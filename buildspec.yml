@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin 255840220362.dkr.ecr.eu-west-3.amazonaws.com
+  build:
+    commands:
+      - echo Build started on `date`
+      - docker build -t twenty-pilot .
+      - docker tag twenty-pilot 255840220362.dkr.ecr.eu-west-3.amazonaws.com/twenty-pilot:latest
+      - cd $CODEBUILD_SRC_DIR
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push 255840220362.dkr.ecr.eu-west-3.amazonaws.com/twenty-pilot:latest
+      - echo Writing image definitions file...
+      - printf '{"AWSEBDockerrunVersion":"1","Image":{"Name":"%s","Update":"true"},"Ports":[{"ContainerPort":3000,"HostPort":80}]}' 255840220362.dkr.ecr.eu-west-3.amazonaws.com/twenty-pilot:latest > Dockerrun.aws.json
+      - cat Dockerrun.aws.json
+
+artifacts:
+  files: Dockerrun.aws.json
