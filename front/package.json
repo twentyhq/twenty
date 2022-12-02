@@ -4,6 +4,10 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.16.0",
+    "@linaria/babel-preset": "^4.3.1",
+    "@linaria/core": "^4.2.3",
+    "@linaria/react": "^4.3.1",
+    "@linaria/webpack-loader": "^4.1.9",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^5.5.0",
     "@types/node": "^16.18.4",
