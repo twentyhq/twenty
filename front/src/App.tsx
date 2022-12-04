@@ -1,5 +1,5 @@
 import React from 'react';
-import Tasks from './pages/Tasks';
+import Tasks from './pages/tasks/Tasks';
 import History from './pages/History';
 import Performances from './pages/Performances';
 import AppLayout from './layout/AppLayout';

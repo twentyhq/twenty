@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import { NavbarOnPerformance } from '../../stories/layout/Navbar.stories';
+import { NavbarOnPerformance } from '../../../stories/layout/navbar/Navbar.stories';
 
 it('Checks the NavItem renders', () => {
   const { getByRole } = render(<NavbarOnPerformance />);

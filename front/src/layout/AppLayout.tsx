@@ -1,9 +1,10 @@
-import Navbar from './Navbar';
+import Navbar from './navbar/Navbar';
 import styled from '@emotion/styled';
 
 const StyledLayout = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100vh;
 `;
 
 type OwnProps = {
