@@ -1,16 +1,19 @@
 import React from 'react';
 import Tasks from './pages/Tasks';
 import History from './pages/History';
+import Performances from './pages/Performances';
+import AppLayout from './layout/AppLayout';
 import { Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
+    <AppLayout>
       <Routes>
         <Route path="/" element={<Tasks />} />
         <Route path="/history" element={<History />} />
+        <Route path="/performances" element={<Performances />} />
       </Routes>
-    </div>
+    </AppLayout>
   );
 }
 
