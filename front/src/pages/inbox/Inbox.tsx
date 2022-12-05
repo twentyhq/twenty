@@ -1,7 +1,7 @@
 import FullWidthContainer from '../../layout/containers/FullWidthContainer';
 import TaskList from './TaskList';
 
-function Tasks() {
+function Inbox() {
   return (
     <FullWidthContainer>
       <TaskList />
@@ -9,4 +9,4 @@ function Tasks() {
   );
 }
 
-export default Tasks;
+export default Inbox;

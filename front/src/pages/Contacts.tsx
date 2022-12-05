@@ -1,4 +1,4 @@
-function History() {
+function Contacts() {
   return (
     <div>
       <h1>This is the history page</h1>
@@ -6,4 +6,4 @@ function History() {
   );
 }
 
-export default History;
+export default Contacts;

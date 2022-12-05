@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import { TaskListHeaderDefault } from '../../../stories/pages/tasks/TaskListHeader.stories';
+import { TaskListHeaderDefault } from '../../../stories/pages/inbox/TaskListHeader.stories';
 
 it('Checks the TaskListHeader render', () => {
   const { getAllByText } = render(<TaskListHeaderDefault />);

@@ -1,7 +1,7 @@
-import TaskList from '../../../pages/tasks/TaskList';
+import TaskList from '../../../pages/inbox/TaskList';
 
 export default {
-  title: 'Tasks',
+  title: 'Inbox',
   component: TaskList,
 };
 

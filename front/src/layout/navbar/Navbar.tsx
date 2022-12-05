@@ -16,7 +16,7 @@ function Navbar() {
     <>
       <NavbarContainer>
         <NavItem
-          label="Tasks"
+          label="Inbox"
           to="/"
           active={
             !!useMatch({
@@ -26,21 +26,21 @@ function Navbar() {
           }
         />
         <NavItem
-          label="History"
-          to="/history"
+          label="Contacts"
+          to="/contacts"
           active={
             !!useMatch({
-              path: useResolvedPath('/history').pathname,
+              path: useResolvedPath('/contacts').pathname,
               end: true,
             })
           }
         />
         <NavItem
-          label="Performances"
-          to="/performances"
+          label="Insights"
+          to="/insights"
           active={
             !!useMatch({
-              path: useResolvedPath('/performances').pathname,
+              path: useResolvedPath('/insights').pathname,
               end: true,
             })
           }

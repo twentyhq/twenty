@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import { TaskListItemDefault } from '../../../stories/pages/tasks/TaskListItem.stories';
+import { TaskListItemDefault } from '../../../stories/pages/inbox/TaskListItem.stories';
 
 it('Checks the TaskListItem render', () => {
   const { getAllByText } = render(<TaskListItemDefault />);

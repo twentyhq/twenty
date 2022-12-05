@@ -1,8 +1,8 @@
 import { MemoryRouter } from 'react-router-dom';
-import TaskListHeader from '../../../pages/tasks/TaskListHeader';
+import TaskListHeader from '../../../pages/inbox/TaskListHeader';
 
 export default {
-  title: 'Tasks',
+  title: 'Inbox',
   component: TaskListHeader,
 };
 

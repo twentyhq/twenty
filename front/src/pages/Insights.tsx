@@ -1,4 +1,4 @@
-function Performances() {
+function Insights() {
   return (
     <div>
       <h1>This is the performances page</h1>
@@ -6,4 +6,4 @@ function Performances() {
   );
 }
 
-export default Performances;
+export default Insights;

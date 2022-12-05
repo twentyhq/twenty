@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 
-import { TaskListDefault } from '../../../stories/pages/tasks/TaskList.stories';
+import { TaskListDefault } from '../../../stories/pages/inbox/TaskList.stories';
 
-it('Checks the Tasks page render', () => {
+it('Checks the task list render', () => {
   const { getAllByRole } = render(<TaskListDefault />);
 
   const button = getAllByRole('button');

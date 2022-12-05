@@ -7,8 +7,8 @@ export default {
   component: Navbar,
 };
 
-export const NavbarOnPerformance = () => (
-  <MemoryRouter initialEntries={['/performances']}>
+export const NavbarOnInsights = () => (
+  <MemoryRouter initialEntries={['/insights']}>
     <Navbar />
   </MemoryRouter>
 );
