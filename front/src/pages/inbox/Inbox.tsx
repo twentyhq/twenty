@@ -1,10 +1,16 @@
 import FullWidthContainer from '../../layout/containers/FullWidthContainer';
-import ListPanel from './ListPanel';
+import DiscussionPanel from './discussion-panel/DiscussionPanel';
+import ListPanel from './list-panel/ListPanel';
+import PluginPanel from './plugin-panel/PluginPanel';
 
 function Inbox() {
   return (
     <FullWidthContainer>
-      <ListPanel />
+      <>
+        <ListPanel />
+        <DiscussionPanel />
+        <PluginPanel />
+      </>
     </FullWidthContainer>
   );
 }
