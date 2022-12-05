@@ -1,5 +1,5 @@
 import { MemoryRouter } from 'react-router-dom';
-import Inbox from '../../../pages/inbox/Inbox';
+import Inbox from '../Inbox';
 
 export default {
   title: 'Inbox',

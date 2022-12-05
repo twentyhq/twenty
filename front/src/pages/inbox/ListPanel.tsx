@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import TaskListHeader from './TaskListHeader';
-import TaskListItem from './TaskListItem';
+import ListPanelHeader from './ListPanelHeader';
+import ListPanelItem from './ListPanelItem';
 
 const StyledList = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ export type Task = {
   lastMessage: string;
 };
 
-function TaskList() {
+function ListPanel() {
   const tasks: Task[] = [
     {
       id: 1,
@@ -38,13 +38,13 @@ function TaskList() {
   return (
     <StyledList>
       <>
-        <TaskListHeader />
+        <ListPanelHeader />
         {tasks.map((item) => (
-          <TaskListItem key={item.id} task={item} />
+          <ListPanelItem key={item.id} task={item} />
         ))}
       </>
     </StyledList>
   );
 }
 
-export default TaskList;
+export default ListPanel;

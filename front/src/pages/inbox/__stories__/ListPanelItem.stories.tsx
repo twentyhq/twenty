@@ -1,13 +1,13 @@
 import { MemoryRouter } from 'react-router-dom';
-import TaskListItem from '../../../pages/inbox/TaskListItem';
+import ListPanelItem from '../ListPanelItem';
 
 export default {
   title: 'Inbox',
-  component: TaskListItem,
+  component: ListPanelItem,
 };
 
-export const TaskListItemDefault = () => (
-  <TaskListItem
+export const ListPanelItemDefault = () => (
+  <ListPanelItem
     task={{
       id: 1,
       targetUser: 'Sylvie Vartan',

@@ -1,10 +1,10 @@
 import FullWidthContainer from '../../layout/containers/FullWidthContainer';
-import TaskList from './TaskList';
+import ListPanel from './ListPanel';
 
 function Inbox() {
   return (
     <FullWidthContainer>
-      <TaskList />
+      <ListPanel />
     </FullWidthContainer>
   );
 }

@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import { InboxDefault } from '../../../stories/pages/inbox/Inbox.stories';
+import { InboxDefault } from '../__stories__/Inbox.stories';
 
 it('Checks the Inbox page render', () => {
   const { getAllByRole } = render(<InboxDefault />);

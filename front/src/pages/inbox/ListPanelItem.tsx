@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Task } from './TaskList';
+import { Task } from './ListPanel';
 
 type OwnProps = {
   task: Task;
@@ -72,7 +72,7 @@ const StyledContent = styled.div`
   margin-top: 8px;
 `;
 
-function TaskListItem({ task }: OwnProps) {
+function ListPanelItem({ task }: OwnProps) {
   return (
     <StyledListItem>
       <StyledHeader>
@@ -95,4 +95,4 @@ function TaskListItem({ task }: OwnProps) {
   );
 }
 
-export default TaskListItem;
+export default ListPanelItem;

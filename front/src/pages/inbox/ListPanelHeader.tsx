@@ -10,8 +10,8 @@ const StyledHeader = styled.div`
   border-bottom: 1px solid #eaecee;
 `;
 
-function TaskListHeader() {
+function ListPanelHeader() {
   return <StyledHeader>6 tasks waiting</StyledHeader>;
 }
 
-export default TaskListHeader;
+export default ListPanelHeader;

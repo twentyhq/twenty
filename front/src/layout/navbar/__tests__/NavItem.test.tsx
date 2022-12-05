@@ -1,6 +1,6 @@
 import { render, fireEvent } from '@testing-library/react';
 
-import { NavItemDefault } from '../../../stories/layout/navbar/NavItem.stories'; //👈 Our stories imported here.
+import { NavItemDefault } from '../__stories__/NavItem.stories';
 
 const mockedNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
