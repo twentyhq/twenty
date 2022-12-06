@@ -47,9 +47,6 @@
     "react-refresh": "0.14.0"
   },
   "jest": {
-    "coveragePathIgnorePatterns": [
-      "src/stories"
-    ]
   },
   "browserslist": {
     "production": [

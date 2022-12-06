@@ -1,7 +1,7 @@
 import ListPanel from '../ListPanel';
 
 export default {
-  title: 'Inbox',
+  title: 'ListPanel',
   component: ListPanel,
 };
 

@@ -1,8 +1,7 @@
-import { MemoryRouter } from 'react-router-dom';
 import ListPanelItem from '../ListPanelItem';
 
 export default {
-  title: 'Inbox',
+  title: 'ListPanel',
   component: ListPanelItem,
 };
 
