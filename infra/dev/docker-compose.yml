@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  twenty-server:
+    build: 
+      context: ../..
+      dockerfile: ./infra/dev/twenty-server/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+  twenty-api:
+    image: hasura/graphql-engine:latest
+    ports:
+    - "8080:8080"
+    depends_on:
+    - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/hasura
+      PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/twenty
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+  postgres:
+    build: ./postgres
+    volumes:
+    - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+volumes:
+  db_data:
