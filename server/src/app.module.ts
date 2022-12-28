@@ -10,7 +10,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '../..', 'front/build'),
     }),
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
