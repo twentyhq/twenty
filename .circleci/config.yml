@@ -23,12 +23,13 @@ workflows:
     jobs:
       - tests
       - aws-ecr/build-and-push-image:
+          name: build-image
           filters:
             branches:
               only: main
           requires:
             - tests
-          dockerfile: Dockerfile
+          dockerfile: ./infra/prod/Dockerfile
           registry-id: AWS_ACCOUNT_ID
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
@@ -38,7 +39,7 @@ workflows:
       - aws-ecs/deploy-service-update:
           name: deploy-canary
           requires:
-            - aws-ecr/build-and-push-image
+            - build-image
           family: $AWS_ECS_CONTAINER_NAME_CANARY
           cluster: $AWS_ECS_CLUSTER
           container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_CANARY,tag=${CIRCLE_SHA1}"
@@ -65,3 +66,14 @@ workflows:
             - slack/notify:
                 event: fail
                 template: basic_fail_1
+      - aws-ecr/build-and-push-image:
+          name: build-image-latest
+          requires:
+            - deploy-prod
+          dockerfile: ./infra/prod/Dockerfile
+          registry-id: AWS_ACCOUNT_ID
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: $AWS_REGION
+          repo: $AWS_ECR_REPO
+          tag: latest

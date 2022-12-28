@@ -4,39 +4,33 @@ Welcome to Twenty!
 
 ## Setup & Development
 
-### Frontend
-
 ```
-cd front && npm install
-npm run start
+docker-compose -f infra/dev/docker-compose.yml up --build --force-recreate
 ```
 
-Browse: `localhost:3000`
-
-### Backend
-
-```
-cd server && npm install
-npm run start:dev
-```
-
-Browse: `localhost:5000`
+Browse:
+- FE/BE: localhost:3000
+- Hasura: localhost:8080
 
 ## Tests
 
+Ssh into the twenty-server container using:
+- `docker ps` to get the container id
+- `docker exec -it CONTAINER_ID sh`
+
 ### Frontend
 
 ```
+cd front
 npm run test
 ```
 
 ### Backend
 
 ```
+cd server
 npm run test
 ```
-
-Browse: `localhost:5000`
 
 ## Production
 

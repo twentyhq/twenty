@@ -1,0 +1,2 @@
+CREATE DATABASE twenty;
+CREATE DATABASE hasura;
