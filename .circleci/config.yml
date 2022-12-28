@@ -6,8 +6,13 @@ orbs:
   slack: circleci/slack@4.12.0
   node: circleci/node@5.0.3
 
+parameters:
+  build-api:
+    type: boolean
+    default: false
+
 jobs:
-  tests:
+  tests-server:
     executor: node/default
     steps:
       - checkout
@@ -19,17 +24,17 @@ jobs:
           name: tests
 
 workflows:
-  build-and-deploy:
+  build-and-deploy-server:
     jobs:
-      - tests
+      - tests-server
       - aws-ecr/build-and-push-image:
-          name: build-image
+          name: build-image-server
           filters:
             branches:
               only: main
           requires:
-            - tests
-          dockerfile: ./infra/prod/Dockerfile
+            - tests-server
+          dockerfile: ./infra/prod/twenty-server/Dockerfile
           registry-id: AWS_ACCOUNT_ID
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
@@ -37,28 +42,28 @@ workflows:
           repo: $AWS_ECR_REPO
           tag: $CIRCLE_SHA1
       - aws-ecs/deploy-service-update:
-          name: deploy-canary
+          name: deploy-server-canary
           requires:
-            - build-image
-          family: $AWS_ECS_CONTAINER_NAME_CANARY
+            - build-image-server
+          family: $AWS_ECS_CONTAINER_NAME_SERVER_CANARY
           cluster: $AWS_ECS_CLUSTER
-          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_CANARY,tag=${CIRCLE_SHA1}"
+          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_SERVER_CANARY,tag=${CIRCLE_SHA1}"
       - slack/on-hold:
           name: slack-notification
           context: slack-secrets
           requires:
-            - deploy-canary
+            - deploy-server-canary
       - hold:
           type: approval
           requires:
             - slack-notification
       - aws-ecs/deploy-service-update:
-          name: deploy-prod
+          name: deploy-server-default
           requires:
             - hold
-          family: $AWS_ECS_CONTAINER_NAME_DEFAULT
+          family: $AWS_ECS_CONTAINER_NAME_SERVER_DEFAULT
           cluster: $AWS_ECS_CLUSTER
-          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_DEFAULT,tag=${CIRCLE_SHA1}"
+          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_SERVER_DEFAULT,tag=${CIRCLE_SHA1}"
           post-steps:
             - slack/notify:
                 event: pass
@@ -69,11 +74,53 @@ workflows:
       - aws-ecr/build-and-push-image:
           name: build-image-latest
           requires:
-            - deploy-prod
-          dockerfile: ./infra/prod/Dockerfile
+            - deploy-server-default
+          dockerfile: ./infra/prod/twenty-server/Dockerfile
           registry-id: AWS_ACCOUNT_ID
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           region: $AWS_REGION
           repo: $AWS_ECR_REPO
+          tag: latest
+
+  build-and-deploy-api:
+    when: << pipeline.parameters.build-api >>
+    jobs:
+      - aws-ecr/build-and-push-image:
+          name: build-image-api
+          dockerfile: ./infra/prod/twenty-api/Dockerfile
+          registry-id: AWS_ACCOUNT_ID
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: $AWS_REGION
+          repo: $AWS_ECR_REPO_API
+          tag: $CIRCLE_SHA1
+      - aws-ecs/deploy-service-update:
+          name: deploy-api-canary
+          requires:
+            - build-image-api
+          family: $AWS_ECS_CONTAINER_NAME_API_CANARY
+          cluster: $AWS_ECS_CLUSTER
+          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_API_CANARY,tag=${CIRCLE_SHA1}"
+      - hold:
+          type: approval
+          requires:
+            - deploy-api-canary
+      - aws-ecs/deploy-service-update:
+          name: deploy-api-default
+          requires:
+            - hold
+          family: $AWS_ECS_CONTAINER_NAME_API_DEFAULT
+          cluster: $AWS_ECS_CLUSTER
+          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_API_DEFAULT,tag=${CIRCLE_SHA1}"
+      - aws-ecr/build-and-push-image:
+          name: build-image-api-latest
+          requires:
+            - deploy-api-default
+          dockerfile: ./infra/prod/twenty-api/Dockerfile
+          registry-id: AWS_ACCOUNT_ID
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: $AWS_REGION
+          repo: $AWS_ECR_REPO_API
           tag: latest
