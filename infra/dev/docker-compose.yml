@@ -9,7 +9,7 @@ services:
     depends_on:
       - postgres
   twenty-api:
-    image: hasura/graphql-engine:latest
+    build: ./twenty-api
     ports:
     - "8080:8080"
     depends_on:
