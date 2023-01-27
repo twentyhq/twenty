@@ -1,5 +1,17 @@
 version: "3.9"
 services:
+  twenty-front:
+    build: 
+      context: ../..
+      dockerfile: ./infra/dev/twenty-front/Dockerfile
+    ports:
+      - "3001:3001"
+      - "6006:6006"
+    volumes:
+      - ../../front:/app/front
+      - ../../infra:/app/infra
+    depends_on:
+      - postgres
   twenty-server:
     build: 
       context: ../..
@@ -20,6 +32,8 @@ services:
       PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/twenty
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
   postgres:
     build: ./postgres

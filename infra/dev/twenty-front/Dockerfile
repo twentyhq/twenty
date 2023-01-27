@@ -3,8 +3,8 @@ FROM node:18-alpine as app
 WORKDIR /app
 COPY ../.. .
 
-WORKDIR /app/server
+WORKDIR /app/front
 RUN npm install
 RUN npm run build
 
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start"]
