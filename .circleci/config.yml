@@ -89,6 +89,12 @@ workflows:
           region: $AWS_REGION
           repo: $AWS_ECR_REPO
           tag: latest
+          extra-build-args: >
+            --build-arg REACT_APP_AUTH0_DOMAIN=$REACT_APP_AUTH0_DOMAIN
+            --build-arg REACT_APP_AUTH0_CLIENT_ID=$REACT_APP_AUTH0_CLIENT_ID
+            --build-arg REACT_APP_AUTH0_CALLBACK_URL=$REACT_APP_AUTH0_CALLBACK_URL
+            --build-arg REACT_APP_AUTH0_AUDIENCE=$REACT_APP_AUTH0_AUDIENCE
+            --build-arg REACT_APP_API_URL=$REACT_APP_API_URL
 
   build-and-deploy-api:
     when: << pipeline.parameters.build-api >>
@@ -133,3 +139,5 @@ workflows:
           region: $AWS_REGION
           repo: $AWS_ECR_REPO_API
           tag: latest
+          extra-build-args: >
+            --build-arg HASURA_GRAPHQL_JWT_SECRET=$HASURA_GRAPHQL_JWT_SECRET
