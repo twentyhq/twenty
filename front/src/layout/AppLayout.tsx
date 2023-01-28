@@ -9,12 +9,18 @@ const StyledLayout = styled.div`
 
 type OwnProps = {
   children: JSX.Element;
+  user?: {
+    email: string;
+    first_name: string;
+    last_name: string;
+    tenant: { id: string; name: string };
+  };
 };
 
-function AppLayout({ children }: OwnProps) {
+function AppLayout({ children, user }: OwnProps) {
   return (
     <StyledLayout>
-      <Navbar />
+      <Navbar user={user} />
       <div>{children}</div>
     </StyledLayout>
   );
