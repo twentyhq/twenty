@@ -41,6 +41,13 @@ workflows:
           region: $AWS_REGION
           repo: $AWS_ECR_REPO
           tag: $CIRCLE_SHA1
+          extra-build-args: >
+            --build-arg REACT_APP_AUTH0_DOMAIN=$REACT_APP_AUTH0_DOMAIN
+            --build-arg REACT_APP_AUTH0_CLIENT_ID=$REACT_APP_AUTH0_CLIENT_ID
+            --build-arg REACT_APP_AUTH0_CALLBACK_URL=$REACT_APP_AUTH0_CALLBACK_URL
+            --build-arg REACT_APP_AUTH0_AUDIENCE=$REACT_APP_AUTH0_AUDIENCE
+            --build-arg REACT_APP_API_URL=$REACT_APP_API_URL
+
       - aws-ecs/deploy-service-update:
           name: deploy-server-canary
           requires:
@@ -95,6 +102,8 @@ workflows:
           region: $AWS_REGION
           repo: $AWS_ECR_REPO_API
           tag: $CIRCLE_SHA1
+          extra-build-args: >
+            --build-arg HASURA_GRAPHQL_JWT_SECRET=$HASURA_GRAPHQL_JWT_SECRET
       - aws-ecs/deploy-service-update:
           name: deploy-api-canary
           requires:
