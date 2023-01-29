@@ -108,8 +108,6 @@ workflows:
           region: $AWS_REGION
           repo: $AWS_ECR_REPO_API
           tag: $CIRCLE_SHA1
-          extra-build-args: >
-            --build-arg HASURA_GRAPHQL_JWT_SECRET=$HASURA_GRAPHQL_JWT_SECRET
       - aws-ecs/deploy-service-update:
           name: deploy-api-canary
           requires:
@@ -139,5 +137,3 @@ workflows:
           region: $AWS_REGION
           repo: $AWS_ECR_REPO_API
           tag: latest
-          extra-build-args: >
-            --build-arg HASURA_GRAPHQL_JWT_SECRET=$HASURA_GRAPHQL_JWT_SECRET
