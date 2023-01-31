@@ -21,7 +21,7 @@ Make sure to have the latest Docker and Docker-compose versions installed on you
 ### Step 2: docker build
 Build docker containers.
 
-The whole setup/development experience is happening in `infra/dev` folder. Make sure to be in this folder:
+The whole setup experience is happening in `infra/dev` folder. Make sure to be in this folder:
 ```
 cd infra/dev
 ```
@@ -49,38 +49,60 @@ Browse Hasura console on http://localhost:8080, go to settings and import metada
 
 ## Developping on Frontend
 
+The whole development experience is happening in `infra/dev` folder.
+```
+cd infra/dev
+```
+
 The development FE server is running on docker up and is exposing the `twenty-front` on port http://localhost:3001. As you modify the `/front` folder on your computer, this folder is synced with your `twenty-front` container and the frontend application is automatically refreshed.
 
 ### Develop
 
 Recommended: as you modify frontend code, here is how to access `twenty-front` server logs in order to debug / watch typescript issues:
 ```
-docker-compose up
-docker-compose logs twenty-front -f
+make up
+make logs container=twenty-front
 ```
 
 ### Open a shell into the container
 ```
-docker-compose exec twenty-front sh
+make front-sh
 ```
 
 ### Tests
 
 #### Unit tests:
 ```
-docker-compose exec twenty-front sh -c "npm run test"
+make front-test
 # coverage
-docker-compose exec twenty-front sh -c "npm run coverage"
+make front-coverage
 ```
 
 #### Storybook:
 ```
-docker-compose exec twenty-front sh -c "npm run storybook"
+make front-storybook
 ```
 
 ## Developping on API
 
-The API is a Hasura instance which is a no-code container. To modify API behavior, you'll need to connect to Hasura console on: http://localhost:8080/console
+The whole development experience is happening in `infra/dev` folder.
+```
+cd infra/dev
+```
+
+The API is a Hasura instance which is a no-code container. 
+To modify API behavior, you'll need to connect to run Hasura console through the CLI
+```
+make api-console
+```
+
+Once your local changes in the console are finished you can export them into the filesystem (in order to version them, and deploy them to other environments), depending on your needs:
+
+```
+make api-make-migration name=my_migration_name
+make api-make-metadata
+make api-make-seeds
+```
 
 ## Developping on server
 
