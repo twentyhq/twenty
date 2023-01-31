@@ -1,0 +1,23 @@
+table:
+  name: users
+  schema: public
+object_relationships:
+  - name: tenant
+    using:
+      foreign_key_constraint_on: tenant_id
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - tenant_id
+        - email
+        - first_name
+        - last_name
+        - created_at
+        - updated_at
+      filter:
+        tenant:
+          users:
+            email:
+              _eq: X-Hasura-User-Email
