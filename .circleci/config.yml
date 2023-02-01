@@ -22,6 +22,18 @@ jobs:
       - run:
           command: cd front && npm run test
           name: tests
+  deploy-api-canary:
+    docker:
+      - image: hasura/graphql-engine:latest.cli-migrations-v3
+    steps:
+      - checkout
+      - run: cd api && /bin/hasura-cli deploy --admin-secret $HASURA_ADMIN_SECRET --endpoint $HASURA_CANARY_ENDPOINT
+  deploy-api:
+    docker:
+      - image: hasura/graphql-engine:latest.cli-migrations-v3
+    steps:
+      - checkout
+      - run: cd api && /bin/hasura-cli deploy --admin-secret $HASURA_ADMIN_SECRET --endpoint $HASURA_ENDPOINT
 
 workflows:
   build-and-deploy-server:
@@ -96,7 +108,22 @@ workflows:
             --build-arg REACT_APP_AUTH0_AUDIENCE=$REACT_APP_AUTH0_AUDIENCE
             --build-arg REACT_APP_API_URL=$REACT_APP_API_URL
 
-  build-and-deploy-api:
+  deploy-api:
+    jobs:
+      - deploy-api-canary
+      - slack/on-hold:
+          name: slack-notification
+          context: slack-secrets
+          requires:
+            - deploy-api-canary
+      - hold:
+          type: approval
+          requires:
+            - slack-notification
+      - deploy-api:
+          requires:
+              - hold
+  build-api:
     when: << pipeline.parameters.build-api >>
     jobs:
       - aws-ecr/build-and-push-image:
