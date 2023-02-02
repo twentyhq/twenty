@@ -27,7 +27,7 @@ api-make-metadata: ##
 		hasura metadata export"
 
 front-sh: ## 
-	@docker-compose exec twenty-front bash
+	@docker-compose exec twenty-front sh
 
 front-test: ## 
 	@docker-compose exec twenty-front sh -c "npm run test"

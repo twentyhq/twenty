@@ -1,5 +1,6 @@
 import Navbar from './navbar/Navbar';
 import styled from '@emotion/styled';
+import { User } from '../interfaces/user.interface';
 
 const StyledLayout = styled.div`
   display: flex;
@@ -9,12 +10,7 @@ const StyledLayout = styled.div`
 
 type OwnProps = {
   children: JSX.Element;
-  user?: {
-    email: string;
-    first_name: string;
-    last_name: string;
-    tenant: { id: string; name: string };
-  };
+  user?: User;
 };
 
 function AppLayout({ children, user }: OwnProps) {

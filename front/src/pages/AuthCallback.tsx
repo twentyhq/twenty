@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import AuthService from '../hooks/AuthenticationHooks';
+import { useGetAccessToken } from '../hooks/AuthenticationHooks';
 
 function AuthCallback() {
-  const { useGetAccessToken } = AuthService;
-
   const { token } = useGetAccessToken();
 
   useEffect(() => {

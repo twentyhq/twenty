@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useMatch, useResolvedPath } from 'react-router-dom';
+import { User } from '../../interfaces/user.interface';
 import NavItem from './NavItem';
 import ProfileContainer from './ProfileContainer';
 
@@ -18,12 +19,7 @@ const NavItemsContainer = styled.div`
 `;
 
 type OwnProps = {
-  user?: {
-    email: string;
-    first_name: string;
-    last_name: string;
-    tenant: { id: string; name: string };
-  };
+  user?: User;
 };
 
 function Navbar({ user }: OwnProps) {

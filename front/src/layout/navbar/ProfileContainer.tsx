@@ -1,12 +1,8 @@
 import styled from '@emotion/styled';
+import { User } from '../../interfaces/user.interface';
 
 type OwnProps = {
-  user?: {
-    email: string;
-    first_name: string;
-    last_name: string;
-    tenant: { id: string; name: string };
-  };
+  user?: User;
 };
 
 const StyledContainer = styled.button`
@@ -65,7 +61,7 @@ function ProfileContainer({ user }: OwnProps) {
       </StyledAvatar>
       <StyledInfoContainer>
         <StyledEmail>{user?.email}</StyledEmail>
-        <StyledTenant>{user?.tenant.name}</StyledTenant>
+        <StyledTenant>{user?.tenant?.name}</StyledTenant>
       </StyledInfoContainer>
     </StyledContainer>
   );
