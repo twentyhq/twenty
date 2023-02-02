@@ -6,28 +6,10 @@ import AuthCallback from './pages/AuthCallback';
 import AppLayout from './layout/AppLayout';
 import RequireAuth from './components/RequireAuth';
 import { Routes, Route } from 'react-router-dom';
-import { useQuery, gql } from '@apollo/client';
-
-const GET_USER_PROFILE = gql`
-  query GetUserProfile {
-    users {
-      id
-      email
-      first_name
-      last_name
-      tenant {
-        id
-        name
-      }
-    }
-  }
-`;
+import { useGetProfile } from './hooks/profile/useGetProfile';
 
 function App() {
-  const { data } = useQuery(GET_USER_PROFILE, {
-    fetchPolicy: 'network-only',
-  });
-  const user = data?.users[0];
+  const { user } = useGetProfile();
 
   return (
     <AppLayout user={user}>
