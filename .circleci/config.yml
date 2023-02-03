@@ -33,7 +33,7 @@ jobs:
       - image: hasura/graphql-engine:latest.cli-migrations-v3
     steps:
       - checkout
-      - run: cd api && /bin/hasura-cli deploy --admin-secret $HASURA_ADMIN_SECRET --endpoint $HASURA_ENDPOINT
+      - run: cd api && /bin/hasura-cli metadata apply --admin-secret $HASURA_ADMIN_SECRET --endpoint $HASURA_ENDPOINT
 
 workflows:
   build-and-deploy-server:
