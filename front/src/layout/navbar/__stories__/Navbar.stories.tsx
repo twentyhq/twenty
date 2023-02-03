@@ -15,7 +15,12 @@ export const NavbarOnInsights = () => (
         email: 'charles@twenty.com',
         first_name: 'Charles',
         last_name: 'Bochet',
-        tenant: { id: 1, name: 'Twenty' },
+        tenant: {
+          id: 1,
+          name: 'Twenty',
+          domain: 'pilot.twenty.com',
+          auth0_client_id: 'auth0_client_id',
+        },
       }}
     />
   </MemoryRouter>

@@ -10,13 +10,21 @@ array_relationships:
           name: users
           schema: public
 select_permissions:
+  - role: public
+    permission:
+      columns:
+        - auth0_client_id
+        - domain
+      filter: {}
+      limit: 1
   - role: user
     permission:
       columns:
+        - auth0_client_id
+        - email_domain
         - id
         - name
         - uuid
-        - email_domain
       filter:
         users:
           email:

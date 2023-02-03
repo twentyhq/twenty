@@ -1,0 +1,1 @@
+alter table "public"."tenants" drop column "domain";
