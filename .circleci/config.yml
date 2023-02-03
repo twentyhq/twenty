@@ -110,7 +110,10 @@ workflows:
 
   deploy-api:
     jobs:
-      - deploy-api-canary
+      - deploy-api-canary:
+          filters:
+              branches:
+                only: main
       - slack/on-hold:
           name: slack-notification
           context: slack-secrets
