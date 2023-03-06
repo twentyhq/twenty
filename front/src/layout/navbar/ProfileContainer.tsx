@@ -29,12 +29,6 @@ const StyledEmail = styled.div`
   display: flex;
 `;
 
-const StyledTenant = styled.div`
-  display: flex;
-  text-transform: capitalize;
-  font-weight: bold;
-`;
-
 const StyledAvatar = styled.div`
   display: flex;
   width: 40px;
@@ -61,7 +55,6 @@ function ProfileContainer({ user }: OwnProps) {
       </StyledAvatar>
       <StyledInfoContainer>
         <StyledEmail>{user?.email}</StyledEmail>
-        <StyledTenant>{user?.tenant?.name}</StyledTenant>
       </StyledInfoContainer>
     </StyledContainer>
   );

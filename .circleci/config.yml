@@ -6,13 +6,8 @@ orbs:
   slack: circleci/slack@4.12.0
   node: circleci/node@5.0.3
 
-parameters:
-  build-api:
-    type: boolean
-    default: false
-
 jobs:
-  tests-server:
+  tests-front:
     executor: node/default
     steps:
       - checkout
@@ -22,31 +17,19 @@ jobs:
       - run:
           command: cd front && npm run test
           name: tests
-  deploy-api-canary:
-    docker:
-      - image: hasura/graphql-engine:latest.cli-migrations-v3
-    steps:
-      - checkout
-      - run: cd api && /bin/hasura-cli deploy --admin-secret $HASURA_ADMIN_SECRET --endpoint $HASURA_CANARY_ENDPOINT
-  deploy-api:
-    docker:
-      - image: hasura/graphql-engine:latest.cli-migrations-v3
-    steps:
-      - checkout
-      - run: cd api && /bin/hasura-cli metadata apply --admin-secret $HASURA_ADMIN_SECRET --endpoint $HASURA_ENDPOINT
 
 workflows:
-  build-and-deploy-server:
+  build-and-deploy:
     jobs:
-      - tests-server
+      - tests-front
       - aws-ecr/build-and-push-image:
-          name: build-image-server
+          name: build-image
           filters:
             branches:
               only: main
           requires:
-            - tests-server
-          dockerfile: ./infra/prod/twenty-server/Dockerfile
+            - tests-front
+          dockerfile: ./infra/prod/twenty/Dockerfile
           registry-id: AWS_ACCOUNT_ID
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
@@ -54,35 +37,31 @@ workflows:
           repo: $AWS_ECR_REPO
           tag: $CIRCLE_SHA1
           extra-build-args: >
-            --build-arg REACT_APP_AUTH0_DOMAIN=$REACT_APP_AUTH0_DOMAIN
-            --build-arg REACT_APP_AUTH0_CLIENT_ID=$REACT_APP_AUTH0_CLIENT_ID
-            --build-arg REACT_APP_AUTH0_CALLBACK_URL=$REACT_APP_AUTH0_CALLBACK_URL
-            --build-arg REACT_APP_AUTH0_AUDIENCE=$REACT_APP_AUTH0_AUDIENCE
             --build-arg REACT_APP_API_URL=$REACT_APP_API_URL
 
       - aws-ecs/deploy-service-update:
-          name: deploy-server-canary
+          name: deploy-canary
           requires:
-            - build-image-server
-          family: $AWS_ECS_CONTAINER_NAME_SERVER_CANARY
+            - build-image
+          family: $AWS_ECS_CONTAINER_NAME_CANARY
           cluster: $AWS_ECS_CLUSTER
-          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_SERVER_CANARY,tag=${CIRCLE_SHA1}"
+          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_CANARY,tag=${CIRCLE_SHA1}"
       - slack/on-hold:
           name: slack-notification
           context: slack-secrets
           requires:
-            - deploy-server-canary
+            - deploy-canary
       - hold:
           type: approval
           requires:
             - slack-notification
       - aws-ecs/deploy-service-update:
-          name: deploy-server-default
+          name: deploy-default
           requires:
             - hold
-          family: $AWS_ECS_CONTAINER_NAME_SERVER_DEFAULT
+          family: $AWS_ECS_CONTAINER_NAME_DEFAULT
           cluster: $AWS_ECS_CLUSTER
-          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_SERVER_DEFAULT,tag=${CIRCLE_SHA1}"
+          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_DEFAULT,tag=${CIRCLE_SHA1}"
           post-steps:
             - slack/notify:
                 event: pass
@@ -93,8 +72,8 @@ workflows:
       - aws-ecr/build-and-push-image:
           name: build-image-latest
           requires:
-            - deploy-server-default
-          dockerfile: ./infra/prod/twenty-server/Dockerfile
+            - deploy-default
+          dockerfile: ./infra/prod/twenty/Dockerfile
           registry-id: AWS_ACCOUNT_ID
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
@@ -102,68 +81,4 @@ workflows:
           repo: $AWS_ECR_REPO
           tag: latest
           extra-build-args: >
-            --build-arg REACT_APP_AUTH0_DOMAIN=$REACT_APP_AUTH0_DOMAIN
-            --build-arg REACT_APP_AUTH0_CLIENT_ID=$REACT_APP_AUTH0_CLIENT_ID
-            --build-arg REACT_APP_AUTH0_CALLBACK_URL=$REACT_APP_AUTH0_CALLBACK_URL
-            --build-arg REACT_APP_AUTH0_AUDIENCE=$REACT_APP_AUTH0_AUDIENCE
             --build-arg REACT_APP_API_URL=$REACT_APP_API_URL
-
-  deploy-api:
-    jobs:
-      - deploy-api-canary:
-          filters:
-              branches:
-                only: main
-      - slack/on-hold:
-          name: slack-notification
-          context: slack-secrets
-          requires:
-            - deploy-api-canary
-      - hold:
-          type: approval
-          requires:
-            - slack-notification
-      - deploy-api:
-          requires:
-              - hold
-  build-api:
-    when: << pipeline.parameters.build-api >>
-    jobs:
-      - aws-ecr/build-and-push-image:
-          name: build-image-api
-          dockerfile: ./infra/prod/twenty-api/Dockerfile
-          registry-id: AWS_ACCOUNT_ID
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: $AWS_REGION
-          repo: $AWS_ECR_REPO_API
-          tag: $CIRCLE_SHA1
-      - aws-ecs/deploy-service-update:
-          name: deploy-api-canary
-          requires:
-            - build-image-api
-          family: $AWS_ECS_CONTAINER_NAME_API_CANARY
-          cluster: $AWS_ECS_CLUSTER
-          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_API_CANARY,tag=${CIRCLE_SHA1}"
-      - hold:
-          type: approval
-          requires:
-            - deploy-api-canary
-      - aws-ecs/deploy-service-update:
-          name: deploy-api-default
-          requires:
-            - hold
-          family: $AWS_ECS_CONTAINER_NAME_API_DEFAULT
-          cluster: $AWS_ECS_CLUSTER
-          container-image-name-updates: "container=$AWS_ECS_CONTAINER_NAME_API_DEFAULT,tag=${CIRCLE_SHA1}"
-      - aws-ecr/build-and-push-image:
-          name: build-image-api-latest
-          requires:
-            - deploy-api-default
-          dockerfile: ./infra/prod/twenty-api/Dockerfile
-          registry-id: AWS_ACCOUNT_ID
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: $AWS_REGION
-          repo: $AWS_ECR_REPO_API
-          tag: latest

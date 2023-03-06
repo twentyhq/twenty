@@ -4,16 +4,29 @@ Welcome to Twenty documentation!
 
 ## High Level Overview
 
-Twenty development stack is composed of 5 different layers:
-- twenty-front: our frontend React app
-- twenty-api (Hasura): our backend presentation layer that can do straight forward CRUDs, permissionning, authentication.
-- twenty-server: our backend that contain complex logics, scripts, jobs...
-- [tbd] twenty-events (Jitsu): our event ingestor which is separated from api and server to ensure high availability
-- storages: postgres, [tbd] elasticsearch, [tbd] redis.
+Twenty development stack is composed of 3 different layers
+- front: our frontend React app
+- server: our backend that contain endpoint, crm logic, scripts, jobs...
+- storages: postgres
 
-## Development environment setup
+## Development environment setup with npm (Alternative 1)
 
-This section only discusses the development setup. The whole developemnt environment is containerized with Docker and orchestrated with docker-compose. 
+This is the easiest way to get started contributing to twenty
+Make sure you have `node@18` installed on your machine. You can use `nvm` to manage your nvm versions in case you have projects that require different node versions.
+
+`npm install`
+`npm start`
+
+You'll need to provide your own postgres storage.
+
+Once this is completed you should have:
+- front available on: http://localhost:3001
+- server available on: http://localhost:3000/health
+
+
+## Development environment setup with docker-compose (Alternative 2)
+
+We also provide a containerized environment with Docker and orchestrated with docker-compose in case it is easier for you. This install will also provision a postgres container out of the box.
 
 ### Step 1: pre-requesites
 Make sure to have the latest Docker and Docker-compose versions installed on your computer.
@@ -31,10 +44,9 @@ docker-compose up --build --force-recreate
 ```
 
 Once this is completed you should have:
-- twenty-front available on: http://localhost:3001
-- twenty-api available on: http://localhost:8080
-- twenty-server available on: http://localhost:3000/health
-- postgres: available on http://localhost:5432 that should contain two database: twenty (data) and hasura (metadata)
+- front available on: http://localhost:3001
+- server available on: http://localhost:3000/health
+- postgres: available on http://localhost:5432 that should contain `twenty` database
 
 ### Step 3: environment file
 Configure your environment by copying the `.env.example` file located in `infra/dev` folder into `.env`.
@@ -44,34 +56,16 @@ cp infra/dev/.env.example infra/dev/.env
 
 Then, you'll need to replace all REPLACE_ME variable by their development value. Please reach out to another engineer to get these values (as most of them are third party credentials, sensitive data)
 
-### Step 4: API (Hasura) metadata
-Browse Hasura console on http://localhost:8080, go to settings and import metadata file located in `infra/dev/twenty-api` folder
+### Note
 
-## Developping on Frontend
+If you are using Docker install, make sure to ssh in the docker container during development to execute commands. You can also use `Makefile` to help you
 
-The whole development experience is happening in `infra/dev` folder.
-```
-cd infra/dev
-```
-
-The development FE server is running on docker up and is exposing the `twenty-front` on port http://localhost:3001. As you modify the `/front` folder on your computer, this folder is synced with your `twenty-front` container and the frontend application is automatically refreshed.
-
-### Develop
-
-Recommended: as you modify frontend code, here is how to access `twenty-front` server logs in order to debug / watch typescript issues:
-```
-make up
-make logs container=twenty-front
-```
-
-### Open a shell into the container
-```
-make front-sh
-```
+## Development
 
 ### Tests
 
 #### Unit tests:
+
 ```
 make front-test
 # coverage
@@ -81,27 +75,6 @@ make front-coverage
 #### Storybook:
 ```
 make front-storybook
-```
-
-## Developping on API
-
-The whole development experience is happening in `infra/dev` folder.
-```
-cd infra/dev
-```
-
-The API is a Hasura instance which is a no-code container. 
-To modify API behavior, you'll need to connect to run Hasura console through the CLI
-```
-make api-console
-```
-
-Once your local changes in the console are finished you can export them into the filesystem (in order to version them, and deploy them to other environments), depending on your needs:
-
-```
-make api-make-migration name=my_migration_name
-make api-make-metadata
-make api-make-seeds
 ```
 
 ## Developping on server
