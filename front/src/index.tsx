@@ -14,17 +14,8 @@ import { setContext } from '@apollo/client/link/context';
 const httpLink = createHttpLink({ uri: process.env.REACT_APP_API_URL });
 
 const authLink = setContext((_, { headers }) => {
-  const requestHeaders = { ...headers };
-  const token = localStorage.getItem('accessToken');
-  const headerContainsPublicRole =
-    requestHeaders.hasOwnProperty('x-hasura-default-role') &&
-    requestHeaders['x-hasura-default-role'] === 'public';
-  if (!headerContainsPublicRole && token) {
-    requestHeaders['authorization'] = `Bearer ${token}`;
-  }
-
   return {
-    headers: requestHeaders,
+    headers: headers,
   };
 });
 

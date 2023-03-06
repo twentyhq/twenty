@@ -1,0 +1,16 @@
+{
+  "name": "twenty",
+  "version": "1.0.0",
+  "description": "Open-source CRM",
+  "main": "index.js",
+  "scripts": {
+    "server": "npm start --prefix server",
+    "front": "npm start --prefix front",
+    "start": "concurrently \"npm run server\" \"npm run front\""
+  },
+  "author": "Charles Bochet",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
