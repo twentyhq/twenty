@@ -9,9 +9,10 @@ services:
       - "3001:3001"
       - "6006:6006"
     volumes:
-      - ../../front:/app/front
-      - ../../server:/app/server
-      - ../../infra:/app/infra
+      - ../..:/app
+      - twenty_node_modules_root:/app/node_modules
+      - twenty_node_modules_front:/app/front/node_modules
+      - twenty_node_modules_server:/app/server/node_modules
     depends_on:
       - postgres
   postgres:
@@ -24,3 +25,6 @@ services:
       - "5432:5432"
 volumes:
   db_data:
+  twenty_node_modules_root:
+  twenty_node_modules_front:
+  twenty_node_modules_server:
