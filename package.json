@@ -4,6 +4,7 @@
   "description": "Open-source CRM",
   "main": "index.js",
   "scripts": {
+    "install-dev": "npm install && npm install --prefix server && npm install --prefix front",
     "server": "npm start --prefix server",
     "front": "npm start --prefix front",
     "start": "concurrently \"npm run server\" \"npm run front\""
