@@ -3,10 +3,6 @@ name: Push Image to ECR
   push:
     branches:
       - main
-      - setup-github-actions
-  pull_request:
-    branches:
-      - main
 env:
   AWS_REGION: eu-west-3
 jobs:
