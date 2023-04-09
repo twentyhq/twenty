@@ -1,0 +1,45 @@
+import styled from '@emotion/styled';
+import TopBar from '../top-bar/TopBar';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+
+type OwnProps = {
+  children: JSX.Element;
+  title: string;
+  icon: IconProp;
+};
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+`;
+
+const ContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  background: ${(props) => props.theme.noisyBackground};
+  flex: 1;
+  padding-right: 12px;
+  padding-bottom: 12px;
+`;
+
+const ContentSubContainer = styled.div`
+  display: flex;
+  background: ${(props) => props.theme.primaryBackground};
+  border-radius: 8px;
+  border: 1px solid ${(props) => props.theme.primaryBorder};
+  flex: 1;
+`;
+
+function FullWidthContainer({ children, title, icon }: OwnProps) {
+  return (
+    <StyledContainer>
+      <TopBar title={title} icon={icon} />
+      <ContentContainer>
+        <ContentSubContainer>{children}</ContentSubContainer>
+      </ContentContainer>
+    </StyledContainer>
+  );
+}
+
+export default FullWidthContainer;

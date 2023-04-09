@@ -1,64 +1,62 @@
 import styled from '@emotion/styled';
 import { useMatch, useResolvedPath } from 'react-router-dom';
 import { User } from '../../interfaces/user.interface';
+import { Workspace } from '../../interfaces/workspace.interface';
 import NavItem from './NavItem';
-import ProfileContainer from './ProfileContainer';
+import NavTitle from './NavTitle';
+import WorkspaceContainer from './WorkspaceContainer';
+import { faUser } from '@fortawesome/free-regular-svg-icons';
+import { faBuilding } from '@fortawesome/free-regular-svg-icons';
 
 const NavbarContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding-left: 12px;
-  height: 58px;
-  border-bottom: 2px solid #eaecee;
+  flex-direction: column;
+  background: ${(props) => props.theme.noisyBackground};
+  min-width: 220px;
+  padding: 8px;
 `;
 
 const NavItemsContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  margin-top: 40px;
 `;
 
 type OwnProps = {
   user?: User;
+  workspace?: Workspace;
 };
 
-function Navbar({ user }: OwnProps) {
+function Navbar({ workspace }: OwnProps) {
   return (
     <>
       <NavbarContainer>
+        {workspace && <WorkspaceContainer workspace={workspace} />}
         <NavItemsContainer>
+          <NavTitle label="Workspace" />
           <NavItem
-            label="Inbox"
-            to="/"
+            label="People"
+            to="/people"
+            icon={faUser}
             active={
               !!useMatch({
-                path: useResolvedPath('/').pathname,
+                path: useResolvedPath('/people').pathname,
                 end: true,
               })
             }
           />
           <NavItem
-            label="Contacts"
-            to="/contacts"
+            label="Companies"
+            to="/companies"
+            icon={faBuilding}
             active={
               !!useMatch({
-                path: useResolvedPath('/contacts').pathname,
-                end: true,
-              })
-            }
-          />
-          <NavItem
-            label="Insights"
-            to="/insights"
-            active={
-              !!useMatch({
-                path: useResolvedPath('/insights').pathname,
+                path: useResolvedPath('/companies').pathname,
                 end: true,
               })
             }
           />
         </NavItemsContainer>
-        <ProfileContainer user={user} />
       </NavbarContainer>
     </>
   );
