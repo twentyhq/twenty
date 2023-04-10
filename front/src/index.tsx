@@ -10,6 +10,8 @@ import {
   createHttpLink,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import '@emotion/react';
+import { ThemeType } from './layout/styles/themes';
 
 const httpLink = createHttpLink({ uri: process.env.REACT_APP_API_URL });
 
@@ -34,3 +36,8 @@ root.render(
     </BrowserRouter>
   </ApolloProvider>,
 );
+
+declare module '@emotion/react' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  export interface Theme extends ThemeType {}
+}

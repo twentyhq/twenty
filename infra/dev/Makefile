@@ -8,10 +8,10 @@ sh: ##
 	@docker-compose exec twenty sh
 
 front-test: ## 
-	@docker-compose exec twenty sh -c "npm run test"
+	@docker-compose exec twenty sh -c "cd front && npm run test"
 
 front-coverage: ## 
-	@docker-compose exec twenty sh -c "npm run coverage"
+	@docker-compose exec twenty sh -c "cd front && npm run coverage"
 
 front-storybook: ## 
-	@docker-compose exec twenty sh -c "npm run storybook"
+	@docker-compose exec twenty sh -c "cd front && npm run storybook"

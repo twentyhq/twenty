@@ -52,6 +52,10 @@ Once this is completed you should have:
 - server available on: http://localhost:3000/health
 - postgres: available on http://localhost:5432 that should contain `twenty` database
 
+### Step 3: IDE setup
+
+If you are using VSCode, please use the `Dev Containers` extension to open the project in a container. This will allow you to run Visual Studio on top of the docker container. This will allow you to run the project without having to install node on your machine. 
+
 ### Note
 
 If you are using Docker install, make sure to ssh in the docker container during development to execute commands. You can also use `Makefile` to help you

@@ -1,16 +1,16 @@
 import { render } from '@testing-library/react';
 
-import { NavbarOnInsights } from '../__stories__/Navbar.stories';
+import { NavbarOnCompanies } from '../__stories__/Navbar.stories';
 
 it('Checks the NavItem renders', () => {
-  const { getByRole } = render(<NavbarOnInsights />);
+  const { getByRole } = render(<NavbarOnCompanies />);
 
-  expect(getByRole('button', { name: 'Insights' })).toHaveAttribute(
+  expect(getByRole('button', { name: 'Companies' })).toHaveAttribute(
     'aria-selected',
     'true',
   );
 
-  expect(getByRole('button', { name: 'Inbox' })).toHaveAttribute(
+  expect(getByRole('button', { name: 'People' })).toHaveAttribute(
     'aria-selected',
     'false',
   );

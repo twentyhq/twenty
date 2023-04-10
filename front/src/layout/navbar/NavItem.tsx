@@ -1,40 +1,44 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 type OwnProps = {
   label: string;
   to: string;
   active?: boolean;
+  icon: IconProp;
 };
 
 type StyledItemProps = {
   active?: boolean;
 };
 
-const StyledItem = styled.button`
+const StyledItem = styled.button<StyledItemProps>`
   display: flex;
-  height: 60px;
-  background: inherit;
-  align-items: center;
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
-  font-size: 16px;
-  margin-bottom: -2px;
+  border: none;
+  font-size: 12px;
   cursor: pointer;
-  color: ${(props: StyledItemProps) => (props.active ? 'black' : '#2e3138')};
-  font-weight: ${(props: StyledItemProps) =>
-    props.active ? 'bold' : 'inherit'};
-  border: 0;
-  border-bottom: ${(props: StyledItemProps) =>
-    props.active ? '2px solid black' : '2px solid #eaecee'};
-  &:hover {
-    border-bottom: 2px solid #2e3138;
+  background: ${(props) => (props.active ? 'rgba(0, 0, 0, 0.04)' : 'inherit')};
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 4px;
+  font-family: 'Inter';
+  color: ${(props) =>
+    props.active ? props.theme.text100 : props.theme.text60};
+  border-radius: 4px;
+  :hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: ${(props) => props.theme.text100};
   }
 `;
 
-function NavItem({ label, to, active }: OwnProps) {
+const StyledItemLabel = styled.div`
+  display: flex;
+  margin-left: 8px;
+`;
+
+function NavItem({ label, icon, to, active }: OwnProps) {
   const navigate = useNavigate();
 
   return (
@@ -45,7 +49,8 @@ function NavItem({ label, to, active }: OwnProps) {
       active={active}
       aria-selected={active}
     >
-      {label}
+      <FontAwesomeIcon icon={icon} />
+      <StyledItemLabel>{label}</StyledItemLabel>
     </StyledItem>
   );
 }
