@@ -7,14 +7,16 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import TableHeader from './TableHeader';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 type OwnProps = {
   data: Array<any>;
   columns: Array<ColumnDef<any, any>>;
   viewName: string;
+  viewIcon?: IconProp;
 };
 
-function Table({ data, columns, viewName }: OwnProps) {
+function Table({ data, columns, viewName, viewIcon }: OwnProps) {
   const table = useReactTable({
     data,
     columns,
@@ -23,7 +25,7 @@ function Table({ data, columns, viewName }: OwnProps) {
 
   return (
     <div>
-      <TableHeader viewName={viewName} />
+      <TableHeader viewName={viewName} viewIcon={viewIcon} />
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
