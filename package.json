@@ -3,15 +3,7 @@
   "version": "1.0.0",
   "description": "Open-source CRM",
   "main": "index.js",
-  "scripts": {
-    "install-dev": "npm install && npm install --prefix server && npm install --prefix front",
-    "server": "npm start --prefix server",
-    "front": "npm start --prefix front",
-    "start": "concurrently \"npm run server\" \"npm run front\""
-  },
+  "scripts": {},
   "author": "Charles Bochet",
-  "license": "ISC",
-  "devDependencies": {
-    "concurrently": "^7.6.0"
-  }
+  "license": "ISC"
 }

@@ -1,17 +1,42 @@
 version: "3.9"
 services:
-  twenty:
+  twenty-front:
     build: 
       context: ../..
-      dockerfile: ./infra/dev/twenty/Dockerfile
+      dockerfile: ./infra/dev/front/Dockerfile
     ports:
-      - "3000:3000"
       - "3001:3001"
       - "6006:6006"
     volumes:
-      - ../..:/app
-      - twenty_node_modules_root:/app/node_modules
+      - ../../front:/app/front
       - twenty_node_modules_front:/app/front/node_modules
+    depends_on:
+      - postgres
+  twenty-hasura:
+    build: ./hasura
+    ports:
+    - "8080:8080"
+    - "9695:9695"
+    - "9693:9693"
+    volumes:
+      - ../../hasura:/hasura
+    depends_on:
+    - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/hasura
+      HASURA_GRAPHQL_PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/twenty
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+  twenty-server:
+    build: 
+      context: ../..
+      dockerfile: ./infra/dev/server/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../../front:/app/front
       - twenty_node_modules_server:/app/server/node_modules
     depends_on:
       - postgres
@@ -25,6 +50,5 @@ services:
       - "5432:5432"
 volumes:
   db_data:
-  twenty_node_modules_root:
   twenty_node_modules_front:
   twenty_node_modules_server:
