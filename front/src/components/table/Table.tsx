@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-table';
 import TableHeader from './TableHeader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import styled from '@emotion/styled';
 
 type OwnProps = {
   data: Array<any>;
@@ -15,6 +16,21 @@ type OwnProps = {
   viewName: string;
   viewIcon?: IconProp;
 };
+
+const StyledTable = styled.table`
+  min-width: 100%;
+  border-radius: 4px;
+  border: 1px solid #f5f5f5;
+  border-spacing: 0;
+
+  td,
+  th {
+    border: 1px solid #f5f5f5;
+    font-size: 12px;
+    text-align: left;
+    padding: 11px 0 11px 4px;
+  }
+`;
 
 function Table({ data, columns, viewName, viewIcon }: OwnProps) {
   const table = useReactTable({
@@ -26,7 +42,7 @@ function Table({ data, columns, viewName, viewIcon }: OwnProps) {
   return (
     <div>
       <TableHeader viewName={viewName} viewIcon={viewIcon} />
-      <table>
+      <StyledTable>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -71,6 +87,7 @@ function Table({ data, columns, viewName, viewIcon }: OwnProps) {
           ))}
         </tfoot>
       </table>
+      </StyledTable>
     </div>
   );
 }
