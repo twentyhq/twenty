@@ -1,9 +1,18 @@
-import { faUser } from '@fortawesome/free-regular-svg-icons';
+import {
+  faBuilding,
+  faCalendar,
+  faEnvelope,
+  faRectangleList,
+  faUser,
+} from '@fortawesome/free-regular-svg-icons';
+import { faList, faMapPin, faPhone } from '@fortawesome/free-solid-svg-icons';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
 import { Company } from '../../interfaces/company.interface';
 import { Pipe } from '../../interfaces/pipe.interface';
 import { createColumnHelper } from '@tanstack/react-table';
+import styled from '@emotion/styled';
+import TableHeader from '../../components/table/TableHeader';
 
 type People = {
   fullName: string;
@@ -14,6 +23,15 @@ type People = {
   pipe: Pipe;
   city: string;
 };
+
+const StyledPeopleContainer = styled.div`
+  padding: 8px;
+  width: 100%;
+
+  table {
+    margin-top: 8px;
+  }
+`;
 
 const defaultData: Array<People> = [
   {
@@ -67,34 +85,41 @@ const columnHelper = createColumnHelper<People>();
 
 const columns = [
   columnHelper.accessor('fullName', {
-    header: () => 'People',
+    header: () => <TableHeader viewName="People" viewIcon={faUser} />,
   }),
   columnHelper.accessor('email', {
-    header: () => <span>Email</span>,
+    header: () => <TableHeader viewName="Email" viewIcon={faEnvelope} />,
   }),
   columnHelper.accessor('company', {
-    header: () => <span>Company</span>,
     cell: (props) => <span>{props.row.original.company.name}</span>,
+    header: () => <TableHeader viewName="Company" viewIcon={faBuilding} />,
   }),
   columnHelper.accessor('phone', {
-    header: () => <span>Phone</span>,
+    header: () => <TableHeader viewName="Phone" viewIcon={faPhone} />,
   }),
   columnHelper.accessor('creationDate', {
-    header: () => <span>Creation</span>,
+    header: () => <TableHeader viewName="Creation" viewIcon={faCalendar} />,
   }),
   columnHelper.accessor('pipe', {
-    header: () => <span>Pipe</span>,
     cell: (props) => <span>{props.row.original.pipe.name}</span>,
+    header: () => <TableHeader viewName="Pipe" viewIcon={faRectangleList} />,
   }),
   columnHelper.accessor('city', {
-    header: () => <span>City</span>,
+    header: () => <TableHeader viewName="City" viewIcon={faMapPin} />,
   }),
 ];
 
 function People() {
   return (
     <WithTopBarContainer title="People" icon={faUser}>
-      <Table data={defaultData} columns={columns} viewName="All People" />
+      <StyledPeopleContainer>
+        <Table
+          data={defaultData}
+          columns={columns}
+          viewName="All People"
+          viewIcon={faList}
+        />
+      </StyledPeopleContainer>
     </WithTopBarContainer>
   );
 }

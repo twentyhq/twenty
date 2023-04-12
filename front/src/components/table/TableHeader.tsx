@@ -13,6 +13,7 @@ const StyledTitle = styled.div`
   align-items: center;
   gap: 5px;
   color: ${(props) => props.theme.text60};
+  font-weight: 500;
 `;
 
 function TableHeader({ viewName, viewIcon }: OwnProps) {
