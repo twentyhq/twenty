@@ -13,21 +13,6 @@ Twenty development stack is composed of 3 different layers
 
 1. `cp ./infra/dev/.front.env.example ./front/.env` and fill with values
 
-## Development environment setup with npm (Not recommended)
-
-This is the easiest way to get started contributing to twenty
-Make sure you have `node@18` installed on your machine. You can use `nvm` to manage your nvm versions in case you have projects that require different node versions.
-
-`npm run install-dev`
-`npm run front`
-
-You'll need to provide your own postgres storage.
-
-Once this is completed you should have:
-- front available on: http://localhost:3001
-- server available on: http://localhost:3000/health
-
-
 ## Development environment setup with docker-compose (Recommended)
 
 We also provide a containerized environment with Docker and orchestrated with docker-compose in case it is easier for you. This install will also provision a postgres container out of the box.
