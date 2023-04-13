@@ -14,7 +14,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import styled from '@emotion/styled';
 import TableHeader from '../../components/table/TableHeader';
 
-type People = {
+type Person = {
   fullName: string;
   email: string;
   company: Company;
@@ -33,7 +33,7 @@ const StyledPeopleContainer = styled.div`
   }
 `;
 
-const defaultData: Array<People> = [
+const defaultData: Array<Person> = [
   {
     fullName: 'Alexandre Prot',
     email: 'alexandre@qonto.com',
@@ -81,7 +81,7 @@ const defaultData: Array<People> = [
   },
 ];
 
-const columnHelper = createColumnHelper<People>();
+const columnHelper = createColumnHelper<Person>();
 
 const columns = [
   columnHelper.accessor('fullName', {
