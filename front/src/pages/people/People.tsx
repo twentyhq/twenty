@@ -12,6 +12,7 @@ import { Company } from '../../interfaces/company.interface';
 import { Pipe } from '../../interfaces/pipe.interface';
 import { createColumnHelper } from '@tanstack/react-table';
 import styled from '@emotion/styled';
+import CellLink from '../../components/cell-link/CellLink';
 import TableHeader from '../../components/table/TableHeader';
 
 type Person = {
@@ -86,13 +87,26 @@ const columnHelper = createColumnHelper<Person>();
 const columns = [
   columnHelper.accessor('fullName', {
     header: () => <TableHeader viewName="People" viewIcon={faUser} />,
+    cell: (props) => (
+      <CellLink
+        name={props.row.original.fullName}
+        picture={props.row.original.picture}
+        href="#"
+      />
+    ),
   }),
   columnHelper.accessor('email', {
     header: () => <TableHeader viewName="Email" viewIcon={faEnvelope} />,
   }),
   columnHelper.accessor('company', {
-    cell: (props) => <span>{props.row.original.company.name}</span>,
     header: () => <TableHeader viewName="Company" viewIcon={faBuilding} />,
+    cell: (props) => (
+      <CellLink
+        name={props.row.original.company.name}
+        picture={props.row.original.company.logo}
+        href="#"
+      />
+    ),
   }),
   columnHelper.accessor('phone', {
     header: () => <TableHeader viewName="Phone" viewIcon={faPhone} />,
@@ -101,8 +115,14 @@ const columns = [
     header: () => <TableHeader viewName="Creation" viewIcon={faCalendar} />,
   }),
   columnHelper.accessor('pipe', {
-    cell: (props) => <span>{props.row.original.pipe.name}</span>,
     header: () => <TableHeader viewName="Pipe" viewIcon={faRectangleList} />,
+    cell: (props) => (
+      <CellLink
+        name={props.row.original.pipe.name}
+        picture={props.row.original.pipe.icon}
+        href="#"
+      />
+    ),
   }),
   columnHelper.accessor('city', {
     header: () => <TableHeader viewName="City" viewIcon={faMapPin} />,
