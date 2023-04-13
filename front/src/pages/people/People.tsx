@@ -23,7 +23,7 @@ type Person = {
   email: string;
   company: Company;
   phone: string;
-  creationDate: string;
+  creationDate: Date;
   pipe: Pipe;
   city: string;
   countryCode: string;
@@ -50,7 +50,7 @@ const defaultData: Array<Person> = [
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
     phone: '06 12 34 56 78',
-    creationDate: 'Feb 23, 2018',
+    creationDate: new Date('Feb 23, 2018'),
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
     city: 'Paris',
     countryCode: 'FR',
@@ -61,7 +61,7 @@ const defaultData: Array<Person> = [
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
     phone: '06 12 34 56 78',
-    creationDate: 'Feb 23, 2018',
+    creationDate: new Date('Feb 23, 2018'),
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
     city: 'Paris',
     countryCode: 'FR',
@@ -72,7 +72,7 @@ const defaultData: Array<Person> = [
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
     phone: '06 12 34 56 78',
-    creationDate: 'Feb 23, 2018',
+    creationDate: new Date('Feb 23, 2018'),
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
     city: 'Paris',
     countryCode: 'FR',
@@ -83,7 +83,7 @@ const defaultData: Array<Person> = [
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
     phone: '06 12 34 56 78',
-    creationDate: 'Feb 23, 2018',
+    creationDate: new Date('Feb 23, 2018'),
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
     city: 'Paris',
     countryCode: 'FR',
@@ -94,7 +94,7 @@ const defaultData: Array<Person> = [
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
     phone: '06 12 34 56 78',
-    creationDate: 'Feb 23, 2018',
+    creationDate: new Date('Feb 23, 2018'),
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
     city: 'Paris',
     countryCode: 'FR',
@@ -145,6 +145,12 @@ const columns = [
   }),
   columnHelper.accessor('creationDate', {
     header: () => <TableHeader viewName="Creation" viewIcon={faCalendar} />,
+    cell: (props) =>
+      new Intl.DateTimeFormat(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      }).format(props.row.original.creationDate),
   }),
   columnHelper.accessor('pipe', {
     header: () => <TableHeader viewName="Pipe" viewIcon={faRectangleList} />,
