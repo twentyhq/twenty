@@ -1,0 +1,3 @@
+table:
+  name: workspaces
+  schema: public
