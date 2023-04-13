@@ -49,6 +49,7 @@ docker-compose up --build --force-recreate
 
 Once this is completed you should have:
 - front available on: http://localhost:3001
+- hasura available on: http://localhost:8080
 - server available on: http://localhost:3000/health
 - postgres: available on http://localhost:5432 that should contain `twenty` database
 
