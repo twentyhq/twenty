@@ -10,6 +10,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@tanstack/react-table": "^8.8.5",
     "@types/node": "^16.18.4",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
@@ -18,7 +19,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.4",
-    "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -26,8 +26,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public",
+    "storybook": "storybook dev -p 6006 -s public",
+    "build-storybook": "storybook build -s public",
     "coverage": "react-scripts test --coverage --watchAll"
   },
   "eslintConfig": {
@@ -50,7 +50,7 @@
     "react-refresh": "0.14.0"
   },
   "jest": {
-    "coveragePathIgnorePatterns" : [
+    "coveragePathIgnorePatterns": [
       ".stories.tsx$"
     ]
   },
@@ -67,19 +67,19 @@
     ]
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.5.14",
-    "@storybook/addon-essentials": "^6.5.14",
-    "@storybook/addon-interactions": "^6.5.14",
-    "@storybook/addon-links": "^6.5.14",
-    "@storybook/builder-webpack5": "^6.5.14",
-    "@storybook/manager-webpack5": "^6.5.14",
-    "@storybook/node-logger": "^6.5.14",
-    "@storybook/preset-create-react-app": "^4.1.2",
-    "@storybook/react": "^6.5.14",
-    "@storybook/testing-library": "^0.0.13",
+    "@storybook/addon-actions": "^7.0.2",
+    "@storybook/addon-essentials": "^7.0.2",
+    "@storybook/addon-interactions": "^7.0.2",
+    "@storybook/addon-links": "^7.0.2",
+    "@storybook/node-logger": "^7.0.2",
+    "@storybook/preset-create-react-app": "^7.0.2",
+    "@storybook/react": "^7.0.2",
+    "@storybook/react-webpack5": "^7.0.2",
+    "@storybook/testing-library": "^0.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "react-scripts": "5.0.1",
     "@types/jest": "^27.5.2",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "babel-plugin-named-exports-order": "^0.0.2",
@@ -91,9 +91,10 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.31.11",
-    "eslint-plugin-storybook": "^0.6.7",
+    "eslint-plugin-storybook": "^0.6.11",
     "prettier": "^2.8.0",
     "prop-types": "^15.8.1",
+    "storybook": "^7.0.2",
     "typescript": "^4.9.3",
     "webpack": "^5.75.0"
   }
