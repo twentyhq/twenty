@@ -6,6 +6,7 @@ Welcome to Twenty documentation!
 
 Twenty development stack is composed of 3 different layers
 - front: our frontend React app
+- hasura: our graphql engine exposing our database and server
 - server: our backend that contain endpoint, crm logic, scripts, jobs...
 - storages: postgres
 
@@ -29,7 +30,7 @@ cd infra/dev
 ```
 
 ```
-docker-compose up --build --force-recreate
+make build
 ```
 
 Once this is completed you should have:
@@ -46,23 +47,10 @@ If you are using VSCode, please use the `Dev Containers` extension to open the p
 
 If you are using Docker install, make sure to ssh in the docker container during development to execute commands. You can also use `Makefile` to help you
 
-## Development
+## Development workflow
 
-### Tests
+### Front tests
 
-#### Unit tests:
-
-```
-make front-test
-# coverage
-make front-coverage
-```
-
-#### Storybook:
-```
-make front-storybook
-```
-
-## Developping on server
-
-Section TBD
+Run tests: `make front-test`
+Run coverage: `make front-coverage`
+Run storybook: `make front-storybook`
