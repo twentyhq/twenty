@@ -14,9 +14,11 @@ import { createColumnHelper } from '@tanstack/react-table';
 import styled from '@emotion/styled';
 import CellLink from '../../components/cell-link/CellLink';
 import TableHeader from '../../components/table/TableHeader';
+import personPlaceholder from './placeholder.png';
 
 type Person = {
   fullName: string;
+  picture?: string;
   email: string;
   company: Company;
   phone: string;
@@ -37,6 +39,7 @@ const StyledPeopleContainer = styled.div`
 const defaultData: Array<Person> = [
   {
     fullName: 'Alexandre Prot',
+    picture: personPlaceholder,
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
     phone: '06 12 34 56 78',
@@ -46,6 +49,7 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
+    picture: personPlaceholder,
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
     phone: '06 12 34 56 78',
@@ -55,6 +59,7 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
+    picture: personPlaceholder,
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
     phone: '06 12 34 56 78',
@@ -64,6 +69,7 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
+    picture: personPlaceholder,
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
     phone: '06 12 34 56 78',
@@ -73,6 +79,7 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
+    picture: personPlaceholder,
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
     phone: '06 12 34 56 78',
