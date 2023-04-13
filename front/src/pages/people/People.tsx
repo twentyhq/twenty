@@ -116,6 +116,11 @@ const columns = [
   }),
   columnHelper.accessor('email', {
     header: () => <TableHeader viewName="Email" viewIcon={faEnvelope} />,
+    cell: (props) => (
+      <a href={`mailto:${props.row.original.email}`}>
+        {props.row.original.email}
+      </a>
+    ),
   }),
   columnHelper.accessor('company', {
     header: () => <TableHeader viewName="Company" viewIcon={faBuilding} />,
