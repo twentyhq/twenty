@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import CellLink from '../../components/cell-link/CellLink';
 import TableHeader from '../../components/table/TableHeader';
 import personPlaceholder from './placeholder.png';
+import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
 
 type Person = {
   fullName: string;
@@ -25,6 +26,7 @@ type Person = {
   creationDate: string;
   pipe: Pipe;
   city: string;
+  countryCode: string;
 };
 
 const StyledPeopleContainer = styled.div`
@@ -33,6 +35,11 @@ const StyledPeopleContainer = styled.div`
 
   table {
     margin-top: 8px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 `;
 
@@ -46,6 +53,7 @@ const defaultData: Array<Person> = [
     creationDate: 'Feb 23, 2018',
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
     city: 'Paris',
+    countryCode: 'FR',
   },
   {
     fullName: 'Alexandre Prot',
@@ -56,6 +64,7 @@ const defaultData: Array<Person> = [
     creationDate: 'Feb 23, 2018',
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
     city: 'Paris',
+    countryCode: 'FR',
   },
   {
     fullName: 'Alexandre Prot',
@@ -66,6 +75,7 @@ const defaultData: Array<Person> = [
     creationDate: 'Feb 23, 2018',
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
     city: 'Paris',
+    countryCode: 'FR',
   },
   {
     fullName: 'Alexandre Prot',
@@ -76,6 +86,7 @@ const defaultData: Array<Person> = [
     creationDate: 'Feb 23, 2018',
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
     city: 'Paris',
+    countryCode: 'FR',
   },
   {
     fullName: 'Alexandre Prot',
@@ -86,6 +97,7 @@ const defaultData: Array<Person> = [
     creationDate: 'Feb 23, 2018',
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
     city: 'Paris',
+    countryCode: 'FR',
   },
 ];
 
@@ -117,6 +129,19 @@ const columns = [
   }),
   columnHelper.accessor('phone', {
     header: () => <TableHeader viewName="Phone" viewIcon={faPhone} />,
+    cell: (props) => (
+      <a
+        href={parsePhoneNumber(
+          props.row.original.phone,
+          props.row.original.countryCode as CountryCode,
+        )?.getURI()}
+      >
+        {parsePhoneNumber(
+          props.row.original.phone,
+          props.row.original.countryCode as CountryCode,
+        )?.formatInternational() || props.row.original.phone}
+      </a>
+    ),
   }),
   columnHelper.accessor('creationDate', {
     header: () => <TableHeader viewName="Creation" viewIcon={faCalendar} />,
