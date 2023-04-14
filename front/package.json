@@ -29,7 +29,8 @@
     "eject": "react-scripts eject",
     "storybook": "storybook dev -p 6006 -s public",
     "build-storybook": "storybook build -s public",
-    "coverage": "react-scripts test --coverage --watchAll"
+    "coverage": "react-scripts test --coverage --watchAll",
+    "coverage-ci": "react-scripts test --coverage --watchAll=false"
   },
   "eslintConfig": {
     "extends": [
@@ -53,7 +54,15 @@
   "jest": {
     "coveragePathIgnorePatterns": [
       ".stories.tsx$"
-    ]
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 85,
+        "lines": 85,
+        "statements": 85
+      }
+    }
   },
   "browserslist": {
     "production": [
