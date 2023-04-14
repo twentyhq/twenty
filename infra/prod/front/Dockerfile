@@ -1,5 +1,7 @@
 FROM node:18-alpine as front
 
+ARG FONTAWESOME_NPM_AUTH_TOKEN
+
 WORKDIR /app/front
 COPY ./front .
 

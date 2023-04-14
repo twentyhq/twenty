@@ -7,6 +7,7 @@ RUN apk update && apk upgrade && \
 WORKDIR /app/front
 COPY ../../front .
 
+RUN export $(xargs <.env)
 RUN npm install
 
 CMD ["npm", "run", "start"]
