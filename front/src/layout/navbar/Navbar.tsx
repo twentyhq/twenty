@@ -13,7 +13,7 @@ const NavbarContainer = styled.div`
   flex-direction: column;
   background: ${(props) => props.theme.noisyBackground};
   min-width: 220px;
-  padding: 8px;
+  padding: ${(props) => props.theme.spacing(2)};
 `;
 
 const NavItemsContainer = styled.div`

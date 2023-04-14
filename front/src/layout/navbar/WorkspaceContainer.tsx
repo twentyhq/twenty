@@ -14,9 +14,9 @@ const StyledContainer = styled.button`
   border: 0;
   background: inherit;
   border: 1px solid ${(props) => props.theme.primaryBorder};
-  border-radius: 4px;
-  padding: 8px;
-  margin-left: 4px;
+  border-radius: ${(props) => props.theme.spacing(1)};
+  padding: ${(props) => props.theme.spacing(2)};
+  margin-left: ${(props) => props.theme.spacing(1)};
 `;
 
 type StyledLogoProps = {
@@ -32,10 +32,10 @@ const StyledLogo = styled.div<StyledLogoProps>`
 `;
 
 const StyledName = styled.div`
-  margin-left: 4px;
+  margin-left: ${(props) => props.theme.spacing(1)};
   font-family: 'Inter';
   font-weight: 500;
-  font-size: 14px;
+  font-size: ${(props) => props.theme.fontSizeLarge};
   font-color: ${(props) => props.theme.text0};
 `;
 

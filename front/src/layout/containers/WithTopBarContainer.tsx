@@ -19,8 +19,8 @@ const ContentContainer = styled.div`
   flex-direction: column;
   background: ${(props) => props.theme.noisyBackground};
   flex: 1;
-  padding-right: 12px;
-  padding-bottom: 12px;
+  padding-right: ${(props) => props.theme.spacing(3)};
+  padding-bottom: ${(props) => props.theme.spacing(3)};
 `;
 
 const ContentSubContainer = styled.div`

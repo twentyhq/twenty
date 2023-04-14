@@ -17,12 +17,12 @@ type StyledItemProps = {
 const StyledItem = styled.button<StyledItemProps>`
   display: flex;
   border: none;
-  font-size: 12px;
+  font-size: ${(props) => props.theme.fontSizeMedium};
   cursor: pointer;
   background: ${(props) => (props.active ? 'rgba(0, 0, 0, 0.04)' : 'inherit')};
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 4px;
+  padding-top: ${(props) => props.theme.spacing(1)};
+  padding-bottom: ${(props) => props.theme.spacing(1)};
+  padding-left: ${(props) => props.theme.spacing(1)};
   font-family: 'Inter';
   color: ${(props) =>
     props.active ? props.theme.text100 : props.theme.text60};
@@ -35,7 +35,7 @@ const StyledItem = styled.button<StyledItemProps>`
 
 const StyledItemLabel = styled.div`
   display: flex;
-  margin-left: 8px;
+  margin-left: ${(props) => props.theme.spacing(2)};
 `;
 
 function NavItem({ label, icon, to, active }: OwnProps) {

@@ -8,11 +8,11 @@ const StyledTitle = styled.div`
   display: flex;
   text-transform: uppercase;
   color: ${(props) => props.theme.text30};
-  font-size: 12px;
+  font-size: ${(props) => props.theme.fontSizeMedium};
   font-weight: 600;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 4px;
+  padding-top: ${(props) => props.theme.spacing(1)};
+  padding-bottom: ${(props) => props.theme.spacing(1)};
+  padding-left: ${(props) => props.theme.spacing(1)};
 `;
 
 function NavTitle({ label }: OwnProps) {
