@@ -1,11 +1,11 @@
 import {
-  faBuilding,
+  faBuildings,
   faCalendar,
   faEnvelope,
   faRectangleList,
   faUser,
-} from '@fortawesome/free-regular-svg-icons';
-import { faList, faMapPin, faPhone } from '@fortawesome/free-solid-svg-icons';
+} from '@fortawesome/pro-regular-svg-icons';
+import { faList, faMapPin, faPhone } from '@fortawesome/pro-solid-svg-icons';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
 import { Company } from '../../interfaces/company.interface';
@@ -123,7 +123,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('company', {
-    header: () => <TableHeader viewName="Company" viewIcon={faBuilding} />,
+    header: () => <TableHeader viewName="Company" viewIcon={faBuildings} />,
     cell: (props) => (
       <CellLink
         name={props.row.original.company.name}

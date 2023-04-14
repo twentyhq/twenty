@@ -5,8 +5,8 @@ import { Workspace } from '../../interfaces/workspace.interface';
 import NavItem from './NavItem';
 import NavTitle from './NavTitle';
 import WorkspaceContainer from './WorkspaceContainer';
-import { faUser } from '@fortawesome/free-regular-svg-icons';
-import { faBuilding } from '@fortawesome/free-regular-svg-icons';
+import { faUser } from '@fortawesome/pro-regular-svg-icons';
+import { faBuildings } from '@fortawesome/pro-regular-svg-icons';
 
 const NavbarContainer = styled.div`
   display: flex;
@@ -48,7 +48,7 @@ function Navbar({ workspace }: OwnProps) {
           <NavItem
             label="Companies"
             to="/companies"
-            icon={faBuilding}
+            icon={faBuildings}
             active={
               !!useMatch({
                 path: useResolvedPath('/companies').pathname,

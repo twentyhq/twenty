@@ -1,5 +1,5 @@
 import { MemoryRouter } from 'react-router-dom';
-import { faUser } from '@fortawesome/free-regular-svg-icons';
+import { faUser } from '@fortawesome/pro-regular-svg-icons';
 import { ThemeProvider } from '@emotion/react';
 
 import NavItem from '../../../layout/navbar/NavItem';
