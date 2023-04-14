@@ -32,6 +32,12 @@ const StyledTable = styled.table`
   }
 `;
 
+const StyledTableWithHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+`;
+
 function Table({ data, columns, viewName, viewIcon }: OwnProps) {
   const table = useReactTable({
     data,
@@ -40,7 +46,7 @@ function Table({ data, columns, viewName, viewIcon }: OwnProps) {
   });
 
   return (
-    <div>
+    <StyledTableWithHeader>
       <TableHeader viewName={viewName} viewIcon={viewIcon} />
       <StyledTable>
         <thead>
@@ -92,7 +98,7 @@ function Table({ data, columns, viewName, viewIcon }: OwnProps) {
           </tfoot>
         )}
       </StyledTable>
-    </div>
+    </StyledTableWithHeader>
   );
 }
 
