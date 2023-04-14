@@ -12,7 +12,7 @@ import { Company } from '../../interfaces/company.interface';
 import { Pipe } from '../../interfaces/pipe.interface';
 import { createColumnHelper } from '@tanstack/react-table';
 import styled from '@emotion/styled';
-import CellLink from '../../components/cell-link/CellLink';
+import CellLink from '../../components/table/CellLink';
 import TableHeader from '../../components/table/TableHeader';
 import personPlaceholder from './placeholder.png';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
