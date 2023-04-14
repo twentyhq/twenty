@@ -1,5 +1,8 @@
 FROM node:18-alpine as server
 
+COPY ./server/package.json ./
+RUN npm install
+
 RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh && \
     apk add libc6-compat
@@ -7,6 +10,5 @@ RUN apk update && apk upgrade && \
 WORKDIR /app/server
 COPY ./server .
 
-RUN npm install
 
 CMD ["npm", "run", "start"]
