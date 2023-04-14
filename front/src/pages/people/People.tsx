@@ -13,7 +13,7 @@ import { Pipe } from '../../interfaces/pipe.interface';
 import { createColumnHelper } from '@tanstack/react-table';
 import styled from '@emotion/styled';
 import CellLink from '../../components/table/CellLink';
-import TableHeader from '../../components/table/TableHeader';
+import ColumnHead from '../../components/table/ColumnHead';
 import personPlaceholder from './placeholder.png';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
 
@@ -30,12 +30,10 @@ type Person = {
 };
 
 const StyledPeopleContainer = styled.div`
-  padding: 8px;
+  display: flex;
+  padding-left: ${(props) => props.theme.spacing(2)};
+  padding-right: ${(props) => props.theme.spacing(2)};
   width: 100%;
-
-  table {
-    margin-top: 8px;
-  }
 
   a {
     color: inherit;
@@ -105,7 +103,7 @@ const columnHelper = createColumnHelper<Person>();
 
 const columns = [
   columnHelper.accessor('fullName', {
-    header: () => <TableHeader viewName="People" viewIcon={faUser} />,
+    header: () => <ColumnHead viewName="People" viewIcon={faUser} />,
     cell: (props) => (
       <CellLink
         name={props.row.original.fullName}
@@ -115,7 +113,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('email', {
-    header: () => <TableHeader viewName="Email" viewIcon={faEnvelope} />,
+    header: () => <ColumnHead viewName="Email" viewIcon={faEnvelope} />,
     cell: (props) => (
       <a href={`mailto:${props.row.original.email}`}>
         {props.row.original.email}
@@ -123,7 +121,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('company', {
-    header: () => <TableHeader viewName="Company" viewIcon={faBuildings} />,
+    header: () => <ColumnHead viewName="Company" viewIcon={faBuildings} />,
     cell: (props) => (
       <CellLink
         name={props.row.original.company.name}
@@ -133,7 +131,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('phone', {
-    header: () => <TableHeader viewName="Phone" viewIcon={faPhone} />,
+    header: () => <ColumnHead viewName="Phone" viewIcon={faPhone} />,
     cell: (props) => (
       <a
         href={parsePhoneNumber(
@@ -149,7 +147,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('creationDate', {
-    header: () => <TableHeader viewName="Creation" viewIcon={faCalendar} />,
+    header: () => <ColumnHead viewName="Creation" viewIcon={faCalendar} />,
     cell: (props) =>
       new Intl.DateTimeFormat(undefined, {
         month: 'short',
@@ -158,7 +156,7 @@ const columns = [
       }).format(props.row.original.creationDate),
   }),
   columnHelper.accessor('pipe', {
-    header: () => <TableHeader viewName="Pipe" viewIcon={faRectangleList} />,
+    header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleList} />,
     cell: (props) => (
       <CellLink
         name={props.row.original.pipe.name}
@@ -168,7 +166,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('city', {
-    header: () => <TableHeader viewName="City" viewIcon={faMapPin} />,
+    header: () => <ColumnHead viewName="City" viewIcon={faMapPin} />,
   }),
 ];
 
