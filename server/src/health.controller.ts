@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
 
-@Controller('health')
+@Controller('healthz')
 export class HealthController {
   constructor(private health: HealthCheckService) {}
 
