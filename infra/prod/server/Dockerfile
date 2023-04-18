@@ -1,4 +1,4 @@
-FROM node:18-alpine as server
+FROM node:18.16.0-alpine as server
 
 COPY ./server/package.json ./
 COPY ./server/package-lock.json ./

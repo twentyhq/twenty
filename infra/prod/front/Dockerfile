@@ -1,4 +1,4 @@
-FROM node:18-alpine as front
+FROM node:18.16.0-alpine as front
 
 ARG FONTAWESOME_NPM_AUTH_TOKEN
 

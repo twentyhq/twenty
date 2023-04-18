@@ -1,5 +1,8 @@
 build: ##
-	@docker-compose up --build --force-recreate
+	@docker-compose down 
+	docker volume rm dev_twenty_node_modules_front || true
+	docker volume rm dev_twenty_node_modules_server || true
+	docker-compose build
 
 up: ## 
 	@docker-compose up -d
