@@ -5,8 +5,12 @@ RUN apk update && apk upgrade && \
     apk add libc6-compat
 
 WORKDIR /app/server
+
+COPY ../../server/package.json .
+COPY ../../server/package-lock.json .
+RUN npm install
+
 COPY ../../server .
 
-RUN npm install
 
 CMD ["npm", "run", "start"]
