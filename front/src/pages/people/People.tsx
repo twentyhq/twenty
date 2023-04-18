@@ -16,6 +16,7 @@ import CellLink from '../../components/table/CellLink';
 import ColumnHead from '../../components/table/ColumnHead';
 import personPlaceholder from './placeholder.png';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
+import Checkbox from '../../components/form/Checkbox';
 
 type Person = {
   fullName: string;
@@ -106,11 +107,10 @@ const columns = [
     header: () => <ColumnHead viewName="People" viewIcon={faUser} />,
     cell: (props) => (
       <>
-        <input
-          type="checkbox"
+        <Checkbox
           id={`person-selected-${props.row.original.email}`}
           name={`person-selected${props.row.original.email}`}
-        ></input>
+        />
         <CellLink
           name={props.row.original.fullName}
           picture={props.row.original.picture}
