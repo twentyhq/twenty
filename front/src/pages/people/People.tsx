@@ -105,11 +105,18 @@ const columns = [
   columnHelper.accessor('fullName', {
     header: () => <ColumnHead viewName="People" viewIcon={faUser} />,
     cell: (props) => (
-      <CellLink
-        name={props.row.original.fullName}
-        picture={props.row.original.picture}
-        href="#"
-      />
+      <>
+        <input
+          type="checkbox"
+          id={`person-selected-${props.row.original.email}`}
+          name={`person-selected${props.row.original.email}`}
+        ></input>
+        <CellLink
+          name={props.row.original.fullName}
+          picture={props.row.original.picture}
+          href="#"
+        />
+      </>
     ),
   }),
   columnHelper.accessor('email', {
