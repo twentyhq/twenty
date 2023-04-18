@@ -31,7 +31,12 @@ const StyledContainer = styled.span`
 function Checkbox({ name, id }: OwnProps) {
   return (
     <StyledContainer>
-      <input type="checkbox" id={id} name={name}></input>
+      <input
+        type="checkbox"
+        data-testid="input-checkbox"
+        id={id}
+        name={name}
+      ></input>
     </StyledContainer>
   );
 }
