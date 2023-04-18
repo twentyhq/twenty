@@ -1,6 +1,7 @@
 FROM node:18-alpine as server
 
 COPY ./server/package.json ./
+COPY ./server/package-lock.json ./
 RUN npm install
 
 
