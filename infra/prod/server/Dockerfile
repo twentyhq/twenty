@@ -7,5 +7,6 @@ RUN npm install
 WORKDIR /app/server
 COPY ./server .
 
+RUN npm run build
 
-CMD ["npm", "run", "start"]
+CMD ["node", "dist/main"]
