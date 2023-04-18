@@ -1,4 +1,4 @@
-FROM node:18-alpine as server
+FROM node:18.16.0-alpine as server
 
 RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh && \
