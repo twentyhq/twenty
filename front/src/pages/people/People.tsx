@@ -16,6 +16,8 @@ import CellLink from '../../components/table/CellLink';
 import ColumnHead from '../../components/table/ColumnHead';
 import personPlaceholder from './placeholder.png';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
+import Checkbox from '../../components/form/Checkbox';
+import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 
 type Person = {
   fullName: string;
@@ -105,11 +107,17 @@ const columns = [
   columnHelper.accessor('fullName', {
     header: () => <ColumnHead viewName="People" viewIcon={faUser} />,
     cell: (props) => (
-      <CellLink
-        name={props.row.original.fullName}
-        picture={props.row.original.picture}
-        href="#"
-      />
+      <HorizontalyAlignedContainer>
+        <Checkbox
+          id={`person-selected-${props.row.original.email}`}
+          name={`person-selected${props.row.original.email}`}
+        />
+        <CellLink
+          name={props.row.original.fullName}
+          picture={props.row.original.picture}
+          href="#"
+        />
+      </HorizontalyAlignedContainer>
     ),
   }),
   columnHelper.accessor('email', {
