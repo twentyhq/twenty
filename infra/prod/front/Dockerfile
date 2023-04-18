@@ -5,6 +5,10 @@ ARG FONTAWESOME_NPM_AUTH_TOKEN
 WORKDIR /app/front
 COPY ./front .
 
+RUN echo "@fortawesome:registry=https://npm.fontawesome.com/" > .npmrc
+RUN echo "//npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_AUTH_TOKEN}" >> .npmrc
+
+
 RUN npm install
 RUN npm run build
 
