@@ -5,6 +5,7 @@ Welcome to Twenty documentation!
 ## High Level Overview
 
 Twenty development stack is composed of 3 different layers
+
 - front: our frontend React app
 - hasura: our graphql engine exposing our database and server
 - server: our backend that contain endpoint, crm logic, scripts, jobs...
@@ -20,12 +21,15 @@ Twenty development stack is composed of 3 different layers
 We also provide a containerized environment with Docker and orchestrated with docker-compose in case it is easier for you. This install will also provision a postgres container out of the box.
 
 ### Step 1: pre-requesites
+
 Make sure to have the latest Docker and Docker-compose versions installed on your computer. You can run `docker-compose --version` to check if you have docker-compose installed and `docker --version` to check if you have docker installed.
 
 ### Step 2: docker build
+
 Build docker containers.
 
 The whole setup experience is happening in `infra/dev` folder. Make sure to be in this folder:
+
 ```
 cd infra/dev
 ```
@@ -35,6 +39,7 @@ make build
 ```
 
 Once this is completed you should have:
+
 - front available on: http://localhost:3001
 - hasura available on: http://localhost:8080
 - server available on: http://localhost:3000/health
@@ -42,7 +47,7 @@ Once this is completed you should have:
 
 ### Step 3: IDE setup
 
-If you are using VSCode, please use the `Dev Containers` extension to open the project in a container. This will allow you to run Visual Studio on top of the docker container. This will allow you to run the project without having to install node on your machine. 
+If you are using VSCode, please use the `Dev Containers` extension to open the project in a container. This will allow you to run Visual Studio on top of the docker container. This will allow you to run the project without having to install node on your machine.
 
 ### Note
 
