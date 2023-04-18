@@ -8,7 +8,7 @@ type OwnProps = {
 
 const StyledContainer = styled.span`
   input[type='checkbox'] {
-    accent-color: #1111b7;
+    accent-color: ${(props) => props.theme.purple};
   }
 `;
 
