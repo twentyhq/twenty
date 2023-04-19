@@ -48,7 +48,7 @@ const defaultData: Array<Person> = [
     fullName: 'Alexandre Prot',
     picture: personPlaceholder,
     email: 'alexandre@qonto.com',
-    company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
+    company: { id: 1, name: 'Qonto', domain: 'qonto.com' },
     phone: '06 12 34 56 78',
     creationDate: new Date('Feb 23, 2018'),
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
@@ -59,7 +59,7 @@ const defaultData: Array<Person> = [
     fullName: 'Alexandre Prot',
     picture: personPlaceholder,
     email: 'alexandre@qonto.com',
-    company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
+    company: { id: 2, name: 'LinkedIn', domain: 'linkedin.com' },
     phone: '06 12 34 56 78',
     creationDate: new Date('Feb 23, 2018'),
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
@@ -70,7 +70,7 @@ const defaultData: Array<Person> = [
     fullName: 'Alexandre Prot',
     picture: personPlaceholder,
     email: 'alexandre@qonto.com',
-    company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
+    company: { id: 1, name: 'Qonto', domain: 'qonto.com' },
     phone: '06 12 34 56 78',
     creationDate: new Date('Feb 23, 2018'),
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
@@ -81,7 +81,7 @@ const defaultData: Array<Person> = [
     fullName: 'Alexandre Prot',
     picture: personPlaceholder,
     email: 'alexandre@qonto.com',
-    company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
+    company: { id: 1, name: 'Slack', domain: 'slack.com' },
     phone: '06 12 34 56 78',
     creationDate: new Date('Feb 23, 2018'),
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
@@ -92,7 +92,7 @@ const defaultData: Array<Person> = [
     fullName: 'Alexandre Prot',
     picture: personPlaceholder,
     email: 'alexandre@qonto.com',
-    company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
+    company: { id: 2, name: 'Facebook', domain: 'facebook.com' },
     phone: '06 12 34 56 78',
     creationDate: new Date('Feb 23, 2018'),
     pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
@@ -133,7 +133,7 @@ const columns = [
     cell: (props) => (
       <CellLink
         name={props.row.original.company.name}
-        picture={props.row.original.company.logo}
+        picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain}&sz=256`}
         href="#"
       />
     ),
