@@ -18,6 +18,7 @@ import personPlaceholder from './placeholder.png';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
 import Checkbox from '../../components/form/Checkbox';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
+import CompanyChip from '../../components/chips/CompanyChip';
 
 type Person = {
   fullName: string;
@@ -116,7 +117,12 @@ const columns = [
           name={props.row.original.fullName}
           picture={props.row.original.picture}
           href="#"
-        />
+        >
+          <CompanyChip
+            name={props.row.original.fullName}
+            picture={props.row.original.picture}
+          />
+        </CellLink>
       </HorizontalyAlignedContainer>
     ),
   }),
@@ -132,10 +138,15 @@ const columns = [
     header: () => <ColumnHead viewName="Company" viewIcon={faBuildings} />,
     cell: (props) => (
       <CellLink
-        name={props.row.original.company.name}
-        picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain}&sz=256`}
+        name={props.row.original.fullName}
+        picture={props.row.original.picture}
         href="#"
-      />
+      >
+        <CompanyChip
+          name={props.row.original.company.name}
+          picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain}&sz=256`}
+        />
+      </CellLink>
     ),
   }),
   columnHelper.accessor('phone', {
@@ -167,10 +178,15 @@ const columns = [
     header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleList} />,
     cell: (props) => (
       <CellLink
-        name={props.row.original.pipe.name}
-        picture={props.row.original.pipe.icon}
+        name={props.row.original.fullName}
+        picture={props.row.original.picture}
         href="#"
-      />
+      >
+        <CompanyChip
+          name={props.row.original.pipe.name}
+          picture={props.row.original.pipe.icon}
+        />
+      </CellLink>
     ),
   }),
   columnHelper.accessor('city', {

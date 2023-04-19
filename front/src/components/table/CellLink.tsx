@@ -1,19 +1,15 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import CompanyChip from '../chips/CompanyChip';
 
 type OwnProps = {
   name: string;
   picture?: string;
   href: string;
+  children?: React.ReactNode;
 };
 
-function CellLink({ name, picture, href }: OwnProps) {
-  return (
-    <Link to={href}>
-      <CompanyChip name={name} picture={picture} />
-    </Link>
-  );
+function CellLink({ href, children }: OwnProps) {
+  return <Link to={href}>{children}</Link>;
 }
 
 export default CellLink;
