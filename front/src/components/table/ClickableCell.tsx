@@ -10,6 +10,24 @@ type OwnProps = {
 
 const TD = styled.td`
   position: relative;
+  box-sizing: border-box;
+
+  ::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    border: 1px solid ${(props) => props.theme.text20};
+    box-sizing: border-box;
+    border-radius: 4px;
+    display: none;
+  }
+
+  :hover::before {
+    display: block;
+  }
 `;
 
 const Container = styled.span`

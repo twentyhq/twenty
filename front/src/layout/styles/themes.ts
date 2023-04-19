@@ -32,7 +32,7 @@ const lightThemeSpecific = {
   text60: '#666',
   text40: '#999999',
   text30: '#b3b3b3',
-  text20: '#ccc',
+  text20: '#cccccc',
   text0: '#fff',
 
   blue: '#1961ed',
@@ -58,11 +58,11 @@ const darkThemeSpecific = {
   primaryBorder: 'rgba(255, 255, 255, 0.08)',
 
   text100: '#ffffff',
-  text80: '#ccc',
+  text80: '#cccccc',
   text60: '#999',
   text40: '#666',
   text30: '#4c4c4c',
-  text20: '#333',
+  text20: '#333333',
   text0: '#000',
 
   blue: '#6895ec',
