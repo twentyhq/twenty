@@ -14,11 +14,11 @@ import { createColumnHelper } from '@tanstack/react-table';
 import styled from '@emotion/styled';
 import ClickableCell from '../../components/table/ClickableCell';
 import ColumnHead from '../../components/table/ColumnHead';
-import personPlaceholder from './placeholder.png';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
 import Checkbox from '../../components/form/Checkbox';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import CompanyChip from '../../components/chips/CompanyChip';
+import PersonChip from '../../components/chips/PersonChip';
 
 type Person = {
   fullName: string;
@@ -47,7 +47,7 @@ const StyledPeopleContainer = styled.div`
 const defaultData: Array<Person> = [
   {
     fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
+    picture: 'http://placekitten.com/256',
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', domain: 'qonto.com' },
     phone: '06 12 34 56 78',
@@ -58,7 +58,6 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
     email: 'alexandre@qonto.com',
     company: { id: 2, name: 'LinkedIn', domain: 'linkedin.com' },
     phone: '06 12 34 56 78',
@@ -69,7 +68,7 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
+    picture: 'http://placekitten.com/256',
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', domain: 'qonto.com' },
     phone: '06 12 34 56 78',
@@ -80,7 +79,7 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
+    picture: 'https://placekitten.com/g/256',
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Slack', domain: 'slack.com' },
     phone: '06 12 34 56 78',
@@ -91,7 +90,6 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
     email: 'alexandre@qonto.com',
     company: { id: 2, name: 'Facebook', domain: 'facebook.com' },
     phone: '06 12 34 56 78',
@@ -114,7 +112,7 @@ const columns = [
           name={`person-selected${props.row.original.email}`}
         />
         <ClickableCell href="#">
-          <CompanyChip
+          <PersonChip
             name={props.row.original.fullName}
             picture={props.row.original.picture}
           />
