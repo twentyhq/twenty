@@ -33,7 +33,7 @@ function CompanyChip({ name, picture }: OwnProps) {
         <img
           data-testid="company-chip-image"
           src={picture?.toString()}
-          alt=""
+          alt={`${name}-company-logo`}
         />
       )}
       {name}
