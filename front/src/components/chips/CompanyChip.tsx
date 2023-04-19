@@ -1,11 +1,9 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { Link } from 'react-router-dom';
 
 type OwnProps = {
   name: string;
   picture?: string;
-  href: string;
 };
 
 const StyledContainer = styled.span`
@@ -28,15 +26,19 @@ const StyledContainer = styled.span`
   }
 `;
 
-function CellLink({ name, picture, href }: OwnProps) {
+function CompanyChip({ name, picture }: OwnProps) {
   return (
-    <Link to={href}>
-      <StyledContainer>
-        {picture && <img src={picture?.toString()} alt="" />}
-        {name}
-      </StyledContainer>
-    </Link>
+    <StyledContainer data-testid="company-chip">
+      {picture && (
+        <img
+          data-testid="company-chip-image"
+          src={picture?.toString()}
+          alt={`${name}-company-logo`}
+        />
+      )}
+      {name}
+    </StyledContainer>
   );
 }
 
-export default CellLink;
+export default CompanyChip;

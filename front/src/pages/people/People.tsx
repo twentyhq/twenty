@@ -12,12 +12,13 @@ import { Company } from '../../interfaces/company.interface';
 import { Pipe } from '../../interfaces/pipe.interface';
 import { createColumnHelper } from '@tanstack/react-table';
 import styled from '@emotion/styled';
-import CellLink from '../../components/table/CellLink';
+import ClickableCell from '../../components/table/ClickableCell';
 import ColumnHead from '../../components/table/ColumnHead';
-import personPlaceholder from './placeholder.png';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
 import Checkbox from '../../components/form/Checkbox';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
+import CompanyChip from '../../components/chips/CompanyChip';
+import PersonChip from '../../components/chips/PersonChip';
 
 type Person = {
   fullName: string;
@@ -46,7 +47,7 @@ const StyledPeopleContainer = styled.div`
 const defaultData: Array<Person> = [
   {
     fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
+    picture: 'http://placekitten.com/256',
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', domain: 'qonto.com' },
     phone: '06 12 34 56 78',
@@ -57,7 +58,6 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
     email: 'alexandre@qonto.com',
     company: { id: 2, name: 'LinkedIn', domain: 'linkedin.com' },
     phone: '06 12 34 56 78',
@@ -68,7 +68,7 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
+    picture: 'http://placekitten.com/256',
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Qonto', domain: 'qonto.com' },
     phone: '06 12 34 56 78',
@@ -79,7 +79,7 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
+    picture: 'https://placekitten.com/g/256',
     email: 'alexandre@qonto.com',
     company: { id: 1, name: 'Slack', domain: 'slack.com' },
     phone: '06 12 34 56 78',
@@ -90,7 +90,6 @@ const defaultData: Array<Person> = [
   },
   {
     fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
     email: 'alexandre@qonto.com',
     company: { id: 2, name: 'Facebook', domain: 'facebook.com' },
     phone: '06 12 34 56 78',
@@ -112,11 +111,12 @@ const columns = [
           id={`person-selected-${props.row.original.email}`}
           name={`person-selected${props.row.original.email}`}
         />
-        <CellLink
-          name={props.row.original.fullName}
-          picture={props.row.original.picture}
-          href="#"
-        />
+        <ClickableCell href="#">
+          <PersonChip
+            name={props.row.original.fullName}
+            picture={props.row.original.picture}
+          />
+        </ClickableCell>
       </HorizontalyAlignedContainer>
     ),
   }),
@@ -131,11 +131,12 @@ const columns = [
   columnHelper.accessor('company', {
     header: () => <ColumnHead viewName="Company" viewIcon={faBuildings} />,
     cell: (props) => (
-      <CellLink
-        name={props.row.original.company.name}
-        picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain}&sz=256`}
-        href="#"
-      />
+      <ClickableCell href="#">
+        <CompanyChip
+          name={props.row.original.company.name}
+          picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain}&sz=256`}
+        />
+      </ClickableCell>
     ),
   }),
   columnHelper.accessor('phone', {
@@ -166,11 +167,12 @@ const columns = [
   columnHelper.accessor('pipe', {
     header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleList} />,
     cell: (props) => (
-      <CellLink
-        name={props.row.original.pipe.name}
-        picture={props.row.original.pipe.icon}
-        href="#"
-      />
+      <ClickableCell href="#">
+        <CompanyChip
+          name={props.row.original.pipe.name}
+          picture={props.row.original.pipe.icon}
+        />
+      </ClickableCell>
     ),
   }),
   columnHelper.accessor('city', {
