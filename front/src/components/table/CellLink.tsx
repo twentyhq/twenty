@@ -14,13 +14,16 @@ const StyledContainer = styled.span`
   color: ${(props) => props.theme.text80};
   display: inline-flex;
   align-items: center;
-  padding: 4px 8px 4px 4px;
+  padding: 4px;
   gap: 4px;
 
+  :hover {
+    filter: brightness(95%);
+  }
+
   img {
-    height: 1rem;
-    width: 1rem;
-    border-radius: 0.5rem;
+    height: 14px;
+    width: 14px;
     object-fit: cover;
   }
 `;
