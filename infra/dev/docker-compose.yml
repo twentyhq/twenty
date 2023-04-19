@@ -47,6 +47,19 @@ services:
     depends_on:
     - "twenty-hasura"
     - "postgres"
+    - "mailhog"
+  mailhog:
+    image: jcalonso/mailhog
+    environment:
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      SMTP_PASS: smtp-secret
+      SMTP_USER: smtp-user
+      SMTP_SECURE: "false"
+      SMTP_SENDER: auth@localhost
+    ports:
+      - "1025:1025"
+      - "8025:8025"
   twenty-server:
     build: 
       context: ../..
