@@ -8,8 +8,6 @@ export function useOutsideAlerter(
 ) {
   useEffect(() => {
     function handleClickOutside(event: Event) {
-      console.log('test3');
-
       const target = event.target as HTMLButtonElement;
       if (ref.current && !ref.current.contains(target)) {
         callback();

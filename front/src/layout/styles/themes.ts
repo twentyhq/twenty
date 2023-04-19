@@ -40,6 +40,9 @@ const lightThemeSpecific = {
   green: '#1e7e50',
   purple: '#1111b7',
   yellow: '#cc660a',
+
+  blueHighTransparency: 'rgba(25, 97, 237, 0.03)',
+  blueLowTransparency: 'rgba(25, 97, 237, 0.32)',
 };
 
 const darkThemeSpecific: typeof lightThemeSpecific = {
@@ -70,6 +73,9 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
   green: '#e6fff2',
   purple: '#e0e0ff',
   yellow: '#fff2e7',
+
+  blueHighTransparency: 'rgba(104, 149, 236, 0.03)',
+  blueLowTransparency: 'rgba(104, 149, 236, 0.32)',
 };
 
 export const modalBackground = (props: any) =>
