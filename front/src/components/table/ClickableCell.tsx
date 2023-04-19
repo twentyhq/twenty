@@ -8,7 +8,7 @@ type OwnProps = {
 };
 
 const Container = styled.span`
-  margin-left: 4px;
+  margin-left: ${(props) => props.theme.spacing(2)};
 `;
 
 function ClickableCell({ href, children }: OwnProps) {

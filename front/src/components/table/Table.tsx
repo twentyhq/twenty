@@ -25,21 +25,21 @@ const StyledTable = styled.table`
   th {
     color: ${(props) => props.theme.text40};
     padding: 0;
-    border-top: 1px solid ${(props) => props.theme.primaryBorder};
-    border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
+    border-top: 1px solid ${(props) => props.theme.tertiaryBackground};
+    border-bottom: 1px solid ${(props) => props.theme.tertiaryBackground};
     text-align: left;
     :not(:last-child) {
-      border-right: 1px solid ${(props) => props.theme.primaryBorder};
+      border-right: 1px solid ${(props) => props.theme.tertiaryBackground};
     }
   }
 
   td {
     color: ${(props) => props.theme.text80};
     padding: 0;
-    border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
+    border-bottom: 1px solid ${(props) => props.theme.tertiaryBackground};
     text-align: left;
     :not(:last-child) {
-      border-right: 1px solid ${(props) => props.theme.primaryBorder};
+      border-right: 1px solid ${(props) => props.theme.tertiaryBackground};
     }
   }
 `;
