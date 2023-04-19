@@ -12,7 +12,7 @@ import { Company } from '../../interfaces/company.interface';
 import { Pipe } from '../../interfaces/pipe.interface';
 import { createColumnHelper } from '@tanstack/react-table';
 import styled from '@emotion/styled';
-import CellLink from '../../components/table/CellLink';
+import ClickableCell from '../../components/table/ClickableCell';
 import ColumnHead from '../../components/table/ColumnHead';
 import personPlaceholder from './placeholder.png';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
@@ -113,7 +113,7 @@ const columns = [
           id={`person-selected-${props.row.original.email}`}
           name={`person-selected${props.row.original.email}`}
         />
-        <CellLink
+        <ClickableCell
           name={props.row.original.fullName}
           picture={props.row.original.picture}
           href="#"
@@ -122,7 +122,7 @@ const columns = [
             name={props.row.original.fullName}
             picture={props.row.original.picture}
           />
-        </CellLink>
+        </ClickableCell>
       </HorizontalyAlignedContainer>
     ),
   }),
@@ -137,7 +137,7 @@ const columns = [
   columnHelper.accessor('company', {
     header: () => <ColumnHead viewName="Company" viewIcon={faBuildings} />,
     cell: (props) => (
-      <CellLink
+      <ClickableCell
         name={props.row.original.fullName}
         picture={props.row.original.picture}
         href="#"
@@ -146,7 +146,7 @@ const columns = [
           name={props.row.original.company.name}
           picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain}&sz=256`}
         />
-      </CellLink>
+      </ClickableCell>
     ),
   }),
   columnHelper.accessor('phone', {
@@ -177,7 +177,7 @@ const columns = [
   columnHelper.accessor('pipe', {
     header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleList} />,
     cell: (props) => (
-      <CellLink
+      <ClickableCell
         name={props.row.original.fullName}
         picture={props.row.original.picture}
         href="#"
@@ -186,7 +186,7 @@ const columns = [
           name={props.row.original.pipe.name}
           picture={props.row.original.pipe.icon}
         />
-      </CellLink>
+      </ClickableCell>
     ),
   }),
   columnHelper.accessor('city', {

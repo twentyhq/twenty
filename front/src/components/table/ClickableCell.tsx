@@ -8,8 +8,8 @@ type OwnProps = {
   children?: React.ReactNode;
 };
 
-function CellLink({ href, children }: OwnProps) {
+function ClickableCell({ href, children }: OwnProps) {
   return <Link to={href}>{children}</Link>;
 }
 
-export default CellLink;
+export default ClickableCell;
