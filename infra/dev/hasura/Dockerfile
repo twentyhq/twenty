@@ -8,4 +8,8 @@ RUN curl -L https://github.com/hasura/graphql-engine/raw/stable/cli/get.sh | bas
 
 WORKDIR /hasura
 
-CMD ["sh", "-c", "graphql-engine serve"]
+RUN mkdir entrypoints
+COPY ./entrypoint.sh ./entrypoints/entrypoint.sh
+
+ENTRYPOINT ["entrypoints/entrypoint.sh"]
+

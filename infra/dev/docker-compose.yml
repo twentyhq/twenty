@@ -20,6 +20,7 @@ services:
     - "9693:9693"
     volumes:
       - ../../hasura:/hasura
+      - /hasura/entrypoints
     depends_on:
     - "postgres"
     restart: always
@@ -29,6 +30,36 @@ services:
       HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: secret
+      HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "jwt-very-long-hard-to-guess-secret"}'
+  hasura-auth:
+    image: nhost/hasura-auth:0.19.1
+    ports:
+    - "4000:4000"
+    environment:
+      HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "jwt-very-long-hard-to-guess-secret"}'
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/twenty
+      HASURA_GRAPHQL_GRAPHQL_URL: http://twenty-hasura:8080/v1/graphql
+      HASURA_GRAPHQL_ADMIN_SECRET: secret
+      npm_package_version: '0'
+      AUTH_SMTP_HOST: mailhog
+      AUTH_SMTP_PORT: 1025
+    depends_on:
+    - "twenty-hasura"
+    - "postgres"
+    - "mailhog"
+  mailhog:
+    image: jcalonso/mailhog
+    environment:
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      SMTP_PASS: smtp-secret
+      SMTP_USER: smtp-user
+      SMTP_SECURE: "false"
+      SMTP_SENDER: auth@localhost
+    ports:
+      - "1025:1025"
+      - "8025:8025"
   twenty-server:
     build: 
       context: ../..
