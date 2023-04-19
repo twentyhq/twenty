@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import personPlaceholder from './placeholder.png';
+import PersonPlaceholder from './person-placeholder.png';
 
 type OwnProps = {
   name: string;
@@ -29,12 +29,11 @@ const StyledContainer = styled.span`
 `;
 
 function PersonChip({ name, picture }: OwnProps) {
-  console.log(picture ? picture.toString() : personPlaceholder);
   return (
     <StyledContainer data-testid="person-chip">
       <img
         data-testid="person-chip-image"
-        src={picture ? picture.toString() : personPlaceholder.toString()}
+        src={picture ? picture.toString() : PersonPlaceholder.toString()}
         alt="person-picture"
       />
       {name}
