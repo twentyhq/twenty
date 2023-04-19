@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import DropdownButton from './DropdownButton';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { faCalendar } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps = {
   viewName: string;
@@ -30,12 +32,7 @@ const StyledViewSection = styled.div`
 const StyledFilters = styled.div`
   display: flex;
   font-weight: 400;
-  margin-right: ${(props) => props.theme.spacing(1)};
-`;
-
-const StyledFilterButton = styled.div`
-  display: flex;
-  margin-left: ${(props) => props.theme.spacing(4)};
+  margin-right: ${(props) => props.theme.spacing(2)};
 `;
 
 function TableHeader({ viewName, viewIcon }: OwnProps) {
@@ -48,9 +45,12 @@ function TableHeader({ viewName, viewIcon }: OwnProps) {
         {viewName}
       </StyledViewSection>
       <StyledFilters>
-        <StyledFilterButton>Filter</StyledFilterButton>
-        <StyledFilterButton>Sort</StyledFilterButton>
-        <StyledFilterButton>Settings</StyledFilterButton>
+        <DropdownButton label="Filter" options={[]} />
+        <DropdownButton
+          label="Sort"
+          options={[{ label: 'Created at', icon: faCalendar }]}
+        />
+        <DropdownButton label="Settings" options={[]} />
       </StyledFilters>
     </StyledTitle>
   );

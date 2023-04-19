@@ -1,3 +1,5 @@
+import { css } from '@emotion/react';
+
 const commonTheme = {
   fontSizeSmall: '0.92rem',
   fontSizeMedium: '1rem',
@@ -20,6 +22,8 @@ const lightThemeSpecific = {
   greenBackground: '#e6fff2',
   purpleBackground: '#e0e0ff',
   yellowBackground: '#fff2e7',
+
+  secondaryBackgroundSmallTransparency: 'rgba(252, 252, 252, 0.8)',
 
   primaryBorder: 'rgba(0, 0, 0, 0.08)',
 
@@ -49,6 +53,10 @@ const darkThemeSpecific = {
   purpleBackground: '#1111b7',
   yellowBackground: '#cc660a',
 
+  secondaryBackgroundSmallTransparency: 'rgba(23, 23, 23, 0.8)',
+
+  primaryBorder: 'rgba(255, 255, 255, 0.08)',
+
   text100: '#ffffff',
   text80: '#ccc',
   text60: '#999',
@@ -63,6 +71,12 @@ const darkThemeSpecific = {
   purple: '#e0e0ff',
   yellow: '#fff2e7',
 };
+
+export const modalBackground = (props: any) =>
+  css`
+    backdrop-filter: blur(20px);
+    background: ${props.theme.secondaryBackgroundSmallTransparency};
+  `;
 
 export const lightTheme = { ...commonTheme, ...lightThemeSpecific };
 export const darkTheme = { ...commonTheme, ...darkThemeSpecific };

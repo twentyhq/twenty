@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import TableHeader from './TableHeader';
+import TableHeader from './table-header/TableHeader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import styled from '@emotion/styled';
 
