@@ -11,8 +11,7 @@ const StyledTitle = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 40px;
-  color: ${(props) => props.theme.text60};
+  height: ${(props) => props.theme.spacing(8)};
   font-weight: 500;
   padding-left: ${(props) => props.theme.spacing(2)};
 `;

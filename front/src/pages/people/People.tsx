@@ -2,10 +2,12 @@ import {
   faBuildings,
   faCalendar,
   faEnvelope,
-  faRectangleList,
   faUser,
+  faMapPin,
+  faPhone,
+  faRectangleHistory,
+  faList,
 } from '@fortawesome/pro-regular-svg-icons';
-import { faList, faMapPin, faPhone } from '@fortawesome/pro-solid-svg-icons';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
 import { Company } from '../../interfaces/company.interface';
@@ -123,9 +125,11 @@ const columns = [
   columnHelper.accessor('email', {
     header: () => <ColumnHead viewName="Email" viewIcon={faEnvelope} />,
     cell: (props) => (
-      <a href={`mailto:${props.row.original.email}`}>
-        {props.row.original.email}
-      </a>
+      <ClickableCell href="#">
+        <a href={`mailto:${props.row.original.email}`}>
+          {props.row.original.email}
+        </a>
+      </ClickableCell>
     ),
   }),
   columnHelper.accessor('company', {
@@ -142,41 +146,44 @@ const columns = [
   columnHelper.accessor('phone', {
     header: () => <ColumnHead viewName="Phone" viewIcon={faPhone} />,
     cell: (props) => (
-      <a
-        href={parsePhoneNumber(
-          props.row.original.phone,
-          props.row.original.countryCode as CountryCode,
-        )?.getURI()}
-      >
-        {parsePhoneNumber(
-          props.row.original.phone,
-          props.row.original.countryCode as CountryCode,
-        )?.formatInternational() || props.row.original.phone}
-      </a>
+      <ClickableCell href="#">
+        <a
+          href={parsePhoneNumber(
+            props.row.original.phone,
+            props.row.original.countryCode as CountryCode,
+          )?.getURI()}
+        >
+          {parsePhoneNumber(
+            props.row.original.phone,
+            props.row.original.countryCode as CountryCode,
+          )?.formatInternational() || props.row.original.phone}
+        </a>
+      </ClickableCell>
     ),
   }),
   columnHelper.accessor('creationDate', {
     header: () => <ColumnHead viewName="Creation" viewIcon={faCalendar} />,
-    cell: (props) =>
-      new Intl.DateTimeFormat(undefined, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      }).format(props.row.original.creationDate),
-  }),
-  columnHelper.accessor('pipe', {
-    header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleList} />,
     cell: (props) => (
       <ClickableCell href="#">
-        <CompanyChip
-          name={props.row.original.pipe.name}
-          picture={props.row.original.pipe.icon}
-        />
+        {new Intl.DateTimeFormat(undefined, {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        }).format(props.row.original.creationDate)}
       </ClickableCell>
+    ),
+  }),
+  columnHelper.accessor('pipe', {
+    header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleHistory} />,
+    cell: (props) => (
+      <ClickableCell href="#">{props.row.original.pipe.name}</ClickableCell>
     ),
   }),
   columnHelper.accessor('city', {
     header: () => <ColumnHead viewName="City" viewIcon={faMapPin} />,
+    cell: (props) => (
+      <ClickableCell href="#">{props.row.original.city}</ClickableCell>
+    ),
   }),
 ];
 

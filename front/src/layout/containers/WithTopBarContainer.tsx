@@ -27,7 +27,6 @@ const ContentSubContainer = styled.div`
   display: flex;
   background: ${(props) => props.theme.primaryBackground};
   border-radius: 8px;
-  border: 1px solid ${(props) => props.theme.primaryBorder};
   flex: 1;
 `;
 

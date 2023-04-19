@@ -20,15 +20,27 @@ type OwnProps = {
 const StyledTable = styled.table`
   min-width: 100%;
   border-radius: 4px;
-  border: 1px solid #f5f5f5;
   border-spacing: 0;
 
-  td,
   th {
-    border: 1px solid #f5f5f5;
-    font-size: 12px;
+    color: ${(props) => props.theme.text40};
+    padding: 0;
+    border-top: 1px solid ${(props) => props.theme.tertiaryBackground};
+    border-bottom: 1px solid ${(props) => props.theme.tertiaryBackground};
     text-align: left;
-    padding: 11px 0 11px 4px;
+    :not(:last-child) {
+      border-right: 1px solid ${(props) => props.theme.tertiaryBackground};
+    }
+  }
+
+  td {
+    color: ${(props) => props.theme.text80};
+    padding: 0;
+    border-bottom: 1px solid ${(props) => props.theme.tertiaryBackground};
+    text-align: left;
+    :not(:last-child) {
+      border-right: 1px solid ${(props) => props.theme.tertiaryBackground};
+    }
   }
 `;
 

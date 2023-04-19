@@ -28,9 +28,9 @@ const lightThemeSpecific = {
   primaryBorder: 'rgba(0, 0, 0, 0.08)',
 
   text100: '#000',
-  text80: '#333',
+  text80: '#333333',
   text60: '#666',
-  text40: '#999',
+  text40: '#999999',
   text30: '#b3b3b3',
   text20: '#ccc',
   text0: '#fff',
