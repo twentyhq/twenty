@@ -28,7 +28,6 @@ const StyledTable = styled.table`
     border: 1px solid #f5f5f5;
     font-size: 12px;
     text-align: left;
-    padding: 11px 0 11px 4px;
   }
 `;
 
