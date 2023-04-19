@@ -21,25 +21,33 @@ const StyledTable = styled.table`
   min-width: 100%;
   border-radius: 4px;
   border-spacing: 0;
+  border-collapse: collapse;
 
   th {
+    border-collapse: collapse;
     color: ${(props) => props.theme.text40};
     padding: 0;
-    border-top: 1px solid ${(props) => props.theme.tertiaryBackground};
-    border-bottom: 1px solid ${(props) => props.theme.tertiaryBackground};
+    border: 1px solid ${(props) => props.theme.tertiaryBackground};
     text-align: left;
-    :not(:last-child) {
-      border-right: 1px solid ${(props) => props.theme.tertiaryBackground};
+    :last-child {
+      border-right-color: transparent;
+    }
+    :first-child {
+      border-left-color: transparent;
     }
   }
 
   td {
+    border-collapse: collapse;
     color: ${(props) => props.theme.text80};
     padding: 0;
-    border-bottom: 1px solid ${(props) => props.theme.tertiaryBackground};
+    border: 1px solid ${(props) => props.theme.tertiaryBackground};
     text-align: left;
-    :not(:last-child) {
-      border-right: 1px solid ${(props) => props.theme.tertiaryBackground};
+    :last-child {
+      border-right-color: transparent;
+    }
+    :first-child {
+      border-left-color: transparent;
     }
   }
 `;
