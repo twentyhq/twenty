@@ -10,12 +10,12 @@ type OwnProps = {
 
 const StyledContainer = styled.span`
   background-color: ${(props) => props.theme.tertiaryBackground};
-  border-radius: 4px;
+  border-radius: ${(props) => props.theme.spacing(1)};
   color: ${(props) => props.theme.text80};
   display: inline-flex;
   align-items: center;
-  padding: 4px;
-  gap: 4px;
+  padding: ${(props) => props.theme.spacing(1)};
+  gap: ${(props) => props.theme.spacing(1)};
 
   :hover {
     filter: brightness(95%);
