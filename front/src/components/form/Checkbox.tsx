@@ -10,15 +10,15 @@ const StyledContainer = styled.span`
   input[type='checkbox'] {
     accent-color: ${(props) => props.theme.blue};
     margin: 8px;
-    height: 16px;
-    width: 16px;
+    height: 14px;
+    width: 14px;
   }
 
   input[type='checkbox']::before {
     content: '';
     border: 1px solid black;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 2px;
     display: block;
   }
