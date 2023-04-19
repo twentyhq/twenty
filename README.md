@@ -36,6 +36,7 @@ cd infra/dev
 
 ```
 make build
+make up
 ```
 
 Once this is completed you should have:
