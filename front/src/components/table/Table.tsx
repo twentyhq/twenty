@@ -23,6 +23,7 @@ const StyledTable = styled.table`
   border-spacing: 0;
 
   th {
+    color: ${(props) => props.theme.text40};
     padding: 0;
     border-top: 1px solid ${(props) => props.theme.primaryBorder};
     border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
@@ -33,6 +34,7 @@ const StyledTable = styled.table`
   }
 
   td {
+    color: ${(props) => props.theme.text80};
     padding: 0;
     border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
     text-align: left;
