@@ -32,7 +32,7 @@ const StyledTable = styled.table`
     :last-child {
       border-right-color: transparent;
     }
-    :first-child {
+    :first-of-type {
       border-left-color: transparent;
     }
   }
@@ -46,7 +46,7 @@ const StyledTable = styled.table`
     :last-child {
       border-right-color: transparent;
     }
-    :first-child {
+    :first-of-type {
       border-left-color: transparent;
     }
   }
@@ -89,9 +89,10 @@ function Table({ data, columns, viewName, viewIcon }: OwnProps) {
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => {
-                return flexRender(
-                  cell.column.columnDef.cell,
-                  cell.getContext(),
+                return (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
                 );
               })}
             </tr>
