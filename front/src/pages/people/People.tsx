@@ -113,12 +113,10 @@ const columns = [
           id={`person-selected-${props.row.original.email}`}
           name={`person-selected${props.row.original.email}`}
         />
-        <ClickableCell href="#">
-          <PersonChip
-            name={props.row.original.fullName}
-            picture={props.row.original.picture}
-          />
-        </ClickableCell>
+        <PersonChip
+          name={props.row.original.fullName}
+          picture={props.row.original.picture}
+        />
       </HorizontalyAlignedContainer>
     ),
   }),
