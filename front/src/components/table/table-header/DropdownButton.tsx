@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState, useRef } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
 import { modalBackground } from '../../../layout/styles/themes';
+import { SortType } from './SortAndFilterBar';
 
 type OwnProps = {
   label: string;
-  options: Array<{ label: string; icon: IconProp }>;
+  options: Array<SortType>;
+  onSortSelect?: (id: string) => void;
 };
 
 const StyledDropdownButtonContainer = styled.div`
@@ -68,7 +69,7 @@ const StyledIcon = styled.div`
   margin-right: ${(props) => props.theme.spacing(1)};
 `;
 
-function DropdownButton({ label, options }: OwnProps) {
+function DropdownButton({ label, options, onSortSelect }: OwnProps) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const onButtonClick = () => {
@@ -90,9 +91,17 @@ function DropdownButton({ label, options }: OwnProps) {
       {isUnfolded && options.length > 0 && (
         <StyledDropdown ref={dropdownRef}>
           {options.map((option, index) => (
-            <StyledDropdownItem key={index}>
+            <StyledDropdownItem
+              key={index}
+              onClick={() => {
+                setIsUnfolded(false);
+                if (onSortSelect) {
+                  onSortSelect(option.id);
+                }
+              }}
+            >
               <StyledIcon>
-                <FontAwesomeIcon icon={option.icon} />
+                {option.icon && <FontAwesomeIcon icon={option.icon} />}
               </StyledIcon>
               {option.label}
             </StyledDropdownItem>
