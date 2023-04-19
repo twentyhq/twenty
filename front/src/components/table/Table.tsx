@@ -88,11 +88,12 @@ function Table({ data, columns, viewName, viewIcon }: OwnProps) {
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
+              {row.getVisibleCells().map((cell) => {
+                return flexRender(
+                  cell.column.columnDef.cell,
+                  cell.getContext(),
+                );
+              })}
             </tr>
           ))}
         </tbody>

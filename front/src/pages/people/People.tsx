@@ -108,22 +108,24 @@ const columns = [
   columnHelper.accessor('fullName', {
     header: () => <ColumnHead viewName="People" viewIcon={faUser} />,
     cell: (props) => (
-      <HorizontalyAlignedContainer>
-        <Checkbox
-          id={`person-selected-${props.row.original.email}`}
-          name={`person-selected${props.row.original.email}`}
-        />
-        <PersonChip
-          name={props.row.original.fullName}
-          picture={props.row.original.picture}
-        />
-      </HorizontalyAlignedContainer>
+      <td key={props.cell.id}>
+        <HorizontalyAlignedContainer>
+          <Checkbox
+            id={`person-selected-${props.row.original.email}`}
+            name={`person-selected${props.row.original.email}`}
+          />
+          <PersonChip
+            name={props.row.original.fullName}
+            picture={props.row.original.picture}
+          />
+        </HorizontalyAlignedContainer>
+      </td>
     ),
   }),
   columnHelper.accessor('email', {
     header: () => <ColumnHead viewName="Email" viewIcon={faEnvelope} />,
     cell: (props) => (
-      <ClickableCell href="#">
+      <ClickableCell id={props.cell.id} href="#">
         <a href={`mailto:${props.row.original.email}`}>
           {props.row.original.email}
         </a>
@@ -133,7 +135,7 @@ const columns = [
   columnHelper.accessor('company', {
     header: () => <ColumnHead viewName="Company" viewIcon={faBuildings} />,
     cell: (props) => (
-      <ClickableCell href="#">
+      <ClickableCell id={props.cell.id} href="#">
         <CompanyChip
           name={props.row.original.company.name}
           picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain}&sz=256`}
@@ -144,7 +146,7 @@ const columns = [
   columnHelper.accessor('phone', {
     header: () => <ColumnHead viewName="Phone" viewIcon={faPhone} />,
     cell: (props) => (
-      <ClickableCell href="#">
+      <ClickableCell id={props.cell.id} href="#">
         <a
           href={parsePhoneNumber(
             props.row.original.phone,
@@ -162,7 +164,7 @@ const columns = [
   columnHelper.accessor('creationDate', {
     header: () => <ColumnHead viewName="Creation" viewIcon={faCalendar} />,
     cell: (props) => (
-      <ClickableCell href="#">
+      <ClickableCell id={props.cell.id} href="#">
         {new Intl.DateTimeFormat(undefined, {
           month: 'short',
           day: 'numeric',
@@ -174,13 +176,17 @@ const columns = [
   columnHelper.accessor('pipe', {
     header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleHistory} />,
     cell: (props) => (
-      <ClickableCell href="#">{props.row.original.pipe.name}</ClickableCell>
+      <ClickableCell id={props.cell.id} href="#">
+        {props.row.original.pipe.name}
+      </ClickableCell>
     ),
   }),
   columnHelper.accessor('city', {
     header: () => <ColumnHead viewName="City" viewIcon={faMapPin} />,
     cell: (props) => (
-      <ClickableCell href="#">{props.row.original.city}</ClickableCell>
+      <ClickableCell id={props.cell.id} href="#">
+        {props.row.original.city}
+      </ClickableCell>
     ),
   }),
 ];
