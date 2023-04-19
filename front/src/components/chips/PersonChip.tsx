@@ -23,6 +23,7 @@ const StyledContainer = styled.span`
   img {
     height: 14px;
     width: 14px;
+    border-radius: 100%;
     object-fit: cover;
   }
 `;
