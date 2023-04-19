@@ -23,19 +23,19 @@ const StyledTable = styled.table`
   border-spacing: 0;
 
   th {
-    border-top: 1px solid #f5f5f5;
-    border-bottom: 1px solid #f5f5f5;
+    border-top: 1px solid ${(props) => props.theme.primaryBorder};
+    border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
     text-align: left;
     :not(:last-child) {
-      border-right: 1px solid #f5f5f5;
+      border-right: 1px solid ${(props) => props.theme.primaryBorder};
     }
   }
 
   td {
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
     text-align: left;
     :not(:last-child) {
-      border-right: 1px solid #f5f5f5;
+      border-right: 1px solid ${(props) => props.theme.primaryBorder};
     }
   }
 `;
