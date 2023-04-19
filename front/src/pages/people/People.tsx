@@ -113,11 +113,7 @@ const columns = [
           id={`person-selected-${props.row.original.email}`}
           name={`person-selected${props.row.original.email}`}
         />
-        <ClickableCell
-          name={props.row.original.fullName}
-          picture={props.row.original.picture}
-          href="#"
-        >
+        <ClickableCell href="#">
           <CompanyChip
             name={props.row.original.fullName}
             picture={props.row.original.picture}
@@ -137,11 +133,7 @@ const columns = [
   columnHelper.accessor('company', {
     header: () => <ColumnHead viewName="Company" viewIcon={faBuildings} />,
     cell: (props) => (
-      <ClickableCell
-        name={props.row.original.fullName}
-        picture={props.row.original.picture}
-        href="#"
-      >
+      <ClickableCell href="#">
         <CompanyChip
           name={props.row.original.company.name}
           picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain}&sz=256`}
@@ -177,11 +169,7 @@ const columns = [
   columnHelper.accessor('pipe', {
     header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleList} />,
     cell: (props) => (
-      <ClickableCell
-        name={props.row.original.fullName}
-        picture={props.row.original.picture}
-        href="#"
-      >
+      <ClickableCell href="#">
         <CompanyChip
           name={props.row.original.pipe.name}
           picture={props.row.original.pipe.icon}
