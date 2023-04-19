@@ -23,6 +23,7 @@ const StyledTable = styled.table`
   border-spacing: 0;
 
   th {
+    padding: 0;
     border-top: 1px solid ${(props) => props.theme.primaryBorder};
     border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
     text-align: left;
@@ -32,6 +33,7 @@ const StyledTable = styled.table`
   }
 
   td {
+    padding: 0;
     border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
     text-align: left;
     :not(:last-child) {
