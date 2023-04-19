@@ -125,10 +125,8 @@ const columns = [
   columnHelper.accessor('email', {
     header: () => <ColumnHead viewName="Email" viewIcon={faEnvelope} />,
     cell: (props) => (
-      <ClickableCell href="#">
-        <a href={`mailto:${props.row.original.email}`}>
-          {props.row.original.email}
-        </a>
+      <ClickableCell href={`mailto:${props.row.original.email}`}>
+        {props.row.original.email}
       </ClickableCell>
     ),
   }),
@@ -146,18 +144,16 @@ const columns = [
   columnHelper.accessor('phone', {
     header: () => <ColumnHead viewName="Phone" viewIcon={faPhone} />,
     cell: (props) => (
-      <ClickableCell href="#">
-        <a
-          href={parsePhoneNumber(
-            props.row.original.phone,
-            props.row.original.countryCode as CountryCode,
-          )?.getURI()}
-        >
-          {parsePhoneNumber(
-            props.row.original.phone,
-            props.row.original.countryCode as CountryCode,
-          )?.formatInternational() || props.row.original.phone}
-        </a>
+      <ClickableCell
+        href={parsePhoneNumber(
+          props.row.original.phone,
+          props.row.original.countryCode as CountryCode,
+        )?.getURI()}
+      >
+        {parsePhoneNumber(
+          props.row.original.phone,
+          props.row.original.countryCode as CountryCode,
+        )?.formatInternational() || props.row.original.phone}
       </ClickableCell>
     ),
   }),

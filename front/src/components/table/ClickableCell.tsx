@@ -24,6 +24,7 @@ const StyledClickable = styled.div`
     border: 1px solid ${(props) => props.theme.text20};
     box-sizing: border-box;
     border-radius: 4px;
+    pointer-events: none;
     display: none;
   }
 
