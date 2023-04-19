@@ -4,14 +4,15 @@ import { Link } from 'react-router-dom';
 
 type OwnProps = {
   href: string;
-  id: string;
   children?: React.ReactNode;
 };
 
-const TD = styled.td`
+const StyledClickable = styled.div`
   position: relative;
   box-sizing: border-box;
   height: 32px;
+  display: flex;
+  align-items: center;
 
   ::before {
     content: '';
@@ -23,6 +24,7 @@ const TD = styled.td`
     border: 1px solid ${(props) => props.theme.text20};
     box-sizing: border-box;
     border-radius: 4px;
+    pointer-events: none;
     display: none;
   }
 
@@ -35,13 +37,13 @@ const Container = styled.span`
   padding-left: ${(props) => props.theme.spacing(2)};
 `;
 
-function ClickableCell({ href, children, id }: OwnProps) {
+function ClickableCell({ href, children }: OwnProps) {
   return (
-    <TD key={id}>
+    <StyledClickable>
       <Link to={href}>
         <Container>{children}</Container>
       </Link>
-    </TD>
+    </StyledClickable>
   );
 }
 
