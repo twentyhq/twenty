@@ -2,10 +2,12 @@ import {
   faBuildings,
   faCalendar,
   faEnvelope,
-  faRectangleList,
   faUser,
+  faMapPin,
+  faPhone,
+  faRectangleHistory,
+  faList,
 } from '@fortawesome/pro-regular-svg-icons';
-import { faList, faMapPin, faPhone } from '@fortawesome/pro-solid-svg-icons';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
 import { Company } from '../../interfaces/company.interface';
@@ -172,7 +174,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('pipe', {
-    header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleList} />,
+    header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleHistory} />,
     cell: (props) => (
       <ClickableCell href="#">{props.row.original.pipe.name}</ClickableCell>
     ),
