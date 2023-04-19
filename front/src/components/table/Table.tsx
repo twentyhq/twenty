@@ -20,14 +20,23 @@ type OwnProps = {
 const StyledTable = styled.table`
   min-width: 100%;
   border-radius: 4px;
-  border: 1px solid #f5f5f5;
   border-spacing: 0;
 
-  td,
   th {
-    border: 1px solid #f5f5f5;
-    font-size: 12px;
+    border-top: 1px solid #f5f5f5;
+    border-bottom: 1px solid #f5f5f5;
     text-align: left;
+    :not(:last-child) {
+      border-right: 1px solid #f5f5f5;
+    }
+  }
+
+  td {
+    border-bottom: 1px solid #f5f5f5;
+    text-align: left;
+    :not(:last-child) {
+      border-right: 1px solid #f5f5f5;
+    }
   }
 `;
 
