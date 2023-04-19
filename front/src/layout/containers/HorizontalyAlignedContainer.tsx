@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 type OwnProps = {
-  children: JSX.Element[];
+  children: JSX.Element[] | JSX.Element;
 };
 
 const StyledContainer = styled.div`
