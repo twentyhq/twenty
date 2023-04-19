@@ -1,5 +1,3 @@
-import { MemoryRouter } from 'react-router-dom';
-
 import CompanyChip from '../CompanyChip';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
@@ -12,9 +10,7 @@ export default {
 export const RegularCompanyChip = () => {
   return (
     <ThemeProvider theme={lightTheme}>
-      <MemoryRouter initialEntries={['/companies']}>
-        <CompanyChip name="selected-company-1" />
-      </MemoryRouter>
+      <CompanyChip name="selected-company-1" />
     </ThemeProvider>
   );
 };
@@ -22,9 +18,7 @@ export const RegularCompanyChip = () => {
 export const RegularCompanyChipWithImage = () => {
   return (
     <ThemeProvider theme={lightTheme}>
-      <MemoryRouter initialEntries={['/companies']}>
-        <CompanyChip name="selected-company-1" picture="coucou.fr" />
-      </MemoryRouter>
+      <CompanyChip name="selected-company-1" picture="coucou.fr" />
     </ThemeProvider>
   );
 };
