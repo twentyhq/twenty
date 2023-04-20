@@ -10,6 +10,8 @@ import {
   mapPerson,
 } from '../../interfaces/person.interface';
 import { defaultData } from './default-data';
+import { useState } from 'react';
+import { SortType } from '../../components/table/table-header/SortAndFilterBar';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -41,8 +43,10 @@ const orderBy = [
 ];
 
 function People() {
+  const [sorts, setSorts] = useState([] as Array<SortType>);
+  console.log(sorts);
   const { data } = useQuery<{ person: GraphqlPerson[] }>(GET_PEOPLE, {
-    variables: { orderBy },
+    variables: { orderBy: sorts ? orderBy : orderBy },
   });
 
   const mydata: Person[] = data ? data.person.map(mapPerson) : defaultData;
@@ -56,6 +60,7 @@ function People() {
             columns={peopleColumns}
             viewName="All People"
             viewIcon={faList}
+            setSorts={setSorts}
           />
         )}
       </StyledPeopleContainer>

@@ -9,6 +9,7 @@ import { useState } from 'react';
 type OwnProps = {
   viewName: string;
   viewIcon?: IconProp;
+  setSorts?: React.Dispatch<React.SetStateAction<SortType[]>>;
 };
 
 const StyledContainer = styled.div`
@@ -43,8 +44,18 @@ const StyledFilters = styled.div`
   margin-right: ${(props) => props.theme.spacing(2)};
 `;
 
-function TableHeader({ viewName, viewIcon }: OwnProps) {
-  const [sorts, setSorts] = useState([] as Array<SortType>);
+function TableHeader({
+  viewName,
+  viewIcon,
+  setSorts: parentSetSorts,
+}: OwnProps) {
+  const [sorts, localSetSorts] = useState([] as Array<SortType>);
+
+  const setSorts = (value: React.SetStateAction<SortType[]>) => {
+    parentSetSorts && parentSetSorts(value);
+    localSetSorts(value);
+  };
+
   const onSortItemSelect = (sortId: string) => {
     setSorts([
       {

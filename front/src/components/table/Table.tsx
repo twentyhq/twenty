@@ -9,12 +9,14 @@ import {
 import TableHeader from './table-header/TableHeader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import styled from '@emotion/styled';
+import { SortType } from './table-header/SortAndFilterBar';
 
 type OwnProps<TData> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: IconProp;
+  setSorts?: React.Dispatch<React.SetStateAction<SortType[]>>;
 };
 
 const StyledTable = styled.table`
@@ -60,7 +62,13 @@ const StyledTableWithHeader = styled.div`
   flex: 1;
 `;
 
-function Table<TData>({ data, columns, viewName, viewIcon }: OwnProps<TData>) {
+function Table<TData>({
+  data,
+  columns,
+  viewName,
+  viewIcon,
+  setSorts,
+}: OwnProps<TData>) {
   const table = useReactTable({
     data,
     columns,
@@ -69,7 +77,11 @@ function Table<TData>({ data, columns, viewName, viewIcon }: OwnProps<TData>) {
 
   return (
     <StyledTableWithHeader>
-      <TableHeader viewName={viewName} viewIcon={viewIcon} />
+      <TableHeader
+        viewName={viewName}
+        viewIcon={viewIcon}
+        setSorts={setSorts}
+      />
       <StyledTable>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
