@@ -34,7 +34,7 @@ function PersonChip({ name, picture }: OwnProps) {
       <img
         data-testid="person-chip-image"
         src={picture ? picture.toString() : PersonPlaceholder.toString()}
-        alt="person-picture"
+        alt="person"
       />
       {name}
     </StyledContainer>

@@ -2,10 +2,12 @@ import CompanyChip from '../CompanyChip';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
 
-export default {
+const component = {
   title: 'CompanyChip',
   component: CompanyChip,
 };
+
+export default component;
 
 export const RegularCompanyChip = () => {
   return (

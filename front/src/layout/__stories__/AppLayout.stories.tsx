@@ -3,10 +3,12 @@ import AppLayout from '../AppLayout';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../styles/themes';
 
-export default {
+const component = {
   title: 'AppLayout',
   component: AppLayout,
 };
+
+export default component;
 
 export const AppLayoutDefault = () => (
   <ThemeProvider theme={lightTheme}>

@@ -3,10 +3,12 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { faBuilding } from '@fortawesome/pro-regular-svg-icons';
 
-export default {
+const component = {
   title: 'TableHeader',
   component: TableHeader,
 };
+
+export default component;
 
 export const RegularTableHeader = () => {
   return (

@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import {
   RegularCompanyChip,
   RegularCompanyChipWithImage,
-} from '../__stories__/CompanyChip';
+} from '../__stories__/CompanyChip.stories';
 
 it('Checks the CompanyChip renders', () => {
   const { getByText } = render(<RegularCompanyChip />);

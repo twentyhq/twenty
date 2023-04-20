@@ -9,7 +9,7 @@ const StyledContainer = styled.div`
   align-items: center;
 `;
 
-function HorizontalyAlignedContainer({ children: children }: OwnProps) {
+function HorizontalyAlignedContainer({ children }: OwnProps) {
   return <StyledContainer>{children}</StyledContainer>;
 }
 

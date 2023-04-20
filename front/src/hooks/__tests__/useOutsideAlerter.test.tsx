@@ -1,9 +1,9 @@
-const onOutsideClick = jest.fn();
 import { useRef } from 'react';
 import TableHeader from '../../components/table/table-header/TableHeader';
 import { render, fireEvent } from '@testing-library/react';
 import { useOutsideAlerter } from '../useOutsideAlerter';
 import { act } from 'react-dom/test-utils';
+const onOutsideClick = jest.fn();
 
 function TestComponent() {
   const buttonRef = useRef(null);
