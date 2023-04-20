@@ -1,1 +1,2 @@
+- "!include public_person.yaml"
 - "!include public_workspaces.yaml"
