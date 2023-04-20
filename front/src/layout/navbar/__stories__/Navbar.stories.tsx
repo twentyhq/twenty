@@ -4,10 +4,12 @@ import Navbar from '../Navbar';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../styles/themes';
 
-export default {
+const component = {
   title: 'Navbar',
   component: Navbar,
 };
+
+export default component;
 
 export const NavbarOnCompanies = () => {
   return (

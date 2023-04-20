@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import {
   RegularPersonChip,
   RegularPersonChipWithImage,
-} from '../__stories__/PersonChip';
+} from '../__stories__/PersonChip.stories';
 
 it('Checks the PersonChip renders', () => {
   const { getByText, getByTestId } = render(<RegularPersonChip />);

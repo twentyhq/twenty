@@ -3,10 +3,12 @@ import People from '../People';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
 
-export default {
+const component = {
   title: 'People',
   component: People,
 };
+
+export default component;
 
 export const PeopleDefault = () => (
   <ThemeProvider theme={lightTheme}>

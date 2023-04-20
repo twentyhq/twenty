@@ -2,10 +2,12 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
 import PersonChip from '../PersonChip';
 
-export default {
+const component = {
   title: 'PersonChip',
   component: PersonChip,
 };
+
+export default component;
 
 export const RegularPersonChip = () => {
   return (

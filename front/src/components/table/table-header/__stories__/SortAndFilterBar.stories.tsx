@@ -3,10 +3,12 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { faArrowDown } from '@fortawesome/pro-regular-svg-icons';
 
-export default {
+const component = {
   title: 'SortAndFilterBar',
   component: SortAndFilterBar,
 };
+
+export default component;
 
 type OwnProps = {
   removeFunction: () => void;
