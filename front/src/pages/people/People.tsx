@@ -8,11 +8,6 @@ import { defaultData } from './defaultData';
 const StyledPeopleContainer = styled.div`
   display: flex;
   width: 100%;
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
 `;
 
 function People() {
