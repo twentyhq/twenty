@@ -1,5 +1,5 @@
-import { Company } from '../../interfaces/company.interface';
-import { Pipe } from '../../interfaces/pipe.interface';
+import { Company } from './company.interface';
+import { Pipe } from './pipe.interface';
 
 export type Person = {
   fullName: string;

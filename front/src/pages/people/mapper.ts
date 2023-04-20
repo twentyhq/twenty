@@ -1,4 +1,4 @@
-import { GraphqlPerson, Person } from './types';
+import { GraphqlPerson, Person } from '../../interfaces/person.interface';
 
 export const mapPerson = (person: GraphqlPerson): Person => ({
   fullName: `${person.firstname} ${person.lastname}`,

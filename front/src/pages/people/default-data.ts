@@ -1,4 +1,4 @@
-import { Person } from './types';
+import { Person } from '../../interfaces/person.interface';
 
 export const defaultData: Array<Person> = [
   {

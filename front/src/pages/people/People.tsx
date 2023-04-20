@@ -4,7 +4,7 @@ import Table from '../../components/table/Table';
 import styled from '@emotion/styled';
 import { peopleColumns } from './people-table';
 import { gql, useQuery } from '@apollo/client';
-import { GraphqlPerson, Person } from './types';
+import { GraphqlPerson, Person } from '../../interfaces/person.interface';
 import { defaultData } from './default-data';
 import { mapPerson } from './mapper';
 
