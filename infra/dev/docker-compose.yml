@@ -7,6 +7,9 @@ services:
     ports:
       - "3001:3001"
       - "6006:6006"
+    environment:
+      - REACT_APP_API_URL=${FRONT_REACT_APP_API_URL}
+      - REACT_APP_LOGIN_PROVIDER_URL=${FRONT_REACT_APP_LOGIN_PROVIDER_URL}
     volumes:
       - ../../front:/app/front
       - twenty_node_modules_front:/app/front/node_modules
@@ -44,6 +47,12 @@ services:
       npm_package_version: '0'
       AUTH_SMTP_HOST: mailhog
       AUTH_SMTP_PORT: 1025
+      AUTH_SERVER_URL: ${HASURA_AUTH_SERVER_URL}
+      AUTH_CLIENT_URL: ${HASURA_AUTH_CLIENT_URL}
+      AUTH_PROVIDER_GOOGLE_ENABLED: true
+      AUTH_PROVIDER_GOOGLE_CLIENT_ID: ${HASURA_AUTH_PROVIDER_GOOGLE_CLIENT_ID}
+      AUTH_PROVIDER_GOOGLE_CLIENT_SECRET: ${HASURA_AUTH_PROVIDER_GOOGLE_CLIENT_SECRET}
+      AUTH_PROVIDER_GOOGLE_SCOPE: email,profile
     depends_on:
     - "twenty-hasura"
     - "postgres"

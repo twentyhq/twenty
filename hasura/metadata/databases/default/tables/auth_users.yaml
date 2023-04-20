@@ -1,0 +1,122 @@
+table:
+  name: users
+  schema: auth
+configuration:
+  column_config:
+    active_mfa_type:
+      custom_name: activeMfaType
+    avatar_url:
+      custom_name: avatarUrl
+    created_at:
+      custom_name: createdAt
+    default_role:
+      custom_name: defaultRole
+    disabled:
+      custom_name: disabled
+    display_name:
+      custom_name: displayName
+    email:
+      custom_name: email
+    email_verified:
+      custom_name: emailVerified
+    id:
+      custom_name: id
+    is_anonymous:
+      custom_name: isAnonymous
+    last_seen:
+      custom_name: lastSeen
+    locale:
+      custom_name: locale
+    new_email:
+      custom_name: newEmail
+    otp_hash:
+      custom_name: otpHash
+    otp_hash_expires_at:
+      custom_name: otpHashExpiresAt
+    otp_method_last_used:
+      custom_name: otpMethodLastUsed
+    password_hash:
+      custom_name: passwordHash
+    phone_number:
+      custom_name: phoneNumber
+    phone_number_verified:
+      custom_name: phoneNumberVerified
+    ticket:
+      custom_name: ticket
+    ticket_expires_at:
+      custom_name: ticketExpiresAt
+    totp_secret:
+      custom_name: totpSecret
+    updated_at:
+      custom_name: updatedAt
+    webauthn_current_challenge:
+      custom_name: currentChallenge
+  custom_column_names:
+    active_mfa_type: activeMfaType
+    avatar_url: avatarUrl
+    created_at: createdAt
+    default_role: defaultRole
+    disabled: disabled
+    display_name: displayName
+    email: email
+    email_verified: emailVerified
+    id: id
+    is_anonymous: isAnonymous
+    last_seen: lastSeen
+    locale: locale
+    new_email: newEmail
+    otp_hash: otpHash
+    otp_hash_expires_at: otpHashExpiresAt
+    otp_method_last_used: otpMethodLastUsed
+    password_hash: passwordHash
+    phone_number: phoneNumber
+    phone_number_verified: phoneNumberVerified
+    ticket: ticket
+    ticket_expires_at: ticketExpiresAt
+    totp_secret: totpSecret
+    updated_at: updatedAt
+    webauthn_current_challenge: currentChallenge
+  custom_name: users
+  custom_root_fields:
+    delete: deleteUsers
+    delete_by_pk: deleteUser
+    insert: insertUsers
+    insert_one: insertUser
+    select: users
+    select_aggregate: usersAggregate
+    select_by_pk: user
+    update: updateUsers
+    update_by_pk: updateUser
+object_relationships:
+  - name: defaultRoleByRole
+    using:
+      foreign_key_constraint_on: default_role
+array_relationships:
+  - name: refreshTokens
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: refresh_tokens
+          schema: auth
+  - name: roles
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: user_roles
+          schema: auth
+  - name: securityKeys
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: user_security_keys
+          schema: auth
+  - name: userProviders
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: user_providers
+          schema: auth

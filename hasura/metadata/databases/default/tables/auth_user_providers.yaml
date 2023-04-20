@@ -1,0 +1,48 @@
+table:
+  name: user_providers
+  schema: auth
+configuration:
+  column_config:
+    access_token:
+      custom_name: accessToken
+    created_at:
+      custom_name: createdAt
+    id:
+      custom_name: id
+    provider_id:
+      custom_name: providerId
+    provider_user_id:
+      custom_name: providerUserId
+    refresh_token:
+      custom_name: refreshToken
+    updated_at:
+      custom_name: updatedAt
+    user_id:
+      custom_name: userId
+  custom_column_names:
+    access_token: accessToken
+    created_at: createdAt
+    id: id
+    provider_id: providerId
+    provider_user_id: providerUserId
+    refresh_token: refreshToken
+    updated_at: updatedAt
+    user_id: userId
+  custom_name: authUserProviders
+  custom_root_fields:
+    delete: deleteAuthUserProviders
+    delete_by_pk: deleteAuthUserProvider
+    insert: insertAuthUserProviders
+    insert_one: insertAuthUserProvider
+    select: authUserProviders
+    select_aggregate: authUserProvidersAggregate
+    select_by_pk: authUserProvider
+    update: updateAuthUserProviders
+    update_by_pk: updateAuthUserProvider
+object_relationships:
+  - name: provider
+    using:
+      foreign_key_constraint_on: provider_id
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
