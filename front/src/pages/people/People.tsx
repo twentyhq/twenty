@@ -36,17 +36,28 @@ export const GET_PEOPLE = gql`
   }
 `;
 
-const orderBy = [
+// @TODO get those types from generated-code person-order-by
+type OrderBy = Record<string, 'asc' | 'desc'>;
+
+const defaultOrderBy = [
   {
     created_at: 'desc',
   },
 ];
 
+const reduceSortsToGqlSorts = (sorts: Array<SortType>): OrderBy[] => {
+  const mappedSorts = sorts.reduce((acc, sort) => {
+    acc[sort.id] = sort.order;
+    return acc;
+  }, {} as OrderBy);
+  return [mappedSorts];
+};
+
 function People() {
   const [sorts, setSorts] = useState([] as Array<SortType>);
-  console.log(sorts);
+  const orderBy = sorts.length ? reduceSortsToGqlSorts(sorts) : defaultOrderBy;
   const { data } = useQuery<{ person: GraphqlPerson[] }>(GET_PEOPLE, {
-    variables: { orderBy: sorts ? orderBy : orderBy },
+    variables: { orderBy: orderBy },
   });
 
   const mydata: Person[] = data ? data.person.map(mapPerson) : defaultData;

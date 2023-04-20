@@ -10,7 +10,7 @@ type OwnProps = {
 
 export type SortType = {
   label: string;
-  order: string;
+  order: 'asc' | 'desc';
   id: string;
   icon?: IconProp;
 };
