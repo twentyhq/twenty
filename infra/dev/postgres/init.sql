@@ -1,8 +1,8 @@
-CREATE DATABASE twenty;
+CREATE DATABASE "default";
 CREATE DATABASE hasura;
 
 -- From: https://raw.githubusercontent.com/nhost/hasura-auth/main/docker/initdb.d/0001-create-schema.sql
-\c twenty;
+\c default;
 -- auth schema
 CREATE SCHEMA IF NOT EXISTS auth;
 -- https://github.com/hasura/graphql-engine/issues/3657
