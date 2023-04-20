@@ -13,7 +13,7 @@ const StyledPeopleContainer = styled.div`
   width: 100%;
 `;
 
-const GET_PEOPLE = gql`
+export const GET_PEOPLE = gql`
   query GetPeople {
     person {
       id
