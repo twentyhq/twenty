@@ -51,10 +51,10 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'Twenty',
+        /*title: 'Twenty',*/
         logo: {
-          alt: 'Twenty Logo',
-          src: 'img/logo.svg',
+          alt: 'Twenty',
+          src: 'https://twenty.com/wp-content/uploads/2023/03/Screenshot-2023-03-07-at-22.21.44-2.png',
         },
         items: [
           {
