@@ -100,8 +100,8 @@ function Table<TData>({
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+          {table.getRowModel().rows.map((row, index) => (
+            <tr key={row.id} data-testid={`row-id-${row.index}`}>
               {row.getVisibleCells().map((cell) => {
                 return (
                   <td key={cell.id}>
