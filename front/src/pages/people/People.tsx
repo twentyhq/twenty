@@ -6,6 +6,7 @@ import { peopleColumns } from './people-table';
 import { gql, useQuery } from '@apollo/client';
 import { GraphqlPerson, Person } from './types';
 import { defaultData } from './default-data';
+import { mapPerson } from './mapper';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -33,20 +34,7 @@ const GET_PEOPLE = gql`
 function People() {
   const { data } = useQuery<{ person: GraphqlPerson[] }>(GET_PEOPLE);
 
-  const mydata: Person[] = data
-    ? data.person.map((person) => ({
-        fullName: `${person.firstname} ${person.lastname}`,
-        creationDate: new Date(person.created_at),
-        pipe: { name: 'coucou', id: 1, icon: 'faUser' },
-        ...person,
-        company: {
-          id: 1,
-          name: person.company.company_name,
-          domain: person.company.company_domain,
-        },
-        countryCode: 'FR',
-      }))
-    : defaultData;
+  const mydata: Person[] = data ? data.person.map(mapPerson) : defaultData;
 
   return (
     <WithTopBarContainer title="People" icon={faUser}>
