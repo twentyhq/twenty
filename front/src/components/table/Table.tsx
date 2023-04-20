@@ -10,9 +10,9 @@ import TableHeader from './table-header/TableHeader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import styled from '@emotion/styled';
 
-type OwnProps = {
-  data: Array<any>;
-  columns: Array<ColumnDef<any, any>>;
+type OwnProps<TData> = {
+  data: Array<TData>;
+  columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: IconProp;
 };
@@ -60,7 +60,7 @@ const StyledTableWithHeader = styled.div`
   flex: 1;
 `;
 
-function Table({ data, columns, viewName, viewIcon }: OwnProps) {
+function Table<TData>({ data, columns, viewName, viewIcon }: OwnProps<TData>) {
   const table = useReactTable({
     data,
     columns,
