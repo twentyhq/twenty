@@ -16,7 +16,7 @@ type OwnProps<TData> = {
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: IconProp;
-  setSorts?: React.Dispatch<React.SetStateAction<SortType[]>>;
+  onSortsUpdate?: React.Dispatch<React.SetStateAction<SortType[]>>;
 };
 
 const StyledTable = styled.table`
@@ -67,7 +67,7 @@ function Table<TData>({
   columns,
   viewName,
   viewIcon,
-  setSorts,
+  onSortsUpdate,
 }: OwnProps<TData>) {
   const table = useReactTable({
     data,
@@ -80,7 +80,7 @@ function Table<TData>({
       <TableHeader
         viewName={viewName}
         viewIcon={viewIcon}
-        setSorts={setSorts}
+        onSortsUpdate={onSortsUpdate}
       />
       <StyledTable>
         <thead>

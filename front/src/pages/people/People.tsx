@@ -69,7 +69,7 @@ function People() {
             columns={peopleColumns}
             viewName="All People"
             viewIcon={faList}
-            setSorts={setSorts}
+            onSortsUpdate={setSorts}
           />
         )}
       </StyledPeopleContainer>
