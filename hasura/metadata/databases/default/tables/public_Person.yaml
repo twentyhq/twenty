@@ -1,0 +1,10 @@
+table:
+  name: person
+  schema: public
+object_relationships:
+  - name: company
+    using:
+      foreign_key_constraint_on: company_id
+  - name: workspace
+    using:
+      foreign_key_constraint_on: workspace_id

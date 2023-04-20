@@ -1,0 +1,3 @@
+table:
+  name: company
+  schema: public

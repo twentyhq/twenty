@@ -1,7 +1,9 @@
 import { MemoryRouter } from 'react-router-dom';
-import People from '../People';
+import People, { GET_PEOPLE } from '../People';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
+import { MockedProvider } from '@apollo/client/testing';
+import { defaultData } from '../default-data';
 
 const component = {
   title: 'People',
@@ -10,10 +12,25 @@ const component = {
 
 export default component;
 
+const mocks = [
+  {
+    request: {
+      query: GET_PEOPLE,
+    },
+    result: {
+      data: {
+        person: defaultData,
+      },
+    },
+  },
+];
+
 export const PeopleDefault = () => (
-  <ThemeProvider theme={lightTheme}>
-    <MemoryRouter>
-      <People />
-    </MemoryRouter>
-  </ThemeProvider>
+  <MockedProvider mocks={mocks}>
+    <ThemeProvider theme={lightTheme}>
+      <MemoryRouter>
+        <People />
+      </MemoryRouter>
+    </ThemeProvider>
+  </MockedProvider>
 );

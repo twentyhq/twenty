@@ -31,6 +31,11 @@ const StyledClickable = styled.div`
   :hover::before {
     display: block;
   }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 `;
 
 const Container = styled.span`

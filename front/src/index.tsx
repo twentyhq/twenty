@@ -13,11 +13,13 @@ import { setContext } from '@apollo/client/link/context';
 import '@emotion/react';
 import { ThemeType } from './layout/styles/themes';
 
-const httpLink = createHttpLink({ uri: process.env.REACT_APP_API_URL });
+const httpLink = createHttpLink({
+  uri: `${process.env.REACT_APP_API_URL}/v1/graphql`,
+});
 
 const authLink = setContext((_, { headers }) => {
   return {
-    headers: headers,
+    headers: { ...headers, 'x-hasura-admin-secret': 'secret' },
   };
 });
 
