@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { peopleColumns } from './people-table';
 import { gql, useQuery } from '@apollo/client';
 import { GraphqlPerson, Person } from './types';
-import { defaultData } from './defaultData';
+import { defaultData } from './default-data';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
