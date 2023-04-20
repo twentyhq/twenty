@@ -9,6 +9,7 @@ import { useState } from 'react';
 type OwnProps = {
   viewName: string;
   viewIcon?: IconProp;
+  onSortsUpdate?: React.Dispatch<React.SetStateAction<SortType[]>>;
 };
 
 const StyledContainer = styled.div`
@@ -43,8 +44,9 @@ const StyledFilters = styled.div`
   margin-right: ${(props) => props.theme.spacing(2)};
 `;
 
-function TableHeader({ viewName, viewIcon }: OwnProps) {
+function TableHeader({ viewName, viewIcon, onSortsUpdate }: OwnProps) {
   const [sorts, setSorts] = useState([] as Array<SortType>);
+
   const onSortItemSelect = (sortId: string) => {
     setSorts([
       {
@@ -53,6 +55,7 @@ function TableHeader({ viewName, viewIcon }: OwnProps) {
         id: sortId,
       },
     ]);
+    onSortsUpdate && onSortsUpdate(sorts);
   };
 
   const onSortItemUnSelect = (sortId: string) => {

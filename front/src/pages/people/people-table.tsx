@@ -15,7 +15,7 @@ import Checkbox from '../../components/form/Checkbox';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import CompanyChip from '../../components/chips/CompanyChip';
 import PersonChip from '../../components/chips/PersonChip';
-import { Person } from './types';
+import { Person } from '../../interfaces/person.interface';
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [
