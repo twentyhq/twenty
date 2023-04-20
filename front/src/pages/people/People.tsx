@@ -4,12 +4,7 @@ import Table from '../../components/table/Table';
 import styled from '@emotion/styled';
 import { peopleColumns } from './people-table';
 import { gql, useQuery } from '@apollo/client';
-import {
-  GraphqlPerson,
-  Person,
-  mapPerson,
-} from '../../interfaces/person.interface';
-import { defaultData } from './default-data';
+import { GraphqlPerson, mapPerson } from '../../interfaces/person.interface';
 import { useState } from 'react';
 import { SortType } from '../../components/table/table-header/SortAndFilterBar';
 
