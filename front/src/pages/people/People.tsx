@@ -45,7 +45,7 @@ const defaultOrderBy = [
   },
 ];
 
-const reduceSortsToGqlSorts = (sorts: Array<SortType>): OrderBy[] => {
+const reduceSortsToOrderBy = (sorts: Array<SortType>): OrderBy[] => {
   const mappedSorts = sorts.reduce((acc, sort) => {
     acc[sort.id] = sort.order;
     return acc;
@@ -55,19 +55,17 @@ const reduceSortsToGqlSorts = (sorts: Array<SortType>): OrderBy[] => {
 
 function People() {
   const [sorts, setSorts] = useState([] as Array<SortType>);
-  const orderBy = sorts.length ? reduceSortsToGqlSorts(sorts) : defaultOrderBy;
+  const orderBy = sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy;
   const { data } = useQuery<{ person: GraphqlPerson[] }>(GET_PEOPLE, {
     variables: { orderBy: orderBy },
   });
 
-  const mydata: Person[] = data ? data.person.map(mapPerson) : defaultData;
-
   return (
     <WithTopBarContainer title="People" icon={faUser}>
       <StyledPeopleContainer>
-        {mydata && (
+        {data && (
           <Table
-            data={mydata}
+            data={data.person.map(mapPerson)}
             columns={peopleColumns}
             viewName="All People"
             viewIcon={faList}
