@@ -4,7 +4,7 @@ import Table from '../../components/table/Table';
 import styled from '@emotion/styled';
 import { peopleColumns } from './people-table';
 import { gql, useQuery } from '@apollo/client';
-import { Person } from './types';
+import { GraphqlPerson, Person } from './types';
 import { defaultData } from './defaultData';
 
 const StyledPeopleContainer = styled.div`
@@ -30,24 +30,8 @@ const GET_PEOPLE = gql`
   }
 `;
 
-type QueryResult = {
-  city: string;
-  company: {
-    __typename: string;
-    company_name: string;
-    company_domain: string;
-  };
-  created_at: string;
-  email: string;
-  firstname: string;
-  id: number;
-  lastname: string;
-  phone: string;
-  __typename: string;
-};
-
 function People() {
-  const { data } = useQuery<{ person: QueryResult[] }>(GET_PEOPLE);
+  const { data } = useQuery<{ person: GraphqlPerson[] }>(GET_PEOPLE);
 
   const mydata: Person[] = data
     ? data.person.map((person) => ({

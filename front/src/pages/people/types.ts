@@ -12,3 +12,19 @@ export type Person = {
   city: string;
   countryCode: string;
 };
+
+export type GraphqlPerson = {
+  city: string;
+  company: {
+    __typename: string;
+    company_name: string;
+    company_domain: string;
+  };
+  created_at: string;
+  email: string;
+  firstname: string;
+  id: number;
+  lastname: string;
+  phone: string;
+  __typename: string;
+};
