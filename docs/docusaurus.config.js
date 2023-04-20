@@ -26,7 +26,6 @@ const config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
-
   presets: [
     [
       'classic',
@@ -37,7 +36,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/twentyhq/twenty/edit/main/docs/docs/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -59,10 +58,14 @@ const config = {
         },
         items: [
           {
+            type: 'search',
+            position: 'left',
+          },
+          {
             type: 'docSidebar',
             sidebarId: 'docsSidebar',
             position: 'right',
-            label: 'Docs',
+            label: 'Developer Docs',
           },
           {
             type: 'docSidebar',
@@ -79,13 +82,33 @@ const config = {
           {
             to: 'https://github.com/twentyhq/twenty/releases',
             label: 'Releases',
-            position: 'right'},
-          {
+            position: 'right'
+          }
+          /*{
             href: 'https://github.com/twentyhq/twenty',
             label: 'GitHub',
             position: 'right',
-          },
+          }*/,
         ],
+      },
+      algolia: {
+        appId: 'YOUR_APP_ID',
+        apiKey: 'YOUR_SEARCH_API_KEY',
+        indexName: 'YOUR_INDEX_NAME',
+  
+        // Optional: see doc section below
+        contextualSearch: true,
+        // Optional: Specify domains where the navigation should occur through window.location instead on history.push. Useful when our Algolia config crawls multiple documentation sites and we want to navigate with window.location.href to them.
+        externalUrlRegex: 'external\\.com|domain\\.com',
+        // Optional: Replace parts of the item URLs from Algolia. Useful when using the same search index for multiple deployments using a different baseUrl. You can use regexp or string in the `from` param. For example: localhost:3000 vs myCompany.com/docs
+        replaceSearchResultPathname: {
+          from: '/docs/', // or as RegExp: /\/docs\//
+          to: '/',
+        },
+        // Optional: Algolia search parameters
+        searchParameters: {},
+        // Optional: path for search page that enabled by default (`false` to disable it)
+        searchPagePath: 'search',
       },
       /* footer: {
         copyright: `© ${new Date().getFullYear()} Twenty. Docs generated with Docusaurus.`,
