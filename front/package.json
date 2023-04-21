@@ -14,6 +14,7 @@
     "@types/node": "^16.18.4",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
+    "apollo-link-rest": "^0.9.0",
     "graphql": "^16.6.0",
     "jwt-decode": "^3.1.2",
     "libphonenumber-js": "^1.10.26",

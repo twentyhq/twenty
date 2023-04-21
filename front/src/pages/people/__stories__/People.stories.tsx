@@ -22,7 +22,7 @@ const mocks = [
     },
     result: {
       data: {
-        person: defaultData,
+        persons: defaultData,
       },
     },
   },

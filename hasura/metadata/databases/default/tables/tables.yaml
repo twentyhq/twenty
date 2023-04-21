@@ -6,6 +6,6 @@
 - "!include auth_user_roles.yaml"
 - "!include auth_user_security_keys.yaml"
 - "!include auth_users.yaml"
-- "!include public_company.yaml"
-- "!include public_person.yaml"
+- "!include public_companies.yaml"
+- "!include public_persons.yaml"
 - "!include public_workspaces.yaml"

@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import TableHeader from '../../components/table/table-header/TableHeader';
 import { render, fireEvent } from '@testing-library/react';
 import { useOutsideAlerter } from '../useOutsideAlerter';
 import { act } from 'react-dom/test-utils';
@@ -17,9 +16,7 @@ function TestComponent() {
   );
 }
 
-export default TableHeader;
-
-test('clicking the button toggles an answer on/off', async () => {
+test('useOutsideAlerter hook works properly', async () => {
   const { getByText } = render(<TestComponent />);
   const inside = getByText('Inside');
   const outside = getByText('Outside');

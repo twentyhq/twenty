@@ -14,8 +14,8 @@ const StyledPeopleContainer = styled.div`
 `;
 
 export const GET_PEOPLE = gql`
-  query GetPeople($orderBy: [person_order_by!]) {
-    person(order_by: $orderBy) {
+  query GetPeople($orderBy: [persons_order_by!]) {
+    persons(order_by: $orderBy) {
       id
       phone
       email
@@ -57,7 +57,7 @@ function People() {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   };
 
-  const { data } = useQuery<{ person: GraphqlPerson[] }>(GET_PEOPLE, {
+  const { data } = useQuery<{ persons: GraphqlPerson[] }>(GET_PEOPLE, {
     variables: { orderBy: orderBy },
   });
 
@@ -66,7 +66,7 @@ function People() {
       <StyledPeopleContainer>
         {
           <Table
-            data={data ? data.person.map(mapPerson) : []}
+            data={data ? data.persons.map(mapPerson) : []}
             columns={peopleColumns}
             viewName="All People"
             viewIcon={faList}

@@ -6,7 +6,8 @@ function Login() {
   const navigate = useNavigate();
   useEffect(() => {
     if (!refreshToken) {
-      window.location.href = process.env.REACT_APP_LOGIN_PROVIDER_URL || '';
+      window.location.href =
+        process.env.REACT_APP_AUTH_URL + '/signin/provider/google' || '';
     }
     navigate('/');
   }, [refreshToken, navigate]);
