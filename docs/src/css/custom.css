@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-global-radius: 8px;
+  --ifm-code-font-size: var(14px);
+  --ifm-font-family-base: "Inter",BlinkMacSystemFont,-apple-system,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue","Helvetica","Arial",sans-serif;
+  --ifm-font-family-monospace: 'Roboto Mono',SFMono-Regular, Menlo, Monaco, Consolas,'Liberation Mono', 'Courier New', monospace;
+  --ifm-font-size-base: var(14px);
+  --ifm-base-spacing: 16px;
+  --ifm-line-height-base: var(--twenty-body-regular-line-height);
+  --ifm-font-weight-base: var(--twenty-body-regular-font-weight);
+  --ifm-color-primary: #11181c;
+  --ifm-code-font-size: 95%;
+  --docsearch-key-gradient: none !important;
+  --docsearch-key-shadow: 0 0 0 0.5px var(--docsearch-muted-color) !important;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-toc-padding-vertical: 0.5rem;
+  --ifm-breadcrumb-border-radius: 8px;
+  --ifm-navbar-link-color: #687076;
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #fff;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  font-size: 16px;
+}
+
+.DocSearch-Button {
+  border-radius: 8px !important;
+}
+
+.navbar__items--right svg > path {
+  fill: #687076 !important;
+}
+
+.DocSearch-Button-Placeholder {
+  padding: 0 100px 0 6px !important;
+}
