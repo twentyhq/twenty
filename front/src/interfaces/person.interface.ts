@@ -32,7 +32,7 @@ export type GraphqlPerson = {
 export const mapPerson = (person: GraphqlPerson): Person => ({
   fullName: `${person.firstname} ${person.lastname}`,
   creationDate: new Date(person.created_at),
-  pipe: { name: 'coucou', id: 1, icon: 'faUser' },
+  pipe: { name: 'coucou', id: 1, icon: '💰' },
   ...person,
   company: {
     id: 1,

@@ -16,6 +16,7 @@ import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlig
 import CompanyChip from '../../components/chips/CompanyChip';
 import PersonChip from '../../components/chips/PersonChip';
 import { Person } from '../../interfaces/person.interface';
+import PipeChip from '../../components/chips/PipeChip';
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [
@@ -86,7 +87,10 @@ export const peopleColumns = [
   columnHelper.accessor('pipe', {
     header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleHistory} />,
     cell: (props) => (
-      <ClickableCell href="#">{props.row.original.pipe.name}</ClickableCell>
+      <PipeChip
+        name={props.row.original.pipe.name}
+        picture={props.row.original.pipe.icon}
+      />
     ),
   }),
   columnHelper.accessor('city', {
