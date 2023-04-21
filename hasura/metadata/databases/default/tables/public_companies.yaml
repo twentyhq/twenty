@@ -1,0 +1,14 @@
+table:
+  name: companies
+  schema: public
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - workspace_id
+        - company_domain
+        - company_name
+        - created_at
+        - updated_at
+      filter: {}

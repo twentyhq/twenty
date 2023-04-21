@@ -1,0 +1,25 @@
+table:
+  name: persons
+  schema: public
+object_relationships:
+  - name: company
+    using:
+      foreign_key_constraint_on: company_id
+  - name: workspace
+    using:
+      foreign_key_constraint_on: workspace_id
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - company_id
+        - id
+        - workspace_id
+        - city
+        - email
+        - firstname
+        - lastname
+        - phone
+        - created_at
+        - updated_at
+      filter: {}

@@ -9,7 +9,7 @@ services:
       - "6006:6006"
     environment:
       - REACT_APP_API_URL=${FRONT_REACT_APP_API_URL}
-      - REACT_APP_LOGIN_PROVIDER_URL=${FRONT_REACT_APP_LOGIN_PROVIDER_URL}
+      - REACT_APP_AUTH_URL=${FRONT_REACT_APP_AUTH_URL}
     volumes:
       - ../../front:/app/front
       - twenty_node_modules_front:/app/front/node_modules
