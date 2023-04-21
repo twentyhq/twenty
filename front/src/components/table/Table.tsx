@@ -16,7 +16,7 @@ type OwnProps<TData> = {
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: IconProp;
-  onSortsUpdate?: React.Dispatch<React.SetStateAction<SortType[]>>;
+  onSortsUpdate?: (sorts: Array<SortType>) => void;
 };
 
 const StyledTable = styled.table`

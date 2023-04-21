@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { peopleColumns } from './people-table';
 import { gql, useQuery } from '@apollo/client';
 import { GraphqlPerson, mapPerson } from '../../interfaces/person.interface';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SortType } from '../../components/table/table-header/SortAndFilterBar';
 
 const StyledPeopleContainer = styled.div`
@@ -34,7 +34,7 @@ export const GET_PEOPLE = gql`
 // @TODO get those types from generated-code person-order-by
 type OrderBy = Record<string, 'asc' | 'desc'>;
 
-const defaultOrderBy = [
+const defaultOrderBy: OrderBy[] = [
   {
     created_at: 'desc',
   },
@@ -50,7 +50,13 @@ const reduceSortsToOrderBy = (sorts: Array<SortType>): OrderBy[] => {
 
 function People() {
   const [sorts, setSorts] = useState([] as Array<SortType>);
-  const orderBy = sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy;
+  const [orderBy, setOrderBy] = useState(defaultOrderBy);
+
+  const updateSorts = (sorts: Array<SortType>) => {
+    setSorts(sorts);
+    setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
+  };
+
   const { data } = useQuery<{ person: GraphqlPerson[] }>(GET_PEOPLE, {
     variables: { orderBy: orderBy },
   });
@@ -58,15 +64,15 @@ function People() {
   return (
     <WithTopBarContainer title="People" icon={faUser}>
       <StyledPeopleContainer>
-        {data && (
+        {
           <Table
-            data={data.person.map(mapPerson)}
+            data={data ? data.person.map(mapPerson) : []}
             columns={peopleColumns}
             viewName="All People"
             viewIcon={faList}
-            onSortsUpdate={setSorts}
+            onSortsUpdate={updateSorts}
           />
-        )}
+        }
       </StyledPeopleContainer>
     </WithTopBarContainer>
   );
