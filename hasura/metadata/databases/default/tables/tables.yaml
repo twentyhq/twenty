@@ -7,5 +7,5 @@
 - "!include auth_user_security_keys.yaml"
 - "!include auth_users.yaml"
 - "!include public_companies.yaml"
-- "!include public_persons.yaml"
+- "!include public_people.yaml"
 - "!include public_workspaces.yaml"

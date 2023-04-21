@@ -37,7 +37,7 @@ jest.mock('@apollo/client', () => {
         },
       },
       isLoading: false,
-      error: {},
+      error: null,
     }),
   };
 });

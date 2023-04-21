@@ -15,18 +15,18 @@ export const GET_TOKEN = gql`
 
 export const useRefreshToken = () => {
   const refreshToken = localStorage.getItem('refreshToken');
-  const { data, loading } = useQuery(GET_TOKEN, {
+  const { data, loading, error } = useQuery(GET_TOKEN, {
     client: authClient,
     variables: { input: { refreshToken } },
   });
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !error) {
       const accessToken = data.token.accessToken;
-      if (refreshToken && accessToken) {
+      if (accessToken) {
         localStorage.setItem('accessToken', accessToken || '');
       }
     }
-  }, [data, refreshToken, loading]);
+  }, [data, refreshToken, loading, error]);
 
-  return { loading };
+  return { loading, error };
 };
