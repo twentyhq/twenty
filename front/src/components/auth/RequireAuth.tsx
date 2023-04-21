@@ -1,20 +1,19 @@
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHasAccessToken } from '../../hooks/auth/useHasAccessToken';
+import { useEffect } from 'react';
 
-function Login() {
+function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
   const hasAccessToken = useHasAccessToken();
+
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!hasAccessToken) {
-      window.location.href =
-        process.env.REACT_APP_AUTH_URL + '/signin/provider/google' || '';
-    } else {
-      navigate('/');
+      navigate('/auth/login');
     }
   }, [hasAccessToken, navigate]);
 
-  return <></>;
+  return children;
 }
 
-export default Login;
+export default RequireAuth;

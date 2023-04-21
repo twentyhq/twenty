@@ -5,6 +5,7 @@ import AuthCallback from './pages/auth/Callback';
 import Login from './pages/auth/Login';
 import AppLayout from './layout/AppLayout';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import RequireAuth from './components/auth/RequireAuth';
 
 function App() {
   const user = {
@@ -25,9 +26,30 @@ function App() {
       {
         <AppLayout user={user} workspace={workspace}>
           <Routes>
-            <Route path="/" element={<Navigate to="/people" replace />} />
-            <Route path="/people" element={<People />} />
-            <Route path="/companies" element={<Companies />} />
+            <Route
+              path="/"
+              element={
+                <RequireAuth>
+                  <Navigate to="/people" replace />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/people"
+              element={
+                <RequireAuth>
+                  <People />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/companies"
+              element={
+                <RequireAuth>
+                  <Companies />
+                </RequireAuth>
+              }
+            />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/auth/login" element={<Login />} />
           </Routes>
