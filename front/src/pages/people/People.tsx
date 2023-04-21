@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { peopleColumns } from './people-table';
 import { gql, useQuery } from '@apollo/client';
 import { GraphqlPerson, mapPerson } from '../../interfaces/person.interface';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SortType } from '../../components/table/table-header/SortAndFilterBar';
 
 const StyledPeopleContainer = styled.div`
@@ -49,7 +49,7 @@ const reduceSortsToOrderBy = (sorts: Array<SortType>): OrderBy[] => {
 };
 
 function People() {
-  const [sorts, setSorts] = useState([] as Array<SortType>);
+  const [, setSorts] = useState([] as Array<SortType>);
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
 
   const updateSorts = (sorts: Array<SortType>) => {
