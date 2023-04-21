@@ -1,15 +1,10 @@
 import { render } from '@testing-library/react';
 
 import { CallbackDefault } from '../__stories__/Callback.stories';
+import { act } from 'react-dom/test-utils';
 
-jest.mock('../../../hooks/auth/useRefreshToken', () => ({
-  useRefreshToken: () => ({ loading: false }),
-}));
-
-it('Checks the Callback page render', () => {
-  render(<CallbackDefault />);
-});
-
-afterEach(() => {
-  jest.clearAllMocks();
+it('Checks the Callback page render', async () => {
+  await act(async () => {
+    render(<CallbackDefault />);
+  });
 });
