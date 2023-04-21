@@ -13,7 +13,7 @@ Twenty development stack is composed of 3 different layers
 
 ## Setup env variables and npmrc variables
 
-1. `cp ./front/.env.example ./front/.env` and fill with values
+1. `cp ./infra/dev/.env.example ./infra/dev/.env` and fill with values
 2. `cp ./front/.npmrc.example ./front/.npmrc` and fill with values
 
 ## Development environment setup with docker-compose (Recommended)

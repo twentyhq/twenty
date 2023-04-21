@@ -1,6 +1,8 @@
 import React from 'react';
 import People from './pages/people/People';
 import Companies from './pages/companies/Companies';
+import AuthCallback from './pages/auth/Callback';
+import Login from './pages/auth/Login';
 import AppLayout from './layout/AppLayout';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
@@ -26,6 +28,8 @@ function App() {
             <Route path="/" element={<Navigate to="/people" replace />} />
             <Route path="/people" element={<People />} />
             <Route path="/companies" element={<Companies />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/auth/login" element={<Login />} />
           </Routes>
         </AppLayout>
       }
