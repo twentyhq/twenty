@@ -4,12 +4,12 @@ import DropdownButton from './DropdownButton';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faCalendar } from '@fortawesome/pro-regular-svg-icons';
 import SortAndFilterBar, { SortType } from './SortAndFilterBar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type OwnProps = {
   viewName: string;
   viewIcon?: IconProp;
-  onSortsUpdate?: React.Dispatch<React.SetStateAction<SortType[]>>;
+  onSortsUpdate?: (sorts: Array<SortType>) => void;
 };
 
 const StyledContainer = styled.div`
@@ -53,14 +53,16 @@ function TableHeader({ viewName, viewIcon, onSortsUpdate }: OwnProps) {
         label: 'Created at',
         order: 'asc',
         id: sortId,
-      },
+      } as SortType,
     ]);
-    onSortsUpdate && onSortsUpdate(sorts);
   };
-
   const onSortItemUnSelect = (sortId: string) => {
     setSorts([]);
   };
+
+  useEffect(() => {
+    onSortsUpdate && onSortsUpdate(sorts);
+  }, [sorts, onSortsUpdate]);
 
   const sortsAvailable: Array<SortType> = [
     {
