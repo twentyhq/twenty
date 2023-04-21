@@ -24,6 +24,26 @@ const StyledBar = styled.div`
   height: 40px;
 `;
 
+const StyledCancelButton = styled.button`
+  margin-left: auto;
+  border: none;
+  background-color: inherit;
+  padding: ${(props) => {
+    const horiz = props.theme.spacing(2);
+    const vert = props.theme.spacing(1);
+    return `${vert} ${horiz} ${vert} ${horiz}`;
+  }};
+  color: ${(props) => props.theme.text40};
+  font-weight: 500;
+  margin-right: ${(props) => props.theme.spacing(2)};
+  cursor: pointer;
+
+  &:hover {
+    border-radius: ${(props) => props.theme.spacing(1)};
+    background-color: ${(props) => props.theme.tertiaryBackground};
+  }
+`;
+
 function SortAndFilterBar({ sorts, onRemoveSort }: OwnProps) {
   return (
     <StyledBar>
@@ -38,6 +58,14 @@ function SortAndFilterBar({ sorts, onRemoveSort }: OwnProps) {
           />
         );
       })}
+      {sorts.length > 0 && (
+        <StyledCancelButton
+          data-testid={'cancel-button'}
+          onClick={() => sorts.forEach((i) => onRemoveSort(i.id))}
+        >
+          Cancel
+        </StyledCancelButton>
+      )}
     </StyledBar>
   );
 }
