@@ -55,3 +55,11 @@ html {
 .DocSearch-Button-Placeholder {
   padding: 0 100px 0 6px !important;
 }
+
+.theme-edit-this-page {
+  font-size: 70%;
+}
+.theme-edit-this-page svg {
+  height: 14px;
+  width: 14px;
+}
