@@ -1,5 +1,5 @@
 import { QueryResult, gql, useQuery } from '@apollo/client';
-import { GraphqlPerson } from '../../interfaces/person.interface';
+import { GraphqlQueryPerson } from '../../interfaces/person.interface';
 
 export type OrderBy = Record<string, 'asc' | 'desc'>;
 
@@ -14,6 +14,7 @@ export const GET_PEOPLE = gql`
       lastname
       created_at
       company {
+        id
         company_name
         company_domain
       }
@@ -23,8 +24,8 @@ export const GET_PEOPLE = gql`
 
 export function usePeopleQuery(
   orderBy: OrderBy[],
-): QueryResult<{ people: GraphqlPerson[] }> {
-  return useQuery<{ people: GraphqlPerson[] }>(GET_PEOPLE, {
+): QueryResult<{ people: GraphqlQueryPerson[] }> {
+  return useQuery<{ people: GraphqlQueryPerson[] }>(GET_PEOPLE, {
     variables: { orderBy },
   });
 }

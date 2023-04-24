@@ -1,6 +1,6 @@
-import { GraphqlPerson } from '../../interfaces/person.interface';
+import { GraphqlQueryPerson } from '../../interfaces/person.interface';
 
-export const defaultData: Array<GraphqlPerson> = [
+export const defaultData: Array<GraphqlQueryPerson> = [
   {
     id: 1,
     __typename: 'Person',
@@ -8,6 +8,7 @@ export const defaultData: Array<GraphqlPerson> = [
     lastname: 'Prot',
     email: 'alexandre@qonto.com',
     company: {
+      id: 1,
       company_name: 'Qonto',
       company_domain: 'qonto.com',
       __typename: 'Company',
@@ -24,6 +25,7 @@ export const defaultData: Array<GraphqlPerson> = [
     lastname: 'Prot',
     email: 'alexandre@qonto.com',
     company: {
+      id: 1,
       company_name: 'LinkedIn',
       company_domain: 'linkedin.com',
       __typename: 'Company',
@@ -40,6 +42,7 @@ export const defaultData: Array<GraphqlPerson> = [
     lastname: 'Prot',
     email: 'alexandre@qonto.com',
     company: {
+      id: 1,
       company_name: 'Sequoia',
       company_domain: 'sequoiacap.com',
       __typename: 'Company',
@@ -57,6 +60,7 @@ export const defaultData: Array<GraphqlPerson> = [
     lastname: 'Prot',
     email: 'alexandre@qonto.com',
     company: {
+      id: 1,
       company_name: 'Facebook',
       company_domain: 'facebook.com',
       __typename: 'Company',

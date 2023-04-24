@@ -12,6 +12,7 @@ describe('mapPerson', () => {
       created_at: '',
       company: {
         __typename: '',
+        id: 1,
         company_name: '',
         company_domain: '',
       },

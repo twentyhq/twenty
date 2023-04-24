@@ -15,9 +15,11 @@ import Checkbox from '../../components/form/Checkbox';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import CompanyChip from '../../components/chips/CompanyChip';
 import PersonChip from '../../components/chips/PersonChip';
-import { GraphqlPerson, Person } from '../../interfaces/person.interface';
+import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
 import { SortType } from '../../components/table/table-header/SortAndFilterBar';
+import EditableCell from '../../components/table/EditableCell';
+import { updatePerson } from '../../services/people';
 
 export const sortsAvailable = [
   {
@@ -34,9 +36,7 @@ export const sortsAvailable = [
     icon: faCalendar,
   },
   { id: 'city', label: 'City', order: 'asc', icon: faMapPin },
-] satisfies Array<SortType<keyof GraphqlPerson>>;
-import EditableCell from '../../components/table/EditableCell';
-import { updatePerson } from '../../services/people';
+] satisfies Array<SortType<keyof GraphqlQueryPerson>>;
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [
