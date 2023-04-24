@@ -15,6 +15,7 @@ const StyledDropdownButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
+  z-index: 1;
 `;
 
 type StyledDropdownButtonProps = {
@@ -37,6 +38,7 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
 
 const StyledDropdown = styled.ul`
   display: flex;
+  flex-direction: column;
   position: absolute;
   top: 14px;
   right: 0;
@@ -55,7 +57,6 @@ const StyledDropdownItem = styled.li`
   margin: 2px;
   background: ${(props) => props.theme.primaryBackground};
   cursor: pointer;
-  width: 100%;
   border-radius: 4px;
   color: ${(props) => props.theme.text60};
 
