@@ -1,14 +1,9 @@
-import {
-  faUser,
-  faList,
-  faCalendar,
-  faEnvelope,
-} from '@fortawesome/pro-regular-svg-icons';
+import { faUser, faList } from '@fortawesome/pro-regular-svg-icons';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
 import styled from '@emotion/styled';
-import { peopleColumns } from './people-table';
-import { GraphqlPerson, mapPerson } from '../../interfaces/person.interface';
+import { peopleColumns, sortsAvailable } from './people-table';
+import { mapPerson } from '../../interfaces/person.interface';
 import { useCallback, useState } from 'react';
 import { SortType } from '../../components/table/table-header/SortAndFilterBar';
 import { OrderBy, usePeopleQuery } from '../../services/people';
@@ -31,21 +26,6 @@ const reduceSortsToOrderBy = (sorts: Array<SortType>): OrderBy[] => {
   }, {} as OrderBy);
   return [mappedSorts];
 };
-
-const sortsAvailable = [
-  {
-    id: 'created_at',
-    label: 'Created at',
-    order: 'asc',
-    icon: faCalendar,
-  },
-  {
-    id: 'email',
-    label: 'Email',
-    order: 'asc',
-    icon: faEnvelope,
-  },
-] satisfies Array<SortType<keyof GraphqlPerson>>;
 
 function People() {
   const [, setSorts] = useState([] as Array<SortType>);
