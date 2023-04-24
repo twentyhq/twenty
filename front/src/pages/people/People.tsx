@@ -32,7 +32,7 @@ const reduceSortsToOrderBy = (sorts: Array<SortType>): OrderBy[] => {
   return [mappedSorts];
 };
 
-const sortsAvailable: Array<SortType<keyof GraphqlPerson>> = [
+const sortsAvailable = [
   {
     id: 'created_at',
     label: 'Created at',
@@ -45,7 +45,7 @@ const sortsAvailable: Array<SortType<keyof GraphqlPerson>> = [
     order: 'asc',
     icon: faEnvelope,
   },
-];
+] satisfies Array<SortType<keyof GraphqlPerson>>;
 
 function People() {
   const [, setSorts] = useState([] as Array<SortType>);
