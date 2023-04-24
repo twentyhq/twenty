@@ -71,12 +71,12 @@ const StyledDropdownItem = styled.li`
   padding: ${(props) => props.theme.spacing(2)}
     calc(${(props) => props.theme.spacing(2)} - 2px);
   margin: 2px;
-  background: ${(props) => props.theme.primaryBackground};
+  background: rgba(0, 0, 0, 0);
   cursor: pointer;
   color: ${(props) => props.theme.text60};
 
   &:hover {
-    filter: brightness(0.95);
+    background: rgba(0, 0, 0, 0.04);
   }
 `;
 
