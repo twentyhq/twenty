@@ -1,4 +1,9 @@
-import { faUser, faList, faCalendar } from '@fortawesome/pro-regular-svg-icons';
+import {
+  faUser,
+  faList,
+  faCalendar,
+  faEnvelope,
+} from '@fortawesome/pro-regular-svg-icons';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
 import styled from '@emotion/styled';
@@ -27,6 +32,21 @@ const reduceSortsToOrderBy = (sorts: Array<SortType>): OrderBy[] => {
   return [mappedSorts];
 };
 
+const sortsAvailable: Array<SortType<keyof GraphqlPerson>> = [
+  {
+    id: 'created_at',
+    label: 'Created at',
+    order: 'asc',
+    icon: faCalendar,
+  },
+  {
+    id: 'email',
+    label: 'Email',
+    order: 'asc',
+    icon: faEnvelope,
+  },
+];
+
 function People() {
   const [, setSorts] = useState([] as Array<SortType>);
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
@@ -37,15 +57,6 @@ function People() {
   }, []);
 
   const { data } = usePeopleQuery(orderBy);
-
-  const sortsAvailable: Array<SortType<keyof GraphqlPerson>> = [
-    {
-      id: 'created_at',
-      label: 'Created at',
-      order: 'asc',
-      icon: faCalendar,
-    },
-  ];
 
   return (
     <WithTopBarContainer title="People" icon={faUser}>

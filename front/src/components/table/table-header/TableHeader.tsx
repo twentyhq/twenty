@@ -59,7 +59,7 @@ function TableHeader({
           label: 'Created at',
           order: 'asc',
           id: sortId,
-        } as SortType,
+        } satisfies SortType,
       ];
       setSorts(newSorts);
       onSortsUpdate && onSortsUpdate(newSorts);
