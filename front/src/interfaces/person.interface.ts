@@ -2,6 +2,7 @@ import { Company } from './company.interface';
 import { Pipe } from './pipe.interface';
 
 export type Person = {
+  id: number;
   fullName: string;
   picture?: string;
   email: string;
@@ -29,7 +30,19 @@ export type GraphqlPerson = {
   __typename: string;
 };
 
-export const mapPerson = (person: GraphqlPerson): Person => ({
+export type GraphqlMutationPerson = {
+  city: string;
+  company_id?: number;
+  created_at: string;
+  email: string;
+  firstname: string;
+  id: number;
+  lastname: string;
+  phone: string;
+  __typename: string;
+};
+
+export const mapPerson = (person: GraphqlQueryPerson): Person => ({
   fullName: `${person.firstname} ${person.lastname}`,
   creationDate: new Date(person.created_at),
   pipe: { name: 'coucou', id: 1, icon: '💰' },
@@ -40,4 +53,13 @@ export const mapPerson = (person: GraphqlPerson): Person => ({
     domain: person.company.company_domain,
   },
   countryCode: 'FR',
+});
+
+export const mapGqlPerson = (person: Person): GraphqlMutationPerson => ({
+  firstname: person.fullName.split(' ').shift() || '',
+  lastname: person.fullName.split(' ').slice(1).join(' '),
+  created_at: person.creationDate.toUTCString(),
+  company_id: person.company.id,
+  ...(person as Omit<Person, 'company'>),
+  __typename: 'People',
 });
