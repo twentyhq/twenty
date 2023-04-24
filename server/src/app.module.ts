@@ -12,7 +12,7 @@ import { UserModule } from './user/user.module';
     TerminusModule,
     HasuraModule.forRoot(HasuraModule, {
       webhookConfig: {
-        secretFactory: process.env.HASURA_EVENT_HANDLER_SECRET_HEADER,
+        secretFactory: process.env.HASURA_EVENT_HANDLER_SECRET_HEADER || '',
         secretHeader: 'secret-header',
       },
     }),
