@@ -120,3 +120,24 @@ array_relationships:
         table:
           name: user_providers
           schema: auth
+  - name: workspace_member
+    using:
+      foreign_key_constraint_on:
+        column: user_id
+        table:
+          name: workspace_members
+          schema: public
+event_triggers:
+  - name: user-created
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    retry_conf:
+      interval_sec: 10
+      num_retries: 0
+      timeout_sec: 60
+    webhook: '{{HASURA_EVENT_HANDLER_URL}}'
+    headers:
+      - name: secret-header
+        value: secret

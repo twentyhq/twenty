@@ -28,22 +28,24 @@ services:
     - "postgres"
     restart: always
     environment:
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/hasura
-      HASURA_GRAPHQL_PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/default
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: ${HASURA_GRAPHQL_METADATA_DATABASE_URL}
+      HASURA_GRAPHQL_PG_DATABASE_URL: ${HASURA_GRAPHQL_PG_DATABASE_URL}
       HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
-      HASURA_GRAPHQL_ADMIN_SECRET: secret
-      HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "jwt-very-long-hard-to-guess-secret"}'
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}
+      HASURA_EVENT_HANDLER_URL: ${HASURA_EVENT_HANDLER_URL}
   hasura-auth:
     image: nhost/hasura-auth:0.19.1
     ports:
     - "4000:4000"
     environment:
-      HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS256", "key": "jwt-very-long-hard-to-guess-secret"}'
-      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/default
-      HASURA_GRAPHQL_GRAPHQL_URL: http://twenty-hasura:8080/v1/graphql
-      HASURA_GRAPHQL_ADMIN_SECRET: secret
+      HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}
+      HASURA_GRAPHQL_DATABASE_URL: ${HASURA_GRAPHQL_PG_DATABASE_URL}
+      HASURA_GRAPHQL_GRAPHQL_URL: ${HASURA_AUTH_GRAPHQL_URL}
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      AUTH_JWT_CUSTOM_CLAIMS: '{"workspace-id":"workspace_member.workspace_id"}'
       npm_package_version: '0'
       AUTH_SMTP_HOST: mailhog
       AUTH_SMTP_PORT: 1025
@@ -78,6 +80,9 @@ services:
     volumes:
       - ../../server:/app/server
       - twenty_node_modules_server:/app/server/node_modules
+    environment:
+      HASURA_EVENT_HANDLER_SECRET_HEADER: ${SERVER_HASURA_EVENT_HANDLER_SECRET_HEADER}
+      SERVER_DATABASE_URL: ${SERVER_DATABASE_URL}
     depends_on:
       - postgres
   postgres:
@@ -85,7 +90,7 @@ services:
     volumes:
     - db_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
 volumes:
