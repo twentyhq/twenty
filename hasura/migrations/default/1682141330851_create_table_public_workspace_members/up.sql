@@ -1,1 +1,0 @@
-CREATE TABLE "public"."workspace_members" ("id" serial NOT NULL, "user_id" uuid NOT NULL, "workspace_id" integer NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON UPDATE restrict ON DELETE restrict, FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON UPDATE restrict ON DELETE restrict, UNIQUE ("id"), UNIQUE ("user_id"));
