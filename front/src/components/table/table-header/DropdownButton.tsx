@@ -8,6 +8,7 @@ import { SortType } from './SortAndFilterBar';
 type OwnProps = {
   label: string;
   options: Array<SortType>;
+  isActive: boolean;
   onSortSelect?: (id: string) => void;
 };
 
@@ -20,6 +21,7 @@ const StyledDropdownButtonContainer = styled.div`
 
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
+  isActive: boolean;
 };
 
 const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
@@ -27,6 +29,7 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   margin-left: ${(props) => props.theme.spacing(3)};
   cursor: pointer;
   background: ${(props) => props.theme.primaryBackground};
+  color: ${(props) => (props.isActive ? props.theme.blue : 'none')};
   padding: ${(props) => props.theme.spacing(1)};
   border-radius: 4px;
   filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};
@@ -85,7 +88,7 @@ const StyledIcon = styled.div`
   margin-right: ${(props) => props.theme.spacing(1)};
 `;
 
-function DropdownButton({ label, options, onSortSelect }: OwnProps) {
+function DropdownButton({ label, options, onSortSelect, isActive }: OwnProps) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const onButtonClick = () => {
@@ -101,7 +104,11 @@ function DropdownButton({ label, options, onSortSelect }: OwnProps) {
 
   return (
     <StyledDropdownButtonContainer>
-      <StyledDropdownButton isUnfolded={isUnfolded} onClick={onButtonClick}>
+      <StyledDropdownButton
+        isUnfolded={isUnfolded}
+        onClick={onButtonClick}
+        isActive={isActive}
+      >
         {label}
       </StyledDropdownButton>
       {isUnfolded && options.length > 0 && (

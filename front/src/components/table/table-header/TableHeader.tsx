@@ -86,13 +86,14 @@ function TableHeader({
           {viewName}
         </StyledViewSection>
         <StyledFilters>
-          <DropdownButton label="Filter" options={[]} />
+          <DropdownButton label="Filter" options={[]} isActive={false} />
           <DropdownButton
             label="Sort"
             options={sortsAvailable}
             onSortSelect={onSortItemSelect}
+            isActive={sorts.length > 0}
           />
-          <DropdownButton label="Settings" options={[]} />
+          <DropdownButton label="Settings" options={[]} isActive={false} />
         </StyledFilters>
       </StyledTableHeader>
       {sorts.length > 0 && (
