@@ -10,7 +10,6 @@ import TableHeader from './table-header/TableHeader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import styled from '@emotion/styled';
 import { SortType } from './table-header/SortAndFilterBar';
-import { faCalendar } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps<TData> = {
   data: Array<TData>;
@@ -18,6 +17,7 @@ type OwnProps<TData> = {
   viewName: string;
   viewIcon?: IconProp;
   onSortsUpdate?: (sorts: Array<SortType>) => void;
+  sortsAvailable?: Array<SortType>;
 };
 
 const StyledTable = styled.table`
@@ -69,6 +69,7 @@ function Table<TData>({
   viewName,
   viewIcon,
   onSortsUpdate,
+  sortsAvailable,
 }: OwnProps<TData>) {
   const table = useReactTable({
     data,
@@ -76,22 +77,13 @@ function Table<TData>({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const sortsAvailable: Array<SortType> = [
-    {
-      id: 'created_at',
-      label: 'Created at',
-      order: 'asc',
-      icon: faCalendar,
-    },
-  ];
-
   return (
     <StyledTableWithHeader>
       <TableHeader
         viewName={viewName}
         viewIcon={viewIcon}
         onSortsUpdate={onSortsUpdate}
-        sortsAvailable={sortsAvailable}
+        sortsAvailable={sortsAvailable || []}
       />
       <StyledTable>
         <thead>

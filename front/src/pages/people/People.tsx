@@ -1,4 +1,4 @@
-import { faUser, faList } from '@fortawesome/pro-regular-svg-icons';
+import { faUser, faList, faCalendar } from '@fortawesome/pro-regular-svg-icons';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
 import styled from '@emotion/styled';
@@ -38,6 +38,15 @@ function People() {
 
   const { data } = usePeopleQuery(orderBy);
 
+  const sortsAvailable: Array<SortType> = [
+    {
+      id: 'created_at',
+      label: 'Created at',
+      order: 'asc',
+      icon: faCalendar,
+    },
+  ];
+
   return (
     <WithTopBarContainer title="People" icon={faUser}>
       <StyledPeopleContainer>
@@ -48,6 +57,7 @@ function People() {
             viewName="All People"
             viewIcon={faList}
             onSortsUpdate={updateSorts}
+            sortsAvailable={sortsAvailable}
           />
         }
       </StyledPeopleContainer>
