@@ -30,5 +30,8 @@ export const refreshAccessToken = async () => {
   if (response.ok) {
     const { accessToken } = await response.json();
     localStorage.setItem('accessToken', accessToken);
+  } else {
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('accessToken');
   }
 };
