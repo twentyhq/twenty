@@ -14,10 +14,11 @@ export type Person = {
   countryCode: string;
 };
 
-export type GraphqlPerson = {
+export type GraphqlQueryPerson = {
   city: string;
   company: {
     __typename: string;
+    id: number;
     company_name: string;
     company_domain: string;
   };
@@ -48,7 +49,7 @@ export const mapPerson = (person: GraphqlQueryPerson): Person => ({
   pipe: { name: 'coucou', id: 1, icon: '💰' },
   ...person,
   company: {
-    id: 1,
+    id: person.company.id,
     name: person.company.company_name,
     domain: person.company.company_domain,
   },
