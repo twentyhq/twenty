@@ -1,4 +1,4 @@
-import { mapPerson } from './person.interface';
+import { mapGqlPerson, mapPerson } from './person.interface';
 
 describe('mapPerson', () => {
   it('should map person', () => {
@@ -19,5 +19,28 @@ describe('mapPerson', () => {
       __typename: '',
     });
     expect(person.fullName).toBe('John Doe');
+  });
+
+  it('should map person back', () => {
+    const person = mapGqlPerson({
+      id: 1,
+      fullName: 'John Doe',
+      email: '',
+      phone: '',
+      city: '',
+      company: {
+        id: 1,
+        name: '',
+        domain: '',
+      },
+      creationDate: new Date(),
+      pipe: {
+        id: 3,
+        name: '',
+        icon: '',
+      },
+      countryCode: '',
+    });
+    expect(person.firstname).toBe('John');
   });
 });
