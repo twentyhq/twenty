@@ -4,9 +4,9 @@ WORKDIR /app/server
 COPY ./server/package.json ./
 COPY ./server/package-lock.json ./
 RUN npm install
-RUN npx prisma generate
 
 COPY ./server .
+RUN npx prisma generate
 
 RUN npm run build
 
