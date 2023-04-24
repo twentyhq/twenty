@@ -3,7 +3,7 @@ import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
 import styled from '@emotion/styled';
 import { peopleColumns } from './people-table';
-import { mapPerson } from '../../interfaces/person.interface';
+import { GraphqlPerson, mapPerson } from '../../interfaces/person.interface';
 import { useState } from 'react';
 import { SortType } from '../../components/table/table-header/SortAndFilterBar';
 import { OrderBy, usePeopleQuery } from '../../services/people';
@@ -38,7 +38,7 @@ function People() {
 
   const { data } = usePeopleQuery(orderBy);
 
-  const sortsAvailable: Array<SortType> = [
+  const sortsAvailable: Array<SortType<keyof GraphqlPerson>> = [
     {
       id: 'created_at',
       label: 'Created at',
