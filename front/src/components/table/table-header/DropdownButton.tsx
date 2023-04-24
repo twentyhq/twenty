@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, useRef } from 'react';
+import { useRef, ReactNode } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
 import { modalBackground } from '../../../layout/styles/themes';
 import { SortType } from './SortAndFilterBar';
@@ -10,6 +9,9 @@ type OwnProps = {
   options: Array<SortType>;
   isActive: boolean;
   onSortSelect?: (id: string) => void;
+  children?: ReactNode;
+  isUnfolded?: boolean;
+  setIsUnfolded?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const StyledDropdownButtonContainer = styled.div`
@@ -88,15 +90,20 @@ const StyledIcon = styled.div`
   margin-right: ${(props) => props.theme.spacing(1)};
 `;
 
-function DropdownButton({ label, options, onSortSelect, isActive }: OwnProps) {
-  const [isUnfolded, setIsUnfolded] = useState(false);
-
+function DropdownButton({
+  label,
+  options,
+  isActive,
+  children,
+  isUnfolded = false,
+  setIsUnfolded,
+}: OwnProps) {
   const onButtonClick = () => {
-    setIsUnfolded(!isUnfolded);
+    setIsUnfolded && setIsUnfolded(!isUnfolded);
   };
 
   const onOutsideClick = () => {
-    setIsUnfolded(false);
+    setIsUnfolded && setIsUnfolded(false);
   };
 
   const dropdownRef = useRef(null);
@@ -112,27 +119,13 @@ function DropdownButton({ label, options, onSortSelect, isActive }: OwnProps) {
         {label}
       </StyledDropdownButton>
       {isUnfolded && options.length > 0 && (
-        <StyledDropdown ref={dropdownRef}>
-          {options.map((option, index) => (
-            <StyledDropdownItem
-              key={index}
-              onClick={() => {
-                setIsUnfolded(false);
-                if (onSortSelect) {
-                  onSortSelect(option.id);
-                }
-              }}
-            >
-              <StyledIcon>
-                {option.icon && <FontAwesomeIcon icon={option.icon} />}
-              </StyledIcon>
-              {option.label}
-            </StyledDropdownItem>
-          ))}
-        </StyledDropdown>
+        <StyledDropdown ref={dropdownRef}>{children}</StyledDropdown>
       )}
     </StyledDropdownButtonContainer>
   );
 }
+
+DropdownButton.StyledDropdownItem = StyledDropdownItem;
+DropdownButton.StyledIcon = StyledIcon;
 
 export default DropdownButton;

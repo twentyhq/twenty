@@ -1,11 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
 import { SortType } from './SortAndFilterBar';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type OwnProps = {
   sorts: SortType[];
-  setSorts: any;
-  sortsAvailable: any;
+  setSorts: (sorts: SortType[]) => void;
+  sortsAvailable: SortType[];
 };
 
 export function SortDropdownButton({
@@ -13,6 +14,8 @@ export function SortDropdownButton({
   setSorts,
   sorts,
 }: OwnProps) {
+  const [isUnfolded, setIsUnfolded] = useState(false);
+
   const onSortItemSelect = useCallback(
     (sortId: string) => {
       const newSorts = [
@@ -33,6 +36,23 @@ export function SortDropdownButton({
       options={sortsAvailable}
       onSortSelect={onSortItemSelect}
       isActive={sorts.length > 0}
-    />
+      isUnfolded={isUnfolded}
+      setIsUnfolded={setIsUnfolded}
+    >
+      {sortsAvailable.map((option, index) => (
+        <DropdownButton.StyledDropdownItem
+          key={index}
+          onClick={() => {
+            setIsUnfolded(false);
+            onSortItemSelect(option.id);
+          }}
+        >
+          <DropdownButton.StyledIcon>
+            {option.icon && <FontAwesomeIcon icon={option.icon} />}
+          </DropdownButton.StyledIcon>
+          {option.label}
+        </DropdownButton.StyledDropdownItem>
+      ))}
+    </DropdownButton>
   );
 }
