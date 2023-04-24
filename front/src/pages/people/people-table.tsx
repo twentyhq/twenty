@@ -35,6 +35,8 @@ export const sortsAvailable = [
   },
   { id: 'city', label: 'City', order: 'asc', icon: faMapPin },
 ] satisfies Array<SortType<keyof GraphqlPerson>>;
+import EditableCell from '../../components/table/EditableCell';
+import { updatePerson } from '../../services/people';
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [
@@ -58,9 +60,14 @@ export const peopleColumns = [
   columnHelper.accessor('email', {
     header: () => <ColumnHead viewName="Email" viewIcon={faEnvelope} />,
     cell: (props) => (
-      <ClickableCell href={`mailto:${props.row.original.email}`}>
-        {props.row.original.email}
-      </ClickableCell>
+      <EditableCell
+        content={props.row.original.email}
+        changeHandler={(value) => {
+          const person = props.row.original;
+          person.email = value;
+          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+        }}
+      />
     ),
   }),
   columnHelper.accessor('company', {
