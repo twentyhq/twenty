@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState, useRef } from 'react';
+import { useRef, ReactNode } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
 import { modalBackground } from '../../../layout/styles/themes';
-import { SortType } from './SortAndFilterBar';
 
 type OwnProps = {
   label: string;
-  options: Array<SortType>;
-  onSortSelect?: (id: string) => void;
+  isActive: boolean;
+  children?: ReactNode;
+  isUnfolded?: boolean;
+  setIsUnfolded?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const StyledDropdownButtonContainer = styled.div`
@@ -20,6 +20,7 @@ const StyledDropdownButtonContainer = styled.div`
 
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
+  isActive: boolean;
 };
 
 const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
@@ -27,6 +28,7 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   margin-left: ${(props) => props.theme.spacing(3)};
   cursor: pointer;
   background: ${(props) => props.theme.primaryBackground};
+  color: ${(props) => (props.isActive ? props.theme.blue : 'none')};
   padding: ${(props) => props.theme.spacing(1)};
   border-radius: 4px;
   filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};
@@ -85,15 +87,19 @@ const StyledIcon = styled.div`
   margin-right: ${(props) => props.theme.spacing(1)};
 `;
 
-function DropdownButton({ label, options, onSortSelect }: OwnProps) {
-  const [isUnfolded, setIsUnfolded] = useState(false);
-
+function DropdownButton({
+  label,
+  isActive,
+  children,
+  isUnfolded = false,
+  setIsUnfolded,
+}: OwnProps) {
   const onButtonClick = () => {
-    setIsUnfolded(!isUnfolded);
+    setIsUnfolded && setIsUnfolded(!isUnfolded);
   };
 
   const onOutsideClick = () => {
-    setIsUnfolded(false);
+    setIsUnfolded && setIsUnfolded(false);
   };
 
   const dropdownRef = useRef(null);
@@ -101,31 +107,21 @@ function DropdownButton({ label, options, onSortSelect }: OwnProps) {
 
   return (
     <StyledDropdownButtonContainer>
-      <StyledDropdownButton isUnfolded={isUnfolded} onClick={onButtonClick}>
+      <StyledDropdownButton
+        isUnfolded={isUnfolded}
+        onClick={onButtonClick}
+        isActive={isActive}
+      >
         {label}
       </StyledDropdownButton>
-      {isUnfolded && options.length > 0 && (
-        <StyledDropdown ref={dropdownRef}>
-          {options.map((option, index) => (
-            <StyledDropdownItem
-              key={index}
-              onClick={() => {
-                setIsUnfolded(false);
-                if (onSortSelect) {
-                  onSortSelect(option.id);
-                }
-              }}
-            >
-              <StyledIcon>
-                {option.icon && <FontAwesomeIcon icon={option.icon} />}
-              </StyledIcon>
-              {option.label}
-            </StyledDropdownItem>
-          ))}
-        </StyledDropdown>
+      {isUnfolded && (
+        <StyledDropdown ref={dropdownRef}>{children}</StyledDropdown>
       )}
     </StyledDropdownButtonContainer>
   );
 }
+
+DropdownButton.StyledDropdownItem = StyledDropdownItem;
+DropdownButton.StyledIcon = StyledIcon;
 
 export default DropdownButton;
