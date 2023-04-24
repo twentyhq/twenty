@@ -8,6 +8,21 @@ object_relationships:
   - name: workspace
     using:
       foreign_key_constraint_on: workspace_id
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - company_id
+        - id
+        - workspace_id
+        - city
+        - email
+        - firstname
+        - lastname
+        - phone
+        - created_at
+        - updated_at
 select_permissions:
   - role: user
     permission:
@@ -22,4 +37,24 @@ select_permissions:
         - phone
         - created_at
         - updated_at
+      filter: {}
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - company_id
+        - id
+        - workspace_id
+        - city
+        - email
+        - firstname
+        - lastname
+        - phone
+        - created_at
+        - updated_at
+      filter: {}
+      check: {}
+delete_permissions:
+  - role: user
+    permission:
       filter: {}
