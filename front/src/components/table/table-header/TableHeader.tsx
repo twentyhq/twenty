@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DropdownButton from './DropdownButton';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import SortAndFilterBar, { SortType } from './SortAndFilterBar';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 type OwnProps = {
   viewName: string;
@@ -52,23 +52,29 @@ function TableHeader({
 }: OwnProps) {
   const [sorts, setSorts] = useState([] as Array<SortType>);
 
-  const onSortItemSelect = (sortId: string) => {
-    const newSorts = [
-      {
-        label: 'Created at',
-        order: 'asc',
-        id: sortId,
-      } as SortType,
-    ];
-    setSorts(newSorts);
-    onSortsUpdate && onSortsUpdate(newSorts);
-  };
+  const onSortItemSelect = useCallback(
+    (sortId: string) => {
+      const newSorts = [
+        {
+          label: 'Created at',
+          order: 'asc',
+          id: sortId,
+        } as SortType,
+      ];
+      setSorts(newSorts);
+      onSortsUpdate && onSortsUpdate(newSorts);
+    },
+    [onSortsUpdate],
+  );
 
-  const onSortItemUnSelect = (sortId: string) => {
-    const newSorts = [] as SortType[];
-    setSorts(newSorts);
-    onSortsUpdate && onSortsUpdate(newSorts);
-  };
+  const onSortItemUnSelect = useCallback(
+    (sortId: string) => {
+      const newSorts = [] as SortType[];
+      setSorts(newSorts);
+      onSortsUpdate && onSortsUpdate(newSorts);
+    },
+    [onSortsUpdate],
+  );
 
   return (
     <StyledContainer>
