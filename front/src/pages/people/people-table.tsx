@@ -21,17 +21,19 @@ import { SortType } from '../../components/table/table-header/SortAndFilterBar';
 
 export const sortsAvailable = [
   {
-    id: 'created_at',
-    label: 'Created at',
-    order: 'asc',
-    icon: faCalendar,
-  },
-  {
     id: 'email',
     label: 'Email',
     order: 'asc',
     icon: faEnvelope,
   },
+  { id: 'phone', label: 'Phone', order: 'asc', icon: faPhone },
+  {
+    id: 'created_at',
+    label: 'Created at',
+    order: 'asc',
+    icon: faCalendar,
+  },
+  { id: 'city', label: 'City', order: 'asc', icon: faMapPin },
 ] satisfies Array<SortType<keyof GraphqlPerson>>;
 
 const columnHelper = createColumnHelper<Person>();
