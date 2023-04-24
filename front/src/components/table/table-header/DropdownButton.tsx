@@ -2,13 +2,10 @@ import styled from '@emotion/styled';
 import { useRef, ReactNode } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
 import { modalBackground } from '../../../layout/styles/themes';
-import { SortType } from './SortAndFilterBar';
 
 type OwnProps = {
   label: string;
-  options: Array<SortType>;
   isActive: boolean;
-  onSortSelect?: (id: string) => void;
   children?: ReactNode;
   isUnfolded?: boolean;
   setIsUnfolded?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -92,7 +89,6 @@ const StyledIcon = styled.div`
 
 function DropdownButton({
   label,
-  options,
   isActive,
   children,
   isUnfolded = false,
@@ -118,7 +114,7 @@ function DropdownButton({
       >
         {label}
       </StyledDropdownButton>
-      {isUnfolded && options.length > 0 && (
+      {isUnfolded && (
         <StyledDropdown ref={dropdownRef}>{children}</StyledDropdown>
       )}
     </StyledDropdownButtonContainer>

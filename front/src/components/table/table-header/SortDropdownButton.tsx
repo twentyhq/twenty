@@ -17,14 +17,8 @@ export function SortDropdownButton({
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const onSortItemSelect = useCallback(
-    (sortId: string) => {
-      const newSorts = [
-        {
-          label: 'Created at',
-          order: 'asc',
-          id: sortId,
-        } satisfies SortType,
-      ];
+    (sort: SortType) => {
+      const newSorts = [sort];
       setSorts(newSorts);
     },
     [setSorts],
@@ -33,8 +27,6 @@ export function SortDropdownButton({
   return (
     <DropdownButton
       label="Sort"
-      options={sortsAvailable}
-      onSortSelect={onSortItemSelect}
       isActive={sorts.length > 0}
       isUnfolded={isUnfolded}
       setIsUnfolded={setIsUnfolded}
@@ -44,7 +36,7 @@ export function SortDropdownButton({
           key={index}
           onClick={() => {
             setIsUnfolded(false);
-            onSortItemSelect(option.id);
+            onSortItemSelect(option);
           }}
         >
           <DropdownButton.StyledIcon>
