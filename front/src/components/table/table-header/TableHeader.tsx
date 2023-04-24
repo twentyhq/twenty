@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DropdownButton from './DropdownButton';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import SortAndFilterBar, { SortType } from './SortAndFilterBar';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type OwnProps = {
   viewName: string;
@@ -53,21 +53,22 @@ function TableHeader({
   const [sorts, setSorts] = useState([] as Array<SortType>);
 
   const onSortItemSelect = (sortId: string) => {
-    setSorts([
+    const newSorts = [
       {
         label: 'Created at',
         order: 'asc',
         id: sortId,
       } as SortType,
-    ]);
-  };
-  const onSortItemUnSelect = (sortId: string) => {
-    setSorts([]);
+    ];
+    setSorts(newSorts);
+    onSortsUpdate && onSortsUpdate(newSorts);
   };
 
-  useEffect(() => {
-    onSortsUpdate && onSortsUpdate(sorts);
-  }, [sorts, onSortsUpdate]);
+  const onSortItemUnSelect = (sortId: string) => {
+    const newSorts = [] as SortType[];
+    setSorts(newSorts);
+    onSortsUpdate && onSortsUpdate(newSorts);
+  };
 
   return (
     <StyledContainer>
