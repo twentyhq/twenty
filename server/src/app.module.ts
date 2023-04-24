@@ -6,16 +6,17 @@ import { TerminusModule } from '@nestjs/terminus';
 import { HasuraModule } from '@golevelup/nestjs-hasura';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
-const path = require('path');
-
 @Module({
-  imports: [UserModule, TerminusModule, HasuraModule.forRoot(HasuraModule, {
-    webhookConfig: {
-      secretFactory: process.env.HASURA_EVENT_HANDLER_SECRET_HEADER,
-      secretHeader: 'secret-header',
-    },
-  })
-],
+  imports: [
+    UserModule,
+    TerminusModule,
+    HasuraModule.forRoot(HasuraModule, {
+      webhookConfig: {
+        secretFactory: process.env.HASURA_EVENT_HANDLER_SECRET_HEADER,
+        secretHeader: 'secret-header',
+      },
+    }),
+  ],
   controllers: [AppController, HealthController],
   providers: [AppService, UserService],
 })

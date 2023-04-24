@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, WorkspaceMember } from '@prisma/client';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from '../database/prisma.service';
 
 @Injectable()
 export class UserRepository {
@@ -8,7 +8,8 @@ export class UserRepository {
 
     async upsertWorkspaceMember(params: { data: Prisma.WorkspaceMemberCreateInput }): Promise<WorkspaceMember> {
       const { data } = params;
-      return this.prisma.workspaceMember.upsert({
+
+      return await this.prisma.workspaceMember.upsert({
         where: {
             user_id: data.user_id,
         },
