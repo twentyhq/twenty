@@ -9,6 +9,8 @@ WORKDIR /app/server
 COPY ../../server/package.json .
 COPY ../../server/package-lock.json .
 RUN npm install
+RUN npx prisma generate
+
 
 COPY ../../server .
 

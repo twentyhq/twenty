@@ -9,5 +9,7 @@ WORKDIR /app/server
 COPY ./server .
 
 RUN npm run build
+RUN npx prisma generate
+
 
 CMD ["node", "dist/main"]
