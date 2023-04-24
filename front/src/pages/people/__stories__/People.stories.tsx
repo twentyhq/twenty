@@ -1,9 +1,10 @@
 import { MemoryRouter } from 'react-router-dom';
-import People, { GET_PEOPLE } from '../People';
+import People from '../People';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
 import { MockedProvider } from '@apollo/client/testing';
 import { defaultData } from '../default-data';
+import { GET_PEOPLE } from '../../../services/people';
 
 const component = {
   title: 'People',
