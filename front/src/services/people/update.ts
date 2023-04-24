@@ -1,8 +1,8 @@
-import { gql } from '@apollo/client';
+import { ApolloClient, NormalizedCacheObject, gql } from '@apollo/client';
 import { Person, mapGqlPerson } from '../../interfaces/person.interface';
 import { apiClient } from '../../apollo';
 
-const UPDATE_PERSON = gql`
+export const UPDATE_PERSON = gql`
   mutation UpdatePeople(
     $id: Int
     $firstname: String
@@ -41,8 +41,11 @@ const UPDATE_PERSON = gql`
   }
 `;
 
-export async function updatePerson(person: Person) {
-  const result = await apiClient.mutate({
+export async function updatePerson(
+  person: Person,
+  client: ApolloClient<NormalizedCacheObject> = apiClient,
+) {
+  const result = await client.mutate({
     mutation: UPDATE_PERSON,
     variables: mapGqlPerson(person),
   });
