@@ -2,14 +2,14 @@ import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DropdownButton from './DropdownButton';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faCalendar } from '@fortawesome/pro-regular-svg-icons';
 import SortAndFilterBar, { SortType } from './SortAndFilterBar';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 type OwnProps = {
   viewName: string;
   viewIcon?: IconProp;
   onSortsUpdate?: (sorts: Array<SortType>) => void;
+  sortsAvailable: Array<SortType>;
 };
 
 const StyledContainer = styled.div`
@@ -44,34 +44,37 @@ const StyledFilters = styled.div`
   margin-right: ${(props) => props.theme.spacing(2)};
 `;
 
-function TableHeader({ viewName, viewIcon, onSortsUpdate }: OwnProps) {
+function TableHeader({
+  viewName,
+  viewIcon,
+  onSortsUpdate,
+  sortsAvailable,
+}: OwnProps) {
   const [sorts, setSorts] = useState([] as Array<SortType>);
 
-  const onSortItemSelect = (sortId: string) => {
-    setSorts([
-      {
-        label: 'Created at',
-        order: 'asc',
-        id: sortId,
-      } as SortType,
-    ]);
-  };
-  const onSortItemUnSelect = (sortId: string) => {
-    setSorts([]);
-  };
-
-  useEffect(() => {
-    onSortsUpdate && onSortsUpdate(sorts);
-  }, [sorts, onSortsUpdate]);
-
-  const sortsAvailable: Array<SortType> = [
-    {
-      id: 'created_at',
-      label: 'Created at',
-      order: 'asc',
-      icon: faCalendar,
+  const onSortItemSelect = useCallback(
+    (sortId: string) => {
+      const newSorts = [
+        {
+          label: 'Created at',
+          order: 'asc',
+          id: sortId,
+        } satisfies SortType,
+      ];
+      setSorts(newSorts);
+      onSortsUpdate && onSortsUpdate(newSorts);
     },
-  ];
+    [onSortsUpdate],
+  );
+
+  const onSortItemUnSelect = useCallback(
+    (sortId: string) => {
+      const newSorts = [] as SortType[];
+      setSorts(newSorts);
+      onSortsUpdate && onSortsUpdate(newSorts);
+    },
+    [onSortsUpdate],
+  );
 
   return (
     <StyledContainer>

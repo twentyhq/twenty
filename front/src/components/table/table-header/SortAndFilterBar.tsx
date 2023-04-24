@@ -8,10 +8,10 @@ type OwnProps = {
   onRemoveSort: (sortId: string) => void;
 };
 
-export type SortType = {
+export type SortType<SortIds = string> = {
   label: string;
   order: 'asc' | 'desc';
-  id: string;
+  id: SortIds;
   icon?: IconProp;
 };
 

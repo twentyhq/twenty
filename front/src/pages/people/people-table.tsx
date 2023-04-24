@@ -15,8 +15,26 @@ import Checkbox from '../../components/form/Checkbox';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import CompanyChip from '../../components/chips/CompanyChip';
 import PersonChip from '../../components/chips/PersonChip';
-import { Person } from '../../interfaces/person.interface';
+import { GraphqlPerson, Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
+import { SortType } from '../../components/table/table-header/SortAndFilterBar';
+
+export const sortsAvailable = [
+  {
+    id: 'email',
+    label: 'Email',
+    order: 'asc',
+    icon: faEnvelope,
+  },
+  { id: 'phone', label: 'Phone', order: 'asc', icon: faPhone },
+  {
+    id: 'created_at',
+    label: 'Created at',
+    order: 'asc',
+    icon: faCalendar,
+  },
+  { id: 'city', label: 'City', order: 'asc', icon: faMapPin },
+] satisfies Array<SortType<keyof GraphqlPerson>>;
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [
