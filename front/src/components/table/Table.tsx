@@ -10,6 +10,7 @@ import TableHeader from './table-header/TableHeader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import styled from '@emotion/styled';
 import { SortType } from './table-header/SortAndFilterBar';
+import { faCalendar } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps<TData> = {
   data: Array<TData>;
@@ -75,12 +76,22 @@ function Table<TData>({
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const sortsAvailable: Array<SortType> = [
+    {
+      id: 'created_at',
+      label: 'Created at',
+      order: 'asc',
+      icon: faCalendar,
+    },
+  ];
+
   return (
     <StyledTableWithHeader>
       <TableHeader
         viewName={viewName}
         viewIcon={viewIcon}
         onSortsUpdate={onSortsUpdate}
+        sortsAvailable={sortsAvailable}
       />
       <StyledTable>
         <thead>
