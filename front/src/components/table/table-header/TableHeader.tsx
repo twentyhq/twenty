@@ -4,6 +4,7 @@ import DropdownButton from './DropdownButton';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import SortAndFilterBar, { SortType } from './SortAndFilterBar';
 import { useCallback, useState } from 'react';
+import { SortDropdownButton } from './SortDropdownButton';
 
 type OwnProps = {
   viewName: string;
@@ -50,19 +51,12 @@ function TableHeader({
   onSortsUpdate,
   sortsAvailable,
 }: OwnProps) {
-  const [sorts, setSorts] = useState([] as Array<SortType>);
+  const [sorts, innerSetSorts] = useState([] as Array<SortType>);
 
-  const onSortItemSelect = useCallback(
-    (sortId: string) => {
-      const newSorts = [
-        {
-          label: 'Created at',
-          order: 'asc',
-          id: sortId,
-        } satisfies SortType,
-      ];
-      setSorts(newSorts);
-      onSortsUpdate && onSortsUpdate(newSorts);
+  const setSorts = useCallback(
+    (sorts: SortType[]) => {
+      innerSetSorts(sorts);
+      onSortsUpdate && onSortsUpdate(sorts);
     },
     [onSortsUpdate],
   );
@@ -70,7 +64,7 @@ function TableHeader({
   const onSortItemUnSelect = useCallback(
     (sortId: string) => {
       const newSorts = [] as SortType[];
-      setSorts(newSorts);
+      innerSetSorts(newSorts);
       onSortsUpdate && onSortsUpdate(newSorts);
     },
     [onSortsUpdate],
@@ -87,12 +81,12 @@ function TableHeader({
         </StyledViewSection>
         <StyledFilters>
           <DropdownButton label="Filter" options={[]} isActive={false} />
-          <DropdownButton
-            label="Sort"
-            options={sortsAvailable}
-            onSortSelect={onSortItemSelect}
-            isActive={sorts.length > 0}
+          <SortDropdownButton
+            setSorts={setSorts}
+            sorts={sorts}
+            sortsAvailable={sortsAvailable}
           />
+
           <DropdownButton label="Settings" options={[]} isActive={false} />
         </StyledFilters>
       </StyledTableHeader>
