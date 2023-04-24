@@ -1,6 +1,17 @@
 table:
   name: companies
   schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - id
+        - workspace_id
+        - company_domain
+        - company_name
+        - created_at
+        - updated_at
 select_permissions:
   - role: user
     permission:
@@ -11,4 +22,20 @@ select_permissions:
         - company_name
         - created_at
         - updated_at
+      filter: {}
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - workspace_id
+        - company_domain
+        - company_name
+        - created_at
+        - updated_at
+      filter: {}
+      check: {}
+delete_permissions:
+  - role: user
+    permission:
       filter: {}
