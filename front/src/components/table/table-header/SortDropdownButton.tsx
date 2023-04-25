@@ -2,11 +2,7 @@ import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
 import { SortType } from './SortAndFilterBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faAngleDown,
-  faArrowDown,
-  faArrowUp,
-} from '@fortawesome/pro-regular-svg-icons';
+import { faAngleDown } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps = {
   sorts: SortType[];
@@ -64,18 +60,18 @@ export function SortDropdownButton({
 
               <FontAwesomeIcon icon={faAngleDown} />
             </DropdownButton.StyledDropdownTopOption>,
-            ...sortsAvailable.map((option, index) => (
+            ...sortsAvailable.map((sort, index) => (
               <DropdownButton.StyledDropdownItem
                 key={index + 1}
                 onClick={() => {
                   setIsUnfolded(false);
-                  onSortItemSelect(option);
+                  onSortItemSelect(sort);
                 }}
               >
                 <DropdownButton.StyledIcon>
-                  {option.icon && <FontAwesomeIcon icon={option.icon} />}
+                  {sort.icon && <FontAwesomeIcon icon={sort.icon} />}
                 </DropdownButton.StyledIcon>
-                {option.label}
+                {sort.label}
               </DropdownButton.StyledDropdownItem>
             )),
           ]}
