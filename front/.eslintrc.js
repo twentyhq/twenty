@@ -17,7 +17,8 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js', 'codegen.js'],
+
+  ignorePatterns: ['.eslintrc.js', 'codegen.js', './src/generated/graphql.tsx'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
