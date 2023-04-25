@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 type OwnProps = {
   sorts: SortType[];
   setSorts: (sorts: SortType[]) => void;
-  sortsAvailable: SortType[];
+  sortsAvailable: Omit<SortType, 'order'>[];
 };
 
 export function SortDropdownButton({
@@ -16,9 +16,12 @@ export function SortDropdownButton({
 }: OwnProps) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
+  const [selectedOption, setSelectedOption] =
+    useState<SortType['order']>('asc');
+
   const onSortItemSelect = useCallback(
-    (sort: SortType) => {
-      const newSorts = [sort];
+    (sort: Omit<SortType, 'order'>) => {
+      const newSorts = [{ ...sort, order: selectedOption }];
       setSorts(newSorts);
     },
     [setSorts],

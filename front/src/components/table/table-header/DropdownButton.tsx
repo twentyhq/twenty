@@ -57,11 +57,11 @@ const StyledDropdown = styled.ul`
   li {
     border-radius: 2px;
 
-    &:first-child {
+    &:first-of-type {
       border-top-left-radius: var(--outer-border-radius);
       border-top-right-radius: var(--outer-border-radius);
     }
-    &:last-child {
+    &:last-of-type {
       border-bottom-left-radius: var(--outer-border-radius);
       border-bottom-right-radius: var(--outer-border-radius);
     }
