@@ -9,11 +9,11 @@ import SortAndFilterBar, {
 import { useCallback, useState } from 'react';
 import { SortDropdownButton } from './SortDropdownButton';
 
-type OwnProps<SortFields> = {
+type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: IconProp;
-  onSortsUpdate?: (sorts: Array<SelectedSortType<SortFields>>) => void;
-  sortsAvailable: Array<SortType<SortFields>>;
+  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  sortsAvailable: Array<SortType<SortField>>;
 };
 
 const StyledContainer = styled.div`
@@ -52,18 +52,18 @@ const StyledFilters = styled.div`
   margin-right: ${(props) => props.theme.spacing(2)};
 `;
 
-function TableHeader<SortFields extends string>({
+function TableHeader<SortField extends string>({
   viewName,
   viewIcon,
   onSortsUpdate,
   sortsAvailable,
-}: OwnProps<SortFields>) {
-  const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortFields>>>(
+}: OwnProps<SortField>) {
+  const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
     [],
   );
 
   const setSorts = useCallback(
-    (sorts: SelectedSortType<SortFields>[]) => {
+    (sorts: SelectedSortType<SortField>[]) => {
       innerSetSorts(sorts);
       onSortsUpdate && onSortsUpdate(sorts);
     },
@@ -72,7 +72,7 @@ function TableHeader<SortFields extends string>({
 
   const onSortItemUnSelect = useCallback(
     (sortId: string) => {
-      const newSorts = [] as SelectedSortType<SortFields>[];
+      const newSorts = [] as SelectedSortType<SortField>[];
       innerSetSorts(newSorts);
       onSortsUpdate && onSortsUpdate(newSorts);
     },
