@@ -3,16 +3,19 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import SortOrFilterChip from './SortOrFilterChip';
 import { faArrowDown, faArrowUp } from '@fortawesome/pro-regular-svg-icons';
 
-type OwnProps = {
-  sorts: Array<SortType>;
+type OwnProps<SortField> = {
+  sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: string) => void;
 };
 
 export type SortType<SortIds = string> = {
   label: string;
-  order: 'asc' | 'desc';
   id: SortIds;
   icon?: IconProp;
+};
+
+export type SelectedSortType<SortField = string> = SortType<SortField> & {
+  order: 'asc' | 'desc';
 };
 
 const StyledBar = styled.div`
@@ -44,7 +47,10 @@ const StyledCancelButton = styled.button`
   }
 `;
 
-function SortAndFilterBar({ sorts, onRemoveSort }: OwnProps) {
+function SortAndFilterBar<SortField extends string>({
+  sorts,
+  onRemoveSort,
+}: OwnProps<SortField>) {
   return (
     <StyledBar>
       {sorts.map((sort) => {

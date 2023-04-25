@@ -9,15 +9,15 @@ import {
 import TableHeader from './table-header/TableHeader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import styled from '@emotion/styled';
-import { SortType } from './table-header/SortAndFilterBar';
+import { SelectedSortType, SortType } from './table-header/SortAndFilterBar';
 
-type OwnProps<TData> = {
+type OwnProps<TData, SortField> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: IconProp;
-  onSortsUpdate?: (sorts: Array<SortType>) => void;
-  sortsAvailable?: Array<SortType>;
+  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  sortsAvailable?: Array<SortType<SortField>>;
 };
 
 const StyledTable = styled.table`
@@ -71,14 +71,14 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-function Table<TData>({
+function Table<TData, SortField extends string>({
   data,
   columns,
   viewName,
   viewIcon,
   onSortsUpdate,
   sortsAvailable,
-}: OwnProps<TData>) {
+}: OwnProps<TData, SortField>) {
   const table = useReactTable({
     data,
     columns,

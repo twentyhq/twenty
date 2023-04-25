@@ -57,11 +57,11 @@ const StyledDropdown = styled.ul`
   li {
     border-radius: 2px;
 
-    &:first-child {
+    &:first-of-type {
       border-top-left-radius: var(--outer-border-radius);
       border-top-right-radius: var(--outer-border-radius);
     }
-    &:last-child {
+    &:last-of-type {
       border-bottom-left-radius: var(--outer-border-radius);
       border-bottom-right-radius: var(--outer-border-radius);
     }
@@ -70,6 +70,7 @@ const StyledDropdown = styled.ul`
 
 const StyledDropdownItem = styled.li`
   display: flex;
+  align-items: center;
   padding: ${(props) => props.theme.spacing(2)}
     calc(${(props) => props.theme.spacing(2)} - 2px);
   margin: 2px;
@@ -82,9 +83,29 @@ const StyledDropdownItem = styled.li`
   }
 `;
 
+const StyledDropdownTopOption = styled.li`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(${(props) => props.theme.spacing(2)} + 2px)
+    calc(${(props) => props.theme.spacing(2)});
+  background: rgba(0, 0, 0, 0);
+  cursor: pointer;
+  color: ${(props) => props.theme.text60};
+  font-weight: ${(props) => props.theme.fontWeightBold};
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  border-radius: 0%;
+  border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
+`;
+
 const StyledIcon = styled.div`
   display: flex;
   margin-right: ${(props) => props.theme.spacing(1)};
+  min-width: ${(props) => props.theme.spacing(4)};
+  justify-content: center;
 `;
 
 function DropdownButton({
@@ -122,6 +143,7 @@ function DropdownButton({
 }
 
 DropdownButton.StyledDropdownItem = StyledDropdownItem;
+DropdownButton.StyledDropdownTopOption = StyledDropdownTopOption;
 DropdownButton.StyledIcon = StyledIcon;
 
 export default DropdownButton;

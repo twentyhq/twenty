@@ -15,28 +15,36 @@ import Checkbox from '../../components/form/Checkbox';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import CompanyChip from '../../components/chips/CompanyChip';
 import PersonChip from '../../components/chips/PersonChip';
-import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
+import { Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
 import { SortType } from '../../components/table/table-header/SortAndFilterBar';
 import EditableCell from '../../components/table/EditableCell';
-import { updatePerson } from '../../services/people';
+import { OrderByFields, updatePerson } from '../../services/people';
 
 export const sortsAvailable = [
   {
+    id: 'fullname',
+    label: 'People',
+    icon: faUser,
+  },
+  {
+    id: 'company_name',
+    label: 'Company',
+    icon: faBuildings,
+  },
+  {
     id: 'email',
     label: 'Email',
-    order: 'asc',
     icon: faEnvelope,
   },
-  { id: 'phone', label: 'Phone', order: 'asc', icon: faPhone },
+  { id: 'phone', label: 'Phone', icon: faPhone },
   {
     id: 'created_at',
     label: 'Created at',
-    order: 'asc',
     icon: faCalendar,
   },
-  { id: 'city', label: 'City', order: 'asc', icon: faMapPin },
-] satisfies Array<SortType<keyof GraphqlQueryPerson>>;
+  { id: 'city', label: 'City', icon: faMapPin },
+] satisfies Array<SortType<OrderByFields>>;
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [

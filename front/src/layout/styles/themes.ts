@@ -12,6 +12,8 @@ const commonTheme = {
   iconSizeMedium: '1.08rem',
   iconSizeLarge: '1.23rem',
 
+  fontWeightBold: 500,
+
   spacing: (multiplicator: number) => `${multiplicator * 4}px`,
 };
 
