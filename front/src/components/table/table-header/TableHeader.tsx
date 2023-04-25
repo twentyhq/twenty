@@ -33,6 +33,10 @@ const StyledTableHeader = styled.div`
 const StyledIcon = styled.div`
   display: flex;
   margin-right: ${(props) => props.theme.spacing(2)};
+
+  & > svg {
+    font-size: ${(props) => props.theme.fontSizeLarge};
+  }
 `;
 
 const StyledViewSection = styled.div`
@@ -75,7 +79,7 @@ function TableHeader({
       <StyledTableHeader>
         <StyledViewSection>
           <StyledIcon>
-            {viewIcon && <FontAwesomeIcon icon={viewIcon} size="lg" />}
+            {viewIcon && <FontAwesomeIcon icon={viewIcon} />}
           </StyledIcon>
           {viewName}
         </StyledViewSection>
