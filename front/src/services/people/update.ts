@@ -1,4 +1,4 @@
-import { ApolloClient, NormalizedCacheObject, gql } from '@apollo/client';
+import { FetchResult, gql } from '@apollo/client';
 import { Person, mapGqlPerson } from '../../interfaces/person.interface';
 import { apiClient } from '../../apollo';
 
@@ -43,9 +43,8 @@ export const UPDATE_PERSON = gql`
 
 export async function updatePerson(
   person: Person,
-  client: ApolloClient<NormalizedCacheObject> = apiClient,
-) {
-  const result = await client.mutate({
+): Promise<FetchResult<Person>> {
+  const result = await apiClient.mutate({
     mutation: UPDATE_PERSON,
     variables: mapGqlPerson(person),
   });
