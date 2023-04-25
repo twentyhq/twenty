@@ -72,7 +72,7 @@ services:
       - "1025:1025"
       - "8025:8025"
   twenty-server:
-    build: 
+    build:
       context: ../..
       dockerfile: ./infra/dev/server/Dockerfile
     ports:
@@ -85,6 +85,15 @@ services:
       SERVER_DATABASE_URL: ${SERVER_DATABASE_URL}
     depends_on:
       - postgres
+  twenty-docs:
+    build:
+      context: ../..
+      dockerfile: ./infra/dev/docs/Dockerfile
+    ports:
+      - "5000:3000"
+    volumes:
+      - ../../docs:/app/docs
+      - twenty_node_modules_docs:/app/docs/node_modules
   postgres:
     build: ./postgres
     volumes:
@@ -97,3 +106,4 @@ volumes:
   db_data:
   twenty_node_modules_front:
   twenty_node_modules_server:
+  twenty_node_modules_docs:
