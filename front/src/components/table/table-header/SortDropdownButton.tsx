@@ -58,6 +58,7 @@ export function SortDropdownButton({
           ))
         : [
             <DropdownButton.StyledDropdownItem
+              key={0}
               onClick={() => setIsOptionUnfolded(true)}
             >
               <DropdownButton.StyledIcon>
@@ -69,7 +70,7 @@ export function SortDropdownButton({
             </DropdownButton.StyledDropdownItem>,
             ...sortsAvailable.map((option, index) => (
               <DropdownButton.StyledDropdownItem
-                key={index}
+                key={index + 1}
                 onClick={() => {
                   setIsUnfolded(false);
                   onSortItemSelect(option);
