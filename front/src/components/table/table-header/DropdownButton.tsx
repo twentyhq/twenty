@@ -86,6 +86,8 @@ const StyledDropdownItem = styled.li`
 const StyledIcon = styled.div`
   display: flex;
   margin-right: ${(props) => props.theme.spacing(1)};
+  min-width: ${(props) => props.theme.spacing(4)};
+  justify-content: center;
 `;
 
 function DropdownButton({
