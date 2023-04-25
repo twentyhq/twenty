@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 const TopBarContainer = styled.div`
   display: flex;
   flex-direction: row;
-  height: 40px;
+  height: 38px;
   align-items: center;
   background: ${(props) => props.theme.noisyBackground};
   padding: 8px;

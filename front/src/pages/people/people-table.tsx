@@ -105,10 +105,12 @@ export const peopleColumns = [
   columnHelper.accessor('pipe', {
     header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleHistory} />,
     cell: (props) => (
-      <PipeChip
-        name={props.row.original.pipe.name}
-        picture={props.row.original.pipe.icon}
-      />
+      <ClickableCell href="#">
+        <PipeChip
+          name={props.row.original.pipe.name}
+          picture={props.row.original.pipe.icon}
+        />
+      </ClickableCell>
     ),
   }),
   columnHelper.accessor('city', {

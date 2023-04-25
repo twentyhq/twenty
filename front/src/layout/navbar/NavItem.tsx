@@ -31,6 +31,7 @@ const StyledItem = styled.button<StyledItemProps>`
     background: rgba(0, 0, 0, 0.04);
     color: ${(props) => props.theme.text100};
   }
+  margin-bottom: calc(${(props) => props.theme.spacing(1)} / 2);
 `;
 
 const StyledItemLabel = styled.div`

@@ -16,7 +16,7 @@ const StyledContainer = styled.span`
 
   input[type='checkbox']::before {
     content: '';
-    border: 1px solid black;
+    border: 1px solid ${(props) => props.theme.text80};
     width: 12px;
     height: 12px;
     border-radius: 2px;

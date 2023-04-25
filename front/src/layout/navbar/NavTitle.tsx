@@ -8,7 +8,7 @@ const StyledTitle = styled.div`
   display: flex;
   text-transform: uppercase;
   color: ${(props) => props.theme.text30};
-  font-size: ${(props) => props.theme.fontSizeMedium};
+  font-size: ${(props) => props.theme.fontSizeExtraSmall};
   font-weight: 600;
   padding-top: ${(props) => props.theme.spacing(1)};
   padding-bottom: ${(props) => props.theme.spacing(1)};
