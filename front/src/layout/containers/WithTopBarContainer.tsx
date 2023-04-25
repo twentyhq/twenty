@@ -12,6 +12,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 const ContentContainer = styled.div`
@@ -21,6 +22,7 @@ const ContentContainer = styled.div`
   flex: 1;
   padding-right: ${(props) => props.theme.spacing(3)};
   padding-bottom: ${(props) => props.theme.spacing(3)};
+  width: calc(100% - ${(props) => props.theme.spacing(3)});
 `;
 
 const ContentSubContainer = styled.div`
