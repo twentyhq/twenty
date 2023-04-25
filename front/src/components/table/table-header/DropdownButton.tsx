@@ -92,7 +92,7 @@ const StyledDropdownTopOption = styled.li`
   background: rgba(0, 0, 0, 0);
   cursor: pointer;
   color: ${(props) => props.theme.text60};
-  font-weight: 500;
+  font-weight: ${(props) => props.theme.fontWeightBold};
 
   &:hover {
     background: rgba(0, 0, 0, 0.04);
