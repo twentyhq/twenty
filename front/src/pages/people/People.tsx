@@ -6,8 +6,8 @@ import { peopleColumns, sortsAvailable } from './people-table';
 import { mapPerson } from '../../interfaces/person.interface';
 import { useCallback, useState } from 'react';
 import {
-  OrderBy,
   PeopleSelectedSortType,
+  defaultOrderBy,
   reduceSortsToOrderBy,
   usePeopleQuery,
 } from '../../services/people';
@@ -16,12 +16,6 @@ const StyledPeopleContainer = styled.div`
   display: flex;
   width: 100%;
 `;
-
-const defaultOrderBy: OrderBy[] = [
-  {
-    created_at: 'desc',
-  },
-];
 
 function People() {
   const [, setSorts] = useState([] as Array<PeopleSelectedSortType>);

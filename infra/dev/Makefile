@@ -27,6 +27,9 @@ front-coverage: ##
 front-storybook: ## 
 	@docker-compose exec twenty-front sh -c "npm run storybook"
 
+front-graphql-generate: ## 
+	@docker-compose exec twenty-front sh -c "npm run graphql-generate"
+
 ## Hasura
 
 hasura-logs: ##

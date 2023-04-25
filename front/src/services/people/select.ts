@@ -1,36 +1,32 @@
 import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphqlQueryPerson } from '../../interfaces/person.interface';
 import { SelectedSortType } from '../../components/table/table-header/SortAndFilterBar';
+import { Order_By, People_Order_By } from '../../generated/graphql';
 
-export type OrderByFields =
-  | keyof GraphqlQueryPerson
-  | 'fullname'
-  | 'company_name';
-
-export type OrderBy = Partial<{
-  [key in keyof GraphqlQueryPerson]:
-    | 'asc'
-    | 'desc'
-    | { [key in string]: 'asc' | 'desc' };
-}>;
+export type OrderByFields = keyof People_Order_By | 'fullname' | 'company_name';
 
 export type PeopleSelectedSortType = SelectedSortType<OrderByFields>;
 
+const mapOrder = (order: 'asc' | 'desc'): Order_By => {
+  return order === 'asc' ? Order_By.Asc : Order_By.Desc;
+};
+
 export const reduceSortsToOrderBy = (
   sorts: Array<PeopleSelectedSortType>,
-): OrderBy[] => {
+): People_Order_By[] => {
   const mappedSorts = sorts.reduce((acc, sort) => {
     const id = sort.id;
+    const order = mapOrder(sort.order);
     if (id === 'fullname') {
-      acc['firstname'] = sort.order;
-      acc['lastname'] = sort.order;
+      acc['firstname'] = order;
+      acc['lastname'] = order;
     } else if (id === 'company_name') {
-      acc['company'] = { company_name: sort.order };
+      acc['company'] = { company_name: order };
     } else {
-      acc[id] = sort.order;
+      acc[id] = order;
     }
     return acc;
-  }, {} as OrderBy);
+  }, {} as People_Order_By);
   return [mappedSorts];
 };
 
@@ -54,9 +50,15 @@ export const GET_PEOPLE = gql`
 `;
 
 export function usePeopleQuery(
-  orderBy: OrderBy[],
+  orderBy: People_Order_By[],
 ): QueryResult<{ people: GraphqlQueryPerson[] }> {
   return useQuery<{ people: GraphqlQueryPerson[] }>(GET_PEOPLE, {
     variables: { orderBy },
   });
 }
+
+export const defaultOrderBy: People_Order_By[] = [
+  {
+    created_at: Order_By.Desc,
+  },
+];

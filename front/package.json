@@ -33,7 +33,8 @@
     "storybook": "storybook dev -p 6006 -s public",
     "build-storybook": "storybook build -s public",
     "coverage": "react-scripts test --coverage --watchAll",
-    "coverage-ci": "react-scripts test --coverage --watchAll=false"
+    "coverage-ci": "react-scripts test --coverage --watchAll=false",
+    "graphql-generate": "REACT_APP_GRAPHQL_ADMIN_SECRET=$REACT_APP_GRAPHQL_ADMIN_SECRET graphql-codegen --config codegen.js"
   },
   "eslintConfig": {
     "extends": [
@@ -80,6 +81,10 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^3.3.1",
+    "@graphql-codegen/typescript": "^3.0.4",
+    "@graphql-codegen/typescript-operations": "^3.0.4",
+    "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@storybook/addon-actions": "^7.0.2",
     "@storybook/addon-essentials": "^7.0.2",
     "@storybook/addon-interactions": "^7.0.2",
