@@ -4,28 +4,28 @@ import { SelectedSortType, SortType } from './SortAndFilterBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown } from '@fortawesome/pro-regular-svg-icons';
 
-type OwnProps = {
-  sorts: SelectedSortType[];
-  setSorts: (sorts: SelectedSortType[]) => void;
-  sortsAvailable: SortType[];
+type OwnProps<SortFields> = {
+  sorts: SelectedSortType<SortFields>[];
+  setSorts: (sorts: SelectedSortType<SortFields>[]) => void;
+  sortsAvailable: SortType<SortFields>[];
 };
 
-const options: Array<SelectedSortType['order']> = ['asc', 'desc'];
+const options: Array<SelectedSortType<string>['order']> = ['asc', 'desc'];
 
-export function SortDropdownButton({
+export function SortDropdownButton<SortFields extends string>({
   sortsAvailable,
   setSorts,
   sorts,
-}: OwnProps) {
+}: OwnProps<SortFields>) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
 
   const [selectedOption, setSelectedOption] =
-    useState<SelectedSortType['order']>('asc');
+    useState<SelectedSortType<SortFields>['order']>('asc');
 
   const onSortItemSelect = useCallback(
-    (sort: SortType) => {
+    (sort: SortType<SortFields>) => {
       const newSorts = [{ ...sort, order: selectedOption }];
       setSorts(newSorts);
     },

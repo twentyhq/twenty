@@ -11,13 +11,13 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import styled from '@emotion/styled';
 import { SelectedSortType, SortType } from './table-header/SortAndFilterBar';
 
-type OwnProps<TData> = {
+type OwnProps<TData, SortFields> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: IconProp;
-  onSortsUpdate?: (sorts: Array<SelectedSortType>) => void;
-  sortsAvailable?: Array<SortType>;
+  onSortsUpdate?: (sorts: Array<SelectedSortType<SortFields>>) => void;
+  sortsAvailable?: Array<SortType<SortFields>>;
 };
 
 const StyledTable = styled.table`
@@ -71,14 +71,14 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-function Table<TData>({
+function Table<TData, SortFields extends string>({
   data,
   columns,
   viewName,
   viewIcon,
   onSortsUpdate,
   sortsAvailable,
-}: OwnProps<TData>) {
+}: OwnProps<TData, SortFields>) {
   const table = useReactTable({
     data,
     columns,
