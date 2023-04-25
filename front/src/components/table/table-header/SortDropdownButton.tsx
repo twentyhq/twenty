@@ -1,16 +1,16 @@
 import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
-import { SortType } from './SortAndFilterBar';
+import { SelectedSortType, SortType } from './SortAndFilterBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps = {
-  sorts: SortType[];
-  setSorts: (sorts: SortType[]) => void;
-  sortsAvailable: Omit<SortType, 'order'>[];
+  sorts: SelectedSortType[];
+  setSorts: (sorts: SelectedSortType[]) => void;
+  sortsAvailable: SortType[];
 };
 
-const options: Array<SortType['order']> = ['asc', 'desc'];
+const options: Array<SelectedSortType['order']> = ['asc', 'desc'];
 
 export function SortDropdownButton({
   sortsAvailable,
@@ -22,10 +22,10 @@ export function SortDropdownButton({
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
 
   const [selectedOption, setSelectedOption] =
-    useState<SortType['order']>('asc');
+    useState<SelectedSortType['order']>('asc');
 
   const onSortItemSelect = useCallback(
-    (sort: Omit<SortType, 'order'>) => {
+    (sort: SortType) => {
       const newSorts = [{ ...sort, order: selectedOption }];
       setSorts(newSorts);
     },

@@ -4,16 +4,17 @@ import SortOrFilterChip from './SortOrFilterChip';
 import { faArrowDown, faArrowUp } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps = {
-  sorts: Array<SortType>;
+  sorts: Array<SelectedSortType>;
   onRemoveSort: (sortId: string) => void;
 };
 
 export type SortType<SortIds = string> = {
   label: string;
-  order: 'asc' | 'desc';
   id: SortIds;
   icon?: IconProp;
 };
+
+export type SelectedSortType = SortType & { order: 'asc' | 'desc' };
 
 const StyledBar = styled.div`
   display: flex;

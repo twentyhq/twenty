@@ -9,14 +9,14 @@ import {
 import TableHeader from './table-header/TableHeader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import styled from '@emotion/styled';
-import { SortType } from './table-header/SortAndFilterBar';
+import { SelectedSortType, SortType } from './table-header/SortAndFilterBar';
 
 type OwnProps<TData> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: IconProp;
-  onSortsUpdate?: (sorts: Array<SortType>) => void;
+  onSortsUpdate?: (sorts: Array<SelectedSortType>) => void;
   sortsAvailable?: Array<SortType>;
 };
 

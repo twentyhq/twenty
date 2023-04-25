@@ -16,7 +16,6 @@ export const RegularTableHeader = () => {
     {
       id: 'created_at',
       label: 'Created at',
-      order: 'asc',
       icon: faCalendar,
     },
   ];

@@ -25,17 +25,15 @@ export const sortsAvailable = [
   {
     id: 'email',
     label: 'Email',
-    order: 'asc',
     icon: faEnvelope,
   },
-  { id: 'phone', label: 'Phone', order: 'asc', icon: faPhone },
+  { id: 'phone', label: 'Phone', icon: faPhone },
   {
     id: 'created_at',
     label: 'Created at',
-    order: 'asc',
     icon: faCalendar,
   },
-  { id: 'city', label: 'City', order: 'asc', icon: faMapPin },
+  { id: 'city', label: 'City', icon: faMapPin },
 ] satisfies Array<SortType<keyof GraphqlQueryPerson>>;
 
 const columnHelper = createColumnHelper<Person>();
