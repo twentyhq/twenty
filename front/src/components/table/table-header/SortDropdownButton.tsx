@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
 import { SortType } from './SortAndFilterBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowDown, faArrowUp } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps = {
   sorts: SortType[];
@@ -47,6 +48,11 @@ export function SortDropdownButton({
                 setIsOptionUnfolded(false);
               }}
             >
+              <DropdownButton.StyledIcon>
+                <FontAwesomeIcon
+                  icon={option === 'asc' ? faArrowDown : faArrowUp}
+                />
+              </DropdownButton.StyledIcon>
               {option}
             </DropdownButton.StyledDropdownItem>
           ))
@@ -54,6 +60,11 @@ export function SortDropdownButton({
             <DropdownButton.StyledDropdownItem
               onClick={() => setIsOptionUnfolded(true)}
             >
+              <DropdownButton.StyledIcon>
+                <FontAwesomeIcon
+                  icon={selectedOption === 'asc' ? faArrowDown : faArrowUp}
+                />
+              </DropdownButton.StyledIcon>
               {selectedOption}
             </DropdownButton.StyledDropdownItem>,
             ...sortsAvailable.map((option, index) => (
