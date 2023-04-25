@@ -28,6 +28,11 @@ export const sortsAvailable = [
     icon: faUser,
   },
   {
+    id: 'company_name',
+    label: 'Company',
+    icon: faBuildings,
+  },
+  {
     id: 'email',
     label: 'Email',
     icon: faEnvelope,

@@ -2,10 +2,16 @@ import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphqlQueryPerson } from '../../interfaces/person.interface';
 import { SelectedSortType } from '../../components/table/table-header/SortAndFilterBar';
 
-export type OrderByFields = keyof GraphqlQueryPerson | 'fullname';
+export type OrderByFields =
+  | keyof GraphqlQueryPerson
+  | 'fullname'
+  | 'company_name';
 
 export type OrderBy = Partial<{
-  [key in keyof GraphqlQueryPerson]: 'asc' | 'desc';
+  [key in keyof GraphqlQueryPerson]:
+    | 'asc'
+    | 'desc'
+    | { [key in string]: 'asc' | 'desc' };
 }>;
 
 export type PeopleSelectedSortType = SelectedSortType<OrderByFields>;
@@ -18,6 +24,8 @@ export const reduceSortsToOrderBy = (
     if (id === 'fullname') {
       acc['firstname'] = sort.order;
       acc['lastname'] = sort.order;
+    } else if (id === 'company_name') {
+      acc['company'] = { company_name: sort.order };
     } else {
       acc[id] = sort.order;
     }
