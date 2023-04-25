@@ -21,15 +21,15 @@ export function SortDropdownButton<SortField extends string>({
 
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
 
-  const [selectedOption, setSelectedOption] =
+  const [selectedSortDirection, setSelectedSortDirection] =
     useState<SelectedSortType<SortField>['order']>('asc');
 
   const onSortItemSelect = useCallback(
     (sort: SortType<SortField>) => {
-      const newSorts = [{ ...sort, order: selectedOption }];
+      const newSorts = [{ ...sort, order: selectedSortDirection }];
       setSorts(newSorts);
     },
-    [setSorts, selectedOption],
+    [setSorts, selectedSortDirection],
   );
 
   return (
@@ -44,7 +44,7 @@ export function SortDropdownButton<SortField extends string>({
             <DropdownButton.StyledDropdownItem
               key={index}
               onClick={() => {
-                setSelectedOption(option);
+                setSelectedSortDirection(option);
                 setIsOptionUnfolded(false);
               }}
             >
@@ -56,7 +56,7 @@ export function SortDropdownButton<SortField extends string>({
               key={0}
               onClick={() => setIsOptionUnfolded(true)}
             >
-              {selectedOption === 'asc' ? 'Ascending' : 'Descending'}
+              {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
 
               <FontAwesomeIcon icon={faAngleDown} />
             </DropdownButton.StyledDropdownTopOption>,
