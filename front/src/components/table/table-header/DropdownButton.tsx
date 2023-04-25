@@ -83,6 +83,24 @@ const StyledDropdownItem = styled.li`
   }
 `;
 
+const StyledDropdownTopOption = styled.li`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(${(props) => props.theme.spacing(2)} + 2px)
+    calc(${(props) => props.theme.spacing(2)});
+  background: rgba(0, 0, 0, 0);
+  cursor: pointer;
+  color: ${(props) => props.theme.text60};
+  font-weight: 500;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  border-radius: 0%;
+  border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
+`;
+
 const StyledIcon = styled.div`
   display: flex;
   margin-right: ${(props) => props.theme.spacing(1)};
@@ -125,6 +143,7 @@ function DropdownButton({
 }
 
 DropdownButton.StyledDropdownItem = StyledDropdownItem;
+DropdownButton.StyledDropdownTopOption = StyledDropdownTopOption;
 DropdownButton.StyledIcon = StyledIcon;
 
 export default DropdownButton;
