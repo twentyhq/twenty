@@ -17,10 +17,9 @@ const StyledChip = styled.div`
   background-color: ${(props) => props.theme.blueHighTransparency};
   border: 1px solid ${(props) => props.theme.blueLowTransparency};
   color: ${(props) => props.theme.blue};
-  padding: ${(props) => props.theme.spacing(1)}
-    ${(props) => props.theme.spacing(2)};
+  padding: ${(props) => props.theme.spacing(1) + ' ' + props.theme.spacing(2)};
   margin-left: ${(props) => props.theme.spacing(2)};
-  fontsize: ${(props) => props.theme.fontSizeSmall};
+  font-size: ${(props) => props.theme.fontSizeSmall};
 `;
 const StyledIcon = styled.div`
   margin-right: ${(props) => props.theme.spacing(1)};
