@@ -21,7 +21,8 @@ type OwnProps<TData> = {
 };
 
 const StyledTable = styled.table`
-  min-width: calc(100% - ${(props) => props.theme.spacing(4)});
+  min-width: 1000px;
+  width: calc(100% - ${(props) => props.theme.spacing(4)});
   border-radius: 4px;
   border-spacing: 0;
   border-collapse: collapse;
@@ -61,6 +62,13 @@ const StyledTableWithHeader = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  width: 100%;
+`;
+
+const StyledTableScrollableContainer = styled.div`
+  overflow: auto;
+  height: 100%;
+  flex: 1;
 `;
 
 function Table<TData>({
@@ -85,58 +93,64 @@ function Table<TData>({
         onSortsUpdate={onSortsUpdate}
         sortsAvailable={sortsAvailable || []}
       />
-      <StyledTable>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row, index) => (
-            <tr key={row.id} data-testid={`row-id-${row.index}`}>
-              {row.getVisibleCells().map((cell) => {
-                return (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-        {table
-          .getFooterGroups()
-          .flatMap((group) => group.headers)
-          .filter((header) => !!header.column.columnDef.footer).length > 0 && (
-          <tfoot>
-            {table.getFooterGroups().map((footerGroup) => (
-              <tr key={footerGroup.id}>
-                {footerGroup.headers.map((header) => (
+      <StyledTableScrollableContainer>
+        <StyledTable>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
                   <th key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.footer,
+                          header.column.columnDef.header,
                           header.getContext(),
                         )}
                   </th>
                 ))}
               </tr>
             ))}
-          </tfoot>
-        )}
-      </StyledTable>
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row, index) => (
+              <tr key={row.id} data-testid={`row-id-${row.index}`}>
+                {row.getVisibleCells().map((cell) => {
+                  return (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+          {table
+            .getFooterGroups()
+            .flatMap((group) => group.headers)
+            .filter((header) => !!header.column.columnDef.footer).length >
+            0 && (
+            <tfoot>
+              {table.getFooterGroups().map((footerGroup) => (
+                <tr key={footerGroup.id}>
+                  {footerGroup.headers.map((header) => (
+                    <th key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.footer,
+                            header.getContext(),
+                          )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </tfoot>
+          )}
+        </StyledTable>
+      </StyledTableScrollableContainer>
     </StyledTableWithHeader>
   );
 }
