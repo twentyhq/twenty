@@ -24,7 +24,7 @@ export function SortDropdownButton({
       const newSorts = [{ ...sort, order: selectedOption }];
       setSorts(newSorts);
     },
-    [setSorts],
+    [setSorts, selectedOption],
   );
 
   return (
@@ -34,6 +34,11 @@ export function SortDropdownButton({
       isUnfolded={isUnfolded}
       setIsUnfolded={setIsUnfolded}
     >
+      <DropdownButton.StyledDropdownItem
+        onClick={() => setSelectedOption('desc')}
+      >
+        {selectedOption}
+      </DropdownButton.StyledDropdownItem>
       {sortsAvailable.map((option, index) => (
         <DropdownButton.StyledDropdownItem
           key={index}
