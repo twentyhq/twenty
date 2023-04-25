@@ -9,12 +9,16 @@ type OwnProps = {
   sortsAvailable: Omit<SortType, 'order'>[];
 };
 
+const options: Array<SortType['order']> = ['asc', 'desc'];
+
 export function SortDropdownButton({
   sortsAvailable,
   setSorts,
   sorts,
 }: OwnProps) {
   const [isUnfolded, setIsUnfolded] = useState(false);
+
+  const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
 
   const [selectedOption, setSelectedOption] =
     useState<SortType['order']>('asc');
@@ -34,25 +38,39 @@ export function SortDropdownButton({
       isUnfolded={isUnfolded}
       setIsUnfolded={setIsUnfolded}
     >
-      <DropdownButton.StyledDropdownItem
-        onClick={() => setSelectedOption('desc')}
-      >
-        {selectedOption}
-      </DropdownButton.StyledDropdownItem>
-      {sortsAvailable.map((option, index) => (
-        <DropdownButton.StyledDropdownItem
-          key={index}
-          onClick={() => {
-            setIsUnfolded(false);
-            onSortItemSelect(option);
-          }}
-        >
-          <DropdownButton.StyledIcon>
-            {option.icon && <FontAwesomeIcon icon={option.icon} />}
-          </DropdownButton.StyledIcon>
-          {option.label}
-        </DropdownButton.StyledDropdownItem>
-      ))}
+      {isOptionUnfolded
+        ? options.map((option, index) => (
+            <DropdownButton.StyledDropdownItem
+              key={index}
+              onClick={() => {
+                setSelectedOption(option);
+                setIsOptionUnfolded(false);
+              }}
+            >
+              {option}
+            </DropdownButton.StyledDropdownItem>
+          ))
+        : [
+            <DropdownButton.StyledDropdownItem
+              onClick={() => setIsOptionUnfolded(true)}
+            >
+              {selectedOption}
+            </DropdownButton.StyledDropdownItem>,
+            ...sortsAvailable.map((option, index) => (
+              <DropdownButton.StyledDropdownItem
+                key={index}
+                onClick={() => {
+                  setIsUnfolded(false);
+                  onSortItemSelect(option);
+                }}
+              >
+                <DropdownButton.StyledIcon>
+                  {option.icon && <FontAwesomeIcon icon={option.icon} />}
+                </DropdownButton.StyledIcon>
+                {option.label}
+              </DropdownButton.StyledDropdownItem>
+            )),
+          ]}
     </DropdownButton>
   );
 }
