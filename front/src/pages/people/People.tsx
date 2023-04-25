@@ -5,11 +5,12 @@ import styled from '@emotion/styled';
 import { peopleColumns, sortsAvailable } from './people-table';
 import { mapPerson } from '../../interfaces/person.interface';
 import { useCallback, useState } from 'react';
+import { SelectedSortType } from '../../components/table/table-header/SortAndFilterBar';
 import {
-  SelectedSortType,
-  SortType,
-} from '../../components/table/table-header/SortAndFilterBar';
-import { OrderBy, usePeopleQuery } from '../../services/people';
+  OrderBy,
+  reduceSortsToOrderBy,
+  usePeopleQuery,
+} from '../../services/people';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -21,14 +22,6 @@ const defaultOrderBy: OrderBy[] = [
     created_at: 'desc',
   },
 ];
-
-const reduceSortsToOrderBy = (sorts: Array<SelectedSortType>): OrderBy[] => {
-  const mappedSorts = sorts.reduce((acc, sort) => {
-    acc[sort.id] = sort.order;
-    return acc;
-  }, {} as OrderBy);
-  return [mappedSorts];
-};
 
 function People() {
   const [, setSorts] = useState([] as Array<SelectedSortType>);
