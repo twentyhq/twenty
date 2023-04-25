@@ -8,8 +8,10 @@ services:
       - "3001:3001"
       - "6006:6006"
     environment:
-      - REACT_APP_API_URL=${FRONT_REACT_APP_API_URL}
-      - REACT_APP_AUTH_URL=${FRONT_REACT_APP_AUTH_URL}
+      REACT_APP_API_URL: ${FRONT_REACT_APP_API_URL}
+      REACT_APP_AUTH_URL: ${FRONT_REACT_APP_AUTH_URL}
+      HASURA_GRAPHQL_ENDPOINT: ${FRONT_HASURA_GRAPHQL_ENDPOINT}
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
     volumes:
       - ../../front:/app/front
       - twenty_node_modules_front:/app/front/node_modules
