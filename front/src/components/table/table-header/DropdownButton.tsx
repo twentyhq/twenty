@@ -70,6 +70,7 @@ const StyledDropdown = styled.ul`
 
 const StyledDropdownItem = styled.li`
   display: flex;
+  align-items: center;
   padding: ${(props) => props.theme.spacing(2)}
     calc(${(props) => props.theme.spacing(2)} - 2px);
   margin: 2px;
