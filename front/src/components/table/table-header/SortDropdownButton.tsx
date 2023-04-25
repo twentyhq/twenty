@@ -52,12 +52,7 @@ export function SortDropdownButton({
                 setIsOptionUnfolded(false);
               }}
             >
-              <DropdownButton.StyledIcon>
-                <FontAwesomeIcon
-                  icon={option === 'asc' ? faArrowDown : faArrowUp}
-                />
-              </DropdownButton.StyledIcon>
-              {option}
+              {option === 'asc' ? 'Ascending' : 'Descending'}
             </DropdownButton.StyledDropdownItem>
           ))
         : [
@@ -67,9 +62,7 @@ export function SortDropdownButton({
             >
               {selectedOption === 'asc' ? 'Ascending' : 'Descending'}
 
-              <DropdownButton.StyledIcon>
-                <FontAwesomeIcon icon={faAngleDown} />
-              </DropdownButton.StyledIcon>
+              <FontAwesomeIcon icon={faAngleDown} />
             </DropdownButton.StyledDropdownTopOption>,
             ...sortsAvailable.map((option, index) => (
               <DropdownButton.StyledDropdownItem
