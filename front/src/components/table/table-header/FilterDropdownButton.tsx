@@ -1,8 +1,7 @@
 import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
-import { FilterType } from './SortAndFilterBar';
+import { FilterType, SelectedFilterType } from './SortAndFilterBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { SelectedFilterType } from './TableHeader';
 
 type OwnProps = {
   filters: SelectedFilterType[];

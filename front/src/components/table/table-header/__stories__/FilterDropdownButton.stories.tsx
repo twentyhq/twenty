@@ -2,7 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
-import { FilterType } from '../SortAndFilterBar';
+import { FilterType, SelectedFilterType } from '../SortAndFilterBar';
 import {
   faUser,
   faBuildings,
@@ -11,7 +11,6 @@ import {
   faCalendar,
   faMapPin,
 } from '@fortawesome/pro-regular-svg-icons';
-import { SelectedFilterType } from '../TableHeader';
 import { useCallback, useState } from 'react';
 
 const component = {
@@ -27,27 +26,27 @@ type OwnProps = {
 
 const availableFilters = [
   {
-    id: 'fullname',
+    key: 'fullname',
     label: 'People',
     icon: faUser,
   },
   {
-    id: 'company_name',
+    key: 'company_name',
     label: 'Company',
     icon: faBuildings,
   },
   {
-    id: 'email',
+    key: 'email',
     label: 'Email',
     icon: faEnvelope,
   },
-  { id: 'phone', label: 'Phone', icon: faPhone },
+  { key: 'phone', label: 'Phone', icon: faPhone },
   {
-    id: 'created_at',
+    key: 'created_at',
     label: 'Created at',
     icon: faCalendar,
   },
-  { id: 'city', label: 'City', icon: faMapPin },
+  { key: 'city', label: 'City', icon: faMapPin },
 ] satisfies FilterType[];
 
 const StyleDiv = styled.div`

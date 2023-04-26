@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import SortOrFilterChip from './SortOrFilterChip';
 import { faArrowDown, faArrowUp } from '@fortawesome/pro-regular-svg-icons';
-import { SelectedFilterType } from './TableHeader';
 
 type OwnProps<SortField> = {
   sorts: Array<SelectedSortType<SortField>>;
@@ -19,7 +18,15 @@ export type SortType<SortIds = string> = {
 
 export type FilterType<KeyOfFilter = string> = {
   label: string;
-  id: KeyOfFilter;
+  key: KeyOfFilter;
+  icon: IconProp;
+};
+
+export type SelectedFilterType = {
+  id: string;
+  label: string;
+  value: string;
+  operand: { id: string; label: string };
   icon: IconProp;
 };
 

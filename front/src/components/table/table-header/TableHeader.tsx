@@ -4,20 +4,13 @@ import DropdownButton from './DropdownButton';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import SortAndFilterBar, {
   FilterType,
+  SelectedFilterType,
   SelectedSortType,
   SortType,
 } from './SortAndFilterBar';
 import { useCallback, useState } from 'react';
 import { SortDropdownButton } from './SortDropdownButton';
 import { FilterDropdownButton } from './FilterDropdownButton';
-
-export type SelectedFilterType = {
-  id: string;
-  label: string;
-  value: string;
-  operand: { id: string; label: string };
-  icon: IconProp;
-};
 
 type OwnProps<SortField> = {
   viewName: string;
