@@ -124,3 +124,7 @@ li.coming-soon a::after {
 .theme-doc-sidebar-item-category {
   padding-top: 1.5rem;
 }
+
+.sidebar-item-icon {
+  padding-right: 0.5rem;
+}
