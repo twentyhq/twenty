@@ -56,7 +56,9 @@
   },
   "jest": {
     "coveragePathIgnorePatterns": [
-      ".stories.tsx$"
+      ".stories.tsx$",
+      "graphql.tsx$",
+      "apollo.tsx$"
     ],
     "coverageThreshold": {
       "global": {
