@@ -1,3 +1,4 @@
+
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
@@ -19,6 +20,17 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'stylesheet',
+        href: 'https://kit.fontawesome.com/c4eca3d765.css',
+        crossorigin: 'anonymous'
+      },
+    },
+  ],
+
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
@@ -33,16 +45,35 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
+          sidebarCollapsible: false,
+          routeBasePath: '/',
           editUrl:
             'https://github.com/twentyhq/twenty/edit/main/docs/docs/',
         },
+        blog: false,
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
       }),
+
     ],
+    [
+      'redocusaurus',
+      {
+        // Plugin Options for loading OpenAPI files
+        specs: [
+          {
+            spec: 'docs/open-api/openapi.yaml',
+            route: '/api/',
+          },
+        ],
+        // Theme Options for modifying how redoc renders them
+        theme: {
+          // Change with your site colors
+          primaryColor: '#1890ff',
+        },
+      },
+    ]
   ],
 
   themeConfig:
@@ -74,10 +105,9 @@ const config = {
             label: 'User guide',
           },
           {
-            type: 'docSidebar',
-            sidebarId: 'APISidebar',
-            position: 'right',
+            to: '/api/',
             label: 'API',
+            position: 'right'
           },
           {
             to: 'https://github.com/twentyhq/twenty/releases',
