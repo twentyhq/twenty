@@ -8,6 +8,7 @@ import SortAndFilterBar, {
 } from './SortAndFilterBar';
 import { useCallback, useState } from 'react';
 import { SortDropdownButton } from './SortDropdownButton';
+import { FilterDropdownButton } from './FilterDropdownButton';
 
 type OwnProps<SortField> = {
   viewName: string;
@@ -89,7 +90,7 @@ function TableHeader<SortField extends string>({
           {viewName}
         </StyledViewSection>
         <StyledFilters>
-          <DropdownButton label="Filter" isActive={false}></DropdownButton>
+          <FilterDropdownButton />
           <SortDropdownButton
             setSorts={setSorts}
             sorts={sorts}

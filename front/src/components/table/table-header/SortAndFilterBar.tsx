@@ -14,6 +14,12 @@ export type SortType<SortIds = string> = {
   icon?: IconProp;
 };
 
+export type FilterType<KeyOfFilter = string> = {
+  label: string;
+  id: KeyOfFilter;
+  icon?: IconProp;
+};
+
 export type SelectedSortType<SortField = string> = SortType<SortField> & {
   order: 'asc' | 'desc';
 };
