@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
-import * as React from 'react';
-import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
-import { convert } from 'html-to-text';
+import { ChangeEvent, useRef, useState } from 'react';
 
 type OwnProps = {
   content: string;
@@ -14,6 +12,7 @@ const StyledEditable = styled.div`
   height: 32px;
   display: flex;
   align-items: center;
+  width: 100%;
 
   :hover::before {
     display: block;
@@ -32,58 +31,38 @@ const StyledEditable = styled.div`
     pointer-events: none;
     display: none;
   }
-
-  :focus-within {
-    color: ${(props) => props.theme.text100};
-  }
-
-  :focus-within::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    width: calc(100% + 2px);
-    height: calc(100% + 2px);
-    border: 1px solid ${(props) => props.theme.blue};
-    border-radius: 4px;
-    pointer-events: none;
-    display: block;
-  }
-
-  [contenteditable] {
-    outline: none;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-
-  [contenteditable] br {
-    display: none;
-  }
-
-  [contenteditable] * {
-    display: inline;
-    white-space: nowrap;
-  }
 `;
 
-const Container = styled.span`
+const StyledInplaceInput = styled.input`
+  width: 100%;
+  border: none;
+  outline: none;
+`;
+
+const Container = styled.div`
+  width: 100%;
   padding-left: ${(props) => props.theme.spacing(2)};
+  padding-right: ${(props) => props.theme.spacing(2)};
 `;
 
 function EditableCell({ content, changeHandler }: OwnProps) {
-  const ref = React.createRef<HTMLElement>();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [inputValue, setInputValue] = useState(content);
 
   return (
-    <StyledEditable onClick={() => ref.current?.focus()}>
+    <StyledEditable
+      onClick={() => {
+        inputRef.current?.focus();
+      }}
+    >
       <Container>
-        <ContentEditable
-          innerRef={ref}
-          html={content}
-          disabled={false}
-          onChange={(e: ContentEditableEvent) =>
-            changeHandler(convert(e.target.value))
-          }
-          tagName="span"
+        <StyledInplaceInput
+          ref={inputRef}
+          value={inputValue}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            setInputValue(event.target.value);
+            changeHandler(event.target.value);
+          }}
         />
       </Container>
     </StyledEditable>
