@@ -1,3 +1,4 @@
+
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
@@ -54,7 +55,25 @@ const config = {
           customCss: require.resolve('./src/css/custom.css'),
         },
       }),
+
     ],
+    [
+      'redocusaurus',
+      {
+        // Plugin Options for loading OpenAPI files
+        specs: [
+          {
+            spec: 'docs/open-api/openapi.yaml',
+            route: '/api/',
+          },
+        ],
+        // Theme Options for modifying how redoc renders them
+        theme: {
+          // Change with your site colors
+          primaryColor: '#1890ff',
+        },
+      },
+    ]
   ],
 
   themeConfig:
@@ -86,10 +105,9 @@ const config = {
             label: 'User guide',
           },
           {
-            type: 'docSidebar',
-            sidebarId: 'APISidebar',
-            position: 'right',
+            to: '/api/',
             label: 'API',
+            position: 'right'
           },
           {
             to: 'https://github.com/twentyhq/twenty/releases',
