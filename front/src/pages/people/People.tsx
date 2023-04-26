@@ -19,6 +19,7 @@ import {
 const StyledPeopleContainer = styled.div`
   display: flex;
   width: 100%;
+  height: 100%;
 `;
 
 function People() {

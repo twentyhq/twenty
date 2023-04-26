@@ -11,6 +11,7 @@ const TopBarContainer = styled.div`
   padding: 8px;
   font-size: 14px;
   color: ${(props) => props.theme.text80};
+  flex-shrink: 0;
 `;
 
 const TitleContainer = styled.div`

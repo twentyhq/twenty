@@ -23,12 +23,14 @@ const ContentContainer = styled.div`
   padding-right: ${(props) => props.theme.spacing(3)};
   padding-bottom: ${(props) => props.theme.spacing(3)};
   width: calc(100% - ${(props) => props.theme.spacing(3)});
+  height: calc(100% - 54px);
 `;
 
 const ContentSubContainer = styled.div`
   display: flex;
   background: ${(props) => props.theme.primaryBackground};
   border-radius: 8px;
+  height: 100%;
   flex: 1;
 `;
 
