@@ -2,7 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
-import { FilterType, SelectedFilterType } from '../SortAndFilterBar';
+import { FilterType, SelectedFilterType } from '../interface';
 import {
   faUser,
   faBuildings,

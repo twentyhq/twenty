@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
-import { SelectedSortType, SortType } from './SortAndFilterBar';
+import { SelectedSortType, SortType } from './interface';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type OwnProps<SortField> = {

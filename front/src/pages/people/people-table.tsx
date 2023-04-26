@@ -17,12 +17,12 @@ import CompanyChip from '../../components/chips/CompanyChip';
 import PersonChip from '../../components/chips/PersonChip';
 import { Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
+import EditableCell from '../../components/table/EditableCell';
+import { OrderByFields, updatePerson } from '../../services/people';
 import {
   FilterType,
   SortType,
-} from '../../components/table/table-header/SortAndFilterBar';
-import EditableCell from '../../components/table/EditableCell';
-import { OrderByFields, updatePerson } from '../../services/people';
+} from '../../components/table/table-header/interface';
 
 export const availableSorts = [
   {

@@ -13,7 +13,7 @@ import {
   FilterType,
   SelectedSortType,
   SortType,
-} from './table-header/SortAndFilterBar';
+} from './table-header/interface';
 
 type OwnProps<TData, SortField> = {
   data: Array<TData>;

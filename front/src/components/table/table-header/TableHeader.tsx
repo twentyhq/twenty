@@ -2,15 +2,16 @@ import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DropdownButton from './DropdownButton';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import SortAndFilterBar, {
+import {
   FilterType,
   SelectedFilterType,
   SelectedSortType,
   SortType,
-} from './SortAndFilterBar';
+} from './interface';
 import { useCallback, useState } from 'react';
 import { SortDropdownButton } from './SortDropdownButton';
 import { FilterDropdownButton } from './FilterDropdownButton';
+import SortAndFilterBar from './SortAndFilterBar';
 
 type OwnProps<SortField> = {
   viewName: string;
