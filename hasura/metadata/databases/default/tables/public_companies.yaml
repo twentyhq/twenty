@@ -1,41 +1,56 @@
 table:
   name: companies
   schema: public
+object_relationships:
+  - name: workspace
+    using:
+      foreign_key_constraint_on: workspace_id
 insert_permissions:
   - role: user
     permission:
-      check: {}
+      check:
+        workspace_id:
+          _eq: x-hasura-workspace-id
       columns:
         - id
         - workspace_id
-        - company_domain
-        - company_name
+        - name
+        - domain_name
         - created_at
         - updated_at
+        - deleted_at
 select_permissions:
   - role: user
     permission:
       columns:
+        - domain_name
+        - name
+        - created_at
+        - deleted_at
+        - updated_at
         - id
         - workspace_id
-        - company_domain
-        - company_name
-        - created_at
-        - updated_at
-      filter: {}
+      filter:
+        workspace_id:
+          _eq: x-hasura-workspace-id
 update_permissions:
   - role: user
     permission:
       columns:
+        - domain_name
+        - name
+        - created_at
+        - deleted_at
+        - updated_at
         - id
         - workspace_id
-        - company_domain
-        - company_name
-        - created_at
-        - updated_at
-      filter: {}
-      check: {}
+      filter:
+        workspace_id:
+          _eq: x-hasura-workspace-id
+      check: null
 delete_permissions:
   - role: user
     permission:
-      filter: {}
+      filter:
+        workspace_id:
+          _eq: x-hasura-workspace-id

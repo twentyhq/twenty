@@ -2,7 +2,7 @@ import { Company } from './company.interface';
 import { Pipe } from './pipe.interface';
 
 export type Person = {
-  id: number;
+  id: string;
   fullName: string;
   picture?: string;
   email: string;
@@ -18,14 +18,14 @@ export type GraphqlQueryPerson = {
   city: string;
   company: {
     __typename: string;
-    id: number;
-    company_name: string;
-    company_domain: string;
+    id: string;
+    name: string;
+    domain_name: string;
   };
   created_at: string;
   email: string;
   firstname: string;
-  id: number;
+  id: string;
   lastname: string;
   phone: string;
   __typename: string;
@@ -33,11 +33,11 @@ export type GraphqlQueryPerson = {
 
 export type GraphqlMutationPerson = {
   city: string;
-  company_id?: number;
+  company_id?: string;
   created_at: string;
   email: string;
   firstname: string;
-  id: number;
+  id: string;
   lastname: string;
   phone: string;
   __typename: string;
@@ -46,12 +46,16 @@ export type GraphqlMutationPerson = {
 export const mapPerson = (person: GraphqlQueryPerson): Person => ({
   fullName: `${person.firstname} ${person.lastname}`,
   creationDate: new Date(person.created_at),
-  pipe: { name: 'coucou', id: 1, icon: '💰' },
+  pipe: {
+    name: 'coucou',
+    id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+    icon: '💰',
+  },
   ...person,
   company: {
     id: person.company.id,
-    name: person.company.company_name,
-    domain: person.company.company_domain,
+    name: person.company.name,
+    domain_name: person.company.domain_name,
   },
   countryCode: 'FR',
 });

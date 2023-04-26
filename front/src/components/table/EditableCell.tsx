@@ -39,11 +39,12 @@ const StyledEditable = styled.div`
     left: -1px;
     width: calc(100% + 2px);
     height: calc(100% + 2px);
-    border: 1px solid ${(props) => props.theme.blue};
+    border: 1px solid ${(props) => props.theme.text20};
     border-radius: 4px;
     pointer-events: none;
     display: block;
     z-index: 1;
+    box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.09);
   }
 `;
 

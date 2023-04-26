@@ -21,7 +21,7 @@ export const reduceSortsToOrderBy = (
       acc['firstname'] = order;
       acc['lastname'] = order;
     } else if (id === 'company_name') {
-      acc['company'] = { company_name: order };
+      acc['company'] = { name: order };
     } else {
       acc[id] = order;
     }
@@ -42,8 +42,8 @@ export const GET_PEOPLE = gql`
       created_at
       company {
         id
-        company_name
-        company_domain
+        name
+        domain_name
       }
     }
   }

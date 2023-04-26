@@ -112,7 +112,7 @@ export const peopleColumns = [
       <ClickableCell href="#">
         <CompanyChip
           name={props.row.original.company.name}
-          picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain}&sz=256`}
+          picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain_name}&sz=256`}
         />
       </ClickableCell>
     ),

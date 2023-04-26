@@ -24,16 +24,16 @@ jest.mock('../../../apollo', () => {
 it('updates a person', async () => {
   const result = await updatePerson({
     fullName: 'John Doe',
-    id: 1,
+    id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
     email: 'john@example.com',
     company: {
-      id: 2,
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       name: 'ACME',
-      domain: 'example.com',
+      domain_name: 'example.com',
     },
     phone: '+1 (555) 123-4567',
     pipe: {
-      id: 3,
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
       name: 'Customer',
       icon: '!',
     },

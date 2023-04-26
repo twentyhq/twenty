@@ -91,6 +91,15 @@ object_relationships:
   - name: defaultRoleByRole
     using:
       foreign_key_constraint_on: default_role
+  - name: workspace_member
+    using:
+      manual_configuration:
+        column_mapping:
+          id: user_id
+        insertion_order: null
+        remote_table:
+          name: workspace_members
+          schema: public
 array_relationships:
   - name: refreshTokens
     using:
@@ -120,13 +129,6 @@ array_relationships:
         table:
           name: user_providers
           schema: auth
-  - name: workspace_member
-    using:
-      foreign_key_constraint_on:
-        column: user_id
-        table:
-          name: workspace_members
-          schema: public
 event_triggers:
   - name: user-created
     definition:

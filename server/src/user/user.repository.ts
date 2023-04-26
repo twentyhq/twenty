@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma, WorkspaceMember } from '@prisma/client';
 import { PrismaService } from '../database/prisma.service';
 
+
 @Injectable()
 export class UserRepository {
     constructor(private prisma: PrismaService) {}
@@ -14,6 +15,7 @@ export class UserRepository {
             user_id: data.user_id,
         },
         create: {
+          id: data.id,
           user_id: data.user_id,
           workspace_id: data.workspace_id,
         },

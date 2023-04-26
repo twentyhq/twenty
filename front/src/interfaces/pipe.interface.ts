@@ -1,5 +1,5 @@
 export interface Pipe {
-  id: number;
+  id: string;
   name: string;
   icon: string;
 }

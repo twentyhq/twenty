@@ -5,7 +5,7 @@ import {
 import { UserRepository } from './user.repository';
 import { Injectable, Response } from '@nestjs/common';
 import { WorkspaceRepository } from './workspace.repository';
-import { response } from 'express';
+import { v4 } from 'uuid';
 
 interface User {
   id: number;
@@ -42,6 +42,7 @@ export class UserService {
 
     const workspaceMember = await this.repository.upsertWorkspaceMember({
       data: {
+        id: v4(),
         user_id: String(evt.event.data.new.id),
         workspace_id: workspace.id,
       },
