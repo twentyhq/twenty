@@ -1,4 +1,4 @@
-- name: twenty
+- name: default
   kind: postgres
   configuration:
     connection_info:
@@ -6,4 +6,4 @@
         from_env: HASURA_GRAPHQL_PG_DATABASE_URL
       isolation_level: read-committed
       use_prepared_statements: false
-  tables: "!include twenty/tables/tables.yaml"
+  tables: "!include default/tables/tables.yaml"

@@ -25,5 +25,7 @@ jobs:
         env:
           FONTAWESOME_NPM_AUTH_TOKEN: ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
         run: cd front && npm install
+      - name: Run linter
+        run: cd front && npm run lint
       - name: Run tests and code coverage
         run: cd front && npm run coverage-ci

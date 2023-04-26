@@ -2,6 +2,7 @@ build: ##
 	@docker-compose down 
 	docker volume rm dev_twenty_node_modules_front || true
 	docker volume rm dev_twenty_node_modules_server || true
+	docker volume rm dev_twenty_node_modules_docs || true
 	docker-compose build
 
 up: ## 
@@ -26,6 +27,9 @@ front-coverage: ##
 
 front-storybook: ## 
 	@docker-compose exec twenty-front sh -c "npm run storybook"
+
+front-graphql-generate: ## 
+	@docker-compose exec twenty-front sh -c "npm run graphql-generate"
 
 ## Hasura
 

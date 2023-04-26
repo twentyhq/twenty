@@ -7,6 +7,11 @@ services:
     ports:
       - "3001:3001"
       - "6006:6006"
+    environment:
+      REACT_APP_API_URL: ${FRONT_REACT_APP_API_URL}
+      REACT_APP_AUTH_URL: ${FRONT_REACT_APP_AUTH_URL}
+      HASURA_GRAPHQL_ENDPOINT: ${FRONT_HASURA_GRAPHQL_ENDPOINT}
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
     volumes:
       - ../../front:/app/front
       - twenty_node_modules_front:/app/front/node_modules
@@ -20,17 +25,56 @@ services:
     - "9693:9693"
     volumes:
       - ../../hasura:/hasura
+      - /hasura/entrypoints
     depends_on:
     - "postgres"
     restart: always
     environment:
-      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/hasura
-      HASURA_GRAPHQL_PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/twenty
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: ${HASURA_GRAPHQL_METADATA_DATABASE_URL}
+      HASURA_GRAPHQL_PG_DATABASE_URL: ${HASURA_GRAPHQL_PG_DATABASE_URL}
       HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
       HASURA_GRAPHQL_DEV_MODE: "true"
       HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}
+      HASURA_EVENT_HANDLER_URL: ${HASURA_EVENT_HANDLER_URL}
+  hasura-auth:
+    image: nhost/hasura-auth:0.19.1
+    ports:
+    - "4000:4000"
+    environment:
+      HASURA_GRAPHQL_JWT_SECRET: ${HASURA_GRAPHQL_JWT_SECRET}
+      HASURA_GRAPHQL_DATABASE_URL: ${HASURA_GRAPHQL_PG_DATABASE_URL}
+      HASURA_GRAPHQL_GRAPHQL_URL: ${HASURA_AUTH_GRAPHQL_URL}
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_GRAPHQL_ADMIN_SECRET}
+      AUTH_JWT_CUSTOM_CLAIMS: '{"workspace-id":"workspace_member.workspace_id"}'
+      npm_package_version: '0'
+      AUTH_SMTP_HOST: mailhog
+      AUTH_SMTP_PORT: 1025
+      AUTH_SERVER_URL: ${HASURA_AUTH_SERVER_URL}
+      AUTH_CLIENT_URL: ${HASURA_AUTH_CLIENT_URL}
+      AUTH_PROVIDER_GOOGLE_ENABLED: "true"
+      AUTH_PROVIDER_GOOGLE_CLIENT_ID: ${HASURA_AUTH_PROVIDER_GOOGLE_CLIENT_ID}
+      AUTH_PROVIDER_GOOGLE_CLIENT_SECRET: ${HASURA_AUTH_PROVIDER_GOOGLE_CLIENT_SECRET}
+      AUTH_PROVIDER_GOOGLE_SCOPE: email,profile
+    depends_on:
+    - "twenty-hasura"
+    - "postgres"
+    - "mailhog"
+  mailhog:
+    image: jcalonso/mailhog
+    environment:
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+      SMTP_PASS: smtp-secret
+      SMTP_USER: smtp-user
+      SMTP_SECURE: "false"
+      SMTP_SENDER: auth@localhost
+    ports:
+      - "1025:1025"
+      - "8025:8025"
   twenty-server:
-    build: 
+    build:
       context: ../..
       dockerfile: ./infra/dev/server/Dockerfile
     ports:
@@ -38,17 +82,30 @@ services:
     volumes:
       - ../../server:/app/server
       - twenty_node_modules_server:/app/server/node_modules
+    environment:
+      HASURA_EVENT_HANDLER_SECRET_HEADER: ${SERVER_HASURA_EVENT_HANDLER_SECRET_HEADER}
+      SERVER_DATABASE_URL: ${SERVER_DATABASE_URL}
     depends_on:
       - postgres
+  twenty-docs:
+    build:
+      context: ../..
+      dockerfile: ./infra/dev/docs/Dockerfile
+    ports:
+      - "5000:3000"
+    volumes:
+      - ../../docs:/app/docs
+      - twenty_node_modules_docs:/app/docs/node_modules
   postgres:
     build: ./postgres
     volumes:
     - db_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
 volumes:
   db_data:
   twenty_node_modules_front:
   twenty_node_modules_server:
+  twenty_node_modules_docs:

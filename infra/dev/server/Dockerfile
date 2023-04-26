@@ -10,7 +10,10 @@ COPY ../../server/package.json .
 COPY ../../server/package-lock.json .
 RUN npm install
 
+COPY ../../server/src/database/schema.prisma ./src/database/schema.prisma
+RUN npx prisma generate
+
 COPY ../../server .
 
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:dev"]

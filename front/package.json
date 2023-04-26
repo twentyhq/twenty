@@ -14,6 +14,7 @@
     "@types/node": "^16.18.4",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
+    "apollo-link-rest": "^0.9.0",
     "graphql": "^16.6.0",
     "jwt-decode": "^3.1.2",
     "libphonenumber-js": "^1.10.26",
@@ -27,10 +28,12 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "lint": "eslint src --max-warnings=0",
     "storybook": "storybook dev -p 6006 -s public",
     "build-storybook": "storybook build -s public",
     "coverage": "react-scripts test --coverage --watchAll",
-    "coverage-ci": "react-scripts test --coverage --watchAll=false"
+    "coverage-ci": "react-scripts test --coverage --watchAll=false",
+    "graphql-generate": "REACT_APP_GRAPHQL_ADMIN_SECRET=$REACT_APP_GRAPHQL_ADMIN_SECRET graphql-codegen --config codegen.js"
   },
   "eslintConfig": {
     "extends": [
@@ -77,6 +80,10 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^3.3.1",
+    "@graphql-codegen/typescript": "^3.0.4",
+    "@graphql-codegen/typescript-operations": "^3.0.4",
+    "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@storybook/addon-actions": "^7.0.2",
     "@storybook/addon-essentials": "^7.0.2",
     "@storybook/addon-interactions": "^7.0.2",
@@ -94,6 +101,7 @@
     "babel-plugin-named-exports-order": "^0.0.2",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-config-react-app": "^7.0.1",
     "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.5.1",
@@ -101,6 +109,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-storybook": "^0.6.11",
+    "mock-apollo-client": "^1.2.1",
     "prettier": "^2.8.0",
     "prop-types": "^15.8.1",
     "react-scripts": "5.0.1",

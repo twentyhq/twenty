@@ -5,10 +5,12 @@ import { ThemeProvider } from '@emotion/react';
 import NavItem from '../../../layout/navbar/NavItem';
 import { lightTheme } from '../../styles/themes';
 
-export default {
+const component = {
   title: 'NavItem',
   component: NavItem,
 };
+
+export default component;
 
 export const NavItemDefault = () => (
   <ThemeProvider theme={lightTheme}>

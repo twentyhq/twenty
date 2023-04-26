@@ -1,0 +1,3 @@
+
+-- No down migration
+

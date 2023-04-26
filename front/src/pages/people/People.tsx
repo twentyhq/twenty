@@ -1,193 +1,52 @@
-import {
-  faBuildings,
-  faCalendar,
-  faEnvelope,
-  faRectangleList,
-  faUser,
-} from '@fortawesome/pro-regular-svg-icons';
-import { faList, faMapPin, faPhone } from '@fortawesome/pro-solid-svg-icons';
+import { faUser, faList } from '@fortawesome/pro-regular-svg-icons';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
-import { Company } from '../../interfaces/company.interface';
-import { Pipe } from '../../interfaces/pipe.interface';
-import { createColumnHelper } from '@tanstack/react-table';
 import styled from '@emotion/styled';
-import CellLink from '../../components/table/CellLink';
-import ColumnHead from '../../components/table/ColumnHead';
-import personPlaceholder from './placeholder.png';
-import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
-import Checkbox from '../../components/form/Checkbox';
-import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
-
-type Person = {
-  fullName: string;
-  picture?: string;
-  email: string;
-  company: Company;
-  phone: string;
-  creationDate: Date;
-  pipe: Pipe;
-  city: string;
-  countryCode: string;
-};
+import {
+  availableFilters,
+  peopleColumns,
+  availableSorts,
+} from './people-table';
+import { mapPerson } from '../../interfaces/person.interface';
+import { useCallback, useState } from 'react';
+import {
+  PeopleSelectedSortType,
+  defaultOrderBy,
+  reduceSortsToOrderBy,
+  usePeopleQuery,
+} from '../../services/people';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
-  padding-left: ${(props) => props.theme.spacing(2)};
-  padding-right: ${(props) => props.theme.spacing(2)};
   width: 100%;
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
+  height: 100%;
 `;
 
-const defaultData: Array<Person> = [
-  {
-    fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
-    email: 'alexandre@qonto.com',
-    company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
-    phone: '06 12 34 56 78',
-    creationDate: new Date('Feb 23, 2018'),
-    pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
-    city: 'Paris',
-    countryCode: 'FR',
-  },
-  {
-    fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
-    email: 'alexandre@qonto.com',
-    company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
-    phone: '06 12 34 56 78',
-    creationDate: new Date('Feb 23, 2018'),
-    pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
-    city: 'Paris',
-    countryCode: 'FR',
-  },
-  {
-    fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
-    email: 'alexandre@qonto.com',
-    company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
-    phone: '06 12 34 56 78',
-    creationDate: new Date('Feb 23, 2018'),
-    pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
-    city: 'Paris',
-    countryCode: 'FR',
-  },
-  {
-    fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
-    email: 'alexandre@qonto.com',
-    company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
-    phone: '06 12 34 56 78',
-    creationDate: new Date('Feb 23, 2018'),
-    pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
-    city: 'Paris',
-    countryCode: 'FR',
-  },
-  {
-    fullName: 'Alexandre Prot',
-    picture: personPlaceholder,
-    email: 'alexandre@qonto.com',
-    company: { id: 1, name: 'Qonto', logo: 'https://qonto.eu/logo.png' },
-    phone: '06 12 34 56 78',
-    creationDate: new Date('Feb 23, 2018'),
-    pipe: { id: 1, name: 'Sales Pipeline', icon: 'faUser' },
-    city: 'Paris',
-    countryCode: 'FR',
-  },
-];
-
-const columnHelper = createColumnHelper<Person>();
-
-const columns = [
-  columnHelper.accessor('fullName', {
-    header: () => <ColumnHead viewName="People" viewIcon={faUser} />,
-    cell: (props) => (
-      <HorizontalyAlignedContainer>
-        <Checkbox
-          id={`person-selected-${props.row.original.email}`}
-          name={`person-selected${props.row.original.email}`}
-        />
-        <CellLink
-          name={props.row.original.fullName}
-          picture={props.row.original.picture}
-          href="#"
-        />
-      </HorizontalyAlignedContainer>
-    ),
-  }),
-  columnHelper.accessor('email', {
-    header: () => <ColumnHead viewName="Email" viewIcon={faEnvelope} />,
-    cell: (props) => (
-      <a href={`mailto:${props.row.original.email}`}>
-        {props.row.original.email}
-      </a>
-    ),
-  }),
-  columnHelper.accessor('company', {
-    header: () => <ColumnHead viewName="Company" viewIcon={faBuildings} />,
-    cell: (props) => (
-      <CellLink
-        name={props.row.original.company.name}
-        picture={props.row.original.company.logo}
-        href="#"
-      />
-    ),
-  }),
-  columnHelper.accessor('phone', {
-    header: () => <ColumnHead viewName="Phone" viewIcon={faPhone} />,
-    cell: (props) => (
-      <a
-        href={parsePhoneNumber(
-          props.row.original.phone,
-          props.row.original.countryCode as CountryCode,
-        )?.getURI()}
-      >
-        {parsePhoneNumber(
-          props.row.original.phone,
-          props.row.original.countryCode as CountryCode,
-        )?.formatInternational() || props.row.original.phone}
-      </a>
-    ),
-  }),
-  columnHelper.accessor('creationDate', {
-    header: () => <ColumnHead viewName="Creation" viewIcon={faCalendar} />,
-    cell: (props) =>
-      new Intl.DateTimeFormat(undefined, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      }).format(props.row.original.creationDate),
-  }),
-  columnHelper.accessor('pipe', {
-    header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleList} />,
-    cell: (props) => (
-      <CellLink
-        name={props.row.original.pipe.name}
-        picture={props.row.original.pipe.icon}
-        href="#"
-      />
-    ),
-  }),
-  columnHelper.accessor('city', {
-    header: () => <ColumnHead viewName="City" viewIcon={faMapPin} />,
-  }),
-];
-
 function People() {
+  const [, setSorts] = useState([] as Array<PeopleSelectedSortType>);
+  const [orderBy, setOrderBy] = useState(defaultOrderBy);
+
+  const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
+    setSorts(sorts);
+    setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
+  }, []);
+
+  const { data } = usePeopleQuery(orderBy);
+
   return (
     <WithTopBarContainer title="People" icon={faUser}>
       <StyledPeopleContainer>
-        <Table
-          data={defaultData}
-          columns={columns}
-          viewName="All People"
-          viewIcon={faList}
-        />
+        {
+          <Table
+            data={data ? data.people.map(mapPerson) : []}
+            columns={peopleColumns}
+            viewName="All People"
+            viewIcon={faList}
+            onSortsUpdate={updateSorts}
+            availableSorts={availableSorts}
+            availableFilters={availableFilters}
+          />
+        }
       </StyledPeopleContainer>
     </WithTopBarContainer>
   );

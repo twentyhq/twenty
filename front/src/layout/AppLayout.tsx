@@ -16,6 +16,7 @@ const StyledRightContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex: 1;
+  overflow: hidden;
 `;
 
 type OwnProps = {

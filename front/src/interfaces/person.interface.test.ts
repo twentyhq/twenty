@@ -1,0 +1,46 @@
+import { mapGqlPerson, mapPerson } from './person.interface';
+
+describe('mapPerson', () => {
+  it('should map person', () => {
+    const person = mapPerson({
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+      firstname: 'John',
+      lastname: 'Doe',
+      email: '',
+      phone: '',
+      city: '',
+      created_at: '',
+      company: {
+        __typename: '',
+        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+        name: '',
+        domain_name: '',
+      },
+      __typename: '',
+    });
+    expect(person.fullName).toBe('John Doe');
+  });
+
+  it('should map person back', () => {
+    const person = mapGqlPerson({
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+      fullName: 'John Doe',
+      email: '',
+      phone: '',
+      city: '',
+      company: {
+        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+        name: '',
+        domain_name: '',
+      },
+      creationDate: new Date(),
+      pipe: {
+        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
+        name: '',
+        icon: '',
+      },
+      countryCode: '',
+    });
+    expect(person.firstname).toBe('John');
+  });
+});

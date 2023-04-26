@@ -3,11 +3,14 @@ sidebar_position: 0
 slug: '/'
 ---
 
-# Local setup
+# Twenty
+
+Welcome to Twenty documentation!
 
 ## High Level Overview
 
-Twenty development stack is composed of 3 different layers:
+Twenty development stack is composed of 3 different layers
+
 - front: our frontend React app
 - hasura: our graphql engine exposing our database and server
 - server: our backend that contain endpoint, crm logic, scripts, jobs...
@@ -15,7 +18,7 @@ Twenty development stack is composed of 3 different layers:
 
 ## Setup env variables and npmrc variables
 
-1. `cp ./front/.env.example ./front/.env` and fill with values
+1. `cp ./infra/dev/.env.example ./infra/dev/.env` and fill with values
 2. `cp ./front/.npmrc.example ./front/.npmrc` and fill with values
 
 ## Development environment setup with docker-compose (Recommended)
@@ -38,6 +41,7 @@ cd infra/dev
 
 ```
 make build
+make up
 ```
 
 Once this is completed you should have:

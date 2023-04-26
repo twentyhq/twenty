@@ -1,0 +1,7 @@
+table:
+  name: workspace_members
+  schema: public
+object_relationships:
+  - name: workspace
+    using:
+      foreign_key_constraint_on: workspace_id
