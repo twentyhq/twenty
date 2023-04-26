@@ -11,6 +11,7 @@ type OwnProps = {
   children?: ReactNode;
   isUnfolded?: boolean;
   setIsUnfolded?: React.Dispatch<React.SetStateAction<boolean>>;
+  resetState?: () => void;
 };
 
 const StyledDropdownButtonContainer = styled.div`
@@ -116,6 +117,7 @@ function DropdownButton({
   children,
   isUnfolded = false,
   setIsUnfolded,
+  resetState,
 }: OwnProps) {
   const onButtonClick = () => {
     setIsUnfolded && setIsUnfolded(!isUnfolded);
@@ -123,6 +125,7 @@ function DropdownButton({
 
   const onOutsideClick = () => {
     setIsUnfolded && setIsUnfolded(false);
+    resetState && resetState();
   };
 
   const dropdownRef = useRef(null);

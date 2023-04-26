@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
 import { FilterType } from './SortAndFilterBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -41,12 +41,19 @@ export function FilterDropdownButton({ availableFilters }: OwnProps) {
   const [selectedFilterOperand, setSelectedFilterOperand] =
     useState<FilterOperandType>(filterOperands[0]);
 
+  const resetState = useCallback(() => {
+    setIsOptionUnfolded(false);
+    setSelectedFilter(undefined);
+    setSelectedFilterOperand(filterOperands[0]);
+  }, []);
+
   return (
     <DropdownButton
       label="Filter"
       isActive={false}
       isUnfolded={isUnfolded}
       setIsUnfolded={setIsUnfolded}
+      resetState={resetState}
     >
       {selectedFilter
         ? isOptionUnfolded

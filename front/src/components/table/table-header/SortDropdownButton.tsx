@@ -31,12 +31,18 @@ export function SortDropdownButton<SortField extends string>({
     [setSorts, selectedSortDirection],
   );
 
+  const resetState = useCallback(() => {
+    setIsOptionUnfolded(false);
+    setSelectedSortDirection('asc');
+  }, []);
+
   return (
     <DropdownButton
       label="Sort"
       isActive={sorts.length > 0}
       isUnfolded={isUnfolded}
       setIsUnfolded={setIsUnfolded}
+      resetState={resetState}
     >
       {isOptionUnfolded
         ? options.map((option, index) => (
