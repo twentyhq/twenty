@@ -15,7 +15,7 @@ type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: IconProp;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  sortsAvailable: Array<SortType<SortField>>;
+  sortsAvailable?: Array<SortType<SortField>>;
   availableFilters?: FilterType[];
 };
 
@@ -97,7 +97,7 @@ function TableHeader<SortField extends string>({
           <SortDropdownButton
             setSorts={setSorts}
             sorts={sorts}
-            sortsAvailable={sortsAvailable}
+            sortsAvailable={sortsAvailable || []}
           />
 
           <DropdownButton label="Settings" isActive={false}></DropdownButton>

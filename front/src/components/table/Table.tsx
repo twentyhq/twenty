@@ -97,7 +97,7 @@ function Table<TData, SortField extends string>({
         viewName={viewName}
         viewIcon={viewIcon}
         onSortsUpdate={onSortsUpdate}
-        sortsAvailable={sortsAvailable || []}
+        sortsAvailable={sortsAvailable}
         availableFilters={availableFilters}
       />
       <StyledTableScrollableContainer>
