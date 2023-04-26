@@ -37,7 +37,7 @@ function Companies() {
           viewName="All Companies"
           viewIcon={faList}
           onSortsUpdate={updateSorts}
-          sortsAvailable={sortsAvailable}
+          availableSorts={sortsAvailable}
         />
       </StyledCompaniesContainer>
     </WithTopBarContainer>

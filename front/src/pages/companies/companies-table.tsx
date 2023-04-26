@@ -1,5 +1,4 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { SortType } from '../../components/table/table-header/SortAndFilterBar';
 import { Company } from '../../interfaces/company.interface';
 import { OrderByFields } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
@@ -11,15 +10,16 @@ import PipeChip from '../../components/chips/PipeChip';
 import { faCalendar } from '@fortawesome/pro-regular-svg-icons';
 import ClickableCell from '../../components/table/ClickableCell';
 import PersonChip from '../../components/chips/PersonChip';
+import { SortType } from '../../components/table/table-header/interface';
 
 export const sortsAvailable = [
   {
-    id: 'company_name',
+    key: 'name',
     label: 'Name',
     icon: undefined,
   },
   {
-    id: 'company_domain',
+    key: 'domain_name',
     label: 'Domain',
     icon: undefined,
   },
@@ -30,18 +30,16 @@ export const companiesColumns = [
   columnHelper.accessor('name', {
     header: () => <ColumnHead viewName="Name" />,
     cell: (props) => (
-      <>
-        <HorizontalyAlignedContainer>
-          <Checkbox
-            id={`company-selected-${props.row.original.id}`}
-            name={`company-selected-${props.row.original.id}`}
-          />
-          <CompanyChip
-            name={props.row.original.name}
-            picture={`https://www.google.com/s2/favicons?domain=${props.row.original.domain}&sz=256`}
-          />
-        </HorizontalyAlignedContainer>
-      </>
+      <HorizontalyAlignedContainer>
+        <Checkbox
+          id={`company-selected-${props.row.original.id}`}
+          name={`company-selected-${props.row.original.id}`}
+        />
+        <CompanyChip
+          name={props.row.original.name}
+          picture={`https://www.google.com/s2/favicons?domain=${props.row.original.domain_name}&sz=256`}
+        />
+      </HorizontalyAlignedContainer>
     ),
   }),
   columnHelper.accessor('employees', {
@@ -57,14 +55,14 @@ export const companiesColumns = [
       />
     ),
   }),
-  columnHelper.accessor('domain', {
+  columnHelper.accessor('domain_name', {
     header: () => <ColumnHead viewName="URL" />,
     cell: (props) => (
       <EditableCell
-        content={props.row.original.domain}
+        content={props.row.original.domain_name}
         changeHandler={(value) => {
           const company = props.row.original;
-          company.domain = value;
+          company.domain_name = value;
           // TODO: update company
         }}
       />

@@ -24,8 +24,8 @@ export type GraphqlQueryAccountOwner = {
 
 export type GraphqlQueryCompany = {
   id: string;
-  company_name: string;
-  company_domain: string;
+  name: string;
+  domain_name: string;
   account_owner: GraphqlQueryAccountOwner;
   employees: number;
   address: string;
@@ -34,8 +34,8 @@ export type GraphqlQueryCompany = {
 
 export const mapCompany = (company: GraphqlQueryCompany): Company => ({
   ...company,
-  name: company.company_name,
-  domain_name: company.company_domain,
+  name: company.name,
+  domain_name: company.domain_name,
   accountOwner: {
     id: company.account_owner.id,
     email: company.account_owner.email,
@@ -48,8 +48,8 @@ export const mapCompany = (company: GraphqlQueryCompany): Company => ({
 
 export const mapGqlCompany = (company: Company): GraphqlQueryCompany => ({
   ...company,
-  company_name: company.name,
-  company_domain: company.domain_name,
+  name: company.name,
+  domain_name: company.domain_name,
   created_at: company.creationDate.toUTCString(),
   account_owner: {
     id: company.accountOwner.id,

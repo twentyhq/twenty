@@ -2,11 +2,11 @@ import { GraphqlQueryCompany } from '../../../interfaces/company.interface';
 
 export const defaultData: Array<GraphqlQueryCompany> = [
   {
-    id: 1,
-    company_name: 'ACME',
-    company_domain: 'example.com',
+    id: '',
+    name: 'ACME',
+    domain_name: 'example.com',
     account_owner: {
-      id: 1,
+      id: '',
       email: 'john@example.com',
       displayName: 'John Doe',
     },

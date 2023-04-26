@@ -1,12 +1,9 @@
 import { QueryResult, gql, useQuery } from '@apollo/client';
-import { SelectedSortType } from '../../components/table/table-header/SortAndFilterBar';
 import { Order_By, Companies_Order_By } from '../../generated/graphql';
 import { GraphqlQueryCompany } from '../../interfaces/company.interface';
+import { SelectedSortType } from '../../components/table/table-header/interface';
 
-export type OrderByFields =
-  | keyof Companies_Order_By
-  | 'company_domain'
-  | 'company_name';
+export type OrderByFields = keyof Companies_Order_By | 'domain_name' | 'name';
 
 export type CompaniesSelectedSortType = SelectedSortType<OrderByFields>;
 
@@ -18,7 +15,7 @@ export const reduceSortsToOrderBy = (
   sorts: Array<CompaniesSelectedSortType>,
 ): Companies_Order_By[] => {
   const mappedSorts = sorts.reduce((acc, sort) => {
-    const id = sort.id;
+    const id = sort.key;
     const order = mapOrder(sort.order);
     acc[id] = order;
     return acc;
@@ -31,8 +28,8 @@ export const GET_COMPANIES = gql`
     companies(order_by: $orderBy) {
       id
       workspace_id
-      company_domain
-      company_name
+      domain_name
+      name
       created_at
       address
       employees
@@ -55,6 +52,6 @@ export function useCompaniesQuery(
 
 export const defaultOrderBy: Companies_Order_By[] = [
   {
-    company_name: Order_By.Asc,
+    name: Order_By.Asc,
   },
 ];
