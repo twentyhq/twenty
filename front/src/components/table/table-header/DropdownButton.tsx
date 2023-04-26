@@ -2,6 +2,8 @@ import styled from '@emotion/styled';
 import { useRef, ReactNode } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
 import { modalBackground } from '../../../layout/styles/themes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleDown } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps = {
   label: string;
@@ -142,8 +144,20 @@ function DropdownButton({
   );
 }
 
+const StyleAngleDownContainer = styled.div`
+  margin-left: auto;
+`;
+
+function DropdownTopOptionAngleDown() {
+  return (
+    <StyleAngleDownContainer>
+      <FontAwesomeIcon icon={faAngleDown} />
+    </StyleAngleDownContainer>
+  );
+}
 DropdownButton.StyledDropdownItem = StyledDropdownItem;
 DropdownButton.StyledDropdownTopOption = StyledDropdownTopOption;
+DropdownButton.StyledDropdownTopOptionAngleDown = DropdownTopOptionAngleDown;
 DropdownButton.StyledIcon = StyledIcon;
 
 export default DropdownButton;

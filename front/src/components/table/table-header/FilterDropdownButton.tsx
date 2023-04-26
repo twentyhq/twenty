@@ -3,7 +3,6 @@ import DropdownButton from './DropdownButton';
 import { FilterType } from './SortAndFilterBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faAngleDown,
   faBuildings,
   faCalendar,
   faEnvelope,
@@ -96,8 +95,13 @@ export function FilterDropdownButton() {
                 key={'selected-filter'}
                 onClick={() => setSelectedFilter(undefined)}
               >
+                <DropdownButton.StyledIcon>
+                  {selectedFilter.icon && (
+                    <FontAwesomeIcon icon={selectedFilter.icon} />
+                  )}
+                </DropdownButton.StyledIcon>
                 {selectedFilter.label}
-                <FontAwesomeIcon icon={faAngleDown} />
+                <DropdownButton.StyledDropdownTopOptionAngleDown />
               </DropdownButton.StyledDropdownTopOption>,
               <DropdownButton.StyledDropdownTopOption
                 key={'selected-filter-operand'}
@@ -105,7 +109,7 @@ export function FilterDropdownButton() {
               >
                 {selectedFilterOperand.label}
 
-                <FontAwesomeIcon icon={faAngleDown} />
+                <DropdownButton.StyledDropdownTopOptionAngleDown />
               </DropdownButton.StyledDropdownTopOption>,
               someFieldRandomValue.map((value, index) => (
                 <DropdownButton.StyledDropdownItem

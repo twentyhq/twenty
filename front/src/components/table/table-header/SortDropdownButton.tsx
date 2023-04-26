@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
 import { SelectedSortType, SortType } from './SortAndFilterBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps<SortField> = {
   sorts: SelectedSortType<SortField>[];
@@ -58,7 +57,7 @@ export function SortDropdownButton<SortField extends string>({
             >
               {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
 
-              <FontAwesomeIcon icon={faAngleDown} />
+              <DropdownButton.StyledDropdownTopOptionAngleDown />
             </DropdownButton.StyledDropdownTopOption>,
             ...sortsAvailable.map((sort, index) => (
               <DropdownButton.StyledDropdownItem
