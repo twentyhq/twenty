@@ -82,18 +82,6 @@ export function FilterDropdownButton({
   function renderFilterDropdown(selectedFilter: FilterType) {
     return [
       <DropdownButton.StyledDropdownTopOption
-        key={'selected-filter'}
-        onClick={() => setSelectedFilter(undefined)}
-      >
-        <DropdownButton.StyledIcon>
-          {selectedFilter.icon && (
-            <FontAwesomeIcon icon={selectedFilter.icon} />
-          )}
-        </DropdownButton.StyledIcon>
-        {selectedFilter.label}
-        <DropdownButton.StyledDropdownTopOptionAngleDown />
-      </DropdownButton.StyledDropdownTopOption>,
-      <DropdownButton.StyledDropdownTopOption
         key={'selected-filter-operand'}
         onClick={() => setIsOptionUnfolded(true)}
       >
