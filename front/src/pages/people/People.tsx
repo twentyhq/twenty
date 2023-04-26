@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import {
   availableFilters,
   peopleColumns,
-  sortsAvailable,
+  availableSorts,
 } from './people-table';
 import { mapPerson } from '../../interfaces/person.interface';
 import { useCallback, useState } from 'react';
@@ -42,7 +42,7 @@ function People() {
             viewName="All People"
             viewIcon={faList}
             onSortsUpdate={updateSorts}
-            sortsAvailable={sortsAvailable}
+            availableSorts={availableSorts}
             availableFilters={availableFilters}
           />
         }

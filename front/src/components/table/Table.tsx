@@ -21,7 +21,7 @@ type OwnProps<TData, SortField> = {
   viewName: string;
   viewIcon?: IconProp;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  sortsAvailable?: Array<SortType<SortField>>;
+  availableSorts?: Array<SortType<SortField>>;
   availableFilters?: FilterType[];
 };
 
@@ -82,7 +82,7 @@ function Table<TData, SortField extends string>({
   viewName,
   viewIcon,
   onSortsUpdate,
-  sortsAvailable,
+  availableSorts,
   availableFilters,
 }: OwnProps<TData, SortField>) {
   const table = useReactTable({
@@ -97,7 +97,7 @@ function Table<TData, SortField extends string>({
         viewName={viewName}
         viewIcon={viewIcon}
         onSortsUpdate={onSortsUpdate}
-        sortsAvailable={sortsAvailable}
+        availableSorts={availableSorts}
         availableFilters={availableFilters}
       />
       <StyledTableScrollableContainer>

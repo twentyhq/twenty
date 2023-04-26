@@ -6,13 +6,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 type OwnProps<SortField> = {
   sorts: SelectedSortType<SortField>[];
   setSorts: (sorts: SelectedSortType<SortField>[]) => void;
-  sortsAvailable: SortType<SortField>[];
+  availableSorts: SortType<SortField>[];
 };
 
 const options: Array<SelectedSortType<string>['order']> = ['asc', 'desc'];
 
 export function SortDropdownButton<SortField extends string>({
-  sortsAvailable,
+  availableSorts,
   setSorts,
   sorts,
 }: OwnProps<SortField>) {
@@ -59,7 +59,7 @@ export function SortDropdownButton<SortField extends string>({
 
               <DropdownButton.StyledDropdownTopOptionAngleDown />
             </DropdownButton.StyledDropdownTopOption>,
-            ...sortsAvailable.map((sort, index) => (
+            ...availableSorts.map((sort, index) => (
               <DropdownButton.StyledDropdownItem
                 key={index + 1}
                 onClick={() => {

@@ -61,7 +61,7 @@ export const RegularSortDropdownButton = ({ setSorts }: OwnProps) => {
       <StyleDiv>
         <SortDropdownButton
           sorts={sorts}
-          sortsAvailable={availableSorts}
+          availableSorts={availableSorts}
           setSorts={setSorts}
         />
       </StyleDiv>

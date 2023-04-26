@@ -12,7 +12,7 @@ const component = {
 export default component;
 
 export const RegularTableHeader = () => {
-  const sortsAvailable: Array<SortType> = [
+  const availableSorts: Array<SortType> = [
     {
       id: 'created_at',
       label: 'Created at',
@@ -24,7 +24,7 @@ export const RegularTableHeader = () => {
       <TableHeader
         viewName="Test"
         viewIcon={faBuilding}
-        sortsAvailable={sortsAvailable}
+        availableSorts={availableSorts}
       />
     </ThemeProvider>
   );

@@ -15,7 +15,7 @@ type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: IconProp;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  sortsAvailable?: Array<SortType<SortField>>;
+  availableSorts?: Array<SortType<SortField>>;
   availableFilters?: FilterType[];
 };
 
@@ -59,7 +59,7 @@ function TableHeader<SortField extends string>({
   viewName,
   viewIcon,
   onSortsUpdate,
-  sortsAvailable, //TODO RENAME availableSorts
+  availableSorts,
   availableFilters,
 }: OwnProps<SortField>) {
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
@@ -97,7 +97,7 @@ function TableHeader<SortField extends string>({
           <SortDropdownButton
             setSorts={setSorts}
             sorts={sorts}
-            sortsAvailable={sortsAvailable || []}
+            availableSorts={availableSorts || []}
           />
 
           <DropdownButton label="Settings" isActive={false}></DropdownButton>

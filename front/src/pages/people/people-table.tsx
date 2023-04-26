@@ -24,7 +24,7 @@ import {
 import EditableCell from '../../components/table/EditableCell';
 import { OrderByFields, updatePerson } from '../../services/people';
 
-export const sortsAvailable = [
+export const availableSorts = [
   {
     id: 'fullname',
     label: 'People',
