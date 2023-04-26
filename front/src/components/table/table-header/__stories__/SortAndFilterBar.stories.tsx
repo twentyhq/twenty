@@ -34,7 +34,15 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
         ]}
         onRemoveSort={removeFunction}
         onRemoveFilter={removeFunction}
-        filters={[]}
+        filters={[
+          {
+            label: 'People',
+            operand: { id: 'include', label: 'Include' },
+            id: 'test_filter',
+            icon: faArrowDown,
+            value: 'John Doe',
+          },
+        ]}
       />
     </ThemeProvider>
   );

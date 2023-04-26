@@ -25,8 +25,6 @@ type OwnProps = {
   setFilters: (filters: SelectedFilterType[]) => void;
 };
 
-const filters = [] satisfies SelectedFilterType[];
-
 const availableFilters = [
   {
     id: 'fullname',

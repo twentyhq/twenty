@@ -101,7 +101,13 @@ export function FilterDropdownButton({
                   key={`fields-value-${index}`}
                   onClick={() => {
                     setFilters([
-                      { id: value, operandId: selectedFilterOperand.id },
+                      {
+                        id: value,
+                        operand: selectedFilterOperand,
+                        label: selectedFilter.label,
+                        value: value,
+                        icon: selectedFilter.icon,
+                      },
                     ]);
                     setIsUnfolded(false);
                     setSelectedFilter(undefined);

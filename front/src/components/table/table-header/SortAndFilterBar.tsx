@@ -20,7 +20,7 @@ export type SortType<SortIds = string> = {
 export type FilterType<KeyOfFilter = string> = {
   label: string;
   id: KeyOfFilter;
-  icon?: IconProp;
+  icon: IconProp;
 };
 
 export type SelectedSortType<SortField = string> = SortType<SortField> & {
@@ -59,6 +59,8 @@ const StyledCancelButton = styled.button`
 function SortAndFilterBar<SortField extends string>({
   sorts,
   onRemoveSort,
+  filters,
+  onRemoveFilter,
 }: OwnProps<SortField>) {
   return (
     <StyledBar>
@@ -73,10 +75,24 @@ function SortAndFilterBar<SortField extends string>({
           />
         );
       })}
-      {sorts.length > 0 && (
+      {filters.map((filter) => {
+        return (
+          <SortOrFilterChip
+            key={filter.id}
+            label={`${filter.label}: ${filter.operand.label} ${filter.value}`}
+            id={filter.id}
+            icon={filter.icon}
+            onRemove={() => onRemoveFilter(filter.id)}
+          />
+        );
+      })}
+      {filters.length + sorts.length > 0 && (
         <StyledCancelButton
           data-testid={'cancel-button'}
-          onClick={() => sorts.forEach((i) => onRemoveSort(i.id))}
+          onClick={() => {
+            sorts.forEach((i) => onRemoveSort(i.id));
+            filters.forEach((i) => onRemoveFilter(i.id));
+          }}
         >
           Cancel
         </StyledCancelButton>

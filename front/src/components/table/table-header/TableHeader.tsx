@@ -11,7 +11,13 @@ import { useCallback, useState } from 'react';
 import { SortDropdownButton } from './SortDropdownButton';
 import { FilterDropdownButton } from './FilterDropdownButton';
 
-export type SelectedFilterType = any;
+export type SelectedFilterType = {
+  id: string;
+  label: string;
+  value: string;
+  operand: { id: string; label: string };
+  icon: IconProp;
+};
 
 type OwnProps<SortField> = {
   viewName: string;
@@ -90,17 +96,17 @@ function TableHeader<SortField extends string>({
   const [filters, innerSetFilters] = useState<Array<SelectedFilterType>>([]);
 
   const setFilters = useCallback(
-    (sorts: SelectedSortType<SelectedFilterType>[]) => {
-      innerSetFilters(sorts);
-      onSortsUpdate && onSortsUpdate(sorts);
+    (filters: SelectedFilterType[]) => {
+      innerSetFilters(filters);
+      onFiltersUpdate && onFiltersUpdate(filters);
     },
-    [onSortsUpdate],
+    [onFiltersUpdate],
   );
 
   const onFilterItemUnSelect = useCallback(
     (filterId: SelectedFilterType['id']) => {
       const newFilters = [] as SelectedFilterType[];
-      innerSetSorts(newFilters);
+      innerSetFilters(newFilters);
       onFiltersUpdate && onFiltersUpdate(newFilters);
     },
     [onFiltersUpdate],
@@ -130,7 +136,7 @@ function TableHeader<SortField extends string>({
           <DropdownButton label="Settings" isActive={false}></DropdownButton>
         </StyledFilters>
       </StyledTableHeader>
-      {sorts.length > 0 && (
+      {sorts.length + filters.length > 0 && (
         <SortAndFilterBar
           sorts={sorts}
           onRemoveSort={onSortItemUnSelect}
