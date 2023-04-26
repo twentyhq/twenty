@@ -107,13 +107,14 @@ li.coming-soon a {
 li.coming-soon a::after {
   float: right;
   content: "soon";
-  background-color: #ebe6e6;
   border-color: #373737;
   border: 1px solid;
   border-radius: 4px;
   text-align: center;
   float:right;
-  padding: 2px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: 2px;
   font-size: 80%;
 }
 

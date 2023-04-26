@@ -41,7 +41,7 @@ export default function DocSidebarItemLink({
           onClick: onItemClick ? () => onItemClick(item) : undefined,
         })}
         {...props}>
-        <i class={"sidebar-item-icon fa-light " + (customProps && customProps.icon ? ("fa-"+customProps.icon) : "fa-notdef")}></i>
+        <i className={"sidebar-item-icon fa-light " + (customProps && customProps.icon ? ("fa-"+customProps.icon) : "fa-notdef")}></i>
         {label}
         {!isInternalLink && <IconExternalLink />}
       </Link>
