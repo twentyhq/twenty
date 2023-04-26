@@ -31,6 +31,20 @@ const StyledEditable = styled.div`
     pointer-events: none;
     display: none;
   }
+
+  &:has(input:focus-within)::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    border: 1px solid ${(props) => props.theme.blue};
+    border-radius: 4px;
+    pointer-events: none;
+    display: block;
+    z-index: 1;
+  }
 `;
 
 const StyledInplaceInput = styled.input`

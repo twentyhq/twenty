@@ -1,5 +1,4 @@
-import { render } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render } from '@testing-library/react';
 
 import { RegularEditableCell } from '../__stories__/EditableCell.stories';
 
@@ -8,10 +7,12 @@ it('Checks the EditableCell editing event bubbles up', async () => {
   const { getByTestId } = render(<RegularEditableCell changeHandler={func} />);
 
   const parent = getByTestId('content-editable-parent');
-  expect(parent).not.toBeNull();
-  const editable = parent.querySelector('[contenteditable]');
-  expect(editable).not.toBeNull();
-  editable && userEvent.click(editable);
-  userEvent.keyboard('a');
-  expect(func).toBeCalled();
+  const editableInput = parent.querySelector('input');
+
+  if (!editableInput) {
+    throw new Error('Editable input not found');
+  }
+
+  fireEvent.change(editableInput, { target: { value: '23' } });
+  expect(func).toBeCalledWith('23');
 });
