@@ -12,4 +12,5 @@ It is meant to be:
 # Documentation
 The doc is available on [docs.twenty.com](docs.twenty.com)
 
-We don't have a Slack community yet but we will create one after we lanch.
+We don't have a Slack community yet but we will create one when we are ready to launch.
+In the meantime, feel free to create a Github issue or open a discussion.

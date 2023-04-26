@@ -5,10 +5,5 @@
   "main": "index.js",
   "scripts": {},
   "author": "Charles Bochet",
-  "license": "ISC",
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.4.0",
-    "@fortawesome/free-regular-svg-icons": "^6.4.0",
-    "@fortawesome/react-fontawesome": "^0.2.0"
-  }
+  "license": "ISC"
 }
