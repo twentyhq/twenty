@@ -6,7 +6,10 @@ import NavItem from './NavItem';
 import NavTitle from './NavTitle';
 import WorkspaceContainer from './WorkspaceContainer';
 import { faUser } from '@fortawesome/pro-regular-svg-icons';
-import { faBuildings } from '@fortawesome/pro-regular-svg-icons';
+import {
+  faBuildings,
+  faBullseyeArrow,
+} from '@fortawesome/pro-regular-svg-icons';
 
 const NavbarContainer = styled.div`
   display: flex;
@@ -52,6 +55,17 @@ function Navbar({ workspace }: OwnProps) {
             active={
               !!useMatch({
                 path: useResolvedPath('/companies').pathname,
+                end: true,
+              })
+            }
+          />
+          <NavItem
+            label="Opportunities"
+            to="/opportunities"
+            icon={faBullseyeArrow}
+            active={
+              !!useMatch({
+                path: useResolvedPath('/opportunities').pathname,
                 end: true,
               })
             }
