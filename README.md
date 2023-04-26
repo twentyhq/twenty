@@ -1,68 +1,15 @@
 # Twenty
 
-Welcome to Twenty documentation!
+Twenty is a open source CRM designed to solve the issues that are still prevalent amongst the existings solutions. 
+It is meant to be:
+- Easily extendable
+- Perfectly in-sync with your data
+- Crafted with care and enjoyable to use
 
-## High Level Overview
+![Mockup of the CRM](/docs/src/img/mockup.png)
 
-Twenty development stack is composed of 3 different layers
 
-- front: our frontend React app
-- hasura: our graphql engine exposing our database and server
-- server: our backend that contain endpoint, crm logic, scripts, jobs...
-- storages: postgres
+# Documentation
+The doc is available on [docs.twenty.com](docs.twenty.com)
 
-## Setup env variables and npmrc variables
-
-1. `cp ./front/.env.example ./front/.env` and fill with values
-2. `cp ./front/.npmrc.example ./front/.npmrc` and fill with values
-
-## Development environment setup with docker-compose (Recommended)
-
-We also provide a containerized environment with Docker and orchestrated with docker-compose in case it is easier for you. This install will also provision a postgres container out of the box.
-
-### Step 1: pre-requesites
-
-Make sure to have the latest Docker and Docker-compose versions installed on your computer. You can run `docker-compose --version` to check if you have docker-compose installed and `docker --version` to check if you have docker installed.
-
-### Step 2: docker build
-
-Build docker containers.
-
-The whole setup experience is happening in `infra/dev` folder. Make sure to be in this folder:
-
-```
-cd infra/dev
-```
-
-```
-make build
-```
-
-Once this is completed you should have:
-
-- front available on: http://localhost:3001
-- hasura available on: http://localhost:8080
-- server available on: http://localhost:3000/health
-- postgres: available on http://localhost:5432 that should contain `twenty` database
-
-### Step 3: IDE setup
-
-If you are using VSCode, please use the `Dev Containers` extension to open the project in a container. This will allow you to run Visual Studio on top of the docker container. This will allow you to run the project without having to install node on your machine.
-
-### Note
-
-If you are using Docker install, make sure to ssh in the docker container during development to execute commands. You can also use `Makefile` to help you
-
-## Development workflow
-
-### Front tests
-
-Run tests: `make front-test`
-Run coverage: `make front-coverage`
-Run storybook: `make front-storybook`
-
-### Hasura development
-
-Open hasura console: `make hasura-console`
-Do your changes in hasura console on http://localhost:9695
-Commit your changes in git
+We don't have a Slack community yet but we will create one after we lanch.

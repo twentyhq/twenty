@@ -10,11 +10,11 @@
 /* You can override the default Infima variables here. */
 :root {
   --ifm-global-radius: 8px;
-  --ifm-code-font-size: var(14px);
+  --ifm-code-font-size: 14px;
   --ifm-font-family-base: "Inter",BlinkMacSystemFont,-apple-system,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue","Helvetica","Arial",sans-serif;
   --ifm-font-family-monospace: 'Roboto Mono',SFMono-Regular, Menlo, Monaco, Consolas,'Liberation Mono', 'Courier New', monospace;
-  --ifm-font-size-base: var(14px);
-  --ifm-base-spacing: 16px;
+  --ifm-font-size-base: 14px;
+  --ifm-base-spacing: 14px;
   --ifm-line-height-base: var(--twenty-body-regular-line-height);
   --ifm-font-weight-base: var(--twenty-body-regular-font-weight);
   --ifm-color-primary: #11181c;
@@ -25,6 +25,35 @@
   --ifm-toc-padding-vertical: 0.5rem;
   --ifm-breadcrumb-border-radius: 8px;
   --ifm-navbar-link-color: #687076;
+
+
+  --ifm-heading-font-weight: 600;
+
+  --ifm-h1-font-size: 1.7rem !important;
+  --ifm-h2-font-size: 1.25rem !important;
+  --ifm-h3-font-size: 1rem !important;
+  --ifm-h4-font-size: 0.875rem !important;
+  --ifm-h5-font-size: 0.85rem !important;
+
+  --ifm-spacing-horizontal: 2rem;
+
+  --ifm-menu-link-padding-vertical: 0.2rem;
+}
+
+.markdown > h1 {
+  --ifm-h1-font-size: 1.7rem !important;
+}
+.markdown > h2 {
+  --ifm-h2-font-size: 1.25rem;
+}
+.markdown > h3 {
+  --ifm-h3-font-size: 1rem;
+}
+.markdown > h4 {
+  --ifm-h4-font-size: 0.875rem;
+}
+.markdown > h5 {
+  --ifm-h5-font-size: 0.85rem;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -41,7 +70,7 @@ body {
 }
 
 html {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .DocSearch-Button {
@@ -62,4 +91,36 @@ html {
 .theme-edit-this-page svg {
   height: 14px;
   width: 14px;
+}
+
+li.coming-soon {
+  display: flex;
+}
+
+
+li.coming-soon a {
+  display: inline-block;
+  pointer-events: none;
+  cursor: default;
+}
+
+li.coming-soon a::after {
+  float: right;
+  content: "soon";
+  background-color: #ebe6e6;
+  border-color: #373737;
+  border: 1px solid;
+  border-radius: 4px;
+  text-align: center;
+  float:right;
+  padding: 2px;
+  font-size: 80%;
+}
+
+.menu__list-item-collapsible > a {
+  text-transform: uppercase;
+}
+
+.theme-doc-sidebar-item-category {
+  padding-top: 1.5rem;
 }

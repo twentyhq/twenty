@@ -1,0 +1,114 @@
+{
+  "name": "@fortawesome/react-fontawesome",
+  "description": "Official React component for Font Awesome 5",
+  "version": "0.2.0",
+  "main": "index.js",
+  "module": "index.es.js",
+  "jsnext:main": "index.es.js",
+  "types": "index.d.ts",
+  "homepage": "https://github.com/FortAwesome/react-fontawesome",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FortAwesome/react-fontawesome.git"
+  },
+  "contributors": [
+    "Travis Chase <travis@fontawesome.com>",
+    "Rob Madole <rob@fontawesome.com>",
+    "Mike Wilkerson <mwilkerson@gmail.com>",
+    "Nate Radebaugh <github.com/NateRadebaugh>",
+    "Kirk Ross <github.com/kirkbross>",
+    "Prateek Goel <github.com/prateekgoel>",
+    "Naor Torgeman <github.com/naortor>",
+    "Matthew Hand <github.com/mmhand123>",
+    "Calvin Freitas <github.com/calvinf>",
+    "Bill Parrott <github.com/chimericdream>",
+    "Mike Lynch <github.com/baelec>",
+    "Lukáš Rod <github.com/rodlukas>",
+    "Proudust <github.com/proudust>",
+    "Tiago Sousa <github.com/TiagoPortfolio>",
+    "Alexey Victorov <github.com/AliMamed>",
+    "Calum Smith <github.com/cpmsmith>"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "dist": "cross-env NODE_ENV=production npm run build",
+    "lint": "eslint src",
+    "prettier": "pretty-quick --pattern src/** --staged",
+    "prepack": "npm run dist",
+    "test": "jest --silent",
+    "install.5": "npm --no-save install @fortawesome/fontawesome-svg-core@1.2.x @fortawesome/free-solid-svg-icons@5.x",
+    "install.6": "npm --no-save install @fortawesome/fontawesome-svg-core@6.x @fortawesome/free-solid-svg-icons@6.x",
+    "clean": "rm -f index.js && rm -f index.es.js"
+  },
+  "lint-staged": {
+    "README.md": [
+      "markdown-toc -i",
+      "git add README.md"
+    ]
+  },
+  "peerDependencies": {
+    "@fortawesome/fontawesome-svg-core": "~1 || ~6",
+    "react": ">=16.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.7",
+    "@babel/plugin-external-helpers": "^7.16.7",
+    "@babel/preset-env": "^7.16.8",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-stage-3": "^7.8.3",
+    "@fortawesome/fontawesome-svg-core": "^1.3.0",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@types/react": "^17.0.38",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^27.4.6",
+    "browserslist": "^4.19.1",
+    "caniuse-lite": "^1.0.30001299",
+    "cross-env": "^7.0.3",
+    "eslint": "^6.7.2",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-compat": "^3.3.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^23.1.1",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "husky": "^7.0.4",
+    "jest": "^27.4.7",
+    "lint-staged": "^12.1.7",
+    "markdown-toc": "^1.2.0",
+    "prettier": "^2.5.1",
+    "pretty-quick": "^3.1.3",
+    "react": ">=17.x",
+    "react-dom": "^17.0.2",
+    "react-test-renderer": "^17.0.2",
+    "rollup": "^2.64.0"
+  },
+  "dependencies": {
+    "prop-types": "^15.8.1"
+  },
+  "files": [
+    "index.js",
+    "index.es.js",
+    "index.d.ts"
+  ],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "ie > 10"
+  ],
+  "jest": {
+    "roots": [
+      "src"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run prettier && lint-staged"
+    }
+  }
+}
