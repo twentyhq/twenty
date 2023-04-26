@@ -26,27 +26,27 @@ import {
 
 export const availableSorts = [
   {
-    id: 'fullname',
+    key: 'fullname',
     label: 'People',
     icon: faUser,
   },
   {
-    id: 'company_name',
+    key: 'company_name',
     label: 'Company',
     icon: faBuildings,
   },
   {
-    id: 'email',
+    key: 'email',
     label: 'Email',
     icon: faEnvelope,
   },
-  { id: 'phone', label: 'Phone', icon: faPhone },
+  { key: 'phone', label: 'Phone', icon: faPhone },
   {
-    id: 'created_at',
+    key: 'created_at',
     label: 'Created at',
     icon: faCalendar,
   },
-  { id: 'city', label: 'City', icon: faMapPin },
+  { key: 'city', label: 'City', icon: faMapPin },
 ] satisfies Array<SortType<OrderByFields>>;
 
 export const availableFilters = [

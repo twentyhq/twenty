@@ -17,7 +17,7 @@ it('Checks the default top option is Ascending', async () => {
   expect(setSorts).toHaveBeenCalledWith([
     {
       label: 'Email',
-      id: 'email',
+      key: 'email',
       icon: faEnvelope,
       order: 'asc',
     },
@@ -45,7 +45,7 @@ it('Checks the selection of Descending', async () => {
   expect(setSorts).toHaveBeenCalledWith([
     {
       label: 'Email',
-      id: 'email',
+      key: 'email',
       icon: faEnvelope,
       order: 'desc',
     },

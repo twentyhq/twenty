@@ -14,7 +14,7 @@ export default component;
 export const RegularTableHeader = () => {
   const availableSorts: Array<SortType> = [
     {
-      id: 'created_at',
+      key: 'created_at',
       label: 'Created at',
       icon: faCalendar,
     },

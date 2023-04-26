@@ -1,14 +1,14 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
-export type SortType<SortIds = string> = {
+export type SortType<SortKey = string> = {
   label: string;
-  id: SortIds;
+  key: SortKey;
   icon?: IconProp;
 };
 
-export type FilterType<KeyOfFilter = string> = {
+export type FilterType<FilterKey = string> = {
   label: string;
-  key: KeyOfFilter;
+  key: FilterKey;
   icon: IconProp;
 };
 

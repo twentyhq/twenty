@@ -5,7 +5,7 @@ import { SelectedFilterType, SelectedSortType } from './interface';
 
 type OwnProps<SortField> = {
   sorts: Array<SelectedSortType<SortField>>;
-  onRemoveSort: (sortId: SelectedSortType<SortField>['id']) => void;
+  onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
   filters: Array<SelectedFilterType>;
   onRemoveFilter: (filterId: SelectedFilterType['id']) => void;
 };
@@ -50,11 +50,11 @@ function SortAndFilterBar<SortField extends string>({
       {sorts.map((sort) => {
         return (
           <SortOrFilterChip
-            key={sort.id}
+            key={sort.key}
             label={sort.label}
-            id={sort.id}
+            id={sort.key}
             icon={sort.order === 'asc' ? faArrowDown : faArrowUp}
-            onRemove={() => onRemoveSort(sort.id)}
+            onRemove={() => onRemoveSort(sort.key)}
           />
         );
       })}
@@ -73,7 +73,7 @@ function SortAndFilterBar<SortField extends string>({
         <StyledCancelButton
           data-testid={'cancel-button'}
           onClick={() => {
-            sorts.forEach((i) => onRemoveSort(i.id));
+            sorts.forEach((i) => onRemoveSort(i.key));
             filters.forEach((i) => onRemoveFilter(i.id));
           }}
         >

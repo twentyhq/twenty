@@ -15,7 +15,7 @@ export const reduceSortsToOrderBy = (
   sorts: Array<PeopleSelectedSortType>,
 ): People_Order_By[] => {
   const mappedSorts = sorts.reduce((acc, sort) => {
-    const id = sort.id;
+    const id = sort.key;
     const order = mapOrder(sort.order);
     if (id === 'fullname') {
       acc['firstname'] = order;
