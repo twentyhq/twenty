@@ -129,6 +129,14 @@ array_relationships:
         table:
           name: user_providers
           schema: auth
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - display_name
+        - email
+        - id
+      filter: {}
 event_triggers:
   - name: user-created
     definition:

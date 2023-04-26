@@ -2,6 +2,15 @@ table:
   name: companies
   schema: public
 object_relationships:
+  - name: account_owner
+    using:
+      manual_configuration:
+        column_mapping:
+          account_owner_id: id
+        insertion_order: null
+        remote_table:
+          name: users
+          schema: auth
   - name: workspace
     using:
       foreign_key_constraint_on: workspace_id
@@ -14,6 +23,9 @@ insert_permissions:
       columns:
         - id
         - workspace_id
+        - account_owner_id
+        - address
+        - employees
         - name
         - domain_name
         - created_at
@@ -25,6 +37,9 @@ select_permissions:
       columns:
         - domain_name
         - name
+        - account_owner_id
+        - address
+        - employees
         - created_at
         - deleted_at
         - updated_at
@@ -39,6 +54,9 @@ update_permissions:
       columns:
         - domain_name
         - name
+        - employees
+        - address
+        - account_owner_id
         - created_at
         - deleted_at
         - updated_at
