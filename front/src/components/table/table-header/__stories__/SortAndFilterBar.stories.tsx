@@ -33,6 +33,8 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
           },
         ]}
         onRemoveSort={removeFunction}
+        onRemoveFilter={removeFunction}
+        filters={[]}
       />
     </ThemeProvider>
   );

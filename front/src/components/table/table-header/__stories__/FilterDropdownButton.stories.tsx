@@ -11,6 +11,7 @@ import {
   faCalendar,
   faMapPin,
 } from '@fortawesome/pro-regular-svg-icons';
+import { SelectedFilterType } from '../TableHeader';
 
 const component = {
   title: 'FilterDropdownButton',
@@ -19,7 +20,13 @@ const component = {
 
 export default component;
 
-export const availableFilters = [
+type OwnProps = {
+  setFilters: () => void;
+};
+
+const filters = [] satisfies SelectedFilterType[];
+
+const availableFilters = [
   {
     id: 'fullname',
     label: 'People',
@@ -49,11 +56,15 @@ const StyleDiv = styled.div`
   width: 200px;
 `;
 
-export const RegularFilterDropdownButton = () => {
+export const RegularFilterDropdownButton = ({ setFilters }: OwnProps) => {
   return (
     <ThemeProvider theme={lightTheme}>
       <StyleDiv>
-        <FilterDropdownButton availableFilters={availableFilters} />
+        <FilterDropdownButton
+          availableFilters={availableFilters}
+          filters={filters}
+          setFilters={setFilters}
+        />
       </StyleDiv>
     </ThemeProvider>
   );

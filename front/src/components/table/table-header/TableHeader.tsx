@@ -11,10 +11,13 @@ import { useCallback, useState } from 'react';
 import { SortDropdownButton } from './SortDropdownButton';
 import { FilterDropdownButton } from './FilterDropdownButton';
 
+export type SelectedFilterType = any;
+
 type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: IconProp;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
   availableSorts?: Array<SortType<SortField>>;
   availableFilters?: FilterType[];
 };
@@ -59,6 +62,7 @@ function TableHeader<SortField extends string>({
   viewName,
   viewIcon,
   onSortsUpdate,
+  onFiltersUpdate,
   availableSorts,
   availableFilters,
 }: OwnProps<SortField>) {
@@ -83,6 +87,25 @@ function TableHeader<SortField extends string>({
     [onSortsUpdate],
   );
 
+  const [filters, innerSetFilters] = useState<Array<SelectedFilterType>>([]);
+
+  const setFilters = useCallback(
+    (sorts: SelectedSortType<SelectedFilterType>[]) => {
+      innerSetFilters(sorts);
+      onSortsUpdate && onSortsUpdate(sorts);
+    },
+    [onSortsUpdate],
+  );
+
+  const onFilterItemUnSelect = useCallback(
+    (filterId: SelectedFilterType['id']) => {
+      const newFilters = [] as SelectedFilterType[];
+      innerSetSorts(newFilters);
+      onFiltersUpdate && onFiltersUpdate(newFilters);
+    },
+    [onFiltersUpdate],
+  );
+
   return (
     <StyledContainer>
       <StyledTableHeader>
@@ -93,7 +116,11 @@ function TableHeader<SortField extends string>({
           {viewName}
         </StyledViewSection>
         <StyledFilters>
-          <FilterDropdownButton availableFilters={availableFilters || []} />
+          <FilterDropdownButton
+            filters={filters}
+            setFilters={setFilters}
+            availableFilters={availableFilters || []}
+          />
           <SortDropdownButton
             setSorts={setSorts}
             sorts={sorts}
@@ -104,7 +131,12 @@ function TableHeader<SortField extends string>({
         </StyledFilters>
       </StyledTableHeader>
       {sorts.length > 0 && (
-        <SortAndFilterBar sorts={sorts} onRemoveSort={onSortItemUnSelect} />
+        <SortAndFilterBar
+          sorts={sorts}
+          onRemoveSort={onSortItemUnSelect}
+          filters={filters}
+          onRemoveFilter={onFilterItemUnSelect}
+        />
       )}
     </StyledContainer>
   );
