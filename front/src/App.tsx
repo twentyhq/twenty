@@ -6,6 +6,7 @@ import Login from './pages/auth/Login';
 import AppLayout from './layout/AppLayout';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import RequireAuth from './components/auth/RequireAuth';
+import Opportunities from './pages/opportunities/Opportunities';
 
 function App() {
   const user = {
@@ -47,6 +48,14 @@ function App() {
               element={
                 <RequireAuth>
                   <Companies />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/opportunities"
+              element={
+                <RequireAuth>
+                  <Opportunities />
                 </RequireAuth>
               }
             />
