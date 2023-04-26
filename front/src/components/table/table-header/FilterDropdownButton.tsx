@@ -35,6 +35,7 @@ const someFieldRandomValue = [
 export function FilterDropdownButton({
   availableFilters,
   setFilters,
+  filters,
 }: OwnProps) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -56,7 +57,7 @@ export function FilterDropdownButton({
   return (
     <DropdownButton
       label="Filter"
-      isActive={false}
+      isActive={filters.length > 0}
       isUnfolded={isUnfolded}
       setIsUnfolded={setIsUnfolded}
       resetState={resetState}

@@ -131,12 +131,15 @@ function DropdownButton({
   const dropdownRef = useRef(null);
   useOutsideAlerter(dropdownRef, onOutsideClick);
 
+  console.log('isActive', isActive);
+
   return (
     <StyledDropdownButtonContainer>
       <StyledDropdownButton
         isUnfolded={isUnfolded}
         onClick={onButtonClick}
         isActive={isActive}
+        aria-selected={isActive}
       >
         {label}
       </StyledDropdownButton>

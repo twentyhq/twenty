@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { RegularFilterDropdownButton } from '../__stories__/FilterDropdownButton.stories';
 
 it('Checks the default top option is Include', async () => {
@@ -51,4 +51,9 @@ it('Checks the selection of top option for Doesnot include', async () => {
       operandId: 'not-include',
     },
   ]);
+
+  const blueSortDropdownButton = getByText('Filter');
+  await waitFor(() => {
+    expect(blueSortDropdownButton).toHaveAttribute('aria-selected', 'true');
+  });
 });

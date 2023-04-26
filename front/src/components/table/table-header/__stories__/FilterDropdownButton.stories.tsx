@@ -12,6 +12,7 @@ import {
   faMapPin,
 } from '@fortawesome/pro-regular-svg-icons';
 import { SelectedFilterType } from '../TableHeader';
+import { useCallback, useState } from 'react';
 
 const component = {
   title: 'FilterDropdownButton',
@@ -21,7 +22,7 @@ const component = {
 export default component;
 
 type OwnProps = {
-  setFilters: () => void;
+  setFilters: (filters: SelectedFilterType[]) => void;
 };
 
 const filters = [] satisfies SelectedFilterType[];
@@ -57,13 +58,21 @@ const StyleDiv = styled.div`
 `;
 
 export const RegularFilterDropdownButton = ({ setFilters }: OwnProps) => {
+  const [filters, innerSetFilters] = useState<SelectedFilterType[]>([]);
+  const outerSetFilters = useCallback(
+    (filters: SelectedFilterType[]) => {
+      innerSetFilters(filters);
+      setFilters(filters);
+    },
+    [setFilters],
+  );
   return (
     <ThemeProvider theme={lightTheme}>
       <StyleDiv>
         <FilterDropdownButton
           availableFilters={availableFilters}
           filters={filters}
-          setFilters={setFilters}
+          setFilters={outerSetFilters}
         />
       </StyleDiv>
     </ThemeProvider>
