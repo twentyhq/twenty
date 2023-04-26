@@ -32,7 +32,10 @@ const someFieldRandomValue = [
   'Jane Jones',
 ];
 
-export function FilterDropdownButton({ availableFilters }: OwnProps) {
+export function FilterDropdownButton({
+  availableFilters,
+  setFilters,
+}: OwnProps) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
@@ -96,6 +99,9 @@ export function FilterDropdownButton({ availableFilters }: OwnProps) {
                 <DropdownButton.StyledDropdownItem
                   key={`fields-value-${index}`}
                   onClick={() => {
+                    setFilters([
+                      { id: value, operandId: selectedFilterOperand.id },
+                    ]);
                     setIsUnfolded(false);
                     setSelectedFilter(undefined);
                   }}
