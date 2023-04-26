@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 import { RegularSortDropdownButton } from '../__stories__/SortDropdownButton.stories';
-import { faArrowDown } from '@fortawesome/pro-regular-svg-icons';
+import { faEnvelope } from '@fortawesome/pro-regular-svg-icons';
 
 it('Checks the default top option is Ascending', async () => {
   const setSorts = jest.fn();
@@ -18,7 +18,7 @@ it('Checks the default top option is Ascending', async () => {
     {
       label: 'Email',
       id: 'email',
-      icon: faArrowDown,
+      icon: faEnvelope,
       order: 'asc',
     },
   ]);
@@ -46,7 +46,7 @@ it('Checks the selection of Descending', async () => {
     {
       label: 'Email',
       id: 'email',
-      icon: faArrowDown,
+      icon: faEnvelope,
       order: 'desc',
     },
   ]);
