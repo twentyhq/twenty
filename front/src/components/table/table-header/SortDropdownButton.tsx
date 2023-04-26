@@ -1,19 +1,18 @@
 import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
-import { SelectedSortType, SortType } from './SortAndFilterBar';
+import { SelectedSortType, SortType } from './interface';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps<SortField> = {
   sorts: SelectedSortType<SortField>[];
   setSorts: (sorts: SelectedSortType<SortField>[]) => void;
-  sortsAvailable: SortType<SortField>[];
+  availableSorts: SortType<SortField>[];
 };
 
 const options: Array<SelectedSortType<string>['order']> = ['asc', 'desc'];
 
 export function SortDropdownButton<SortField extends string>({
-  sortsAvailable,
+  availableSorts,
   setSorts,
   sorts,
 }: OwnProps<SortField>) {
@@ -32,12 +31,18 @@ export function SortDropdownButton<SortField extends string>({
     [setSorts, selectedSortDirection],
   );
 
+  const resetState = useCallback(() => {
+    setIsOptionUnfolded(false);
+    setSelectedSortDirection('asc');
+  }, []);
+
   return (
     <DropdownButton
       label="Sort"
       isActive={sorts.length > 0}
       isUnfolded={isUnfolded}
       setIsUnfolded={setIsUnfolded}
+      resetState={resetState}
     >
       {isOptionUnfolded
         ? options.map((option, index) => (
@@ -58,9 +63,9 @@ export function SortDropdownButton<SortField extends string>({
             >
               {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
 
-              <FontAwesomeIcon icon={faAngleDown} />
+              <DropdownButton.StyledDropdownTopOptionAngleDown />
             </DropdownButton.StyledDropdownTopOption>,
-            ...sortsAvailable.map((sort, index) => (
+            ...availableSorts.map((sort, index) => (
               <DropdownButton.StyledDropdownItem
                 key={index + 1}
                 onClick={() => {

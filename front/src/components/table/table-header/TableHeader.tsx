@@ -2,18 +2,24 @@ import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DropdownButton from './DropdownButton';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import SortAndFilterBar, {
+import {
+  FilterType,
+  SelectedFilterType,
   SelectedSortType,
   SortType,
-} from './SortAndFilterBar';
+} from './interface';
 import { useCallback, useState } from 'react';
 import { SortDropdownButton } from './SortDropdownButton';
+import { FilterDropdownButton } from './FilterDropdownButton';
+import SortAndFilterBar from './SortAndFilterBar';
 
 type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: IconProp;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  sortsAvailable: Array<SortType<SortField>>;
+  onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
+  availableSorts?: Array<SortType<SortField>>;
+  availableFilters?: FilterType[];
 };
 
 const StyledContainer = styled.div`
@@ -56,7 +62,9 @@ function TableHeader<SortField extends string>({
   viewName,
   viewIcon,
   onSortsUpdate,
-  sortsAvailable,
+  onFiltersUpdate,
+  availableSorts,
+  availableFilters,
 }: OwnProps<SortField>) {
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
     [],
@@ -79,6 +87,25 @@ function TableHeader<SortField extends string>({
     [onSortsUpdate],
   );
 
+  const [filters, innerSetFilters] = useState<Array<SelectedFilterType>>([]);
+
+  const setFilters = useCallback(
+    (filters: SelectedFilterType[]) => {
+      innerSetFilters(filters);
+      onFiltersUpdate && onFiltersUpdate(filters);
+    },
+    [onFiltersUpdate],
+  );
+
+  const onFilterItemUnSelect = useCallback(
+    (filterId: SelectedFilterType['id']) => {
+      const newFilters = [] as SelectedFilterType[];
+      innerSetFilters(newFilters);
+      onFiltersUpdate && onFiltersUpdate(newFilters);
+    },
+    [onFiltersUpdate],
+  );
+
   return (
     <StyledContainer>
       <StyledTableHeader>
@@ -89,18 +116,27 @@ function TableHeader<SortField extends string>({
           {viewName}
         </StyledViewSection>
         <StyledFilters>
-          <DropdownButton label="Filter" isActive={false}></DropdownButton>
+          <FilterDropdownButton
+            filters={filters}
+            setFilters={setFilters}
+            availableFilters={availableFilters || []}
+          />
           <SortDropdownButton
             setSorts={setSorts}
             sorts={sorts}
-            sortsAvailable={sortsAvailable}
+            availableSorts={availableSorts || []}
           />
 
           <DropdownButton label="Settings" isActive={false}></DropdownButton>
         </StyledFilters>
       </StyledTableHeader>
-      {sorts.length > 0 && (
-        <SortAndFilterBar sorts={sorts} onRemoveSort={onSortItemUnSelect} />
+      {sorts.length + filters.length > 0 && (
+        <SortAndFilterBar
+          sorts={sorts}
+          onRemoveSort={onSortItemUnSelect}
+          filters={filters}
+          onRemoveFilter={onFilterItemUnSelect}
+        />
       )}
     </StyledContainer>
   );

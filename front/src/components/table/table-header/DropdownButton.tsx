@@ -2,6 +2,8 @@ import styled from '@emotion/styled';
 import { useRef, ReactNode } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
 import { modalBackground } from '../../../layout/styles/themes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleDown } from '@fortawesome/pro-regular-svg-icons';
 
 type OwnProps = {
   label: string;
@@ -9,6 +11,7 @@ type OwnProps = {
   children?: ReactNode;
   isUnfolded?: boolean;
   setIsUnfolded?: React.Dispatch<React.SetStateAction<boolean>>;
+  resetState?: () => void;
 };
 
 const StyledDropdownButtonContainer = styled.div`
@@ -114,6 +117,7 @@ function DropdownButton({
   children,
   isUnfolded = false,
   setIsUnfolded,
+  resetState,
 }: OwnProps) {
   const onButtonClick = () => {
     setIsUnfolded && setIsUnfolded(!isUnfolded);
@@ -121,6 +125,7 @@ function DropdownButton({
 
   const onOutsideClick = () => {
     setIsUnfolded && setIsUnfolded(false);
+    resetState && resetState();
   };
 
   const dropdownRef = useRef(null);
@@ -132,6 +137,7 @@ function DropdownButton({
         isUnfolded={isUnfolded}
         onClick={onButtonClick}
         isActive={isActive}
+        aria-selected={isActive}
       >
         {label}
       </StyledDropdownButton>
@@ -142,8 +148,20 @@ function DropdownButton({
   );
 }
 
+const StyleAngleDownContainer = styled.div`
+  margin-left: auto;
+`;
+
+function DropdownTopOptionAngleDown() {
+  return (
+    <StyleAngleDownContainer>
+      <FontAwesomeIcon icon={faAngleDown} />
+    </StyleAngleDownContainer>
+  );
+}
 DropdownButton.StyledDropdownItem = StyledDropdownItem;
 DropdownButton.StyledDropdownTopOption = StyledDropdownTopOption;
+DropdownButton.StyledDropdownTopOptionAngleDown = DropdownTopOptionAngleDown;
 DropdownButton.StyledIcon = StyledIcon;
 
 export default DropdownButton;

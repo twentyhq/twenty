@@ -9,7 +9,11 @@ import {
 import TableHeader from './table-header/TableHeader';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import styled from '@emotion/styled';
-import { SelectedSortType, SortType } from './table-header/SortAndFilterBar';
+import {
+  FilterType,
+  SelectedSortType,
+  SortType,
+} from './table-header/interface';
 
 type OwnProps<TData, SortField> = {
   data: Array<TData>;
@@ -17,7 +21,8 @@ type OwnProps<TData, SortField> = {
   viewName: string;
   viewIcon?: IconProp;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  sortsAvailable?: Array<SortType<SortField>>;
+  availableSorts?: Array<SortType<SortField>>;
+  availableFilters?: FilterType[];
 };
 
 const StyledTable = styled.table`
@@ -77,7 +82,8 @@ function Table<TData, SortField extends string>({
   viewName,
   viewIcon,
   onSortsUpdate,
-  sortsAvailable,
+  availableSorts,
+  availableFilters,
 }: OwnProps<TData, SortField>) {
   const table = useReactTable({
     data,
@@ -91,7 +97,8 @@ function Table<TData, SortField extends string>({
         viewName={viewName}
         viewIcon={viewIcon}
         onSortsUpdate={onSortsUpdate}
-        sortsAvailable={sortsAvailable || []}
+        availableSorts={availableSorts}
+        availableFilters={availableFilters}
       />
       <StyledTableScrollableContainer>
         <StyledTable>

@@ -2,7 +2,7 @@ import TableHeader from '../TableHeader';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { faBuilding, faCalendar } from '@fortawesome/pro-regular-svg-icons';
-import { SortType } from '../SortAndFilterBar';
+import { SortType } from '../interface';
 
 const component = {
   title: 'TableHeader',
@@ -12,9 +12,9 @@ const component = {
 export default component;
 
 export const RegularTableHeader = () => {
-  const sortsAvailable: Array<SortType> = [
+  const availableSorts: Array<SortType> = [
     {
-      id: 'created_at',
+      key: 'created_at',
       label: 'Created at',
       icon: faCalendar,
     },
@@ -24,7 +24,7 @@ export const RegularTableHeader = () => {
       <TableHeader
         viewName="Test"
         viewIcon={faBuilding}
-        sortsAvailable={sortsAvailable}
+        availableSorts={availableSorts}
       />
     </ThemeProvider>
   );

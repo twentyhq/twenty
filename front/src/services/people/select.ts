@@ -1,7 +1,7 @@
 import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphqlQueryPerson } from '../../interfaces/person.interface';
-import { SelectedSortType } from '../../components/table/table-header/SortAndFilterBar';
 import { Order_By, People_Order_By } from '../../generated/graphql';
+import { SelectedSortType } from '../../components/table/table-header/interface';
 
 export type OrderByFields = keyof People_Order_By | 'fullname' | 'company_name';
 
@@ -15,7 +15,7 @@ export const reduceSortsToOrderBy = (
   sorts: Array<PeopleSelectedSortType>,
 ): People_Order_By[] => {
   const mappedSorts = sorts.reduce((acc, sort) => {
-    const id = sort.id;
+    const id = sort.key;
     const order = mapOrder(sort.order);
     if (id === 'fullname') {
       acc['firstname'] = order;

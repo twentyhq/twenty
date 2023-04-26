@@ -1,8 +1,16 @@
-import { SelectedSortType, SortType } from '../SortAndFilterBar';
+import { SelectedSortType, SortType } from '../interface';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
-import { faArrowDown } from '@fortawesome/pro-regular-svg-icons';
+import {
+  faBuildings,
+  faCalendar,
+  faEnvelope,
+  faMapPin,
+  faPhone,
+  faUser,
+} from '@fortawesome/pro-regular-svg-icons';
 import { SortDropdownButton } from '../SortDropdownButton';
+import styled from '@emotion/styled';
 
 const component = {
   title: 'SortDropdownButton',
@@ -19,20 +27,44 @@ const sorts = [] satisfies SelectedSortType[];
 
 const availableSorts = [
   {
-    label: 'Email',
-    id: 'email',
-    icon: faArrowDown,
+    key: 'fullname',
+    label: 'People',
+    icon: faUser,
   },
+  {
+    key: 'company_name',
+    label: 'Company',
+    icon: faBuildings,
+  },
+  {
+    key: 'email',
+    label: 'Email',
+    icon: faEnvelope,
+  },
+  { key: 'phone', label: 'Phone', icon: faPhone },
+  {
+    key: 'created_at',
+    label: 'Created at',
+    icon: faCalendar,
+  },
+  { key: 'city', label: 'City', icon: faMapPin },
 ] satisfies SortType[];
+
+const StyleDiv = styled.div`
+  height: 200px;
+  width: 200px;
+`;
 
 export const RegularSortDropdownButton = ({ setSorts }: OwnProps) => {
   return (
     <ThemeProvider theme={lightTheme}>
-      <SortDropdownButton
-        sorts={sorts}
-        sortsAvailable={availableSorts}
-        setSorts={setSorts}
-      />
+      <StyleDiv>
+        <SortDropdownButton
+          sorts={sorts}
+          availableSorts={availableSorts}
+          setSorts={setSorts}
+        />
+      </StyleDiv>
     </ThemeProvider>
   );
 };
