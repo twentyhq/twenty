@@ -111,6 +111,34 @@ const StyledIcon = styled.div`
   justify-content: center;
 `;
 
+const StyledSearchField = styled.li`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  color: ${(props) => props.theme.text60};
+  font-weight: ${(props) => props.theme.fontWeightBold};
+
+  border-radius: 0%;
+  border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
+  input {
+    height: 36px;
+    width: 100%;
+    border: none;
+    padding: 8px;
+    box-sizing: border-box;
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+  input::placeholder {
+    color: ${(props) => props.theme.text40};
+    font-weight: ${(props) => props.theme.fontWeightBold};
+  }
+`;
+
 function DropdownButton({
   label,
   isActive,
@@ -160,6 +188,7 @@ function DropdownTopOptionAngleDown() {
   );
 }
 DropdownButton.StyledDropdownItem = StyledDropdownItem;
+DropdownButton.StyledSearchField = StyledSearchField;
 DropdownButton.StyledDropdownTopOption = StyledDropdownTopOption;
 DropdownButton.StyledDropdownTopOptionAngleDown = DropdownTopOptionAngleDown;
 DropdownButton.StyledIcon = StyledIcon;

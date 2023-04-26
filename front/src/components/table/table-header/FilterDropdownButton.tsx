@@ -89,6 +89,9 @@ export function FilterDropdownButton({
 
         <DropdownButton.StyledDropdownTopOptionAngleDown />
       </DropdownButton.StyledDropdownTopOption>,
+      <DropdownButton.StyledSearchField key={'search-filter'}>
+        <input type="text" placeholder={selectedFilter.label} />
+      </DropdownButton.StyledSearchField>,
       someFieldRandomValue.map((value, index) => (
         <DropdownButton.StyledDropdownItem
           key={`fields-value-${index}`}
