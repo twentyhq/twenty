@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DropdownButton from './DropdownButton';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import SortAndFilterBar, {
+  FilterType,
   SelectedSortType,
   SortType,
 } from './SortAndFilterBar';
@@ -15,6 +16,7 @@ type OwnProps<SortField> = {
   viewIcon?: IconProp;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   sortsAvailable: Array<SortType<SortField>>;
+  availableFilters?: FilterType[];
 };
 
 const StyledContainer = styled.div`
@@ -57,7 +59,8 @@ function TableHeader<SortField extends string>({
   viewName,
   viewIcon,
   onSortsUpdate,
-  sortsAvailable,
+  sortsAvailable, //TODO RENAME availableSorts
+  availableFilters,
 }: OwnProps<SortField>) {
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
     [],
@@ -90,7 +93,7 @@ function TableHeader<SortField extends string>({
           {viewName}
         </StyledViewSection>
         <StyledFilters>
-          <FilterDropdownButton />
+          <FilterDropdownButton availableFilters={availableFilters || []} />
           <SortDropdownButton
             setSorts={setSorts}
             sorts={sorts}

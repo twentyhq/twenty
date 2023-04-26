@@ -2,7 +2,11 @@ import { faUser, faList } from '@fortawesome/pro-regular-svg-icons';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
 import styled from '@emotion/styled';
-import { peopleColumns, sortsAvailable } from './people-table';
+import {
+  availableFilters,
+  peopleColumns,
+  sortsAvailable,
+} from './people-table';
 import { mapPerson } from '../../interfaces/person.interface';
 import { useCallback, useState } from 'react';
 import {
@@ -39,6 +43,7 @@ function People() {
             viewIcon={faList}
             onSortsUpdate={updateSorts}
             sortsAvailable={sortsAvailable}
+            availableFilters={availableFilters}
           />
         }
       </StyledPeopleContainer>

@@ -17,7 +17,10 @@ import CompanyChip from '../../components/chips/CompanyChip';
 import PersonChip from '../../components/chips/PersonChip';
 import { Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
-import { SortType } from '../../components/table/table-header/SortAndFilterBar';
+import {
+  FilterType,
+  SortType,
+} from '../../components/table/table-header/SortAndFilterBar';
 import EditableCell from '../../components/table/EditableCell';
 import { OrderByFields, updatePerson } from '../../services/people';
 
@@ -45,6 +48,31 @@ export const sortsAvailable = [
   },
   { id: 'city', label: 'City', icon: faMapPin },
 ] satisfies Array<SortType<OrderByFields>>;
+
+export const availableFilters = [
+  {
+    id: 'fullname',
+    label: 'People',
+    icon: faUser,
+  },
+  {
+    id: 'company_name',
+    label: 'Company',
+    icon: faBuildings,
+  },
+  {
+    id: 'email',
+    label: 'Email',
+    icon: faEnvelope,
+  },
+  { id: 'phone', label: 'Phone', icon: faPhone },
+  {
+    id: 'created_at',
+    label: 'Created at',
+    icon: faCalendar,
+  },
+  { id: 'city', label: 'City', icon: faMapPin },
+] satisfies FilterType[];
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [
