@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
+import { convert } from 'html-to-text';
 
 type OwnProps = {
   content: string;
@@ -13,6 +14,10 @@ const StyledEditable = styled.div`
   height: 32px;
   display: flex;
   align-items: center;
+
+  :hover::before {
+    display: block;
+  }
 
   ::before {
     content: '';
@@ -28,12 +33,36 @@ const StyledEditable = styled.div`
     display: none;
   }
 
-  :hover::before {
+  :focus-within {
+    color: ${(props) => props.theme.text100};
+  }
+
+  :focus-within::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    border: 1px solid ${(props) => props.theme.blue};
+    border-radius: 4px;
+    pointer-events: none;
     display: block;
   }
 
   [contenteditable] {
     outline: none;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  [contenteditable] br {
+    display: none;
+  }
+
+  [contenteditable] * {
+    display: inline;
+    white-space: nowrap;
   }
 `;
 
@@ -41,23 +70,19 @@ const Container = styled.span`
   padding-left: ${(props) => props.theme.spacing(2)};
 `;
 
-function escapeHTML(unsafeText: string): string {
-  const div = document.createElement('div');
-  div.innerText = unsafeText;
-  return div.innerHTML;
-}
-
 function EditableCell({ content, changeHandler }: OwnProps) {
   const ref = React.createRef<HTMLElement>();
 
   return (
-    <StyledEditable>
+    <StyledEditable onClick={() => ref.current?.focus()}>
       <Container>
         <ContentEditable
           innerRef={ref}
-          html={escapeHTML(content)}
+          html={content}
           disabled={false}
-          onChange={(e: ContentEditableEvent) => changeHandler(e.target.value)}
+          onChange={(e: ContentEditableEvent) =>
+            changeHandler(convert(e.target.value))
+          }
           tagName="span"
         />
       </Container>
