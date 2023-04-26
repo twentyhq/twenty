@@ -44,10 +44,29 @@ const filterOperands: FilterOperandType[] = [
   { label: "Doesn't include", id: 'not-include' },
 ];
 
+const someFieldRandomValue = [
+  'John Doe',
+  'Jane Doe',
+  'John Smith',
+  'Jane Smith',
+  'John Johnson',
+  'Jane Johnson',
+  'John Williams',
+  'Jane Williams',
+  'John Brown',
+  'Jane Brown',
+  'John Jones',
+  'Jane Jones',
+];
+
 export function FilterDropdownButton() {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
+
+  const [selectedFilter, setSelectedFilter] = useState<FilterType | undefined>(
+    undefined,
+  );
 
   const [selectedFilterOperand, setSelectedFilterOperand] =
     useState<FilterOperandType>(filterOperands[0]);
@@ -59,36 +78,53 @@ export function FilterDropdownButton() {
       isUnfolded={isUnfolded}
       setIsUnfolded={setIsUnfolded}
     >
-      {isOptionUnfolded
-        ? filterOperands.map((option, index) => (
+      {selectedFilter
+        ? isOptionUnfolded
+          ? filterOperands.map((filterOperand, index) => (
+              <DropdownButton.StyledDropdownItem
+                key={index}
+                onClick={() => {
+                  setSelectedFilterOperand(filterOperand);
+                  setIsOptionUnfolded(false);
+                }}
+              >
+                {filterOperand.label}
+              </DropdownButton.StyledDropdownItem>
+            ))
+          : [
+              <DropdownButton.StyledDropdownTopOption
+                key={0}
+                onClick={() => setIsOptionUnfolded(true)}
+              >
+                {selectedFilterOperand.label}
+
+                <FontAwesomeIcon icon={faAngleDown} />
+              </DropdownButton.StyledDropdownTopOption>,
+              someFieldRandomValue.map((value, index) => (
+                <DropdownButton.StyledDropdownItem
+                  key={index + 1}
+                  onClick={() => {
+                    setIsUnfolded(false);
+                    setSelectedFilter(undefined);
+                  }}
+                >
+                  {value}
+                </DropdownButton.StyledDropdownItem>
+              )),
+            ]
+        : filters.map((filter, index) => (
             <DropdownButton.StyledDropdownItem
-              key={index}
+              key={index + 1}
               onClick={() => {
-                setSelectedFilterOperand(option);
-                setIsOptionUnfolded(false);
+                setSelectedFilter(filter);
               }}
             >
-              {option.label}
+              <DropdownButton.StyledIcon>
+                {filter.icon && <FontAwesomeIcon icon={filter.icon} />}
+              </DropdownButton.StyledIcon>
+              {filter.label}
             </DropdownButton.StyledDropdownItem>
-          ))
-        : [
-            <DropdownButton.StyledDropdownTopOption
-              key={0}
-              onClick={() => setIsOptionUnfolded(true)}
-            >
-              {selectedFilterOperand.label}
-
-              <FontAwesomeIcon icon={faAngleDown} />
-            </DropdownButton.StyledDropdownTopOption>,
-            ...filters.map((filter, index) => (
-              <DropdownButton.StyledDropdownItem key={index + 1}>
-                <DropdownButton.StyledIcon>
-                  {filter.icon && <FontAwesomeIcon icon={filter.icon} />}
-                </DropdownButton.StyledIcon>
-                {filter.label}
-              </DropdownButton.StyledDropdownItem>
-            )),
-          ]}
+          ))}
     </DropdownButton>
   );
 }
