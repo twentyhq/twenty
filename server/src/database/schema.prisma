@@ -8,18 +8,18 @@ datasource db {
 }
 
 model WorkspaceMember {
-  id           Int       @id @default(autoincrement())
+  id           String    @id
   created_at   DateTime  @default(now())
   updated_at   DateTime  @updatedAt
   deleted_at   DateTime?
   user_id      String    @unique
-  workspace_id Int
+  workspace_id String
 
   @@map("workspace_members")
 }
 
 model Workspace {
-  id           Int       @id @default(autoincrement())
+  id           String    @id
   created_at   DateTime  @default(now())
   updated_at   DateTime  @updatedAt
   deleted_at   DateTime?

@@ -4,12 +4,12 @@ import { apiClient } from '../../apollo';
 
 export const UPDATE_PERSON = gql`
   mutation UpdatePeople(
-    $id: Int
+    $id: uuid
     $firstname: String
     $lastname: String
     $phone: String
     $city: String
-    $company_id: Int
+    $company_id: uuid
     $email: String
   ) {
     update_people(
@@ -27,8 +27,8 @@ export const UPDATE_PERSON = gql`
       returning {
         city
         company {
-          company_domain
-          company_name
+          domain_name
+          name
           id
         }
         email

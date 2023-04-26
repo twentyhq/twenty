@@ -17,7 +17,6 @@ export type Scalars = {
   bytea: any;
   citext: any;
   jsonb: any;
-  timestamp: any;
   timestamptz: any;
   uuid: any;
 };
@@ -1716,12 +1715,15 @@ export type Citext_Comparison_Exp = {
 /** columns and relationships of "companies" */
 export type Companies = {
   __typename?: 'companies';
-  company_domain: Scalars['String'];
-  company_name: Scalars['String'];
   created_at: Scalars['timestamptz'];
-  id: Scalars['Int'];
+  deleted_at?: Maybe<Scalars['timestamptz']>;
+  domain_name?: Maybe<Scalars['String']>;
+  id: Scalars['uuid'];
+  name?: Maybe<Scalars['String']>;
   updated_at: Scalars['timestamptz'];
-  workspace_id: Scalars['Int'];
+  /** An object relationship */
+  workspace: Workspaces;
+  workspace_id: Scalars['uuid'];
 };
 
 /** aggregated selection of "companies" */
@@ -1734,17 +1736,9 @@ export type Companies_Aggregate = {
 /** aggregate fields of "companies" */
 export type Companies_Aggregate_Fields = {
   __typename?: 'companies_aggregate_fields';
-  avg?: Maybe<Companies_Avg_Fields>;
   count: Scalars['Int'];
   max?: Maybe<Companies_Max_Fields>;
   min?: Maybe<Companies_Min_Fields>;
-  stddev?: Maybe<Companies_Stddev_Fields>;
-  stddev_pop?: Maybe<Companies_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Companies_Stddev_Samp_Fields>;
-  sum?: Maybe<Companies_Sum_Fields>;
-  var_pop?: Maybe<Companies_Var_Pop_Fields>;
-  var_samp?: Maybe<Companies_Var_Samp_Fields>;
-  variance?: Maybe<Companies_Variance_Fields>;
 };
 
 
@@ -1754,68 +1748,61 @@ export type Companies_Aggregate_FieldsCountArgs = {
   distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** aggregate avg on columns */
-export type Companies_Avg_Fields = {
-  __typename?: 'companies_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
 /** Boolean expression to filter rows from the table "companies". All fields are combined with a logical 'AND'. */
 export type Companies_Bool_Exp = {
   _and?: InputMaybe<Array<Companies_Bool_Exp>>;
   _not?: InputMaybe<Companies_Bool_Exp>;
   _or?: InputMaybe<Array<Companies_Bool_Exp>>;
-  company_domain?: InputMaybe<String_Comparison_Exp>;
-  company_name?: InputMaybe<String_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  id?: InputMaybe<Int_Comparison_Exp>;
+  deleted_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  domain_name?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  workspace_id?: InputMaybe<Int_Comparison_Exp>;
+  workspace?: InputMaybe<Workspaces_Bool_Exp>;
+  workspace_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "companies" */
 export enum Companies_Constraint {
   /** unique or primary key constraint on columns "id" */
-  CompanyPkey = 'company_pkey'
+  CompaniesPkey = 'companies_pkey'
 }
-
-/** input type for incrementing numeric columns in table "companies" */
-export type Companies_Inc_Input = {
-  id?: InputMaybe<Scalars['Int']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
-};
 
 /** input type for inserting data into table "companies" */
 export type Companies_Insert_Input = {
-  company_domain?: InputMaybe<Scalars['String']>;
-  company_name?: InputMaybe<Scalars['String']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
-  id?: InputMaybe<Scalars['Int']>;
+  deleted_at?: InputMaybe<Scalars['timestamptz']>;
+  domain_name?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
+  workspace?: InputMaybe<Workspaces_Obj_Rel_Insert_Input>;
+  workspace_id?: InputMaybe<Scalars['uuid']>;
 };
 
 /** aggregate max on columns */
 export type Companies_Max_Fields = {
   __typename?: 'companies_max_fields';
-  company_domain?: Maybe<Scalars['String']>;
-  company_name?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['Int']>;
+  deleted_at?: Maybe<Scalars['timestamptz']>;
+  domain_name?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
-  workspace_id?: Maybe<Scalars['Int']>;
+  workspace_id?: Maybe<Scalars['uuid']>;
 };
 
 /** aggregate min on columns */
 export type Companies_Min_Fields = {
   __typename?: 'companies_min_fields';
-  company_domain?: Maybe<Scalars['String']>;
-  company_name?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['Int']>;
+  deleted_at?: Maybe<Scalars['timestamptz']>;
+  domain_name?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['uuid']>;
+  name?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
-  workspace_id?: Maybe<Scalars['Int']>;
+  workspace_id?: Maybe<Scalars['uuid']>;
 };
 
 /** response of any mutation on the table "companies" */
@@ -1843,29 +1830,33 @@ export type Companies_On_Conflict = {
 
 /** Ordering options when selecting data from "companies". */
 export type Companies_Order_By = {
-  company_domain?: InputMaybe<Order_By>;
-  company_name?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
+  deleted_at?: InputMaybe<Order_By>;
+  domain_name?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
+  workspace?: InputMaybe<Workspaces_Order_By>;
   workspace_id?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: companies */
 export type Companies_Pk_Columns_Input = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 /** select columns of table "companies" */
 export enum Companies_Select_Column {
   /** column name */
-  CompanyDomain = 'company_domain',
-  /** column name */
-  CompanyName = 'company_name',
-  /** column name */
   CreatedAt = 'created_at',
   /** column name */
+  DeletedAt = 'deleted_at',
+  /** column name */
+  DomainName = 'domain_name',
+  /** column name */
   Id = 'id',
+  /** column name */
+  Name = 'name',
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
@@ -1874,33 +1865,13 @@ export enum Companies_Select_Column {
 
 /** input type for updating data in table "companies" */
 export type Companies_Set_Input = {
-  company_domain?: InputMaybe<Scalars['String']>;
-  company_name?: InputMaybe<Scalars['String']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
-  id?: InputMaybe<Scalars['Int']>;
+  deleted_at?: InputMaybe<Scalars['timestamptz']>;
+  domain_name?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
-};
-
-/** aggregate stddev on columns */
-export type Companies_Stddev_Fields = {
-  __typename?: 'companies_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Companies_Stddev_Pop_Fields = {
-  __typename?: 'companies_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Companies_Stddev_Samp_Fields = {
-  __typename?: 'companies_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
+  workspace_id?: InputMaybe<Scalars['uuid']>;
 };
 
 /** Streaming cursor of the table "companies" */
@@ -1913,31 +1884,27 @@ export type Companies_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Companies_Stream_Cursor_Value_Input = {
-  company_domain?: InputMaybe<Scalars['String']>;
-  company_name?: InputMaybe<Scalars['String']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
-  id?: InputMaybe<Scalars['Int']>;
+  deleted_at?: InputMaybe<Scalars['timestamptz']>;
+  domain_name?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['uuid']>;
+  name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
-};
-
-/** aggregate sum on columns */
-export type Companies_Sum_Fields = {
-  __typename?: 'companies_sum_fields';
-  id?: Maybe<Scalars['Int']>;
-  workspace_id?: Maybe<Scalars['Int']>;
+  workspace_id?: InputMaybe<Scalars['uuid']>;
 };
 
 /** update columns of table "companies" */
 export enum Companies_Update_Column {
   /** column name */
-  CompanyDomain = 'company_domain',
-  /** column name */
-  CompanyName = 'company_name',
-  /** column name */
   CreatedAt = 'created_at',
   /** column name */
+  DeletedAt = 'deleted_at',
+  /** column name */
+  DomainName = 'domain_name',
+  /** column name */
   Id = 'id',
+  /** column name */
+  Name = 'name',
   /** column name */
   UpdatedAt = 'updated_at',
   /** column name */
@@ -1945,33 +1912,10 @@ export enum Companies_Update_Column {
 }
 
 export type Companies_Updates = {
-  /** increments the numeric columns with given value of the filtered values */
-  _inc?: InputMaybe<Companies_Inc_Input>;
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Companies_Set_Input>;
   /** filter the rows which have to be updated */
   where: Companies_Bool_Exp;
-};
-
-/** aggregate var_pop on columns */
-export type Companies_Var_Pop_Fields = {
-  __typename?: 'companies_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate var_samp on columns */
-export type Companies_Var_Samp_Fields = {
-  __typename?: 'companies_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate variance on columns */
-export type Companies_Variance_Fields = {
-  __typename?: 'companies_variance_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
 };
 
 /** ordering argument of a cursor */
@@ -2288,7 +2232,7 @@ export type Mutation_RootDelete_CompaniesArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Companies_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -2300,7 +2244,7 @@ export type Mutation_RootDelete_PeopleArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_People_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -2312,7 +2256,7 @@ export type Mutation_RootDelete_Workspace_MembersArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Workspace_Members_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -2324,7 +2268,7 @@ export type Mutation_RootDelete_WorkspacesArgs = {
 
 /** mutation root */
 export type Mutation_RootDelete_Workspaces_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -2674,7 +2618,6 @@ export type Mutation_RootUpdate_AuthUserSecurityKeys_ManyArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_CompaniesArgs = {
-  _inc?: InputMaybe<Companies_Inc_Input>;
   _set?: InputMaybe<Companies_Set_Input>;
   where: Companies_Bool_Exp;
 };
@@ -2682,7 +2625,6 @@ export type Mutation_RootUpdate_CompaniesArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Companies_By_PkArgs = {
-  _inc?: InputMaybe<Companies_Inc_Input>;
   _set?: InputMaybe<Companies_Set_Input>;
   pk_columns: Companies_Pk_Columns_Input;
 };
@@ -2696,7 +2638,6 @@ export type Mutation_RootUpdate_Companies_ManyArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_PeopleArgs = {
-  _inc?: InputMaybe<People_Inc_Input>;
   _set?: InputMaybe<People_Set_Input>;
   where: People_Bool_Exp;
 };
@@ -2704,7 +2645,6 @@ export type Mutation_RootUpdate_PeopleArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_People_By_PkArgs = {
-  _inc?: InputMaybe<People_Inc_Input>;
   _set?: InputMaybe<People_Set_Input>;
   pk_columns: People_Pk_Columns_Input;
 };
@@ -2724,7 +2664,6 @@ export type Mutation_RootUpdate_Users_ManyArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Workspace_MembersArgs = {
-  _inc?: InputMaybe<Workspace_Members_Inc_Input>;
   _set?: InputMaybe<Workspace_Members_Set_Input>;
   where: Workspace_Members_Bool_Exp;
 };
@@ -2732,7 +2671,6 @@ export type Mutation_RootUpdate_Workspace_MembersArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Workspace_Members_By_PkArgs = {
-  _inc?: InputMaybe<Workspace_Members_Inc_Input>;
   _set?: InputMaybe<Workspace_Members_Set_Input>;
   pk_columns: Workspace_Members_Pk_Columns_Input;
 };
@@ -2746,7 +2684,6 @@ export type Mutation_RootUpdate_Workspace_Members_ManyArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_WorkspacesArgs = {
-  _inc?: InputMaybe<Workspaces_Inc_Input>;
   _set?: InputMaybe<Workspaces_Set_Input>;
   where: Workspaces_Bool_Exp;
 };
@@ -2754,7 +2691,6 @@ export type Mutation_RootUpdate_WorkspacesArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Workspaces_By_PkArgs = {
-  _inc?: InputMaybe<Workspaces_Inc_Input>;
   _set?: InputMaybe<Workspaces_Set_Input>;
   pk_columns: Workspaces_Pk_Columns_Input;
 };
@@ -2787,17 +2723,18 @@ export type People = {
   city?: Maybe<Scalars['String']>;
   /** An object relationship */
   company?: Maybe<Companies>;
-  company_id?: Maybe<Scalars['Int']>;
+  company_id?: Maybe<Scalars['uuid']>;
   created_at: Scalars['timestamptz'];
+  deleted_at?: Maybe<Scalars['timestamptz']>;
   email?: Maybe<Scalars['String']>;
   firstname?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  lastname: Scalars['String'];
+  id: Scalars['uuid'];
+  lastname?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   updated_at: Scalars['timestamptz'];
   /** An object relationship */
   workspace: Workspaces;
-  workspace_id: Scalars['Int'];
+  workspace_id: Scalars['uuid'];
 };
 
 /** aggregated selection of "people" */
@@ -2810,17 +2747,9 @@ export type People_Aggregate = {
 /** aggregate fields of "people" */
 export type People_Aggregate_Fields = {
   __typename?: 'people_aggregate_fields';
-  avg?: Maybe<People_Avg_Fields>;
   count: Scalars['Int'];
   max?: Maybe<People_Max_Fields>;
   min?: Maybe<People_Min_Fields>;
-  stddev?: Maybe<People_Stddev_Fields>;
-  stddev_pop?: Maybe<People_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<People_Stddev_Samp_Fields>;
-  sum?: Maybe<People_Sum_Fields>;
-  var_pop?: Maybe<People_Var_Pop_Fields>;
-  var_samp?: Maybe<People_Var_Samp_Fields>;
-  variance?: Maybe<People_Variance_Fields>;
 };
 
 
@@ -2830,14 +2759,6 @@ export type People_Aggregate_FieldsCountArgs = {
   distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** aggregate avg on columns */
-export type People_Avg_Fields = {
-  __typename?: 'people_avg_fields';
-  company_id?: Maybe<Scalars['Float']>;
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
 /** Boolean expression to filter rows from the table "people". All fields are combined with a logical 'AND'. */
 export type People_Bool_Exp = {
   _and?: InputMaybe<Array<People_Bool_Exp>>;
@@ -2845,75 +2766,72 @@ export type People_Bool_Exp = {
   _or?: InputMaybe<Array<People_Bool_Exp>>;
   city?: InputMaybe<String_Comparison_Exp>;
   company?: InputMaybe<Companies_Bool_Exp>;
-  company_id?: InputMaybe<Int_Comparison_Exp>;
+  company_id?: InputMaybe<Uuid_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  deleted_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   email?: InputMaybe<String_Comparison_Exp>;
   firstname?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Int_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
   lastname?: InputMaybe<String_Comparison_Exp>;
   phone?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   workspace?: InputMaybe<Workspaces_Bool_Exp>;
-  workspace_id?: InputMaybe<Int_Comparison_Exp>;
+  workspace_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "people" */
 export enum People_Constraint {
   /** unique or primary key constraint on columns "id" */
-  PersonPkey = 'person_pkey'
+  PeoplePkey = 'people_pkey'
 }
-
-/** input type for incrementing numeric columns in table "people" */
-export type People_Inc_Input = {
-  company_id?: InputMaybe<Scalars['Int']>;
-  id?: InputMaybe<Scalars['Int']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
-};
 
 /** input type for inserting data into table "people" */
 export type People_Insert_Input = {
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<Companies_Obj_Rel_Insert_Input>;
-  company_id?: InputMaybe<Scalars['Int']>;
+  company_id?: InputMaybe<Scalars['uuid']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
+  deleted_at?: InputMaybe<Scalars['timestamptz']>;
   email?: InputMaybe<Scalars['String']>;
   firstname?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['uuid']>;
   lastname?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
   workspace?: InputMaybe<Workspaces_Obj_Rel_Insert_Input>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
+  workspace_id?: InputMaybe<Scalars['uuid']>;
 };
 
 /** aggregate max on columns */
 export type People_Max_Fields = {
   __typename?: 'people_max_fields';
   city?: Maybe<Scalars['String']>;
-  company_id?: Maybe<Scalars['Int']>;
+  company_id?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
+  deleted_at?: Maybe<Scalars['timestamptz']>;
   email?: Maybe<Scalars['String']>;
   firstname?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['uuid']>;
   lastname?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
-  workspace_id?: Maybe<Scalars['Int']>;
+  workspace_id?: Maybe<Scalars['uuid']>;
 };
 
 /** aggregate min on columns */
 export type People_Min_Fields = {
   __typename?: 'people_min_fields';
   city?: Maybe<Scalars['String']>;
-  company_id?: Maybe<Scalars['Int']>;
+  company_id?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
+  deleted_at?: Maybe<Scalars['timestamptz']>;
   email?: Maybe<Scalars['String']>;
   firstname?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['uuid']>;
   lastname?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
-  workspace_id?: Maybe<Scalars['Int']>;
+  workspace_id?: Maybe<Scalars['uuid']>;
 };
 
 /** response of any mutation on the table "people" */
@@ -2938,6 +2856,7 @@ export type People_Order_By = {
   company?: InputMaybe<Companies_Order_By>;
   company_id?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
+  deleted_at?: InputMaybe<Order_By>;
   email?: InputMaybe<Order_By>;
   firstname?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
@@ -2950,7 +2869,7 @@ export type People_Order_By = {
 
 /** primary key columns input for table: people */
 export type People_Pk_Columns_Input = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 /** select columns of table "people" */
@@ -2961,6 +2880,8 @@ export enum People_Select_Column {
   CompanyId = 'company_id',
   /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  DeletedAt = 'deleted_at',
   /** column name */
   Email = 'email',
   /** column name */
@@ -2980,39 +2901,16 @@ export enum People_Select_Column {
 /** input type for updating data in table "people" */
 export type People_Set_Input = {
   city?: InputMaybe<Scalars['String']>;
-  company_id?: InputMaybe<Scalars['Int']>;
+  company_id?: InputMaybe<Scalars['uuid']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
+  deleted_at?: InputMaybe<Scalars['timestamptz']>;
   email?: InputMaybe<Scalars['String']>;
   firstname?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['uuid']>;
   lastname?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
-};
-
-/** aggregate stddev on columns */
-export type People_Stddev_Fields = {
-  __typename?: 'people_stddev_fields';
-  company_id?: Maybe<Scalars['Float']>;
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_pop on columns */
-export type People_Stddev_Pop_Fields = {
-  __typename?: 'people_stddev_pop_fields';
-  company_id?: Maybe<Scalars['Float']>;
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_samp on columns */
-export type People_Stddev_Samp_Fields = {
-  __typename?: 'people_stddev_samp_fields';
-  company_id?: Maybe<Scalars['Float']>;
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
+  workspace_id?: InputMaybe<Scalars['uuid']>;
 };
 
 /** Streaming cursor of the table "people" */
@@ -3026,23 +2924,16 @@ export type People_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type People_Stream_Cursor_Value_Input = {
   city?: InputMaybe<Scalars['String']>;
-  company_id?: InputMaybe<Scalars['Int']>;
+  company_id?: InputMaybe<Scalars['uuid']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
+  deleted_at?: InputMaybe<Scalars['timestamptz']>;
   email?: InputMaybe<Scalars['String']>;
   firstname?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['uuid']>;
   lastname?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
-};
-
-/** aggregate sum on columns */
-export type People_Sum_Fields = {
-  __typename?: 'people_sum_fields';
-  company_id?: Maybe<Scalars['Int']>;
-  id?: Maybe<Scalars['Int']>;
-  workspace_id?: Maybe<Scalars['Int']>;
+  workspace_id?: InputMaybe<Scalars['uuid']>;
 };
 
 /** update columns of table "people" */
@@ -3053,6 +2944,8 @@ export enum People_Update_Column {
   CompanyId = 'company_id',
   /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  DeletedAt = 'deleted_at',
   /** column name */
   Email = 'email',
   /** column name */
@@ -3070,36 +2963,10 @@ export enum People_Update_Column {
 }
 
 export type People_Updates = {
-  /** increments the numeric columns with given value of the filtered values */
-  _inc?: InputMaybe<People_Inc_Input>;
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<People_Set_Input>;
   /** filter the rows which have to be updated */
   where: People_Bool_Exp;
-};
-
-/** aggregate var_pop on columns */
-export type People_Var_Pop_Fields = {
-  __typename?: 'people_var_pop_fields';
-  company_id?: Maybe<Scalars['Float']>;
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate var_samp on columns */
-export type People_Var_Samp_Fields = {
-  __typename?: 'people_var_samp_fields';
-  company_id?: Maybe<Scalars['Float']>;
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate variance on columns */
-export type People_Variance_Fields = {
-  __typename?: 'people_variance_fields';
-  company_id?: Maybe<Scalars['Float']>;
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
 };
 
 export type Query_Root = {
@@ -3359,7 +3226,7 @@ export type Query_RootCompanies_AggregateArgs = {
 
 
 export type Query_RootCompanies_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -3382,7 +3249,7 @@ export type Query_RootPeople_AggregateArgs = {
 
 
 export type Query_RootPeople_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -3428,7 +3295,7 @@ export type Query_RootWorkspace_Members_AggregateArgs = {
 
 
 export type Query_RootWorkspace_Members_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -3451,7 +3318,7 @@ export type Query_RootWorkspaces_AggregateArgs = {
 
 
 export type Query_RootWorkspaces_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 export type Subscription_Root = {
@@ -3784,7 +3651,7 @@ export type Subscription_RootCompanies_AggregateArgs = {
 
 
 export type Subscription_RootCompanies_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -3814,7 +3681,7 @@ export type Subscription_RootPeople_AggregateArgs = {
 
 
 export type Subscription_RootPeople_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -3874,7 +3741,7 @@ export type Subscription_RootWorkspace_Members_AggregateArgs = {
 
 
 export type Subscription_RootWorkspace_Members_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -3904,7 +3771,7 @@ export type Subscription_RootWorkspaces_AggregateArgs = {
 
 
 export type Subscription_RootWorkspaces_By_PkArgs = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 
@@ -3912,19 +3779,6 @@ export type Subscription_RootWorkspaces_StreamArgs = {
   batch_size: Scalars['Int'];
   cursor: Array<InputMaybe<Workspaces_Stream_Cursor_Input>>;
   where?: InputMaybe<Workspaces_Bool_Exp>;
-};
-
-/** Boolean expression to compare columns of type "timestamp". All fields are combined with logical 'AND'. */
-export type Timestamp_Comparison_Exp = {
-  _eq?: InputMaybe<Scalars['timestamp']>;
-  _gt?: InputMaybe<Scalars['timestamp']>;
-  _gte?: InputMaybe<Scalars['timestamp']>;
-  _in?: InputMaybe<Array<Scalars['timestamp']>>;
-  _is_null?: InputMaybe<Scalars['Boolean']>;
-  _lt?: InputMaybe<Scalars['timestamp']>;
-  _lte?: InputMaybe<Scalars['timestamp']>;
-  _neq?: InputMaybe<Scalars['timestamp']>;
-  _nin?: InputMaybe<Array<Scalars['timestamp']>>;
 };
 
 /** Boolean expression to compare columns of type "timestamptz". All fields are combined with logical 'AND'. */
@@ -3986,10 +3840,8 @@ export type Users = {
   userProviders: Array<AuthUserProviders>;
   /** An aggregate relationship */
   userProviders_aggregate: AuthUserProviders_Aggregate;
-  /** An array relationship */
-  workspace_member: Array<Workspace_Members>;
-  /** An aggregate relationship */
-  workspace_member_aggregate: Workspace_Members_Aggregate;
+  /** An object relationship */
+  workspaceMember?: Maybe<Workspace_Members>;
 };
 
 
@@ -4076,26 +3928,6 @@ export type UsersUserProviders_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']>;
   order_by?: InputMaybe<Array<AuthUserProviders_Order_By>>;
   where?: InputMaybe<AuthUserProviders_Bool_Exp>;
-};
-
-
-/** User account information. Don't modify its structure as Hasura Auth relies on it to function properly. */
-export type UsersWorkspace_MemberArgs = {
-  distinct_on?: InputMaybe<Array<Workspace_Members_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Workspace_Members_Order_By>>;
-  where?: InputMaybe<Workspace_Members_Bool_Exp>;
-};
-
-
-/** User account information. Don't modify its structure as Hasura Auth relies on it to function properly. */
-export type UsersWorkspace_Member_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Workspace_Members_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  order_by?: InputMaybe<Array<Workspace_Members_Order_By>>;
-  where?: InputMaybe<Workspace_Members_Bool_Exp>;
 };
 
 /** aggregated selection of "auth.users" */
@@ -4205,8 +4037,7 @@ export type Users_Bool_Exp = {
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   userProviders?: InputMaybe<AuthUserProviders_Bool_Exp>;
   userProviders_aggregate?: InputMaybe<AuthUserProviders_Aggregate_Bool_Exp>;
-  workspace_member?: InputMaybe<Workspace_Members_Bool_Exp>;
-  workspace_member_aggregate?: InputMaybe<Workspace_Members_Aggregate_Bool_Exp>;
+  workspaceMember?: InputMaybe<Workspace_Members_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "auth.users" */
@@ -4266,7 +4097,7 @@ export type Users_Insert_Input = {
   totpSecret?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']>;
   userProviders?: InputMaybe<AuthUserProviders_Arr_Rel_Insert_Input>;
-  workspace_member?: InputMaybe<Workspace_Members_Arr_Rel_Insert_Input>;
+  workspaceMember?: InputMaybe<Workspace_Members_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -4422,7 +4253,7 @@ export type Users_Order_By = {
   totpSecret?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
   userProviders_aggregate?: InputMaybe<AuthUserProviders_Aggregate_Order_By>;
-  workspace_member_aggregate?: InputMaybe<Workspace_Members_Aggregate_Order_By>;
+  workspaceMember?: InputMaybe<Workspace_Members_Order_By>;
 };
 
 /** primary key columns input for table: auth.users */
@@ -4668,10 +4499,12 @@ export type Workspace_Members = {
   __typename?: 'workspace_members';
   created_at: Scalars['timestamptz'];
   deleted_at?: Maybe<Scalars['timestamptz']>;
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
   updated_at: Scalars['timestamptz'];
   user_id: Scalars['uuid'];
-  workspace_id: Scalars['Int'];
+  /** An object relationship */
+  workspace: Workspaces;
+  workspace_id: Scalars['uuid'];
 };
 
 /** aggregated selection of "workspace_members" */
@@ -4681,31 +4514,12 @@ export type Workspace_Members_Aggregate = {
   nodes: Array<Workspace_Members>;
 };
 
-export type Workspace_Members_Aggregate_Bool_Exp = {
-  count?: InputMaybe<Workspace_Members_Aggregate_Bool_Exp_Count>;
-};
-
-export type Workspace_Members_Aggregate_Bool_Exp_Count = {
-  arguments?: InputMaybe<Array<Workspace_Members_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']>;
-  filter?: InputMaybe<Workspace_Members_Bool_Exp>;
-  predicate: Int_Comparison_Exp;
-};
-
 /** aggregate fields of "workspace_members" */
 export type Workspace_Members_Aggregate_Fields = {
   __typename?: 'workspace_members_aggregate_fields';
-  avg?: Maybe<Workspace_Members_Avg_Fields>;
   count: Scalars['Int'];
   max?: Maybe<Workspace_Members_Max_Fields>;
   min?: Maybe<Workspace_Members_Min_Fields>;
-  stddev?: Maybe<Workspace_Members_Stddev_Fields>;
-  stddev_pop?: Maybe<Workspace_Members_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Workspace_Members_Stddev_Samp_Fields>;
-  sum?: Maybe<Workspace_Members_Sum_Fields>;
-  var_pop?: Maybe<Workspace_Members_Var_Pop_Fields>;
-  var_samp?: Maybe<Workspace_Members_Var_Samp_Fields>;
-  variance?: Maybe<Workspace_Members_Variance_Fields>;
 };
 
 
@@ -4715,41 +4529,6 @@ export type Workspace_Members_Aggregate_FieldsCountArgs = {
   distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** order by aggregate values of table "workspace_members" */
-export type Workspace_Members_Aggregate_Order_By = {
-  avg?: InputMaybe<Workspace_Members_Avg_Order_By>;
-  count?: InputMaybe<Order_By>;
-  max?: InputMaybe<Workspace_Members_Max_Order_By>;
-  min?: InputMaybe<Workspace_Members_Min_Order_By>;
-  stddev?: InputMaybe<Workspace_Members_Stddev_Order_By>;
-  stddev_pop?: InputMaybe<Workspace_Members_Stddev_Pop_Order_By>;
-  stddev_samp?: InputMaybe<Workspace_Members_Stddev_Samp_Order_By>;
-  sum?: InputMaybe<Workspace_Members_Sum_Order_By>;
-  var_pop?: InputMaybe<Workspace_Members_Var_Pop_Order_By>;
-  var_samp?: InputMaybe<Workspace_Members_Var_Samp_Order_By>;
-  variance?: InputMaybe<Workspace_Members_Variance_Order_By>;
-};
-
-/** input type for inserting array relation for remote table "workspace_members" */
-export type Workspace_Members_Arr_Rel_Insert_Input = {
-  data: Array<Workspace_Members_Insert_Input>;
-  /** upsert condition */
-  on_conflict?: InputMaybe<Workspace_Members_On_Conflict>;
-};
-
-/** aggregate avg on columns */
-export type Workspace_Members_Avg_Fields = {
-  __typename?: 'workspace_members_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** order by avg() on columns of table "workspace_members" */
-export type Workspace_Members_Avg_Order_By = {
-  id?: InputMaybe<Order_By>;
-  workspace_id?: InputMaybe<Order_By>;
-};
-
 /** Boolean expression to filter rows from the table "workspace_members". All fields are combined with a logical 'AND'. */
 export type Workspace_Members_Bool_Exp = {
   _and?: InputMaybe<Array<Workspace_Members_Bool_Exp>>;
@@ -4757,34 +4536,28 @@ export type Workspace_Members_Bool_Exp = {
   _or?: InputMaybe<Array<Workspace_Members_Bool_Exp>>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   deleted_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  id?: InputMaybe<Int_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   user_id?: InputMaybe<Uuid_Comparison_Exp>;
-  workspace_id?: InputMaybe<Int_Comparison_Exp>;
+  workspace?: InputMaybe<Workspaces_Bool_Exp>;
+  workspace_id?: InputMaybe<Uuid_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "workspace_members" */
 export enum Workspace_Members_Constraint {
   /** unique or primary key constraint on columns "id" */
-  WorkspaceMembersPkey = 'workspace_members_pkey',
-  /** unique or primary key constraint on columns "user_id" */
-  WorkspaceMembersUserIdKey = 'workspace_members_user_id_key'
+  WorkspaceMembersPkey = 'workspace_members_pkey'
 }
-
-/** input type for incrementing numeric columns in table "workspace_members" */
-export type Workspace_Members_Inc_Input = {
-  id?: InputMaybe<Scalars['Int']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
-};
 
 /** input type for inserting data into table "workspace_members" */
 export type Workspace_Members_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']>;
   deleted_at?: InputMaybe<Scalars['timestamptz']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['uuid']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
   user_id?: InputMaybe<Scalars['uuid']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
+  workspace?: InputMaybe<Workspaces_Obj_Rel_Insert_Input>;
+  workspace_id?: InputMaybe<Scalars['uuid']>;
 };
 
 /** aggregate max on columns */
@@ -4792,20 +4565,10 @@ export type Workspace_Members_Max_Fields = {
   __typename?: 'workspace_members_max_fields';
   created_at?: Maybe<Scalars['timestamptz']>;
   deleted_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
   user_id?: Maybe<Scalars['uuid']>;
-  workspace_id?: Maybe<Scalars['Int']>;
-};
-
-/** order by max() on columns of table "workspace_members" */
-export type Workspace_Members_Max_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  deleted_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  user_id?: InputMaybe<Order_By>;
-  workspace_id?: InputMaybe<Order_By>;
+  workspace_id?: Maybe<Scalars['uuid']>;
 };
 
 /** aggregate min on columns */
@@ -4813,20 +4576,10 @@ export type Workspace_Members_Min_Fields = {
   __typename?: 'workspace_members_min_fields';
   created_at?: Maybe<Scalars['timestamptz']>;
   deleted_at?: Maybe<Scalars['timestamptz']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
   user_id?: Maybe<Scalars['uuid']>;
-  workspace_id?: Maybe<Scalars['Int']>;
-};
-
-/** order by min() on columns of table "workspace_members" */
-export type Workspace_Members_Min_Order_By = {
-  created_at?: InputMaybe<Order_By>;
-  deleted_at?: InputMaybe<Order_By>;
-  id?: InputMaybe<Order_By>;
-  updated_at?: InputMaybe<Order_By>;
-  user_id?: InputMaybe<Order_By>;
-  workspace_id?: InputMaybe<Order_By>;
+  workspace_id?: Maybe<Scalars['uuid']>;
 };
 
 /** response of any mutation on the table "workspace_members" */
@@ -4836,6 +4589,13 @@ export type Workspace_Members_Mutation_Response = {
   affected_rows: Scalars['Int'];
   /** data from the rows affected by the mutation */
   returning: Array<Workspace_Members>;
+};
+
+/** input type for inserting object relation for remote table "workspace_members" */
+export type Workspace_Members_Obj_Rel_Insert_Input = {
+  data: Workspace_Members_Insert_Input;
+  /** upsert condition */
+  on_conflict?: InputMaybe<Workspace_Members_On_Conflict>;
 };
 
 /** on_conflict condition type for table "workspace_members" */
@@ -4852,12 +4612,13 @@ export type Workspace_Members_Order_By = {
   id?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
+  workspace?: InputMaybe<Workspaces_Order_By>;
   workspace_id?: InputMaybe<Order_By>;
 };
 
 /** primary key columns input for table: workspace_members */
 export type Workspace_Members_Pk_Columns_Input = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 /** select columns of table "workspace_members" */
@@ -4880,49 +4641,10 @@ export enum Workspace_Members_Select_Column {
 export type Workspace_Members_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']>;
   deleted_at?: InputMaybe<Scalars['timestamptz']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['uuid']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
   user_id?: InputMaybe<Scalars['uuid']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
-};
-
-/** aggregate stddev on columns */
-export type Workspace_Members_Stddev_Fields = {
-  __typename?: 'workspace_members_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev() on columns of table "workspace_members" */
-export type Workspace_Members_Stddev_Order_By = {
-  id?: InputMaybe<Order_By>;
-  workspace_id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Workspace_Members_Stddev_Pop_Fields = {
-  __typename?: 'workspace_members_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_pop() on columns of table "workspace_members" */
-export type Workspace_Members_Stddev_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-  workspace_id?: InputMaybe<Order_By>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Workspace_Members_Stddev_Samp_Fields = {
-  __typename?: 'workspace_members_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** order by stddev_samp() on columns of table "workspace_members" */
-export type Workspace_Members_Stddev_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-  workspace_id?: InputMaybe<Order_By>;
+  workspace_id?: InputMaybe<Scalars['uuid']>;
 };
 
 /** Streaming cursor of the table "workspace_members" */
@@ -4937,23 +4659,10 @@ export type Workspace_Members_Stream_Cursor_Input = {
 export type Workspace_Members_Stream_Cursor_Value_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']>;
   deleted_at?: InputMaybe<Scalars['timestamptz']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['uuid']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
   user_id?: InputMaybe<Scalars['uuid']>;
-  workspace_id?: InputMaybe<Scalars['Int']>;
-};
-
-/** aggregate sum on columns */
-export type Workspace_Members_Sum_Fields = {
-  __typename?: 'workspace_members_sum_fields';
-  id?: Maybe<Scalars['Int']>;
-  workspace_id?: Maybe<Scalars['Int']>;
-};
-
-/** order by sum() on columns of table "workspace_members" */
-export type Workspace_Members_Sum_Order_By = {
-  id?: InputMaybe<Order_By>;
-  workspace_id?: InputMaybe<Order_By>;
+  workspace_id?: InputMaybe<Scalars['uuid']>;
 };
 
 /** update columns of table "workspace_members" */
@@ -4973,61 +4682,20 @@ export enum Workspace_Members_Update_Column {
 }
 
 export type Workspace_Members_Updates = {
-  /** increments the numeric columns with given value of the filtered values */
-  _inc?: InputMaybe<Workspace_Members_Inc_Input>;
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Workspace_Members_Set_Input>;
   /** filter the rows which have to be updated */
   where: Workspace_Members_Bool_Exp;
 };
 
-/** aggregate var_pop on columns */
-export type Workspace_Members_Var_Pop_Fields = {
-  __typename?: 'workspace_members_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_pop() on columns of table "workspace_members" */
-export type Workspace_Members_Var_Pop_Order_By = {
-  id?: InputMaybe<Order_By>;
-  workspace_id?: InputMaybe<Order_By>;
-};
-
-/** aggregate var_samp on columns */
-export type Workspace_Members_Var_Samp_Fields = {
-  __typename?: 'workspace_members_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** order by var_samp() on columns of table "workspace_members" */
-export type Workspace_Members_Var_Samp_Order_By = {
-  id?: InputMaybe<Order_By>;
-  workspace_id?: InputMaybe<Order_By>;
-};
-
-/** aggregate variance on columns */
-export type Workspace_Members_Variance_Fields = {
-  __typename?: 'workspace_members_variance_fields';
-  id?: Maybe<Scalars['Float']>;
-  workspace_id?: Maybe<Scalars['Float']>;
-};
-
-/** order by variance() on columns of table "workspace_members" */
-export type Workspace_Members_Variance_Order_By = {
-  id?: InputMaybe<Order_By>;
-  workspace_id?: InputMaybe<Order_By>;
-};
-
 /** columns and relationships of "workspaces" */
 export type Workspaces = {
   __typename?: 'workspaces';
   created_at: Scalars['timestamptz'];
-  deleted_at?: Maybe<Scalars['timestamp']>;
+  deleted_at?: Maybe<Scalars['timestamptz']>;
   display_name: Scalars['String'];
   domain_name: Scalars['String'];
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
   updated_at: Scalars['timestamptz'];
 };
 
@@ -5041,17 +4709,9 @@ export type Workspaces_Aggregate = {
 /** aggregate fields of "workspaces" */
 export type Workspaces_Aggregate_Fields = {
   __typename?: 'workspaces_aggregate_fields';
-  avg?: Maybe<Workspaces_Avg_Fields>;
   count: Scalars['Int'];
   max?: Maybe<Workspaces_Max_Fields>;
   min?: Maybe<Workspaces_Min_Fields>;
-  stddev?: Maybe<Workspaces_Stddev_Fields>;
-  stddev_pop?: Maybe<Workspaces_Stddev_Pop_Fields>;
-  stddev_samp?: Maybe<Workspaces_Stddev_Samp_Fields>;
-  sum?: Maybe<Workspaces_Sum_Fields>;
-  var_pop?: Maybe<Workspaces_Var_Pop_Fields>;
-  var_samp?: Maybe<Workspaces_Var_Samp_Fields>;
-  variance?: Maybe<Workspaces_Variance_Fields>;
 };
 
 
@@ -5061,45 +4721,34 @@ export type Workspaces_Aggregate_FieldsCountArgs = {
   distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
-/** aggregate avg on columns */
-export type Workspaces_Avg_Fields = {
-  __typename?: 'workspaces_avg_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
 /** Boolean expression to filter rows from the table "workspaces". All fields are combined with a logical 'AND'. */
 export type Workspaces_Bool_Exp = {
   _and?: InputMaybe<Array<Workspaces_Bool_Exp>>;
   _not?: InputMaybe<Workspaces_Bool_Exp>;
   _or?: InputMaybe<Array<Workspaces_Bool_Exp>>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
-  deleted_at?: InputMaybe<Timestamp_Comparison_Exp>;
+  deleted_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   display_name?: InputMaybe<String_Comparison_Exp>;
   domain_name?: InputMaybe<String_Comparison_Exp>;
-  id?: InputMaybe<Int_Comparison_Exp>;
+  id?: InputMaybe<Uuid_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
 /** unique or primary key constraints on table "workspaces" */
 export enum Workspaces_Constraint {
   /** unique or primary key constraint on columns "domain_name" */
-  WorkspacesNameKey = 'workspaces_name_key',
+  WorkspacesDomainNameKey = 'workspaces_domain_name_key',
   /** unique or primary key constraint on columns "id" */
   WorkspacesPkey = 'workspaces_pkey'
 }
 
-/** input type for incrementing numeric columns in table "workspaces" */
-export type Workspaces_Inc_Input = {
-  id?: InputMaybe<Scalars['Int']>;
-};
-
 /** input type for inserting data into table "workspaces" */
 export type Workspaces_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']>;
-  deleted_at?: InputMaybe<Scalars['timestamp']>;
+  deleted_at?: InputMaybe<Scalars['timestamptz']>;
   display_name?: InputMaybe<Scalars['String']>;
   domain_name?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['uuid']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
@@ -5107,10 +4756,10 @@ export type Workspaces_Insert_Input = {
 export type Workspaces_Max_Fields = {
   __typename?: 'workspaces_max_fields';
   created_at?: Maybe<Scalars['timestamptz']>;
-  deleted_at?: Maybe<Scalars['timestamp']>;
+  deleted_at?: Maybe<Scalars['timestamptz']>;
   display_name?: Maybe<Scalars['String']>;
   domain_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -5118,10 +4767,10 @@ export type Workspaces_Max_Fields = {
 export type Workspaces_Min_Fields = {
   __typename?: 'workspaces_min_fields';
   created_at?: Maybe<Scalars['timestamptz']>;
-  deleted_at?: Maybe<Scalars['timestamp']>;
+  deleted_at?: Maybe<Scalars['timestamptz']>;
   display_name?: Maybe<Scalars['String']>;
   domain_name?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['uuid']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -5160,7 +4809,7 @@ export type Workspaces_Order_By = {
 
 /** primary key columns input for table: workspaces */
 export type Workspaces_Pk_Columns_Input = {
-  id: Scalars['Int'];
+  id: Scalars['uuid'];
 };
 
 /** select columns of table "workspaces" */
@@ -5182,29 +4831,11 @@ export enum Workspaces_Select_Column {
 /** input type for updating data in table "workspaces" */
 export type Workspaces_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']>;
-  deleted_at?: InputMaybe<Scalars['timestamp']>;
+  deleted_at?: InputMaybe<Scalars['timestamptz']>;
   display_name?: InputMaybe<Scalars['String']>;
   domain_name?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['uuid']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
-};
-
-/** aggregate stddev on columns */
-export type Workspaces_Stddev_Fields = {
-  __typename?: 'workspaces_stddev_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_pop on columns */
-export type Workspaces_Stddev_Pop_Fields = {
-  __typename?: 'workspaces_stddev_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate stddev_samp on columns */
-export type Workspaces_Stddev_Samp_Fields = {
-  __typename?: 'workspaces_stddev_samp_fields';
-  id?: Maybe<Scalars['Float']>;
 };
 
 /** Streaming cursor of the table "workspaces" */
@@ -5218,17 +4849,11 @@ export type Workspaces_Stream_Cursor_Input = {
 /** Initial value of the column from where the streaming should start */
 export type Workspaces_Stream_Cursor_Value_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']>;
-  deleted_at?: InputMaybe<Scalars['timestamp']>;
+  deleted_at?: InputMaybe<Scalars['timestamptz']>;
   display_name?: InputMaybe<Scalars['String']>;
   domain_name?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['uuid']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
-};
-
-/** aggregate sum on columns */
-export type Workspaces_Sum_Fields = {
-  __typename?: 'workspaces_sum_fields';
-  id?: Maybe<Scalars['Int']>;
 };
 
 /** update columns of table "workspaces" */
@@ -5248,30 +4873,10 @@ export enum Workspaces_Update_Column {
 }
 
 export type Workspaces_Updates = {
-  /** increments the numeric columns with given value of the filtered values */
-  _inc?: InputMaybe<Workspaces_Inc_Input>;
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Workspaces_Set_Input>;
   /** filter the rows which have to be updated */
   where: Workspaces_Bool_Exp;
-};
-
-/** aggregate var_pop on columns */
-export type Workspaces_Var_Pop_Fields = {
-  __typename?: 'workspaces_var_pop_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate var_samp on columns */
-export type Workspaces_Var_Samp_Fields = {
-  __typename?: 'workspaces_var_samp_fields';
-  id?: Maybe<Scalars['Float']>;
-};
-
-/** aggregate variance on columns */
-export type Workspaces_Variance_Fields = {
-  __typename?: 'workspaces_variance_fields';
-  id?: Maybe<Scalars['Float']>;
 };
 
 export type GetPeopleQueryVariables = Exact<{
@@ -5279,20 +4884,20 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'query_root', people: Array<{ __typename?: 'people', id: number, phone?: string | null, email?: string | null, city?: string | null, firstname?: string | null, lastname: string, created_at: any, company?: { __typename?: 'companies', id: number, company_name: string, company_domain: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'query_root', people: Array<{ __typename?: 'people', id: any, phone?: string | null, email?: string | null, city?: string | null, firstname?: string | null, lastname?: string | null, created_at: any, company?: { __typename?: 'companies', id: any, name?: string | null, domain_name?: string | null } | null }> };
 
 export type UpdatePeopleMutationVariables = Exact<{
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['uuid']>;
   firstname?: InputMaybe<Scalars['String']>;
   lastname?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   city?: InputMaybe<Scalars['String']>;
-  company_id?: InputMaybe<Scalars['Int']>;
+  company_id?: InputMaybe<Scalars['uuid']>;
   email?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type UpdatePeopleMutation = { __typename?: 'mutation_root', update_people?: { __typename?: 'people_mutation_response', returning: Array<{ __typename?: 'people', city?: string | null, email?: string | null, firstname?: string | null, id: number, lastname: string, phone?: string | null, company?: { __typename?: 'companies', company_domain: string, company_name: string, id: number } | null }> } | null };
+export type UpdatePeopleMutation = { __typename?: 'mutation_root', update_people?: { __typename?: 'people_mutation_response', returning: Array<{ __typename?: 'people', city?: string | null, email?: string | null, firstname?: string | null, id: any, lastname?: string | null, phone?: string | null, company?: { __typename?: 'companies', domain_name?: string | null, name?: string | null, id: any } | null }> } | null };
 
 
 export const GetPeopleDocument = gql`
@@ -5307,8 +4912,8 @@ export const GetPeopleDocument = gql`
     created_at
     company {
       id
-      company_name
-      company_domain
+      name
+      domain_name
     }
   }
 }
@@ -5342,7 +4947,7 @@ export type GetPeopleQueryHookResult = ReturnType<typeof useGetPeopleQuery>;
 export type GetPeopleLazyQueryHookResult = ReturnType<typeof useGetPeopleLazyQuery>;
 export type GetPeopleQueryResult = Apollo.QueryResult<GetPeopleQuery, GetPeopleQueryVariables>;
 export const UpdatePeopleDocument = gql`
-    mutation UpdatePeople($id: Int, $firstname: String, $lastname: String, $phone: String, $city: String, $company_id: Int, $email: String) {
+    mutation UpdatePeople($id: uuid, $firstname: String, $lastname: String, $phone: String, $city: String, $company_id: uuid, $email: String) {
   update_people(
     where: {id: {_eq: $id}}
     _set: {city: $city, company_id: $company_id, email: $email, firstname: $firstname, id: $id, lastname: $lastname, phone: $phone}
@@ -5350,8 +4955,8 @@ export const UpdatePeopleDocument = gql`
     returning {
       city
       company {
-        company_domain
-        company_name
+        domain_name
+        name
         id
       }
       email

@@ -3,7 +3,7 @@ import { mapGqlPerson, mapPerson } from './person.interface';
 describe('mapPerson', () => {
   it('should map person', () => {
     const person = mapPerson({
-      id: 1,
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       firstname: 'John',
       lastname: 'Doe',
       email: '',
@@ -12,9 +12,9 @@ describe('mapPerson', () => {
       created_at: '',
       company: {
         __typename: '',
-        id: 1,
-        company_name: '',
-        company_domain: '',
+        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+        name: '',
+        domain_name: '',
       },
       __typename: '',
     });
@@ -23,19 +23,19 @@ describe('mapPerson', () => {
 
   it('should map person back', () => {
     const person = mapGqlPerson({
-      id: 1,
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       fullName: 'John Doe',
       email: '',
       phone: '',
       city: '',
       company: {
-        id: 1,
+        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
         name: '',
-        domain: '',
+        domain_name: '',
       },
       creationDate: new Date(),
       pipe: {
-        id: 3,
+        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
         name: '',
         icon: '',
       },

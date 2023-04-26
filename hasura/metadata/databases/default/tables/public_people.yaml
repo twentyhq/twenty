@@ -11,50 +11,61 @@ object_relationships:
 insert_permissions:
   - role: user
     permission:
-      check: {}
+      check:
+        workspace_id:
+          _eq: x-hasura-workspace-id
       columns:
-        - company_id
-        - id
-        - workspace_id
         - city
         - email
         - firstname
         - lastname
         - phone
         - created_at
+        - deleted_at
         - updated_at
+        - company_id
+        - id
+        - workspace_id
 select_permissions:
   - role: user
     permission:
       columns:
-        - company_id
-        - id
-        - workspace_id
         - city
         - email
         - firstname
         - lastname
         - phone
         - created_at
+        - deleted_at
         - updated_at
-      filter: {}
+        - company_id
+        - id
+        - workspace_id
+      filter:
+        workspace_id:
+          _eq: x-hasura-workspace-id
 update_permissions:
   - role: user
     permission:
       columns:
-        - company_id
-        - id
-        - workspace_id
         - city
         - email
         - firstname
         - lastname
         - phone
         - created_at
+        - deleted_at
         - updated_at
-      filter: {}
-      check: {}
+        - company_id
+        - id
+        - workspace_id
+      filter:
+        workspace_id:
+          _eq: x-hasura-workspace-id
+      check: null
 delete_permissions:
   - role: user
     permission:
-      filter: {}
+      filter:
+        workspace_id:
+          _eq: x-hasura-workspace-id
