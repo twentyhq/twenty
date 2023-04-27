@@ -23,8 +23,6 @@ type OwnProps = {
   setSorts: () => void;
 };
 
-const sorts = [] satisfies SelectedSortType[];
-
 const availableSorts = [
   {
     key: 'fullname',
@@ -60,9 +58,9 @@ export const RegularSortDropdownButton = ({ setSorts }: OwnProps) => {
     <ThemeProvider theme={lightTheme}>
       <StyleDiv>
         <SortDropdownButton
-          sorts={sorts}
+          isSortSelected={true}
           availableSorts={availableSorts}
-          setSorts={setSorts}
+          onSortSelect={setSorts}
         />
       </StyleDiv>
     </ThemeProvider>

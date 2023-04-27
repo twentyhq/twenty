@@ -1,12 +1,14 @@
-import { useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterType, SelectedFilterType } from './interface';
 
 type OwnProps = {
-  filters: SelectedFilterType[];
-  setFilters: (sorts: SelectedFilterType[]) => void;
+  isFilterSelected: boolean;
   availableFilters: FilterType[];
+  filterSearchResults?: string[];
+  onFilterSelect: (filter: SelectedFilterType) => void;
+  onFilterSearch: (filterKey: string, filterValue: string) => void;
 };
 
 type FilterOperandType = { label: string; id: string };
@@ -16,25 +18,12 @@ const filterOperands: FilterOperandType[] = [
   { label: "Doesn't include", id: 'not-include' },
 ];
 
-const someFieldRandomValue = [
-  'John Doe',
-  'Jane Doe',
-  'John Smith',
-  'Jane Smith',
-  'John Johnson',
-  'Jane Johnson',
-  'John Williams',
-  'Jane Williams',
-  'John Brown',
-  'Jane Brown',
-  'John Jones',
-  'Jane Jones',
-];
-
 export function FilterDropdownButton({
   availableFilters,
-  setFilters,
-  filters,
+  filterSearchResults,
+  onFilterSearch,
+  onFilterSelect,
+  isFilterSelected,
 }: OwnProps) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -80,45 +69,52 @@ export function FilterDropdownButton({
   ));
 
   function renderFilterDropdown(selectedFilter: FilterType) {
-    return [
-      <DropdownButton.StyledDropdownTopOption
-        key={'selected-filter-operand'}
-        onClick={() => setIsOptionUnfolded(true)}
-      >
-        {selectedFilterOperand.label}
-
-        <DropdownButton.StyledDropdownTopOptionAngleDown />
-      </DropdownButton.StyledDropdownTopOption>,
-      <DropdownButton.StyledSearchField key={'search-filter'}>
-        <input type="text" placeholder={selectedFilter.label} />
-      </DropdownButton.StyledSearchField>,
-      someFieldRandomValue.map((value, index) => (
-        <DropdownButton.StyledDropdownItem
-          key={`fields-value-${index}`}
-          onClick={() => {
-            setFilters([
-              {
-                id: value,
-                operand: selectedFilterOperand,
-                label: selectedFilter.label,
-                value: value,
-                icon: selectedFilter.icon,
-              },
-            ]);
-            setIsUnfolded(false);
-            setSelectedFilter(undefined);
-          }}
+    return (
+      <>
+        <DropdownButton.StyledDropdownTopOption
+          key={'selected-filter-operand'}
+          onClick={() => setIsOptionUnfolded(true)}
         >
-          {value}
-        </DropdownButton.StyledDropdownItem>
-      )),
-    ];
+          {selectedFilterOperand.label}
+
+          <DropdownButton.StyledDropdownTopOptionAngleDown />
+        </DropdownButton.StyledDropdownTopOption>
+        <DropdownButton.StyledSearchField key={'search-filter'}>
+          <input
+            type="text"
+            placeholder={selectedFilter.label}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              onFilterSearch(selectedFilter.key, event.target.value)
+            }
+          />
+        </DropdownButton.StyledSearchField>
+        {filterSearchResults &&
+          filterSearchResults.map((value, index) => (
+            <DropdownButton.StyledDropdownItem
+              key={`fields-value-${index}`}
+              onClick={() => {
+                onFilterSelect({
+                  id: value,
+                  operand: selectedFilterOperand,
+                  label: selectedFilter.label,
+                  value: value,
+                  icon: selectedFilter.icon,
+                });
+                setIsUnfolded(false);
+                setSelectedFilter(undefined);
+              }}
+            >
+              {value}
+            </DropdownButton.StyledDropdownItem>
+          ))}
+      </>
+    );
   }
 
   return (
     <DropdownButton
       label="Filter"
-      isActive={filters.length > 0}
+      isActive={isFilterSelected}
       isUnfolded={isUnfolded}
       setIsUnfolded={setIsUnfolded}
       resetState={resetState}

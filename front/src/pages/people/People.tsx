@@ -8,7 +8,7 @@ import {
   availableSorts,
 } from './people-table';
 import { mapPerson } from '../../interfaces/person.interface';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   PeopleSelectedSortType,
   defaultOrderBy,
@@ -25,13 +25,42 @@ const StyledPeopleContainer = styled.div`
 function People() {
   const [, setSorts] = useState([] as Array<PeopleSelectedSortType>);
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
+  const [filterSearchResults, setFilterSearchResults] = useState([
+    'Toto',
+    'Lala',
+  ] as Array<string>);
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
     setSorts(sorts);
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
-  const { data } = usePeopleQuery(orderBy);
+  const {
+    data: filterSearchResultsQueryData,
+    refetch: filterSearchResultQueryRefetch,
+  } = usePeopleQuery({}, orderBy, 5);
+
+  useEffect(() => {
+    if (filterSearchResultsQueryData) {
+      setFilterSearchResults(
+        filterSearchResultsQueryData.people.map((person) => person.firstname),
+      );
+    }
+  }, [filterSearchResultsQueryData]);
+
+  const filterSearch = useCallback(
+    (filterKey: string, filterValue: string) => {
+      console.log('filterSearch', filterKey, filterValue);
+      filterSearchResultQueryRefetch({
+        where: {
+          [filterKey]: { _ilike: `%${filterValue}%` },
+        },
+      });
+    },
+    [filterSearchResultQueryRefetch],
+  );
+
+  const { data } = usePeopleQuery({}, orderBy, 100);
 
   return (
     <WithTopBarContainer title="People" icon={faUser}>
@@ -42,9 +71,11 @@ function People() {
             columns={peopleColumns}
             viewName="All People"
             viewIcon={faList}
-            onSortsUpdate={updateSorts}
             availableSorts={availableSorts}
             availableFilters={availableFilters}
+            filterSearchResults={filterSearchResults}
+            onSortsUpdate={updateSorts}
+            onFilterSearch={filterSearch}
           />
         }
       </StyledPeopleContainer>

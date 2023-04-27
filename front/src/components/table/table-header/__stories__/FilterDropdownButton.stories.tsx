@@ -55,11 +55,11 @@ const StyleDiv = styled.div`
 `;
 
 export const RegularFilterDropdownButton = ({ setFilters }: OwnProps) => {
-  const [filters, innerSetFilters] = useState<SelectedFilterType[]>([]);
+  const [, innerSetFilters] = useState<SelectedFilterType[]>([]);
   const outerSetFilters = useCallback(
-    (filters: SelectedFilterType[]) => {
-      innerSetFilters(filters);
-      setFilters(filters);
+    (filter: SelectedFilterType) => {
+      innerSetFilters([filter]);
+      setFilters([filter]);
     },
     [setFilters],
   );
@@ -68,8 +68,10 @@ export const RegularFilterDropdownButton = ({ setFilters }: OwnProps) => {
       <StyleDiv>
         <FilterDropdownButton
           availableFilters={availableFilters}
-          filters={filters}
-          setFilters={outerSetFilters}
+          isFilterSelected={true}
+          onFilterSearch={jest.fn()}
+          onFilterSelect={outerSetFilters}
+          filterSearchResults={[]}
         />
       </StyleDiv>
     </ThemeProvider>

@@ -11,6 +11,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import styled from '@emotion/styled';
 import {
   FilterType,
+  SelectedFilterType,
   SelectedSortType,
   SortType,
 } from './table-header/interface';
@@ -20,9 +21,12 @@ type OwnProps<TData, SortField> = {
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: IconProp;
-  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   availableSorts?: Array<SortType<SortField>>;
   availableFilters?: FilterType[];
+  filterSearchResults?: Array<string>;
+  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
+  onFilterSearch?: (filterKey: string, filterValue: string) => void;
 };
 
 const StyledTable = styled.table`
@@ -81,9 +85,12 @@ function Table<TData, SortField extends string>({
   columns,
   viewName,
   viewIcon,
-  onSortsUpdate,
   availableSorts,
   availableFilters,
+  filterSearchResults,
+  onSortsUpdate,
+  onFiltersUpdate,
+  onFilterSearch,
 }: OwnProps<TData, SortField>) {
   const table = useReactTable({
     data,
@@ -96,9 +103,12 @@ function Table<TData, SortField extends string>({
       <TableHeader
         viewName={viewName}
         viewIcon={viewIcon}
-        onSortsUpdate={onSortsUpdate}
         availableSorts={availableSorts}
         availableFilters={availableFilters}
+        filterSearchResults={filterSearchResults}
+        onSortsUpdate={onSortsUpdate}
+        onFiltersUpdate={onFiltersUpdate}
+        onFilterSearch={onFilterSearch}
       />
       <StyledTableScrollableContainer>
         <StyledTable>

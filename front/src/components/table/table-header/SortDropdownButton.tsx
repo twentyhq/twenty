@@ -4,17 +4,17 @@ import { SelectedSortType, SortType } from './interface';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type OwnProps<SortField> = {
-  sorts: SelectedSortType<SortField>[];
-  setSorts: (sorts: SelectedSortType<SortField>[]) => void;
+  isSortSelected: boolean;
+  onSortSelect: (sort: SelectedSortType<SortField>) => void;
   availableSorts: SortType<SortField>[];
 };
 
 const options: Array<SelectedSortType<string>['order']> = ['asc', 'desc'];
 
 export function SortDropdownButton<SortField extends string>({
+  isSortSelected,
   availableSorts,
-  setSorts,
-  sorts,
+  onSortSelect,
 }: OwnProps<SortField>) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -25,10 +25,9 @@ export function SortDropdownButton<SortField extends string>({
 
   const onSortItemSelect = useCallback(
     (sort: SortType<SortField>) => {
-      const newSorts = [{ ...sort, order: selectedSortDirection }];
-      setSorts(newSorts);
+      onSortSelect({ ...sort, order: selectedSortDirection });
     },
-    [setSorts, selectedSortDirection],
+    [onSortSelect, selectedSortDirection],
   );
 
   const resetState = useCallback(() => {
@@ -39,7 +38,7 @@ export function SortDropdownButton<SortField extends string>({
   return (
     <DropdownButton
       label="Sort"
-      isActive={sorts.length > 0}
+      isActive={isSortSelected}
       isUnfolded={isUnfolded}
       setIsUnfolded={setIsUnfolded}
       resetState={resetState}

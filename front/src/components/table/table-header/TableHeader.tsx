@@ -16,10 +16,12 @@ import SortAndFilterBar from './SortAndFilterBar';
 type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: IconProp;
-  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
   availableSorts?: Array<SortType<SortField>>;
   availableFilters?: FilterType[];
+  filterSearchResults?: Array<string>;
+  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
+  onFilterSearch?: (filterKey: string, filterValue: string) => void;
 };
 
 const StyledContainer = styled.div`
@@ -61,24 +63,27 @@ const StyledFilters = styled.div`
 function TableHeader<SortField extends string>({
   viewName,
   viewIcon,
-  onSortsUpdate,
-  onFiltersUpdate,
   availableSorts,
   availableFilters,
+  filterSearchResults,
+  onSortsUpdate,
+  onFiltersUpdate,
+  onFilterSearch,
 }: OwnProps<SortField>) {
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
     [],
   );
+  const [filters, innerSetFilters] = useState<Array<SelectedFilterType>>([]);
 
-  const setSorts = useCallback(
-    (sorts: SelectedSortType<SortField>[]) => {
-      innerSetSorts(sorts);
-      onSortsUpdate && onSortsUpdate(sorts);
+  const sortSelect = useCallback(
+    (sort: SelectedSortType<SortField>) => {
+      innerSetSorts([sort]);
+      onSortsUpdate && onSortsUpdate([sort]);
     },
     [onSortsUpdate],
   );
 
-  const onSortItemUnSelect = useCallback(
+  const sortUnselect = useCallback(
     (sortId: string) => {
       const newSorts = [] as SelectedSortType<SortField>[];
       innerSetSorts(newSorts);
@@ -87,23 +92,28 @@ function TableHeader<SortField extends string>({
     [onSortsUpdate],
   );
 
-  const [filters, innerSetFilters] = useState<Array<SelectedFilterType>>([]);
-
-  const setFilters = useCallback(
-    (filters: SelectedFilterType[]) => {
-      innerSetFilters(filters);
-      onFiltersUpdate && onFiltersUpdate(filters);
+  const filterSelect = useCallback(
+    (filter: SelectedFilterType) => {
+      innerSetFilters([filter]);
+      onFiltersUpdate && onFiltersUpdate([filter]);
     },
     [onFiltersUpdate],
   );
 
-  const onFilterItemUnSelect = useCallback(
+  const filterUnselect = useCallback(
     (filterId: SelectedFilterType['id']) => {
       const newFilters = [] as SelectedFilterType[];
       innerSetFilters(newFilters);
       onFiltersUpdate && onFiltersUpdate(newFilters);
     },
     [onFiltersUpdate],
+  );
+
+  const filterSearch = useCallback(
+    (filterKey: string, filterValue: string) => {
+      onFilterSearch && onFilterSearch(filterKey, filterValue);
+    },
+    [onFilterSearch],
   );
 
   return (
@@ -117,14 +127,16 @@ function TableHeader<SortField extends string>({
         </StyledViewSection>
         <StyledFilters>
           <FilterDropdownButton
-            filters={filters}
-            setFilters={setFilters}
+            isFilterSelected={filters.length > 0}
             availableFilters={availableFilters || []}
+            filterSearchResults={filterSearchResults}
+            onFilterSelect={filterSelect}
+            onFilterSearch={filterSearch}
           />
-          <SortDropdownButton
-            setSorts={setSorts}
-            sorts={sorts}
+          <SortDropdownButton<SortField>
+            isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
+            onSortSelect={sortSelect}
           />
 
           <DropdownButton label="Settings" isActive={false}></DropdownButton>
@@ -133,9 +145,9 @@ function TableHeader<SortField extends string>({
       {sorts.length + filters.length > 0 && (
         <SortAndFilterBar
           sorts={sorts}
-          onRemoveSort={onSortItemUnSelect}
           filters={filters}
-          onRemoveFilter={onFilterItemUnSelect}
+          onRemoveSort={sortUnselect}
+          onRemoveFilter={filterUnselect}
         />
       )}
     </StyledContainer>

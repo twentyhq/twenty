@@ -1,7 +1,12 @@
 import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphqlQueryPerson } from '../../interfaces/person.interface';
-import { Order_By, People_Order_By } from '../../generated/graphql';
+import {
+  Order_By,
+  People_Max_Fields,
+  People_Order_By,
+} from '../../generated/graphql';
 import { SelectedSortType } from '../../components/table/table-header/interface';
+import { People_Bool_Exp } from '../../generated/graphql';
 
 export type OrderByFields = keyof People_Order_By | 'fullname' | 'company_name';
 
@@ -50,10 +55,12 @@ export const GET_PEOPLE = gql`
 `;
 
 export function usePeopleQuery(
+  where: People_Bool_Exp,
   orderBy: People_Order_By[],
+  limit: number,
 ): QueryResult<{ people: GraphqlQueryPerson[] }> {
   return useQuery<{ people: GraphqlQueryPerson[] }>(GET_PEOPLE, {
-    variables: { orderBy },
+    variables: { orderBy, where, limit },
   });
 }
 
