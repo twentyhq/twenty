@@ -1,14 +1,29 @@
 import { fireEvent, render } from '@testing-library/react';
 
-import { RegularSortOrFilterChip } from '../__stories__/SortOrFilterChip.stories';
+import {
+  RegularFilterChip,
+  RegularSortChip,
+} from '../__stories__/SortOrFilterChip.stories';
 
 const removeFunction = jest.fn();
 
-it('Checks the RegularSortOrFilterChip renders', async () => {
+it('Checks the filter chip renders', async () => {
   const { getByText, getByTestId } = render(
-    <RegularSortOrFilterChip removeFunction={removeFunction} />,
+    <RegularFilterChip removeFunction={removeFunction} />,
   );
-  expect(getByText('Test sort')).toBeDefined();
+  expect(getByText('Account owner:')).toBeDefined();
+
+  const removeIcon = getByTestId('remove-icon-test_sort');
+  fireEvent.click(removeIcon);
+
+  expect(removeFunction).toHaveBeenCalled();
+});
+
+it('Checks the sort chip renders', async () => {
+  const { getByText, getByTestId } = render(
+    <RegularSortChip removeFunction={removeFunction} />,
+  );
+  expect(getByText('Created at')).toBeDefined();
 
   const removeIcon = getByTestId('remove-icon-test_sort');
   fireEvent.click(removeIcon);
