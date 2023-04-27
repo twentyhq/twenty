@@ -8,12 +8,20 @@ RUN apk update && apk upgrade && \
     apk add python3 && \
     apk add make && \
     apk add g++
+
+ARG FONTAWESOME_NPM_AUTH_TOKEN
+#ARG REACT_APP_API_URL
+#ARG REACT_APP_AUTH_URL
+
 WORKDIR /app/front
-COPY ./front/package.json .
-COPY ./front/package-lock.json .
-# COPY ./front/.npmrc .
-RUN npm install
+
 COPY ./front .
+RUN echo "@fortawesome:registry=https://npm.fontawesome.com/" > .npmrc
+RUN echo "//npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_AUTH_TOKEN}" >> .npmrc
+
+RUN npm install
+
+
 
 # Build the Hasura API
 FROM hasura/graphql-engine:latest as api
