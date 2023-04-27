@@ -28,8 +28,6 @@ RUN apt-get install -y nodejs
 
 
 # Build the server
-ARG SERVER_HASURA_EVENT_HANDLER_SECRET_HEADER
-ARG SERVER_DATABASE_URL
 WORKDIR /app/server
 COPY ./server/package.json ./
 COPY ./server/package-lock.json ./
@@ -40,8 +38,6 @@ RUN npm run build
 
 # Build the frontend
 ARG FONTAWESOME_NPM_AUTH_TOKEN
-#ARG REACT_APP_API_URL
-#ARG REACT_APP_AUTH_URL
 WORKDIR /app/front
 COPY ./front .
 RUN echo "@fortawesome:registry=https://npm.fontawesome.com/" > .npmrc
