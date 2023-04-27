@@ -1,6 +1,7 @@
 import SortAndFilterBar from '../SortAndFilterBar';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
+import { GET_PEOPLE } from '../../../../services/people';
 import { FaArrowDown } from 'react-icons/fa';
 
 const component = {
@@ -37,10 +38,24 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
         filters={[
           {
             label: 'People',
-            operand: { id: 'include', label: 'Include' },
-            id: 'test_filter',
+            operand: { label: 'Include', id: 'include', keyWord: 'ilike' },
+            key: 'test_filter',
             icon: <FaArrowDown />,
             value: 'John Doe',
+            where: {
+              firstname: { _ilike: 'John Doe' },
+            },
+            searchQuery: GET_PEOPLE,
+            searchTemplate: () => ({
+              firstname: { _ilike: 'John Doe' },
+            }),
+            whereTemplate: () => {
+              return { firstname: { _ilike: 'John Doe' } };
+            },
+            searchResultMapper: (data) => ({
+              displayValue: 'John Doe',
+              value: data.firstname,
+            }),
           },
         ]}
       />

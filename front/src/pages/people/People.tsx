@@ -12,9 +12,13 @@ import { useCallback, useState } from 'react';
 import {
   PeopleSelectedSortType,
   defaultOrderBy,
+  reduceFiltersToWhere,
   reduceSortsToOrderBy,
   usePeopleQuery,
 } from '../../services/people';
+import { useSearch } from '../../services/search/search';
+import { People_Bool_Exp } from '../../generated/graphql';
+import { SelectedFilterType } from '../../components/table/table-header/interface';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -23,15 +27,22 @@ const StyledPeopleContainer = styled.div`
 `;
 
 function People() {
-  const [, setSorts] = useState([] as Array<PeopleSelectedSortType>);
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
+  const [where, setWhere] = useState<People_Bool_Exp>({});
+  const [filterSearchResults, setSearhInput, setFilterSearch] = useSearch();
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
-    setSorts(sorts);
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
-  const { data } = usePeopleQuery(orderBy);
+  const updateFilters = useCallback(
+    (filters: Array<SelectedFilterType<People_Bool_Exp>>) => {
+      setWhere(reduceFiltersToWhere(filters));
+    },
+    [],
+  );
+
+  const { data } = usePeopleQuery(orderBy, where);
 
   return (
     <WithTopBarContainer title="People" icon={<FaRegUser />}>
@@ -42,9 +53,15 @@ function People() {
             columns={peopleColumns}
             viewName="All People"
             viewIcon={<FaList />}
-            onSortsUpdate={updateSorts}
             availableSorts={availableSorts}
             availableFilters={availableFilters}
+            filterSearchResults={filterSearchResults}
+            onSortsUpdate={updateSorts}
+            onFiltersUpdate={updateFilters}
+            onFilterSearch={(filter, searchValue) => {
+              setSearhInput(searchValue);
+              setFilterSearch(filter);
+            }}
           />
         }
       </StyledPeopleContainer>

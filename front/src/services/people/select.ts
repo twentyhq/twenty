@@ -1,7 +1,14 @@
 import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphqlQueryPerson } from '../../interfaces/person.interface';
-import { Order_By, People_Order_By } from '../../generated/graphql';
-import { SelectedSortType } from '../../components/table/table-header/interface';
+import {
+  Order_By,
+  People_Bool_Exp,
+  People_Order_By,
+} from '../../generated/graphql';
+import {
+  SelectedFilterType,
+  SelectedSortType,
+} from '../../components/table/table-header/interface';
 
 export type OrderByFields = keyof People_Order_By | 'fullname' | 'company_name';
 
@@ -9,6 +16,16 @@ export type PeopleSelectedSortType = SelectedSortType<OrderByFields>;
 
 const mapOrder = (order: 'asc' | 'desc'): Order_By => {
   return order === 'asc' ? Order_By.Asc : Order_By.Desc;
+};
+
+export const reduceFiltersToWhere = <T>(
+  filters: Array<SelectedFilterType<T>>,
+): T => {
+  const where = filters.reduce((acc, filter) => {
+    const { where } = filter;
+    return { ...acc, ...where };
+  }, {} as T);
+  return where;
 };
 
 export const reduceSortsToOrderBy = (
@@ -31,8 +48,12 @@ export const reduceSortsToOrderBy = (
 };
 
 export const GET_PEOPLE = gql`
-  query GetPeople($orderBy: [people_order_by!]) {
-    people(order_by: $orderBy) {
+  query GetPeople(
+    $orderBy: [people_order_by!]
+    $where: people_bool_exp
+    $limit: Int
+  ) {
+    people(order_by: $orderBy, where: $where, limit: $limit) {
       id
       phone
       email
@@ -51,9 +72,10 @@ export const GET_PEOPLE = gql`
 
 export function usePeopleQuery(
   orderBy: People_Order_By[],
+  where: People_Bool_Exp,
 ): QueryResult<{ people: GraphqlQueryPerson[] }> {
   return useQuery<{ people: GraphqlQueryPerson[] }>(GET_PEOPLE, {
-    variables: { orderBy },
+    variables: { orderBy, where },
   });
 }
 

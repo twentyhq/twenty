@@ -1,4 +1,4 @@
-import { SelectedSortType, SortType } from '../interface';
+import { SortType } from '../interface';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import {
@@ -22,8 +22,6 @@ export default component;
 type OwnProps = {
   setSorts: () => void;
 };
-
-const sorts = [] satisfies SelectedSortType[];
 
 const availableSorts = [
   {
@@ -60,9 +58,9 @@ export const RegularSortDropdownButton = ({ setSorts }: OwnProps) => {
     <ThemeProvider theme={lightTheme}>
       <StyleDiv>
         <SortDropdownButton
-          sorts={sorts}
+          isSortSelected={true}
           availableSorts={availableSorts}
-          setSorts={setSorts}
+          onSortSelect={setSorts}
         />
       </StyleDiv>
     </ThemeProvider>

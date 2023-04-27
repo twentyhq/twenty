@@ -3,15 +3,10 @@ import { lightTheme } from '../../../../layout/styles/themes';
 import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
 import { FilterType, SelectedFilterType } from '../interface';
-import {
-  FaRegUser,
-  FaRegBuilding,
-  FaEnvelope,
-  FaPhone,
-  FaCalendar,
-  FaMapPin,
-} from 'react-icons/fa';
 import { useCallback, useState } from 'react';
+import { GET_PEOPLE } from '../../../../services/people';
+import { People_Bool_Exp } from '../../../../generated/graphql';
+import { FaUsers } from 'react-icons/fa';
 
 const component = {
   title: 'FilterDropdownButton',
@@ -20,46 +15,48 @@ const component = {
 
 export default component;
 
-type OwnProps = {
-  setFilters: (filters: SelectedFilterType[]) => void;
+type OwnProps<FilterProperties> = {
+  setFilter: (filters: SelectedFilterType<FilterProperties>) => void;
 };
 
 const availableFilters = [
   {
     key: 'fullname',
     label: 'People',
-    icon: <FaRegUser />,
+    icon: <FaUsers />,
+    searchQuery: GET_PEOPLE,
+    searchTemplate: () => ({
+      _or: [
+        { firstname: { _ilike: 'value' } },
+        { lastname: { _ilike: 'value' } },
+      ],
+    }),
+    whereTemplate: () => ({
+      _or: [
+        { firstname: { _ilike: 'value' } },
+        { lastname: { _ilike: 'value' } },
+      ],
+    }),
+    searchResultMapper: (data) => ({
+      displayValue: 'John Doe',
+      value: data.firstname,
+    }),
   },
-  {
-    key: 'company_name',
-    label: 'Company',
-    icon: <FaRegBuilding />,
-  },
-  {
-    key: 'email',
-    label: 'Email',
-    icon: <FaEnvelope />,
-  },
-  { key: 'phone', label: 'Phone', icon: <FaPhone /> },
-  {
-    key: 'created_at',
-    label: 'Created at',
-    icon: <FaCalendar />,
-  },
-  { key: 'city', label: 'City', icon: <FaMapPin /> },
-] satisfies FilterType[];
+] satisfies FilterType<People_Bool_Exp>[];
 
 const StyleDiv = styled.div`
   height: 200px;
   width: 200px;
 `;
 
-export const RegularFilterDropdownButton = ({ setFilters }: OwnProps) => {
-  const [filters, innerSetFilters] = useState<SelectedFilterType[]>([]);
+export const RegularFilterDropdownButton = ({
+  setFilter: setFilters,
+}: OwnProps<People_Bool_Exp>) => {
+  const [, innerSetFilters] = useState<SelectedFilterType<People_Bool_Exp>>();
   const outerSetFilters = useCallback(
-    (filters: SelectedFilterType[]) => {
-      innerSetFilters(filters);
-      setFilters(filters);
+    (filter: SelectedFilterType<People_Bool_Exp>) => {
+      innerSetFilters(filter);
+      setFilters(filter);
     },
     [setFilters],
   );
@@ -68,8 +65,18 @@ export const RegularFilterDropdownButton = ({ setFilters }: OwnProps) => {
       <StyleDiv>
         <FilterDropdownButton
           availableFilters={availableFilters}
-          filters={filters}
-          setFilters={outerSetFilters}
+          isFilterSelected={true}
+          onFilterSearch={jest.fn()}
+          onFilterSelect={outerSetFilters}
+          filterSearchResults={{
+            loading: false,
+            results: [
+              {
+                displayValue: 'John Doe',
+                value: { firstname: 'John', lastname: 'doe' },
+              },
+            ],
+          }}
         />
       </StyleDiv>
     </ThemeProvider>
