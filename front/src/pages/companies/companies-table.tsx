@@ -1,6 +1,6 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Company } from '../../interfaces/company.interface';
-import { OrderByFields } from '../../services/companies';
+import { OrderByFields, updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import Checkbox from '../../components/form/Checkbox';
@@ -50,7 +50,7 @@ export const companiesColumns = [
         changeHandler={(value) => {
           const company = props.row.original;
           company.employees = parseInt(value);
-          // TODO: update company
+          updateCompany(company).catch((error) => console.error(error));
         }}
       />
     ),
@@ -63,7 +63,7 @@ export const companiesColumns = [
         changeHandler={(value) => {
           const company = props.row.original;
           company.domain_name = value;
-          // TODO: update company
+          updateCompany(company).catch((error) => console.error(error));
         }}
       />
     ),
@@ -76,7 +76,7 @@ export const companiesColumns = [
         changeHandler={(value) => {
           const company = props.row.original;
           company.address = value;
-          // TODO: update company
+          updateCompany(company).catch((error) => console.error(error));
         }}
       />
     ),

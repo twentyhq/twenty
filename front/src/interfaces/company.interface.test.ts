@@ -48,6 +48,7 @@ describe('mapCompany', () => {
     expect(company.name).toBe('ACME');
     expect(company.domain_name).toBe('exmaple.com');
     expect(company.creationDate).toEqual(now);
+    expect(company.accountOwner).toBeUndefined();
     expect(company.employees).toBe(10);
     expect(company.address).toBe(
       '1 Infinite Loop, 95014 Cupertino, California, USA',
@@ -76,11 +77,9 @@ describe('mapCompany', () => {
     expect(company.name).toBe('ACME');
     expect(company.domain_name).toBe('exmaple.com');
     expect(company.created_at).toEqual(now.toUTCString());
-    expect(company.account_owner?.id).toBe(
+    expect(company.account_owner_id).toBe(
       '522d4ec4-c46b-4360-a0a7-df8df170be81',
     );
-    expect(company.account_owner?.email).toBe('john@example.com');
-    expect(company.account_owner?.displayName).toBe('John Doe');
     expect(company.employees).toBe(10);
     expect(company.address).toBe(
       '1 Infinite Loop, 95014 Cupertino, California, USA',
@@ -103,6 +102,7 @@ describe('mapCompany', () => {
     expect(company.name).toBe('ACME');
     expect(company.domain_name).toBe('exmaple.com');
     expect(company.created_at).toEqual(now.toUTCString());
+    expect(company.account_owner_id).toBeUndefined();
     expect(company.employees).toBe(10);
     expect(company.address).toBe(
       '1 Infinite Loop, 95014 Cupertino, California, USA',
