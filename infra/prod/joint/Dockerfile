@@ -26,6 +26,7 @@ RUN apt-get update && \
 
 RUN apt-get install -y nodejs
 
+
 # Build the server
 ARG SERVER_HASURA_EVENT_HANDLER_SECRET_HEADER
 ARG SERVER_DATABASE_URL
@@ -44,10 +45,16 @@ ARG FONTAWESOME_NPM_AUTH_TOKEN
 WORKDIR /app/front
 COPY ./front .
 RUN echo "@fortawesome:registry=https://npm.fontawesome.com/" > .npmrc
-RUN echo "//npm.fontawesome.com/:_authToken=E09517B1-61FF-48B9-BD2F-601CBFF80D3A" >> .npmrc
+RUN echo "//npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_AUTH_TOKEN}" >> .npmrc
 RUN npm install
 RUN npm run build
 RUN npm install -g serve
+
+# Setup Nginx in front
+# https://stackoverflow.com/questions/59692797/how-to-fill-user-input-for-interactive-command-for-run-command
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y nginx gettext-base
+COPY ./infra/prod/joint/nginx.conf.base /etc/nginx/nginx.conf.base
 
 
 # Entrypoint script
