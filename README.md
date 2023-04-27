@@ -10,7 +10,12 @@ It is meant to be:
 
 
 # Documentation
-The doc is available on [docs.twenty.com](docs.twenty.com)
+The doc is available on [docs.twenty.com](https://docs.twenty.com)
 
 We don't have a Slack community yet but we will create one when we are ready to launch.
 In the meantime, feel free to create a Github issue or open a discussion.
+
+
+# Quick deploy
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/YWGqza?referralCode=3CLObs)
