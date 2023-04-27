@@ -92,7 +92,7 @@ services:
       context: ../..
       dockerfile: ./infra/dev/docs/Dockerfile
     ports:
-      - "5000:3000"
+      - "5001:3000"
     volumes:
       - ../../docs:/app/docs
       - twenty_node_modules_docs:/app/docs/node_modules
