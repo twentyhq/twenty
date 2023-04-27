@@ -84,11 +84,11 @@ export const companiesColumns = [
   columnHelper.accessor('opportunities', {
     header: () => <ColumnHead viewName="Opportunities" />,
     cell: (props) => (
-      <HorizontalyAlignedContainer>
+      <ClickableCell href="#">
         {props.row.original.opportunities.map((opportunity) => (
           <PipeChip name={opportunity.name} picture={opportunity.icon} />
         ))}
-      </HorizontalyAlignedContainer>
+      </ClickableCell>
     ),
   }),
   columnHelper.accessor('creationDate', {
@@ -106,7 +106,7 @@ export const companiesColumns = [
   columnHelper.accessor('accountOwner', {
     header: () => <ColumnHead viewName="Account Owner" />,
     cell: (props) => (
-      <HorizontalyAlignedContainer>
+      <ClickableCell href="#">
         <>
           {props.row.original.accountOwner && (
             <PersonChip
@@ -116,7 +116,7 @@ export const companiesColumns = [
             />
           )}
         </>
-      </HorizontalyAlignedContainer>
+      </ClickableCell>
     ),
   }),
 ];
