@@ -51,7 +51,7 @@ function SortAndFilterBar<SortField extends string>({
         return (
           <SortOrFilterChip
             key={sort.key}
-            label={sort.label}
+            labelValue={sort.label}
             id={sort.key}
             icon={sort.order === 'asc' ? faArrowDown : faArrowUp}
             onRemove={() => onRemoveSort(sort.key)}
@@ -62,7 +62,8 @@ function SortAndFilterBar<SortField extends string>({
         return (
           <SortOrFilterChip
             key={filter.id}
-            label={`${filter.label}: ${filter.operand.label} ${filter.value}`}
+            labelKey={filter.label}
+            labelValue={`${filter.operand.label} ${filter.value}`}
             id={filter.id}
             icon={filter.icon}
             onRemove={() => onRemoveFilter(filter.id)}

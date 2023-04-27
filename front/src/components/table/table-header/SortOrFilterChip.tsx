@@ -5,7 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type OwnProps = {
   id: string;
-  label: string;
+  labelKey?: string;
+  labelValue: string;
   icon: IconProp;
   onRemove: () => void;
 };
@@ -30,13 +31,24 @@ const StyledDelete = styled.div`
   cursor: pointer;
 `;
 
-function SortOrFilterChip({ id, label, icon, onRemove }: OwnProps) {
+const StyledLabelKey = styled.div`
+  font-weight: 500;
+`;
+
+function SortOrFilterChip({
+  id,
+  labelKey,
+  labelValue,
+  icon,
+  onRemove,
+}: OwnProps) {
   return (
     <StyledChip>
       <StyledIcon>
         <FontAwesomeIcon icon={icon} />
       </StyledIcon>
-      {label}
+      {labelKey && <StyledLabelKey>{labelKey}:&nbsp;</StyledLabelKey>}
+      {labelValue}
       <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
         <FontAwesomeIcon icon={faTimes} />
       </StyledDelete>
