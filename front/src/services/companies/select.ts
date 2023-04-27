@@ -27,7 +27,6 @@ export const GET_COMPANIES = gql`
   query GetCompanies($orderBy: [companies_order_by!]) {
     companies(order_by: $orderBy) {
       id
-      workspace_id
       domain_name
       name
       created_at
