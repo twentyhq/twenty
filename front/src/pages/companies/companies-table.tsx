@@ -7,7 +7,15 @@ import Checkbox from '../../components/form/Checkbox';
 import CompanyChip from '../../components/chips/CompanyChip';
 import EditableCell from '../../components/table/EditableCell';
 import PipeChip from '../../components/chips/PipeChip';
-import { faCalendar } from '@fortawesome/pro-regular-svg-icons';
+import {
+  faBuildings,
+  faCalendar,
+  faLinkSimple,
+  faMapPin,
+  faRectangleHistory,
+  faSigma,
+  faUser,
+} from '@fortawesome/pro-regular-svg-icons';
 import ClickableCell from '../../components/table/ClickableCell';
 import PersonChip from '../../components/chips/PersonChip';
 import { SortType } from '../../components/table/table-header/interface';
@@ -28,7 +36,7 @@ export const sortsAvailable = [
 const columnHelper = createColumnHelper<Company>();
 export const companiesColumns = [
   columnHelper.accessor('name', {
-    header: () => <ColumnHead viewName="Name" />,
+    header: () => <ColumnHead viewName="Name" viewIcon={faBuildings} />,
     cell: (props) => (
       <HorizontalyAlignedContainer>
         <Checkbox
@@ -43,7 +51,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('employees', {
-    header: () => <ColumnHead viewName="Employees" />,
+    header: () => <ColumnHead viewName="Employees" viewIcon={faSigma} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.employees.toFixed(0)}
@@ -56,7 +64,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('domain_name', {
-    header: () => <ColumnHead viewName="URL" />,
+    header: () => <ColumnHead viewName="URL" viewIcon={faLinkSimple} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.domain_name}
@@ -69,7 +77,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('address', {
-    header: () => <ColumnHead viewName="Address" />,
+    header: () => <ColumnHead viewName="Address" viewIcon={faMapPin} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.address}
@@ -82,7 +90,9 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('opportunities', {
-    header: () => <ColumnHead viewName="Opportunities" />,
+    header: () => (
+      <ColumnHead viewName="Opportunities" viewIcon={faRectangleHistory} />
+    ),
     cell: (props) => (
       <ClickableCell href="#">
         {props.row.original.opportunities.map((opportunity) => (
@@ -104,7 +114,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('accountOwner', {
-    header: () => <ColumnHead viewName="Account Owner" />,
+    header: () => <ColumnHead viewName="Account Owner" viewIcon={faUser} />,
     cell: (props) => (
       <ClickableCell href="#">
         <>
