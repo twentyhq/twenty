@@ -6,7 +6,10 @@ export type Person = {
   fullName: string;
   picture?: string;
   email: string;
-  company: Company;
+  company: Omit<
+    Company,
+    'employees' | 'address' | 'opportunities' | 'accountOwner' | 'creationDate'
+  >;
   phone: string;
   creationDate: Date;
   pipe: Pipe;
