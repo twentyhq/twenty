@@ -2,7 +2,7 @@
 
 # Start the frontend
 cd /app/front
-serve -s build -l 80 &
+serve -s build -l $PORT &
 
 # Start the Hasura API
 cd /app/hasura

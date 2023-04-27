@@ -27,7 +27,7 @@ RUN apt-get update && \
 RUN apt-get install -y nodejs
 
 # Build the server
-ARG HASURA_EVENT_HANDLER_SECRET_HEADER
+ARG SERVER_HASURA_EVENT_HANDLER_SECRET_HEADER
 ARG SERVER_DATABASE_URL
 WORKDIR /app/server
 COPY ./server/package.json ./
