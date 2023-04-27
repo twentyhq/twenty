@@ -18,12 +18,12 @@ const mocks = [
     request: {
       query: GET_COMPANIES,
       variables: {
-        orderBy: [{ company_name: 'asc' }],
+        orderBy: [{ name: 'asc' }],
       },
     },
     result: {
       data: {
-        people: defaultData,
+        companies: defaultData,
       },
     },
   },
