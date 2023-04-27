@@ -12,6 +12,4 @@ it('Checks the Companies page render', async () => {
     const row = getByTestId('row-id-0');
     expect(row).toBeDefined();
   });
-
 });
-
