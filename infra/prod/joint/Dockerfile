@@ -22,7 +22,6 @@ RUN echo "//npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_AUTH_TOKEN}" >> .n
 RUN npm install
 
 
-
 # Build the Hasura API
 FROM hasura/graphql-engine:latest as api
 RUN apt-get update
