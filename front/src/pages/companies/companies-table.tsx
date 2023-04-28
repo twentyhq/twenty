@@ -107,9 +107,15 @@ export const companiesColumns = [
     header: () => <ColumnHead viewName="Account Owner" />,
     cell: (props) => (
       <HorizontalyAlignedContainer>
-        <PersonChip
-          name={`${props.row.original.accountOwner.first_name} ${props.row.original.accountOwner.last_name}`}
-        />
+        <>
+          {props.row.original.accountOwner && (
+            <PersonChip
+              name={`${props.row.original.accountOwner?.first_name || ''} ${
+                props.row.original.accountOwner?.last_name || ''
+              }`}
+            />
+          )}
+        </>
       </HorizontalyAlignedContainer>
     ),
   }),
