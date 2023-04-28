@@ -1,7 +1,7 @@
 import SortOrFilterChip from '../SortOrFilterChip';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
-import { faArrowDown } from '@fortawesome/pro-regular-svg-icons';
+import { faArrowDown, faPeople } from '@fortawesome/pro-regular-svg-icons';
 
 const component = {
   title: 'SortOrFilterChip',
@@ -14,13 +14,27 @@ type OwnProps = {
   removeFunction: () => void;
 };
 
-export const RegularSortOrFilterChip = ({ removeFunction }: OwnProps) => {
+export const RegularFilterChip = ({ removeFunction }: OwnProps) => {
+  return (
+    <ThemeProvider theme={lightTheme}>
+      <SortOrFilterChip
+        id="test_sort"
+        icon={faPeople}
+        labelKey="Account owner"
+        labelValue="is Charles"
+        onRemove={removeFunction}
+      />
+    </ThemeProvider>
+  );
+};
+
+export const RegularSortChip = ({ removeFunction }: OwnProps) => {
   return (
     <ThemeProvider theme={lightTheme}>
       <SortOrFilterChip
         id="test_sort"
         icon={faArrowDown}
-        label="Test sort"
+        labelValue="Created at"
         onRemove={removeFunction}
       />
     </ThemeProvider>
