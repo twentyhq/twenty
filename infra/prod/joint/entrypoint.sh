@@ -12,7 +12,7 @@ cd /app/hasura
 
 echo "Starting the server"
 cd /app/server
-SERVER_DATABASE_URL=${SERVER_DATABASE_URL} node dist/main &
+node dist/main &
 
 echo "Deploying Hasura (metadata, migrations...)"
 hasura deploy

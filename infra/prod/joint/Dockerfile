@@ -1,4 +1,6 @@
 # Joint image for hosting providers that don't support docker-compose (e.g. Railway)
+ARG SERVER_DATABASE_URL
+ARG FONTAWESOME_NPM_AUTH_TOKEN
 
 # Build the Hasura API
 FROM hasura/graphql-engine:latest as api
@@ -29,6 +31,17 @@ RUN apt-get install -y nodejs
 
 # Build the server
 WORKDIR /app/server
+ENV SERVER_DATABASE_URL ${SERVER_DATABASE_URL}
+RUN echo "DBURL"
+RUN echo ${SERVER_DATABASE_URL}
+RUN echo "FONTAWESOME"
+RUN echo ${FONTAWESOME_NPM_AUTH_TOKEN}
+RUN echo "HASURA_GRAPHQL_DATABASE_URL"
+RUN echo ${HASURA_GRAPHQL_DATABASE_URL}
+RUN echo "HASURA_GRAPHQL_PG_DATABASE_URL"
+RUN echo ${HASURA_GRAPHQL_PG_DATABASE_URL}
+RUN echo "HASURA_GRAPHQL_JWT_SECRET"
+RUN echo ${HASURA_GRAPHQL_JWT_SECRET}
 COPY ./server/package.json ./
 COPY ./server/package-lock.json ./
 RUN npm install
@@ -37,7 +50,6 @@ RUN npx prisma generate
 RUN npm run build
 
 # Build the frontend
-ARG FONTAWESOME_NPM_AUTH_TOKEN
 WORKDIR /app/front
 COPY ./front .
 RUN echo "@fortawesome:registry=https://npm.fontawesome.com/" > .npmrc
