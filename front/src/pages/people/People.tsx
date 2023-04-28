@@ -15,6 +15,8 @@ import {
   reduceSortsToOrderBy,
   usePeopleQuery,
 } from '../../services/people';
+import { People_Bool_Exp } from '../../generated/graphql';
+import { useLazySearch } from '../../services/search/search';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -35,32 +37,27 @@ function People() {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
-  const {
-    data: filterSearchResultsQueryData,
-    refetch: filterSearchResultQueryRefetch,
-  } = usePeopleQuery({}, orderBy, 5);
+  const [lazySearch, { data: lazySearchData }] = useLazySearch();
 
   useEffect(() => {
-    if (filterSearchResultsQueryData) {
+    if (lazySearchData) {
       setFilterSearchResults(
-        filterSearchResultsQueryData.people.map((person) => person.firstname),
+        lazySearchData.people.map((person: any) => person.firstname),
       );
     }
-  }, [filterSearchResultsQueryData]);
+  }, [lazySearchData]);
 
   const filterSearch = useCallback(
     (filterKey: string, filterValue: string) => {
       console.log('filterSearch', filterKey, filterValue);
-      filterSearchResultQueryRefetch({
-        where: {
-          [filterKey]: { _ilike: `%${filterValue}%` },
-        },
+      lazySearch({
+        [filterKey]: { _ilike: `%${filterValue}%` },
       });
     },
-    [filterSearchResultQueryRefetch],
+    [lazySearch],
   );
 
-  const { data } = usePeopleQuery({}, orderBy, 100);
+  const { data } = usePeopleQuery(orderBy);
 
   return (
     <WithTopBarContainer title="People" icon={faUser}>
