@@ -32,6 +32,16 @@ export type GraphqlQueryCompany = {
   created_at: string;
 };
 
+export type GraphqlMutationCompany = {
+  id: string;
+  name: string;
+  domain_name: string;
+  account_owner_id?: string;
+  employees: number;
+  address: string;
+  created_at: string;
+};
+
 export const mapCompany = (company: GraphqlQueryCompany): Company => ({
   ...company,
   name: company.name,
@@ -51,16 +61,10 @@ export const mapCompany = (company: GraphqlQueryCompany): Company => ({
   opportunities: [{ name: 'Sales Pipeline', icon: '' }],
 });
 
-export const mapGqlCompany = (company: Company): GraphqlQueryCompany => ({
+export const mapGqlCompany = (company: Company): GraphqlMutationCompany => ({
   ...company,
   name: company.name,
   domain_name: company.domain_name,
   created_at: company.creationDate.toUTCString(),
-  account_owner: company.accountOwner
-    ? {
-        id: company.accountOwner.id,
-        email: company.accountOwner.email,
-        displayName: `${company.accountOwner.first_name} ${company.accountOwner.last_name}`,
-      }
-    : undefined,
+  account_owner_id: company.accountOwner?.id,
 });

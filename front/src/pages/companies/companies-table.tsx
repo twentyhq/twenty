@@ -1,13 +1,21 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Company } from '../../interfaces/company.interface';
-import { OrderByFields } from '../../services/companies';
+import { OrderByFields, updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import Checkbox from '../../components/form/Checkbox';
 import CompanyChip from '../../components/chips/CompanyChip';
 import EditableCell from '../../components/table/EditableCell';
 import PipeChip from '../../components/chips/PipeChip';
-import { faCalendar } from '@fortawesome/pro-regular-svg-icons';
+import {
+  faBuildings,
+  faCalendar,
+  faLinkSimple,
+  faMapPin,
+  faRectangleHistory,
+  faSigma,
+  faUser,
+} from '@fortawesome/pro-regular-svg-icons';
 import ClickableCell from '../../components/table/ClickableCell';
 import PersonChip from '../../components/chips/PersonChip';
 import { SortType } from '../../components/table/table-header/interface';
@@ -28,7 +36,7 @@ export const sortsAvailable = [
 const columnHelper = createColumnHelper<Company>();
 export const companiesColumns = [
   columnHelper.accessor('name', {
-    header: () => <ColumnHead viewName="Name" />,
+    header: () => <ColumnHead viewName="Name" viewIcon={faBuildings} />,
     cell: (props) => (
       <HorizontalyAlignedContainer>
         <Checkbox
@@ -43,52 +51,54 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('employees', {
-    header: () => <ColumnHead viewName="Employees" />,
+    header: () => <ColumnHead viewName="Employees" viewIcon={faSigma} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.employees.toFixed(0)}
         changeHandler={(value) => {
           const company = props.row.original;
           company.employees = parseInt(value);
-          // TODO: update company
+          updateCompany(company).catch((error) => console.error(error));
         }}
       />
     ),
   }),
   columnHelper.accessor('domain_name', {
-    header: () => <ColumnHead viewName="URL" />,
+    header: () => <ColumnHead viewName="URL" viewIcon={faLinkSimple} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.domain_name}
         changeHandler={(value) => {
           const company = props.row.original;
           company.domain_name = value;
-          // TODO: update company
+          updateCompany(company).catch((error) => console.error(error));
         }}
       />
     ),
   }),
   columnHelper.accessor('address', {
-    header: () => <ColumnHead viewName="Address" />,
+    header: () => <ColumnHead viewName="Address" viewIcon={faMapPin} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.address}
         changeHandler={(value) => {
           const company = props.row.original;
           company.address = value;
-          // TODO: update company
+          updateCompany(company).catch((error) => console.error(error));
         }}
       />
     ),
   }),
   columnHelper.accessor('opportunities', {
-    header: () => <ColumnHead viewName="Opportunities" />,
+    header: () => (
+      <ColumnHead viewName="Opportunities" viewIcon={faRectangleHistory} />
+    ),
     cell: (props) => (
-      <HorizontalyAlignedContainer>
+      <ClickableCell href="#">
         {props.row.original.opportunities.map((opportunity) => (
           <PipeChip name={opportunity.name} picture={opportunity.icon} />
         ))}
-      </HorizontalyAlignedContainer>
+      </ClickableCell>
     ),
   }),
   columnHelper.accessor('creationDate', {
@@ -104,9 +114,9 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('accountOwner', {
-    header: () => <ColumnHead viewName="Account Owner" />,
+    header: () => <ColumnHead viewName="Account Owner" viewIcon={faUser} />,
     cell: (props) => (
-      <HorizontalyAlignedContainer>
+      <ClickableCell href="#">
         <>
           {props.row.original.accountOwner && (
             <PersonChip
@@ -116,7 +126,7 @@ export const companiesColumns = [
             />
           )}
         </>
-      </HorizontalyAlignedContainer>
+      </ClickableCell>
     ),
   }),
 ];
