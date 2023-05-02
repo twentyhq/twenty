@@ -2,6 +2,8 @@
 
 cd "$(dirname "$0")/../infra/dev"
 
+cp .env.example .env
+
 set -o allexport; source .env; set +o allexport
 
 docker-compose up -d postgres
