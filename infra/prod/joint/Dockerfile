@@ -42,6 +42,7 @@ RUN pnpm install --frozen-lockfile --prod  && pnpm store prune
 COPY --from=auth ./app/migrations/ ./migrations/
 COPY --from=auth ./app/email-templates/ ./email-templates
 COPY --from=auth ./app/dist dist/
+COPY ./infra/dev/postgres/init.sql .
 
 # Build the server
 WORKDIR /app/server

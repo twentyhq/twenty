@@ -16,6 +16,7 @@ node dist/main &
 
 echo "Starting Hasura Auth"
 cd /app/hasura-auth
+psql $SERVER_DATABASE_URL -f init.sql 
 node dist/start &
 
 cd /app/hasura
