@@ -14,6 +14,11 @@ echo "Starting the server"
 cd /app/server
 node dist/main &
 
+echo "Starting Hasura Auth"
+cd /app/hasura-auth
+node dist/start &
+
+cd /app/hasura
 echo "Deploying Hasura (metadata, migrations...)"
 hasura deploy
 
