@@ -11,6 +11,6 @@
 			"moby": "true"
 		}
 	},
-
-	"postCreateCommand": ".devcontainer/init.sh"
+	"postCreateCommand": ".devcontainer/init.sh",
+	"postStartCommand": ".vscode/up.sh"
 }
