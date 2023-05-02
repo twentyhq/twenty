@@ -26,7 +26,7 @@ docker-compose up -d hasura-auth
 
 while ! curl -s http://localhost:4000/healthz > /dev/null ; do 
   sleep 1
-  echo "Waiting for Hasura to be ready..."
+  echo "Waiting for Hasura Auth to be ready..."
 done
 
 docker-compose exec twenty-hasura hasura deploy
