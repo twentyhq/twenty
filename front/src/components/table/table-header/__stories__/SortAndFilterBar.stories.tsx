@@ -47,12 +47,16 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
               firstname: { _ilike: 'John Doe' },
             },
             searchQuery: GET_PEOPLE,
-            searchTemplate: {
+            searchTemplate: () => ({
               firstname: { _ilike: 'John Doe' },
-            },
+            }),
             whereTemplate: () => {
-              return {};
+              return { firstname: { _ilike: 'John Doe' } };
             },
+            searchResultMapper: (data) => ({
+              displayValue: 'John Doe',
+              value: data.firstname,
+            }),
           },
         ]}
       />

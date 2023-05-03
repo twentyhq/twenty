@@ -16,13 +16,16 @@ export type SelectedSortType<SortField = string> = SortType<SortField> & {
   order: 'asc' | 'desc';
 };
 
-export type FilterType<WhereTemplate> = {
+export type FilterType<WhereTemplate, T = Record<string, string>> = {
   label: string;
   key: string;
   icon: IconProp;
-  whereTemplate: (operand: FilterOperandType, ...args: any[]) => WhereTemplate;
+  whereTemplate: (operand: FilterOperandType, value: T) => WhereTemplate;
   searchQuery: DocumentNode;
-  searchTemplate: People_Bool_Exp | Companies_Bool_Exp | Users_Bool_Exp;
+  searchTemplate: (
+    searchInput: string,
+  ) => People_Bool_Exp | Companies_Bool_Exp | Users_Bool_Exp;
+  searchResultMapper: (data: any) => { displayValue: string; value: T };
 };
 
 export type FilterOperandType = {

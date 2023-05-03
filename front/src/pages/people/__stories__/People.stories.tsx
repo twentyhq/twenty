@@ -5,7 +5,7 @@ import { lightTheme } from '../../../layout/styles/themes';
 import { MockedProvider } from '@apollo/client/testing';
 import { defaultData } from '../default-data';
 import { GET_PEOPLE } from '../../../services/people';
-import { SEARCH_QUERY } from '../../../services/search/search';
+import { SEARCH_PEOPLE_QUERY } from '../../../services/search/search';
 
 const component = {
   title: 'People',
@@ -31,7 +31,7 @@ const mocks = [
   },
   {
     request: {
-      query: SEARCH_QUERY, // TODO this should not be called for empty filters
+      query: SEARCH_PEOPLE_QUERY, // TODO this should not be called for empty filters
       variables: {
         where: undefined,
       },

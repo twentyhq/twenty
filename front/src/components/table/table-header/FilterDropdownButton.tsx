@@ -108,6 +108,7 @@ export function FilterDropdownButton<FilterProperties>({
                     selectedFilterOperand,
                     value.value,
                   ),
+                  searchResultMapper: selectedFilter.searchResultMapper,
                 });
                 setIsUnfolded(false);
                 setSelectedFilter(undefined);

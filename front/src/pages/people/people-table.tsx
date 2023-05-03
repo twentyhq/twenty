@@ -15,7 +15,7 @@ import Checkbox from '../../components/form/Checkbox';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import CompanyChip from '../../components/chips/CompanyChip';
 import PersonChip from '../../components/chips/PersonChip';
-import { Person } from '../../interfaces/person.interface';
+import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
 import EditableCell from '../../components/table/EditableCell';
 import { GET_PEOPLE, OrderByFields, updatePerson } from '../../services/people';
@@ -23,8 +23,12 @@ import {
   FilterType,
   SortType,
 } from '../../components/table/table-header/interface';
-import { GET_COMPANIES } from '../../services/companies';
 import { People_Bool_Exp } from '../../generated/graphql';
+import {
+  SEARCH_COMPANY_QUERY,
+  SEARCH_PEOPLE_QUERY,
+} from '../../services/search/search';
+import { GraphqlQueryCompany } from '../../interfaces/company.interface';
 
 export const availableSorts = [
   {
@@ -62,54 +66,64 @@ export const availableFilters = [
         { lastname: { _ilike: `${lastname}` } },
       ],
     }),
-    searchQuery: GET_PEOPLE,
-    searchTemplate: {
+    searchQuery: SEARCH_PEOPLE_QUERY,
+    searchTemplate: (searchInput: string) => ({
       _or: [
-        { firstname: { _ilike: '%value%' } },
-        { lastname: { _ilike: '%value%' } },
+        { firstname: { _ilike: `%${searchInput}%` } },
+        { lastname: { _ilike: `%${searchInput}%` } },
       ],
-    },
+    }),
+    searchResultMapper: (person: GraphqlQueryPerson) => ({
+      displayValue: `${person.firstname} ${person.lastname}`,
+      value: { firstname: person.firstname, lastname: person.lastname },
+    }),
   },
   {
     key: 'company_name',
     label: 'Company',
     icon: faBuildings,
     whereTemplate: () => ({ company: { name: { _ilike: '%value%' } } }),
-    searchQuery: GET_COMPANIES,
-    searchTemplate: { company: { name: { _ilike: '%value%' } } },
+    searchQuery: SEARCH_COMPANY_QUERY,
+    searchTemplate: (searchInput: string) => ({
+      name: { _ilike: `%${searchInput}%` },
+    }),
+    searchResultMapper: (company: GraphqlQueryCompany) => ({
+      displayValue: company.name,
+      value: { companyName: company.name },
+    }),
   },
-  {
-    key: 'email',
-    label: 'Email',
-    icon: faEnvelope,
-    whereTemplate: () => ({ email: { _ilike: '%value%' } }),
-    searchQuery: GET_PEOPLE,
-    searchTemplate: { email: { _ilike: '%value%' } },
-  },
-  {
-    key: 'phone',
-    label: 'Phone',
-    icon: faPhone,
-    whereTemplate: () => ({ phone: { _ilike: '%value%' } }),
-    searchQuery: GET_PEOPLE,
-    searchTemplate: { phone: { _ilike: '%value%' } },
-  },
-  {
-    key: 'created_at',
-    label: 'Created at',
-    icon: faCalendar,
-    whereTemplate: () => ({ created_at: { _eq: '%value%' } }),
-    searchQuery: GET_PEOPLE,
-    searchTemplate: { created_at: { _eq: '%value%' } },
-  },
-  {
-    key: 'city',
-    label: 'City',
-    icon: faMapPin,
-    whereTemplate: () => ({ city: { _ilike: '%value%' } }),
-    searchQuery: GET_PEOPLE,
-    searchTemplate: { city: { _ilike: '%value%' } },
-  },
+  // {
+  //   key: 'email',
+  //   label: 'Email',
+  //   icon: faEnvelope,
+  //   whereTemplate: () => ({ email: { _ilike: '%value%' } }),
+  //   searchQuery: GET_PEOPLE,
+  //   searchTemplate: { email: { _ilike: '%value%' } },
+  // },
+  // {
+  //   key: 'phone',
+  //   label: 'Phone',
+  //   icon: faPhone,
+  //   whereTemplate: () => ({ phone: { _ilike: '%value%' } }),
+  //   searchQuery: GET_PEOPLE,
+  //   searchTemplate: { phone: { _ilike: '%value%' } },
+  // },
+  // {
+  //   key: 'created_at',
+  //   label: 'Created at',
+  //   icon: faCalendar,
+  //   whereTemplate: () => ({ created_at: { _eq: '%value%' } }),
+  //   searchQuery: GET_PEOPLE,
+  //   searchTemplate: { created_at: { _eq: '%value%' } },
+  // },
+  // {
+  //   key: 'city',
+  //   label: 'City',
+  //   icon: faMapPin,
+  //   whereTemplate: () => ({ city: { _ilike: '%value%' } }),
+  //   searchQuery: GET_PEOPLE,
+  //   searchTemplate: { city: { _ilike: '%value%' } },
+  // },
 ] satisfies FilterType<People_Bool_Exp>[];
 
 const columnHelper = createColumnHelper<Person>();

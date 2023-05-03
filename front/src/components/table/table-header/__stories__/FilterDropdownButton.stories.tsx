@@ -25,17 +25,21 @@ const availableFilters = [
     label: 'People',
     icon: faUser,
     searchQuery: GET_PEOPLE,
-    searchTemplate: {
+    searchTemplate: () => ({
       _or: [
         { firstname: { _ilike: 'value' } },
         { lastname: { _ilike: 'value' } },
       ],
-    },
+    }),
     whereTemplate: () => ({
       _or: [
         { firstname: { _ilike: 'value' } },
         { lastname: { _ilike: 'value' } },
       ],
+    }),
+    searchResultMapper: (data) => ({
+      displayValue: 'John Doe',
+      value: data.firstname,
     }),
   },
 ] satisfies FilterType<People_Bool_Exp>[];

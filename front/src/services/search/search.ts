@@ -5,9 +5,9 @@ import { useMemo, useState } from 'react';
 import { GraphqlQueryPerson } from '../../interfaces/person.interface';
 import { FilterType } from '../../components/table/table-header/interface';
 
-export const SEARCH_QUERY = gql`
+export const SEARCH_PEOPLE_QUERY = gql`
   query SearchQuery($where: people_bool_exp, $limit: Int) {
-    people(where: $where, limit: $limit) {
+    searchResults: people(where: $where, limit: $limit) {
       id
       phone
       email
@@ -15,11 +15,15 @@ export const SEARCH_QUERY = gql`
       firstname
       lastname
       created_at
-      company {
-        id
-        name
-        domain_name
-      }
+    }
+  }
+`;
+
+export const SEARCH_COMPANY_QUERY = gql`
+  query SearchQuery($where: companies_bool_exp, $limit: Int) {
+    searchResults: companies(where: $where, limit: $limit) {
+      id
+      name
     }
   }
 `;
@@ -67,23 +71,38 @@ export const useSearch = (): [
     return (
       filterSearchParams &&
       filterSearchParams.filter &&
-      parseWhereQuery(
-        filterSearchParams.filter.searchTemplate,
-        filterSearchParams.searchValue,
-      )
+      filterSearchParams.filter.searchTemplate &&
+      filterSearchParams.filter.searchTemplate(filterSearchParams.searchValue)
     );
   }, [filterSearchParams]);
 
-  const searchFilterQueryResults = useQuery(SEARCH_QUERY, {
-    variables: {
-      where,
+  console.log('where', where);
+  console.log(
+    'filterSearchParams?.filter?.searchQuery',
+    filterSearchParams?.filter?.searchQuery,
+  );
+
+  const searchFilterQueryResults = useQuery(
+    filterSearchParams?.filter?.searchQuery || SEARCH_PEOPLE_QUERY,
+    {
+      variables: {
+        where,
+      },
     },
-  });
+  );
+
+  console.log('searchFilterQueryResults', searchFilterQueryResults);
 
   const searchFilterResults = useMemo<{
     results: { displayValue: string; value: any }[];
     loading: boolean;
   }>(() => {
+    if (filterSearchParams == null) {
+      return {
+        loading: false,
+        results: [],
+      };
+    }
     if (searchFilterQueryResults.loading) {
       return {
         loading: true,
@@ -93,15 +112,12 @@ export const useSearch = (): [
     return (
       {
         loading: false,
-        results: searchFilterQueryResults.data?.people.map(
-          (person: GraphqlQueryPerson) => ({
-            displayValue: `${person.firstname} ${person.lastname}`,
-            value: { firstname: person.firstname, lastname: person.lastname },
-          }),
+        results: searchFilterQueryResults.data?.searchResults.map(
+          filterSearchParams?.filter?.searchResultMapper || (() => null),
         ),
       } || { loading: false, results: [] }
     );
-  }, [searchFilterQueryResults]);
+  }, [searchFilterQueryResults, filterSearchParams]);
 
   return [searchFilterResults, debouncedSetFilterSearchParams];
 };
