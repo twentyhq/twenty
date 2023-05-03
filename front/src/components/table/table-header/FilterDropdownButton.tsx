@@ -59,6 +59,40 @@ export function FilterDropdownButton<FilterProperties>({
     </DropdownButton.StyledDropdownItem>
   ));
 
+  const renderSearchResults = (
+    filterSearchResults: NonNullable<
+      OwnProps<FilterProperties>['filterSearchResults']
+    >,
+    selectedFilter: FilterType<FilterProperties>,
+  ) => {
+    return filterSearchResults.results.map((value, index) => (
+      <DropdownButton.StyledDropdownItem
+        key={`fields-value-${index}`}
+        onClick={() => {
+          onFilterSelect({
+            key: value.displayValue,
+            operand: selectedFilterOperand,
+            searchQuery: selectedFilter.searchQuery,
+            searchTemplate: selectedFilter.searchTemplate,
+            whereTemplate: selectedFilter.whereTemplate,
+            label: selectedFilter.label,
+            value: value.displayValue,
+            icon: selectedFilter.icon,
+            where: selectedFilter.whereTemplate(
+              selectedFilterOperand,
+              value.value,
+            ),
+            searchResultMapper: selectedFilter.searchResultMapper,
+          });
+          setIsUnfolded(false);
+          setSelectedFilter(undefined);
+        }}
+      >
+        {value.displayValue}
+      </DropdownButton.StyledDropdownItem>
+    ));
+  };
+
   const renderSelectFilterITems = availableFilters.map((filter, index) => (
     <DropdownButton.StyledDropdownItem
       key={`select-filter-${index}`}
@@ -95,32 +129,7 @@ export function FilterDropdownButton<FilterProperties>({
           />
         </DropdownButton.StyledSearchField>
         {filterSearchResults &&
-          filterSearchResults.results.map((value, index) => (
-            <DropdownButton.StyledDropdownItem
-              key={`fields-value-${index}`}
-              onClick={() => {
-                onFilterSelect({
-                  key: value.displayValue,
-                  operand: selectedFilterOperand,
-                  searchQuery: selectedFilter.searchQuery,
-                  searchTemplate: selectedFilter.searchTemplate,
-                  whereTemplate: selectedFilter.whereTemplate,
-                  label: selectedFilter.label,
-                  value: value.displayValue,
-                  icon: selectedFilter.icon,
-                  where: selectedFilter.whereTemplate(
-                    selectedFilterOperand,
-                    value.value,
-                  ),
-                  searchResultMapper: selectedFilter.searchResultMapper,
-                });
-                setIsUnfolded(false);
-                setSelectedFilter(undefined);
-              }}
-            >
-              {value.displayValue}
-            </DropdownButton.StyledDropdownItem>
-          ))}
+          renderSearchResults(filterSearchResults, selectedFilter)}
       </>
     );
   }
