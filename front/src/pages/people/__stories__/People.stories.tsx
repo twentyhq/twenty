@@ -20,6 +20,7 @@ const mocks = [
       query: GET_PEOPLE,
       variables: {
         orderBy: [{ created_at: 'desc' }],
+        where: {},
       },
     },
     result: {

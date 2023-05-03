@@ -31,12 +31,12 @@ const availableFilters = [
         { lastname: { _ilike: 'value' } },
       ],
     },
-    whereTemplate: {
+    whereTemplate: () => ({
       _or: [
         { firstname: { _ilike: 'value' } },
         { lastname: { _ilike: 'value' } },
       ],
-    },
+    }),
   },
 ] satisfies FilterType<People_Bool_Exp>[];
 

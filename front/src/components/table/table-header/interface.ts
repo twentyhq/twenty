@@ -20,7 +20,7 @@ export type FilterType<WhereTemplate> = {
   label: string;
   key: string;
   icon: IconProp;
-  whereTemplate: WhereTemplate;
+  whereTemplate: (...args: any[]) => WhereTemplate;
   searchQuery: DocumentNode;
   searchTemplate: People_Bool_Exp | Companies_Bool_Exp | Users_Bool_Exp;
 };
@@ -34,4 +34,5 @@ export type FilterOperandType = {
 export type SelectedFilterType<WhereTemplate> = FilterType<WhereTemplate> & {
   value: string;
   operand: FilterOperandType;
+  where: WhereTemplate;
 };

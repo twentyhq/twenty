@@ -3,6 +3,7 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { faArrowDown } from '@fortawesome/pro-regular-svg-icons';
 import { GET_PEOPLE } from '../../../../services/people';
+import { People_Bool_Exp } from '../../../../generated/graphql';
 
 const component = {
   title: 'SortAndFilterBar',
@@ -42,12 +43,15 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
             key: 'test_filter',
             icon: faArrowDown,
             value: 'John Doe',
-            whereTemplate: {
+            where: {
               firstname: { _ilike: 'John Doe' },
             },
             searchQuery: GET_PEOPLE,
             searchTemplate: {
               firstname: { _ilike: 'John Doe' },
+            },
+            whereTemplate: () => {
+              return {};
             },
           },
         ]}

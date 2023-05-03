@@ -104,6 +104,7 @@ export function FilterDropdownButton<FilterProperties>({
                   label: selectedFilter.label,
                   value: value,
                   icon: selectedFilter.icon,
+                  where: selectedFilter.whereTemplate(value),
                 });
                 setIsUnfolded(false);
                 setSelectedFilter(undefined);

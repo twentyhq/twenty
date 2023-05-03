@@ -62,7 +62,7 @@ export const useSearch = () => {
       filterSearchParams &&
       filterSearchParams.filter &&
       parseWhereQuery(
-        filterSearchParams.filter.whereTemplate,
+        filterSearchParams.filter.searchTemplate,
         filterSearchParams.searchValue,
       )
     );
