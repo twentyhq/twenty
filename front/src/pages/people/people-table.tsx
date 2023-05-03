@@ -18,11 +18,12 @@ import PersonChip from '../../components/chips/PersonChip';
 import { Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
 import EditableCell from '../../components/table/EditableCell';
-import { OrderByFields, updatePerson } from '../../services/people';
+import { GET_PEOPLE, OrderByFields, updatePerson } from '../../services/people';
 import {
   FilterType,
   SortType,
 } from '../../components/table/table-header/interface';
+import { GET_COMPANIES } from '../../services/companies';
 
 export const availableSorts = [
   {
@@ -54,24 +55,60 @@ export const availableFilters = [
     key: 'fullname',
     label: 'People',
     icon: faUser,
+    whereTemplate: {
+      _or: [
+        { firstname: { _ilike: '%value%' } },
+        { lastname: { _ilike: '%value%' } },
+      ],
+    },
+    searchQuery: GET_PEOPLE,
+    searchTemplate: {
+      _or: [
+        { firstname: { _ilike: '%value%' } },
+        { lastname: { _ilike: '%value%' } },
+      ],
+    },
   },
   {
     key: 'company_name',
     label: 'Company',
     icon: faBuildings,
+    whereTemplate: { company: { name: { _ilike: '%value%' } } },
+    searchQuery: GET_COMPANIES,
+    searchTemplate: { company: { name: { _ilike: '%value%' } } },
   },
   {
     key: 'email',
     label: 'Email',
     icon: faEnvelope,
+    whereTemplate: { email: { _ilike: '%value%' } },
+    searchQuery: GET_PEOPLE,
+    searchTemplate: { email: { _ilike: '%value%' } },
   },
-  { key: 'phone', label: 'Phone', icon: faPhone },
+  {
+    key: 'phone',
+    label: 'Phone',
+    icon: faPhone,
+    whereTemplate: { phone: { _ilike: '%value%' } },
+    searchQuery: GET_PEOPLE,
+    searchTemplate: { phone: { _ilike: '%value%' } },
+  },
   {
     key: 'created_at',
     label: 'Created at',
     icon: faCalendar,
+    whereTemplate: { created_at: { _eq: '%value%' } },
+    searchQuery: GET_PEOPLE,
+    searchTemplate: { created_at: { _eq: '%value%' } },
   },
-  { key: 'city', label: 'City', icon: faMapPin },
+  {
+    key: 'city',
+    label: 'City',
+    icon: faMapPin,
+    whereTemplate: { city: { _ilike: '%value%' } },
+    searchQuery: GET_PEOPLE,
+    searchTemplate: { city: { _ilike: '%value%' } },
+  },
 ] satisfies FilterType[];
 
 const columnHelper = createColumnHelper<Person>();

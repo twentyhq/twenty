@@ -15,8 +15,8 @@ import {
   reduceSortsToOrderBy,
   usePeopleQuery,
 } from '../../services/people';
-import { People_Bool_Exp } from '../../generated/graphql';
-import { useLazySearch } from '../../services/search/search';
+import { parseWhereQuery, useLazySearch } from '../../services/search/search';
+import { FilterType } from '../../components/table/table-header/interface';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -27,10 +27,9 @@ const StyledPeopleContainer = styled.div`
 function People() {
   const [, setSorts] = useState([] as Array<PeopleSelectedSortType>);
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
-  const [filterSearchResults, setFilterSearchResults] = useState([
-    'Toto',
-    'Lala',
-  ] as Array<string>);
+  const [filterSearchResults, setFilterSearchResults] = useState(
+    [] as Array<string>,
+  );
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
     setSorts(sorts);
@@ -48,11 +47,8 @@ function People() {
   }, [lazySearchData]);
 
   const filterSearch = useCallback(
-    (filterKey: string, filterValue: string) => {
-      console.log('filterSearch', filterKey, filterValue);
-      lazySearch({
-        [filterKey]: { _ilike: `%${filterValue}%` },
-      });
+    (filter: FilterType, searchValue: string) => {
+      lazySearch(parseWhereQuery(filter.whereTemplate, searchValue));
     },
     [lazySearch],
   );

@@ -1,4 +1,10 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import {
+  Companies_Bool_Exp,
+  People_Bool_Exp,
+  Users_Bool_Exp,
+} from '../../../generated/graphql';
+import { DocumentNode } from 'graphql';
 
 export type SortType<SortKey = string> = {
   label: string;
@@ -6,20 +12,26 @@ export type SortType<SortKey = string> = {
   icon?: IconProp;
 };
 
-export type FilterType<FilterKey = string> = {
-  label: string;
-  key: FilterKey;
-  icon: IconProp;
-};
-
-export type SelectedFilterType = {
-  id: string;
-  label: string;
-  value: string;
-  operand: { id: string; label: string };
-  icon: IconProp;
-};
-
 export type SelectedSortType<SortField = string> = SortType<SortField> & {
   order: 'asc' | 'desc';
+};
+
+export type FilterType = {
+  label: string;
+  key: string;
+  icon: IconProp;
+  whereTemplate: People_Bool_Exp;
+  searchQuery: DocumentNode;
+  searchTemplate: People_Bool_Exp | Companies_Bool_Exp | Users_Bool_Exp;
+};
+
+export type FilterOperandType = {
+  label: string;
+  id: string;
+  keyWord: 'ilike' | 'not_ilike';
+};
+
+export type SelectedFilterType = FilterType & {
+  value: string;
+  operand: FilterOperandType;
 };

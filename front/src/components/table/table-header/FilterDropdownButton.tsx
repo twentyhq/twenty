@@ -1,21 +1,19 @@
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import DropdownButton from './DropdownButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { FilterType, SelectedFilterType } from './interface';
+import { FilterOperandType, FilterType, SelectedFilterType } from './interface';
 
 type OwnProps = {
   isFilterSelected: boolean;
   availableFilters: FilterType[];
   filterSearchResults?: string[];
   onFilterSelect: (filter: SelectedFilterType) => void;
-  onFilterSearch: (filterKey: string, filterValue: string) => void;
+  onFilterSearch: (filter: FilterType, searchValue: string) => void;
 };
 
-type FilterOperandType = { label: string; id: string };
-
 const filterOperands: FilterOperandType[] = [
-  { label: 'Include', id: 'include' },
-  { label: "Doesn't include", id: 'not-include' },
+  { label: 'Include', id: 'include', keyWord: 'ilike' },
+  { label: "Doesn't include", id: 'not-include', keyWord: 'not_ilike' },
 ];
 
 export function FilterDropdownButton({
@@ -35,6 +33,17 @@ export function FilterDropdownButton({
 
   const [selectedFilterOperand, setSelectedFilterOperand] =
     useState<FilterOperandType>(filterOperands[0]);
+
+  const [searchInputValue, setSearchInputValue] = useState('');
+
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      if (selectedFilter) {
+        onFilterSearch(selectedFilter, searchInputValue);
+      }
+    }, 500);
+    return () => clearTimeout(timeOutId);
+  }, [searchInputValue, onFilterSearch, selectedFilter]);
 
   const resetState = useCallback(() => {
     setIsOptionUnfolded(false);
@@ -84,7 +93,7 @@ export function FilterDropdownButton({
             type="text"
             placeholder={selectedFilter.label}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              onFilterSearch(selectedFilter.key, event.target.value)
+              setSearchInputValue(event.target.value)
             }
           />
         </DropdownButton.StyledSearchField>
@@ -94,8 +103,11 @@ export function FilterDropdownButton({
               key={`fields-value-${index}`}
               onClick={() => {
                 onFilterSelect({
-                  id: value,
+                  key: value,
                   operand: selectedFilterOperand,
+                  searchQuery: selectedFilter.searchQuery,
+                  searchTemplate: selectedFilter.searchTemplate,
+                  whereTemplate: selectedFilter.whereTemplate,
                   label: selectedFilter.label,
                   value: value,
                   icon: selectedFilter.icon,

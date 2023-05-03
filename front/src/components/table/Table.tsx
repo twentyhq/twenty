@@ -26,7 +26,7 @@ type OwnProps<TData, SortField> = {
   filterSearchResults?: Array<string>;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
-  onFilterSearch?: (filterKey: string, filterValue: string) => void;
+  onFilterSearch?: (filter: FilterType, searchValue: string) => void;
 };
 
 const StyledTable = styled.table`

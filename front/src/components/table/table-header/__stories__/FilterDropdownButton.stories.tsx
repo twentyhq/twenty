@@ -12,6 +12,7 @@ import {
   faMapPin,
 } from '@fortawesome/pro-regular-svg-icons';
 import { useCallback, useState } from 'react';
+import { GET_PEOPLE } from '../../../../services/people';
 
 const component = {
   title: 'FilterDropdownButton',
@@ -29,24 +30,20 @@ const availableFilters = [
     key: 'fullname',
     label: 'People',
     icon: faUser,
+    searchQuery: GET_PEOPLE,
+    searchTemplate: {
+      _or: [
+        { firstname: { _ilike: 'value' } },
+        { lastname: { _ilike: 'value' } },
+      ],
+    },
+    whereTemplate: {
+      _or: [
+        { firstname: { _ilike: 'value' } },
+        { lastname: { _ilike: 'value' } },
+      ],
+    },
   },
-  {
-    key: 'company_name',
-    label: 'Company',
-    icon: faBuildings,
-  },
-  {
-    key: 'email',
-    label: 'Email',
-    icon: faEnvelope,
-  },
-  { key: 'phone', label: 'Phone', icon: faPhone },
-  {
-    key: 'created_at',
-    label: 'Created at',
-    icon: faCalendar,
-  },
-  { key: 'city', label: 'City', icon: faMapPin },
 ] satisfies FilterType[];
 
 const StyleDiv = styled.div`

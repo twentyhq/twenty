@@ -7,7 +7,7 @@ type OwnProps<SortField> = {
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
   filters: Array<SelectedFilterType>;
-  onRemoveFilter: (filterId: SelectedFilterType['id']) => void;
+  onRemoveFilter: (filterId: SelectedFilterType['key']) => void;
 };
 
 const StyledBar = styled.div`
@@ -61,12 +61,12 @@ function SortAndFilterBar<SortField extends string>({
       {filters.map((filter) => {
         return (
           <SortOrFilterChip
-            key={filter.id}
+            key={filter.key}
             labelKey={filter.label}
             labelValue={`${filter.operand.label} ${filter.value}`}
-            id={filter.id}
+            id={filter.key}
             icon={filter.icon}
-            onRemove={() => onRemoveFilter(filter.id)}
+            onRemove={() => onRemoveFilter(filter.key)}
           />
         );
       })}
@@ -75,7 +75,7 @@ function SortAndFilterBar<SortField extends string>({
           data-testid={'cancel-button'}
           onClick={() => {
             sorts.forEach((i) => onRemoveSort(i.key));
-            filters.forEach((i) => onRemoveFilter(i.id));
+            filters.forEach((i) => onRemoveFilter(i.key));
           }}
         >
           Cancel

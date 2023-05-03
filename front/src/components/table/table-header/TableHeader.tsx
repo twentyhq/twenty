@@ -21,7 +21,7 @@ type OwnProps<SortField> = {
   filterSearchResults?: Array<string>;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
-  onFilterSearch?: (filterKey: string, filterValue: string) => void;
+  onFilterSearch?: (filter: FilterType, searchValue: string) => void;
 };
 
 const StyledContainer = styled.div`
@@ -101,7 +101,7 @@ function TableHeader<SortField extends string>({
   );
 
   const filterUnselect = useCallback(
-    (filterId: SelectedFilterType['id']) => {
+    (filterId: SelectedFilterType['key']) => {
       const newFilters = [] as SelectedFilterType[];
       innerSetFilters(newFilters);
       onFiltersUpdate && onFiltersUpdate(newFilters);
@@ -110,8 +110,8 @@ function TableHeader<SortField extends string>({
   );
 
   const filterSearch = useCallback(
-    (filterKey: string, filterValue: string) => {
-      onFilterSearch && onFilterSearch(filterKey, filterValue);
+    (filter: FilterType, searchValue: string) => {
+      onFilterSearch && onFilterSearch(filter, searchValue);
     },
     [onFilterSearch],
   );
