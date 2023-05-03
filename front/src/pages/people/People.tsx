@@ -46,7 +46,7 @@ function People() {
             viewIcon={faList}
             availableSorts={availableSorts}
             availableFilters={availableFilters}
-            filterSearchResults={filterSearchResults}
+            filterSearchResults={filterSearchResults.results}
             onSortsUpdate={updateSorts}
             onFilterSearch={(filter, searchValue) =>
               setFilterSearchParams({ filter, searchValue })

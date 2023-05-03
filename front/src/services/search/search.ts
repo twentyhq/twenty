@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 import { People_Bool_Exp } from '../../generated/graphql';
 import {} from '../../interfaces/company.interface';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { GraphqlQueryPerson } from '../../interfaces/person.interface';
 import { FilterType } from '../../components/table/table-header/interface';
 
@@ -48,7 +48,7 @@ export const parseWhereQuery = (
 
 export const useSearch = () => {
   const [filterSearchParams, setFilterSearchParams] = useState<{
-    filter: FilterType;
+    filter: FilterType | null;
     searchValue: string;
   }>();
 
@@ -60,6 +60,7 @@ export const useSearch = () => {
   const where = useMemo(() => {
     return (
       filterSearchParams &&
+      filterSearchParams.filter &&
       parseWhereQuery(
         filterSearchParams.filter.whereTemplate,
         filterSearchParams.searchValue,
@@ -67,19 +68,25 @@ export const useSearch = () => {
     );
   }, [filterSearchParams]);
 
-  const searchFilterResults = useQuery(SEARCH_QUERY, {
+  const searchFilterQueryResults = useQuery(SEARCH_QUERY, {
     variables: {
       where,
     },
   });
 
-  const filterSearchResults = useMemo(() => {
+  const searchFilterResults = useMemo(() => {
+    if (searchFilterQueryResults.loading) {
+      return { loading: true, results: [] };
+    }
     return (
-      searchFilterResults.data?.people.map(
-        (person: GraphqlQueryPerson) => person.firstname,
-      ) || []
+      {
+        loading: false,
+        results: searchFilterQueryResults.data?.people.map(
+          (person: GraphqlQueryPerson) => person.firstname,
+        ),
+      } || { loading: false, results: [] }
     );
-  }, [searchFilterResults.data?.people]);
+  }, [searchFilterQueryResults]);
 
-  return [filterSearchResults, debouncedSetFilterSearchParams];
+  return [searchFilterResults, debouncedSetFilterSearchParams] as const;
 };
