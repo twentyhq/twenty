@@ -1,15 +1,15 @@
-import { IconType } from 'react-icons/lib';
+import { ReactNode } from 'react';
 
 export type SortType<SortKey = string> = {
   label: string;
   key: SortKey;
-  icon?: IconType;
+  icon?: ReactNode;
 };
 
 export type FilterType<FilterKey = string> = {
   label: string;
   key: FilterKey;
-  icon: IconType;
+  icon: ReactNode;
 };
 
 export type SelectedFilterType = {
@@ -17,7 +17,7 @@ export type SelectedFilterType = {
   label: string;
   value: string;
   operand: { id: string; label: string };
-  icon: IconType;
+  icon: ReactNode;
 };
 
 export type SelectedSortType<SortField = string> = SortType<SortField> & {

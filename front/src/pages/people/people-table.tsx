@@ -1,8 +1,8 @@
 import {
-  FaBuilding,
+  FaRegBuilding,
   FaCalendar,
   FaEnvelope,
-  FaUser,
+  FaRegUser,
   FaMapPin,
   FaPhone,
   FaStream,
@@ -28,56 +28,56 @@ export const availableSorts = [
   {
     key: 'fullname',
     label: 'People',
-    icon: FaUser,
+    icon: <FaRegUser />,
   },
   {
     key: 'company_name',
     label: 'Company',
-    icon: FaBuilding,
+    icon: <FaRegBuilding />,
   },
   {
     key: 'email',
     label: 'Email',
-    icon: FaEnvelope,
+    icon: <FaEnvelope />,
   },
-  { key: 'phone', label: 'Phone', icon: FaPhone },
+  { key: 'phone', label: 'Phone', icon: <FaPhone /> },
   {
     key: 'created_at',
     label: 'Created at',
-    icon: FaCalendar,
+    icon: <FaCalendar />,
   },
-  { key: 'city', label: 'City', icon: FaMapPin },
+  { key: 'city', label: 'City', icon: <FaMapPin /> },
 ] satisfies Array<SortType<OrderByFields>>;
 
 export const availableFilters = [
   {
     key: 'fullname',
     label: 'People',
-    icon: FaUser,
+    icon: <FaRegUser />,
   },
   {
     key: 'company_name',
     label: 'Company',
-    icon: FaBuilding,
+    icon: <FaRegBuilding />,
   },
   {
     key: 'email',
     label: 'Email',
-    icon: FaEnvelope,
+    icon: <FaEnvelope />,
   },
-  { key: 'phone', label: 'Phone', icon: FaPhone },
+  { key: 'phone', label: 'Phone', icon: <FaPhone /> },
   {
     key: 'created_at',
     label: 'Created at',
-    icon: FaCalendar,
+    icon: <FaCalendar />,
   },
-  { key: 'city', label: 'City', icon: FaMapPin },
+  { key: 'city', label: 'City', icon: <FaMapPin /> },
 ] satisfies FilterType[];
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [
   columnHelper.accessor('fullName', {
-    header: () => <ColumnHead viewName="People" viewIcon={FaUser} />,
+    header: () => <ColumnHead viewName="People" viewIcon={<FaRegUser />} />,
     cell: (props) => (
       <>
         <HorizontalyAlignedContainer>
@@ -94,7 +94,7 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('email', {
-    header: () => <ColumnHead viewName="Email" viewIcon={FaEnvelope} />,
+    header: () => <ColumnHead viewName="Email" viewIcon={<FaEnvelope />} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.email}
@@ -107,7 +107,9 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('company', {
-    header: () => <ColumnHead viewName="Company" viewIcon={FaBuilding} />,
+    header: () => (
+      <ColumnHead viewName="Company" viewIcon={<FaRegBuilding />} />
+    ),
     cell: (props) => (
       <ClickableCell href="#">
         <CompanyChip
@@ -118,7 +120,7 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('phone', {
-    header: () => <ColumnHead viewName="Phone" viewIcon={FaPhone} />,
+    header: () => <ColumnHead viewName="Phone" viewIcon={<FaPhone />} />,
     cell: (props) => (
       <ClickableCell
         href={parsePhoneNumber(
@@ -134,7 +136,7 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('creationDate', {
-    header: () => <ColumnHead viewName="Creation" viewIcon={FaCalendar} />,
+    header: () => <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />,
     cell: (props) => (
       <ClickableCell href="#">
         {new Intl.DateTimeFormat(undefined, {
@@ -146,7 +148,7 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('pipe', {
-    header: () => <ColumnHead viewName="Pipe" viewIcon={FaStream} />,
+    header: () => <ColumnHead viewName="Pipe" viewIcon={<FaStream />} />,
     cell: (props) => (
       <ClickableCell href="#">
         <PipeChip
@@ -157,7 +159,7 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('city', {
-    header: () => <ColumnHead viewName="City" viewIcon={FaMapPin} />,
+    header: () => <ColumnHead viewName="City" viewIcon={<FaMapPin />} />,
     cell: (props) => (
       <ClickableCell href="#">{props.row.original.city}</ClickableCell>
     ),

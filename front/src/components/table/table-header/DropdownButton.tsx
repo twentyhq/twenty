@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { useRef, ReactNode } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
 import { modalBackground } from '../../../layout/styles/themes';
-import ReactIcon from '../../icons/ReactIcon';
 import { FaAngleDown } from 'react-icons/fa';
 
 type OwnProps = {
@@ -183,7 +182,7 @@ const StyleAngleDownContainer = styled.div`
 function DropdownTopOptionAngleDown() {
   return (
     <StyleAngleDownContainer>
-      <ReactIcon icon={FaAngleDown} />
+      <FaAngleDown />
     </StyleAngleDownContainer>
   );
 }

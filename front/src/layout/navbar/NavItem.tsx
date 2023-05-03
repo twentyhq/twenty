@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import ReactIcon from '../../components/icons/ReactIcon';
-import { IconType } from 'react-icons/lib';
+import { ReactNode } from 'react';
 
 type OwnProps = {
   label: string;
   to: string;
   active?: boolean;
-  icon: IconType;
+  icon: ReactNode;
 };
 
 type StyledItemProps = {
@@ -50,7 +49,7 @@ function NavItem({ label, icon, to, active }: OwnProps) {
       active={active}
       aria-selected={active}
     >
-      <ReactIcon icon={icon} />
+      {icon}
       <StyledItemLabel>{label}</StyledItemLabel>
     </StyledItem>
   );

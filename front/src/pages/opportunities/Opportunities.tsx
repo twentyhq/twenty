@@ -3,7 +3,7 @@ import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 
 function Opportunities() {
   return (
-    <WithTopBarContainer title="Opportunities" icon={FaBullseye}>
+    <WithTopBarContainer title="Opportunities" icon={<FaBullseye />}>
       <></>
     </WithTopBarContainer>
   );

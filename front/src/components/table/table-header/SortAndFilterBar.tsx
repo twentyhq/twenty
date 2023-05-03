@@ -53,7 +53,7 @@ function SortAndFilterBar<SortField extends string>({
             key={sort.key}
             labelValue={sort.label}
             id={sort.key}
-            icon={sort.order === 'asc' ? FaArrowDown : FaArrowUp}
+            icon={sort.order === 'asc' ? <FaArrowDown /> : <FaArrowUp />}
             onRemove={() => onRemoveSort(sort.key)}
           />
         );

@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import TopBar from '../top-bar/TopBar';
-import { IconType } from 'react-icons/lib';
+import { ReactNode } from 'react';
 
 type OwnProps = {
   children: JSX.Element;
   title: string;
-  icon: IconType;
+  icon: ReactNode;
 };
 
 const StyledContainer = styled.div`

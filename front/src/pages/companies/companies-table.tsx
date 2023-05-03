@@ -8,13 +8,13 @@ import CompanyChip from '../../components/chips/CompanyChip';
 import EditableCell from '../../components/table/EditableCell';
 import PipeChip from '../../components/chips/PipeChip';
 import {
-  FaBuilding,
+  FaRegBuilding,
   FaCalendar,
   FaLink,
   FaMapPin,
   FaStream,
+  FaRegUser,
   FaUsers,
-  FaUser,
 } from 'react-icons/fa';
 import ClickableCell from '../../components/table/ClickableCell';
 import PersonChip from '../../components/chips/PersonChip';
@@ -36,7 +36,7 @@ export const sortsAvailable = [
 const columnHelper = createColumnHelper<Company>();
 export const companiesColumns = [
   columnHelper.accessor('name', {
-    header: () => <ColumnHead viewName="Name" viewIcon={FaBuilding} />,
+    header: () => <ColumnHead viewName="Name" viewIcon={<FaRegBuilding />} />,
     cell: (props) => (
       <HorizontalyAlignedContainer>
         <Checkbox
@@ -51,7 +51,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('employees', {
-    header: () => <ColumnHead viewName="Employees" viewIcon={FaUsers} />,
+    header: () => <ColumnHead viewName="Employees" viewIcon={<FaUsers />} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.employees.toFixed(0)}
@@ -64,7 +64,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('domain_name', {
-    header: () => <ColumnHead viewName="URL" viewIcon={FaLink} />,
+    header: () => <ColumnHead viewName="URL" viewIcon={<FaLink />} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.domain_name}
@@ -77,7 +77,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('address', {
-    header: () => <ColumnHead viewName="Address" viewIcon={FaMapPin} />,
+    header: () => <ColumnHead viewName="Address" viewIcon={<FaMapPin />} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.address}
@@ -90,7 +90,9 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('opportunities', {
-    header: () => <ColumnHead viewName="Opportunities" viewIcon={FaStream} />,
+    header: () => (
+      <ColumnHead viewName="Opportunities" viewIcon={<FaStream />} />
+    ),
     cell: (props) => (
       <ClickableCell href="#">
         {props.row.original.opportunities.map((opportunity) => (
@@ -100,7 +102,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('creationDate', {
-    header: () => <ColumnHead viewName="Creation" viewIcon={FaCalendar} />,
+    header: () => <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />,
     cell: (props) => (
       <ClickableCell href="#">
         {new Intl.DateTimeFormat(undefined, {
@@ -112,7 +114,9 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('accountOwner', {
-    header: () => <ColumnHead viewName="Account Owner" viewIcon={FaUser} />,
+    header: () => (
+      <ColumnHead viewName="Account Owner" viewIcon={<FaRegUser />} />
+    ),
     cell: (props) => (
       <ClickableCell href="#">
         <>

@@ -4,8 +4,8 @@ import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
 import { FilterType, SelectedFilterType } from '../interface';
 import {
-  FaUser,
-  FaBuilding,
+  FaRegUser,
+  FaRegBuilding,
   FaEnvelope,
   FaPhone,
   FaCalendar,
@@ -28,25 +28,25 @@ const availableFilters = [
   {
     key: 'fullname',
     label: 'People',
-    icon: FaUser,
+    icon: <FaRegUser />,
   },
   {
     key: 'company_name',
     label: 'Company',
-    icon: FaBuilding,
+    icon: <FaRegBuilding />,
   },
   {
     key: 'email',
     label: 'Email',
-    icon: FaEnvelope,
+    icon: <FaEnvelope />,
   },
-  { key: 'phone', label: 'Phone', icon: FaPhone },
+  { key: 'phone', label: 'Phone', icon: <FaPhone /> },
   {
     key: 'created_at',
     label: 'Created at',
-    icon: FaCalendar,
+    icon: <FaCalendar />,
   },
-  { key: 'city', label: 'City', icon: FaMapPin },
+  { key: 'city', label: 'City', icon: <FaMapPin /> },
 ] satisfies FilterType[];
 
 const StyleDiv = styled.div`

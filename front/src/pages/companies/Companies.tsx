@@ -1,4 +1,4 @@
-import { FaBuilding, FaList } from 'react-icons/fa';
+import { FaRegBuilding, FaList } from 'react-icons/fa';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import styled from '@emotion/styled';
 import { useState, useCallback } from 'react';
@@ -29,13 +29,13 @@ function Companies() {
   const { data } = useCompaniesQuery(orderBy);
 
   return (
-    <WithTopBarContainer title="Companies" icon={FaBuilding}>
+    <WithTopBarContainer title="Companies" icon={<FaRegBuilding />}>
       <StyledCompaniesContainer>
         <Table
           data={data ? data.companies.map(mapCompany) : []}
           columns={companiesColumns}
           viewName="All Companies"
-          viewIcon={FaList}
+          viewIcon={<FaList />}
           onSortsUpdate={updateSorts}
           availableSorts={sortsAvailable}
         />

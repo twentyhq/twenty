@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
-import ReactIcon from '../icons/ReactIcon';
+import { ReactNode } from 'react';
 import { IconType } from 'react-icons/lib';
 
 type OwnProps = {
   viewName: string;
-  viewIcon?: IconType;
+  viewIcon?: ReactNode;
 };
 
 const StyledTitle = styled.div`
@@ -24,7 +24,7 @@ const StyledIcon = styled.div`
 function TableHeader({ viewName, viewIcon }: OwnProps) {
   return (
     <StyledTitle>
-      <StyledIcon>{viewIcon && <ReactIcon icon={viewIcon} />}</StyledIcon>
+      <StyledIcon>{viewIcon}</StyledIcon>
       {viewName}
     </StyledTitle>
   );

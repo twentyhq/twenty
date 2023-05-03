@@ -2,12 +2,12 @@ import { SelectedSortType, SortType } from '../interface';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import {
-  FaBuilding,
+  FaRegBuilding,
   FaCalendar,
   FaEnvelope,
   FaMapPin,
   FaPhone,
-  FaUser,
+  FaRegUser,
 } from 'react-icons/fa';
 import { SortDropdownButton } from '../SortDropdownButton';
 import styled from '@emotion/styled';
@@ -29,25 +29,25 @@ const availableSorts = [
   {
     key: 'fullname',
     label: 'People',
-    icon: FaUser,
+    icon: <FaRegUser />,
   },
   {
     key: 'company_name',
     label: 'Company',
-    icon: FaBuilding,
+    icon: <FaRegBuilding />,
   },
   {
     key: 'email',
     label: 'Email',
-    icon: FaEnvelope,
+    icon: <FaEnvelope />,
   },
-  { key: 'phone', label: 'Phone', icon: FaPhone },
+  { key: 'phone', label: 'Phone', icon: <FaPhone /> },
   {
     key: 'created_at',
     label: 'Created at',
-    icon: FaCalendar,
+    icon: <FaCalendar />,
   },
-  { key: 'city', label: 'City', icon: FaMapPin },
+  { key: 'city', label: 'City', icon: <FaMapPin /> },
 ] satisfies SortType[];
 
 const StyleDiv = styled.div`

@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
-import ReactIcon from '../../icons/ReactIcon';
 import { FilterType, SelectedFilterType } from './interface';
 
 type OwnProps = {
@@ -72,9 +71,7 @@ export function FilterDropdownButton({
         setSelectedFilter(filter);
       }}
     >
-      <DropdownButton.StyledIcon>
-        {filter.icon && <ReactIcon icon={filter.icon} />}
-      </DropdownButton.StyledIcon>
+      <DropdownButton.StyledIcon>{filter.icon}</DropdownButton.StyledIcon>
       {filter.label}
     </DropdownButton.StyledDropdownItem>
   ));

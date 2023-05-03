@@ -1,21 +1,19 @@
 import styled from '@emotion/styled';
-import ReactIcon from '../../icons/ReactIcon';
 import DropdownButton from './DropdownButton';
-import { IconType } from 'react-icons/lib';
 import {
   FilterType,
   SelectedFilterType,
   SelectedSortType,
   SortType,
 } from './interface';
-import { useCallback, useState } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 import { SortDropdownButton } from './SortDropdownButton';
 import { FilterDropdownButton } from './FilterDropdownButton';
 import SortAndFilterBar from './SortAndFilterBar';
 
 type OwnProps<SortField> = {
   viewName: string;
-  viewIcon?: IconType;
+  viewIcon?: ReactNode;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
   availableSorts?: Array<SortType<SortField>>;
@@ -110,7 +108,7 @@ function TableHeader<SortField extends string>({
     <StyledContainer>
       <StyledTableHeader>
         <StyledViewSection>
-          <StyledIcon>{viewIcon && <ReactIcon icon={viewIcon} />}</StyledIcon>
+          <StyledIcon>{viewIcon}</StyledIcon>
           {viewName}
         </StyledViewSection>
         <StyledFilters>

@@ -23,13 +23,13 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
             label: 'Test sort',
             order: 'asc',
             key: 'test_sort',
-            icon: FaArrowDown,
+            icon: <FaArrowDown />,
           },
           {
             label: 'Test sort 2',
             order: 'desc',
             key: 'test_sort_2',
-            icon: FaArrowDown,
+            icon: <FaArrowDown />,
           },
         ]}
         onRemoveSort={removeFunction}
@@ -39,7 +39,7 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
             label: 'People',
             operand: { id: 'include', label: 'Include' },
             id: 'test_filter',
-            icon: FaArrowDown,
+            icon: <FaArrowDown />,
             value: 'John Doe',
           },
         ]}

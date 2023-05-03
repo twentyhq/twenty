@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-import { IconType } from 'react-icons/lib';
-import ReactIcon from '../../components/icons/ReactIcon';
+import { ReactNode } from 'react';
 
 const TopBarContainer = styled.div`
   display: flex;
@@ -22,14 +21,14 @@ const TitleContainer = styled.div`
 
 type OwnProps = {
   title: string;
-  icon: IconType;
+  icon: ReactNode;
 };
 
 function TopBar({ title, icon }: OwnProps) {
   return (
     <>
       <TopBarContainer>
-        <ReactIcon icon={icon} />
+        {icon}
         <TitleContainer data-testid="top-bar-title">{title}</TitleContainer>
       </TopBarContainer>
     </>

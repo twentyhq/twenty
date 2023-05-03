@@ -1,7 +1,7 @@
 import TableHeader from '../TableHeader';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
-import { FaBuilding, FaCalendar } from 'react-icons/fa';
+import { FaRegBuilding, FaCalendar } from 'react-icons/fa';
 import { SortType } from '../interface';
 
 const component = {
@@ -16,14 +16,14 @@ export const RegularTableHeader = () => {
     {
       key: 'created_at',
       label: 'Created at',
-      icon: FaCalendar,
+      icon: <FaCalendar />,
     },
   ];
   return (
     <ThemeProvider theme={lightTheme}>
       <TableHeader
         viewName="Test"
-        viewIcon={FaBuilding}
+        viewIcon={<FaRegBuilding />}
         availableSorts={availableSorts}
       />
     </ThemeProvider>

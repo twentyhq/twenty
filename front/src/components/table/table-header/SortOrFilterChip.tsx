@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
-import { IconType } from 'react-icons/lib';
 import { FaTimes } from 'react-icons/fa';
-import ReactIcon from '../../icons/ReactIcon';
+import { ReactNode } from 'react';
 
 type OwnProps = {
   id: string;
   labelKey?: string;
   labelValue: string;
-  icon: IconType;
+  icon: ReactNode;
   onRemove: () => void;
 };
 
@@ -44,13 +43,11 @@ function SortOrFilterChip({
 }: OwnProps) {
   return (
     <StyledChip>
-      <StyledIcon>
-        <ReactIcon icon={icon} />
-      </StyledIcon>
+      <StyledIcon>{icon}</StyledIcon>
       {labelKey && <StyledLabelKey>{labelKey}:&nbsp;</StyledLabelKey>}
       {labelValue}
       <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
-        <ReactIcon icon={FaTimes} />
+        <FaTimes />
       </StyledDelete>
     </StyledChip>
   );
