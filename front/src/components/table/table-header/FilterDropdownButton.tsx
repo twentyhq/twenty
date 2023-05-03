@@ -65,6 +65,9 @@ export function FilterDropdownButton<FilterProperties>({
     >,
     selectedFilter: FilterType<FilterProperties>,
   ) => {
+    if (filterSearchResults.loading) {
+      return 'LOADING';
+    }
     return filterSearchResults.results.map((value, index) => (
       <DropdownButton.StyledDropdownItem
         key={`fields-value-${index}`}
