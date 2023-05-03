@@ -18,7 +18,7 @@ import PersonChip from '../../components/chips/PersonChip';
 import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
 import EditableCell from '../../components/table/EditableCell';
-import { GET_PEOPLE, OrderByFields, updatePerson } from '../../services/people';
+import { OrderByFields, updatePerson } from '../../services/people';
 import {
   FilterType,
   SortType,

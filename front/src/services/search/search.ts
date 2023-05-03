@@ -2,7 +2,6 @@ import { gql, useQuery } from '@apollo/client';
 import { People_Bool_Exp } from '../../generated/graphql';
 import {} from '../../interfaces/company.interface';
 import { useMemo, useState } from 'react';
-import { GraphqlQueryPerson } from '../../interfaces/person.interface';
 import { FilterType } from '../../components/table/table-header/interface';
 
 export const SEARCH_PEOPLE_QUERY = gql`
