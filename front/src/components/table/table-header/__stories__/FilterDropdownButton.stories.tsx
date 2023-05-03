@@ -3,14 +3,7 @@ import { lightTheme } from '../../../../layout/styles/themes';
 import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
 import { FilterType, SelectedFilterType } from '../interface';
-import {
-  faUser,
-  faBuildings,
-  faEnvelope,
-  faPhone,
-  faCalendar,
-  faMapPin,
-} from '@fortawesome/pro-regular-svg-icons';
+import { faUser } from '@fortawesome/pro-regular-svg-icons';
 import { useCallback, useState } from 'react';
 import { GET_PEOPLE } from '../../../../services/people';
 
@@ -22,7 +15,7 @@ const component = {
 export default component;
 
 type OwnProps = {
-  setFilters: (filters: SelectedFilterType[]) => void;
+  setFilter: (filters: SelectedFilterType) => void;
 };
 
 const availableFilters = [
@@ -51,12 +44,14 @@ const StyleDiv = styled.div`
   width: 200px;
 `;
 
-export const RegularFilterDropdownButton = ({ setFilters }: OwnProps) => {
-  const [, innerSetFilters] = useState<SelectedFilterType[]>([]);
+export const RegularFilterDropdownButton = ({
+  setFilter: setFilters,
+}: OwnProps) => {
+  const [, innerSetFilters] = useState<SelectedFilterType>();
   const outerSetFilters = useCallback(
     (filter: SelectedFilterType) => {
-      innerSetFilters([filter]);
-      setFilters([filter]);
+      innerSetFilters(filter);
+      setFilters(filter);
     },
     [setFilters],
   );
@@ -68,7 +63,7 @@ export const RegularFilterDropdownButton = ({ setFilters }: OwnProps) => {
           isFilterSelected={true}
           onFilterSearch={jest.fn()}
           onFilterSelect={outerSetFilters}
-          filterSearchResults={[]}
+          filterSearchResults={['John Doe']}
         />
       </StyleDiv>
     </ThemeProvider>
