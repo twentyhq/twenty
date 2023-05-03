@@ -16,6 +16,8 @@ import {
   usePeopleQuery,
 } from '../../services/people';
 import { useSearch } from '../../services/search/search';
+import { People_Bool_Exp } from '../../generated/graphql';
+import { SelectedFilterType } from '../../components/table/table-header/interface';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -25,13 +27,19 @@ const StyledPeopleContainer = styled.div`
 
 function People() {
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
+  const [where, setWhere] = useState<People_Bool_Exp>({});
   const [filterSearchResults, setFilterSearchParams] = useSearch();
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
-  const { data } = usePeopleQuery(orderBy);
+  const updateFilters = useCallback((filters: Array<SelectedFilterType>) => {
+    console.log(filters);
+    setWhere({ firstname: { _ilike: filters[0].key } });
+  }, []);
+
+  const { data } = usePeopleQuery(orderBy, where);
 
   return (
     <WithTopBarContainer title="People" icon={faUser}>
@@ -46,6 +54,7 @@ function People() {
             availableFilters={availableFilters}
             filterSearchResults={filterSearchResults.results}
             onSortsUpdate={updateSorts}
+            onFiltersUpdate={updateFilters}
             onFilterSearch={(filter, searchValue) =>
               setFilterSearchParams({ filter, searchValue })
             }
