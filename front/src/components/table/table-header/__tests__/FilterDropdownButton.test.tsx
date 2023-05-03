@@ -11,7 +11,7 @@ it('Checks the default top option is Include', async () => {
   const sortDropdownButton = getByText('Filter');
   fireEvent.click(sortDropdownButton);
 
-  const sortByEmail = getByText('Email');
+  const sortByEmail = getByText('People');
   fireEvent.click(sortByEmail);
 
   const filterByJohn = getByText('John Doe');
@@ -37,7 +37,7 @@ it('Checks the selection of top option for Doesnot include', async () => {
   const sortDropdownButton = getByText('Filter');
   fireEvent.click(sortDropdownButton);
 
-  const sortByEmail = getByText('Email');
+  const sortByEmail = getByText('People');
   fireEvent.click(sortByEmail);
 
   const openOperandOptions = getByText('Include');
