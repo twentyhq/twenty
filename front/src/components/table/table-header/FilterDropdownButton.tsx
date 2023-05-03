@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterOperandType, FilterType, SelectedFilterType } from './interface';
@@ -8,7 +8,7 @@ type OwnProps = {
   availableFilters: FilterType[];
   filterSearchResults?: string[];
   onFilterSelect: (filter: SelectedFilterType) => void;
-  onFilterSearch: (filter: FilterType, searchValue: string) => void;
+  onFilterSearch: (filter: FilterType | null, searchValue: string) => void;
 };
 
 const filterOperands: FilterOperandType[] = [
@@ -34,22 +34,12 @@ export function FilterDropdownButton({
   const [selectedFilterOperand, setSelectedFilterOperand] =
     useState<FilterOperandType>(filterOperands[0]);
 
-  const [searchInputValue, setSearchInputValue] = useState('');
-
-  useEffect(() => {
-    const timeOutId = setTimeout(() => {
-      if (selectedFilter) {
-        onFilterSearch(selectedFilter, searchInputValue);
-      }
-    }, 500);
-    return () => clearTimeout(timeOutId);
-  }, [searchInputValue, onFilterSearch, selectedFilter]);
-
   const resetState = useCallback(() => {
     setIsOptionUnfolded(false);
     setSelectedFilter(undefined);
     setSelectedFilterOperand(filterOperands[0]);
-  }, []);
+    onFilterSearch(null, '');
+  }, [onFilterSearch]);
 
   const renderSelectOptionItems = filterOperands.map((filterOperand, index) => (
     <DropdownButton.StyledDropdownItem
@@ -93,7 +83,7 @@ export function FilterDropdownButton({
             type="text"
             placeholder={selectedFilter.label}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setSearchInputValue(event.target.value)
+              onFilterSearch(selectedFilter, event.target.value)
             }
           />
         </DropdownButton.StyledSearchField>

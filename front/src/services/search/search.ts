@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 import { People_Bool_Exp } from '../../generated/graphql';
 import {} from '../../interfaces/company.interface';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GraphqlQueryPerson } from '../../interfaces/person.interface';
 import { FilterType } from '../../components/table/table-header/interface';
 
@@ -24,6 +24,19 @@ export const SEARCH_QUERY = gql`
   }
 `;
 
+const debounce = <FuncArgs extends any[]>(
+  func: (...args: FuncArgs) => void,
+  delay: number,
+) => {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return (...args: FuncArgs) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+};
+
 export const parseWhereQuery = (
   whereTemplate: People_Bool_Exp,
   value: string,
@@ -38,6 +51,11 @@ export const useSearch = () => {
     filter: FilterType;
     searchValue: string;
   }>();
+
+  const debouncedSetFilterSearchParams = useMemo(
+    () => debounce(setFilterSearchParams, 500),
+    [],
+  );
 
   const where = useMemo(() => {
     return (
@@ -63,5 +81,5 @@ export const useSearch = () => {
     );
   }, [searchFilterResults.data?.people]);
 
-  return [filterSearchResults, setFilterSearchParams];
+  return [filterSearchResults, debouncedSetFilterSearchParams];
 };
