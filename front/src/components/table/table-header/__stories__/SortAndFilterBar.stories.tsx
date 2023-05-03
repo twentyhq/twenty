@@ -3,7 +3,6 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { faArrowDown } from '@fortawesome/pro-regular-svg-icons';
 import { GET_PEOPLE } from '../../../../services/people';
-import { People_Bool_Exp } from '../../../../generated/graphql';
 
 const component = {
   title: 'SortAndFilterBar',

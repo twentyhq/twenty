@@ -1,4 +1,4 @@
-import { SelectedSortType, SortType } from '../interface';
+import { SortType } from '../interface';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import {
