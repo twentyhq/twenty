@@ -11,7 +11,6 @@ WORKDIR /app/front
 
 COPY ../../front/package.json .
 COPY ../../front/package-lock.json .
-COPY ../../front/.npmrc .
 RUN npm install
 
 COPY ../../front .
