@@ -7,16 +7,21 @@ import {
   peopleColumns,
   availableSorts,
 } from './people-table';
-import { mapPerson } from '../../interfaces/person.interface';
-import { useCallback, useEffect, useState } from 'react';
+import {
+  GraphqlQueryPerson,
+  Person,
+  mapPerson,
+} from '../../interfaces/person.interface';
+import { useCallback, useMemo, useState } from 'react';
 import {
   PeopleSelectedSortType,
   defaultOrderBy,
   reduceSortsToOrderBy,
   usePeopleQuery,
 } from '../../services/people';
-import { parseWhereQuery, useLazySearch } from '../../services/search/search';
+import { SEARCH_QUERY, parseWhereQuery } from '../../services/search/search';
 import { FilterType } from '../../components/table/table-header/interface';
+import { useQuery } from '@apollo/client';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -27,31 +32,39 @@ const StyledPeopleContainer = styled.div`
 function People() {
   const [, setSorts] = useState([] as Array<PeopleSelectedSortType>);
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
-  const [filterSearchResults, setFilterSearchResults] = useState(
-    [] as Array<string>,
-  );
+  const [filterSearchParams, setFilterSearchParams] = useState<{
+    filter: FilterType;
+    searchValue: string;
+  }>();
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
     setSorts(sorts);
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
-  const [lazySearch, { data: lazySearchData }] = useLazySearch();
+  const where = useMemo(() => {
+    return (
+      filterSearchParams &&
+      parseWhereQuery(
+        filterSearchParams.filter.whereTemplate,
+        filterSearchParams.searchValue,
+      )
+    );
+  }, [filterSearchParams]);
 
-  useEffect(() => {
-    if (lazySearchData) {
-      setFilterSearchResults(
-        lazySearchData.people.map((person: any) => person.firstname),
-      );
-    }
-  }, [lazySearchData]);
-
-  const filterSearch = useCallback(
-    (filter: FilterType, searchValue: string) => {
-      lazySearch(parseWhereQuery(filter.whereTemplate, searchValue));
+  const searchFilterResults = useQuery(SEARCH_QUERY, {
+    variables: {
+      where,
     },
-    [lazySearch],
-  );
+  });
+
+  const filterSearchResults = useMemo(() => {
+    return (
+      searchFilterResults.data?.people.map(
+        (person: GraphqlQueryPerson) => person.firstname,
+      ) || []
+    );
+  }, [searchFilterResults.data?.people]);
 
   const { data } = usePeopleQuery(orderBy);
 
@@ -68,7 +81,9 @@ function People() {
             availableFilters={availableFilters}
             filterSearchResults={filterSearchResults}
             onSortsUpdate={updateSorts}
-            onFilterSearch={filterSearch}
+            onFilterSearch={(filter, searchValue) =>
+              setFilterSearchParams({ filter, searchValue })
+            }
           />
         }
       </StyledPeopleContainer>

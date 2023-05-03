@@ -1,16 +1,10 @@
-import { DocumentNode, QueryResult, gql, useLazyQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
 import { People_Bool_Exp } from '../../generated/graphql';
-import { GraphqlQueryPerson } from '../../interfaces/person.interface';
 import {} from '../../interfaces/company.interface';
 
 export const SEARCH_QUERY = gql`
-  query SearchQuery(
-    $where: people_bool_exp
-    $limit: Int
-    $isPersonSearch: Boolean!
-    $isCompanySearch: Boolean!
-  ) {
-    people(where: $where, limit: $limit) @include(if: $isPersonSearch) {
+  query SearchQuery($where: people_bool_exp, $limit: Int) {
+    people(where: $where, limit: $limit) {
       id
       phone
       email
@@ -24,10 +18,6 @@ export const SEARCH_QUERY = gql`
         domain_name
       }
     }
-    companies(where: $where, limit: $limit) @include(if: $isCompanySearch) {
-      id
-      name
-    }
   }
 `;
 
@@ -36,28 +26,6 @@ export const parseWhereQuery = (
   value: string,
 ): People_Bool_Exp => {
   const whereStringified = JSON.stringify(whereTemplate);
-  const whereWithValue = whereStringified.replace('%value%', value);
-  console.log(whereWithValue);
+  const whereWithValue = whereStringified.replace('value', value);
   return JSON.parse(whereWithValue);
-};
-
-export const useLazySearch = (): [
-  (where: People_Bool_Exp) => Promise<QueryResult<any>>,
-  Partial<QueryResult<any>>,
-] => {
-  const [searchLazyQuery, { loading, error, data }] = useLazyQuery<{
-    people: GraphqlQueryPerson[];
-  }>(SEARCH_QUERY);
-
-  const searchQuery = (where: People_Bool_Exp) => {
-    return searchLazyQuery({
-      variables: {
-        isPersonSearch: true,
-        isCompanySearch: false,
-        where,
-      },
-    });
-  };
-
-  return [searchQuery, { loading, error, data }];
 };
