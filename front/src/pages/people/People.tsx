@@ -55,7 +55,7 @@ function People() {
             viewIcon={faList}
             availableSorts={availableSorts}
             availableFilters={availableFilters}
-            filterSearchResults={filterSearchResults.results}
+            filterSearchResults={filterSearchResults}
             onSortsUpdate={updateSorts}
             onFiltersUpdate={updateFilters}
             onFilterSearch={(filter, searchValue) =>

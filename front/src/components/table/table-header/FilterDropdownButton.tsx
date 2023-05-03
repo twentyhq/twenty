@@ -6,7 +6,10 @@ import { FilterOperandType, FilterType, SelectedFilterType } from './interface';
 type OwnProps<FilterProperties> = {
   isFilterSelected: boolean;
   availableFilters: FilterType<FilterProperties>[];
-  filterSearchResults?: { displayValue: string; value: any }[];
+  filterSearchResults?: {
+    results: { displayValue: string; value: any }[];
+    loading: boolean;
+  };
   onFilterSelect: (filter: SelectedFilterType<FilterProperties>) => void;
   onFilterSearch: (
     filter: FilterType<FilterProperties> | null,
@@ -92,7 +95,7 @@ export function FilterDropdownButton<FilterProperties>({
           />
         </DropdownButton.StyledSearchField>
         {filterSearchResults &&
-          filterSearchResults.map((value, index) => (
+          filterSearchResults.results.map((value, index) => (
             <DropdownButton.StyledDropdownItem
               key={`fields-value-${index}`}
               onClick={() => {
