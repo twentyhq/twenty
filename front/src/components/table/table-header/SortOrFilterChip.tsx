@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faTimes } from '@fortawesome/pro-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FaTimes } from 'react-icons/fa';
+import { ReactNode } from 'react';
 
 type OwnProps = {
   id: string;
   labelKey?: string;
   labelValue: string;
-  icon: IconProp;
+  icon: ReactNode;
   onRemove: () => void;
 };
 
@@ -44,13 +43,11 @@ function SortOrFilterChip({
 }: OwnProps) {
   return (
     <StyledChip>
-      <StyledIcon>
-        <FontAwesomeIcon icon={icon} />
-      </StyledIcon>
+      <StyledIcon>{icon}</StyledIcon>
       {labelKey && <StyledLabelKey>{labelKey}:&nbsp;</StyledLabelKey>}
       {labelValue}
       <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
-        <FontAwesomeIcon icon={faTimes} />
+        <FaTimes />
       </StyledDelete>
     </StyledChip>
   );

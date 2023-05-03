@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 import { useRef, ReactNode } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
 import { modalBackground } from '../../../layout/styles/themes';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown } from '@fortawesome/pro-regular-svg-icons';
+import { FaAngleDown } from 'react-icons/fa';
 
 type OwnProps = {
   label: string;
@@ -183,7 +182,7 @@ const StyleAngleDownContainer = styled.div`
 function DropdownTopOptionAngleDown() {
   return (
     <StyleAngleDownContainer>
-      <FontAwesomeIcon icon={faAngleDown} />
+      <FaAngleDown />
     </StyleAngleDownContainer>
   );
 }

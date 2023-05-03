@@ -1,15 +1,15 @@
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { ReactNode } from 'react';
 
 export type SortType<SortKey = string> = {
   label: string;
   key: SortKey;
-  icon?: IconProp;
+  icon?: ReactNode;
 };
 
 export type FilterType<FilterKey = string> = {
   label: string;
   key: FilterKey;
-  icon: IconProp;
+  icon: ReactNode;
 };
 
 export type SelectedFilterType = {
@@ -17,7 +17,7 @@ export type SelectedFilterType = {
   label: string;
   value: string;
   operand: { id: string; label: string };
-  icon: IconProp;
+  icon: ReactNode;
 };
 
 export type SelectedSortType<SortField = string> = SortType<SortField> & {

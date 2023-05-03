@@ -6,10 +6,6 @@
     "@apollo/client": "^3.7.5",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.5",
-    "@fortawesome/fontawesome-svg-core": "^6.2.1",
-    "@fortawesome/pro-regular-svg-icons": "^6.4.0",
-    "@fortawesome/pro-solid-svg-icons": "^6.4.0",
-    "@fortawesome/react-fontawesome": "^0.2.0",
     "@tanstack/react-table": "^8.8.5",
     "@types/node": "^16.18.4",
     "@types/react": "^18.0.25",
@@ -20,6 +16,7 @@
     "libphonenumber-js": "^1.10.26",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0",
     "react-router-dom": "^6.4.4",
     "web-vitals": "^2.1.4"
   },

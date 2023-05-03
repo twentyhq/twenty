@@ -1,12 +1,12 @@
 import {
-  faBuildings,
-  faCalendar,
-  faEnvelope,
-  faUser,
-  faMapPin,
-  faPhone,
-  faRectangleHistory,
-} from '@fortawesome/pro-regular-svg-icons';
+  FaRegBuilding,
+  FaCalendar,
+  FaEnvelope,
+  FaRegUser,
+  FaMapPin,
+  FaPhone,
+  FaStream,
+} from 'react-icons/fa';
 import { createColumnHelper } from '@tanstack/react-table';
 import ClickableCell from '../../components/table/ClickableCell';
 import ColumnHead from '../../components/table/ColumnHead';
@@ -28,56 +28,56 @@ export const availableSorts = [
   {
     key: 'fullname',
     label: 'People',
-    icon: faUser,
+    icon: <FaRegUser />,
   },
   {
     key: 'company_name',
     label: 'Company',
-    icon: faBuildings,
+    icon: <FaRegBuilding />,
   },
   {
     key: 'email',
     label: 'Email',
-    icon: faEnvelope,
+    icon: <FaEnvelope />,
   },
-  { key: 'phone', label: 'Phone', icon: faPhone },
+  { key: 'phone', label: 'Phone', icon: <FaPhone /> },
   {
     key: 'created_at',
     label: 'Created at',
-    icon: faCalendar,
+    icon: <FaCalendar />,
   },
-  { key: 'city', label: 'City', icon: faMapPin },
+  { key: 'city', label: 'City', icon: <FaMapPin /> },
 ] satisfies Array<SortType<OrderByFields>>;
 
 export const availableFilters = [
   {
     key: 'fullname',
     label: 'People',
-    icon: faUser,
+    icon: <FaRegUser />,
   },
   {
     key: 'company_name',
     label: 'Company',
-    icon: faBuildings,
+    icon: <FaRegBuilding />,
   },
   {
     key: 'email',
     label: 'Email',
-    icon: faEnvelope,
+    icon: <FaEnvelope />,
   },
-  { key: 'phone', label: 'Phone', icon: faPhone },
+  { key: 'phone', label: 'Phone', icon: <FaPhone /> },
   {
     key: 'created_at',
     label: 'Created at',
-    icon: faCalendar,
+    icon: <FaCalendar />,
   },
-  { key: 'city', label: 'City', icon: faMapPin },
+  { key: 'city', label: 'City', icon: <FaMapPin /> },
 ] satisfies FilterType[];
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [
   columnHelper.accessor('fullName', {
-    header: () => <ColumnHead viewName="People" viewIcon={faUser} />,
+    header: () => <ColumnHead viewName="People" viewIcon={<FaRegUser />} />,
     cell: (props) => (
       <>
         <HorizontalyAlignedContainer>
@@ -94,7 +94,7 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('email', {
-    header: () => <ColumnHead viewName="Email" viewIcon={faEnvelope} />,
+    header: () => <ColumnHead viewName="Email" viewIcon={<FaEnvelope />} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.email}
@@ -107,7 +107,9 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('company', {
-    header: () => <ColumnHead viewName="Company" viewIcon={faBuildings} />,
+    header: () => (
+      <ColumnHead viewName="Company" viewIcon={<FaRegBuilding />} />
+    ),
     cell: (props) => (
       <ClickableCell href="#">
         <CompanyChip
@@ -118,7 +120,7 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('phone', {
-    header: () => <ColumnHead viewName="Phone" viewIcon={faPhone} />,
+    header: () => <ColumnHead viewName="Phone" viewIcon={<FaPhone />} />,
     cell: (props) => (
       <ClickableCell
         href={parsePhoneNumber(
@@ -134,7 +136,7 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('creationDate', {
-    header: () => <ColumnHead viewName="Creation" viewIcon={faCalendar} />,
+    header: () => <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />,
     cell: (props) => (
       <ClickableCell href="#">
         {new Intl.DateTimeFormat(undefined, {
@@ -146,7 +148,7 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('pipe', {
-    header: () => <ColumnHead viewName="Pipe" viewIcon={faRectangleHistory} />,
+    header: () => <ColumnHead viewName="Pipe" viewIcon={<FaStream />} />,
     cell: (props) => (
       <ClickableCell href="#">
         <PipeChip
@@ -157,7 +159,7 @@ export const peopleColumns = [
     ),
   }),
   columnHelper.accessor('city', {
-    header: () => <ColumnHead viewName="City" viewIcon={faMapPin} />,
+    header: () => <ColumnHead viewName="City" viewIcon={<FaMapPin />} />,
     cell: (props) => (
       <ClickableCell href="#">{props.row.original.city}</ClickableCell>
     ),

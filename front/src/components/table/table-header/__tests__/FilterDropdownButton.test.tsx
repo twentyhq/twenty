@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { RegularFilterDropdownButton } from '../__stories__/FilterDropdownButton.stories';
-import { faEnvelope } from '@fortawesome/pro-regular-svg-icons';
+import { FaEnvelope } from 'react-icons/fa';
 
 it('Checks the default top option is Include', async () => {
   const setSorts = jest.fn();
@@ -23,7 +23,7 @@ it('Checks the default top option is Include', async () => {
       value: 'John Doe',
       label: 'Email',
       operand: { id: 'include', label: 'Include' },
-      icon: faEnvelope,
+      icon: <FaEnvelope />,
     },
   ]);
 });
@@ -55,7 +55,7 @@ it('Checks the selection of top option for Doesnot include', async () => {
       value: 'John Doe',
       label: 'Email',
       operand: { id: 'not-include', label: "Doesn't include" },
-      icon: faEnvelope,
+      icon: <FaEnvelope />,
     },
   ]);
 

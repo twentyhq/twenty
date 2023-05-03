@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { ReactNode } from 'react';
 
 type OwnProps = {
   viewName: string;
-  viewIcon?: IconProp;
+  viewIcon?: ReactNode;
 };
 
 const StyledTitle = styled.div`
@@ -24,7 +23,7 @@ const StyledIcon = styled.div`
 function TableHeader({ viewName, viewIcon }: OwnProps) {
   return (
     <StyledTitle>
-      <StyledIcon>{viewIcon && <FontAwesomeIcon icon={viewIcon} />}</StyledIcon>
+      <StyledIcon>{viewIcon}</StyledIcon>
       {viewName}
     </StyledTitle>
   );
