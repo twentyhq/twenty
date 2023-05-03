@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import { IconType } from 'react-icons/lib';
 
 type OwnProps = {
   viewName: string;

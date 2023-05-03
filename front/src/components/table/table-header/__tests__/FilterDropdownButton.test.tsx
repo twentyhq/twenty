@@ -55,7 +55,7 @@ it('Checks the selection of top option for Doesnot include', async () => {
       value: 'John Doe',
       label: 'Email',
       operand: { id: 'not-include', label: "Doesn't include" },
-      icon: FaEnvelope,
+      icon: <FaEnvelope />,
     },
   ]);
 

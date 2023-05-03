@@ -18,7 +18,7 @@ it('Checks the default top option is Ascending', async () => {
     {
       label: 'Email',
       key: 'email',
-      icon: FaEnvelope,
+      icon: <FaEnvelope />,
       order: 'asc',
     },
   ]);
@@ -46,7 +46,7 @@ it('Checks the selection of Descending', async () => {
     {
       label: 'Email',
       key: 'email',
-      icon: FaEnvelope,
+      icon: <FaEnvelope />,
       order: 'desc',
     },
   ]);
