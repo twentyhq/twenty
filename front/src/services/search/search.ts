@@ -76,12 +76,6 @@ export const useSearch = (): [
     );
   }, [filterSearchParams]);
 
-  console.log('where', where);
-  console.log(
-    'filterSearchParams?.filter?.searchQuery',
-    filterSearchParams?.filter?.searchQuery,
-  );
-
   const searchFilterQueryResults = useQuery(
     filterSearchParams?.filter?.searchQuery || SEARCH_PEOPLE_QUERY,
     {
@@ -90,8 +84,6 @@ export const useSearch = (): [
       },
     },
   );
-
-  console.log('searchFilterQueryResults', searchFilterQueryResults);
 
   const searchFilterResults = useMemo<{
     results: { displayValue: string; value: any }[];
@@ -113,7 +105,8 @@ export const useSearch = (): [
       {
         loading: false,
         results: searchFilterQueryResults.data?.searchResults.map(
-          filterSearchParams?.filter?.searchResultMapper || (() => null),
+          filterSearchParams?.filter?.searchResultMapper ||
+            (() => ({ displayValue: '', value: '' })),
         ),
       } || { loading: false, results: [] }
     );

@@ -82,7 +82,9 @@ export const availableFilters = [
     key: 'company_name',
     label: 'Company',
     icon: faBuildings,
-    whereTemplate: () => ({ company: { name: { _ilike: '%value%' } } }),
+    whereTemplate: (_operand, { companyName }) => ({
+      company: { name: { _ilike: `%${companyName}%` } },
+    }),
     searchQuery: SEARCH_COMPANY_QUERY,
     searchTemplate: (searchInput: string) => ({
       name: { _ilike: `%${searchInput}%` },
