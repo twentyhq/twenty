@@ -24,12 +24,10 @@ const StyledPeopleContainer = styled.div`
 `;
 
 function People() {
-  const [, setSorts] = useState([] as Array<PeopleSelectedSortType>);
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
   const [filterSearchResults, setFilterSearchParams] = useSearch();
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
-    setSorts(sorts);
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
