@@ -46,7 +46,18 @@ export const parseWhereQuery = (
   return JSON.parse(whereWithValue);
 };
 
-export const useSearch = () => {
+export const useSearch = (): [
+  { results: { displayValue: string; value: any }[]; loading: boolean },
+  (
+    value: React.SetStateAction<
+      | {
+          filter: FilterType<People_Bool_Exp> | null;
+          searchValue: string;
+        }
+      | undefined
+    >,
+  ) => void,
+] => {
   const [filterSearchParams, setFilterSearchParams] = useState<{
     filter: FilterType<People_Bool_Exp> | null;
     searchValue: string;
@@ -74,9 +85,15 @@ export const useSearch = () => {
     },
   });
 
-  const searchFilterResults = useMemo(() => {
+  const searchFilterResults = useMemo<{
+    results: { displayValue: string; value: any }[];
+    loading: boolean;
+  }>(() => {
     if (searchFilterQueryResults.loading) {
-      return { loading: true, results: [] };
+      return {
+        loading: true,
+        results: [],
+      };
     }
     return (
       {
@@ -91,5 +108,5 @@ export const useSearch = () => {
     );
   }, [searchFilterQueryResults]);
 
-  return [searchFilterResults, debouncedSetFilterSearchParams] as const;
+  return [searchFilterResults, debouncedSetFilterSearchParams];
 };
