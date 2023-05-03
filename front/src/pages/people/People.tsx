@@ -29,7 +29,7 @@ const StyledPeopleContainer = styled.div`
 function People() {
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
   const [where, setWhere] = useState<People_Bool_Exp>({});
-  const [filterSearchResults, setFilterSearchParams] = useSearch();
+  const [filterSearchResults, setSearhInput, setFilterSearch] = useSearch();
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
@@ -58,9 +58,10 @@ function People() {
             filterSearchResults={filterSearchResults}
             onSortsUpdate={updateSorts}
             onFiltersUpdate={updateFilters}
-            onFilterSearch={(filter, searchValue) =>
-              setFilterSearchParams({ filter, searchValue })
-            }
+            onFilterSearch={(filter, searchValue) => {
+              setSearhInput(searchValue);
+              setFilterSearch(filter);
+            }}
           />
         }
       </StyledPeopleContainer>

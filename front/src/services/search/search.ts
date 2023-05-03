@@ -41,43 +41,29 @@ const debounce = <FuncArgs extends any[]>(
   };
 };
 
-export const parseWhereQuery = (
-  whereTemplate: People_Bool_Exp,
-  value: string,
-): People_Bool_Exp => {
-  const whereStringified = JSON.stringify(whereTemplate);
-  const whereWithValue = whereStringified.replace('value', value);
-  return JSON.parse(whereWithValue);
-};
-
-type SearchAndFilter = {
-  filter: FilterType<People_Bool_Exp> | null;
-  searchValue: string;
-};
-
 export const useSearch = (): [
   { results: { displayValue: string; value: any }[]; loading: boolean },
-  (value: React.SetStateAction<SearchAndFilter | undefined>) => void,
+  React.Dispatch<React.SetStateAction<string>>,
+  React.Dispatch<React.SetStateAction<FilterType<People_Bool_Exp> | null>>,
 ] => {
-  const [filterSearchParams, setFilterSearchParams] =
-    useState<SearchAndFilter>();
+  const [filter, setFilter] = useState<FilterType<People_Bool_Exp> | null>(
+    null,
+  );
+  const [searchInput, setSearchInput] = useState<string>('');
 
-  const debouncedSetFilterSearchParams = useMemo(
-    () => debounce(setFilterSearchParams, 500),
+  const debouncedsetSearchInput = useMemo(
+    () => debounce(setSearchInput, 500),
     [],
   );
 
   const where = useMemo(() => {
     return (
-      filterSearchParams &&
-      filterSearchParams.filter &&
-      filterSearchParams.filter.searchTemplate &&
-      filterSearchParams.filter.searchTemplate(filterSearchParams.searchValue)
+      filter && filter.searchTemplate && filter.searchTemplate(searchInput)
     );
-  }, [filterSearchParams]);
+  }, [filter, searchInput]);
 
   const searchFilterQueryResults = useQuery(
-    filterSearchParams?.filter?.searchQuery || SEARCH_PEOPLE_QUERY,
+    filter?.searchQuery || SEARCH_PEOPLE_QUERY,
     {
       variables: {
         where,
@@ -89,7 +75,7 @@ export const useSearch = (): [
     results: { displayValue: string; value: any }[];
     loading: boolean;
   }>(() => {
-    if (filterSearchParams == null) {
+    if (filter == null) {
       return {
         loading: false,
         results: [],
@@ -105,12 +91,12 @@ export const useSearch = (): [
       {
         loading: false,
         results: searchFilterQueryResults.data?.searchResults.map(
-          filterSearchParams?.filter?.searchResultMapper ||
+          filter?.searchResultMapper ||
             (() => ({ displayValue: '', value: '' })),
         ),
       } || { loading: false, results: [] }
     );
-  }, [searchFilterQueryResults, filterSearchParams]);
+  }, [filter, searchFilterQueryResults]);
 
-  return [searchFilterResults, debouncedSetFilterSearchParams];
+  return [searchFilterResults, debouncedsetSearchInput, setFilter];
 };
