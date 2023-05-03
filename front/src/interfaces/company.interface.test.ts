@@ -25,8 +25,7 @@ describe('mapCompany', () => {
       '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
     );
     expect(company.accountOwner?.email).toBe('john@example.com');
-    expect(company.accountOwner?.first_name).toBe('John');
-    expect(company.accountOwner?.last_name).toBe('Doe');
+    expect(company.accountOwner?.displayName).toBe('John Doe');
     expect(company.employees).toBe(10);
     expect(company.address).toBe(
       '1 Infinite Loop, 95014 Cupertino, California, USA',
@@ -68,8 +67,7 @@ describe('mapCompany', () => {
       accountOwner: {
         id: '522d4ec4-c46b-4360-a0a7-df8df170be81',
         email: 'john@example.com',
-        first_name: 'John',
-        last_name: 'Doe',
+        displayName: 'John Doe',
       },
       creationDate: now,
     });

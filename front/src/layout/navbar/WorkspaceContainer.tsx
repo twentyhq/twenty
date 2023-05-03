@@ -39,13 +39,13 @@ const StyledName = styled.div`
   font-color: ${(props) => props.theme.text0};
 `;
 
-function ProfileContainer({ workspace }: OwnProps) {
+function WorkspaceContainer({ workspace }: OwnProps) {
   return (
     <StyledContainer>
       <StyledLogo logo={workspace.logo}></StyledLogo>
-      <StyledName>{workspace?.name}</StyledName>
+      <StyledName>{workspace?.display_name}</StyledName>
     </StyledContainer>
   );
 }
 
-export default ProfileContainer;
+export default WorkspaceContainer;

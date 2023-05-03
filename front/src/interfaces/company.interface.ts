@@ -50,11 +50,7 @@ export const mapCompany = (company: GraphqlQueryCompany): Company => ({
     ? {
         id: company.account_owner.id,
         email: company.account_owner.email,
-        first_name: company.account_owner.displayName.split(' ').shift() || '',
-        last_name: company.account_owner.displayName
-          .split(' ')
-          .slice(1)
-          .join(' '),
+        displayName: company.account_owner.displayName,
       }
     : undefined,
   creationDate: new Date(company.created_at),
