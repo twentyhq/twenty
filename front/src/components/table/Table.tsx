@@ -16,17 +16,22 @@ import {
   SortType,
 } from './table-header/interface';
 
-type OwnProps<TData, SortField> = {
+type OwnProps<TData, SortField, FilterProperties> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: IconProp;
   availableSorts?: Array<SortType<SortField>>;
-  availableFilters?: FilterType[];
+  availableFilters?: FilterType<FilterProperties>[];
   filterSearchResults?: Array<string>;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
-  onFilterSearch?: (filter: FilterType | null, searchValue: string) => void;
+  onFiltersUpdate?: (
+    sorts: Array<SelectedFilterType<FilterProperties>>,
+  ) => void;
+  onFilterSearch?: (
+    filter: FilterType<FilterProperties> | null,
+    searchValue: string,
+  ) => void;
 };
 
 const StyledTable = styled.table`
@@ -80,7 +85,7 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-function Table<TData, SortField extends string>({
+function Table<TData, SortField extends string, FilterProperies>({
   data,
   columns,
   viewName,
@@ -91,7 +96,7 @@ function Table<TData, SortField extends string>({
   onSortsUpdate,
   onFiltersUpdate,
   onFilterSearch,
-}: OwnProps<TData, SortField>) {
+}: OwnProps<TData, SortField, FilterProperies>) {
   const table = useReactTable({
     data,
     columns,

@@ -3,12 +3,15 @@ import DropdownButton from './DropdownButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FilterOperandType, FilterType, SelectedFilterType } from './interface';
 
-type OwnProps = {
+type OwnProps<FilterProperties> = {
   isFilterSelected: boolean;
-  availableFilters: FilterType[];
+  availableFilters: FilterType<FilterProperties>[];
   filterSearchResults?: string[];
-  onFilterSelect: (filter: SelectedFilterType) => void;
-  onFilterSearch: (filter: FilterType | null, searchValue: string) => void;
+  onFilterSelect: (filter: SelectedFilterType<FilterProperties>) => void;
+  onFilterSearch: (
+    filter: FilterType<FilterProperties> | null,
+    searchValue: string,
+  ) => void;
 };
 
 const filterOperands: FilterOperandType[] = [
@@ -16,20 +19,20 @@ const filterOperands: FilterOperandType[] = [
   { label: "Doesn't include", id: 'not-include', keyWord: 'not_ilike' },
 ];
 
-export function FilterDropdownButton({
+export function FilterDropdownButton<FilterProperties>({
   availableFilters,
   filterSearchResults,
   onFilterSearch,
   onFilterSelect,
   isFilterSelected,
-}: OwnProps) {
+}: OwnProps<FilterProperties>) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
 
-  const [selectedFilter, setSelectedFilter] = useState<FilterType | undefined>(
-    undefined,
-  );
+  const [selectedFilter, setSelectedFilter] = useState<
+    FilterType<FilterProperties> | undefined
+  >(undefined);
 
   const [selectedFilterOperand, setSelectedFilterOperand] =
     useState<FilterOperandType>(filterOperands[0]);
@@ -67,7 +70,7 @@ export function FilterDropdownButton({
     </DropdownButton.StyledDropdownItem>
   ));
 
-  function renderFilterDropdown(selectedFilter: FilterType) {
+  function renderFilterDropdown(selectedFilter: FilterType<FilterProperties>) {
     return (
       <>
         <DropdownButton.StyledDropdownTopOption

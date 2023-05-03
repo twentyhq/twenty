@@ -6,6 +6,7 @@ import { FilterType, SelectedFilterType } from '../interface';
 import { faUser } from '@fortawesome/pro-regular-svg-icons';
 import { useCallback, useState } from 'react';
 import { GET_PEOPLE } from '../../../../services/people';
+import { People_Bool_Exp } from '../../../../generated/graphql';
 
 const component = {
   title: 'FilterDropdownButton',
@@ -14,8 +15,8 @@ const component = {
 
 export default component;
 
-type OwnProps = {
-  setFilter: (filters: SelectedFilterType) => void;
+type OwnProps<FilterProperties> = {
+  setFilter: (filters: SelectedFilterType<FilterProperties>) => void;
 };
 
 const availableFilters = [
@@ -37,7 +38,7 @@ const availableFilters = [
       ],
     },
   },
-] satisfies FilterType[];
+] satisfies FilterType<People_Bool_Exp>[];
 
 const StyleDiv = styled.div`
   height: 200px;
@@ -46,10 +47,10 @@ const StyleDiv = styled.div`
 
 export const RegularFilterDropdownButton = ({
   setFilter: setFilters,
-}: OwnProps) => {
-  const [, innerSetFilters] = useState<SelectedFilterType>();
+}: OwnProps<People_Bool_Exp>) => {
+  const [, innerSetFilters] = useState<SelectedFilterType<People_Bool_Exp>>();
   const outerSetFilters = useCallback(
-    (filter: SelectedFilterType) => {
+    (filter: SelectedFilterType<People_Bool_Exp>) => {
       innerSetFilters(filter);
       setFilters(filter);
     },

@@ -5,7 +5,10 @@ import {
   People_Bool_Exp,
   People_Order_By,
 } from '../../generated/graphql';
-import { SelectedSortType } from '../../components/table/table-header/interface';
+import {
+  SelectedFilterType,
+  SelectedSortType,
+} from '../../components/table/table-header/interface';
 
 export type OrderByFields = keyof People_Order_By | 'fullname' | 'company_name';
 
@@ -13,6 +16,13 @@ export type PeopleSelectedSortType = SelectedSortType<OrderByFields>;
 
 const mapOrder = (order: 'asc' | 'desc'): Order_By => {
   return order === 'asc' ? Order_By.Asc : Order_By.Desc;
+};
+
+export const reduceFiltersToWhere = <T>(
+  filters: Array<SelectedFilterType<T>>,
+): T => {
+  console.log(filters);
+  return {} as T;
 };
 
 export const reduceSortsToOrderBy = (

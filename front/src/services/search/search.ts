@@ -48,7 +48,7 @@ export const parseWhereQuery = (
 
 export const useSearch = () => {
   const [filterSearchParams, setFilterSearchParams] = useState<{
-    filter: FilterType | null;
+    filter: FilterType<People_Bool_Exp> | null;
     searchValue: string;
   }>();
 

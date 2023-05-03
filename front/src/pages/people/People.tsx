@@ -12,6 +12,7 @@ import { useCallback, useState } from 'react';
 import {
   PeopleSelectedSortType,
   defaultOrderBy,
+  reduceFiltersToWhere,
   reduceSortsToOrderBy,
   usePeopleQuery,
 } from '../../services/people';
@@ -34,10 +35,14 @@ function People() {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
-  const updateFilters = useCallback((filters: Array<SelectedFilterType>) => {
-    console.log(filters);
-    setWhere({ firstname: { _ilike: filters[0].key } });
-  }, []);
+  const updateFilters = useCallback(
+    (filters: Array<SelectedFilterType<People_Bool_Exp>>) => {
+      console.log(filters);
+      console.log(filters.length ? reduceFiltersToWhere(filters) : '');
+      setWhere(filters.length ? { firstname: { _ilike: filters[0].key } } : {});
+    },
+    [],
+  );
 
   const { data } = usePeopleQuery(orderBy, where);
 

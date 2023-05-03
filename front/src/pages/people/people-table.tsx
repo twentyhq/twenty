@@ -24,6 +24,7 @@ import {
   SortType,
 } from '../../components/table/table-header/interface';
 import { GET_COMPANIES } from '../../services/companies';
+import { People_Bool_Exp } from '../../generated/graphql';
 
 export const availableSorts = [
   {
@@ -109,7 +110,7 @@ export const availableFilters = [
     searchQuery: GET_PEOPLE,
     searchTemplate: { city: { _ilike: '%value%' } },
   },
-] satisfies FilterType[];
+] satisfies FilterType<People_Bool_Exp>[];
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [

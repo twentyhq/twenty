@@ -3,11 +3,13 @@ import SortOrFilterChip from './SortOrFilterChip';
 import { faArrowDown, faArrowUp } from '@fortawesome/pro-regular-svg-icons';
 import { SelectedFilterType, SelectedSortType } from './interface';
 
-type OwnProps<SortField> = {
+type OwnProps<SortField, FilterProperties> = {
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
-  filters: Array<SelectedFilterType>;
-  onRemoveFilter: (filterId: SelectedFilterType['key']) => void;
+  filters: Array<SelectedFilterType<FilterProperties>>;
+  onRemoveFilter: (
+    filterId: SelectedFilterType<FilterProperties>['key'],
+  ) => void;
 };
 
 const StyledBar = styled.div`
@@ -39,12 +41,12 @@ const StyledCancelButton = styled.button`
   }
 `;
 
-function SortAndFilterBar<SortField extends string>({
+function SortAndFilterBar<SortField extends string, FilterProperties>({
   sorts,
   onRemoveSort,
   filters,
   onRemoveFilter,
-}: OwnProps<SortField>) {
+}: OwnProps<SortField, FilterProperties>) {
   return (
     <StyledBar>
       {sorts.map((sort) => {

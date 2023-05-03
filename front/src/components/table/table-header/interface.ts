@@ -16,11 +16,11 @@ export type SelectedSortType<SortField = string> = SortType<SortField> & {
   order: 'asc' | 'desc';
 };
 
-export type FilterType = {
+export type FilterType<WhereTemplate> = {
   label: string;
   key: string;
   icon: IconProp;
-  whereTemplate: People_Bool_Exp;
+  whereTemplate: WhereTemplate;
   searchQuery: DocumentNode;
   searchTemplate: People_Bool_Exp | Companies_Bool_Exp | Users_Bool_Exp;
 };
@@ -31,7 +31,7 @@ export type FilterOperandType = {
   keyWord: 'ilike' | 'not_ilike';
 };
 
-export type SelectedFilterType = FilterType & {
+export type SelectedFilterType<WhereTemplate> = FilterType<WhereTemplate> & {
   value: string;
   operand: FilterOperandType;
 };
