@@ -61,6 +61,7 @@ export function FilterDropdownButton<FilterProperties>({
       key={`select-filter-${index}`}
       onClick={() => {
         setSelectedFilter(filter);
+        onFilterSearch(filter, '');
       }}
     >
       <DropdownButton.StyledIcon>
