@@ -64,7 +64,12 @@ export const RegularFilterDropdownButton = ({
           isFilterSelected={true}
           onFilterSearch={jest.fn()}
           onFilterSelect={outerSetFilters}
-          filterSearchResults={['John Doe']}
+          filterSearchResults={[
+            {
+              displayValue: 'John Doe',
+              value: { firstname: 'John', lastname: 'doe' },
+            },
+          ]}
         />
       </StyleDiv>
     </ThemeProvider>

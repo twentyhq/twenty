@@ -56,10 +56,10 @@ export const availableFilters = [
     key: 'fullname',
     label: 'People',
     icon: faUser,
-    whereTemplate: (value: string) => ({
-      _or: [
-        { firstname: { _ilike: `%${value}%` } },
-        { lastname: { _ilike: `%${value}%` } },
+    whereTemplate: (_operand, { firstname, lastname }) => ({
+      _and: [
+        { firstname: { _ilike: `${firstname}` } },
+        { lastname: { _ilike: `${lastname}` } },
       ],
     }),
     searchQuery: GET_PEOPLE,

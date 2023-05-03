@@ -6,7 +6,7 @@ import { FilterOperandType, FilterType, SelectedFilterType } from './interface';
 type OwnProps<FilterProperties> = {
   isFilterSelected: boolean;
   availableFilters: FilterType<FilterProperties>[];
-  filterSearchResults?: string[];
+  filterSearchResults?: { displayValue: string; value: any }[];
   onFilterSelect: (filter: SelectedFilterType<FilterProperties>) => void;
   onFilterSearch: (
     filter: FilterType<FilterProperties> | null,
@@ -96,21 +96,24 @@ export function FilterDropdownButton<FilterProperties>({
               key={`fields-value-${index}`}
               onClick={() => {
                 onFilterSelect({
-                  key: value,
+                  key: value.displayValue,
                   operand: selectedFilterOperand,
                   searchQuery: selectedFilter.searchQuery,
                   searchTemplate: selectedFilter.searchTemplate,
                   whereTemplate: selectedFilter.whereTemplate,
                   label: selectedFilter.label,
-                  value: value,
+                  value: value.displayValue,
                   icon: selectedFilter.icon,
-                  where: selectedFilter.whereTemplate(value),
+                  where: selectedFilter.whereTemplate(
+                    selectedFilterOperand,
+                    value.value,
+                  ),
                 });
                 setIsUnfolded(false);
                 setSelectedFilter(undefined);
               }}
             >
-              {value}
+              {value.displayValue}
             </DropdownButton.StyledDropdownItem>
           ))}
       </>

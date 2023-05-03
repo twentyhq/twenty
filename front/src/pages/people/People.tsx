@@ -39,7 +39,7 @@ function People() {
     (filters: Array<SelectedFilterType<People_Bool_Exp>>) => {
       console.log(filters);
       console.log(filters.length ? reduceFiltersToWhere(filters) : '');
-      setWhere(filters.length ? { firstname: { _ilike: filters[0].key } } : {});
+      setWhere(filters.length ? filters[0].where : {});
     },
     [],
   );

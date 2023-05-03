@@ -82,7 +82,10 @@ export const useSearch = () => {
       {
         loading: false,
         results: searchFilterQueryResults.data?.people.map(
-          (person: GraphqlQueryPerson) => person.firstname,
+          (person: GraphqlQueryPerson) => ({
+            displayValue: `${person.firstname} ${person.lastname}`,
+            value: { firstname: person.firstname, lastname: person.lastname },
+          }),
         ),
       } || { loading: false, results: [] }
     );

@@ -18,7 +18,7 @@ type OwnProps<SortField, FilterProperties> = {
   viewIcon?: IconProp;
   availableSorts?: Array<SortType<SortField>>;
   availableFilters?: FilterType<FilterProperties>[];
-  filterSearchResults?: Array<string>;
+  filterSearchResults?: { displayValue: string; value: any }[];
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onFiltersUpdate?: (
     sorts: Array<SelectedFilterType<FilterProperties>>,
