@@ -46,22 +46,17 @@ export const parseWhereQuery = (
   return JSON.parse(whereWithValue);
 };
 
+type SearchAndFilter = {
+  filter: FilterType<People_Bool_Exp> | null;
+  searchValue: string;
+};
+
 export const useSearch = (): [
   { results: { displayValue: string; value: any }[]; loading: boolean },
-  (
-    value: React.SetStateAction<
-      | {
-          filter: FilterType<People_Bool_Exp> | null;
-          searchValue: string;
-        }
-      | undefined
-    >,
-  ) => void,
+  (value: React.SetStateAction<SearchAndFilter | undefined>) => void,
 ] => {
-  const [filterSearchParams, setFilterSearchParams] = useState<{
-    filter: FilterType<People_Bool_Exp> | null;
-    searchValue: string;
-  }>();
+  const [filterSearchParams, setFilterSearchParams] =
+    useState<SearchAndFilter>();
 
   const debouncedSetFilterSearchParams = useMemo(
     () => debounce(setFilterSearchParams, 500),
