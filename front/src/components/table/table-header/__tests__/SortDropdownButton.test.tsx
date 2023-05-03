@@ -14,14 +14,12 @@ it('Checks the default top option is Ascending', async () => {
   const sortByEmail = getByText('Email');
   fireEvent.click(sortByEmail);
 
-  expect(setSorts).toHaveBeenCalledWith([
-    {
-      label: 'Email',
-      key: 'email',
-      icon: faEnvelope,
-      order: 'asc',
-    },
-  ]);
+  expect(setSorts).toHaveBeenCalledWith({
+    label: 'Email',
+    key: 'email',
+    icon: faEnvelope,
+    order: 'asc',
+  });
 });
 
 it('Checks the selection of Descending', async () => {
@@ -42,12 +40,10 @@ it('Checks the selection of Descending', async () => {
   const sortByEmail = getByText('Email');
   fireEvent.click(sortByEmail);
 
-  expect(setSorts).toHaveBeenCalledWith([
-    {
-      label: 'Email',
-      key: 'email',
-      icon: faEnvelope,
-      order: 'desc',
-    },
-  ]);
+  expect(setSorts).toHaveBeenCalledWith({
+    label: 'Email',
+    key: 'email',
+    icon: faEnvelope,
+    order: 'desc',
+  });
 });
