@@ -21,8 +21,11 @@ const mapOrder = (order: 'asc' | 'desc'): Order_By => {
 export const reduceFiltersToWhere = <T>(
   filters: Array<SelectedFilterType<T>>,
 ): T => {
-  console.log(filters);
-  return {} as T;
+  const where = filters.reduce((acc, filter) => {
+    const { where } = filter;
+    return { ...acc, ...where };
+  }, {} as T);
+  return where;
 };
 
 export const reduceSortsToOrderBy = (

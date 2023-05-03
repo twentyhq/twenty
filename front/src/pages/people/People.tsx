@@ -37,9 +37,7 @@ function People() {
 
   const updateFilters = useCallback(
     (filters: Array<SelectedFilterType<People_Bool_Exp>>) => {
-      console.log(filters);
-      console.log(filters.length ? reduceFiltersToWhere(filters) : '');
-      setWhere(filters.length ? filters[0].where : {});
+      setWhere(reduceFiltersToWhere(filters));
     },
     [],
   );
