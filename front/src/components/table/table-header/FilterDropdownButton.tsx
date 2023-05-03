@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ReactIcon from '../../icons/ReactIcon';
 import { FilterType, SelectedFilterType } from './interface';
 
 type OwnProps = {
@@ -73,7 +73,7 @@ export function FilterDropdownButton({
       }}
     >
       <DropdownButton.StyledIcon>
-        {filter.icon && <FontAwesomeIcon icon={filter.icon} />}
+        {filter.icon && <ReactIcon icon={filter.icon} />}
       </DropdownButton.StyledIcon>
       {filter.label}
     </DropdownButton.StyledDropdownItem>

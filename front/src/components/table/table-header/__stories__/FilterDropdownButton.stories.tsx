@@ -4,13 +4,13 @@ import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
 import { FilterType, SelectedFilterType } from '../interface';
 import {
-  faUser,
-  faBuildings,
-  faEnvelope,
-  faPhone,
-  faCalendar,
-  faMapPin,
-} from '@fortawesome/pro-regular-svg-icons';
+  FaUser,
+  FaBuilding,
+  FaEnvelope,
+  FaPhone,
+  FaCalendar,
+  FaMapPin,
+} from 'react-icons/fa';
 import { useCallback, useState } from 'react';
 
 const component = {
@@ -28,25 +28,25 @@ const availableFilters = [
   {
     key: 'fullname',
     label: 'People',
-    icon: faUser,
+    icon: FaUser,
   },
   {
     key: 'company_name',
     label: 'Company',
-    icon: faBuildings,
+    icon: FaBuilding,
   },
   {
     key: 'email',
     label: 'Email',
-    icon: faEnvelope,
+    icon: FaEnvelope,
   },
-  { key: 'phone', label: 'Phone', icon: faPhone },
+  { key: 'phone', label: 'Phone', icon: FaPhone },
   {
     key: 'created_at',
     label: 'Created at',
-    icon: faCalendar,
+    icon: FaCalendar,
   },
-  { key: 'city', label: 'City', icon: faMapPin },
+  { key: 'city', label: 'City', icon: FaMapPin },
 ] satisfies FilterType[];
 
 const StyleDiv = styled.div`

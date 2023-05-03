@@ -1,4 +1,4 @@
-import { faUser, faList } from '@fortawesome/pro-regular-svg-icons';
+import { FaUser, FaList } from 'react-icons/fa';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
 import styled from '@emotion/styled';
@@ -34,14 +34,14 @@ function People() {
   const { data } = usePeopleQuery(orderBy);
 
   return (
-    <WithTopBarContainer title="People" icon={faUser}>
+    <WithTopBarContainer title="People" icon={FaUser}>
       <StyledPeopleContainer>
         {
           <Table
             data={data ? data.people.map(mapPerson) : []}
             columns={peopleColumns}
             viewName="All People"
-            viewIcon={faList}
+            viewIcon={FaList}
             onSortsUpdate={updateSorts}
             availableSorts={availableSorts}
             availableFilters={availableFilters}

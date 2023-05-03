@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { RegularFilterDropdownButton } from '../__stories__/FilterDropdownButton.stories';
-import { faEnvelope } from '@fortawesome/pro-regular-svg-icons';
+import { FaEnvelope } from 'react-icons/fa';
 
 it('Checks the default top option is Include', async () => {
   const setSorts = jest.fn();

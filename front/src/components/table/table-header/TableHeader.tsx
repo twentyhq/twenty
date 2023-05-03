@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ReactIcon from '../../icons/ReactIcon';
 import DropdownButton from './DropdownButton';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { IconType } from 'react-icons/lib';
 import {
   FilterType,
   SelectedFilterType,
@@ -15,7 +15,7 @@ import SortAndFilterBar from './SortAndFilterBar';
 
 type OwnProps<SortField> = {
   viewName: string;
-  viewIcon?: IconProp;
+  viewIcon?: IconType;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
   availableSorts?: Array<SortType<SortField>>;
@@ -110,9 +110,7 @@ function TableHeader<SortField extends string>({
     <StyledContainer>
       <StyledTableHeader>
         <StyledViewSection>
-          <StyledIcon>
-            {viewIcon && <FontAwesomeIcon icon={viewIcon} />}
-          </StyledIcon>
+          <StyledIcon>{viewIcon && <ReactIcon icon={viewIcon} />}</StyledIcon>
           {viewName}
         </StyledViewSection>
         <StyledFilters>

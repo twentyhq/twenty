@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
 import { SelectedSortType, SortType } from './interface';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ReactIcon from '../../icons/ReactIcon';
 
 type OwnProps<SortField> = {
   sorts: SelectedSortType<SortField>[];
@@ -74,7 +74,7 @@ export function SortDropdownButton<SortField extends string>({
                 }}
               >
                 <DropdownButton.StyledIcon>
-                  {sort.icon && <FontAwesomeIcon icon={sort.icon} />}
+                  {sort.icon && <ReactIcon icon={sort.icon} />}
                 </DropdownButton.StyledIcon>
                 {sort.label}
               </DropdownButton.StyledDropdownItem>

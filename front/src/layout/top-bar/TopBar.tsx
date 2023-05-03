@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconType } from 'react-icons/lib';
+import ReactIcon from '../../components/icons/ReactIcon';
 
 const TopBarContainer = styled.div`
   display: flex;
@@ -22,14 +22,14 @@ const TitleContainer = styled.div`
 
 type OwnProps = {
   title: string;
-  icon: IconProp;
+  icon: IconType;
 };
 
 function TopBar({ title, icon }: OwnProps) {
   return (
     <>
       <TopBarContainer>
-        <FontAwesomeIcon icon={icon} />
+        <ReactIcon icon={icon} />
         <TitleContainer data-testid="top-bar-title">{title}</TitleContainer>
       </TopBarContainer>
     </>

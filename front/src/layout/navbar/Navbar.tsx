@@ -5,11 +5,7 @@ import { Workspace } from '../../interfaces/workspace.interface';
 import NavItem from './NavItem';
 import NavTitle from './NavTitle';
 import WorkspaceContainer from './WorkspaceContainer';
-import { faUser } from '@fortawesome/pro-regular-svg-icons';
-import {
-  faBuildings,
-  faBullseyeArrow,
-} from '@fortawesome/pro-regular-svg-icons';
+import { FaUser, FaBuilding, FaBullseye } from 'react-icons/fa';
 
 const NavbarContainer = styled.div`
   display: flex;
@@ -40,7 +36,7 @@ function Navbar({ workspace }: OwnProps) {
           <NavItem
             label="People"
             to="/people"
-            icon={faUser}
+            icon={FaUser}
             active={
               !!useMatch({
                 path: useResolvedPath('/people').pathname,
@@ -51,7 +47,7 @@ function Navbar({ workspace }: OwnProps) {
           <NavItem
             label="Companies"
             to="/companies"
-            icon={faBuildings}
+            icon={FaBuilding}
             active={
               !!useMatch({
                 path: useResolvedPath('/companies').pathname,
@@ -62,7 +58,7 @@ function Navbar({ workspace }: OwnProps) {
           <NavItem
             label="Opportunities"
             to="/opportunities"
-            icon={faBullseyeArrow}
+            icon={FaBullseye}
             active={
               !!useMatch({
                 path: useResolvedPath('/opportunities').pathname,

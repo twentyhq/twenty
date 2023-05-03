@@ -1,7 +1,7 @@
 import SortAndFilterBar from '../SortAndFilterBar';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
-import { faArrowDown } from '@fortawesome/pro-regular-svg-icons';
+import { FaArrowDown } from 'react-icons/fa';
 
 const component = {
   title: 'SortAndFilterBar',
@@ -23,13 +23,13 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
             label: 'Test sort',
             order: 'asc',
             key: 'test_sort',
-            icon: faArrowDown,
+            icon: FaArrowDown,
           },
           {
             label: 'Test sort 2',
             order: 'desc',
             key: 'test_sort_2',
-            icon: faArrowDown,
+            icon: FaArrowDown,
           },
         ]}
         onRemoveSort={removeFunction}
@@ -39,7 +39,7 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
             label: 'People',
             operand: { id: 'include', label: 'Include' },
             id: 'test_filter',
-            icon: faArrowDown,
+            icon: FaArrowDown,
             value: 'John Doe',
           },
         ]}

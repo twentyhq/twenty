@@ -7,7 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import TableHeader from './table-header/TableHeader';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { IconType } from 'react-icons/lib';
 import styled from '@emotion/styled';
 import {
   FilterType,
@@ -19,7 +19,7 @@ type OwnProps<TData, SortField> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
-  viewIcon?: IconProp;
+  viewIcon?: IconType;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   availableSorts?: Array<SortType<SortField>>;
   availableFilters?: FilterType[];

@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import TopBar from '../top-bar/TopBar';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { IconType } from 'react-icons/lib';
 
 type OwnProps = {
   children: JSX.Element;
   title: string;
-  icon: IconProp;
+  icon: IconType;
 };
 
 const StyledContainer = styled.div`

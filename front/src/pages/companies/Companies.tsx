@@ -1,4 +1,4 @@
-import { faBuildings, faList } from '@fortawesome/pro-regular-svg-icons';
+import { FaBuilding, FaList } from 'react-icons/fa';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import styled from '@emotion/styled';
 import { useState, useCallback } from 'react';
@@ -29,13 +29,13 @@ function Companies() {
   const { data } = useCompaniesQuery(orderBy);
 
   return (
-    <WithTopBarContainer title="Companies" icon={faBuildings}>
+    <WithTopBarContainer title="Companies" icon={FaBuilding}>
       <StyledCompaniesContainer>
         <Table
           data={data ? data.companies.map(mapCompany) : []}
           columns={companiesColumns}
           viewName="All Companies"
-          viewIcon={faList}
+          viewIcon={FaList}
           onSortsUpdate={updateSorts}
           availableSorts={sortsAvailable}
         />

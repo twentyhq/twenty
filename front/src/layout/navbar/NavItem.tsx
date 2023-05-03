@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import ReactIcon from '../../components/icons/ReactIcon';
+import { IconType } from 'react-icons/lib';
 
 type OwnProps = {
   label: string;
   to: string;
   active?: boolean;
-  icon: IconProp;
+  icon: IconType;
 };
 
 type StyledItemProps = {
@@ -50,7 +50,7 @@ function NavItem({ label, icon, to, active }: OwnProps) {
       active={active}
       aria-selected={active}
     >
-      <FontAwesomeIcon icon={icon} />
+      <ReactIcon icon={icon} />
       <StyledItemLabel>{label}</StyledItemLabel>
     </StyledItem>
   );

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import SortOrFilterChip from './SortOrFilterChip';
-import { faArrowDown, faArrowUp } from '@fortawesome/pro-regular-svg-icons';
+import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { SelectedFilterType, SelectedSortType } from './interface';
 
 type OwnProps<SortField> = {
@@ -53,7 +53,7 @@ function SortAndFilterBar<SortField extends string>({
             key={sort.key}
             labelValue={sort.label}
             id={sort.key}
-            icon={sort.order === 'asc' ? faArrowDown : faArrowUp}
+            icon={sort.order === 'asc' ? FaArrowDown : FaArrowUp}
             onRemove={() => onRemoveSort(sort.key)}
           />
         );

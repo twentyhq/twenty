@@ -8,14 +8,14 @@ import CompanyChip from '../../components/chips/CompanyChip';
 import EditableCell from '../../components/table/EditableCell';
 import PipeChip from '../../components/chips/PipeChip';
 import {
-  faBuildings,
-  faCalendar,
-  faLinkSimple,
-  faMapPin,
-  faRectangleHistory,
-  faSigma,
-  faUser,
-} from '@fortawesome/pro-regular-svg-icons';
+  FaBuilding,
+  FaCalendar,
+  FaLink,
+  FaMapPin,
+  FaStream,
+  FaUsers,
+  FaUser,
+} from 'react-icons/fa';
 import ClickableCell from '../../components/table/ClickableCell';
 import PersonChip from '../../components/chips/PersonChip';
 import { SortType } from '../../components/table/table-header/interface';
@@ -36,7 +36,7 @@ export const sortsAvailable = [
 const columnHelper = createColumnHelper<Company>();
 export const companiesColumns = [
   columnHelper.accessor('name', {
-    header: () => <ColumnHead viewName="Name" viewIcon={faBuildings} />,
+    header: () => <ColumnHead viewName="Name" viewIcon={FaBuilding} />,
     cell: (props) => (
       <HorizontalyAlignedContainer>
         <Checkbox
@@ -51,7 +51,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('employees', {
-    header: () => <ColumnHead viewName="Employees" viewIcon={faSigma} />,
+    header: () => <ColumnHead viewName="Employees" viewIcon={FaUsers} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.employees.toFixed(0)}
@@ -64,7 +64,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('domain_name', {
-    header: () => <ColumnHead viewName="URL" viewIcon={faLinkSimple} />,
+    header: () => <ColumnHead viewName="URL" viewIcon={FaLink} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.domain_name}
@@ -77,7 +77,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('address', {
-    header: () => <ColumnHead viewName="Address" viewIcon={faMapPin} />,
+    header: () => <ColumnHead viewName="Address" viewIcon={FaMapPin} />,
     cell: (props) => (
       <EditableCell
         content={props.row.original.address}
@@ -90,9 +90,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('opportunities', {
-    header: () => (
-      <ColumnHead viewName="Opportunities" viewIcon={faRectangleHistory} />
-    ),
+    header: () => <ColumnHead viewName="Opportunities" viewIcon={FaStream} />,
     cell: (props) => (
       <ClickableCell href="#">
         {props.row.original.opportunities.map((opportunity) => (
@@ -102,7 +100,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('creationDate', {
-    header: () => <ColumnHead viewName="Creation" viewIcon={faCalendar} />,
+    header: () => <ColumnHead viewName="Creation" viewIcon={FaCalendar} />,
     cell: (props) => (
       <ClickableCell href="#">
         {new Intl.DateTimeFormat(undefined, {
@@ -114,7 +112,7 @@ export const companiesColumns = [
     ),
   }),
   columnHelper.accessor('accountOwner', {
-    header: () => <ColumnHead viewName="Account Owner" viewIcon={faUser} />,
+    header: () => <ColumnHead viewName="Account Owner" viewIcon={FaUser} />,
     cell: (props) => (
       <ClickableCell href="#">
         <>
