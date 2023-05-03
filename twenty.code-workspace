@@ -1,0 +1,21 @@
+{
+  "folders": [
+    {
+      "path": "front"
+    },
+    {
+      "path": "hasura"
+    },
+    {
+      "path": "server"
+    },
+    {
+      "path": "docs"
+    },
+    {
+      "path": ".",
+      "name": "root"
+
+    }
+  ]
+}

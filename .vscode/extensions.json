@@ -1,0 +1,6 @@
+{
+  "recommendations": [
+    "ms-vscode-remote.remote-containers",
+    "ms-vscode.makefile-tools"
+  ]
+}
