@@ -63,27 +63,27 @@ export const availableFilters = [
     label: 'People',
     icon: <FaUser />,
     whereTemplate: (operand, { firstname, lastname }) => {
-      if (operand.keyWord === 'ilike') {
+      if (operand.keyWord === 'equal') {
         return {
           _and: [
-            { firstname: { _ilike: `${firstname}` } },
-            { lastname: { _ilike: `${lastname}` } },
+            { firstname: { _eq: `${firstname}` } },
+            { lastname: { _eq: `${lastname}` } },
           ],
         };
       }
 
-      if (operand.keyWord === 'not_ilike') {
+      if (operand.keyWord === 'not_equal') {
         return {
           _not: {
             _and: [
-              { firstname: { _ilike: `${firstname}` } },
-              { lastname: { _ilike: `${lastname}` } },
+              { firstname: { _eq: `${firstname}` } },
+              { lastname: { _eq: `${lastname}` } },
             ],
           },
         };
       }
-      const unhandledOperand: never = operand.keyWord;
-      throw new Error(`Unhandled operand: ${unhandledOperand}`);
+      console.error(Error(`Unhandled operand: ${operand.keyWord}`));
+      return {};
     },
     searchQuery: SEARCH_PEOPLE_QUERY,
     searchTemplate: (searchInput: string) => ({
@@ -96,26 +96,29 @@ export const availableFilters = [
       displayValue: `${person.firstname} ${person.lastname}`,
       value: { firstname: person.firstname, lastname: person.lastname },
     }),
-    operands: [],
+    operands: [
+      { label: 'Equal', id: 'equal', keyWord: 'equal' },
+      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+    ],
   },
   {
     key: 'company_name',
     label: 'Company',
     icon: <FaBuilding />,
     whereTemplate: (operand, { companyName }) => {
-      if (operand.keyWord === 'ilike') {
+      if (operand.keyWord === 'equal') {
         return {
-          company: { name: { _ilike: `%${companyName}%` } },
+          company: { name: { _eq: `%${companyName}%` } },
         };
       }
 
-      if (operand.keyWord === 'not_ilike') {
+      if (operand.keyWord === 'not_equal') {
         return {
-          _not: { company: { name: { _ilike: `%${companyName}%` } } },
+          _not: { company: { name: { _eq: `%${companyName}%` } } },
         };
       }
-      const unhandledOperand: never = operand.keyWord;
-      throw new Error(`Unhandled operand: ${unhandledOperand}`);
+      console.error(Error(`Unhandled operand: ${operand.keyWord}`));
+      return {};
     },
     searchQuery: SEARCH_COMPANY_QUERY,
     searchTemplate: (searchInput: string) => ({
@@ -125,7 +128,10 @@ export const availableFilters = [
       displayValue: company.name,
       value: { companyName: company.name },
     }),
-    operands: [],
+    operands: [
+      { label: 'Equal', id: 'equal', keyWord: 'equal' },
+      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+    ],
   },
   // {
   //   key: 'email',

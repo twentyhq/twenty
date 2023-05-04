@@ -38,7 +38,7 @@ export type FilterType<WhereTemplate, FilterValue = Record<string, any>> = {
 export type FilterOperandType = {
   label: string;
   id: string;
-  keyWord: 'ilike' | 'not_ilike';
+  keyWord: 'ilike' | 'not_ilike' | 'equal' | 'not_equal';
 };
 
 export type SelectedFilterType<WhereTemplate> = FilterType<WhereTemplate> & {

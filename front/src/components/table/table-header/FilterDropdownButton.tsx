@@ -19,6 +19,8 @@ type OwnProps<FilterProperties> = {
 const filterOperands: FilterOperandType[] = [
   { label: 'Include', id: 'include', keyWord: 'ilike' },
   { label: "Doesn't include", id: 'not-include', keyWord: 'not_ilike' },
+  { label: 'Equal', id: 'equal', keyWord: 'equal' },
+  { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
 ];
 
 export function FilterDropdownButton<FilterProperties>({
