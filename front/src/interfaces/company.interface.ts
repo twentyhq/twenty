@@ -1,6 +1,7 @@
 import { User } from './user.interface';
 
 export interface Opportunity {
+  id: string;
   name: string;
   icon: string;
 }
@@ -54,7 +55,7 @@ export const mapCompany = (company: GraphqlQueryCompany): Company => ({
       }
     : undefined,
   creationDate: new Date(company.created_at),
-  opportunities: [{ name: 'Sales Pipeline', icon: '' }],
+  opportunities: [],
 });
 
 export const mapGqlCompany = (company: Company): GraphqlMutationCompany => ({

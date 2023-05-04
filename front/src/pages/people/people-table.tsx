@@ -207,10 +207,7 @@ export const peopleColumns = [
     header: () => <ColumnHead viewName="Pipe" viewIcon={<FaStream />} />,
     cell: (props) => (
       <ClickableCell href="#">
-        <PipeChip
-          name={props.row.original.pipe.name}
-          picture={props.row.original.pipe.icon}
-        />
+        <PipeChip opportunity={props.row.original.pipe} />
       </ClickableCell>
     ),
   }),

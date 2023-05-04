@@ -96,7 +96,7 @@ export const companiesColumns = [
     cell: (props) => (
       <ClickableCell href="#">
         {props.row.original.opportunities.map((opportunity) => (
-          <PipeChip name={opportunity.name} picture={opportunity.icon} />
+          <PipeChip opportunity={opportunity} />
         ))}
       </ClickableCell>
     ),

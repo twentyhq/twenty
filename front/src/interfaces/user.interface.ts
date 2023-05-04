@@ -1,5 +1,10 @@
-import { GraphqlQueryAccountOwner } from './company.interface';
 import { Workspace } from './workspace.interface';
+
+export type GraphqlQueryUser = {
+  id: string;
+  email: string;
+  displayName: string;
+};
 
 export interface User {
   id: string;
@@ -10,6 +15,6 @@ export interface User {
   };
 }
 
-export const mapUser = (user: GraphqlQueryAccountOwner): User => ({
+export const mapUser = (user: GraphqlQueryUser): User => ({
   ...user,
 });

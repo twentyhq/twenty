@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+import { Opportunity } from '../../interfaces/company.interface';
 
 type OwnProps = {
-  name: string;
-  picture?: string;
+  opportunity: Opportunity;
 };
 
 const StyledContainer = styled.span`
@@ -20,11 +20,11 @@ const StyledContainer = styled.span`
   }
 `;
 
-function PipeChip({ name, picture }: OwnProps) {
+function PipeChip({ opportunity }: OwnProps) {
   return (
-    <StyledContainer data-testid="company-chip">
-      {picture && <span>{picture}</span>}
-      <span>{name}</span>
+    <StyledContainer data-testid="company-chip" key={opportunity.id}>
+      {opportunity.icon && <span>{opportunity.icon}</span>}
+      <span>{opportunity.name}</span>
     </StyledContainer>
   );
 }
