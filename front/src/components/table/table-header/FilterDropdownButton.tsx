@@ -16,13 +16,6 @@ type OwnProps<FilterProperties> = {
   ) => void;
 };
 
-const filterOperands: FilterOperandType[] = [
-  { label: 'Include', id: 'include', keyWord: 'ilike' },
-  { label: "Doesn't include", id: 'not-include', keyWord: 'not_ilike' },
-  { label: 'Equal', id: 'equal', keyWord: 'equal' },
-  { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
-];
-
 export function FilterDropdownButton<FilterProperties>({
   availableFilters,
   filterSearchResults,
@@ -38,33 +31,37 @@ export function FilterDropdownButton<FilterProperties>({
     FilterType<FilterProperties> | undefined
   >(undefined);
 
-  const [selectedFilterOperand, setSelectedFilterOperand] =
-    useState<FilterOperandType>(filterOperands[0]);
+  const [selectedFilterOperand, setSelectedFilterOperand] = useState<
+    FilterOperandType | undefined
+  >(undefined);
 
   const resetState = useCallback(() => {
     setIsOptionUnfolded(false);
     setSelectedFilter(undefined);
-    setSelectedFilterOperand(filterOperands[0]);
+    setSelectedFilterOperand(undefined);
     onFilterSearch(null, '');
   }, [onFilterSearch]);
 
-  const renderSelectOptionItems = filterOperands.map((filterOperand, index) => (
-    <DropdownButton.StyledDropdownItem
-      key={`select-filter-operand-${index}`}
-      onClick={() => {
-        setSelectedFilterOperand(filterOperand);
-        setIsOptionUnfolded(false);
-      }}
-    >
-      {filterOperand.label}
-    </DropdownButton.StyledDropdownItem>
-  ));
+  const renderSelectOptionItems = selectedFilter?.operands.map(
+    (filterOperand, index) => (
+      <DropdownButton.StyledDropdownItem
+        key={`select-filter-operand-${index}`}
+        onClick={() => {
+          setSelectedFilterOperand(filterOperand);
+          setIsOptionUnfolded(false);
+        }}
+      >
+        {filterOperand.label}
+      </DropdownButton.StyledDropdownItem>
+    ),
+  );
 
   const renderSearchResults = (
     filterSearchResults: NonNullable<
       OwnProps<FilterProperties>['filterSearchResults']
     >,
     selectedFilter: FilterType<FilterProperties>,
+    selectedFilterOperand: FilterOperandType,
   ) => {
     if (filterSearchResults.loading) {
       return (
@@ -107,6 +104,7 @@ export function FilterDropdownButton<FilterProperties>({
       key={`select-filter-${index}`}
       onClick={() => {
         setSelectedFilter(filter);
+        setSelectedFilterOperand(filter.operands[0]);
         onFilterSearch(filter, '');
       }}
     >
@@ -115,7 +113,10 @@ export function FilterDropdownButton<FilterProperties>({
     </DropdownButton.StyledDropdownItem>
   ));
 
-  function renderFilterDropdown(selectedFilter: FilterType<FilterProperties>) {
+  function renderFilterDropdown(
+    selectedFilter: FilterType<FilterProperties>,
+    selectedFilterOperand: FilterOperandType,
+  ) {
     return (
       <>
         <DropdownButton.StyledDropdownTopOption
@@ -136,7 +137,11 @@ export function FilterDropdownButton<FilterProperties>({
           />
         </DropdownButton.StyledSearchField>
         {filterSearchResults &&
-          renderSearchResults(filterSearchResults, selectedFilter)}
+          renderSearchResults(
+            filterSearchResults,
+            selectedFilter,
+            selectedFilterOperand,
+          )}
       </>
     );
   }
@@ -149,10 +154,10 @@ export function FilterDropdownButton<FilterProperties>({
       setIsUnfolded={setIsUnfolded}
       resetState={resetState}
     >
-      {selectedFilter
+      {selectedFilter && selectedFilterOperand
         ? isOptionUnfolded
           ? renderSelectOptionItems
-          : renderFilterDropdown(selectedFilter)
+          : renderFilterDropdown(selectedFilter, selectedFilterOperand)
         : renderSelectFilterITems}
     </DropdownButton>
   );
