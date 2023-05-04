@@ -66,7 +66,7 @@ export function FilterDropdownButton<FilterProperties>({
   ) => {
     if (filterSearchResults.loading) {
       return (
-        <DropdownButton.StyledDropdownItem>
+        <DropdownButton.StyledDropdownItem data-testid="loading-search-results">
           Loading
         </DropdownButton.StyledDropdownItem>
       );
