@@ -65,7 +65,11 @@ export function FilterDropdownButton<FilterProperties>({
     selectedFilter: FilterType<FilterProperties>,
   ) => {
     if (filterSearchResults.loading) {
-      return 'LOADING';
+      return (
+        <DropdownButton.StyledDropdownItem>
+          Loading
+        </DropdownButton.StyledDropdownItem>
+      );
     }
     return filterSearchResults.results.map((value, index) => (
       <DropdownButton.StyledDropdownItem

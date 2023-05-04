@@ -100,7 +100,7 @@ it('Calls the filters when typing a new name', async () => {
   fireEvent.change(filterSearch, { target: { value: 'Jane' } });
 
   await waitFor(() => {
-    const loadingDiv = getByText('LOADING');
+    const loadingDiv = getByText('Loading');
     expect(loadingDiv).toBeDefined();
   });
 
