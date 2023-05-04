@@ -14,14 +14,24 @@ it('Checks the default top option is Include', async () => {
   const filterByPeople = getByText('People');
   fireEvent.click(filterByPeople);
 
-  const filterByJohn = getByText('John Doe');
+  await waitFor(() => {
+    const firstSearchResult = getByText('Alexandre Prot');
+    expect(firstSearchResult).toBeDefined();
+  });
+
+  const filterByJohn = getByText('Alexandre Prot');
   fireEvent.click(filterByJohn);
 
   expect(setFilters).toHaveBeenCalledWith(
     expect.objectContaining({
-      key: 'John Doe',
-      value: 'John Doe',
+      key: 'Alexandre Prot',
+      value: 'Alexandre Prot',
       label: 'People',
+      operand: {
+        id: 'include',
+        keyWord: 'ilike',
+        label: 'Include',
+      },
       icon: <FaUsers />,
     }),
   );
@@ -45,14 +55,24 @@ it('Checks the selection of top option for Doesnot include', async () => {
   const selectOperand = getByText("Doesn't include");
   fireEvent.click(selectOperand);
 
-  const filterByJohn = getByText('John Doe');
+  await waitFor(() => {
+    const firstSearchResult = getByText('Alexandre Prot');
+    expect(firstSearchResult).toBeDefined();
+  });
+
+  const filterByJohn = getByText('Alexandre Prot');
   fireEvent.click(filterByJohn);
 
   expect(setFilters).toHaveBeenCalledWith(
     expect.objectContaining({
-      key: 'John Doe',
-      value: 'John Doe',
+      key: 'Alexandre Prot',
+      value: 'Alexandre Prot',
       label: 'People',
+      operand: {
+        id: 'not-include',
+        keyWord: 'not_ilike',
+        label: "Doesn't include",
+      },
       icon: <FaUsers />,
     }),
   );

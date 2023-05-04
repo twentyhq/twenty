@@ -4,9 +4,14 @@ import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
 import { FilterType, SelectedFilterType } from '../interface';
 import { useCallback, useState } from 'react';
-import { GET_PEOPLE } from '../../../../services/people';
 import { People_Bool_Exp } from '../../../../generated/graphql';
 import { FaUsers } from 'react-icons/fa';
+import {
+  SEARCH_PEOPLE_QUERY,
+  useSearch,
+} from '../../../../services/search/search';
+import { MockedProvider } from '@apollo/client/testing';
+import { defaultData } from '../../../../pages/people/default-data';
 
 const component = {
   title: 'FilterDropdownButton',
@@ -19,16 +24,50 @@ type OwnProps<FilterProperties> = {
   setFilter: (filters: SelectedFilterType<FilterProperties>) => void;
 };
 
+const mocks = [
+  {
+    request: {
+      query: SEARCH_PEOPLE_QUERY, // TODO this should not be called for empty filters
+      variables: {
+        where: undefined,
+      },
+    },
+    result: {
+      data: {
+        searchResults: defaultData,
+      },
+    },
+  },
+  {
+    request: {
+      query: SEARCH_PEOPLE_QUERY, // TODO this should not be called for empty filters
+      variables: {
+        where: {
+          _or: [
+            { firstname: { _ilike: '%%' } },
+            { lastname: { _ilike: '%%' } },
+          ],
+        },
+      },
+    },
+    result: {
+      data: {
+        searchResults: [defaultData[0]],
+      },
+    },
+  },
+];
+
 const availableFilters = [
   {
     key: 'fullname',
     label: 'People',
     icon: <FaUsers />,
-    searchQuery: GET_PEOPLE,
-    searchTemplate: () => ({
+    searchQuery: SEARCH_PEOPLE_QUERY,
+    searchTemplate: (searchInput: string) => ({
       _or: [
-        { firstname: { _ilike: 'value' } },
-        { lastname: { _ilike: 'value' } },
+        { firstname: { _ilike: `%${searchInput}%` } },
+        { lastname: { _ilike: `%${searchInput}%` } },
       ],
     }),
     whereTemplate: () => ({
@@ -38,7 +77,7 @@ const availableFilters = [
       ],
     }),
     searchResultMapper: (data) => ({
-      displayValue: 'John Doe',
+      displayValue: data.firstname + ' ' + data.lastname,
       value: data.firstname,
     }),
   },
@@ -49,10 +88,12 @@ const StyleDiv = styled.div`
   width: 200px;
 `;
 
-export const RegularFilterDropdownButton = ({
+const InnerRegularFilterDropdownButton = ({
   setFilter: setFilters,
 }: OwnProps<People_Bool_Exp>) => {
   const [, innerSetFilters] = useState<SelectedFilterType<People_Bool_Exp>>();
+  const [filterSearchResults, setSearhInput, setFilterSearch] = useSearch();
+
   const outerSetFilters = useCallback(
     (filter: SelectedFilterType<People_Bool_Exp>) => {
       innerSetFilters(filter);
@@ -61,24 +102,29 @@ export const RegularFilterDropdownButton = ({
     [setFilters],
   );
   return (
-    <ThemeProvider theme={lightTheme}>
-      <StyleDiv>
-        <FilterDropdownButton
-          availableFilters={availableFilters}
-          isFilterSelected={true}
-          onFilterSearch={jest.fn()}
-          onFilterSelect={outerSetFilters}
-          filterSearchResults={{
-            loading: false,
-            results: [
-              {
-                displayValue: 'John Doe',
-                value: { firstname: 'John', lastname: 'doe' },
-              },
-            ],
-          }}
-        />
-      </StyleDiv>
-    </ThemeProvider>
+    <StyleDiv>
+      <FilterDropdownButton
+        availableFilters={availableFilters}
+        isFilterSelected={true}
+        onFilterSelect={outerSetFilters}
+        filterSearchResults={filterSearchResults}
+        onFilterSearch={(filter, searchValue) => {
+          setSearhInput(searchValue);
+          setFilterSearch(filter);
+        }}
+      />
+    </StyleDiv>
+  );
+};
+
+export const RegularFilterDropdownButton = ({
+  setFilter: setFilters,
+}: OwnProps<People_Bool_Exp>) => {
+  return (
+    <MockedProvider mocks={mocks}>
+      <ThemeProvider theme={lightTheme}>
+        <InnerRegularFilterDropdownButton setFilter={setFilters} />
+      </ThemeProvider>
+    </MockedProvider>
   );
 };

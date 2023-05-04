@@ -18,6 +18,12 @@ export const SEARCH_PEOPLE_QUERY = gql`
   }
 `;
 
+const EMPTY_QUERY = gql`
+  query EmptyQuery {
+    _
+  }
+`;
+
 export const SEARCH_COMPANY_QUERY = gql`
   query SearchQuery($where: companies_bool_exp, $limit: Int) {
     searchResults: companies(where: $where, limit: $limit) {
@@ -62,11 +68,12 @@ export const useSearch = (): [
   }, [filter, searchInput]);
 
   const searchFilterQueryResults = useQuery(
-    filter?.searchQuery || SEARCH_PEOPLE_QUERY,
+    filter?.searchQuery || EMPTY_QUERY,
     {
       variables: {
         where,
       },
+      skip: !filter,
     },
   );
 
@@ -86,15 +93,12 @@ export const useSearch = (): [
         results: [],
       };
     }
-    return (
-      {
-        loading: false,
-        results: searchFilterQueryResults.data?.searchResults.map(
-          filter?.searchResultMapper ||
-            (() => ({ displayValue: '', value: '' })),
-        ),
-      } || { loading: false, results: [] }
-    );
+    return {
+      loading: false,
+      results: searchFilterQueryResults.data.searchResults.map(
+        filter.searchResultMapper,
+      ),
+    };
   }, [filter, searchFilterQueryResults]);
 
   return [searchFilterResults, debouncedsetSearchInput, setFilter];
