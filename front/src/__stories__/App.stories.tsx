@@ -2,6 +2,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import App from '../App';
 import { GET_CURRENT_USER } from '../services/users';
 import { MemoryRouter } from 'react-router-dom';
+import { GET_PEOPLE } from '../services/people';
 
 const component = {
   title: 'App',
@@ -36,6 +37,17 @@ const mocks = [
             __typename: 'users',
           },
         ],
+      },
+    },
+  },
+  {
+    request: {
+      query: GET_PEOPLE,
+      variables: { orderBy: [{ created_at: 'desc' }], where: {} },
+    },
+    result: {
+      data: {
+        people: [],
       },
     },
   },
