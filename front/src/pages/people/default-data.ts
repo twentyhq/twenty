@@ -21,9 +21,9 @@ export const defaultData: Array<GraphqlQueryPerson> = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
     __typename: 'Person',
-    firstname: 'Alexandre',
-    lastname: 'Prot',
-    email: 'alexandre@qonto.com',
+    firstname: 'John',
+    lastname: 'Doe',
+    email: 'john@linkedin.com',
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6e',
       name: 'LinkedIn',
@@ -38,9 +38,9 @@ export const defaultData: Array<GraphqlQueryPerson> = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6f',
     __typename: 'Person',
-    firstname: 'Alexandre',
-    lastname: 'Prot',
-    email: 'alexandre@qonto.com',
+    firstname: 'Jane',
+    lastname: 'Doe',
+    email: 'jane@sequoiacap.com',
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6g',
       name: 'Sequoia',
@@ -56,9 +56,9 @@ export const defaultData: Array<GraphqlQueryPerson> = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6h',
     __typename: 'Person',
-    firstname: 'Alexandre',
-    lastname: 'Prot',
-    email: 'alexandre@qonto.com',
+    firstname: 'Janice',
+    lastname: 'Dane',
+    email: 'janice@facebook.com',
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6i',
       name: 'Facebook',

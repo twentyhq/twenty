@@ -1,5 +1,5 @@
 import { QueryResult, gql, useQuery } from '@apollo/client';
-import { GraphqlQueryAccountOwner } from '../../interfaces/company.interface';
+import { GraphqlQueryUser } from '../../interfaces/user.interface';
 
 export const GET_CURRENT_USER = gql`
   query GetCurrentUser {
@@ -20,7 +20,7 @@ export const GET_CURRENT_USER = gql`
 `;
 
 export function useGetCurrentUserQuery(): QueryResult<{
-  users: GraphqlQueryAccountOwner[];
+  users: GraphqlQueryUser[];
 }> {
-  return useQuery<{ users: GraphqlQueryAccountOwner[] }>(GET_CURRENT_USER);
+  return useQuery<{ users: GraphqlQueryUser[] }>(GET_CURRENT_USER);
 }

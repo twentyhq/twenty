@@ -1,24 +1,31 @@
 import EditableCell from '../EditableCell';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
+import { StoryFn } from '@storybook/react';
 
 const component = {
   title: 'EditableCell',
   component: EditableCell,
 };
 
-export default component;
-
 type OwnProps = {
-  changeHandler: () => void;
+  content: string;
+  changeHandler: (updated: string) => void;
 };
 
-export const RegularEditableCell = ({ changeHandler }: OwnProps) => {
+export default component;
+
+const Template: StoryFn<typeof EditableCell> = (args: OwnProps) => {
   return (
     <ThemeProvider theme={lightTheme}>
       <div data-testid="content-editable-parent">
-        <EditableCell content={''} changeHandler={changeHandler} />,
+        <EditableCell {...args} />
       </div>
     </ThemeProvider>
   );
+};
+
+export const EditableCellStory = Template.bind({});
+EditableCellStory.args = {
+  content: 'Test string',
 };

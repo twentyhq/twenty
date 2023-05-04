@@ -1,6 +1,7 @@
-import { User } from './user.interface';
+import { GraphqlQueryUser, User } from './user.interface';
 
 export interface Opportunity {
+  id: string;
   name: string;
   icon: string;
 }
@@ -16,17 +17,11 @@ export interface Company {
   creationDate: Date;
 }
 
-export type GraphqlQueryAccountOwner = {
-  id: string;
-  email: string;
-  displayName: string;
-};
-
 export type GraphqlQueryCompany = {
   id: string;
   name: string;
   domain_name: string;
-  account_owner?: GraphqlQueryAccountOwner;
+  account_owner?: GraphqlQueryUser;
   employees: number;
   address: string;
   created_at: string;
@@ -54,7 +49,7 @@ export const mapCompany = (company: GraphqlQueryCompany): Company => ({
       }
     : undefined,
   creationDate: new Date(company.created_at),
-  opportunities: [{ name: 'Sales Pipeline', icon: '' }],
+  opportunities: [],
 });
 
 export const mapGqlCompany = (company: Company): GraphqlMutationCompany => ({

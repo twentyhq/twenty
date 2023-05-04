@@ -10,18 +10,30 @@ import TableHeader from './table-header/TableHeader';
 import styled from '@emotion/styled';
 import {
   FilterType,
+  SelectedFilterType,
   SelectedSortType,
   SortType,
 } from './table-header/interface';
 
-type OwnProps<TData, SortField> = {
+type OwnProps<TData, SortField, FilterProperties> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: React.ReactNode;
-  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   availableSorts?: Array<SortType<SortField>>;
-  availableFilters?: FilterType[];
+  availableFilters?: FilterType<FilterProperties>[];
+  filterSearchResults?: {
+    results: { displayValue: string; value: any }[];
+    loading: boolean;
+  };
+  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  onFiltersUpdate?: (
+    sorts: Array<SelectedFilterType<FilterProperties>>,
+  ) => void;
+  onFilterSearch?: (
+    filter: FilterType<FilterProperties> | null,
+    searchValue: string,
+  ) => void;
 };
 
 const StyledTable = styled.table`
@@ -75,15 +87,18 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-function Table<TData, SortField extends string>({
+function Table<TData, SortField extends string, FilterProperies>({
   data,
   columns,
   viewName,
   viewIcon,
-  onSortsUpdate,
   availableSorts,
   availableFilters,
-}: OwnProps<TData, SortField>) {
+  filterSearchResults,
+  onSortsUpdate,
+  onFiltersUpdate,
+  onFilterSearch,
+}: OwnProps<TData, SortField, FilterProperies>) {
   const table = useReactTable({
     data,
     columns,
@@ -95,9 +110,12 @@ function Table<TData, SortField extends string>({
       <TableHeader
         viewName={viewName}
         viewIcon={viewIcon}
-        onSortsUpdate={onSortsUpdate}
         availableSorts={availableSorts}
         availableFilters={availableFilters}
+        filterSearchResults={filterSearchResults}
+        onSortsUpdate={onSortsUpdate}
+        onFiltersUpdate={onFiltersUpdate}
+        onFilterSearch={onFilterSearch}
       />
       <StyledTableScrollableContainer>
         <StyledTable>

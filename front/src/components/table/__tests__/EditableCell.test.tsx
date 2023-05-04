@@ -1,10 +1,12 @@
 import { fireEvent, render } from '@testing-library/react';
 
-import { RegularEditableCell } from '../__stories__/EditableCell.stories';
+import { EditableCellStory } from '../__stories__/EditableCell.stories';
 
 it('Checks the EditableCell editing event bubbles up', async () => {
   const func = jest.fn(() => null);
-  const { getByTestId } = render(<RegularEditableCell changeHandler={func} />);
+  const { getByTestId } = render(
+    <EditableCellStory content="test" changeHandler={func} />,
+  );
 
   const parent = getByTestId('content-editable-parent');
   const editableInput = parent.querySelector('input');

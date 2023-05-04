@@ -3,11 +3,13 @@ import SortOrFilterChip from './SortOrFilterChip';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { SelectedFilterType, SelectedSortType } from './interface';
 
-type OwnProps<SortField> = {
+type OwnProps<SortField, FilterProperties> = {
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
-  filters: Array<SelectedFilterType>;
-  onRemoveFilter: (filterId: SelectedFilterType['id']) => void;
+  filters: Array<SelectedFilterType<FilterProperties>>;
+  onRemoveFilter: (
+    filterId: SelectedFilterType<FilterProperties>['key'],
+  ) => void;
 };
 
 const StyledBar = styled.div`
@@ -39,12 +41,12 @@ const StyledCancelButton = styled.button`
   }
 `;
 
-function SortAndFilterBar<SortField extends string>({
+function SortAndFilterBar<SortField extends string, FilterProperties>({
   sorts,
   onRemoveSort,
   filters,
   onRemoveFilter,
-}: OwnProps<SortField>) {
+}: OwnProps<SortField, FilterProperties>) {
   return (
     <StyledBar>
       {sorts.map((sort) => {
@@ -61,12 +63,12 @@ function SortAndFilterBar<SortField extends string>({
       {filters.map((filter) => {
         return (
           <SortOrFilterChip
-            key={filter.id}
+            key={filter.key}
             labelKey={filter.label}
             labelValue={`${filter.operand.label} ${filter.value}`}
-            id={filter.id}
+            id={filter.key}
             icon={filter.icon}
-            onRemove={() => onRemoveFilter(filter.id)}
+            onRemove={() => onRemoveFilter(filter.key)}
           />
         );
       })}
@@ -75,7 +77,7 @@ function SortAndFilterBar<SortField extends string>({
           data-testid={'cancel-button'}
           onClick={() => {
             sorts.forEach((i) => onRemoveSort(i.key));
-            filters.forEach((i) => onRemoveFilter(i.id));
+            filters.forEach((i) => onRemoveFilter(i.key));
           }}
         >
           Cancel

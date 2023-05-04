@@ -9,6 +9,7 @@ export const defaultData: Array<GraphqlQueryCompany> = [
       id: '91510aa5-ede6-451f-8029-a7fa69e4bad6',
       email: 'john@example.com',
       displayName: 'John Doe',
+      __typename: 'User',
     },
     employees: 10,
     address: '1 Infinity Loop, 95014 Cupertino, California',
