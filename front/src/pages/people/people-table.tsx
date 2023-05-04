@@ -101,40 +101,42 @@ export const fullnameFilter = {
   ],
 } satisfies FilterType<People_Bool_Exp>;
 
+export const companyFilter = {
+  key: 'company_name',
+  label: 'Company',
+  icon: <FaBuilding />,
+  whereTemplate: (operand, { companyName }) => {
+    if (operand.keyWord === 'equal') {
+      return {
+        company: { name: { _eq: companyName } },
+      };
+    }
+
+    if (operand.keyWord === 'not_equal') {
+      return {
+        _not: { company: { name: { _eq: companyName } } },
+      };
+    }
+    console.error(Error(`Unhandled operand: ${operand.keyWord}`));
+    return {};
+  },
+  searchQuery: SEARCH_COMPANY_QUERY,
+  searchTemplate: (searchInput: string) => ({
+    name: { _ilike: `%${searchInput}%` },
+  }),
+  searchResultMapper: (company: GraphqlQueryCompany) => ({
+    displayValue: company.name,
+    value: { companyName: company.name },
+  }),
+  operands: [
+    { label: 'Equal', id: 'equal', keyWord: 'equal' },
+    { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+  ],
+} satisfies FilterType<People_Bool_Exp>;
+
 export const availableFilters = [
   fullnameFilter,
-  {
-    key: 'company_name',
-    label: 'Company',
-    icon: <FaBuilding />,
-    whereTemplate: (operand, { companyName }) => {
-      if (operand.keyWord === 'equal') {
-        return {
-          company: { name: { _eq: companyName } },
-        };
-      }
-
-      if (operand.keyWord === 'not_equal') {
-        return {
-          _not: { company: { name: { _eq: companyName } } },
-        };
-      }
-      console.error(Error(`Unhandled operand: ${operand.keyWord}`));
-      return {};
-    },
-    searchQuery: SEARCH_COMPANY_QUERY,
-    searchTemplate: (searchInput: string) => ({
-      name: { _ilike: `%${searchInput}%` },
-    }),
-    searchResultMapper: (company: GraphqlQueryCompany) => ({
-      displayValue: company.name,
-      value: { companyName: company.name },
-    }),
-    operands: [
-      { label: 'Equal', id: 'equal', keyWord: 'equal' },
-      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
-    ],
-  },
+  companyFilter,
   // {
   //   key: 'email',
   //   label: 'Email',

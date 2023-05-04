@@ -1,6 +1,6 @@
 import { GraphqlQueryCompany } from '../../../interfaces/company.interface';
 
-export const defaultData: Array<GraphqlQueryCompany> = [
+export const mockCompanyData: Array<GraphqlQueryCompany> = [
   {
     id: 'f121ab32-fac4-4b8c-9a3d-150c877319c2',
     name: 'ACME',

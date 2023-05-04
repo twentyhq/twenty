@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PeopleFilter Fullname filter should generate the where variable of the GQL call 1`] = `
+exports[`PeopleFilter Company fitler should generate the where variable of the GQL call 1`] = `
 Object {
   "_and": Array [
     Object {
@@ -17,7 +17,7 @@ Object {
 }
 `;
 
-exports[`PeopleFilter Fullname filter should generate the where variable of the GQL call 2`] = `
+exports[`PeopleFilter Company fitler should generate the where variable of the GQL call 2`] = `
 Object {
   "_not": Object {
     "_and": Array [
@@ -36,7 +36,7 @@ Object {
 }
 `;
 
-exports[`PeopleFilter Fullname filter should generate the where variable of the GQL call 3`] = `
+exports[`PeopleFilter Fullname filter should generate the where variable of the GQL call 1`] = `
 Object {
   "_and": Array [
     Object {
@@ -53,7 +53,7 @@ Object {
 }
 `;
 
-exports[`PeopleFilter Fullname filter should generate the where variable of the GQL call 4`] = `
+exports[`PeopleFilter Fullname filter should generate the where variable of the GQL call 2`] = `
 Object {
   "_not": Object {
     "_and": Array [
