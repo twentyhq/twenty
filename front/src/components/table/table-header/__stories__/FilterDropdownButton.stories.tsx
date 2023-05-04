@@ -48,6 +48,7 @@ const mocks = [
             { lastname: { _ilike: '%%' } },
           ],
         },
+        limit: 5,
       },
     },
     result: {
@@ -66,6 +67,7 @@ const mocks = [
             { lastname: { _ilike: '%Jane%' } },
           ],
         },
+        limit: 5,
       },
     },
     result: {
