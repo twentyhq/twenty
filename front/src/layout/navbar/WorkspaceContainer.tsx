@@ -43,7 +43,7 @@ function WorkspaceContainer({ workspace }: OwnProps) {
   return (
     <StyledContainer>
       <StyledLogo logo={workspace.logo}></StyledLogo>
-      <StyledName>{workspace?.display_name}</StyledName>
+      <StyledName>{workspace?.displayName}</StyledName>
     </StyledContainer>
   );
 }

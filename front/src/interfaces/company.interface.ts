@@ -1,4 +1,4 @@
-import { User } from './user.interface';
+import { GraphqlQueryUser, User } from './user.interface';
 
 export interface Opportunity {
   id: string;
@@ -17,17 +17,11 @@ export interface Company {
   creationDate: Date;
 }
 
-export type GraphqlQueryAccountOwner = {
-  id: string;
-  email: string;
-  displayName: string;
-};
-
 export type GraphqlQueryCompany = {
   id: string;
   name: string;
   domain_name: string;
-  account_owner?: GraphqlQueryAccountOwner;
+  account_owner?: GraphqlQueryUser;
   employees: number;
   address: string;
   created_at: string;

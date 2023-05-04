@@ -13,6 +13,7 @@ describe('mapCompany', () => {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
         email: 'john@example.com',
         displayName: 'John Doe',
+        __typename: 'User',
       },
       employees: 10,
       address: '1 Infinite Loop, 95014 Cupertino, California, USA',
