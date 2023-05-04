@@ -62,12 +62,29 @@ export const availableFilters = [
     key: 'fullname',
     label: 'People',
     icon: <FaUser />,
-    whereTemplate: (_operand, { firstname, lastname }) => ({
-      _and: [
-        { firstname: { _ilike: `${firstname}` } },
-        { lastname: { _ilike: `${lastname}` } },
-      ],
-    }),
+    whereTemplate: (operand, { firstname, lastname }) => {
+      if (operand.keyWord === 'ilike') {
+        return {
+          _and: [
+            { firstname: { _ilike: `${firstname}` } },
+            { lastname: { _ilike: `${lastname}` } },
+          ],
+        };
+      }
+
+      if (operand.keyWord === 'not_ilike') {
+        return {
+          _not: {
+            _and: [
+              { firstname: { _ilike: `${firstname}` } },
+              { lastname: { _ilike: `${lastname}` } },
+            ],
+          },
+        };
+      }
+      const unhandledOperand: never = operand.keyWord;
+      throw new Error(`Unhandled operand: ${unhandledOperand}`);
+    },
     searchQuery: SEARCH_PEOPLE_QUERY,
     searchTemplate: (searchInput: string) => ({
       _or: [
@@ -85,9 +102,21 @@ export const availableFilters = [
     key: 'company_name',
     label: 'Company',
     icon: <FaBuilding />,
-    whereTemplate: (_operand, { companyName }) => ({
-      company: { name: { _ilike: `%${companyName}%` } },
-    }),
+    whereTemplate: (operand, { companyName }) => {
+      if (operand.keyWord === 'ilike') {
+        return {
+          company: { name: { _ilike: `%${companyName}%` } },
+        };
+      }
+
+      if (operand.keyWord === 'not_ilike') {
+        return {
+          _not: { company: { name: { _ilike: `%${companyName}%` } } },
+        };
+      }
+      const unhandledOperand: never = operand.keyWord;
+      throw new Error(`Unhandled operand: ${unhandledOperand}`);
+    },
     searchQuery: SEARCH_COMPANY_QUERY,
     searchTemplate: (searchInput: string) => ({
       name: { _ilike: `%${searchInput}%` },
