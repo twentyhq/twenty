@@ -52,7 +52,25 @@ const mocks = [
     },
     result: {
       data: {
-        searchResults: [defaultData[0]],
+        searchResults: defaultData,
+      },
+    },
+  },
+  {
+    request: {
+      query: SEARCH_PEOPLE_QUERY, // TODO this should not be called for empty filters
+      variables: {
+        where: {
+          _or: [
+            { firstname: { _ilike: '%Jane%' } },
+            { lastname: { _ilike: '%Jane%' } },
+          ],
+        },
+      },
+    },
+    result: {
+      data: {
+        searchResults: [defaultData.find((p) => p.firstname === 'Jane')],
       },
     },
   },

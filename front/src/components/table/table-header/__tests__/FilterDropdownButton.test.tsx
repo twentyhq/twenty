@@ -81,3 +81,56 @@ it('Checks the selection of top option for Doesnot include', async () => {
     expect(blueSortDropdownButton).toHaveAttribute('aria-selected', 'true');
   });
 });
+
+it('Calls the filters when typing a new name', async () => {
+  const setFilters = jest.fn();
+  const { getByText, getByPlaceholderText, queryByText } = render(
+    <RegularFilterDropdownButton setFilter={setFilters} />,
+  );
+
+  const sortDropdownButton = getByText('Filter');
+  fireEvent.click(sortDropdownButton);
+
+  const filterByPeople = getByText('People');
+  fireEvent.click(filterByPeople);
+
+  const filterSearch = getByPlaceholderText('People');
+  fireEvent.click(filterSearch);
+
+  fireEvent.change(filterSearch, { target: { value: 'Jane' } });
+
+  await waitFor(() => {
+    const loadingDiv = getByText('LOADING');
+    expect(loadingDiv).toBeDefined();
+  });
+
+  await waitFor(() => {
+    const firstSearchResult = getByText('Jane Doe');
+    expect(firstSearchResult).toBeDefined();
+
+    const alexandreSearchResult = queryByText('Alexandre Prot');
+    expect(alexandreSearchResult).not.toBeInTheDocument();
+  });
+
+  const filterByJane = getByText('Jane Doe');
+
+  fireEvent.click(filterByJane);
+
+  expect(setFilters).toHaveBeenCalledWith(
+    expect.objectContaining({
+      key: 'Jane Doe',
+      value: 'Jane Doe',
+      label: 'People',
+      operand: {
+        id: 'include',
+        keyWord: 'ilike',
+        label: 'Include',
+      },
+      icon: <FaUsers />,
+    }),
+  );
+  const blueSortDropdownButton = getByText('Filter');
+  await waitFor(() => {
+    expect(blueSortDropdownButton).toHaveAttribute('aria-selected', 'true');
+  });
+});
