@@ -19,7 +19,7 @@ import CompanyChip from '../../components/chips/CompanyChip';
 import PersonChip from '../../components/chips/PersonChip';
 import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
-import EditableCell from '../../components/table/EditableCell';
+import EditableText from '../../components/table/editable-cell/EditableText';
 import { OrderByFields, updatePerson } from '../../services/people';
 import {
   FilterType,
@@ -152,7 +152,8 @@ export const peopleColumns = [
   columnHelper.accessor('email', {
     header: () => <ColumnHead viewName="Email" viewIcon={<FaEnvelope />} />,
     cell: (props) => (
-      <EditableCell
+      <EditableText
+        placeholder="Email"
         content={props.row.original.email}
         changeHandler={(value) => {
           const person = props.row.original;

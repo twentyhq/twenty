@@ -5,7 +5,7 @@ import ColumnHead from '../../components/table/ColumnHead';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import Checkbox from '../../components/form/Checkbox';
 import CompanyChip from '../../components/chips/CompanyChip';
-import EditableCell from '../../components/table/EditableCell';
+import EditableText from '../../components/table/editable-cell/EditableText';
 import PipeChip from '../../components/chips/PipeChip';
 import {
   FaRegBuilding,
@@ -53,7 +53,7 @@ export const companiesColumns = [
   columnHelper.accessor('employees', {
     header: () => <ColumnHead viewName="Employees" viewIcon={<FaUsers />} />,
     cell: (props) => (
-      <EditableCell
+      <EditableText
         content={props.row.original.employees.toFixed(0)}
         changeHandler={(value) => {
           const company = props.row.original;
@@ -66,7 +66,7 @@ export const companiesColumns = [
   columnHelper.accessor('domain_name', {
     header: () => <ColumnHead viewName="URL" viewIcon={<FaLink />} />,
     cell: (props) => (
-      <EditableCell
+      <EditableText
         content={props.row.original.domain_name}
         changeHandler={(value) => {
           const company = props.row.original;
@@ -79,7 +79,7 @@ export const companiesColumns = [
   columnHelper.accessor('address', {
     header: () => <ColumnHead viewName="Address" viewIcon={<FaMapPin />} />,
     cell: (props) => (
-      <EditableCell
+      <EditableText
         content={props.row.original.address}
         changeHandler={(value) => {
           const company = props.row.original;

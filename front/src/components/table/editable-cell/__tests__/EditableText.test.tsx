@@ -1,14 +1,22 @@
 import { fireEvent, render } from '@testing-library/react';
 
-import { EditableCellStory } from '../__stories__/EditableCell.stories';
+import { EditableTextStory } from '../__stories__/EditableText.stories';
 
 it('Checks the EditableCell editing event bubbles up', async () => {
   const func = jest.fn(() => null);
   const { getByTestId } = render(
-    <EditableCellStory content="test" changeHandler={func} />,
+    <EditableTextStory content="test" changeHandler={func} />,
   );
 
   const parent = getByTestId('content-editable-parent');
+
+  const wrapper = parent.querySelector('div');
+
+  if (!wrapper) {
+    throw new Error('Editable input not found');
+  }
+  fireEvent.click(wrapper);
+
   const editableInput = parent.querySelector('input');
 
   if (!editableInput) {
