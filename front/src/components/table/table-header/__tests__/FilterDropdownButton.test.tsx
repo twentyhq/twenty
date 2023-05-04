@@ -84,7 +84,7 @@ it('Checks the selection of top option for Doesnot include', async () => {
 
 it('Calls the filters when typing a new name', async () => {
   const setFilters = jest.fn();
-  const { getByText, getByPlaceholderText, queryByText } = render(
+  const { getByText, getByPlaceholderText, queryByText, getByTestId } = render(
     <RegularFilterDropdownButton setFilter={setFilters} />,
   );
 
@@ -100,7 +100,7 @@ it('Calls the filters when typing a new name', async () => {
   fireEvent.change(filterSearch, { target: { value: 'Jane' } });
 
   await waitFor(() => {
-    const loadingDiv = getByText('LOADING');
+    const loadingDiv = getByTestId('loading-search-results');
     expect(loadingDiv).toBeDefined();
   });
 

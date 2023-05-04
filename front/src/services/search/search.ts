@@ -72,6 +72,7 @@ export const useSearch = (): [
     {
       variables: {
         where,
+        limit: 5,
       },
       skip: !filter,
     },
