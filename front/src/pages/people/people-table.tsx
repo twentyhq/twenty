@@ -108,13 +108,13 @@ export const availableFilters = [
     whereTemplate: (operand, { companyName }) => {
       if (operand.keyWord === 'equal') {
         return {
-          company: { name: { _eq: `%${companyName}%` } },
+          company: { name: { _eq: companyName } },
         };
       }
 
       if (operand.keyWord === 'not_equal') {
         return {
-          _not: { company: { name: { _eq: `%${companyName}%` } } },
+          _not: { company: { name: { _eq: companyName } } },
         };
       }
       console.error(Error(`Unhandled operand: ${operand.keyWord}`));
