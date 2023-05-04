@@ -12,7 +12,6 @@ import {
 import { createColumnHelper } from '@tanstack/react-table';
 import ClickableCell from '../../components/table/ClickableCell';
 import ColumnHead from '../../components/table/ColumnHead';
-import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
 import Checkbox from '../../components/form/Checkbox';
 import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import CompanyChip from '../../components/chips/CompanyChip';
@@ -31,6 +30,7 @@ import {
   SEARCH_PEOPLE_QUERY,
 } from '../../services/search/search';
 import { GraphqlQueryCompany } from '../../interfaces/company.interface';
+import EditablePhone from '../../components/table/editable-cell/EditablePhone';
 
 export const availableSorts = [
   {
@@ -155,7 +155,7 @@ export const peopleColumns = [
       <EditableText
         placeholder="Email"
         content={props.row.original.email}
-        changeHandler={(value) => {
+        changeHandler={(value: string) => {
           const person = props.row.original;
           person.email = value;
           updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
@@ -179,17 +179,15 @@ export const peopleColumns = [
   columnHelper.accessor('phone', {
     header: () => <ColumnHead viewName="Phone" viewIcon={<FaPhone />} />,
     cell: (props) => (
-      <ClickableCell
-        href={parsePhoneNumber(
-          props.row.original.phone,
-          props.row.original.countryCode as CountryCode,
-        )?.getURI()}
-      >
-        {parsePhoneNumber(
-          props.row.original.phone,
-          props.row.original.countryCode as CountryCode,
-        )?.formatInternational() || props.row.original.phone}
-      </ClickableCell>
+      <EditablePhone
+        placeholder="Phone"
+        value={props.row.original.phone}
+        changeHandler={(value: string) => {
+          const person = props.row.original;
+          person.phone = value;
+          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+        }}
+      />
     ),
   }),
   columnHelper.accessor('creationDate', {
@@ -215,7 +213,16 @@ export const peopleColumns = [
   columnHelper.accessor('city', {
     header: () => <ColumnHead viewName="City" viewIcon={<FaMapPin />} />,
     cell: (props) => (
-      <ClickableCell href="#">{props.row.original.city}</ClickableCell>
+      <EditableText
+        shouldAlignRight={true}
+        placeholder="City"
+        content={props.row.original.city}
+        changeHandler={(value: string) => {
+          const person = props.row.original;
+          person.city = value;
+          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+        }}
+      />
     ),
   }),
 ];

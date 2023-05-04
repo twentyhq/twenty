@@ -1,11 +1,11 @@
 import { fireEvent, render } from '@testing-library/react';
 
-import { EditableTextStory } from '../__stories__/EditableText.stories';
+import { EditablePhoneStory } from '../__stories__/EditablePhone.stories';
 
-it('Checks the EditableText editing event bubbles up', async () => {
+it('Checks the EditablePhone editing event bubbles up', async () => {
   const func = jest.fn(() => null);
   const { getByTestId } = render(
-    <EditableTextStory content="test" changeHandler={func} />,
+    <EditablePhoneStory value="+33786405315" changeHandler={func} />,
   );
 
   const parent = getByTestId('content-editable-parent');
