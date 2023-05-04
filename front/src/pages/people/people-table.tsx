@@ -57,50 +57,52 @@ export const availableSorts = [
   { key: 'city', label: 'City', icon: <FaMapPin /> },
 ] satisfies Array<SortType<OrderByFields>>;
 
-export const availableFilters = [
-  {
-    key: 'fullname',
-    label: 'People',
-    icon: <FaUser />,
-    whereTemplate: (operand, { firstname, lastname }) => {
-      if (operand.keyWord === 'equal') {
-        return {
+export const fullnameFilter = {
+  key: 'fullname',
+  label: 'People',
+  icon: <FaUser />,
+  whereTemplate: (operand, { firstname, lastname }) => {
+    if (operand.keyWord === 'equal') {
+      return {
+        _and: [
+          { firstname: { _eq: `${firstname}` } },
+          { lastname: { _eq: `${lastname}` } },
+        ],
+      };
+    }
+
+    if (operand.keyWord === 'not_equal') {
+      return {
+        _not: {
           _and: [
             { firstname: { _eq: `${firstname}` } },
             { lastname: { _eq: `${lastname}` } },
           ],
-        };
-      }
-
-      if (operand.keyWord === 'not_equal') {
-        return {
-          _not: {
-            _and: [
-              { firstname: { _eq: `${firstname}` } },
-              { lastname: { _eq: `${lastname}` } },
-            ],
-          },
-        };
-      }
-      console.error(Error(`Unhandled operand: ${operand.keyWord}`));
-      return {};
-    },
-    searchQuery: SEARCH_PEOPLE_QUERY,
-    searchTemplate: (searchInput: string) => ({
-      _or: [
-        { firstname: { _ilike: `%${searchInput}%` } },
-        { lastname: { _ilike: `%${searchInput}%` } },
-      ],
-    }),
-    searchResultMapper: (person: GraphqlQueryPerson) => ({
-      displayValue: `${person.firstname} ${person.lastname}`,
-      value: { firstname: person.firstname, lastname: person.lastname },
-    }),
-    operands: [
-      { label: 'Equal', id: 'equal', keyWord: 'equal' },
-      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
-    ],
+        },
+      };
+    }
+    console.error(Error(`Unhandled operand: ${operand.keyWord}`));
+    return {};
   },
+  searchQuery: SEARCH_PEOPLE_QUERY,
+  searchTemplate: (searchInput: string) => ({
+    _or: [
+      { firstname: { _ilike: `%${searchInput}%` } },
+      { lastname: { _ilike: `%${searchInput}%` } },
+    ],
+  }),
+  searchResultMapper: (person: GraphqlQueryPerson) => ({
+    displayValue: `${person.firstname} ${person.lastname}`,
+    value: { firstname: person.firstname, lastname: person.lastname },
+  }),
+  operands: [
+    { label: 'Equal', id: 'equal', keyWord: 'equal' },
+    { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+  ],
+} satisfies FilterType<People_Bool_Exp>;
+
+export const availableFilters = [
+  fullnameFilter,
   {
     key: 'company_name',
     label: 'Company',
