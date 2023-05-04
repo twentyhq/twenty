@@ -13,9 +13,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import ClickableCell from '../../components/table/ClickableCell';
 import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
-import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import CompanyChip from '../../components/chips/CompanyChip';
-import PersonChip from '../../components/chips/PersonChip';
 import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
 import EditableText from '../../components/table/editable-cell/EditableText';
@@ -31,6 +29,7 @@ import {
 } from '../../services/search/search';
 import { GraphqlQueryCompany } from '../../interfaces/company.interface';
 import EditablePhone from '../../components/table/editable-cell/EditablePhone';
+import EditableFullName from '../../components/table/editable-cell/EditableFullName';
 
 export const availableSorts = [
   {
@@ -132,21 +131,30 @@ export const availableFilters = [
 
 const columnHelper = createColumnHelper<Person>();
 export const peopleColumns = [
-  columnHelper.accessor('fullName', {
+  columnHelper.accessor('id', {
+    header: () => (
+      <Checkbox id={`person-select-all`} name={`person-select-all`} />
+    ),
+    cell: (props) => (
+      <Checkbox
+        id={`person-selected-${props.row.original.email}`}
+        name={`person-selected-${props.row.original.email}`}
+      />
+    ),
+  }),
+  columnHelper.accessor('firstname', {
     header: () => <ColumnHead viewName="People" viewIcon={<FaRegUser />} />,
     cell: (props) => (
-      <>
-        <HorizontalyAlignedContainer>
-          <Checkbox
-            id={`person-selected-${props.row.original.email}`}
-            name={`person-selected-${props.row.original.email}`}
-          />
-          <PersonChip
-            name={props.row.original.fullName}
-            picture={props.row.original.picture}
-          />
-        </HorizontalyAlignedContainer>
-      </>
+      <EditableFullName
+        firstname={props.row.original.firstname}
+        lastname={props.row.original.lastname}
+        changeHandler={(firstName: string, lastName: string) => {
+          const person = props.row.original;
+          person.firstname = firstName;
+          person.lastname = lastName;
+          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+        }}
+      />
     ),
   }),
   columnHelper.accessor('email', {

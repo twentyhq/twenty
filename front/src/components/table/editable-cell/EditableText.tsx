@@ -41,9 +41,6 @@ function EditableCell({
 
   const onEditModeChange = (isEditMode: boolean) => {
     setIsEditMode(isEditMode);
-    if (isEditMode) {
-      inputRef.current?.focus();
-    }
   };
 
   return (
@@ -55,6 +52,7 @@ function EditableCell({
         <StyledInplaceInput
           isEditMode={isEditMode}
           placeholder={placeholder || ''}
+          autoFocus
           ref={inputRef}
           value={inputValue}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
