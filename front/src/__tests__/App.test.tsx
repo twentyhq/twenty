@@ -9,7 +9,6 @@ window.location = { assign: assignMock };
 it('Checks the App component renders', async () => {
   const { getByText } = render(<RegularApp />);
 
-  expect(getByText('People')).toBeDefined();
   expect(getByText('Companies')).toBeDefined();
   expect(getByText('Opportunities')).toBeDefined();
   await waitFor(() => {

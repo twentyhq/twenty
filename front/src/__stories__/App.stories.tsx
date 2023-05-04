@@ -8,6 +8,9 @@ const component = {
   component: App,
 };
 
+localStorage.setItem('refreshToken', 'xxx-refresh');
+localStorage.setItem('accessToken', 'xxx-access');
+
 const mocks = [
   {
     request: {
