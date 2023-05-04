@@ -121,11 +121,7 @@ export const companiesColumns = [
       <ClickableCell href="#">
         <>
           {props.row.original.accountOwner && (
-            <PersonChip
-              name={`${props.row.original.accountOwner?.first_name || ''} ${
-                props.row.original.accountOwner?.last_name || ''
-              }`}
-            />
+            <PersonChip name={props.row.original.accountOwner?.displayName} />
           )}
         </>
       </ClickableCell>

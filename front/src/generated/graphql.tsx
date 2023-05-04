@@ -1715,9 +1715,14 @@ export type Citext_Comparison_Exp = {
 /** columns and relationships of "companies" */
 export type Companies = {
   __typename?: 'companies';
+  /** An object relationship */
+  account_owner?: Maybe<Users>;
+  account_owner_id?: Maybe<Scalars['uuid']>;
+  address?: Maybe<Scalars['String']>;
   created_at: Scalars['timestamptz'];
   deleted_at?: Maybe<Scalars['timestamptz']>;
   domain_name?: Maybe<Scalars['String']>;
+  employees: Scalars['Int'];
   id: Scalars['uuid'];
   name?: Maybe<Scalars['String']>;
   updated_at: Scalars['timestamptz'];
@@ -1736,9 +1741,17 @@ export type Companies_Aggregate = {
 /** aggregate fields of "companies" */
 export type Companies_Aggregate_Fields = {
   __typename?: 'companies_aggregate_fields';
+  avg?: Maybe<Companies_Avg_Fields>;
   count: Scalars['Int'];
   max?: Maybe<Companies_Max_Fields>;
   min?: Maybe<Companies_Min_Fields>;
+  stddev?: Maybe<Companies_Stddev_Fields>;
+  stddev_pop?: Maybe<Companies_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Companies_Stddev_Samp_Fields>;
+  sum?: Maybe<Companies_Sum_Fields>;
+  var_pop?: Maybe<Companies_Var_Pop_Fields>;
+  var_samp?: Maybe<Companies_Var_Samp_Fields>;
+  variance?: Maybe<Companies_Variance_Fields>;
 };
 
 
@@ -1748,14 +1761,24 @@ export type Companies_Aggregate_FieldsCountArgs = {
   distinct?: InputMaybe<Scalars['Boolean']>;
 };
 
+/** aggregate avg on columns */
+export type Companies_Avg_Fields = {
+  __typename?: 'companies_avg_fields';
+  employees?: Maybe<Scalars['Float']>;
+};
+
 /** Boolean expression to filter rows from the table "companies". All fields are combined with a logical 'AND'. */
 export type Companies_Bool_Exp = {
   _and?: InputMaybe<Array<Companies_Bool_Exp>>;
   _not?: InputMaybe<Companies_Bool_Exp>;
   _or?: InputMaybe<Array<Companies_Bool_Exp>>;
+  account_owner?: InputMaybe<Users_Bool_Exp>;
+  account_owner_id?: InputMaybe<Uuid_Comparison_Exp>;
+  address?: InputMaybe<String_Comparison_Exp>;
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   deleted_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   domain_name?: InputMaybe<String_Comparison_Exp>;
+  employees?: InputMaybe<Int_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -1769,11 +1792,20 @@ export enum Companies_Constraint {
   CompaniesPkey = 'companies_pkey'
 }
 
+/** input type for incrementing numeric columns in table "companies" */
+export type Companies_Inc_Input = {
+  employees?: InputMaybe<Scalars['Int']>;
+};
+
 /** input type for inserting data into table "companies" */
 export type Companies_Insert_Input = {
+  account_owner?: InputMaybe<Users_Obj_Rel_Insert_Input>;
+  account_owner_id?: InputMaybe<Scalars['uuid']>;
+  address?: InputMaybe<Scalars['String']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
   deleted_at?: InputMaybe<Scalars['timestamptz']>;
   domain_name?: InputMaybe<Scalars['String']>;
+  employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['uuid']>;
   name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
@@ -1784,9 +1816,12 @@ export type Companies_Insert_Input = {
 /** aggregate max on columns */
 export type Companies_Max_Fields = {
   __typename?: 'companies_max_fields';
+  account_owner_id?: Maybe<Scalars['uuid']>;
+  address?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   deleted_at?: Maybe<Scalars['timestamptz']>;
   domain_name?: Maybe<Scalars['String']>;
+  employees?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
@@ -1796,9 +1831,12 @@ export type Companies_Max_Fields = {
 /** aggregate min on columns */
 export type Companies_Min_Fields = {
   __typename?: 'companies_min_fields';
+  account_owner_id?: Maybe<Scalars['uuid']>;
+  address?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   deleted_at?: Maybe<Scalars['timestamptz']>;
   domain_name?: Maybe<Scalars['String']>;
+  employees?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
@@ -1830,9 +1868,13 @@ export type Companies_On_Conflict = {
 
 /** Ordering options when selecting data from "companies". */
 export type Companies_Order_By = {
+  account_owner?: InputMaybe<Users_Order_By>;
+  account_owner_id?: InputMaybe<Order_By>;
+  address?: InputMaybe<Order_By>;
   created_at?: InputMaybe<Order_By>;
   deleted_at?: InputMaybe<Order_By>;
   domain_name?: InputMaybe<Order_By>;
+  employees?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
@@ -1848,11 +1890,17 @@ export type Companies_Pk_Columns_Input = {
 /** select columns of table "companies" */
 export enum Companies_Select_Column {
   /** column name */
+  AccountOwnerId = 'account_owner_id',
+  /** column name */
+  Address = 'address',
+  /** column name */
   CreatedAt = 'created_at',
   /** column name */
   DeletedAt = 'deleted_at',
   /** column name */
   DomainName = 'domain_name',
+  /** column name */
+  Employees = 'employees',
   /** column name */
   Id = 'id',
   /** column name */
@@ -1865,13 +1913,34 @@ export enum Companies_Select_Column {
 
 /** input type for updating data in table "companies" */
 export type Companies_Set_Input = {
+  account_owner_id?: InputMaybe<Scalars['uuid']>;
+  address?: InputMaybe<Scalars['String']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
   deleted_at?: InputMaybe<Scalars['timestamptz']>;
   domain_name?: InputMaybe<Scalars['String']>;
+  employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['uuid']>;
   name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
   workspace_id?: InputMaybe<Scalars['uuid']>;
+};
+
+/** aggregate stddev on columns */
+export type Companies_Stddev_Fields = {
+  __typename?: 'companies_stddev_fields';
+  employees?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Companies_Stddev_Pop_Fields = {
+  __typename?: 'companies_stddev_pop_fields';
+  employees?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Companies_Stddev_Samp_Fields = {
+  __typename?: 'companies_stddev_samp_fields';
+  employees?: Maybe<Scalars['Float']>;
 };
 
 /** Streaming cursor of the table "companies" */
@@ -1884,23 +1953,38 @@ export type Companies_Stream_Cursor_Input = {
 
 /** Initial value of the column from where the streaming should start */
 export type Companies_Stream_Cursor_Value_Input = {
+  account_owner_id?: InputMaybe<Scalars['uuid']>;
+  address?: InputMaybe<Scalars['String']>;
   created_at?: InputMaybe<Scalars['timestamptz']>;
   deleted_at?: InputMaybe<Scalars['timestamptz']>;
   domain_name?: InputMaybe<Scalars['String']>;
+  employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['uuid']>;
   name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
   workspace_id?: InputMaybe<Scalars['uuid']>;
 };
 
+/** aggregate sum on columns */
+export type Companies_Sum_Fields = {
+  __typename?: 'companies_sum_fields';
+  employees?: Maybe<Scalars['Int']>;
+};
+
 /** update columns of table "companies" */
 export enum Companies_Update_Column {
+  /** column name */
+  AccountOwnerId = 'account_owner_id',
+  /** column name */
+  Address = 'address',
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
   DeletedAt = 'deleted_at',
   /** column name */
   DomainName = 'domain_name',
+  /** column name */
+  Employees = 'employees',
   /** column name */
   Id = 'id',
   /** column name */
@@ -1912,10 +1996,30 @@ export enum Companies_Update_Column {
 }
 
 export type Companies_Updates = {
+  /** increments the numeric columns with given value of the filtered values */
+  _inc?: InputMaybe<Companies_Inc_Input>;
   /** sets the columns of the filtered rows to the given values */
   _set?: InputMaybe<Companies_Set_Input>;
   /** filter the rows which have to be updated */
   where: Companies_Bool_Exp;
+};
+
+/** aggregate var_pop on columns */
+export type Companies_Var_Pop_Fields = {
+  __typename?: 'companies_var_pop_fields';
+  employees?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate var_samp on columns */
+export type Companies_Var_Samp_Fields = {
+  __typename?: 'companies_var_samp_fields';
+  employees?: Maybe<Scalars['Float']>;
+};
+
+/** aggregate variance on columns */
+export type Companies_Variance_Fields = {
+  __typename?: 'companies_variance_fields';
+  employees?: Maybe<Scalars['Float']>;
 };
 
 /** ordering argument of a cursor */
@@ -2618,6 +2722,7 @@ export type Mutation_RootUpdate_AuthUserSecurityKeys_ManyArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_CompaniesArgs = {
+  _inc?: InputMaybe<Companies_Inc_Input>;
   _set?: InputMaybe<Companies_Set_Input>;
   where: Companies_Bool_Exp;
 };
@@ -2625,6 +2730,7 @@ export type Mutation_RootUpdate_CompaniesArgs = {
 
 /** mutation root */
 export type Mutation_RootUpdate_Companies_By_PkArgs = {
+  _inc?: InputMaybe<Companies_Inc_Input>;
   _set?: InputMaybe<Companies_Set_Input>;
   pk_columns: Companies_Pk_Columns_Input;
 };
@@ -3841,7 +3947,7 @@ export type Users = {
   /** An aggregate relationship */
   userProviders_aggregate: AuthUserProviders_Aggregate;
   /** An object relationship */
-  workspaceMember?: Maybe<Workspace_Members>;
+  workspace_member?: Maybe<Workspace_Members>;
 };
 
 
@@ -4037,7 +4143,7 @@ export type Users_Bool_Exp = {
   updatedAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   userProviders?: InputMaybe<AuthUserProviders_Bool_Exp>;
   userProviders_aggregate?: InputMaybe<AuthUserProviders_Aggregate_Bool_Exp>;
-  workspaceMember?: InputMaybe<Workspace_Members_Bool_Exp>;
+  workspace_member?: InputMaybe<Workspace_Members_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "auth.users" */
@@ -4097,7 +4203,7 @@ export type Users_Insert_Input = {
   totpSecret?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['timestamptz']>;
   userProviders?: InputMaybe<AuthUserProviders_Arr_Rel_Insert_Input>;
-  workspaceMember?: InputMaybe<Workspace_Members_Obj_Rel_Insert_Input>;
+  workspace_member?: InputMaybe<Workspace_Members_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -4253,7 +4359,7 @@ export type Users_Order_By = {
   totpSecret?: InputMaybe<Order_By>;
   updatedAt?: InputMaybe<Order_By>;
   userProviders_aggregate?: InputMaybe<AuthUserProviders_Aggregate_Order_By>;
-  workspaceMember?: InputMaybe<Workspace_Members_Order_By>;
+  workspace_member?: InputMaybe<Workspace_Members_Order_By>;
 };
 
 /** primary key columns input for table: auth.users */
@@ -4696,6 +4802,7 @@ export type Workspaces = {
   display_name: Scalars['String'];
   domain_name: Scalars['String'];
   id: Scalars['uuid'];
+  logo?: Maybe<Scalars['String']>;
   updated_at: Scalars['timestamptz'];
 };
 
@@ -4731,6 +4838,7 @@ export type Workspaces_Bool_Exp = {
   display_name?: InputMaybe<String_Comparison_Exp>;
   domain_name?: InputMaybe<String_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
+  logo?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
 };
 
@@ -4749,6 +4857,7 @@ export type Workspaces_Insert_Input = {
   display_name?: InputMaybe<Scalars['String']>;
   domain_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['uuid']>;
+  logo?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
@@ -4760,6 +4869,7 @@ export type Workspaces_Max_Fields = {
   display_name?: Maybe<Scalars['String']>;
   domain_name?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  logo?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -4771,6 +4881,7 @@ export type Workspaces_Min_Fields = {
   display_name?: Maybe<Scalars['String']>;
   domain_name?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['uuid']>;
+  logo?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -4804,6 +4915,7 @@ export type Workspaces_Order_By = {
   display_name?: InputMaybe<Order_By>;
   domain_name?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  logo?: InputMaybe<Order_By>;
   updated_at?: InputMaybe<Order_By>;
 };
 
@@ -4825,6 +4937,8 @@ export enum Workspaces_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  Logo = 'logo',
+  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -4835,6 +4949,7 @@ export type Workspaces_Set_Input = {
   display_name?: InputMaybe<Scalars['String']>;
   domain_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['uuid']>;
+  logo?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
@@ -4853,6 +4968,7 @@ export type Workspaces_Stream_Cursor_Value_Input = {
   display_name?: InputMaybe<Scalars['String']>;
   domain_name?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['uuid']>;
+  logo?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
 };
 
@@ -4869,6 +4985,8 @@ export enum Workspaces_Update_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  Logo = 'logo',
+  /** column name */
   UpdatedAt = 'updated_at'
 }
 
@@ -4878,6 +4996,25 @@ export type Workspaces_Updates = {
   /** filter the rows which have to be updated */
   where: Workspaces_Bool_Exp;
 };
+
+export type GetCompaniesQueryVariables = Exact<{
+  orderBy?: InputMaybe<Array<Companies_Order_By> | Companies_Order_By>;
+}>;
+
+
+export type GetCompaniesQuery = { __typename?: 'query_root', companies: Array<{ __typename?: 'companies', id: any, domain_name?: string | null, name?: string | null, created_at: any, address?: string | null, employees: number, account_owner?: { __typename?: 'users', id: any, email?: any | null, displayName: string } | null }> };
+
+export type UpdateCompanyMutationVariables = Exact<{
+  id?: InputMaybe<Scalars['uuid']>;
+  name?: InputMaybe<Scalars['String']>;
+  domain_name?: InputMaybe<Scalars['String']>;
+  account_owner_id?: InputMaybe<Scalars['uuid']>;
+  address?: InputMaybe<Scalars['String']>;
+  employees?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type UpdateCompanyMutation = { __typename?: 'mutation_root', update_companies?: { __typename?: 'companies_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'companies', address?: string | null, created_at: any, domain_name?: string | null, employees: number, id: any, name?: string | null, account_owner?: { __typename?: 'users', id: any, email?: any | null, displayName: string } | null }> } | null };
 
 export type GetPeopleQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<People_Order_By> | People_Order_By>;
@@ -4900,6 +5037,105 @@ export type UpdatePeopleMutationVariables = Exact<{
 export type UpdatePeopleMutation = { __typename?: 'mutation_root', update_people?: { __typename?: 'people_mutation_response', returning: Array<{ __typename?: 'people', city?: string | null, email?: string | null, firstname?: string | null, id: any, lastname?: string | null, phone?: string | null, company?: { __typename?: 'companies', domain_name?: string | null, name?: string | null, id: any } | null }> } | null };
 
 
+export const GetCompaniesDocument = gql`
+    query GetCompanies($orderBy: [companies_order_by!]) {
+  companies(order_by: $orderBy) {
+    id
+    domain_name
+    name
+    created_at
+    address
+    employees
+    account_owner {
+      id
+      email
+      displayName
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCompaniesQuery__
+ *
+ * To run a query within a React component, call `useGetCompaniesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCompaniesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCompaniesQuery({
+ *   variables: {
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useGetCompaniesQuery(baseOptions?: Apollo.QueryHookOptions<GetCompaniesQuery, GetCompaniesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCompaniesQuery, GetCompaniesQueryVariables>(GetCompaniesDocument, options);
+      }
+export function useGetCompaniesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCompaniesQuery, GetCompaniesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCompaniesQuery, GetCompaniesQueryVariables>(GetCompaniesDocument, options);
+        }
+export type GetCompaniesQueryHookResult = ReturnType<typeof useGetCompaniesQuery>;
+export type GetCompaniesLazyQueryHookResult = ReturnType<typeof useGetCompaniesLazyQuery>;
+export type GetCompaniesQueryResult = Apollo.QueryResult<GetCompaniesQuery, GetCompaniesQueryVariables>;
+export const UpdateCompanyDocument = gql`
+    mutation UpdateCompany($id: uuid, $name: String, $domain_name: String, $account_owner_id: uuid, $address: String, $employees: Int) {
+  update_companies(
+    where: {id: {_eq: $id}}
+    _set: {account_owner_id: $account_owner_id, address: $address, domain_name: $domain_name, employees: $employees, name: $name}
+  ) {
+    affected_rows
+    returning {
+      account_owner {
+        id
+        email
+        displayName
+      }
+      address
+      created_at
+      domain_name
+      employees
+      id
+      name
+    }
+  }
+}
+    `;
+export type UpdateCompanyMutationFn = Apollo.MutationFunction<UpdateCompanyMutation, UpdateCompanyMutationVariables>;
+
+/**
+ * __useUpdateCompanyMutation__
+ *
+ * To run a mutation, you first call `useUpdateCompanyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCompanyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCompanyMutation, { data, loading, error }] = useUpdateCompanyMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      domain_name: // value for 'domain_name'
+ *      account_owner_id: // value for 'account_owner_id'
+ *      address: // value for 'address'
+ *      employees: // value for 'employees'
+ *   },
+ * });
+ */
+export function useUpdateCompanyMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCompanyMutation, UpdateCompanyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateCompanyMutation, UpdateCompanyMutationVariables>(UpdateCompanyDocument, options);
+      }
+export type UpdateCompanyMutationHookResult = ReturnType<typeof useUpdateCompanyMutation>;
+export type UpdateCompanyMutationResult = Apollo.MutationResult<UpdateCompanyMutation>;
+export type UpdateCompanyMutationOptions = Apollo.BaseMutationOptions<UpdateCompanyMutation, UpdateCompanyMutationVariables>;
 export const GetPeopleDocument = gql`
     query GetPeople($orderBy: [people_order_by!]) {
   people(order_by: $orderBy) {

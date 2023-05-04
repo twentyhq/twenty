@@ -1,5 +1,5 @@
 export interface Workspace {
   id: string;
-  name: string;
+  display_name: string;
   logo: string;
 }
