@@ -28,16 +28,16 @@ it('Checks the default top option is Include', async () => {
       value: 'Alexandre Prot',
       label: 'People',
       operand: {
-        id: 'include',
-        keyWord: 'ilike',
-        label: 'Include',
+        id: 'equal',
+        keyWord: 'equal',
+        label: 'Equal',
       },
       icon: <FaUsers />,
     }),
   );
 });
 
-it('Checks the selection of top option for Doesnot include', async () => {
+it('Checks the selection of top option for Not Equal', async () => {
   const setFilters = jest.fn();
   const { getByText } = render(
     <RegularFilterDropdownButton setFilter={setFilters} />,
@@ -49,10 +49,10 @@ it('Checks the selection of top option for Doesnot include', async () => {
   const filterByPeople = getByText('People');
   fireEvent.click(filterByPeople);
 
-  const openOperandOptions = getByText('Include');
+  const openOperandOptions = getByText('Equal');
   fireEvent.click(openOperandOptions);
 
-  const selectOperand = getByText("Doesn't include");
+  const selectOperand = getByText('Not equal');
   fireEvent.click(selectOperand);
 
   await waitFor(() => {
@@ -69,9 +69,9 @@ it('Checks the selection of top option for Doesnot include', async () => {
       value: 'Alexandre Prot',
       label: 'People',
       operand: {
-        id: 'not-include',
-        keyWord: 'not_ilike',
-        label: "Doesn't include",
+        id: 'not-equal',
+        keyWord: 'not_equal',
+        label: 'Not equal',
       },
       icon: <FaUsers />,
     }),
@@ -122,9 +122,9 @@ it('Calls the filters when typing a new name', async () => {
       value: 'Jane Doe',
       label: 'People',
       operand: {
-        id: 'include',
-        keyWord: 'ilike',
-        label: 'Include',
+        id: 'equal',
+        keyWord: 'equal',
+        label: 'Equal',
       },
       icon: <FaUsers />,
     }),
