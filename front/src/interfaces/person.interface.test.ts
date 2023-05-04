@@ -18,13 +18,14 @@ describe('mapPerson', () => {
       },
       __typename: '',
     });
-    expect(person.fullName).toBe('John Doe');
+    expect(person.firstname).toBe('John');
   });
 
   it('should map person back', () => {
     const person = mapGqlPerson({
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      fullName: 'John Doe',
+      firstname: 'John',
+      lastname: 'Doe',
       email: '',
       phone: '',
       city: '',
