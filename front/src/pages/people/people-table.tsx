@@ -79,6 +79,7 @@ export const availableFilters = [
       displayValue: `${person.firstname} ${person.lastname}`,
       value: { firstname: person.firstname, lastname: person.lastname },
     }),
+    operands: [],
   },
   {
     key: 'company_name',
@@ -95,6 +96,7 @@ export const availableFilters = [
       displayValue: company.name,
       value: { companyName: company.name },
     }),
+    operands: [],
   },
   // {
   //   key: 'email',

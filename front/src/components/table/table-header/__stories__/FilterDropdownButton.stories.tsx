@@ -100,6 +100,7 @@ const availableFilters = [
       displayValue: data.firstname + ' ' + data.lastname,
       value: data.firstname,
     }),
+    operands: [],
   },
 ] satisfies FilterType<People_Bool_Exp>[];
 

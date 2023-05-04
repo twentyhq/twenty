@@ -76,6 +76,7 @@ export function FilterDropdownButton<FilterProperties>({
         key={`fields-value-${index}`}
         onClick={() => {
           onFilterSelect({
+            ...selectedFilter,
             key: value.displayValue,
             operand: selectedFilterOperand,
             searchQuery: selectedFilter.searchQuery,
