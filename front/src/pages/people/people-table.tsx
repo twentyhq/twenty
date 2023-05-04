@@ -213,7 +213,16 @@ export const peopleColumns = [
   columnHelper.accessor('city', {
     header: () => <ColumnHead viewName="City" viewIcon={<FaMapPin />} />,
     cell: (props) => (
-      <ClickableCell href="#">{props.row.original.city}</ClickableCell>
+      <EditableText
+        shouldAlignRight={true}
+        placeholder="City"
+        content={props.row.original.city}
+        changeHandler={(value: string) => {
+          const person = props.row.original;
+          person.city = value;
+          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+        }}
+      />
     ),
   }),
 ];

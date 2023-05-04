@@ -6,6 +6,7 @@ type OwnProps = {
   placeholder?: string;
   content: string;
   changeHandler: (updated: string) => void;
+  shouldAlignRight?: boolean;
 };
 
 type StyledEditModeProps = {
@@ -24,7 +25,16 @@ const StyledInplaceInput = styled.input<StyledEditModeProps>`
   }
 `;
 
-function EditableCell({ content, placeholder, changeHandler }: OwnProps) {
+const StyledNoEditText = styled.div`
+  max-width: 200px;
+`;
+
+function EditableCell({
+  content,
+  placeholder,
+  changeHandler,
+  shouldAlignRight,
+}: OwnProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(content);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -37,17 +47,24 @@ function EditableCell({ content, placeholder, changeHandler }: OwnProps) {
   };
 
   return (
-    <EditableCellWrapper onEditModeChange={onEditModeChange}>
-      <StyledInplaceInput
-        isEditMode={isEditMode}
-        placeholder={placeholder || ''}
-        ref={inputRef}
-        value={inputValue}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          setInputValue(event.target.value);
-          changeHandler(event.target.value);
-        }}
-      />
+    <EditableCellWrapper
+      onEditModeChange={onEditModeChange}
+      shouldAlignRight={shouldAlignRight}
+    >
+      {isEditMode ? (
+        <StyledInplaceInput
+          isEditMode={isEditMode}
+          placeholder={placeholder || ''}
+          ref={inputRef}
+          value={inputValue}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            setInputValue(event.target.value);
+            changeHandler(event.target.value);
+          }}
+        />
+      ) : (
+        <StyledNoEditText>{inputValue}</StyledNoEditText>
+      )}
     </EditableCellWrapper>
   );
 }
