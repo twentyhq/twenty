@@ -3,7 +3,7 @@
 exports[`PeopleFilter City filter should generate the where variable of the GQL call 1`] = `
 Object {
   "city": Object {
-    "_eq": undefined,
+    "_eq": "Paris",
   },
 }
 `;
@@ -12,7 +12,7 @@ exports[`PeopleFilter City filter should generate the where variable of the GQL 
 Object {
   "_not": Object {
     "city": Object {
-      "_eq": undefined,
+      "_eq": "Paris",
     },
   },
 }
@@ -22,7 +22,7 @@ exports[`PeopleFilter Company fitler should generate the where variable of the G
 Object {
   "company": Object {
     "name": Object {
-      "_eq": undefined,
+      "_eq": "ACME",
     },
   },
 }
@@ -33,7 +33,7 @@ Object {
   "_not": Object {
     "company": Object {
       "name": Object {
-        "_eq": undefined,
+        "_eq": "ACME",
       },
     },
   },
@@ -43,7 +43,7 @@ Object {
 exports[`PeopleFilter Email filter should generate the where variable of the GQL call 1`] = `
 Object {
   "email": Object {
-    "_eq": undefined,
+    "_eq": "john@linkedin.com",
   },
 }
 `;
@@ -52,7 +52,7 @@ exports[`PeopleFilter Email filter should generate the where variable of the GQL
 Object {
   "_not": Object {
     "email": Object {
-      "_eq": undefined,
+      "_eq": "john@linkedin.com",
     },
   },
 }
@@ -63,12 +63,12 @@ Object {
   "_and": Array [
     Object {
       "firstname": Object {
-        "_eq": "undefined",
+        "_eq": "John",
       },
     },
     Object {
       "lastname": Object {
-        "_eq": "undefined",
+        "_eq": "Doe",
       },
     },
   ],
@@ -81,12 +81,12 @@ Object {
     "_and": Array [
       Object {
         "firstname": Object {
-          "_eq": "undefined",
+          "_eq": "John",
         },
       },
       Object {
         "lastname": Object {
-          "_eq": "undefined",
+          "_eq": "Doe",
         },
       },
     ],

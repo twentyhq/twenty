@@ -17,7 +17,7 @@ describe('PeopleFilter', () => {
     const filterSelectedValue = fullnameFilter.searchResultMapper(JohnDoeUser);
     for (const operand of fullnameFilter.operands) {
       expect(
-        fullnameFilter.whereTemplate(operand, filterSelectedValue),
+        fullnameFilter.whereTemplate(operand, filterSelectedValue.value),
       ).toMatchSnapshot();
     }
   });
@@ -25,7 +25,7 @@ describe('PeopleFilter', () => {
     const filterSelectedValue = emailFilter.searchResultMapper(JohnDoeUser);
     for (const operand of emailFilter.operands) {
       expect(
-        emailFilter.whereTemplate(operand, filterSelectedValue),
+        emailFilter.whereTemplate(operand, filterSelectedValue.value),
       ).toMatchSnapshot();
     }
   });
@@ -33,7 +33,7 @@ describe('PeopleFilter', () => {
     const filterSelectedValue = cityFilter.searchResultMapper(JohnDoeUser);
     for (const operand of cityFilter.operands) {
       expect(
-        cityFilter.whereTemplate(operand, filterSelectedValue),
+        cityFilter.whereTemplate(operand, filterSelectedValue.value),
       ).toMatchSnapshot();
     }
   });
@@ -43,7 +43,7 @@ describe('PeopleFilter', () => {
     );
     for (const operand of companyFilter.operands) {
       expect(
-        companyFilter.whereTemplate(operand, filterSelectedValue),
+        companyFilter.whereTemplate(operand, filterSelectedValue.value),
       ).toMatchSnapshot();
     }
   });
