@@ -6,12 +6,6 @@ import {
   People_Bool_Exp,
   Users_Bool_Exp,
 } from '../../../generated/graphql';
-import { GraphqlQueryCompany } from '../../../interfaces/company.interface';
-import {
-  SEARCH_COMPANY_QUERY,
-  SEARCH_PEOPLE_QUERY,
-} from '../../../services/search/search';
-import { GraphqlQueryPerson } from '../../../interfaces/person.interface';
 
 export type SortType<OrderByTemplate> =
   | {
@@ -62,25 +56,3 @@ export type SelectedFilterType<WhereTemplate> = FilterType<WhereTemplate> & {
   operand: FilterOperandType;
   where: WhereTemplate;
 };
-
-export function assertFilterUseCompanySearch<FilterValue>(
-  filter: FilterType<People_Bool_Exp>,
-): filter is FilterType<People_Bool_Exp> & {
-  searchResultMapper: (data: GraphqlQueryCompany) => {
-    displayValue: string;
-    value: FilterValue;
-  };
-} {
-  return filter.searchQuery === SEARCH_COMPANY_QUERY;
-}
-
-export function assertFilterUsePeopleSearch<FilterValue>(
-  filter: FilterType<People_Bool_Exp>,
-): filter is FilterType<People_Bool_Exp> & {
-  searchResultMapper: (data: GraphqlQueryPerson) => {
-    displayValue: string;
-    value: FilterValue;
-  };
-} {
-  return filter.searchQuery === SEARCH_PEOPLE_QUERY;
-}
