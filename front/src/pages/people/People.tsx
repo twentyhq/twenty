@@ -20,7 +20,7 @@ import { SelectedFilterType } from '../../components/table/table-header/interfac
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
-} from '../../components/table/table-header/heplers';
+} from '../../components/table/table-header/helpers';
 
 const StyledPeopleContainer = styled.div`
   display: flex;

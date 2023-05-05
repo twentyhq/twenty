@@ -1,4 +1,4 @@
-import { reduceSortsToOrderBy } from '../../components/table/table-header/heplers';
+import { reduceSortsToOrderBy } from '../../components/table/table-header/helpers';
 import { CompaniesSelectedSortType } from './select';
 
 describe('reduceSortsToOrderBy', () => {
