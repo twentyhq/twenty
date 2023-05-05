@@ -55,7 +55,8 @@
     "coveragePathIgnorePatterns": [
       ".stories.tsx$",
       "graphql.tsx$",
-      "apollo.tsx$"
+      "apollo.tsx$",
+      "src/index.tsx$"
     ],
     "coverageThreshold": {
       "global": {
