@@ -80,8 +80,6 @@ const fullnameFilter = {
         },
       };
     }
-    console.error(Error(`Unhandled operand: ${operand.keyWord}`));
-    return {};
   },
   searchQuery: SEARCH_PEOPLE_QUERY,
   searchTemplate: (searchInput: string) => ({
@@ -116,8 +114,6 @@ const companyFilter = {
         _not: { company: { name: { _eq: companyName } } },
       };
     }
-    console.error(Error(`Unhandled operand: ${operand.keyWord}`));
-    return {};
   },
   searchQuery: SEARCH_COMPANY_QUERY,
   searchTemplate: (searchInput: string) => ({
@@ -149,8 +145,6 @@ const emailFilter = {
         _not: { email: { _eq: email } },
       };
     }
-    console.error(Error(`Unhandled operand: ${operand.keyWord}`));
-    return {};
   },
   searchQuery: SEARCH_PEOPLE_QUERY,
   searchTemplate: (searchInput: string) => ({
@@ -182,8 +176,6 @@ const cityFilter = {
         _not: { city: { _eq: city } },
       };
     }
-    console.error(Error(`Unhandled operand: ${operand.keyWord}`));
-    return {};
   },
   searchQuery: SEARCH_PEOPLE_QUERY,
   searchTemplate: (searchInput: string) => ({

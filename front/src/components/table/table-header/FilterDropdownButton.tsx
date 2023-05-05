@@ -84,10 +84,11 @@ export function FilterDropdownButton<FilterProperties>({
             label: selectedFilter.label,
             value: value.displayValue,
             icon: selectedFilter.icon,
-            where: selectedFilter.whereTemplate(
-              selectedFilterOperand,
-              value.value,
-            ),
+            where:
+              selectedFilter.whereTemplate(
+                selectedFilterOperand,
+                value.value,
+              ) || ({} as FilterProperties),
             searchResultMapper: selectedFilter.searchResultMapper,
           });
           setIsUnfolded(false);

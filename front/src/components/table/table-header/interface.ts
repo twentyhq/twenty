@@ -30,7 +30,7 @@ export type FilterType<WhereTemplate, FilterValue = Record<string, any>> = {
   whereTemplate: (
     operand: FilterOperandType,
     value: FilterValue,
-  ) => WhereTemplate;
+  ) => WhereTemplate | undefined;
   searchQuery: DocumentNode;
   searchTemplate: (
     searchInput: string,
