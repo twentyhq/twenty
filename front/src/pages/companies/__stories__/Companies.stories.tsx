@@ -19,6 +19,7 @@ const mocks = [
       query: GET_COMPANIES,
       variables: {
         orderBy: [{ name: 'asc' }],
+        where: {},
       },
     },
     result: {

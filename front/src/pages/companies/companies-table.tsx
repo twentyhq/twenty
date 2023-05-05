@@ -1,5 +1,8 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { Company } from '../../interfaces/company.interface';
+import {
+  Company,
+  GraphqlQueryCompany,
+} from '../../interfaces/company.interface';
 import { updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
@@ -14,12 +17,20 @@ import {
   FaStream,
   FaRegUser,
   FaUsers,
+  FaBuilding,
 } from 'react-icons/fa';
 import ClickableCell from '../../components/table/ClickableCell';
 import PersonChip from '../../components/chips/PersonChip';
 import EditableChip from '../../components/table/editable-cell/EditableChip';
-import { SortType } from '../../components/table/table-header/interface';
-import { Companies_Order_By } from '../../generated/graphql';
+import {
+  FilterType,
+  SortType,
+} from '../../components/table/table-header/interface';
+import {
+  Companies_Bool_Exp,
+  Companies_Order_By,
+} from '../../generated/graphql';
+import { SEARCH_COMPANY_QUERY } from '../../services/search/search';
 
 export const sortsAvailable = [
   {
@@ -35,6 +46,39 @@ export const sortsAvailable = [
     _type: 'default_sort',
   },
 ] satisfies Array<SortType<Companies_Order_By>>;
+
+export const filtersAvailable = [
+  {
+    key: 'company_name',
+    label: 'Company',
+    icon: <FaBuilding />,
+    whereTemplate: (operand, { companyName }) => {
+      if (operand.keyWord === 'equal') {
+        return {
+          name: { _eq: companyName },
+        };
+      }
+
+      if (operand.keyWord === 'not_equal') {
+        return {
+          _not: { name: { _eq: companyName } },
+        };
+      }
+    },
+    searchQuery: SEARCH_COMPANY_QUERY,
+    searchTemplate: (searchInput: string) => ({
+      name: { _ilike: `%${searchInput}%` },
+    }),
+    searchResultMapper: (company: GraphqlQueryCompany) => ({
+      displayValue: company.name,
+      value: { companyName: company.name },
+    }),
+    operands: [
+      { label: 'Equal', id: 'equal', keyWord: 'equal' },
+      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+    ],
+  },
+] satisfies Array<FilterType<Companies_Bool_Exp>>;
 
 const columnHelper = createColumnHelper<Company>();
 export const companiesColumns = [
