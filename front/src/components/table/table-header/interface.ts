@@ -2,6 +2,7 @@ import { DocumentNode } from 'graphql';
 import { ReactNode } from 'react';
 import {
   Companies_Bool_Exp,
+  Order_By,
   People_Bool_Exp,
   Users_Bool_Exp,
 } from '../../../generated/graphql';
@@ -12,13 +13,27 @@ import {
 } from '../../../services/search/search';
 import { GraphqlQueryPerson } from '../../../interfaces/person.interface';
 
-export type SortType<SortKey = string> = {
-  label: string;
-  key: SortKey;
-  icon?: ReactNode;
-};
+export type SortType<OrderByTemplate> =
+  | {
+      _type: 'default_sort';
+      label: string;
+      key: keyof OrderByTemplate & string;
+      icon?: ReactNode;
+    }
+  | {
+      _type: 'custom_sort';
+      label: string;
+      key: string;
+      icon?: ReactNode;
+      orderByTemplate: (order: Order_By) => OrderByTemplate;
+    };
 
-export type SelectedSortType<SortField = string> = SortType<SortField> & {
+export const defaultOrderByTemplateFactory =
+  (key: string) => (order: string) => ({
+    [key]: order,
+  });
+
+export type SelectedSortType<OrderByTemplate> = SortType<OrderByTemplate> & {
   order: 'asc' | 'desc';
 };
 

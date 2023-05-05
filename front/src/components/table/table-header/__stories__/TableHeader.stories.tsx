@@ -12,11 +12,12 @@ const component = {
 export default component;
 
 export const RegularTableHeader = () => {
-  const availableSorts: Array<SortType> = [
+  const availableSorts: Array<SortType<Record<'created_at', 'asc'>>> = [
     {
       key: 'created_at',
       label: 'Created at',
       icon: <FaCalendar />,
+      _type: 'default_sort',
     },
   ];
   return (

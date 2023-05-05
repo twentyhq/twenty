@@ -25,12 +25,14 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
             order: 'asc',
             key: 'test_sort',
             icon: <FaArrowDown />,
+            _type: 'default_sort',
           },
           {
             label: 'Test sort 2',
             order: 'desc',
             key: 'test_sort_2',
             icon: <FaArrowDown />,
+            _type: 'default_sort',
           },
         ]}
         onRemoveSort={removeFunction}

@@ -1,6 +1,6 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Company } from '../../interfaces/company.interface';
-import { OrderByFields, updateCompany } from '../../services/companies';
+import { updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
 import CompanyChip from '../../components/chips/CompanyChip';
@@ -17,21 +17,24 @@ import {
 } from 'react-icons/fa';
 import ClickableCell from '../../components/table/ClickableCell';
 import PersonChip from '../../components/chips/PersonChip';
-import { SortType } from '../../components/table/table-header/interface';
 import EditableChip from '../../components/table/editable-cell/EditableChip';
+import { SortType } from '../../components/table/table-header/interface';
+import { Companies_Order_By } from '../../generated/graphql';
 
 export const sortsAvailable = [
   {
     key: 'name',
     label: 'Name',
     icon: undefined,
+    _type: 'default_sort',
   },
   {
     key: 'domain_name',
     label: 'Domain',
     icon: undefined,
+    _type: 'default_sort',
   },
-] satisfies Array<SortType<OrderByFields>>;
+] satisfies Array<SortType<Companies_Order_By>>;
 
 const columnHelper = createColumnHelper<Company>();
 export const companiesColumns = [

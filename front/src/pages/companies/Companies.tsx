@@ -5,12 +5,12 @@ import { useState, useCallback } from 'react';
 import {
   CompaniesSelectedSortType,
   defaultOrderBy,
-  reduceSortsToOrderBy,
   useCompaniesQuery,
 } from '../../services/companies';
 import Table from '../../components/table/Table';
 import { mapCompany } from '../../interfaces/company.interface';
 import { companiesColumns, sortsAvailable } from './companies-table';
+import { reduceSortsToOrderBy } from '../../services/people/select';
 
 const StyledCompaniesContainer = styled.div`
   display: flex;

@@ -8,9 +8,9 @@ type OwnProps<SortField> = {
   availableSorts: SortType<SortField>[];
 };
 
-const options: Array<SelectedSortType<string>['order']> = ['asc', 'desc'];
+const options: Array<SelectedSortType<any>['order']> = ['asc', 'desc'];
 
-export function SortDropdownButton<SortField extends string>({
+export function SortDropdownButton<SortField>({
   isSortSelected,
   availableSorts,
   onSortSelect,

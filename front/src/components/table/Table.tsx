@@ -87,11 +87,7 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-function Table<
-  TData extends { id: string },
-  SortField extends string,
-  FilterProperies,
->({
+function Table<TData extends { id: string }, SortField, FilterProperies>({
   data,
   columns,
   viewName,

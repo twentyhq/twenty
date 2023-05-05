@@ -8,15 +8,10 @@ import {
 import {
   SelectedFilterType,
   SelectedSortType,
+  defaultOrderByTemplateFactory,
 } from '../../components/table/table-header/interface';
 
-export type OrderByFields = keyof People_Order_By | 'fullname' | 'company_name';
-
-export type PeopleSelectedSortType = SelectedSortType<OrderByFields>;
-
-const mapOrder = (order: 'asc' | 'desc'): Order_By => {
-  return order === 'asc' ? Order_By.Asc : Order_By.Desc;
-};
+export type PeopleSelectedSortType = SelectedSortType<People_Order_By>;
 
 export const reduceFiltersToWhere = <T>(
   filters: Array<SelectedFilterType<T>>,
@@ -28,24 +23,20 @@ export const reduceFiltersToWhere = <T>(
   return where;
 };
 
-export const reduceSortsToOrderBy = (
-  sorts: Array<PeopleSelectedSortType>,
-): People_Order_By[] => {
+const mapOrderToOrder_By = (order: string) => {
+  if (order === 'asc') return Order_By.Asc;
+  return Order_By.Desc;
+};
+
+export const reduceSortsToOrderBy = <OrderByTemplate>(
+  sorts: Array<SelectedSortType<OrderByTemplate>>,
+): OrderByTemplate[] => {
   const mappedSorts = sorts.map((sort) => {
-    const acc = {} as People_Order_By;
-    const id = sort.key;
-    const order = mapOrder(sort.order);
-    if (id === 'fullname') {
-      acc['firstname'] = order;
-      acc['lastname'] = order;
-    } else if (id === 'company_name') {
-      acc['company'] = { name: order };
-    } else {
-      acc[id] = order;
-    }
-    return acc;
+    if (sort._type === 'custom_sort')
+      return sort.orderByTemplate(mapOrderToOrder_By(sort.order));
+    return defaultOrderByTemplateFactory(sort.key as string)(sort.order);
   });
-  return mappedSorts;
+  return mappedSorts as OrderByTemplate[];
 };
 
 export const GET_PEOPLE = gql`

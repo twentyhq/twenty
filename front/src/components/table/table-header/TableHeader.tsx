@@ -66,7 +66,7 @@ const StyledFilters = styled.div`
   margin-right: ${(props) => props.theme.spacing(2)};
 `;
 
-function TableHeader<SortField extends string, FilterProperties>({
+function TableHeader<SortField, FilterProperties>({
   viewName,
   viewIcon,
   availableSorts,
