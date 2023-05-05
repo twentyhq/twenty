@@ -1,7 +1,12 @@
 import { GraphqlQueryPerson } from '../../../interfaces/person.interface';
 import { mockCompanyData } from '../../companies/__stories__/mock-data';
 import { defaultData } from '../default-data';
-import { companyFilter, emailFilter, fullnameFilter } from '../people-table';
+import {
+  cityFilter,
+  companyFilter,
+  emailFilter,
+  fullnameFilter,
+} from '../people-table';
 
 const JohnDoeUser = defaultData.find(
   (user) => user.email === 'john@linkedin.com',
@@ -21,6 +26,14 @@ describe('PeopleFilter', () => {
     for (const operand of emailFilter.operands) {
       expect(
         emailFilter.whereTemplate(operand, filterSelectedValue),
+      ).toMatchSnapshot();
+    }
+  });
+  it('City filter should generate the where variable of the GQL call', () => {
+    const filterSelectedValue = cityFilter.searchResultMapper(JohnDoeUser);
+    for (const operand of cityFilter.operands) {
+      expect(
+        cityFilter.whereTemplate(operand, filterSelectedValue),
       ).toMatchSnapshot();
     }
   });

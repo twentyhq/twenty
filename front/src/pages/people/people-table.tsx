@@ -166,11 +166,44 @@ export const emailFilter = {
   ],
 } satisfies FilterType<People_Bool_Exp>;
 
+export const cityFilter = {
+  key: 'city',
+  label: 'City',
+  icon: <FaMapPin />,
+  whereTemplate: (operand, { city }) => {
+    if (operand.keyWord === 'equal') {
+      return {
+        city: { _eq: city },
+      };
+    }
+
+    if (operand.keyWord === 'not_equal') {
+      return {
+        _not: { city: { _eq: city } },
+      };
+    }
+    console.error(Error(`Unhandled operand: ${operand.keyWord}`));
+    return {};
+  },
+  searchQuery: SEARCH_PEOPLE_QUERY,
+  searchTemplate: (searchInput: string) => ({
+    city: { _ilike: `%${searchInput}%` },
+  }),
+  searchResultMapper: (person: GraphqlQueryPerson) => ({
+    displayValue: person.city,
+    value: { city: person.city },
+  }),
+  operands: [
+    { label: 'Equal', id: 'equal', keyWord: 'equal' },
+    { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+  ],
+} satisfies FilterType<People_Bool_Exp>;
+
 export const availableFilters = [
   fullnameFilter,
   companyFilter,
   emailFilter,
-
+  cityFilter,
   // {
   //   key: 'phone',
   //   label: 'Phone',
@@ -186,14 +219,6 @@ export const availableFilters = [
   //   whereTemplate: () => ({ created_at: { _eq: '%value%' } }),
   //   searchQuery: GET_PEOPLE,
   //   searchTemplate: { created_at: { _eq: '%value%' } },
-  // },
-  // {
-  //   key: 'city',
-  //   label: 'City',
-  //   icon: faMapPin,
-  //   whereTemplate: () => ({ city: { _ilike: '%value%' } }),
-  //   searchQuery: GET_PEOPLE,
-  //   searchTemplate: { city: { _ilike: '%value%' } },
   // },
 ] satisfies FilterType<People_Bool_Exp>[];
 

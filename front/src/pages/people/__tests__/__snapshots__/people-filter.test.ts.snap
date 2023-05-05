@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`PeopleFilter City filter should generate the where variable of the GQL call 1`] = `
+Object {
+  "city": Object {
+    "_eq": undefined,
+  },
+}
+`;
+
+exports[`PeopleFilter City filter should generate the where variable of the GQL call 2`] = `
+Object {
+  "_not": Object {
+    "city": Object {
+      "_eq": undefined,
+    },
+  },
+}
+`;
+
 exports[`PeopleFilter Company fitler should generate the where variable of the GQL call 1`] = `
 Object {
   "_and": Array [
