@@ -78,6 +78,36 @@ export const filtersAvailable = [
       { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
     ],
   },
+  {
+    key: 'domainName',
+    label: 'Url',
+    icon: <FaLink />,
+    whereTemplate: (operand, { domainName }) => {
+      if (operand.keyWord === 'equal') {
+        return {
+          domain_name: { _eq: domainName },
+        };
+      }
+
+      if (operand.keyWord === 'not_equal') {
+        return {
+          _not: { domain_name: { _eq: domainName } },
+        };
+      }
+    },
+    searchQuery: SEARCH_COMPANY_QUERY,
+    searchTemplate: (searchInput: string) => ({
+      domain_name: { _ilike: `%${searchInput}%` },
+    }),
+    searchResultMapper: (company: GraphqlQueryCompany) => ({
+      displayValue: company.domain_name,
+      value: { domainName: company.domain_name },
+    }),
+    operands: [
+      { label: 'Equal', id: 'equal', keyWord: 'equal' },
+      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+    ],
+  },
 ] satisfies Array<FilterType<Companies_Bool_Exp>>;
 
 const columnHelper = createColumnHelper<Company>();

@@ -29,6 +29,7 @@ export const SEARCH_COMPANY_QUERY = gql`
     searchResults: companies(where: $where, limit: $limit) {
       id
       name
+      domain_name
     }
   }
 `;
