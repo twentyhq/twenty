@@ -85,7 +85,7 @@ function TableHeader<SortField extends string, FilterProperties>({
 
   const sortSelect = useCallback(
     (newSort: SelectedSortType<SortField>) => {
-      const newSorts = updateSortByKey(sorts, newSort);
+      const newSorts = updateSortOrFilterByKey(sorts, newSort);
       innerSetSorts(newSorts);
       onSortsUpdate && onSortsUpdate(newSorts);
     },
@@ -103,19 +103,21 @@ function TableHeader<SortField extends string, FilterProperties>({
 
   const filterSelect = useCallback(
     (filter: SelectedFilterType<FilterProperties>) => {
-      innerSetFilters([filter]);
-      onFiltersUpdate && onFiltersUpdate([filter]);
+      const newFilters = updateSortOrFilterByKey(filters, filter);
+
+      innerSetFilters(newFilters);
+      onFiltersUpdate && onFiltersUpdate(newFilters);
     },
-    [onFiltersUpdate],
+    [onFiltersUpdate, filters],
   );
 
   const filterUnselect = useCallback(
     (filterId: SelectedFilterType<FilterProperties>['key']) => {
-      const newFilters = [] as SelectedFilterType<FilterProperties>[];
+      const newFilters = filters.filter((filter) => filter.key !== filterId);
       innerSetFilters(newFilters);
       onFiltersUpdate && onFiltersUpdate(newFilters);
     },
-    [onFiltersUpdate],
+    [onFiltersUpdate, filters],
   );
 
   const filterSearch = useCallback(
@@ -163,17 +165,18 @@ function TableHeader<SortField extends string, FilterProperties>({
 
 export default TableHeader;
 
-function updateSortByKey<Sort extends { key: string }>(
-  sorts: Sort[],
-  newSort: Sort,
-): Sort[] {
+function updateSortOrFilterByKey<SortOrFilter extends { key: string }>(
+  sorts: Readonly<SortOrFilter[]>,
+  newSort: SortOrFilter,
+): SortOrFilter[] {
+  const newSorts = [...sorts];
   const existingSortIndex = sorts.findIndex((sort) => sort.key === newSort.key);
 
   if (existingSortIndex !== -1) {
-    sorts[existingSortIndex] = newSort;
+    newSorts[existingSortIndex] = newSort;
   } else {
-    sorts.push(newSort);
+    newSorts.push(newSort);
   }
 
-  return sorts;
+  return newSorts;
 }
