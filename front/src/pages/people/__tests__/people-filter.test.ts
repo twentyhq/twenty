@@ -43,7 +43,7 @@ describe('PeopleFilter', () => {
     );
     for (const operand of companyFilter.operands) {
       expect(
-        fullnameFilter.whereTemplate(operand, filterSelectedValue),
+        companyFilter.whereTemplate(operand, filterSelectedValue),
       ).toMatchSnapshot();
     }
   });
