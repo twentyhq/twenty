@@ -133,17 +133,44 @@ export const companyFilter = {
   ],
 } satisfies FilterType<People_Bool_Exp>;
 
+export const emailFilter = {
+  key: 'email',
+  label: 'Email',
+  icon: <FaEnvelope />,
+  whereTemplate: (operand, { email }) => {
+    if (operand.keyWord === 'equal') {
+      return {
+        email: { _eq: email },
+      };
+    }
+
+    if (operand.keyWord === 'not_equal') {
+      return {
+        _not: { email: { _eq: email } },
+      };
+    }
+    console.error(Error(`Unhandled operand: ${operand.keyWord}`));
+    return {};
+  },
+  searchQuery: SEARCH_PEOPLE_QUERY,
+  searchTemplate: (searchInput: string) => ({
+    email: { _ilike: `%${searchInput}%` },
+  }),
+  searchResultMapper: (person: GraphqlQueryPerson) => ({
+    displayValue: person.email,
+    value: { email: person.email },
+  }),
+  operands: [
+    { label: 'Equal', id: 'equal', keyWord: 'equal' },
+    { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+  ],
+} satisfies FilterType<People_Bool_Exp>;
+
 export const availableFilters = [
   fullnameFilter,
   companyFilter,
-  // {
-  //   key: 'email',
-  //   label: 'Email',
-  //   icon: faEnvelope,
-  //   whereTemplate: () => ({ email: { _ilike: '%value%' } }),
-  //   searchQuery: GET_PEOPLE,
-  //   searchTemplate: { email: { _ilike: '%value%' } },
-  // },
+  emailFilter,
+
   // {
   //   key: 'phone',
   //   label: 'Phone',
