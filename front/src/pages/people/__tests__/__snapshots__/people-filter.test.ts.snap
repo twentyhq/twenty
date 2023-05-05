@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PeopleFilter Company fitler should generate the where variable of the GQL call 1`] = `
+Object {
+  "_and": Array [
+    Object {
+      "firstname": Object {
+        "_eq": "undefined",
+      },
+    },
+    Object {
+      "lastname": Object {
+        "_eq": "undefined",
+      },
+    },
+  ],
+}
+`;
+
+exports[`PeopleFilter Company fitler should generate the where variable of the GQL call 2`] = `
+Object {
+  "_not": Object {
+    "_and": Array [
+      Object {
+        "firstname": Object {
+          "_eq": "undefined",
+        },
+      },
+      Object {
+        "lastname": Object {
+          "_eq": "undefined",
+        },
+      },
+    ],
+  },
+}
+`;
+
+exports[`PeopleFilter Fullname filter should generate the where variable of the GQL call 1`] = `
+Object {
+  "_and": Array [
+    Object {
+      "firstname": Object {
+        "_eq": "undefined",
+      },
+    },
+    Object {
+      "lastname": Object {
+        "_eq": "undefined",
+      },
+    },
+  ],
+}
+`;
+
+exports[`PeopleFilter Fullname filter should generate the where variable of the GQL call 2`] = `
+Object {
+  "_not": Object {
+    "_and": Array [
+      Object {
+        "firstname": Object {
+          "_eq": "undefined",
+        },
+      },
+      Object {
+        "lastname": Object {
+          "_eq": "undefined",
+        },
+      },
+    ],
+  },
+}
+`;

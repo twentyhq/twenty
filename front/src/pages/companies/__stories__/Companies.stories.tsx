@@ -3,7 +3,7 @@ import Companies from '../Companies';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
 import { GET_COMPANIES } from '../../../services/companies';
-import { defaultData } from './mock-data';
+import { mockCompanyData } from './mock-data';
 import { MockedProvider } from '@apollo/client/testing';
 
 const component = {
@@ -23,7 +23,7 @@ const mocks = [
     },
     result: {
       data: {
-        companies: defaultData,
+        companies: mockCompanyData,
       },
     },
   },

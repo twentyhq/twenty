@@ -56,6 +56,7 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
               displayValue: 'John Doe',
               value: data.firstname,
             }),
+            operands: [],
           },
         ]}
       />

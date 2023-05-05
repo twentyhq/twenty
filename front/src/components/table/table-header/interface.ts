@@ -16,22 +16,29 @@ export type SelectedSortType<SortField = string> = SortType<SortField> & {
   order: 'asc' | 'desc';
 };
 
-export type FilterType<WhereTemplate, T = Record<string, string>> = {
+export type FilterType<WhereTemplate, FilterValue = Record<string, any>> = {
+  operands: FilterOperandType[];
   label: string;
   key: string;
   icon: ReactNode;
-  whereTemplate: (operand: FilterOperandType, value: T) => WhereTemplate;
+  whereTemplate: (
+    operand: FilterOperandType,
+    value: FilterValue,
+  ) => WhereTemplate;
   searchQuery: DocumentNode;
   searchTemplate: (
     searchInput: string,
   ) => People_Bool_Exp | Companies_Bool_Exp | Users_Bool_Exp;
-  searchResultMapper: (data: any) => { displayValue: string; value: T };
+  searchResultMapper: (data: any) => {
+    displayValue: string;
+    value: FilterValue;
+  };
 };
 
 export type FilterOperandType = {
   label: string;
   id: string;
-  keyWord: 'ilike' | 'not_ilike';
+  keyWord: 'ilike' | 'not_ilike' | 'equal' | 'not_equal';
 };
 
 export type SelectedFilterType<WhereTemplate> = FilterType<WhereTemplate> & {

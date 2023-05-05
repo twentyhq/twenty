@@ -100,6 +100,10 @@ const availableFilters = [
       displayValue: data.firstname + ' ' + data.lastname,
       value: data.firstname,
     }),
+    operands: [
+      { label: 'Equal', id: 'equal', keyWord: 'equal' },
+      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+    ],
   },
 ] satisfies FilterType<People_Bool_Exp>[];
 
