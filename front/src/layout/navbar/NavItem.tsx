@@ -15,6 +15,7 @@ type StyledItemProps = {
 
 const StyledItem = styled.button<StyledItemProps>`
   display: flex;
+  align-items: center;
   border: none;
   font-size: ${(props) => props.theme.fontSizeMedium};
   cursor: pointer;

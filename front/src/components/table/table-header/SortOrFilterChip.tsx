@@ -23,11 +23,15 @@ const StyledChip = styled.div`
 `;
 const StyledIcon = styled.div`
   margin-right: ${(props) => props.theme.spacing(1)};
+  display: flex;
+  align-items: center;
 `;
 
 const StyledDelete = styled.div`
   margin-left: ${(props) => props.theme.spacing(2)};
   cursor: pointer;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledLabelKey = styled.div`
