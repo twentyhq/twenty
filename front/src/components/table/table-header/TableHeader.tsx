@@ -84,20 +84,21 @@ function TableHeader<SortField extends string, FilterProperties>({
   >([]);
 
   const sortSelect = useCallback(
-    (sort: SelectedSortType<SortField>) => {
-      innerSetSorts([sort]);
-      onSortsUpdate && onSortsUpdate([sort]);
-    },
-    [onSortsUpdate],
-  );
-
-  const sortUnselect = useCallback(
-    (sortId: string) => {
-      const newSorts = [] as SelectedSortType<SortField>[];
+    (newSort: SelectedSortType<SortField>) => {
+      const newSorts = updateSortByKey(sorts, newSort);
       innerSetSorts(newSorts);
       onSortsUpdate && onSortsUpdate(newSorts);
     },
-    [onSortsUpdate],
+    [onSortsUpdate, sorts],
+  );
+
+  const sortUnselect = useCallback(
+    (sortKey: string) => {
+      const newSorts = sorts.filter((sort) => sort.key !== sortKey);
+      innerSetSorts(newSorts);
+      onSortsUpdate && onSortsUpdate(newSorts);
+    },
+    [onSortsUpdate, sorts],
   );
 
   const filterSelect = useCallback(
@@ -161,3 +162,18 @@ function TableHeader<SortField extends string, FilterProperties>({
 }
 
 export default TableHeader;
+
+function updateSortByKey<Sort extends { key: string }>(
+  sorts: Sort[],
+  newSort: Sort,
+): Sort[] {
+  const existingSortIndex = sorts.findIndex((sort) => sort.key === newSort.key);
+
+  if (existingSortIndex !== -1) {
+    sorts[existingSortIndex] = newSort;
+  } else {
+    sorts.push(newSort);
+  }
+
+  return sorts;
+}
