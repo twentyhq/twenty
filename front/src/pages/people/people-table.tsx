@@ -56,7 +56,7 @@ export const availableSorts = [
   { key: 'city', label: 'City', icon: <FaMapPin /> },
 ] satisfies Array<SortType<OrderByFields>>;
 
-export const fullnameFilter = {
+const fullnameFilter = {
   key: 'fullname',
   label: 'People',
   icon: <FaUser />,
@@ -100,7 +100,7 @@ export const fullnameFilter = {
   ],
 } satisfies FilterType<People_Bool_Exp>;
 
-export const companyFilter = {
+const companyFilter = {
   key: 'company_name',
   label: 'Company',
   icon: <FaBuilding />,
@@ -133,7 +133,7 @@ export const companyFilter = {
   ],
 } satisfies FilterType<People_Bool_Exp>;
 
-export const emailFilter = {
+const emailFilter = {
   key: 'email',
   label: 'Email',
   icon: <FaEnvelope />,
@@ -166,7 +166,7 @@ export const emailFilter = {
   ],
 } satisfies FilterType<People_Bool_Exp>;
 
-export const cityFilter = {
+const cityFilter = {
   key: 'city',
   label: 'City',
   icon: <FaMapPin />,
