@@ -26,7 +26,7 @@ const StyledInplaceInput = styled.input<StyledEditModeProps>`
 `;
 
 const StyledNoEditText = styled.div`
-  max-width: 200px;
+  width: 100%;
 `;
 
 function EditableText({

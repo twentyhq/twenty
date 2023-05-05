@@ -34,6 +34,7 @@ import {
 import { GraphqlQueryCompany } from '../../interfaces/company.interface';
 import EditablePhone from '../../components/table/editable-cell/EditablePhone';
 import EditableFullName from '../../components/table/editable-cell/EditableFullName';
+import EditableDate from '../../components/table/editable-cell/EditableDate';
 
 export const availableSorts = [
   {
@@ -309,13 +310,14 @@ export const peopleColumns = [
   columnHelper.accessor('creationDate', {
     header: () => <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />,
     cell: (props) => (
-      <ClickableCell href="#">
-        {new Intl.DateTimeFormat(undefined, {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-        }).format(props.row.original.creationDate)}
-      </ClickableCell>
+      <EditableDate
+        value={props.row.original.creationDate}
+        changeHandler={(value: Date) => {
+          const person = props.row.original;
+          person.creationDate = value;
+          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+        }}
+      />
     ),
   }),
   columnHelper.accessor('pipe', {

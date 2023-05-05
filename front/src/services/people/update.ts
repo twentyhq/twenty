@@ -11,6 +11,7 @@ export const UPDATE_PERSON = gql`
     $city: String
     $company_id: uuid
     $email: String
+    $created_at: timestamptz
   ) {
     update_people(
       where: { id: { _eq: $id } }
@@ -22,6 +23,7 @@ export const UPDATE_PERSON = gql`
         id: $id
         lastname: $lastname
         phone: $phone
+        created_at: $created_at
       }
     ) {
       returning {
@@ -36,6 +38,7 @@ export const UPDATE_PERSON = gql`
         id
         lastname
         phone
+        created_at
       }
     }
   }
