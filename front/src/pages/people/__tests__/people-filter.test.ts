@@ -33,5 +33,8 @@ describe('PeopleFilter', () => {
         }
       }
     });
+    it(`should render the serch ${filter.key} with the searchValue`, () => {
+      expect(filter.searchTemplate('Search value')).toMatchSnapshot();
+    });
   }
 });
