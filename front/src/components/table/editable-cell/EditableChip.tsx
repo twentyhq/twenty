@@ -1,12 +1,14 @@
 import styled from '@emotion/styled';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, ComponentType, useRef, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
 
-type OwnProps = {
+export type EditableChipProps = {
   placeholder?: string;
-  content: string;
+  value: string;
+  picture: string;
   changeHandler: (updated: string) => void;
   shouldAlignRight?: boolean;
+  ChipComponent: ComponentType<{ name: string; picture: string }>;
 };
 
 type StyledEditModeProps = {
@@ -24,19 +26,16 @@ const StyledInplaceInput = styled.input<StyledEditModeProps>`
       props.isEditMode ? props.theme.text20 : 'transparent'};
   }
 `;
-
-const StyledNoEditText = styled.div`
-  max-width: 200px;
-`;
-
-function EditableText({
-  content,
+function EditableChip({
+  value,
   placeholder,
   changeHandler,
+  picture,
   shouldAlignRight,
-}: OwnProps) {
+  ChipComponent,
+}: EditableChipProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [inputValue, setInputValue] = useState(content);
+  const [inputValue, setInputValue] = useState(value);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const onEditModeChange = (isEditMode: boolean) => {
@@ -61,10 +60,10 @@ function EditableText({
           }}
         />
       ) : (
-        <StyledNoEditText>{inputValue}</StyledNoEditText>
+        <ChipComponent name={value} picture={picture} />
       )}
     </EditableCellWrapper>
   );
 }
 
-export default EditableText;
+export default EditableChip;
