@@ -7,6 +7,6 @@ describe('reduceSortsToOrderBy', () => {
       { key: 'lastname', label: 'lastname', order: 'desc' },
     ] satisfies PeopleSelectedSortType[];
     const result = reduceSortsToOrderBy(sorts);
-    expect(result).toEqual([{ firstname: 'asc', lastname: 'desc' }]);
+    expect(result).toEqual([{ firstname: 'asc' }, { lastname: 'desc' }]);
   });
 });

@@ -31,7 +31,8 @@ export const reduceFiltersToWhere = <T>(
 export const reduceSortsToOrderBy = (
   sorts: Array<PeopleSelectedSortType>,
 ): People_Order_By[] => {
-  const mappedSorts = sorts.reduce((acc, sort) => {
+  const mappedSorts = sorts.map((sort) => {
+    const acc = {} as People_Order_By;
     const id = sort.key;
     const order = mapOrder(sort.order);
     if (id === 'fullname') {
@@ -43,8 +44,8 @@ export const reduceSortsToOrderBy = (
       acc[id] = order;
     }
     return acc;
-  }, {} as People_Order_By);
-  return [mappedSorts];
+  });
+  return mappedSorts;
 };
 
 export const GET_PEOPLE = gql`
