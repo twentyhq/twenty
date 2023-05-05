@@ -2,7 +2,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { Company } from '../../interfaces/company.interface';
 import { OrderByFields, updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
-import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import Checkbox from '../../components/form/Checkbox';
 import CompanyChip from '../../components/chips/CompanyChip';
 import EditableText from '../../components/table/editable-cell/EditableText';
@@ -19,6 +18,7 @@ import {
 import ClickableCell from '../../components/table/ClickableCell';
 import PersonChip from '../../components/chips/PersonChip';
 import { SortType } from '../../components/table/table-header/interface';
+import EditableChip from '../../components/table/editable-cell/EditableChip';
 
 export const sortsAvailable = [
   {
@@ -35,19 +35,31 @@ export const sortsAvailable = [
 
 const columnHelper = createColumnHelper<Company>();
 export const companiesColumns = [
+  columnHelper.accessor('id', {
+    header: () => (
+      <Checkbox id="company-select-all" name="company-select-all" />
+    ),
+    cell: (props) => (
+      <Checkbox
+        id={`company-selected-${props.row.original.id}`}
+        name={`company-selected-${props.row.original.id}`}
+      />
+    ),
+  }),
   columnHelper.accessor('name', {
     header: () => <ColumnHead viewName="Name" viewIcon={<FaRegBuilding />} />,
     cell: (props) => (
-      <HorizontalyAlignedContainer>
-        <Checkbox
-          id={`company-selected-${props.row.original.id}`}
-          name={`company-selected-${props.row.original.id}`}
-        />
-        <CompanyChip
-          name={props.row.original.name}
-          picture={`https://www.google.com/s2/favicons?domain=${props.row.original.domain_name}&sz=256`}
-        />
-      </HorizontalyAlignedContainer>
+      <EditableChip
+        value={props.row.original.name}
+        placeholder="Name"
+        picture={`https://www.google.com/s2/favicons?domain=${props.row.original.domain_name}&sz=256`}
+        changeHandler={(value: string) => {
+          const company = props.row.original;
+          company.name = value;
+          updateCompany(company).catch((error) => console.error(error));
+        }}
+        ChipComponent={CompanyChip}
+      />
     ),
   }),
   columnHelper.accessor('employees', {
