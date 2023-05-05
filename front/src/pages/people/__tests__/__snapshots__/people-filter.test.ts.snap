@@ -1,70 +1,92 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PeopleFilter Company fitler should generate the where variable of the GQL call 1`] = `
+exports[`PeopleFilter should render the filter city 1`] = `
 Object {
-  "_and": Array [
-    Object {
-      "firstname": Object {
-        "_eq": "undefined",
-      },
-    },
-    Object {
-      "lastname": Object {
-        "_eq": "undefined",
-      },
-    },
-  ],
-}
-`;
-
-exports[`PeopleFilter Company fitler should generate the where variable of the GQL call 2`] = `
-Object {
-  "_not": Object {
-    "_and": Array [
-      Object {
-        "firstname": Object {
-          "_eq": "undefined",
-        },
-      },
-      Object {
-        "lastname": Object {
-          "_eq": "undefined",
-        },
-      },
-    ],
+  "city": Object {
+    "_eq": "Paris",
   },
 }
 `;
 
-exports[`PeopleFilter Fullname filter should generate the where variable of the GQL call 1`] = `
+exports[`PeopleFilter should render the filter city 2`] = `
+Object {
+  "_not": Object {
+    "city": Object {
+      "_eq": "Paris",
+    },
+  },
+}
+`;
+
+exports[`PeopleFilter should render the filter company_name 1`] = `
+Object {
+  "company": Object {
+    "name": Object {
+      "_eq": "ACME",
+    },
+  },
+}
+`;
+
+exports[`PeopleFilter should render the filter company_name 2`] = `
+Object {
+  "_not": Object {
+    "company": Object {
+      "name": Object {
+        "_eq": "ACME",
+      },
+    },
+  },
+}
+`;
+
+exports[`PeopleFilter should render the filter email 1`] = `
+Object {
+  "email": Object {
+    "_eq": "john@linkedin.com",
+  },
+}
+`;
+
+exports[`PeopleFilter should render the filter email 2`] = `
+Object {
+  "_not": Object {
+    "email": Object {
+      "_eq": "john@linkedin.com",
+    },
+  },
+}
+`;
+
+exports[`PeopleFilter should render the filter fullname 1`] = `
 Object {
   "_and": Array [
     Object {
       "firstname": Object {
-        "_eq": "undefined",
+        "_eq": "John",
       },
     },
     Object {
       "lastname": Object {
-        "_eq": "undefined",
+        "_eq": "Doe",
       },
     },
   ],
 }
 `;
 
-exports[`PeopleFilter Fullname filter should generate the where variable of the GQL call 2`] = `
+exports[`PeopleFilter should render the filter fullname 2`] = `
 Object {
   "_not": Object {
     "_and": Array [
       Object {
         "firstname": Object {
-          "_eq": "undefined",
+          "_eq": "John",
         },
       },
       Object {
         "lastname": Object {
-          "_eq": "undefined",
+          "_eq": "Doe",
         },
       },
     ],
