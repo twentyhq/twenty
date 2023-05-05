@@ -93,3 +93,44 @@ Object {
   },
 }
 `;
+
+exports[`PeopleFilter should render the serch city with the searchValue 1`] = `
+Object {
+  "city": Object {
+    "_ilike": "%Search value%",
+  },
+}
+`;
+
+exports[`PeopleFilter should render the serch company_name with the searchValue 1`] = `
+Object {
+  "name": Object {
+    "_ilike": "%Search value%",
+  },
+}
+`;
+
+exports[`PeopleFilter should render the serch email with the searchValue 1`] = `
+Object {
+  "email": Object {
+    "_ilike": "%Search value%",
+  },
+}
+`;
+
+exports[`PeopleFilter should render the serch fullname with the searchValue 1`] = `
+Object {
+  "_or": Array [
+    Object {
+      "firstname": Object {
+        "_ilike": "%Search value%",
+      },
+    },
+    Object {
+      "lastname": Object {
+        "_ilike": "%Search value%",
+      },
+    },
+  ],
+}
+`;

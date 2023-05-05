@@ -5,47 +5,9 @@ import {
   People_Bool_Exp,
   People_Order_By,
 } from '../../generated/graphql';
-import {
-  SelectedFilterType,
-  SelectedSortType,
-} from '../../components/table/table-header/interface';
+import { SelectedSortType } from '../../components/table/table-header/interface';
 
-export type OrderByFields = keyof People_Order_By | 'fullname' | 'company_name';
-
-export type PeopleSelectedSortType = SelectedSortType<OrderByFields>;
-
-const mapOrder = (order: 'asc' | 'desc'): Order_By => {
-  return order === 'asc' ? Order_By.Asc : Order_By.Desc;
-};
-
-export const reduceFiltersToWhere = <T>(
-  filters: Array<SelectedFilterType<T>>,
-): T => {
-  const where = filters.reduce((acc, filter) => {
-    const { where } = filter;
-    return { ...acc, ...where };
-  }, {} as T);
-  return where;
-};
-
-export const reduceSortsToOrderBy = (
-  sorts: Array<PeopleSelectedSortType>,
-): People_Order_By[] => {
-  const mappedSorts = sorts.reduce((acc, sort) => {
-    const id = sort.key;
-    const order = mapOrder(sort.order);
-    if (id === 'fullname') {
-      acc['firstname'] = order;
-      acc['lastname'] = order;
-    } else if (id === 'company_name') {
-      acc['company'] = { name: order };
-    } else {
-      acc[id] = order;
-    }
-    return acc;
-  }, {} as People_Order_By);
-  return [mappedSorts];
-};
+export type PeopleSelectedSortType = SelectedSortType<People_Order_By>;
 
 export const GET_PEOPLE = gql`
   query GetPeople(

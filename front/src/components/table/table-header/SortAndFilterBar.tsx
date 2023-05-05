@@ -41,7 +41,7 @@ const StyledCancelButton = styled.button`
   }
 `;
 
-function SortAndFilterBar<SortField extends string, FilterProperties>({
+function SortAndFilterBar<SortField, FilterProperties>({
   sorts,
   onRemoveSort,
   filters,

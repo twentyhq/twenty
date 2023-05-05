@@ -87,7 +87,7 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-function Table<TData, SortField extends string, FilterProperies>({
+function Table<TData extends { id: string }, SortField, FilterProperies>({
   data,
   columns,
   viewName,
@@ -140,7 +140,7 @@ function Table<TData, SortField extends string, FilterProperies>({
               <tr key={row.id} data-testid={`row-id-${row.index}`}>
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <td key={cell.id}>
+                    <td key={cell.id + row.original.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

@@ -66,7 +66,7 @@ const StyledFilters = styled.div`
   margin-right: ${(props) => props.theme.spacing(2)};
 `;
 
-function TableHeader<SortField extends string, FilterProperties>({
+function TableHeader<SortField, FilterProperties>({
   viewName,
   viewIcon,
   availableSorts,
@@ -84,37 +84,40 @@ function TableHeader<SortField extends string, FilterProperties>({
   >([]);
 
   const sortSelect = useCallback(
-    (sort: SelectedSortType<SortField>) => {
-      innerSetSorts([sort]);
-      onSortsUpdate && onSortsUpdate([sort]);
-    },
-    [onSortsUpdate],
-  );
-
-  const sortUnselect = useCallback(
-    (sortId: string) => {
-      const newSorts = [] as SelectedSortType<SortField>[];
+    (newSort: SelectedSortType<SortField>) => {
+      const newSorts = updateSortOrFilterByKey(sorts, newSort);
       innerSetSorts(newSorts);
       onSortsUpdate && onSortsUpdate(newSorts);
     },
-    [onSortsUpdate],
+    [onSortsUpdate, sorts],
+  );
+
+  const sortUnselect = useCallback(
+    (sortKey: string) => {
+      const newSorts = sorts.filter((sort) => sort.key !== sortKey);
+      innerSetSorts(newSorts);
+      onSortsUpdate && onSortsUpdate(newSorts);
+    },
+    [onSortsUpdate, sorts],
   );
 
   const filterSelect = useCallback(
     (filter: SelectedFilterType<FilterProperties>) => {
-      innerSetFilters([filter]);
-      onFiltersUpdate && onFiltersUpdate([filter]);
+      const newFilters = updateSortOrFilterByKey(filters, filter);
+
+      innerSetFilters(newFilters);
+      onFiltersUpdate && onFiltersUpdate(newFilters);
     },
-    [onFiltersUpdate],
+    [onFiltersUpdate, filters],
   );
 
   const filterUnselect = useCallback(
     (filterId: SelectedFilterType<FilterProperties>['key']) => {
-      const newFilters = [] as SelectedFilterType<FilterProperties>[];
+      const newFilters = filters.filter((filter) => filter.key !== filterId);
       innerSetFilters(newFilters);
       onFiltersUpdate && onFiltersUpdate(newFilters);
     },
-    [onFiltersUpdate],
+    [onFiltersUpdate, filters],
   );
 
   const filterSearch = useCallback(
@@ -161,3 +164,19 @@ function TableHeader<SortField extends string, FilterProperties>({
 }
 
 export default TableHeader;
+
+function updateSortOrFilterByKey<SortOrFilter extends { key: string }>(
+  sorts: Readonly<SortOrFilter[]>,
+  newSort: SortOrFilter,
+): SortOrFilter[] {
+  const newSorts = [...sorts];
+  const existingSortIndex = sorts.findIndex((sort) => sort.key === newSort.key);
+
+  if (existingSortIndex !== -1) {
+    newSorts[existingSortIndex] = newSort;
+  } else {
+    newSorts.push(newSort);
+  }
+
+  return newSorts;
+}

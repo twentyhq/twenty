@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fa';
 import { SortDropdownButton } from '../SortDropdownButton';
 import styled from '@emotion/styled';
+import { Order_By, People_Order_By } from '../../../../generated/graphql';
 
 const component = {
   title: 'SortDropdownButton',
@@ -28,25 +29,31 @@ const availableSorts = [
     key: 'fullname',
     label: 'People',
     icon: <FaRegUser />,
+    _type: 'custom_sort',
+    orderByTemplate: () => ({ email: Order_By.Asc }),
   },
   {
     key: 'company_name',
     label: 'Company',
     icon: <FaRegBuilding />,
+    _type: 'custom_sort',
+    orderByTemplate: () => ({ email: Order_By.Asc }),
   },
   {
     key: 'email',
     label: 'Email',
     icon: <FaEnvelope />,
+    _type: 'default_sort',
   },
-  { key: 'phone', label: 'Phone', icon: <FaPhone /> },
+  { key: 'phone', label: 'Phone', icon: <FaPhone />, _type: 'default_sort' },
   {
     key: 'created_at',
     label: 'Created at',
     icon: <FaCalendar />,
+    _type: 'default_sort',
   },
-  { key: 'city', label: 'City', icon: <FaMapPin /> },
-] satisfies SortType[];
+  { key: 'city', label: 'City', icon: <FaMapPin />, _type: 'default_sort' },
+] satisfies SortType<People_Order_By>[];
 
 const StyleDiv = styled.div`
   height: 200px;
@@ -57,7 +64,7 @@ export const RegularSortDropdownButton = ({ setSorts }: OwnProps) => {
   return (
     <ThemeProvider theme={lightTheme}>
       <StyleDiv>
-        <SortDropdownButton
+        <SortDropdownButton<People_Order_By>
           isSortSelected={true}
           availableSorts={availableSorts}
           onSortSelect={setSorts}
