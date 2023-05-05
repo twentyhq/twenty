@@ -36,13 +36,13 @@ export const sortsAvailable = [
   {
     key: 'name',
     label: 'Name',
-    icon: undefined,
+    icon: <FaBuilding />,
     _type: 'default_sort',
   },
   {
     key: 'domain_name',
-    label: 'Domain',
-    icon: undefined,
+    label: 'Url',
+    icon: <FaLink />,
     _type: 'default_sort',
   },
 ] satisfies Array<SortType<Companies_Order_By>>;
