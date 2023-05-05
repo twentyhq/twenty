@@ -2,7 +2,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { Company } from '../../interfaces/company.interface';
 import { OrderByFields, updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
-import HorizontalyAlignedContainer from '../../layout/containers/HorizontalyAlignedContainer';
 import Checkbox from '../../components/form/Checkbox';
 import CompanyChip from '../../components/chips/CompanyChip';
 import EditableText from '../../components/table/editable-cell/EditableText';
