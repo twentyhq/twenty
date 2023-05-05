@@ -12,13 +12,15 @@ import { useCallback, useState } from 'react';
 import {
   PeopleSelectedSortType,
   defaultOrderBy,
-  reduceFiltersToWhere,
-  reduceSortsToOrderBy,
   usePeopleQuery,
 } from '../../services/people';
 import { useSearch } from '../../services/search/search';
 import { People_Bool_Exp } from '../../generated/graphql';
 import { SelectedFilterType } from '../../components/table/table-header/interface';
+import {
+  reduceFiltersToWhere,
+  reduceSortsToOrderBy,
+} from '../../components/table/table-header/heplers';
 
 const StyledPeopleContainer = styled.div`
   display: flex;

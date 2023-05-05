@@ -10,7 +10,7 @@ import {
 import Table from '../../components/table/Table';
 import { mapCompany } from '../../interfaces/company.interface';
 import { companiesColumns, sortsAvailable } from './companies-table';
-import { reduceSortsToOrderBy } from '../../services/people/select';
+import { reduceSortsToOrderBy } from '../../components/table/table-header/heplers';
 
 const StyledCompaniesContainer = styled.div`
   display: flex;

@@ -28,11 +28,6 @@ export type SortType<OrderByTemplate> =
       orderByTemplate: (order: Order_By) => OrderByTemplate;
     };
 
-export const defaultOrderByTemplateFactory =
-  (key: string) => (order: string) => ({
-    [key]: order,
-  });
-
 export type SelectedSortType<OrderByTemplate> = SortType<OrderByTemplate> & {
   order: 'asc' | 'desc';
 };
