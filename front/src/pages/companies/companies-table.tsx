@@ -33,7 +33,6 @@ import {
 } from '../../generated/graphql';
 import {
   SEARCH_COMPANY_QUERY,
-  SEARCH_PEOPLE_QUERY,
   SEARCH_USER_QUERY,
 } from '../../services/search/search';
 import EditableDate from '../../components/table/editable-cell/EditableDate';
@@ -159,7 +158,7 @@ export const companiesColumns = [
         changeHandler={(value: string) => {
           const company = props.row.original;
           company.name = value;
-          updateCompany(company).catch((error) => console.error(error));
+          updateCompany(company);
         }}
         ChipComponent={CompanyChip}
       />
@@ -173,7 +172,7 @@ export const companiesColumns = [
         changeHandler={(value) => {
           const company = props.row.original;
           company.employees = parseInt(value);
-          updateCompany(company).catch((error) => console.error(error));
+          updateCompany(company);
         }}
       />
     ),
@@ -186,7 +185,7 @@ export const companiesColumns = [
         changeHandler={(value) => {
           const company = props.row.original;
           company.domain_name = value;
-          updateCompany(company).catch((error) => console.error(error));
+          updateCompany(company);
         }}
       />
     ),
@@ -199,7 +198,7 @@ export const companiesColumns = [
         changeHandler={(value) => {
           const company = props.row.original;
           company.address = value;
-          updateCompany(company).catch((error) => console.error(error));
+          updateCompany(company);
         }}
       />
     ),

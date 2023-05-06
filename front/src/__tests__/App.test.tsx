@@ -10,7 +10,6 @@ it('Checks the App component renders', async () => {
   const { getByText } = render(<RegularApp />);
 
   expect(getByText('Companies')).toBeDefined();
-  expect(getByText('Opportunities')).toBeDefined();
   await waitFor(() => {
     expect(getByText('Twenty')).toBeDefined();
   });

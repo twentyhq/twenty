@@ -51,7 +51,7 @@ function EditableChip({
           }}
         />
       }
-      nonEditModeContent={<ChipComponent name={value} picture={picture} />}
+      nonEditModeContent={<ChipComponent name={inputValue} picture={picture} />}
     ></EditableCellWrapper>
   );
 }
