@@ -11,7 +11,7 @@ import {
   useSearch,
 } from '../../../../services/search/search';
 import { MockedProvider } from '@apollo/client/testing';
-import { defaultData } from '../../../../pages/people/default-data';
+import { mockData } from '../../../../pages/people/__tests__/__data__/mock-data';
 
 const component = {
   title: 'FilterDropdownButton',
@@ -34,7 +34,7 @@ const mocks = [
     },
     result: {
       data: {
-        searchResults: defaultData,
+        searchResults: mockData,
       },
     },
   },
@@ -53,7 +53,7 @@ const mocks = [
     },
     result: {
       data: {
-        searchResults: defaultData,
+        searchResults: mockData,
       },
     },
   },
@@ -72,7 +72,7 @@ const mocks = [
     },
     result: {
       data: {
-        searchResults: [defaultData.find((p) => p.firstname === 'Jane')],
+        searchResults: [mockData.find((p) => p.firstname === 'Jane')],
       },
     },
   },

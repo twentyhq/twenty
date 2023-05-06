@@ -58,6 +58,10 @@
       "apollo.tsx$",
       "src/index.tsx$"
     ],
+    "testMatch": [
+      "<rootDir>/**/*.test.ts",
+      "<rootDir>/**/*.test.tsx"
+    ],
     "coverageThreshold": {
       "global": {
         "branches": 70,

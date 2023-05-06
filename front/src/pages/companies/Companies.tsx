@@ -8,11 +8,11 @@ import {
   useCompaniesQuery,
 } from '../../services/companies';
 import Table from '../../components/table/Table';
-import { Company, mapCompany } from '../../interfaces/company.interface';
+import { mapCompany } from '../../interfaces/company.interface';
 import {
   companiesColumns,
-  filtersAvailable,
-  sortsAvailable,
+  availableFilters,
+  availableSorts,
 } from './companies-table';
 import {
   reduceFiltersToWhere,
@@ -57,8 +57,8 @@ function Companies() {
           columns={companiesColumns}
           viewName="All Companies"
           viewIcon={<FaList />}
-          availableSorts={sortsAvailable}
-          availableFilters={filtersAvailable}
+          availableSorts={availableSorts}
+          availableFilters={availableFilters}
           filterSearchResults={filterSearchResults}
           onSortsUpdate={updateSorts}
           onFiltersUpdate={updateFilters}

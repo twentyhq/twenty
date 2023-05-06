@@ -22,7 +22,7 @@ exports[`PeopleFilter should render the filter company_name 1`] = `
 Object {
   "company": Object {
     "name": Object {
-      "_eq": "ACME",
+      "_eq": "Airbnb",
     },
   },
 }
@@ -33,7 +33,7 @@ Object {
   "_not": Object {
     "company": Object {
       "name": Object {
-        "_eq": "ACME",
+        "_eq": "Airbnb",
       },
     },
   },

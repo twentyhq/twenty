@@ -17,6 +17,7 @@ describe('mapCompany', () => {
       },
       employees: 10,
       address: '1 Infinite Loop, 95014 Cupertino, California, USA',
+      __typename: 'Company',
     });
     expect(company.id).toBe('7dfbc3f7-6e5e-4128-957e-8d86808cdf6b');
     expect(company.name).toBe('ACME');
@@ -43,6 +44,7 @@ describe('mapCompany', () => {
       created_at: now.toUTCString(),
       employees: 10,
       address: '1 Infinite Loop, 95014 Cupertino, California, USA',
+      __typename: 'Company',
     });
     expect(company.id).toBe('7dfbc3f7-6e5e-4128-957e-8d86808cdf6b');
     expect(company.name).toBe('ACME');

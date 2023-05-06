@@ -32,7 +32,7 @@ import {
 } from '../../generated/graphql';
 import { SEARCH_COMPANY_QUERY } from '../../services/search/search';
 
-export const sortsAvailable = [
+export const availableSorts = [
   {
     key: 'name',
     label: 'Name',
@@ -65,7 +65,7 @@ export const sortsAvailable = [
   },
 ] satisfies Array<SortType<Companies_Order_By>>;
 
-export const filtersAvailable = [
+export const availableFilters = [
   {
     key: 'company_name',
     label: 'Company',
