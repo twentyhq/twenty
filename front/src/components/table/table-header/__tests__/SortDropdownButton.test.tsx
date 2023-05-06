@@ -1,7 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 import { RegularSortDropdownButton } from '../__stories__/SortDropdownButton.stories';
 import { FaEnvelope, FaRegBuilding } from 'react-icons/fa';
-import { Order_By } from '../../../../generated/graphql';
 
 it('Checks the default top option is Ascending', async () => {
   const setSorts = jest.fn();

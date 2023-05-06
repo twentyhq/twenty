@@ -1,4 +1,4 @@
-import { FetchResult, gql, useMutation } from '@apollo/client';
+import { FetchResult, gql } from '@apollo/client';
 import { Person, mapGqlPerson } from '../../interfaces/person.interface';
 import { apiClient } from '../../apollo';
 
