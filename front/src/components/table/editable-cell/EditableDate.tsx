@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
 import DatePicker from '../../form/DatePicker';
 
 export type EditableDateProps = {
   value: Date;
   changeHandler: (date: Date) => void;
-  shouldAlignRight?: boolean;
+  editModeHorizontalAlign?: 'left' | 'right';
 };
 
 const StyledContainer = styled.div`
@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
 function EditableDate({
   value,
   changeHandler,
-  shouldAlignRight,
+  editModeHorizontalAlign,
 }: EditableDateProps) {
   const [inputValue, setInputValue] = useState(value);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -25,22 +25,50 @@ function EditableDate({
     setIsEditMode(isEditMode);
   };
 
+  type DivProps = React.HTMLProps<HTMLDivElement>;
+
+  const DateDisplay = forwardRef<HTMLDivElement, DivProps>(
+    ({ value, onClick }, ref) => (
+      <div onClick={onClick} ref={ref}>
+        {value &&
+          new Intl.DateTimeFormat(undefined, {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          }).format(new Date(value as string))}
+      </div>
+    ),
+  );
+
   return (
     <EditableCellWrapper
       onEditModeChange={onEditModeChange}
-      shouldAlignRight={shouldAlignRight}
-    >
-      <StyledContainer>
-        <DatePicker
-          isOpen={isEditMode}
-          date={inputValue}
-          onChangeHandler={(date: Date) => {
-            changeHandler(date);
-            setInputValue(date);
-          }}
-        />
-      </StyledContainer>
-    </EditableCellWrapper>
+      editModeHorizontalAlign={editModeHorizontalAlign}
+      editModeContent={
+        <StyledContainer>
+          <DatePicker
+            date={inputValue}
+            onChangeHandler={(date: Date) => {
+              changeHandler(date);
+              setInputValue(date);
+            }}
+            customInput={<DateDisplay />}
+          />
+        </StyledContainer>
+      }
+      nonEditModeContent={
+        <StyledContainer>
+          <div>
+            {inputValue &&
+              new Intl.DateTimeFormat(undefined, {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              }).format(inputValue)}
+          </div>
+        </StyledContainer>
+      }
+    ></EditableCellWrapper>
   );
 }
 

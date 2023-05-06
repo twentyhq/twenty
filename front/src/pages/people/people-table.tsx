@@ -347,7 +347,7 @@ export const peopleColumns = [
     header: () => <ColumnHead viewName="City" viewIcon={<FaMapPin />} />,
     cell: (props) => (
       <EditableText
-        shouldAlignRight={true}
+        editModeHorizontalAlign="right"
         placeholder="City"
         content={props.row.original.city}
         changeHandler={(value: string) => {

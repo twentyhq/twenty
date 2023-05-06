@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { forwardRef, useState } from 'react';
+import React, { ReactElement, forwardRef, useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -8,6 +8,7 @@ export type DatePickerProps = {
   isOpen?: boolean;
   date: Date;
   onChangeHandler: (date: Date) => void;
+  customInput?: ReactElement;
 };
 
 const StyledContainer = styled.div`
@@ -34,11 +35,12 @@ const StyledContainer = styled.div`
   }
 `;
 
-function DatePicker({ date, onChangeHandler, isOpen }: DatePickerProps) {
+function DatePicker({ date, onChangeHandler, customInput }: DatePickerProps) {
   const [startDate, setStartDate] = useState(date);
 
   type DivProps = React.HTMLProps<HTMLDivElement>;
-  const DateDisplay = forwardRef<HTMLDivElement, DivProps>(
+
+  const DefaultDateDisplay = forwardRef<HTMLDivElement, DivProps>(
     ({ value, onClick }, ref) => (
       <div onClick={onClick} ref={ref}>
         {value &&
@@ -54,30 +56,13 @@ function DatePicker({ date, onChangeHandler, isOpen }: DatePickerProps) {
   return (
     <StyledContainer>
       <ReactDatePicker
-        open={isOpen}
+        open={true}
         selected={startDate}
         onChange={(date: Date) => {
           setStartDate(date);
           onChangeHandler(date);
         }}
-        popperPlacement="bottom"
-        popperModifiers={[
-          {
-            name: 'offset',
-            options: {
-              offset: [55, 0],
-            },
-          },
-          {
-            name: 'preventOverflow',
-            options: {
-              rootBoundary: 'viewport',
-              tether: false,
-              altAxis: true,
-            },
-          },
-        ]}
-        customInput={<DateDisplay />}
+        customInput={customInput ? customInput : <DefaultDateDisplay />}
       />
     </StyledContainer>
   );

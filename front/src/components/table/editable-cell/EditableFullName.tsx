@@ -36,13 +36,10 @@ function EditableFullName({ firstname, lastname, changeHandler }: OwnProps) {
   const firstnameInputRef = useRef<HTMLInputElement>(null);
   const [firstnameValue, setFirstnameValue] = useState(firstname);
   const [lastnameValue, setLastnameValue] = useState(lastname);
-  const [isEditMode, setIsEditMode] = useState(false);
 
   return (
     <EditableCellWrapper
-      onEditModeChange={(editMode: boolean) => setIsEditMode(editMode)}
-    >
-      {isEditMode ? (
+      editModeContent={
         <StyledContainer>
           <StyledEditInplaceInput
             autoFocus
@@ -65,10 +62,11 @@ function EditableFullName({ firstname, lastname, changeHandler }: OwnProps) {
             }}
           />
         </StyledContainer>
-      ) : (
+      }
+      nonEditModeContent={
         <PersonChip name={firstnameValue + ' ' + lastnameValue} />
-      )}
-    </EditableCellWrapper>
+      }
+    ></EditableCellWrapper>
   );
 }
 

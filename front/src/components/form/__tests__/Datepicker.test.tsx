@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 import { DatePickerStory } from '../__stories__/Datepicker.stories';
 import { act } from 'react-dom/test-utils';
 
-it('Checks the datepicker renders', () => {
+it('Checks the datepicker renders', async () => {
   const changeHandler = jest.fn();
   const { getByText } = render(
     <DatePickerStory
@@ -11,6 +11,11 @@ it('Checks the datepicker renders', () => {
       onChangeHandler={changeHandler}
     />,
   );
+
+  await act(async () => {
+    expect(getByText('Mar 3, 2021')).toBeInTheDocument();
+  });
+
   act(() => {
     fireEvent.click(getByText('Mar 3, 2021'));
   });

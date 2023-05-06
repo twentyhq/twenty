@@ -38,8 +38,9 @@ function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
   };
 
   return (
-    <EditableCellWrapper onEditModeChange={onEditModeChange}>
-      {isEditMode ? (
+    <EditableCellWrapper
+      onEditModeChange={onEditModeChange}
+      editModeContent={
         <StyledEditInplaceInput
           autoFocus
           isEditMode={isEditMode}
@@ -51,7 +52,8 @@ function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
             changeHandler(event.target.value);
           }}
         />
-      ) : (
+      }
+      nonEditModeContent={
         <div>
           {isValidPhoneNumber(inputValue) ? (
             <Link
@@ -67,8 +69,8 @@ function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
             <Link href="#">{inputValue}</Link>
           )}
         </div>
-      )}
-    </EditableCellWrapper>
+      }
+    />
   );
 }
 

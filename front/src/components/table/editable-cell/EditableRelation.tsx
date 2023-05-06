@@ -1,25 +1,20 @@
-import styled from '@emotion/styled';
 import { ComponentType, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
 
 export type EditableRelationProps<RelationType, ChipComponentPropsType> = {
   relation: RelationType;
   changeHandler: (relation: RelationType) => void;
-  shouldAlignRight?: boolean;
+  editModeHorizontalAlign?: 'left' | 'right';
   ChipComponent: ComponentType<ChipComponentPropsType>;
   chipComponentPropsMapper: (
     relation: RelationType,
   ) => ChipComponentPropsType & JSX.IntrinsicAttributes;
 };
 
-const StyledContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
 function EditableRelation<RelationType, ChipComponentPropsType>({
   relation,
   changeHandler,
-  shouldAlignRight,
+  editModeHorizontalAlign,
   ChipComponent,
   chipComponentPropsMapper,
 }: EditableRelationProps<RelationType, ChipComponentPropsType>) {
@@ -35,22 +30,26 @@ function EditableRelation<RelationType, ChipComponentPropsType>({
   return (
     <EditableCellWrapper
       onEditModeChange={onEditModeChange}
-      shouldAlignRight={shouldAlignRight}
-    >
-      <StyledContainer>
-        {isEditMode ? (
-          <div></div>
-        ) : (
-          <div>
-            {selectedRelation ? (
-              <ChipComponent {...chipComponentPropsMapper(selectedRelation)} />
-            ) : (
-              <></>
-            )}
-          </div>
-        )}
-      </StyledContainer>
-    </EditableCellWrapper>
+      editModeHorizontalAlign={editModeHorizontalAlign}
+      editModeContent={
+        <div>
+          {selectedRelation ? (
+            <ChipComponent {...chipComponentPropsMapper(selectedRelation)} />
+          ) : (
+            <></>
+          )}
+        </div>
+      }
+      nonEditModeContent={
+        <div>
+          {selectedRelation ? (
+            <ChipComponent {...chipComponentPropsMapper(selectedRelation)} />
+          ) : (
+            <></>
+          )}
+        </div>
+      }
+    />
   );
 }
 
