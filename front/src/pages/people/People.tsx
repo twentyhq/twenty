@@ -44,10 +44,18 @@ function People() {
     [],
   );
 
+  const addEmptyRow = useCallback(() => {
+    console.log('add row');
+  }, []);
+
   const { data } = usePeopleQuery(orderBy, where);
 
   return (
-    <WithTopBarContainer title="People" icon={<FaRegUser />}>
+    <WithTopBarContainer
+      title="People"
+      icon={<FaRegUser />}
+      onAddButtonClick={addEmptyRow}
+    >
       <StyledPeopleContainer>
         {
           <Table

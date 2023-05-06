@@ -1,16 +1,18 @@
 import { FaRegBuilding, FaList } from 'react-icons/fa';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import styled from '@emotion/styled';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import {
   CompaniesSelectedSortType,
   defaultOrderBy,
+  insertCompany,
   useCompaniesQuery,
 } from '../../services/companies';
 import Table from '../../components/table/Table';
-import { mapCompany } from '../../interfaces/company.interface';
+import { Company, mapCompany } from '../../interfaces/company.interface';
 import {
-  companiesColumns,
+  useCompaniesColumns,
   availableFilters,
   availableSorts,
 } from './companies-table';
@@ -33,6 +35,7 @@ const StyledCompaniesContainer = styled.div`
 function Companies() {
   const [orderBy, setOrderBy] = useState<Companies_Order_By[]>(defaultOrderBy);
   const [where, setWhere] = useState<Companies_Bool_Exp>({});
+  const [internalData, setInternalData] = useState<Array<Company>>([]);
 
   const [filterSearchResults, setSearhInput, setFilterSearch] = useSearch();
 
@@ -47,13 +50,43 @@ function Companies() {
     [],
   );
 
-  const { data } = useCompaniesQuery(orderBy, where);
+  const { data, loading, refetch } = useCompaniesQuery(orderBy, where);
+
+  useEffect(() => {
+    if (!loading) {
+      if (data) {
+        setInternalData(data.companies.map(mapCompany));
+      }
+    }
+  }, [loading, setInternalData, data]);
+
+  const addEmptyRow = useCallback(() => {
+    const newCompany: Company = {
+      id: uuidv4(),
+      name: '',
+      domain_name: '',
+      employees: 0,
+      address: '',
+      opportunities: [],
+      creationDate: new Date(),
+      accountOwner: null,
+    };
+    insertCompany(newCompany);
+    setInternalData([newCompany, ...internalData]);
+    refetch();
+  }, [internalData, setInternalData, refetch]);
+
+  const companiesColumns = useCompaniesColumns();
 
   return (
-    <WithTopBarContainer title="Companies" icon={<FaRegBuilding />}>
+    <WithTopBarContainer
+      title="Companies"
+      icon={<FaRegBuilding />}
+      onAddButtonClick={addEmptyRow}
+    >
       <StyledCompaniesContainer>
         <Table
-          data={data ? data.companies.map(mapCompany) : []}
+          data={internalData}
           columns={companiesColumns}
           viewName="All Companies"
           viewIcon={<FaList />}

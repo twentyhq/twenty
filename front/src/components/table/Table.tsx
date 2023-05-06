@@ -99,7 +99,7 @@ function Table<TData extends { id: string }, SortField, FilterProperies>({
   onFiltersUpdate,
   onFilterSearch,
 }: OwnProps<TData, SortField, FilterProperies>) {
-  const table = useReactTable({
+  const table = useReactTable<TData>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),

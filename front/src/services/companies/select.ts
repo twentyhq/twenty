@@ -41,6 +41,6 @@ export function useCompaniesQuery(
 
 export const defaultOrderBy: Companies_Order_By[] = [
   {
-    name: Order_By.Asc,
+    created_at: Order_By.Desc,
   },
 ];

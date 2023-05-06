@@ -13,7 +13,7 @@ export type Company = {
   employees: number;
   address: string;
   opportunities: Opportunity[];
-  accountOwner?: User;
+  accountOwner?: User | null;
   creationDate: Date;
 };
 
@@ -39,11 +39,14 @@ export type GraphqlMutationCompany = {
   employees: number;
   address: string;
   created_at: string;
+  account_owner?: GraphqlQueryUser | null;
 };
 
 export const mapCompany = (company: GraphqlQueryCompany): Company => ({
-  ...company,
+  id: company.id,
+  employees: company.employees,
   name: company.name,
+  address: company.address,
   domain_name: company.domain_name,
   accountOwner: company.account_owner
     ? {
@@ -57,9 +60,19 @@ export const mapCompany = (company: GraphqlQueryCompany): Company => ({
 });
 
 export const mapGqlCompany = (company: Company): GraphqlMutationCompany => ({
-  ...company,
   name: company.name,
   domain_name: company.domain_name,
   created_at: company.creationDate.toUTCString(),
   account_owner_id: company.accountOwner?.id,
+  address: company.address,
+  employees: company.employees,
+  id: company.id,
+  account_owner: company.accountOwner
+    ? {
+        id: company.accountOwner?.id,
+        email: company.accountOwner?.email,
+        displayName: company.accountOwner?.displayName,
+        __typename: 'users',
+      }
+    : null,
 });

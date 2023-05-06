@@ -41,6 +41,40 @@ export const UPDATE_COMPANY = gql`
   }
 `;
 
+export const INSERT_COMPANY = gql`
+  mutation InsertCompany(
+    $id: uuid
+    $name: String
+    $domain_name: String
+    $account_owner_id: uuid
+    $created_at: timestamptz
+    $address: String
+    $employees: Int
+  ) {
+    insert_companies(
+      objects: {
+        id: $id
+        name: $name
+        domain_name: $domain_name
+        account_owner_id: $account_owner_id
+        created_at: $created_at
+        address: $address
+        employees: $employees
+      }
+    ) {
+      affected_rows
+      returning {
+        address
+        created_at
+        domain_name
+        employees
+        id
+        name
+      }
+    }
+  }
+`;
+
 export async function updateCompany(
   company: Company,
 ): Promise<FetchResult<Company>> {
@@ -48,5 +82,16 @@ export async function updateCompany(
     mutation: UPDATE_COMPANY,
     variables: mapGqlCompany(company),
   });
+  return result;
+}
+
+export async function insertCompany(
+  company: Company,
+): Promise<FetchResult<Company>> {
+  const result = await apiClient.mutate({
+    mutation: INSERT_COMPANY,
+    variables: mapGqlCompany(company),
+  });
+
   return result;
 }
