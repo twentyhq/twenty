@@ -3,7 +3,7 @@ import Companies from '../Companies';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
 import { GET_COMPANIES } from '../../../services/companies';
-import { mockCompanyData } from './mock-data';
+import { mockData } from '../__tests__/__data__/mock-data';
 import { MockedProvider } from '@apollo/client/testing';
 
 const component = {
@@ -19,11 +19,12 @@ const mocks = [
       query: GET_COMPANIES,
       variables: {
         orderBy: [{ name: 'asc' }],
+        where: {},
       },
     },
     result: {
       data: {
-        companies: mockCompanyData,
+        companies: mockData,
       },
     },
   },

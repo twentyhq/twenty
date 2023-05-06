@@ -1,5 +1,8 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { Company } from '../../interfaces/company.interface';
+import {
+  Company,
+  GraphqlQueryCompany,
+} from '../../interfaces/company.interface';
 import { updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
@@ -14,27 +17,116 @@ import {
   FaStream,
   FaRegUser,
   FaUsers,
+  FaBuilding,
 } from 'react-icons/fa';
 import ClickableCell from '../../components/table/ClickableCell';
 import PersonChip from '../../components/chips/PersonChip';
 import EditableChip from '../../components/table/editable-cell/EditableChip';
-import { SortType } from '../../components/table/table-header/interface';
-import { Companies_Order_By } from '../../generated/graphql';
+import {
+  FilterType,
+  SortType,
+} from '../../components/table/table-header/interface';
+import {
+  Companies_Bool_Exp,
+  Companies_Order_By,
+} from '../../generated/graphql';
+import { SEARCH_COMPANY_QUERY } from '../../services/search/search';
 
-export const sortsAvailable = [
+export const availableSorts = [
   {
     key: 'name',
     label: 'Name',
-    icon: undefined,
+    icon: <FaBuilding />,
+    _type: 'default_sort',
+  },
+  {
+    key: 'employees',
+    label: 'Employees',
+    icon: <FaUsers />,
     _type: 'default_sort',
   },
   {
     key: 'domain_name',
-    label: 'Domain',
-    icon: undefined,
+    label: 'Url',
+    icon: <FaLink />,
+    _type: 'default_sort',
+  },
+  {
+    key: 'address',
+    label: 'Address',
+    icon: <FaMapPin />,
+    _type: 'default_sort',
+  },
+  {
+    key: 'created_at',
+    label: 'Creation',
+    icon: <FaCalendar />,
     _type: 'default_sort',
   },
 ] satisfies Array<SortType<Companies_Order_By>>;
+
+export const availableFilters = [
+  {
+    key: 'company_name',
+    label: 'Company',
+    icon: <FaBuilding />,
+    whereTemplate: (operand, { companyName }) => {
+      if (operand.keyWord === 'equal') {
+        return {
+          name: { _eq: companyName },
+        };
+      }
+
+      if (operand.keyWord === 'not_equal') {
+        return {
+          _not: { name: { _eq: companyName } },
+        };
+      }
+    },
+    searchQuery: SEARCH_COMPANY_QUERY,
+    searchTemplate: (searchInput: string) => ({
+      name: { _ilike: `%${searchInput}%` },
+    }),
+    searchResultMapper: (company: GraphqlQueryCompany) => ({
+      displayValue: company.name,
+      value: { companyName: company.name },
+    }),
+    operands: [
+      { label: 'Equal', id: 'equal', keyWord: 'equal' },
+      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+    ],
+  },
+  {
+    key: 'domainName',
+    label: 'Url',
+    icon: <FaLink />,
+    whereTemplate: (operand, { domainName }) => {
+      if (operand.keyWord === 'equal') {
+        return {
+          domain_name: { _eq: domainName },
+        };
+      }
+
+      if (operand.keyWord === 'not_equal') {
+        return {
+          _not: { domain_name: { _eq: domainName } },
+        };
+      }
+    },
+    searchQuery: SEARCH_COMPANY_QUERY,
+    searchTemplate: (searchInput: string) => ({
+      domain_name: { _ilike: `%${searchInput}%` },
+    }),
+    searchResultMapper: (company: GraphqlQueryCompany) => ({
+      displayValue: company.domain_name,
+      value: { domainName: company.domain_name },
+    }),
+    operands: [
+      { label: 'Equal', id: 'equal', keyWord: 'equal' },
+      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+    ],
+  },
+] satisfies Array<FilterType<Companies_Bool_Exp>>;
 
 const columnHelper = createColumnHelper<Company>();
 export const companiesColumns = [

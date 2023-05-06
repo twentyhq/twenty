@@ -3,7 +3,7 @@ import People from '../People';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
 import { MockedProvider } from '@apollo/client/testing';
-import { defaultData } from '../default-data';
+import { mockData } from '../__tests__/__data__/mock-data';
 import { GET_PEOPLE } from '../../../services/people';
 import { SEARCH_PEOPLE_QUERY } from '../../../services/search/search';
 
@@ -25,7 +25,7 @@ const mocks = [
     },
     result: {
       data: {
-        people: defaultData,
+        people: mockData,
       },
     },
   },

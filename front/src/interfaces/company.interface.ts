@@ -21,10 +21,11 @@ export type GraphqlQueryCompany = {
   id: string;
   name: string;
   domain_name: string;
-  account_owner?: GraphqlQueryUser;
+  account_owner?: GraphqlQueryUser | null;
   employees: number;
   address: string;
   created_at: string;
+  __typename: string;
 };
 
 export type GraphqlMutationCompany = {
