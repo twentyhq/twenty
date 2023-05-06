@@ -147,8 +147,6 @@ function TableHeader<SortField, FilterProperties>({
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
           />
-
-          <DropdownButton label="Settings" isActive={false}></DropdownButton>
         </StyledFilters>
       </StyledTableHeader>
       {sorts.length + filters.length > 0 && (

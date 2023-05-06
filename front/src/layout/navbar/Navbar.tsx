@@ -55,17 +55,6 @@ function Navbar({ workspace }: OwnProps) {
               })
             }
           />
-          <NavItem
-            label="Opportunities"
-            to="/opportunities"
-            icon={<FaBullseye />}
-            active={
-              !!useMatch({
-                path: useResolvedPath('/opportunities').pathname,
-                end: true,
-              })
-            }
-          />
         </NavItemsContainer>
       </NavbarContainer>
     </>
