@@ -27,7 +27,7 @@ const lightThemeSpecific = {
   purpleBackground: '#e0e0ff',
   yellowBackground: '#fff2e7',
 
-  secondaryBackgroundSmallTransparency: 'rgba(252, 252, 252, 0.8)',
+  secondaryBackgroundSmallTransparency: 'rgba(252, 252, 252, 0.97)',
 
   primaryBorder: 'rgba(0, 0, 0, 0.08)',
 
@@ -59,7 +59,7 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
   purpleBackground: '#1111b7',
   yellowBackground: '#cc660a',
 
-  secondaryBackgroundSmallTransparency: 'rgba(23, 23, 23, 0.8)',
+  secondaryBackgroundSmallTransparency: 'rgba(23, 23, 23, 0.97)',
 
   primaryBorder: 'rgba(255, 255, 255, 0.08)',
 
@@ -83,7 +83,6 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
 
 export const modalBackground = (props: any) =>
   css`
-    backdrop-filter: blur(20px);
     background: ${props.theme.secondaryBackgroundSmallTransparency};
   `;
 
