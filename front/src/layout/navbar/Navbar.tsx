@@ -5,7 +5,7 @@ import { Workspace } from '../../interfaces/workspace.interface';
 import NavItem from './NavItem';
 import NavTitle from './NavTitle';
 import WorkspaceContainer from './WorkspaceContainer';
-import { FaRegUser, FaRegBuilding, FaBullseye } from 'react-icons/fa';
+import { FaRegUser, FaRegBuilding } from 'react-icons/fa';
 
 const NavbarContainer = styled.div`
   display: flex;
@@ -51,17 +51,6 @@ function Navbar({ workspace }: OwnProps) {
             active={
               !!useMatch({
                 path: useResolvedPath('/companies').pathname,
-                end: true,
-              })
-            }
-          />
-          <NavItem
-            label="Opportunities"
-            to="/opportunities"
-            icon={<FaBullseye />}
-            active={
-              !!useMatch({
-                path: useResolvedPath('/opportunities').pathname,
                 end: true,
               })
             }

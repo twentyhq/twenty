@@ -18,6 +18,16 @@ export const SEARCH_PEOPLE_QUERY = gql`
   }
 `;
 
+export const SEARCH_USER_QUERY = gql`
+  query SearchQuery($where: users_bool_exp, $limit: Int) {
+    searchResults: users(where: $where, limit: $limit) {
+      id
+      email
+      displayName
+    }
+  }
+`;
+
 const EMPTY_QUERY = gql`
   query EmptyQuery {
     _

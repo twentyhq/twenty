@@ -8,6 +8,7 @@ export const UPDATE_COMPANY = gql`
     $name: String
     $domain_name: String
     $account_owner_id: uuid
+    $created_at: timestamptz
     $address: String
     $employees: Int
   ) {
@@ -19,6 +20,7 @@ export const UPDATE_COMPANY = gql`
         domain_name: $domain_name
         employees: $employees
         name: $name
+        created_at: $created_at
       }
     ) {
       affected_rows

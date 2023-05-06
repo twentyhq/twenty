@@ -8,19 +8,19 @@ import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
 import CompanyChip from '../../components/chips/CompanyChip';
 import EditableText from '../../components/table/editable-cell/EditableText';
-import PipeChip from '../../components/chips/PipeChip';
 import {
   FaRegBuilding,
   FaCalendar,
   FaLink,
   FaMapPin,
-  FaStream,
   FaRegUser,
   FaUsers,
   FaBuilding,
+  FaUser,
 } from 'react-icons/fa';
-import ClickableCell from '../../components/table/ClickableCell';
-import PersonChip from '../../components/chips/PersonChip';
+import PersonChip, {
+  PersonChipPropsType,
+} from '../../components/chips/PersonChip';
 import EditableChip from '../../components/table/editable-cell/EditableChip';
 import {
   FilterType,
@@ -29,8 +29,15 @@ import {
 import {
   Companies_Bool_Exp,
   Companies_Order_By,
+  Users_Bool_Exp,
 } from '../../generated/graphql';
-import { SEARCH_COMPANY_QUERY } from '../../services/search/search';
+import {
+  SEARCH_COMPANY_QUERY,
+  SEARCH_USER_QUERY,
+} from '../../services/search/search';
+import EditableDate from '../../components/table/editable-cell/EditableDate';
+import EditableRelation from '../../components/table/editable-cell/EditableRelation';
+import { GraphqlQueryUser, PartialUser } from '../../interfaces/user.interface';
 
 export const availableSorts = [
   {
@@ -151,7 +158,7 @@ export const companiesColumns = [
         changeHandler={(value: string) => {
           const company = props.row.original;
           company.name = value;
-          updateCompany(company).catch((error) => console.error(error));
+          updateCompany(company);
         }}
         ChipComponent={CompanyChip}
       />
@@ -165,7 +172,7 @@ export const companiesColumns = [
         changeHandler={(value) => {
           const company = props.row.original;
           company.employees = parseInt(value);
-          updateCompany(company).catch((error) => console.error(error));
+          updateCompany(company);
         }}
       />
     ),
@@ -178,7 +185,7 @@ export const companiesColumns = [
         changeHandler={(value) => {
           const company = props.row.original;
           company.domain_name = value;
-          updateCompany(company).catch((error) => console.error(error));
+          updateCompany(company);
         }}
       />
     ),
@@ -191,33 +198,22 @@ export const companiesColumns = [
         changeHandler={(value) => {
           const company = props.row.original;
           company.address = value;
-          updateCompany(company).catch((error) => console.error(error));
+          updateCompany(company);
         }}
       />
-    ),
-  }),
-  columnHelper.accessor('opportunities', {
-    header: () => (
-      <ColumnHead viewName="Opportunities" viewIcon={<FaStream />} />
-    ),
-    cell: (props) => (
-      <ClickableCell href="#">
-        {props.row.original.opportunities.map((opportunity) => (
-          <PipeChip opportunity={opportunity} />
-        ))}
-      </ClickableCell>
     ),
   }),
   columnHelper.accessor('creationDate', {
     header: () => <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />,
     cell: (props) => (
-      <ClickableCell href="#">
-        {new Intl.DateTimeFormat(undefined, {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-        }).format(props.row.original.creationDate)}
-      </ClickableCell>
+      <EditableDate
+        value={props.row.original.creationDate}
+        changeHandler={(value: Date) => {
+          const company = props.row.original;
+          company.creationDate = value;
+          updateCompany(company);
+        }}
+      />
     ),
   }),
   columnHelper.accessor('accountOwner', {
@@ -225,13 +221,54 @@ export const companiesColumns = [
       <ColumnHead viewName="Account Owner" viewIcon={<FaRegUser />} />
     ),
     cell: (props) => (
-      <ClickableCell href="#">
-        <>
-          {props.row.original.accountOwner && (
-            <PersonChip name={props.row.original.accountOwner?.displayName} />
-          )}
-        </>
-      </ClickableCell>
+      <EditableRelation<PartialUser, PersonChipPropsType>
+        relation={props.row.original.accountOwner}
+        searchPlaceholder="Account Owner"
+        ChipComponent={PersonChip}
+        chipComponentPropsMapper={(
+          accountOwner: PartialUser,
+        ): PersonChipPropsType => {
+          return {
+            name: accountOwner.displayName,
+          };
+        }}
+        changeHandler={(relation: PartialUser) => {
+          const company = props.row.original;
+          if (company.accountOwner) {
+            company.accountOwner.id = relation.id;
+          } else {
+            company.accountOwner = {
+              id: relation.id,
+              email: relation.email,
+              displayName: relation.displayName,
+            };
+          }
+          updateCompany(company);
+        }}
+        searchFilter={
+          {
+            key: 'account_owner_name',
+            label: 'Account Owner',
+            icon: <FaUser />,
+            whereTemplate: () => {
+              return {};
+            },
+            searchQuery: SEARCH_USER_QUERY,
+            searchTemplate: (searchInput: string) => ({
+              displayName: { _ilike: `%${searchInput}%` },
+            }),
+            searchResultMapper: (accountOwner: GraphqlQueryUser) => ({
+              displayValue: accountOwner.displayName,
+              value: {
+                id: accountOwner.id,
+                email: accountOwner.email,
+                displayName: accountOwner.displayName,
+              },
+            }),
+            operands: [],
+          } satisfies FilterType<Users_Bool_Exp>
+        }
+      />
     ),
   }),
 ];

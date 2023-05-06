@@ -18,6 +18,9 @@ export interface User {
   workspace_member?: WorkspaceMember;
 }
 
+export type PartialUser = Partial<User> &
+  Pick<User, 'id' | 'displayName' | 'email'>;
+
 export const mapUser = (user: GraphqlQueryUser): User => {
   const mappedUser = {
     id: user.id,

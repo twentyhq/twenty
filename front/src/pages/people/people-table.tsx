@@ -5,19 +5,16 @@ import {
   FaRegUser,
   FaMapPin,
   FaPhone,
-  FaStream,
   FaUser,
   FaBuilding,
 } from 'react-icons/fa';
 import { createColumnHelper } from '@tanstack/react-table';
-import ClickableCell from '../../components/table/ClickableCell';
 import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
 import CompanyChip, {
   CompanyChipPropsType,
 } from '../../components/chips/CompanyChip';
 import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
-import PipeChip from '../../components/chips/PipeChip';
 import EditableText from '../../components/table/editable-cell/EditableText';
 import {
   FilterType,
@@ -359,14 +356,6 @@ export const peopleColumns = [
           updatePerson(person);
         }}
       />
-    ),
-  }),
-  columnHelper.accessor('pipe', {
-    header: () => <ColumnHead viewName="Pipe" viewIcon={<FaStream />} />,
-    cell: (props) => (
-      <ClickableCell href="#">
-        <PipeChip opportunity={props.row.original.pipe} />
-      </ClickableCell>
     ),
   }),
   columnHelper.accessor('city', {

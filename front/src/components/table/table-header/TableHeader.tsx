@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import DropdownButton from './DropdownButton';
 import {
   FilterType,
   SelectedFilterType,
@@ -147,8 +146,6 @@ function TableHeader<SortField, FilterProperties>({
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
           />
-
-          <DropdownButton label="Settings" isActive={false}></DropdownButton>
         </StyledFilters>
       </StyledTableHeader>
       {sorts.length + filters.length > 0 && (
