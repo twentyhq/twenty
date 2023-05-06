@@ -10,6 +10,7 @@ type OwnProps<SortField, FilterProperties> = {
   onRemoveFilter: (
     filterId: SelectedFilterType<FilterProperties>['key'],
   ) => void;
+  onCancelClick: () => void;
 };
 
 const StyledBar = styled.div`
@@ -46,6 +47,7 @@ function SortAndFilterBar<SortField, FilterProperties>({
   onRemoveSort,
   filters,
   onRemoveFilter,
+  onCancelClick,
 }: OwnProps<SortField, FilterProperties>) {
   return (
     <StyledBar>
@@ -75,10 +77,7 @@ function SortAndFilterBar<SortField, FilterProperties>({
       {filters.length + sorts.length > 0 && (
         <StyledCancelButton
           data-testid={'cancel-button'}
-          onClick={() => {
-            sorts.forEach((i) => onRemoveSort(i.key));
-            filters.forEach((i) => onRemoveFilter(i.key));
-          }}
+          onClick={onCancelClick}
         >
           Cancel
         </StyledCancelButton>

@@ -157,6 +157,12 @@ function TableHeader<SortField, FilterProperties>({
           filters={filters}
           onRemoveSort={sortUnselect}
           onRemoveFilter={filterUnselect}
+          onCancelClick={() => {
+            innerSetFilters([]);
+            onFiltersUpdate && onFiltersUpdate([]);
+            innerSetSorts([]);
+            onSortsUpdate && onSortsUpdate([]);
+          }}
         />
       )}
     </StyledContainer>
