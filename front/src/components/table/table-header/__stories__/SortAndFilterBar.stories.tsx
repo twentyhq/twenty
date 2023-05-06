@@ -13,9 +13,13 @@ export default component;
 
 type OwnProps = {
   removeFunction: () => void;
+  cancelFunction: () => void;
 };
 
-export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
+export const RegularSortAndFilterBar = ({
+  removeFunction,
+  cancelFunction,
+}: OwnProps) => {
   return (
     <ThemeProvider theme={lightTheme}>
       <SortAndFilterBar
@@ -37,6 +41,7 @@ export const RegularSortAndFilterBar = ({ removeFunction }: OwnProps) => {
         ]}
         onRemoveSort={removeFunction}
         onRemoveFilter={removeFunction}
+        onCancelClick={cancelFunction}
         filters={[
           {
             label: 'People',

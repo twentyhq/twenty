@@ -4,8 +4,13 @@ import { RegularSortAndFilterBar } from '../__stories__/SortAndFilterBar.stories
 
 it('Checks the SortAndFilterBar renders', async () => {
   const removeFunction = jest.fn();
+  const cancelFunction = jest.fn();
+
   const { getByText, getByTestId } = render(
-    <RegularSortAndFilterBar removeFunction={removeFunction} />,
+    <RegularSortAndFilterBar
+      removeFunction={removeFunction}
+      cancelFunction={cancelFunction}
+    />,
   );
   expect(getByText('Test sort')).toBeDefined();
 
@@ -17,11 +22,15 @@ it('Checks the SortAndFilterBar renders', async () => {
 
 it('Removes sorts when cancel is pressed', async () => {
   const removeFunction = jest.fn();
+  const cancelFunction = jest.fn();
   const { getByTestId } = render(
-    <RegularSortAndFilterBar removeFunction={removeFunction} />,
+    <RegularSortAndFilterBar
+      removeFunction={removeFunction}
+      cancelFunction={cancelFunction}
+    />,
   );
   const cancel = getByTestId('cancel-button');
   fireEvent.click(cancel);
 
-  expect(removeFunction).toHaveBeenCalled();
+  expect(cancelFunction).toHaveBeenCalled();
 });
