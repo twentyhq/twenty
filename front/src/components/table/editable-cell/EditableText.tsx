@@ -6,7 +6,7 @@ type OwnProps = {
   placeholder?: string;
   content: string;
   changeHandler: (updated: string) => void;
-  shouldAlignRight?: boolean;
+  editModeHorizontalAlign?: 'left' | 'right';
 };
 
 type StyledEditModeProps = {
@@ -33,22 +33,19 @@ function EditableText({
   content,
   placeholder,
   changeHandler,
-  shouldAlignRight,
+  editModeHorizontalAlign,
 }: OwnProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(content);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const onEditModeChange = (isEditMode: boolean) => {
-    setIsEditMode(isEditMode);
-  };
-
   return (
     <EditableCellWrapper
-      onEditModeChange={onEditModeChange}
-      shouldAlignRight={shouldAlignRight}
-    >
-      {isEditMode ? (
+      isEditMode={isEditMode}
+      onOutsideClick={() => setIsEditMode(false)}
+      onInsideClick={() => setIsEditMode(true)}
+      editModeHorizontalAlign={editModeHorizontalAlign}
+      editModeContent={
         <StyledInplaceInput
           isEditMode={isEditMode}
           placeholder={placeholder || ''}
@@ -60,10 +57,9 @@ function EditableText({
             changeHandler(event.target.value);
           }}
         />
-      ) : (
-        <StyledNoEditText>{inputValue}</StyledNoEditText>
-      )}
-    </EditableCellWrapper>
+      }
+      nonEditModeContent={<StyledNoEditText>{inputValue}</StyledNoEditText>}
+    ></EditableCellWrapper>
   );
 }
 

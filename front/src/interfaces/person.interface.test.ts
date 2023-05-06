@@ -31,8 +31,12 @@ describe('mapPerson', () => {
       city: '',
       company: {
         id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-        name: '',
+        name: 'Test',
         domain_name: '',
+        opportunities: [],
+        employees: 0,
+        address: '',
+        creationDate: new Date(),
       },
       creationDate: new Date(),
       pipe: {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
-type OwnProps = {
+export type CompanyChipPropsType = {
   name: string;
   picture?: string;
 };
@@ -26,7 +26,7 @@ const StyledContainer = styled.span`
   }
 `;
 
-function CompanyChip({ name, picture }: OwnProps) {
+function CompanyChip({ name, picture }: CompanyChipPropsType) {
   return (
     <StyledContainer data-testid="company-chip">
       {picture && (

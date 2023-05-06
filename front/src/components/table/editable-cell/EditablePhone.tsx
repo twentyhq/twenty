@@ -30,16 +30,12 @@ function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
   const [inputValue, setInputValue] = useState(value);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const onEditModeChange = (isEditMode: boolean) => {
-    setIsEditMode(isEditMode);
-    if (isEditMode) {
-      inputRef.current?.focus();
-    }
-  };
-
   return (
-    <EditableCellWrapper onEditModeChange={onEditModeChange}>
-      {isEditMode ? (
+    <EditableCellWrapper
+      isEditMode={isEditMode}
+      onOutsideClick={() => setIsEditMode(false)}
+      onInsideClick={() => setIsEditMode(true)}
+      editModeContent={
         <StyledEditInplaceInput
           autoFocus
           isEditMode={isEditMode}
@@ -51,7 +47,8 @@ function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
             changeHandler(event.target.value);
           }}
         />
-      ) : (
+      }
+      nonEditModeContent={
         <div>
           {isValidPhoneNumber(inputValue) ? (
             <Link
@@ -67,8 +64,8 @@ function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
             <Link href="#">{inputValue}</Link>
           )}
         </div>
-      )}
-    </EditableCellWrapper>
+      }
+    />
   );
 }
 

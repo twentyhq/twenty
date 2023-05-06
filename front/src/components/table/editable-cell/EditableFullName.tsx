@@ -40,9 +40,10 @@ function EditableFullName({ firstname, lastname, changeHandler }: OwnProps) {
 
   return (
     <EditableCellWrapper
-      onEditModeChange={(editMode: boolean) => setIsEditMode(editMode)}
-    >
-      {isEditMode ? (
+      onOutsideClick={() => setIsEditMode(false)}
+      onInsideClick={() => setIsEditMode(true)}
+      isEditMode={isEditMode}
+      editModeContent={
         <StyledContainer>
           <StyledEditInplaceInput
             autoFocus
@@ -65,10 +66,11 @@ function EditableFullName({ firstname, lastname, changeHandler }: OwnProps) {
             }}
           />
         </StyledContainer>
-      ) : (
+      }
+      nonEditModeContent={
         <PersonChip name={firstnameValue + ' ' + lastnameValue} />
-      )}
-    </EditableCellWrapper>
+      }
+    ></EditableCellWrapper>
   );
 }
 

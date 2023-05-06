@@ -1,4 +1,4 @@
-import { Company } from './company.interface';
+import { PartialCompany } from './company.interface';
 import { Pipe } from './pipe.interface';
 
 export type Person = {
@@ -7,10 +7,7 @@ export type Person = {
   lastname: string;
   picture?: string;
   email: string;
-  company: Omit<
-    Company,
-    'employees' | 'address' | 'opportunities' | 'accountOwner' | 'creationDate'
-  >;
+  company: PartialCompany;
   phone: string;
   creationDate: Date;
   pipe: Pipe;

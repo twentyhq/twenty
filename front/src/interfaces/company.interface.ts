@@ -6,7 +6,7 @@ export interface Opportunity {
   icon: string;
 }
 
-export interface Company {
+export type Company = {
   id: string;
   name: string;
   domain_name: string;
@@ -15,7 +15,10 @@ export interface Company {
   opportunities: Opportunity[];
   accountOwner?: User;
   creationDate: Date;
-}
+};
+
+export type PartialCompany = Partial<Company> &
+  Pick<Company, 'id' | 'name' | 'domain_name'>;
 
 export type GraphqlQueryCompany = {
   id: string;

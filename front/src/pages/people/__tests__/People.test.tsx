@@ -1,12 +1,85 @@
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { PeopleDefault } from '../__stories__/People.stories';
+import { act } from 'react-dom/test-utils';
+import {
+  GraphqlMutationPerson,
+  GraphqlQueryPerson,
+} from '../../../interfaces/person.interface';
 
-it('Checks the People page render', async () => {
-  const { getByTestId } = render(<PeopleDefault />);
+jest.mock('../../../apollo', () => {
+  const personInterface = jest.requireActual(
+    '../../../interfaces/person.interface',
+  );
+  return {
+    apiClient: {
+      mutate: (arg: {
+        mutation: unknown;
+        variables: GraphqlMutationPerson;
+      }) => {
+        const gqlPerson = arg.variables as unknown as GraphqlQueryPerson;
+        return { data: personInterface.mapPerson(gqlPerson) };
+      },
+    },
+  };
+});
+
+it('Checks people full name edit is updating data', async () => {
+  const { getByText, getByDisplayValue } = render(<PeopleDefault />);
 
   await waitFor(() => {
-    const personChip = getByTestId('row-id-0');
-    expect(personChip).toBeDefined();
+    expect(getByText('John Doe')).toBeDefined();
+  });
+
+  act(() => {
+    fireEvent.click(getByText('John Doe'));
+  });
+
+  await waitFor(() => {
+    expect(getByDisplayValue('John')).toBeInTheDocument();
+  });
+
+  act(() => {
+    const nameInput = getByDisplayValue('John');
+
+    if (!nameInput) {
+      throw new Error('firstNameInput is null');
+    }
+    fireEvent.change(nameInput, { target: { value: 'Jo' } });
+    fireEvent.click(getByText('All People')); // Click outside
+  });
+
+  await waitFor(() => {
+    expect(getByText('Jo Doe')).toBeInTheDocument();
+  });
+});
+
+it('Checks people email edit is updating data', async () => {
+  const { getByText, getByDisplayValue } = render(<PeopleDefault />);
+
+  await waitFor(() => {
+    expect(getByText('john@linkedin.com')).toBeDefined();
+  });
+
+  act(() => {
+    fireEvent.click(getByText('john@linkedin.com'));
+  });
+
+  await waitFor(() => {
+    expect(getByDisplayValue('john@linkedin.com')).toBeInTheDocument();
+  });
+
+  act(() => {
+    const emailInput = getByDisplayValue('john@linkedin.com');
+
+    if (!emailInput) {
+      throw new Error('emailInput is null');
+    }
+    fireEvent.change(emailInput, { target: { value: 'john@linkedin.c' } });
+    fireEvent.click(getByText('All People')); // Click outside
+  });
+
+  await waitFor(() => {
+    expect(getByText('john@linkedin.c')).toBeInTheDocument();
   });
 });

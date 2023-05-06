@@ -13,11 +13,12 @@ import { createColumnHelper } from '@tanstack/react-table';
 import ClickableCell from '../../components/table/ClickableCell';
 import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
-import CompanyChip from '../../components/chips/CompanyChip';
+import CompanyChip, {
+  CompanyChipPropsType,
+} from '../../components/chips/CompanyChip';
 import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
 import EditableText from '../../components/table/editable-cell/EditableText';
-import { updatePerson } from '../../services/people';
 import {
   FilterType,
   SortType,
@@ -31,10 +32,15 @@ import {
   SEARCH_COMPANY_QUERY,
   SEARCH_PEOPLE_QUERY,
 } from '../../services/search/search';
-import { GraphqlQueryCompany } from '../../interfaces/company.interface';
+import {
+  GraphqlQueryCompany,
+  PartialCompany,
+} from '../../interfaces/company.interface';
 import EditablePhone from '../../components/table/editable-cell/EditablePhone';
 import EditableFullName from '../../components/table/editable-cell/EditableFullName';
 import EditableDate from '../../components/table/editable-cell/EditableDate';
+import EditableRelation from '../../components/table/editable-cell/EditableRelation';
+import { updatePerson } from '../../services/people';
 
 export const availableSorts = [
   {
@@ -261,7 +267,7 @@ export const peopleColumns = [
           const person = props.row.original;
           person.firstname = firstName;
           person.lastname = lastName;
-          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+          updatePerson(person);
         }}
       />
     ),
@@ -275,7 +281,7 @@ export const peopleColumns = [
         changeHandler={(value: string) => {
           const person = props.row.original;
           person.email = value;
-          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+          updatePerson(person);
         }}
       />
     ),
@@ -285,12 +291,47 @@ export const peopleColumns = [
       <ColumnHead viewName="Company" viewIcon={<FaRegBuilding />} />
     ),
     cell: (props) => (
-      <ClickableCell href="#">
-        <CompanyChip
-          name={props.row.original.company.name}
-          picture={`https://www.google.com/s2/favicons?domain=${props.row.original.company.domain_name}&sz=256`}
-        />
-      </ClickableCell>
+      <EditableRelation<PartialCompany, CompanyChipPropsType>
+        relation={props.row.original.company}
+        searchPlaceholder="Company"
+        ChipComponent={CompanyChip}
+        chipComponentPropsMapper={(
+          company: PartialCompany,
+        ): CompanyChipPropsType => {
+          return {
+            name: company.name,
+            picture: `https://www.google.com/s2/favicons?domain=${company.domain_name}&sz=256`,
+          };
+        }}
+        changeHandler={(relation: PartialCompany) => {
+          const person = props.row.original;
+          person.company.id = relation.id;
+          updatePerson(person);
+        }}
+        searchFilter={
+          {
+            key: 'company_name',
+            label: 'Company',
+            icon: <FaBuilding />,
+            whereTemplate: () => {
+              return {};
+            },
+            searchQuery: SEARCH_COMPANY_QUERY,
+            searchTemplate: (searchInput: string) => ({
+              name: { _ilike: `%${searchInput}%` },
+            }),
+            searchResultMapper: (company: GraphqlQueryCompany) => ({
+              displayValue: company.name,
+              value: {
+                id: company.id,
+                name: company.name,
+                domain_name: company.domain_name,
+              },
+            }),
+            operands: [],
+          } satisfies FilterType<People_Bool_Exp>
+        }
+      />
     ),
   }),
   columnHelper.accessor('phone', {
@@ -302,7 +343,7 @@ export const peopleColumns = [
         changeHandler={(value: string) => {
           const person = props.row.original;
           person.phone = value;
-          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+          updatePerson(person);
         }}
       />
     ),
@@ -315,7 +356,7 @@ export const peopleColumns = [
         changeHandler={(value: Date) => {
           const person = props.row.original;
           person.creationDate = value;
-          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+          updatePerson(person);
         }}
       />
     ),
@@ -332,13 +373,13 @@ export const peopleColumns = [
     header: () => <ColumnHead viewName="City" viewIcon={<FaMapPin />} />,
     cell: (props) => (
       <EditableText
-        shouldAlignRight={true}
+        editModeHorizontalAlign="right"
         placeholder="City"
         content={props.row.original.city}
         changeHandler={(value: string) => {
           const person = props.row.original;
           person.city = value;
-          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+          updatePerson(person);
         }}
       />
     ),

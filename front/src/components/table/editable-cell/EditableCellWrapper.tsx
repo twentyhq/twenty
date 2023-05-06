@@ -1,13 +1,15 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactElement, useRef, useState } from 'react';
+import { ReactElement, useRef } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
-import { ThemeType } from '../../../layout/styles/themes';
 
 type OwnProps = {
-  children: ReactElement;
-  onEditModeChange: (isEditMode: boolean) => void;
-  shouldAlignRight?: boolean;
+  editModeContent: ReactElement;
+  nonEditModeContent: ReactElement;
+  editModeHorizontalAlign?: 'left' | 'right';
+  editModeVerticalPosition?: 'over' | 'below';
+  isEditMode?: boolean;
+  onOutsideClick?: () => void;
+  onInsideClick?: () => void;
 };
 
 const StyledWrapper = styled.div`
@@ -19,63 +21,74 @@ const StyledWrapper = styled.div`
   width: 100%;
 `;
 
-type styledEditModeWrapperProps = {
-  isEditMode: boolean;
-  shouldAlignRight?: boolean;
+type StyledEditModeContainerProps = {
+  editModeHorizontalAlign?: 'left' | 'right';
+  editModeVerticalPosition?: 'over' | 'below';
 };
 
-const styledEditModeWrapper = (
-  props: styledEditModeWrapperProps & { theme: ThemeType },
-) =>
-  css`
-    position: absolute;
-    left: ${props.shouldAlignRight ? 'auto' : '0'};
-    right: ${props.shouldAlignRight ? '0' : 'auto'};
-    width: 260px;
-    height: 100%;
-
-    display: flex;
-    padding-left: ${props.theme.spacing(2)};
-    padding-right: ${props.theme.spacing(2)};
-    background: ${props.theme.primaryBackground};
-    border: 1px solid ${props.theme.primaryBorder};
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.16);
-    z-index: 1;
-    border-radius: 4px;
-    backdrop-filter: blur(20px);
-  `;
-
-const Container = styled.div<styledEditModeWrapperProps>`
+const StyledNonEditModeContainer = styled.div`
+  display: flex;
+  align-items: center;
   width: 100%;
+  height: 100%;
   padding-left: ${(props) => props.theme.spacing(2)};
   padding-right: ${(props) => props.theme.spacing(2)};
-  ${(props) => props.isEditMode && styledEditModeWrapper(props)}
+`;
+
+const StyledEditModeContainer = styled.div<StyledEditModeContainerProps>`
+  display: flex;
+  align-items: center;
+  min-width: 100%;
+  min-height: 100%;
+  padding-left: ${(props) => props.theme.spacing(2)};
+  padding-right: ${(props) => props.theme.spacing(2)};
+  position: absolute;
+  left: ${(props) =>
+    props.editModeHorizontalAlign === 'right' ? 'auto' : '0'};
+  right: ${(props) =>
+    props.editModeHorizontalAlign === 'right' ? '0' : 'auto'};
+  top: ${(props) => (props.editModeVerticalPosition === 'over' ? '0' : '100%')};
+
+  background: ${(props) => props.theme.primaryBackground};
+  border: 1px solid ${(props) => props.theme.primaryBorder};
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.16);
+  z-index: 1;
+  border-radius: 4px;
+  backdrop-filter: blur(20px);
 `;
 
 function EditableCellWrapper({
-  children,
-  onEditModeChange,
-  shouldAlignRight,
+  editModeContent,
+  nonEditModeContent,
+  editModeHorizontalAlign = 'left',
+  editModeVerticalPosition = 'over',
+  isEditMode = false,
+  onOutsideClick,
+  onInsideClick,
 }: OwnProps) {
-  const [isEditMode, setIsEditMode] = useState(false);
-
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, () => {
-    setIsEditMode(false);
-    onEditModeChange(false);
+    onOutsideClick && onOutsideClick();
   });
 
   return (
     <StyledWrapper
       ref={wrapperRef}
       onClick={() => {
-        setIsEditMode(true);
-        onEditModeChange(true);
+        onInsideClick && onInsideClick();
       }}
     >
-      <Container shouldAlignRight={shouldAlignRight} isEditMode={isEditMode}>
-        {children}
-      </Container>
+      <StyledNonEditModeContainer>
+        {nonEditModeContent}
+      </StyledNonEditModeContainer>
+      {isEditMode && (
+        <StyledEditModeContainer
+          editModeHorizontalAlign={editModeHorizontalAlign}
+          editModeVerticalPosition={editModeVerticalPosition}
+        >
+          {editModeContent}
+        </StyledEditModeContainer>
+      )}
     </StyledWrapper>
   );
 }

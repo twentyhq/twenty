@@ -7,23 +7,18 @@ export type EditableChipProps = {
   value: string;
   picture: string;
   changeHandler: (updated: string) => void;
-  shouldAlignRight?: boolean;
+  editModeHorizontalAlign?: 'left' | 'right';
   ChipComponent: ComponentType<{ name: string; picture: string }>;
 };
 
-type StyledEditModeProps = {
-  isEditMode: boolean;
-};
-
-const StyledInplaceInput = styled.input<StyledEditModeProps>`
+const StyledInplaceInput = styled.input`
   width: 100%;
   border: none;
   outline: none;
 
   &::placeholder {
-    font-weight: ${(props) => (props.isEditMode ? 'bold' : 'normal')};
-    color: ${(props) =>
-      props.isEditMode ? props.theme.text20 : 'transparent'};
+    font-weight: 'bold';
+    color: props.theme.text20;
   }
 `;
 function EditableChip({
@@ -31,25 +26,21 @@ function EditableChip({
   placeholder,
   changeHandler,
   picture,
-  shouldAlignRight,
+  editModeHorizontalAlign,
   ChipComponent,
 }: EditableChipProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const onEditModeChange = (isEditMode: boolean) => {
-    setIsEditMode(isEditMode);
-  };
-
   return (
     <EditableCellWrapper
-      onEditModeChange={onEditModeChange}
-      shouldAlignRight={shouldAlignRight}
-    >
-      {isEditMode ? (
+      onOutsideClick={() => setIsEditMode(false)}
+      onInsideClick={() => setIsEditMode(true)}
+      isEditMode={isEditMode}
+      editModeHorizontalAlign={editModeHorizontalAlign}
+      editModeContent={
         <StyledInplaceInput
-          isEditMode={isEditMode}
           placeholder={placeholder || ''}
           autoFocus
           ref={inputRef}
@@ -59,10 +50,9 @@ function EditableChip({
             changeHandler(event.target.value);
           }}
         />
-      ) : (
-        <ChipComponent name={value} picture={picture} />
-      )}
-    </EditableCellWrapper>
+      }
+      nonEditModeContent={<ChipComponent name={value} picture={picture} />}
+    ></EditableCellWrapper>
   );
 }
 
