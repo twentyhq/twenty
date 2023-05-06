@@ -21,10 +21,6 @@ function EditableDate({
   const [inputValue, setInputValue] = useState(value);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const onEditModeChange = (isEditMode: boolean) => {
-    setIsEditMode(isEditMode);
-  };
-
   type DivProps = React.HTMLProps<HTMLDivElement>;
 
   const DateDisplay = forwardRef<HTMLDivElement, DivProps>(
@@ -42,7 +38,9 @@ function EditableDate({
 
   return (
     <EditableCellWrapper
-      onEditModeChange={onEditModeChange}
+      isEditMode={isEditMode}
+      onOutsideClick={() => setIsEditMode(false)}
+      onInsideClick={() => setIsEditMode(true)}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <StyledContainer>

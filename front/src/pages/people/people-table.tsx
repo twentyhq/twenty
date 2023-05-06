@@ -19,7 +19,6 @@ import CompanyChip, {
 import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
 import PipeChip from '../../components/chips/PipeChip';
 import EditableText from '../../components/table/editable-cell/EditableText';
-import { updatePerson } from '../../services/people';
 import {
   FilterType,
   SortType,
@@ -41,6 +40,7 @@ import EditablePhone from '../../components/table/editable-cell/EditablePhone';
 import EditableFullName from '../../components/table/editable-cell/EditableFullName';
 import EditableDate from '../../components/table/editable-cell/EditableDate';
 import EditableRelation from '../../components/table/editable-cell/EditableRelation';
+import { updatePerson } from '../../services/people';
 
 export const availableSorts = [
   {
@@ -267,7 +267,7 @@ export const peopleColumns = [
           const person = props.row.original;
           person.firstname = firstName;
           person.lastname = lastName;
-          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+          updatePerson(person);
         }}
       />
     ),
@@ -281,7 +281,7 @@ export const peopleColumns = [
         changeHandler={(value: string) => {
           const person = props.row.original;
           person.email = value;
-          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+          updatePerson(person);
         }}
       />
     ),
@@ -293,6 +293,7 @@ export const peopleColumns = [
     cell: (props) => (
       <EditableRelation<PartialCompany, CompanyChipPropsType>
         relation={props.row.original.company}
+        searchPlaceholder="Company"
         ChipComponent={CompanyChip}
         chipComponentPropsMapper={(
           company: PartialCompany,
@@ -303,8 +304,33 @@ export const peopleColumns = [
           };
         }}
         changeHandler={(relation: PartialCompany) => {
-          console.log('changed', relation);
+          const person = props.row.original;
+          person.company.id = relation.id;
+          updatePerson(person);
         }}
+        searchFilter={
+          {
+            key: 'company_name',
+            label: 'Company',
+            icon: <FaBuilding />,
+            whereTemplate: () => {
+              return {};
+            },
+            searchQuery: SEARCH_COMPANY_QUERY,
+            searchTemplate: (searchInput: string) => ({
+              name: { _ilike: `%${searchInput}%` },
+            }),
+            searchResultMapper: (company: GraphqlQueryCompany) => ({
+              displayValue: company.name,
+              value: {
+                id: company.id,
+                name: company.name,
+                domain_name: company.domain_name,
+              },
+            }),
+            operands: [],
+          } satisfies FilterType<People_Bool_Exp>
+        }
       />
     ),
   }),
@@ -317,7 +343,7 @@ export const peopleColumns = [
         changeHandler={(value: string) => {
           const person = props.row.original;
           person.phone = value;
-          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+          updatePerson(person);
         }}
       />
     ),
@@ -330,7 +356,7 @@ export const peopleColumns = [
         changeHandler={(value: Date) => {
           const person = props.row.original;
           person.creationDate = value;
-          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+          updatePerson(person);
         }}
       />
     ),
@@ -353,7 +379,7 @@ export const peopleColumns = [
         changeHandler={(value: string) => {
           const person = props.row.original;
           person.city = value;
-          updatePerson(person).catch((error) => console.error(error)); // TODO: handle error
+          updatePerson(person);
         }}
       />
     ),

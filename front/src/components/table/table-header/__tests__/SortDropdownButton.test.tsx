@@ -1,6 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { RegularSortDropdownButton } from '../__stories__/SortDropdownButton.stories';
-import { FaEnvelope } from 'react-icons/fa';
+import { FaEnvelope, FaRegBuilding } from 'react-icons/fa';
+import { Order_By } from '../../../../generated/graphql';
 
 it('Checks the default top option is Ascending', async () => {
   const setSorts = jest.fn();
@@ -48,4 +49,27 @@ it('Checks the selection of Descending', async () => {
     order: 'desc',
     _type: 'default_sort',
   });
+});
+
+it('Checks custom_sort is working', async () => {
+  const setSorts = jest.fn();
+  const { getByText } = render(
+    <RegularSortDropdownButton setSorts={setSorts} />,
+  );
+
+  const sortDropdownButton = getByText('Sort');
+  fireEvent.click(sortDropdownButton);
+
+  const sortByCompany = getByText('Company');
+  fireEvent.click(sortByCompany);
+
+  expect(setSorts).toHaveBeenCalledWith(
+    expect.objectContaining({
+      key: 'company_name',
+      label: 'Company',
+      icon: <FaRegBuilding />,
+      _type: 'custom_sort',
+      order: 'asc',
+    }),
+  );
 });

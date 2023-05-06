@@ -36,9 +36,13 @@ function EditableFullName({ firstname, lastname, changeHandler }: OwnProps) {
   const firstnameInputRef = useRef<HTMLInputElement>(null);
   const [firstnameValue, setFirstnameValue] = useState(firstname);
   const [lastnameValue, setLastnameValue] = useState(lastname);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   return (
     <EditableCellWrapper
+      onOutsideClick={() => setIsEditMode(false)}
+      onInsideClick={() => setIsEditMode(true)}
+      isEditMode={isEditMode}
       editModeContent={
         <StyledContainer>
           <StyledEditInplaceInput

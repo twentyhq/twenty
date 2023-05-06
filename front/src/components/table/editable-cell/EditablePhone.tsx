@@ -30,16 +30,11 @@ function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
   const [inputValue, setInputValue] = useState(value);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const onEditModeChange = (isEditMode: boolean) => {
-    setIsEditMode(isEditMode);
-    if (isEditMode) {
-      inputRef.current?.focus();
-    }
-  };
-
   return (
     <EditableCellWrapper
-      onEditModeChange={onEditModeChange}
+      isEditMode={isEditMode}
+      onOutsideClick={() => setIsEditMode(false)}
+      onInsideClick={() => setIsEditMode(true)}
       editModeContent={
         <StyledEditInplaceInput
           autoFocus

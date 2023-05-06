@@ -1,15 +1,15 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactElement, useRef, useState } from 'react';
+import { ReactElement, useRef } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
-import { ThemeType } from '../../../layout/styles/themes';
 
 type OwnProps = {
   editModeContent: ReactElement;
   nonEditModeContent: ReactElement;
-  onEditModeChange?: (isEditMode: boolean) => void;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
+  isEditMode?: boolean;
+  onOutsideClick?: () => void;
+  onInsideClick?: () => void;
 };
 
 const StyledWrapper = styled.div`
@@ -38,8 +38,8 @@ const StyledNonEditModeContainer = styled.div`
 const StyledEditModeContainer = styled.div<StyledEditModeContainerProps>`
   display: flex;
   align-items: center;
-  width: 100%;
-  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
   padding-left: ${(props) => props.theme.spacing(2)};
   padding-right: ${(props) => props.theme.spacing(2)};
   position: absolute;
@@ -47,8 +47,7 @@ const StyledEditModeContainer = styled.div<StyledEditModeContainerProps>`
     props.editModeHorizontalAlign === 'right' ? 'auto' : '0'};
   right: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? '0' : 'auto'};
-  top: ${(props) =>
-    props.editModeVerticalPosition === 'over' ? 'auto' : '100%'};
+  top: ${(props) => (props.editModeVerticalPosition === 'over' ? '0' : '100%')};
 
   background: ${(props) => props.theme.primaryBackground};
   border: 1px solid ${(props) => props.theme.primaryBorder};
@@ -61,24 +60,22 @@ const StyledEditModeContainer = styled.div<StyledEditModeContainerProps>`
 function EditableCellWrapper({
   editModeContent,
   nonEditModeContent,
-  onEditModeChange,
   editModeHorizontalAlign = 'left',
   editModeVerticalPosition = 'over',
+  isEditMode = false,
+  onOutsideClick,
+  onInsideClick,
 }: OwnProps) {
-  const [isEditMode, setIsEditMode] = useState(false);
-
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, () => {
-    setIsEditMode(false);
-    onEditModeChange && onEditModeChange(false);
+    onOutsideClick && onOutsideClick();
   });
 
   return (
     <StyledWrapper
       ref={wrapperRef}
       onClick={() => {
-        setIsEditMode(true);
-        onEditModeChange && onEditModeChange(true);
+        onInsideClick && onInsideClick();
       }}
     >
       <StyledNonEditModeContainer>

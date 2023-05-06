@@ -1,24 +1,21 @@
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { EditableRelationStory } from '../__stories__/EditableRelation.stories';
-import CompanyChip, { CompanyChipPropsType } from '../../../chips/CompanyChip';
+import { CompanyChipPropsType } from '../../../chips/CompanyChip';
 import { PartialCompany } from '../../../../interfaces/company.interface';
+
+import { EditableRelationProps } from '../EditableRelation';
+import { act } from 'react-dom/test-utils';
 
 it('Checks the EditableRelation editing event bubbles up', async () => {
   const func = jest.fn(() => null);
-  const { getByTestId } = render(
+  const { getByTestId, getByText } = render(
     <EditableRelationStory
-      ChipComponent={CompanyChip}
+      {...(EditableRelationStory.args as EditableRelationProps<
+        PartialCompany,
+        CompanyChipPropsType
+      >)}
       changeHandler={func}
-      relation={{ id: '123', name: 'abnb', domain_name: 'abnb.com' }}
-      chipComponentPropsMapper={(
-        company: PartialCompany,
-      ): CompanyChipPropsType => {
-        return {
-          name: company.name,
-          picture: `https://www.google.com/s2/favicons?domain=${company.domain_name}&sz=256`,
-        };
-      }}
     />,
   );
 
@@ -26,8 +23,36 @@ it('Checks the EditableRelation editing event bubbles up', async () => {
 
   const wrapper = parent.querySelector('div');
 
+  await waitFor(() => {
+    expect(getByText('Heroku')).toBeInTheDocument();
+  });
+
   if (!wrapper) {
-    throw new Error('Editable input not found');
+    throw new Error('Editable relation not found');
   }
   fireEvent.click(wrapper);
+
+  const input = parent.querySelector('input');
+  if (!input) {
+    throw new Error('Search input not found');
+  }
+  act(() => {
+    fireEvent.change(input, { target: { value: 'Ai' } });
+  });
+
+  await waitFor(() => {
+    expect(getByText('Airbnb')).toBeInTheDocument();
+  });
+
+  act(() => {
+    fireEvent.click(getByText('Airbnb'));
+  });
+
+  await waitFor(() => {
+    expect(func).toBeCalledWith({
+      domain_name: 'abnb.com',
+      id: 'abnb',
+      name: 'Airbnb',
+    });
+  });
 });

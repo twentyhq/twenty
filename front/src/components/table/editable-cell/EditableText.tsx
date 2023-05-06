@@ -39,13 +39,11 @@ function EditableText({
   const [inputValue, setInputValue] = useState(content);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const onEditModeChange = (isEditMode: boolean) => {
-    setIsEditMode(isEditMode);
-  };
-
   return (
     <EditableCellWrapper
-      onEditModeChange={onEditModeChange}
+      isEditMode={isEditMode}
+      onOutsideClick={() => setIsEditMode(false)}
+      onInsideClick={() => setIsEditMode(true)}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <StyledInplaceInput

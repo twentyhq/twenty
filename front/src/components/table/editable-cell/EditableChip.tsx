@@ -31,9 +31,13 @@ function EditableChip({
 }: EditableChipProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   return (
     <EditableCellWrapper
+      onOutsideClick={() => setIsEditMode(false)}
+      onInsideClick={() => setIsEditMode(true)}
+      isEditMode={isEditMode}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <StyledInplaceInput
