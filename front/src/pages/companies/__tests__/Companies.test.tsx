@@ -115,3 +115,24 @@ it('Checks company address edit is updating data', async () => {
     expect(getByText('21 rue de clignancourt')).toBeInTheDocument();
   });
 });
+
+it('Checks insert data is appending a new line', async () => {
+  const { getByText, getByTestId, container } = render(<CompaniesDefault />);
+
+  await waitFor(() => {
+    expect(getByText('Airbnb')).toBeDefined();
+  });
+  const tableRows = container.querySelectorAll<HTMLElement>('table tbody tr');
+
+  expect(tableRows.length).toBe(6);
+
+  act(() => {
+    fireEvent.click(getByTestId('add-button'));
+  });
+
+  await waitFor(() => {
+    const tableRows = container.querySelectorAll<HTMLElement>('table tbody tr');
+
+    expect(tableRows.length).toBe(7);
+  });
+});

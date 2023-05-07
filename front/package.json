@@ -19,6 +19,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
     "react-router-dom": "^6.4.4",
+    "uuid": "^9.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -103,6 +104,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
     "@types/react-datepicker": "^4.11.2",
+    "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "babel-plugin-named-exports-order": "^0.0.2",
     "eslint": "^8.28.0",

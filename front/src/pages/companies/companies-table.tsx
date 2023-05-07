@@ -38,6 +38,7 @@ import {
 import EditableDate from '../../components/table/editable-cell/EditableDate';
 import EditableRelation from '../../components/table/editable-cell/EditableRelation';
 import { GraphqlQueryUser, PartialUser } from '../../interfaces/user.interface';
+import { useMemo } from 'react';
 
 export const availableSorts = [
   {
@@ -136,139 +137,150 @@ export const availableFilters = [
 ] satisfies Array<FilterType<Companies_Bool_Exp>>;
 
 const columnHelper = createColumnHelper<Company>();
-export const companiesColumns = [
-  columnHelper.accessor('id', {
-    header: () => (
-      <Checkbox id="company-select-all" name="company-select-all" />
-    ),
-    cell: (props) => (
-      <Checkbox
-        id={`company-selected-${props.row.original.id}`}
-        name={`company-selected-${props.row.original.id}`}
-      />
-    ),
-  }),
-  columnHelper.accessor('name', {
-    header: () => <ColumnHead viewName="Name" viewIcon={<FaRegBuilding />} />,
-    cell: (props) => (
-      <EditableChip
-        value={props.row.original.name}
-        placeholder="Name"
-        picture={`https://www.google.com/s2/favicons?domain=${props.row.original.domain_name}&sz=256`}
-        changeHandler={(value: string) => {
-          const company = props.row.original;
-          company.name = value;
-          updateCompany(company);
-        }}
-        ChipComponent={CompanyChip}
-      />
-    ),
-  }),
-  columnHelper.accessor('employees', {
-    header: () => <ColumnHead viewName="Employees" viewIcon={<FaUsers />} />,
-    cell: (props) => (
-      <EditableText
-        content={props.row.original.employees.toFixed(0)}
-        changeHandler={(value) => {
-          const company = props.row.original;
-          company.employees = parseInt(value);
-          updateCompany(company);
-        }}
-      />
-    ),
-  }),
-  columnHelper.accessor('domain_name', {
-    header: () => <ColumnHead viewName="URL" viewIcon={<FaLink />} />,
-    cell: (props) => (
-      <EditableText
-        content={props.row.original.domain_name}
-        changeHandler={(value) => {
-          const company = props.row.original;
-          company.domain_name = value;
-          updateCompany(company);
-        }}
-      />
-    ),
-  }),
-  columnHelper.accessor('address', {
-    header: () => <ColumnHead viewName="Address" viewIcon={<FaMapPin />} />,
-    cell: (props) => (
-      <EditableText
-        content={props.row.original.address}
-        changeHandler={(value) => {
-          const company = props.row.original;
-          company.address = value;
-          updateCompany(company);
-        }}
-      />
-    ),
-  }),
-  columnHelper.accessor('creationDate', {
-    header: () => <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />,
-    cell: (props) => (
-      <EditableDate
-        value={props.row.original.creationDate}
-        changeHandler={(value: Date) => {
-          const company = props.row.original;
-          company.creationDate = value;
-          updateCompany(company);
-        }}
-      />
-    ),
-  }),
-  columnHelper.accessor('accountOwner', {
-    header: () => (
-      <ColumnHead viewName="Account Owner" viewIcon={<FaRegUser />} />
-    ),
-    cell: (props) => (
-      <EditableRelation<PartialUser, PersonChipPropsType>
-        relation={props.row.original.accountOwner}
-        searchPlaceholder="Account Owner"
-        ChipComponent={PersonChip}
-        chipComponentPropsMapper={(
-          accountOwner: PartialUser,
-        ): PersonChipPropsType => {
-          return {
-            name: accountOwner.displayName,
-          };
-        }}
-        changeHandler={(relation: PartialUser) => {
-          const company = props.row.original;
-          if (company.accountOwner) {
-            company.accountOwner.id = relation.id;
-          } else {
-            company.accountOwner = {
-              id: relation.id,
-              email: relation.email,
-              displayName: relation.displayName,
-            };
-          }
-          updateCompany(company);
-        }}
-        searchFilter={
-          {
-            key: 'account_owner_name',
-            label: 'Account Owner',
-            icon: <FaUser />,
-            whereTemplate: () => {
-              return {};
-            },
-            searchQuery: SEARCH_USER_QUERY,
-            searchTemplate: (searchInput: string) => ({
-              displayName: { _ilike: `%${searchInput}%` },
-            }),
-            searchResultMapper: (accountOwner: GraphqlQueryUser) => ({
-              displayValue: accountOwner.displayName,
-              value: {
-                id: accountOwner.id,
-                email: accountOwner.email,
-                displayName: accountOwner.displayName,
-              },
-            }),
-            operands: [],
-          } satisfies FilterType<Users_Bool_Exp>
-        }
-      />
-    ),
-  }),
-];
+
+export const useCompaniesColumns = () => {
+  return useMemo(() => {
+    return [
+      columnHelper.accessor('id', {
+        header: () => (
+          <Checkbox id="company-select-all" name="company-select-all" />
+        ),
+        cell: (props) => (
+          <Checkbox
+            id={`company-selected-${props.row.original.id}`}
+            name={`company-selected-${props.row.original.id}`}
+          />
+        ),
+      }),
+      columnHelper.accessor('name', {
+        header: () => (
+          <ColumnHead viewName="Name" viewIcon={<FaRegBuilding />} />
+        ),
+        cell: (props) => (
+          <EditableChip
+            value={props.row.original.name}
+            placeholder="Name"
+            picture={`https://www.google.com/s2/favicons?domain=${props.row.original.domain_name}&sz=256`}
+            changeHandler={(value: string) => {
+              const company = props.row.original;
+              company.name = value;
+              updateCompany(company);
+            }}
+            ChipComponent={CompanyChip}
+          />
+        ),
+      }),
+      columnHelper.accessor('employees', {
+        header: () => (
+          <ColumnHead viewName="Employees" viewIcon={<FaUsers />} />
+        ),
+        cell: (props) => (
+          <EditableText
+            content={props.row.original.employees.toFixed(0)}
+            changeHandler={(value) => {
+              const company = props.row.original;
+              company.employees = parseInt(value);
+              updateCompany(company);
+            }}
+          />
+        ),
+      }),
+      columnHelper.accessor('domain_name', {
+        header: () => <ColumnHead viewName="URL" viewIcon={<FaLink />} />,
+        cell: (props) => (
+          <EditableText
+            content={props.row.original.domain_name}
+            changeHandler={(value) => {
+              const company = props.row.original;
+              company.domain_name = value;
+              updateCompany(company);
+            }}
+          />
+        ),
+      }),
+      columnHelper.accessor('address', {
+        header: () => <ColumnHead viewName="Address" viewIcon={<FaMapPin />} />,
+        cell: (props) => (
+          <EditableText
+            content={props.row.original.address}
+            changeHandler={(value) => {
+              const company = props.row.original;
+              company.address = value;
+              updateCompany(company);
+            }}
+          />
+        ),
+      }),
+      columnHelper.accessor('creationDate', {
+        header: () => (
+          <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />
+        ),
+        cell: (props) => (
+          <EditableDate
+            value={props.row.original.creationDate}
+            changeHandler={(value: Date) => {
+              const company = props.row.original;
+              company.creationDate = value;
+              updateCompany(company);
+            }}
+          />
+        ),
+      }),
+      columnHelper.accessor('accountOwner', {
+        header: () => (
+          <ColumnHead viewName="Account Owner" viewIcon={<FaRegUser />} />
+        ),
+        cell: (props) => (
+          <EditableRelation<PartialUser, PersonChipPropsType>
+            relation={props.row.original.accountOwner}
+            searchPlaceholder="Account Owner"
+            ChipComponent={PersonChip}
+            chipComponentPropsMapper={(
+              accountOwner: PartialUser,
+            ): PersonChipPropsType => {
+              return {
+                name: accountOwner.displayName,
+              };
+            }}
+            changeHandler={(relation: PartialUser) => {
+              const company = props.row.original;
+              if (company.accountOwner) {
+                company.accountOwner.id = relation.id;
+              } else {
+                company.accountOwner = {
+                  id: relation.id,
+                  email: relation.email,
+                  displayName: relation.displayName,
+                };
+              }
+              updateCompany(company);
+            }}
+            searchFilter={
+              {
+                key: 'account_owner_name',
+                label: 'Account Owner',
+                icon: <FaUser />,
+                whereTemplate: () => {
+                  return {};
+                },
+                searchQuery: SEARCH_USER_QUERY,
+                searchTemplate: (searchInput: string) => ({
+                  displayName: { _ilike: `%${searchInput}%` },
+                }),
+                searchResultMapper: (accountOwner: GraphqlQueryUser) => ({
+                  displayValue: accountOwner.displayName,
+                  value: {
+                    id: accountOwner.id,
+                    email: accountOwner.email,
+                    displayName: accountOwner.displayName,
+                  },
+                }),
+                operands: [],
+              } satisfies FilterType<Users_Bool_Exp>
+            }
+          />
+        ),
+      }),
+    ];
+  }, []);
+};

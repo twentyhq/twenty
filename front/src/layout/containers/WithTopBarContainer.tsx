@@ -6,6 +6,7 @@ type OwnProps = {
   children: JSX.Element;
   title: string;
   icon: ReactNode;
+  onAddButtonClick?: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -34,10 +35,15 @@ const ContentSubContainer = styled.div`
   flex: 1;
 `;
 
-function FullWidthContainer({ children, title, icon }: OwnProps) {
+function FullWidthContainer({
+  children,
+  title,
+  icon,
+  onAddButtonClick,
+}: OwnProps) {
   return (
     <StyledContainer>
-      <TopBar title={title} icon={icon} />
+      <TopBar title={title} icon={icon} onAddButtonClick={onAddButtonClick} />
       <ContentContainer>
         <ContentSubContainer>{children}</ContentSubContainer>
       </ContentContainer>

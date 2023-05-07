@@ -49,7 +49,7 @@ const StyledEditModeResultItem = styled.div`
 `;
 
 export type EditableRelationProps<RelationType, ChipComponentPropsType> = {
-  relation?: RelationType;
+  relation?: RelationType | null;
   searchPlaceholder: string;
   searchFilter: FilterType<People_Bool_Exp>;
   changeHandler: (relation: RelationType) => void;
