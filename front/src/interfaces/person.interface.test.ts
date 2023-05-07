@@ -44,7 +44,6 @@ describe('mapPerson', () => {
         name: '',
         icon: '',
       },
-      countryCode: '',
     });
     expect(person.firstname).toBe('John');
   });

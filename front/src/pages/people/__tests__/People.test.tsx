@@ -83,3 +83,24 @@ it('Checks people email edit is updating data', async () => {
     expect(getByText('john@linkedin.c')).toBeInTheDocument();
   });
 });
+
+it('Checks insert data is appending a new line', async () => {
+  const { getByText, getByTestId, container } = render(<PeopleDefault />);
+
+  await waitFor(() => {
+    expect(getByText('John Doe')).toBeDefined();
+  });
+  const tableRows = container.querySelectorAll<HTMLElement>('table tbody tr');
+
+  expect(tableRows.length).toBe(4);
+
+  act(() => {
+    fireEvent.click(getByTestId('add-button'));
+  });
+
+  await waitFor(() => {
+    const tableRows = container.querySelectorAll<HTMLElement>('table tbody tr');
+
+    expect(tableRows.length).toBe(5);
+  });
+});

@@ -50,7 +50,7 @@ describe('mapCompany', () => {
     expect(company.name).toBe('ACME');
     expect(company.domain_name).toBe('exmaple.com');
     expect(company.creationDate).toEqual(now);
-    expect(company.accountOwner).toBeUndefined();
+    expect(company.accountOwner).toBeNull();
     expect(company.employees).toBe(10);
     expect(company.address).toBe(
       '1 Infinite Loop, 95014 Cupertino, California, USA',

@@ -38,6 +38,7 @@ import EditableFullName from '../../components/table/editable-cell/EditableFullN
 import EditableDate from '../../components/table/editable-cell/EditableDate';
 import EditableRelation from '../../components/table/editable-cell/EditableRelation';
 import { updatePerson } from '../../services/people';
+import { useMemo } from 'react';
 
 export const availableSorts = [
   {
@@ -242,135 +243,150 @@ export const availableFilters = [
 ] satisfies FilterType<People_Bool_Exp>[];
 
 const columnHelper = createColumnHelper<Person>();
-export const peopleColumns = [
-  columnHelper.accessor('id', {
-    header: () => (
-      <Checkbox id={`person-select-all`} name={`person-select-all`} />
-    ),
-    cell: (props) => (
-      <Checkbox
-        id={`person-selected-${props.row.original.email}`}
-        name={`person-selected-${props.row.original.email}`}
-      />
-    ),
-  }),
-  columnHelper.accessor('firstname', {
-    header: () => <ColumnHead viewName="People" viewIcon={<FaRegUser />} />,
-    cell: (props) => (
-      <EditableFullName
-        firstname={props.row.original.firstname}
-        lastname={props.row.original.lastname}
-        changeHandler={(firstName: string, lastName: string) => {
-          const person = props.row.original;
-          person.firstname = firstName;
-          person.lastname = lastName;
-          updatePerson(person);
-        }}
-      />
-    ),
-  }),
-  columnHelper.accessor('email', {
-    header: () => <ColumnHead viewName="Email" viewIcon={<FaEnvelope />} />,
-    cell: (props) => (
-      <EditableText
-        placeholder="Email"
-        content={props.row.original.email}
-        changeHandler={(value: string) => {
-          const person = props.row.original;
-          person.email = value;
-          updatePerson(person);
-        }}
-      />
-    ),
-  }),
-  columnHelper.accessor('company', {
-    header: () => (
-      <ColumnHead viewName="Company" viewIcon={<FaRegBuilding />} />
-    ),
-    cell: (props) => (
-      <EditableRelation<PartialCompany, CompanyChipPropsType>
-        relation={props.row.original.company}
-        searchPlaceholder="Company"
-        ChipComponent={CompanyChip}
-        chipComponentPropsMapper={(
-          company: PartialCompany,
-        ): CompanyChipPropsType => {
-          return {
-            name: company.name,
-            picture: `https://www.google.com/s2/favicons?domain=${company.domain_name}&sz=256`,
-          };
-        }}
-        changeHandler={(relation: PartialCompany) => {
-          const person = props.row.original;
-          person.company.id = relation.id;
-          updatePerson(person);
-        }}
-        searchFilter={
-          {
-            key: 'company_name',
-            label: 'Company',
-            icon: <FaBuilding />,
-            whereTemplate: () => {
-              return {};
-            },
-            searchQuery: SEARCH_COMPANY_QUERY,
-            searchTemplate: (searchInput: string) => ({
-              name: { _ilike: `%${searchInput}%` },
-            }),
-            searchResultMapper: (company: GraphqlQueryCompany) => ({
-              displayValue: company.name,
-              value: {
-                id: company.id,
+
+export const usePeopleColumns = () => {
+  return useMemo(() => {
+    return [
+      columnHelper.accessor('id', {
+        header: () => (
+          <Checkbox id={`person-select-all`} name={`person-select-all`} />
+        ),
+        cell: (props) => (
+          <Checkbox
+            id={`person-selected-${props.row.original.email}`}
+            name={`person-selected-${props.row.original.email}`}
+          />
+        ),
+      }),
+      columnHelper.accessor('firstname', {
+        header: () => <ColumnHead viewName="People" viewIcon={<FaRegUser />} />,
+        cell: (props) => (
+          <EditableFullName
+            firstname={props.row.original.firstname}
+            lastname={props.row.original.lastname}
+            changeHandler={(firstName: string, lastName: string) => {
+              const person = props.row.original;
+              person.firstname = firstName;
+              person.lastname = lastName;
+              updatePerson(person);
+            }}
+          />
+        ),
+      }),
+      columnHelper.accessor('email', {
+        header: () => <ColumnHead viewName="Email" viewIcon={<FaEnvelope />} />,
+        cell: (props) => (
+          <EditableText
+            placeholder="Email"
+            content={props.row.original.email}
+            changeHandler={(value: string) => {
+              const person = props.row.original;
+              person.email = value;
+              updatePerson(person);
+            }}
+          />
+        ),
+      }),
+      columnHelper.accessor('company', {
+        header: () => (
+          <ColumnHead viewName="Company" viewIcon={<FaRegBuilding />} />
+        ),
+        cell: (props) => (
+          <EditableRelation<PartialCompany, CompanyChipPropsType>
+            relation={props.row.original.company}
+            searchPlaceholder="Company"
+            ChipComponent={CompanyChip}
+            chipComponentPropsMapper={(
+              company: PartialCompany,
+            ): CompanyChipPropsType => {
+              return {
                 name: company.name,
-                domain_name: company.domain_name,
-              },
-            }),
-            operands: [],
-          } satisfies FilterType<People_Bool_Exp>
-        }
-      />
-    ),
-  }),
-  columnHelper.accessor('phone', {
-    header: () => <ColumnHead viewName="Phone" viewIcon={<FaPhone />} />,
-    cell: (props) => (
-      <EditablePhone
-        placeholder="Phone"
-        value={props.row.original.phone}
-        changeHandler={(value: string) => {
-          const person = props.row.original;
-          person.phone = value;
-          updatePerson(person);
-        }}
-      />
-    ),
-  }),
-  columnHelper.accessor('creationDate', {
-    header: () => <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />,
-    cell: (props) => (
-      <EditableDate
-        value={props.row.original.creationDate}
-        changeHandler={(value: Date) => {
-          const person = props.row.original;
-          person.creationDate = value;
-          updatePerson(person);
-        }}
-      />
-    ),
-  }),
-  columnHelper.accessor('city', {
-    header: () => <ColumnHead viewName="City" viewIcon={<FaMapPin />} />,
-    cell: (props) => (
-      <EditableText
-        editModeHorizontalAlign="right"
-        placeholder="City"
-        content={props.row.original.city}
-        changeHandler={(value: string) => {
-          const person = props.row.original;
-          person.city = value;
-          updatePerson(person);
-        }}
-      />
-    ),
-  }),
-];
+                picture: `https://www.google.com/s2/favicons?domain=${company.domain_name}&sz=256`,
+              };
+            }}
+            changeHandler={(relation: PartialCompany) => {
+              const person = props.row.original;
+              if (person.company) {
+                person.company.id = relation.id;
+              } else {
+                person.company = {
+                  id: relation.id,
+                  name: relation.name,
+                  domain_name: relation.domain_name,
+                };
+              }
+              updatePerson(person);
+            }}
+            searchFilter={
+              {
+                key: 'company_name',
+                label: 'Company',
+                icon: <FaBuilding />,
+                whereTemplate: () => {
+                  return {};
+                },
+                searchQuery: SEARCH_COMPANY_QUERY,
+                searchTemplate: (searchInput: string) => ({
+                  name: { _ilike: `%${searchInput}%` },
+                }),
+                searchResultMapper: (company: GraphqlQueryCompany) => ({
+                  displayValue: company.name,
+                  value: {
+                    id: company.id,
+                    name: company.name,
+                    domain_name: company.domain_name,
+                  },
+                }),
+                operands: [],
+              } satisfies FilterType<People_Bool_Exp>
+            }
+          />
+        ),
+      }),
+      columnHelper.accessor('phone', {
+        header: () => <ColumnHead viewName="Phone" viewIcon={<FaPhone />} />,
+        cell: (props) => (
+          <EditablePhone
+            placeholder="Phone"
+            value={props.row.original.phone}
+            changeHandler={(value: string) => {
+              const person = props.row.original;
+              person.phone = value;
+              updatePerson(person);
+            }}
+          />
+        ),
+      }),
+      columnHelper.accessor('creationDate', {
+        header: () => (
+          <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />
+        ),
+        cell: (props) => (
+          <EditableDate
+            value={props.row.original.creationDate}
+            changeHandler={(value: Date) => {
+              const person = props.row.original;
+              person.creationDate = value;
+              updatePerson(person);
+            }}
+          />
+        ),
+      }),
+      columnHelper.accessor('city', {
+        header: () => <ColumnHead viewName="City" viewIcon={<FaMapPin />} />,
+        cell: (props) => (
+          <EditableText
+            editModeHorizontalAlign="right"
+            placeholder="City"
+            content={props.row.original.city}
+            changeHandler={(value: string) => {
+              const person = props.row.original;
+              person.city = value;
+              updatePerson(person);
+            }}
+          />
+        ),
+      }),
+    ];
+  }, []);
+};

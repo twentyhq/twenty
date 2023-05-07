@@ -28,6 +28,20 @@ const mocks = [
       },
     },
   },
+  {
+    request: {
+      query: GET_COMPANIES,
+      variables: {
+        orderBy: [{ created_at: 'desc' }],
+        where: {},
+      },
+    },
+    result: {
+      data: {
+        companies: mockData,
+      },
+    },
+  },
 ];
 
 export const CompaniesDefault = () => (
