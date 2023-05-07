@@ -14,6 +14,8 @@ insert_permissions:
       check:
         workspace_id:
           _eq: x-hasura-workspace-id
+      set:
+        workspace_id: x-hasura-Workspace-Id
       columns:
         - city
         - email

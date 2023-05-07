@@ -1,17 +1,19 @@
 import { FaRegUser, FaList } from 'react-icons/fa';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import Table from '../../components/table/Table';
+import { v4 as uuidv4 } from 'uuid';
 import styled from '@emotion/styled';
 import {
   availableFilters,
-  peopleColumns,
   availableSorts,
+  usePeopleColumns,
 } from './people-table';
-import { mapPerson } from '../../interfaces/person.interface';
-import { useCallback, useState } from 'react';
+import { Person, mapPerson } from '../../interfaces/person.interface';
+import { useCallback, useEffect, useState } from 'react';
 import {
   PeopleSelectedSortType,
   defaultOrderBy,
+  insertPerson,
   usePeopleQuery,
 } from '../../services/people';
 import { useSearch } from '../../services/search/search';
@@ -32,6 +34,7 @@ function People() {
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
   const [where, setWhere] = useState<People_Bool_Exp>({});
   const [filterSearchResults, setSearchInput, setFilterSearch] = useSearch();
+  const [internalData, setInternalData] = useState<Array<Person>>([]);
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
@@ -44,11 +47,34 @@ function People() {
     [],
   );
 
-  const addEmptyRow = useCallback(() => {
-    console.log('add row');
-  }, []);
+  const { data, loading, refetch } = usePeopleQuery(orderBy, where);
 
-  const { data } = usePeopleQuery(orderBy, where);
+  useEffect(() => {
+    if (!loading) {
+      if (data) {
+        setInternalData(data.people.map(mapPerson));
+      }
+    }
+  }, [loading, setInternalData, data]);
+
+  const addEmptyRow = useCallback(() => {
+    const newCompany: Person = {
+      id: uuidv4(),
+      firstname: '',
+      lastname: '',
+      email: '',
+      phone: '',
+      company: null,
+      pipe: null,
+      creationDate: new Date(),
+      city: '',
+    };
+    insertPerson(newCompany);
+    setInternalData([newCompany, ...internalData]);
+    refetch();
+  }, [internalData, setInternalData, refetch]);
+
+  const peopleColumns = usePeopleColumns();
 
   return (
     <WithTopBarContainer
@@ -59,7 +85,7 @@ function People() {
       <StyledPeopleContainer>
         {
           <Table
-            data={data ? data.people.map(mapPerson) : []}
+            data={internalData}
             columns={peopleColumns}
             viewName="All People"
             viewIcon={<FaList />}

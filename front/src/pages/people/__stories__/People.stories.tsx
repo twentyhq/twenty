@@ -31,6 +31,20 @@ const mocks = [
   },
   {
     request: {
+      query: GET_PEOPLE,
+      variables: {
+        orderBy: [{ created_at: 'desc' }],
+        where: {},
+      },
+    },
+    result: {
+      data: {
+        people: mockData,
+      },
+    },
+  },
+  {
+    request: {
       query: SEARCH_PEOPLE_QUERY, // TODO this should not be called for empty filters
       variables: {
         where: undefined,

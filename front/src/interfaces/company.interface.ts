@@ -54,7 +54,7 @@ export const mapCompany = (company: GraphqlQueryCompany): Company => ({
         email: company.account_owner.email,
         displayName: company.account_owner.displayName,
       }
-    : undefined,
+    : null,
   creationDate: new Date(company.created_at),
   opportunities: [],
 });
