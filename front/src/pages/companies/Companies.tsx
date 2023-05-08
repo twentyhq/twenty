@@ -99,6 +99,9 @@ function Companies() {
             setSearhInput(searchValue);
             setFilterSearch(filter);
           }}
+          onRowSelectionChange={(selectedRows) => {
+            console.log(selectedRows);
+          }}
         />
       </StyledCompaniesContainer>
     </WithTopBarContainer>

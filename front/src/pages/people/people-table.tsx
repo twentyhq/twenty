@@ -8,7 +8,7 @@ import {
   FaUser,
   FaBuilding,
 } from 'react-icons/fa';
-import { createColumnHelper } from '@tanstack/react-table';
+import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
 import CompanyChip, {
@@ -39,6 +39,7 @@ import EditableDate from '../../components/table/editable-cell/EditableDate';
 import EditableRelation from '../../components/table/editable-cell/EditableRelation';
 import { updatePerson } from '../../services/people';
 import { useMemo } from 'react';
+import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 
 export const availableSorts = [
   {
@@ -247,17 +248,24 @@ const columnHelper = createColumnHelper<Person>();
 export const usePeopleColumns = () => {
   return useMemo(() => {
     return [
-      columnHelper.accessor('id', {
-        header: () => (
-          <Checkbox id={`person-select-all`} name={`person-select-all`} />
-        ),
-        cell: (props) => (
-          <Checkbox
-            id={`person-selected-${props.row.original.email}`}
-            name={`person-selected-${props.row.original.email}`}
+      {
+        id: 'select',
+        header: ({ table }: any) => (
+          <SelectAllCheckbox
+            checked={table.getIsAllRowsSelected()}
+            indeterminate={table.getIsSomeRowsSelected()}
+            onChange={table.getToggleAllRowsSelectedHandler()}
           />
         ),
-      }),
+        cell: (props: CellContext<Person, string>) => (
+          <Checkbox
+            id={`person-selected-${props.row.original.id}`}
+            name={`person-selected-${props.row.original.id}`}
+            checked={props.row.getIsSelected()}
+            onChange={props.row.getToggleSelectedHandler()}
+          />
+        ),
+      },
       columnHelper.accessor('firstname', {
         header: () => <ColumnHead viewName="People" viewIcon={<FaRegUser />} />,
         cell: (props) => (

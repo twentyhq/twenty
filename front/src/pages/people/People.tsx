@@ -98,6 +98,9 @@ function People() {
               setSearchInput(searchValue);
               setFilterSearch(filter);
             }}
+            onRowSelectionChange={(selectedRows) => {
+              console.log(selectedRows);
+            }}
           />
         }
       </StyledPeopleContainer>

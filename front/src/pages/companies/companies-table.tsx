@@ -1,11 +1,10 @@
-import { createColumnHelper } from '@tanstack/react-table';
+import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import {
   Company,
   GraphqlQueryCompany,
 } from '../../interfaces/company.interface';
 import { updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
-import Checkbox from '../../components/form/Checkbox';
 import CompanyChip from '../../components/chips/CompanyChip';
 import EditableText from '../../components/table/editable-cell/EditableText';
 import {
@@ -39,6 +38,8 @@ import EditableDate from '../../components/table/editable-cell/EditableDate';
 import EditableRelation from '../../components/table/editable-cell/EditableRelation';
 import { GraphqlQueryUser, PartialUser } from '../../interfaces/user.interface';
 import { useMemo } from 'react';
+import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
+import Checkbox from '../../components/form/Checkbox';
 
 export const availableSorts = [
   {
@@ -141,17 +142,24 @@ const columnHelper = createColumnHelper<Company>();
 export const useCompaniesColumns = () => {
   return useMemo(() => {
     return [
-      columnHelper.accessor('id', {
-        header: () => (
-          <Checkbox id="company-select-all" name="company-select-all" />
+      {
+        id: 'select',
+        header: ({ table }: any) => (
+          <SelectAllCheckbox
+            checked={table.getIsAllRowsSelected()}
+            indeterminate={table.getIsSomeRowsSelected()}
+            onChange={table.getToggleAllRowsSelectedHandler()}
+          />
         ),
-        cell: (props) => (
+        cell: (props: CellContext<Company, string>) => (
           <Checkbox
             id={`company-selected-${props.row.original.id}`}
             name={`company-selected-${props.row.original.id}`}
+            checked={props.row.getIsSelected()}
+            onChange={props.row.getToggleSelectedHandler()}
           />
         ),
-      }),
+      },
       columnHelper.accessor('name', {
         header: () => (
           <ColumnHead viewName="Name" viewIcon={<FaRegBuilding />} />
