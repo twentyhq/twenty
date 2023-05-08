@@ -4,6 +4,9 @@ import styled from '@emotion/styled';
 type OwnProps = {
   name: string;
   id: string;
+  checked?: boolean;
+  indeterminate?: boolean;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const StyledContainer = styled.span`
@@ -28,14 +31,25 @@ const StyledContainer = styled.span`
   }
 `;
 
-function Checkbox({ name, id }: OwnProps) {
+function Checkbox({ name, id, checked, onChange, indeterminate }: OwnProps) {
+  const ref = React.useRef<HTMLInputElement>(null);
+  React.useEffect(() => {
+    if (ref.current === null) return;
+    if (typeof indeterminate === 'boolean') {
+      ref.current.indeterminate = !checked && indeterminate;
+    }
+  }, [ref, indeterminate, checked]);
+
   return (
     <StyledContainer>
       <input
+        ref={ref}
         type="checkbox"
         data-testid="input-checkbox"
         id={id}
         name={name}
+        checked={checked}
+        onChange={onChange}
       ></input>
     </StyledContainer>
   );

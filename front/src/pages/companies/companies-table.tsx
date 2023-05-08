@@ -1,11 +1,10 @@
-import { createColumnHelper } from '@tanstack/react-table';
+import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import {
   Company,
   GraphqlQueryCompany,
 } from '../../interfaces/company.interface';
 import { updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
-import Checkbox from '../../components/form/Checkbox';
 import CompanyChip from '../../components/chips/CompanyChip';
 import EditableText from '../../components/table/editable-cell/EditableText';
 import {
@@ -38,7 +37,9 @@ import {
 import EditableDate from '../../components/table/editable-cell/EditableDate';
 import EditableRelation from '../../components/table/editable-cell/EditableRelation';
 import { GraphqlQueryUser, PartialUser } from '../../interfaces/user.interface';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
+import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
+import Checkbox from '../../components/form/Checkbox';
 
 export const availableSorts = [
   {
@@ -138,53 +139,25 @@ export const availableFilters = [
 
 const columnHelper = createColumnHelper<Company>();
 
-function IndeterminateCheckbox({
-  indeterminate,
-  className = '',
-  ...rest
-}: { indeterminate?: boolean } & React.HTMLProps<HTMLInputElement>) {
-  const ref = useRef<HTMLInputElement>(null!);
-
-  useEffect(() => {
-    if (typeof indeterminate === 'boolean') {
-      ref.current.indeterminate = !rest.checked && indeterminate;
-    }
-  }, [ref, indeterminate]);
-
-  return (
-    <input
-      type="checkbox"
-      ref={ref}
-      className={className + ' cursor-pointer'}
-      {...rest}
-    />
-  );
-}
-
 export const useCompaniesColumns = () => {
   return useMemo(() => {
     return [
       {
         id: 'select',
         header: ({ table }: any) => (
-          <IndeterminateCheckbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler(),
-            }}
+          <SelectAllCheckbox
+            checked={table.getIsAllRowsSelected()}
+            indeterminate={table.getIsSomeRowsSelected()}
+            onChange={table.getToggleAllRowsSelectedHandler()}
           />
         ),
-        cell: (props: any) => (
-          <div className="px-1">
-            <IndeterminateCheckbox
-              {...{
-                checked: props.row.getIsSelected(),
-                indeterminate: props.row.getIsSomeSelected(),
-                onChange: props.row.getToggleSelectedHandler(),
-              }}
-            />
-          </div>
+        cell: (props: CellContext<Company, string>) => (
+          <Checkbox
+            id={`company-selected-${props.row.original.id}`}
+            name={`company-selected-${props.row.original.id}`}
+            checked={props.row.getIsSelected()}
+            onChange={props.row.getToggleSelectedHandler()}
+          />
         ),
       },
       columnHelper.accessor('name', {

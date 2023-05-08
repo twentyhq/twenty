@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import {
   ColumnDef,
+  RowSelectionState,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -34,6 +35,7 @@ type OwnProps<TData, SortField, FilterProperties> = {
     filter: FilterType<FilterProperties> | null,
     searchValue: string,
   ) => void;
+  onRowSelectionChange?: (rowSelection: RowSelectionState) => void;
 };
 
 const StyledTable = styled.table`
@@ -98,8 +100,14 @@ function Table<TData extends { id: string }, SortField, FilterProperies>({
   onSortsUpdate,
   onFiltersUpdate,
   onFilterSearch,
+  onRowSelectionChange,
 }: OwnProps<TData, SortField, FilterProperies>) {
   const [rowSelection, setRowSelection] = React.useState({});
+
+  React.useEffect(() => {
+    onRowSelectionChange && onRowSelectionChange(rowSelection);
+  }, [rowSelection, onRowSelectionChange]);
+
   const table = useReactTable<TData>({
     data,
     columns,
