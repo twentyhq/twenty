@@ -1,7 +1,7 @@
 import { FaRegBuilding, FaList } from 'react-icons/fa';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import styled from '@emotion/styled';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
   CompaniesSelectedSortType,
@@ -36,7 +36,6 @@ function Companies() {
   const [orderBy, setOrderBy] = useState<Companies_Order_By[]>(defaultOrderBy);
   const [where, setWhere] = useState<Companies_Bool_Exp>({});
   const [internalData, setInternalData] = useState<Array<Company>>([]);
-  const [selectedRows, setSelectedRows] = useState<Array<string>>([]);
 
   const [filterSearchResults, setSearhInput, setFilterSearch] = useSearch();
 
@@ -78,6 +77,7 @@ function Companies() {
   }, [internalData, setInternalData, refetch]);
 
   const companiesColumns = useCompaniesColumns();
+  const tableRef = useRef<{ resetRowSelection: () => void }>();
 
   return (
     <WithTopBarContainer
@@ -87,6 +87,7 @@ function Companies() {
     >
       <StyledCompaniesContainer>
         <Table
+          ref={tableRef}
           data={internalData}
           columns={companiesColumns}
           viewName="All Companies"
@@ -101,7 +102,7 @@ function Companies() {
             setFilterSearch(filter);
           }}
           onRowSelectionChange={(selectedRows) => {
-            setSelectedRows(selectedRows);
+            console.log(selectedRows);
           }}
         />
       </StyledCompaniesContainer>
