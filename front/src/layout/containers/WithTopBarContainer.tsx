@@ -18,6 +18,7 @@ const StyledContainer = styled.div`
 
 const ContentContainer = styled.div`
   display: flex;
+  position: relative;
   flex-direction: column;
   background: ${(props) => props.theme.noisyBackground};
   flex: 1;

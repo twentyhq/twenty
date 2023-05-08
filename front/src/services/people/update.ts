@@ -86,6 +86,27 @@ export const INSERT_PERSON = gql`
   }
 `;
 
+export const DELETE_PEOPLE = gql`
+  mutation DeletePeople($ids: [uuid]) {
+    delete_people(where: { id: { _in: $ids } }) {
+      returning {
+        city
+        company {
+          domain_name
+          name
+          id
+        }
+        email
+        firstname
+        id
+        lastname
+        phone
+        created_at
+      }
+    }
+  }
+`;
+
 export async function updatePerson(
   person: Person,
 ): Promise<FetchResult<Person>> {
@@ -102,6 +123,17 @@ export async function insertPerson(
   const result = await apiClient.mutate({
     mutation: INSERT_PERSON,
     variables: mapGqlPerson(person),
+  });
+
+  return result;
+}
+
+export async function deletePeople(
+  peopleIds: string[],
+): Promise<FetchResult<Person>> {
+  const result = await apiClient.mutate({
+    mutation: DELETE_PEOPLE,
+    variables: { ids: peopleIds },
   });
 
   return result;

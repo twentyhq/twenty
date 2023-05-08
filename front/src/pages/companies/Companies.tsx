@@ -36,6 +36,7 @@ function Companies() {
   const [orderBy, setOrderBy] = useState<Companies_Order_By[]>(defaultOrderBy);
   const [where, setWhere] = useState<Companies_Bool_Exp>({});
   const [internalData, setInternalData] = useState<Array<Company>>([]);
+  const [selectedRows, setSelectedRows] = useState<Array<string>>([]);
 
   const [filterSearchResults, setSearhInput, setFilterSearch] = useSearch();
 
@@ -100,7 +101,7 @@ function Companies() {
             setFilterSearch(filter);
           }}
           onRowSelectionChange={(selectedRows) => {
-            console.log(selectedRows);
+            setSelectedRows(selectedRows);
           }}
         />
       </StyledCompaniesContainer>
