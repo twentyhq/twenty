@@ -9,10 +9,11 @@ import {
   usePeopleColumns,
 } from './people-table';
 import { Person, mapPerson } from '../../interfaces/person.interface';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   PeopleSelectedSortType,
   defaultOrderBy,
+  deletePeople,
   insertPerson,
   usePeopleQuery,
 } from '../../services/people';
@@ -23,6 +24,7 @@ import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
 } from '../../components/table/table-header/helpers';
+import ActionBar from '../../components/table/action-bar/ActionBar';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -35,6 +37,7 @@ function People() {
   const [where, setWhere] = useState<People_Bool_Exp>({});
   const [filterSearchResults, setSearchInput, setFilterSearch] = useSearch();
   const [internalData, setInternalData] = useState<Array<Person>>([]);
+  const [selectedRowIds, setSelectedRowIds] = useState<Array<string>>([]);
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
@@ -74,6 +77,18 @@ function People() {
     refetch();
   }, [internalData, setInternalData, refetch]);
 
+  const deleteRows = useCallback(() => {
+    deletePeople(selectedRowIds);
+    setInternalData([
+      ...internalData.filter((row) => !selectedRowIds.includes(row.id)),
+    ]);
+    refetch();
+    if (tableRef.current) {
+      tableRef.current.resetRowSelection();
+    }
+  }, [internalData, selectedRowIds, refetch]);
+
+  const tableRef = useRef<{ resetRowSelection: () => void }>();
   const peopleColumns = usePeopleColumns();
 
   return (
@@ -82,9 +97,10 @@ function People() {
       icon={<FaRegUser />}
       onAddButtonClick={addEmptyRow}
     >
-      <StyledPeopleContainer>
-        {
+      <>
+        <StyledPeopleContainer>
           <Table
+            ref={tableRef}
             data={internalData}
             columns={peopleColumns}
             viewName="All People"
@@ -98,12 +114,11 @@ function People() {
               setSearchInput(searchValue);
               setFilterSearch(filter);
             }}
-            onRowSelectionChange={(selectedRows) => {
-              console.log(selectedRows);
-            }}
+            onRowSelectionChange={setSelectedRowIds}
           />
-        }
-      </StyledPeopleContainer>
+        </StyledPeopleContainer>
+        {selectedRowIds.length > 0 && <ActionBar onDeleteClick={deleteRows} />}
+      </>
     </WithTopBarContainer>
   );
 }

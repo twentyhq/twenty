@@ -1,11 +1,12 @@
 import { FaRegBuilding, FaList } from 'react-icons/fa';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import styled from '@emotion/styled';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
   CompaniesSelectedSortType,
   defaultOrderBy,
+  deleteCompanies,
   insertCompany,
   useCompaniesQuery,
 } from '../../services/companies';
@@ -26,6 +27,7 @@ import {
 } from '../../generated/graphql';
 import { SelectedFilterType } from '../../components/table/table-header/interface';
 import { useSearch } from '../../services/search/search';
+import ActionBar from '../../components/table/action-bar/ActionBar';
 
 const StyledCompaniesContainer = styled.div`
   display: flex;
@@ -36,6 +38,7 @@ function Companies() {
   const [orderBy, setOrderBy] = useState<Companies_Order_By[]>(defaultOrderBy);
   const [where, setWhere] = useState<Companies_Bool_Exp>({});
   const [internalData, setInternalData] = useState<Array<Company>>([]);
+  const [selectedRowIds, setSelectedRowIds] = useState<Array<string>>([]);
 
   const [filterSearchResults, setSearhInput, setFilterSearch] = useSearch();
 
@@ -76,7 +79,19 @@ function Companies() {
     refetch();
   }, [internalData, setInternalData, refetch]);
 
+  const deleteRows = useCallback(() => {
+    deleteCompanies(selectedRowIds);
+    setInternalData([
+      ...internalData.filter((row) => !selectedRowIds.includes(row.id)),
+    ]);
+    refetch();
+    if (tableRef.current) {
+      tableRef.current.resetRowSelection();
+    }
+  }, [internalData, selectedRowIds, refetch]);
+
   const companiesColumns = useCompaniesColumns();
+  const tableRef = useRef<{ resetRowSelection: () => void }>();
 
   return (
     <WithTopBarContainer
@@ -84,26 +99,28 @@ function Companies() {
       icon={<FaRegBuilding />}
       onAddButtonClick={addEmptyRow}
     >
-      <StyledCompaniesContainer>
-        <Table
-          data={internalData}
-          columns={companiesColumns}
-          viewName="All Companies"
-          viewIcon={<FaList />}
-          availableSorts={availableSorts}
-          availableFilters={availableFilters}
-          filterSearchResults={filterSearchResults}
-          onSortsUpdate={updateSorts}
-          onFiltersUpdate={updateFilters}
-          onFilterSearch={(filter, searchValue) => {
-            setSearhInput(searchValue);
-            setFilterSearch(filter);
-          }}
-          onRowSelectionChange={(selectedRows) => {
-            console.log(selectedRows);
-          }}
-        />
-      </StyledCompaniesContainer>
+      <>
+        <StyledCompaniesContainer>
+          <Table
+            ref={tableRef}
+            data={internalData}
+            columns={companiesColumns}
+            viewName="All Companies"
+            viewIcon={<FaList />}
+            availableSorts={availableSorts}
+            availableFilters={availableFilters}
+            filterSearchResults={filterSearchResults}
+            onSortsUpdate={updateSorts}
+            onFiltersUpdate={updateFilters}
+            onFilterSearch={(filter, searchValue) => {
+              setSearhInput(searchValue);
+              setFilterSearch(filter);
+            }}
+            onRowSelectionChange={setSelectedRowIds}
+          />
+        </StyledCompaniesContainer>
+        {selectedRowIds.length > 0 && <ActionBar onDeleteClick={deleteRows} />}
+      </>
     </WithTopBarContainer>
   );
 }

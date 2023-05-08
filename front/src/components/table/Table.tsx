@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import {
   ColumnDef,
-  RowSelectionState,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -15,6 +14,12 @@ import {
   SelectedSortType,
   SortType,
 } from './table-header/interface';
+
+declare module 'react' {
+  function forwardRef<T, P = object>(
+    render: (props: P, ref: React.Ref<T>) => React.ReactElement | null,
+  ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
+}
 
 type OwnProps<TData, SortField, FilterProperties> = {
   data: Array<TData>;
@@ -35,7 +40,7 @@ type OwnProps<TData, SortField, FilterProperties> = {
     filter: FilterType<FilterProperties> | null,
     searchValue: string,
   ) => void;
-  onRowSelectionChange?: (rowSelection: RowSelectionState) => void;
+  onRowSelectionChange?: (rowSelection: string[]) => void;
 };
 
 const StyledTable = styled.table`
@@ -89,34 +94,48 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-function Table<TData extends { id: string }, SortField, FilterProperies>({
-  data,
-  columns,
-  viewName,
-  viewIcon,
-  availableSorts,
-  availableFilters,
-  filterSearchResults,
-  onSortsUpdate,
-  onFiltersUpdate,
-  onFilterSearch,
-  onRowSelectionChange,
-}: OwnProps<TData, SortField, FilterProperies>) {
-  const [rowSelection, setRowSelection] = React.useState({});
-
-  React.useEffect(() => {
-    onRowSelectionChange && onRowSelectionChange(rowSelection);
-  }, [rowSelection, onRowSelectionChange]);
+const Table = <TData extends { id: string }, SortField, FilterProperies>(
+  {
+    data,
+    columns,
+    viewName,
+    viewIcon,
+    availableSorts,
+    availableFilters,
+    filterSearchResults,
+    onSortsUpdate,
+    onFiltersUpdate,
+    onFilterSearch,
+    onRowSelectionChange,
+  }: OwnProps<TData, SortField, FilterProperies>,
+  ref: React.ForwardedRef<{ resetRowSelection: () => void } | undefined>,
+) => {
+  const [internalRowSelection, setInternalRowSelection] = React.useState({});
 
   const table = useReactTable<TData>({
     data,
     columns,
     state: {
-      rowSelection,
+      rowSelection: internalRowSelection,
     },
     getCoreRowModel: getCoreRowModel(),
-    enableRowSelection: true, //enable row selection for all rows
-    onRowSelectionChange: setRowSelection,
+    enableRowSelection: true,
+    onRowSelectionChange: setInternalRowSelection,
+  });
+
+  const selectedRows = table.getSelectedRowModel().rows;
+
+  React.useEffect(() => {
+    const selectedRowIds = selectedRows.map((row) => row.original.id);
+    onRowSelectionChange && onRowSelectionChange(selectedRowIds);
+  }, [onRowSelectionChange, selectedRows]);
+
+  React.useImperativeHandle(ref, () => {
+    return {
+      resetRowSelection: () => {
+        table.resetRowSelection();
+      },
+    };
   });
 
   return (
@@ -169,6 +188,6 @@ function Table<TData extends { id: string }, SortField, FilterProperies>({
       </StyledTableScrollableContainer>
     </StyledTableWithHeader>
   );
-}
+};
 
-export default Table;
+export default React.forwardRef(Table);

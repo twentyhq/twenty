@@ -75,6 +75,21 @@ export const INSERT_COMPANY = gql`
   }
 `;
 
+export const DELETE_COMPANIES = gql`
+  mutation DeleteCompanies($ids: [uuid]) {
+    delete_companies(where: { id: { _in: $ids } }) {
+      returning {
+        address
+        created_at
+        domain_name
+        employees
+        id
+        name
+      }
+    }
+  }
+`;
+
 export async function updateCompany(
   company: Company,
 ): Promise<FetchResult<Company>> {
@@ -91,6 +106,17 @@ export async function insertCompany(
   const result = await apiClient.mutate({
     mutation: INSERT_COMPANY,
     variables: mapGqlCompany(company),
+  });
+
+  return result;
+}
+
+export async function deleteCompanies(
+  peopleIds: string[],
+): Promise<FetchResult<Company>> {
+  const result = await apiClient.mutate({
+    mutation: DELETE_COMPANIES,
+    variables: { ids: peopleIds },
   });
 
   return result;
