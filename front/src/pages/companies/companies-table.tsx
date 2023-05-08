@@ -38,7 +38,7 @@ import {
 import EditableDate from '../../components/table/editable-cell/EditableDate';
 import EditableRelation from '../../components/table/editable-cell/EditableRelation';
 import { GraphqlQueryUser, PartialUser } from '../../interfaces/user.interface';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 export const availableSorts = [
   {
@@ -138,20 +138,55 @@ export const availableFilters = [
 
 const columnHelper = createColumnHelper<Company>();
 
+function IndeterminateCheckbox({
+  indeterminate,
+  className = '',
+  ...rest
+}: { indeterminate?: boolean } & React.HTMLProps<HTMLInputElement>) {
+  const ref = useRef<HTMLInputElement>(null!);
+
+  useEffect(() => {
+    if (typeof indeterminate === 'boolean') {
+      ref.current.indeterminate = !rest.checked && indeterminate;
+    }
+  }, [ref, indeterminate]);
+
+  return (
+    <input
+      type="checkbox"
+      ref={ref}
+      className={className + ' cursor-pointer'}
+      {...rest}
+    />
+  );
+}
+
 export const useCompaniesColumns = () => {
   return useMemo(() => {
     return [
-      columnHelper.accessor('id', {
-        header: () => (
-          <Checkbox id="company-select-all" name="company-select-all" />
-        ),
-        cell: (props) => (
-          <Checkbox
-            id={`company-selected-${props.row.original.id}`}
-            name={`company-selected-${props.row.original.id}`}
+      {
+        id: 'select',
+        header: ({ table }: any) => (
+          <IndeterminateCheckbox
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler(),
+            }}
           />
         ),
-      }),
+        cell: (props: any) => (
+          <div className="px-1">
+            <IndeterminateCheckbox
+              {...{
+                checked: props.row.getIsSelected(),
+                indeterminate: props.row.getIsSomeSelected(),
+                onChange: props.row.getToggleSelectedHandler(),
+              }}
+            />
+          </div>
+        ),
+      },
       columnHelper.accessor('name', {
         header: () => (
           <ColumnHead viewName="Name" viewIcon={<FaRegBuilding />} />

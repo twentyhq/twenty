@@ -99,10 +99,16 @@ function Table<TData extends { id: string }, SortField, FilterProperies>({
   onFiltersUpdate,
   onFilterSearch,
 }: OwnProps<TData, SortField, FilterProperies>) {
+  const [rowSelection, setRowSelection] = React.useState({});
   const table = useReactTable<TData>({
     data,
     columns,
+    state: {
+      rowSelection,
+    },
     getCoreRowModel: getCoreRowModel(),
+    enableRowSelection: true, //enable row selection for all rows
+    onRowSelectionChange: setRowSelection,
   });
 
   return (
