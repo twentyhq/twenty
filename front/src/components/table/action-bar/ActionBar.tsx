@@ -18,6 +18,7 @@ const StyledContainer = styled.div`
   padding-right: ${(props) => props.theme.spacing(4)};
   color: ${(props) => props.theme.red};
   left: 50%;
+  transform: translateX(-50%);
 
   border-radius: 8px;
   border: 1px solid ${(props) => props.theme.primaryBorder};
