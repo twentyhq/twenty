@@ -1,7 +1,22 @@
+import jwt from 'jwt-decode';
+
 export const hasAccessToken = () => {
   const accessToken = localStorage.getItem('accessToken');
 
   return accessToken ? true : false;
+};
+
+export const getUserIdFromToken: () => string | null = () => {
+  const accessToken = localStorage.getItem('accessToken');
+  if (!accessToken) {
+    return null;
+  }
+
+  try {
+    return jwt<{ sub: string }>(accessToken).sub;
+  } catch (error) {
+    return null;
+  }
 };
 
 export const hasRefreshToken = () => {

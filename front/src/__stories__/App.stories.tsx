@@ -10,12 +10,18 @@ const component = {
 };
 
 localStorage.setItem('refreshToken', 'xxx-refresh');
-localStorage.setItem('accessToken', 'xxx-access');
+localStorage.setItem(
+  'accessToken',
+  'eyJhbGciOiJIUzI1NiJ9.eyJodHRwczovL2hhc3VyYS5pby9qd3QvY2xhaW1zIjp7IngtaGFzdXJhLXdvcmtzcGFjZS1pZCI6IjdlZDlkMjEyLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIngtaGFzdXJhLWFsbG93ZWQtcm9sZXMiOlsibWUiLCJ1c2VyIl0sIngtaGFzdXJhLWRlZmF1bHQtcm9sZSI6InVzZXIiLCJ4LWhhc3VyYS11c2VyLWlkIjoiMTY1MDZiYTgtMTk2Yy00YzEzLWE0YTctYTIyY2I1ZWNjZmExIiwieC1oYXN1cmEtdXNlci1pcy1hbm9ueW1vdXMiOiJmYWxzZSJ9LCJzdWIiOiIxNjUwNmJhOC0xOTZjLTRjMTMtYTRhNy1hMjJjYjVlY2NmYTEiLCJpYXQiOjE2ODM4NzM5NzIsImV4cCI6MTY4Mzg3NDg3MiwiaXNzIjoiaGFzdXJhLWF1dGgifQ.C_OynseOprgU-SdLBLzMdfg_441eopI7LYg8yB86g3c',
+);
 
 const mocks = [
   {
     request: {
       query: GET_CURRENT_USER,
+      variables: {
+        uuid: '16506ba8-196c-4c13-a4a7-a22cb5eccfa1',
+      },
     },
     result: {
       data: {

@@ -9,11 +9,13 @@ import RequireAuth from './components/auth/RequireAuth';
 import Opportunities from './pages/opportunities/Opportunities';
 import { User, mapUser } from './interfaces/user.interface';
 import { useGetCurrentUserQuery } from './services/users';
+import { getUserIdFromToken } from './services/AuthService';
 
 function App() {
   const [user, setUser] = useState<User | undefined>(undefined);
 
-  const { data } = useGetCurrentUserQuery();
+  const userIdFromToken = getUserIdFromToken();
+  const { data } = useGetCurrentUserQuery(userIdFromToken);
 
   useEffect(() => {
     if (data?.users[0]) {
