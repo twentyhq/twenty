@@ -6,13 +6,17 @@ export const hasAccessToken = () => {
   return accessToken ? true : false;
 };
 
-export const getUserIdFromToken = () => {
+export const getUserIdFromToken: () => string | null = () => {
   const accessToken = localStorage.getItem('accessToken');
   if (!accessToken) {
     return null;
   }
 
-  return jwt<{ sub: string }>(accessToken).sub;
+  try {
+    return jwt<{ sub: string }>(accessToken).sub;
+  } catch (error) {
+    return null;
+  }
 };
 
 export const hasRefreshToken = () => {
