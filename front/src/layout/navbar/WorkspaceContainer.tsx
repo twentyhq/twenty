@@ -7,7 +7,6 @@ type OwnProps = {
 
 const StyledContainer = styled.button`
   display: inline-flex;
-  width: min-content;
   height: 34px;
   align-items: center;
   cursor: pointer;
@@ -17,6 +16,7 @@ const StyledContainer = styled.button`
   border-radius: ${(props) => props.theme.spacing(1)};
   padding: ${(props) => props.theme.spacing(2)};
   margin-left: ${(props) => props.theme.spacing(1)};
+  align-self: flex-start;
 `;
 
 type StyledLogoProps = {
@@ -36,7 +36,6 @@ const StyledName = styled.div`
   font-family: 'Inter';
   font-weight: 500;
   font-size: ${(props) => props.theme.fontSizeLarge};
-  font-color: ${(props) => props.theme.text0};
 `;
 
 function WorkspaceContainer({ workspace }: OwnProps) {
