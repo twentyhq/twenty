@@ -41,14 +41,14 @@ describe('UserService', () => {
   it('upsertWorkspaceMember should not upsert if email is absent', () => {
     service.handleUserCreated({
       event: {
-        data: { new: { id: 1, email: ''}, old: null },
+        data: { new: { id: 1, email: '' }, old: null },
         session_variables: {},
-        op: 'INSERT'
+        op: 'INSERT',
       },
       id: '1',
       table: { schema: 'auth', name: 'users' },
       trigger: { name: 'user-created' },
-      delivery_info: { current_retry: 0, max_retries: 0},
+      delivery_info: { current_retry: 0, max_retries: 0 },
       created_at: '2021-03-01T00:00:00.000Z',
     });
     expect(mockedPrismaService.workspace.findUnique).toHaveBeenCalledTimes(0);
