@@ -16,5 +16,8 @@
     "docs",
     "server",
     "front"
-  ]
+  ],
+  "scripts": {
+    "start": "cd infra/dev && make up"
+  }
 }
