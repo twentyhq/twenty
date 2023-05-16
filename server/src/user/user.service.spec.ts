@@ -56,7 +56,7 @@ describe('UserService', () => {
 
   it('upsertWorkspaceMember should upsert if domain name is found from email', async () => {
     mockedPrismaService.workspace.findUnique.mockResolvedValue({
-      id: 2,
+      id: '2',
       display_name: 'test',
       domain_name: 'domain.namexxx',
       created_at: new Date(),
@@ -65,9 +65,9 @@ describe('UserService', () => {
     });
 
     mockedPrismaService.workspaceMember.upsert.mockResolvedValue({
-      id: 1,
+      id: '1',
       user_id: '1',
-      workspace_id: 1,
+      workspace_id: '1',
       created_at: new Date(),
       updated_at: new Date(),
       deleted_at: null,
@@ -88,17 +88,16 @@ describe('UserService', () => {
     expect(mockedPrismaService.workspace.findUnique).toHaveBeenCalledWith({
       where: { domain_name: 'domain.name' },
     });
-    expect(mockedPrismaService.workspaceMember.upsert).toHaveBeenCalledWith(
-      {
-        where: {
-          user_id: '1',
-        },
-        create: {
-          user_id: '1',
-          workspace_id: 2,
-        },
-        update: {},
+    expect(mockedPrismaService.workspaceMember.upsert).toHaveBeenCalledWith({
+      where: {
+        user_id: '1',
       },
-    );
+      create: {
+        id: expect.any(String), // matches auto-generated uuid
+        user_id: '1',
+        workspace_id: '2',
+      },
+      update: {},
+    });
   });
 });
