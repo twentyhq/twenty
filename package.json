@@ -1,0 +1,20 @@
+{
+  "name": "twenty",
+  "version": "0.0.1",
+  "description": "Twenty is a open source CRM designed to solve the issues that are still prevalent amongst the existings solutions.  It is meant to be: - Easily extendable - Perfectly in-sync with your data - Crafted with care and enjoyable to use",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twentyhq/twenty.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/twentyhq/twenty/issues"
+  },
+  "homepage": "https://docs.twenty.com/",
+  "workspaces": [
+    "docs",
+    "server",
+    "front"
+  ]
+}
