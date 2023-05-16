@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { forwardRef, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
-import DatePicker from '../../form/DatePicker';
+import DatePicker from '../form/DatePicker';
 import { CalendarContainer } from 'react-datepicker';
-import { modalBackground } from '../../../layout/styles/themes';
+import { modalBackground } from '../../layout/styles/themes';
 
 export type EditableDateProps = {
   value: Date;

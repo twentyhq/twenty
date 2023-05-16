@@ -1,7 +1,7 @@
 import SortAndFilterBar from '../SortAndFilterBar';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
-import { GET_PEOPLE } from '../../../../services/people';
+import { GET_PEOPLE } from '../../../../api/people';
 import { FaArrowDown } from 'react-icons/fa';
 
 const component = {

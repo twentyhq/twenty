@@ -1,4 +1,4 @@
-import { mapGqlPerson, mapPerson } from './person.interface';
+import { mapGqlPerson, mapPerson } from '../person.interface';
 
 describe('mapPerson', () => {
   it('should map person', () => {

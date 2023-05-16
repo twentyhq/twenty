@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
 import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
-import Link from '../../link/Link';
+import Link from '../link/Link';
 
 type OwnProps = {
   placeholder?: string;

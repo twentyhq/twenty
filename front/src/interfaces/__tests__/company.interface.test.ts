@@ -1,4 +1,4 @@
-import { mapGqlCompany, mapCompany } from './company.interface';
+import { mapGqlCompany, mapCompany } from '../company.interface';
 
 describe('mapCompany', () => {
   it('should map company', () => {

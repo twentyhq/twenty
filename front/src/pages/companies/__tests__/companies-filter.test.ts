@@ -5,7 +5,7 @@ import { GraphqlQueryPerson } from '../../../interfaces/person.interface';
 import {
   SEARCH_COMPANY_QUERY,
   SEARCH_PEOPLE_QUERY,
-} from '../../../services/search/search';
+} from '../../../hooks/search/search';
 import { mockData } from './__data__/mock-data';
 import { availableFilters } from '../companies-table';
 

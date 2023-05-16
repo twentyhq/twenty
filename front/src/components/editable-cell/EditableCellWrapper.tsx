@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { ReactElement, useRef } from 'react';
-import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
+import { useOutsideAlerter } from '../../hooks/useOutsideAlerter';
 
 type OwnProps = {
   editModeContent: ReactElement;

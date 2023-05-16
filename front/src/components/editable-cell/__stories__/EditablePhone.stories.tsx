@@ -1,6 +1,6 @@
 import EditablePhone from '../EditablePhone';
 import { ThemeProvider } from '@emotion/react';
-import { lightTheme } from '../../../../layout/styles/themes';
+import { lightTheme } from '../../../layout/styles/themes';
 import { StoryFn } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 

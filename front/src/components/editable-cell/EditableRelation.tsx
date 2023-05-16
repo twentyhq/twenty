@@ -1,9 +1,9 @@
 import { ChangeEvent, ComponentType, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
 import styled from '@emotion/styled';
-import { useSearch } from '../../../services/search/search';
-import { FilterType } from '../table-header/interface';
-import { People_Bool_Exp } from '../../../generated/graphql';
+import { useSearch } from '../../hooks/search/search';
+import { FilterType } from '../table/table-header/interface';
+import { People_Bool_Exp } from '../../generated/graphql';
 
 const StyledEditModeContainer = styled.div`
   width: 200px;

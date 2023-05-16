@@ -27,7 +27,7 @@ function AppLayout({ children, user }: OwnProps) {
   return (
     <ThemeProvider theme={lightTheme}>
       <StyledLayout>
-        <Navbar user={user} workspace={user?.workspace_member?.workspace} />
+        <Navbar user={user} workspace={user?.workspaceMember?.workspace} />
         <StyledRightContainer>{children}</StyledRightContainer>
       </StyledLayout>
     </ThemeProvider>

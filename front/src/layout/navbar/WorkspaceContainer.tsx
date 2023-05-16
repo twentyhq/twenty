@@ -20,7 +20,7 @@ const StyledContainer = styled.button`
 `;
 
 type StyledLogoProps = {
-  logo: string;
+  logo?: string | null;
 };
 
 const StyledLogo = styled.div<StyledLogoProps>`

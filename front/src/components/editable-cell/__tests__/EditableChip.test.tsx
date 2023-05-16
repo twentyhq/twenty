@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 
 import { EditableChipStory } from '../__stories__/EditableChip.stories';
-import CompanyChip from '../../../chips/CompanyChip';
+import CompanyChip from '../../chip/CompanyChip';
 
 it('Checks the EditableChip editing event bubbles up', async () => {
   const func = jest.fn(() => null);

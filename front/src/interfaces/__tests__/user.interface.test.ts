@@ -1,4 +1,4 @@
-import { mapUser } from './user.interface';
+import { mapUser } from '../user.interface';
 
 describe('mapUser', () => {
   it('should map person', () => {

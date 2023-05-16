@@ -1,8 +1,8 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { EditableRelationStory } from '../__stories__/EditableRelation.stories';
-import { CompanyChipPropsType } from '../../../chips/CompanyChip';
-import { PartialCompany } from '../../../../interfaces/company.interface';
+import { CompanyChipPropsType } from '../../chip/CompanyChip';
+import { PartialCompany } from '../../../interfaces/company.interface';
 
 import { EditableRelationProps } from '../EditableRelation';
 import { act } from 'react-dom/test-utils';

@@ -9,9 +9,9 @@ import {
   deleteCompanies,
   insertCompany,
   useCompaniesQuery,
-} from '../../services/companies';
+} from '../../api/companies';
 import Table from '../../components/table/Table';
-import { Company, mapCompany } from '../../interfaces/company.interface';
+import { Company, mapToCompany } from '../../interfaces/company.interface';
 import {
   useCompaniesColumns,
   availableFilters,
@@ -26,7 +26,7 @@ import {
   Companies_Order_By,
 } from '../../generated/graphql';
 import { SelectedFilterType } from '../../components/table/table-header/interface';
-import { useSearch } from '../../services/search/search';
+import { useSearch } from '../../hooks/search/search';
 import ActionBar from '../../components/table/action-bar/ActionBar';
 
 const StyledCompaniesContainer = styled.div`
@@ -58,7 +58,7 @@ function Companies() {
   useEffect(() => {
     if (!loading) {
       if (data) {
-        setInternalData(data.companies.map(mapCompany));
+        setInternalData(data.companies.map(mapToCompany));
       }
     }
   }, [loading, setInternalData, data]);
@@ -67,10 +67,10 @@ function Companies() {
     const newCompany: Company = {
       id: uuidv4(),
       name: '',
-      domain_name: '',
-      employees: 0,
+      domainName: '',
+      employees: '0',
       address: '',
-      opportunities: [],
+      pipes: [],
       creationDate: new Date(),
       accountOwner: null,
     };

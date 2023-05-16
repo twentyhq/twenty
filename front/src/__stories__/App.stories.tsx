@@ -1,8 +1,8 @@
 import { MockedProvider } from '@apollo/client/testing';
 import App from '../App';
-import { GET_CURRENT_USER } from '../services/users';
+import { GET_CURRENT_USER } from '../api/users';
 import { MemoryRouter } from 'react-router-dom';
-import { GET_PEOPLE } from '../services/people';
+import { GET_PEOPLE } from '../api/people';
 
 const component = {
   title: 'App',

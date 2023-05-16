@@ -1,6 +1,6 @@
 import EditableDate, { EditableDateProps } from '../EditableDate';
 import { ThemeProvider } from '@emotion/react';
-import { lightTheme } from '../../../../layout/styles/themes';
+import { lightTheme } from '../../../layout/styles/themes';
 import { StoryFn } from '@storybook/react';
 
 const component = {

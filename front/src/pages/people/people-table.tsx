@@ -13,9 +13,9 @@ import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
 import CompanyChip, {
   CompanyChipPropsType,
-} from '../../components/chips/CompanyChip';
+} from '../../components/chip/CompanyChip';
 import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
-import EditableText from '../../components/table/editable-cell/EditableText';
+import EditableText from '../../components/editable-cell/EditableText';
 import {
   FilterType,
   SortType,
@@ -28,16 +28,16 @@ import {
 import {
   SEARCH_COMPANY_QUERY,
   SEARCH_PEOPLE_QUERY,
-} from '../../services/search/search';
+} from '../../hooks/search/search';
 import {
+  Company,
   GraphqlQueryCompany,
-  PartialCompany,
 } from '../../interfaces/company.interface';
-import EditablePhone from '../../components/table/editable-cell/EditablePhone';
-import EditableFullName from '../../components/table/editable-cell/EditableFullName';
-import EditableDate from '../../components/table/editable-cell/EditableDate';
-import EditableRelation from '../../components/table/editable-cell/EditableRelation';
-import { updatePerson } from '../../services/people';
+import EditablePhone from '../../components/editable-cell/EditablePhone';
+import EditableFullName from '../../components/editable-cell/EditableFullName';
+import EditableDate from '../../components/editable-cell/EditableDate';
+import EditableRelation from '../../components/editable-cell/EditableRelation';
+import { updatePerson } from '../../api/people';
 import { useMemo } from 'react';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 
@@ -149,7 +149,6 @@ const companyFilter = {
     name: { _ilike: `%${searchInput}%` },
   }),
   searchResultMapper: (company: GraphqlQueryCompany) => ({
-    displayValue: company.name,
     value: { companyName: company.name },
   }),
   operands: [
@@ -225,22 +224,6 @@ export const availableFilters = [
   companyFilter,
   emailFilter,
   cityFilter,
-  // {
-  //   key: 'phone',
-  //   label: 'Phone',
-  //   icon: faPhone,
-  //   whereTemplate: () => ({ phone: { _ilike: '%value%' } }),
-  //   searchQuery: GET_PEOPLE,
-  //   searchTemplate: { phone: { _ilike: '%value%' } },
-  // },
-  // {
-  //   key: 'created_at',
-  //   label: 'Created at',
-  //   icon: faCalendar,
-  //   whereTemplate: () => ({ created_at: { _eq: '%value%' } }),
-  //   searchQuery: GET_PEOPLE,
-  //   searchTemplate: { created_at: { _eq: '%value%' } },
-  // },
 ] satisfies FilterType<People_Bool_Exp>[];
 
 const columnHelper = createColumnHelper<Person>();
@@ -270,8 +253,8 @@ export const usePeopleColumns = () => {
         header: () => <ColumnHead viewName="People" viewIcon={<FaRegUser />} />,
         cell: (props) => (
           <EditableFullName
-            firstname={props.row.original.firstname}
-            lastname={props.row.original.lastname}
+            firstname={props.row.original.firstname ?? ''}
+            lastname={props.row.original.lastname ?? ''}
             changeHandler={(firstName: string, lastName: string) => {
               const person = props.row.original;
               person.firstname = firstName;
@@ -286,7 +269,7 @@ export const usePeopleColumns = () => {
         cell: (props) => (
           <EditableText
             placeholder="Email"
-            content={props.row.original.email}
+            content={props.row.original.email ?? ''}
             changeHandler={(value: string) => {
               const person = props.row.original;
               person.email = value;
@@ -300,19 +283,21 @@ export const usePeopleColumns = () => {
           <ColumnHead viewName="Company" viewIcon={<FaRegBuilding />} />
         ),
         cell: (props) => (
-          <EditableRelation<PartialCompany, CompanyChipPropsType>
+          <EditableRelation<Company, CompanyChipPropsType>
             relation={props.row.original.company}
             searchPlaceholder="Company"
             ChipComponent={CompanyChip}
             chipComponentPropsMapper={(
-              company: PartialCompany,
+              company: Company,
             ): CompanyChipPropsType => {
               return {
-                name: company.name,
-                picture: `https://www.google.com/s2/favicons?domain=${company.domain_name}&sz=256`,
+                name: company.name ?? '',
+                picture: company.domainName
+                  ? `https://www.google.com/s2/favicons?domain=${company.domainName}&sz=256`
+                  : undefined,
               };
             }}
-            changeHandler={(relation: PartialCompany) => {
+            changeHandler={(relation: Company) => {
               const person = props.row.original;
               if (person.company) {
                 person.company.id = relation.id;
@@ -320,7 +305,7 @@ export const usePeopleColumns = () => {
                 person.company = {
                   id: relation.id,
                   name: relation.name,
-                  domain_name: relation.domain_name,
+                  domainName: relation.domainName,
                 };
               }
               updatePerson(person);
@@ -356,7 +341,7 @@ export const usePeopleColumns = () => {
         cell: (props) => (
           <EditablePhone
             placeholder="Phone"
-            value={props.row.original.phone}
+            value={props.row.original.phone ? props.row.original.phone : ''}
             changeHandler={(value: string) => {
               const person = props.row.original;
               person.phone = value;
@@ -371,7 +356,11 @@ export const usePeopleColumns = () => {
         ),
         cell: (props) => (
           <EditableDate
-            value={props.row.original.creationDate}
+            value={
+              props.row.original.creationDate
+                ? props.row.original.creationDate
+                : new Date()
+            }
             changeHandler={(value: Date) => {
               const person = props.row.original;
               person.creationDate = value;
@@ -386,7 +375,7 @@ export const usePeopleColumns = () => {
           <EditableText
             editModeHorizontalAlign="right"
             placeholder="City"
-            content={props.row.original.city}
+            content={props.row.original.city ?? ''}
             changeHandler={(value: string) => {
               const person = props.row.original;
               person.city = value;

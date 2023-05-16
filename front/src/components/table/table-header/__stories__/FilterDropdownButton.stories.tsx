@@ -9,7 +9,7 @@ import { FaUsers } from 'react-icons/fa';
 import {
   SEARCH_PEOPLE_QUERY,
   useSearch,
-} from '../../../../services/search/search';
+} from '../../../../hooks/search/search';
 import { MockedProvider } from '@apollo/client/testing';
 import { mockData } from '../../../../pages/people/__tests__/__data__/mock-data';
 

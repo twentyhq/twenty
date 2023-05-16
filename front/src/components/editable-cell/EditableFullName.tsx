@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
-import PersonChip from '../../chips/PersonChip';
+import PersonChip from '../chip/PersonChip';
 
 type OwnProps = {
   firstname: string;
