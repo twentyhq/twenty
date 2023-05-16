@@ -1,0 +1,6 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "thebearingedge.vscode-sql-lit"
+  ]
+}
