@@ -30,7 +30,7 @@ type OwnProps<TData extends FilterableFieldsType, SortField> = {
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
-  availableFilters?: FilterConfigType<TData, TData>[];
+  availableFilters?: FilterConfigType<TData>[];
   filterSearchResults?: {
     results: {
       render: (value: SearchableType) => string;
@@ -98,7 +98,10 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-const Table = <TData extends { id: string }, SortField>(
+const Table = <
+  TData extends { id: string; __typename: 'companies' | 'people' | 'users' },
+  SortField,
+>(
   {
     data,
     columns,

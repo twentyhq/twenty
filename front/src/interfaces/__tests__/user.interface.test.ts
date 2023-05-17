@@ -28,6 +28,7 @@ describe('User mappers', () => {
 
     const User = mapToUser(graphQLUser);
     expect(User).toStrictEqual({
+      __typename: 'users',
       id: graphQLUser.id,
       displayName: graphQLUser.display_name,
       email: graphQLUser.email,
@@ -47,6 +48,7 @@ describe('User mappers', () => {
     const now = new Date();
     now.setMilliseconds(0);
     const user = {
+      __typename: 'users',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       displayName: 'John Doe',
       email: 'john.doe@gmail.com',

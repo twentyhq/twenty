@@ -44,6 +44,7 @@ describe('Company mappers', () => {
       employees: graphQLCompany.employees,
       address: graphQLCompany.address,
       accountOwner: {
+        __typename: 'users',
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
         email: 'john@example.com',
         displayName: 'John Doe',

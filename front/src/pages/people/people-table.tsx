@@ -227,7 +227,7 @@ export const availableFilters = [
   companyFilter,
   emailFilter,
   cityFilter,
-];
+] satisfies FilterConfigType<Person, any>[];
 
 const columnHelper = createColumnHelper<Person>();
 

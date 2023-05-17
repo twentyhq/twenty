@@ -253,6 +253,7 @@ export const useCompaniesColumns = () => {
                 company.accountOwner.id = relation.id;
               } else {
                 company.accountOwner = {
+                  __typename: 'users',
                   id: relation.id,
                   email: relation.email,
                   displayName: relation.displayName,

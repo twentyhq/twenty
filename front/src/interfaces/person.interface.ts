@@ -6,6 +6,7 @@ import {
 import { Pipe } from './pipe.interface';
 
 export type Person = {
+  __typename: 'people';
   id: string;
   firstname?: string;
   lastname?: string;
@@ -44,10 +45,11 @@ export type GraphqlMutationPerson = {
   city?: string;
   created_at?: string;
   company_id?: string;
-  __typename: string;
+  __typename: 'people';
 };
 
 export const mapToPerson = (person: GraphqlQueryPerson): Person => ({
+  __typename: 'people',
   id: person.id,
   firstname: person.firstname,
   lastname: person.lastname,

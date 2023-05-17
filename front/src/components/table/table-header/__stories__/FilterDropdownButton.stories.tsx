@@ -102,8 +102,8 @@ const InnerRegularFilterDropdownButton = ({
   );
   return (
     <StyleDiv>
-      <FilterDropdownButton
-        availableFilters={availableFilters as FilterConfigType[]}
+      <FilterDropdownButton<Person>
+        availableFilters={availableFilters}
         isFilterSelected={true}
         onFilterSelect={outerSetFilters}
         filterSearchResults={filterSearchResults}

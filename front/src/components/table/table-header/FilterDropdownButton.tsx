@@ -3,14 +3,15 @@ import DropdownButton from './DropdownButton';
 import {
   FilterConfigType,
   FilterOperandType,
+  FilterableFieldsType,
   SearchConfigType,
   SearchableType,
   SelectedFilterType,
 } from './interface';
 
-type OwnProps = {
+type OwnProps<TData extends FilterableFieldsType> = {
   isFilterSelected: boolean;
-  availableFilters: FilterConfigType[];
+  availableFilters: FilterConfigType<TData>[];
   filterSearchResults?: {
     results: {
       render: (value: SearchableType) => string;
@@ -25,13 +26,15 @@ type OwnProps = {
   ) => void;
 };
 
-export function FilterDropdownButton({
+export const FilterDropdownButton = <
+  TData extends { id: string; __typename: 'companies' | 'people' | 'users' },
+>({
   availableFilters,
   filterSearchResults,
   onFilterSearch,
   onFilterSelect,
   isFilterSelected,
-}: OwnProps) {
+}: OwnProps<TData>) => {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
@@ -66,7 +69,7 @@ export function FilterDropdownButton({
   );
 
   const renderSearchResults = (
-    filterSearchResults: NonNullable<OwnProps['filterSearchResults']>,
+    filterSearchResults: NonNullable<OwnProps<TData>['filterSearchResults']>,
     selectedFilter: FilterConfigType,
     selectedFilterOperand: FilterOperandType,
   ) => {
@@ -161,4 +164,4 @@ export function FilterDropdownButton({
         : renderSelectFilterITems}
     </DropdownButton>
   );
-}
+};

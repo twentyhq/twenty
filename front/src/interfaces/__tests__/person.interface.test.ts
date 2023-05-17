@@ -28,6 +28,7 @@ describe('Person mappers', () => {
 
     const person = mapToPerson(graphQLPerson);
     expect(person).toStrictEqual({
+      __typename: 'people',
       id: graphQLPerson.id,
       firstname: graphQLPerson.firstname,
       lastname: graphQLPerson.lastname,

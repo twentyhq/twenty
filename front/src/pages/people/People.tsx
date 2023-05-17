@@ -19,10 +19,7 @@ import {
 } from '../../services/people';
 import { useSearch } from '../../services/search/search';
 import { People_Bool_Exp } from '../../generated/graphql';
-import {
-  FilterConfigType,
-  SelectedFilterType,
-} from '../../components/table/table-header/interface';
+import { SelectedFilterType } from '../../components/table/table-header/interface';
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
@@ -64,7 +61,8 @@ function People() {
   }, [loading, setInternalData, data]);
 
   const addEmptyRow = useCallback(async () => {
-    const newCompany: Person = {
+    const newPerson: Person = {
+      __typename: 'people',
       id: uuidv4(),
       firstname: '',
       lastname: '',
@@ -75,8 +73,8 @@ function People() {
       creationDate: new Date(),
       city: '',
     };
-    await insertPerson(newCompany);
-    setInternalData([newCompany, ...internalData]);
+    await insertPerson(newPerson);
+    setInternalData([newPerson, ...internalData]);
     refetch();
   }, [internalData, setInternalData, refetch]);
 
@@ -109,7 +107,7 @@ function People() {
             viewName="All People"
             viewIcon={<FaList />}
             availableSorts={availableSorts}
-            availableFilters={availableFilters as Array<FilterConfigType>}
+            availableFilters={availableFilters}
             filterSearchResults={filterSearchResults}
             onSortsUpdate={updateSorts}
             onFiltersUpdate={updateFilters}

@@ -35,9 +35,12 @@ export type SelectedSortType<OrderByTemplate> = SortType<OrderByTemplate> & {
   order: 'asc' | 'desc';
 };
 
-type AnyEntity = { id: string } & Record<string, any>;
-export type FilterableFieldsType = Person | Company;
-export type FilterWhereType = Person | Company | User;
+type AnyEntity = {
+  id: string;
+  __typename: string;
+} & Record<string, any>;
+export type FilterableFieldsType = Person | Company | AnyEntity;
+export type FilterWhereType = Person | Company | User | AnyEntity;
 
 type FilterConfigGqlType<WhereType> = WhereType extends Company
   ? GraphqlQueryCompany
@@ -57,7 +60,7 @@ export type BoolExpType<T> = T extends Company
 
 export type FilterConfigType<
   FilteredType extends FilterableFieldsType = AnyEntity,
-  WhereType extends FilterWhereType = AnyEntity,
+  WhereType extends FilterWhereType = any,
 > = {
   key: string;
   label: string;

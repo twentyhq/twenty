@@ -17,6 +17,7 @@ export const NavbarOnCompanies = () => {
       <MemoryRouter initialEntries={['/companies']}>
         <Navbar
           user={{
+            __typename: 'users',
             id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
             email: 'charles@twenty.com',
             displayName: 'Charles Bochet',
