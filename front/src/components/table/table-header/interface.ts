@@ -86,7 +86,7 @@ export type SearchConfigType<SearchType extends SearchableType> = {
 };
 
 export type FilterOperandType<
-  FilteredType extends FilterableFieldsType = AnyEntity,
+  FilteredType extends FilterableFieldsType,
   WhereType extends FilterWhereType = AnyEntity,
 > =
   | FilterOperandExactMatchType<FilteredType, WhereType>

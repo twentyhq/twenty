@@ -44,7 +44,7 @@ export const FilterDropdownButton = <
   >(undefined);
 
   const [selectedFilterOperand, setSelectedFilterOperand] = useState<
-    FilterOperandType | undefined
+    FilterOperandType<TData> | undefined
   >(undefined);
 
   const resetState = useCallback(() => {
@@ -71,7 +71,7 @@ export const FilterDropdownButton = <
   const renderSearchResults = (
     filterSearchResults: NonNullable<OwnProps<TData>['filterSearchResults']>,
     selectedFilter: FilterConfigType,
-    selectedFilterOperand: FilterOperandType,
+    selectedFilterOperand: FilterOperandType<TData>,
   ) => {
     if (filterSearchResults.loading) {
       return (
@@ -118,7 +118,7 @@ export const FilterDropdownButton = <
 
   function renderFilterDropdown(
     selectedFilter: FilterConfigType,
-    selectedFilterOperand: FilterOperandType,
+    selectedFilterOperand: FilterOperandType<TData>,
   ) {
     return (
       <>
