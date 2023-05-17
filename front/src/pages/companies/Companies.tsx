@@ -80,8 +80,8 @@ function Companies() {
     refetch();
   }, [internalData, setInternalData, refetch]);
 
-  const deleteRows = useCallback(() => {
-    deleteCompanies(selectedRowIds);
+  const deleteRows = useCallback(async () => {
+    await deleteCompanies(selectedRowIds);
     setInternalData([
       ...internalData.filter((row) => !selectedRowIds.includes(row.id)),
     ]);

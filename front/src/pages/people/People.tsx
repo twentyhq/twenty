@@ -78,8 +78,8 @@ function People() {
     refetch();
   }, [internalData, setInternalData, refetch]);
 
-  const deleteRows = useCallback(() => {
-    deletePeople(selectedRowIds);
+  const deleteRows = useCallback(async () => {
+    await deletePeople(selectedRowIds);
     setInternalData([
       ...internalData.filter((row) => !selectedRowIds.includes(row.id)),
     ]);
