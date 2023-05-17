@@ -19,6 +19,15 @@ const StyledContainer = styled.span`
     filter: brightness(95%);
   }
 
+  [data-editmode='selected'] &:hover {
+    cursor: pointer;
+  }
+
+  [data-editmode='selected'] &:hover::after {
+    content: '✖️';
+    display: block;
+  }
+
   img {
     height: 14px;
     width: 14px;

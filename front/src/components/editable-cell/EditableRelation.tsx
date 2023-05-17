@@ -95,7 +95,7 @@ function EditableRelation<
       }}
       editModeContent={
         <StyledEditModeContainer>
-          <StyledEditModeSelectedContainer>
+          <StyledEditModeSelectedContainer data-editmode="selected">
             {selectedRelation ? (
               <ChipComponent {...chipComponentPropsMapper(selectedRelation)} />
             ) : (
