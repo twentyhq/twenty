@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 export type CompanyChipPropsType = {
   name: string;
   picture?: string;
+  clickHandler?: (editing: boolean) => void;
 };
 
 const StyledContainer = styled.span`
@@ -35,9 +36,17 @@ const StyledContainer = styled.span`
   }
 `;
 
-function CompanyChip({ name, picture }: CompanyChipPropsType) {
+function CompanyChip({ name, picture, clickHandler }: CompanyChipPropsType) {
   return (
-    <StyledContainer data-testid="company-chip">
+    <StyledContainer
+      data-testid="company-chip"
+      onClick={(event) => {
+        if (clickHandler)
+          clickHandler(
+            !!event.currentTarget.closest('[data-editmode="selected"]'),
+          );
+      }}
+    >
       {picture && (
         <img
           data-testid="company-chip-image"

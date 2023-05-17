@@ -7,8 +7,13 @@ export type EditableChipProps = {
   value: string;
   picture: string;
   changeHandler: (updated: string) => void;
+  chipClickHandler: (editing: boolean) => void;
   editModeHorizontalAlign?: 'left' | 'right';
-  ChipComponent: ComponentType<{ name: string; picture: string }>;
+  ChipComponent: ComponentType<{
+    name: string;
+    picture: string;
+    clickHandler: (editing: boolean) => void;
+  }>;
 };
 
 const StyledInplaceInput = styled.input`
@@ -26,6 +31,7 @@ function EditableChip({
   placeholder,
   changeHandler,
   picture,
+  chipClickHandler,
   editModeHorizontalAlign,
   ChipComponent,
 }: EditableChipProps) {
@@ -51,7 +57,13 @@ function EditableChip({
           }}
         />
       }
-      nonEditModeContent={<ChipComponent name={inputValue} picture={picture} />}
+      nonEditModeContent={
+        <ChipComponent
+          name={inputValue}
+          picture={picture}
+          clickHandler={chipClickHandler}
+        />
+      }
     ></EditableCellWrapper>
   );
 }

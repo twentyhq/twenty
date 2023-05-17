@@ -96,11 +96,18 @@ export const usePeopleColumns = () => {
               return {
                 name: company.name || '',
                 picture: `https://www.google.com/s2/favicons?domain=${company.domainName}&sz=256`,
+                clickHandler: (editing) => {
+                  if (editing) {
+                    const person = props.row.original;
+                    person.company = null;
+                    updatePerson(person);
+                  }
+                },
               };
             }}
             changeHandler={(relation) => {
               const person = props.row.original;
-              if (person.company) {
+              if (!!relation && person.company) {
                 person.company.id = relation.id;
               } else {
                 person.company = relation;
