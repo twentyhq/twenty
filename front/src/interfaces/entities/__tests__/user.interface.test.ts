@@ -12,7 +12,7 @@ describe('User mappers', () => {
     now.setMilliseconds(0);
     const graphQLUser = {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      display_name: 'John Doe',
+      displayName: 'John Doe',
       email: 'john.doe@gmail.com',
       workspace_member: {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e88',
@@ -30,7 +30,7 @@ describe('User mappers', () => {
     expect(User).toStrictEqual({
       __typename: 'users',
       id: graphQLUser.id,
-      displayName: graphQLUser.display_name,
+      displayName: graphQLUser.displayName,
       email: graphQLUser.email,
       workspaceMember: {
         id: graphQLUser.workspace_member.id,
@@ -64,7 +64,7 @@ describe('User mappers', () => {
     const graphQLUser = mapToGqlUser(user);
     expect(graphQLUser).toStrictEqual({
       id: user.id,
-      display_name: user.displayName,
+      displayName: user.displayName,
       email: user.email,
       workspace_member_id: user.workspaceMember.id,
       __typename: 'users',
