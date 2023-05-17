@@ -121,6 +121,7 @@ const Table = <TData extends { id: string }, SortField, FilterProperies>(
     getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
     onRowSelectionChange: setInternalRowSelection,
+    getRowId: (row) => row.id,
   });
 
   const selectedRows = table.getSelectedRowModel().rows;
