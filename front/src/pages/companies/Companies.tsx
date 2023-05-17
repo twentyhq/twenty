@@ -63,7 +63,7 @@ function Companies() {
     }
   }, [loading, setInternalData, data]);
 
-  const addEmptyRow = useCallback(() => {
+  const addEmptyRow = useCallback(async () => {
     const newCompany: Company = {
       id: uuidv4(),
       name: '',
@@ -75,7 +75,7 @@ function Companies() {
       accountOwner: null,
       __typename: 'companies',
     };
-    insertCompany(newCompany);
+    await insertCompany(newCompany);
     setInternalData([newCompany, ...internalData]);
     refetch();
   }, [internalData, setInternalData, refetch]);
