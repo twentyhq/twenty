@@ -36,6 +36,7 @@ describe('Company mappers', () => {
 
     const company = mapToCompany(graphQLCompany);
     expect(company).toStrictEqual({
+      __typename: 'companies',
       id: graphQLCompany.id,
       name: graphQLCompany.name,
       domainName: graphQLCompany.domain_name,
@@ -43,6 +44,7 @@ describe('Company mappers', () => {
       employees: graphQLCompany.employees,
       address: graphQLCompany.address,
       accountOwner: {
+        __typename: 'users',
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
         email: 'john@example.com',
         displayName: 'John Doe',
@@ -66,9 +68,11 @@ describe('Company mappers', () => {
         id: '522d4ec4-c46b-4360-a0a7-df8df170be81',
         email: 'john@example.com',
         displayName: 'John Doe',
+        __typename: 'users',
       },
       creationDate: now,
-    };
+      __typename: 'companies',
+    } satisfies Company;
     const graphQLCompany = mapToGqlCompany(company);
     expect(graphQLCompany).toStrictEqual({
       id: company.id,

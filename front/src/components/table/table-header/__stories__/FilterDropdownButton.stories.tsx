@@ -2,7 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
-import { FilterConfigType, SelectedFilterType } from '../interface';
+import { FilterableFieldsType, SelectedFilterType } from '../interface';
 import { useCallback, useState } from 'react';
 import {
   SEARCH_PEOPLE_QUERY,
@@ -20,7 +20,7 @@ const component = {
 
 export default component;
 
-type OwnProps<FilterProperties> = {
+type OwnProps<FilterProperties extends FilterableFieldsType> = {
   setFilter: (filters: SelectedFilterType<FilterProperties>) => void;
 };
 
@@ -98,8 +98,8 @@ const InnerRegularFilterDropdownButton = ({
   );
   return (
     <StyleDiv>
-      <FilterDropdownButton
-        availableFilters={availableFilters as FilterConfigType[]}
+      <FilterDropdownButton<Person>
+        availableFilters={availableFilters}
         isFilterSelected={true}
         onFilterSelect={outerSetFilters}
         filterSearchResults={filterSearchResults}

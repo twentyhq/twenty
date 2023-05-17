@@ -35,8 +35,13 @@ export type SelectedSortType<OrderByTemplate> = SortType<OrderByTemplate> & {
   order: 'asc' | 'desc';
 };
 
+type AnyEntity = {
+  id: string;
+  __typename: string;
+} & Record<string, any>;
+
 export type FilterableFieldsType = Person | Company;
-export type FilterWhereType = Person | Company | User;
+export type FilterWhereType = Person | Company | User | AnyEntity;
 
 type FilterConfigGqlType<WhereType> = WhereType extends Company
   ? GraphqlQueryCompany
@@ -50,9 +55,14 @@ export type BoolExpType<T> = T extends Company
   ? Companies_Bool_Exp
   : T extends Person
   ? People_Bool_Exp
+  : T extends User
+  ? Users_Bool_Exp
   : never;
 
-export type FilterConfigType<FilteredType = any, WhereType = any> = {
+export type FilterConfigType<
+  FilteredType extends FilterableFieldsType,
+  WhereType extends FilterWhereType = any,
+> = {
   key: string;
   label: string;
   icon: ReactNode;
@@ -77,17 +87,33 @@ export type SearchConfigType<SearchType extends SearchableType> = {
 };
 
 export type FilterOperandType<
-  FilteredType = FilterableFieldsType,
-  WhereType = any,
+  FilteredType extends FilterableFieldsType,
+  WhereType extends FilterWhereType = AnyEntity,
+> =
+  | FilterOperandExactMatchType<FilteredType, WhereType>
+  | FilterOperandComparativeType<FilteredType, WhereType>;
+
+type FilterOperandExactMatchType<
+  FilteredType extends FilterableFieldsType,
+  WhereType extends FilterWhereType,
 > = {
-  label: string;
-  id: string;
+  label: 'Equal' | 'Not equal';
+  id: 'equal' | 'not-equal';
+  whereTemplate: (value: WhereType) => BoolExpType<FilteredType>;
+};
+
+type FilterOperandComparativeType<
+  FilteredType extends FilterableFieldsType,
+  WhereType extends FilterWhereType,
+> = {
+  label: 'Like' | 'Not like' | 'Include';
+  id: 'like' | 'not_like' | 'include';
   whereTemplate: (value: WhereType) => BoolExpType<FilteredType>;
 };
 
 export type SelectedFilterType<
-  FilteredType = FilterableFieldsType,
-  WhereType = any,
+  FilteredType extends FilterableFieldsType,
+  WhereType extends FilterWhereType = AnyEntity,
 > = {
   key: string;
   value: WhereType;

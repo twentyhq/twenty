@@ -3,6 +3,7 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FaArrowDown } from 'react-icons/fa';
 import { SelectedFilterType } from '../interface';
+import { Person } from '../../../../interfaces/person.interface';
 
 const component = {
   title: 'SortAndFilterBar',
@@ -20,6 +21,31 @@ export const RegularSortAndFilterBar = ({
   removeFunction,
   cancelFunction,
 }: OwnProps) => {
+  const personFilter = {
+    label: 'People',
+    operand: {
+      label: 'Include',
+      id: 'include',
+      whereTemplate: (person: Person) => {
+        return { email: { _eq: person.email } };
+      },
+    },
+    key: 'test_filter',
+    icon: <FaArrowDown />,
+    displayValue: 'john@doedoe.com',
+    value: {
+      __typename: 'people',
+      id: 'test',
+      email: 'john@doedoe.com',
+      firstname: 'John',
+      lastname: 'Doe',
+      phone: '123456789',
+      company: null,
+      creationDate: new Date(),
+      pipes: null,
+      city: 'Paris',
+    },
+  } satisfies SelectedFilterType<Person, Person>;
   return (
     <ThemeProvider theme={lightTheme}>
       <SortAndFilterBar
@@ -42,32 +68,7 @@ export const RegularSortAndFilterBar = ({
         onRemoveSort={removeFunction}
         onRemoveFilter={removeFunction}
         onCancelClick={cancelFunction}
-        filters={[
-          {
-            label: 'People',
-            operand: {
-              label: 'Include',
-              id: 'include',
-              whereTemplate: (person) => {
-                return { email: { _eq: person.email } };
-              },
-            },
-            key: 'test_filter',
-            icon: <FaArrowDown />,
-            displayValue: 'john@doedoe.com',
-            value: {
-              id: 'test',
-              email: 'john@doedoe.com',
-              firstname: 'John',
-              lastname: 'Doe',
-              phone: '123456789',
-              company: null,
-              creationDate: new Date(),
-              pipe: null,
-              city: 'Paris',
-            },
-          } satisfies SelectedFilterType,
-        ]}
+        filters={[personFilter] as SelectedFilterType<Person>[]}
       />
     </ThemeProvider>
   );

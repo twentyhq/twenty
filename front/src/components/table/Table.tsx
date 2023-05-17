@@ -23,7 +23,10 @@ declare module 'react' {
   ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
 }
 
-type OwnProps<TData, SortField> = {
+type OwnProps<
+  TData extends { id: string; __typename: 'companies' | 'people' },
+  SortField,
+> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
@@ -38,7 +41,7 @@ type OwnProps<TData, SortField> = {
     loading: boolean;
   };
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
+  onFiltersUpdate?: (sorts: Array<SelectedFilterType<TData>>) => void;
   onFilterSearch?: (
     filter: SearchConfigType<any> | null,
     searchValue: string,
@@ -97,7 +100,10 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-const Table = <TData extends { id: string }, SortField>(
+const Table = <
+  TData extends { id: string; __typename: 'companies' | 'people' },
+  SortField,
+>(
   {
     data,
     columns,

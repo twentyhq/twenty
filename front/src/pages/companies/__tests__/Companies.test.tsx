@@ -136,3 +136,28 @@ it('Checks insert data is appending a new line', async () => {
     expect(tableRows.length).toBe(7);
   });
 });
+
+it('Checks filters are working', async () => {
+  const { getByText } = render(<CompaniesDefault />);
+
+  await waitFor(() => {
+    expect(getByText('Airbnb')).toBeDefined();
+  });
+
+  const filterDropdown = getByText('Filter');
+  fireEvent.click(filterDropdown);
+
+  await waitFor(() => {
+    expect(getByText('Url')).toBeDefined();
+  });
+
+  const urlFilter = getByText('Url');
+  fireEvent.click(urlFilter);
+
+  await waitFor(() => {
+    expect(getByText('linkedin-searched.com')).toBeDefined();
+  });
+
+  const filterByLinkedinOption = getByText('linkedin-searched.com');
+  fireEvent.click(filterByLinkedinOption);
+});

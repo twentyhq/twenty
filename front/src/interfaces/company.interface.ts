@@ -3,6 +3,7 @@ import { GraphqlQueryUser, User, mapToUser } from './user.interface';
 import { GraphqlQueryPipe } from './pipe.interface';
 
 export type Company = {
+  __typename: 'companies';
   id: string;
   name?: string;
   domainName?: string;
@@ -43,6 +44,7 @@ export type GraphqlMutationCompany = {
 };
 
 export const mapToCompany = (company: GraphqlQueryCompany): Company => ({
+  __typename: 'companies',
   id: company.id,
   employees: company.employees,
   name: company.name,

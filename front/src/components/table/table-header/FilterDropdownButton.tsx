@@ -3,14 +3,15 @@ import DropdownButton from './DropdownButton';
 import {
   FilterConfigType,
   FilterOperandType,
+  FilterableFieldsType,
   SearchConfigType,
   SearchableType,
   SelectedFilterType,
 } from './interface';
 
-type OwnProps = {
+type OwnProps<TData extends FilterableFieldsType> = {
   isFilterSelected: boolean;
-  availableFilters: FilterConfigType[];
+  availableFilters: FilterConfigType<TData>[];
   filterSearchResults?: {
     results: {
       render: (value: SearchableType) => string;
@@ -18,30 +19,30 @@ type OwnProps = {
     }[];
     loading: boolean;
   };
-  onFilterSelect: (filter: SelectedFilterType) => void;
+  onFilterSelect: (filter: SelectedFilterType<TData>) => void;
   onFilterSearch: (
     filter: SearchConfigType<any> | null,
     searchValue: string,
   ) => void;
 };
 
-export function FilterDropdownButton({
+export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   availableFilters,
   filterSearchResults,
   onFilterSearch,
   onFilterSelect,
   isFilterSelected,
-}: OwnProps) {
+}: OwnProps<TData>) => {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
 
   const [selectedFilter, setSelectedFilter] = useState<
-    FilterConfigType | undefined
+    FilterConfigType<TData> | undefined
   >(undefined);
 
   const [selectedFilterOperand, setSelectedFilterOperand] = useState<
-    FilterOperandType | undefined
+    FilterOperandType<TData> | undefined
   >(undefined);
 
   const resetState = useCallback(() => {
@@ -66,9 +67,9 @@ export function FilterDropdownButton({
   );
 
   const renderSearchResults = (
-    filterSearchResults: NonNullable<OwnProps['filterSearchResults']>,
-    selectedFilter: FilterConfigType,
-    selectedFilterOperand: FilterOperandType,
+    filterSearchResults: NonNullable<OwnProps<TData>['filterSearchResults']>,
+    selectedFilter: FilterConfigType<TData>,
+    selectedFilterOperand: FilterOperandType<TData>,
   ) => {
     if (filterSearchResults.loading) {
       return (
@@ -114,8 +115,8 @@ export function FilterDropdownButton({
   ));
 
   function renderFilterDropdown(
-    selectedFilter: FilterConfigType,
-    selectedFilterOperand: FilterOperandType,
+    selectedFilter: FilterConfigType<TData>,
+    selectedFilterOperand: FilterOperandType<TData>,
   ) {
     return (
       <>
@@ -161,4 +162,4 @@ export function FilterDropdownButton({
         : renderSelectFilterITems}
     </DropdownButton>
   );
-}
+};

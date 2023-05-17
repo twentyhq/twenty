@@ -1,13 +1,17 @@
 import styled from '@emotion/styled';
 import SortOrFilterChip from './SortOrFilterChip';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
-import { SelectedFilterType, SelectedSortType } from './interface';
+import {
+  FilterableFieldsType,
+  SelectedFilterType,
+  SelectedSortType,
+} from './interface';
 
-type OwnProps<SortField> = {
+type OwnProps<SortField, TData extends FilterableFieldsType> = {
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
-  filters: Array<SelectedFilterType>;
-  onRemoveFilter: (filterId: SelectedFilterType['key']) => void;
+  filters: Array<SelectedFilterType<TData>>;
+  onRemoveFilter: (filterId: SelectedFilterType<TData>['key']) => void;
   onCancelClick: () => void;
 };
 
@@ -40,13 +44,13 @@ const StyledCancelButton = styled.button`
   }
 `;
 
-function SortAndFilterBar<SortField>({
+function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
   sorts,
   onRemoveSort,
   filters,
   onRemoveFilter,
   onCancelClick,
-}: OwnProps<SortField>) {
+}: OwnProps<SortField, TData>) {
   return (
     <StyledBar>
       {sorts.map((sort) => {

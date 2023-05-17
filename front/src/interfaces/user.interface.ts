@@ -5,6 +5,7 @@ import {
 } from './workspace_member.interface';
 
 export interface User {
+  __typename: 'users';
   id: string;
   email?: string;
   displayName?: string;
@@ -28,6 +29,7 @@ export type GraphqlMutationUser = {
 };
 
 export const mapToUser = (user: GraphqlQueryUser): User => ({
+  __typename: 'users',
   id: user.id,
   email: user.email,
   displayName: user.display_name,

@@ -25,10 +25,7 @@ import {
   Companies_Bool_Exp,
   Companies_Order_By,
 } from '../../generated/graphql';
-import {
-  FilterConfigType,
-  SelectedFilterType,
-} from '../../components/table/table-header/interface';
+import { SelectedFilterType } from '../../components/table/table-header/interface';
 import { useSearch } from '../../services/search/search';
 import ActionBar from '../../components/table/action-bar/ActionBar';
 
@@ -66,7 +63,7 @@ function Companies() {
     }
   }, [loading, setInternalData, data]);
 
-  const addEmptyRow = useCallback(() => {
+  const addEmptyRow = useCallback(async () => {
     const newCompany: Company = {
       id: uuidv4(),
       name: '',
@@ -76,14 +73,15 @@ function Companies() {
       pipes: [],
       creationDate: new Date(),
       accountOwner: null,
+      __typename: 'companies',
     };
-    insertCompany(newCompany);
+    await insertCompany(newCompany);
     setInternalData([newCompany, ...internalData]);
     refetch();
   }, [internalData, setInternalData, refetch]);
 
-  const deleteRows = useCallback(() => {
-    deleteCompanies(selectedRowIds);
+  const deleteRows = useCallback(async () => {
+    await deleteCompanies(selectedRowIds);
     setInternalData([
       ...internalData.filter((row) => !selectedRowIds.includes(row.id)),
     ]);
@@ -111,7 +109,7 @@ function Companies() {
             viewName="All Companies"
             viewIcon={<FaList />}
             availableSorts={availableSorts}
-            availableFilters={availableFilters as Array<FilterConfigType>}
+            availableFilters={availableFilters}
             filterSearchResults={filterSearchResults}
             onSortsUpdate={updateSorts}
             onFiltersUpdate={updateFilters}
