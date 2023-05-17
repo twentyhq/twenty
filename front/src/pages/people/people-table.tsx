@@ -14,7 +14,7 @@ import Checkbox from '../../components/form/Checkbox';
 import CompanyChip, {
   CompanyChipPropsType,
 } from '../../components/chips/CompanyChip';
-import { Person, mapPerson } from '../../interfaces/person.interface';
+import { Person, mapToPerson } from '../../interfaces/person.interface';
 import EditableText from '../../components/table/editable-cell/EditableText';
 import {
   FilterConfigType,
@@ -26,7 +26,7 @@ import {
   SEARCH_COMPANY_QUERY,
   SEARCH_PEOPLE_QUERY,
 } from '../../services/search/search';
-import { Company, mapCompany } from '../../interfaces/company.interface';
+import { Company, mapToCompany } from '../../interfaces/company.interface';
 import EditablePhone from '../../components/table/editable-cell/EditablePhone';
 import EditableFullName from '../../components/table/editable-cell/EditableFullName';
 import EditableDate from '../../components/table/editable-cell/EditableDate';
@@ -93,7 +93,7 @@ export const fullnameFilter = {
     }),
     resultMapper: (person) => ({
       render: (person) => `${person.firstname} ${person.lastname}`,
-      value: mapPerson(person),
+      value: mapToPerson(person),
     }),
   },
   selectedValueRender: (person) => `${person.firstname} ${person.lastname}`,
@@ -133,11 +133,11 @@ export const companyFilter = {
       name: { _ilike: `%${searchInput}%` },
     }),
     resultMapper: (data) => ({
-      value: mapCompany(data),
+      value: mapToCompany(data),
       render: (company) => company.name,
     }),
   },
-  selectedValueRender: (company) => company.name,
+  selectedValueRender: (company) => company.name || '',
   operands: [
     {
       label: 'Equal',
@@ -167,7 +167,7 @@ export const emailFilter = {
     }),
     resultMapper: (person) => ({
       render: (person) => person.email,
-      value: mapPerson(person),
+      value: mapToPerson(person),
     }),
   },
   operands: [
@@ -186,7 +186,7 @@ export const emailFilter = {
       }),
     },
   ],
-  selectedValueRender: (person) => person.email,
+  selectedValueRender: (person) => person.email || '',
 } satisfies FilterConfigType<Person, Person>;
 
 export const cityFilter = {
@@ -200,7 +200,7 @@ export const cityFilter = {
     }),
     resultMapper: (person) => ({
       render: (person) => person.city,
-      value: mapPerson(person),
+      value: mapToPerson(person),
     }),
   },
   operands: [
@@ -219,7 +219,7 @@ export const cityFilter = {
       }),
     },
   ],
-  selectedValueRender: (person) => person.email,
+  selectedValueRender: (person) => person.email || '',
 } satisfies FilterConfigType<Person, Person>;
 
 export const availableFilters = [
@@ -256,8 +256,8 @@ export const usePeopleColumns = () => {
         header: () => <ColumnHead viewName="People" viewIcon={<FaRegUser />} />,
         cell: (props) => (
           <EditableFullName
-            firstname={props.row.original.firstname}
-            lastname={props.row.original.lastname}
+            firstname={props.row.original.firstname || ''}
+            lastname={props.row.original.lastname || ''}
             changeHandler={(firstName: string, lastName: string) => {
               const person = props.row.original;
               person.firstname = firstName;
@@ -272,7 +272,7 @@ export const usePeopleColumns = () => {
         cell: (props) => (
           <EditableText
             placeholder="Email"
-            content={props.row.original.email}
+            content={props.row.original.email || ''}
             changeHandler={(value: string) => {
               const person = props.row.original;
               person.email = value;
@@ -292,8 +292,8 @@ export const usePeopleColumns = () => {
             ChipComponent={CompanyChip}
             chipComponentPropsMapper={(company): CompanyChipPropsType => {
               return {
-                name: company.name,
-                picture: `https://www.google.com/s2/favicons?domain=${company.domain_name}&sz=256`,
+                name: company.name || '',
+                picture: `https://www.google.com/s2/favicons?domain=${company.domainName}&sz=256`,
               };
             }}
             changeHandler={(relation) => {
@@ -313,7 +313,7 @@ export const usePeopleColumns = () => {
                 }),
                 resultMapper: (company) => ({
                   render: (company) => company.name,
-                  value: mapCompany(company),
+                  value: mapToCompany(company),
                 }),
               } satisfies SearchConfigType<Company>
             }
@@ -325,7 +325,7 @@ export const usePeopleColumns = () => {
         cell: (props) => (
           <EditablePhone
             placeholder="Phone"
-            value={props.row.original.phone}
+            value={props.row.original.phone || ''}
             changeHandler={(value: string) => {
               const person = props.row.original;
               person.phone = value;
@@ -340,7 +340,7 @@ export const usePeopleColumns = () => {
         ),
         cell: (props) => (
           <EditableDate
-            value={props.row.original.creationDate}
+            value={props.row.original.creationDate || new Date()}
             changeHandler={(value: Date) => {
               const person = props.row.original;
               person.creationDate = value;
@@ -355,7 +355,7 @@ export const usePeopleColumns = () => {
           <EditableText
             editModeHorizontalAlign="right"
             placeholder="City"
-            content={props.row.original.city}
+            content={props.row.original.city || ''}
             changeHandler={(value: string) => {
               const person = props.row.original;
               person.city = value;

@@ -49,16 +49,15 @@ it('Checks the EditableRelation editing event bubbles up', async () => {
   });
 
   await waitFor(() => {
-    expect(func).toBeCalledWith(
-      expect.objectContaining({
-        accountOwner: null,
-        address: undefined,
-        domain_name: 'abnb.com',
-        employees: undefined,
-        id: 'abnb',
-        name: 'Airbnb',
-        opportunities: [],
-      }),
-    );
+    expect(func).toBeCalledWith({
+      accountOwner: undefined,
+      address: undefined,
+      domainName: 'abnb.com',
+      employees: undefined,
+      creationDate: undefined,
+      id: 'abnb',
+      name: 'Airbnb',
+      pipes: [],
+    });
   });
 });

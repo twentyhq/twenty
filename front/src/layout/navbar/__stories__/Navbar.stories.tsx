@@ -20,7 +20,8 @@ export const NavbarOnCompanies = () => {
             id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
             email: 'charles@twenty.com',
             displayName: 'Charles Bochet',
-            workspace_member: {
+            workspaceMember: {
+              id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
               workspace: {
                 id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
                 displayName: 'Claap',

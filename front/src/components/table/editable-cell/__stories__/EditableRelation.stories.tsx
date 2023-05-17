@@ -3,7 +3,10 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { StoryFn } from '@storybook/react';
 import CompanyChip, { CompanyChipPropsType } from '../../../chips/CompanyChip';
-import { Company, mapCompany } from '../../../../interfaces/company.interface';
+import {
+  Company,
+  mapToCompany,
+} from '../../../../interfaces/company.interface';
 import { MockedProvider } from '@apollo/client/testing';
 import { SEARCH_COMPANY_QUERY } from '../../../../services/search/search';
 import styled from '@emotion/styled';
@@ -76,8 +79,10 @@ EditableRelationStory.args = {
   ChipComponent: CompanyChip,
   chipComponentPropsMapper: (company: Company): CompanyChipPropsType => {
     return {
-      name: company.name,
-      picture: `https://www.google.com/s2/favicons?domain=${company.domain_name}&sz=256`,
+      name: company.name || '',
+      picture: company.domainName
+        ? `https://www.google.com/s2/favicons?domain=${company.domainName}&sz=256`
+        : undefined,
     };
   },
   changeHandler: (relation: Company) => {
@@ -90,7 +95,7 @@ EditableRelationStory.args = {
     }),
     resultMapper: (company) => ({
       render: (company) => company.name,
-      value: mapCompany(company),
+      value: mapToCompany(company),
     }),
   } satisfies SearchConfigType<Company>,
 };

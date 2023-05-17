@@ -8,7 +8,7 @@ import {
   availableSorts,
   usePeopleColumns,
 } from './people-table';
-import { Person, mapPerson } from '../../interfaces/person.interface';
+import { Person, mapToPerson } from '../../interfaces/person.interface';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   PeopleSelectedSortType,
@@ -58,7 +58,7 @@ function People() {
   useEffect(() => {
     if (!loading) {
       if (data) {
-        setInternalData(data.people.map(mapPerson));
+        setInternalData(data.people.map(mapToPerson));
       }
     }
   }, [loading, setInternalData, data]);
@@ -71,7 +71,7 @@ function People() {
       email: '',
       phone: '',
       company: null,
-      pipe: null,
+      pipes: [],
       creationDate: new Date(),
       city: '',
     };

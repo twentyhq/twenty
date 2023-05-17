@@ -1,42 +1,45 @@
 import {
   GraphqlQueryWorkspaceMember,
   WorkspaceMember,
-} from './workspace.interface';
+  mapToWorkspaceMember,
+} from './workspace_member.interface';
+
+export interface User {
+  id: string;
+  email?: string;
+  displayName?: string;
+  workspaceMember?: WorkspaceMember;
+}
 
 export type GraphqlQueryUser = {
   id: string;
-  email: string;
-  displayName: string;
+  email?: string;
+  display_name?: string;
   workspace_member?: GraphqlQueryWorkspaceMember;
   __typename: string;
 };
 
-export interface User {
+export type GraphqlMutationUser = {
   id: string;
-  email: string;
-  displayName: string;
-  workspace_member?: WorkspaceMember;
-}
-
-export type PartialUser = Partial<User> &
-  Pick<User, 'id' | 'displayName' | 'email'>;
-
-export const mapUser = (user: GraphqlQueryUser): User => {
-  const mappedUser = {
-    id: user.id,
-    email: user.email,
-    displayName: user.displayName,
-  } as User;
-  if (user.workspace_member) {
-    mappedUser['workspace_member'] = {
-      workspace: {
-        id: user.workspace_member.workspace.id,
-        displayName: user.workspace_member.workspace.display_name,
-        domainName: user.workspace_member.workspace.domain_name,
-        logo: user.workspace_member.workspace.logo,
-      },
-    };
-  }
-
-  return mappedUser;
+  email?: string;
+  display_name?: string;
+  workspace_member_id?: string;
+  __typename: string;
 };
+
+export const mapToUser = (user: GraphqlQueryUser): User => ({
+  id: user.id,
+  email: user.email,
+  displayName: user.display_name,
+  workspaceMember: user.workspace_member
+    ? mapToWorkspaceMember(user.workspace_member)
+    : user.workspace_member,
+});
+
+export const mapToGqlUser = (user: User): GraphqlMutationUser => ({
+  id: user.id,
+  email: user.email,
+  display_name: user.displayName,
+  workspace_member_id: user.workspaceMember?.id,
+  __typename: 'users',
+});

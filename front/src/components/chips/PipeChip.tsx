@@ -1,9 +1,9 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { Opportunity } from '../../interfaces/company.interface';
+import { Pipe } from '../../interfaces/pipe.interface';
 
 type OwnProps = {
-  opportunity: Opportunity;
+  opportunity: Pipe;
 };
 
 const StyledContainer = styled.span`
