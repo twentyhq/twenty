@@ -39,7 +39,7 @@ type OwnProps<TData extends FilterableFieldsType, SortField> = {
     loading: boolean;
   };
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
+  onFiltersUpdate?: (sorts: Array<SelectedFilterType<TData>>) => void;
   onFilterSearch?: (
     filter: SearchConfigType<any> | null,
     searchValue: string,

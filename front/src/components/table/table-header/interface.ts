@@ -39,7 +39,8 @@ type AnyEntity = {
   id: string;
   __typename: string;
 } & Record<string, any>;
-export type FilterableFieldsType = Person | Company | AnyEntity;
+
+export type FilterableFieldsType = Person | Company | User;
 export type FilterWhereType = Person | Company | User | AnyEntity;
 
 type FilterConfigGqlType<WhereType> = WhereType extends Company
@@ -59,7 +60,7 @@ export type BoolExpType<T> = T extends Company
   : never;
 
 export type FilterConfigType<
-  FilteredType extends FilterableFieldsType = AnyEntity,
+  FilteredType extends FilterableFieldsType,
   WhereType extends FilterWhereType = any,
 > = {
   key: string;
@@ -111,7 +112,7 @@ type FilterOperandComparativeType<
 };
 
 export type SelectedFilterType<
-  FilteredType extends FilterableFieldsType = AnyEntity,
+  FilteredType extends FilterableFieldsType,
   WhereType extends FilterWhereType = AnyEntity,
 > = {
   key: string;

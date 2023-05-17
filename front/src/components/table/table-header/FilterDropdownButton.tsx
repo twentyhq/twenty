@@ -19,7 +19,7 @@ type OwnProps<TData extends FilterableFieldsType> = {
     }[];
     loading: boolean;
   };
-  onFilterSelect: (filter: SelectedFilterType) => void;
+  onFilterSelect: (filter: SelectedFilterType<TData>) => void;
   onFilterSearch: (
     filter: SearchConfigType<any> | null,
     searchValue: string,
@@ -40,7 +40,7 @@ export const FilterDropdownButton = <
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
 
   const [selectedFilter, setSelectedFilter] = useState<
-    FilterConfigType | undefined
+    FilterConfigType<TData> | undefined
   >(undefined);
 
   const [selectedFilterOperand, setSelectedFilterOperand] = useState<
@@ -70,7 +70,7 @@ export const FilterDropdownButton = <
 
   const renderSearchResults = (
     filterSearchResults: NonNullable<OwnProps<TData>['filterSearchResults']>,
-    selectedFilter: FilterConfigType,
+    selectedFilter: FilterConfigType<TData>,
     selectedFilterOperand: FilterOperandType<TData>,
   ) => {
     if (filterSearchResults.loading) {
@@ -117,7 +117,7 @@ export const FilterDropdownButton = <
   ));
 
   function renderFilterDropdown(
-    selectedFilter: FilterConfigType,
+    selectedFilter: FilterConfigType<TData>,
     selectedFilterOperand: FilterOperandType<TData>,
   ) {
     return (

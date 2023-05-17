@@ -11,7 +11,7 @@ type OwnProps<SortField, TData extends FilterableFieldsType> = {
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
   filters: Array<SelectedFilterType<TData>>;
-  onRemoveFilter: (filterId: SelectedFilterType['key']) => void;
+  onRemoveFilter: (filterId: SelectedFilterType<TData>['key']) => void;
   onCancelClick: () => void;
 };
 
