@@ -1,54 +1,80 @@
-import { mapToGqlPerson, mapToPerson } from '../person.interface';
+import {
+  mapToGqlPerson,
+  mapToPerson,
+  Person,
+  GraphqlMutationPerson,
+  GraphqlQueryPerson,
+} from '../person.interface';
 
-describe('mapPerson', () => {
-  it('should map person', () => {
-    const person = mapToPerson({
+describe('Person mappers', () => {
+  it('should map GraphqlPerson to Person', () => {
+    const now = new Date();
+    now.setMilliseconds(0);
+    const graphQLPerson = {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       firstname: 'John',
       lastname: 'Doe',
-      email: '',
-      phone: '',
-      city: '',
-      created_at: '',
+      created_at: now.toUTCString(),
+      email: 'john.doe@gmail.com',
+      phone: '+1 (555) 123-4567',
+      city: 'Paris',
       company: {
-        __typename: '',
-        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-        name: '',
-        domain_name: '',
-        employees: '0',
-        address: '',
-        created_at: '',
-        account_owner: null,
+        id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
+        name: 'John Doe',
+        __typename: 'Company',
       },
-      __typename: '',
-    });
-    expect(person.firstname).toBe('John');
+      __typename: 'people',
+    } satisfies GraphqlQueryPerson;
+
+    const person = mapToPerson(graphQLPerson);
+    expect(person).toStrictEqual({
+      id: graphQLPerson.id,
+      firstname: graphQLPerson.firstname,
+      lastname: graphQLPerson.lastname,
+      creationDate: new Date(now.toUTCString()),
+      email: graphQLPerson.email,
+      city: graphQLPerson.city,
+      phone: graphQLPerson.phone,
+      company: {
+        id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
+        accountOwner: undefined,
+        address: undefined,
+        creationDate: undefined,
+        domainName: undefined,
+        employees: undefined,
+        name: 'John Doe',
+        pipes: [],
+      },
+    } satisfies Person);
   });
 
-  it('should map person back', () => {
-    const person = mapToGqlPerson({
+  it('should map Person to GraphQlPerson', () => {
+    const now = new Date();
+    now.setMilliseconds(0);
+    const person = {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       firstname: 'John',
       lastname: 'Doe',
-      email: '',
-      phone: '',
-      city: '',
+      creationDate: new Date(now.toUTCString()),
+      email: 'john.doe@gmail.com',
+      phone: '+1 (555) 123-4567',
+      city: 'Paris',
       company: {
-        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-        name: 'Test',
-        domain_name: '',
-        opportunities: [],
-        employees: 0,
-        address: '',
-        creationDate: new Date(),
+        id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
       },
-      creationDate: new Date(),
-      pipe: {
-        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
-        name: '',
-        icon: '',
-      },
-    });
-    expect(person.firstname).toBe('John');
+    } satisfies Person;
+
+    const graphQLPerson = mapToGqlPerson(person);
+    expect(graphQLPerson).toStrictEqual({
+      id: person.id,
+      firstname: person.firstname,
+      lastname: person.lastname,
+      created_at: now.toUTCString(),
+      email: person.email,
+      city: person.city,
+      phone: person.phone,
+      company_id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
+      __typename: 'people',
+    } satisfies GraphqlMutationPerson);
   });
 });

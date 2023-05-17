@@ -1,4 +1,8 @@
-import { Company, mapToCompany } from './company.interface';
+import {
+  Company,
+  GraphqlQueryCompany,
+  mapToCompany,
+} from './company.interface';
 import { Pipe } from './pipe.interface';
 
 export type Person = {
@@ -26,12 +30,8 @@ export type GraphqlQueryPerson = {
 
   created_at?: string;
 
-  company?: {
-    __typename: string;
-    id: string;
-    name?: string;
-    domain_name?: string;
-  };
+  company?: GraphqlQueryCompany | null;
+
   __typename: string;
 };
 
@@ -73,5 +73,5 @@ export const mapToGqlPerson = (person: Person): GraphqlMutationPerson => ({
     : undefined,
 
   company_id: person.company?.id,
-  __typename: 'People',
+  __typename: 'people',
 });

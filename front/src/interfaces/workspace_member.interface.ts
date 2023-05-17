@@ -35,5 +35,5 @@ export const mapToGqlWorkspaceMember = (
 ): GraphqlMutationWorkspaceMember => ({
   id: workspaceMember.id,
   workspace_id: workspaceMember.workspace?.id,
-  __typename: 'workspace_member',
+  __typename: 'workspace_members',
 });

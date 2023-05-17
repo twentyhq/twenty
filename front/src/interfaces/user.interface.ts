@@ -41,5 +41,5 @@ export const mapToGqlUser = (user: User): GraphqlMutationUser => ({
   email: user.email,
   display_name: user.displayName,
   workspace_member_id: user.workspaceMember?.id,
-  __typename: 'user',
+  __typename: 'users',
 });

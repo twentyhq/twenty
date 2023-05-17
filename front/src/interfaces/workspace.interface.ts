@@ -37,5 +37,5 @@ export const mapToGqlWorkspace = (
   domain_name: workspace.domainName,
   display_name: workspace.displayName,
   logo: workspace.logo,
-  __typename: 'workspace',
+  __typename: 'workspaces',
 });

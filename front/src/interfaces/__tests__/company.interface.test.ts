@@ -1,66 +1,61 @@
-import { mapToGqlCompany, mapToCompany } from '../company.interface';
+import {
+  mapToGqlCompany,
+  mapToCompany,
+  Company,
+  GraphqlMutationCompany,
+  GraphqlQueryCompany,
+} from '../company.interface';
 
-describe('mapCompany', () => {
-  it('should map company', () => {
+describe('Company mappers', () => {
+  it('should map GraphQl Company to Company', () => {
     const now = new Date();
     now.setMilliseconds(0);
-    const company = mapToCompany({
+    const graphQLCompany = {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       name: 'ACME',
       domain_name: 'exmaple.com',
       created_at: now.toUTCString(),
+      employees: '10',
+      address: '1 Infinite Loop, 95014 Cupertino, California, USA',
       account_owner: {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
         email: 'john@example.com',
         display_name: 'John Doe',
         __typename: 'User',
       },
-      employees: '10',
-      address: '1 Infinite Loop, 95014 Cupertino, California, USA',
-      __typename: 'Company',
-    });
-    expect(company.id).toBe('7dfbc3f7-6e5e-4128-957e-8d86808cdf6b');
-    expect(company.name).toBe('ACME');
-    expect(company.domainName).toBe('exmaple.com');
-    expect(company.creationDate).toEqual(now);
-    expect(company.accountOwner?.id).toBe(
-      '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
-    );
-    expect(company.accountOwner?.email).toBe('john@example.com');
-    expect(company.accountOwner?.displayName).toBe('John Doe');
-    expect(company.employees).toBe('10');
-    expect(company.address).toBe(
-      '1 Infinite Loop, 95014 Cupertino, California, USA',
-    );
+      pipes: [
+        {
+          id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
+          name: 'Pipe 1',
+          icon: '!',
+          __typename: 'Pipe',
+        },
+      ],
+      __typename: 'companies',
+    } satisfies GraphqlQueryCompany;
+
+    const company = mapToCompany(graphQLCompany);
+    expect(company).toStrictEqual({
+      id: graphQLCompany.id,
+      name: graphQLCompany.name,
+      domainName: graphQLCompany.domain_name,
+      creationDate: new Date(now.toUTCString()),
+      employees: graphQLCompany.employees,
+      address: graphQLCompany.address,
+      accountOwner: {
+        id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
+        email: 'john@example.com',
+        displayName: 'John Doe',
+        workspaceMember: undefined,
+      },
+      pipes: [],
+    } satisfies Company);
   });
 
-  it('should map company with no account owner', () => {
+  it('should map Company to GraphQLCompany', () => {
     const now = new Date();
     now.setMilliseconds(0);
-    const company = mapToCompany({
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      name: 'ACME',
-      domain_name: 'exmaple.com',
-      created_at: now.toUTCString(),
-      employees: '10',
-      address: '1 Infinite Loop, 95014 Cupertino, California, USA',
-      __typename: 'Company',
-    });
-    expect(company.id).toBe('7dfbc3f7-6e5e-4128-957e-8d86808cdf6b');
-    expect(company.name).toBe('ACME');
-    expect(company.domainName).toBe('exmaple.com');
-    expect(company.creationDate).toEqual(now);
-    expect(company.accountOwner).toBeUndefined();
-    expect(company.employees).toBe('10');
-    expect(company.address).toBe(
-      '1 Infinite Loop, 95014 Cupertino, California, USA',
-    );
-  });
-
-  it('should map company back', () => {
-    const now = new Date();
-    now.setMilliseconds(0);
-    const company = mapToGqlCompany({
+    const company = {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       name: 'ACME',
       domainName: 'example.com',
@@ -73,40 +68,17 @@ describe('mapCompany', () => {
         displayName: 'John Doe',
       },
       creationDate: now,
-    });
-    expect(company.id).toBe('7dfbc3f7-6e5e-4128-957e-8d86808cdf6b');
-    expect(company.name).toBe('ACME');
-    expect(company.domain_name).toBe('example.com');
-    expect(company.created_at).toEqual(now.toUTCString());
-    expect(company.account_owner_id).toBe(
-      '522d4ec4-c46b-4360-a0a7-df8df170be81',
-    );
-    expect(company.employees).toBe('10');
-    expect(company.address).toBe(
-      '1 Infinite Loop, 95014 Cupertino, California, USA',
-    );
-  });
-
-  it('should map company with no account owner back', () => {
-    const now = new Date();
-    now.setMilliseconds(0);
-    const company = mapToGqlCompany({
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      name: 'ACME',
-      domainName: 'example.com',
-      employees: '10',
-      address: '1 Infinite Loop, 95014 Cupertino, California, USA',
-      pipes: [],
-      creationDate: now,
-    });
-    expect(company.id).toBe('7dfbc3f7-6e5e-4128-957e-8d86808cdf6b');
-    expect(company.name).toBe('ACME');
-    expect(company.domain_name).toBe('example.com');
-    expect(company.created_at).toEqual(now.toUTCString());
-    expect(company.account_owner_id).toBeUndefined();
-    expect(company.employees).toBe('10');
-    expect(company.address).toBe(
-      '1 Infinite Loop, 95014 Cupertino, California, USA',
-    );
+    };
+    const graphQLCompany = mapToGqlCompany(company);
+    expect(graphQLCompany).toStrictEqual({
+      id: company.id,
+      name: company.name,
+      domain_name: company.domainName,
+      created_at: now.toUTCString(),
+      employees: company.employees,
+      address: company.address,
+      account_owner_id: '522d4ec4-c46b-4360-a0a7-df8df170be81',
+      __typename: 'companies',
+    } satisfies GraphqlMutationCompany);
   });
 });

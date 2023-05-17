@@ -1,5 +1,6 @@
 import { Pipe } from 'stream';
 import { GraphqlQueryUser, User, mapToUser } from './user.interface';
+import { GraphqlQueryPipe } from './pipe.interface';
 
 export type Company = {
   id: string;
@@ -24,6 +25,7 @@ export type GraphqlQueryCompany = {
   created_at?: string;
 
   account_owner?: GraphqlQueryUser | null;
+  pipes?: GraphqlQueryPipe[] | null;
   __typename: string;
 };
 
@@ -37,6 +39,7 @@ export type GraphqlMutationCompany = {
   created_at?: string;
 
   account_owner_id?: string;
+  __typename: string;
 };
 
 export const mapToCompany = (company: GraphqlQueryCompany): Company => ({
@@ -65,4 +68,5 @@ export const mapToGqlCompany = (company: Company): GraphqlMutationCompany => ({
     : undefined,
 
   account_owner_id: company.accountOwner?.id,
+  __typename: 'companies',
 });
