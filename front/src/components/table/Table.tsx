@@ -10,6 +10,7 @@ import TableHeader from './table-header/TableHeader';
 import styled from '@emotion/styled';
 import {
   FilterConfigType,
+  FilterableFieldsType,
   SearchConfigType,
   SearchableType,
   SelectedFilterType,
@@ -23,7 +24,7 @@ declare module 'react' {
   ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
 }
 
-type OwnProps<TData, SortField> = {
+type OwnProps<TData extends FilterableFieldsType, SortField> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;

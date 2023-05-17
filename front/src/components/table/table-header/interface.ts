@@ -35,6 +35,7 @@ export type SelectedSortType<OrderByTemplate> = SortType<OrderByTemplate> & {
   order: 'asc' | 'desc';
 };
 
+type AnyEntity = { id: string };
 export type FilterableFieldsType = Person | Company;
 export type FilterWhereType = Person | Company | User;
 
@@ -52,7 +53,10 @@ export type BoolExpType<T> = T extends Company
   ? People_Bool_Exp
   : never;
 
-export type FilterConfigType<FilteredType = any, WhereType = any> = {
+export type FilterConfigType<
+  FilteredType extends FilterableFieldsType = AnyEntity,
+  WhereType extends FilterWhereType = AnyEntity,
+> = {
   key: string;
   label: string;
   icon: ReactNode;
@@ -78,7 +82,7 @@ export type SearchConfigType<SearchType extends SearchableType> = {
 
 export type FilterOperandType<
   FilteredType = FilterableFieldsType,
-  WhereType = any,
+  WhereType = AnyEntity,
 > = {
   label: string;
   id: string;
@@ -87,7 +91,7 @@ export type FilterOperandType<
 
 export type SelectedFilterType<
   FilteredType = FilterableFieldsType,
-  WhereType = any,
+  WhereType = AnyEntity,
 > = {
   key: string;
   value: WhereType;
