@@ -5,6 +5,8 @@ import { lightTheme } from '../../../layout/styles/themes';
 import { GET_COMPANIES } from '../../../services/companies';
 import { mockData } from '../__tests__/__data__/mock-data';
 import { MockedProvider } from '@apollo/client/testing';
+import { SEARCH_COMPANY_QUERY } from '../../../services/search/search';
+import { mockCompanySearchData } from '../../../services/search/__data__/mock-search-data';
 
 const component = {
   title: 'Companies',
@@ -34,6 +36,27 @@ const mocks = [
       variables: {
         orderBy: [{ created_at: 'desc' }],
         where: {},
+      },
+    },
+    result: {
+      data: {
+        companies: mockData,
+      },
+    },
+  },
+  {
+    request: {
+      query: SEARCH_COMPANY_QUERY,
+      variables: { where: { name: { _ilike: '%%' } }, limit: 5 },
+    },
+    result: mockCompanySearchData,
+  },
+  {
+    request: {
+      query: GET_COMPANIES,
+      variables: {
+        orderBy: [{ created_at: 'desc' }],
+        where: { domain_name: { _eq: 'linkedin-searched.com' } },
       },
     },
     result: {

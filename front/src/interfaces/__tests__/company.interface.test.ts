@@ -68,9 +68,11 @@ describe('Company mappers', () => {
         id: '522d4ec4-c46b-4360-a0a7-df8df170be81',
         email: 'john@example.com',
         displayName: 'John Doe',
+        __typename: 'users',
       },
       creationDate: now,
-    };
+      __typename: 'companies',
+    } satisfies Company;
     const graphQLCompany = mapToGqlCompany(company);
     expect(graphQLCompany).toStrictEqual({
       id: company.id,
