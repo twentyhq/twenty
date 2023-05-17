@@ -11,7 +11,7 @@ import {
   useCompaniesQuery,
 } from '../../services/companies';
 import Table from '../../components/table/Table';
-import { Company, mapCompany } from '../../interfaces/company.interface';
+import { Company, mapToCompany } from '../../interfaces/company.interface';
 import {
   useCompaniesColumns,
   availableFilters,
@@ -61,7 +61,7 @@ function Companies() {
   useEffect(() => {
     if (!loading) {
       if (data) {
-        setInternalData(data.companies.map(mapCompany));
+        setInternalData(data.companies.map(mapToCompany));
       }
     }
   }, [loading, setInternalData, data]);
@@ -70,10 +70,10 @@ function Companies() {
     const newCompany: Company = {
       id: uuidv4(),
       name: '',
-      domain_name: '',
-      employees: 0,
+      domainName: '',
+      employees: '0',
       address: '',
-      opportunities: [],
+      pipes: [],
       creationDate: new Date(),
       accountOwner: null,
     };

@@ -18,7 +18,7 @@ jest.mock('../../../apollo', () => {
         variables: GraphqlMutationPerson;
       }) => {
         const gqlPerson = arg.variables as unknown as GraphqlQueryPerson;
-        return { data: personInterface.mapPerson(gqlPerson) };
+        return { data: personInterface.mapToPerson(gqlPerson) };
       },
     },
   };

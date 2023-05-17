@@ -1,5 +1,5 @@
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
-import { Company, mapCompany } from '../../interfaces/company.interface';
+import { Company, mapToCompany } from '../../interfaces/company.interface';
 import { updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
 import CompanyChip from '../../components/chips/CompanyChip';
@@ -29,7 +29,7 @@ import {
 } from '../../services/search/search';
 import EditableDate from '../../components/table/editable-cell/EditableDate';
 import EditableRelation from '../../components/table/editable-cell/EditableRelation';
-import { User, mapUser } from '../../interfaces/user.interface';
+import { User, mapToUser } from '../../interfaces/user.interface';
 import { useMemo } from 'react';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 import Checkbox from '../../components/form/Checkbox';
@@ -79,7 +79,7 @@ export const availableFilters = [
       }),
       resultMapper: (company) => ({
         render: (company) => company.name,
-        value: mapCompany(company),
+        value: mapToCompany(company),
       }),
     },
     selectedValueRender: (company) => company.name,
@@ -110,24 +110,24 @@ export const availableFilters = [
         name: { _ilike: `%${searchInput}%` },
       }),
       resultMapper: (company) => ({
-        render: (company) => company.domain_name,
-        value: mapCompany(company),
+        render: (company) => company.domainName,
+        value: mapToCompany(company),
       }),
     },
-    selectedValueRender: (company) => company.domain_name,
+    selectedValueRender: (company) => company.domainName,
     operands: [
       {
         label: 'Equal',
         id: 'equal',
         whereTemplate: (company) => ({
-          domain_name: { _eq: company.domain_name },
+          domain_name: { _eq: company.domainName },
         }),
       },
       {
         label: 'Not equal',
         id: 'not-equal',
         whereTemplate: (company) => ({
-          _not: { domain_name: { _eq: company.domain_name } },
+          _not: { domain_name: { _eq: company.domainName } },
         }),
       },
     ],
@@ -163,9 +163,9 @@ export const useCompaniesColumns = () => {
         ),
         cell: (props) => (
           <EditableChip
-            value={props.row.original.name}
+            value={props.row.original.name || ''}
             placeholder="Name"
-            picture={`https://www.google.com/s2/favicons?domain=${props.row.original.domain_name}&sz=256`}
+            picture={`https://www.google.com/s2/favicons?domain=${props.row.original.domainName}&sz=256`}
             changeHandler={(value: string) => {
               const company = props.row.original;
               company.name = value;
@@ -181,23 +181,23 @@ export const useCompaniesColumns = () => {
         ),
         cell: (props) => (
           <EditableText
-            content={props.row.original.employees.toFixed(0)}
+            content={props.row.original.employees || ''}
             changeHandler={(value) => {
               const company = props.row.original;
-              company.employees = parseInt(value);
+              company.employees = value;
               updateCompany(company);
             }}
           />
         ),
       }),
-      columnHelper.accessor('domain_name', {
+      columnHelper.accessor('domainName', {
         header: () => <ColumnHead viewName="URL" viewIcon={<FaLink />} />,
         cell: (props) => (
           <EditableText
-            content={props.row.original.domain_name}
+            content={props.row.original.domainName || ''}
             changeHandler={(value) => {
               const company = props.row.original;
-              company.domain_name = value;
+              company.domainName = value;
               updateCompany(company);
             }}
           />
@@ -207,7 +207,7 @@ export const useCompaniesColumns = () => {
         header: () => <ColumnHead viewName="Address" viewIcon={<FaMapPin />} />,
         cell: (props) => (
           <EditableText
-            content={props.row.original.address}
+            content={props.row.original.address || ''}
             changeHandler={(value) => {
               const company = props.row.original;
               company.address = value;
@@ -222,7 +222,7 @@ export const useCompaniesColumns = () => {
         ),
         cell: (props) => (
           <EditableDate
-            value={props.row.original.creationDate}
+            value={props.row.original.creationDate || new Date()}
             changeHandler={(value: Date) => {
               const company = props.row.original;
               company.creationDate = value;
@@ -244,7 +244,7 @@ export const useCompaniesColumns = () => {
               accountOwner: User,
             ): PersonChipPropsType => {
               return {
-                name: accountOwner.displayName,
+                name: accountOwner.displayName || '',
               };
             }}
             changeHandler={(relation: User) => {
@@ -268,7 +268,7 @@ export const useCompaniesColumns = () => {
                 }),
                 resultMapper: (accountOwner) => ({
                   render: (accountOwner) => accountOwner.displayName,
-                  value: mapUser(accountOwner),
+                  value: mapToUser(accountOwner),
                 }),
               } satisfies SearchConfigType<User>
             }

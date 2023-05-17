@@ -1,8 +1,8 @@
-import { mapGqlPerson, mapPerson } from './person.interface';
+import { mapToGqlPerson, mapToPerson } from '../person.interface';
 
 describe('mapPerson', () => {
   it('should map person', () => {
-    const person = mapPerson({
+    const person = mapToPerson({
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       firstname: 'John',
       lastname: 'Doe',
@@ -15,7 +15,7 @@ describe('mapPerson', () => {
         id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
         name: '',
         domain_name: '',
-        employees: 0,
+        employees: '0',
         address: '',
         created_at: '',
         account_owner: null,
@@ -26,7 +26,7 @@ describe('mapPerson', () => {
   });
 
   it('should map person back', () => {
-    const person = mapGqlPerson({
+    const person = mapToGqlPerson({
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       firstname: 'John',
       lastname: 'Doe',

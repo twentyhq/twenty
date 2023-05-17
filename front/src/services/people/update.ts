@@ -1,5 +1,5 @@
 import { FetchResult, gql } from '@apollo/client';
-import { Person, mapGqlPerson } from '../../interfaces/person.interface';
+import { Person, mapToGqlPerson } from '../../interfaces/person.interface';
 import { apiClient } from '../../apollo';
 
 export const UPDATE_PERSON = gql`
@@ -112,7 +112,7 @@ export async function updatePerson(
 ): Promise<FetchResult<Person>> {
   const result = await apiClient.mutate({
     mutation: UPDATE_PERSON,
-    variables: mapGqlPerson(person),
+    variables: mapToGqlPerson(person),
   });
   return result;
 }
@@ -122,7 +122,7 @@ export async function insertPerson(
 ): Promise<FetchResult<Person>> {
   const result = await apiClient.mutate({
     mutation: INSERT_PERSON,
-    variables: mapGqlPerson(person),
+    variables: mapToGqlPerson(person),
   });
 
   return result;

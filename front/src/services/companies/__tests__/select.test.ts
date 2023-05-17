@@ -1,5 +1,5 @@
-import { reduceSortsToOrderBy } from '../../components/table/table-header/helpers';
-import { CompaniesSelectedSortType } from './select';
+import { reduceSortsToOrderBy } from '../../../components/table/table-header/helpers';
+import { CompaniesSelectedSortType } from '../select';
 
 describe('reduceSortsToOrderBy', () => {
   it('should return an array of objects with the id as key and the order as value', () => {

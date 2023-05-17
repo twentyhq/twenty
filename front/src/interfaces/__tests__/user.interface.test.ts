@@ -1,12 +1,13 @@
-import { mapUser } from './user.interface';
+import { mapToUser } from '../user.interface';
 
 describe('mapUser', () => {
   it('should map person', () => {
     const graphQLUser = {
       id: '16506ba8-196c-4c13-a4a7-a22cb5eccfa1',
       email: 'charles@twenty.com',
-      displayName: 'Charles Bochet',
+      display_name: 'Charles Bochet',
       workspace_member: {
+        id: '7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
         workspace: {
           id: '7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
           domain_name: 'twenty.com',
@@ -18,12 +19,13 @@ describe('mapUser', () => {
       },
       __typename: 'users',
     };
-    const user = mapUser(graphQLUser);
+    const user = mapToUser(graphQLUser);
     expect(user).toStrictEqual({
       id: graphQLUser.id,
       email: graphQLUser.email,
-      displayName: graphQLUser.displayName,
-      workspace_member: {
+      displayName: graphQLUser.display_name,
+      workspaceMember: {
+        id: graphQLUser.workspace_member.id,
         workspace: {
           id: graphQLUser?.workspace_member?.workspace.id,
           displayName: graphQLUser?.workspace_member?.workspace.display_name,

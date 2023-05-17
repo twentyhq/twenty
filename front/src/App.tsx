@@ -7,7 +7,7 @@ import AppLayout from './layout/AppLayout';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import RequireAuth from './components/auth/RequireAuth';
 import Opportunities from './pages/opportunities/Opportunities';
-import { User, mapUser } from './interfaces/user.interface';
+import { User, mapToUser } from './interfaces/user.interface';
 import { useGetCurrentUserQuery } from './services/users';
 import { getUserIdFromToken } from './services/AuthService';
 
@@ -19,7 +19,7 @@ function App() {
 
   useEffect(() => {
     if (data?.users[0]) {
-      setUser(mapUser(data?.users[0]));
+      setUser(mapToUser(data?.users[0]));
     }
   }, [data]);
 
