@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { hasAccessToken } from '../../services/AuthService';
+import { hasAccessToken } from '../../services/auth/AuthService';
 
 function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
   const navigate = useNavigate();

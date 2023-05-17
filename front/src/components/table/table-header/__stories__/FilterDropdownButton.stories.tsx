@@ -2,16 +2,19 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
-import { FilterableFieldsType, SelectedFilterType } from '../interface';
 import { useCallback, useState } from 'react';
 import {
   SEARCH_PEOPLE_QUERY,
   useSearch,
-} from '../../../../services/search/search';
+} from '../../../../services/api/search/search';
 import { MockedProvider } from '@apollo/client/testing';
 import { mockData } from '../../../../pages/people/__tests__/__data__/mock-data';
 import { availableFilters } from '../../../../pages/people/people-table';
-import { Person } from '../../../../interfaces/person.interface';
+import { Person } from '../../../../interfaces/entities/person.interface';
+import {
+  FilterableFieldsType,
+  SelectedFilterType,
+} from '../../../../interfaces/filters/interface';
 
 const component = {
   title: 'FilterDropdownButton',

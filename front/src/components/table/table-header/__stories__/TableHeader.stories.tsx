@@ -2,7 +2,7 @@ import TableHeader from '../TableHeader';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FaRegBuilding, FaCalendar } from 'react-icons/fa';
-import { SortType } from '../interface';
+import { SortType } from '../../../../interfaces/sorts/interface';
 
 const component = {
   title: 'TableHeader',

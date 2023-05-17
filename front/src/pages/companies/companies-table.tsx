@@ -1,9 +1,12 @@
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
-import { Company, mapToCompany } from '../../interfaces/company.interface';
-import { updateCompany } from '../../services/companies';
+import {
+  Company,
+  mapToCompany,
+} from '../../interfaces/entities/company.interface';
+import { updateCompany } from '../../services/api/companies';
 import ColumnHead from '../../components/table/ColumnHead';
 import CompanyChip from '../../components/chips/CompanyChip';
-import EditableText from '../../components/table/editable-cell/EditableText';
+import EditableText from '../../components/editable-cell/EditableText';
 import {
   FaRegBuilding,
   FaCalendar,
@@ -16,23 +19,21 @@ import {
 import PersonChip, {
   PersonChipPropsType,
 } from '../../components/chips/PersonChip';
-import EditableChip from '../../components/table/editable-cell/EditableChip';
-import {
-  FilterConfigType,
-  SearchConfigType,
-  SortType,
-} from '../../components/table/table-header/interface';
+import EditableChip from '../../components/editable-cell/EditableChip';
 import { Companies_Order_By } from '../../generated/graphql';
 import {
   SEARCH_COMPANY_QUERY,
   SEARCH_USER_QUERY,
-} from '../../services/search/search';
-import EditableDate from '../../components/table/editable-cell/EditableDate';
-import EditableRelation from '../../components/table/editable-cell/EditableRelation';
-import { User, mapToUser } from '../../interfaces/user.interface';
+} from '../../services/api/search/search';
+import EditableDate from '../../components/editable-cell/EditableDate';
+import EditableRelation from '../../components/editable-cell/EditableRelation';
+import { User, mapToUser } from '../../interfaces/entities/user.interface';
 import { useMemo } from 'react';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 import Checkbox from '../../components/form/Checkbox';
+import { SortType } from '../../interfaces/sorts/interface';
+import { FilterConfigType } from '../../interfaces/filters/interface';
+import { SearchConfigType } from '../../interfaces/search/interface';
 
 export const availableSorts = [
   {

@@ -2,11 +2,11 @@ import { MemoryRouter } from 'react-router-dom';
 import Companies from '../Companies';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
-import { GET_COMPANIES } from '../../../services/companies';
+import { GET_COMPANIES } from '../../../services/api/companies';
 import { mockData } from '../__tests__/__data__/mock-data';
 import { MockedProvider } from '@apollo/client/testing';
-import { SEARCH_COMPANY_QUERY } from '../../../services/search/search';
-import { mockCompanySearchData } from '../../../services/search/__data__/mock-search-data';
+import { SEARCH_COMPANY_QUERY } from '../../../services/api/search/search';
+import { mockCompanySearchData } from '../../../services/api/search/__data__/mock-search-data';
 
 const component = {
   title: 'Companies',

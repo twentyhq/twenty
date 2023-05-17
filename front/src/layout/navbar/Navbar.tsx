@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useMatch, useResolvedPath } from 'react-router-dom';
-import { User } from '../../interfaces/user.interface';
-import { Workspace } from '../../interfaces/workspace.interface';
+import { User } from '../../interfaces/entities/user.interface';
+import { Workspace } from '../../interfaces/entities/workspace.interface';
 import NavItem from './NavItem';
 import NavTitle from './NavTitle';
 import WorkspaceContainer from './WorkspaceContainer';

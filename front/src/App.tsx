@@ -7,9 +7,9 @@ import AppLayout from './layout/AppLayout';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import RequireAuth from './components/auth/RequireAuth';
 import Opportunities from './pages/opportunities/Opportunities';
-import { User, mapToUser } from './interfaces/user.interface';
-import { useGetCurrentUserQuery } from './services/users';
-import { getUserIdFromToken } from './services/AuthService';
+import { User, mapToUser } from './interfaces/entities/user.interface';
+import { useGetCurrentUserQuery } from './services/api/users';
+import { getUserIdFromToken } from './services/auth/AuthService';
 
 function App() {
   const [user, setUser] = useState<User | undefined>(undefined);

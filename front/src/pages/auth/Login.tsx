@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { hasAccessToken } from '../../services/AuthService';
+import { hasAccessToken } from '../../services/auth/AuthService';
 
 function Login() {
   const navigate = useNavigate();

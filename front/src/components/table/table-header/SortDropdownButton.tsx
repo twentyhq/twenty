@@ -1,6 +1,9 @@
 import { useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
-import { SelectedSortType, SortType } from './interface';
+import {
+  SelectedSortType,
+  SortType,
+} from '../../../interfaces/sorts/interface';
 
 type OwnProps<SortField> = {
   isSortSelected: boolean;

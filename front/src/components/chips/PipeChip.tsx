@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import { Pipe } from '../../interfaces/pipe.interface';
+import { Pipe } from '../../interfaces/entities/pipe.interface';
 
 type OwnProps = {
   opportunity: Pipe;
