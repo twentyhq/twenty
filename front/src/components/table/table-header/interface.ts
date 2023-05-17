@@ -40,7 +40,7 @@ type AnyEntity = {
   __typename: string;
 } & Record<string, any>;
 
-export type FilterableFieldsType = Person | Company | User;
+export type FilterableFieldsType = Person | Company;
 export type FilterWhereType = Person | Company | User | AnyEntity;
 
 type FilterConfigGqlType<WhereType> = WhereType extends Company

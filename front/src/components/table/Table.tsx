@@ -99,7 +99,7 @@ const StyledTableScrollableContainer = styled.div`
 `;
 
 const Table = <
-  TData extends { id: string; __typename: 'companies' | 'people' | 'users' },
+  TData extends { id: string; __typename: 'companies' | 'people' },
   SortField,
 >(
   {

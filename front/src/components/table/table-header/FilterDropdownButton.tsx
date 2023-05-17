@@ -26,9 +26,7 @@ type OwnProps<TData extends FilterableFieldsType> = {
   ) => void;
 };
 
-export const FilterDropdownButton = <
-  TData extends { id: string; __typename: 'companies' | 'people' | 'users' },
->({
+export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   availableFilters,
   filterSearchResults,
   onFilterSearch,
