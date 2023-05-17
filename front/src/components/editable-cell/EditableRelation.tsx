@@ -57,7 +57,7 @@ export type EditableRelationProps<
   relation?: RelationType | null;
   searchPlaceholder: string;
   searchConfig: SearchConfigType<RelationType>;
-  changeHandler: (relation: RelationType) => void;
+  changeHandler: (relation: RelationType | null) => void;
   editModeHorizontalAlign?: 'left' | 'right';
   ChipComponent: ComponentType<ChipComponentPropsType>;
   chipComponentPropsMapper: (

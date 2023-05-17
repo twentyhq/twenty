@@ -172,6 +172,11 @@ export const useCompaniesColumns = () => {
               company.name = value;
               updateCompany(company);
             }}
+            chipClickHandler={(editing) => {
+              const company = props.row.original;
+              company.name = undefined;
+              updateCompany(company);
+            }}
             ChipComponent={CompanyChip}
           />
         ),
@@ -248,8 +253,12 @@ export const useCompaniesColumns = () => {
                 name: accountOwner.displayName || '',
               };
             }}
-            changeHandler={(relation: User) => {
+            changeHandler={(relation: User | null) => {
               const company = props.row.original;
+              if (!relation) {
+                company.accountOwner = null;
+                return;
+              }
               if (company.accountOwner) {
                 company.accountOwner.id = relation.id;
               } else {
