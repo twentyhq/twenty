@@ -2,11 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
-import {
-  FilterConfigType,
-  FilterableFieldsType,
-  SelectedFilterType,
-} from '../interface';
+import { FilterableFieldsType, SelectedFilterType } from '../interface';
 import { useCallback, useState } from 'react';
 import {
   SEARCH_PEOPLE_QUERY,

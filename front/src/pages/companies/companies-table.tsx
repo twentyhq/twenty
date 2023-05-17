@@ -82,7 +82,7 @@ export const availableFilters = [
         value: mapToCompany(company),
       }),
     },
-    selectedValueRender: (company) => company.name,
+    selectedValueRender: (company) => company.name || '',
     operands: [
       {
         label: 'Equal',
@@ -99,7 +99,7 @@ export const availableFilters = [
         }),
       },
     ],
-  } as FilterConfigType<Company, Company>,
+  } satisfies FilterConfigType<Company, Company>,
   {
     key: 'company_domain_name',
     label: 'Url',
@@ -114,7 +114,7 @@ export const availableFilters = [
         value: mapToCompany(company),
       }),
     },
-    selectedValueRender: (company) => company.domainName,
+    selectedValueRender: (company) => company.domainName || '',
     operands: [
       {
         label: 'Equal',
@@ -131,7 +131,7 @@ export const availableFilters = [
         }),
       },
     ],
-  } as FilterConfigType<Company, Company>,
+  } satisfies FilterConfigType<Company, Company>,
 ];
 
 const columnHelper = createColumnHelper<Company>();
