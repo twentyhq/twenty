@@ -30,7 +30,7 @@ type OwnProps<TData extends FilterableFieldsType, SortField> = {
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
-  availableFilters?: FilterConfigType<TData>[];
+  availableFilters?: FilterConfigType<TData, TData>[];
   filterSearchResults?: {
     results: {
       render: (value: SearchableType) => string;

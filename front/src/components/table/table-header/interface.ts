@@ -35,7 +35,7 @@ export type SelectedSortType<OrderByTemplate> = SortType<OrderByTemplate> & {
   order: 'asc' | 'desc';
 };
 
-type AnyEntity = { id: string };
+type AnyEntity = { id: string } & Record<string, any>;
 export type FilterableFieldsType = Person | Company;
 export type FilterWhereType = Person | Company | User;
 
@@ -51,6 +51,8 @@ export type BoolExpType<T> = T extends Company
   ? Companies_Bool_Exp
   : T extends Person
   ? People_Bool_Exp
+  : T extends User
+  ? Users_Bool_Exp
   : never;
 
 export type FilterConfigType<
@@ -81,17 +83,33 @@ export type SearchConfigType<SearchType extends SearchableType> = {
 };
 
 export type FilterOperandType<
-  FilteredType = FilterableFieldsType,
-  WhereType = AnyEntity,
+  FilteredType extends FilterableFieldsType = AnyEntity,
+  WhereType extends FilterWhereType = AnyEntity,
+> =
+  | FilterOperandExactMatchType<FilteredType, WhereType>
+  | FilterOperandComparativeType<FilteredType, WhereType>;
+
+type FilterOperandExactMatchType<
+  FilteredType extends FilterableFieldsType,
+  WhereType extends FilterWhereType,
 > = {
-  label: string;
-  id: string;
+  label: 'Equal' | 'Not equal';
+  id: 'equal' | 'not-equal';
+  whereTemplate: (value: WhereType) => BoolExpType<FilteredType>;
+};
+
+type FilterOperandComparativeType<
+  FilteredType extends FilterableFieldsType,
+  WhereType extends FilterWhereType,
+> = {
+  label: 'Like' | 'Not like' | 'Include';
+  id: 'like' | 'not_like' | 'include';
   whereTemplate: (value: WhereType) => BoolExpType<FilteredType>;
 };
 
 export type SelectedFilterType<
-  FilteredType = FilterableFieldsType,
-  WhereType = AnyEntity,
+  FilteredType extends FilterableFieldsType = AnyEntity,
+  WhereType extends FilterWhereType = AnyEntity,
 > = {
   key: string;
   value: WhereType;

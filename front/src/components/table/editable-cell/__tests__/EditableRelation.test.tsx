@@ -50,6 +50,7 @@ it('Checks the EditableRelation editing event bubbles up', async () => {
 
   await waitFor(() => {
     expect(func).toBeCalledWith({
+      __typename: 'companies',
       accountOwner: undefined,
       address: undefined,
       domainName: 'abnb.com',

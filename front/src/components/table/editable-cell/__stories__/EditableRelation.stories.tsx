@@ -72,6 +72,7 @@ const Template: StoryFn<
 export const EditableRelationStory = Template.bind({});
 EditableRelationStory.args = {
   relation: {
+    __typename: 'companies',
     id: '123',
     name: 'Heroku',
     domain_name: 'heroku.com',

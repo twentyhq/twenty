@@ -36,6 +36,7 @@ describe('Company mappers', () => {
 
     const company = mapToCompany(graphQLCompany);
     expect(company).toStrictEqual({
+      __typename: 'companies',
       id: graphQLCompany.id,
       name: graphQLCompany.name,
       domainName: graphQLCompany.domain_name,

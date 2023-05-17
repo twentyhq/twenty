@@ -25,10 +25,7 @@ import {
   Companies_Bool_Exp,
   Companies_Order_By,
 } from '../../generated/graphql';
-import {
-  FilterConfigType,
-  SelectedFilterType,
-} from '../../components/table/table-header/interface';
+import { SelectedFilterType } from '../../components/table/table-header/interface';
 import { useSearch } from '../../services/search/search';
 import ActionBar from '../../components/table/action-bar/ActionBar';
 
@@ -76,6 +73,7 @@ function Companies() {
       pipes: [],
       creationDate: new Date(),
       accountOwner: null,
+      __typename: 'companies',
     };
     insertCompany(newCompany);
     setInternalData([newCompany, ...internalData]);
@@ -111,7 +109,7 @@ function Companies() {
             viewName="All Companies"
             viewIcon={<FaList />}
             availableSorts={availableSorts}
-            availableFilters={availableFilters as Array<FilterConfigType>}
+            availableFilters={availableFilters}
             filterSearchResults={filterSearchResults}
             onSortsUpdate={updateSorts}
             onFiltersUpdate={updateFilters}

@@ -3,6 +3,8 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FaArrowDown } from 'react-icons/fa';
 import { SelectedFilterType } from '../interface';
+import { Person } from '../../../../interfaces/person.interface';
+import { Company } from '../../../../interfaces/company.interface';
 
 const component = {
   title: 'SortAndFilterBar',
@@ -63,10 +65,10 @@ export const RegularSortAndFilterBar = ({
               phone: '123456789',
               company: null,
               creationDate: new Date(),
-              pipe: null,
+              pipes: null,
               city: 'Paris',
             },
-          } satisfies SelectedFilterType,
+          } satisfies SelectedFilterType<Person, Person>,
         ]}
       />
     </ThemeProvider>
