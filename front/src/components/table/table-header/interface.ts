@@ -6,6 +6,15 @@ import {
   People_Bool_Exp,
   Users_Bool_Exp,
 } from '../../../generated/graphql';
+import {
+  Company,
+  GraphqlQueryCompany,
+} from '../../../interfaces/company.interface';
+import {
+  GraphqlQueryPerson,
+  Person,
+} from '../../../interfaces/person.interface';
+import { GraphqlQueryUser, User } from '../../../interfaces/user.interface';
 
 export type SortType<OrderByTemplate> =
   | {
@@ -26,33 +35,64 @@ export type SelectedSortType<OrderByTemplate> = SortType<OrderByTemplate> & {
   order: 'asc' | 'desc';
 };
 
-export type FilterType<WhereTemplate, FilterValue = Record<string, any>> = {
-  operands: FilterOperandType[];
-  label: string;
+export type FilterableFieldsType = Person | Company;
+export type FilterWhereType = Person | Company | User;
+
+type FilterConfigGqlType<WhereType> = WhereType extends Company
+  ? GraphqlQueryCompany
+  : WhereType extends Person
+  ? GraphqlQueryPerson
+  : WhereType extends User
+  ? GraphqlQueryUser
+  : never;
+
+export type BoolExpType<T> = T extends Company
+  ? Companies_Bool_Exp
+  : T extends Person
+  ? People_Bool_Exp
+  : never;
+
+export type FilterConfigType<FilteredType = any, WhereType = any> = {
   key: string;
+  label: string;
   icon: ReactNode;
-  whereTemplate: (
-    operand: FilterOperandType,
-    value: FilterValue,
-  ) => WhereTemplate | undefined;
-  searchQuery: DocumentNode;
-  searchTemplate: (
+  operands: FilterOperandType<FilteredType, WhereType>[];
+  searchConfig: WhereType extends SearchableType
+    ? SearchConfigType<WhereType>
+    : null;
+  selectedValueRender: (selected: WhereType) => string;
+};
+
+export type SearchableType = Person | Company | User;
+
+export type SearchConfigType<SearchType extends SearchableType> = {
+  query: DocumentNode;
+  template: (
     searchInput: string,
   ) => People_Bool_Exp | Companies_Bool_Exp | Users_Bool_Exp;
-  searchResultMapper: (data: any) => {
-    displayValue: string;
-    value: FilterValue;
+  resultMapper: (data: FilterConfigGqlType<SearchType>) => {
+    value: SearchType;
+    render: (value: SearchType) => ReactNode;
   };
 };
 
-export type FilterOperandType = {
+export type FilterOperandType<
+  FilteredType = FilterableFieldsType,
+  WhereType = any,
+> = {
   label: string;
   id: string;
-  keyWord: 'ilike' | 'not_ilike' | 'equal' | 'not_equal';
+  whereTemplate: (value: WhereType) => BoolExpType<FilteredType>;
 };
 
-export type SelectedFilterType<WhereTemplate> = FilterType<WhereTemplate> & {
-  value: string;
-  operand: FilterOperandType;
-  where: WhereTemplate;
+export type SelectedFilterType<
+  FilteredType = FilterableFieldsType,
+  WhereType = any,
+> = {
+  key: string;
+  value: WhereType;
+  displayValue: string;
+  label: string;
+  icon: ReactNode;
+  operand: FilterOperandType<FilteredType, WhereType>;
 };

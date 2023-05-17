@@ -9,7 +9,9 @@ import {
 import TableHeader from './table-header/TableHeader';
 import styled from '@emotion/styled';
 import {
-  FilterType,
+  FilterConfigType,
+  SearchConfigType,
+  SearchableType,
   SelectedFilterType,
   SelectedSortType,
   SortType,
@@ -21,23 +23,24 @@ declare module 'react' {
   ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
 }
 
-type OwnProps<TData, SortField, FilterProperties> = {
+type OwnProps<TData, SortField> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
-  availableFilters?: FilterType<FilterProperties>[];
+  availableFilters?: FilterConfigType<TData>[];
   filterSearchResults?: {
-    results: { displayValue: string; value: any }[];
+    results: {
+      render: (value: SearchableType) => string;
+      value: SearchableType;
+    }[];
     loading: boolean;
   };
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onFiltersUpdate?: (
-    sorts: Array<SelectedFilterType<FilterProperties>>,
-  ) => void;
+  onFiltersUpdate?: (sorts: Array<SelectedFilterType>) => void;
   onFilterSearch?: (
-    filter: FilterType<FilterProperties> | null,
+    filter: SearchConfigType<any> | null,
     searchValue: string,
   ) => void;
   onRowSelectionChange?: (rowSelection: string[]) => void;
@@ -94,7 +97,7 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-const Table = <TData extends { id: string }, SortField, FilterProperies>(
+const Table = <TData extends { id: string }, SortField>(
   {
     data,
     columns,
@@ -107,7 +110,7 @@ const Table = <TData extends { id: string }, SortField, FilterProperies>(
     onFiltersUpdate,
     onFilterSearch,
     onRowSelectionChange,
-  }: OwnProps<TData, SortField, FilterProperies>,
+  }: OwnProps<TData, SortField>,
   ref: React.ForwardedRef<{ resetRowSelection: () => void } | undefined>,
 ) => {
   const [internalRowSelection, setInternalRowSelection] = React.useState({});
@@ -144,7 +147,7 @@ const Table = <TData extends { id: string }, SortField, FilterProperies>(
         viewName={viewName}
         viewIcon={viewIcon}
         availableSorts={availableSorts}
-        availableFilters={availableFilters}
+        availableFilters={availableFilters as FilterConfigType<any>[]}
         filterSearchResults={filterSearchResults}
         onSortsUpdate={onSortsUpdate}
         onFiltersUpdate={onFiltersUpdate}

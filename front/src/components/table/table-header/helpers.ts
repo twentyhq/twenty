@@ -1,13 +1,12 @@
 import { Order_By } from '../../../generated/graphql';
-import { SelectedFilterType, SelectedSortType } from './interface';
+import { BoolExpType, SelectedFilterType, SelectedSortType } from './interface';
 
-export const reduceFiltersToWhere = <T>(
-  filters: Array<SelectedFilterType<T>>,
-): T => {
+export const reduceFiltersToWhere = <ValueType, WhereTemplateType>(
+  filters: Array<SelectedFilterType<ValueType, WhereTemplateType>>,
+): BoolExpType<WhereTemplateType> => {
   const where = filters.reduce((acc, filter) => {
-    const { where } = filter;
-    return { ...acc, ...where };
-  }, {} as T);
+    return { ...acc, ...filter.operand.whereTemplate(filter.value) };
+  }, {} as BoolExpType<WhereTemplateType>);
   return where;
 };
 

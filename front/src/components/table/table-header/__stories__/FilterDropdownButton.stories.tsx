@@ -2,16 +2,16 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
-import { FilterType, SelectedFilterType } from '../interface';
+import { FilterConfigType, SelectedFilterType } from '../interface';
 import { useCallback, useState } from 'react';
-import { People_Bool_Exp } from '../../../../generated/graphql';
-import { FaUsers } from 'react-icons/fa';
 import {
   SEARCH_PEOPLE_QUERY,
   useSearch,
 } from '../../../../services/search/search';
 import { MockedProvider } from '@apollo/client/testing';
 import { mockData } from '../../../../pages/people/__tests__/__data__/mock-data';
+import { availableFilters } from '../../../../pages/people/people-table';
+import { Person } from '../../../../interfaces/person.interface';
 
 const component = {
   title: 'FilterDropdownButton',
@@ -78,35 +78,6 @@ const mocks = [
   },
 ];
 
-const availableFilters = [
-  {
-    key: 'fullname',
-    label: 'People',
-    icon: <FaUsers />,
-    searchQuery: SEARCH_PEOPLE_QUERY,
-    searchTemplate: (searchInput: string) => ({
-      _or: [
-        { firstname: { _ilike: `%${searchInput}%` } },
-        { lastname: { _ilike: `%${searchInput}%` } },
-      ],
-    }),
-    whereTemplate: () => ({
-      _or: [
-        { firstname: { _ilike: 'value' } },
-        { lastname: { _ilike: 'value' } },
-      ],
-    }),
-    searchResultMapper: (data) => ({
-      displayValue: data.firstname + ' ' + data.lastname,
-      value: data.firstname,
-    }),
-    operands: [
-      { label: 'Equal', id: 'equal', keyWord: 'equal' },
-      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
-    ],
-  },
-] satisfies FilterType<People_Bool_Exp>[];
-
 const StyleDiv = styled.div`
   height: 200px;
   width: 200px;
@@ -114,12 +85,12 @@ const StyleDiv = styled.div`
 
 const InnerRegularFilterDropdownButton = ({
   setFilter: setFilters,
-}: OwnProps<People_Bool_Exp>) => {
-  const [, innerSetFilters] = useState<SelectedFilterType<People_Bool_Exp>>();
+}: OwnProps<Person>) => {
+  const [, innerSetFilters] = useState<SelectedFilterType<Person>>();
   const [filterSearchResults, setSearhInput, setFilterSearch] = useSearch();
 
   const outerSetFilters = useCallback(
-    (filter: SelectedFilterType<People_Bool_Exp>) => {
+    (filter: SelectedFilterType<Person>) => {
       innerSetFilters(filter);
       setFilters(filter);
     },
@@ -128,7 +99,7 @@ const InnerRegularFilterDropdownButton = ({
   return (
     <StyleDiv>
       <FilterDropdownButton
-        availableFilters={availableFilters}
+        availableFilters={availableFilters as FilterConfigType[]}
         isFilterSelected={true}
         onFilterSelect={outerSetFilters}
         filterSearchResults={filterSearchResults}
@@ -143,7 +114,7 @@ const InnerRegularFilterDropdownButton = ({
 
 export const RegularFilterDropdownButton = ({
   setFilter: setFilters,
-}: OwnProps<People_Bool_Exp>) => {
+}: OwnProps<Person>) => {
   return (
     <MockedProvider mocks={mocks}>
       <ThemeProvider theme={lightTheme}>

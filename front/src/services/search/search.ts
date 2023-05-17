@@ -1,8 +1,9 @@
 import { gql, useQuery } from '@apollo/client';
-import { People_Bool_Exp } from '../../generated/graphql';
-import {} from '../../interfaces/company.interface';
 import { useMemo, useState } from 'react';
-import { FilterType } from '../../components/table/table-header/interface';
+import {
+  SearchConfigType,
+  SearchableType,
+} from '../../components/table/table-header/interface';
 
 export const SEARCH_PEOPLE_QUERY = gql`
   query SearchQuery($where: people_bool_exp, $limit: Int) {
@@ -57,12 +58,18 @@ const debounce = <FuncArgs extends any[]>(
   };
 };
 
-export const useSearch = (): [
-  { results: { displayValue: string; value: any }[]; loading: boolean },
+export const useSearch = <T extends SearchableType>(): [
+  {
+    results: {
+      render: (value: T) => string;
+      value: T;
+    }[];
+    loading: boolean;
+  },
   React.Dispatch<React.SetStateAction<string>>,
-  React.Dispatch<React.SetStateAction<FilterType<People_Bool_Exp> | null>>,
+  React.Dispatch<React.SetStateAction<SearchConfigType<T> | null>>,
 ] => {
-  const [filter, setFilter] = useState<FilterType<People_Bool_Exp> | null>(
+  const [searchConfig, setSearchConfig] = useState<SearchConfigType<T> | null>(
     null,
   );
   const [searchInput, setSearchInput] = useState<string>('');
@@ -74,26 +81,28 @@ export const useSearch = (): [
 
   const where = useMemo(() => {
     return (
-      filter && filter.searchTemplate && filter.searchTemplate(searchInput)
+      searchConfig &&
+      searchConfig.template &&
+      searchConfig.template(searchInput)
     );
-  }, [filter, searchInput]);
+  }, [searchConfig, searchInput]);
 
   const searchFilterQueryResults = useQuery(
-    filter?.searchQuery || EMPTY_QUERY,
+    searchConfig?.query || EMPTY_QUERY,
     {
       variables: {
         where,
         limit: 5,
       },
-      skip: !filter,
+      skip: !searchConfig,
     },
   );
 
   const searchFilterResults = useMemo<{
-    results: { displayValue: string; value: any }[];
+    results: { render: (value: T) => string; value: any }[];
     loading: boolean;
   }>(() => {
-    if (filter == null) {
+    if (searchConfig == null) {
       return {
         loading: false,
         results: [],
@@ -108,10 +117,10 @@ export const useSearch = (): [
     return {
       loading: false,
       results: searchFilterQueryResults.data.searchResults.map(
-        filter.searchResultMapper,
+        searchConfig.resultMapper,
       ),
     };
-  }, [filter, searchFilterQueryResults]);
+  }, [searchConfig, searchFilterQueryResults]);
 
-  return [searchFilterResults, debouncedsetSearchInput, setFilter];
+  return [searchFilterResults, debouncedsetSearchInput, setSearchConfig];
 };

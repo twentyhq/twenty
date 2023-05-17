@@ -3,16 +3,11 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { StoryFn } from '@storybook/react';
 import CompanyChip, { CompanyChipPropsType } from '../../../chips/CompanyChip';
-import {
-  GraphqlQueryCompany,
-  PartialCompany,
-} from '../../../../interfaces/company.interface';
+import { Company, mapCompany } from '../../../../interfaces/company.interface';
 import { MockedProvider } from '@apollo/client/testing';
 import { SEARCH_COMPANY_QUERY } from '../../../../services/search/search';
 import styled from '@emotion/styled';
-import { People_Bool_Exp } from '../../../../generated/graphql';
-import { FilterType } from '../../table-header/interface';
-import { FaBuilding } from 'react-icons/fa';
+import { SearchConfigType } from '../../table-header/interface';
 
 const component = {
   title: 'editable-cell/EditableRelation',
@@ -58,13 +53,13 @@ const mocks = [
 ];
 
 const Template: StoryFn<
-  typeof EditableRelation<PartialCompany, CompanyChipPropsType>
-> = (args: EditableRelationProps<PartialCompany, CompanyChipPropsType>) => {
+  typeof EditableRelation<Company, CompanyChipPropsType>
+> = (args: EditableRelationProps<Company, CompanyChipPropsType>) => {
   return (
     <MockedProvider mocks={mocks}>
       <ThemeProvider theme={lightTheme}>
         <StyledParent data-testid="content-editable-parent">
-          <EditableRelation<PartialCompany, CompanyChipPropsType> {...args} />
+          <EditableRelation<Company, CompanyChipPropsType> {...args} />
         </StyledParent>
       </ThemeProvider>
     </MockedProvider>
@@ -77,36 +72,25 @@ EditableRelationStory.args = {
     id: '123',
     name: 'Heroku',
     domain_name: 'heroku.com',
-  } as PartialCompany,
+  } as Company,
   ChipComponent: CompanyChip,
-  chipComponentPropsMapper: (company: PartialCompany): CompanyChipPropsType => {
+  chipComponentPropsMapper: (company: Company): CompanyChipPropsType => {
     return {
       name: company.name,
       picture: `https://www.google.com/s2/favicons?domain=${company.domain_name}&sz=256`,
     };
   },
-  changeHandler: (relation: PartialCompany) => {
+  changeHandler: (relation: Company) => {
     console.log('changed', relation);
   },
-  searchFilter: {
-    key: 'company_name',
-    label: 'Company',
-    icon: <FaBuilding />,
-    whereTemplate: () => {
-      return {};
-    },
-    searchQuery: SEARCH_COMPANY_QUERY,
-    searchTemplate: (searchInput: string) => ({
+  searchConfig: {
+    query: SEARCH_COMPANY_QUERY,
+    template: (searchInput: string) => ({
       name: { _ilike: `%${searchInput}%` },
     }),
-    searchResultMapper: (company: GraphqlQueryCompany) => ({
-      displayValue: company.name,
-      value: {
-        id: company.id,
-        name: company.name,
-        domain_name: company.domain_name,
-      },
+    resultMapper: (company) => ({
+      render: (company) => company.name,
+      value: mapCompany(company),
     }),
-    operands: [],
-  } satisfies FilterType<People_Bool_Exp>,
+  } satisfies SearchConfigType<Company>,
 };

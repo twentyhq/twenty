@@ -3,13 +3,11 @@ import SortOrFilterChip from './SortOrFilterChip';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { SelectedFilterType, SelectedSortType } from './interface';
 
-type OwnProps<SortField, FilterProperties> = {
+type OwnProps<SortField> = {
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
-  filters: Array<SelectedFilterType<FilterProperties>>;
-  onRemoveFilter: (
-    filterId: SelectedFilterType<FilterProperties>['key'],
-  ) => void;
+  filters: Array<SelectedFilterType>;
+  onRemoveFilter: (filterId: SelectedFilterType['key']) => void;
   onCancelClick: () => void;
 };
 
@@ -42,13 +40,13 @@ const StyledCancelButton = styled.button`
   }
 `;
 
-function SortAndFilterBar<SortField, FilterProperties>({
+function SortAndFilterBar<SortField>({
   sorts,
   onRemoveSort,
   filters,
   onRemoveFilter,
   onCancelClick,
-}: OwnProps<SortField, FilterProperties>) {
+}: OwnProps<SortField>) {
   return (
     <StyledBar>
       {sorts.map((sort) => {
@@ -67,7 +65,7 @@ function SortAndFilterBar<SortField, FilterProperties>({
           <SortOrFilterChip
             key={filter.key}
             labelKey={filter.label}
-            labelValue={`${filter.operand.label} ${filter.value}`}
+            labelValue={`${filter.operand.label} ${filter.displayValue}`}
             id={filter.key}
             icon={filter.icon}
             onRemove={() => onRemoveFilter(filter.key)}
