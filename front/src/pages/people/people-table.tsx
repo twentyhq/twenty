@@ -14,25 +14,19 @@ import Checkbox from '../../components/form/Checkbox';
 import CompanyChip, {
   CompanyChipPropsType,
 } from '../../components/chips/CompanyChip';
-import { GraphqlQueryPerson, Person } from '../../interfaces/person.interface';
+import { Person, mapPerson } from '../../interfaces/person.interface';
 import EditableText from '../../components/table/editable-cell/EditableText';
 import {
-  FilterType,
+  FilterConfigType,
+  SearchConfigType,
   SortType,
 } from '../../components/table/table-header/interface';
-import {
-  Order_By,
-  People_Bool_Exp,
-  People_Order_By,
-} from '../../generated/graphql';
+import { Order_By, People_Order_By } from '../../generated/graphql';
 import {
   SEARCH_COMPANY_QUERY,
   SEARCH_PEOPLE_QUERY,
 } from '../../services/search/search';
-import {
-  GraphqlQueryCompany,
-  PartialCompany,
-} from '../../interfaces/company.interface';
+import { Company, mapCompany } from '../../interfaces/company.interface';
 import EditablePhone from '../../components/table/editable-cell/EditablePhone';
 import EditableFullName from '../../components/table/editable-cell/EditableFullName';
 import EditableDate from '../../components/table/editable-cell/EditableDate';
@@ -85,163 +79,155 @@ export const availableSorts = [
   },
 ] satisfies Array<SortType<People_Order_By>>;
 
-const fullnameFilter = {
+export const fullnameFilter = {
   key: 'fullname',
   label: 'People',
   icon: <FaUser />,
-  whereTemplate: (operand, { firstname, lastname }) => {
-    if (operand.keyWord === 'equal') {
-      return {
+  searchConfig: {
+    query: SEARCH_PEOPLE_QUERY,
+    template: (searchInput: string) => ({
+      _or: [
+        { firstname: { _ilike: `%${searchInput}%` } },
+        { lastname: { _ilike: `%${searchInput}%` } },
+      ],
+    }),
+    resultMapper: (person) => ({
+      render: (person) => `${person.firstname} ${person.lastname}`,
+      value: mapPerson(person),
+    }),
+  },
+  selectedValueRender: (person) => `${person.firstname} ${person.lastname}`,
+  operands: [
+    {
+      label: 'Equal',
+      id: 'equal',
+      whereTemplate: (person) => ({
         _and: [
-          { firstname: { _eq: `${firstname}` } },
-          { lastname: { _eq: `${lastname}` } },
+          { firstname: { _eq: `${person.firstname}` } },
+          { lastname: { _eq: `${person.lastname}` } },
         ],
-      };
-    }
-
-    if (operand.keyWord === 'not_equal') {
-      return {
+      }),
+    },
+    {
+      label: 'Not equal',
+      id: 'not-equal',
+      whereTemplate: (person) => ({
         _not: {
           _and: [
-            { firstname: { _eq: `${firstname}` } },
-            { lastname: { _eq: `${lastname}` } },
+            { firstname: { _eq: `${person.firstname}` } },
+            { lastname: { _eq: `${person.lastname}` } },
           ],
         },
-      };
-    }
-  },
-  searchQuery: SEARCH_PEOPLE_QUERY,
-  searchTemplate: (searchInput: string) => ({
-    _or: [
-      { firstname: { _ilike: `%${searchInput}%` } },
-      { lastname: { _ilike: `%${searchInput}%` } },
-    ],
-  }),
-  searchResultMapper: (person: GraphqlQueryPerson) => ({
-    displayValue: `${person.firstname} ${person.lastname}`,
-    value: { firstname: person.firstname, lastname: person.lastname },
-  }),
-  operands: [
-    { label: 'Equal', id: 'equal', keyWord: 'equal' },
-    { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+      }),
+    },
   ],
-} satisfies FilterType<People_Bool_Exp>;
+} satisfies FilterConfigType<Person, Person>;
 
-const companyFilter = {
+export const companyFilter = {
   key: 'company_name',
   label: 'Company',
   icon: <FaBuilding />,
-  whereTemplate: (operand, { companyName }) => {
-    if (operand.keyWord === 'equal') {
-      return {
-        company: { name: { _eq: companyName } },
-      };
-    }
-
-    if (operand.keyWord === 'not_equal') {
-      return {
-        _not: { company: { name: { _eq: companyName } } },
-      };
-    }
+  searchConfig: {
+    query: SEARCH_COMPANY_QUERY,
+    template: (searchInput: string) => ({
+      name: { _ilike: `%${searchInput}%` },
+    }),
+    resultMapper: (data) => ({
+      value: mapCompany(data),
+      render: (company) => company.name,
+    }),
   },
-  searchQuery: SEARCH_COMPANY_QUERY,
-  searchTemplate: (searchInput: string) => ({
-    name: { _ilike: `%${searchInput}%` },
-  }),
-  searchResultMapper: (company: GraphqlQueryCompany) => ({
-    displayValue: company.name,
-    value: { companyName: company.name },
-  }),
+  selectedValueRender: (company) => company.name,
   operands: [
-    { label: 'Equal', id: 'equal', keyWord: 'equal' },
-    { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+    {
+      label: 'Equal',
+      id: 'equal',
+      whereTemplate: (company) => ({
+        company: { name: { _eq: company.name } },
+      }),
+    },
+    {
+      label: 'Not equal',
+      id: 'not-equal',
+      whereTemplate: (company) => ({
+        _not: { company: { name: { _eq: company.name } } },
+      }),
+    },
   ],
-} satisfies FilterType<People_Bool_Exp>;
+} satisfies FilterConfigType<Person, Company>;
 
-const emailFilter = {
+export const emailFilter = {
   key: 'email',
   label: 'Email',
   icon: <FaEnvelope />,
-  whereTemplate: (operand, { email }) => {
-    if (operand.keyWord === 'equal') {
-      return {
-        email: { _eq: email },
-      };
-    }
-
-    if (operand.keyWord === 'not_equal') {
-      return {
-        _not: { email: { _eq: email } },
-      };
-    }
+  searchConfig: {
+    query: SEARCH_PEOPLE_QUERY,
+    template: (searchInput: string) => ({
+      email: { _ilike: `%${searchInput}%` },
+    }),
+    resultMapper: (person) => ({
+      render: (person) => person.email,
+      value: mapPerson(person),
+    }),
   },
-  searchQuery: SEARCH_PEOPLE_QUERY,
-  searchTemplate: (searchInput: string) => ({
-    email: { _ilike: `%${searchInput}%` },
-  }),
-  searchResultMapper: (person: GraphqlQueryPerson) => ({
-    displayValue: person.email,
-    value: { email: person.email },
-  }),
   operands: [
-    { label: 'Equal', id: 'equal', keyWord: 'equal' },
-    { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+    {
+      label: 'Equal',
+      id: 'equal',
+      whereTemplate: (person) => ({
+        email: { _eq: person.email },
+      }),
+    },
+    {
+      label: 'Not equal',
+      id: 'not-equal',
+      whereTemplate: (person) => ({
+        _not: { email: { _eq: person.email } },
+      }),
+    },
   ],
-} satisfies FilterType<People_Bool_Exp>;
+  selectedValueRender: (person) => person.email,
+} satisfies FilterConfigType<Person, Person>;
 
-const cityFilter = {
+export const cityFilter = {
   key: 'city',
   label: 'City',
   icon: <FaMapPin />,
-  whereTemplate: (operand, { city }) => {
-    if (operand.keyWord === 'equal') {
-      return {
-        city: { _eq: city },
-      };
-    }
-
-    if (operand.keyWord === 'not_equal') {
-      return {
-        _not: { city: { _eq: city } },
-      };
-    }
+  searchConfig: {
+    query: SEARCH_PEOPLE_QUERY,
+    template: (searchInput: string) => ({
+      city: { _ilike: `%${searchInput}%` },
+    }),
+    resultMapper: (person) => ({
+      render: (person) => person.city,
+      value: mapPerson(person),
+    }),
   },
-  searchQuery: SEARCH_PEOPLE_QUERY,
-  searchTemplate: (searchInput: string) => ({
-    city: { _ilike: `%${searchInput}%` },
-  }),
-  searchResultMapper: (person: GraphqlQueryPerson) => ({
-    displayValue: person.city,
-    value: { city: person.city },
-  }),
   operands: [
-    { label: 'Equal', id: 'equal', keyWord: 'equal' },
-    { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+    {
+      label: 'Equal',
+      id: 'equal',
+      whereTemplate: (person) => ({
+        city: { _eq: person.city },
+      }),
+    },
+    {
+      label: 'Not equal',
+      id: 'not-equal',
+      whereTemplate: (person) => ({
+        _not: { city: { _eq: person.city } },
+      }),
+    },
   ],
-} satisfies FilterType<People_Bool_Exp>;
+  selectedValueRender: (person) => person.email,
+} satisfies FilterConfigType<Person, Person>;
 
 export const availableFilters = [
   fullnameFilter,
   companyFilter,
   emailFilter,
   cityFilter,
-  // {
-  //   key: 'phone',
-  //   label: 'Phone',
-  //   icon: faPhone,
-  //   whereTemplate: () => ({ phone: { _ilike: '%value%' } }),
-  //   searchQuery: GET_PEOPLE,
-  //   searchTemplate: { phone: { _ilike: '%value%' } },
-  // },
-  // {
-  //   key: 'created_at',
-  //   label: 'Created at',
-  //   icon: faCalendar,
-  //   whereTemplate: () => ({ created_at: { _eq: '%value%' } }),
-  //   searchQuery: GET_PEOPLE,
-  //   searchTemplate: { created_at: { _eq: '%value%' } },
-  // },
-] satisfies FilterType<People_Bool_Exp>[];
+];
 
 const columnHelper = createColumnHelper<Person>();
 
@@ -300,53 +286,36 @@ export const usePeopleColumns = () => {
           <ColumnHead viewName="Company" viewIcon={<FaRegBuilding />} />
         ),
         cell: (props) => (
-          <EditableRelation<PartialCompany, CompanyChipPropsType>
+          <EditableRelation<Company, CompanyChipPropsType>
             relation={props.row.original.company}
             searchPlaceholder="Company"
             ChipComponent={CompanyChip}
-            chipComponentPropsMapper={(
-              company: PartialCompany,
-            ): CompanyChipPropsType => {
+            chipComponentPropsMapper={(company): CompanyChipPropsType => {
               return {
                 name: company.name,
                 picture: `https://www.google.com/s2/favicons?domain=${company.domain_name}&sz=256`,
               };
             }}
-            changeHandler={(relation: PartialCompany) => {
+            changeHandler={(relation) => {
               const person = props.row.original;
               if (person.company) {
                 person.company.id = relation.id;
               } else {
-                person.company = {
-                  id: relation.id,
-                  name: relation.name,
-                  domain_name: relation.domain_name,
-                };
+                person.company = relation;
               }
               updatePerson(person);
             }}
-            searchFilter={
+            searchConfig={
               {
-                key: 'company_name',
-                label: 'Company',
-                icon: <FaBuilding />,
-                whereTemplate: () => {
-                  return {};
-                },
-                searchQuery: SEARCH_COMPANY_QUERY,
-                searchTemplate: (searchInput: string) => ({
+                query: SEARCH_COMPANY_QUERY,
+                template: (searchInput: string) => ({
                   name: { _ilike: `%${searchInput}%` },
                 }),
-                searchResultMapper: (company: GraphqlQueryCompany) => ({
-                  displayValue: company.name,
-                  value: {
-                    id: company.id,
-                    name: company.name,
-                    domain_name: company.domain_name,
-                  },
+                resultMapper: (company) => ({
+                  render: (company) => company.name,
+                  value: mapCompany(company),
                 }),
-                operands: [],
-              } satisfies FilterType<People_Bool_Exp>
+              } satisfies SearchConfigType<Company>
             }
           />
         ),

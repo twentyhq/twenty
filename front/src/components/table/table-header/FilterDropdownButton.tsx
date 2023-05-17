@@ -1,34 +1,43 @@
 import { ChangeEvent, useCallback, useState } from 'react';
 import DropdownButton from './DropdownButton';
-import { FilterOperandType, FilterType, SelectedFilterType } from './interface';
+import {
+  FilterConfigType,
+  FilterOperandType,
+  SearchConfigType,
+  SearchableType,
+  SelectedFilterType,
+} from './interface';
 
-type OwnProps<FilterProperties> = {
+type OwnProps = {
   isFilterSelected: boolean;
-  availableFilters: FilterType<FilterProperties>[];
+  availableFilters: FilterConfigType[];
   filterSearchResults?: {
-    results: { displayValue: string; value: any }[];
+    results: {
+      render: (value: SearchableType) => string;
+      value: SearchableType;
+    }[];
     loading: boolean;
   };
-  onFilterSelect: (filter: SelectedFilterType<FilterProperties>) => void;
+  onFilterSelect: (filter: SelectedFilterType) => void;
   onFilterSearch: (
-    filter: FilterType<FilterProperties> | null,
+    filter: SearchConfigType<any> | null,
     searchValue: string,
   ) => void;
 };
 
-export function FilterDropdownButton<FilterProperties>({
+export function FilterDropdownButton({
   availableFilters,
   filterSearchResults,
   onFilterSearch,
   onFilterSelect,
   isFilterSelected,
-}: OwnProps<FilterProperties>) {
+}: OwnProps) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
 
   const [selectedFilter, setSelectedFilter] = useState<
-    FilterType<FilterProperties> | undefined
+    FilterConfigType | undefined
   >(undefined);
 
   const [selectedFilterOperand, setSelectedFilterOperand] = useState<
@@ -57,10 +66,8 @@ export function FilterDropdownButton<FilterProperties>({
   );
 
   const renderSearchResults = (
-    filterSearchResults: NonNullable<
-      OwnProps<FilterProperties>['filterSearchResults']
-    >,
-    selectedFilter: FilterType<FilterProperties>,
+    filterSearchResults: NonNullable<OwnProps['filterSearchResults']>,
+    selectedFilter: FilterConfigType,
     selectedFilterOperand: FilterOperandType,
   ) => {
     if (filterSearchResults.loading) {
@@ -70,32 +77,24 @@ export function FilterDropdownButton<FilterProperties>({
         </DropdownButton.StyledDropdownItem>
       );
     }
-    return filterSearchResults.results.map((value, index) => (
+
+    return filterSearchResults.results.map((result, index) => (
       <DropdownButton.StyledDropdownItem
         key={`fields-value-${index}`}
         onClick={() => {
           onFilterSelect({
-            ...selectedFilter,
-            key: value.displayValue,
-            operand: selectedFilterOperand,
-            searchQuery: selectedFilter.searchQuery,
-            searchTemplate: selectedFilter.searchTemplate,
-            whereTemplate: selectedFilter.whereTemplate,
+            key: selectedFilter.key,
             label: selectedFilter.label,
-            value: value.displayValue,
+            value: result.value,
+            displayValue: result.render(result.value),
             icon: selectedFilter.icon,
-            where:
-              selectedFilter.whereTemplate(
-                selectedFilterOperand,
-                value.value,
-              ) || ({} as FilterProperties),
-            searchResultMapper: selectedFilter.searchResultMapper,
+            operand: selectedFilterOperand,
           });
           setIsUnfolded(false);
           setSelectedFilter(undefined);
         }}
       >
-        {value.displayValue}
+        {result.render(result.value)}
       </DropdownButton.StyledDropdownItem>
     ));
   };
@@ -106,7 +105,7 @@ export function FilterDropdownButton<FilterProperties>({
       onClick={() => {
         setSelectedFilter(filter);
         setSelectedFilterOperand(filter.operands[0]);
-        onFilterSearch(filter, '');
+        onFilterSearch(filter.searchConfig, '');
       }}
     >
       <DropdownButton.StyledIcon>{filter.icon}</DropdownButton.StyledIcon>
@@ -115,7 +114,7 @@ export function FilterDropdownButton<FilterProperties>({
   ));
 
   function renderFilterDropdown(
-    selectedFilter: FilterType<FilterProperties>,
+    selectedFilter: FilterConfigType,
     selectedFilterOperand: FilterOperandType,
   ) {
     return (
@@ -133,7 +132,7 @@ export function FilterDropdownButton<FilterProperties>({
             type="text"
             placeholder={selectedFilter.label}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              onFilterSearch(selectedFilter, event.target.value)
+              onFilterSearch(selectedFilter.searchConfig, event.target.value)
             }
           />
         </DropdownButton.StyledSearchField>

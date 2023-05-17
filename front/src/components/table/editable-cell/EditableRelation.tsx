@@ -2,8 +2,7 @@ import { ChangeEvent, ComponentType, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
 import styled from '@emotion/styled';
 import { useSearch } from '../../../services/search/search';
-import { FilterType } from '../table-header/interface';
-import { People_Bool_Exp } from '../../../generated/graphql';
+import { SearchConfigType, SearchableType } from '../table-header/interface';
 
 const StyledEditModeContainer = styled.div`
   width: 200px;
@@ -48,10 +47,13 @@ const StyledEditModeResultItem = styled.div`
   cursor: pointer;
 `;
 
-export type EditableRelationProps<RelationType, ChipComponentPropsType> = {
+export type EditableRelationProps<
+  RelationType extends SearchableType,
+  ChipComponentPropsType,
+> = {
   relation?: RelationType | null;
   searchPlaceholder: string;
-  searchFilter: FilterType<People_Bool_Exp>;
+  searchConfig: SearchConfigType<RelationType>;
   changeHandler: (relation: RelationType) => void;
   editModeHorizontalAlign?: 'left' | 'right';
   ChipComponent: ComponentType<ChipComponentPropsType>;
@@ -60,10 +62,13 @@ export type EditableRelationProps<RelationType, ChipComponentPropsType> = {
   ) => ChipComponentPropsType & JSX.IntrinsicAttributes;
 };
 
-function EditableRelation<RelationType, ChipComponentPropsType>({
+function EditableRelation<
+  RelationType extends SearchableType,
+  ChipComponentPropsType,
+>({
   relation,
   searchPlaceholder,
-  searchFilter,
+  searchConfig,
   changeHandler,
   editModeHorizontalAlign,
   ChipComponent,
@@ -72,7 +77,8 @@ function EditableRelation<RelationType, ChipComponentPropsType>({
   const [selectedRelation, setSelectedRelation] = useState(relation);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [filterSearchResults, setSearchInput, setFilterSearch] = useSearch();
+  const [filterSearchResults, setSearchInput, setFilterSearch] =
+    useSearch<RelationType>();
 
   return (
     <EditableCellWrapper
@@ -97,16 +103,16 @@ function EditableRelation<RelationType, ChipComponentPropsType>({
             <StyledEditModeSearchInput
               placeholder={searchPlaceholder}
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setFilterSearch(searchFilter);
+                setFilterSearch(searchConfig);
                 setSearchInput(event.target.value);
               }}
             />
           </StyledEditModeSearchContainer>
           <StyledEditModeResults>
             {filterSearchResults.results &&
-              filterSearchResults.results.map((result) => (
+              filterSearchResults.results.map((result, index) => (
                 <StyledEditModeResultItem
-                  key={result.value.id}
+                  key={index}
                   onClick={() => {
                     setSelectedRelation(result.value);
                     changeHandler(result.value);

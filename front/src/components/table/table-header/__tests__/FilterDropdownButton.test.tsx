@@ -1,6 +1,5 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { RegularFilterDropdownButton } from '../__stories__/FilterDropdownButton.stories';
-import { FaUsers } from 'react-icons/fa';
 
 it('Checks the default top option is Include', async () => {
   const setFilters = jest.fn();
@@ -24,15 +23,9 @@ it('Checks the default top option is Include', async () => {
 
   expect(setFilters).toHaveBeenCalledWith(
     expect.objectContaining({
-      key: 'Alexandre Prot',
-      value: 'Alexandre Prot',
+      displayValue: 'Alexandre Prot',
+      key: 'fullname',
       label: 'People',
-      operand: {
-        id: 'equal',
-        keyWord: 'equal',
-        label: 'Equal',
-      },
-      icon: <FaUsers />,
     }),
   );
 });
@@ -65,15 +58,9 @@ it('Checks the selection of top option for Not Equal', async () => {
 
   expect(setFilters).toHaveBeenCalledWith(
     expect.objectContaining({
-      key: 'Alexandre Prot',
-      value: 'Alexandre Prot',
+      key: 'fullname',
+      displayValue: 'Alexandre Prot',
       label: 'People',
-      operand: {
-        id: 'not-equal',
-        keyWord: 'not_equal',
-        label: 'Not equal',
-      },
-      icon: <FaUsers />,
     }),
   );
   const blueSortDropdownButton = getByText('Filter');
@@ -118,15 +105,9 @@ it('Calls the filters when typing a new name', async () => {
 
   expect(setFilters).toHaveBeenCalledWith(
     expect.objectContaining({
-      key: 'Jane Doe',
-      value: 'Jane Doe',
+      key: 'fullname',
+      displayValue: 'Jane Doe',
       label: 'People',
-      operand: {
-        id: 'equal',
-        keyWord: 'equal',
-        label: 'Equal',
-      },
-      icon: <FaUsers />,
     }),
   );
   const blueSortDropdownButton = getByText('Filter');

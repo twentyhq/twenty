@@ -1,4 +1,4 @@
-import { PartialCompany } from './company.interface';
+import { Company, GraphqlQueryCompany, mapCompany } from './company.interface';
 import { Pipe } from './pipe.interface';
 
 export type Person = {
@@ -7,7 +7,7 @@ export type Person = {
   lastname: string;
   picture?: string;
   email: string;
-  company: PartialCompany | null;
+  company: Company | null;
   phone: string;
   creationDate: Date;
   pipe: Pipe | null;
@@ -16,12 +16,7 @@ export type Person = {
 
 export type GraphqlQueryPerson = {
   city: string;
-  company: {
-    __typename: string;
-    id: string;
-    name: string;
-    domain_name: string;
-  };
+  company: GraphqlQueryCompany | null;
   created_at: string;
   email: string;
   firstname: string;
@@ -56,13 +51,7 @@ export const mapPerson = (person: GraphqlQueryPerson): Person => ({
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
     icon: '💰',
   },
-  company: person.company
-    ? {
-        id: person.company.id,
-        name: person.company.name,
-        domain_name: person.company.domain_name,
-      }
-    : null,
+  company: person.company ? mapCompany(person.company) : null,
 });
 
 export const mapGqlPerson = (person: Person): GraphqlMutationPerson => ({

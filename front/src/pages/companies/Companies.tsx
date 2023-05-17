@@ -25,7 +25,10 @@ import {
   Companies_Bool_Exp,
   Companies_Order_By,
 } from '../../generated/graphql';
-import { SelectedFilterType } from '../../components/table/table-header/interface';
+import {
+  FilterConfigType,
+  SelectedFilterType,
+} from '../../components/table/table-header/interface';
 import { useSearch } from '../../services/search/search';
 import ActionBar from '../../components/table/action-bar/ActionBar';
 
@@ -47,7 +50,7 @@ function Companies() {
   }, []);
 
   const updateFilters = useCallback(
-    (filters: Array<SelectedFilterType<Companies_Bool_Exp>>) => {
+    (filters: Array<SelectedFilterType<Company>>) => {
       setWhere(reduceFiltersToWhere(filters));
     },
     [],
@@ -108,7 +111,7 @@ function Companies() {
             viewName="All Companies"
             viewIcon={<FaList />}
             availableSorts={availableSorts}
-            availableFilters={availableFilters}
+            availableFilters={availableFilters as Array<FilterConfigType>}
             filterSearchResults={filterSearchResults}
             onSortsUpdate={updateSorts}
             onFiltersUpdate={updateFilters}

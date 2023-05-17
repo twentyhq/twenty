@@ -2,17 +2,17 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { EditableRelationStory } from '../__stories__/EditableRelation.stories';
 import { CompanyChipPropsType } from '../../../chips/CompanyChip';
-import { PartialCompany } from '../../../../interfaces/company.interface';
 
 import { EditableRelationProps } from '../EditableRelation';
 import { act } from 'react-dom/test-utils';
+import { Company } from '../../../../interfaces/company.interface';
 
 it('Checks the EditableRelation editing event bubbles up', async () => {
   const func = jest.fn(() => null);
   const { getByTestId, getByText } = render(
     <EditableRelationStory
       {...(EditableRelationStory.args as EditableRelationProps<
-        PartialCompany,
+        Company,
         CompanyChipPropsType
       >)}
       changeHandler={func}
@@ -49,10 +49,16 @@ it('Checks the EditableRelation editing event bubbles up', async () => {
   });
 
   await waitFor(() => {
-    expect(func).toBeCalledWith({
-      domain_name: 'abnb.com',
-      id: 'abnb',
-      name: 'Airbnb',
-    });
+    expect(func).toBeCalledWith(
+      expect.objectContaining({
+        accountOwner: null,
+        address: undefined,
+        domain_name: 'abnb.com',
+        employees: undefined,
+        id: 'abnb',
+        name: 'Airbnb',
+        opportunities: [],
+      }),
+    );
   });
 });

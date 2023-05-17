@@ -1,8 +1,5 @@
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
-import {
-  Company,
-  GraphqlQueryCompany,
-} from '../../interfaces/company.interface';
+import { Company, mapCompany } from '../../interfaces/company.interface';
 import { updateCompany } from '../../services/companies';
 import ColumnHead from '../../components/table/ColumnHead';
 import CompanyChip from '../../components/chips/CompanyChip';
@@ -15,28 +12,24 @@ import {
   FaRegUser,
   FaUsers,
   FaBuilding,
-  FaUser,
 } from 'react-icons/fa';
 import PersonChip, {
   PersonChipPropsType,
 } from '../../components/chips/PersonChip';
 import EditableChip from '../../components/table/editable-cell/EditableChip';
 import {
-  FilterType,
+  FilterConfigType,
+  SearchConfigType,
   SortType,
 } from '../../components/table/table-header/interface';
-import {
-  Companies_Bool_Exp,
-  Companies_Order_By,
-  Users_Bool_Exp,
-} from '../../generated/graphql';
+import { Companies_Order_By } from '../../generated/graphql';
 import {
   SEARCH_COMPANY_QUERY,
   SEARCH_USER_QUERY,
 } from '../../services/search/search';
 import EditableDate from '../../components/table/editable-cell/EditableDate';
 import EditableRelation from '../../components/table/editable-cell/EditableRelation';
-import { GraphqlQueryUser, PartialUser } from '../../interfaces/user.interface';
+import { User, mapUser } from '../../interfaces/user.interface';
 import { useMemo } from 'react';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 import Checkbox from '../../components/form/Checkbox';
@@ -79,63 +72,67 @@ export const availableFilters = [
     key: 'company_name',
     label: 'Company',
     icon: <FaBuilding />,
-    whereTemplate: (operand, { companyName }) => {
-      if (operand.keyWord === 'equal') {
-        return {
-          name: { _eq: companyName },
-        };
-      }
-
-      if (operand.keyWord === 'not_equal') {
-        return {
-          _not: { name: { _eq: companyName } },
-        };
-      }
+    searchConfig: {
+      query: SEARCH_COMPANY_QUERY,
+      template: (searchInput) => ({
+        name: { _ilike: `%${searchInput}%` },
+      }),
+      resultMapper: (company) => ({
+        render: (company) => company.name,
+        value: mapCompany(company),
+      }),
     },
-    searchQuery: SEARCH_COMPANY_QUERY,
-    searchTemplate: (searchInput: string) => ({
-      name: { _ilike: `%${searchInput}%` },
-    }),
-    searchResultMapper: (company: GraphqlQueryCompany) => ({
-      displayValue: company.name,
-      value: { companyName: company.name },
-    }),
+    selectedValueRender: (company) => company.name,
     operands: [
-      { label: 'Equal', id: 'equal', keyWord: 'equal' },
-      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+      {
+        label: 'Equal',
+        id: 'equal',
+        whereTemplate: (company) => ({
+          name: { _eq: company.name },
+        }),
+      },
+      {
+        label: 'Not equal',
+        id: 'not-equal',
+        whereTemplate: (company) => ({
+          _not: { name: { _eq: company.name } },
+        }),
+      },
     ],
-  },
+  } as FilterConfigType<Company, Company>,
   {
-    key: 'domainName',
+    key: 'company_domain_name',
     label: 'Url',
     icon: <FaLink />,
-    whereTemplate: (operand, { domainName }) => {
-      if (operand.keyWord === 'equal') {
-        return {
-          domain_name: { _eq: domainName },
-        };
-      }
-
-      if (operand.keyWord === 'not_equal') {
-        return {
-          _not: { domain_name: { _eq: domainName } },
-        };
-      }
+    searchConfig: {
+      query: SEARCH_COMPANY_QUERY,
+      template: (searchInput) => ({
+        name: { _ilike: `%${searchInput}%` },
+      }),
+      resultMapper: (company) => ({
+        render: (company) => company.domain_name,
+        value: mapCompany(company),
+      }),
     },
-    searchQuery: SEARCH_COMPANY_QUERY,
-    searchTemplate: (searchInput: string) => ({
-      domain_name: { _ilike: `%${searchInput}%` },
-    }),
-    searchResultMapper: (company: GraphqlQueryCompany) => ({
-      displayValue: company.domain_name,
-      value: { domainName: company.domain_name },
-    }),
+    selectedValueRender: (company) => company.domain_name,
     operands: [
-      { label: 'Equal', id: 'equal', keyWord: 'equal' },
-      { label: 'Not equal', id: 'not-equal', keyWord: 'not_equal' },
+      {
+        label: 'Equal',
+        id: 'equal',
+        whereTemplate: (company) => ({
+          domain_name: { _eq: company.domain_name },
+        }),
+      },
+      {
+        label: 'Not equal',
+        id: 'not-equal',
+        whereTemplate: (company) => ({
+          _not: { domain_name: { _eq: company.domain_name } },
+        }),
+      },
     ],
-  },
-] satisfies Array<FilterType<Companies_Bool_Exp>>;
+  } as FilterConfigType<Company, Company>,
+];
 
 const columnHelper = createColumnHelper<Company>();
 
@@ -239,18 +236,18 @@ export const useCompaniesColumns = () => {
           <ColumnHead viewName="Account Owner" viewIcon={<FaRegUser />} />
         ),
         cell: (props) => (
-          <EditableRelation<PartialUser, PersonChipPropsType>
+          <EditableRelation<User, PersonChipPropsType>
             relation={props.row.original.accountOwner}
             searchPlaceholder="Account Owner"
             ChipComponent={PersonChip}
             chipComponentPropsMapper={(
-              accountOwner: PartialUser,
+              accountOwner: User,
             ): PersonChipPropsType => {
               return {
                 name: accountOwner.displayName,
               };
             }}
-            changeHandler={(relation: PartialUser) => {
+            changeHandler={(relation: User) => {
               const company = props.row.original;
               if (company.accountOwner) {
                 company.accountOwner.id = relation.id;
@@ -263,28 +260,17 @@ export const useCompaniesColumns = () => {
               }
               updateCompany(company);
             }}
-            searchFilter={
+            searchConfig={
               {
-                key: 'account_owner_name',
-                label: 'Account Owner',
-                icon: <FaUser />,
-                whereTemplate: () => {
-                  return {};
-                },
-                searchQuery: SEARCH_USER_QUERY,
-                searchTemplate: (searchInput: string) => ({
+                query: SEARCH_USER_QUERY,
+                template: (searchInput: string) => ({
                   displayName: { _ilike: `%${searchInput}%` },
                 }),
-                searchResultMapper: (accountOwner: GraphqlQueryUser) => ({
-                  displayValue: accountOwner.displayName,
-                  value: {
-                    id: accountOwner.id,
-                    email: accountOwner.email,
-                    displayName: accountOwner.displayName,
-                  },
+                resultMapper: (accountOwner) => ({
+                  render: (accountOwner) => accountOwner.displayName,
+                  value: mapUser(accountOwner),
                 }),
-                operands: [],
-              } satisfies FilterType<Users_Bool_Exp>
+              } satisfies SearchConfigType<User>
             }
           />
         ),

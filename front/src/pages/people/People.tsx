@@ -19,7 +19,10 @@ import {
 } from '../../services/people';
 import { useSearch } from '../../services/search/search';
 import { People_Bool_Exp } from '../../generated/graphql';
-import { SelectedFilterType } from '../../components/table/table-header/interface';
+import {
+  FilterConfigType,
+  SelectedFilterType,
+} from '../../components/table/table-header/interface';
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
@@ -44,7 +47,7 @@ function People() {
   }, []);
 
   const updateFilters = useCallback(
-    (filters: Array<SelectedFilterType<People_Bool_Exp>>) => {
+    (filters: Array<SelectedFilterType<Person>>) => {
       setWhere(reduceFiltersToWhere(filters));
     },
     [],
@@ -106,7 +109,7 @@ function People() {
             viewName="All People"
             viewIcon={<FaList />}
             availableSorts={availableSorts}
-            availableFilters={availableFilters}
+            availableFilters={availableFilters as Array<FilterConfigType>}
             filterSearchResults={filterSearchResults}
             onSortsUpdate={updateSorts}
             onFiltersUpdate={updateFilters}

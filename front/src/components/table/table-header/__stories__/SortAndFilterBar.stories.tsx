@@ -1,8 +1,8 @@
 import SortAndFilterBar from '../SortAndFilterBar';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
-import { GET_PEOPLE } from '../../../../services/people';
 import { FaArrowDown } from 'react-icons/fa';
+import { SelectedFilterType } from '../interface';
 
 const component = {
   title: 'SortAndFilterBar',
@@ -45,26 +45,28 @@ export const RegularSortAndFilterBar = ({
         filters={[
           {
             label: 'People',
-            operand: { label: 'Include', id: 'include', keyWord: 'ilike' },
+            operand: {
+              label: 'Include',
+              id: 'include',
+              whereTemplate: (person) => {
+                return { email: { _eq: person.email } };
+              },
+            },
             key: 'test_filter',
             icon: <FaArrowDown />,
-            value: 'John Doe',
-            where: {
-              firstname: { _ilike: 'John Doe' },
+            displayValue: 'john@doedoe.com',
+            value: {
+              id: 'test',
+              email: 'john@doedoe.com',
+              firstname: 'John',
+              lastname: 'Doe',
+              phone: '123456789',
+              company: null,
+              creationDate: new Date(),
+              pipe: null,
+              city: 'Paris',
             },
-            searchQuery: GET_PEOPLE,
-            searchTemplate: () => ({
-              firstname: { _ilike: 'John Doe' },
-            }),
-            whereTemplate: () => {
-              return { firstname: { _ilike: 'John Doe' } };
-            },
-            searchResultMapper: (data) => ({
-              displayValue: 'John Doe',
-              value: data.firstname,
-            }),
-            operands: [],
-          },
+          } satisfies SelectedFilterType,
         ]}
       />
     </ThemeProvider>

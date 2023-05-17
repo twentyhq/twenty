@@ -17,9 +17,6 @@ export type Company = {
   creationDate: Date;
 };
 
-export type PartialCompany = Partial<Company> &
-  Pick<Company, 'id' | 'name' | 'domain_name'>;
-
 export type GraphqlQueryCompany = {
   id: string;
   name: string;
