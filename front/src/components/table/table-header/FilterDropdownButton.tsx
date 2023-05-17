@@ -4,10 +4,12 @@ import {
   FilterConfigType,
   FilterOperandType,
   FilterableFieldsType,
+  SelectedFilterType,
+} from '../../../interfaces/filters/interface';
+import {
   SearchConfigType,
   SearchableType,
-  SelectedFilterType,
-} from './interface';
+} from '../../../interfaces/search/interface';
 
 type OwnProps<TData extends FilterableFieldsType> = {
   isFilterSelected: boolean;

@@ -1,11 +1,11 @@
 import { Order_By } from '../../../generated/graphql';
+import { BoolExpType } from '../../../interfaces/entities/generic.interface';
 import {
-  BoolExpType,
-  FilterWhereType,
   FilterableFieldsType,
+  FilterWhereType,
   SelectedFilterType,
-  SelectedSortType,
-} from './interface';
+} from '../../../interfaces/filters/interface';
+import { SelectedSortType } from '../../../interfaces/sorts/interface';
 
 export const reduceFiltersToWhere = <
   ValueType extends FilterableFieldsType,

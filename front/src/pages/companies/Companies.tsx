@@ -9,9 +9,12 @@ import {
   deleteCompanies,
   insertCompany,
   useCompaniesQuery,
-} from '../../services/companies';
+} from '../../services/api/companies';
 import Table from '../../components/table/Table';
-import { Company, mapToCompany } from '../../interfaces/company.interface';
+import {
+  Company,
+  mapToCompany,
+} from '../../interfaces/entities/company.interface';
 import {
   useCompaniesColumns,
   availableFilters,
@@ -25,9 +28,9 @@ import {
   Companies_Bool_Exp,
   Companies_Order_By,
 } from '../../generated/graphql';
-import { SelectedFilterType } from '../../components/table/table-header/interface';
-import { useSearch } from '../../services/search/search';
+import { useSearch } from '../../services/api/search/search';
 import ActionBar from '../../components/table/action-bar/ActionBar';
+import { SelectedFilterType } from '../../interfaces/filters/interface';
 
 const StyledCompaniesContainer = styled.div`
   display: flex;

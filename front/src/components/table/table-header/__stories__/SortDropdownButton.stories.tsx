@@ -1,4 +1,3 @@
-import { SortType } from '../interface';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import {
@@ -12,6 +11,7 @@ import {
 import { SortDropdownButton } from '../SortDropdownButton';
 import styled from '@emotion/styled';
 import { Order_By, People_Order_By } from '../../../../generated/graphql';
+import { SortType } from '../../../../interfaces/sorts/interface';
 
 const component = {
   title: 'SortDropdownButton',

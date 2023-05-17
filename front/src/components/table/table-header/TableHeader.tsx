@@ -1,17 +1,22 @@
 import styled from '@emotion/styled';
-import {
-  FilterConfigType,
-  FilterableFieldsType,
-  SearchConfigType,
-  SearchableType,
-  SelectedFilterType,
-  SelectedSortType,
-  SortType,
-} from './interface';
+
 import { ReactNode, useCallback, useState } from 'react';
 import { SortDropdownButton } from './SortDropdownButton';
 import { FilterDropdownButton } from './FilterDropdownButton';
 import SortAndFilterBar from './SortAndFilterBar';
+import {
+  FilterableFieldsType,
+  FilterConfigType,
+  SelectedFilterType,
+} from '../../../interfaces/filters/interface';
+import {
+  SearchableType,
+  SearchConfigType,
+} from '../../../interfaces/search/interface';
+import {
+  SortType,
+  SelectedSortType,
+} from '../../../interfaces/sorts/interface';
 
 type OwnProps<SortField, TData extends FilterableFieldsType> = {
   viewName: string;

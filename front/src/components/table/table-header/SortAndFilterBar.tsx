@@ -4,8 +4,8 @@ import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import {
   FilterableFieldsType,
   SelectedFilterType,
-  SelectedSortType,
-} from './interface';
+} from '../../../interfaces/filters/interface';
+import { SelectedSortType } from '../../../interfaces/sorts/interface';
 
 type OwnProps<SortField, TData extends FilterableFieldsType> = {
   sorts: Array<SelectedSortType<SortField>>;

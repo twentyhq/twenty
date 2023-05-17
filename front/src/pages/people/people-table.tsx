@@ -14,26 +14,30 @@ import Checkbox from '../../components/form/Checkbox';
 import CompanyChip, {
   CompanyChipPropsType,
 } from '../../components/chips/CompanyChip';
-import { Person, mapToPerson } from '../../interfaces/person.interface';
-import EditableText from '../../components/table/editable-cell/EditableText';
 import {
-  FilterConfigType,
-  SearchConfigType,
-  SortType,
-} from '../../components/table/table-header/interface';
+  Person,
+  mapToPerson,
+} from '../../interfaces/entities/person.interface';
+import EditableText from '../../components/editable-cell/EditableText';
 import { Order_By, People_Order_By } from '../../generated/graphql';
 import {
   SEARCH_COMPANY_QUERY,
   SEARCH_PEOPLE_QUERY,
-} from '../../services/search/search';
-import { Company, mapToCompany } from '../../interfaces/company.interface';
-import EditablePhone from '../../components/table/editable-cell/EditablePhone';
-import EditableFullName from '../../components/table/editable-cell/EditableFullName';
-import EditableDate from '../../components/table/editable-cell/EditableDate';
-import EditableRelation from '../../components/table/editable-cell/EditableRelation';
-import { updatePerson } from '../../services/people';
+} from '../../services/api/search/search';
+import {
+  Company,
+  mapToCompany,
+} from '../../interfaces/entities/company.interface';
+import EditablePhone from '../../components/editable-cell/EditablePhone';
+import EditableFullName from '../../components/editable-cell/EditableFullName';
+import EditableDate from '../../components/editable-cell/EditableDate';
+import EditableRelation from '../../components/editable-cell/EditableRelation';
+import { updatePerson } from '../../services/api/people';
 import { useMemo } from 'react';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
+import { SortType } from '../../interfaces/sorts/interface';
+import { FilterConfigType } from '../../interfaces/filters/interface';
+import { SearchConfigType } from '../../interfaces/search/interface';
 
 export const availableSorts = [
   {

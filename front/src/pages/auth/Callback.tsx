@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { refreshAccessToken } from '../../services/AuthService';
+import { refreshAccessToken } from '../../services/auth/AuthService';
 
 function Callback() {
   const [searchParams] = useSearchParams();

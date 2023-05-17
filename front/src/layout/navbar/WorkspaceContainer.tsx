@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Workspace } from '../../interfaces/workspace.interface';
+import { Workspace } from '../../interfaces/entities/workspace.interface';
 
 type OwnProps = {
   workspace: Workspace;

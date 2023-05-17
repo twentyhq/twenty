@@ -2,8 +2,8 @@ import SortAndFilterBar from '../SortAndFilterBar';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FaArrowDown } from 'react-icons/fa';
-import { SelectedFilterType } from '../interface';
-import { Person } from '../../../../interfaces/person.interface';
+import { Person } from '../../../../interfaces/entities/person.interface';
+import { SelectedFilterType } from '../../../../interfaces/filters/interface';
 
 const component = {
   title: 'SortAndFilterBar',

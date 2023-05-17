@@ -10,12 +10,13 @@ import TableHeader from './table-header/TableHeader';
 import styled from '@emotion/styled';
 import {
   FilterConfigType,
-  SearchConfigType,
-  SearchableType,
   SelectedFilterType,
-  SelectedSortType,
-  SortType,
-} from './table-header/interface';
+} from '../../interfaces/filters/interface';
+import {
+  SearchableType,
+  SearchConfigType,
+} from '../../interfaces/search/interface';
+import { SortType, SelectedSortType } from '../../interfaces/sorts/interface';
 
 declare module 'react' {
   function forwardRef<T, P = object>(

@@ -5,11 +5,11 @@ import { act } from 'react-dom/test-utils';
 import {
   GraphqlMutationPerson,
   GraphqlQueryPerson,
-} from '../../../interfaces/person.interface';
+} from '../../../interfaces/entities/person.interface';
 
 jest.mock('../../../apollo', () => {
   const personInterface = jest.requireActual(
-    '../../../interfaces/person.interface',
+    '../../../interfaces/entities/person.interface',
   );
   return {
     apiClient: {

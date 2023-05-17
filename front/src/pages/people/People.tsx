@@ -8,7 +8,10 @@ import {
   availableSorts,
   usePeopleColumns,
 } from './people-table';
-import { Person, mapToPerson } from '../../interfaces/person.interface';
+import {
+  Person,
+  mapToPerson,
+} from '../../interfaces/entities/person.interface';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   PeopleSelectedSortType,
@@ -16,15 +19,15 @@ import {
   deletePeople,
   insertPerson,
   usePeopleQuery,
-} from '../../services/people';
-import { useSearch } from '../../services/search/search';
+} from '../../services/api/people';
+import { useSearch } from '../../services/api/search/search';
 import { People_Bool_Exp } from '../../generated/graphql';
-import { SelectedFilterType } from '../../components/table/table-header/interface';
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
 } from '../../components/table/table-header/helpers';
 import ActionBar from '../../components/table/action-bar/ActionBar';
+import { SelectedFilterType } from '../../interfaces/filters/interface';
 
 const StyledPeopleContainer = styled.div`
   display: flex;

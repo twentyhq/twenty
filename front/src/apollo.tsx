@@ -8,7 +8,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { RestLink } from 'apollo-link-rest';
 import { onError } from '@apollo/client/link/error';
-import { refreshAccessToken } from './services/AuthService';
+import { refreshAccessToken } from './services/auth/AuthService';
 
 const apiLink = createHttpLink({
   uri: `${process.env.REACT_APP_API_URL}/v1/graphql`,
