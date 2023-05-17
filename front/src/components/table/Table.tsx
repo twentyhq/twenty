@@ -1,4 +1,5 @@
 import * as React from 'react';
+import styled from '@emotion/styled';
 
 import {
   ColumnDef,
@@ -7,15 +8,10 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import TableHeader from './table-header/TableHeader';
-import styled from '@emotion/styled';
 import {
   FilterConfigType,
   SelectedFilterType,
 } from '../../interfaces/filters/interface';
-import {
-  SearchableType,
-  SearchConfigType,
-} from '../../interfaces/search/interface';
 import { SortType, SelectedSortType } from '../../interfaces/sorts/interface';
 
 declare module 'react' {
@@ -34,19 +30,8 @@ type OwnProps<
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
   availableFilters?: FilterConfigType<TData>[];
-  filterSearchResults?: {
-    results: {
-      render: (value: SearchableType) => string;
-      value: SearchableType;
-    }[];
-    loading: boolean;
-  };
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onFiltersUpdate?: (sorts: Array<SelectedFilterType<TData>>) => void;
-  onFilterSearch?: (
-    filter: SearchConfigType<any> | null,
-    searchValue: string,
-  ) => void;
   onRowSelectionChange?: (rowSelection: string[]) => void;
 };
 
@@ -112,10 +97,8 @@ const Table = <
     viewIcon,
     availableSorts,
     availableFilters,
-    filterSearchResults,
     onSortsUpdate,
     onFiltersUpdate,
-    onFilterSearch,
     onRowSelectionChange,
   }: OwnProps<TData, SortField>,
   ref: React.ForwardedRef<{ resetRowSelection: () => void } | undefined>,
@@ -156,10 +139,8 @@ const Table = <
         viewIcon={viewIcon}
         availableSorts={availableSorts}
         availableFilters={availableFilters as FilterConfigType<any>[]}
-        filterSearchResults={filterSearchResults}
         onSortsUpdate={onSortsUpdate}
         onFiltersUpdate={onFiltersUpdate}
-        onFilterSearch={onFilterSearch}
       />
       <StyledTableScrollableContainer>
         <StyledTable>

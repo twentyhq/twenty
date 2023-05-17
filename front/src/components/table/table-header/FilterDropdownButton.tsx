@@ -7,31 +7,19 @@ import {
   SelectedFilterType,
 } from '../../../interfaces/filters/interface';
 import {
-  SearchConfigType,
-  SearchableType,
-} from '../../../interfaces/search/interface';
+  SearchResultsType,
+  useSearch,
+} from '../../../services/api/search/search';
+import { SearchableType } from '../../../interfaces/search/interface';
 
 type OwnProps<TData extends FilterableFieldsType> = {
   isFilterSelected: boolean;
   availableFilters: FilterConfigType<TData>[];
-  filterSearchResults?: {
-    results: {
-      render: (value: SearchableType) => string;
-      value: SearchableType;
-    }[];
-    loading: boolean;
-  };
   onFilterSelect: (filter: SelectedFilterType<TData>) => void;
-  onFilterSearch: (
-    filter: SearchConfigType<any> | null,
-    searchValue: string,
-  ) => void;
 };
 
 export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   availableFilters,
-  filterSearchResults,
-  onFilterSearch,
   onFilterSelect,
   isFilterSelected,
 }: OwnProps<TData>) => {
@@ -47,12 +35,14 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
     FilterOperandType<TData> | undefined
   >(undefined);
 
+  const [filterSearchResults, setSearchInput, setFilterSearch] = useSearch();
+
   const resetState = useCallback(() => {
     setIsOptionUnfolded(false);
     setSelectedFilter(undefined);
     setSelectedFilterOperand(undefined);
-    onFilterSearch(null, '');
-  }, [onFilterSearch]);
+    setFilterSearch(null);
+  }, [setFilterSearch]);
 
   const renderSelectOptionItems = selectedFilter?.operands.map(
     (filterOperand, index) => (
@@ -69,7 +59,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   );
 
   const renderSearchResults = (
-    filterSearchResults: NonNullable<OwnProps<TData>['filterSearchResults']>,
+    filterSearchResults: SearchResultsType<SearchableType>,
     selectedFilter: FilterConfigType<TData>,
     selectedFilterOperand: FilterOperandType<TData>,
   ) => {
@@ -108,7 +98,8 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
       onClick={() => {
         setSelectedFilter(filter);
         setSelectedFilterOperand(filter.operands[0]);
-        onFilterSearch(filter.searchConfig, '');
+        setFilterSearch(filter.searchConfig);
+        setSearchInput('');
       }}
     >
       <DropdownButton.StyledIcon>{filter.icon}</DropdownButton.StyledIcon>
@@ -134,9 +125,10 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
           <input
             type="text"
             placeholder={selectedFilter.label}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              onFilterSearch(selectedFilter.searchConfig, event.target.value)
-            }
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              setFilterSearch(selectedFilter.searchConfig);
+              setSearchInput(event.target.value);
+            }}
           />
         </DropdownButton.StyledSearchField>
         {filterSearchResults &&

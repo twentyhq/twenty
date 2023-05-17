@@ -3,13 +3,10 @@ import { lightTheme } from '../../../../layout/styles/themes';
 import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
-import {
-  SEARCH_PEOPLE_QUERY,
-  useSearch,
-} from '../../../../services/api/search/search';
+import { SEARCH_PEOPLE_QUERY } from '../../../../services/api/search/search';
 import { MockedProvider } from '@apollo/client/testing';
 import { mockData } from '../../../../pages/people/__tests__/__data__/mock-data';
-import { availableFilters } from '../../../../pages/people/people-table';
+import { availableFilters } from '../../../../pages/people/people-filters';
 import { Person } from '../../../../interfaces/entities/person.interface';
 import {
   FilterableFieldsType,
@@ -90,7 +87,6 @@ const InnerRegularFilterDropdownButton = ({
   setFilter: setFilters,
 }: OwnProps<Person>) => {
   const [, innerSetFilters] = useState<SelectedFilterType<Person>>();
-  const [filterSearchResults, setSearhInput, setFilterSearch] = useSearch();
 
   const outerSetFilters = useCallback(
     (filter: SelectedFilterType<Person>) => {
@@ -105,11 +101,6 @@ const InnerRegularFilterDropdownButton = ({
         availableFilters={availableFilters}
         isFilterSelected={true}
         onFilterSelect={outerSetFilters}
-        filterSearchResults={filterSearchResults}
-        onFilterSearch={(filter, searchValue) => {
-          setSearhInput(searchValue);
-          setFilterSearch(filter);
-        }}
       />
     </StyleDiv>
   );

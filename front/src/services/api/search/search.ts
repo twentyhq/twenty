@@ -29,7 +29,7 @@ export const SEARCH_USER_QUERY = gql`
   }
 `;
 
-const EMPTY_QUERY = gql`
+export const EMPTY_QUERY = gql`
   query EmptyQuery {
     _
   }
@@ -58,14 +58,16 @@ const debounce = <FuncArgs extends any[]>(
   };
 };
 
+export type SearchResultsType<T extends SearchableType> = {
+  results: {
+    render: (value: T) => string;
+    value: T;
+  }[];
+  loading: boolean;
+};
+
 export const useSearch = <T extends SearchableType>(): [
-  {
-    results: {
-      render: (value: T) => string;
-      value: T;
-    }[];
-    loading: boolean;
-  },
+  SearchResultsType<T>,
   React.Dispatch<React.SetStateAction<string>>,
   React.Dispatch<React.SetStateAction<SearchConfigType<T> | null>>,
 ] => {
@@ -87,18 +89,15 @@ export const useSearch = <T extends SearchableType>(): [
     );
   }, [searchConfig, searchInput]);
 
-  const searchFilterQueryResults = useQuery(
-    searchConfig?.query || EMPTY_QUERY,
-    {
-      variables: {
-        where,
-        limit: 5,
-      },
-      skip: !searchConfig,
+  const searchQueryResults = useQuery(searchConfig?.query || EMPTY_QUERY, {
+    variables: {
+      where,
+      limit: 5,
     },
-  );
+    skip: !searchConfig,
+  });
 
-  const searchFilterResults = useMemo<{
+  const searchResults = useMemo<{
     results: { render: (value: T) => string; value: any }[];
     loading: boolean;
   }>(() => {
@@ -108,7 +107,7 @@ export const useSearch = <T extends SearchableType>(): [
         results: [],
       };
     }
-    if (searchFilterQueryResults.loading) {
+    if (searchQueryResults.loading) {
       return {
         loading: true,
         results: [],
@@ -116,11 +115,11 @@ export const useSearch = <T extends SearchableType>(): [
     }
     return {
       loading: false,
-      results: searchFilterQueryResults.data.searchResults.map(
+      results: searchQueryResults.data.searchResults.map(
         searchConfig.resultMapper,
       ),
     };
-  }, [searchConfig, searchFilterQueryResults]);
+  }, [searchConfig, searchQueryResults]);
 
-  return [searchFilterResults, debouncedsetSearchInput, setSearchConfig];
+  return [searchResults, debouncedsetSearchInput, setSearchConfig];
 };

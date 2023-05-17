@@ -1,7 +1,7 @@
-import { FaRegBuilding, FaList } from 'react-icons/fa';
-import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
-import styled from '@emotion/styled';
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { FaRegBuilding, FaList } from 'react-icons/fa';
+import styled from '@emotion/styled';
+import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import { v4 as uuidv4 } from 'uuid';
 import {
   CompaniesSelectedSortType,
@@ -15,22 +15,18 @@ import {
   Company,
   mapToCompany,
 } from '../../interfaces/entities/company.interface';
-import {
-  useCompaniesColumns,
-  availableFilters,
-  availableSorts,
-} from './companies-table';
+
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
 } from '../../components/table/table-header/helpers';
-import {
-  Companies_Bool_Exp,
-  Companies_Order_By,
-} from '../../generated/graphql';
-import { useSearch } from '../../services/api/search/search';
+import { Companies_Order_By } from '../../generated/graphql';
 import ActionBar from '../../components/table/action-bar/ActionBar';
 import { SelectedFilterType } from '../../interfaces/filters/interface';
+import { BoolExpType } from '../../interfaces/entities/generic.interface';
+import { useCompaniesColumns } from './companies-columns';
+import { availableSorts } from './companies-sorts';
+import { availableFilters } from './companies-filters';
 
 const StyledCompaniesContainer = styled.div`
   display: flex;
@@ -39,11 +35,9 @@ const StyledCompaniesContainer = styled.div`
 
 function Companies() {
   const [orderBy, setOrderBy] = useState<Companies_Order_By[]>(defaultOrderBy);
-  const [where, setWhere] = useState<Companies_Bool_Exp>({});
+  const [where, setWhere] = useState<BoolExpType<Company>>({});
   const [internalData, setInternalData] = useState<Array<Company>>([]);
   const [selectedRowIds, setSelectedRowIds] = useState<Array<string>>([]);
-
-  const [filterSearchResults, setSearhInput, setFilterSearch] = useSearch();
 
   const updateSorts = useCallback((sorts: Array<CompaniesSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
@@ -113,13 +107,8 @@ function Companies() {
             viewIcon={<FaList />}
             availableSorts={availableSorts}
             availableFilters={availableFilters}
-            filterSearchResults={filterSearchResults}
             onSortsUpdate={updateSorts}
             onFiltersUpdate={updateFilters}
-            onFilterSearch={(filter, searchValue) => {
-              setSearhInput(searchValue);
-              setFilterSearch(filter);
-            }}
             onRowSelectionChange={setSelectedRowIds}
           />
         </StyledCompaniesContainer>

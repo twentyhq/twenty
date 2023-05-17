@@ -1,18 +1,15 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FaRegUser, FaList } from 'react-icons/fa';
-import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
-import Table from '../../components/table/Table';
 import { v4 as uuidv4 } from 'uuid';
 import styled from '@emotion/styled';
-import {
-  availableFilters,
-  availableSorts,
-  usePeopleColumns,
-} from './people-table';
+
+import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
+import Table from '../../components/table/Table';
+
 import {
   Person,
   mapToPerson,
 } from '../../interfaces/entities/person.interface';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   PeopleSelectedSortType,
   defaultOrderBy,
@@ -20,14 +17,16 @@ import {
   insertPerson,
   usePeopleQuery,
 } from '../../services/api/people';
-import { useSearch } from '../../services/api/search/search';
-import { People_Bool_Exp } from '../../generated/graphql';
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
 } from '../../components/table/table-header/helpers';
 import ActionBar from '../../components/table/action-bar/ActionBar';
 import { SelectedFilterType } from '../../interfaces/filters/interface';
+import { BoolExpType } from '../../interfaces/entities/generic.interface';
+import { usePeopleColumns } from './people-columns';
+import { availableSorts } from './people-sorts';
+import { availableFilters } from './people-filters';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -37,8 +36,7 @@ const StyledPeopleContainer = styled.div`
 
 function People() {
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
-  const [where, setWhere] = useState<People_Bool_Exp>({});
-  const [filterSearchResults, setSearchInput, setFilterSearch] = useSearch();
+  const [where, setWhere] = useState<BoolExpType<Person>>({});
   const [internalData, setInternalData] = useState<Array<Person>>([]);
   const [selectedRowIds, setSelectedRowIds] = useState<Array<string>>([]);
 
@@ -111,13 +109,8 @@ function People() {
             viewIcon={<FaList />}
             availableSorts={availableSorts}
             availableFilters={availableFilters}
-            filterSearchResults={filterSearchResults}
             onSortsUpdate={updateSorts}
             onFiltersUpdate={updateFilters}
-            onFilterSearch={(filter, searchValue) => {
-              setSearchInput(searchValue);
-              setFilterSearch(filter);
-            }}
             onRowSelectionChange={setSelectedRowIds}
           />
         </StyledPeopleContainer>
