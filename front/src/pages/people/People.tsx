@@ -63,7 +63,7 @@ function People() {
     }
   }, [loading, setInternalData, data]);
 
-  const addEmptyRow = useCallback(() => {
+  const addEmptyRow = useCallback(async () => {
     const newCompany: Person = {
       id: uuidv4(),
       firstname: '',
@@ -75,7 +75,7 @@ function People() {
       creationDate: new Date(),
       city: '',
     };
-    insertPerson(newCompany);
+    await insertPerson(newCompany);
     setInternalData([newCompany, ...internalData]);
     refetch();
   }, [internalData, setInternalData, refetch]);
