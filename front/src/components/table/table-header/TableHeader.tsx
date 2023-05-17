@@ -10,10 +10,6 @@ import {
   SelectedFilterType,
 } from '../../../interfaces/filters/interface';
 import {
-  SearchableType,
-  SearchConfigType,
-} from '../../../interfaces/search/interface';
-import {
   SortType,
   SelectedSortType,
 } from '../../../interfaces/sorts/interface';
@@ -23,19 +19,8 @@ type OwnProps<SortField, TData extends FilterableFieldsType> = {
   viewIcon?: ReactNode;
   availableSorts?: Array<SortType<SortField>>;
   availableFilters?: FilterConfigType<TData>[];
-  filterSearchResults?: {
-    results: {
-      render: (value: SearchableType) => string;
-      value: SearchableType;
-    }[];
-    loading: boolean;
-  };
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onFiltersUpdate?: (sorts: Array<SelectedFilterType<TData>>) => void;
-  onFilterSearch?: (
-    filter: SearchConfigType<any> | null,
-    searchValue: string,
-  ) => void;
 };
 
 const StyledContainer = styled.div`
@@ -79,10 +64,8 @@ function TableHeader<SortField, TData extends FilterableFieldsType>({
   viewIcon,
   availableSorts,
   availableFilters,
-  filterSearchResults,
   onSortsUpdate,
   onFiltersUpdate,
-  onFilterSearch,
 }: OwnProps<SortField, TData>) {
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
     [],
@@ -128,13 +111,6 @@ function TableHeader<SortField, TData extends FilterableFieldsType>({
     [onFiltersUpdate, filters],
   );
 
-  const filterSearch = useCallback(
-    (filter: SearchConfigType<any> | null, searchValue: string) => {
-      onFilterSearch && onFilterSearch(filter, searchValue);
-    },
-    [onFilterSearch],
-  );
-
   return (
     <StyledContainer>
       <StyledTableHeader>
@@ -146,9 +122,7 @@ function TableHeader<SortField, TData extends FilterableFieldsType>({
           <FilterDropdownButton
             isFilterSelected={filters.length > 0}
             availableFilters={availableFilters || []}
-            filterSearchResults={filterSearchResults}
             onFilterSelect={filterSelect}
-            onFilterSearch={filterSearch}
           />
           <SortDropdownButton<SortField>
             isSortSelected={sorts.length > 0}

@@ -1,4 +1,4 @@
-import { cityFilter } from '../people-table';
+import { cityFilter } from '../people-filters';
 
 describe('PeopleFilter', () => {
   it(`should render the filter ${cityFilter.key}`, () => {
@@ -11,8 +11,9 @@ describe('PeopleFilter', () => {
         lastname: 'Doe',
         phone: '0123456789',
         creationDate: new Date(),
-        pipe: null,
+        pipes: [],
         company: null,
+        __typename: 'people',
       }),
     ).toMatchSnapshot();
   });

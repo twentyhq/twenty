@@ -3,11 +3,28 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { FaRegBuilding, FaCalendar } from 'react-icons/fa';
 import { SortType } from '../../../../interfaces/sorts/interface';
+import { MockedProvider } from '@apollo/client/testing';
+import { EMPTY_QUERY } from '../../../../services/api/search/search';
 
 const component = {
   title: 'TableHeader',
   component: TableHeader,
 };
+const mocks = [
+  {
+    request: {
+      query: EMPTY_QUERY,
+      variables: {
+        where: undefined,
+      },
+    },
+    result: {
+      data: {
+        searchResults: [],
+      },
+    },
+  },
+];
 
 export default component;
 
@@ -21,12 +38,14 @@ export const RegularTableHeader = () => {
     },
   ];
   return (
-    <ThemeProvider theme={lightTheme}>
-      <TableHeader
-        viewName="Test"
-        viewIcon={<FaRegBuilding />}
-        availableSorts={availableSorts}
-      />
-    </ThemeProvider>
+    <MockedProvider mocks={mocks}>
+      <ThemeProvider theme={lightTheme}>
+        <TableHeader
+          viewName="Test"
+          viewIcon={<FaRegBuilding />}
+          availableSorts={availableSorts}
+        />
+      </ThemeProvider>
+    </MockedProvider>
   );
 };
