@@ -138,7 +138,9 @@ it('Checks insert data is appending a new line', async () => {
 });
 
 it('Checks filters are working', async () => {
-  const { getByText } = render(<CompaniesDefault />);
+  const { getByText, queryByText, getByPlaceholderText } = render(
+    <CompaniesDefault />,
+  );
 
   await waitFor(() => {
     expect(getByText('Airbnb')).toBeDefined();
@@ -154,10 +156,12 @@ it('Checks filters are working', async () => {
   const urlFilter = getByText('Url');
   fireEvent.click(urlFilter);
 
-  await waitFor(() => {
-    expect(getByText('linkedin-searched.com')).toBeDefined();
-  });
+  const filterSearch = getByPlaceholderText('Url');
+  fireEvent.change(filterSearch, { target: { value: 'aircal' } });
 
-  const filterByLinkedinOption = getByText('linkedin-searched.com');
-  fireEvent.click(filterByLinkedinOption);
+  await waitFor(() => {
+    expect(getByText('aircall.io')).toBeDefined();
+    const airbnbResult = queryByText('Airbnb');
+    expect(airbnbResult).not.toBeInTheDocument();
+  });
 });

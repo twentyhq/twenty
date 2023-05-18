@@ -1,6 +1,6 @@
-import { GraphqlQueryCompany } from '../../../../interfaces/company.interface';
+import { GraphqlQueryCompany } from '../../../../interfaces/entities/company.interface';
 
-export const mockData: Array<GraphqlQueryCompany> = [
+export const mockCompaniesData: Array<GraphqlQueryCompany> = [
   {
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
     domain_name: 'airbnb.com',

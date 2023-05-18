@@ -1,20 +1,18 @@
-import { cityFilter } from '../people-filters';
+import { cityFilter, companyFilter } from '../people-filters';
 
 describe('PeopleFilter', () => {
-  it(`should render the filter ${cityFilter.key}`, () => {
+  it(`should render the filter ${companyFilter.key} which relation search`, () => {
     expect(
-      cityFilter.operands[0].whereTemplate({
+      companyFilter.operands[0].whereTemplate({
         id: 'test-id',
-        city: 'Paris',
-        email: 'john@doe.com',
-        firstname: 'John',
-        lastname: 'Doe',
-        phone: '0123456789',
-        creationDate: new Date(),
-        pipes: [],
-        company: null,
-        __typename: 'people',
+        name: 'test-name',
+        domainName: 'test-domain-name',
+        __typename: 'companies',
       }),
     ).toMatchSnapshot();
+  });
+
+  it(`should render the filter ${cityFilter.key} which is text search`, () => {
+    expect(cityFilter.operands[0].whereTemplate('Paris')).toMatchSnapshot();
   });
 });

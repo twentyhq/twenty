@@ -3,10 +3,8 @@ import Companies from '../Companies';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
 import { GET_COMPANIES } from '../../../services/api/companies';
-import { mockData } from '../__tests__/__data__/mock-data';
+import { mockCompaniesData } from '../__tests__/__data__/mock-data';
 import { MockedProvider } from '@apollo/client/testing';
-import { SEARCH_COMPANY_QUERY } from '../../../services/api/search/search';
-import { mockCompanySearchData } from '../../../services/api/search/__data__/mock-search-data';
 
 const component = {
   title: 'Companies',
@@ -26,7 +24,7 @@ const mocks = [
     },
     result: {
       data: {
-        companies: mockData,
+        companies: mockCompaniesData,
       },
     },
   },
@@ -40,28 +38,24 @@ const mocks = [
     },
     result: {
       data: {
-        companies: mockData,
+        companies: mockCompaniesData,
       },
     },
-  },
-  {
-    request: {
-      query: SEARCH_COMPANY_QUERY,
-      variables: { where: { name: { _ilike: '%%' } }, limit: 5 },
-    },
-    result: mockCompanySearchData,
   },
   {
     request: {
       query: GET_COMPANIES,
       variables: {
         orderBy: [{ created_at: 'desc' }],
-        where: { domain_name: { _eq: 'linkedin-searched.com' } },
+        where: { domain_name: { _ilike: '%aircal%' } },
       },
     },
     result: {
       data: {
-        companies: mockData,
+        companies: mockCompaniesData.filter(
+          (company) =>
+            company.domain_name && company.domain_name.includes('aircal'),
+        ),
       },
     },
   },

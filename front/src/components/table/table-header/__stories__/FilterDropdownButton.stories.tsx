@@ -3,15 +3,15 @@ import { lightTheme } from '../../../../layout/styles/themes';
 import { FilterDropdownButton } from '../FilterDropdownButton';
 import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
-import { SEARCH_PEOPLE_QUERY } from '../../../../services/api/search/search';
+import { SEARCH_COMPANY_QUERY } from '../../../../services/api/search/search';
 import { MockedProvider } from '@apollo/client/testing';
-import { mockData } from '../../../../pages/people/__tests__/__data__/mock-data';
 import { availableFilters } from '../../../../pages/people/people-filters';
 import { Person } from '../../../../interfaces/entities/person.interface';
 import {
   FilterableFieldsType,
   SelectedFilterType,
 } from '../../../../interfaces/filters/interface';
+import { mockCompaniesData } from '../../../../pages/companies/__tests__/__data__/mock-data';
 
 const component = {
   title: 'FilterDropdownButton',
@@ -27,52 +27,25 @@ type OwnProps<FilterProperties extends FilterableFieldsType> = {
 const mocks = [
   {
     request: {
-      query: SEARCH_PEOPLE_QUERY, // TODO this should not be called for empty filters
-      variables: {
-        where: undefined,
-      },
+      query: SEARCH_COMPANY_QUERY,
+      variables: { where: { name: { _ilike: '%%' } }, limit: 5 },
     },
     result: {
       data: {
-        searchResults: mockData,
+        searchResults: mockCompaniesData,
       },
     },
   },
   {
     request: {
-      query: SEARCH_PEOPLE_QUERY, // TODO this should not be called for empty filters
-      variables: {
-        where: {
-          _or: [
-            { firstname: { _ilike: '%%' } },
-            { lastname: { _ilike: '%%' } },
-          ],
-        },
-        limit: 5,
-      },
+      query: SEARCH_COMPANY_QUERY,
+      variables: { where: { name: { _ilike: '%Airc%' } }, limit: 5 },
     },
     result: {
       data: {
-        searchResults: mockData,
-      },
-    },
-  },
-  {
-    request: {
-      query: SEARCH_PEOPLE_QUERY, // TODO this should not be called for empty filters
-      variables: {
-        where: {
-          _or: [
-            { firstname: { _ilike: '%Jane%' } },
-            { lastname: { _ilike: '%Jane%' } },
-          ],
-        },
-        limit: 5,
-      },
-    },
-    result: {
-      data: {
-        searchResults: [mockData.find((p) => p.firstname === 'Jane')],
+        searchResults: mockCompaniesData.filter(
+          (company) => company.name === 'Aircall',
+        ),
       },
     },
   },
@@ -101,6 +74,9 @@ const InnerRegularFilterDropdownButton = ({
         availableFilters={availableFilters}
         isFilterSelected={true}
         onFilterSelect={outerSetFilters}
+        onFilterRemove={(filterId) => {
+          console.log(filterId);
+        }}
       />
     </StyleDiv>
   );

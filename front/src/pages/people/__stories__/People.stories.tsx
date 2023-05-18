@@ -3,7 +3,7 @@ import People from '../People';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
 import { MockedProvider } from '@apollo/client/testing';
-import { mockData } from '../__tests__/__data__/mock-data';
+import { mockPeopleData } from '../__tests__/__data__/mock-data';
 import { GET_PEOPLE } from '../../../services/api/people';
 import { SEARCH_PEOPLE_QUERY } from '../../../services/api/search/search';
 
@@ -25,7 +25,7 @@ const mocks = [
     },
     result: {
       data: {
-        people: mockData,
+        people: mockPeopleData,
       },
     },
   },
@@ -39,7 +39,7 @@ const mocks = [
     },
     result: {
       data: {
-        people: mockData,
+        people: mockPeopleData,
       },
     },
   },

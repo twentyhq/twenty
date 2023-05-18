@@ -2,10 +2,8 @@ import { ChangeEvent, ComponentType, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
 import styled from '@emotion/styled';
 import { useSearch } from '../../services/api/search/search';
-import {
-  SearchConfigType,
-  SearchableType,
-} from '../../interfaces/search/interface';
+import { SearchConfigType } from '../../interfaces/search/interface';
+import { AnyEntity } from '../../interfaces/entities/generic.interface';
 
 const StyledEditModeContainer = styled.div`
   width: 200px;
@@ -51,7 +49,7 @@ const StyledEditModeResultItem = styled.div`
 `;
 
 export type EditableRelationProps<
-  RelationType extends SearchableType,
+  RelationType extends AnyEntity,
   ChipComponentPropsType,
 > = {
   relation?: RelationType | null;
@@ -66,7 +64,7 @@ export type EditableRelationProps<
 };
 
 function EditableRelation<
-  RelationType extends SearchableType,
+  RelationType extends AnyEntity,
   ChipComponentPropsType,
 >({
   relation,

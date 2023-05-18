@@ -10,18 +10,19 @@ import {
   SearchResultsType,
   useSearch,
 } from '../../../services/api/search/search';
-import { SearchableType } from '../../../interfaces/search/interface';
 
 type OwnProps<TData extends FilterableFieldsType> = {
   isFilterSelected: boolean;
   availableFilters: FilterConfigType<TData>[];
   onFilterSelect: (filter: SelectedFilterType<TData>) => void;
+  onFilterRemove: (filterId: SelectedFilterType<TData>['key']) => void;
 };
 
 export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   availableFilters,
   onFilterSelect,
   isFilterSelected,
+  onFilterRemove,
 }: OwnProps<TData>) => {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -59,7 +60,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   );
 
   const renderSearchResults = (
-    filterSearchResults: SearchResultsType<SearchableType>,
+    filterSearchResults: SearchResultsType,
     selectedFilter: FilterConfigType<TData>,
     selectedFilterOperand: FilterOperandType<TData>,
   ) => {
@@ -98,7 +99,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
       onClick={() => {
         setSelectedFilter(filter);
         setSelectedFilterOperand(filter.operands[0]);
-        setFilterSearch(filter.searchConfig);
+        filter.searchConfig && setFilterSearch(filter.searchConfig);
         setSearchInput('');
       }}
     >
@@ -126,8 +127,23 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
             type="text"
             placeholder={selectedFilter.label}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setFilterSearch(selectedFilter.searchConfig);
-              setSearchInput(event.target.value);
+              if (selectedFilter.searchConfig) {
+                setFilterSearch(selectedFilter.searchConfig);
+                setSearchInput(event.target.value);
+              } else {
+                if (event.target.value === '') {
+                  onFilterRemove(selectedFilter.key);
+                } else {
+                  onFilterSelect({
+                    key: selectedFilter.key,
+                    label: selectedFilter.label,
+                    value: event.target.value,
+                    displayValue: event.target.value,
+                    icon: selectedFilter.icon,
+                    operand: selectedFilterOperand,
+                  });
+                }
+              }
             }}
           />
         </DropdownButton.StyledSearchField>

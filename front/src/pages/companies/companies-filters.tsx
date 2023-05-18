@@ -1,9 +1,5 @@
-import {
-  Company,
-  mapToCompany,
-} from '../../interfaces/entities/company.interface';
+import { Company } from '../../interfaces/entities/company.interface';
 import { FaLink, FaBuilding } from 'react-icons/fa';
-import { SEARCH_COMPANY_QUERY } from '../../services/api/search/search';
 import { FilterConfigType } from '../../interfaces/filters/interface';
 
 export const availableFilters = [
@@ -11,64 +7,42 @@ export const availableFilters = [
     key: 'company_name',
     label: 'Company',
     icon: <FaBuilding />,
-    searchConfig: {
-      query: SEARCH_COMPANY_QUERY,
-      template: (searchInput) => ({
-        name: { _ilike: `%${searchInput}%` },
-      }),
-      resultMapper: (company) => ({
-        render: (company) => company.name,
-        value: mapToCompany(company),
-      }),
-    },
-    selectedValueRender: (company) => company.name || '',
     operands: [
       {
-        label: 'Equal',
-        id: 'equal',
-        whereTemplate: (company) => ({
-          name: { _eq: company.name },
+        label: 'Contains',
+        id: 'like',
+        whereTemplate: (searchString) => ({
+          name: { _ilike: `%${searchString}%` },
         }),
       },
       {
-        label: 'Not equal',
-        id: 'not-equal',
-        whereTemplate: (company) => ({
-          _not: { name: { _eq: company.name } },
+        label: 'Does not contain',
+        id: 'not_like',
+        whereTemplate: (searchString) => ({
+          _not: { name: { _ilike: `%${searchString}%` } },
         }),
       },
     ],
-  } satisfies FilterConfigType<Company, Company>,
+  } satisfies FilterConfigType<Company, string>,
   {
     key: 'company_domain_name',
     label: 'Url',
     icon: <FaLink />,
-    searchConfig: {
-      query: SEARCH_COMPANY_QUERY,
-      template: (searchInput) => ({
-        name: { _ilike: `%${searchInput}%` },
-      }),
-      resultMapper: (company) => ({
-        render: (company) => company.domainName,
-        value: mapToCompany(company),
-      }),
-    },
-    selectedValueRender: (company) => company.domainName || '',
     operands: [
       {
-        label: 'Equal',
-        id: 'equal',
-        whereTemplate: (company) => ({
-          domain_name: { _eq: company.domainName },
+        label: 'Contains',
+        id: 'like',
+        whereTemplate: (searchString) => ({
+          domain_name: { _ilike: `%${searchString}%` },
         }),
       },
       {
-        label: 'Not equal',
-        id: 'not-equal',
-        whereTemplate: (company) => ({
-          _not: { domain_name: { _eq: company.domainName } },
+        label: 'Does not contain',
+        id: 'not_like',
+        whereTemplate: (searchString) => ({
+          _not: { domain_name: { _ilike: `%${searchString}%` } },
         }),
       },
     ],
-  } satisfies FilterConfigType<Company, Company>,
+  } satisfies FilterConfigType<Company, string>,
 ];

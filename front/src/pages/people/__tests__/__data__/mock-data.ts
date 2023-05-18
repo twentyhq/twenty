@@ -1,6 +1,6 @@
-import { GraphqlQueryPerson } from '../../../../interfaces/person.interface';
+import { GraphqlQueryPerson } from '../../../../interfaces/entities/person.interface';
 
-export const mockData: Array<GraphqlQueryPerson> = [
+export const mockPeopleData: Array<GraphqlQueryPerson> = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
     __typename: 'Person',

@@ -1,12 +1,6 @@
 import { FaEnvelope, FaMapPin, FaUser, FaBuilding } from 'react-icons/fa';
-import {
-  Person,
-  mapToPerson,
-} from '../../interfaces/entities/person.interface';
-import {
-  SEARCH_COMPANY_QUERY,
-  SEARCH_PEOPLE_QUERY,
-} from '../../services/api/search/search';
+import { Person } from '../../interfaces/entities/person.interface';
+import { SEARCH_COMPANY_QUERY } from '../../services/api/search/search';
 import {
   Company,
   mapToCompany,
@@ -17,45 +11,31 @@ export const fullnameFilter = {
   key: 'fullname',
   label: 'People',
   icon: <FaUser />,
-  searchConfig: {
-    query: SEARCH_PEOPLE_QUERY,
-    template: (searchInput: string) => ({
-      _or: [
-        { firstname: { _ilike: `%${searchInput}%` } },
-        { lastname: { _ilike: `%${searchInput}%` } },
-      ],
-    }),
-    resultMapper: (person) => ({
-      render: (person) => `${person.firstname} ${person.lastname}`,
-      value: mapToPerson(person),
-    }),
-  },
-  selectedValueRender: (person) => `${person.firstname} ${person.lastname}`,
   operands: [
     {
-      label: 'Equal',
-      id: 'equal',
-      whereTemplate: (person) => ({
-        _and: [
-          { firstname: { _eq: `${person.firstname}` } },
-          { lastname: { _eq: `${person.lastname}` } },
+      label: 'Contains',
+      id: 'like',
+      whereTemplate: (searchString) => ({
+        _or: [
+          { firstname: { _ilike: `%${searchString}%` } },
+          { lastname: { _ilike: `%${searchString}%` } },
         ],
       }),
     },
     {
-      label: 'Not equal',
-      id: 'not-equal',
-      whereTemplate: (person) => ({
+      label: 'Does not contain',
+      id: 'not_like',
+      whereTemplate: (searchString) => ({
         _not: {
           _and: [
-            { firstname: { _eq: `${person.firstname}` } },
-            { lastname: { _eq: `${person.lastname}` } },
+            { firstname: { _ilike: `%${searchString}%` } },
+            { lastname: { _ilike: `%${searchString}%` } },
           ],
         },
       }),
     },
   ],
-} satisfies FilterConfigType<Person, Person>;
+} satisfies FilterConfigType<Person, string>;
 
 export const companyFilter = {
   key: 'company_name',
@@ -63,8 +43,8 @@ export const companyFilter = {
   icon: <FaBuilding />,
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
-    template: (searchInput: string) => ({
-      name: { _ilike: `%${searchInput}%` },
+    template: (searchString: string) => ({
+      name: { _ilike: `%${searchString}%` },
     }),
     resultMapper: (data) => ({
       value: mapToCompany(data),
@@ -74,15 +54,15 @@ export const companyFilter = {
   selectedValueRender: (company) => company.name || '',
   operands: [
     {
-      label: 'Equal',
-      id: 'equal',
+      label: 'Is',
+      id: 'is',
       whereTemplate: (company) => ({
         company: { name: { _eq: company.name } },
       }),
     },
     {
-      label: 'Not equal',
-      id: 'not-equal',
+      label: 'Is not',
+      id: 'is_not',
       whereTemplate: (company) => ({
         _not: { company: { name: { _eq: company.name } } },
       }),
@@ -94,71 +74,49 @@ export const emailFilter = {
   key: 'email',
   label: 'Email',
   icon: <FaEnvelope />,
-  searchConfig: {
-    query: SEARCH_PEOPLE_QUERY,
-    template: (searchInput: string) => ({
-      email: { _ilike: `%${searchInput}%` },
-    }),
-    resultMapper: (person) => ({
-      render: (person) => person.email,
-      value: mapToPerson(person),
-    }),
-  },
   operands: [
     {
-      label: 'Equal',
-      id: 'equal',
-      whereTemplate: (person) => ({
-        email: { _eq: person.email },
+      label: 'Contains',
+      id: 'like',
+      whereTemplate: (searchString) => ({
+        email: { _ilike: `%${searchString}%` },
       }),
     },
     {
-      label: 'Not equal',
-      id: 'not-equal',
-      whereTemplate: (person) => ({
-        _not: { email: { _eq: person.email } },
+      label: 'Does not contain',
+      id: 'not_like',
+      whereTemplate: (searchString) => ({
+        _not: { email: { _ilike: `%${searchString}%` } },
       }),
     },
   ],
-  selectedValueRender: (person) => person.email || '',
-} satisfies FilterConfigType<Person, Person>;
+} satisfies FilterConfigType<Person, string>;
 
 export const cityFilter = {
   key: 'city',
   label: 'City',
   icon: <FaMapPin />,
-  searchConfig: {
-    query: SEARCH_PEOPLE_QUERY,
-    template: (searchInput: string) => ({
-      city: { _ilike: `%${searchInput}%` },
-    }),
-    resultMapper: (person) => ({
-      render: (person) => person.city,
-      value: mapToPerson(person),
-    }),
-  },
   operands: [
     {
-      label: 'Equal',
-      id: 'equal',
-      whereTemplate: (person) => ({
-        city: { _eq: person.city },
+      label: 'Contains',
+      id: 'like',
+      whereTemplate: (searchString) => ({
+        city: { _ilike: `%${searchString}%` },
       }),
     },
     {
-      label: 'Not equal',
-      id: 'not-equal',
-      whereTemplate: (person) => ({
-        _not: { city: { _eq: person.city } },
+      label: 'Does not contain',
+      id: 'not_like',
+      whereTemplate: (searchString) => ({
+        _not: { city: { _ilike: `%${searchString}%` } },
       }),
     },
   ],
-  selectedValueRender: (person) => person.email || '',
-} satisfies FilterConfigType<Person, Person>;
+} satisfies FilterConfigType<Person, string>;
 
 export const availableFilters = [
   fullnameFilter,
   companyFilter,
   emailFilter,
   cityFilter,
-] satisfies FilterConfigType<Person, any>[];
+] satisfies FilterConfigType<Person>[];
