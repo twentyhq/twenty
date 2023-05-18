@@ -10,7 +10,6 @@ import {
   SearchResultsType,
   useSearch,
 } from '../../../services/api/search/search';
-import { SearchableType } from '../../../interfaces/search/interface';
 
 type OwnProps<TData extends FilterableFieldsType> = {
   isFilterSelected: boolean;
@@ -59,7 +58,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   );
 
   const renderSearchResults = (
-    filterSearchResults: SearchResultsType<SearchableType>,
+    filterSearchResults: SearchResultsType,
     selectedFilter: FilterConfigType<TData>,
     selectedFilterOperand: FilterOperandType<TData>,
   ) => {
@@ -98,7 +97,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
       onClick={() => {
         setSelectedFilter(filter);
         setSelectedFilterOperand(filter.operands[0]);
-        setFilterSearch(filter.searchConfig);
+        filter.searchConfig && setFilterSearch(filter.searchConfig);
         setSearchInput('');
       }}
     >

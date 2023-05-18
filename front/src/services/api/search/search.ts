@@ -4,6 +4,7 @@ import {
   SearchConfigType,
   SearchableType,
 } from '../../../interfaces/search/interface';
+import { AnyEntity } from '../../../interfaces/entities/generic.interface';
 
 export const SEARCH_PEOPLE_QUERY = gql`
   query SearchQuery($where: people_bool_exp, $limit: Int) {
@@ -58,7 +59,7 @@ const debounce = <FuncArgs extends any[]>(
   };
 };
 
-export type SearchResultsType<T extends SearchableType> = {
+export type SearchResultsType<T extends SearchableType = AnyEntity> = {
   results: {
     render: (value: T) => string;
     value: T;
@@ -66,7 +67,7 @@ export type SearchResultsType<T extends SearchableType> = {
   loading: boolean;
 };
 
-export const useSearch = <T extends SearchableType>(): [
+export const useSearch = <T extends SearchableType = AnyEntity>(): [
   SearchResultsType<T>,
   React.Dispatch<React.SetStateAction<string>>,
   React.Dispatch<React.SetStateAction<SearchConfigType<T> | null>>,

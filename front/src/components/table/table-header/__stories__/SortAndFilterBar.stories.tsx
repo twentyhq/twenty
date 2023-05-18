@@ -24,8 +24,8 @@ export const RegularSortAndFilterBar = ({
   const personFilter = {
     label: 'People',
     operand: {
-      label: 'Include',
-      id: 'include',
+      label: 'Is',
+      id: 'is',
       whereTemplate: (person: Person) => {
         return { email: { _eq: person.email } };
       },

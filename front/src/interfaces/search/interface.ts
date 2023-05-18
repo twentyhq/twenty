@@ -8,11 +8,11 @@ import {
 import { Person } from '../entities/person.interface';
 import { Company } from '../entities/company.interface';
 import { User } from '../entities/user.interface';
-import { GqlType } from '../entities/generic.interface';
+import { AnyEntity, GqlType } from '../entities/generic.interface';
 
-export type SearchableType = Person | Company | User;
+export type SearchableType = Person | Company | User | AnyEntity;
 
-export type SearchConfigType<SearchType extends SearchableType> = {
+export type SearchConfigType<SearchType extends SearchableType = AnyEntity> = {
   query: DocumentNode;
   template: (
     searchInput: string,

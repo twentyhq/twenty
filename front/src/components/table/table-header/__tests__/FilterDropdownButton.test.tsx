@@ -1,7 +1,7 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { RegularFilterDropdownButton } from '../__stories__/FilterDropdownButton.stories';
 
-it('Checks the default top option is Include', async () => {
+it('Checks the default top option is Is', async () => {
   const setFilters = jest.fn();
   const { getByText } = render(
     <RegularFilterDropdownButton setFilter={setFilters} />,
@@ -10,27 +10,27 @@ it('Checks the default top option is Include', async () => {
   const sortDropdownButton = getByText('Filter');
   fireEvent.click(sortDropdownButton);
 
-  const filterByPeople = getByText('People');
-  fireEvent.click(filterByPeople);
+  const filterByCompany = getByText('Company');
+  fireEvent.click(filterByCompany);
 
   await waitFor(() => {
-    const firstSearchResult = getByText('Alexandre Prot');
+    const firstSearchResult = getByText('Airbnb');
     expect(firstSearchResult).toBeDefined();
   });
 
-  const filterByJohn = getByText('Alexandre Prot');
-  fireEvent.click(filterByJohn);
+  const filterByAirbnb = getByText('Airbnb');
+  fireEvent.click(filterByAirbnb);
 
   expect(setFilters).toHaveBeenCalledWith(
     expect.objectContaining({
-      displayValue: 'Alexandre Prot',
-      key: 'fullname',
-      label: 'People',
+      displayValue: 'Airbnb',
+      key: 'company_name',
+      label: 'Company',
     }),
   );
 });
 
-it('Checks the selection of top option for Not Equal', async () => {
+it('Checks the selection of top option for Is Not', async () => {
   const setFilters = jest.fn();
   const { getByText } = render(
     <RegularFilterDropdownButton setFilter={setFilters} />,
@@ -39,28 +39,28 @@ it('Checks the selection of top option for Not Equal', async () => {
   const sortDropdownButton = getByText('Filter');
   fireEvent.click(sortDropdownButton);
 
-  const filterByPeople = getByText('People');
-  fireEvent.click(filterByPeople);
+  const filterByCompany = getByText('Company');
+  fireEvent.click(filterByCompany);
 
-  const openOperandOptions = getByText('Equal');
+  const openOperandOptions = getByText('Is');
   fireEvent.click(openOperandOptions);
 
-  const selectOperand = getByText('Not equal');
+  const selectOperand = getByText('Is not');
   fireEvent.click(selectOperand);
 
   await waitFor(() => {
-    const firstSearchResult = getByText('Alexandre Prot');
+    const firstSearchResult = getByText('Airbnb');
     expect(firstSearchResult).toBeDefined();
   });
 
-  const filterByJohn = getByText('Alexandre Prot');
-  fireEvent.click(filterByJohn);
+  const filterByAirbnb = getByText('Airbnb');
+  fireEvent.click(filterByAirbnb);
 
   expect(setFilters).toHaveBeenCalledWith(
     expect.objectContaining({
-      key: 'fullname',
-      displayValue: 'Alexandre Prot',
-      label: 'People',
+      displayValue: 'Airbnb',
+      key: 'company_name',
+      label: 'Company',
     }),
   );
   const blueSortDropdownButton = getByText('Filter');
@@ -78,13 +78,13 @@ it('Calls the filters when typing a new name', async () => {
   const sortDropdownButton = getByText('Filter');
   fireEvent.click(sortDropdownButton);
 
-  const filterByPeople = getByText('People');
-  fireEvent.click(filterByPeople);
+  const filterByCompany = getByText('Company');
+  fireEvent.click(filterByCompany);
 
-  const filterSearch = getByPlaceholderText('People');
+  const filterSearch = getByPlaceholderText('Company');
   fireEvent.click(filterSearch);
 
-  fireEvent.change(filterSearch, { target: { value: 'Jane' } });
+  fireEvent.change(filterSearch, { target: { value: 'Airc' } });
 
   await waitFor(() => {
     const loadingDiv = getByTestId('loading-search-results');
@@ -92,22 +92,22 @@ it('Calls the filters when typing a new name', async () => {
   });
 
   await waitFor(() => {
-    const firstSearchResult = getByText('Jane Doe');
+    const firstSearchResult = getByText('Aircall');
     expect(firstSearchResult).toBeDefined();
 
-    const alexandreSearchResult = queryByText('Alexandre Prot');
-    expect(alexandreSearchResult).not.toBeInTheDocument();
+    const airbnbResult = queryByText('Alexandre Prot');
+    expect(airbnbResult).not.toBeInTheDocument();
   });
 
-  const filterByJane = getByText('Jane Doe');
+  const filterByJane = getByText('Aircall');
 
   fireEvent.click(filterByJane);
 
   expect(setFilters).toHaveBeenCalledWith(
     expect.objectContaining({
-      key: 'fullname',
-      displayValue: 'Jane Doe',
-      label: 'People',
+      key: 'company_name',
+      displayValue: 'Aircall',
+      label: 'Company',
     }),
   );
   const blueSortDropdownButton = getByText('Filter');

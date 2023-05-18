@@ -6,53 +6,65 @@ import { User } from '../entities/user.interface';
 import { AnyEntity, BoolExpType } from '../entities/generic.interface';
 
 export type FilterableFieldsType = Person | Company;
-export type FilterWhereType = Person | Company | User | AnyEntity;
+export type FilterWhereRelationType = Person | Company | User | AnyEntity;
+export type UnknownType = void;
+export type FilterWhereType = FilterWhereRelationType | string | UnknownType;
 
 export type FilterConfigType<
   FilteredType extends FilterableFieldsType,
-  WhereType extends FilterWhereType = any,
+  WhereType extends FilterWhereType = UnknownType,
 > = {
   key: string;
   label: string;
   icon: ReactNode;
   operands: FilterOperandType<FilteredType, WhereType>[];
-  searchConfig: WhereType extends SearchableType
-    ? SearchConfigType<WhereType>
-    : null;
-  selectedValueRender: (selected: WhereType) => string;
-};
+} & (WhereType extends UnknownType
+  ? { searchConfig?: any }
+  : WhereType extends SearchableType
+  ? { searchConfig: SearchConfigType<WhereType> }
+  : WhereType extends string
+  ? object
+  : never) &
+  (WhereType extends UnknownType
+    ? { selectedValueRender?: (selected: any) => string }
+    : WhereType extends SearchableType
+    ? { selectedValueRender: (selected: WhereType) => string }
+    : WhereType extends string
+    ? object
+    : never);
 
 export type FilterOperandType<
   FilteredType extends FilterableFieldsType,
-  WhereType extends FilterWhereType = AnyEntity,
-> =
-  | FilterOperandExactMatchType<FilteredType, WhereType>
-  | FilterOperandComparativeType<FilteredType, WhereType>;
+  WhereType extends FilterWhereType = UnknownType,
+> = WhereType extends UnknownType
+  ? any
+  : WhereType extends FilterWhereRelationType
+  ? FilterOperandRelationType<FilteredType, WhereType>
+  : WhereType extends string
+  ? FilterOperandFieldType<FilteredType>
+  : never;
 
-type FilterOperandExactMatchType<
+type FilterOperandRelationType<
   FilteredType extends FilterableFieldsType,
   WhereType extends FilterWhereType,
 > = {
-  label: 'Equal' | 'Not equal';
-  id: 'equal' | 'not-equal';
+  label: 'Is' | 'Is not';
+  id: 'is' | 'is_not';
   whereTemplate: (value: WhereType) => BoolExpType<FilteredType>;
 };
 
-type FilterOperandComparativeType<
-  FilteredType extends FilterableFieldsType,
-  WhereType extends FilterWhereType,
-> = {
-  label: 'Like' | 'Not like' | 'Include';
-  id: 'like' | 'not_like' | 'include';
-  whereTemplate: (value: WhereType) => BoolExpType<FilteredType>;
+type FilterOperandFieldType<FilteredType extends FilterableFieldsType> = {
+  label: 'Contains' | 'Does not contain';
+  id: 'like' | 'not_like';
+  whereTemplate: (value: string) => BoolExpType<FilteredType>;
 };
 
 export type SelectedFilterType<
   FilteredType extends FilterableFieldsType,
-  WhereType extends FilterWhereType = AnyEntity,
+  WhereType extends FilterWhereType = UnknownType,
 > = {
   key: string;
-  value: WhereType;
+  value: WhereType extends UnknownType ? any : WhereType;
   displayValue: string;
   label: string;
   icon: ReactNode;
