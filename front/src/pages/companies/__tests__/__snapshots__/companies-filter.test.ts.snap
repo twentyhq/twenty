@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Companies Filter should render the filter company_employees 1`] = `
+Object {
+  "employees": Object {
+    "_gte": 2,
+  },
+}
+`;
+
+exports[`Companies Filter should render the filter company_name 1`] = `
+Object {
+  "name": Object {
+    "_ilike": "%name%",
+  },
+}
+`;
