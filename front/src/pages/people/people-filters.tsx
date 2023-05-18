@@ -17,8 +17,8 @@ export const fullnameFilter = {
       id: 'like',
       whereTemplate: (searchString) => ({
         _or: [
-          { firstname: { _eq: `${searchString}` } },
-          { lastname: { _eq: `${searchString}` } },
+          { firstname: { _ilike: `%${searchString}%` } },
+          { lastname: { _ilike: `%${searchString}%` } },
         ],
       }),
     },
@@ -28,8 +28,8 @@ export const fullnameFilter = {
       whereTemplate: (searchString) => ({
         _not: {
           _and: [
-            { firstname: { _eq: `${searchString}` } },
-            { lastname: { _eq: `${searchString}` } },
+            { firstname: { _ilike: `%${searchString}%` } },
+            { lastname: { _ilike: `%${searchString}%` } },
           ],
         },
       }),
@@ -43,8 +43,8 @@ export const companyFilter = {
   icon: <FaBuilding />,
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
-    template: (searchInput: string) => ({
-      name: { _ilike: `%${searchInput}%` },
+    template: (searchString: string) => ({
+      name: { _ilike: `%${searchString}%` },
     }),
     resultMapper: (data) => ({
       value: mapToCompany(data),
@@ -79,14 +79,14 @@ export const emailFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        email: { _eq: searchString },
+        email: { _ilike: `%${searchString}%` },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        _not: { email: { _eq: searchString } },
+        _not: { email: { _ilike: `%${searchString}%` } },
       }),
     },
   ],
@@ -101,14 +101,14 @@ export const cityFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        city: { _eq: searchString },
+        city: { _ilike: `%${searchString}%` },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        _not: { city: { _eq: searchString } },
+        _not: { city: { _ilike: `%${searchString}%` } },
       }),
     },
   ],
@@ -119,4 +119,4 @@ export const availableFilters = [
   companyFilter,
   emailFilter,
   cityFilter,
-] satisfies FilterConfigType<Person, any>[];
+] satisfies FilterConfigType<Person>[];

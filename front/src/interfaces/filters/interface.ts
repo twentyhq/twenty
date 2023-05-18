@@ -1,13 +1,10 @@
 import { ReactNode } from 'react';
-import { SearchConfigType, SearchableType } from '../search/interface';
-import { Person } from '../entities/person.interface';
-import { Company } from '../entities/company.interface';
-import { User } from '../entities/user.interface';
+import { SearchConfigType } from '../search/interface';
 import { AnyEntity, BoolExpType } from '../entities/generic.interface';
 
-export type FilterableFieldsType = Person | Company;
-export type FilterWhereRelationType = Person | Company | User | AnyEntity;
-export type UnknownType = void;
+export type FilterableFieldsType = AnyEntity;
+export type FilterWhereRelationType = AnyEntity;
+type UnknownType = void;
 export type FilterWhereType = FilterWhereRelationType | string | UnknownType;
 
 export type FilterConfigType<
@@ -19,15 +16,15 @@ export type FilterConfigType<
   icon: ReactNode;
   operands: FilterOperandType<FilteredType, WhereType>[];
 } & (WhereType extends UnknownType
-  ? { searchConfig?: any }
-  : WhereType extends SearchableType
+  ? { searchConfig?: SearchConfigType<UnknownType> }
+  : WhereType extends AnyEntity
   ? { searchConfig: SearchConfigType<WhereType> }
   : WhereType extends string
   ? object
   : never) &
   (WhereType extends UnknownType
     ? { selectedValueRender?: (selected: any) => string }
-    : WhereType extends SearchableType
+    : WhereType extends AnyEntity
     ? { selectedValueRender: (selected: WhereType) => string }
     : WhereType extends string
     ? object

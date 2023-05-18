@@ -123,6 +123,7 @@ function TableHeader<SortField, TData extends FilterableFieldsType>({
             isFilterSelected={filters.length > 0}
             availableFilters={availableFilters || []}
             onFilterSelect={filterSelect}
+            onFilterRemove={filterUnselect}
           />
           <SortDropdownButton<SortField>
             isSortSelected={sorts.length > 0}

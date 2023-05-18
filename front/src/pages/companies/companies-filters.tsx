@@ -12,14 +12,14 @@ export const availableFilters = [
         label: 'Contains',
         id: 'like',
         whereTemplate: (searchString) => ({
-          name: { _eq: searchString },
+          name: { _ilike: `%${searchString}%` },
         }),
       },
       {
         label: 'Does not contain',
         id: 'not_like',
         whereTemplate: (searchString) => ({
-          _not: { name: { _eq: searchString } },
+          _not: { name: { _ilike: `%${searchString}%` } },
         }),
       },
     ],
@@ -33,14 +33,14 @@ export const availableFilters = [
         label: 'Contains',
         id: 'like',
         whereTemplate: (searchString) => ({
-          domain_name: { _eq: searchString },
+          domain_name: { _ilike: `%${searchString}%` },
         }),
       },
       {
         label: 'Does not contain',
         id: 'not_like',
         whereTemplate: (searchString) => ({
-          _not: { domain_name: { _eq: searchString } },
+          _not: { domain_name: { _ilike: `%${searchString}%` } },
         }),
       },
     ],

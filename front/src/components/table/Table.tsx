@@ -31,7 +31,7 @@ type OwnProps<
   availableSorts?: Array<SortType<SortField>>;
   availableFilters?: FilterConfigType<TData>[];
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onFiltersUpdate?: (sorts: Array<SelectedFilterType<TData>>) => void;
+  onFiltersUpdate?: (filters: Array<SelectedFilterType<TData>>) => void;
   onRowSelectionChange?: (rowSelection: string[]) => void;
 };
 
@@ -138,7 +138,7 @@ const Table = <
         viewName={viewName}
         viewIcon={viewIcon}
         availableSorts={availableSorts}
-        availableFilters={availableFilters as FilterConfigType<any>[]}
+        availableFilters={availableFilters}
         onSortsUpdate={onSortsUpdate}
         onFiltersUpdate={onFiltersUpdate}
       />

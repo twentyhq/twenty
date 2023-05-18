@@ -95,13 +95,13 @@ it('Calls the filters when typing a new name', async () => {
     const firstSearchResult = getByText('Aircall');
     expect(firstSearchResult).toBeDefined();
 
-    const airbnbResult = queryByText('Alexandre Prot');
+    const airbnbResult = queryByText('Airbnb');
     expect(airbnbResult).not.toBeInTheDocument();
   });
 
-  const filterByJane = getByText('Aircall');
+  const filterByAircall = getByText('Aircall');
 
-  fireEvent.click(filterByJane);
+  fireEvent.click(filterByAircall);
 
   expect(setFilters).toHaveBeenCalledWith(
     expect.objectContaining({

@@ -43,7 +43,7 @@ const mocks = [
     },
     result: {
       data: {
-        searchResults: mockCompaniesData.find(
+        searchResults: mockCompaniesData.filter(
           (company) => company.name === 'Aircall',
         ),
       },
@@ -74,6 +74,9 @@ const InnerRegularFilterDropdownButton = ({
         availableFilters={availableFilters}
         isFilterSelected={true}
         onFilterSelect={outerSetFilters}
+        onFilterRemove={(filterId) => {
+          console.log(filterId);
+        }}
       />
     </StyleDiv>
   );
