@@ -34,6 +34,7 @@ const ContentSubContainer = styled.div`
   border-radius: 8px;
   height: 100%;
   flex: 1;
+  border: 1px solid ${(props) => props.theme.primaryBorder};
 `;
 
 function FullWidthContainer({

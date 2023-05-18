@@ -20,7 +20,7 @@ describe('Company mappers', () => {
       account_owner: {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
         email: 'john@example.com',
-        display_name: 'John Doe',
+        displayName: 'John Doe',
         __typename: 'User',
       },
       pipes: [
