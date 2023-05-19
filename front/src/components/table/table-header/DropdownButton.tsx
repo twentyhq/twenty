@@ -76,7 +76,6 @@ const StyledDropdownItem = styled.li`
   padding: ${(props) => props.theme.spacing(2)}
     calc(${(props) => props.theme.spacing(2)} - 2px);
   margin: 2px;
-  background: rgba(0, 0, 0, 0);
   cursor: pointer;
   color: ${(props) => props.theme.text60};
 
@@ -91,7 +90,6 @@ const StyledDropdownTopOption = styled.li`
   justify-content: space-between;
   padding: calc(${(props) => props.theme.spacing(2)} + 2px)
     calc(${(props) => props.theme.spacing(2)});
-  background: rgba(0, 0, 0, 0);
   cursor: pointer;
   color: ${(props) => props.theme.text60};
   font-weight: ${(props) => props.theme.fontWeightBold};
@@ -115,7 +113,6 @@ const StyledSearchField = styled.li`
   align-items: center;
   justify-content: space-between;
 
-  background: rgba(0, 0, 0, 0.04);
   cursor: pointer;
   color: ${(props) => props.theme.text60};
   font-weight: ${(props) => props.theme.fontWeightBold};

@@ -14,6 +14,13 @@ export type FilterConfigType<
   key: string;
   label: string;
   icon: ReactNode;
+  type: WhereType extends UnknownType
+    ? 'relation' | 'text' | 'date'
+    : WhereType extends AnyEntity
+    ? 'relation'
+    : WhereType extends string
+    ? 'text' | 'date'
+    : never;
   operands: FilterOperandType<FilteredType, WhereType>[];
 } & (WhereType extends UnknownType
   ? { searchConfig?: SearchConfigType<UnknownType> }

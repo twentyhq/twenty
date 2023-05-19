@@ -11,6 +11,7 @@ export const fullnameFilter = {
   key: 'fullname',
   label: 'People',
   icon: <FaUser />,
+  type: 'text',
   operands: [
     {
       label: 'Contains',
@@ -41,6 +42,7 @@ export const companyFilter = {
   key: 'company_name',
   label: 'Company',
   icon: <FaBuilding />,
+  type: 'relation',
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
     template: (searchString: string) => ({
@@ -74,6 +76,7 @@ export const emailFilter = {
   key: 'email',
   label: 'Email',
   icon: <FaEnvelope />,
+  type: 'text',
   operands: [
     {
       label: 'Contains',
@@ -96,6 +99,7 @@ export const cityFilter = {
   key: 'city',
   label: 'City',
   icon: <FaMapPin />,
+  type: 'text',
   operands: [
     {
       label: 'Contains',
