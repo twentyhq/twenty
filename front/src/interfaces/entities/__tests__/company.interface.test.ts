@@ -15,7 +15,7 @@ describe('Company mappers', () => {
       name: 'ACME',
       domain_name: 'exmaple.com',
       created_at: now.toUTCString(),
-      employees: '10',
+      employees: 10,
       address: '1 Infinite Loop, 95014 Cupertino, California, USA',
       account_owner: {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
@@ -61,7 +61,7 @@ describe('Company mappers', () => {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       name: 'ACME',
       domainName: 'example.com',
-      employees: '10',
+      employees: 10,
       address: '1 Infinite Loop, 95014 Cupertino, California, USA',
       pipes: [],
       accountOwner: {

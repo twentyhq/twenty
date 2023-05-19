@@ -90,7 +90,7 @@ export const INSERT_PERSON = gql`
 `;
 
 export const DELETE_PEOPLE = gql`
-  mutation DeletePeople($ids: [uuid]) {
+  mutation DeletePeople($ids: [uuid!]) {
     delete_people(where: { id: { _in: $ids } }) {
       returning {
         city
