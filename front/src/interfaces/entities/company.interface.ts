@@ -7,7 +7,7 @@ export type Company = {
   id: string;
   name?: string;
   domainName?: string;
-  employees?: string;
+  employees?: number | null;
   address?: string;
 
   creationDate?: Date;
@@ -20,7 +20,7 @@ export type GraphqlQueryCompany = {
   id: string;
   name?: string;
   domain_name?: string;
-  employees?: string;
+  employees?: number | null;
   address?: string;
 
   created_at?: string;
@@ -34,7 +34,7 @@ export type GraphqlMutationCompany = {
   id: string;
   name?: string;
   domain_name?: string;
-  employees?: string;
+  employees?: number | null;
   address?: string;
 
   created_at?: string;

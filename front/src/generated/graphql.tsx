@@ -17,6 +17,7 @@ export type Scalars = {
   bytea: any;
   citext: any;
   jsonb: any;
+  numeric: any;
   timestamptz: any;
   uuid: any;
 };
@@ -1722,7 +1723,7 @@ export type Companies = {
   created_at: Scalars['timestamptz'];
   deleted_at?: Maybe<Scalars['timestamptz']>;
   domain_name?: Maybe<Scalars['String']>;
-  employees: Scalars['Int'];
+  employees?: Maybe<Scalars['numeric']>;
   id: Scalars['uuid'];
   name?: Maybe<Scalars['String']>;
   updated_at: Scalars['timestamptz'];
@@ -1778,7 +1779,7 @@ export type Companies_Bool_Exp = {
   created_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   deleted_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   domain_name?: InputMaybe<String_Comparison_Exp>;
-  employees?: InputMaybe<Int_Comparison_Exp>;
+  employees?: InputMaybe<Numeric_Comparison_Exp>;
   id?: InputMaybe<Uuid_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
@@ -1794,7 +1795,7 @@ export enum Companies_Constraint {
 
 /** input type for incrementing numeric columns in table "companies" */
 export type Companies_Inc_Input = {
-  employees?: InputMaybe<Scalars['Int']>;
+  employees?: InputMaybe<Scalars['numeric']>;
 };
 
 /** input type for inserting data into table "companies" */
@@ -1805,7 +1806,7 @@ export type Companies_Insert_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']>;
   deleted_at?: InputMaybe<Scalars['timestamptz']>;
   domain_name?: InputMaybe<Scalars['String']>;
-  employees?: InputMaybe<Scalars['Int']>;
+  employees?: InputMaybe<Scalars['numeric']>;
   id?: InputMaybe<Scalars['uuid']>;
   name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
@@ -1821,7 +1822,7 @@ export type Companies_Max_Fields = {
   created_at?: Maybe<Scalars['timestamptz']>;
   deleted_at?: Maybe<Scalars['timestamptz']>;
   domain_name?: Maybe<Scalars['String']>;
-  employees?: Maybe<Scalars['Int']>;
+  employees?: Maybe<Scalars['numeric']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
@@ -1836,7 +1837,7 @@ export type Companies_Min_Fields = {
   created_at?: Maybe<Scalars['timestamptz']>;
   deleted_at?: Maybe<Scalars['timestamptz']>;
   domain_name?: Maybe<Scalars['String']>;
-  employees?: Maybe<Scalars['Int']>;
+  employees?: Maybe<Scalars['numeric']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
@@ -1918,7 +1919,7 @@ export type Companies_Set_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']>;
   deleted_at?: InputMaybe<Scalars['timestamptz']>;
   domain_name?: InputMaybe<Scalars['String']>;
-  employees?: InputMaybe<Scalars['Int']>;
+  employees?: InputMaybe<Scalars['numeric']>;
   id?: InputMaybe<Scalars['uuid']>;
   name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
@@ -1958,7 +1959,7 @@ export type Companies_Stream_Cursor_Value_Input = {
   created_at?: InputMaybe<Scalars['timestamptz']>;
   deleted_at?: InputMaybe<Scalars['timestamptz']>;
   domain_name?: InputMaybe<Scalars['String']>;
-  employees?: InputMaybe<Scalars['Int']>;
+  employees?: InputMaybe<Scalars['numeric']>;
   id?: InputMaybe<Scalars['uuid']>;
   name?: InputMaybe<Scalars['String']>;
   updated_at?: InputMaybe<Scalars['timestamptz']>;
@@ -1968,7 +1969,7 @@ export type Companies_Stream_Cursor_Value_Input = {
 /** aggregate sum on columns */
 export type Companies_Sum_Fields = {
   __typename?: 'companies_sum_fields';
-  employees?: Maybe<Scalars['Int']>;
+  employees?: Maybe<Scalars['numeric']>;
 };
 
 /** update columns of table "companies" */
@@ -2805,6 +2806,19 @@ export type Mutation_RootUpdate_Workspaces_By_PkArgs = {
 /** mutation root */
 export type Mutation_RootUpdate_Workspaces_ManyArgs = {
   updates: Array<Workspaces_Updates>;
+};
+
+/** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
+export type Numeric_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['numeric']>;
+  _gt?: InputMaybe<Scalars['numeric']>;
+  _gte?: InputMaybe<Scalars['numeric']>;
+  _in?: InputMaybe<Array<Scalars['numeric']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']>;
+  _lt?: InputMaybe<Scalars['numeric']>;
+  _lte?: InputMaybe<Scalars['numeric']>;
+  _neq?: InputMaybe<Scalars['numeric']>;
+  _nin?: InputMaybe<Array<Scalars['numeric']>>;
 };
 
 /** column ordering options */
@@ -4999,25 +5013,49 @@ export type Workspaces_Updates = {
 
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<Companies_Order_By> | Companies_Order_By>;
+  where?: InputMaybe<Companies_Bool_Exp>;
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'query_root', companies: Array<{ __typename?: 'companies', id: any, domain_name?: string | null, name?: string | null, created_at: any, address?: string | null, employees: number, account_owner?: { __typename?: 'users', id: any, email?: any | null, displayName: string } | null }> };
+export type GetCompaniesQuery = { __typename?: 'query_root', companies: Array<{ __typename?: 'companies', id: any, domain_name?: string | null, name?: string | null, created_at: any, address?: string | null, employees?: any | null, account_owner?: { __typename?: 'users', id: any, email?: any | null, displayName: string } | null }> };
 
 export type UpdateCompanyMutationVariables = Exact<{
   id?: InputMaybe<Scalars['uuid']>;
   name?: InputMaybe<Scalars['String']>;
   domain_name?: InputMaybe<Scalars['String']>;
   account_owner_id?: InputMaybe<Scalars['uuid']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
   address?: InputMaybe<Scalars['String']>;
-  employees?: InputMaybe<Scalars['Int']>;
+  employees?: InputMaybe<Scalars['numeric']>;
 }>;
 
 
-export type UpdateCompanyMutation = { __typename?: 'mutation_root', update_companies?: { __typename?: 'companies_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'companies', address?: string | null, created_at: any, domain_name?: string | null, employees: number, id: any, name?: string | null, account_owner?: { __typename?: 'users', id: any, email?: any | null, displayName: string } | null }> } | null };
+export type UpdateCompanyMutation = { __typename?: 'mutation_root', update_companies?: { __typename?: 'companies_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'companies', address?: string | null, created_at: any, domain_name?: string | null, employees?: any | null, id: any, name?: string | null, account_owner?: { __typename?: 'users', id: any, email?: any | null, displayName: string } | null }> } | null };
+
+export type InsertCompanyMutationVariables = Exact<{
+  id?: InputMaybe<Scalars['uuid']>;
+  name?: InputMaybe<Scalars['String']>;
+  domain_name?: InputMaybe<Scalars['String']>;
+  account_owner_id?: InputMaybe<Scalars['uuid']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+  address?: InputMaybe<Scalars['String']>;
+  employees?: InputMaybe<Scalars['numeric']>;
+}>;
+
+
+export type InsertCompanyMutation = { __typename?: 'mutation_root', insert_companies?: { __typename?: 'companies_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'companies', address?: string | null, created_at: any, domain_name?: string | null, employees?: any | null, id: any, name?: string | null }> } | null };
+
+export type DeleteCompaniesMutationVariables = Exact<{
+  ids?: InputMaybe<Array<Scalars['uuid']> | Scalars['uuid']>;
+}>;
+
+
+export type DeleteCompaniesMutation = { __typename?: 'mutation_root', delete_companies?: { __typename?: 'companies_mutation_response', returning: Array<{ __typename?: 'companies', address?: string | null, created_at: any, domain_name?: string | null, employees?: any | null, id: any, name?: string | null }> } | null };
 
 export type GetPeopleQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<People_Order_By> | People_Order_By>;
+  where?: InputMaybe<People_Bool_Exp>;
+  limit?: InputMaybe<Scalars['Int']>;
 }>;
 
 
@@ -5031,15 +5069,44 @@ export type UpdatePeopleMutationVariables = Exact<{
   city?: InputMaybe<Scalars['String']>;
   company_id?: InputMaybe<Scalars['uuid']>;
   email?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
 }>;
 
 
-export type UpdatePeopleMutation = { __typename?: 'mutation_root', update_people?: { __typename?: 'people_mutation_response', returning: Array<{ __typename?: 'people', city?: string | null, email?: string | null, firstname?: string | null, id: any, lastname?: string | null, phone?: string | null, company?: { __typename?: 'companies', domain_name?: string | null, name?: string | null, id: any } | null }> } | null };
+export type UpdatePeopleMutation = { __typename?: 'mutation_root', update_people?: { __typename?: 'people_mutation_response', returning: Array<{ __typename?: 'people', city?: string | null, email?: string | null, firstname?: string | null, id: any, lastname?: string | null, phone?: string | null, created_at: any, company?: { __typename?: 'companies', domain_name?: string | null, name?: string | null, id: any } | null }> } | null };
+
+export type InsertPersonMutationVariables = Exact<{
+  id?: InputMaybe<Scalars['uuid']>;
+  firstname?: InputMaybe<Scalars['String']>;
+  lastname?: InputMaybe<Scalars['String']>;
+  phone?: InputMaybe<Scalars['String']>;
+  city?: InputMaybe<Scalars['String']>;
+  company_id?: InputMaybe<Scalars['uuid']>;
+  email?: InputMaybe<Scalars['String']>;
+  created_at?: InputMaybe<Scalars['timestamptz']>;
+}>;
+
+
+export type InsertPersonMutation = { __typename?: 'mutation_root', insert_people?: { __typename?: 'people_mutation_response', affected_rows: number, returning: Array<{ __typename?: 'people', city?: string | null, email?: string | null, firstname?: string | null, id: any, lastname?: string | null, phone?: string | null, created_at: any, company?: { __typename?: 'companies', domain_name?: string | null, name?: string | null, id: any } | null }> } | null };
+
+export type DeletePeopleMutationVariables = Exact<{
+  ids?: InputMaybe<Array<Scalars['uuid']> | Scalars['uuid']>;
+}>;
+
+
+export type DeletePeopleMutation = { __typename?: 'mutation_root', delete_people?: { __typename?: 'people_mutation_response', returning: Array<{ __typename?: 'people', city?: string | null, email?: string | null, firstname?: string | null, id: any, lastname?: string | null, phone?: string | null, created_at: any, company?: { __typename?: 'companies', domain_name?: string | null, name?: string | null, id: any } | null }> } | null };
+
+export type GetCurrentUserQueryVariables = Exact<{
+  uuid?: InputMaybe<Scalars['uuid']>;
+}>;
+
+
+export type GetCurrentUserQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: any, email?: any | null, displayName: string, workspace_member?: { __typename?: 'workspace_members', workspace: { __typename?: 'workspaces', id: any, domain_name: string, display_name: string, logo?: string | null } } | null }> };
 
 
 export const GetCompaniesDocument = gql`
-    query GetCompanies($orderBy: [companies_order_by!]) {
-  companies(order_by: $orderBy) {
+    query GetCompanies($orderBy: [companies_order_by!], $where: companies_bool_exp) {
+  companies(order_by: $orderBy, where: $where) {
     id
     domain_name
     name
@@ -5068,6 +5135,7 @@ export const GetCompaniesDocument = gql`
  * const { data, loading, error } = useGetCompaniesQuery({
  *   variables: {
  *      orderBy: // value for 'orderBy'
+ *      where: // value for 'where'
  *   },
  * });
  */
@@ -5083,10 +5151,10 @@ export type GetCompaniesQueryHookResult = ReturnType<typeof useGetCompaniesQuery
 export type GetCompaniesLazyQueryHookResult = ReturnType<typeof useGetCompaniesLazyQuery>;
 export type GetCompaniesQueryResult = Apollo.QueryResult<GetCompaniesQuery, GetCompaniesQueryVariables>;
 export const UpdateCompanyDocument = gql`
-    mutation UpdateCompany($id: uuid, $name: String, $domain_name: String, $account_owner_id: uuid, $address: String, $employees: Int) {
+    mutation UpdateCompany($id: uuid, $name: String, $domain_name: String, $account_owner_id: uuid, $created_at: timestamptz, $address: String, $employees: numeric) {
   update_companies(
     where: {id: {_eq: $id}}
-    _set: {account_owner_id: $account_owner_id, address: $address, domain_name: $domain_name, employees: $employees, name: $name}
+    _set: {account_owner_id: $account_owner_id, address: $address, domain_name: $domain_name, employees: $employees, name: $name, created_at: $created_at}
   ) {
     affected_rows
     returning {
@@ -5124,6 +5192,7 @@ export type UpdateCompanyMutationFn = Apollo.MutationFunction<UpdateCompanyMutat
  *      name: // value for 'name'
  *      domain_name: // value for 'domain_name'
  *      account_owner_id: // value for 'account_owner_id'
+ *      created_at: // value for 'created_at'
  *      address: // value for 'address'
  *      employees: // value for 'employees'
  *   },
@@ -5136,9 +5205,98 @@ export function useUpdateCompanyMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateCompanyMutationHookResult = ReturnType<typeof useUpdateCompanyMutation>;
 export type UpdateCompanyMutationResult = Apollo.MutationResult<UpdateCompanyMutation>;
 export type UpdateCompanyMutationOptions = Apollo.BaseMutationOptions<UpdateCompanyMutation, UpdateCompanyMutationVariables>;
+export const InsertCompanyDocument = gql`
+    mutation InsertCompany($id: uuid, $name: String, $domain_name: String, $account_owner_id: uuid, $created_at: timestamptz, $address: String, $employees: numeric) {
+  insert_companies(
+    objects: {id: $id, name: $name, domain_name: $domain_name, account_owner_id: $account_owner_id, created_at: $created_at, address: $address, employees: $employees}
+  ) {
+    affected_rows
+    returning {
+      address
+      created_at
+      domain_name
+      employees
+      id
+      name
+    }
+  }
+}
+    `;
+export type InsertCompanyMutationFn = Apollo.MutationFunction<InsertCompanyMutation, InsertCompanyMutationVariables>;
+
+/**
+ * __useInsertCompanyMutation__
+ *
+ * To run a mutation, you first call `useInsertCompanyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertCompanyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertCompanyMutation, { data, loading, error }] = useInsertCompanyMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      name: // value for 'name'
+ *      domain_name: // value for 'domain_name'
+ *      account_owner_id: // value for 'account_owner_id'
+ *      created_at: // value for 'created_at'
+ *      address: // value for 'address'
+ *      employees: // value for 'employees'
+ *   },
+ * });
+ */
+export function useInsertCompanyMutation(baseOptions?: Apollo.MutationHookOptions<InsertCompanyMutation, InsertCompanyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InsertCompanyMutation, InsertCompanyMutationVariables>(InsertCompanyDocument, options);
+      }
+export type InsertCompanyMutationHookResult = ReturnType<typeof useInsertCompanyMutation>;
+export type InsertCompanyMutationResult = Apollo.MutationResult<InsertCompanyMutation>;
+export type InsertCompanyMutationOptions = Apollo.BaseMutationOptions<InsertCompanyMutation, InsertCompanyMutationVariables>;
+export const DeleteCompaniesDocument = gql`
+    mutation DeleteCompanies($ids: [uuid!]) {
+  delete_companies(where: {id: {_in: $ids}}) {
+    returning {
+      address
+      created_at
+      domain_name
+      employees
+      id
+      name
+    }
+  }
+}
+    `;
+export type DeleteCompaniesMutationFn = Apollo.MutationFunction<DeleteCompaniesMutation, DeleteCompaniesMutationVariables>;
+
+/**
+ * __useDeleteCompaniesMutation__
+ *
+ * To run a mutation, you first call `useDeleteCompaniesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCompaniesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCompaniesMutation, { data, loading, error }] = useDeleteCompaniesMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useDeleteCompaniesMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCompaniesMutation, DeleteCompaniesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCompaniesMutation, DeleteCompaniesMutationVariables>(DeleteCompaniesDocument, options);
+      }
+export type DeleteCompaniesMutationHookResult = ReturnType<typeof useDeleteCompaniesMutation>;
+export type DeleteCompaniesMutationResult = Apollo.MutationResult<DeleteCompaniesMutation>;
+export type DeleteCompaniesMutationOptions = Apollo.BaseMutationOptions<DeleteCompaniesMutation, DeleteCompaniesMutationVariables>;
 export const GetPeopleDocument = gql`
-    query GetPeople($orderBy: [people_order_by!]) {
-  people(order_by: $orderBy) {
+    query GetPeople($orderBy: [people_order_by!], $where: people_bool_exp, $limit: Int) {
+  people(order_by: $orderBy, where: $where, limit: $limit) {
     id
     phone
     email
@@ -5168,6 +5326,8 @@ export const GetPeopleDocument = gql`
  * const { data, loading, error } = useGetPeopleQuery({
  *   variables: {
  *      orderBy: // value for 'orderBy'
+ *      where: // value for 'where'
+ *      limit: // value for 'limit'
  *   },
  * });
  */
@@ -5183,10 +5343,10 @@ export type GetPeopleQueryHookResult = ReturnType<typeof useGetPeopleQuery>;
 export type GetPeopleLazyQueryHookResult = ReturnType<typeof useGetPeopleLazyQuery>;
 export type GetPeopleQueryResult = Apollo.QueryResult<GetPeopleQuery, GetPeopleQueryVariables>;
 export const UpdatePeopleDocument = gql`
-    mutation UpdatePeople($id: uuid, $firstname: String, $lastname: String, $phone: String, $city: String, $company_id: uuid, $email: String) {
+    mutation UpdatePeople($id: uuid, $firstname: String, $lastname: String, $phone: String, $city: String, $company_id: uuid, $email: String, $created_at: timestamptz) {
   update_people(
     where: {id: {_eq: $id}}
-    _set: {city: $city, company_id: $company_id, email: $email, firstname: $firstname, id: $id, lastname: $lastname, phone: $phone}
+    _set: {city: $city, company_id: $company_id, email: $email, firstname: $firstname, id: $id, lastname: $lastname, phone: $phone, created_at: $created_at}
   ) {
     returning {
       city
@@ -5200,6 +5360,7 @@ export const UpdatePeopleDocument = gql`
       id
       lastname
       phone
+      created_at
     }
   }
 }
@@ -5226,6 +5387,7 @@ export type UpdatePeopleMutationFn = Apollo.MutationFunction<UpdatePeopleMutatio
  *      city: // value for 'city'
  *      company_id: // value for 'company_id'
  *      email: // value for 'email'
+ *      created_at: // value for 'created_at'
  *   },
  * });
  */
@@ -5236,3 +5398,150 @@ export function useUpdatePeopleMutation(baseOptions?: Apollo.MutationHookOptions
 export type UpdatePeopleMutationHookResult = ReturnType<typeof useUpdatePeopleMutation>;
 export type UpdatePeopleMutationResult = Apollo.MutationResult<UpdatePeopleMutation>;
 export type UpdatePeopleMutationOptions = Apollo.BaseMutationOptions<UpdatePeopleMutation, UpdatePeopleMutationVariables>;
+export const InsertPersonDocument = gql`
+    mutation InsertPerson($id: uuid, $firstname: String, $lastname: String, $phone: String, $city: String, $company_id: uuid, $email: String, $created_at: timestamptz) {
+  insert_people(
+    objects: {id: $id, firstname: $firstname, lastname: $lastname, phone: $phone, city: $city, company_id: $company_id, email: $email, created_at: $created_at}
+  ) {
+    affected_rows
+    returning {
+      city
+      company {
+        domain_name
+        name
+        id
+      }
+      email
+      firstname
+      id
+      lastname
+      phone
+      created_at
+    }
+  }
+}
+    `;
+export type InsertPersonMutationFn = Apollo.MutationFunction<InsertPersonMutation, InsertPersonMutationVariables>;
+
+/**
+ * __useInsertPersonMutation__
+ *
+ * To run a mutation, you first call `useInsertPersonMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertPersonMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertPersonMutation, { data, loading, error }] = useInsertPersonMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      firstname: // value for 'firstname'
+ *      lastname: // value for 'lastname'
+ *      phone: // value for 'phone'
+ *      city: // value for 'city'
+ *      company_id: // value for 'company_id'
+ *      email: // value for 'email'
+ *      created_at: // value for 'created_at'
+ *   },
+ * });
+ */
+export function useInsertPersonMutation(baseOptions?: Apollo.MutationHookOptions<InsertPersonMutation, InsertPersonMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InsertPersonMutation, InsertPersonMutationVariables>(InsertPersonDocument, options);
+      }
+export type InsertPersonMutationHookResult = ReturnType<typeof useInsertPersonMutation>;
+export type InsertPersonMutationResult = Apollo.MutationResult<InsertPersonMutation>;
+export type InsertPersonMutationOptions = Apollo.BaseMutationOptions<InsertPersonMutation, InsertPersonMutationVariables>;
+export const DeletePeopleDocument = gql`
+    mutation DeletePeople($ids: [uuid!]) {
+  delete_people(where: {id: {_in: $ids}}) {
+    returning {
+      city
+      company {
+        domain_name
+        name
+        id
+      }
+      email
+      firstname
+      id
+      lastname
+      phone
+      created_at
+    }
+  }
+}
+    `;
+export type DeletePeopleMutationFn = Apollo.MutationFunction<DeletePeopleMutation, DeletePeopleMutationVariables>;
+
+/**
+ * __useDeletePeopleMutation__
+ *
+ * To run a mutation, you first call `useDeletePeopleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePeopleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePeopleMutation, { data, loading, error }] = useDeletePeopleMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useDeletePeopleMutation(baseOptions?: Apollo.MutationHookOptions<DeletePeopleMutation, DeletePeopleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeletePeopleMutation, DeletePeopleMutationVariables>(DeletePeopleDocument, options);
+      }
+export type DeletePeopleMutationHookResult = ReturnType<typeof useDeletePeopleMutation>;
+export type DeletePeopleMutationResult = Apollo.MutationResult<DeletePeopleMutation>;
+export type DeletePeopleMutationOptions = Apollo.BaseMutationOptions<DeletePeopleMutation, DeletePeopleMutationVariables>;
+export const GetCurrentUserDocument = gql`
+    query GetCurrentUser($uuid: uuid) {
+  users(where: {id: {_eq: $uuid}}) {
+    id
+    email
+    displayName
+    workspace_member {
+      workspace {
+        id
+        domain_name
+        display_name
+        logo
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCurrentUserQuery__
+ *
+ * To run a query within a React component, call `useGetCurrentUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrentUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCurrentUserQuery({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *   },
+ * });
+ */
+export function useGetCurrentUserQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentUserQuery, GetCurrentUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(GetCurrentUserDocument, options);
+      }
+export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentUserQuery, GetCurrentUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCurrentUserQuery, GetCurrentUserQueryVariables>(GetCurrentUserDocument, options);
+        }
+export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
+export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
+export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;

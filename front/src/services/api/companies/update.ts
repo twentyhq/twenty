@@ -13,7 +13,7 @@ export const UPDATE_COMPANY = gql`
     $account_owner_id: uuid
     $created_at: timestamptz
     $address: String
-    $employees: Int
+    $employees: numeric
   ) {
     update_companies(
       where: { id: { _eq: $id } }
@@ -52,7 +52,7 @@ export const INSERT_COMPANY = gql`
     $account_owner_id: uuid
     $created_at: timestamptz
     $address: String
-    $employees: Int
+    $employees: numeric
   ) {
     insert_companies(
       objects: {
@@ -79,7 +79,7 @@ export const INSERT_COMPANY = gql`
 `;
 
 export const DELETE_COMPANIES = gql`
-  mutation DeleteCompanies($ids: [uuid]) {
+  mutation DeleteCompanies($ids: [uuid!]) {
     delete_companies(where: { id: { _in: $ids } }) {
       returning {
         address

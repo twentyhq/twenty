@@ -65,7 +65,7 @@ function Companies() {
       id: uuidv4(),
       name: '',
       domainName: '',
-      employees: '0',
+      employees: null,
       address: '',
       pipes: [],
       creationDate: new Date(),

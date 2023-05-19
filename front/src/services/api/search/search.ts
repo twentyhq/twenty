@@ -4,7 +4,7 @@ import { SearchConfigType } from '../../../interfaces/search/interface';
 import { AnyEntity } from '../../../interfaces/entities/generic.interface';
 
 export const SEARCH_PEOPLE_QUERY = gql`
-  query SearchQuery($where: people_bool_exp, $limit: Int) {
+  query SearchPeopleQuery($where: people_bool_exp, $limit: Int) {
     searchResults: people(where: $where, limit: $limit) {
       id
       phone
@@ -18,7 +18,7 @@ export const SEARCH_PEOPLE_QUERY = gql`
 `;
 
 export const SEARCH_USER_QUERY = gql`
-  query SearchQuery($where: users_bool_exp, $limit: Int) {
+  query SearchUserQuery($where: users_bool_exp, $limit: Int) {
     searchResults: users(where: $where, limit: $limit) {
       id
       email
@@ -26,10 +26,12 @@ export const SEARCH_USER_QUERY = gql`
     }
   }
 `;
-
+// TODO: remove this query
 export const EMPTY_QUERY = gql`
   query EmptyQuery {
-    _
+    users {
+      id
+    }
   }
 `;
 

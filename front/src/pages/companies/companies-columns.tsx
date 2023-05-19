@@ -75,11 +75,17 @@ export const useCompaniesColumns = () => {
         ),
         cell: (props) => (
           <EditableText
-            content={props.row.original.employees || ''}
+            content={props.row.original.employees?.toString() || ''}
             changeHandler={(value) => {
               const company = props.row.original;
-              company.employees = value;
-              updateCompany(company);
+
+              if (value === '') {
+                company.employees = null;
+                updateCompany(company);
+              } else if (!Number.isNaN(Number(value))) {
+                company.employees = Number(value);
+                updateCompany(company);
+              }
             }}
           />
         ),
