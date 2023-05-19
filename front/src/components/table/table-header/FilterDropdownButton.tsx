@@ -10,6 +10,8 @@ import {
   SearchResultsType,
   useSearch,
 } from '../../../services/api/search/search';
+import DatePicker from '../../form/DatePicker';
+import styled from '@emotion/styled';
 
 type OwnProps<TData extends FilterableFieldsType> = {
   isFilterSelected: boolean;
@@ -26,7 +28,8 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
 }: OwnProps<TData>) => {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
-  const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
+  const [isOperandSelectionUnfolded, setIsOperandSelectionUnfolded] =
+    useState(false);
 
   const [selectedFilter, setSelectedFilter] = useState<
     FilterConfigType<TData> | undefined
@@ -39,25 +42,40 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   const [filterSearchResults, setSearchInput, setFilterSearch] = useSearch();
 
   const resetState = useCallback(() => {
-    setIsOptionUnfolded(false);
+    setIsOperandSelectionUnfolded(false);
     setSelectedFilter(undefined);
     setSelectedFilterOperand(undefined);
     setFilterSearch(null);
   }, [setFilterSearch]);
 
-  const renderSelectOptionItems = selectedFilter?.operands.map(
+  const renderOperandSelection = selectedFilter?.operands.map(
     (filterOperand, index) => (
       <DropdownButton.StyledDropdownItem
         key={`select-filter-operand-${index}`}
         onClick={() => {
           setSelectedFilterOperand(filterOperand);
-          setIsOptionUnfolded(false);
+          setIsOperandSelectionUnfolded(false);
         }}
       >
         {filterOperand.label}
       </DropdownButton.StyledDropdownItem>
     ),
   );
+
+  const renderFilterSelection = availableFilters.map((filter, index) => (
+    <DropdownButton.StyledDropdownItem
+      key={`select-filter-${index}`}
+      onClick={() => {
+        setSelectedFilter(filter);
+        setSelectedFilterOperand(filter.operands[0]);
+        filter.searchConfig && setFilterSearch(filter.searchConfig);
+        setSearchInput('');
+      }}
+    >
+      <DropdownButton.StyledIcon>{filter.icon}</DropdownButton.StyledIcon>
+      {filter.label}
+    </DropdownButton.StyledDropdownItem>
+  ));
 
   const renderSearchResults = (
     filterSearchResults: SearchResultsType,
@@ -93,22 +111,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
     ));
   };
 
-  const renderSelectFilterITems = availableFilters.map((filter, index) => (
-    <DropdownButton.StyledDropdownItem
-      key={`select-filter-${index}`}
-      onClick={() => {
-        setSelectedFilter(filter);
-        setSelectedFilterOperand(filter.operands[0]);
-        filter.searchConfig && setFilterSearch(filter.searchConfig);
-        setSearchInput('');
-      }}
-    >
-      <DropdownButton.StyledIcon>{filter.icon}</DropdownButton.StyledIcon>
-      {filter.label}
-    </DropdownButton.StyledDropdownItem>
-  ));
-
-  function renderFilterDropdown(
+  function renderValueSelection(
     selectedFilter: FilterConfigType<TData>,
     selectedFilterOperand: FilterOperandType<TData>,
   ) {
@@ -116,38 +119,65 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
       <>
         <DropdownButton.StyledDropdownTopOption
           key={'selected-filter-operand'}
-          onClick={() => setIsOptionUnfolded(true)}
+          onClick={() => setIsOperandSelectionUnfolded(true)}
         >
           {selectedFilterOperand.label}
 
           <DropdownButton.StyledDropdownTopOptionAngleDown />
         </DropdownButton.StyledDropdownTopOption>
         <DropdownButton.StyledSearchField key={'search-filter'}>
-          <input
-            type="text"
-            placeholder={selectedFilter.label}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              if (selectedFilter.searchConfig) {
-                setFilterSearch(selectedFilter.searchConfig);
-                setSearchInput(event.target.value);
-              } else {
-                if (event.target.value === '') {
-                  onFilterRemove(selectedFilter.key);
-                } else {
-                  onFilterSelect({
-                    key: selectedFilter.key,
-                    label: selectedFilter.label,
-                    value: event.target.value,
-                    displayValue: event.target.value,
-                    icon: selectedFilter.icon,
-                    operand: selectedFilterOperand,
-                  });
+          {['text', 'relation'].includes(selectedFilter.type) && (
+            <input
+              type="text"
+              placeholder={selectedFilter.label}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                if (
+                  selectedFilter.type === 'relation' &&
+                  selectedFilter.searchConfig
+                ) {
+                  setFilterSearch(selectedFilter.searchConfig);
+                  setSearchInput(event.target.value);
                 }
-              }
-            }}
-          />
+
+                if (selectedFilter.type === 'text') {
+                  if (event.target.value === '') {
+                    onFilterRemove(selectedFilter.key);
+                  } else {
+                    onFilterSelect({
+                      key: selectedFilter.key,
+                      label: selectedFilter.label,
+                      value: event.target.value,
+                      displayValue: event.target.value,
+                      icon: selectedFilter.icon,
+                      operand: selectedFilterOperand,
+                    });
+                  }
+                }
+              }}
+            />
+          )}
+          {selectedFilter.type === 'date' && (
+            <DatePicker
+              date={new Date()}
+              onChangeHandler={(date) => {
+                onFilterSelect({
+                  key: selectedFilter.key,
+                  label: selectedFilter.label,
+                  value: date.toISOString(),
+                  displayValue: date.toLocaleDateString(),
+                  icon: selectedFilter.icon,
+                  operand: selectedFilterOperand,
+                });
+              }}
+              customInput={<></>}
+              customCalendarContainer={styled.div`
+                top: -10px;
+              `}
+            />
+          )}
         </DropdownButton.StyledSearchField>
-        {filterSearchResults &&
+        {selectedFilter.type === 'relation' &&
+          filterSearchResults &&
           renderSearchResults(
             filterSearchResults,
             selectedFilter,
@@ -165,11 +195,11 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
       setIsUnfolded={setIsUnfolded}
       resetState={resetState}
     >
-      {selectedFilter && selectedFilterOperand
-        ? isOptionUnfolded
-          ? renderSelectOptionItems
-          : renderFilterDropdown(selectedFilter, selectedFilterOperand)
-        : renderSelectFilterITems}
+      {selectedFilter
+        ? isOperandSelectionUnfolded
+          ? renderOperandSelection
+          : renderValueSelection(selectedFilter, selectedFilterOperand)
+        : renderFilterSelection}
     </DropdownButton>
   );
 };

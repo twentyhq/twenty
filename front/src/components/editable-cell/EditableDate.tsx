@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { forwardRef, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
 import DatePicker from '../form/DatePicker';
-import { CalendarContainer } from 'react-datepicker';
 import { modalBackground } from '../../layout/styles/themes';
 
 export type EditableDateProps = {
@@ -24,10 +23,10 @@ const StyledCalendarContainer = styled.div<StyledCalendarContainerProps>`
   position: absolute;
   border: 1px solid ${(props) => props.theme.primaryBorder};
   border-radius: 8px;
-  width: 280px;
   box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.09);
   z-index: 1;
   left: -10px;
+  top: 10px;
   ${modalBackground};
 `;
 function EditableDate({
@@ -54,21 +53,11 @@ function EditableDate({
   );
 
   interface DatePickerContainerProps {
-    className?: string;
     children: React.ReactNode;
   }
 
-  const DatePickerContainer = ({
-    className,
-    children,
-  }: DatePickerContainerProps) => {
-    return (
-      <StyledCalendarContainer>
-        <CalendarContainer className={className}>
-          <div style={{ position: 'relative' }}>{children}</div>
-        </CalendarContainer>
-      </StyledCalendarContainer>
-    );
+  const DatePickerContainer = ({ children }: DatePickerContainerProps) => {
+    return <StyledCalendarContainer>{children}</StyledCalendarContainer>;
   };
 
   return (
@@ -86,7 +75,7 @@ function EditableDate({
               setInputValue(date);
             }}
             customInput={<DateDisplay />}
-            customContainer={DatePickerContainer}
+            customCalendarContainer={DatePickerContainer}
           />
         </StyledContainer>
       }

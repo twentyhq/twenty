@@ -9,7 +9,7 @@ export type DatePickerProps = {
   date: Date;
   onChangeHandler: (date: Date) => void;
   customInput?: ReactElement;
-  customContainer?(props: CalendarContainerProps): React.ReactNode;
+  customCalendarContainer?(props: CalendarContainerProps): React.ReactNode;
 };
 
 const StyledContainer = styled.div`
@@ -20,6 +20,13 @@ const StyledContainer = styled.div`
     font-size: ${(props) => props.theme.fontSizeMedium};
     border: none;
     display: block;
+  }
+
+  & .react-datepicker-popper {
+    position: relative !important;
+    inset: auto !important;
+    transform: none !important;
+    padding: 0 !important;
   }
 
   & .react-datepicker__triangle::after {
@@ -125,6 +132,10 @@ const StyledContainer = styled.div`
     line-height: 40px;
   }
 
+  & .react-datepicker__month-container {
+    float: none;
+  }
+
   // Days
 
   & .react-datepicker__month {
@@ -172,7 +183,7 @@ function DatePicker({
   date,
   onChangeHandler,
   customInput,
-  customContainer,
+  customCalendarContainer,
 }: DatePickerProps) {
   const [startDate, setStartDate] = useState(date);
 
@@ -203,7 +214,9 @@ function DatePicker({
           onChangeHandler(date);
         }}
         customInput={customInput ? customInput : <DefaultDateDisplay />}
-        calendarContainer={customContainer ? customContainer : undefined}
+        calendarContainer={
+          customCalendarContainer ? customCalendarContainer : undefined
+        }
       />
     </StyledContainer>
   );
