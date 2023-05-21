@@ -1,8 +1,11 @@
 import { DocumentNode } from 'graphql';
 import { ReactNode } from 'react';
-import { AnyEntity, BoolExpType, GqlType } from '../entities/generic.interface';
-
-type UnknownType = void;
+import {
+  AnyEntity,
+  BoolExpType,
+  GqlType,
+  UnknownType,
+} from '../entities/generic.interface';
 
 export type SearchConfigType<
   SearchType extends AnyEntity | UnknownType = UnknownType,
