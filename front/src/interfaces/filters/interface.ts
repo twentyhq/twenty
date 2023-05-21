@@ -1,10 +1,13 @@
 import { ReactNode } from 'react';
 import { SearchConfigType } from '../search/interface';
-import { AnyEntity, BoolExpType } from '../entities/generic.interface';
+import {
+  AnyEntity,
+  BoolExpType,
+  UnknownType,
+} from '../entities/generic.interface';
 
 export type FilterableFieldsType = AnyEntity;
 export type FilterWhereRelationType = AnyEntity;
-type UnknownType = void;
 export type FilterWhereType = FilterWhereRelationType | string | UnknownType;
 
 export type FilterConfigType<

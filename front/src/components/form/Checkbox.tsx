@@ -21,11 +21,15 @@ const StyledContainer = styled.span`
 
   input[type='checkbox']::before {
     content: '';
-    border: 1px solid ${(props) => props.theme.text80};
+    border: 1px solid ${(props) => props.theme.text40};
     width: 12px;
     height: 12px;
     border-radius: 2px;
     display: block;
+  }
+
+  input[type='checkbox']:hover::before {
+    border: 1px solid ${(props) => props.theme.text80};
   }
 
   input[type='checkbox']:checked::before {

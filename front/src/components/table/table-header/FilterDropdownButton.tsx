@@ -91,25 +91,27 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
       );
     }
 
-    return filterSearchResults.results.map((result, index) => (
-      <DropdownButton.StyledDropdownItem
-        key={`fields-value-${index}`}
-        onClick={() => {
-          onFilterSelect({
-            key: selectedFilter.key,
-            label: selectedFilter.label,
-            value: result.value,
-            displayValue: result.render(result.value),
-            icon: selectedFilter.icon,
-            operand: selectedFilterOperand,
-          });
-          setIsUnfolded(false);
-          setSelectedFilter(undefined);
-        }}
-      >
-        {result.render(result.value)}
-      </DropdownButton.StyledDropdownItem>
-    ));
+    return filterSearchResults.results.map((result, index) => {
+      return (
+        <DropdownButton.StyledDropdownItem
+          key={`fields-value-${index}`}
+          onClick={() => {
+            onFilterSelect({
+              key: selectedFilter.key,
+              label: selectedFilter.label,
+              value: result.value,
+              displayValue: result.render(result.value),
+              icon: selectedFilter.icon,
+              operand: selectedFilterOperand,
+            });
+            setIsUnfolded(false);
+            setSelectedFilter(undefined);
+          }}
+        >
+          {result.render(result.value)}
+        </DropdownButton.StyledDropdownItem>
+      );
+    });
   };
 
   function renderValueSelection(

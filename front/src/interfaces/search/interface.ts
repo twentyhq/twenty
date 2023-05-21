@@ -1,29 +1,25 @@
 import { DocumentNode } from 'graphql';
 import { ReactNode } from 'react';
 import {
-  Companies_Bool_Exp,
-  People_Bool_Exp,
-  Users_Bool_Exp,
-} from '../../generated/graphql';
-import { AnyEntity, GqlType } from '../entities/generic.interface';
-
-type UnknownType = void;
+  AnyEntity,
+  BoolExpType,
+  GqlType,
+  UnknownType,
+} from '../entities/generic.interface';
 
 export type SearchConfigType<
-  SearchType extends AnyEntity | UnknownType = AnyEntity,
-> = SearchType extends AnyEntity
+  SearchType extends AnyEntity | UnknownType = UnknownType,
+> = SearchType extends UnknownType
   ? {
       query: DocumentNode;
-      template: (
-        searchInput: string,
-      ) => People_Bool_Exp | Companies_Bool_Exp | Users_Bool_Exp;
+      template: (searchInput: string) => any;
+      resultMapper: (data: any) => any;
+    }
+  : {
+      query: DocumentNode;
+      template: (searchInput: string) => BoolExpType<SearchType>;
       resultMapper: (data: GqlType<SearchType>) => {
         value: SearchType;
         render: (value: SearchType) => ReactNode;
       };
-    }
-  : {
-      query: DocumentNode;
-      template: (searchInput: string) => any;
-      resultMapper: (data: any) => any;
     };
