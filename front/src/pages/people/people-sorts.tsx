@@ -1,19 +1,19 @@
-import {
-  FaRegBuilding,
-  FaCalendar,
-  FaEnvelope,
-  FaRegUser,
-  FaMapPin,
-  FaPhone,
-} from 'react-icons/fa';
 import { Order_By, People_Order_By } from '../../generated/graphql';
 import { SortType } from '../../interfaces/sorts/interface';
+import {
+  TbBuilding,
+  TbCalendar,
+  TbMail,
+  TbMapPin,
+  TbPhone,
+  TbUser,
+} from 'react-icons/tb';
 
 export const availableSorts = [
   {
     key: 'fullname',
     label: 'People',
-    icon: <FaRegUser />,
+    icon: <TbUser size={16} />,
     _type: 'custom_sort',
     orderByTemplate: (order: Order_By) => ({
       firstname: order,
@@ -23,32 +23,32 @@ export const availableSorts = [
   {
     key: 'company_name',
     label: 'Company',
-    icon: <FaRegBuilding />,
+    icon: <TbBuilding size={16} />,
     _type: 'custom_sort',
     orderByTemplate: (order: Order_By) => ({ company: { name: order } }),
   },
   {
     key: 'email',
     label: 'Email',
-    icon: <FaEnvelope />,
+    icon: <TbMail size={16} />,
     _type: 'default_sort',
   },
   {
     key: 'phone',
     label: 'Phone',
-    icon: <FaPhone />,
+    icon: <TbPhone size={16} />,
     _type: 'default_sort',
   },
   {
     key: 'created_at',
     label: 'Created at',
-    icon: <FaCalendar />,
+    icon: <TbCalendar size={16} />,
     _type: 'default_sort',
   },
   {
     key: 'city',
     label: 'City',
-    icon: <FaMapPin />,
+    icon: <TbMapPin size={16} />,
     _type: 'default_sort',
   },
 ] satisfies Array<SortType<People_Order_By>>;

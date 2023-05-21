@@ -1,12 +1,4 @@
 import { useMemo } from 'react';
-import {
-  FaRegBuilding,
-  FaCalendar,
-  FaLink,
-  FaMapPin,
-  FaRegUser,
-  FaUsers,
-} from 'react-icons/fa';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
 
 import { SEARCH_USER_QUERY } from '../../services/api/search/search';
@@ -27,6 +19,14 @@ import PersonChip, {
   PersonChipPropsType,
 } from '../../components/chips/PersonChip';
 import CompanyChip from '../../components/chips/CompanyChip';
+import {
+  TbBuilding,
+  TbCalendar,
+  TbLink,
+  TbMapPin,
+  TbSum,
+  TbUser,
+} from 'react-icons/tb';
 
 const columnHelper = createColumnHelper<Company>();
 
@@ -53,7 +53,7 @@ export const useCompaniesColumns = () => {
       },
       columnHelper.accessor('name', {
         header: () => (
-          <ColumnHead viewName="Name" viewIcon={<FaRegBuilding />} />
+          <ColumnHead viewName="Name" viewIcon={<TbBuilding size={16} />} />
         ),
         cell: (props) => (
           <EditableChip
@@ -71,7 +71,7 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('employees', {
         header: () => (
-          <ColumnHead viewName="Employees" viewIcon={<FaUsers />} />
+          <ColumnHead viewName="Employees" viewIcon={<TbSum size={16} />} />
         ),
         cell: (props) => (
           <EditableText
@@ -91,7 +91,9 @@ export const useCompaniesColumns = () => {
         ),
       }),
       columnHelper.accessor('domainName', {
-        header: () => <ColumnHead viewName="URL" viewIcon={<FaLink />} />,
+        header: () => (
+          <ColumnHead viewName="URL" viewIcon={<TbLink size={16} />} />
+        ),
         cell: (props) => (
           <EditableText
             content={props.row.original.domainName || ''}
@@ -104,7 +106,9 @@ export const useCompaniesColumns = () => {
         ),
       }),
       columnHelper.accessor('address', {
-        header: () => <ColumnHead viewName="Address" viewIcon={<FaMapPin />} />,
+        header: () => (
+          <ColumnHead viewName="Address" viewIcon={<TbMapPin size={16} />} />
+        ),
         cell: (props) => (
           <EditableText
             content={props.row.original.address || ''}
@@ -118,7 +122,7 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('creationDate', {
         header: () => (
-          <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />
+          <ColumnHead viewName="Creation" viewIcon={<TbCalendar size={16} />} />
         ),
         cell: (props) => (
           <EditableDate
@@ -133,7 +137,10 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('accountOwner', {
         header: () => (
-          <ColumnHead viewName="Account Owner" viewIcon={<FaRegUser />} />
+          <ColumnHead
+            viewName="Account Owner"
+            viewIcon={<TbUser size={16} />}
+          />
         ),
         cell: (props) => (
           <EditableRelation<User, PersonChipPropsType>

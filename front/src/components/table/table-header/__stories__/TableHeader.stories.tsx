@@ -1,10 +1,10 @@
 import TableHeader from '../TableHeader';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
-import { FaRegBuilding, FaCalendar } from 'react-icons/fa';
 import { SortType } from '../../../../interfaces/sorts/interface';
 import { MockedProvider } from '@apollo/client/testing';
 import { EMPTY_QUERY } from '../../../../services/api/search/search';
+import { TbBuilding, TbCalendar } from 'react-icons/tb';
 
 const component = {
   title: 'TableHeader',
@@ -33,7 +33,7 @@ export const RegularTableHeader = () => {
     {
       key: 'created_at',
       label: 'Created at',
-      icon: <FaCalendar />,
+      icon: <TbCalendar size={16} />,
       _type: 'default_sort',
     },
   ];
@@ -42,7 +42,7 @@ export const RegularTableHeader = () => {
       <ThemeProvider theme={lightTheme}>
         <TableHeader
           viewName="Test"
-          viewIcon={<FaRegBuilding />}
+          viewIcon={<TbBuilding size={16} />}
           availableSorts={availableSorts}
         />
       </ThemeProvider>

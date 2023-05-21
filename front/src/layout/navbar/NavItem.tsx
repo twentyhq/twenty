@@ -19,6 +19,7 @@ const StyledItem = styled.button<StyledItemProps>`
   border: none;
   font-size: ${(props) => props.theme.fontSizeMedium};
   cursor: pointer;
+  user-select: none;
   background: ${(props) => (props.active ? 'rgba(0, 0, 0, 0.04)' : 'inherit')};
   padding-top: ${(props) => props.theme.spacing(1)};
   padding-bottom: ${(props) => props.theme.spacing(1)};

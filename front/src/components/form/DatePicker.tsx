@@ -20,6 +20,7 @@ const StyledContainer = styled.div`
     font-size: ${(props) => props.theme.fontSizeMedium};
     border: none;
     display: block;
+    font-weight: 400;
   }
 
   & .react-datepicker-popper {

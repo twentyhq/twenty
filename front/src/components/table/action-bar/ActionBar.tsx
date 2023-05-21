@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import ActionBarButton from './ActionBarButton';
-import { FaTrash } from 'react-icons/fa';
+import { TbTrash } from 'react-icons/tb';
 
 type OwnProps = {
   onDeleteClick: () => void;
@@ -29,7 +29,7 @@ function ActionBar({ onDeleteClick }: OwnProps) {
     <StyledContainer>
       <ActionBarButton
         label="Delete"
-        icon={<FaTrash />}
+        icon={<TbTrash size={16} />}
         onClick={onDeleteClick}
       />
     </StyledContainer>

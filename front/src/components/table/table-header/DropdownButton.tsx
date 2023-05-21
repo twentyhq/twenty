@@ -29,6 +29,7 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   display: flex;
   margin-left: ${(props) => props.theme.spacing(3)};
   cursor: pointer;
+  user-select: none;
   background: ${(props) => props.theme.primaryBackground};
   color: ${(props) => (props.isActive ? props.theme.blue : 'none')};
   padding: ${(props) => props.theme.spacing(1)};
@@ -77,6 +78,7 @@ const StyledDropdownItem = styled.li`
     calc(${(props) => props.theme.spacing(2)} - 2px);
   margin: 2px;
   cursor: pointer;
+  user-select: none;
   color: ${(props) => props.theme.text60};
 
   &:hover {
@@ -91,6 +93,7 @@ const StyledDropdownTopOption = styled.li`
   padding: calc(${(props) => props.theme.spacing(2)} + 2px)
     calc(${(props) => props.theme.spacing(2)});
   cursor: pointer;
+  user-select: none;
   color: ${(props) => props.theme.text60};
   font-weight: ${(props) => props.theme.fontWeightBold};
 
@@ -114,6 +117,7 @@ const StyledSearchField = styled.li`
   justify-content: space-between;
 
   cursor: pointer;
+  user-select: none;
   color: ${(props) => props.theme.text60};
   font-weight: ${(props) => props.theme.fontWeightBold};
 

@@ -1,12 +1,4 @@
 import { useMemo } from 'react';
-import {
-  FaRegBuilding,
-  FaCalendar,
-  FaEnvelope,
-  FaRegUser,
-  FaMapPin,
-  FaPhone,
-} from 'react-icons/fa';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
 
 import { SEARCH_COMPANY_QUERY } from '../../services/api/search/search';
@@ -30,6 +22,14 @@ import EditableRelation from '../../components/editable-cell/EditableRelation';
 import CompanyChip, {
   CompanyChipPropsType,
 } from '../../components/chips/CompanyChip';
+import {
+  TbBuilding,
+  TbCalendar,
+  TbMail,
+  TbMapPin,
+  TbPhone,
+  TbUser,
+} from 'react-icons/tb';
 
 const columnHelper = createColumnHelper<Person>();
 
@@ -55,7 +55,9 @@ export const usePeopleColumns = () => {
         ),
       },
       columnHelper.accessor('firstname', {
-        header: () => <ColumnHead viewName="People" viewIcon={<FaRegUser />} />,
+        header: () => (
+          <ColumnHead viewName="People" viewIcon={<TbUser size={16} />} />
+        ),
         cell: (props) => (
           <EditableFullName
             firstname={props.row.original.firstname || ''}
@@ -70,7 +72,9 @@ export const usePeopleColumns = () => {
         ),
       }),
       columnHelper.accessor('email', {
-        header: () => <ColumnHead viewName="Email" viewIcon={<FaEnvelope />} />,
+        header: () => (
+          <ColumnHead viewName="Email" viewIcon={<TbMail size={16} />} />
+        ),
         cell: (props) => (
           <EditableText
             placeholder="Email"
@@ -85,7 +89,7 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('company', {
         header: () => (
-          <ColumnHead viewName="Company" viewIcon={<FaRegBuilding />} />
+          <ColumnHead viewName="Company" viewIcon={<TbBuilding size={16} />} />
         ),
         cell: (props) => (
           <EditableRelation<Company, CompanyChipPropsType>
@@ -123,7 +127,9 @@ export const usePeopleColumns = () => {
         ),
       }),
       columnHelper.accessor('phone', {
-        header: () => <ColumnHead viewName="Phone" viewIcon={<FaPhone />} />,
+        header: () => (
+          <ColumnHead viewName="Phone" viewIcon={<TbPhone size={16} />} />
+        ),
         cell: (props) => (
           <EditablePhone
             placeholder="Phone"
@@ -138,7 +144,7 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('creationDate', {
         header: () => (
-          <ColumnHead viewName="Creation" viewIcon={<FaCalendar />} />
+          <ColumnHead viewName="Creation" viewIcon={<TbCalendar size={16} />} />
         ),
         cell: (props) => (
           <EditableDate
@@ -152,7 +158,9 @@ export const usePeopleColumns = () => {
         ),
       }),
       columnHelper.accessor('city', {
-        header: () => <ColumnHead viewName="City" viewIcon={<FaMapPin />} />,
+        header: () => (
+          <ColumnHead viewName="City" viewIcon={<TbMapPin size={16} />} />
+        ),
         cell: (props) => (
           <EditableText
             editModeHorizontalAlign="right"

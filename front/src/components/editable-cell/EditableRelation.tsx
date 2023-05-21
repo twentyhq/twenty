@@ -46,6 +46,7 @@ const StyledEditModeResultItem = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+  user-select: none;
 `;
 
 export type EditableRelationProps<

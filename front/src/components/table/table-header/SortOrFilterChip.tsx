@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { FaTimes } from 'react-icons/fa';
+import { TbX } from 'react-icons/tb';
 import { ReactNode } from 'react';
 
 type OwnProps = {
@@ -30,8 +30,11 @@ const StyledIcon = styled.div`
 const StyledDelete = styled.div`
   margin-left: ${(props) => props.theme.spacing(2)};
   cursor: pointer;
+  user-select: none;
   display: flex;
   align-items: center;
+  font-size: ${(props) => props.theme.fontSizeSmall};
+  margin-top: 1px;
 `;
 
 const StyledLabelKey = styled.div`
@@ -51,7 +54,7 @@ function SortOrFilterChip({
       {labelKey && <StyledLabelKey>{labelKey}:&nbsp;</StyledLabelKey>}
       {labelValue}
       <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
-        <FaTimes />
+        <TbX />
       </StyledDelete>
     </StyledChip>
   );
