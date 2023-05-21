@@ -12,6 +12,8 @@ export type AnyEntity = {
   __typename: string;
 } & Record<string, any>;
 
+export type UnknownType = void;
+
 export type GqlType<T> = T extends Company
   ? GraphqlQueryCompany
   : T extends Person
