@@ -53,6 +53,7 @@ export const usePeopleColumns = () => {
             onChange={props.row.getToggleSelectedHandler()}
           />
         ),
+        size: 25,
       },
       columnHelper.accessor('firstname', {
         header: () => (
@@ -70,6 +71,7 @@ export const usePeopleColumns = () => {
             }}
           />
         ),
+        size: 200,
       }),
       columnHelper.accessor('email', {
         header: () => (
@@ -86,6 +88,7 @@ export const usePeopleColumns = () => {
             }}
           />
         ),
+        size: 200,
       }),
       columnHelper.accessor('company', {
         header: () => (
@@ -125,6 +128,7 @@ export const usePeopleColumns = () => {
             }
           />
         ),
+        size: 150,
       }),
       columnHelper.accessor('phone', {
         header: () => (
@@ -141,6 +145,7 @@ export const usePeopleColumns = () => {
             }}
           />
         ),
+        size: 130,
       }),
       columnHelper.accessor('creationDate', {
         header: () => (
@@ -156,6 +161,7 @@ export const usePeopleColumns = () => {
             }}
           />
         ),
+        size: 100,
       }),
       columnHelper.accessor('city', {
         header: () => (

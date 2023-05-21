@@ -50,6 +50,7 @@ export const useCompaniesColumns = () => {
             onChange={props.row.getToggleSelectedHandler()}
           />
         ),
+        size: 25,
       },
       columnHelper.accessor('name', {
         header: () => (
@@ -68,6 +69,7 @@ export const useCompaniesColumns = () => {
             ChipComponent={CompanyChip}
           />
         ),
+        size: 120,
       }),
       columnHelper.accessor('employees', {
         header: () => (
@@ -89,6 +91,7 @@ export const useCompaniesColumns = () => {
             }}
           />
         ),
+        size: 70,
       }),
       columnHelper.accessor('domainName', {
         header: () => (
@@ -104,6 +107,7 @@ export const useCompaniesColumns = () => {
             }}
           />
         ),
+        size: 100,
       }),
       columnHelper.accessor('address', {
         header: () => (
@@ -119,6 +123,7 @@ export const useCompaniesColumns = () => {
             }}
           />
         ),
+        size: 170,
       }),
       columnHelper.accessor('creationDate', {
         header: () => (
@@ -134,6 +139,7 @@ export const useCompaniesColumns = () => {
             }}
           />
         ),
+        size: 70,
       }),
       columnHelper.accessor('accountOwner', {
         header: () => (

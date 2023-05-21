@@ -43,6 +43,7 @@ const StyledTable = styled.table`
   border-collapse: collapse;
   margin-left: ${(props) => props.theme.spacing(2)};
   margin-right: ${(props) => props.theme.spacing(2)};
+  table-layout: fixed;
 
   th {
     border-collapse: collapse;
@@ -148,7 +149,12 @@ const Table = <
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id}>
+                  <th
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                    }}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(

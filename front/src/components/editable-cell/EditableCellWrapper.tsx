@@ -31,10 +31,11 @@ type StyledEditModeContainerProps = {
 const StyledNonEditModeContainer = styled.div`
   display: flex;
   align-items: center;
-  width: 100%;
+  width: calc(100% - ${(props) => props.theme.spacing(5)});
   height: 100%;
   padding-left: ${(props) => props.theme.spacing(2)};
   padding-right: ${(props) => props.theme.spacing(2)};
+  overflow: hidden;
 `;
 
 const StyledEditModeContainer = styled.div<StyledEditModeContainerProps>`
