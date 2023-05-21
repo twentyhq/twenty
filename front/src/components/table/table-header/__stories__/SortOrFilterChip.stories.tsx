@@ -1,7 +1,8 @@
 import SortOrFilterChip from '../SortOrFilterChip';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
-import { FaArrowDown, FaRegUser } from 'react-icons/fa';
+import { FaArrowDown } from 'react-icons/fa';
+import { TbUser } from 'react-icons/tb';
 
 const component = {
   title: 'SortOrFilterChip',
@@ -19,7 +20,7 @@ export const RegularFilterChip = ({ removeFunction }: OwnProps) => {
     <ThemeProvider theme={lightTheme}>
       <SortOrFilterChip
         id="test_sort"
-        icon={<FaRegUser />}
+        icon={<TbUser size={16} />}
         labelKey="Account owner"
         labelValue="is Charles"
         onRemove={removeFunction}

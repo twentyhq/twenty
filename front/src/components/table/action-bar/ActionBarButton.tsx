@@ -10,6 +10,7 @@ type OwnProps = {
 const StyledButton = styled.div`
   display: flex;
   cursor: pointer;
+  user-select: none;
 
   justify-content: center;
 
@@ -21,15 +22,16 @@ const StyledButton = styled.div`
   }
 `;
 
-const StyledButtonabel = styled.div`
+const StyledButtonLabel = styled.div`
   margin-left: ${(props) => props.theme.spacing(2)};
+  font-weight: 500;
 `;
 
 function ActionBarButton({ label, icon, onClick }: OwnProps) {
   return (
     <StyledButton onClick={onClick}>
       {icon}
-      <StyledButtonabel>{label}</StyledButtonabel>
+      <StyledButtonLabel>{label}</StyledButtonLabel>
     </StyledButton>
   );
 }

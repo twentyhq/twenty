@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { FaRegBuilding, FaList } from 'react-icons/fa';
+import { FaList } from 'react-icons/fa';
 import styled from '@emotion/styled';
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +27,7 @@ import { BoolExpType } from '../../interfaces/entities/generic.interface';
 import { useCompaniesColumns } from './companies-columns';
 import { availableSorts } from './companies-sorts';
 import { availableFilters } from './companies-filters';
+import { TbBuilding } from 'react-icons/tb';
 
 const StyledCompaniesContainer = styled.div`
   display: flex;
@@ -94,7 +95,7 @@ function Companies() {
   return (
     <WithTopBarContainer
       title="Companies"
-      icon={<FaRegBuilding />}
+      icon={<TbBuilding size={16} />}
       onAddButtonClick={addEmptyRow}
     >
       <>

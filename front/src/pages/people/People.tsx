@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FaRegUser, FaList } from 'react-icons/fa';
+import { FaList } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
 import styled from '@emotion/styled';
 
@@ -27,6 +27,7 @@ import { BoolExpType } from '../../interfaces/entities/generic.interface';
 import { usePeopleColumns } from './people-columns';
 import { availableSorts } from './people-sorts';
 import { availableFilters } from './people-filters';
+import { TbUser } from 'react-icons/tb';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -96,7 +97,7 @@ function People() {
   return (
     <WithTopBarContainer
       title="People"
-      icon={<FaRegUser />}
+      icon={<TbUser size={16} />}
       onAddButtonClick={addEmptyRow}
     >
       <>

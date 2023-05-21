@@ -12,6 +12,7 @@ import {
 } from '../../../services/api/search/search';
 import DatePicker from '../../form/DatePicker';
 import styled from '@emotion/styled';
+import { humanReadableDate } from '../../../services/utils';
 
 type OwnProps<TData extends FilterableFieldsType> = {
   isFilterSelected: boolean;
@@ -164,7 +165,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
                   key: selectedFilter.key,
                   label: selectedFilter.label,
                   value: date.toISOString(),
-                  displayValue: date.toLocaleDateString(),
+                  displayValue: humanReadableDate(date),
                   icon: selectedFilter.icon,
                   operand: selectedFilterOperand,
                 });

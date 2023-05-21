@@ -1,17 +1,17 @@
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
-import {
-  FaRegBuilding,
-  FaCalendar,
-  FaEnvelope,
-  FaMapPin,
-  FaPhone,
-  FaRegUser,
-} from 'react-icons/fa';
 import { SortDropdownButton } from '../SortDropdownButton';
 import styled from '@emotion/styled';
 import { Order_By, People_Order_By } from '../../../../generated/graphql';
 import { SortType } from '../../../../interfaces/sorts/interface';
+import {
+  TbBuilding,
+  TbCalendar,
+  TbMail,
+  TbMapPin,
+  TbPhone,
+  TbUser,
+} from 'react-icons/tb';
 
 const component = {
   title: 'SortDropdownButton',
@@ -28,31 +28,41 @@ const availableSorts = [
   {
     key: 'fullname',
     label: 'People',
-    icon: <FaRegUser />,
+    icon: <TbUser size={16} />,
     _type: 'custom_sort',
     orderByTemplate: () => ({ email: Order_By.Asc }),
   },
   {
     key: 'company_name',
     label: 'Company',
-    icon: <FaRegBuilding />,
+    icon: <TbBuilding size={16} />,
     _type: 'custom_sort',
     orderByTemplate: () => ({ email: Order_By.Asc }),
   },
   {
     key: 'email',
     label: 'Email',
-    icon: <FaEnvelope />,
+    icon: <TbMail size={16} />,
     _type: 'default_sort',
   },
-  { key: 'phone', label: 'Phone', icon: <FaPhone />, _type: 'default_sort' },
+  {
+    key: 'phone',
+    label: 'Phone',
+    icon: <TbPhone size={16} />,
+    _type: 'default_sort',
+  },
   {
     key: 'created_at',
     label: 'Created at',
-    icon: <FaCalendar />,
+    icon: <TbCalendar size={16} />,
     _type: 'default_sort',
   },
-  { key: 'city', label: 'City', icon: <FaMapPin />, _type: 'default_sort' },
+  {
+    key: 'city',
+    label: 'City',
+    icon: <TbMapPin size={16} />,
+    _type: 'default_sort',
+  },
 ] satisfies SortType<People_Order_By>[];
 
 const StyleDiv = styled.div`

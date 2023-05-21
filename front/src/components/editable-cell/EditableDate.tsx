@@ -3,6 +3,7 @@ import { forwardRef, useState } from 'react';
 import EditableCellWrapper from './EditableCellWrapper';
 import DatePicker from '../form/DatePicker';
 import { modalBackground } from '../../layout/styles/themes';
+import { humanReadableDate } from '../../services/utils';
 
 export type EditableDateProps = {
   value: Date;
@@ -42,12 +43,7 @@ function EditableDate({
   const DateDisplay = forwardRef<HTMLDivElement, DivProps>(
     ({ value, onClick }, ref) => (
       <div onClick={onClick} ref={ref}>
-        {value &&
-          new Intl.DateTimeFormat(undefined, {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-          }).format(new Date(value as string))}
+        {value && humanReadableDate(new Date(value as string))}
       </div>
     ),
   );
@@ -81,14 +77,7 @@ function EditableDate({
       }
       nonEditModeContent={
         <StyledContainer>
-          <div>
-            {inputValue &&
-              new Intl.DateTimeFormat(undefined, {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              }).format(inputValue)}
-          </div>
+          <div>{inputValue && humanReadableDate(inputValue)}</div>
         </StyledContainer>
       }
     ></EditableCellWrapper>

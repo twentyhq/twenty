@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 import { RegularSortDropdownButton } from '../__stories__/SortDropdownButton.stories';
-import { FaEnvelope, FaRegBuilding } from 'react-icons/fa';
+import { TbBuilding, TbMail } from 'react-icons/tb';
 
 it('Checks the default top option is Ascending', async () => {
   const setSorts = jest.fn();
@@ -17,7 +17,7 @@ it('Checks the default top option is Ascending', async () => {
   expect(setSorts).toHaveBeenCalledWith({
     label: 'Email',
     key: 'email',
-    icon: <FaEnvelope />,
+    icon: <TbMail size={16} />,
     order: 'asc',
     _type: 'default_sort',
   });
@@ -44,7 +44,7 @@ it('Checks the selection of Descending', async () => {
   expect(setSorts).toHaveBeenCalledWith({
     label: 'Email',
     key: 'email',
-    icon: <FaEnvelope />,
+    icon: <TbMail size={16} />,
     order: 'desc',
     _type: 'default_sort',
   });
@@ -66,7 +66,7 @@ it('Checks custom_sort is working', async () => {
     expect.objectContaining({
       key: 'company_name',
       label: 'Company',
-      icon: <FaRegBuilding />,
+      icon: <TbBuilding size={16} />,
       _type: 'custom_sort',
       order: 'asc',
     }),

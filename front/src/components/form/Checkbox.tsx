@@ -15,6 +15,8 @@ const StyledContainer = styled.span`
     margin: 8px;
     height: 14px;
     width: 14px;
+    cursor: pointer;
+    user-select: none;
   }
 
   input[type='checkbox']::before {

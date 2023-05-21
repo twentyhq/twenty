@@ -1,17 +1,17 @@
-import { Company } from '../../interfaces/entities/company.interface';
 import {
-  FaLink,
-  FaBuilding,
-  FaMapPin,
-  FaUsers,
-  FaCalendar,
-} from 'react-icons/fa';
+  TbBuilding,
+  TbCalendar,
+  TbLink,
+  TbMapPin,
+  TbSum,
+} from 'react-icons/tb';
+import { Company } from '../../interfaces/entities/company.interface';
 import { FilterConfigType } from '../../interfaces/filters/interface';
 
 export const nameFilter = {
   key: 'company_name',
   label: 'Company',
-  icon: <FaBuilding />,
+  icon: <TbBuilding size={16} />,
   type: 'text',
   operands: [
     {
@@ -34,7 +34,7 @@ export const nameFilter = {
 export const urlFilter = {
   key: 'company_domain_name',
   label: 'Url',
-  icon: <FaLink />,
+  icon: <TbLink size={16} />,
   type: 'text',
   operands: [
     {
@@ -57,7 +57,7 @@ export const urlFilter = {
 export const addressFilter = {
   key: 'company_address',
   label: 'Address',
-  icon: <FaMapPin />,
+  icon: <TbMapPin size={16} />,
   type: 'text',
   operands: [
     {
@@ -80,7 +80,7 @@ export const addressFilter = {
 export const employeesFilter = {
   key: 'company_employees',
   label: 'Employees',
-  icon: <FaUsers />,
+  icon: <TbSum size={16} />,
   type: 'text',
   operands: [
     {
@@ -107,7 +107,7 @@ export const employeesFilter = {
 export const creationDateFilter = {
   key: 'company_created_at',
   label: 'Created At',
-  icon: <FaCalendar />,
+  icon: <TbCalendar size={16} />,
   type: 'date',
   operands: [
     {

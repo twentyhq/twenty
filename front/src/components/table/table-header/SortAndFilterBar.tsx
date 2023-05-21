@@ -37,6 +37,7 @@ const StyledCancelButton = styled.button`
   font-weight: 500;
   margin-right: ${(props) => props.theme.spacing(2)};
   cursor: pointer;
+  user-select: none;
 
   &:hover {
     border-radius: ${(props) => props.theme.spacing(1)};

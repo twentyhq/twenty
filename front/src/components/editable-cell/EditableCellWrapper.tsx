@@ -19,6 +19,8 @@ const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
+  cursor: pointer;
+  user-select: none;
 `;
 
 type StyledEditModeContainerProps = {

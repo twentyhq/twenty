@@ -26,13 +26,14 @@ const AddButtonContainer = styled.div`
   display: flex;
   justify-self: flex-end;
   border: 1px solid ${(props) => props.theme.primaryBorder};
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  color: ${(props) => props.theme.text60};
+  color: ${(props) => props.theme.text80};
   cursor: pointer;
+  user-select: none;
   margin-right: ${(props) => props.theme.spacing(1)};
 `;
 
@@ -53,7 +54,7 @@ function TopBar({ title, icon, onAddButtonClick }: OwnProps) {
             data-testid="add-button"
             onClick={onAddButtonClick}
           >
-            <TbPlus />
+            <TbPlus size={16} />
           </AddButtonContainer>
         )}
       </TopBarContainer>

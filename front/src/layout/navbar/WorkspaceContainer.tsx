@@ -10,6 +10,7 @@ const StyledContainer = styled.button`
   height: 34px;
   align-items: center;
   cursor: pointer;
+  user-select: none;
   border: 0;
   background: inherit;
   border: 1px solid ${(props) => props.theme.primaryBorder};

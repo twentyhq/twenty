@@ -1,4 +1,3 @@
-import { FaEnvelope, FaMapPin, FaUser, FaBuilding } from 'react-icons/fa';
 import { Person } from '../../interfaces/entities/person.interface';
 import { SEARCH_COMPANY_QUERY } from '../../services/api/search/search';
 import {
@@ -6,11 +5,12 @@ import {
   mapToCompany,
 } from '../../interfaces/entities/company.interface';
 import { FilterConfigType } from '../../interfaces/filters/interface';
+import { TbBuilding, TbMail, TbMapPin, TbUser } from 'react-icons/tb';
 
 export const fullnameFilter = {
   key: 'fullname',
   label: 'People',
-  icon: <FaUser />,
+  icon: <TbUser size={16} />,
   type: 'text',
   operands: [
     {
@@ -41,7 +41,7 @@ export const fullnameFilter = {
 export const companyFilter = {
   key: 'company_name',
   label: 'Company',
-  icon: <FaBuilding />,
+  icon: <TbBuilding size={16} />,
   type: 'relation',
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
@@ -75,7 +75,7 @@ export const companyFilter = {
 export const emailFilter = {
   key: 'email',
   label: 'Email',
-  icon: <FaEnvelope />,
+  icon: <TbMail size={16} />,
   type: 'text',
   operands: [
     {
@@ -98,7 +98,7 @@ export const emailFilter = {
 export const cityFilter = {
   key: 'city',
   label: 'City',
-  icon: <FaMapPin />,
+  icon: <TbMapPin size={16} />,
   type: 'text',
   operands: [
     {
