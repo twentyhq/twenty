@@ -4,9 +4,6 @@
       "path": "front"
     },
     {
-      "path": "hasura"
-    },
-    {
       "path": "server"
     },
     {

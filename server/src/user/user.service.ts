@@ -1,7 +1,3 @@
-import {
-  HasuraInsertEvent,
-  TrackedHasuraEventHandler,
-} from '@golevelup/nestjs-hasura';
 import { UserRepository } from './user.repository';
 import { Injectable, Response } from '@nestjs/common';
 import { WorkspaceRepository } from './workspace.repository';
@@ -19,13 +15,7 @@ export class UserService {
     private workspaceRepository: WorkspaceRepository,
   ) {}
 
-  @TrackedHasuraEventHandler({
-    triggerName: 'user-created',
-    tableName: 'users',
-    schema: 'auth',
-    definition: { type: 'insert' },
-  })
-  async handleUserCreated(evt: HasuraInsertEvent<User>) {
+  async handleUserCreated(evt: any) {
     const emailDomain = evt.event.data.new.email.split('@')[1];
 
     if (!emailDomain) {
