@@ -3,9 +3,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthController } from './health.controller';
 import { TerminusModule } from '@nestjs/terminus';
-import { ApiModule } from './api/api.module';
+import { UserModule } from './entities/user/user.module';
+
 @Module({
-  imports: [TerminusModule, ApiModule],
+  imports: [
+    UserModule,
+    TerminusModule,
+  ],
   controllers: [AppController, HealthController],
   providers: [AppService],
 })
