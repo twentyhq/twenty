@@ -7,24 +7,89 @@ datasource db {
   url      = env("SERVER_DATABASE_URL")
 }
 
+model User {
+  id              String           @id
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
+  lastSeen        DateTime?
+  disabled        Boolean          @default(false)
+  displayName     String
+  email           String           @unique
+  avatarUrl       String?
+  locale          String
+  phoneNumber     String?
+  passwordHash    String?
+  emailVerified   Boolean          @default(false)
+  metadata        Json?
+  WorkspaceMember WorkspaceMember?
+  Company         Company[]
+
+  @@map("users")
+}
+
+model Workspace {
+  id              String            @id
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  deletedAt       DateTime?
+  domainName      String            @unique
+  displayName     String
+  WorkspaceMember WorkspaceMember[]
+  Company         Company[]
+  Person          Person[]
+
+  @@map("workspaces")
+}
+
 model WorkspaceMember {
-  id           String    @id
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
-  deleted_at   DateTime?
-  user_id      String    @unique
-  workspace_id String
+  id        String    @id
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  userId    String    @unique
+  user      User      @relation(fields: [userId], references: [id])
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("workspace_members")
 }
 
-model Workspace {
-  id           String    @id
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
-  deleted_at   DateTime?
-  domain_name  String    @unique
-  display_name String
+model Company {
+  id             String    @id
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+  name           String
+  domainName     String
+  address        String
+  employees      Int
+  accountOwnerId String
+  accountOwner   User      @relation(fields: [accountOwnerId], references: [id])
 
-  @@map("workspaces")
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  Person      Person[]
+
+  @@map("companies")
+}
+
+model Person {
+  id        String    @id
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  firstname String
+  lastname  String
+  email     String
+  phone     String
+  city      String
+  companyId String
+  company   Company   @relation(fields: [companyId], references: [id])
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@map("people")
 }
