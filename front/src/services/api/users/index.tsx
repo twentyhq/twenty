@@ -7,7 +7,7 @@ export const GET_CURRENT_USER = gql`
       id
       email
       displayName
-      WorkspaceMember {
+      workspace_member: workspaceMember {
         workspace {
           id
           domain_name: domainName
@@ -21,7 +21,6 @@ export const GET_CURRENT_USER = gql`
 export function useGetCurrentUserQuery(userId: string | null): QueryResult<{
   users: GraphqlQueryUser[];
 }> {
-  console.log('useGetCurrentUserQuery', userId);
   return useQuery<{ users: GraphqlQueryUser[] }>(GET_CURRENT_USER, {
     variables: {
       uuid: userId,

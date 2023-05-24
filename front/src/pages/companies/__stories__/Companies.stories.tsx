@@ -18,7 +18,7 @@ const mocks = [
     request: {
       query: GET_COMPANIES,
       variables: {
-        orderBy: [{ created_at: 'desc' }],
+        orderBy: [{ createdAt: 'desc' }],
         where: {},
       },
     },
@@ -32,7 +32,7 @@ const mocks = [
     request: {
       query: GET_COMPANIES,
       variables: {
-        orderBy: [{ created_at: 'desc' }],
+        orderBy: [{ createdAt: 'desc' }],
         where: {},
       },
     },
@@ -46,8 +46,8 @@ const mocks = [
     request: {
       query: GET_COMPANIES,
       variables: {
-        orderBy: [{ created_at: 'desc' }],
-        where: { domain_name: { _ilike: '%aircal%' } },
+        orderBy: [{ createdAt: 'desc' }],
+        where: { domainName: { contains: '%aircal%' } },
       },
     },
     result: {

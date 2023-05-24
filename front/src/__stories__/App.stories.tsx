@@ -49,7 +49,7 @@ const mocks = [
   {
     request: {
       query: GET_PEOPLE,
-      variables: { orderBy: [{ created_at: 'desc' }], where: {} },
+      variables: { orderBy: [{ createdAt: 'desc' }], where: {} },
     },
     result: {
       data: {

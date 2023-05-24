@@ -41,7 +41,7 @@ const mocks = [
     request: {
       query: SEARCH_COMPANY_QUERY,
       variables: {
-        where: { name: { _ilike: '%%' } },
+        where: { name: { contains: '%%' } },
         limit: 5,
       },
     },

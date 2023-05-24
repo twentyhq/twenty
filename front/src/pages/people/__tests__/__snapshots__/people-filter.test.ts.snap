@@ -3,7 +3,7 @@
 exports[`PeopleFilter should render the filter city which is text search 1`] = `
 Object {
   "city": Object {
-    "_ilike": "%Paris%",
+    "contains": "%Paris%",
   },
 }
 `;
@@ -11,8 +11,10 @@ Object {
 exports[`PeopleFilter should render the filter company_name which relation search 1`] = `
 Object {
   "company": Object {
-    "name": Object {
-      "_eq": "test-name",
+    "is": Object {
+      "name": Object {
+        "equals": "test-name",
+      },
     },
   },
 }
