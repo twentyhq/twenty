@@ -1,7 +1,7 @@
 import {
-  Companies_Bool_Exp,
-  People_Bool_Exp,
-  Users_Bool_Exp,
+  CompanyWhereInput as Companies_Bool_Exp,
+  PersonWhereInput as People_Bool_Exp,
+  UserWhereInput as Users_Bool_Exp,
 } from '../../generated/graphql';
 import { Company, GraphqlQueryCompany } from './company.interface';
 import { GraphqlQueryPerson, Person } from './person.interface';

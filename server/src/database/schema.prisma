@@ -48,13 +48,12 @@ model Workspace {
 }
 
 model WorkspaceMember {
-  id        String    @id
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  userId    String    @unique
-  user      User      @relation(fields: [userId], references: [id])
-
+  id          String    @id
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id])
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
@@ -73,26 +72,24 @@ model Company {
   accountOwnerId String?
   accountOwner   User?     @relation(fields: [accountOwnerId], references: [id])
   people         Person[]
-
-  workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId    String
+  workspace      Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("companies")
 }
 
 model Person {
-  id        String    @id
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  firstname String
-  lastname  String
-  email     String
-  phone     String
-  city      String
-  companyId String?
-  company   Company?  @relation(fields: [companyId], references: [id])
-
+  id          String    @id
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  firstname   String
+  lastname    String
+  email       String
+  phone       String
+  city        String
+  companyId   String?
+  company     Company?  @relation(fields: [companyId], references: [id])
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 

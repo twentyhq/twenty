@@ -2,7 +2,10 @@ import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../../layout/styles/themes';
 import { SortDropdownButton } from '../SortDropdownButton';
 import styled from '@emotion/styled';
-import { Order_By, People_Order_By } from '../../../../generated/graphql';
+import {
+  SortOrder as Order_By,
+  PersonOrderByWithRelationInput as People_Order_By,
+} from '../../../../generated/graphql';
 import { SortType } from '../../../../interfaces/sorts/interface';
 import {
   TbBuilding,
@@ -52,7 +55,7 @@ const availableSorts = [
     _type: 'default_sort',
   },
   {
-    key: 'created_at',
+    key: 'createdAt',
     label: 'Created at',
     icon: <TbCalendar size={16} />,
     _type: 'default_sort',

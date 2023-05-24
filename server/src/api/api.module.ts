@@ -5,9 +5,14 @@ import { PrismaClient } from '@prisma/client';
 
 import {
   CompanyCrudResolver,
+  CompanyRelationsResolver,
   UserCrudResolver,
+  UserRelationsResolver,
   PersonCrudResolver,
+  PersonRelationsResolver,
   WorkspaceCrudResolver,
+  WorkspaceRelationsResolver,
+  WorkspaceMemberRelationsResolver,
 } from '@generated/type-graphql';
 
 interface Context {
@@ -27,9 +32,14 @@ const prisma = new PrismaClient();
   ],
   providers: [
     CompanyCrudResolver,
+    CompanyRelationsResolver,
     UserCrudResolver,
+    UserRelationsResolver,
     PersonCrudResolver,
+    PersonRelationsResolver,
     WorkspaceCrudResolver,
+    WorkspaceRelationsResolver,
+    WorkspaceMemberRelationsResolver,
   ],
 })
 export class ApiModule {}

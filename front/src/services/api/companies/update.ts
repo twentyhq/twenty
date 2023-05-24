@@ -7,88 +7,76 @@ import { apiClient } from '../../../apollo';
 
 export const UPDATE_COMPANY = gql`
   mutation UpdateCompany(
-    $id: uuid
+    $id: String
     $name: String
     $domain_name: String
-    $account_owner_id: uuid
-    $created_at: timestamptz
+    $account_owner_id: String
+    $created_at: DateTime
     $address: String
-    $employees: numeric
+    $employees: Int
   ) {
-    update_companies(
-      where: { id: { _eq: $id } }
-      _set: {
-        account_owner_id: $account_owner_id
-        address: $address
-        domain_name: $domain_name
-        employees: $employees
-        name: $name
-        created_at: $created_at
+    updateOneCompany(
+      where: { id: $id }
+      data: {
+        accountOwner: { connect: { id: $account_owner_id } }
+        address: { set: $address }
+        domainName: { set: $domain_name }
+        employees: { set: $employees }
+        name: { set: $name }
+        createdAt: { set: $created_at }
       }
     ) {
-      affected_rows
-      returning {
-        account_owner {
-          id
-          email
-          displayName
-        }
-        address
-        created_at
-        domain_name
-        employees
+      accountOwner {
         id
-        name
+        email
+        display_name: displayName
       }
+      address
+      created_at: createdAt
+      domain_name: domainName
+      employees
+      id
+      name
     }
   }
 `;
 
 export const INSERT_COMPANY = gql`
   mutation InsertCompany(
-    $id: uuid
-    $name: String
-    $domain_name: String
-    $account_owner_id: uuid
-    $created_at: timestamptz
-    $address: String
-    $employees: numeric
+    $id: String!
+    $name: String!
+    $domain_name: String!
+    $account_owner_id: String
+    $created_at: DateTime
+    $address: String!
+    $employees: Int
   ) {
-    insert_companies(
-      objects: {
+    createOneCompany(
+      data: {
         id: $id
         name: $name
-        domain_name: $domain_name
-        account_owner_id: $account_owner_id
-        created_at: $created_at
+        domainName: $domain_name
+        accountOwner: { connect: { id: $account_owner_id } }
+        createdAt: $created_at
         address: $address
         employees: $employees
+        workspace: { connect: { id: "il faut rajouter l'id du workspace" } }
       }
     ) {
-      affected_rows
-      returning {
-        address
-        created_at
-        domain_name
-        employees
-        id
-        name
-      }
+      address
+      created_at: createdAt
+      domain_name: domainName
+      employees
+      id
+      name
     }
   }
 `;
 
 export const DELETE_COMPANIES = gql`
-  mutation DeleteCompanies($ids: [uuid!]) {
-    delete_companies(where: { id: { _in: $ids } }) {
-      returning {
-        address
-        created_at
-        domain_name
-        employees
-        id
-        name
-      }
+  mutation DeleteCompanies($ids: [String!]) {
+    deleteManyCompany(where: { id: { in: $ids } }) {
+      count
     }
   }
 `;

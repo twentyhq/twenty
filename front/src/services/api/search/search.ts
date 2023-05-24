@@ -7,22 +7,22 @@ import {
 } from '../../../interfaces/entities/generic.interface';
 
 export const SEARCH_PEOPLE_QUERY = gql`
-  query SearchPeopleQuery($where: people_bool_exp, $limit: Int) {
-    searchResults: people(where: $where, limit: $limit) {
+  query SearchPeopleQuery($where: PersonWhereInput, $limit: Int) {
+    searchResults: people(where: $where, take: $limit) {
       id
       phone
       email
       city
       firstname
       lastname
-      created_at
+      createdAt
     }
   }
 `;
 
 export const SEARCH_USER_QUERY = gql`
-  query SearchUserQuery($where: users_bool_exp, $limit: Int) {
-    searchResults: users(where: $where, limit: $limit) {
+  query SearchUserQuery($where: UserWhereInput, $limit: Int) {
+    searchResults: users(where: $where, take: $limit) {
       id
       email
       displayName
@@ -39,11 +39,11 @@ export const EMPTY_QUERY = gql`
 `;
 
 export const SEARCH_COMPANY_QUERY = gql`
-  query SearchQuery($where: companies_bool_exp, $limit: Int) {
-    searchResults: companies(where: $where, limit: $limit) {
+  query SearchQuery($where: CompanyWhereInput, $limit: Int) {
+    searchResults: companies(where: $where, take: $limit) {
       id
       name
-      domain_name
+      domainName
     }
   }
 `;

@@ -178,7 +178,7 @@ export const useCompaniesColumns = () => {
               {
                 query: SEARCH_USER_QUERY,
                 template: (searchInput: string) => ({
-                  displayName: { _ilike: `%${searchInput}%` },
+                  displayName: { contains: `%${searchInput}%` },
                 }),
                 resultMapper: (accountOwner) => ({
                   render: (accountOwner) => accountOwner.displayName,

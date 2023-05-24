@@ -92,7 +92,7 @@ EditableRelationStory.args = {
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
     template: (searchInput: string) => ({
-      name: { _ilike: `%${searchInput}%` },
+      name: { contains: `%${searchInput}%` },
     }),
     resultMapper: (company) => ({
       render: (company) => company.name,
