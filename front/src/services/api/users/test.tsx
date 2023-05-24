@@ -1,5 +1,4 @@
-import { QueryResult, gql, useQuery } from '@apollo/client';
-import { GraphqlQueryUser } from '../../../interfaces/entities/user.interface';
+import { gql } from '@apollo/client';
 
 export const GET_CURRENT_USER = gql`
   query getUsers {
