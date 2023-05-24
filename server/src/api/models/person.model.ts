@@ -1,38 +1,37 @@
 import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
 import { Person as PersonDB } from '@prisma/client';
 import { Company } from './company.model';
-import { FilterableField } from '@ptc-org/nestjs-query-graphql';
 
 @ObjectType()
 export class Person {
   @Field(() => String)
   id: PersonDB[`id`];
 
-  @FilterableField(() => GraphQLISODateTime)
+  @Field(() => GraphQLISODateTime)
   createdAt: PersonDB[`createdAt`];
 
-  @FilterableField(() => GraphQLISODateTime)
+  @Field(() => GraphQLISODateTime)
   updatedAt: PersonDB[`updatedAt`];
 
-  @FilterableField(() => GraphQLISODateTime, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   deletedAt: PersonDB[`deletedAt`];
 
-  @FilterableField(() => String)
+  @Field(() => String)
   firstname: PersonDB[`firstname`];
 
-  @FilterableField(() => String)
+  @Field(() => String)
   lastname: PersonDB[`lastname`];
 
-  @FilterableField(() => String)
+  @Field(() => String)
   email: PersonDB[`email`];
 
-  @FilterableField(() => String)
+  @Field(() => String)
   phone: PersonDB[`phone`];
 
-  @FilterableField(() => String)
+  @Field(() => String)
   city: PersonDB[`city`];
 
-  @FilterableField(() => String, { nullable: true })
+  @Field(() => String, { nullable: true })
   companyId: PersonDB[`companyId`];
 
   @Field(() => Company, { nullable: true })
