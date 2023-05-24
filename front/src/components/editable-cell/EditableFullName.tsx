@@ -1,7 +1,6 @@
-import styled from '@emotion/styled';
-import { ChangeEvent, useRef, useState } from 'react';
-import EditableCellWrapper from './EditableCellWrapper';
+import { useState } from 'react';
 import PersonChip from '../chips/PersonChip';
+import { EditableDoubleText } from './EditableDoubleText';
 
 type OwnProps = {
   firstname: string;
@@ -9,69 +8,31 @@ type OwnProps = {
   changeHandler: (firstname: string, lastname: string) => void;
 };
 
-const StyledContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  & > input:last-child {
-    padding-left: ${(props) => props.theme.spacing(2)};
-    border-left: 1px solid ${(props) => props.theme.primaryBorder};
-  }
-`;
-
-const StyledEditInplaceInput = styled.input`
-  width: 45%;
-  border: none;
-  outline: none;
-  height: 18px;
-
-  &::placeholder {
-    font-weight: bold;
-    color: ${(props) => props.theme.text20};
-  }
-`;
-
-function EditableFullName({ firstname, lastname, changeHandler }: OwnProps) {
-  const firstnameInputRef = useRef<HTMLInputElement>(null);
+export function EditableFullName({
+  firstname,
+  lastname,
+  changeHandler,
+}: OwnProps) {
   const [firstnameValue, setFirstnameValue] = useState(firstname);
   const [lastnameValue, setLastnameValue] = useState(lastname);
-  const [isEditMode, setIsEditMode] = useState(false);
+
+  function handleDoubleTextChange(
+    firstValue: string,
+    secondValue: string,
+  ): void {
+    setFirstnameValue(firstValue);
+    setLastnameValue(secondValue);
+    changeHandler(firstValue, secondValue);
+  }
 
   return (
-    <EditableCellWrapper
-      onOutsideClick={() => setIsEditMode(false)}
-      onInsideClick={() => setIsEditMode(true)}
-      isEditMode={isEditMode}
-      editModeContent={
-        <StyledContainer>
-          <StyledEditInplaceInput
-            autoFocus
-            placeholder="Firstname"
-            ref={firstnameInputRef}
-            value={firstnameValue}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setFirstnameValue(event.target.value);
-              changeHandler(event.target.value, lastnameValue);
-            }}
-          />
-          <StyledEditInplaceInput
-            autoFocus
-            placeholder={'Lastname'}
-            ref={firstnameInputRef}
-            value={lastnameValue}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setLastnameValue(event.target.value);
-              changeHandler(firstnameValue, event.target.value);
-            }}
-          />
-        </StyledContainer>
-      }
-      nonEditModeContent={
-        <PersonChip name={firstnameValue + ' ' + lastnameValue} />
-      }
-    ></EditableCellWrapper>
+    <EditableDoubleText
+      firstValue={firstnameValue}
+      secondValue={lastnameValue}
+      firstValuePlaceholder="First name"
+      secondValuePlaceholder="Last name"
+      changeHandler={handleDoubleTextChange}
+      nonEditModeContent={<PersonChip name={firstname + ' ' + lastname} />}
+    />
   );
 }
-
-export default EditableFullName;

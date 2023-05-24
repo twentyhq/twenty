@@ -96,9 +96,44 @@ export const DELETE_PEOPLE = gql`
 export async function updatePerson(
   person: Person,
 ): Promise<FetchResult<Person>> {
+  console.log({ person });
   const result = await apiClient.mutate({
     mutation: UPDATE_PERSON,
     variables: mapToGqlPerson(person),
+    // TODO: use a mapper ?
+    // optimisticResponse: {
+    //   __typename: 'people' as const,
+    //   id: person.id,
+    //   update_people: {
+    //     returning: {
+    //       id: person.id,
+    //       city: person.city,
+    //       company: {
+    //         domain_name: person.company?.domainName,
+    //         name: person.company?.name,
+    //         id: person.company?.id,
+    //       },
+    //       email: person.email,
+    //       firstname: person.firstname,
+    //       lastname: person.lastname,
+    //       phone: person.phone,
+    //       created_at: person.creationDate,
+
+    //       //   city
+    //       // company {
+    //       //   domain_name
+    //       //   name
+    //       //   id
+    //       // }
+    //       // email
+    //       // firstname
+    //       // id
+    //       // lastname
+    //       // phone
+    //       // created_at
+    //     },
+    //   },
+    // },
   });
   return result;
 }

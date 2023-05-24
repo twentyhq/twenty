@@ -15,7 +15,7 @@ import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 import EditablePhone from '../../components/editable-cell/EditablePhone';
-import EditableFullName from '../../components/editable-cell/EditableFullName';
+import { EditableFullName } from '../../components/editable-cell/EditableFullName';
 import EditableDate from '../../components/editable-cell/EditableDate';
 import EditableText from '../../components/editable-cell/EditableText';
 import EditableRelation from '../../components/editable-cell/EditableRelation';
@@ -65,10 +65,10 @@ export const usePeopleColumns = () => {
             firstname={props.row.original.firstname || ''}
             lastname={props.row.original.lastname || ''}
             changeHandler={(firstName: string, lastName: string) => {
-              const person = props.row.original;
-              person.firstname = firstName;
-              person.lastname = lastName;
-              updatePerson(person);
+              // const person = props.row.original;
+              // person.firstname = firstName;
+              // person.lastname = lastName;
+              // updatePerson(person);
             }}
           />
         ),

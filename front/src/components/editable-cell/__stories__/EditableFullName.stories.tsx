@@ -1,4 +1,4 @@
-import EditableFullName from '../EditableFullName';
+import { EditableFullName } from '../EditableFullName';
 import { ThemeProvider } from '@emotion/react';
 import { lightTheme } from '../../../layout/styles/themes';
 import { StoryFn } from '@storybook/react';
