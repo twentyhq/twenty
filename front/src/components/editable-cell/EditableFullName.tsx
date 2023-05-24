@@ -5,14 +5,10 @@ import { EditableDoubleText } from './EditableDoubleText';
 type OwnProps = {
   firstname: string;
   lastname: string;
-  changeHandler: (firstname: string, lastname: string) => void;
+  onChange: (firstname: string, lastname: string) => void;
 };
 
-export function EditableFullName({
-  firstname,
-  lastname,
-  changeHandler,
-}: OwnProps) {
+export function EditableFullName({ firstname, lastname, onChange }: OwnProps) {
   const [firstnameValue, setFirstnameValue] = useState(firstname);
   const [lastnameValue, setLastnameValue] = useState(lastname);
 
@@ -22,7 +18,12 @@ export function EditableFullName({
   ): void {
     setFirstnameValue(firstValue);
     setLastnameValue(secondValue);
-    changeHandler(firstValue, secondValue);
+
+    onChange(firstnameValue, lastnameValue);
+  }
+
+  function handleValidate() {
+    onChange(firstnameValue, lastnameValue);
   }
 
   return (
@@ -31,7 +32,7 @@ export function EditableFullName({
       secondValue={lastnameValue}
       firstValuePlaceholder="First name"
       secondValuePlaceholder="Last name"
-      changeHandler={handleDoubleTextChange}
+      onChange={handleDoubleTextChange}
       nonEditModeContent={<PersonChip name={firstname + ' ' + lastname} />}
     />
   );

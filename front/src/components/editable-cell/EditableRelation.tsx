@@ -7,6 +7,7 @@ import { AnyEntity } from '../../interfaces/entities/generic.interface';
 import { EditableRelationCreateButton } from './EditableRelationCreateButton';
 import { isNonEmptyArray } from '../../modules/utils/type-guards/isNonEmptyArray';
 import { isNonEmptyString } from '../../modules/utils/type-guards/isNonEmptyString';
+import { EditableCellWrapperWithShortcut } from './EditableCellWrapperWithShortcut';
 
 const StyledEditModeContainer = styled.div`
   width: 200px;
@@ -106,10 +107,11 @@ function EditableRelation<
   }
 
   return (
-    <EditableCellWrapper
+    <EditableCellWrapperWithShortcut
       editModeHorizontalAlign={editModeHorizontalAlign}
       isEditMode={isEditMode}
-      onOutsideClick={() => setIsEditMode(false)}
+      onCancel={() => setIsEditMode(false)}
+      onValidate={() => setIsEditMode(false)}
       onInsideClick={() => {
         if (!isEditMode) {
           setIsEditMode(true);

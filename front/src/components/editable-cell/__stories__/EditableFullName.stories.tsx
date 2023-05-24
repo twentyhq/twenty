@@ -12,7 +12,7 @@ const component = {
 type OwnProps = {
   firstname: string;
   lastname: string;
-  changeHandler: (firstname: string, lastname: string) => void;
+  onChange: (firstname: string, lastname: string) => void;
 };
 
 export default component;
@@ -33,7 +33,7 @@ export const EditableFullNameStory = Template.bind({});
 EditableFullNameStory.args = {
   firstname: 'John',
   lastname: 'Doe',
-  changeHandler: () => {
-    console.log('changed');
+  onChange: () => {
+    console.log('validated');
   },
 };

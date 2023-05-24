@@ -9,7 +9,8 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
   isEditMode?: boolean;
-  onOutsideClick?: () => void;
+  onCancel?: () => void;
+  onValidate?: () => void;
   onInsideClick?: () => void;
 };
 
@@ -61,25 +62,36 @@ const StyledEditModeContainer = styled.div<StyledEditModeContainerProps>`
   backdrop-filter: blur(20px);
 `;
 
-function EditableCellWrapper({
+export function EditableCellWrapperWithShortcut({
   editModeContent,
   nonEditModeContent,
   editModeHorizontalAlign = 'left',
   editModeVerticalPosition = 'over',
   isEditMode = false,
-  onOutsideClick,
+  onCancel,
+  onValidate,
   onInsideClick,
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
   useOutsideAlerter(wrapperRef, () => {
-    onOutsideClick && onOutsideClick();
+    onValidate && onValidate();
   });
 
   useListenKeyboardShortcut(
-    'esc',
+    'Escape',
     () => {
-      onOutsideClick && onOutsideClick();
+      console.log('Escape pressed');
+      onCancel && onCancel();
+    },
+    [],
+  );
+
+  useListenKeyboardShortcut(
+    'Enter',
+    () => {
+      console.log('Escape pressed');
+      onValidate && onValidate();
     },
     [],
   );
@@ -105,5 +117,3 @@ function EditableCellWrapper({
     </StyledWrapper>
   );
 }
-
-export default EditableCellWrapper;

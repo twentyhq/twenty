@@ -64,11 +64,12 @@ export const usePeopleColumns = () => {
           <EditableFullName
             firstname={props.row.original.firstname || ''}
             lastname={props.row.original.lastname || ''}
-            changeHandler={(firstName: string, lastName: string) => {
-              // const person = props.row.original;
-              // person.firstname = firstName;
-              // person.lastname = lastName;
-              // updatePerson(person);
+            onChange={async (firstName: string, lastName: string) => {
+              const person = props.row.original;
+              person.firstname = firstName;
+              person.lastname = lastName;
+              const returnedOptimisticResponse = await updatePerson(person);
+              console.log({ returnedOptimisticResponse });
             }}
           />
         ),

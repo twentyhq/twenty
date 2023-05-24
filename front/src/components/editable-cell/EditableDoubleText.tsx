@@ -8,7 +8,7 @@ type OwnProps = {
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
   nonEditModeContent: ReactElement;
-  changeHandler: (firstValue: string, secondValue: string) => void;
+  onChange: (firstValue: string, secondValue: string) => void;
 };
 
 const StyledContainer = styled.div`
@@ -40,14 +40,13 @@ export function EditableDoubleText({
   firstValuePlaceholder,
   secondValuePlaceholder,
   nonEditModeContent,
-  changeHandler,
+  onChange,
 }: OwnProps) {
   const firstValueInputRef = useRef<HTMLInputElement>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
   return (
     <EditableCellWrapper
-      onOutsideClick={() => setIsEditMode(false)}
       onInsideClick={() => setIsEditMode(true)}
       isEditMode={isEditMode}
       editModeContent={
@@ -58,7 +57,7 @@ export function EditableDoubleText({
             ref={firstValueInputRef}
             value={firstValue}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              changeHandler(event.target.value, secondValue);
+              onChange(event.target.value, secondValue);
             }}
           />
           <StyledEditInplaceInput
@@ -67,7 +66,7 @@ export function EditableDoubleText({
             ref={firstValueInputRef}
             value={secondValue}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              changeHandler(firstValue, event.target.value);
+              onChange(firstValue, event.target.value);
             }}
           />
         </StyledContainer>
