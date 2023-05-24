@@ -3,14 +3,20 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthController } from './health.controller';
 import { TerminusModule } from '@nestjs/terminus';
-import { UserService } from './user/user.service';
-import { UserModule } from './user/user.module';
+import { PersonModule } from './entities/person/person.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver } from '@nestjs/apollo';
+import { ApiModule } from './api/api.module';
 @Module({
   imports: [
-    UserModule,
+    GraphQLModule.forRoot({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+    }),
     TerminusModule,
+    ApiModule,
   ],
   controllers: [AppController, HealthController],
-  providers: [AppService, UserService],
+  providers: [AppService],
 })
 export class AppModule {}

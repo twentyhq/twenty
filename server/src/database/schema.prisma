@@ -23,7 +23,7 @@ model User {
   emailVerified   Boolean          @default(false)
   metadata        Json?
   WorkspaceMember WorkspaceMember?
-  Company         Company[]
+  companies       Company[]
 
   @@map("users")
 }
@@ -36,8 +36,8 @@ model Workspace {
   domainName      String            @unique
   displayName     String
   WorkspaceMember WorkspaceMember[]
-  Company         Company[]
-  Person          Person[]
+  companies       Company[]
+  people          Person[]
 
   @@map("workspaces")
 }
@@ -64,29 +64,29 @@ model Company {
   name           String
   domainName     String
   address        String
-  employees      Int
-  accountOwnerId String
-  accountOwner   User      @relation(fields: [accountOwnerId], references: [id])
+  employees      Int?
+  accountOwnerId String?
+  accountOwner   User?      @relation(fields: [accountOwnerId], references: [id])
+  people         Person[]
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  Person      Person[]
 
   @@map("companies")
 }
 
 model Person {
   id        String    @id
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  firstname String
-  lastname  String
-  email     String
-  phone     String
-  city      String
-  companyId String
-  company   Company   @relation(fields: [companyId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  firstname   String
+  lastname    String
+  email       String
+  phone       String
+  city        String
+  companyId   String?
+  company     Company?   @relation(fields: [companyId], references: [id])
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
