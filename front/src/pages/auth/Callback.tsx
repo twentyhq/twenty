@@ -7,6 +7,7 @@ function Callback() {
   const [isLoading, setIsLoading] = useState(true);
 
   const refreshToken = searchParams.get('refreshToken');
+  console.log('refreshToken', refreshToken);
   localStorage.setItem('refreshToken', refreshToken || '');
   const navigate = useNavigate();
 

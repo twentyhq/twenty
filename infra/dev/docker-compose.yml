@@ -7,9 +7,6 @@ services:
     ports:
       - "3001:3001"
       - "6006:6006"
-    environment:
-      REACT_APP_API_URL: ${FRONT_REACT_APP_API_URL}
-      REACT_APP_AUTH_URL: ${FRONT_REACT_APP_AUTH_URL}
     volumes:
       - ../../front:/app/front
       - twenty_node_modules_front:/app/front/node_modules
@@ -24,8 +21,6 @@ services:
     volumes:
       - ../../server:/app/server
       - twenty_node_modules_server:/app/server/node_modules
-    environment:
-      SERVER_DATABASE_URL: ${SERVER_DATABASE_URL}
     depends_on:
       - postgres
   twenty-docs:

@@ -16,4 +16,10 @@ export class WorkspaceRepository {
         const { skip, take, cursor, where, orderBy } = params;
         return this.prisma.workspace.findMany({ skip, take, cursor, where, orderBy });
       }
+
+      async findUnique(
+          data: Prisma.WorkspaceFindUniqueArgs,
+        ): Promise<Workspace | null> {
+          return await this.prisma.workspace.findUnique(data);
+        }
 }

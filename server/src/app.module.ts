@@ -3,12 +3,16 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthController } from './health.controller';
 import { TerminusModule } from '@nestjs/terminus';
-import { UserModule } from './entities/user/user.module';
 
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { ApiModule } from './api/api.module';
 @Module({
   imports: [
-    UserModule,
+    ConfigModule.forRoot({}),
     TerminusModule,
+    AuthModule,
+    ApiModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],
