@@ -7,105 +7,88 @@ import { apiClient } from '../../../apollo';
 
 export const UPDATE_PERSON = gql`
   mutation UpdatePeople(
-    $id: uuid
+    $id: String
     $firstname: String
     $lastname: String
     $phone: String
     $city: String
-    $company_id: uuid
+    $company_id: String
     $email: String
-    $created_at: timestamptz
+    $created_at: DateTime
   ) {
-    update_people(
-      where: { id: { _eq: $id } }
-      _set: {
-        city: $city
-        company_id: $company_id
-        email: $email
-        firstname: $firstname
-        id: $id
-        lastname: $lastname
-        phone: $phone
-        created_at: $created_at
+    updateOnePerson(
+      where: { id: $id }
+      data: {
+        city: { set: $city }
+        company: { connect: { id: $company_id } }
+        email: { set: $email }
+        firstname: { set: $firstname }
+        id: { set: $id }
+        lastname: { set: $lastname }
+        phone: { set: $phone }
+        createdAt: { set: $created_at }
       }
     ) {
-      returning {
-        city
-        company {
-          domain_name
-          name
-          id
-        }
-        email
-        firstname
+      city
+      company {
+        domain_name: domainName
+        name
         id
-        lastname
-        phone
-        created_at
       }
+      email
+      firstname
+      id
+      lastname
+      phone
+      created_at: createdAt
     }
   }
 `;
 
 export const INSERT_PERSON = gql`
   mutation InsertPerson(
-    $id: uuid
-    $firstname: String
-    $lastname: String
-    $phone: String
-    $city: String
-    $company_id: uuid
-    $email: String
-    $created_at: timestamptz
+    $id: String!
+    $firstname: String!
+    $lastname: String!
+    $phone: String!
+    $city: String!
+    $company_id: String
+    $email: String!
+    $created_at: DateTime
   ) {
-    insert_people(
-      objects: {
+    createOnePerson(
+      data: {
         id: $id
         firstname: $firstname
         lastname: $lastname
         phone: $phone
         city: $city
-        company_id: $company_id
+        company: { connect: { id: $company_id } }
         email: $email
-        created_at: $created_at
+        createdAt: $created_at
+        workspace: { connect: { id: "il faut rajouter l'id du workspace" } }
       }
     ) {
-      affected_rows
-      returning {
-        city
-        company {
-          domain_name
-          name
-          id
-        }
-        email
-        firstname
+      city
+      company {
+        domain_name: domainName
+        name
         id
-        lastname
-        phone
-        created_at
       }
+      email
+      firstname
+      id
+      lastname
+      phone
+      created_at: createdAt
     }
   }
 `;
 
 export const DELETE_PEOPLE = gql`
-  mutation DeletePeople($ids: [uuid!]) {
-    delete_people(where: { id: { _in: $ids } }) {
-      returning {
-        city
-        company {
-          domain_name
-          name
-          id
-        }
-        email
-        firstname
-        id
-        lastname
-        phone
-        created_at
-      }
+  mutation DeletePeople($ids: [String!]) {
+    deleteManyPerson(where: { id: { in: $ids } }) {
+      count
     }
   }
 `;

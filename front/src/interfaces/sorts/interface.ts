@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Order_By } from '../../generated/graphql';
+import { SortOrder as Order_By } from '../../generated/graphql';
 
 export type SortType<OrderByTemplate> =
   | {

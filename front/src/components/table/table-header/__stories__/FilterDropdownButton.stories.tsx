@@ -12,6 +12,7 @@ import {
   SelectedFilterType,
 } from '../../../../interfaces/filters/interface';
 import { mockCompaniesData } from '../../../../pages/companies/__tests__/__data__/mock-data';
+import { QueryMode } from '../../../../generated/graphql';
 
 const component = {
   title: 'FilterDropdownButton',
@@ -28,7 +29,10 @@ const mocks = [
   {
     request: {
       query: SEARCH_COMPANY_QUERY,
-      variables: { where: { name: { _ilike: '%%' } }, limit: 5 },
+      variables: {
+        where: { name: { contains: '%%', mode: QueryMode.Insensitive } },
+        limit: 5,
+      },
     },
     result: {
       data: {
@@ -39,7 +43,10 @@ const mocks = [
   {
     request: {
       query: SEARCH_COMPANY_QUERY,
-      variables: { where: { name: { _ilike: '%Airc%' } }, limit: 5 },
+      variables: {
+        where: { name: { contains: '%Airc%', mode: QueryMode.Insensitive } },
+        limit: 5,
+      },
     },
     result: {
       data: {

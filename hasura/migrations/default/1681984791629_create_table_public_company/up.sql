@@ -1,1 +1,0 @@
-CREATE TABLE "public"."company" ("id" serial NOT NULL, "company_name" text NOT NULL, "company_domain" text NOT NULL, "workspace_id" integer NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces"("id") ON UPDATE restrict ON DELETE restrict);

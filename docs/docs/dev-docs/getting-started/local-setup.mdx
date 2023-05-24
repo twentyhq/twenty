@@ -12,7 +12,6 @@ Welcome to Twenty documentation!
 Twenty development stack is composed of 3 different layers
 
 - front: our frontend React app
-- hasura: our graphql engine exposing our database and server
 - server: our backend that contain endpoint, crm logic, scripts, jobs...
 - storages: postgres
 
@@ -46,7 +45,6 @@ make up
 Once this is completed you should have:
 
 - front available on: http://localhost:3001
-- hasura available on: http://localhost:8080
 - server available on: http://localhost:3000/health
 - postgres: available on http://localhost:5432 that should contain `twenty` database
 
@@ -65,9 +63,3 @@ If you are using Docker install, make sure to ssh in the docker container during
 Run tests: `make front-test`
 Run coverage: `make front-coverage`
 Run storybook: `make front-storybook`
-
-### Hasura development
-
-Open hasura console: `make hasura-console`
-Do your changes in hasura console on http://localhost:9695
-Commit your changes in git

@@ -1,9 +1,9 @@
 import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphqlQueryPerson } from '../../../interfaces/entities/person.interface';
 import {
-  Order_By,
-  People_Bool_Exp,
-  People_Order_By,
+  PersonWhereInput as People_Bool_Exp,
+  PersonOrderByWithRelationInput as People_Order_By,
+  SortOrder,
 } from '../../../generated/graphql';
 import { SelectedSortType } from '../../../interfaces/sorts/interface';
 
@@ -11,22 +11,22 @@ export type PeopleSelectedSortType = SelectedSortType<People_Order_By>;
 
 export const GET_PEOPLE = gql`
   query GetPeople(
-    $orderBy: [people_order_by!]
-    $where: people_bool_exp
+    $orderBy: [PersonOrderByWithRelationInput!]
+    $where: PersonWhereInput
     $limit: Int
   ) {
-    people(order_by: $orderBy, where: $where, limit: $limit) {
+    people(orderBy: $orderBy, where: $where, take: $limit) {
       id
       phone
       email
       city
       firstname
       lastname
-      created_at
+      created_at: createdAt
       company {
         id
         name
-        domain_name
+        domain_name: domainName
       }
     }
   }
@@ -43,6 +43,6 @@ export function usePeopleQuery(
 
 export const defaultOrderBy: People_Order_By[] = [
   {
-    created_at: Order_By.Desc,
+    createdAt: SortOrder.Desc,
   },
 ];

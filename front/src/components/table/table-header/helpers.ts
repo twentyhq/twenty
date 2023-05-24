@@ -1,4 +1,4 @@
-import { Order_By } from '../../../generated/graphql';
+import { SortOrder as Order_By } from '../../../generated/graphql';
 import { BoolExpType } from '../../../interfaces/entities/generic.interface';
 import {
   FilterableFieldsType,

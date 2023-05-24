@@ -20,7 +20,7 @@ import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
 } from '../../components/table/table-header/helpers';
-import { Companies_Order_By } from '../../generated/graphql';
+import { CompanyOrderByWithRelationInput as Companies_Order_By } from '../../generated/graphql';
 import ActionBar from '../../components/table/action-bar/ActionBar';
 import { SelectedFilterType } from '../../interfaces/filters/interface';
 import { BoolExpType } from '../../interfaces/entities/generic.interface';

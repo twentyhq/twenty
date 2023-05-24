@@ -27,7 +27,7 @@ export const RegularSortAndFilterBar = ({
       label: 'Is',
       id: 'is',
       whereTemplate: (person: Person) => {
-        return { email: { _eq: person.email } };
+        return { email: { equals: person.email } };
       },
     },
     key: 'test_filter',

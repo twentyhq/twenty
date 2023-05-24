@@ -18,20 +18,26 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate": "npx prisma migrate deploy"
   },
   "dependencies": {
-    "@golevelup/nestjs-hasura": "^3.0.2",
+    "@nestjs/apollo": "^11.0.5",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/graphql": "^11.0.5",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/serve-static": "^3.0.0",
     "@nestjs/terminus": "^9.2.2",
     "@prisma/client": "^4.13.0",
+    "apollo-server-express": "^3.12.0",
+    "graphql": "^16.6.0",
     "jest-mock-extended": "^3.0.4",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "typegraphql-nestjs": "^0.5.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
@@ -56,6 +62,7 @@
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.1.0",
+    "typegraphql-prisma": "^0.25.1",
     "typescript": "^4.7.4"
   },
   "jest": {
@@ -76,6 +83,7 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "schema": "src/database/schema.prisma"
+    "schema": "src/database/schema.prisma",
+    "seed": "ts-node src/database/seeds/index.ts"
   }
 }

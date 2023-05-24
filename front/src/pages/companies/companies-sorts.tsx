@@ -5,7 +5,7 @@ import {
   TbMapPin,
   TbSum,
 } from 'react-icons/tb';
-import { Companies_Order_By } from '../../generated/graphql';
+import { CompanyOrderByWithRelationInput as Companies_Order_By } from '../../generated/graphql';
 import { SortType } from '../../interfaces/sorts/interface';
 
 export const availableSorts = [
@@ -22,7 +22,7 @@ export const availableSorts = [
     _type: 'default_sort',
   },
   {
-    key: 'domain_name',
+    key: 'domainName',
     label: 'Url',
     icon: <TbLink size={16} />,
     _type: 'default_sort',
@@ -34,7 +34,7 @@ export const availableSorts = [
     _type: 'default_sort',
   },
   {
-    key: 'created_at',
+    key: 'createdAt',
     label: 'Creation',
     icon: <TbCalendar size={16} />,
     _type: 'default_sort',

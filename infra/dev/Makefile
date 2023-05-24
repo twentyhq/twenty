@@ -30,11 +30,3 @@ front-storybook: ##
 
 front-graphql-generate: ## 
 	@docker-compose exec twenty-front sh -c "npm run graphql-generate"
-
-## Hasura
-
-hasura-logs: ##
-	@docker-compose logs twenty-hasura -f
-
-hasura-sh: ##
-	@docker-compose exec twenty-hasura sh

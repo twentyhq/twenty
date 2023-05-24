@@ -2,17 +2,16 @@ import { QueryResult, gql, useQuery } from '@apollo/client';
 import { GraphqlQueryUser } from '../../../interfaces/entities/user.interface';
 
 export const GET_CURRENT_USER = gql`
-  query GetCurrentUser($uuid: uuid) {
-    users(where: { id: { _eq: $uuid } }) {
+  query GetCurrentUser($uuid: String) {
+    users(where: { id: { equals: $uuid } }) {
       id
       email
       displayName
-      workspace_member {
+      workspace_member: workspaceMember {
         workspace {
           id
-          domain_name
-          display_name
-          logo
+          domain_name: domainName
+          display_name: displayName
         }
       }
     }

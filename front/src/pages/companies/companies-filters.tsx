@@ -10,6 +10,7 @@ import { Company } from '../../interfaces/entities/company.interface';
 import { FilterConfigType } from '../../interfaces/filters/interface';
 import { SEARCH_USER_QUERY } from '../../services/api/search/search';
 import { User, mapToUser } from '../../interfaces/entities/user.interface';
+import { QueryMode } from '../../generated/graphql';
 
 export const nameFilter = {
   key: 'company_name',
@@ -21,14 +22,21 @@ export const nameFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        name: { _ilike: `%${searchString}%` },
+        name: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        _not: { name: { _ilike: `%${searchString}%` } },
+        NOT: [
+          {
+            name: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+        ],
       }),
     },
   ],
@@ -45,7 +53,7 @@ export const employeesFilter = {
       id: 'greater_than',
       whereTemplate: (searchString) => ({
         employees: {
-          _gte: isNaN(Number(searchString)) ? undefined : Number(searchString),
+          gte: isNaN(Number(searchString)) ? undefined : Number(searchString),
         },
       }),
     },
@@ -54,7 +62,7 @@ export const employeesFilter = {
       id: 'less_than',
       whereTemplate: (searchString) => ({
         employees: {
-          _lte: isNaN(Number(searchString)) ? undefined : Number(searchString),
+          lte: isNaN(Number(searchString)) ? undefined : Number(searchString),
         },
       }),
     },
@@ -71,14 +79,24 @@ export const urlFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        domain_name: { _ilike: `%${searchString}%` },
+        domainName: {
+          contains: `%${searchString}%`,
+          mode: QueryMode.Insensitive,
+        },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        _not: { domain_name: { _ilike: `%${searchString}%` } },
+        NOT: [
+          {
+            domainName: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+        ],
       }),
     },
   ],
@@ -94,14 +112,21 @@ export const addressFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        address: { _ilike: `%${searchString}%` },
+        address: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        _not: { address: { _ilike: `%${searchString}%` } },
+        NOT: [
+          {
+            address: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+        ],
       }),
     },
   ],
@@ -117,8 +142,8 @@ export const creationDateFilter = {
       label: 'Greater than',
       id: 'greater_than',
       whereTemplate: (searchString) => ({
-        created_at: {
-          _gte: searchString,
+        createdAt: {
+          gte: searchString,
         },
       }),
     },
@@ -126,8 +151,8 @@ export const creationDateFilter = {
       label: 'Less than',
       id: 'less_than',
       whereTemplate: (searchString) => ({
-        created_at: {
-          _lte: searchString,
+        createdAt: {
+          lte: searchString,
         },
       }),
     },
@@ -142,7 +167,10 @@ export const accountOwnerFilter = {
   searchConfig: {
     query: SEARCH_USER_QUERY,
     template: (searchString: string) => ({
-      displayName: { _ilike: `%${searchString}%` },
+      displayName: {
+        contains: `%${searchString}%`,
+        mode: QueryMode.Insensitive,
+      },
     }),
     resultMapper: (data) => ({
       value: mapToUser(data),
@@ -155,14 +183,20 @@ export const accountOwnerFilter = {
       label: 'Is',
       id: 'is',
       whereTemplate: (owner) => ({
-        account_owner: { displayName: { _eq: owner.displayName } },
+        accountOwner: { is: { displayName: { equals: owner.displayName } } },
       }),
     },
     {
       label: 'Is not',
       id: 'is_not',
       whereTemplate: (owner) => ({
-        _not: { account_owner: { displayName: { _eq: owner.displayName } } },
+        NOT: [
+          {
+            accountOwner: {
+              is: { displayName: { equals: owner.displayName } },
+            },
+          },
+        ],
       }),
     },
   ],

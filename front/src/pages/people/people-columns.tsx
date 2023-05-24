@@ -30,6 +30,7 @@ import {
   TbPhone,
   TbUser,
 } from 'react-icons/tb';
+import { QueryMode } from '../../generated/graphql';
 
 const columnHelper = createColumnHelper<Person>();
 
@@ -118,7 +119,10 @@ export const usePeopleColumns = () => {
               {
                 query: SEARCH_COMPANY_QUERY,
                 template: (searchInput: string) => ({
-                  name: { _ilike: `%${searchInput}%` },
+                  name: {
+                    contains: `%${searchInput}%`,
+                    mode: QueryMode.Insensitive,
+                  },
                 }),
                 resultMapper: (company) => ({
                   render: (company) => company.name,
