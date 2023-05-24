@@ -1,15 +1,15 @@
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { CompanyRepository } from 'src/entities/company/company.repository';
-import { Company } from '../models/company.model';
+import { Company } from '@generated/type-graphql';
+import { PrismaService } from '../../database/prisma.service';
+import { Resolver, Query } from 'type-graphql';
 
 @Resolver(() => Company)
 export class CompanyResolver {
-  constructor(
-    private readonly companyRepository: CompanyRepository,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   @Query(() => [Company])
-  async getCompanies() {
-    return this.companyRepository.findMany({});
+  async getCompaniesOfSammy(): Promise<Company[] | null> {
+    return await this.prisma.company.findMany({
+      where: {},
+    });
   }
 }

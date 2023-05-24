@@ -1,14 +1,35 @@
 import { Module } from '@nestjs/common';
-import { PersonModule } from 'src/entities/person/person.module';
-import { CompanyModule } from 'src/entities/company/company.module';
-import { UserModule } from 'src/entities/user/user.module';
-import { WorkspaceModule } from 'src/entities/workspace/workspace.module';
-import { PersonResolver } from './resolvers/person.resolver';
-import { CompanyResolver } from './resolvers/company.resolver';
-import { WorkspaceResolver } from './resolvers/workspace.resolver';
+import { TypeGraphQLModule } from 'typegraphql-nestjs';
+import { ApolloDriver } from '@nestjs/apollo';
+import { PrismaClient } from '@prisma/client';
+
+import {
+  CompanyCrudResolver,
+  UserCrudResolver,
+  PersonCrudResolver,
+  WorkspaceCrudResolver,
+} from '@generated/type-graphql';
+
+interface Context {
+  prisma: PrismaClient;
+}
+
+const prisma = new PrismaClient();
 
 @Module({
-  imports: [PersonModule, CompanyModule, UserModule, WorkspaceModule],
-  providers: [PersonResolver, CompanyResolver, WorkspaceResolver],
+  imports: [
+    TypeGraphQLModule.forRoot({
+      driver: ApolloDriver,
+      path: '/',
+      validate: false,
+      context: (): Context => ({ prisma }),
+    }),
+  ],
+  providers: [
+    CompanyCrudResolver,
+    UserCrudResolver,
+    PersonCrudResolver,
+    WorkspaceCrudResolver,
+  ],
 })
 export class ApiModule {}

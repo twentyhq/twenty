@@ -1,7 +1,7 @@
 module.exports = {
   schema: [
     {
-      'http://twenty-server:3000/graphql': {
+      'http://localhost:3000/graphql': {
         headers: {
           'x-hasura-admin-secret': process.env.HASURA_GRAPHQL_ADMIN_SECRET,
         },

@@ -5,9 +5,7 @@ import { Workspace } from '../models/workspace.model';
 
 @Resolver(() => Workspace)
 export class WorkspaceResolver {
-  constructor(
-    private readonly workspaceRepository: WorkspaceRepository,
-  ) {}
+  constructor(private readonly workspaceRepository: WorkspaceRepository) {}
 
   @Query(() => [Workspace])
   async getWorkspaces() {

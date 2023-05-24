@@ -1,9 +1,10 @@
 import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
 import { Company as CompanyDB } from '@prisma/client';
+import { CustomUuidScalar } from '../graphql/uuid';
 
 @ObjectType()
 export class Company {
-  @Field(() => String)
+  @Field(() => CustomUuidScalar)
   id: CompanyDB[`id`];
 
   @Field(() => GraphQLISODateTime)

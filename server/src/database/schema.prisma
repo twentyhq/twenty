@@ -2,6 +2,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator typegraphql {
+  provider = "typegraphql-prisma"
+  output   = "../../node_modules/@generated/type-graphql"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("SERVER_DATABASE_URL")
@@ -66,7 +71,7 @@ model Company {
   address        String
   employees      Int?
   accountOwnerId String?
-  accountOwner   User?      @relation(fields: [accountOwnerId], references: [id])
+  accountOwner   User?     @relation(fields: [accountOwnerId], references: [id])
   people         Person[]
 
   workspaceId String
@@ -77,16 +82,16 @@ model Company {
 
 model Person {
   id        String    @id
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-  firstname   String
-  lastname    String
-  email       String
-  phone       String
-  city        String
-  companyId   String?
-  company     Company?   @relation(fields: [companyId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  firstname String
+  lastname  String
+  email     String
+  phone     String
+  city      String
+  companyId String?
+  company   Company?  @relation(fields: [companyId], references: [id])
 
   workspaceId String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
