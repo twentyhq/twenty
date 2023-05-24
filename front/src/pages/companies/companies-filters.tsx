@@ -10,6 +10,7 @@ import { Company } from '../../interfaces/entities/company.interface';
 import { FilterConfigType } from '../../interfaces/filters/interface';
 import { SEARCH_USER_QUERY } from '../../services/api/search/search';
 import { User, mapToUser } from '../../interfaces/entities/user.interface';
+import { QueryMode } from '../../generated/graphql';
 
 export const nameFilter = {
   key: 'company_name',
@@ -21,14 +22,21 @@ export const nameFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        name: { contains: `%${searchString}%` },
+        name: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        NOT: [{ name: { contains: `%${searchString}%` } }],
+        NOT: [
+          {
+            name: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+        ],
       }),
     },
   ],
@@ -71,14 +79,24 @@ export const urlFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        domainName: { contains: `%${searchString}%` },
+        domainName: {
+          contains: `%${searchString}%`,
+          mode: QueryMode.Insensitive,
+        },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        NOT: [{ domainName: { contains: `%${searchString}%` } }],
+        NOT: [
+          {
+            domainName: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+        ],
       }),
     },
   ],
@@ -94,14 +112,21 @@ export const addressFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        address: { contains: `%${searchString}%` },
+        address: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        NOT: [{ address: { contains: `%${searchString}%` } }],
+        NOT: [
+          {
+            address: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+        ],
       }),
     },
   ],
@@ -142,7 +167,10 @@ export const accountOwnerFilter = {
   searchConfig: {
     query: SEARCH_USER_QUERY,
     template: (searchString: string) => ({
-      displayName: { contains: `%${searchString}%` },
+      displayName: {
+        contains: `%${searchString}%`,
+        mode: QueryMode.Insensitive,
+      },
     }),
     resultMapper: (data) => ({
       value: mapToUser(data),

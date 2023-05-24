@@ -13,6 +13,7 @@ import {
   TbPhone,
   TbUser,
 } from 'react-icons/tb';
+import { QueryMode } from '../../generated/graphql';
 
 export const fullnameFilter = {
   key: 'fullname',
@@ -25,8 +26,18 @@ export const fullnameFilter = {
       id: 'like',
       whereTemplate: (searchString) => ({
         OR: [
-          { firstname: { contains: `%${searchString}%` } },
-          { lastname: { contains: `%${searchString}%` } },
+          {
+            firstname: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+          {
+            lastname: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
         ],
       }),
     },
@@ -37,8 +48,18 @@ export const fullnameFilter = {
         NOT: [
           {
             AND: [
-              { firstname: { contains: `%${searchString}%` } },
-              { lastname: { contains: `%${searchString}%` } },
+              {
+                firstname: {
+                  contains: `%${searchString}%`,
+                  mode: QueryMode.Insensitive,
+                },
+              },
+              {
+                lastname: {
+                  contains: `%${searchString}%`,
+                  mode: QueryMode.Insensitive,
+                },
+              },
             ],
           },
         ],
@@ -57,14 +78,21 @@ export const emailFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        email: { contains: `%${searchString}%` },
+        email: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        NOT: [{ email: { contains: `%${searchString}%` } }],
+        NOT: [
+          {
+            email: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+        ],
       }),
     },
   ],
@@ -78,7 +106,7 @@ export const companyFilter = {
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
     template: (searchString: string) => ({
-      name: { contains: `%${searchString}%` },
+      name: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
     }),
     resultMapper: (data) => ({
       value: mapToCompany(data),
@@ -114,14 +142,21 @@ export const phoneFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        phone: { contains: `%${searchString}%` },
+        phone: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        NOT: [{ phone: { contains: `%${searchString}%` } }],
+        NOT: [
+          {
+            phone: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+        ],
       }),
     },
   ],
@@ -164,14 +199,21 @@ export const cityFilter = {
       label: 'Contains',
       id: 'like',
       whereTemplate: (searchString) => ({
-        city: { contains: `%${searchString}%` },
+        city: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
       whereTemplate: (searchString) => ({
-        NOT: [{ city: { contains: `%${searchString}%` } }],
+        NOT: [
+          {
+            city: {
+              contains: `%${searchString}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+        ],
       }),
     },
   ],

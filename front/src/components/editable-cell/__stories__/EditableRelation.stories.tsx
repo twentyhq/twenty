@@ -11,6 +11,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { SEARCH_COMPANY_QUERY } from '../../../services/api/search/search';
 import styled from '@emotion/styled';
 import { SearchConfigType } from '../../../interfaces/search/interface';
+import { QueryMode } from '../../../generated/graphql';
 
 const component = {
   title: 'editable-cell/EditableRelation',
@@ -41,7 +42,7 @@ const mocks = [
     request: {
       query: SEARCH_COMPANY_QUERY,
       variables: {
-        where: { name: { contains: '%%' } },
+        where: { name: { contains: '%%', mode: QueryMode.Insensitive } },
         limit: 5,
       },
     },
@@ -92,7 +93,7 @@ EditableRelationStory.args = {
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
     template: (searchInput: string) => ({
-      name: { contains: `%${searchInput}%` },
+      name: { contains: `%${searchInput}%`, mode: QueryMode.Insensitive },
     }),
     resultMapper: (company) => ({
       render: (company) => company.name,

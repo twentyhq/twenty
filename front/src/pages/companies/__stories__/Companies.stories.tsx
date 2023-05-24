@@ -5,6 +5,7 @@ import { lightTheme } from '../../../layout/styles/themes';
 import { GET_COMPANIES } from '../../../services/api/companies';
 import { mockCompaniesData } from '../__tests__/__data__/mock-data';
 import { MockedProvider } from '@apollo/client/testing';
+import { QueryMode } from '../../../generated/graphql';
 
 const component = {
   title: 'Companies',
@@ -47,7 +48,9 @@ const mocks = [
       query: GET_COMPANIES,
       variables: {
         orderBy: [{ createdAt: 'desc' }],
-        where: { domainName: { contains: '%aircal%' } },
+        where: {
+          domainName: { contains: '%aircal%', mode: QueryMode.Insensitive },
+        },
       },
     },
     result: {

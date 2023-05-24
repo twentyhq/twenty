@@ -4,6 +4,7 @@ exports[`PeopleFilter should render the filter city which is text search 1`] = `
 Object {
   "city": Object {
     "contains": "%Paris%",
+    "mode": "insensitive",
   },
 }
 `;

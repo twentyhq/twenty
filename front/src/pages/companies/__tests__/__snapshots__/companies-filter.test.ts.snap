@@ -12,6 +12,7 @@ exports[`Companies Filter should render the filter company_name 1`] = `
 Object {
   "name": Object {
     "contains": "%name%",
+    "mode": "insensitive",
   },
 }
 `;

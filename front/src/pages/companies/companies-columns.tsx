@@ -27,6 +27,7 @@ import {
   TbSum,
   TbUser,
 } from 'react-icons/tb';
+import { QueryMode } from '../../generated/graphql';
 
 const columnHelper = createColumnHelper<Company>();
 
@@ -178,7 +179,10 @@ export const useCompaniesColumns = () => {
               {
                 query: SEARCH_USER_QUERY,
                 template: (searchInput: string) => ({
-                  displayName: { contains: `%${searchInput}%` },
+                  displayName: {
+                    contains: `%${searchInput}%`,
+                    mode: QueryMode.Insensitive,
+                  },
                 }),
                 resultMapper: (accountOwner) => ({
                   render: (accountOwner) => accountOwner.displayName,
