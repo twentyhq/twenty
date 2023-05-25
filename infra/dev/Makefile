@@ -1,32 +1,39 @@
-build: ##
+build:
 	@docker-compose down 
-	docker volume rm dev_twenty_node_modules_front || true
-	docker volume rm dev_twenty_node_modules_server || true
-	docker volume rm dev_twenty_node_modules_docs || true
-	docker-compose build
+	@docker volume rm dev_twenty_node_modules_front > /dev/null 2>&1 || true
+	@docker volume rm dev_twenty_node_modules_server > /dev/null 2>&1 || true
+	@docker volume rm dev_twenty_node_modules_docs > /dev/null 2>&1 || true
+	@docker-compose build
 
-up: ## 
+up:
 	@docker-compose up -d
 
-down: ##
+down:
 	@docker-compose down
 
-## Front
+sh:
+	@docker-compose exec twenty-dev sh
 
-front-logs: ## 
-	@docker-compose logs twenty-front -f
+front-start:
+	@docker-compose exec twenty-dev sh -c "cd /app/front && npm run start"
 
-front-sh: ## 
-	@docker-compose exec twenty-front sh
+front-test:
+	@docker-compose exec twenty-dev sh -c "cd /app/front && npm run test"
 
-front-test: ## 
-	@docker-compose exec twenty-front sh -c "npm run test"
+front-graphql-generate:
+	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run "
 
-front-coverage: ## 
-	@docker-compose exec twenty-front sh -c "npm run coverage"
+front-storybook:
+	@docker-compose exec twenty-dev sh -c "cd /app/front && npm run storybook"
 
-front-storybook: ## 
-	@docker-compose exec twenty-front sh -c "npm run storybook"
+server-start:
+	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run start"
 
-front-graphql-generate: ## 
-	@docker-compose exec twenty-front sh -c "npm run graphql-generate"
+server-prisma-generate:
+	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run prisma:generate"
+
+server-prisma-migrate:
+	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run prisma:migrate"
+
+server-prisma-seed:
+	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run prisma:seed"

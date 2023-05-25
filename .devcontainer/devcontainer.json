@@ -1,16 +1,10 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/docker-in-docker
-{
-	"name": "Twenty",
-	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
 
+{
+	"name": "Twenty Codespace",
+	"image": "node:18.16.0",
 	"features": {
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {
-			"version": "20.10",
-			"enableNonRootDocker": "true",
-			"moby": "true"
-		}
+	  "ghcr.io/devcontainers-contrib/features/jshint:2": {}
 	},
-	"postCreateCommand": ".devcontainer/init.sh",
-	"postStartCommand": ".vscode/up.sh"
-}
+	"forwardPorts": [3000, 3001, 5432],
+	 "postCreateCommand": "cd front && npm install && cd ../server && npm install"
+  }
