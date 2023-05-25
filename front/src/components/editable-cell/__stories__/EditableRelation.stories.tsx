@@ -87,7 +87,7 @@ EditableRelationStory.args = {
         : undefined,
     };
   },
-  changeHandler: (relation: Company) => {
+  onChange: (relation: Company) => {
     console.log('changed', relation);
   },
   searchConfig: {

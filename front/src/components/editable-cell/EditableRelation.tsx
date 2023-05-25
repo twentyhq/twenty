@@ -1,34 +1,52 @@
-import { ChangeEvent, ComponentType, useState } from 'react';
-import EditableCellWrapper from './EditableCellWrapper';
+import { ChangeEvent, ComponentType, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useSearch } from '../../services/api/search/search';
 import { SearchConfigType } from '../../interfaces/search/interface';
 import { AnyEntity } from '../../interfaces/entities/generic.interface';
+import { EditableRelationCreateButton } from './EditableRelationCreateButton';
+import { isNonEmptyString } from '../../modules/utils/type-guards/isNonEmptyString';
+import { isDefined } from '../../modules/utils/type-guards/isDefined';
+import { FaPlus } from 'react-icons/fa';
+import { HoverableMenuItem } from './HoverableMenuItem';
+import { EditableCellMenu } from './EditableCellMenu';
+import { CellNormalModeContainer } from './CellNormalModeContainer';
 
 const StyledEditModeContainer = styled.div`
   width: 200px;
-  margin-left: calc(-1 * ${(props) => props.theme.spacing(2)});
-  margin-right: calc(-1 * ${(props) => props.theme.spacing(2)});
+  // margin-left: calc(-1 * ${(props) => props.theme.spacing(2)});
+  // margin-right: calc(-1 * ${(props) => props.theme.spacing(2)});
 `;
+
 const StyledEditModeSelectedContainer = styled.div`
   height: 31px;
   display: flex;
   align-items: center;
-  padding-left: ${(props) => props.theme.spacing(2)};
-  padding-right: ${(props) => props.theme.spacing(2)};
+  padding-left: ${(props) => props.theme.spacing(1)};
+  padding-right: ${(props) => props.theme.spacing(1)};
 `;
+
 const StyledEditModeSearchContainer = styled.div`
   height: 32px;
   display: flex;
   align-items: center;
   border-top: 1px solid ${(props) => props.theme.primaryBorder};
+  padding-left: ${(props) => props.theme.spacing(1)};
+  padding-right: ${(props) => props.theme.spacing(1)};
 `;
+
+const StyledEditModeCreateButtonContainer = styled.div`
+  height: 36px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid ${(props) => props.theme.primaryBorder};
+  padding: ${(props) => props.theme.spacing(1)};
+  color: ${(props) => props.theme.text60};
+`;
+
 const StyledEditModeSearchInput = styled.input`
   width: 100%;
   border: none;
   outline: none;
-  padding-left: ${(props) => props.theme.spacing(2)};
-  padding-right: ${(props) => props.theme.spacing(2)};
 
   &::placeholder {
     font-weight: 'bold';
@@ -38,15 +56,26 @@ const StyledEditModeSearchInput = styled.input`
 
 const StyledEditModeResults = styled.div`
   border-top: 1px solid ${(props) => props.theme.primaryBorder};
-  padding-left: ${(props) => props.theme.spacing(2)};
-  padding-right: ${(props) => props.theme.spacing(2)};
+  padding-left: ${(props) => props.theme.spacing(1)};
+  padding-right: ${(props) => props.theme.spacing(1)};
 `;
+
 const StyledEditModeResultItem = styled.div`
   height: 32px;
   display: flex;
   align-items: center;
   cursor: pointer;
   user-select: none;
+`;
+
+const StyledCreateButtonIcon = styled.div`
+  color: ${(props) => props.theme.text100};
+  align-self: center;
+  padding-top: 4px;
+`;
+
+const StyledCreateButtonText = styled.div`
+  color: ${(props) => props.theme.text60};
 `;
 
 export type EditableRelationProps<
@@ -56,14 +85,18 @@ export type EditableRelationProps<
   relation?: RelationType | null;
   searchPlaceholder: string;
   searchConfig: SearchConfigType<RelationType>;
-  changeHandler: (relation: RelationType) => void;
+  onChange: (relation: RelationType) => void;
+  onChangeSearchInput?: (searchInput: string) => void;
   editModeHorizontalAlign?: 'left' | 'right';
   ChipComponent: ComponentType<ChipComponentPropsType>;
   chipComponentPropsMapper: (
     relation: RelationType,
   ) => ChipComponentPropsType & JSX.IntrinsicAttributes;
+  // TODO: refactor, newRelationName is too hard coded.
+  onCreate?: (newRelationName: string) => void;
 };
 
+// TODO: split this component
 function EditableRelation<
   RelationType extends AnyEntity,
   ChipComponentPropsType,
@@ -71,72 +104,109 @@ function EditableRelation<
   relation,
   searchPlaceholder,
   searchConfig,
-  changeHandler,
+  onChange,
+  onChangeSearchInput,
   editModeHorizontalAlign,
   ChipComponent,
   chipComponentPropsMapper,
+  onCreate,
 }: EditableRelationProps<RelationType, ChipComponentPropsType>) {
-  const [selectedRelation, setSelectedRelation] = useState(relation);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [filterSearchResults, setSearchInput, setFilterSearch] =
+  // TODO: Tie this to a react context
+  const [filterSearchResults, setSearchInput, setFilterSearch, searchInput] =
     useSearch<RelationType>();
 
+  useEffect(() => {
+    if (isDefined(onChangeSearchInput)) {
+      onChangeSearchInput(searchInput);
+    }
+  }, [onChangeSearchInput, searchInput]);
+
+  const canCreate = isDefined(onCreate);
+
+  const createButtonIsVisible =
+    canCreate && isEditMode && isNonEmptyString(searchInput);
+
+  function handleCreateNewRelationButtonClick() {
+    onCreate?.(searchInput);
+    setIsEditMode(false);
+  }
+
   return (
-    <EditableCellWrapper
-      editModeHorizontalAlign={editModeHorizontalAlign}
-      isEditMode={isEditMode}
-      onOutsideClick={() => setIsEditMode(false)}
-      onInsideClick={() => {
-        if (!isEditMode) {
-          setIsEditMode(true);
+    <>
+      <EditableCellMenu
+        editModeHorizontalAlign={editModeHorizontalAlign}
+        isEditMode={isEditMode}
+        onOutsideClick={() => setIsEditMode(false)}
+        onInsideClick={() => {
+          if (!isEditMode) {
+            setIsEditMode(true);
+          }
+        }}
+        editModeContent={
+          <StyledEditModeContainer>
+            <StyledEditModeSelectedContainer>
+              {relation ? (
+                <ChipComponent {...chipComponentPropsMapper(relation)} />
+              ) : (
+                <></>
+              )}
+            </StyledEditModeSelectedContainer>
+            <StyledEditModeSearchContainer>
+              <StyledEditModeSearchInput
+                placeholder={searchPlaceholder}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                  setFilterSearch(searchConfig);
+                  setSearchInput(event.target.value);
+                }}
+              />
+            </StyledEditModeSearchContainer>
+            {createButtonIsVisible && (
+              <StyledEditModeCreateButtonContainer>
+                <HoverableMenuItem>
+                  <EditableRelationCreateButton
+                    onClick={handleCreateNewRelationButtonClick}
+                  >
+                    <StyledCreateButtonIcon>
+                      <FaPlus />
+                    </StyledCreateButtonIcon>
+                    <StyledCreateButtonText>Create new</StyledCreateButtonText>
+                  </EditableRelationCreateButton>
+                </HoverableMenuItem>
+              </StyledEditModeCreateButtonContainer>
+            )}
+            <StyledEditModeResults>
+              {filterSearchResults.results &&
+                filterSearchResults.results.map((result, index) => (
+                  <StyledEditModeResultItem
+                    key={index}
+                    onClick={() => {
+                      onChange(result.value);
+                      setIsEditMode(false);
+                    }}
+                  >
+                    <HoverableMenuItem>
+                      <ChipComponent
+                        {...chipComponentPropsMapper(result.value)}
+                      />
+                    </HoverableMenuItem>
+                  </StyledEditModeResultItem>
+                ))}
+            </StyledEditModeResults>
+          </StyledEditModeContainer>
         }
-      }}
-      editModeContent={
-        <StyledEditModeContainer>
-          <StyledEditModeSelectedContainer>
-            {selectedRelation ? (
-              <ChipComponent {...chipComponentPropsMapper(selectedRelation)} />
+        nonEditModeContent={
+          <CellNormalModeContainer>
+            {relation ? (
+              <ChipComponent {...chipComponentPropsMapper(relation)} />
             ) : (
               <></>
             )}
-          </StyledEditModeSelectedContainer>
-          <StyledEditModeSearchContainer>
-            <StyledEditModeSearchInput
-              placeholder={searchPlaceholder}
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setFilterSearch(searchConfig);
-                setSearchInput(event.target.value);
-              }}
-            />
-          </StyledEditModeSearchContainer>
-          <StyledEditModeResults>
-            {filterSearchResults.results &&
-              filterSearchResults.results.map((result, index) => (
-                <StyledEditModeResultItem
-                  key={index}
-                  onClick={() => {
-                    setSelectedRelation(result.value);
-                    changeHandler(result.value);
-                    setIsEditMode(false);
-                  }}
-                >
-                  <ChipComponent {...chipComponentPropsMapper(result.value)} />
-                </StyledEditModeResultItem>
-              ))}
-          </StyledEditModeResults>
-        </StyledEditModeContainer>
-      }
-      nonEditModeContent={
-        <div>
-          {selectedRelation ? (
-            <ChipComponent {...chipComponentPropsMapper(selectedRelation)} />
-          ) : (
-            <></>
-          )}
-        </div>
-      }
-    />
+          </CellNormalModeContainer>
+        }
+      />
+    </>
   );
 }
 

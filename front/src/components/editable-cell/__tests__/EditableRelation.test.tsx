@@ -15,7 +15,7 @@ it('Checks the EditableRelation editing event bubbles up', async () => {
         Company,
         CompanyChipPropsType
       >)}
-      changeHandler={func}
+      onChange={func}
     />,
   );
 

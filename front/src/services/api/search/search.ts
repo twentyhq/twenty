@@ -5,6 +5,7 @@ import {
   AnyEntity,
   UnknownType,
 } from '../../../interfaces/entities/generic.interface';
+import { debounce } from '../../../modules/utils/debounce';
 
 export const SEARCH_PEOPLE_QUERY = gql`
   query SearchPeopleQuery($where: PersonWhereInput, $limit: Int) {
@@ -48,19 +49,6 @@ export const SEARCH_COMPANY_QUERY = gql`
   }
 `;
 
-const debounce = <FuncArgs extends any[]>(
-  func: (...args: FuncArgs) => void,
-  delay: number,
-) => {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  return (...args: FuncArgs) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      func(...args);
-    }, delay);
-  };
-};
-
 export type SearchResultsType<T extends AnyEntity | UnknownType = UnknownType> =
   {
     results: {
@@ -74,6 +62,7 @@ export const useSearch = <T extends AnyEntity | UnknownType = UnknownType>(): [
   SearchResultsType<T>,
   React.Dispatch<React.SetStateAction<string>>,
   React.Dispatch<React.SetStateAction<SearchConfigType<T> | null>>,
+  string,
 ] => {
   const [searchConfig, setSearchConfig] = useState<SearchConfigType<T> | null>(
     null,
@@ -81,7 +70,7 @@ export const useSearch = <T extends AnyEntity | UnknownType = UnknownType>(): [
   const [searchInput, setSearchInput] = useState<string>('');
 
   const debouncedsetSearchInput = useMemo(
-    () => debounce(setSearchInput, 500),
+    () => debounce(setSearchInput, 50),
     [],
   );
 
@@ -119,11 +108,12 @@ export const useSearch = <T extends AnyEntity | UnknownType = UnknownType>(): [
     }
     return {
       loading: false,
-      results: searchQueryResults.data.searchResults.map(
+      // TODO: add proper typing
+      results: searchQueryResults?.data?.searchResults?.map(
         searchConfig.resultMapper,
       ),
     };
   }, [searchConfig, searchQueryResults]);
 
-  return [searchResults, debouncedsetSearchInput, setSearchConfig];
+  return [searchResults, debouncedsetSearchInput, setSearchConfig, searchInput];
 };

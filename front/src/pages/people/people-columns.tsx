@@ -1,13 +1,5 @@
 import { useMemo } from 'react';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
-
-import { SEARCH_COMPANY_QUERY } from '../../services/api/search/search';
-import { SearchConfigType } from '../../interfaces/search/interface';
-
-import {
-  Company,
-  mapToCompany,
-} from '../../interfaces/entities/company.interface';
 import { Person } from '../../interfaces/entities/person.interface';
 import { updatePerson } from '../../services/api/people';
 
@@ -15,13 +7,9 @@ import ColumnHead from '../../components/table/ColumnHead';
 import Checkbox from '../../components/form/Checkbox';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 import EditablePhone from '../../components/editable-cell/EditablePhone';
-import EditableFullName from '../../components/editable-cell/EditableFullName';
+import { EditablePeopleFullName } from '../../components/people/EditablePeopleFullName';
 import EditableDate from '../../components/editable-cell/EditableDate';
 import EditableText from '../../components/editable-cell/EditableText';
-import EditableRelation from '../../components/editable-cell/EditableRelation';
-import CompanyChip, {
-  CompanyChipPropsType,
-} from '../../components/chips/CompanyChip';
 import {
   TbBuilding,
   TbCalendar,
@@ -30,7 +18,7 @@ import {
   TbPhone,
   TbUser,
 } from 'react-icons/tb';
-import { QueryMode } from '../../generated/graphql';
+import { PeopleCompanyCell } from '../../components/people/PeopleCompanyCell';
 
 const columnHelper = createColumnHelper<Person>();
 
@@ -61,14 +49,15 @@ export const usePeopleColumns = () => {
           <ColumnHead viewName="People" viewIcon={<TbUser size={16} />} />
         ),
         cell: (props) => (
-          <EditableFullName
+          <EditablePeopleFullName
             firstname={props.row.original.firstname || ''}
             lastname={props.row.original.lastname || ''}
-            changeHandler={(firstName: string, lastName: string) => {
+            onChange={async (firstName: string, lastName: string) => {
               const person = props.row.original;
               person.firstname = firstName;
               person.lastname = lastName;
-              updatePerson(person);
+              const returnedOptimisticResponse = await updatePerson(person);
+              console.log({ returnedOptimisticResponse });
             }}
           />
         ),
@@ -95,43 +84,7 @@ export const usePeopleColumns = () => {
         header: () => (
           <ColumnHead viewName="Company" viewIcon={<TbBuilding size={16} />} />
         ),
-        cell: (props) => (
-          <EditableRelation<Company, CompanyChipPropsType>
-            relation={props.row.original.company}
-            searchPlaceholder="Company"
-            ChipComponent={CompanyChip}
-            chipComponentPropsMapper={(company): CompanyChipPropsType => {
-              return {
-                name: company.name || '',
-                picture: `https://www.google.com/s2/favicons?domain=${company.domainName}&sz=256`,
-              };
-            }}
-            changeHandler={(relation) => {
-              const person = props.row.original;
-              if (person.company) {
-                person.company.id = relation.id;
-              } else {
-                person.company = relation;
-              }
-              updatePerson(person);
-            }}
-            searchConfig={
-              {
-                query: SEARCH_COMPANY_QUERY,
-                template: (searchInput: string) => ({
-                  name: {
-                    contains: `%${searchInput}%`,
-                    mode: QueryMode.Insensitive,
-                  },
-                }),
-                resultMapper: (company) => ({
-                  render: (company) => company.name,
-                  value: mapToCompany(company),
-                }),
-              } satisfies SearchConfigType<Company>
-            }
-          />
-        ),
+        cell: (props) => <PeopleCompanyCell people={props.row.original} />,
         size: 150,
       }),
       columnHelper.accessor('phone', {

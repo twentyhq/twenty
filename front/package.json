@@ -17,6 +17,7 @@
     "react": "^18.2.0",
     "react-datepicker": "^4.11.0",
     "react-dom": "^18.2.0",
+    "react-hotkeys-hook": "^4.4.0",
     "react-icons": "^4.8.0",
     "react-router-dom": "^6.4.4",
     "uuid": "^9.0.0",

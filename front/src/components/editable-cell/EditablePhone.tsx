@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
-import EditableCellWrapper from './EditableCellWrapper';
+import { EditableCell } from './EditableCell';
 import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 import Link from '../link/Link';
 
@@ -14,6 +14,7 @@ type StyledEditModeProps = {
   isEditMode: boolean;
 };
 
+// TODO: refactor
 const StyledEditInplaceInput = styled.input<StyledEditModeProps>`
   width: 100%;
   border: none;
@@ -31,7 +32,7 @@ function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
   const [isEditMode, setIsEditMode] = useState(false);
 
   return (
-    <EditableCellWrapper
+    <EditableCell
       isEditMode={isEditMode}
       onOutsideClick={() => setIsEditMode(false)}
       onInsideClick={() => setIsEditMode(true)}
