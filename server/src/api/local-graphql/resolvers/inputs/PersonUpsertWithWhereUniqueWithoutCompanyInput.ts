@@ -1,0 +1,27 @@
+import * as TypeGraphQL from '@nestjs/graphql';
+import * as GraphQLScalars from 'graphql-scalars';
+import { Prisma } from '@prisma/client';
+import { DecimalJSScalar } from '../../scalars';
+import { PersonCreateWithoutCompanyInput } from './PersonCreateWithoutCompanyInput';
+import { PersonUpdateWithoutCompanyInput } from './PersonUpdateWithoutCompanyInput';
+import { PersonWhereUniqueInput } from './PersonWhereUniqueInput';
+
+@TypeGraphQL.InputType('PersonUpsertWithWhereUniqueWithoutCompanyInput', {
+  isAbstract: true,
+})
+export class PersonUpsertWithWhereUniqueWithoutCompanyInput {
+  @TypeGraphQL.Field((_type) => PersonWhereUniqueInput, {
+    nullable: false,
+  })
+  where!: PersonWhereUniqueInput;
+
+  @TypeGraphQL.Field((_type) => PersonUpdateWithoutCompanyInput, {
+    nullable: false,
+  })
+  update!: PersonUpdateWithoutCompanyInput;
+
+  @TypeGraphQL.Field((_type) => PersonCreateWithoutCompanyInput, {
+    nullable: false,
+  })
+  create!: PersonCreateWithoutCompanyInput;
+}
