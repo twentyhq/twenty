@@ -42,6 +42,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
           id: newCompanyId,
           name: companyName,
           domain_name: companyDomainName,
+          address: '',
           created_at: new Date().toISOString(),
         },
       });
@@ -94,8 +95,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
         {
           query: SEARCH_COMPANY_QUERY,
           template: (searchInput: string) => ({
-            contains: `%${searchInput}%`,
-            mode: QueryMode.Insensitive,
+            name: { contains: `%${searchInput}%`, mode: QueryMode.Insensitive },
           }),
           resultMapper: (company) => ({
             render: (company) => company.name,
