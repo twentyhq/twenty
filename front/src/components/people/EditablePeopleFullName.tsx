@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PersonChip from '../chips/PersonChip';
-import { EditableDoubleText } from './EditableDoubleText';
+import { EditableDoubleText } from '../editable-cell/EditableDoubleText';
 
 type OwnProps = {
   firstname: string;
@@ -8,7 +8,11 @@ type OwnProps = {
   onChange: (firstname: string, lastname: string) => void;
 };
 
-export function EditableFullName({ firstname, lastname, onChange }: OwnProps) {
+export function EditablePeopleFullName({
+  firstname,
+  lastname,
+  onChange,
+}: OwnProps) {
   const [firstnameValue, setFirstnameValue] = useState(firstname);
   const [lastnameValue, setLastnameValue] = useState(lastname);
 
@@ -19,10 +23,6 @@ export function EditableFullName({ firstname, lastname, onChange }: OwnProps) {
     setFirstnameValue(firstValue);
     setLastnameValue(secondValue);
 
-    onChange(firstnameValue, lastnameValue);
-  }
-
-  function handleValidate() {
     onChange(firstnameValue, lastnameValue);
   }
 

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, ComponentType, useRef, useState } from 'react';
-import EditableCellWrapper from './EditableCellWrapper';
+import { EditableCell } from './EditableCell';
 
 export type EditableChipProps = {
   placeholder?: string;
@@ -11,16 +11,33 @@ export type EditableChipProps = {
   ChipComponent: ComponentType<{ name: string; picture: string }>;
 };
 
+// TODO: refactor
 const StyledInplaceInput = styled.input`
   width: 100%;
   border: none;
   outline: none;
+  padding-left: ${(props) => props.theme.spacing(1)};
+  padding-right: ${(props) => props.theme.spacing(1)};
 
   &::placeholder {
     font-weight: 'bold';
     color: props.theme.text20;
   }
 `;
+
+const StyledInplaceShow = styled.input`
+  width: 100%;
+  border: none;
+  outline: none;
+  padding-left: ${(props) => props.theme.spacing(2)};
+  padding-right: ${(props) => props.theme.spacing(2)};
+
+  &::placeholder {
+    font-weight: 'bold';
+    color: props.theme.text20;
+  }
+`;
+
 function EditableChip({
   value,
   placeholder,
@@ -34,7 +51,7 @@ function EditableChip({
   const [isEditMode, setIsEditMode] = useState(false);
 
   return (
-    <EditableCellWrapper
+    <EditableCell
       onOutsideClick={() => setIsEditMode(false)}
       onInsideClick={() => setIsEditMode(true)}
       isEditMode={isEditMode}
@@ -51,8 +68,12 @@ function EditableChip({
           }}
         />
       }
-      nonEditModeContent={<ChipComponent name={inputValue} picture={picture} />}
-    ></EditableCellWrapper>
+      nonEditModeContent={
+        <StyledInplaceShow>
+          <ChipComponent name={inputValue} picture={picture} />
+        </StyledInplaceShow>
+      }
+    ></EditableCell>
   );
 }
 

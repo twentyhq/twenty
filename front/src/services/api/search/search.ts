@@ -5,6 +5,7 @@ import {
   AnyEntity,
   UnknownType,
 } from '../../../interfaces/entities/generic.interface';
+import { debounce } from '../../../modules/utils/debounce';
 
 export const SEARCH_PEOPLE_QUERY = gql`
   query SearchPeopleQuery($where: PersonWhereInput, $limit: Int) {
@@ -48,19 +49,6 @@ export const SEARCH_COMPANY_QUERY = gql`
   }
 `;
 
-const debounce = <FuncArgs extends any[]>(
-  func: (...args: FuncArgs) => void,
-  delay: number,
-) => {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  return (...args: FuncArgs) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      func(...args);
-    }, delay);
-  };
-};
-
 export type SearchResultsType<T extends AnyEntity | UnknownType = UnknownType> =
   {
     results: {
@@ -82,7 +70,7 @@ export const useSearch = <T extends AnyEntity | UnknownType = UnknownType>(): [
   const [searchInput, setSearchInput] = useState<string>('');
 
   const debouncedsetSearchInput = useMemo(
-    () => debounce(setSearchInput, 500),
+    () => debounce(setSearchInput, 50),
     [],
   );
 

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef, useState } from 'react';
-import EditableCellWrapper from './EditableCellWrapper';
+import { EditableCell } from './EditableCell';
 
 type OwnProps = {
   placeholder?: string;
@@ -13,6 +13,7 @@ type StyledEditModeProps = {
   isEditMode: boolean;
 };
 
+// TODO: refactor
 const StyledInplaceInput = styled.input<StyledEditModeProps>`
   width: 100%;
   border: none;
@@ -40,7 +41,7 @@ function EditableText({
   const [isEditMode, setIsEditMode] = useState(false);
 
   return (
-    <EditableCellWrapper
+    <EditableCell
       isEditMode={isEditMode}
       onOutsideClick={() => setIsEditMode(false)}
       onInsideClick={() => setIsEditMode(true)}
@@ -59,7 +60,7 @@ function EditableText({
         />
       }
       nonEditModeContent={<StyledNoEditText>{inputValue}</StyledNoEditText>}
-    ></EditableCellWrapper>
+    ></EditableCell>
   );
 }
 

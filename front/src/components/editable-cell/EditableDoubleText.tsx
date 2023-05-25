@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, ReactElement, useRef, useState } from 'react';
-import EditableCellWrapper from './EditableCellWrapper';
+import { EditableCell } from './EditableCell';
 
 type OwnProps = {
   firstValue: string;
@@ -46,8 +46,9 @@ export function EditableDoubleText({
   const [isEditMode, setIsEditMode] = useState(false);
 
   return (
-    <EditableCellWrapper
+    <EditableCell
       onInsideClick={() => setIsEditMode(true)}
+      onOutsideClick={() => setIsEditMode(false)}
       isEditMode={isEditMode}
       editModeContent={
         <StyledContainer>
@@ -61,7 +62,6 @@ export function EditableDoubleText({
             }}
           />
           <StyledEditInplaceInput
-            autoFocus
             placeholder={secondValuePlaceholder}
             ref={firstValueInputRef}
             value={secondValue}
@@ -72,6 +72,6 @@ export function EditableDoubleText({
         </StyledContainer>
       }
       nonEditModeContent={nonEditModeContent}
-    ></EditableCellWrapper>
+    ></EditableCell>
   );
 }

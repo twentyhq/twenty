@@ -161,7 +161,7 @@ export const useCompaniesColumns = () => {
                 name: accountOwner.displayName || '',
               };
             }}
-            changeHandler={(relation: User) => {
+            onChange={(relation: User) => {
               const company = props.row.original;
               if (company.accountOwner) {
                 company.accountOwner.id = relation.id;

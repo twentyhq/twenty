@@ -14,9 +14,11 @@ export const EditableRelationCreateButton = styled.button`
   border-radius: 4px;
   width: 100%;
   height: 31px;
-  :hover {
-    background: rgba(0, 0, 0, 0.04);
-    color: ${(props) => props.theme.text100};
-  }
+  background: none;
+  gap: 8px;
+  // :hover {
+  //   background: rgba(0, 0, 0, 0.04);
+  //   color: ${(props) => props.theme.text100};
+  // }
   // margin-bottom: calc(${(props) => props.theme.spacing(1)} / 2);
 `;
