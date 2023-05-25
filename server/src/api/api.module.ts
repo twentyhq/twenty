@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { CompanyResolvers } from './company.resolvers';
 import { PrismaClient } from '@prisma/client';
-import { CompanyRelationsResolver } from './local-graphql';
-import { PeopleResolvers } from './people.resolver';
-import { PersonRelationsResolver } from './people-relations.resolver';
-import { UserResolvers } from './user.resolver';
-import { UserRelationsResolver } from './user-relations.resolver';
-import { WorkspaceMemberRelationsResolver } from './workspace-member-relations.resolver';
+import { CompanyRelationsResolver } from './generated-graphql';
+import { CompanyResolver } from './resolvers/company.resolver';
+import { UserResolver } from './resolvers/user.resolver';
+import { PeopleResolver } from './resolvers/people.resolver';
+
+import { PersonRelationsResolver } from './resolvers/relations/people-relations.resolver';
+import { UserRelationsResolver } from './resolvers/relations/user-relations.resolver';
+import { WorkspaceMemberRelationsResolver } from './resolvers/relations/workspace-member-relations.resolver';
 
 @Module({
   imports: [
@@ -19,11 +20,13 @@ import { WorkspaceMemberRelationsResolver } from './workspace-member-relations.r
   ],
   providers: [
     PrismaClient,
-    CompanyResolvers,
+
+    CompanyResolver,
+    PeopleResolver,
+    UserResolver,
+
     CompanyRelationsResolver,
-    PeopleResolvers,
     PersonRelationsResolver,
-    UserResolvers,
     UserRelationsResolver,
     WorkspaceMemberRelationsResolver,
   ],

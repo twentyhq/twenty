@@ -21,13 +21,13 @@ front-test:
 	@docker-compose exec twenty-dev sh -c "cd /app/front && npm run test"
 
 front-graphql-generate:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run "
+	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run graphql:generate"
 
 front-storybook:
 	@docker-compose exec twenty-dev sh -c "cd /app/front && npm run storybook"
 
 server-start:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run start"
+	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run start:dev"
 
 server-prisma-generate:
 	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run prisma:generate"

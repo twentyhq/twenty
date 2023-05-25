@@ -17,10 +17,14 @@ export class AuthService {
     private configService: ConfigService,
     private userRepository: UserRepository,
     private workspaceRepository: WorkspaceRepository,
-    private refreshTokenRepository: RefreshTokenRepository
-    ) {}
+    private refreshTokenRepository: RefreshTokenRepository,
+  ) {}
 
-  async upsertUser(rawUser: { firstName: string, lastName: string, email: string }) {
+  async upsertUser(rawUser: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  }) {
     if (!rawUser.email) {
       return;
     }
@@ -64,20 +68,36 @@ export class AuthService {
     return user;
   }
 
-  generateAccessToken(refreshToken: string) {
-    const refreshTokenObject = this.refreshTokenRepository.findFirst({
-      where: { id: refreshToken },
+  async generateAccessToken(refreshToken: string): Promise<string | undefined> {
+    const refreshTokenObject = await this.refreshTokenRepository.findFirst({
+      where: { refreshToken: refreshToken },
     });
 
     if (!refreshTokenObject) {
       return;
     }
 
-    const payload: JwtPayload = { username: 'Charles', sub: 1 };
-    return {
-      accessToken: this.jwtService.sign(payload),
-      refreshToken: refreshToken,
+    const user = await this.userRepository.findUnique({
+      where: { id: refreshTokenObject.userId },
+    });
+
+    if (!user) {
+      return;
+    }
+
+    const workspace = await this.workspaceRepository.findFirst({
+      where: { WorkspaceMember: { every: { userId: user.id } } },
+    });
+
+    if (!workspace) {
+      return;
+    }
+
+    const payload: JwtPayload = {
+      userId: user.id,
+      workspaceId: workspace.id,
     };
+    return this.jwtService.sign(payload);
   }
 
   async registerRefreshToken(user: User): Promise<RefreshToken> {
@@ -93,6 +113,8 @@ export class AuthService {
   }
 
   computeRedirectURI(refreshToken: string): string {
-    return `${this.configService.get<string>('FRONT_AUTH_CALLBACK_URL')}?refreshToken=${refreshToken}`;
+    return `${this.configService.get<string>(
+      'FRONT_AUTH_CALLBACK_URL',
+    )}?refreshToken=${refreshToken}`;
   }
 }
