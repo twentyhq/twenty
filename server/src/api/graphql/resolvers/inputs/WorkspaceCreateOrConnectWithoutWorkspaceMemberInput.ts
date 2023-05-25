@@ -1,21 +1,21 @@
-import * as TypeGraphQL from "type-graphql";
-import * as GraphQLScalars from "graphql-scalars";
-import { Prisma } from "@prisma/client";
-import { DecimalJSScalar } from "../../scalars";
-import { WorkspaceCreateWithoutWorkspaceMemberInput } from "../inputs/WorkspaceCreateWithoutWorkspaceMemberInput";
-import { WorkspaceWhereUniqueInput } from "../inputs/WorkspaceWhereUniqueInput";
+import * as TypeGraphQL from '@nestjs/graphql';
+import * as GraphQLScalars from 'graphql-scalars';
+import { Prisma } from '@prisma/client';
+import { DecimalJSScalar } from '../../scalars';
+import { WorkspaceCreateWithoutWorkspaceMemberInput } from '../inputs/WorkspaceCreateWithoutWorkspaceMemberInput';
+import { WorkspaceWhereUniqueInput } from '../inputs/WorkspaceWhereUniqueInput';
 
-@TypeGraphQL.InputType("WorkspaceCreateOrConnectWithoutWorkspaceMemberInput", {
-  isAbstract: true
+@TypeGraphQL.InputType('WorkspaceCreateOrConnectWithoutWorkspaceMemberInput', {
+  isAbstract: true,
 })
 export class WorkspaceCreateOrConnectWithoutWorkspaceMemberInput {
-  @TypeGraphQL.Field(_type => WorkspaceWhereUniqueInput, {
-    nullable: false
+  @TypeGraphQL.Field((_type) => WorkspaceWhereUniqueInput, {
+    nullable: false,
   })
   where!: WorkspaceWhereUniqueInput;
 
-  @TypeGraphQL.Field(_type => WorkspaceCreateWithoutWorkspaceMemberInput, {
-    nullable: false
+  @TypeGraphQL.Field((_type) => WorkspaceCreateWithoutWorkspaceMemberInput, {
+    nullable: false,
   })
   create!: WorkspaceCreateWithoutWorkspaceMemberInput;
 }

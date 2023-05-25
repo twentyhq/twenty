@@ -1,10 +1,10 @@
-import * as TypeGraphQL from "type-graphql";
+import * as TypeGraphQL from '@nestjs/graphql';
 
 export enum NullableJsonNullValueInput {
-  DbNull = "DbNull",
-  JsonNull = "JsonNull"
+  DbNull = 'DbNull',
+  JsonNull = 'JsonNull',
 }
 TypeGraphQL.registerEnumType(NullableJsonNullValueInput, {
-  name: "NullableJsonNullValueInput",
+  name: 'NullableJsonNullValueInput',
   description: undefined,
 });

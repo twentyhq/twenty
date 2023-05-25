@@ -1,10 +1,10 @@
-import * as TypeGraphQL from "type-graphql";
+import * as TypeGraphQL from '@nestjs/graphql';
 
 export enum SortOrder {
-  asc = "asc",
-  desc = "desc"
+  asc = 'asc',
+  desc = 'desc',
 }
 TypeGraphQL.registerEnumType(SortOrder, {
-  name: "SortOrder",
+  name: 'SortOrder',
   description: undefined,
 });
