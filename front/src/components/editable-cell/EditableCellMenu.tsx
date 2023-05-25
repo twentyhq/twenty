@@ -2,7 +2,6 @@ import { ReactElement, useRef } from 'react';
 import { useOutsideAlerter } from '../../hooks/useOutsideAlerter';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CellBaseContainer } from './CellBaseContainer';
-import { CellEditModeContainer } from './CellEditModeContainer';
 import styled from '@emotion/styled';
 import { EditableCellMenuEditModeContainer } from './EditableCellMenuEditModeContainer';
 

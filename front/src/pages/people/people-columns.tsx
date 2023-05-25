@@ -18,7 +18,6 @@ import {
   TbPhone,
   TbUser,
 } from 'react-icons/tb';
-import { QueryMode } from '../../generated/graphql';
 import { PeopleCompanyCell } from '../../components/people/PeopleCompanyCell';
 
 const columnHelper = createColumnHelper<Person>();
