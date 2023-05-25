@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
+import { User, Prisma, WorkspaceMember } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
@@ -15,5 +15,40 @@ export class UserRepository {
       }): Promise<User[]> {
         const { skip, take, cursor, where, orderBy } = params;
         return this.prisma.user.findMany({ skip, take, cursor, where, orderBy });
+      }
+
+      async upsertUser(params: { data: Prisma.UserCreateInput, workspaceId: string }): Promise<User> {
+        const { data } = params;
+  
+        return await this.prisma.user.upsert({
+          where: {
+              email: data.email
+          },
+          create: {
+            id: data.id,
+            displayName: data.displayName,
+            email: data.email,
+            locale: data.locale,
+          },
+          update: {
+          }
+        });
+      }
+
+      async upsertWorkspaceMember(params: { data: Prisma.WorkspaceMemberUncheckedCreateInput }): Promise<WorkspaceMember> {
+        const { data } = params;
+  
+        return await this.prisma.workspaceMember.upsert({
+          where: {
+              userId: data.userId
+          },
+          create: {
+            id: data.id,
+            userId: data.userId,
+            workspaceId: data.workspaceId,
+          },
+          update: {
+          }
+        });
       }
 }

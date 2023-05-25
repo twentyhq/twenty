@@ -29,6 +29,7 @@ model User {
   metadata        Json?
   WorkspaceMember WorkspaceMember?
   companies       Company[]
+  RefreshTokens   RefreshToken[]
 
   @@map("users")
 }
@@ -94,4 +95,16 @@ model Person {
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("people")
+}
+
+model RefreshToken {
+  id           String    @id
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  refreshToken String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+
+  @@map("refresh_tokens")
 }
