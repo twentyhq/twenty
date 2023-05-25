@@ -8,6 +8,7 @@ import { PeopleResolvers } from './people.resolver';
 import { PersonRelationsResolver } from './people-relations.resolver';
 import { UserResolvers } from './user.resolver';
 import { UserRelationsResolver } from './user-relations.resolver';
+import { WorkspaceMemberRelationsResolver } from './workspace-member-relations.resolver';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UserRelationsResolver } from './user-relations.resolver';
     PersonRelationsResolver,
     UserResolvers,
     UserRelationsResolver,
+    WorkspaceMemberRelationsResolver,
   ],
 })
 export class ApiModule {}

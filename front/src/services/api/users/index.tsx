@@ -7,7 +7,7 @@ export const GET_CURRENT_USER = gql`
       id
       email
       displayName
-      workspace_member: workspaceMember {
+      workspace_member: WorkspaceMember {
         workspace {
           id
           domain_name: domainName

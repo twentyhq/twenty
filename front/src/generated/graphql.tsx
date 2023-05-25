@@ -22,36 +22,6 @@ export type AffectedRowsOutput = {
   count: Scalars['Int'];
 };
 
-export type AggregateCompany = {
-  __typename?: 'AggregateCompany';
-  _avg?: Maybe<CompanyAvgAggregate>;
-  _count?: Maybe<CompanyCountAggregate>;
-  _max?: Maybe<CompanyMaxAggregate>;
-  _min?: Maybe<CompanyMinAggregate>;
-  _sum?: Maybe<CompanySumAggregate>;
-};
-
-export type AggregatePerson = {
-  __typename?: 'AggregatePerson';
-  _count?: Maybe<PersonCountAggregate>;
-  _max?: Maybe<PersonMaxAggregate>;
-  _min?: Maybe<PersonMinAggregate>;
-};
-
-export type AggregateUser = {
-  __typename?: 'AggregateUser';
-  _count?: Maybe<UserCountAggregate>;
-  _max?: Maybe<UserMaxAggregate>;
-  _min?: Maybe<UserMinAggregate>;
-};
-
-export type AggregateWorkspace = {
-  __typename?: 'AggregateWorkspace';
-  _count?: Maybe<WorkspaceCountAggregate>;
-  _max?: Maybe<WorkspaceMaxAggregate>;
-  _min?: Maybe<WorkspaceMinAggregate>;
-};
-
 export type BoolFieldUpdateOperationsInput = {
   set?: InputMaybe<Scalars['Boolean']>;
 };
@@ -59,14 +29,6 @@ export type BoolFieldUpdateOperationsInput = {
 export type BoolFilter = {
   equals?: InputMaybe<Scalars['Boolean']>;
   not?: InputMaybe<NestedBoolFilter>;
-};
-
-export type BoolWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntFilter>;
-  _max?: InputMaybe<NestedBoolFilter>;
-  _min?: InputMaybe<NestedBoolFilter>;
-  equals?: InputMaybe<Scalars['Boolean']>;
-  not?: InputMaybe<NestedBoolWithAggregatesFilter>;
 };
 
 export type Company = {
@@ -97,46 +59,9 @@ export type CompanyPeopleArgs = {
   where?: InputMaybe<PersonWhereInput>;
 };
 
-export type CompanyAvgAggregate = {
-  __typename?: 'CompanyAvgAggregate';
-  employees?: Maybe<Scalars['Float']>;
-};
-
-export type CompanyAvgOrderByAggregateInput = {
-  employees?: InputMaybe<SortOrder>;
-};
-
 export type CompanyCount = {
   __typename?: 'CompanyCount';
   people: Scalars['Int'];
-};
-
-export type CompanyCountAggregate = {
-  __typename?: 'CompanyCountAggregate';
-  _all: Scalars['Int'];
-  accountOwnerId: Scalars['Int'];
-  address: Scalars['Int'];
-  createdAt: Scalars['Int'];
-  deletedAt: Scalars['Int'];
-  domainName: Scalars['Int'];
-  employees: Scalars['Int'];
-  id: Scalars['Int'];
-  name: Scalars['Int'];
-  updatedAt: Scalars['Int'];
-  workspaceId: Scalars['Int'];
-};
-
-export type CompanyCountOrderByAggregateInput = {
-  accountOwnerId?: InputMaybe<SortOrder>;
-  address?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  domainName?: InputMaybe<SortOrder>;
-  employees?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  name?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-  workspaceId?: InputMaybe<SortOrder>;
 };
 
 export type CompanyCreateInput = {
@@ -168,19 +93,6 @@ export type CompanyCreateManyAccountOwnerInput = {
 export type CompanyCreateManyAccountOwnerInputEnvelope = {
   data: Array<CompanyCreateManyAccountOwnerInput>;
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CompanyCreateManyInput = {
-  accountOwnerId?: InputMaybe<Scalars['String']>;
-  address: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  domainName: Scalars['String'];
-  employees?: InputMaybe<Scalars['Int']>;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspaceId: Scalars['String'];
 };
 
 export type CompanyCreateManyWorkspaceInput = {
@@ -274,105 +186,14 @@ export type CompanyCreateWithoutWorkspaceInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type CompanyGroupBy = {
-  __typename?: 'CompanyGroupBy';
-  _avg?: Maybe<CompanyAvgAggregate>;
-  _count?: Maybe<CompanyCountAggregate>;
-  _max?: Maybe<CompanyMaxAggregate>;
-  _min?: Maybe<CompanyMinAggregate>;
-  _sum?: Maybe<CompanySumAggregate>;
-  accountOwnerId?: Maybe<Scalars['String']>;
-  address: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  domainName: Scalars['String'];
-  employees?: Maybe<Scalars['Int']>;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-  workspaceId: Scalars['String'];
-};
-
 export type CompanyListRelationFilter = {
   every?: InputMaybe<CompanyWhereInput>;
   none?: InputMaybe<CompanyWhereInput>;
   some?: InputMaybe<CompanyWhereInput>;
 };
 
-export type CompanyMaxAggregate = {
-  __typename?: 'CompanyMaxAggregate';
-  accountOwnerId?: Maybe<Scalars['String']>;
-  address?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  domainName?: Maybe<Scalars['String']>;
-  employees?: Maybe<Scalars['Int']>;
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  workspaceId?: Maybe<Scalars['String']>;
-};
-
-export type CompanyMaxOrderByAggregateInput = {
-  accountOwnerId?: InputMaybe<SortOrder>;
-  address?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  domainName?: InputMaybe<SortOrder>;
-  employees?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  name?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-  workspaceId?: InputMaybe<SortOrder>;
-};
-
-export type CompanyMinAggregate = {
-  __typename?: 'CompanyMinAggregate';
-  accountOwnerId?: Maybe<Scalars['String']>;
-  address?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  domainName?: Maybe<Scalars['String']>;
-  employees?: Maybe<Scalars['Int']>;
-  id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  workspaceId?: Maybe<Scalars['String']>;
-};
-
-export type CompanyMinOrderByAggregateInput = {
-  accountOwnerId?: InputMaybe<SortOrder>;
-  address?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  domainName?: InputMaybe<SortOrder>;
-  employees?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  name?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-  workspaceId?: InputMaybe<SortOrder>;
-};
-
 export type CompanyOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
-};
-
-export type CompanyOrderByWithAggregationInput = {
-  _avg?: InputMaybe<CompanyAvgOrderByAggregateInput>;
-  _count?: InputMaybe<CompanyCountOrderByAggregateInput>;
-  _max?: InputMaybe<CompanyMaxOrderByAggregateInput>;
-  _min?: InputMaybe<CompanyMinOrderByAggregateInput>;
-  _sum?: InputMaybe<CompanySumOrderByAggregateInput>;
-  accountOwnerId?: InputMaybe<SortOrder>;
-  address?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  domainName?: InputMaybe<SortOrder>;
-  employees?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  name?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-  workspaceId?: InputMaybe<SortOrder>;
 };
 
 export type CompanyOrderByWithRelationInput = {
@@ -423,31 +244,6 @@ export type CompanyScalarWhereInput = {
   name?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   workspaceId?: InputMaybe<StringFilter>;
-};
-
-export type CompanyScalarWhereWithAggregatesInput = {
-  AND?: InputMaybe<Array<CompanyScalarWhereWithAggregatesInput>>;
-  NOT?: InputMaybe<Array<CompanyScalarWhereWithAggregatesInput>>;
-  OR?: InputMaybe<Array<CompanyScalarWhereWithAggregatesInput>>;
-  accountOwnerId?: InputMaybe<StringNullableWithAggregatesFilter>;
-  address?: InputMaybe<StringWithAggregatesFilter>;
-  createdAt?: InputMaybe<DateTimeWithAggregatesFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableWithAggregatesFilter>;
-  domainName?: InputMaybe<StringWithAggregatesFilter>;
-  employees?: InputMaybe<IntNullableWithAggregatesFilter>;
-  id?: InputMaybe<StringWithAggregatesFilter>;
-  name?: InputMaybe<StringWithAggregatesFilter>;
-  updatedAt?: InputMaybe<DateTimeWithAggregatesFilter>;
-  workspaceId?: InputMaybe<StringWithAggregatesFilter>;
-};
-
-export type CompanySumAggregate = {
-  __typename?: 'CompanySumAggregate';
-  employees?: Maybe<Scalars['Int']>;
-};
-
-export type CompanySumOrderByAggregateInput = {
-  employees?: InputMaybe<SortOrder>;
 };
 
 export type CompanyUpdateInput = {
@@ -638,34 +434,6 @@ export type DateTimeNullableFilter = {
   notIn?: InputMaybe<Array<Scalars['DateTime']>>;
 };
 
-export type DateTimeNullableWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntNullableFilter>;
-  _max?: InputMaybe<NestedDateTimeNullableFilter>;
-  _min?: InputMaybe<NestedDateTimeNullableFilter>;
-  equals?: InputMaybe<Scalars['DateTime']>;
-  gt?: InputMaybe<Scalars['DateTime']>;
-  gte?: InputMaybe<Scalars['DateTime']>;
-  in?: InputMaybe<Array<Scalars['DateTime']>>;
-  lt?: InputMaybe<Scalars['DateTime']>;
-  lte?: InputMaybe<Scalars['DateTime']>;
-  not?: InputMaybe<NestedDateTimeNullableWithAggregatesFilter>;
-  notIn?: InputMaybe<Array<Scalars['DateTime']>>;
-};
-
-export type DateTimeWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntFilter>;
-  _max?: InputMaybe<NestedDateTimeFilter>;
-  _min?: InputMaybe<NestedDateTimeFilter>;
-  equals?: InputMaybe<Scalars['DateTime']>;
-  gt?: InputMaybe<Scalars['DateTime']>;
-  gte?: InputMaybe<Scalars['DateTime']>;
-  in?: InputMaybe<Array<Scalars['DateTime']>>;
-  lt?: InputMaybe<Scalars['DateTime']>;
-  lte?: InputMaybe<Scalars['DateTime']>;
-  not?: InputMaybe<NestedDateTimeWithAggregatesFilter>;
-  notIn?: InputMaybe<Array<Scalars['DateTime']>>;
-};
-
 export type IntNullableFilter = {
   equals?: InputMaybe<Scalars['Int']>;
   gt?: InputMaybe<Scalars['Int']>;
@@ -674,22 +442,6 @@ export type IntNullableFilter = {
   lt?: InputMaybe<Scalars['Int']>;
   lte?: InputMaybe<Scalars['Int']>;
   not?: InputMaybe<NestedIntNullableFilter>;
-  notIn?: InputMaybe<Array<Scalars['Int']>>;
-};
-
-export type IntNullableWithAggregatesFilter = {
-  _avg?: InputMaybe<NestedFloatNullableFilter>;
-  _count?: InputMaybe<NestedIntNullableFilter>;
-  _max?: InputMaybe<NestedIntNullableFilter>;
-  _min?: InputMaybe<NestedIntNullableFilter>;
-  _sum?: InputMaybe<NestedIntNullableFilter>;
-  equals?: InputMaybe<Scalars['Int']>;
-  gt?: InputMaybe<Scalars['Int']>;
-  gte?: InputMaybe<Scalars['Int']>;
-  in?: InputMaybe<Array<Scalars['Int']>>;
-  lt?: InputMaybe<Scalars['Int']>;
-  lte?: InputMaybe<Scalars['Int']>;
-  not?: InputMaybe<NestedIntNullableWithAggregatesFilter>;
   notIn?: InputMaybe<Array<Scalars['Int']>>;
 };
 
@@ -709,79 +461,15 @@ export type JsonNullableFilter = {
   string_starts_with?: InputMaybe<Scalars['String']>;
 };
 
-export type JsonNullableWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntNullableFilter>;
-  _max?: InputMaybe<NestedJsonNullableFilter>;
-  _min?: InputMaybe<NestedJsonNullableFilter>;
-  array_contains?: InputMaybe<Scalars['JSON']>;
-  array_ends_with?: InputMaybe<Scalars['JSON']>;
-  array_starts_with?: InputMaybe<Scalars['JSON']>;
-  equals?: InputMaybe<Scalars['JSON']>;
-  gt?: InputMaybe<Scalars['JSON']>;
-  gte?: InputMaybe<Scalars['JSON']>;
-  lt?: InputMaybe<Scalars['JSON']>;
-  lte?: InputMaybe<Scalars['JSON']>;
-  not?: InputMaybe<Scalars['JSON']>;
-  path?: InputMaybe<Array<Scalars['String']>>;
-  string_contains?: InputMaybe<Scalars['String']>;
-  string_ends_with?: InputMaybe<Scalars['String']>;
-  string_starts_with?: InputMaybe<Scalars['String']>;
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
-  createManyCompany: AffectedRowsOutput;
-  createManyPerson: AffectedRowsOutput;
-  createManyUser: AffectedRowsOutput;
-  createManyWorkspace: AffectedRowsOutput;
   createOneCompany: Company;
   createOnePerson: Person;
-  createOneUser: User;
-  createOneWorkspace: Workspace;
   deleteManyCompany: AffectedRowsOutput;
   deleteManyPerson: AffectedRowsOutput;
-  deleteManyUser: AffectedRowsOutput;
-  deleteManyWorkspace: AffectedRowsOutput;
   deleteOneCompany?: Maybe<Company>;
-  deleteOnePerson?: Maybe<Person>;
-  deleteOneUser?: Maybe<User>;
-  deleteOneWorkspace?: Maybe<Workspace>;
-  updateManyCompany: AffectedRowsOutput;
-  updateManyPerson: AffectedRowsOutput;
-  updateManyUser: AffectedRowsOutput;
-  updateManyWorkspace: AffectedRowsOutput;
   updateOneCompany?: Maybe<Company>;
   updateOnePerson?: Maybe<Person>;
-  updateOneUser?: Maybe<User>;
-  updateOneWorkspace?: Maybe<Workspace>;
-  upsertOneCompany: Company;
-  upsertOnePerson: Person;
-  upsertOneUser: User;
-  upsertOneWorkspace: Workspace;
-};
-
-
-export type MutationCreateManyCompanyArgs = {
-  data: Array<CompanyCreateManyInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-
-export type MutationCreateManyPersonArgs = {
-  data: Array<PersonCreateManyInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-
-export type MutationCreateManyUserArgs = {
-  data: Array<UserCreateManyInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-
-export type MutationCreateManyWorkspaceArgs = {
-  data: Array<WorkspaceCreateManyInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -795,16 +483,6 @@ export type MutationCreateOnePersonArgs = {
 };
 
 
-export type MutationCreateOneUserArgs = {
-  data: UserCreateInput;
-};
-
-
-export type MutationCreateOneWorkspaceArgs = {
-  data: WorkspaceCreateInput;
-};
-
-
 export type MutationDeleteManyCompanyArgs = {
   where?: InputMaybe<CompanyWhereInput>;
 };
@@ -815,57 +493,8 @@ export type MutationDeleteManyPersonArgs = {
 };
 
 
-export type MutationDeleteManyUserArgs = {
-  where?: InputMaybe<UserWhereInput>;
-};
-
-
-export type MutationDeleteManyWorkspaceArgs = {
-  where?: InputMaybe<WorkspaceWhereInput>;
-};
-
-
 export type MutationDeleteOneCompanyArgs = {
   where: CompanyWhereUniqueInput;
-};
-
-
-export type MutationDeleteOnePersonArgs = {
-  where: PersonWhereUniqueInput;
-};
-
-
-export type MutationDeleteOneUserArgs = {
-  where: UserWhereUniqueInput;
-};
-
-
-export type MutationDeleteOneWorkspaceArgs = {
-  where: WorkspaceWhereUniqueInput;
-};
-
-
-export type MutationUpdateManyCompanyArgs = {
-  data: CompanyUpdateManyMutationInput;
-  where?: InputMaybe<CompanyWhereInput>;
-};
-
-
-export type MutationUpdateManyPersonArgs = {
-  data: PersonUpdateManyMutationInput;
-  where?: InputMaybe<PersonWhereInput>;
-};
-
-
-export type MutationUpdateManyUserArgs = {
-  data: UserUpdateManyMutationInput;
-  where?: InputMaybe<UserWhereInput>;
-};
-
-
-export type MutationUpdateManyWorkspaceArgs = {
-  data: WorkspaceUpdateManyMutationInput;
-  where?: InputMaybe<WorkspaceWhereInput>;
 };
 
 
@@ -880,57 +509,9 @@ export type MutationUpdateOnePersonArgs = {
   where: PersonWhereUniqueInput;
 };
 
-
-export type MutationUpdateOneUserArgs = {
-  data: UserUpdateInput;
-  where: UserWhereUniqueInput;
-};
-
-
-export type MutationUpdateOneWorkspaceArgs = {
-  data: WorkspaceUpdateInput;
-  where: WorkspaceWhereUniqueInput;
-};
-
-
-export type MutationUpsertOneCompanyArgs = {
-  create: CompanyCreateInput;
-  update: CompanyUpdateInput;
-  where: CompanyWhereUniqueInput;
-};
-
-
-export type MutationUpsertOnePersonArgs = {
-  create: PersonCreateInput;
-  update: PersonUpdateInput;
-  where: PersonWhereUniqueInput;
-};
-
-
-export type MutationUpsertOneUserArgs = {
-  create: UserCreateInput;
-  update: UserUpdateInput;
-  where: UserWhereUniqueInput;
-};
-
-
-export type MutationUpsertOneWorkspaceArgs = {
-  create: WorkspaceCreateInput;
-  update: WorkspaceUpdateInput;
-  where: WorkspaceWhereUniqueInput;
-};
-
 export type NestedBoolFilter = {
   equals?: InputMaybe<Scalars['Boolean']>;
   not?: InputMaybe<NestedBoolFilter>;
-};
-
-export type NestedBoolWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntFilter>;
-  _max?: InputMaybe<NestedBoolFilter>;
-  _min?: InputMaybe<NestedBoolFilter>;
-  equals?: InputMaybe<Scalars['Boolean']>;
-  not?: InputMaybe<NestedBoolWithAggregatesFilter>;
 };
 
 export type NestedDateTimeFilter = {
@@ -955,56 +536,6 @@ export type NestedDateTimeNullableFilter = {
   notIn?: InputMaybe<Array<Scalars['DateTime']>>;
 };
 
-export type NestedDateTimeNullableWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntNullableFilter>;
-  _max?: InputMaybe<NestedDateTimeNullableFilter>;
-  _min?: InputMaybe<NestedDateTimeNullableFilter>;
-  equals?: InputMaybe<Scalars['DateTime']>;
-  gt?: InputMaybe<Scalars['DateTime']>;
-  gte?: InputMaybe<Scalars['DateTime']>;
-  in?: InputMaybe<Array<Scalars['DateTime']>>;
-  lt?: InputMaybe<Scalars['DateTime']>;
-  lte?: InputMaybe<Scalars['DateTime']>;
-  not?: InputMaybe<NestedDateTimeNullableWithAggregatesFilter>;
-  notIn?: InputMaybe<Array<Scalars['DateTime']>>;
-};
-
-export type NestedDateTimeWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntFilter>;
-  _max?: InputMaybe<NestedDateTimeFilter>;
-  _min?: InputMaybe<NestedDateTimeFilter>;
-  equals?: InputMaybe<Scalars['DateTime']>;
-  gt?: InputMaybe<Scalars['DateTime']>;
-  gte?: InputMaybe<Scalars['DateTime']>;
-  in?: InputMaybe<Array<Scalars['DateTime']>>;
-  lt?: InputMaybe<Scalars['DateTime']>;
-  lte?: InputMaybe<Scalars['DateTime']>;
-  not?: InputMaybe<NestedDateTimeWithAggregatesFilter>;
-  notIn?: InputMaybe<Array<Scalars['DateTime']>>;
-};
-
-export type NestedFloatNullableFilter = {
-  equals?: InputMaybe<Scalars['Float']>;
-  gt?: InputMaybe<Scalars['Float']>;
-  gte?: InputMaybe<Scalars['Float']>;
-  in?: InputMaybe<Array<Scalars['Float']>>;
-  lt?: InputMaybe<Scalars['Float']>;
-  lte?: InputMaybe<Scalars['Float']>;
-  not?: InputMaybe<NestedFloatNullableFilter>;
-  notIn?: InputMaybe<Array<Scalars['Float']>>;
-};
-
-export type NestedIntFilter = {
-  equals?: InputMaybe<Scalars['Int']>;
-  gt?: InputMaybe<Scalars['Int']>;
-  gte?: InputMaybe<Scalars['Int']>;
-  in?: InputMaybe<Array<Scalars['Int']>>;
-  lt?: InputMaybe<Scalars['Int']>;
-  lte?: InputMaybe<Scalars['Int']>;
-  not?: InputMaybe<NestedIntFilter>;
-  notIn?: InputMaybe<Array<Scalars['Int']>>;
-};
-
 export type NestedIntNullableFilter = {
   equals?: InputMaybe<Scalars['Int']>;
   gt?: InputMaybe<Scalars['Int']>;
@@ -1014,38 +545,6 @@ export type NestedIntNullableFilter = {
   lte?: InputMaybe<Scalars['Int']>;
   not?: InputMaybe<NestedIntNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['Int']>>;
-};
-
-export type NestedIntNullableWithAggregatesFilter = {
-  _avg?: InputMaybe<NestedFloatNullableFilter>;
-  _count?: InputMaybe<NestedIntNullableFilter>;
-  _max?: InputMaybe<NestedIntNullableFilter>;
-  _min?: InputMaybe<NestedIntNullableFilter>;
-  _sum?: InputMaybe<NestedIntNullableFilter>;
-  equals?: InputMaybe<Scalars['Int']>;
-  gt?: InputMaybe<Scalars['Int']>;
-  gte?: InputMaybe<Scalars['Int']>;
-  in?: InputMaybe<Array<Scalars['Int']>>;
-  lt?: InputMaybe<Scalars['Int']>;
-  lte?: InputMaybe<Scalars['Int']>;
-  not?: InputMaybe<NestedIntNullableWithAggregatesFilter>;
-  notIn?: InputMaybe<Array<Scalars['Int']>>;
-};
-
-export type NestedJsonNullableFilter = {
-  array_contains?: InputMaybe<Scalars['JSON']>;
-  array_ends_with?: InputMaybe<Scalars['JSON']>;
-  array_starts_with?: InputMaybe<Scalars['JSON']>;
-  equals?: InputMaybe<Scalars['JSON']>;
-  gt?: InputMaybe<Scalars['JSON']>;
-  gte?: InputMaybe<Scalars['JSON']>;
-  lt?: InputMaybe<Scalars['JSON']>;
-  lte?: InputMaybe<Scalars['JSON']>;
-  not?: InputMaybe<Scalars['JSON']>;
-  path?: InputMaybe<Array<Scalars['String']>>;
-  string_contains?: InputMaybe<Scalars['String']>;
-  string_ends_with?: InputMaybe<Scalars['String']>;
-  string_starts_with?: InputMaybe<Scalars['String']>;
 };
 
 export type NestedStringFilter = {
@@ -1072,40 +571,6 @@ export type NestedStringNullableFilter = {
   lt?: InputMaybe<Scalars['String']>;
   lte?: InputMaybe<Scalars['String']>;
   not?: InputMaybe<NestedStringNullableFilter>;
-  notIn?: InputMaybe<Array<Scalars['String']>>;
-  startsWith?: InputMaybe<Scalars['String']>;
-};
-
-export type NestedStringNullableWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntNullableFilter>;
-  _max?: InputMaybe<NestedStringNullableFilter>;
-  _min?: InputMaybe<NestedStringNullableFilter>;
-  contains?: InputMaybe<Scalars['String']>;
-  endsWith?: InputMaybe<Scalars['String']>;
-  equals?: InputMaybe<Scalars['String']>;
-  gt?: InputMaybe<Scalars['String']>;
-  gte?: InputMaybe<Scalars['String']>;
-  in?: InputMaybe<Array<Scalars['String']>>;
-  lt?: InputMaybe<Scalars['String']>;
-  lte?: InputMaybe<Scalars['String']>;
-  not?: InputMaybe<NestedStringNullableWithAggregatesFilter>;
-  notIn?: InputMaybe<Array<Scalars['String']>>;
-  startsWith?: InputMaybe<Scalars['String']>;
-};
-
-export type NestedStringWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntFilter>;
-  _max?: InputMaybe<NestedStringFilter>;
-  _min?: InputMaybe<NestedStringFilter>;
-  contains?: InputMaybe<Scalars['String']>;
-  endsWith?: InputMaybe<Scalars['String']>;
-  equals?: InputMaybe<Scalars['String']>;
-  gt?: InputMaybe<Scalars['String']>;
-  gte?: InputMaybe<Scalars['String']>;
-  in?: InputMaybe<Array<Scalars['String']>>;
-  lt?: InputMaybe<Scalars['String']>;
-  lte?: InputMaybe<Scalars['String']>;
-  not?: InputMaybe<NestedStringWithAggregatesFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
   startsWith?: InputMaybe<Scalars['String']>;
 };
@@ -1143,36 +608,6 @@ export type Person = {
   workspaceId: Scalars['String'];
 };
 
-export type PersonCountAggregate = {
-  __typename?: 'PersonCountAggregate';
-  _all: Scalars['Int'];
-  city: Scalars['Int'];
-  companyId: Scalars['Int'];
-  createdAt: Scalars['Int'];
-  deletedAt: Scalars['Int'];
-  email: Scalars['Int'];
-  firstname: Scalars['Int'];
-  id: Scalars['Int'];
-  lastname: Scalars['Int'];
-  phone: Scalars['Int'];
-  updatedAt: Scalars['Int'];
-  workspaceId: Scalars['Int'];
-};
-
-export type PersonCountOrderByAggregateInput = {
-  city?: InputMaybe<SortOrder>;
-  companyId?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  email?: InputMaybe<SortOrder>;
-  firstname?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  lastname?: InputMaybe<SortOrder>;
-  phone?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-  workspaceId?: InputMaybe<SortOrder>;
-};
-
 export type PersonCreateInput = {
   city: Scalars['String'];
   company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
@@ -1203,20 +638,6 @@ export type PersonCreateManyCompanyInput = {
 export type PersonCreateManyCompanyInputEnvelope = {
   data: Array<PersonCreateManyCompanyInput>;
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type PersonCreateManyInput = {
-  city: Scalars['String'];
-  companyId?: InputMaybe<Scalars['String']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  email: Scalars['String'];
-  firstname: Scalars['String'];
-  id: Scalars['String'];
-  lastname: Scalars['String'];
-  phone: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspaceId: Scalars['String'];
 };
 
 export type PersonCreateManyWorkspaceInput = {
@@ -1287,107 +708,14 @@ export type PersonCreateWithoutWorkspaceInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type PersonGroupBy = {
-  __typename?: 'PersonGroupBy';
-  _count?: Maybe<PersonCountAggregate>;
-  _max?: Maybe<PersonMaxAggregate>;
-  _min?: Maybe<PersonMinAggregate>;
-  city: Scalars['String'];
-  companyId?: Maybe<Scalars['String']>;
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  email: Scalars['String'];
-  firstname: Scalars['String'];
-  id: Scalars['String'];
-  lastname: Scalars['String'];
-  phone: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-  workspaceId: Scalars['String'];
-};
-
 export type PersonListRelationFilter = {
   every?: InputMaybe<PersonWhereInput>;
   none?: InputMaybe<PersonWhereInput>;
   some?: InputMaybe<PersonWhereInput>;
 };
 
-export type PersonMaxAggregate = {
-  __typename?: 'PersonMaxAggregate';
-  city?: Maybe<Scalars['String']>;
-  companyId?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  email?: Maybe<Scalars['String']>;
-  firstname?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  lastname?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  workspaceId?: Maybe<Scalars['String']>;
-};
-
-export type PersonMaxOrderByAggregateInput = {
-  city?: InputMaybe<SortOrder>;
-  companyId?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  email?: InputMaybe<SortOrder>;
-  firstname?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  lastname?: InputMaybe<SortOrder>;
-  phone?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-  workspaceId?: InputMaybe<SortOrder>;
-};
-
-export type PersonMinAggregate = {
-  __typename?: 'PersonMinAggregate';
-  city?: Maybe<Scalars['String']>;
-  companyId?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  email?: Maybe<Scalars['String']>;
-  firstname?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  lastname?: Maybe<Scalars['String']>;
-  phone?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-  workspaceId?: Maybe<Scalars['String']>;
-};
-
-export type PersonMinOrderByAggregateInput = {
-  city?: InputMaybe<SortOrder>;
-  companyId?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  email?: InputMaybe<SortOrder>;
-  firstname?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  lastname?: InputMaybe<SortOrder>;
-  phone?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-  workspaceId?: InputMaybe<SortOrder>;
-};
-
 export type PersonOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
-};
-
-export type PersonOrderByWithAggregationInput = {
-  _count?: InputMaybe<PersonCountOrderByAggregateInput>;
-  _max?: InputMaybe<PersonMaxOrderByAggregateInput>;
-  _min?: InputMaybe<PersonMinOrderByAggregateInput>;
-  city?: InputMaybe<SortOrder>;
-  companyId?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  email?: InputMaybe<SortOrder>;
-  firstname?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  lastname?: InputMaybe<SortOrder>;
-  phone?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-  workspaceId?: InputMaybe<SortOrder>;
 };
 
 export type PersonOrderByWithRelationInput = {
@@ -1435,23 +763,6 @@ export type PersonScalarWhereInput = {
   phone?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   workspaceId?: InputMaybe<StringFilter>;
-};
-
-export type PersonScalarWhereWithAggregatesInput = {
-  AND?: InputMaybe<Array<PersonScalarWhereWithAggregatesInput>>;
-  NOT?: InputMaybe<Array<PersonScalarWhereWithAggregatesInput>>;
-  OR?: InputMaybe<Array<PersonScalarWhereWithAggregatesInput>>;
-  city?: InputMaybe<StringWithAggregatesFilter>;
-  companyId?: InputMaybe<StringNullableWithAggregatesFilter>;
-  createdAt?: InputMaybe<DateTimeWithAggregatesFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableWithAggregatesFilter>;
-  email?: InputMaybe<StringWithAggregatesFilter>;
-  firstname?: InputMaybe<StringWithAggregatesFilter>;
-  id?: InputMaybe<StringWithAggregatesFilter>;
-  lastname?: InputMaybe<StringWithAggregatesFilter>;
-  phone?: InputMaybe<StringWithAggregatesFilter>;
-  updatedAt?: InputMaybe<DateTimeWithAggregatesFilter>;
-  workspaceId?: InputMaybe<StringWithAggregatesFilter>;
 };
 
 export type PersonUpdateInput = {
@@ -1591,70 +902,9 @@ export type PersonWhereUniqueInput = {
 
 export type Query = {
   __typename?: 'Query';
-  aggregateCompany: AggregateCompany;
-  aggregatePerson: AggregatePerson;
-  aggregateUser: AggregateUser;
-  aggregateWorkspace: AggregateWorkspace;
   companies: Array<Company>;
-  company?: Maybe<Company>;
-  findFirstCompany?: Maybe<Company>;
-  findFirstCompanyOrThrow?: Maybe<Company>;
-  findFirstPerson?: Maybe<Person>;
-  findFirstPersonOrThrow?: Maybe<Person>;
-  findFirstUser?: Maybe<User>;
-  findFirstUserOrThrow?: Maybe<User>;
-  findFirstWorkspace?: Maybe<Workspace>;
-  findFirstWorkspaceOrThrow?: Maybe<Workspace>;
-  getCompany?: Maybe<Company>;
-  getPerson?: Maybe<Person>;
-  getUser?: Maybe<User>;
-  getWorkspace?: Maybe<Workspace>;
-  groupByCompany: Array<CompanyGroupBy>;
-  groupByPerson: Array<PersonGroupBy>;
-  groupByUser: Array<UserGroupBy>;
-  groupByWorkspace: Array<WorkspaceGroupBy>;
   people: Array<Person>;
-  person?: Maybe<Person>;
-  user?: Maybe<User>;
   users: Array<User>;
-  workspace?: Maybe<Workspace>;
-  workspaces: Array<Workspace>;
-};
-
-
-export type QueryAggregateCompanyArgs = {
-  cursor?: InputMaybe<CompanyWhereUniqueInput>;
-  orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<CompanyWhereInput>;
-};
-
-
-export type QueryAggregatePersonArgs = {
-  cursor?: InputMaybe<PersonWhereUniqueInput>;
-  orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<PersonWhereInput>;
-};
-
-
-export type QueryAggregateUserArgs = {
-  cursor?: InputMaybe<UserWhereUniqueInput>;
-  orderBy?: InputMaybe<Array<UserOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UserWhereInput>;
-};
-
-
-export type QueryAggregateWorkspaceArgs = {
-  cursor?: InputMaybe<WorkspaceWhereUniqueInput>;
-  orderBy?: InputMaybe<Array<WorkspaceOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<WorkspaceWhereInput>;
 };
 
 
@@ -1668,151 +918,6 @@ export type QueryCompaniesArgs = {
 };
 
 
-export type QueryCompanyArgs = {
-  where: CompanyWhereUniqueInput;
-};
-
-
-export type QueryFindFirstCompanyArgs = {
-  cursor?: InputMaybe<CompanyWhereUniqueInput>;
-  distinct?: InputMaybe<Array<CompanyScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<CompanyWhereInput>;
-};
-
-
-export type QueryFindFirstCompanyOrThrowArgs = {
-  cursor?: InputMaybe<CompanyWhereUniqueInput>;
-  distinct?: InputMaybe<Array<CompanyScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<CompanyWhereInput>;
-};
-
-
-export type QueryFindFirstPersonArgs = {
-  cursor?: InputMaybe<PersonWhereUniqueInput>;
-  distinct?: InputMaybe<Array<PersonScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<PersonWhereInput>;
-};
-
-
-export type QueryFindFirstPersonOrThrowArgs = {
-  cursor?: InputMaybe<PersonWhereUniqueInput>;
-  distinct?: InputMaybe<Array<PersonScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<PersonWhereInput>;
-};
-
-
-export type QueryFindFirstUserArgs = {
-  cursor?: InputMaybe<UserWhereUniqueInput>;
-  distinct?: InputMaybe<Array<UserScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<UserOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UserWhereInput>;
-};
-
-
-export type QueryFindFirstUserOrThrowArgs = {
-  cursor?: InputMaybe<UserWhereUniqueInput>;
-  distinct?: InputMaybe<Array<UserScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<UserOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UserWhereInput>;
-};
-
-
-export type QueryFindFirstWorkspaceArgs = {
-  cursor?: InputMaybe<WorkspaceWhereUniqueInput>;
-  distinct?: InputMaybe<Array<WorkspaceScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<WorkspaceOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<WorkspaceWhereInput>;
-};
-
-
-export type QueryFindFirstWorkspaceOrThrowArgs = {
-  cursor?: InputMaybe<WorkspaceWhereUniqueInput>;
-  distinct?: InputMaybe<Array<WorkspaceScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<WorkspaceOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<WorkspaceWhereInput>;
-};
-
-
-export type QueryGetCompanyArgs = {
-  where: CompanyWhereUniqueInput;
-};
-
-
-export type QueryGetPersonArgs = {
-  where: PersonWhereUniqueInput;
-};
-
-
-export type QueryGetUserArgs = {
-  where: UserWhereUniqueInput;
-};
-
-
-export type QueryGetWorkspaceArgs = {
-  where: WorkspaceWhereUniqueInput;
-};
-
-
-export type QueryGroupByCompanyArgs = {
-  by: Array<CompanyScalarFieldEnum>;
-  having?: InputMaybe<CompanyScalarWhereWithAggregatesInput>;
-  orderBy?: InputMaybe<Array<CompanyOrderByWithAggregationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<CompanyWhereInput>;
-};
-
-
-export type QueryGroupByPersonArgs = {
-  by: Array<PersonScalarFieldEnum>;
-  having?: InputMaybe<PersonScalarWhereWithAggregatesInput>;
-  orderBy?: InputMaybe<Array<PersonOrderByWithAggregationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<PersonWhereInput>;
-};
-
-
-export type QueryGroupByUserArgs = {
-  by: Array<UserScalarFieldEnum>;
-  having?: InputMaybe<UserScalarWhereWithAggregatesInput>;
-  orderBy?: InputMaybe<Array<UserOrderByWithAggregationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<UserWhereInput>;
-};
-
-
-export type QueryGroupByWorkspaceArgs = {
-  by: Array<WorkspaceScalarFieldEnum>;
-  having?: InputMaybe<WorkspaceScalarWhereWithAggregatesInput>;
-  orderBy?: InputMaybe<Array<WorkspaceOrderByWithAggregationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<WorkspaceWhereInput>;
-};
-
-
 export type QueryPeopleArgs = {
   cursor?: InputMaybe<PersonWhereUniqueInput>;
   distinct?: InputMaybe<Array<PersonScalarFieldEnum>>;
@@ -1820,16 +925,6 @@ export type QueryPeopleArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<PersonWhereInput>;
-};
-
-
-export type QueryPersonArgs = {
-  where: PersonWhereUniqueInput;
-};
-
-
-export type QueryUserArgs = {
-  where: UserWhereUniqueInput;
 };
 
 
@@ -1842,25 +937,157 @@ export type QueryUsersArgs = {
   where?: InputMaybe<UserWhereInput>;
 };
 
-
-export type QueryWorkspaceArgs = {
-  where: WorkspaceWhereUniqueInput;
-};
-
-
-export type QueryWorkspacesArgs = {
-  cursor?: InputMaybe<WorkspaceWhereUniqueInput>;
-  distinct?: InputMaybe<Array<WorkspaceScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<WorkspaceOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<WorkspaceWhereInput>;
-};
-
 export enum QueryMode {
   Default = 'default',
   Insensitive = 'insensitive'
 }
+
+export type RefreshToken = {
+  __typename?: 'RefreshToken';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  refreshToken: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  userId: Scalars['String'];
+};
+
+export type RefreshTokenCreateManyUserInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  deletedAt?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  refreshToken: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type RefreshTokenCreateManyUserInputEnvelope = {
+  data: Array<RefreshTokenCreateManyUserInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type RefreshTokenCreateNestedManyWithoutUserInput = {
+  connect?: InputMaybe<Array<RefreshTokenWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<RefreshTokenCreateOrConnectWithoutUserInput>>;
+  create?: InputMaybe<Array<RefreshTokenCreateWithoutUserInput>>;
+  createMany?: InputMaybe<RefreshTokenCreateManyUserInputEnvelope>;
+};
+
+export type RefreshTokenCreateOrConnectWithoutUserInput = {
+  create: RefreshTokenCreateWithoutUserInput;
+  where: RefreshTokenWhereUniqueInput;
+};
+
+export type RefreshTokenCreateWithoutUserInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  deletedAt?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  refreshToken: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type RefreshTokenListRelationFilter = {
+  every?: InputMaybe<RefreshTokenWhereInput>;
+  none?: InputMaybe<RefreshTokenWhereInput>;
+  some?: InputMaybe<RefreshTokenWhereInput>;
+};
+
+export type RefreshTokenOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type RefreshTokenOrderByWithRelationInput = {
+  createdAt?: InputMaybe<SortOrder>;
+  deletedAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  refreshToken?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+  user?: InputMaybe<UserOrderByWithRelationInput>;
+  userId?: InputMaybe<SortOrder>;
+};
+
+export enum RefreshTokenScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Id = 'id',
+  RefreshToken = 'refreshToken',
+  UpdatedAt = 'updatedAt',
+  UserId = 'userId'
+}
+
+export type RefreshTokenScalarWhereInput = {
+  AND?: InputMaybe<Array<RefreshTokenScalarWhereInput>>;
+  NOT?: InputMaybe<Array<RefreshTokenScalarWhereInput>>;
+  OR?: InputMaybe<Array<RefreshTokenScalarWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  deletedAt?: InputMaybe<DateTimeNullableFilter>;
+  id?: InputMaybe<StringFilter>;
+  refreshToken?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+  userId?: InputMaybe<StringFilter>;
+};
+
+export type RefreshTokenUpdateManyMutationInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  refreshToken?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type RefreshTokenUpdateManyWithWhereWithoutUserInput = {
+  data: RefreshTokenUpdateManyMutationInput;
+  where: RefreshTokenScalarWhereInput;
+};
+
+export type RefreshTokenUpdateManyWithoutUserNestedInput = {
+  connect?: InputMaybe<Array<RefreshTokenWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<RefreshTokenCreateOrConnectWithoutUserInput>>;
+  create?: InputMaybe<Array<RefreshTokenCreateWithoutUserInput>>;
+  createMany?: InputMaybe<RefreshTokenCreateManyUserInputEnvelope>;
+  delete?: InputMaybe<Array<RefreshTokenWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<RefreshTokenScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<RefreshTokenWhereUniqueInput>>;
+  set?: InputMaybe<Array<RefreshTokenWhereUniqueInput>>;
+  update?: InputMaybe<Array<RefreshTokenUpdateWithWhereUniqueWithoutUserInput>>;
+  updateMany?: InputMaybe<Array<RefreshTokenUpdateManyWithWhereWithoutUserInput>>;
+  upsert?: InputMaybe<Array<RefreshTokenUpsertWithWhereUniqueWithoutUserInput>>;
+};
+
+export type RefreshTokenUpdateWithWhereUniqueWithoutUserInput = {
+  data: RefreshTokenUpdateWithoutUserInput;
+  where: RefreshTokenWhereUniqueInput;
+};
+
+export type RefreshTokenUpdateWithoutUserInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  refreshToken?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type RefreshTokenUpsertWithWhereUniqueWithoutUserInput = {
+  create: RefreshTokenCreateWithoutUserInput;
+  update: RefreshTokenUpdateWithoutUserInput;
+  where: RefreshTokenWhereUniqueInput;
+};
+
+export type RefreshTokenWhereInput = {
+  AND?: InputMaybe<Array<RefreshTokenWhereInput>>;
+  NOT?: InputMaybe<Array<RefreshTokenWhereInput>>;
+  OR?: InputMaybe<Array<RefreshTokenWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  deletedAt?: InputMaybe<DateTimeNullableFilter>;
+  id?: InputMaybe<StringFilter>;
+  refreshToken?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+  user?: InputMaybe<UserRelationFilter>;
+  userId?: InputMaybe<StringFilter>;
+};
+
+export type RefreshTokenWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
 
 export enum SortOrder {
   Asc = 'asc',
@@ -1901,44 +1128,9 @@ export type StringNullableFilter = {
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
-export type StringNullableWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntNullableFilter>;
-  _max?: InputMaybe<NestedStringNullableFilter>;
-  _min?: InputMaybe<NestedStringNullableFilter>;
-  contains?: InputMaybe<Scalars['String']>;
-  endsWith?: InputMaybe<Scalars['String']>;
-  equals?: InputMaybe<Scalars['String']>;
-  gt?: InputMaybe<Scalars['String']>;
-  gte?: InputMaybe<Scalars['String']>;
-  in?: InputMaybe<Array<Scalars['String']>>;
-  lt?: InputMaybe<Scalars['String']>;
-  lte?: InputMaybe<Scalars['String']>;
-  mode?: InputMaybe<QueryMode>;
-  not?: InputMaybe<NestedStringNullableWithAggregatesFilter>;
-  notIn?: InputMaybe<Array<Scalars['String']>>;
-  startsWith?: InputMaybe<Scalars['String']>;
-};
-
-export type StringWithAggregatesFilter = {
-  _count?: InputMaybe<NestedIntFilter>;
-  _max?: InputMaybe<NestedStringFilter>;
-  _min?: InputMaybe<NestedStringFilter>;
-  contains?: InputMaybe<Scalars['String']>;
-  endsWith?: InputMaybe<Scalars['String']>;
-  equals?: InputMaybe<Scalars['String']>;
-  gt?: InputMaybe<Scalars['String']>;
-  gte?: InputMaybe<Scalars['String']>;
-  in?: InputMaybe<Array<Scalars['String']>>;
-  lt?: InputMaybe<Scalars['String']>;
-  lte?: InputMaybe<Scalars['String']>;
-  mode?: InputMaybe<QueryMode>;
-  not?: InputMaybe<NestedStringWithAggregatesFilter>;
-  notIn?: InputMaybe<Array<Scalars['String']>>;
-  startsWith?: InputMaybe<Scalars['String']>;
-};
-
 export type User = {
   __typename?: 'User';
+  RefreshTokens: Array<RefreshToken>;
   WorkspaceMember?: Maybe<WorkspaceMember>;
   _count?: Maybe<UserCount>;
   avatarUrl?: Maybe<Scalars['String']>;
@@ -1959,6 +1151,16 @@ export type User = {
 };
 
 
+export type UserRefreshTokensArgs = {
+  cursor?: InputMaybe<RefreshTokenWhereUniqueInput>;
+  distinct?: InputMaybe<Array<RefreshTokenScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<RefreshTokenOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<RefreshTokenWhereInput>;
+};
+
+
 export type UserCompaniesArgs = {
   cursor?: InputMaybe<CompanyWhereUniqueInput>;
   distinct?: InputMaybe<Array<CompanyScalarFieldEnum>>;
@@ -1970,79 +1172,8 @@ export type UserCompaniesArgs = {
 
 export type UserCount = {
   __typename?: 'UserCount';
+  RefreshTokens: Scalars['Int'];
   companies: Scalars['Int'];
-};
-
-export type UserCountAggregate = {
-  __typename?: 'UserCountAggregate';
-  _all: Scalars['Int'];
-  avatarUrl: Scalars['Int'];
-  createdAt: Scalars['Int'];
-  deletedAt: Scalars['Int'];
-  disabled: Scalars['Int'];
-  displayName: Scalars['Int'];
-  email: Scalars['Int'];
-  emailVerified: Scalars['Int'];
-  id: Scalars['Int'];
-  lastSeen: Scalars['Int'];
-  locale: Scalars['Int'];
-  metadata: Scalars['Int'];
-  passwordHash: Scalars['Int'];
-  phoneNumber: Scalars['Int'];
-  updatedAt: Scalars['Int'];
-};
-
-export type UserCountOrderByAggregateInput = {
-  avatarUrl?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  disabled?: InputMaybe<SortOrder>;
-  displayName?: InputMaybe<SortOrder>;
-  email?: InputMaybe<SortOrder>;
-  emailVerified?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  lastSeen?: InputMaybe<SortOrder>;
-  locale?: InputMaybe<SortOrder>;
-  metadata?: InputMaybe<SortOrder>;
-  passwordHash?: InputMaybe<SortOrder>;
-  phoneNumber?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-};
-
-export type UserCreateInput = {
-  WorkspaceMember?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutUserInput>;
-  avatarUrl?: InputMaybe<Scalars['String']>;
-  companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  disabled?: InputMaybe<Scalars['Boolean']>;
-  displayName: Scalars['String'];
-  email: Scalars['String'];
-  emailVerified?: InputMaybe<Scalars['Boolean']>;
-  id: Scalars['String'];
-  lastSeen?: InputMaybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
-  metadata?: InputMaybe<Scalars['JSON']>;
-  passwordHash?: InputMaybe<Scalars['String']>;
-  phoneNumber?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UserCreateManyInput = {
-  avatarUrl?: InputMaybe<Scalars['String']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  disabled?: InputMaybe<Scalars['Boolean']>;
-  displayName: Scalars['String'];
-  email: Scalars['String'];
-  emailVerified?: InputMaybe<Scalars['Boolean']>;
-  id: Scalars['String'];
-  lastSeen?: InputMaybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
-  metadata?: InputMaybe<Scalars['JSON']>;
-  passwordHash?: InputMaybe<Scalars['String']>;
-  phoneNumber?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type UserCreateNestedOneWithoutCompaniesInput = {
@@ -2068,6 +1199,7 @@ export type UserCreateOrConnectWithoutWorkspaceMemberInput = {
 };
 
 export type UserCreateWithoutCompaniesInput = {
+  RefreshTokens?: InputMaybe<RefreshTokenCreateNestedManyWithoutUserInput>;
   WorkspaceMember?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutUserInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -2086,6 +1218,7 @@ export type UserCreateWithoutCompaniesInput = {
 };
 
 export type UserCreateWithoutWorkspaceMemberInput = {
+  RefreshTokens?: InputMaybe<RefreshTokenCreateNestedManyWithoutUserInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
   companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -2103,114 +1236,8 @@ export type UserCreateWithoutWorkspaceMemberInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type UserGroupBy = {
-  __typename?: 'UserGroupBy';
-  _count?: Maybe<UserCountAggregate>;
-  _max?: Maybe<UserMaxAggregate>;
-  _min?: Maybe<UserMinAggregate>;
-  avatarUrl?: Maybe<Scalars['String']>;
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  disabled: Scalars['Boolean'];
-  displayName: Scalars['String'];
-  email: Scalars['String'];
-  emailVerified: Scalars['Boolean'];
-  id: Scalars['String'];
-  lastSeen?: Maybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
-  metadata?: Maybe<Scalars['JSON']>;
-  passwordHash?: Maybe<Scalars['String']>;
-  phoneNumber?: Maybe<Scalars['String']>;
-  updatedAt: Scalars['DateTime'];
-};
-
-export type UserMaxAggregate = {
-  __typename?: 'UserMaxAggregate';
-  avatarUrl?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  disabled?: Maybe<Scalars['Boolean']>;
-  displayName?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  emailVerified?: Maybe<Scalars['Boolean']>;
-  id?: Maybe<Scalars['String']>;
-  lastSeen?: Maybe<Scalars['DateTime']>;
-  locale?: Maybe<Scalars['String']>;
-  passwordHash?: Maybe<Scalars['String']>;
-  phoneNumber?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type UserMaxOrderByAggregateInput = {
-  avatarUrl?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  disabled?: InputMaybe<SortOrder>;
-  displayName?: InputMaybe<SortOrder>;
-  email?: InputMaybe<SortOrder>;
-  emailVerified?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  lastSeen?: InputMaybe<SortOrder>;
-  locale?: InputMaybe<SortOrder>;
-  passwordHash?: InputMaybe<SortOrder>;
-  phoneNumber?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-};
-
-export type UserMinAggregate = {
-  __typename?: 'UserMinAggregate';
-  avatarUrl?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  disabled?: Maybe<Scalars['Boolean']>;
-  displayName?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  emailVerified?: Maybe<Scalars['Boolean']>;
-  id?: Maybe<Scalars['String']>;
-  lastSeen?: Maybe<Scalars['DateTime']>;
-  locale?: Maybe<Scalars['String']>;
-  passwordHash?: Maybe<Scalars['String']>;
-  phoneNumber?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type UserMinOrderByAggregateInput = {
-  avatarUrl?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  disabled?: InputMaybe<SortOrder>;
-  displayName?: InputMaybe<SortOrder>;
-  email?: InputMaybe<SortOrder>;
-  emailVerified?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  lastSeen?: InputMaybe<SortOrder>;
-  locale?: InputMaybe<SortOrder>;
-  passwordHash?: InputMaybe<SortOrder>;
-  phoneNumber?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-};
-
-export type UserOrderByWithAggregationInput = {
-  _count?: InputMaybe<UserCountOrderByAggregateInput>;
-  _max?: InputMaybe<UserMaxOrderByAggregateInput>;
-  _min?: InputMaybe<UserMinOrderByAggregateInput>;
-  avatarUrl?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  disabled?: InputMaybe<SortOrder>;
-  displayName?: InputMaybe<SortOrder>;
-  email?: InputMaybe<SortOrder>;
-  emailVerified?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  lastSeen?: InputMaybe<SortOrder>;
-  locale?: InputMaybe<SortOrder>;
-  metadata?: InputMaybe<SortOrder>;
-  passwordHash?: InputMaybe<SortOrder>;
-  phoneNumber?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-};
-
 export type UserOrderByWithRelationInput = {
+  RefreshTokens?: InputMaybe<RefreshTokenOrderByRelationAggregateInput>;
   WorkspaceMember?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
   avatarUrl?: InputMaybe<SortOrder>;
   companies?: InputMaybe<CompanyOrderByRelationAggregateInput>;
@@ -2251,62 +1278,6 @@ export enum UserScalarFieldEnum {
   UpdatedAt = 'updatedAt'
 }
 
-export type UserScalarWhereWithAggregatesInput = {
-  AND?: InputMaybe<Array<UserScalarWhereWithAggregatesInput>>;
-  NOT?: InputMaybe<Array<UserScalarWhereWithAggregatesInput>>;
-  OR?: InputMaybe<Array<UserScalarWhereWithAggregatesInput>>;
-  avatarUrl?: InputMaybe<StringNullableWithAggregatesFilter>;
-  createdAt?: InputMaybe<DateTimeWithAggregatesFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableWithAggregatesFilter>;
-  disabled?: InputMaybe<BoolWithAggregatesFilter>;
-  displayName?: InputMaybe<StringWithAggregatesFilter>;
-  email?: InputMaybe<StringWithAggregatesFilter>;
-  emailVerified?: InputMaybe<BoolWithAggregatesFilter>;
-  id?: InputMaybe<StringWithAggregatesFilter>;
-  lastSeen?: InputMaybe<DateTimeNullableWithAggregatesFilter>;
-  locale?: InputMaybe<StringWithAggregatesFilter>;
-  metadata?: InputMaybe<JsonNullableWithAggregatesFilter>;
-  passwordHash?: InputMaybe<StringNullableWithAggregatesFilter>;
-  phoneNumber?: InputMaybe<StringNullableWithAggregatesFilter>;
-  updatedAt?: InputMaybe<DateTimeWithAggregatesFilter>;
-};
-
-export type UserUpdateInput = {
-  WorkspaceMember?: InputMaybe<WorkspaceMemberUpdateOneWithoutUserNestedInput>;
-  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  passwordHash?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type UserUpdateManyMutationInput = {
-  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  passwordHash?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
 export type UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
   connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutWorkspaceMemberInput>;
@@ -2326,6 +1297,7 @@ export type UserUpdateOneWithoutCompaniesNestedInput = {
 };
 
 export type UserUpdateWithoutCompaniesInput = {
+  RefreshTokens?: InputMaybe<RefreshTokenUpdateManyWithoutUserNestedInput>;
   WorkspaceMember?: InputMaybe<WorkspaceMemberUpdateOneWithoutUserNestedInput>;
   avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -2344,6 +1316,7 @@ export type UserUpdateWithoutCompaniesInput = {
 };
 
 export type UserUpdateWithoutWorkspaceMemberInput = {
+  RefreshTokens?: InputMaybe<RefreshTokenUpdateManyWithoutUserNestedInput>;
   avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -2375,6 +1348,7 @@ export type UserWhereInput = {
   AND?: InputMaybe<Array<UserWhereInput>>;
   NOT?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
+  RefreshTokens?: InputMaybe<RefreshTokenListRelationFilter>;
   WorkspaceMember?: InputMaybe<WorkspaceMemberRelationFilter>;
   avatarUrl?: InputMaybe<StringNullableFilter>;
   companies?: InputMaybe<CompanyListRelationFilter>;
@@ -2400,46 +1374,13 @@ export type UserWhereUniqueInput = {
 
 export type Workspace = {
   __typename?: 'Workspace';
-  WorkspaceMember: Array<WorkspaceMember>;
   _count?: Maybe<WorkspaceCount>;
-  companies: Array<Company>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName: Scalars['String'];
   domainName: Scalars['String'];
   id: Scalars['String'];
-  people: Array<Person>;
   updatedAt: Scalars['DateTime'];
-};
-
-
-export type WorkspaceWorkspaceMemberArgs = {
-  cursor?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
-  distinct?: InputMaybe<Array<WorkspaceMemberScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<WorkspaceMemberOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<WorkspaceMemberWhereInput>;
-};
-
-
-export type WorkspaceCompaniesArgs = {
-  cursor?: InputMaybe<CompanyWhereUniqueInput>;
-  distinct?: InputMaybe<Array<CompanyScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<CompanyWhereInput>;
-};
-
-
-export type WorkspacePeopleArgs = {
-  cursor?: InputMaybe<PersonWhereUniqueInput>;
-  distinct?: InputMaybe<Array<PersonScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<PersonWhereInput>;
 };
 
 export type WorkspaceCount = {
@@ -2447,47 +1388,6 @@ export type WorkspaceCount = {
   WorkspaceMember: Scalars['Int'];
   companies: Scalars['Int'];
   people: Scalars['Int'];
-};
-
-export type WorkspaceCountAggregate = {
-  __typename?: 'WorkspaceCountAggregate';
-  _all: Scalars['Int'];
-  createdAt: Scalars['Int'];
-  deletedAt: Scalars['Int'];
-  displayName: Scalars['Int'];
-  domainName: Scalars['Int'];
-  id: Scalars['Int'];
-  updatedAt: Scalars['Int'];
-};
-
-export type WorkspaceCountOrderByAggregateInput = {
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  displayName?: InputMaybe<SortOrder>;
-  domainName?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-};
-
-export type WorkspaceCreateInput = {
-  WorkspaceMember?: InputMaybe<WorkspaceMemberCreateNestedManyWithoutWorkspaceInput>;
-  companies?: InputMaybe<CompanyCreateNestedManyWithoutWorkspaceInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  displayName: Scalars['String'];
-  domainName: Scalars['String'];
-  id: Scalars['String'];
-  people?: InputMaybe<PersonCreateNestedManyWithoutWorkspaceInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type WorkspaceCreateManyInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  displayName: Scalars['String'];
-  domainName: Scalars['String'];
-  id: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type WorkspaceCreateNestedOneWithoutCompaniesInput = {
@@ -2554,38 +1454,6 @@ export type WorkspaceCreateWithoutWorkspaceMemberInput = {
   id: Scalars['String'];
   people?: InputMaybe<PersonCreateNestedManyWithoutWorkspaceInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type WorkspaceGroupBy = {
-  __typename?: 'WorkspaceGroupBy';
-  _count?: Maybe<WorkspaceCountAggregate>;
-  _max?: Maybe<WorkspaceMaxAggregate>;
-  _min?: Maybe<WorkspaceMinAggregate>;
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  displayName: Scalars['String'];
-  domainName: Scalars['String'];
-  id: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type WorkspaceMaxAggregate = {
-  __typename?: 'WorkspaceMaxAggregate';
-  createdAt?: Maybe<Scalars['DateTime']>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  displayName?: Maybe<Scalars['String']>;
-  domainName?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type WorkspaceMaxOrderByAggregateInput = {
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  displayName?: InputMaybe<SortOrder>;
-  domainName?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
 };
 
 export type WorkspaceMember = {
@@ -2677,15 +1545,6 @@ export type WorkspaceMemberRelationFilter = {
   is?: InputMaybe<WorkspaceMemberWhereInput>;
   isNot?: InputMaybe<WorkspaceMemberWhereInput>;
 };
-
-export enum WorkspaceMemberScalarFieldEnum {
-  CreatedAt = 'createdAt',
-  DeletedAt = 'deletedAt',
-  Id = 'id',
-  UpdatedAt = 'updatedAt',
-  UserId = 'userId',
-  WorkspaceId = 'workspaceId'
-}
 
 export type WorkspaceMemberScalarWhereInput = {
   AND?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
@@ -2786,37 +1645,6 @@ export type WorkspaceMemberWhereUniqueInput = {
   userId?: InputMaybe<Scalars['String']>;
 };
 
-export type WorkspaceMinAggregate = {
-  __typename?: 'WorkspaceMinAggregate';
-  createdAt?: Maybe<Scalars['DateTime']>;
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  displayName?: Maybe<Scalars['String']>;
-  domainName?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type WorkspaceMinOrderByAggregateInput = {
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  displayName?: InputMaybe<SortOrder>;
-  domainName?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-};
-
-export type WorkspaceOrderByWithAggregationInput = {
-  _count?: InputMaybe<WorkspaceCountOrderByAggregateInput>;
-  _max?: InputMaybe<WorkspaceMaxOrderByAggregateInput>;
-  _min?: InputMaybe<WorkspaceMinOrderByAggregateInput>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  displayName?: InputMaybe<SortOrder>;
-  domainName?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-};
-
 export type WorkspaceOrderByWithRelationInput = {
   WorkspaceMember?: InputMaybe<WorkspaceMemberOrderByRelationAggregateInput>;
   companies?: InputMaybe<CompanyOrderByRelationAggregateInput>;
@@ -2832,48 +1660,6 @@ export type WorkspaceOrderByWithRelationInput = {
 export type WorkspaceRelationFilter = {
   is?: InputMaybe<WorkspaceWhereInput>;
   isNot?: InputMaybe<WorkspaceWhereInput>;
-};
-
-export enum WorkspaceScalarFieldEnum {
-  CreatedAt = 'createdAt',
-  DeletedAt = 'deletedAt',
-  DisplayName = 'displayName',
-  DomainName = 'domainName',
-  Id = 'id',
-  UpdatedAt = 'updatedAt'
-}
-
-export type WorkspaceScalarWhereWithAggregatesInput = {
-  AND?: InputMaybe<Array<WorkspaceScalarWhereWithAggregatesInput>>;
-  NOT?: InputMaybe<Array<WorkspaceScalarWhereWithAggregatesInput>>;
-  OR?: InputMaybe<Array<WorkspaceScalarWhereWithAggregatesInput>>;
-  createdAt?: InputMaybe<DateTimeWithAggregatesFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableWithAggregatesFilter>;
-  displayName?: InputMaybe<StringWithAggregatesFilter>;
-  domainName?: InputMaybe<StringWithAggregatesFilter>;
-  id?: InputMaybe<StringWithAggregatesFilter>;
-  updatedAt?: InputMaybe<DateTimeWithAggregatesFilter>;
-};
-
-export type WorkspaceUpdateInput = {
-  WorkspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
-  companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  people?: InputMaybe<PersonUpdateManyWithoutWorkspaceNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type WorkspaceUpdateManyMutationInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
 export type WorkspaceUpdateOneRequiredWithoutCompaniesNestedInput = {
@@ -2974,7 +1760,7 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: any, address: string, employees?: number | null, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, name: string, address: string, employees?: number | null, domain_name: string, created_at: any, account_owner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
 
 export type UpdateCompanyMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -3080,14 +1866,14 @@ export type SearchQueryQueryVariables = Exact<{
 }>;
 
 
-export type SearchQueryQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> };
+export type SearchQueryQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domain_name: string }> };
 
 export type GetCurrentUserQueryVariables = Exact<{
   uuid?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, WorkspaceMember?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, domain_name: string, display_name: string } } | null }> };
+export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspace_member?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, domain_name: string, display_name: string } } | null }> };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3099,12 +1885,12 @@ export const GetCompaniesDocument = gql`
     query GetCompanies($orderBy: [CompanyOrderByWithRelationInput!], $where: CompanyWhereInput) {
   companies(orderBy: $orderBy, where: $where) {
     id
-    domainName
+    domain_name: domainName
     name
-    createdAt
+    created_at: createdAt
     address
     employees
-    accountOwner {
+    account_owner: accountOwner {
       id
       email
       displayName
@@ -3579,7 +2365,7 @@ export const SearchQueryDocument = gql`
   searchResults: companies(where: $where, take: $limit) {
     id
     name
-    domainName
+    domain_name: domainName
   }
 }
     `;
@@ -3618,7 +2404,7 @@ export const GetCurrentUserDocument = gql`
     id
     email
     displayName
-    WorkspaceMember {
+    workspace_member: WorkspaceMember {
       workspace {
         id
         domain_name: domainName
