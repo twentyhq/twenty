@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CompanyResolvers } from './company.resolvers';
+import { PrismaClient } from '@prisma/client';
 
 @Module({
   imports: [
@@ -10,6 +11,6 @@ import { CompanyResolvers } from './company.resolvers';
       autoSchemaFile: true,
     }),
   ],
-  providers: [CompanyResolvers],
+  providers: [PrismaClient, CompanyResolvers],
 })
 export class ApiModule {}
