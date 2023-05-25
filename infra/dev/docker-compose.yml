@@ -9,8 +9,7 @@ services:
       - "3001:3001"
       - "6006:6006"
     volumes:
-      - ../../front:/app/front
-      - ../../server:/app/server
+      - ../..:/app
       - twenty_node_modules_front:/app/front/node_modules
       - twenty_node_modules_server:/app/server/node_modules
     depends_on:
@@ -20,7 +19,7 @@ services:
       context: ../..
       dockerfile: ./infra/dev/twenty-docs/Dockerfile
     ports:
-      - "5001:3000"
+      - "5001:5001"
     volumes:
       - ../../docs:/app/docs
       - twenty_node_modules_docs:/app/docs/node_modules

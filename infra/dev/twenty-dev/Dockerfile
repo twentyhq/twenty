@@ -13,15 +13,17 @@ COPY ../../front/package.json .
 COPY ../../front/package-lock.json .
 RUN npm install
 
-COPY ../../front .
-
 WORKDIR /app/server
 
 COPY ../../server/package.json .
 COPY ../../server/package-lock.json .
 RUN npm install
 
-COPY ../../server .
+WORKDIR /app
+
+COPY ../.. .
+
+WORKDIR /app/server
 RUN npx prisma generate
 
 WORKDIR /app
