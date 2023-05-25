@@ -15,4 +15,15 @@ RUN npm install
 
 COPY ../../front .
 
-CMD ["npm", "run", "start"]
+WORKDIR /app/server
+
+COPY ../../server/package.json .
+COPY ../../server/package-lock.json .
+RUN npm install
+
+COPY ../../server .
+RUN npx prisma generate
+
+WORKDIR /app
+
+CMD ["tail", "-f", "/dev/null"]

@@ -32,7 +32,7 @@
     "build-storybook": "storybook build -s public",
     "coverage": "react-scripts test --coverage --watchAll",
     "coverage-ci": "react-scripts test --coverage --watchAll=false",
-    "graphql-codegen": "REACT_APP_GRAPHQL_ADMIN_SECRET=$REACT_APP_GRAPHQL_ADMIN_SECRET graphql-codegen --config codegen.js"
+    "graphql:generate": "REACT_APP_GRAPHQL_ADMIN_SECRET=$REACT_APP_GRAPHQL_ADMIN_SECRET graphql-codegen --config codegen.js"
   },
   "eslintConfig": {
     "extends": [

@@ -1,32 +1,24 @@
 version: "3.9"
 services:
-  twenty-front:
+  twenty-dev:
     build: 
       context: ../..
-      dockerfile: ./infra/dev/front/Dockerfile
+      dockerfile: ./infra/dev/twenty-dev/Dockerfile
     ports:
+      - "3000:3000"
       - "3001:3001"
       - "6006:6006"
     volumes:
       - ../../front:/app/front
-      - twenty_node_modules_front:/app/front/node_modules
-    depends_on:
-      - postgres
-  twenty-server:
-    build:
-      context: ../..
-      dockerfile: ./infra/dev/server/Dockerfile
-    ports:
-      - "3000:3000"
-    volumes:
       - ../../server:/app/server
+      - twenty_node_modules_front:/app/front/node_modules
       - twenty_node_modules_server:/app/server/node_modules
     depends_on:
       - postgres
   twenty-docs:
     build:
       context: ../..
-      dockerfile: ./infra/dev/docs/Dockerfile
+      dockerfile: ./infra/dev/twenty-docs/Dockerfile
     ports:
       - "5001:3000"
     volumes:
