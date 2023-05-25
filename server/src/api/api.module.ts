@@ -1,44 +1,30 @@
 import { Module } from '@nestjs/common';
-import { TypeGraphQLModule } from 'typegraphql-nestjs';
-import { ApolloDriver } from '@nestjs/apollo';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { CompanyResolvers } from './company.resolvers';
 import { PrismaClient } from '@prisma/client';
-
-import {
-  CompanyCrudResolver,
-  CompanyRelationsResolver,
-  UserCrudResolver,
-  UserRelationsResolver,
-  PersonCrudResolver,
-  PersonRelationsResolver,
-  WorkspaceCrudResolver,
-  WorkspaceRelationsResolver,
-  WorkspaceMemberRelationsResolver,
-} from '@generated/type-graphql';
-
-interface Context {
-  prisma: PrismaClient;
-}
-
-const prisma = new PrismaClient();
+import { CompanyRelationsResolver } from './local-graphql';
+import { PeopleResolvers } from './people.resolver';
+import { PersonRelationsResolver } from './people-relations.resolver';
+import { UserResolvers } from './user.resolver';
+import { UserRelationsResolver } from './user-relations.resolver';
+import { WorkspaceMemberRelationsResolver } from './workspace-member-relations.resolver';
 
 @Module({
   imports: [
-    TypeGraphQLModule.forRoot({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      path: '/',
-      validate: false,
-      context: (): Context => ({ prisma }),
+      autoSchemaFile: true,
     }),
   ],
   providers: [
-    CompanyCrudResolver,
+    PrismaClient,
+    CompanyResolvers,
     CompanyRelationsResolver,
-    UserCrudResolver,
-    UserRelationsResolver,
-    PersonCrudResolver,
+    PeopleResolvers,
     PersonRelationsResolver,
-    WorkspaceCrudResolver,
-    WorkspaceRelationsResolver,
+    UserResolvers,
+    UserRelationsResolver,
     WorkspaceMemberRelationsResolver,
   ],
 })
