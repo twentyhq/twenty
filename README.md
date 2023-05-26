@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://www.twenty.com">
-    <img src="./docs/src/img/square-dark-logo.svg#gh-dark-mode-only" width="136px" alt="Twenty logo" />
+    <img src="./docs/src/img/logo-square-dark.svg#gh-dark-mode-only" width="136px" alt="Twenty logo" />
   </a>
   <a href="https://www.twenty.com">
     <img src="./docs/src/img/square-dark-logo.svg#gh-light-mode-only" width="136px" alt="Twenty logo" />
@@ -9,7 +9,7 @@
 
 
 
-<h2 align="center" >The Open Source CRM empowering simplicity.</h3>
+<h2 align="center" >CRM empowering simplicity.</h3>
 <p align="center">Engineer-Designed. Business-Ready.
 
 
@@ -21,19 +21,17 @@
 
 <p align="center">
   <a href="https://www.twenty.com">
-    <img src="./docs/src/img/TwentyDarkPreview.png#gh-dark-mode-only" alt="Companies view" />
+    <img src="./docs/src/img/preview-dark.png#gh-dark-mode-only" alt="Companies view" />
   </a>
 </p>
 <p align="center">
   <a href="https://www.twenty.com">
-    <img src="./docs/src/img/TwentyLightPreview.png#gh-light-mode-only" alt="Companies view" />
+    <img src="./docs/src/img/preview-light.png#gh-light-mode-only" alt="Companies view" />
   </a>
 </p>
 
 # About
->>>>>>> 6b41be8 (new header for Readme)
 
-<<<<<<< HEAD
 </br>
 <p align="center">
   <a href="https://www.twenty.com#gh-dark-mode-only">
