@@ -1,7 +1,5 @@
 FROM node:18.16.0-alpine as server
 
-ARG SERVER_DATABASE_URL
-
 WORKDIR /app/server
 COPY ./server/package.json ./
 COPY ./server/package-lock.json ./
