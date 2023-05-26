@@ -13,12 +13,8 @@ import {
   SelectedFilterType,
 } from '../../interfaces/filters/interface';
 import { SortType, SelectedSortType } from '../../interfaces/sorts/interface';
-
-declare module 'react' {
-  function forwardRef<T, P = object>(
-    render: (props: P, ref: React.Ref<T>) => React.ReactElement | null,
-  ): (props: P & React.RefAttributes<T>) => React.ReactElement | null;
-}
+import { useRecoilState } from 'recoil';
+import { currentRowSelectionState } from '../../modules/ui/tables/states/rowSelectionState';
 
 type OwnProps<
   TData extends { id: string; __typename: 'companies' | 'people' },
@@ -87,50 +83,37 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-const Table = <
+export const EntityTable = <
   TData extends { id: string; __typename: 'companies' | 'people' },
   SortField,
->(
-  {
-    data,
-    columns,
-    viewName,
-    viewIcon,
-    availableSorts,
-    availableFilters,
-    onSortsUpdate,
-    onFiltersUpdate,
-    onRowSelectionChange,
-  }: OwnProps<TData, SortField>,
-  ref: React.ForwardedRef<{ resetRowSelection: () => void } | undefined>,
-) => {
-  const [internalRowSelection, setInternalRowSelection] = React.useState({});
+>({
+  data,
+  columns,
+  viewName,
+  viewIcon,
+  availableSorts,
+  availableFilters,
+  onSortsUpdate,
+  onFiltersUpdate,
+}: OwnProps<TData, SortField>) => {
+  const [currentRowSelection, setCurrentRowSelection] = useRecoilState(
+    currentRowSelectionState,
+  );
+
+  React.useEffect(() => {
+    setCurrentRowSelection({});
+  }, [setCurrentRowSelection]);
 
   const table = useReactTable<TData>({
     data,
     columns,
     state: {
-      rowSelection: internalRowSelection,
+      rowSelection: currentRowSelection,
     },
     getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
-    onRowSelectionChange: setInternalRowSelection,
+    onRowSelectionChange: setCurrentRowSelection,
     getRowId: (row) => row.id,
-  });
-
-  const selectedRows = table.getSelectedRowModel().rows;
-
-  React.useEffect(() => {
-    const selectedRowIds = selectedRows.map((row) => row.original.id);
-    onRowSelectionChange && onRowSelectionChange(selectedRowIds);
-  }, [onRowSelectionChange, selectedRows]);
-
-  React.useImperativeHandle(ref, () => {
-    return {
-      resetRowSelection: () => {
-        table.resetRowSelection();
-      },
-    };
   });
 
   return (
@@ -187,5 +170,3 @@ const Table = <
     </StyledTableWithHeader>
   );
 };
-
-export default React.forwardRef(Table);

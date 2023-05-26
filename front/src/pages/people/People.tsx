@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FaList } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
 import styled from '@emotion/styled';
 
 import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
-import Table from '../../components/table/Table';
+import { EntityTable } from '../../components/table/EntityTable';
 
 import {
   Person,
@@ -13,7 +13,6 @@ import {
 import {
   PeopleSelectedSortType,
   defaultOrderBy,
-  deletePeople,
   insertPerson,
   usePeopleQuery,
 } from '../../services/api/people';
@@ -21,13 +20,14 @@ import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
 } from '../../components/table/table-header/helpers';
-import ActionBar from '../../components/table/action-bar/ActionBar';
 import { SelectedFilterType } from '../../interfaces/filters/interface';
 import { BoolExpType } from '../../interfaces/entities/generic.interface';
 import { usePeopleColumns } from './people-columns';
 import { availableSorts } from './people-sorts';
 import { availableFilters } from './people-filters';
 import { TbUser } from 'react-icons/tb';
+import { EntityTableActionBar } from '../../components/table/action-bar/EntityTableActionBar';
+import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -38,8 +38,6 @@ const StyledPeopleContainer = styled.div`
 function People() {
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
   const [where, setWhere] = useState<BoolExpType<Person>>({});
-  const [internalData, setInternalData] = useState<Array<Person>>([]);
-  const [selectedRowIds, setSelectedRowIds] = useState<Array<string>>([]);
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
@@ -52,17 +50,11 @@ function People() {
     [],
   );
 
-  const { data, loading, refetch } = usePeopleQuery(orderBy, where);
+  const { data } = usePeopleQuery(orderBy, where);
 
-  useEffect(() => {
-    if (!loading) {
-      if (data) {
-        setInternalData(data.people.map(mapToPerson));
-      }
-    }
-  }, [loading, setInternalData, data]);
+  const people = data?.people.map(mapToPerson) ?? [];
 
-  const addEmptyRow = useCallback(async () => {
+  async function handleAddButtonClick() {
     const newPerson: Person = {
       __typename: 'people',
       id: uuidv4(),
@@ -75,36 +67,22 @@ function People() {
       creationDate: new Date(),
       city: '',
     };
+
     await insertPerson(newPerson);
-    setInternalData([newPerson, ...internalData]);
-    refetch();
-  }, [internalData, setInternalData, refetch]);
+  }
 
-  const deleteRows = useCallback(async () => {
-    await deletePeople(selectedRowIds);
-    setInternalData([
-      ...internalData.filter((row) => !selectedRowIds.includes(row.id)),
-    ]);
-    refetch();
-    if (tableRef.current) {
-      tableRef.current.resetRowSelection();
-    }
-  }, [internalData, selectedRowIds, refetch]);
-
-  const tableRef = useRef<{ resetRowSelection: () => void }>();
   const peopleColumns = usePeopleColumns();
 
   return (
     <WithTopBarContainer
       title="People"
       icon={<TbUser size={16} />}
-      onAddButtonClick={addEmptyRow}
+      onAddButtonClick={handleAddButtonClick}
     >
       <>
         <StyledPeopleContainer>
-          <Table
-            ref={tableRef}
-            data={internalData}
+          <EntityTable
+            data={people}
             columns={peopleColumns}
             viewName="All People"
             viewIcon={<FaList />}
@@ -112,10 +90,11 @@ function People() {
             availableFilters={availableFilters}
             onSortsUpdate={updateSorts}
             onFiltersUpdate={updateFilters}
-            onRowSelectionChange={setSelectedRowIds}
           />
         </StyledPeopleContainer>
-        {selectedRowIds.length > 0 && <ActionBar onDeleteClick={deleteRows} />}
+        <EntityTableActionBar>
+          <TableActionBarButtonDeletePeople />
+        </EntityTableActionBar>
       </>
     </WithTopBarContainer>
   );
