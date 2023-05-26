@@ -3,7 +3,7 @@
     <img src="./docs/src/img/logo-square-dark.svg" width="136px" alt="Twenty logo" />
   </a>
   <a href="https://www.twenty.com#gh-light-mode-only">
-    <img src="./docs/src/img/g.svg" width="136px" alt="Twenty logo" />
+    <img src="./docs/src/img/logo-square-dark.svg" width="136px" alt="Twenty logo" />
   </a>
 </p>
 
