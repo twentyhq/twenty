@@ -16,6 +16,7 @@ const StyledButton = styled.div`
 
   padding: ${(props) => props.theme.spacing(2)};
   border-radius: 4px;
+  transition: background 0.1s ease;
 
   &:hover {
     background: ${(props) => props.theme.tertiaryBackground};
