@@ -46,7 +46,6 @@ export const INSERT_COMPANY = gql`
     $id: String!
     $name: String!
     $domain_name: String!
-    $account_owner_id: String
     $created_at: DateTime
     $address: String!
     $employees: Int
@@ -56,11 +55,9 @@ export const INSERT_COMPANY = gql`
         id: $id
         name: $name
         domainName: $domain_name
-        accountOwner: { connect: { id: $account_owner_id } }
         createdAt: $created_at
         address: $address
         employees: $employees
-        workspace: { connect: { id: "il faut rajouter l'id du workspace" } }
       }
     ) {
       address

@@ -5,11 +5,7 @@ import { EditableFullNameStory } from '../__stories__/EditableFullName.stories';
 it('Checks the EditableFullName editing event bubbles up', async () => {
   const func = jest.fn(() => null);
   const { getByTestId } = render(
-    <EditableFullNameStory
-      firstname="Jone"
-      lastname="Doe"
-      changeHandler={func}
-    />,
+    <EditableFullNameStory firstname="Jone" lastname="Doe" onChange={func} />,
   );
 
   const parent = getByTestId('content-editable-parent');

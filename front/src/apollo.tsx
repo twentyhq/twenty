@@ -28,8 +28,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   if (graphQLErrors) {
     for (const err of graphQLErrors) {
       switch (err.extensions.code) {
-        case 'invalid-jwt':
-        case 'not-found':
+        case 'UNAUTHENTICATED':
           return new Observable((observer) => {
             (async () => {
               try {
