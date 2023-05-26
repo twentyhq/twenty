@@ -7,10 +7,11 @@ import { WorkspaceMember } from '../../generated-graphql/models/WorkspaceMember'
 import { PrismaClient } from '@prisma/client';
 import { UserCompaniesArgs } from '../../generated-graphql/resolvers/relations/User/args/UserCompaniesArgs';
 import { UserRefreshTokensArgs } from '../../generated-graphql/resolvers/relations/User/args/UserRefreshTokensArgs';
+import { PrismaService } from 'src/database/prisma.service';
 
 @TypeGraphQL.Resolver(() => User)
 export class UserRelationsResolver {
-  constructor(private readonly prismaClient: PrismaClient) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   @TypeGraphQL.ResolveField(() => WorkspaceMember, {
     nullable: true,
@@ -18,8 +19,8 @@ export class UserRelationsResolver {
   async WorkspaceMember(
     @TypeGraphQL.Parent() user: User,
   ): Promise<WorkspaceMember | null> {
-    return this.prismaClient.user
-      .findUniqueOrThrow({
+    return await this.prismaService.user
+      .findFirst({
         where: {
           id: user.id,
         },
@@ -35,7 +36,7 @@ export class UserRelationsResolver {
     @TypeGraphQL.Info() info: GraphQLResolveInfo,
     @TypeGraphQL.Args() args: UserCompaniesArgs,
   ): Promise<Company[]> {
-    return this.prismaClient.user
+    return this.prismaService.user
       .findUniqueOrThrow({
         where: {
           id: user.id,
@@ -54,7 +55,7 @@ export class UserRelationsResolver {
     @TypeGraphQL.Info() info: GraphQLResolveInfo,
     @TypeGraphQL.Args() args: UserRefreshTokensArgs,
   ): Promise<RefreshToken[]> {
-    return this.prismaClient.user
+    return this.prismaService.user
       .findUniqueOrThrow({
         where: {
           id: user.id,

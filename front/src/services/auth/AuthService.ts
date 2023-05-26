@@ -13,7 +13,7 @@ export const getUserIdFromToken: () => string | null = () => {
   }
 
   try {
-    return jwt<{ sub: string }>(accessToken).sub;
+    return jwt<{ userId: string }>(accessToken).userId;
   } catch (error) {
     return null;
   }

@@ -33,14 +33,14 @@ const availableSorts = [
     label: 'People',
     icon: <TbUser size={16} />,
     _type: 'custom_sort',
-    orderByTemplate: () => ({ email: Order_By.Asc }),
+    orderByTemplates: [() => ({ email: Order_By.Asc })],
   },
   {
     key: 'company_name',
     label: 'Company',
     icon: <TbBuilding size={16} />,
     _type: 'custom_sort',
-    orderByTemplate: () => ({ email: Order_By.Asc }),
+    orderByTemplates: [() => ({ email: Order_By.Asc })],
   },
   {
     key: 'email',

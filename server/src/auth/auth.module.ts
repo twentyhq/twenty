@@ -12,18 +12,21 @@ import { RefreshTokenRepository } from 'src/entities/refresh-token/refresh-token
 import { PrismaService } from 'src/database/prisma.service';
 
 @Module({
-  imports: [JwtModule.registerAsync({
-    useFactory: async (configService: ConfigService) => {
-      return {
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN'),
-        },
-      };
-    },
-    imports: [ConfigModule.forRoot({})],
-    inject: [ConfigService],
-  }), ConfigModule.forRoot({})],
+  imports: [
+    JwtModule.registerAsync({
+      useFactory: async (configService: ConfigService) => {
+        return {
+          secret: configService.get<string>('JWT_SECRET'),
+          signOptions: {
+            expiresIn: configService.get<string>('JWT_EXPIRES_IN'),
+          },
+        };
+      },
+      imports: [ConfigModule.forRoot({})],
+      inject: [ConfigService],
+    }),
+    ConfigModule.forRoot({}),
+  ],
   controllers: [GoogleAuthController, AuthController],
   providers: [
     AuthService,
