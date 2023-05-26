@@ -1,3 +1,5 @@
+
+</br>
 <p align="center">
   <a href="https://www.twenty.com#gh-dark-mode-only">
     <img src="./docs/src/img/logo-square-dark.svg" width="136px" alt="Twenty logo" />
@@ -14,8 +16,6 @@
 </p>
 <p align="center"><a href="https://twenty.com">Website</a> · <a href="https://docs.twenty.com">Documentation</a> · <a href="https://twenty.com/story">Story</a></p>
 <br />
-
-<br>
 
 <p align="center">
   <a href="https://www.twenty.com#gh-dark-mode-only">
