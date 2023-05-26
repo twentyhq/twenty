@@ -23,5 +23,8 @@ export class WorkspaceCountAggregateInput {
     displayName?: true;
 
     @Field(() => Boolean, {nullable:true})
+    logo?: true;
+
+    @Field(() => Boolean, {nullable:true})
     _all?: true;
 }

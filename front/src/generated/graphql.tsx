@@ -1213,6 +1213,7 @@ export type Workspace = {
   displayName: Scalars['String'];
   domainName: Scalars['String'];
   id: Scalars['ID'];
+  logo?: Maybe<Scalars['String']>;
   people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
 };
@@ -1242,6 +1243,7 @@ export type WorkspaceCreateWithoutWorkspaceMemberInput = {
   displayName: Scalars['String'];
   domainName: Scalars['String'];
   id: Scalars['String'];
+  logo?: InputMaybe<Scalars['String']>;
   people?: InputMaybe<PersonCreateNestedManyWithoutWorkspaceInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -1353,6 +1355,7 @@ export type WorkspaceOrderByWithRelationInput = {
   displayName?: InputMaybe<SortOrder>;
   domainName?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  logo?: InputMaybe<SortOrder>;
   people?: InputMaybe<PersonOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
 };
@@ -1377,6 +1380,7 @@ export type WorkspaceUpdateWithoutWorkspaceMemberInput = {
   displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
   domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  logo?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   people?: InputMaybe<PersonUpdateManyWithoutWorkspaceNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
@@ -1397,6 +1401,7 @@ export type WorkspaceWhereInput = {
   displayName?: InputMaybe<StringFilter>;
   domainName?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
+  logo?: InputMaybe<StringNullableFilter>;
   people?: InputMaybe<PersonListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -1431,7 +1436,6 @@ export type InsertCompanyMutationVariables = Exact<{
   id: Scalars['String'];
   name: Scalars['String'];
   domain_name: Scalars['String'];
-  account_owner_id?: InputMaybe<Scalars['String']>;
   created_at?: InputMaybe<Scalars['DateTime']>;
   address: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
@@ -1476,7 +1480,6 @@ export type InsertPersonMutationVariables = Exact<{
   lastname: Scalars['String'];
   phone: Scalars['String'];
   city: Scalars['String'];
-  company_id?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   created_at?: InputMaybe<Scalars['DateTime']>;
 }>;
@@ -1525,7 +1528,7 @@ export type GetCurrentUserQueryVariables = Exact<{
 }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspace_member?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, domain_name: string, display_name: string } } | null }> };
+export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspace_member?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, logo?: string | null, domain_name: string, display_name: string } } | null }> };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1632,9 +1635,9 @@ export type UpdateCompanyMutationHookResult = ReturnType<typeof useUpdateCompany
 export type UpdateCompanyMutationResult = Apollo.MutationResult<UpdateCompanyMutation>;
 export type UpdateCompanyMutationOptions = Apollo.BaseMutationOptions<UpdateCompanyMutation, UpdateCompanyMutationVariables>;
 export const InsertCompanyDocument = gql`
-    mutation InsertCompany($id: String!, $name: String!, $domain_name: String!, $account_owner_id: String, $created_at: DateTime, $address: String!, $employees: Int) {
+    mutation InsertCompany($id: String!, $name: String!, $domain_name: String!, $created_at: DateTime, $address: String!, $employees: Int) {
   createOneCompany(
-    data: {id: $id, name: $name, domainName: $domain_name, accountOwner: {connect: {id: $account_owner_id}}, createdAt: $created_at, address: $address, employees: $employees}
+    data: {id: $id, name: $name, domainName: $domain_name, createdAt: $created_at, address: $address, employees: $employees}
   ) {
     address
     created_at: createdAt
@@ -1663,7 +1666,6 @@ export type InsertCompanyMutationFn = Apollo.MutationFunction<InsertCompanyMutat
  *      id: // value for 'id'
  *      name: // value for 'name'
  *      domain_name: // value for 'domain_name'
- *      account_owner_id: // value for 'account_owner_id'
  *      created_at: // value for 'created_at'
  *      address: // value for 'address'
  *      employees: // value for 'employees'
@@ -1813,9 +1815,9 @@ export type UpdatePeopleMutationHookResult = ReturnType<typeof useUpdatePeopleMu
 export type UpdatePeopleMutationResult = Apollo.MutationResult<UpdatePeopleMutation>;
 export type UpdatePeopleMutationOptions = Apollo.BaseMutationOptions<UpdatePeopleMutation, UpdatePeopleMutationVariables>;
 export const InsertPersonDocument = gql`
-    mutation InsertPerson($id: String!, $firstname: String!, $lastname: String!, $phone: String!, $city: String!, $company_id: String, $email: String!, $created_at: DateTime) {
+    mutation InsertPerson($id: String!, $firstname: String!, $lastname: String!, $phone: String!, $city: String!, $email: String!, $created_at: DateTime) {
   createOnePerson(
-    data: {id: $id, firstname: $firstname, lastname: $lastname, phone: $phone, city: $city, company: {connect: {id: $company_id}}, email: $email, createdAt: $created_at}
+    data: {id: $id, firstname: $firstname, lastname: $lastname, phone: $phone, city: $city, email: $email, createdAt: $created_at}
   ) {
     city
     company {
@@ -1852,7 +1854,6 @@ export type InsertPersonMutationFn = Apollo.MutationFunction<InsertPersonMutatio
  *      lastname: // value for 'lastname'
  *      phone: // value for 'phone'
  *      city: // value for 'city'
- *      company_id: // value for 'company_id'
  *      email: // value for 'email'
  *      created_at: // value for 'created_at'
  *   },
@@ -2061,6 +2062,7 @@ export const GetCurrentUserDocument = gql`
         id
         domain_name: domainName
         display_name: displayName
+        logo
       }
     }
   }

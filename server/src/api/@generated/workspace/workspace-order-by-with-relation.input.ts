@@ -26,6 +26,9 @@ export class WorkspaceOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     displayName?: keyof typeof SortOrder;
 
+    @Field(() => SortOrder, {nullable:true})
+    logo?: keyof typeof SortOrder;
+
     @Field(() => WorkspaceMemberOrderByRelationAggregateInput, {nullable:true})
     WorkspaceMember?: WorkspaceMemberOrderByRelationAggregateInput;
 

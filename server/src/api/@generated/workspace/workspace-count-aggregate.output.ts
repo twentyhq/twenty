@@ -24,5 +24,8 @@ export class WorkspaceCountAggregate {
     displayName!: number;
 
     @Field(() => Int, {nullable:false})
+    logo!: number;
+
+    @Field(() => Int, {nullable:false})
     _all!: number;
 }

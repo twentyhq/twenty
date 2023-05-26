@@ -42,6 +42,7 @@ model Workspace {
   deletedAt       DateTime?
   domainName      String            @unique
   displayName     String
+  logo            String?
   WorkspaceMember WorkspaceMember[]
   companies       Company[]
   people          Person[]

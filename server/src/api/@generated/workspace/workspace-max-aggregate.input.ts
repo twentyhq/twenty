@@ -21,4 +21,7 @@ export class WorkspaceMaxAggregateInput {
 
     @Field(() => Boolean, {nullable:true})
     displayName?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    logo?: true;
 }
