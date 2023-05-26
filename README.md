@@ -1,3 +1,40 @@
+<<<<<<< HEAD
+=======
+
+<p align="center">
+  <a href="https://www.twenty.com">
+    <img src="./docs/src/img/square-dark-logo.svg#gh-dark-mode-only" width="136px" alt="Twenty logo" />
+  </a>
+  <a href="https://www.twenty.com">
+    <img src="./docs/src/img/square-dark-logo.svg#gh-light-mode-only" width="136px" alt="Twenty logo" />
+  </a>
+</p>
+
+
+
+<h2 align="center" >The Open Source CRM empowering simplicity.</h3>
+<p align="center">Engineer-Designed. Business-Ready.
+
+
+</p>
+<p align="center"><a href="https://twenty.com">Website</a> · <a href="https://docs.twenty.com">Documentation</a> · <a href="https://twenty.com/story">Story</a></p>
+<br />
+
+<br>
+
+<p align="center">
+  <a href="https://strapi.io">
+    <img src="./docs/src/img/TwentyDarkPreview.png#gh-dark-mode-only" alt="Administration panel" />
+  </a>
+</p>
+<p align="center">
+  <a href="https://strapi.io">
+    <img src="./docs/src/img/TwentyLightPreview.png#gh-light-mode-only" alt="Administration panel" />
+  </a>
+</p>
+
+# About
+>>>>>>> 6b41be8 (new header for Readme)
 
 </br>
 <p align="center">
