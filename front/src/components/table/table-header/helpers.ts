@@ -33,9 +33,13 @@ export const reduceSortsToOrderBy = <OrderByTemplate>(
   sorts: Array<SelectedSortType<OrderByTemplate>>,
 ): OrderByTemplate[] => {
   const mappedSorts = sorts.map((sort) => {
-    if (sort._type === 'custom_sort')
-      return sort.orderByTemplate(mapOrderToOrder_By(sort.order));
+    if (sort._type === 'custom_sort') {
+      return sort.orderByTemplates.map((orderByTemplate) =>
+        orderByTemplate(mapOrderToOrder_By(sort.order)),
+      );
+    }
+
     return defaultOrderByTemplateFactory(sort.key as string)(sort.order);
   });
-  return mappedSorts as OrderByTemplate[];
+  return mappedSorts.flat() as OrderByTemplate[];
 };

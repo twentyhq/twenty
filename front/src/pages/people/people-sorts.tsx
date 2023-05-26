@@ -18,17 +18,21 @@ export const availableSorts = [
     label: 'People',
     icon: <TbUser size={16} />,
     _type: 'custom_sort',
-    orderByTemplate: (order: Order_By) => ({
-      firstname: order,
-      lastname: order,
-    }),
+    orderByTemplates: [
+      (order: Order_By) => ({
+        firstname: order,
+      }),
+      (order: Order_By) => ({
+        lastname: order,
+      }),
+    ],
   },
   {
     key: 'company_name',
     label: 'Company',
     icon: <TbBuilding size={16} />,
     _type: 'custom_sort',
-    orderByTemplate: (order: Order_By) => ({ company: { name: order } }),
+    orderByTemplates: [(order: Order_By) => ({ company: { name: order } })],
   },
   {
     key: 'email',

@@ -8,12 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ApiModule } from './api/api.module';
 @Module({
-  imports: [
-    ConfigModule.forRoot({}),
-    TerminusModule,
-    AuthModule,
-    ApiModule,
-  ],
+  imports: [ConfigModule.forRoot({}), TerminusModule, AuthModule, ApiModule],
   controllers: [AppController, HealthController],
   providers: [AppService],
 })

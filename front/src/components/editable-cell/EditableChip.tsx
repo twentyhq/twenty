@@ -25,7 +25,7 @@ const StyledInplaceInput = styled.input`
   }
 `;
 
-const StyledInplaceShow = styled.input`
+const StyledInplaceShow = styled.div`
   width: 100%;
   border: none;
   outline: none;

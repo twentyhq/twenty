@@ -56,7 +56,7 @@ function Checkbox({ name, id, checked, onChange, indeterminate }: OwnProps) {
         name={name}
         checked={checked}
         onChange={onChange}
-      ></input>
+      />
     </StyledContainer>
   );
 }
