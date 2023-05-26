@@ -20,13 +20,13 @@
 <br>
 
 <p align="center">
-  <a href="https://strapi.io">
-    <img src="./docs/src/img/TwentyDarkPreview.png#gh-dark-mode-only" alt="Administration panel" />
+  <a href="https://www.twenty.com">
+    <img src="./docs/src/img/TwentyDarkPreview.png#gh-dark-mode-only" alt="Companies view" />
   </a>
 </p>
 <p align="center">
-  <a href="https://strapi.io">
-    <img src="./docs/src/img/TwentyLightPreview.png#gh-light-mode-only" alt="Administration panel" />
+  <a href="https://www.twenty.com">
+    <img src="./docs/src/img/TwentyLightPreview.png#gh-light-mode-only" alt="Companies view" />
   </a>
 </p>
 
