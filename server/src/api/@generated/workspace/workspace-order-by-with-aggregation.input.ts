@@ -26,6 +26,9 @@ export class WorkspaceOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     displayName?: keyof typeof SortOrder;
 
+    @Field(() => SortOrder, {nullable:true})
+    logo?: keyof typeof SortOrder;
+
     @Field(() => WorkspaceCountOrderByAggregateInput, {nullable:true})
     _count?: WorkspaceCountOrderByAggregateInput;
 

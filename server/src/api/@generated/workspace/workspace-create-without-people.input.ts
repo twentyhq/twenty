@@ -24,6 +24,9 @@ export class WorkspaceCreateWithoutPeopleInput {
     @Field(() => String, {nullable:false})
     displayName!: string;
 
+    @Field(() => String, {nullable:true})
+    logo?: string;
+
     @Field(() => WorkspaceMemberCreateNestedManyWithoutWorkspaceInput, {nullable:true})
     WorkspaceMember?: WorkspaceMemberCreateNestedManyWithoutWorkspaceInput;
 

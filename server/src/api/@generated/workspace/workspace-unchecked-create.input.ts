@@ -25,6 +25,9 @@ export class WorkspaceUncheckedCreateInput {
     @Field(() => String, {nullable:false})
     displayName!: string;
 
+    @Field(() => String, {nullable:true})
+    logo?: string;
+
     @Field(() => WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput, {nullable:true})
     WorkspaceMember?: WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput;
 

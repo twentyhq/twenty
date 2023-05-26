@@ -21,4 +21,7 @@ export class WorkspaceMinAggregate {
 
     @Field(() => String, {nullable:true})
     displayName?: string;
+
+    @Field(() => String, {nullable:true})
+    logo?: string;
 }

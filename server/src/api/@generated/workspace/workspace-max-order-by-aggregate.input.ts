@@ -22,4 +22,7 @@ export class WorkspaceMaxOrderByAggregateInput {
 
     @Field(() => SortOrder, {nullable:true})
     displayName?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    logo?: keyof typeof SortOrder;
 }

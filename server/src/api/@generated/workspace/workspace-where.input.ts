@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { WorkspaceMemberListRelationFilter } from '../workspace-member/workspace-member-list-relation-filter.input';
 import { CompanyListRelationFilter } from '../company/company-list-relation-filter.input';
 import { PersonListRelationFilter } from '../person/person-list-relation-filter.input';
@@ -36,6 +37,9 @@ export class WorkspaceWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     displayName?: StringFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    logo?: StringNullableFilter;
 
     @Field(() => WorkspaceMemberListRelationFilter, {nullable:true})
     WorkspaceMember?: WorkspaceMemberListRelationFilter;

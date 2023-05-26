@@ -12,6 +12,7 @@ export const GET_CURRENT_USER = gql`
           id
           domain_name: domainName
           display_name: displayName
+          logo
         }
       }
     }

@@ -27,6 +27,9 @@ export class Workspace {
     @Field(() => String, {nullable:false})
     displayName!: string;
 
+    @Field(() => String, {nullable:true})
+    logo!: string | null;
+
     @Field(() => [WorkspaceMember], {nullable:true})
     WorkspaceMember?: Array<WorkspaceMember>;
 
