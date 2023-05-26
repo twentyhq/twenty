@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("SERVER_DATABASE_URL")
+  url      = env("PG_DATABASE_URL")
 }
 
 generator nestgraphql {
