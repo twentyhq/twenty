@@ -1,18 +1,18 @@
 import * as TypeGraphQL from '@nestjs/graphql';
-import { Company } from '../../generated-graphql/models/Company';
-import { Person } from '../../generated-graphql/models/Person';
-import { Workspace } from '../../generated-graphql/models/Workspace';
-import { PrismaClient } from '@prisma/client';
+import { Company } from 'src/api/@generated/company/company.model';
+import { Person } from 'src/api/@generated/person/person.model';
+import { Workspace } from 'src/api/@generated/workspace/workspace.model';
+import { PrismaService } from 'src/database/prisma.service';
 
 @TypeGraphQL.Resolver(() => Person)
 export class PersonRelationsResolver {
-  constructor(private readonly prismaClient: PrismaClient) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   @TypeGraphQL.ResolveField(() => Company, {
     nullable: true,
   })
   async company(@TypeGraphQL.Parent() person: Person): Promise<Company | null> {
-    return this.prismaClient.person
+    return await this.prismaService.person
       .findUniqueOrThrow({
         where: {
           id: person.id,
@@ -25,7 +25,7 @@ export class PersonRelationsResolver {
     nullable: false,
   })
   async workspace(@TypeGraphQL.Parent() person: Person): Promise<Workspace> {
-    return this.prismaClient.person
+    return this.prismaService.person
       .findUniqueOrThrow({
         where: {
           id: person.id,

@@ -52,7 +52,6 @@ export const INSERT_PERSON = gql`
     $lastname: String!
     $phone: String!
     $city: String!
-    $company_id: String
     $email: String!
     $created_at: DateTime
   ) {
@@ -63,10 +62,8 @@ export const INSERT_PERSON = gql`
         lastname: $lastname
         phone: $phone
         city: $city
-        company: { connect: { id: $company_id } }
         email: $email
         createdAt: $created_at
-        workspace: { connect: { id: "il faut rajouter l'id du workspace" } }
       }
     ) {
       city
@@ -99,41 +96,6 @@ export async function updatePerson(
   const result = await apiClient.mutate({
     mutation: UPDATE_PERSON,
     variables: mapToGqlPerson(person),
-
-    // TODO: use a mapper?
-    optimisticResponse: {
-      __typename: 'people' as const,
-      id: person.id,
-      update_people: {
-        returning: {
-          id: person.id,
-          city: 'TEST',
-          company: {
-            domain_name: person.company?.domainName,
-            name: person.company?.name,
-            id: person.company?.id,
-          },
-          email: person.email,
-          firstname: person.firstname,
-          lastname: person.lastname,
-          phone: person.phone,
-          created_at: person.creationDate,
-
-          //   city
-          // company {
-          //   domain_name
-          //   name
-          //   id
-          // }
-          // email
-          // firstname
-          // id
-          // lastname
-          // phone
-          // created_at
-        },
-      },
-    },
   });
   return result;
 }

@@ -1,9 +1,8 @@
 import * as TypeGraphQL from '@nestjs/graphql';
 import type { GraphQLResolveInfo } from 'graphql';
-import { User } from '../../generated-graphql/models/User';
-import { Workspace } from '../../generated-graphql/models/Workspace';
-import { WorkspaceMember } from '../../generated-graphql/models/WorkspaceMember';
-import { PrismaClient } from '@prisma/client';
+import { User } from 'src/api/@generated/user/user.model';
+import { WorkspaceMember } from 'src/api/@generated/workspace-member/workspace-member.model';
+import { Workspace } from 'src/api/@generated/workspace/workspace.model';
 import { PrismaService } from 'src/database/prisma.service';
 
 @TypeGraphQL.Resolver(() => WorkspaceMember)

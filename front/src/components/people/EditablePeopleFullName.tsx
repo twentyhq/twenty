@@ -23,7 +23,7 @@ export function EditablePeopleFullName({
     setFirstnameValue(firstValue);
     setLastnameValue(secondValue);
 
-    onChange(firstnameValue, lastnameValue);
+    onChange(firstValue, secondValue);
   }
 
   return (

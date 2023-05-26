@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 import { AuthService } from './services/auth.service';
@@ -11,22 +11,21 @@ import { WorkspaceRepository } from 'src/entities/workspace/workspace.repository
 import { RefreshTokenRepository } from 'src/entities/refresh-token/refresh-token.repository';
 import { PrismaService } from 'src/database/prisma.service';
 
-@Module({
-  imports: [
-    JwtModule.registerAsync({
-      useFactory: async (configService: ConfigService) => {
-        return {
-          secret: configService.get<string>('JWT_SECRET'),
-          signOptions: {
-            expiresIn: configService.get<string>('JWT_EXPIRES_IN'),
-          },
-        };
+const jwtModule = JwtModule.registerAsync({
+  useFactory: async (configService: ConfigService) => {
+    return {
+      secret: configService.get<string>('JWT_SECRET'),
+      signOptions: {
+        expiresIn: configService.get<string>('JWT_EXPIRES_IN') + 's',
       },
-      imports: [ConfigModule.forRoot({})],
-      inject: [ConfigService],
-    }),
-    ConfigModule.forRoot({}),
-  ],
+    };
+  },
+  imports: [ConfigModule.forRoot({})],
+  inject: [ConfigService],
+});
+
+@Module({
+  imports: [jwtModule, ConfigModule.forRoot({})],
   controllers: [GoogleAuthController, AuthController],
   providers: [
     AuthService,
@@ -37,5 +36,6 @@ import { PrismaService } from 'src/database/prisma.service';
     RefreshTokenRepository,
     PrismaService,
   ],
+  exports: [jwtModule],
 })
 export class AuthModule {}
