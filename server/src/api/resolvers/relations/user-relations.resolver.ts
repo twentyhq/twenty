@@ -1,13 +1,12 @@
 import * as TypeGraphQL from '@nestjs/graphql';
 import type { GraphQLResolveInfo } from 'graphql';
-import { Company } from '../../generated-graphql/models/Company';
-import { RefreshToken } from '../../generated-graphql/models/RefreshToken';
-import { User } from '../../generated-graphql/models/User';
-import { WorkspaceMember } from '../../generated-graphql/models/WorkspaceMember';
-import { PrismaClient } from '@prisma/client';
-import { UserCompaniesArgs } from '../../generated-graphql/resolvers/relations/User/args/UserCompaniesArgs';
-import { UserRefreshTokensArgs } from '../../generated-graphql/resolvers/relations/User/args/UserRefreshTokensArgs';
 import { PrismaService } from 'src/database/prisma.service';
+import { WorkspaceMember } from 'src/api/@generated/workspace-member/workspace-member.model';
+import { User } from 'src/api/@generated/user/user.model';
+import { Company } from 'src/api/@generated/company/company.model';
+import { RefreshToken } from 'src/api/@generated/refresh-token/refresh-token.model';
+import { FindManyCompanyArgs } from 'src/api/@generated/company/find-many-company.args';
+import { FindManyRefreshTokenArgs } from 'src/api/@generated/refresh-token/find-many-refresh-token.args';
 
 @TypeGraphQL.Resolver(() => User)
 export class UserRelationsResolver {
@@ -34,7 +33,7 @@ export class UserRelationsResolver {
   async companies(
     @TypeGraphQL.Parent() user: User,
     @TypeGraphQL.Info() info: GraphQLResolveInfo,
-    @TypeGraphQL.Args() args: UserCompaniesArgs,
+    @TypeGraphQL.Args() args: FindManyCompanyArgs,
   ): Promise<Company[]> {
     return this.prismaService.user
       .findUniqueOrThrow({
@@ -53,7 +52,7 @@ export class UserRelationsResolver {
   async RefreshTokens(
     @TypeGraphQL.Parent() user: User,
     @TypeGraphQL.Info() info: GraphQLResolveInfo,
-    @TypeGraphQL.Args() args: UserRefreshTokensArgs,
+    @TypeGraphQL.Args() args: FindManyRefreshTokenArgs,
   ): Promise<RefreshToken[]> {
     return this.prismaService.user
       .findUniqueOrThrow({

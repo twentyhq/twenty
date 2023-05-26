@@ -69,8 +69,7 @@ export function EditableCell({
         onInsideClick && onInsideClick();
       }}
     >
-      <CellNormalModeContainer>{nonEditModeContent}</CellNormalModeContainer>
-      {isEditMode && (
+      {isEditMode ? (
         <CellEditModeContainer
           ref={editableContainerRef}
           editModeHorizontalAlign={editModeHorizontalAlign}
@@ -78,6 +77,8 @@ export function EditableCell({
         >
           {editModeContent}
         </CellEditModeContainer>
+      ) : (
+        <CellNormalModeContainer>{nonEditModeContent}</CellNormalModeContainer>
       )}
     </CellBaseContainer>
   );

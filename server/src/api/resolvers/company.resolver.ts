@@ -1,59 +1,75 @@
-import { PrismaClient } from '@prisma/client';
-import { Company } from '../generated-graphql/models';
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
-import { FindManyCompanyArgs } from '../generated-graphql/resolvers/crud/Company/args/FindManyCompanyArgs';
-import { DeleteOneCompanyArgs } from '../generated-graphql/resolvers/crud/Company/args/DeleteOneCompanyArgs';
-import { UpdateOneCompanyArgs } from '../generated-graphql/resolvers/crud/Company/args/UpdateOneCompanyArgs';
-import { CreateOneCompanyArgs } from '../generated-graphql/resolvers/crud/Company/args/CreateOneCompanyArgs';
-import {
-  AffectedRowsOutput,
-  DeleteManyCompanyArgs,
-} from '../generated-graphql';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
+import { UseGuards } from '@nestjs/common';
+import { User, UserType } from './decorators/user.decorator';
+import { PrismaService } from 'src/database/prisma.service';
+import { Company } from '../@generated/company/company.model';
+import { FindManyCompanyArgs } from '../@generated/company/find-many-company.args';
+import { DeleteOneCompanyArgs } from '../@generated/company/delete-one-company.args';
+import { UpdateOneCompanyArgs } from '../@generated/company/update-one-company.args';
+import { CreateOneCompanyArgs } from '../@generated/company/create-one-company.args';
+import { AffectedRows } from '../@generated/prisma/affected-rows.output';
+import { DeleteManyCompanyArgs } from '../@generated/company/delete-many-company.args';
 
 @Resolver(() => Company)
 export class CompanyResolver {
-  constructor(private readonly prismaClient: PrismaClient) {}
+  constructor(private readonly prismaService: PrismaService) {}
+
+  @UseGuards(JwtAuthGuard)
   @Query(() => [Company])
   async companies(@Args() args: FindManyCompanyArgs) {
-    return this.prismaClient.company.findMany(args);
+    return this.prismaService.company.findMany(args);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Company, {
     nullable: true,
   })
   async deleteOneCompany(
     @Args() args: DeleteOneCompanyArgs,
   ): Promise<Company | null> {
-    return this.prismaClient.company.delete(args);
+    return this.prismaService.company.delete(args);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Company, {
     nullable: true,
   })
   async updateOneCompany(
     @Args() args: UpdateOneCompanyArgs,
   ): Promise<Company | null> {
-    return this.prismaClient.company.update({
+    if (!args.data.accountOwner?.connect?.id) {
+      args.data.accountOwner = { disconnect: true };
+    }
+    return this.prismaService.company.update({
       ...args,
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => Company, {
     nullable: false,
   })
-  async createOneCompany(@Args() args: CreateOneCompanyArgs): Promise<Company> {
-    return this.prismaClient.company.create({
-      ...args,
+  async createOneCompany(
+    @Args() args: CreateOneCompanyArgs,
+    @User() user: UserType,
+  ): Promise<Company> {
+    return this.prismaService.company.create({
+      data: {
+        ...args.data,
+        ...{ workspace: { connect: { id: user.workspaceId } } },
+      },
     });
   }
 
-  @Mutation(() => AffectedRowsOutput, {
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => AffectedRows, {
     nullable: false,
   })
   async deleteManyCompany(
     @Args() args: DeleteManyCompanyArgs,
-  ): Promise<AffectedRowsOutput> {
-    return this.prismaClient.company.deleteMany({
+  ): Promise<AffectedRows> {
+    return this.prismaService.company.deleteMany({
       ...args,
     });
   }

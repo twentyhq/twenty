@@ -6,6 +6,10 @@ import { MockedProvider } from '@apollo/client/testing';
 import { mockPeopleData } from '../__tests__/__data__/mock-data';
 import { GET_PEOPLE } from '../../../services/api/people';
 import { SEARCH_PEOPLE_QUERY } from '../../../services/api/search/search';
+import {
+  GraphqlMutationPerson,
+  GraphqlQueryPerson,
+} from '../../../interfaces/entities/person.interface';
 
 const component = {
   title: 'People',

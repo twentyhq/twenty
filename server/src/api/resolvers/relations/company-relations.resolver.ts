@@ -1,14 +1,13 @@
 import * as TypeGraphQL from '@nestjs/graphql';
-import { Company } from '../../generated-graphql/models/Company';
-import { Person } from '../../generated-graphql/models/Person';
-import { User } from '../../generated-graphql/models/User';
-import { Workspace } from '../../generated-graphql/models/Workspace';
-import { PrismaClient } from '@prisma/client';
-import { CompanyPeopleArgs } from '../../generated-graphql/resolvers/relations/Company/args/CompanyPeopleArgs';
+import { Company } from 'src/api/@generated/company/company.model';
+import { Person } from 'src/api/@generated/person/person.model';
+import { User } from 'src/api/@generated/user/user.model';
+import { Workspace } from 'src/api/@generated/workspace/workspace.model';
+import { PrismaService } from 'src/database/prisma.service';
 
 @TypeGraphQL.Resolver(() => Company)
 export class CompanyRelationsResolver {
-  constructor(private readonly prismaClient: PrismaClient) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   @TypeGraphQL.ResolveField(() => User, {
     nullable: true,
@@ -16,7 +15,7 @@ export class CompanyRelationsResolver {
   async accountOwner(
     @TypeGraphQL.Parent() company: Company,
   ): Promise<User | null> {
-    return this.prismaClient.company
+    return this.prismaService.company
       .findUniqueOrThrow({
         where: {
           id: company.id,
@@ -25,29 +24,11 @@ export class CompanyRelationsResolver {
       .accountOwner({});
   }
 
-  @TypeGraphQL.ResolveField(() => [Person], {
-    nullable: false,
-  })
-  async people(
-    @TypeGraphQL.Root() company: Company,
-    @TypeGraphQL.Args() args: CompanyPeopleArgs,
-  ): Promise<Person[]> {
-    return this.prismaClient.company
-      .findUniqueOrThrow({
-        where: {
-          id: company.id,
-        },
-      })
-      .people({
-        ...args,
-      });
-  }
-
   @TypeGraphQL.ResolveField(() => Workspace, {
     nullable: false,
   })
   async workspace(@TypeGraphQL.Root() company: Company): Promise<Workspace> {
-    return this.prismaClient.company
+    return this.prismaService.company
       .findUniqueOrThrow({
         where: {
           id: company.id,

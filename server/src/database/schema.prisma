@@ -5,7 +5,12 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("SERVER_DATABASE_URL")
+  url      = env("PG_DATABASE_URL")
+}
+
+generator nestgraphql {
+    provider = "node node_modules/prisma-nestjs-graphql"
+    output = "../../src/api/@generated"
 }
 
 model User {
@@ -37,6 +42,7 @@ model Workspace {
   deletedAt       DateTime?
   domainName      String            @unique
   displayName     String
+  logo            String?
   WorkspaceMember WorkspaceMember[]
   companies       Company[]
   people          Person[]
@@ -69,7 +75,10 @@ model Company {
   accountOwnerId String?
   accountOwner   User?     @relation(fields: [accountOwnerId], references: [id])
   people         Person[]
+
+  /// @TypeGraphQL.omit(input: true)
   workspaceId    String
+  /// @TypeGraphQL.omit(input: true)
   workspace      Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("companies")
@@ -87,7 +96,10 @@ model Person {
   city        String
   companyId   String?
   company     Company?  @relation(fields: [companyId], references: [id])
+
+  /// @TypeGraphQL.omit(input: true)
   workspaceId String
+  /// @TypeGraphQL.omit(input: true)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("people")

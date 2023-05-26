@@ -56,8 +56,7 @@ export const usePeopleColumns = () => {
               const person = props.row.original;
               person.firstname = firstName;
               person.lastname = lastName;
-              const returnedOptimisticResponse = await updatePerson(person);
-              console.log({ returnedOptimisticResponse });
+              await updatePerson(person);
             }}
           />
         ),

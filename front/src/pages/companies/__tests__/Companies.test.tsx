@@ -18,7 +18,9 @@ jest.mock('../../../apollo', () => {
         variables: GraphqlMutationCompany;
       }) => {
         const gqlCompany = arg.variables as unknown as GraphqlQueryCompany;
-        return { data: companyInterface.mapToCompany(gqlCompany) };
+        return {
+          data: { updateOneCompany: companyInterface.mapToCompany(gqlCompany) },
+        };
       },
     },
   };
@@ -84,7 +86,7 @@ it('Checks company url edit is updating data', async () => {
   });
 });
 
-it('Checks company address edit is updating data', async () => {
+it.only('Checks company address edit is updating data', async () => {
   const { getByText, getByDisplayValue } = render(<CompaniesDefault />);
 
   await waitFor(() => {

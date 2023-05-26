@@ -17,8 +17,8 @@ export type Scalars = {
   JSON: any;
 };
 
-export type AffectedRowsOutput = {
-  __typename?: 'AffectedRowsOutput';
+export type AffectedRows = {
+  __typename?: 'AffectedRows';
   count: Scalars['Int'];
 };
 
@@ -33,7 +33,7 @@ export type BoolFilter = {
 
 export type Company = {
   __typename?: 'Company';
-  _count?: Maybe<CompanyCount>;
+  _count: CompanyCount;
   accountOwner?: Maybe<User>;
   accountOwnerId?: Maybe<Scalars['String']>;
   address: Scalars['String'];
@@ -41,22 +41,12 @@ export type Company = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: Maybe<Scalars['Int']>;
-  id: Scalars['String'];
+  id: Scalars['ID'];
   name: Scalars['String'];
-  people: Array<Person>;
+  people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
   workspaceId: Scalars['String'];
-};
-
-
-export type CompanyPeopleArgs = {
-  cursor?: InputMaybe<PersonWhereUniqueInput>;
-  distinct?: InputMaybe<Array<PersonScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<PersonWhereInput>;
 };
 
 export type CompanyCount = {
@@ -75,24 +65,6 @@ export type CompanyCreateInput = {
   name: Scalars['String'];
   people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspace: WorkspaceCreateNestedOneWithoutCompaniesInput;
-};
-
-export type CompanyCreateManyAccountOwnerInput = {
-  address: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  domainName: Scalars['String'];
-  employees?: InputMaybe<Scalars['Int']>;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspaceId: Scalars['String'];
-};
-
-export type CompanyCreateManyAccountOwnerInputEnvelope = {
-  data: Array<CompanyCreateManyAccountOwnerInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CompanyCreateManyWorkspaceInput = {
@@ -112,13 +84,6 @@ export type CompanyCreateManyWorkspaceInputEnvelope = {
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type CompanyCreateNestedManyWithoutAccountOwnerInput = {
-  connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutAccountOwnerInput>>;
-  create?: InputMaybe<Array<CompanyCreateWithoutAccountOwnerInput>>;
-  createMany?: InputMaybe<CompanyCreateManyAccountOwnerInputEnvelope>;
-};
-
 export type CompanyCreateNestedManyWithoutWorkspaceInput = {
   connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutWorkspaceInput>>;
@@ -132,11 +97,6 @@ export type CompanyCreateNestedOneWithoutPeopleInput = {
   create?: InputMaybe<CompanyCreateWithoutPeopleInput>;
 };
 
-export type CompanyCreateOrConnectWithoutAccountOwnerInput = {
-  create: CompanyCreateWithoutAccountOwnerInput;
-  where: CompanyWhereUniqueInput;
-};
-
 export type CompanyCreateOrConnectWithoutPeopleInput = {
   create: CompanyCreateWithoutPeopleInput;
   where: CompanyWhereUniqueInput;
@@ -145,19 +105,6 @@ export type CompanyCreateOrConnectWithoutPeopleInput = {
 export type CompanyCreateOrConnectWithoutWorkspaceInput = {
   create: CompanyCreateWithoutWorkspaceInput;
   where: CompanyWhereUniqueInput;
-};
-
-export type CompanyCreateWithoutAccountOwnerInput = {
-  address: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  domainName: Scalars['String'];
-  employees?: InputMaybe<Scalars['Int']>;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspace: WorkspaceCreateNestedOneWithoutCompaniesInput;
 };
 
 export type CompanyCreateWithoutPeopleInput = {
@@ -170,7 +117,6 @@ export type CompanyCreateWithoutPeopleInput = {
   id: Scalars['String'];
   name: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspace: WorkspaceCreateNestedOneWithoutCompaniesInput;
 };
 
 export type CompanyCreateWithoutWorkspaceInput = {
@@ -208,8 +154,6 @@ export type CompanyOrderByWithRelationInput = {
   name?: InputMaybe<SortOrder>;
   people?: InputMaybe<PersonOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
-  workspace?: InputMaybe<WorkspaceOrderByWithRelationInput>;
-  workspaceId?: InputMaybe<SortOrder>;
 };
 
 export type CompanyRelationFilter = {
@@ -243,7 +187,6 @@ export type CompanyScalarWhereInput = {
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  workspaceId?: InputMaybe<StringFilter>;
 };
 
 export type CompanyUpdateInput = {
@@ -257,7 +200,6 @@ export type CompanyUpdateInput = {
   name?: InputMaybe<StringFieldUpdateOperationsInput>;
   people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  workspace?: InputMaybe<WorkspaceUpdateOneRequiredWithoutCompaniesNestedInput>;
 };
 
 export type CompanyUpdateManyMutationInput = {
@@ -271,28 +213,9 @@ export type CompanyUpdateManyMutationInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type CompanyUpdateManyWithWhereWithoutAccountOwnerInput = {
-  data: CompanyUpdateManyMutationInput;
-  where: CompanyScalarWhereInput;
-};
-
 export type CompanyUpdateManyWithWhereWithoutWorkspaceInput = {
   data: CompanyUpdateManyMutationInput;
   where: CompanyScalarWhereInput;
-};
-
-export type CompanyUpdateManyWithoutAccountOwnerNestedInput = {
-  connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutAccountOwnerInput>>;
-  create?: InputMaybe<Array<CompanyCreateWithoutAccountOwnerInput>>;
-  createMany?: InputMaybe<CompanyCreateManyAccountOwnerInputEnvelope>;
-  delete?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CompanyScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  set?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  update?: InputMaybe<Array<CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput>>;
-  updateMany?: InputMaybe<Array<CompanyUpdateManyWithWhereWithoutAccountOwnerInput>>;
-  upsert?: InputMaybe<Array<CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput>>;
 };
 
 export type CompanyUpdateManyWithoutWorkspaceNestedInput = {
@@ -319,27 +242,9 @@ export type CompanyUpdateOneWithoutPeopleNestedInput = {
   upsert?: InputMaybe<CompanyUpsertWithoutPeopleInput>;
 };
 
-export type CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput = {
-  data: CompanyUpdateWithoutAccountOwnerInput;
-  where: CompanyWhereUniqueInput;
-};
-
 export type CompanyUpdateWithWhereUniqueWithoutWorkspaceInput = {
   data: CompanyUpdateWithoutWorkspaceInput;
   where: CompanyWhereUniqueInput;
-};
-
-export type CompanyUpdateWithoutAccountOwnerInput = {
-  address?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  employees?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  workspace?: InputMaybe<WorkspaceUpdateOneRequiredWithoutCompaniesNestedInput>;
 };
 
 export type CompanyUpdateWithoutPeopleInput = {
@@ -352,7 +257,6 @@ export type CompanyUpdateWithoutPeopleInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   name?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  workspace?: InputMaybe<WorkspaceUpdateOneRequiredWithoutCompaniesNestedInput>;
 };
 
 export type CompanyUpdateWithoutWorkspaceInput = {
@@ -366,12 +270,6 @@ export type CompanyUpdateWithoutWorkspaceInput = {
   name?: InputMaybe<StringFieldUpdateOperationsInput>;
   people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput = {
-  create: CompanyCreateWithoutAccountOwnerInput;
-  update: CompanyUpdateWithoutAccountOwnerInput;
-  where: CompanyWhereUniqueInput;
 };
 
 export type CompanyUpsertWithWhereUniqueWithoutWorkspaceInput = {
@@ -400,8 +298,6 @@ export type CompanyWhereInput = {
   name?: InputMaybe<StringFilter>;
   people?: InputMaybe<PersonListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  workspace?: InputMaybe<WorkspaceRelationFilter>;
-  workspaceId?: InputMaybe<StringFilter>;
 };
 
 export type CompanyWhereUniqueInput = {
@@ -465,8 +361,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   createOneCompany: Company;
   createOnePerson: Person;
-  deleteManyCompany: AffectedRowsOutput;
-  deleteManyPerson: AffectedRowsOutput;
+  deleteManyCompany: AffectedRows;
+  deleteManyPerson: AffectedRows;
   deleteOneCompany?: Maybe<Company>;
   updateOneCompany?: Maybe<Company>;
   updateOnePerson?: Maybe<Person>;
@@ -600,7 +496,7 @@ export type Person = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   email: Scalars['String'];
   firstname: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['ID'];
   lastname: Scalars['String'];
   phone: Scalars['String'];
   updatedAt: Scalars['DateTime'];
@@ -619,7 +515,6 @@ export type PersonCreateInput = {
   lastname: Scalars['String'];
   phone: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspace: WorkspaceCreateNestedOneWithoutPeopleInput;
 };
 
 export type PersonCreateManyCompanyInput = {
@@ -632,7 +527,6 @@ export type PersonCreateManyCompanyInput = {
   lastname: Scalars['String'];
   phone: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspaceId: Scalars['String'];
 };
 
 export type PersonCreateManyCompanyInputEnvelope = {
@@ -692,7 +586,6 @@ export type PersonCreateWithoutCompanyInput = {
   lastname: Scalars['String'];
   phone: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspace: WorkspaceCreateNestedOneWithoutPeopleInput;
 };
 
 export type PersonCreateWithoutWorkspaceInput = {
@@ -730,8 +623,6 @@ export type PersonOrderByWithRelationInput = {
   lastname?: InputMaybe<SortOrder>;
   phone?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
-  workspace?: InputMaybe<WorkspaceOrderByWithRelationInput>;
-  workspaceId?: InputMaybe<SortOrder>;
 };
 
 export enum PersonScalarFieldEnum {
@@ -762,7 +653,6 @@ export type PersonScalarWhereInput = {
   lastname?: InputMaybe<StringFilter>;
   phone?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  workspaceId?: InputMaybe<StringFilter>;
 };
 
 export type PersonUpdateInput = {
@@ -776,7 +666,6 @@ export type PersonUpdateInput = {
   lastname?: InputMaybe<StringFieldUpdateOperationsInput>;
   phone?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  workspace?: InputMaybe<WorkspaceUpdateOneRequiredWithoutPeopleNestedInput>;
 };
 
 export type PersonUpdateManyMutationInput = {
@@ -849,7 +738,6 @@ export type PersonUpdateWithoutCompanyInput = {
   lastname?: InputMaybe<StringFieldUpdateOperationsInput>;
   phone?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  workspace?: InputMaybe<WorkspaceUpdateOneRequiredWithoutPeopleNestedInput>;
 };
 
 export type PersonUpdateWithoutWorkspaceInput = {
@@ -892,8 +780,6 @@ export type PersonWhereInput = {
   lastname?: InputMaybe<StringFilter>;
   phone?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  workspace?: InputMaybe<WorkspaceRelationFilter>;
-  workspaceId?: InputMaybe<StringFilter>;
 };
 
 export type PersonWhereUniqueInput = {
@@ -904,6 +790,7 @@ export type Query = {
   __typename?: 'Query';
   companies: Array<Company>;
   people: Array<Person>;
+  user: User;
   users: Array<User>;
 };
 
@@ -928,6 +815,11 @@ export type QueryPeopleArgs = {
 };
 
 
+export type QueryUserArgs = {
+  where: UserWhereUniqueInput;
+};
+
+
 export type QueryUsersArgs = {
   cursor?: InputMaybe<UserWhereUniqueInput>;
   distinct?: InputMaybe<Array<UserScalarFieldEnum>>;
@@ -946,9 +838,10 @@ export type RefreshToken = {
   __typename?: 'RefreshToken';
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
-  id: Scalars['String'];
+  id: Scalars['ID'];
   refreshToken: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+  user: User;
   userId: Scalars['String'];
 };
 
@@ -1130,18 +1023,18 @@ export type StringNullableFilter = {
 
 export type User = {
   __typename?: 'User';
-  RefreshTokens: Array<RefreshToken>;
+  RefreshTokens?: Maybe<Array<RefreshToken>>;
   WorkspaceMember?: Maybe<WorkspaceMember>;
-  _count?: Maybe<UserCount>;
+  _count: UserCount;
   avatarUrl?: Maybe<Scalars['String']>;
-  companies: Array<Company>;
+  companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   disabled: Scalars['Boolean'];
   displayName: Scalars['String'];
   email: Scalars['String'];
   emailVerified: Scalars['Boolean'];
-  id: Scalars['String'];
+  id: Scalars['ID'];
   lastSeen?: Maybe<Scalars['DateTime']>;
   locale: Scalars['String'];
   metadata?: Maybe<Scalars['JSON']>;
@@ -1182,19 +1075,8 @@ export type UserCreateNestedOneWithoutCompaniesInput = {
   create?: InputMaybe<UserCreateWithoutCompaniesInput>;
 };
 
-export type UserCreateNestedOneWithoutWorkspaceMemberInput = {
-  connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutWorkspaceMemberInput>;
-  create?: InputMaybe<UserCreateWithoutWorkspaceMemberInput>;
-};
-
 export type UserCreateOrConnectWithoutCompaniesInput = {
   create: UserCreateWithoutCompaniesInput;
-  where: UserWhereUniqueInput;
-};
-
-export type UserCreateOrConnectWithoutWorkspaceMemberInput = {
-  create: UserCreateWithoutWorkspaceMemberInput;
   where: UserWhereUniqueInput;
 };
 
@@ -1202,25 +1084,6 @@ export type UserCreateWithoutCompaniesInput = {
   RefreshTokens?: InputMaybe<RefreshTokenCreateNestedManyWithoutUserInput>;
   WorkspaceMember?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutUserInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  disabled?: InputMaybe<Scalars['Boolean']>;
-  displayName: Scalars['String'];
-  email: Scalars['String'];
-  emailVerified?: InputMaybe<Scalars['Boolean']>;
-  id: Scalars['String'];
-  lastSeen?: InputMaybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
-  metadata?: InputMaybe<Scalars['JSON']>;
-  passwordHash?: InputMaybe<Scalars['String']>;
-  phoneNumber?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UserCreateWithoutWorkspaceMemberInput = {
-  RefreshTokens?: InputMaybe<RefreshTokenCreateNestedManyWithoutUserInput>;
-  avatarUrl?: InputMaybe<Scalars['String']>;
-  companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   deletedAt?: InputMaybe<Scalars['DateTime']>;
   disabled?: InputMaybe<Scalars['Boolean']>;
@@ -1278,14 +1141,6 @@ export enum UserScalarFieldEnum {
   UpdatedAt = 'updatedAt'
 }
 
-export type UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput = {
-  connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutWorkspaceMemberInput>;
-  create?: InputMaybe<UserCreateWithoutWorkspaceMemberInput>;
-  update?: InputMaybe<UserUpdateWithoutWorkspaceMemberInput>;
-  upsert?: InputMaybe<UserUpsertWithoutWorkspaceMemberInput>;
-};
-
 export type UserUpdateOneWithoutCompaniesNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
   connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutCompaniesInput>;
@@ -1315,33 +1170,9 @@ export type UserUpdateWithoutCompaniesInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type UserUpdateWithoutWorkspaceMemberInput = {
-  RefreshTokens?: InputMaybe<RefreshTokenUpdateManyWithoutUserNestedInput>;
-  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  passwordHash?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
 export type UserUpsertWithoutCompaniesInput = {
   create: UserCreateWithoutCompaniesInput;
   update: UserUpdateWithoutCompaniesInput;
-};
-
-export type UserUpsertWithoutWorkspaceMemberInput = {
-  create: UserCreateWithoutWorkspaceMemberInput;
-  update: UserUpdateWithoutWorkspaceMemberInput;
 };
 
 export type UserWhereInput = {
@@ -1374,12 +1205,16 @@ export type UserWhereUniqueInput = {
 
 export type Workspace = {
   __typename?: 'Workspace';
-  _count?: Maybe<WorkspaceCount>;
+  WorkspaceMember?: Maybe<Array<WorkspaceMember>>;
+  _count: WorkspaceCount;
+  companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName: Scalars['String'];
   domainName: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['ID'];
+  logo?: Maybe<Scalars['String']>;
+  people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -1390,59 +1225,15 @@ export type WorkspaceCount = {
   people: Scalars['Int'];
 };
 
-export type WorkspaceCreateNestedOneWithoutCompaniesInput = {
-  connect?: InputMaybe<WorkspaceWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<WorkspaceCreateOrConnectWithoutCompaniesInput>;
-  create?: InputMaybe<WorkspaceCreateWithoutCompaniesInput>;
-};
-
-export type WorkspaceCreateNestedOneWithoutPeopleInput = {
-  connect?: InputMaybe<WorkspaceWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<WorkspaceCreateOrConnectWithoutPeopleInput>;
-  create?: InputMaybe<WorkspaceCreateWithoutPeopleInput>;
-};
-
 export type WorkspaceCreateNestedOneWithoutWorkspaceMemberInput = {
   connect?: InputMaybe<WorkspaceWhereUniqueInput>;
   connectOrCreate?: InputMaybe<WorkspaceCreateOrConnectWithoutWorkspaceMemberInput>;
   create?: InputMaybe<WorkspaceCreateWithoutWorkspaceMemberInput>;
 };
 
-export type WorkspaceCreateOrConnectWithoutCompaniesInput = {
-  create: WorkspaceCreateWithoutCompaniesInput;
-  where: WorkspaceWhereUniqueInput;
-};
-
-export type WorkspaceCreateOrConnectWithoutPeopleInput = {
-  create: WorkspaceCreateWithoutPeopleInput;
-  where: WorkspaceWhereUniqueInput;
-};
-
 export type WorkspaceCreateOrConnectWithoutWorkspaceMemberInput = {
   create: WorkspaceCreateWithoutWorkspaceMemberInput;
   where: WorkspaceWhereUniqueInput;
-};
-
-export type WorkspaceCreateWithoutCompaniesInput = {
-  WorkspaceMember?: InputMaybe<WorkspaceMemberCreateNestedManyWithoutWorkspaceInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  displayName: Scalars['String'];
-  domainName: Scalars['String'];
-  id: Scalars['String'];
-  people?: InputMaybe<PersonCreateNestedManyWithoutWorkspaceInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type WorkspaceCreateWithoutPeopleInput = {
-  WorkspaceMember?: InputMaybe<WorkspaceMemberCreateNestedManyWithoutWorkspaceInput>;
-  companies?: InputMaybe<CompanyCreateNestedManyWithoutWorkspaceInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  displayName: Scalars['String'];
-  domainName: Scalars['String'];
-  id: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type WorkspaceCreateWithoutWorkspaceMemberInput = {
@@ -1452,6 +1243,7 @@ export type WorkspaceCreateWithoutWorkspaceMemberInput = {
   displayName: Scalars['String'];
   domainName: Scalars['String'];
   id: Scalars['String'];
+  logo?: InputMaybe<Scalars['String']>;
   people?: InputMaybe<PersonCreateNestedManyWithoutWorkspaceInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -1460,32 +1252,12 @@ export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
-  id: Scalars['String'];
+  id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
   workspace: Workspace;
   workspaceId: Scalars['String'];
-};
-
-export type WorkspaceMemberCreateManyWorkspaceInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  userId: Scalars['String'];
-};
-
-export type WorkspaceMemberCreateManyWorkspaceInputEnvelope = {
-  data: Array<WorkspaceMemberCreateManyWorkspaceInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type WorkspaceMemberCreateNestedManyWithoutWorkspaceInput = {
-  connect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<WorkspaceMemberCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<WorkspaceMemberCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<WorkspaceMemberCreateManyWorkspaceInputEnvelope>;
 };
 
 export type WorkspaceMemberCreateNestedOneWithoutUserInput = {
@@ -1499,25 +1271,12 @@ export type WorkspaceMemberCreateOrConnectWithoutUserInput = {
   where: WorkspaceMemberWhereUniqueInput;
 };
 
-export type WorkspaceMemberCreateOrConnectWithoutWorkspaceInput = {
-  create: WorkspaceMemberCreateWithoutWorkspaceInput;
-  where: WorkspaceMemberWhereUniqueInput;
-};
-
 export type WorkspaceMemberCreateWithoutUserInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   deletedAt?: InputMaybe<Scalars['DateTime']>;
   id: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   workspace: WorkspaceCreateNestedOneWithoutWorkspaceMemberInput;
-};
-
-export type WorkspaceMemberCreateWithoutWorkspaceInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  user: UserCreateNestedOneWithoutWorkspaceMemberInput;
 };
 
 export type WorkspaceMemberListRelationFilter = {
@@ -1546,44 +1305,6 @@ export type WorkspaceMemberRelationFilter = {
   isNot?: InputMaybe<WorkspaceMemberWhereInput>;
 };
 
-export type WorkspaceMemberScalarWhereInput = {
-  AND?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
-  NOT?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
-  OR?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
-  id?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-  userId?: InputMaybe<StringFilter>;
-  workspaceId?: InputMaybe<StringFilter>;
-};
-
-export type WorkspaceMemberUpdateManyMutationInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput = {
-  data: WorkspaceMemberUpdateManyMutationInput;
-  where: WorkspaceMemberScalarWhereInput;
-};
-
-export type WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput = {
-  connect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<WorkspaceMemberCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<WorkspaceMemberCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<WorkspaceMemberCreateManyWorkspaceInputEnvelope>;
-  delete?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  set?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  update?: InputMaybe<Array<WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput>>;
-  updateMany?: InputMaybe<Array<WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput>>;
-  upsert?: InputMaybe<Array<WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput>>;
-};
-
 export type WorkspaceMemberUpdateOneWithoutUserNestedInput = {
   connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
   connectOrCreate?: InputMaybe<WorkspaceMemberCreateOrConnectWithoutUserInput>;
@@ -1594,31 +1315,12 @@ export type WorkspaceMemberUpdateOneWithoutUserNestedInput = {
   upsert?: InputMaybe<WorkspaceMemberUpsertWithoutUserInput>;
 };
 
-export type WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput = {
-  data: WorkspaceMemberUpdateWithoutWorkspaceInput;
-  where: WorkspaceMemberWhereUniqueInput;
-};
-
 export type WorkspaceMemberUpdateWithoutUserInput = {
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   workspace?: InputMaybe<WorkspaceUpdateOneRequiredWithoutWorkspaceMemberNestedInput>;
-};
-
-export type WorkspaceMemberUpdateWithoutWorkspaceInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  user?: InputMaybe<UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput>;
-};
-
-export type WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput = {
-  create: WorkspaceMemberCreateWithoutWorkspaceInput;
-  update: WorkspaceMemberUpdateWithoutWorkspaceInput;
-  where: WorkspaceMemberWhereUniqueInput;
 };
 
 export type WorkspaceMemberUpsertWithoutUserInput = {
@@ -1653,6 +1355,7 @@ export type WorkspaceOrderByWithRelationInput = {
   displayName?: InputMaybe<SortOrder>;
   domainName?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  logo?: InputMaybe<SortOrder>;
   people?: InputMaybe<PersonOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
 };
@@ -1660,22 +1363,6 @@ export type WorkspaceOrderByWithRelationInput = {
 export type WorkspaceRelationFilter = {
   is?: InputMaybe<WorkspaceWhereInput>;
   isNot?: InputMaybe<WorkspaceWhereInput>;
-};
-
-export type WorkspaceUpdateOneRequiredWithoutCompaniesNestedInput = {
-  connect?: InputMaybe<WorkspaceWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<WorkspaceCreateOrConnectWithoutCompaniesInput>;
-  create?: InputMaybe<WorkspaceCreateWithoutCompaniesInput>;
-  update?: InputMaybe<WorkspaceUpdateWithoutCompaniesInput>;
-  upsert?: InputMaybe<WorkspaceUpsertWithoutCompaniesInput>;
-};
-
-export type WorkspaceUpdateOneRequiredWithoutPeopleNestedInput = {
-  connect?: InputMaybe<WorkspaceWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<WorkspaceCreateOrConnectWithoutPeopleInput>;
-  create?: InputMaybe<WorkspaceCreateWithoutPeopleInput>;
-  update?: InputMaybe<WorkspaceUpdateWithoutPeopleInput>;
-  upsert?: InputMaybe<WorkspaceUpsertWithoutPeopleInput>;
 };
 
 export type WorkspaceUpdateOneRequiredWithoutWorkspaceMemberNestedInput = {
@@ -1686,28 +1373,6 @@ export type WorkspaceUpdateOneRequiredWithoutWorkspaceMemberNestedInput = {
   upsert?: InputMaybe<WorkspaceUpsertWithoutWorkspaceMemberInput>;
 };
 
-export type WorkspaceUpdateWithoutCompaniesInput = {
-  WorkspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  people?: InputMaybe<PersonUpdateManyWithoutWorkspaceNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type WorkspaceUpdateWithoutPeopleInput = {
-  WorkspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
-  companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
 export type WorkspaceUpdateWithoutWorkspaceMemberInput = {
   companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -1715,18 +1380,9 @@ export type WorkspaceUpdateWithoutWorkspaceMemberInput = {
   displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
   domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  logo?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   people?: InputMaybe<PersonUpdateManyWithoutWorkspaceNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type WorkspaceUpsertWithoutCompaniesInput = {
-  create: WorkspaceCreateWithoutCompaniesInput;
-  update: WorkspaceUpdateWithoutCompaniesInput;
-};
-
-export type WorkspaceUpsertWithoutPeopleInput = {
-  create: WorkspaceCreateWithoutPeopleInput;
-  update: WorkspaceUpdateWithoutPeopleInput;
 };
 
 export type WorkspaceUpsertWithoutWorkspaceMemberInput = {
@@ -1745,6 +1401,7 @@ export type WorkspaceWhereInput = {
   displayName?: InputMaybe<StringFilter>;
   domainName?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
+  logo?: InputMaybe<StringNullableFilter>;
   people?: InputMaybe<PersonListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -1779,7 +1436,6 @@ export type InsertCompanyMutationVariables = Exact<{
   id: Scalars['String'];
   name: Scalars['String'];
   domain_name: Scalars['String'];
-  account_owner_id?: InputMaybe<Scalars['String']>;
   created_at?: InputMaybe<Scalars['DateTime']>;
   address: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
@@ -1793,7 +1449,7 @@ export type DeleteCompaniesMutationVariables = Exact<{
 }>;
 
 
-export type DeleteCompaniesMutation = { __typename?: 'Mutation', deleteManyCompany: { __typename?: 'AffectedRowsOutput', count: number } };
+export type DeleteCompaniesMutation = { __typename?: 'Mutation', deleteManyCompany: { __typename?: 'AffectedRows', count: number } };
 
 export type GetPeopleQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
@@ -1824,7 +1480,6 @@ export type InsertPersonMutationVariables = Exact<{
   lastname: Scalars['String'];
   phone: Scalars['String'];
   city: Scalars['String'];
-  company_id?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   created_at?: InputMaybe<Scalars['DateTime']>;
 }>;
@@ -1837,7 +1492,7 @@ export type DeletePeopleMutationVariables = Exact<{
 }>;
 
 
-export type DeletePeopleMutation = { __typename?: 'Mutation', deleteManyPerson: { __typename?: 'AffectedRowsOutput', count: number } };
+export type DeletePeopleMutation = { __typename?: 'Mutation', deleteManyPerson: { __typename?: 'AffectedRows', count: number } };
 
 export type SearchPeopleQueryQueryVariables = Exact<{
   where?: InputMaybe<PersonWhereInput>;
@@ -1873,7 +1528,7 @@ export type GetCurrentUserQueryVariables = Exact<{
 }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspace_member?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, domain_name: string, display_name: string } } | null }> };
+export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspace_member?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, logo?: string | null, domain_name: string, display_name: string } } | null }> };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1980,9 +1635,9 @@ export type UpdateCompanyMutationHookResult = ReturnType<typeof useUpdateCompany
 export type UpdateCompanyMutationResult = Apollo.MutationResult<UpdateCompanyMutation>;
 export type UpdateCompanyMutationOptions = Apollo.BaseMutationOptions<UpdateCompanyMutation, UpdateCompanyMutationVariables>;
 export const InsertCompanyDocument = gql`
-    mutation InsertCompany($id: String!, $name: String!, $domain_name: String!, $account_owner_id: String, $created_at: DateTime, $address: String!, $employees: Int) {
+    mutation InsertCompany($id: String!, $name: String!, $domain_name: String!, $created_at: DateTime, $address: String!, $employees: Int) {
   createOneCompany(
-    data: {id: $id, name: $name, domainName: $domain_name, accountOwner: {connect: {id: $account_owner_id}}, createdAt: $created_at, address: $address, employees: $employees, workspace: {connect: {id: "il faut rajouter l'id du workspace"}}}
+    data: {id: $id, name: $name, domainName: $domain_name, createdAt: $created_at, address: $address, employees: $employees}
   ) {
     address
     created_at: createdAt
@@ -2011,7 +1666,6 @@ export type InsertCompanyMutationFn = Apollo.MutationFunction<InsertCompanyMutat
  *      id: // value for 'id'
  *      name: // value for 'name'
  *      domain_name: // value for 'domain_name'
- *      account_owner_id: // value for 'account_owner_id'
  *      created_at: // value for 'created_at'
  *      address: // value for 'address'
  *      employees: // value for 'employees'
@@ -2161,9 +1815,9 @@ export type UpdatePeopleMutationHookResult = ReturnType<typeof useUpdatePeopleMu
 export type UpdatePeopleMutationResult = Apollo.MutationResult<UpdatePeopleMutation>;
 export type UpdatePeopleMutationOptions = Apollo.BaseMutationOptions<UpdatePeopleMutation, UpdatePeopleMutationVariables>;
 export const InsertPersonDocument = gql`
-    mutation InsertPerson($id: String!, $firstname: String!, $lastname: String!, $phone: String!, $city: String!, $company_id: String, $email: String!, $created_at: DateTime) {
+    mutation InsertPerson($id: String!, $firstname: String!, $lastname: String!, $phone: String!, $city: String!, $email: String!, $created_at: DateTime) {
   createOnePerson(
-    data: {id: $id, firstname: $firstname, lastname: $lastname, phone: $phone, city: $city, company: {connect: {id: $company_id}}, email: $email, createdAt: $created_at, workspace: {connect: {id: "il faut rajouter l'id du workspace"}}}
+    data: {id: $id, firstname: $firstname, lastname: $lastname, phone: $phone, city: $city, email: $email, createdAt: $created_at}
   ) {
     city
     company {
@@ -2200,7 +1854,6 @@ export type InsertPersonMutationFn = Apollo.MutationFunction<InsertPersonMutatio
  *      lastname: // value for 'lastname'
  *      phone: // value for 'phone'
  *      city: // value for 'city'
- *      company_id: // value for 'company_id'
  *      email: // value for 'email'
  *      created_at: // value for 'created_at'
  *   },
@@ -2399,7 +2052,7 @@ export type SearchQueryQueryHookResult = ReturnType<typeof useSearchQueryQuery>;
 export type SearchQueryLazyQueryHookResult = ReturnType<typeof useSearchQueryLazyQuery>;
 export type SearchQueryQueryResult = Apollo.QueryResult<SearchQueryQuery, SearchQueryQueryVariables>;
 export const GetCurrentUserDocument = gql`
-    query GetCurrentUser($uuid: String) {
+    query getCurrentUser($uuid: String) {
   users(where: {id: {equals: $uuid}}) {
     id
     email
@@ -2409,6 +2062,7 @@ export const GetCurrentUserDocument = gql`
         id
         domain_name: domainName
         display_name: displayName
+        logo
       }
     }
   }

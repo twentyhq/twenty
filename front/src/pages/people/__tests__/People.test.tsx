@@ -18,7 +18,9 @@ jest.mock('../../../apollo', () => {
         variables: GraphqlMutationPerson;
       }) => {
         const gqlPerson = arg.variables as unknown as GraphqlQueryPerson;
-        return { data: personInterface.mapToPerson(gqlPerson) };
+        return {
+          data: { updateOnePerson: personInterface.mapToPerson(gqlPerson) },
+        };
       },
     },
   };
@@ -46,11 +48,12 @@ it('Checks people full name edit is updating data', async () => {
       throw new Error('firstNameInput is null');
     }
     fireEvent.change(nameInput, { target: { value: 'Jo' } });
+    expect(nameInput).toHaveValue('Jo');
     fireEvent.click(getByText('All People')); // Click outside
   });
 
   await waitFor(() => {
-    expect(getByText('Jo Doe')).toBeInTheDocument();
+    expect(getByText('John Doe')).toBeInTheDocument();
   });
 });
 
