@@ -15,6 +15,7 @@ import {
 import { SortType, SelectedSortType } from '../../interfaces/sorts/interface';
 import { useRecoilState } from 'recoil';
 import { currentRowSelectionState } from '../../modules/ui/tables/states/rowSelectionState';
+import { useResetTableRowSelection } from '../../modules/ui/tables/hooks/useResetTableRowSelection';
 
 type OwnProps<
   TData extends { id: string; __typename: 'companies' | 'people' },
@@ -83,7 +84,7 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
-export const EntityTable = <
+export function EntityTable<
   TData extends { id: string; __typename: 'companies' | 'people' },
   SortField,
 >({
@@ -95,14 +96,16 @@ export const EntityTable = <
   availableFilters,
   onSortsUpdate,
   onFiltersUpdate,
-}: OwnProps<TData, SortField>) => {
+}: OwnProps<TData, SortField>) {
   const [currentRowSelection, setCurrentRowSelection] = useRecoilState(
     currentRowSelectionState,
   );
 
+  const resetTableRowSelection = useResetTableRowSelection();
+
   React.useEffect(() => {
-    setCurrentRowSelection({});
-  }, [setCurrentRowSelection]);
+    resetTableRowSelection();
+  }, [resetTableRowSelection]);
 
   const table = useReactTable<TData>({
     data,
@@ -169,4 +172,4 @@ export const EntityTable = <
       </StyledTableScrollableContainer>
     </StyledTableWithHeader>
   );
-};
+}
