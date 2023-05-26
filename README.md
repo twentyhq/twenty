@@ -33,7 +33,7 @@
 
 # About
 
-Twenty is a open source CRM designed to solve the issues that are still prevalent amongst the existings solutions. 
+Twenty is an open source CRM designed to solve the issues that are still prevalent amongst the existings solutions. 
 It is meant to be:
 - Easily extendable
 - Perfectly in-sync with your data
