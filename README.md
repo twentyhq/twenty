@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-=======
-
 <p align="center">
   <a href="https://www.twenty.com">
     <img src="./docs/src/img/square-dark-logo.svg#gh-dark-mode-only" width="136px" alt="Twenty logo" />
@@ -36,6 +33,7 @@
 # About
 >>>>>>> 6b41be8 (new header for Readme)
 
+<<<<<<< HEAD
 </br>
 <p align="center">
   <a href="https://www.twenty.com#gh-dark-mode-only">
@@ -67,7 +65,8 @@
 
 # About
 
-Twenty is an Open Source CRM designed to solve the issues that are still prevalent among the existings solutions. 
+Twenty is an open source CRM designed to solve the issues that are still prevalent amongst the existings solutions.
+
 It is meant to be:
 - Easily extendable
 - Perfectly in-sync with your data
