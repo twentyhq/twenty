@@ -1,13 +1,11 @@
 <p align="center">
-  <a href="https://www.twenty.com">
-    <img src="./docs/src/img/logo-square-dark.svg#gh-dark-mode-only" width="136px" alt="Twenty logo" />
+  <a href="https://www.twenty.com#gh-dark-mode-only">
+    <img src="./docs/src/img/logo-square-dark.svg" width="136px" alt="Twenty logo" />
   </a>
-  <a href="https://www.twenty.com">
-    <img src="./docs/src/img/square-dark-logo.svg#gh-light-mode-only" width="136px" alt="Twenty logo" />
+  <a href="https://www.twenty.com#gh-light-mode-only">
+    <img src="./docs/src/img/g.svg" width="136px" alt="Twenty logo" />
   </a>
 </p>
-
-
 
 <h2 align="center" >CRM empowering simplicity.</h3>
 <p align="center">Engineer-Designed. Business-Ready.
@@ -20,13 +18,13 @@
 <br>
 
 <p align="center">
-  <a href="https://www.twenty.com">
-    <img src="./docs/src/img/preview-dark.png#gh-dark-mode-only" alt="Companies view" />
+  <a href="https://www.twenty.com#gh-dark-mode-only">
+    <img src="./docs/src/img/preview-dark.png" alt="Companies view" />
   </a>
 </p>
 <p align="center">
-  <a href="https://www.twenty.com">
-    <img src="./docs/src/img/preview-light.png#gh-light-mode-only" alt="Companies view" />
+  <a href="https://www.twenty.com#gh-light-mode-only">
+    <img src="./docs/src/img/preview-light.png" alt="Companies view" />
   </a>
 </p>
 
