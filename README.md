@@ -1,7 +1,7 @@
 
 <p align="center">
   <a href="https://www.twenty.com">
-    <img src="./docs/src/img/square-dark-logo.svg#gh-dark-mode-only" width="136px" alt="Twenty logo" />
+    <img src="./docs/src/img/logo-square-dark.svg#gh-dark-mode-only" width="136px" alt="Twenty logo" />
   </a>
   <a href="https://www.twenty.com">
     <img src="./docs/src/img/square-dark-logo.svg#gh-light-mode-only" width="136px" alt="Twenty logo" />
@@ -10,7 +10,7 @@
 
 
 
-<h2 align="center" >The Open Source CRM empowering simplicity.</h3>
+<h2 align="center" >CRM empowering simplicity.</h3>
 <p align="center">Engineer-Designed. Business-Ready.
 
 
@@ -22,18 +22,18 @@
 
 <p align="center">
   <a href="https://www.twenty.com">
-    <img src="./docs/src/img/TwentyDarkPreview.png#gh-dark-mode-only" alt="Companies view" />
+    <img src="./docs/src/img/preview-dark.png#gh-dark-mode-only" alt="Companies view" />
   </a>
 </p>
 <p align="center">
   <a href="https://www.twenty.com">
-    <img src="./docs/src/img/TwentyLightPreview.png#gh-light-mode-only" alt="Companies view" />
+    <img src="./docs/src/img/preview-light.png#gh-light-mode-only" alt="Companies view" />
   </a>
 </p>
 
 # About
 
-Twenty is an open source CRM designed to solve the issues that are still prevalent amongst the existings solutions. 
+Twenty is an open source CRM designed to solve the issues that are still prevalent among the existings solutions. 
 It is meant to be:
 - Easily extendable
 - Perfectly in-sync with your data
