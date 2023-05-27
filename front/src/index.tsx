@@ -7,18 +7,21 @@ import { ApolloProvider } from '@apollo/client';
 import '@emotion/react';
 import { ThemeType } from './layout/styles/themes';
 import { apiClient } from './apollo';
+import { RecoilRoot } from 'recoil';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
-  <ApolloProvider client={apiClient}>
-    <BrowserRouter>
-      <StrictMode>
-        <App />
-      </StrictMode>
-    </BrowserRouter>
-  </ApolloProvider>,
+  <RecoilRoot>
+    <ApolloProvider client={apiClient}>
+      <BrowserRouter>
+        <StrictMode>
+          <App />
+        </StrictMode>
+      </BrowserRouter>
+    </ApolloProvider>
+  </RecoilRoot>,
 );
 
 declare module '@emotion/react' {

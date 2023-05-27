@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { isDefined } from '../../utils/type-guards/isDefined';
+import { isDefined } from '../../../utils/type-guards/isDefined';
 
 export function useListenClickOutsideArrayOfRef<T extends HTMLElement>(
   arrayOfRef: Array<React.RefObject<T>>,
