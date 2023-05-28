@@ -1,4 +1,4 @@
-import { GraphqlQueryCompany } from '../../../../interfaces/entities/company.interface';
+import { GraphqlQueryCompany } from '../../interfaces/entities/company.interface';
 
 export const mockCompaniesData: Array<GraphqlQueryCompany> = [
   {
@@ -43,8 +43,8 @@ export const mockCompaniesData: Array<GraphqlQueryCompany> = [
   },
   {
     id: '5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
-    domain_name: 'bereal.com',
-    name: 'BeReal',
+    domain_name: 'qonto.com',
+    name: 'Qonto',
     created_at: '2023-04-26T10:13:29.712485+00:00',
     address: '10 rue de la Paix',
     employees: 1,
@@ -53,8 +53,18 @@ export const mockCompaniesData: Array<GraphqlQueryCompany> = [
   },
   {
     id: '9d162de6-cfbf-4156-a790-e39854dcd4eb',
-    domain_name: 'claap.com',
-    name: 'Claap',
+    domain_name: 'facebook.com',
+    name: 'Facebook',
+    created_at: '2023-04-26T10:09:25.656555+00:00',
+    address: '',
+    employees: 1,
+    account_owner: null,
+    __typename: 'companies',
+  },
+  {
+    id: '9d162de6-cfbf-4156-a790-e39854dcd4eb',
+    domain_name: 'sequoia.com',
+    name: 'Sequoia',
     created_at: '2023-04-26T10:09:25.656555+00:00',
     address: '',
     employees: 1,

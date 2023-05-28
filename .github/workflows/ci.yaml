@@ -26,4 +26,4 @@ jobs:
       - name: Run linter
         run: cd front && npm run lint
       - name: Run tests and code coverage
-        run: cd front && npm run coverage-ci
+        run: cd front && npm run test-storybook

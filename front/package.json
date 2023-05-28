@@ -30,9 +30,10 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src --max-warnings=0",
-    "storybook": "storybook dev -p 6006 -s public",
-    "build-storybook": "storybook build -s public",
-    "coverage": "react-scripts test --coverage --watchAll",
+    "storybook": "storybook dev -p 6006 -s ../public",
+    "test-storybook": "test-storybook",
+    "build-storybook": "storybook build -s ../public",
+    "coverage": "test-storybook --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook",
     "coverage-ci": "react-scripts test --coverage --watchAll=false",
     "graphql:generate": "REACT_APP_GRAPHQL_ADMIN_SECRET=$REACT_APP_GRAPHQL_ADMIN_SECRET graphql-codegen --config codegen.js"
   },
@@ -93,13 +94,16 @@
     "@graphql-codegen/typescript-operations": "^3.0.4",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@storybook/addon-actions": "^7.0.2",
+    "@storybook/addon-coverage": "^0.0.8",
     "@storybook/addon-essentials": "^7.0.2",
     "@storybook/addon-interactions": "^7.0.2",
     "@storybook/addon-links": "^7.0.2",
+    "@storybook/jest": "^0.1.0",
     "@storybook/node-logger": "^7.0.2",
     "@storybook/preset-create-react-app": "^7.0.2",
     "@storybook/react": "^7.0.2",
     "@storybook/react-webpack5": "^7.0.2",
+    "@storybook/test-runner": "^0.10.0",
     "@storybook/testing-library": "^0.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -120,11 +124,16 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-storybook": "^0.6.11",
     "mock-apollo-client": "^1.2.1",
+    "msw": "^1.2.1",
+    "msw-storybook-addon": "^1.8.0",
     "prettier": "^2.8.0",
     "prop-types": "^15.8.1",
     "react-scripts": "5.0.1",
     "storybook": "^7.0.2",
     "typescript": "^4.9.3",
     "webpack": "^5.75.0"
+  },
+  "msw": {
+    "workerDirectory": "public"
   }
 }
