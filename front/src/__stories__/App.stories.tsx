@@ -47,12 +47,12 @@ const render = () => (
 
 export const Default: Story = {
   render,
-  /*loaders: [
+  loaders: [
     async () => ({
       accessTokenStored: await window.localStorage.setItem(
         'accessToken',
         'test-token',
       ),
     }),
-  ],*/
+  ],
 };

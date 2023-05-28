@@ -32,9 +32,8 @@
     "lint": "eslint src --max-warnings=0",
     "storybook": "storybook dev -p 6006 -s ../public",
     "test-storybook": "test-storybook",
-    "build-storybook": "storybook build -s ../public",
-    "coverage": "test-storybook --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook",
-    "coverage-ci": "react-scripts test --coverage --watchAll=false",
+    "build-storybook": "storybook build -s public",
+    "coverage": "test-storybook --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage --lines 50",
     "graphql:generate": "REACT_APP_GRAPHQL_ADMIN_SECRET=$REACT_APP_GRAPHQL_ADMIN_SECRET graphql-codegen --config codegen.js"
   },
   "eslintConfig": {
@@ -57,24 +56,10 @@
     "react-refresh": "0.14.0"
   },
   "jest": {
-    "coveragePathIgnorePatterns": [
-      ".stories.tsx$",
-      "graphql.tsx$",
-      "apollo.tsx$",
-      "src/index.tsx$"
-    ],
     "testMatch": [
       "<rootDir>/**/*.test.ts",
       "<rootDir>/**/*.test.tsx"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 70,
-        "functions": 75,
-        "lines": 80,
-        "statements": 80
-      }
-    }
+    ]
   },
   "browserslist": {
     "production": [
@@ -113,6 +98,7 @@
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "babel-plugin-named-exports-order": "^0.0.2",
+    "concurrently": "^8.0.1",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-react-app": "^7.0.1",
@@ -123,6 +109,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-storybook": "^0.6.11",
+    "http-server": "^14.1.1",
     "mock-apollo-client": "^1.2.1",
     "msw": "^1.2.1",
     "msw-storybook-addon": "^1.8.0",

@@ -4,12 +4,21 @@ on:
 jobs:
   front-test:
     runs-on: ubuntu-latest
+    env:
+      REACT_APP_API_URL: http://127.0.0.1:3000/graphql
+      REACT_APP_AUTH_URL: http://127.0.0.1:3000/auth
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: "18"
+      - name: Write .env
+        run: |
+          cd front
+          touch .env
+          echo "REACT_APP_API_URL: $REACT_APP_API_URL" >> .env
+          echo "REACT_APP_AUTH_URL: $REACT_APP_AUTH_URL" >> .env
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -23,7 +32,14 @@ jobs:
             ${{ runner.os }}-
       - name: Install Dependencies
         run: cd front && npm install
+      - name: Install Playwright
+        run: cd front && npx playwright install --with-deps
       - name: Run linter
         run: cd front && npm run lint
-      - name: Run tests and code coverage
-        run: cd front && npm run test-storybook
+      - name: Build Storybook
+        run: cd front && npm run build-storybook --quiet
+      - name: Serve Storybook and run tests
+        run: |
+          cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "npx http-server storybook-static --silent --port 6006" \
+            "npm run coverage"
