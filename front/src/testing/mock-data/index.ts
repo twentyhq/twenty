@@ -23,7 +23,10 @@ function filterData<DataT>(
 
         if (filterElement.is) {
           const nestedKey = Object.keys(filterElement.is)[0] as string;
-          if (typeof item[key as keyof typeof item] === 'object') {
+          if (
+            item[key as keyof typeof item] &&
+            typeof item[key as keyof typeof item] === 'object'
+          ) {
             const nestedItem = item[key as keyof typeof item];
             return (
               nestedItem[nestedKey as keyof typeof nestedItem] ===
@@ -71,6 +74,7 @@ export function filterAndSortData<DataT>(
   limit: number,
 ): Array<DataT> {
   let filteredData = filterData<DataT>(data, where);
+  console.log(filteredData);
 
   if (orderBy) {
     const firstOrderBy = orderBy[0];
@@ -84,8 +88,12 @@ export function filterAndSortData<DataT>(
         return 0;
       }
 
+      const sortDirection =
+        firstOrderBy[key as unknown as keyof typeof firstOrderBy];
       if (typeof itemAValue === 'string' && typeof itemBValue === 'string') {
-        return itemBValue.localeCompare(itemAValue);
+        return sortDirection === 'desc'
+          ? itemBValue.localeCompare(itemAValue)
+          : -itemBValue.localeCompare(itemAValue);
       }
       return 0;
     });

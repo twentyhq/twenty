@@ -40,7 +40,7 @@ export const EMPTY_QUERY = gql`
 `;
 
 export const SEARCH_COMPANY_QUERY = gql`
-  query SearchQuery($where: CompanyWhereInput, $limit: Int) {
+  query SearchCompanyQuery($where: CompanyWhereInput, $limit: Int) {
     searchResults: companies(where: $where, take: $limit) {
       id
       name

@@ -14,7 +14,7 @@ import { QueryMode } from '../../generated/graphql';
 
 export const nameFilter = {
   key: 'name',
-  label: 'Company',
+  label: 'Name',
   icon: <TbBuilding size={16} />,
   type: 'text',
   operands: [

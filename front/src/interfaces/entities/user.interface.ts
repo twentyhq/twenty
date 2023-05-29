@@ -24,7 +24,7 @@ export type GraphqlMutationUser = {
   id: string;
   email?: string;
   displayName?: string;
-  workspaceMember_id?: string;
+  workspaceMemberId?: string;
   __typename: string;
 };
 
@@ -42,6 +42,6 @@ export const mapToGqlUser = (user: User): GraphqlMutationUser => ({
   id: user.id,
   email: user.email,
   displayName: user.displayName,
-  workspaceMember_id: user.workspaceMember?.id,
+  workspaceMemberId: user.workspaceMember?.id,
   __typename: 'users',
 });
