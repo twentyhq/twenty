@@ -10,7 +10,7 @@ export type Company = {
   employees?: number | null;
   address?: string;
 
-  creationDate?: Date;
+  createdAt?: Date;
 
   pipes?: Pipe[];
   accountOwner?: User | null;
@@ -19,13 +19,13 @@ export type Company = {
 export type GraphqlQueryCompany = {
   id: string;
   name?: string;
-  domain_name?: string;
+  domainName?: string;
   employees?: number | null;
   address?: string;
 
-  created_at?: string;
+  createdAt?: string;
 
-  account_owner?: GraphqlQueryUser | null;
+  accountOwner?: GraphqlQueryUser | null;
   pipes?: GraphqlQueryPipe[] | null;
   __typename: string;
 };
@@ -33,13 +33,13 @@ export type GraphqlQueryCompany = {
 export type GraphqlMutationCompany = {
   id: string;
   name?: string;
-  domain_name?: string;
+  domainName?: string;
   employees?: number | null;
   address?: string;
 
-  created_at?: string;
+  createdAt?: string;
 
-  account_owner_id?: string;
+  accountOwnerId?: string;
   __typename: string;
 };
 
@@ -49,26 +49,24 @@ export const mapToCompany = (company: GraphqlQueryCompany): Company => ({
   employees: company.employees,
   name: company.name,
   address: company.address,
-  domainName: company.domain_name,
-  creationDate: company.created_at ? new Date(company.created_at) : undefined,
+  domainName: company.domainName,
+  createdAt: company.createdAt ? new Date(company.createdAt) : undefined,
 
-  accountOwner: company.account_owner
-    ? mapToUser(company.account_owner)
-    : company.account_owner,
+  accountOwner: company.accountOwner
+    ? mapToUser(company.accountOwner)
+    : company.accountOwner,
   pipes: [],
 });
 
 export const mapToGqlCompany = (company: Company): GraphqlMutationCompany => ({
   id: company.id,
   name: company.name,
-  domain_name: company.domainName,
+  domainName: company.domainName,
   address: company.address,
   employees: company.employees,
 
-  created_at: company.creationDate
-    ? company.creationDate.toUTCString()
-    : undefined,
+  createdAt: company.createdAt ? company.createdAt.toUTCString() : undefined,
 
-  account_owner_id: company.accountOwner?.id,
+  accountOwnerId: company.accountOwner?.id,
   __typename: 'companies',
 });

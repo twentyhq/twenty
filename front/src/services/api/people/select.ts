@@ -22,11 +22,11 @@ export const GET_PEOPLE = gql`
       city
       firstname
       lastname
-      created_at: createdAt
+      createdAt
       company {
         id
         name
-        domain_name: domainName
+        domainName
       }
     }
   }

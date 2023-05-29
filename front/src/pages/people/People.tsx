@@ -64,7 +64,7 @@ function People() {
       phone: '',
       company: null,
       pipes: [],
-      creationDate: new Date(),
+      createdAt: new Date(),
       city: '',
     };
 

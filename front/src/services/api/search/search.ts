@@ -44,7 +44,7 @@ export const SEARCH_COMPANY_QUERY = gql`
     searchResults: companies(where: $where, take: $limit) {
       id
       name
-      domain_name: domainName
+      domainName
     }
   }
 `;

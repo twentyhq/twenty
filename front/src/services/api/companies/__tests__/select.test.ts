@@ -6,13 +6,13 @@ describe('reduceSortsToOrderBy', () => {
     const sorts = [
       { key: 'name', label: 'name', order: 'asc', _type: 'default_sort' },
       {
-        key: 'domain_name',
-        label: 'domain_name',
+        key: 'domainName',
+        label: 'domainName',
         order: 'desc',
         _type: 'default_sort',
       },
     ] satisfies CompaniesSelectedSortType[];
     const result = reduceSortsToOrderBy(sorts);
-    expect(result).toEqual([{ name: 'asc' }, { domain_name: 'desc' }]);
+    expect(result).toEqual([{ name: 'asc' }, { domainName: 'desc' }]);
   });
 });

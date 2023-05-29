@@ -15,7 +15,7 @@ export type Person = {
   phone?: string;
   city?: string;
 
-  creationDate?: Date;
+  createdAt?: Date;
 
   company?: Company | null;
   pipes?: Pipe[] | null;
@@ -29,7 +29,7 @@ export type GraphqlQueryPerson = {
   email?: string;
   phone?: string;
 
-  created_at?: string;
+  createdAt?: string;
 
   company?: GraphqlQueryCompany | null;
 
@@ -43,8 +43,8 @@ export type GraphqlMutationPerson = {
   email?: string;
   phone?: string;
   city?: string;
-  created_at?: string;
-  company_id?: string;
+  createdAt?: string;
+  companyId?: string;
   __typename: 'people';
 };
 
@@ -57,7 +57,7 @@ export const mapToPerson = (person: GraphqlQueryPerson): Person => ({
   phone: person.phone,
   city: person.city,
 
-  creationDate: person.created_at ? new Date(person.created_at) : undefined,
+  createdAt: person.createdAt ? new Date(person.createdAt) : undefined,
 
   company: person.company ? mapToCompany(person.company) : null,
 });
@@ -70,10 +70,8 @@ export const mapToGqlPerson = (person: Person): GraphqlMutationPerson => ({
   phone: person.phone,
   city: person.city,
 
-  created_at: person.creationDate
-    ? person.creationDate.toUTCString()
-    : undefined,
+  createdAt: person.createdAt ? person.createdAt.toUTCString() : undefined,
 
-  company_id: person.company?.id,
+  companyId: person.company?.id,
   __typename: 'people',
 });

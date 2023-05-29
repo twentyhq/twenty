@@ -13,7 +13,7 @@ import { User, mapToUser } from '../../interfaces/entities/user.interface';
 import { QueryMode } from '../../generated/graphql';
 
 export const nameFilter = {
-  key: 'company_name',
+  key: 'name',
   label: 'Company',
   icon: <TbBuilding size={16} />,
   type: 'text',
@@ -43,7 +43,7 @@ export const nameFilter = {
 } satisfies FilterConfigType<Company, string>;
 
 export const employeesFilter = {
-  key: 'company_employees',
+  key: 'employees',
   label: 'Employees',
   icon: <TbSum size={16} />,
   type: 'text',
@@ -70,7 +70,7 @@ export const employeesFilter = {
 } satisfies FilterConfigType<Company, string>;
 
 export const urlFilter = {
-  key: 'company_domain_name',
+  key: 'domainName',
   label: 'Url',
   icon: <TbLink size={16} />,
   type: 'text',
@@ -103,7 +103,7 @@ export const urlFilter = {
 } satisfies FilterConfigType<Company, string>;
 
 export const addressFilter = {
-  key: 'company_address',
+  key: 'address',
   label: 'Address',
   icon: <TbMapPin size={16} />,
   type: 'text',
@@ -132,8 +132,8 @@ export const addressFilter = {
   ],
 } satisfies FilterConfigType<Company, string>;
 
-export const creationDateFilter = {
-  key: 'company_created_at',
+export const ccreatedAtFilter = {
+  key: 'createdAt',
   label: 'Created At',
   icon: <TbCalendar size={16} />,
   type: 'date',
@@ -160,7 +160,7 @@ export const creationDateFilter = {
 } satisfies FilterConfigType<Company, string>;
 
 export const accountOwnerFilter = {
-  key: 'account_owner_name',
+  key: 'accountOwner',
   label: 'Account Owner',
   icon: <TbUser size={16} />,
   type: 'relation',
@@ -207,6 +207,6 @@ export const availableFilters = [
   employeesFilter,
   urlFilter,
   addressFilter,
-  creationDateFilter,
+  ccreatedAtFilter,
   accountOwnerFilter,
 ];

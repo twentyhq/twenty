@@ -41,16 +41,16 @@ export function PeopleCompanyCell({ people }: OwnProps) {
         variables: {
           id: newCompanyId,
           name: companyName,
-          domain_name: companyDomainName,
+          domainName: companyDomainName,
           address: '',
-          created_at: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
         },
       });
 
       await updatePeople({
         variables: {
           ...mapToGqlPerson(people),
-          company_id: newCompanyId,
+          companyId: newCompanyId,
         },
       });
     } catch (error) {
@@ -86,7 +86,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
         await updatePeople({
           variables: {
             ...mapToGqlPerson(people),
-            company_id: relation.id,
+            companyId: relation.id,
           },
         });
       }}

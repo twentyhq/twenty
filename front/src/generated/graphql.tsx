@@ -1417,32 +1417,32 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, name: string, address: string, employees?: number | null, domain_name: string, created_at: any, account_owner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: any, address: string, employees?: number | null, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
 
 export type UpdateCompanyMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
-  domain_name?: InputMaybe<Scalars['String']>;
-  account_owner_id?: InputMaybe<Scalars['String']>;
-  created_at?: InputMaybe<Scalars['DateTime']>;
+  domainName?: InputMaybe<Scalars['String']>;
+  accountOwnerId?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
   address?: InputMaybe<Scalars['String']>;
   employees?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type UpdateCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, employees?: number | null, id: string, name: string, created_at: any, domain_name: string, accountOwner?: { __typename?: 'User', id: string, email: string, display_name: string } | null } | null };
+export type UpdateCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: any, domainName: string, employees?: number | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null } | null };
 
 export type InsertCompanyMutationVariables = Exact<{
   id: Scalars['String'];
   name: Scalars['String'];
-  domain_name: Scalars['String'];
-  created_at?: InputMaybe<Scalars['DateTime']>;
+  domainName: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
   address: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type InsertCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, employees?: number | null, id: string, name: string, created_at: any, domain_name: string } };
+export type InsertCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: any, domainName: string, employees?: number | null, id: string, name: string } };
 
 export type DeleteCompaniesMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -1458,7 +1458,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, created_at: any, company?: { __typename?: 'Company', id: string, name: string, domain_name: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: any, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type UpdatePeopleMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1466,13 +1466,13 @@ export type UpdatePeopleMutationVariables = Exact<{
   lastname?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   city?: InputMaybe<Scalars['String']>;
-  company_id?: InputMaybe<Scalars['String']>;
+  companyId?: InputMaybe<Scalars['String']>;
   email?: InputMaybe<Scalars['String']>;
-  created_at?: InputMaybe<Scalars['DateTime']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
 }>;
 
 
-export type UpdatePeopleMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', city: string, email: string, firstname: string, id: string, lastname: string, phone: string, created_at: any, company?: { __typename?: 'Company', name: string, id: string, domain_name: string } | null } | null };
+export type UpdatePeopleMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', city: string, email: string, firstname: string, id: string, lastname: string, phone: string, createdAt: any, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
 
 export type InsertPersonMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1481,11 +1481,11 @@ export type InsertPersonMutationVariables = Exact<{
   phone: Scalars['String'];
   city: Scalars['String'];
   email: Scalars['String'];
-  created_at?: InputMaybe<Scalars['DateTime']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
 }>;
 
 
-export type InsertPersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', city: string, email: string, firstname: string, id: string, lastname: string, phone: string, created_at: any, company?: { __typename?: 'Company', name: string, id: string, domain_name: string } | null } };
+export type InsertPersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', city: string, email: string, firstname: string, id: string, lastname: string, phone: string, createdAt: any, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
 
 export type DeletePeopleMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -1521,14 +1521,14 @@ export type SearchQueryQueryVariables = Exact<{
 }>;
 
 
-export type SearchQueryQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domain_name: string }> };
+export type SearchQueryQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> };
 
 export type GetCurrentUserQueryVariables = Exact<{
   uuid?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspace_member?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, logo?: string | null, domain_name: string, display_name: string } } | null }> };
+export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspaceMember?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }> };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1540,12 +1540,12 @@ export const GetCompaniesDocument = gql`
     query GetCompanies($orderBy: [CompanyOrderByWithRelationInput!], $where: CompanyWhereInput) {
   companies(orderBy: $orderBy, where: $where) {
     id
-    domain_name: domainName
+    domainName
     name
-    created_at: createdAt
+    createdAt
     address
     employees
-    account_owner: accountOwner {
+    accountOwner: accountOwner {
       id
       email
       displayName
@@ -1583,19 +1583,19 @@ export type GetCompaniesQueryHookResult = ReturnType<typeof useGetCompaniesQuery
 export type GetCompaniesLazyQueryHookResult = ReturnType<typeof useGetCompaniesLazyQuery>;
 export type GetCompaniesQueryResult = Apollo.QueryResult<GetCompaniesQuery, GetCompaniesQueryVariables>;
 export const UpdateCompanyDocument = gql`
-    mutation UpdateCompany($id: String, $name: String, $domain_name: String, $account_owner_id: String, $created_at: DateTime, $address: String, $employees: Int) {
+    mutation UpdateCompany($id: String, $name: String, $domainName: String, $accountOwnerId: String, $createdAt: DateTime, $address: String, $employees: Int) {
   updateOneCompany(
     where: {id: $id}
-    data: {accountOwner: {connect: {id: $account_owner_id}}, address: {set: $address}, domainName: {set: $domain_name}, employees: {set: $employees}, name: {set: $name}, createdAt: {set: $created_at}}
+    data: {accountOwner: {connect: {id: $accountOwnerId}}, address: {set: $address}, domainName: {set: $domainName}, employees: {set: $employees}, name: {set: $name}, createdAt: {set: $createdAt}}
   ) {
     accountOwner {
       id
       email
-      display_name: displayName
+      displayName
     }
     address
-    created_at: createdAt
-    domain_name: domainName
+    createdAt
+    domainName
     employees
     id
     name
@@ -1619,9 +1619,9 @@ export type UpdateCompanyMutationFn = Apollo.MutationFunction<UpdateCompanyMutat
  *   variables: {
  *      id: // value for 'id'
  *      name: // value for 'name'
- *      domain_name: // value for 'domain_name'
- *      account_owner_id: // value for 'account_owner_id'
- *      created_at: // value for 'created_at'
+ *      domainName: // value for 'domainName'
+ *      accountOwnerId: // value for 'accountOwnerId'
+ *      createdAt: // value for 'createdAt'
  *      address: // value for 'address'
  *      employees: // value for 'employees'
  *   },
@@ -1635,13 +1635,13 @@ export type UpdateCompanyMutationHookResult = ReturnType<typeof useUpdateCompany
 export type UpdateCompanyMutationResult = Apollo.MutationResult<UpdateCompanyMutation>;
 export type UpdateCompanyMutationOptions = Apollo.BaseMutationOptions<UpdateCompanyMutation, UpdateCompanyMutationVariables>;
 export const InsertCompanyDocument = gql`
-    mutation InsertCompany($id: String!, $name: String!, $domain_name: String!, $created_at: DateTime, $address: String!, $employees: Int) {
+    mutation InsertCompany($id: String!, $name: String!, $domainName: String!, $createdAt: DateTime, $address: String!, $employees: Int) {
   createOneCompany(
-    data: {id: $id, name: $name, domainName: $domain_name, createdAt: $created_at, address: $address, employees: $employees}
+    data: {id: $id, name: $name, domainName: $domainName, createdAt: $createdAt, address: $address, employees: $employees}
   ) {
     address
-    created_at: createdAt
-    domain_name: domainName
+    createdAt
+    domainName
     employees
     id
     name
@@ -1665,8 +1665,8 @@ export type InsertCompanyMutationFn = Apollo.MutationFunction<InsertCompanyMutat
  *   variables: {
  *      id: // value for 'id'
  *      name: // value for 'name'
- *      domain_name: // value for 'domain_name'
- *      created_at: // value for 'created_at'
+ *      domainName: // value for 'domainName'
+ *      createdAt: // value for 'createdAt'
  *      address: // value for 'address'
  *      employees: // value for 'employees'
  *   },
@@ -1721,11 +1721,11 @@ export const GetPeopleDocument = gql`
     city
     firstname
     lastname
-    created_at: createdAt
+    createdAt
     company {
       id
       name
-      domain_name: domainName
+      domainName
     }
   }
 }
@@ -1761,14 +1761,14 @@ export type GetPeopleQueryHookResult = ReturnType<typeof useGetPeopleQuery>;
 export type GetPeopleLazyQueryHookResult = ReturnType<typeof useGetPeopleLazyQuery>;
 export type GetPeopleQueryResult = Apollo.QueryResult<GetPeopleQuery, GetPeopleQueryVariables>;
 export const UpdatePeopleDocument = gql`
-    mutation UpdatePeople($id: String, $firstname: String, $lastname: String, $phone: String, $city: String, $company_id: String, $email: String, $created_at: DateTime) {
+    mutation UpdatePeople($id: String, $firstname: String, $lastname: String, $phone: String, $city: String, $companyId: String, $email: String, $createdAt: DateTime) {
   updateOnePerson(
     where: {id: $id}
-    data: {city: {set: $city}, company: {connect: {id: $company_id}}, email: {set: $email}, firstname: {set: $firstname}, id: {set: $id}, lastname: {set: $lastname}, phone: {set: $phone}, createdAt: {set: $created_at}}
+    data: {city: {set: $city}, company: {connect: {id: $companyId}}, email: {set: $email}, firstname: {set: $firstname}, id: {set: $id}, lastname: {set: $lastname}, phone: {set: $phone}, createdAt: {set: $createdAt}}
   ) {
     city
     company {
-      domain_name: domainName
+      domainName
       name
       id
     }
@@ -1777,7 +1777,7 @@ export const UpdatePeopleDocument = gql`
     id
     lastname
     phone
-    created_at: createdAt
+    createdAt
   }
 }
     `;
@@ -1801,9 +1801,9 @@ export type UpdatePeopleMutationFn = Apollo.MutationFunction<UpdatePeopleMutatio
  *      lastname: // value for 'lastname'
  *      phone: // value for 'phone'
  *      city: // value for 'city'
- *      company_id: // value for 'company_id'
+ *      companyId: // value for 'companyId'
  *      email: // value for 'email'
- *      created_at: // value for 'created_at'
+ *      createdAt: // value for 'createdAt'
  *   },
  * });
  */
@@ -1815,13 +1815,13 @@ export type UpdatePeopleMutationHookResult = ReturnType<typeof useUpdatePeopleMu
 export type UpdatePeopleMutationResult = Apollo.MutationResult<UpdatePeopleMutation>;
 export type UpdatePeopleMutationOptions = Apollo.BaseMutationOptions<UpdatePeopleMutation, UpdatePeopleMutationVariables>;
 export const InsertPersonDocument = gql`
-    mutation InsertPerson($id: String!, $firstname: String!, $lastname: String!, $phone: String!, $city: String!, $email: String!, $created_at: DateTime) {
+    mutation InsertPerson($id: String!, $firstname: String!, $lastname: String!, $phone: String!, $city: String!, $email: String!, $createdAt: DateTime) {
   createOnePerson(
-    data: {id: $id, firstname: $firstname, lastname: $lastname, phone: $phone, city: $city, email: $email, createdAt: $created_at}
+    data: {id: $id, firstname: $firstname, lastname: $lastname, phone: $phone, city: $city, email: $email, createdAt: $createdAt}
   ) {
     city
     company {
-      domain_name: domainName
+      domainName
       name
       id
     }
@@ -1830,7 +1830,7 @@ export const InsertPersonDocument = gql`
     id
     lastname
     phone
-    created_at: createdAt
+    createdAt
   }
 }
     `;
@@ -1855,7 +1855,7 @@ export type InsertPersonMutationFn = Apollo.MutationFunction<InsertPersonMutatio
  *      phone: // value for 'phone'
  *      city: // value for 'city'
  *      email: // value for 'email'
- *      created_at: // value for 'created_at'
+ *      createdAt: // value for 'createdAt'
  *   },
  * });
  */
@@ -2018,7 +2018,7 @@ export const SearchQueryDocument = gql`
   searchResults: companies(where: $where, take: $limit) {
     id
     name
-    domain_name: domainName
+    domainName: domainName
   }
 }
     `;
@@ -2057,11 +2057,11 @@ export const GetCurrentUserDocument = gql`
     id
     email
     displayName
-    workspace_member: WorkspaceMember {
+    workspaceMember: WorkspaceMember {
       workspace {
         id
-        domain_name: domainName
-        display_name: displayName
+        domainName
+        displayName
         logo
       }
     }

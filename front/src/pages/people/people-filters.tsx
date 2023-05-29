@@ -162,8 +162,8 @@ export const phoneFilter = {
   ],
 } satisfies FilterConfigType<Person, string>;
 
-export const creationDateFilter = {
-  key: 'person_created_at',
+export const createdAtFilter = {
+  key: 'createdAt',
   label: 'Created At',
   icon: <TbCalendar size={16} />,
   type: 'date',
@@ -224,6 +224,6 @@ export const availableFilters = [
   emailFilter,
   companyFilter,
   phoneFilter,
-  creationDateFilter,
+  createdAtFilter,
   cityFilter,
 ] satisfies FilterConfigType<Person>[];

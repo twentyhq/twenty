@@ -61,7 +61,7 @@ function Companies() {
       employees: null,
       address: '',
       pipes: [],
-      creationDate: new Date(),
+      createdAt: new Date(),
       accountOwner: null,
       __typename: 'companies',
     };

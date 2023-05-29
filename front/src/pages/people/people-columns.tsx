@@ -103,16 +103,16 @@ export const usePeopleColumns = () => {
         ),
         size: 130,
       }),
-      columnHelper.accessor('creationDate', {
+      columnHelper.accessor('createdAt', {
         header: () => (
           <ColumnHead viewName="Creation" viewIcon={<TbCalendar size={16} />} />
         ),
         cell: (props) => (
           <EditableDate
-            value={props.row.original.creationDate || new Date()}
+            value={props.row.original.createdAt || new Date()}
             changeHandler={(value: Date) => {
               const person = props.row.original;
-              person.creationDate = value;
+              person.createdAt = value;
               updatePerson(person);
             }}
           />
