@@ -60,7 +60,7 @@ function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
             key={sort.key}
             labelValue={sort.label}
             id={sort.key}
-            icon={sort.order === 'asc' ? <FaArrowDown /> : <FaArrowUp />}
+            icon={sort.order === 'desc' ? <FaArrowDown /> : <FaArrowUp />}
             onRemove={() => onRemoveSort(sort.key)}
           />
         );

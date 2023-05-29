@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import People from '../People';
+import Companies from '../Companies';
 
 import { render, mocks } from './shared';
 
-const meta: Meta<typeof People> = {
-  title: 'Pages/People',
-  component: People,
+const meta: Meta<typeof Companies> = {
+  title: 'Pages/Companies',
+  component: Companies,
 };
 
 export default meta;
 
-export type Story = StoryObj<typeof People>;
+export type Story = StoryObj<typeof Companies>;
 
 export const Default: Story = {
   render,

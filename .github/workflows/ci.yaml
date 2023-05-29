@@ -38,8 +38,11 @@ jobs:
         run: cd front && npm run lint
       - name: Build Storybook
         run: cd front && npm run build-storybook --quiet
-      - name: Serve Storybook and run tests
+      - name: Serve Storybook and run storybook tests
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
             "npm run coverage"
+      - name: run jest tests
+        run: |
+          cd front && npm run test

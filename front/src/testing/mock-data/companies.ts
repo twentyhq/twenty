@@ -1,6 +1,6 @@
 import { GraphqlQueryCompany } from '../../interfaces/entities/company.interface';
 
-export const mockCompaniesData: Array<GraphqlQueryCompany> = [
+export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
   {
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
     domainName: 'airbnb.com',
@@ -8,7 +8,12 @@ export const mockCompaniesData: Array<GraphqlQueryCompany> = [
     createdAt: '2023-04-26T10:08:54.724515+00:00',
     address: '17 rue de clignancourt',
     employees: 12,
-    accountOwner: null,
+    accountOwner: {
+      email: 'charles@test.com',
+      displayName: 'Charles Test',
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+      __typename: 'users',
+    },
     __typename: 'companies',
   },
   {

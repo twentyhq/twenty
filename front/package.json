@@ -33,7 +33,7 @@
     "storybook": "storybook dev -p 6006 -s ../public",
     "test-storybook": "test-storybook",
     "build-storybook": "storybook build -s public",
-    "coverage": "test-storybook --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage --lines 50",
+    "coverage": "test-storybook --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
     "graphql:generate": "REACT_APP_GRAPHQL_ADMIN_SECRET=$REACT_APP_GRAPHQL_ADMIN_SECRET graphql-codegen --config codegen.js"
   },
   "eslintConfig": {
@@ -122,5 +122,9 @@
   },
   "msw": {
     "workerDirectory": "public"
+  },
+  "nyc": {
+    "lines": 60,
+    "statements": 60
   }
 }
