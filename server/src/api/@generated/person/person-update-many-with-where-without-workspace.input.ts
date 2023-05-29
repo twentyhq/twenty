@@ -6,12 +6,11 @@ import { PersonUpdateManyMutationInput } from './person-update-many-mutation.inp
 
 @InputType()
 export class PersonUpdateManyWithWhereWithoutWorkspaceInput {
+  @Field(() => PersonScalarWhereInput, { nullable: false })
+  @Type(() => PersonScalarWhereInput)
+  where!: PersonScalarWhereInput;
 
-    @Field(() => PersonScalarWhereInput, {nullable:false})
-    @Type(() => PersonScalarWhereInput)
-    where!: PersonScalarWhereInput;
-
-    @Field(() => PersonUpdateManyMutationInput, {nullable:false})
-    @Type(() => PersonUpdateManyMutationInput)
-    data!: PersonUpdateManyMutationInput;
+  @Field(() => PersonUpdateManyMutationInput, { nullable: false })
+  @Type(() => PersonUpdateManyMutationInput)
+  data!: PersonUpdateManyMutationInput;
 }

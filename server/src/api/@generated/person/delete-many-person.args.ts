@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class DeleteManyPersonArgs {
-
-    @Field(() => PersonWhereInput, {nullable:true})
-    @Type(() => PersonWhereInput)
-    where?: PersonWhereInput;
+  @Field(() => PersonWhereInput, { nullable: true })
+  @Type(() => PersonWhereInput)
+  where?: PersonWhereInput;
 }

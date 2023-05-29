@@ -12,32 +12,33 @@ import { WorkspaceMemberMaxAggregateInput } from './workspace-member-max-aggrega
 
 @ArgsType()
 export class WorkspaceMemberGroupByArgs {
+  @Field(() => WorkspaceMemberWhereInput, { nullable: true })
+  @Type(() => WorkspaceMemberWhereInput)
+  where?: WorkspaceMemberWhereInput;
 
-    @Field(() => WorkspaceMemberWhereInput, {nullable:true})
-    @Type(() => WorkspaceMemberWhereInput)
-    where?: WorkspaceMemberWhereInput;
+  @Field(() => [WorkspaceMemberOrderByWithAggregationInput], { nullable: true })
+  orderBy?: Array<WorkspaceMemberOrderByWithAggregationInput>;
 
-    @Field(() => [WorkspaceMemberOrderByWithAggregationInput], {nullable:true})
-    orderBy?: Array<WorkspaceMemberOrderByWithAggregationInput>;
+  @Field(() => [WorkspaceMemberScalarFieldEnum], { nullable: false })
+  by!: Array<keyof typeof WorkspaceMemberScalarFieldEnum>;
 
-    @Field(() => [WorkspaceMemberScalarFieldEnum], {nullable:false})
-    by!: Array<keyof typeof WorkspaceMemberScalarFieldEnum>;
+  @Field(() => WorkspaceMemberScalarWhereWithAggregatesInput, {
+    nullable: true,
+  })
+  having?: WorkspaceMemberScalarWhereWithAggregatesInput;
 
-    @Field(() => WorkspaceMemberScalarWhereWithAggregatesInput, {nullable:true})
-    having?: WorkspaceMemberScalarWhereWithAggregatesInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
+  @Field(() => WorkspaceMemberCountAggregateInput, { nullable: true })
+  _count?: WorkspaceMemberCountAggregateInput;
 
-    @Field(() => WorkspaceMemberCountAggregateInput, {nullable:true})
-    _count?: WorkspaceMemberCountAggregateInput;
+  @Field(() => WorkspaceMemberMinAggregateInput, { nullable: true })
+  _min?: WorkspaceMemberMinAggregateInput;
 
-    @Field(() => WorkspaceMemberMinAggregateInput, {nullable:true})
-    _min?: WorkspaceMemberMinAggregateInput;
-
-    @Field(() => WorkspaceMemberMaxAggregateInput, {nullable:true})
-    _max?: WorkspaceMemberMaxAggregateInput;
+  @Field(() => WorkspaceMemberMaxAggregateInput, { nullable: true })
+  _max?: WorkspaceMemberMaxAggregateInput;
 }

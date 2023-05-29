@@ -8,37 +8,36 @@ import { WorkspaceCount } from './workspace-count.output';
 
 @ObjectType()
 export class Workspace {
+  @Field(() => ID, { nullable: false })
+  id!: string;
 
-    @Field(() => ID, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: false })
+  createdAt!: Date;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
+  @Field(() => Date, { nullable: false })
+  updatedAt!: Date;
 
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
+  @Field(() => Date, { nullable: true })
+  deletedAt!: Date | null;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
+  @Field(() => String, { nullable: false })
+  domainName!: string;
 
-    @Field(() => String, {nullable:false})
-    domainName!: string;
+  @Field(() => String, { nullable: false })
+  displayName!: string;
 
-    @Field(() => String, {nullable:false})
-    displayName!: string;
+  @Field(() => String, { nullable: true })
+  logo!: string | null;
 
-    @Field(() => String, {nullable:true})
-    logo!: string | null;
+  @Field(() => [WorkspaceMember], { nullable: true })
+  WorkspaceMember?: Array<WorkspaceMember>;
 
-    @Field(() => [WorkspaceMember], {nullable:true})
-    WorkspaceMember?: Array<WorkspaceMember>;
+  @Field(() => [Company], { nullable: true })
+  companies?: Array<Company>;
 
-    @Field(() => [Company], {nullable:true})
-    companies?: Array<Company>;
+  @Field(() => [Person], { nullable: true })
+  people?: Array<Person>;
 
-    @Field(() => [Person], {nullable:true})
-    people?: Array<Person>;
-
-    @Field(() => WorkspaceCount, {nullable:false})
-    _count?: WorkspaceCount;
+  @Field(() => WorkspaceCount, { nullable: false })
+  _count?: WorkspaceCount;
 }

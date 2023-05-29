@@ -1,9 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../strategies/jwt.auth.strategy';
-import { randomUUID } from 'crypto';
 import { ConfigService } from '@nestjs/config';
-import { Profile } from 'passport-google-oauth20';
 import { UserRepository } from 'src/entities/user/user.repository';
 import { WorkspaceRepository } from 'src/entities/workspace/workspace.repository';
 import { RefreshTokenRepository } from 'src/entities/refresh-token/refresh-token.repository';
@@ -26,17 +24,26 @@ export class AuthService {
     email: string;
   }) {
     if (!rawUser.email) {
-      return;
+      throw new HttpException(
+        { reason: 'Email is missing' },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     if (!rawUser.firstName || !rawUser.lastName) {
-      return;
+      throw new HttpException(
+        { reason: 'Firstname or lastname is missing' },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const emailDomain = rawUser.email.split('@')[1];
 
     if (!emailDomain) {
-      return;
+      throw new HttpException(
+        { reason: 'Email is malformed' },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const workspace = await this.workspaceRepository.findUnique({
@@ -44,7 +51,10 @@ export class AuthService {
     });
 
     if (!workspace) {
-      return;
+      throw new HttpException(
+        { reason: 'User email domain does not match an existing workspace' },
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     const user = await this.userRepository.upsertUser({

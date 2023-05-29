@@ -7,16 +7,15 @@ import { RefreshTokenUpdateInput } from './refresh-token-update.input';
 
 @ArgsType()
 export class UpsertOneRefreshTokenArgs {
+  @Field(() => RefreshTokenWhereUniqueInput, { nullable: false })
+  @Type(() => RefreshTokenWhereUniqueInput)
+  where!: RefreshTokenWhereUniqueInput;
 
-    @Field(() => RefreshTokenWhereUniqueInput, {nullable:false})
-    @Type(() => RefreshTokenWhereUniqueInput)
-    where!: RefreshTokenWhereUniqueInput;
+  @Field(() => RefreshTokenCreateInput, { nullable: false })
+  @Type(() => RefreshTokenCreateInput)
+  create!: RefreshTokenCreateInput;
 
-    @Field(() => RefreshTokenCreateInput, {nullable:false})
-    @Type(() => RefreshTokenCreateInput)
-    create!: RefreshTokenCreateInput;
-
-    @Field(() => RefreshTokenUpdateInput, {nullable:false})
-    @Type(() => RefreshTokenUpdateInput)
-    update!: RefreshTokenUpdateInput;
+  @Field(() => RefreshTokenUpdateInput, { nullable: false })
+  @Type(() => RefreshTokenUpdateInput)
+  update!: RefreshTokenUpdateInput;
 }

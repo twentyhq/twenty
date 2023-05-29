@@ -6,12 +6,11 @@ import { CompanyCreateWithoutAccountOwnerInput } from './company-create-without-
 
 @InputType()
 export class CompanyCreateOrConnectWithoutAccountOwnerInput {
+  @Field(() => CompanyWhereUniqueInput, { nullable: false })
+  @Type(() => CompanyWhereUniqueInput)
+  where!: CompanyWhereUniqueInput;
 
-    @Field(() => CompanyWhereUniqueInput, {nullable:false})
-    @Type(() => CompanyWhereUniqueInput)
-    where!: CompanyWhereUniqueInput;
-
-    @Field(() => CompanyCreateWithoutAccountOwnerInput, {nullable:false})
-    @Type(() => CompanyCreateWithoutAccountOwnerInput)
-    create!: CompanyCreateWithoutAccountOwnerInput;
+  @Field(() => CompanyCreateWithoutAccountOwnerInput, { nullable: false })
+  @Type(() => CompanyCreateWithoutAccountOwnerInput)
+  create!: CompanyCreateWithoutAccountOwnerInput;
 }

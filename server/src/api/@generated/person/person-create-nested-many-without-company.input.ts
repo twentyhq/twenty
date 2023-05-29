@@ -8,20 +8,19 @@ import { PersonWhereUniqueInput } from './person-where-unique.input';
 
 @InputType()
 export class PersonCreateNestedManyWithoutCompanyInput {
+  @Field(() => [PersonCreateWithoutCompanyInput], { nullable: true })
+  @Type(() => PersonCreateWithoutCompanyInput)
+  create?: Array<PersonCreateWithoutCompanyInput>;
 
-    @Field(() => [PersonCreateWithoutCompanyInput], {nullable:true})
-    @Type(() => PersonCreateWithoutCompanyInput)
-    create?: Array<PersonCreateWithoutCompanyInput>;
+  @Field(() => [PersonCreateOrConnectWithoutCompanyInput], { nullable: true })
+  @Type(() => PersonCreateOrConnectWithoutCompanyInput)
+  connectOrCreate?: Array<PersonCreateOrConnectWithoutCompanyInput>;
 
-    @Field(() => [PersonCreateOrConnectWithoutCompanyInput], {nullable:true})
-    @Type(() => PersonCreateOrConnectWithoutCompanyInput)
-    connectOrCreate?: Array<PersonCreateOrConnectWithoutCompanyInput>;
+  @Field(() => PersonCreateManyCompanyInputEnvelope, { nullable: true })
+  @Type(() => PersonCreateManyCompanyInputEnvelope)
+  createMany?: PersonCreateManyCompanyInputEnvelope;
 
-    @Field(() => PersonCreateManyCompanyInputEnvelope, {nullable:true})
-    @Type(() => PersonCreateManyCompanyInputEnvelope)
-    createMany?: PersonCreateManyCompanyInputEnvelope;
-
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    connect?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  connect?: Array<PersonWhereUniqueInput>;
 }

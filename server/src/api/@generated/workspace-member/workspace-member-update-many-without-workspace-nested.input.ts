@@ -12,48 +12,57 @@ import { WorkspaceMemberScalarWhereInput } from './workspace-member-scalar-where
 
 @InputType()
 export class WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput {
+  @Field(() => [WorkspaceMemberCreateWithoutWorkspaceInput], { nullable: true })
+  @Type(() => WorkspaceMemberCreateWithoutWorkspaceInput)
+  create?: Array<WorkspaceMemberCreateWithoutWorkspaceInput>;
 
-    @Field(() => [WorkspaceMemberCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => WorkspaceMemberCreateWithoutWorkspaceInput)
-    create?: Array<WorkspaceMemberCreateWithoutWorkspaceInput>;
+  @Field(() => [WorkspaceMemberCreateOrConnectWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => WorkspaceMemberCreateOrConnectWithoutWorkspaceInput)
+  connectOrCreate?: Array<WorkspaceMemberCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => [WorkspaceMemberCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => WorkspaceMemberCreateOrConnectWithoutWorkspaceInput)
-    connectOrCreate?: Array<WorkspaceMemberCreateOrConnectWithoutWorkspaceInput>;
+  @Field(() => [WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput)
+  upsert?: Array<WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput>;
 
-    @Field(() => [WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
-    @Type(() => WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput)
-    upsert?: Array<WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput>;
+  @Field(() => WorkspaceMemberCreateManyWorkspaceInputEnvelope, {
+    nullable: true,
+  })
+  @Type(() => WorkspaceMemberCreateManyWorkspaceInputEnvelope)
+  createMany?: WorkspaceMemberCreateManyWorkspaceInputEnvelope;
 
-    @Field(() => WorkspaceMemberCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => WorkspaceMemberCreateManyWorkspaceInputEnvelope)
-    createMany?: WorkspaceMemberCreateManyWorkspaceInputEnvelope;
+  @Field(() => [WorkspaceMemberWhereUniqueInput], { nullable: true })
+  @Type(() => WorkspaceMemberWhereUniqueInput)
+  set?: Array<WorkspaceMemberWhereUniqueInput>;
 
-    @Field(() => [WorkspaceMemberWhereUniqueInput], {nullable:true})
-    @Type(() => WorkspaceMemberWhereUniqueInput)
-    set?: Array<WorkspaceMemberWhereUniqueInput>;
+  @Field(() => [WorkspaceMemberWhereUniqueInput], { nullable: true })
+  @Type(() => WorkspaceMemberWhereUniqueInput)
+  disconnect?: Array<WorkspaceMemberWhereUniqueInput>;
 
-    @Field(() => [WorkspaceMemberWhereUniqueInput], {nullable:true})
-    @Type(() => WorkspaceMemberWhereUniqueInput)
-    disconnect?: Array<WorkspaceMemberWhereUniqueInput>;
+  @Field(() => [WorkspaceMemberWhereUniqueInput], { nullable: true })
+  @Type(() => WorkspaceMemberWhereUniqueInput)
+  delete?: Array<WorkspaceMemberWhereUniqueInput>;
 
-    @Field(() => [WorkspaceMemberWhereUniqueInput], {nullable:true})
-    @Type(() => WorkspaceMemberWhereUniqueInput)
-    delete?: Array<WorkspaceMemberWhereUniqueInput>;
+  @Field(() => [WorkspaceMemberWhereUniqueInput], { nullable: true })
+  @Type(() => WorkspaceMemberWhereUniqueInput)
+  connect?: Array<WorkspaceMemberWhereUniqueInput>;
 
-    @Field(() => [WorkspaceMemberWhereUniqueInput], {nullable:true})
-    @Type(() => WorkspaceMemberWhereUniqueInput)
-    connect?: Array<WorkspaceMemberWhereUniqueInput>;
+  @Field(() => [WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput)
+  update?: Array<WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput>;
 
-    @Field(() => [WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
-    @Type(() => WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput)
-    update?: Array<WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput>;
+  @Field(() => [WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput)
+  updateMany?: Array<WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput>;
 
-    @Field(() => [WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput], {nullable:true})
-    @Type(() => WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput)
-    updateMany?: Array<WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput>;
-
-    @Field(() => [WorkspaceMemberScalarWhereInput], {nullable:true})
-    @Type(() => WorkspaceMemberScalarWhereInput)
-    deleteMany?: Array<WorkspaceMemberScalarWhereInput>;
+  @Field(() => [WorkspaceMemberScalarWhereInput], { nullable: true })
+  @Type(() => WorkspaceMemberScalarWhereInput)
+  deleteMany?: Array<WorkspaceMemberScalarWhereInput>;
 }

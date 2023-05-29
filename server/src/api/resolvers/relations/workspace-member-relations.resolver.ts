@@ -14,7 +14,6 @@ export class WorkspaceMemberRelationsResolver {
   })
   async user(
     @TypeGraphQL.Parent() workspaceMember: WorkspaceMember,
-    @TypeGraphQL.Info() info: GraphQLResolveInfo,
   ): Promise<User> {
     return await this.prismaService.workspaceMember
       .findUniqueOrThrow({
@@ -25,12 +24,11 @@ export class WorkspaceMemberRelationsResolver {
       .user({});
   }
 
-  @TypeGraphQL.ResolveField((_type) => Workspace, {
+  @TypeGraphQL.ResolveField(() => Workspace, {
     nullable: false,
   })
   async workspace(
     @TypeGraphQL.Parent() workspaceMember: WorkspaceMember,
-    @TypeGraphQL.Info() info: GraphQLResolveInfo,
   ): Promise<Workspace> {
     return this.prismaService.workspaceMember
       .findUniqueOrThrow({

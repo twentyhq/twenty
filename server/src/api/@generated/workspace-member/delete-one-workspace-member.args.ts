@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class DeleteOneWorkspaceMemberArgs {
-
-    @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:false})
-    @Type(() => WorkspaceMemberWhereUniqueInput)
-    where!: WorkspaceMemberWhereUniqueInput;
+  @Field(() => WorkspaceMemberWhereUniqueInput, { nullable: false })
+  @Type(() => WorkspaceMemberWhereUniqueInput)
+  where!: WorkspaceMemberWhereUniqueInput;
 }

@@ -5,31 +5,34 @@ import { CompanyUncheckedCreateNestedManyWithoutWorkspaceInput } from '../compan
 
 @InputType()
 export class WorkspaceUncheckedCreateWithoutPeopleInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+  @Field(() => String, { nullable: false })
+  domainName!: string;
 
-    @Field(() => String, {nullable:false})
-    domainName!: string;
+  @Field(() => String, { nullable: false })
+  displayName!: string;
 
-    @Field(() => String, {nullable:false})
-    displayName!: string;
+  @Field(() => String, { nullable: true })
+  logo?: string;
 
-    @Field(() => String, {nullable:true})
-    logo?: string;
+  @Field(() => WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  WorkspaceMember?: WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput;
 
-    @Field(() => WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    WorkspaceMember?: WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput;
-
-    @Field(() => CompanyUncheckedCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    companies?: CompanyUncheckedCreateNestedManyWithoutWorkspaceInput;
+  @Field(() => CompanyUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  companies?: CompanyUncheckedCreateNestedManyWithoutWorkspaceInput;
 }

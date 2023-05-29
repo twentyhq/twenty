@@ -9,43 +9,42 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CompanyScalarWhereWithAggregatesInput {
+  @Field(() => [CompanyScalarWhereWithAggregatesInput], { nullable: true })
+  AND?: Array<CompanyScalarWhereWithAggregatesInput>;
 
-    @Field(() => [CompanyScalarWhereWithAggregatesInput], {nullable:true})
-    AND?: Array<CompanyScalarWhereWithAggregatesInput>;
+  @Field(() => [CompanyScalarWhereWithAggregatesInput], { nullable: true })
+  OR?: Array<CompanyScalarWhereWithAggregatesInput>;
 
-    @Field(() => [CompanyScalarWhereWithAggregatesInput], {nullable:true})
-    OR?: Array<CompanyScalarWhereWithAggregatesInput>;
+  @Field(() => [CompanyScalarWhereWithAggregatesInput], { nullable: true })
+  NOT?: Array<CompanyScalarWhereWithAggregatesInput>;
 
-    @Field(() => [CompanyScalarWhereWithAggregatesInput], {nullable:true})
-    NOT?: Array<CompanyScalarWhereWithAggregatesInput>;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  id?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    id?: StringWithAggregatesFilter;
+  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
+  createdAt?: DateTimeWithAggregatesFilter;
 
-    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
-    createdAt?: DateTimeWithAggregatesFilter;
+  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
+  updatedAt?: DateTimeWithAggregatesFilter;
 
-    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
-    updatedAt?: DateTimeWithAggregatesFilter;
+  @Field(() => DateTimeNullableWithAggregatesFilter, { nullable: true })
+  deletedAt?: DateTimeNullableWithAggregatesFilter;
 
-    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
-    deletedAt?: DateTimeNullableWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  name?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    name?: StringWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  domainName?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    domainName?: StringWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  address?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    address?: StringWithAggregatesFilter;
+  @Field(() => IntNullableWithAggregatesFilter, { nullable: true })
+  employees?: IntNullableWithAggregatesFilter;
 
-    @Field(() => IntNullableWithAggregatesFilter, {nullable:true})
-    employees?: IntNullableWithAggregatesFilter;
+  @Field(() => StringNullableWithAggregatesFilter, { nullable: true })
+  accountOwnerId?: StringNullableWithAggregatesFilter;
 
-    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
-    accountOwnerId?: StringNullableWithAggregatesFilter;
-
-    @HideField()
-    workspaceId?: StringWithAggregatesFilter;
+  @HideField()
+  workspaceId?: StringWithAggregatesFilter;
 }

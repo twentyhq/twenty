@@ -6,12 +6,11 @@ import { PersonUpdateWithoutCompanyInput } from './person-update-without-company
 
 @InputType()
 export class PersonUpdateWithWhereUniqueWithoutCompanyInput {
+  @Field(() => PersonWhereUniqueInput, { nullable: false })
+  @Type(() => PersonWhereUniqueInput)
+  where!: PersonWhereUniqueInput;
 
-    @Field(() => PersonWhereUniqueInput, {nullable:false})
-    @Type(() => PersonWhereUniqueInput)
-    where!: PersonWhereUniqueInput;
-
-    @Field(() => PersonUpdateWithoutCompanyInput, {nullable:false})
-    @Type(() => PersonUpdateWithoutCompanyInput)
-    data!: PersonUpdateWithoutCompanyInput;
+  @Field(() => PersonUpdateWithoutCompanyInput, { nullable: false })
+  @Type(() => PersonUpdateWithoutCompanyInput)
+  data!: PersonUpdateWithoutCompanyInput;
 }

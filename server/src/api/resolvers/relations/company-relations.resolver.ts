@@ -1,6 +1,5 @@
 import * as TypeGraphQL from '@nestjs/graphql';
 import { Company } from 'src/api/@generated/company/company.model';
-import { Person } from 'src/api/@generated/person/person.model';
 import { User } from 'src/api/@generated/user/user.model';
 import { Workspace } from 'src/api/@generated/workspace/workspace.model';
 import { PrismaService } from 'src/database/prisma.service';

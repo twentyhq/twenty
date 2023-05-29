@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class FindUniqueWorkspaceMemberOrThrowArgs {
-
-    @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:false})
-    @Type(() => WorkspaceMemberWhereUniqueInput)
-    where!: WorkspaceMemberWhereUniqueInput;
+  @Field(() => WorkspaceMemberWhereUniqueInput, { nullable: false })
+  @Type(() => WorkspaceMemberWhereUniqueInput)
+  where!: WorkspaceMemberWhereUniqueInput;
 }

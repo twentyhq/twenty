@@ -6,31 +6,30 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 
 @InputType()
 export class WorkspaceMemberScalarWhereInput {
+  @Field(() => [WorkspaceMemberScalarWhereInput], { nullable: true })
+  AND?: Array<WorkspaceMemberScalarWhereInput>;
 
-    @Field(() => [WorkspaceMemberScalarWhereInput], {nullable:true})
-    AND?: Array<WorkspaceMemberScalarWhereInput>;
+  @Field(() => [WorkspaceMemberScalarWhereInput], { nullable: true })
+  OR?: Array<WorkspaceMemberScalarWhereInput>;
 
-    @Field(() => [WorkspaceMemberScalarWhereInput], {nullable:true})
-    OR?: Array<WorkspaceMemberScalarWhereInput>;
+  @Field(() => [WorkspaceMemberScalarWhereInput], { nullable: true })
+  NOT?: Array<WorkspaceMemberScalarWhereInput>;
 
-    @Field(() => [WorkspaceMemberScalarWhereInput], {nullable:true})
-    NOT?: Array<WorkspaceMemberScalarWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @Field(() => StringFilter, { nullable: true })
+  userId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    userId?: StringFilter;
-
-    @Field(() => StringFilter, {nullable:true})
-    workspaceId?: StringFilter;
+  @Field(() => StringFilter, { nullable: true })
+  workspaceId?: StringFilter;
 }

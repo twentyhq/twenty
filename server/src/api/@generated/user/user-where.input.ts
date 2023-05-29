@@ -12,64 +12,63 @@ import { RefreshTokenListRelationFilter } from '../refresh-token/refresh-token-l
 
 @InputType()
 export class UserWhereInput {
+  @Field(() => [UserWhereInput], { nullable: true })
+  AND?: Array<UserWhereInput>;
 
-    @Field(() => [UserWhereInput], {nullable:true})
-    AND?: Array<UserWhereInput>;
+  @Field(() => [UserWhereInput], { nullable: true })
+  OR?: Array<UserWhereInput>;
 
-    @Field(() => [UserWhereInput], {nullable:true})
-    OR?: Array<UserWhereInput>;
+  @Field(() => [UserWhereInput], { nullable: true })
+  NOT?: Array<UserWhereInput>;
 
-    @Field(() => [UserWhereInput], {nullable:true})
-    NOT?: Array<UserWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  lastSeen?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    lastSeen?: DateTimeNullableFilter;
+  @Field(() => BoolFilter, { nullable: true })
+  disabled?: BoolFilter;
 
-    @Field(() => BoolFilter, {nullable:true})
-    disabled?: BoolFilter;
+  @Field(() => StringFilter, { nullable: true })
+  displayName?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    displayName?: StringFilter;
+  @Field(() => StringFilter, { nullable: true })
+  email?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    email?: StringFilter;
+  @Field(() => StringNullableFilter, { nullable: true })
+  avatarUrl?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    avatarUrl?: StringNullableFilter;
+  @Field(() => StringFilter, { nullable: true })
+  locale?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    locale?: StringFilter;
+  @Field(() => StringNullableFilter, { nullable: true })
+  phoneNumber?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    phoneNumber?: StringNullableFilter;
+  @Field(() => StringNullableFilter, { nullable: true })
+  passwordHash?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    passwordHash?: StringNullableFilter;
+  @Field(() => BoolFilter, { nullable: true })
+  emailVerified?: BoolFilter;
 
-    @Field(() => BoolFilter, {nullable:true})
-    emailVerified?: BoolFilter;
+  @Field(() => JsonNullableFilter, { nullable: true })
+  metadata?: JsonNullableFilter;
 
-    @Field(() => JsonNullableFilter, {nullable:true})
-    metadata?: JsonNullableFilter;
+  @Field(() => WorkspaceMemberRelationFilter, { nullable: true })
+  WorkspaceMember?: WorkspaceMemberRelationFilter;
 
-    @Field(() => WorkspaceMemberRelationFilter, {nullable:true})
-    WorkspaceMember?: WorkspaceMemberRelationFilter;
+  @Field(() => CompanyListRelationFilter, { nullable: true })
+  companies?: CompanyListRelationFilter;
 
-    @Field(() => CompanyListRelationFilter, {nullable:true})
-    companies?: CompanyListRelationFilter;
-
-    @Field(() => RefreshTokenListRelationFilter, {nullable:true})
-    RefreshTokens?: RefreshTokenListRelationFilter;
+  @Field(() => RefreshTokenListRelationFilter, { nullable: true })
+  RefreshTokens?: RefreshTokenListRelationFilter;
 }

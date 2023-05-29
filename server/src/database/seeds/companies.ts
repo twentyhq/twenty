@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 export const seedCompanies = async (prisma: PrismaClient) => {
   await prisma.company.upsert({
     where: { id: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408' },
@@ -10,7 +10,7 @@ export const seedCompanies = async (prisma: PrismaClient) => {
       workspaceId: '7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       address: '',
     },
-  })
+  });
   await prisma.company.upsert({
     where: { id: '118995f3-5d81-46d6-bf83-f7fd33ea6102' },
     update: {},
@@ -21,7 +21,7 @@ export const seedCompanies = async (prisma: PrismaClient) => {
       workspaceId: '7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       address: '',
     },
-  })
+  });
   await prisma.company.upsert({
     where: { id: '04b2e9f5-0713-40a5-8216-82802401d33e' },
     update: {},
@@ -88,7 +88,7 @@ export const seedCompanies = async (prisma: PrismaClient) => {
       address: '',
     },
   });
-  
+
   await prisma.company.upsert({
     where: { id: '9d162de6-cfbf-4156-a790-e39854dcd4eb' },
     update: {},
@@ -100,7 +100,7 @@ export const seedCompanies = async (prisma: PrismaClient) => {
       address: '',
     },
   });
-  
+
   await prisma.company.upsert({
     where: { id: 'aaffcfbd-f86b-419f-b794-02319abe8637' },
     update: {},
@@ -112,7 +112,7 @@ export const seedCompanies = async (prisma: PrismaClient) => {
       address: '',
     },
   });
-  
+
   await prisma.company.upsert({
     where: { id: 'f33dc242-5518-4553-9433-42d8eb82834b' },
     update: {},
@@ -124,7 +124,7 @@ export const seedCompanies = async (prisma: PrismaClient) => {
       address: '',
     },
   });
-  
+
   await prisma.company.upsert({
     where: { id: 'a7bc68d5-f79e-40dd-bd06-c36e6abb4678' },
     update: {},
@@ -147,4 +147,4 @@ export const seedCompanies = async (prisma: PrismaClient) => {
       address: '',
     },
   });
-}
+};

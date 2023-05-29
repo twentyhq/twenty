@@ -10,43 +10,42 @@ import { PersonListRelationFilter } from '../person/person-list-relation-filter.
 
 @InputType()
 export class WorkspaceWhereInput {
+  @Field(() => [WorkspaceWhereInput], { nullable: true })
+  AND?: Array<WorkspaceWhereInput>;
 
-    @Field(() => [WorkspaceWhereInput], {nullable:true})
-    AND?: Array<WorkspaceWhereInput>;
+  @Field(() => [WorkspaceWhereInput], { nullable: true })
+  OR?: Array<WorkspaceWhereInput>;
 
-    @Field(() => [WorkspaceWhereInput], {nullable:true})
-    OR?: Array<WorkspaceWhereInput>;
+  @Field(() => [WorkspaceWhereInput], { nullable: true })
+  NOT?: Array<WorkspaceWhereInput>;
 
-    @Field(() => [WorkspaceWhereInput], {nullable:true})
-    NOT?: Array<WorkspaceWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @Field(() => StringFilter, { nullable: true })
+  domainName?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    domainName?: StringFilter;
+  @Field(() => StringFilter, { nullable: true })
+  displayName?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    displayName?: StringFilter;
+  @Field(() => StringNullableFilter, { nullable: true })
+  logo?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    logo?: StringNullableFilter;
+  @Field(() => WorkspaceMemberListRelationFilter, { nullable: true })
+  WorkspaceMember?: WorkspaceMemberListRelationFilter;
 
-    @Field(() => WorkspaceMemberListRelationFilter, {nullable:true})
-    WorkspaceMember?: WorkspaceMemberListRelationFilter;
+  @Field(() => CompanyListRelationFilter, { nullable: true })
+  companies?: CompanyListRelationFilter;
 
-    @Field(() => CompanyListRelationFilter, {nullable:true})
-    companies?: CompanyListRelationFilter;
-
-    @Field(() => PersonListRelationFilter, {nullable:true})
-    people?: PersonListRelationFilter;
+  @Field(() => PersonListRelationFilter, { nullable: true })
+  people?: PersonListRelationFilter;
 }

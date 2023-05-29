@@ -5,31 +5,30 @@ import { PersonCreateNestedManyWithoutWorkspaceInput } from '../person/person-cr
 
 @InputType()
 export class WorkspaceCreateWithoutWorkspaceMemberInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+  @Field(() => String, { nullable: false })
+  domainName!: string;
 
-    @Field(() => String, {nullable:false})
-    domainName!: string;
+  @Field(() => String, { nullable: false })
+  displayName!: string;
 
-    @Field(() => String, {nullable:false})
-    displayName!: string;
+  @Field(() => String, { nullable: true })
+  logo?: string;
 
-    @Field(() => String, {nullable:true})
-    logo?: string;
+  @Field(() => CompanyCreateNestedManyWithoutWorkspaceInput, { nullable: true })
+  companies?: CompanyCreateNestedManyWithoutWorkspaceInput;
 
-    @Field(() => CompanyCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    companies?: CompanyCreateNestedManyWithoutWorkspaceInput;
-
-    @Field(() => PersonCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    people?: PersonCreateNestedManyWithoutWorkspaceInput;
+  @Field(() => PersonCreateNestedManyWithoutWorkspaceInput, { nullable: true })
+  people?: PersonCreateNestedManyWithoutWorkspaceInput;
 }

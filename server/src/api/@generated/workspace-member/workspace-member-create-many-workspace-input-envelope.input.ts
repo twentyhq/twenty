@@ -5,11 +5,10 @@ import { Type } from 'class-transformer';
 
 @InputType()
 export class WorkspaceMemberCreateManyWorkspaceInputEnvelope {
+  @Field(() => [WorkspaceMemberCreateManyWorkspaceInput], { nullable: false })
+  @Type(() => WorkspaceMemberCreateManyWorkspaceInput)
+  data!: Array<WorkspaceMemberCreateManyWorkspaceInput>;
 
-    @Field(() => [WorkspaceMemberCreateManyWorkspaceInput], {nullable:false})
-    @Type(() => WorkspaceMemberCreateManyWorkspaceInput)
-    data!: Array<WorkspaceMemberCreateManyWorkspaceInput>;
-
-    @Field(() => Boolean, {nullable:true})
-    skipDuplicates?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  skipDuplicates?: boolean;
 }

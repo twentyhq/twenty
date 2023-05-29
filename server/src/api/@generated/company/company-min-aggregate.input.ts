@@ -4,34 +4,33 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CompanyMinAggregateInput {
+  @Field(() => Boolean, { nullable: true })
+  id?: true;
 
-    @Field(() => Boolean, {nullable:true})
-    id?: true;
+  @Field(() => Boolean, { nullable: true })
+  createdAt?: true;
 
-    @Field(() => Boolean, {nullable:true})
-    createdAt?: true;
+  @Field(() => Boolean, { nullable: true })
+  updatedAt?: true;
 
-    @Field(() => Boolean, {nullable:true})
-    updatedAt?: true;
+  @Field(() => Boolean, { nullable: true })
+  deletedAt?: true;
 
-    @Field(() => Boolean, {nullable:true})
-    deletedAt?: true;
+  @Field(() => Boolean, { nullable: true })
+  name?: true;
 
-    @Field(() => Boolean, {nullable:true})
-    name?: true;
+  @Field(() => Boolean, { nullable: true })
+  domainName?: true;
 
-    @Field(() => Boolean, {nullable:true})
-    domainName?: true;
+  @Field(() => Boolean, { nullable: true })
+  address?: true;
 
-    @Field(() => Boolean, {nullable:true})
-    address?: true;
+  @Field(() => Boolean, { nullable: true })
+  employees?: true;
 
-    @Field(() => Boolean, {nullable:true})
-    employees?: true;
+  @Field(() => Boolean, { nullable: true })
+  accountOwnerId?: true;
 
-    @Field(() => Boolean, {nullable:true})
-    accountOwnerId?: true;
-
-    @HideField()
-    workspaceId?: true;
+  @HideField()
+  workspaceId?: true;
 }

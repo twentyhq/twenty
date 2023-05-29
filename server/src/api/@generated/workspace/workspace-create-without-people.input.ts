@@ -5,31 +5,32 @@ import { CompanyCreateNestedManyWithoutWorkspaceInput } from '../company/company
 
 @InputType()
 export class WorkspaceCreateWithoutPeopleInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+  @Field(() => String, { nullable: false })
+  domainName!: string;
 
-    @Field(() => String, {nullable:false})
-    domainName!: string;
+  @Field(() => String, { nullable: false })
+  displayName!: string;
 
-    @Field(() => String, {nullable:false})
-    displayName!: string;
+  @Field(() => String, { nullable: true })
+  logo?: string;
 
-    @Field(() => String, {nullable:true})
-    logo?: string;
+  @Field(() => WorkspaceMemberCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  WorkspaceMember?: WorkspaceMemberCreateNestedManyWithoutWorkspaceInput;
 
-    @Field(() => WorkspaceMemberCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    WorkspaceMember?: WorkspaceMemberCreateNestedManyWithoutWorkspaceInput;
-
-    @Field(() => CompanyCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    companies?: CompanyCreateNestedManyWithoutWorkspaceInput;
+  @Field(() => CompanyCreateNestedManyWithoutWorkspaceInput, { nullable: true })
+  companies?: CompanyCreateNestedManyWithoutWorkspaceInput;
 }

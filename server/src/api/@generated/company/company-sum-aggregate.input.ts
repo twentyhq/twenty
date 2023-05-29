@@ -3,7 +3,6 @@ import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CompanySumAggregateInput {
-
-    @Field(() => Boolean, {nullable:true})
-    employees?: true;
+  @Field(() => Boolean, { nullable: true })
+  employees?: true;
 }
