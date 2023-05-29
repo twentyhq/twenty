@@ -7,22 +7,23 @@ import { UserUpdateOneRequiredWithoutRefreshTokensNestedInput } from '../user/us
 
 @InputType()
 export class RefreshTokenUpdateInput {
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  createdAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
+  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  refreshToken?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    refreshToken?: StringFieldUpdateOperationsInput;
-
-    @Field(() => UserUpdateOneRequiredWithoutRefreshTokensNestedInput, {nullable:true})
-    user?: UserUpdateOneRequiredWithoutRefreshTokensNestedInput;
+  @Field(() => UserUpdateOneRequiredWithoutRefreshTokensNestedInput, {
+    nullable: true,
+  })
+  user?: UserUpdateOneRequiredWithoutRefreshTokensNestedInput;
 }

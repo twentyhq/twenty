@@ -9,30 +9,29 @@ import { UserUpdateWithoutCompaniesInput } from './user-update-without-companies
 
 @InputType()
 export class UserUpdateOneWithoutCompaniesNestedInput {
+  @Field(() => UserCreateWithoutCompaniesInput, { nullable: true })
+  @Type(() => UserCreateWithoutCompaniesInput)
+  create?: UserCreateWithoutCompaniesInput;
 
-    @Field(() => UserCreateWithoutCompaniesInput, {nullable:true})
-    @Type(() => UserCreateWithoutCompaniesInput)
-    create?: UserCreateWithoutCompaniesInput;
+  @Field(() => UserCreateOrConnectWithoutCompaniesInput, { nullable: true })
+  @Type(() => UserCreateOrConnectWithoutCompaniesInput)
+  connectOrCreate?: UserCreateOrConnectWithoutCompaniesInput;
 
-    @Field(() => UserCreateOrConnectWithoutCompaniesInput, {nullable:true})
-    @Type(() => UserCreateOrConnectWithoutCompaniesInput)
-    connectOrCreate?: UserCreateOrConnectWithoutCompaniesInput;
+  @Field(() => UserUpsertWithoutCompaniesInput, { nullable: true })
+  @Type(() => UserUpsertWithoutCompaniesInput)
+  upsert?: UserUpsertWithoutCompaniesInput;
 
-    @Field(() => UserUpsertWithoutCompaniesInput, {nullable:true})
-    @Type(() => UserUpsertWithoutCompaniesInput)
-    upsert?: UserUpsertWithoutCompaniesInput;
+  @Field(() => Boolean, { nullable: true })
+  disconnect?: boolean;
 
-    @Field(() => Boolean, {nullable:true})
-    disconnect?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  delete?: boolean;
 
-    @Field(() => Boolean, {nullable:true})
-    delete?: boolean;
+  @Field(() => UserWhereUniqueInput, { nullable: true })
+  @Type(() => UserWhereUniqueInput)
+  connect?: UserWhereUniqueInput;
 
-    @Field(() => UserWhereUniqueInput, {nullable:true})
-    @Type(() => UserWhereUniqueInput)
-    connect?: UserWhereUniqueInput;
-
-    @Field(() => UserUpdateWithoutCompaniesInput, {nullable:true})
-    @Type(() => UserUpdateWithoutCompaniesInput)
-    update?: UserUpdateWithoutCompaniesInput;
+  @Field(() => UserUpdateWithoutCompaniesInput, { nullable: true })
+  @Type(() => UserUpdateWithoutCompaniesInput)
+  update?: UserUpdateWithoutCompaniesInput;
 }

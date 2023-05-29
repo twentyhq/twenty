@@ -9,30 +9,29 @@ import { CompanyUpdateWithoutPeopleInput } from './company-update-without-people
 
 @InputType()
 export class CompanyUpdateOneWithoutPeopleNestedInput {
+  @Field(() => CompanyCreateWithoutPeopleInput, { nullable: true })
+  @Type(() => CompanyCreateWithoutPeopleInput)
+  create?: CompanyCreateWithoutPeopleInput;
 
-    @Field(() => CompanyCreateWithoutPeopleInput, {nullable:true})
-    @Type(() => CompanyCreateWithoutPeopleInput)
-    create?: CompanyCreateWithoutPeopleInput;
+  @Field(() => CompanyCreateOrConnectWithoutPeopleInput, { nullable: true })
+  @Type(() => CompanyCreateOrConnectWithoutPeopleInput)
+  connectOrCreate?: CompanyCreateOrConnectWithoutPeopleInput;
 
-    @Field(() => CompanyCreateOrConnectWithoutPeopleInput, {nullable:true})
-    @Type(() => CompanyCreateOrConnectWithoutPeopleInput)
-    connectOrCreate?: CompanyCreateOrConnectWithoutPeopleInput;
+  @Field(() => CompanyUpsertWithoutPeopleInput, { nullable: true })
+  @Type(() => CompanyUpsertWithoutPeopleInput)
+  upsert?: CompanyUpsertWithoutPeopleInput;
 
-    @Field(() => CompanyUpsertWithoutPeopleInput, {nullable:true})
-    @Type(() => CompanyUpsertWithoutPeopleInput)
-    upsert?: CompanyUpsertWithoutPeopleInput;
+  @Field(() => Boolean, { nullable: true })
+  disconnect?: boolean;
 
-    @Field(() => Boolean, {nullable:true})
-    disconnect?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  delete?: boolean;
 
-    @Field(() => Boolean, {nullable:true})
-    delete?: boolean;
+  @Field(() => CompanyWhereUniqueInput, { nullable: true })
+  @Type(() => CompanyWhereUniqueInput)
+  connect?: CompanyWhereUniqueInput;
 
-    @Field(() => CompanyWhereUniqueInput, {nullable:true})
-    @Type(() => CompanyWhereUniqueInput)
-    connect?: CompanyWhereUniqueInput;
-
-    @Field(() => CompanyUpdateWithoutPeopleInput, {nullable:true})
-    @Type(() => CompanyUpdateWithoutPeopleInput)
-    update?: CompanyUpdateWithoutPeopleInput;
+  @Field(() => CompanyUpdateWithoutPeopleInput, { nullable: true })
+  @Type(() => CompanyUpdateWithoutPeopleInput)
+  update?: CompanyUpdateWithoutPeopleInput;
 }

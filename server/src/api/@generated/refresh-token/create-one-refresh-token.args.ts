@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class CreateOneRefreshTokenArgs {
-
-    @Field(() => RefreshTokenCreateInput, {nullable:false})
-    @Type(() => RefreshTokenCreateInput)
-    data!: RefreshTokenCreateInput;
+  @Field(() => RefreshTokenCreateInput, { nullable: false })
+  @Type(() => RefreshTokenCreateInput)
+  data!: RefreshTokenCreateInput;
 }

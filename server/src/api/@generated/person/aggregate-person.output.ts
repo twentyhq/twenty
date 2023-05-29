@@ -6,13 +6,12 @@ import { PersonMaxAggregate } from './person-max-aggregate.output';
 
 @ObjectType()
 export class AggregatePerson {
+  @Field(() => PersonCountAggregate, { nullable: true })
+  _count?: PersonCountAggregate;
 
-    @Field(() => PersonCountAggregate, {nullable:true})
-    _count?: PersonCountAggregate;
+  @Field(() => PersonMinAggregate, { nullable: true })
+  _min?: PersonMinAggregate;
 
-    @Field(() => PersonMinAggregate, {nullable:true})
-    _min?: PersonMinAggregate;
-
-    @Field(() => PersonMaxAggregate, {nullable:true})
-    _max?: PersonMaxAggregate;
+  @Field(() => PersonMaxAggregate, { nullable: true })
+  _max?: PersonMaxAggregate;
 }

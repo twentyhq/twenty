@@ -6,12 +6,11 @@ import { PersonWhereInput } from './person-where.input';
 
 @ArgsType()
 export class UpdateManyPersonArgs {
+  @Field(() => PersonUpdateManyMutationInput, { nullable: false })
+  @Type(() => PersonUpdateManyMutationInput)
+  data!: PersonUpdateManyMutationInput;
 
-    @Field(() => PersonUpdateManyMutationInput, {nullable:false})
-    @Type(() => PersonUpdateManyMutationInput)
-    data!: PersonUpdateManyMutationInput;
-
-    @Field(() => PersonWhereInput, {nullable:true})
-    @Type(() => PersonWhereInput)
-    where?: PersonWhereInput;
+  @Field(() => PersonWhereInput, { nullable: true })
+  @Type(() => PersonWhereInput)
+  where?: PersonWhereInput;
 }

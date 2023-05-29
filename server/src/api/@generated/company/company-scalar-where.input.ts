@@ -9,43 +9,42 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CompanyScalarWhereInput {
+  @Field(() => [CompanyScalarWhereInput], { nullable: true })
+  AND?: Array<CompanyScalarWhereInput>;
 
-    @Field(() => [CompanyScalarWhereInput], {nullable:true})
-    AND?: Array<CompanyScalarWhereInput>;
+  @Field(() => [CompanyScalarWhereInput], { nullable: true })
+  OR?: Array<CompanyScalarWhereInput>;
 
-    @Field(() => [CompanyScalarWhereInput], {nullable:true})
-    OR?: Array<CompanyScalarWhereInput>;
+  @Field(() => [CompanyScalarWhereInput], { nullable: true })
+  NOT?: Array<CompanyScalarWhereInput>;
 
-    @Field(() => [CompanyScalarWhereInput], {nullable:true})
-    NOT?: Array<CompanyScalarWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @Field(() => StringFilter, { nullable: true })
+  name?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    name?: StringFilter;
+  @Field(() => StringFilter, { nullable: true })
+  domainName?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    domainName?: StringFilter;
+  @Field(() => StringFilter, { nullable: true })
+  address?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    address?: StringFilter;
+  @Field(() => IntNullableFilter, { nullable: true })
+  employees?: IntNullableFilter;
 
-    @Field(() => IntNullableFilter, {nullable:true})
-    employees?: IntNullableFilter;
+  @Field(() => StringNullableFilter, { nullable: true })
+  accountOwnerId?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    accountOwnerId?: StringNullableFilter;
-
-    @HideField()
-    workspaceId?: StringFilter;
+  @HideField()
+  workspaceId?: StringFilter;
 }

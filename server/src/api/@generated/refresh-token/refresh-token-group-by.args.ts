@@ -12,32 +12,31 @@ import { RefreshTokenMaxAggregateInput } from './refresh-token-max-aggregate.inp
 
 @ArgsType()
 export class RefreshTokenGroupByArgs {
+  @Field(() => RefreshTokenWhereInput, { nullable: true })
+  @Type(() => RefreshTokenWhereInput)
+  where?: RefreshTokenWhereInput;
 
-    @Field(() => RefreshTokenWhereInput, {nullable:true})
-    @Type(() => RefreshTokenWhereInput)
-    where?: RefreshTokenWhereInput;
+  @Field(() => [RefreshTokenOrderByWithAggregationInput], { nullable: true })
+  orderBy?: Array<RefreshTokenOrderByWithAggregationInput>;
 
-    @Field(() => [RefreshTokenOrderByWithAggregationInput], {nullable:true})
-    orderBy?: Array<RefreshTokenOrderByWithAggregationInput>;
+  @Field(() => [RefreshTokenScalarFieldEnum], { nullable: false })
+  by!: Array<keyof typeof RefreshTokenScalarFieldEnum>;
 
-    @Field(() => [RefreshTokenScalarFieldEnum], {nullable:false})
-    by!: Array<keyof typeof RefreshTokenScalarFieldEnum>;
+  @Field(() => RefreshTokenScalarWhereWithAggregatesInput, { nullable: true })
+  having?: RefreshTokenScalarWhereWithAggregatesInput;
 
-    @Field(() => RefreshTokenScalarWhereWithAggregatesInput, {nullable:true})
-    having?: RefreshTokenScalarWhereWithAggregatesInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
+  @Field(() => RefreshTokenCountAggregateInput, { nullable: true })
+  _count?: RefreshTokenCountAggregateInput;
 
-    @Field(() => RefreshTokenCountAggregateInput, {nullable:true})
-    _count?: RefreshTokenCountAggregateInput;
+  @Field(() => RefreshTokenMinAggregateInput, { nullable: true })
+  _min?: RefreshTokenMinAggregateInput;
 
-    @Field(() => RefreshTokenMinAggregateInput, {nullable:true})
-    _min?: RefreshTokenMinAggregateInput;
-
-    @Field(() => RefreshTokenMaxAggregateInput, {nullable:true})
-    _max?: RefreshTokenMaxAggregateInput;
+  @Field(() => RefreshTokenMaxAggregateInput, { nullable: true })
+  _max?: RefreshTokenMaxAggregateInput;
 }

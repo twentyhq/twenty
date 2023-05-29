@@ -6,13 +6,12 @@ import { WorkspaceMaxAggregate } from './workspace-max-aggregate.output';
 
 @ObjectType()
 export class AggregateWorkspace {
+  @Field(() => WorkspaceCountAggregate, { nullable: true })
+  _count?: WorkspaceCountAggregate;
 
-    @Field(() => WorkspaceCountAggregate, {nullable:true})
-    _count?: WorkspaceCountAggregate;
+  @Field(() => WorkspaceMinAggregate, { nullable: true })
+  _min?: WorkspaceMinAggregate;
 
-    @Field(() => WorkspaceMinAggregate, {nullable:true})
-    _min?: WorkspaceMinAggregate;
-
-    @Field(() => WorkspaceMaxAggregate, {nullable:true})
-    _max?: WorkspaceMaxAggregate;
+  @Field(() => WorkspaceMaxAggregate, { nullable: true })
+  _max?: WorkspaceMaxAggregate;
 }

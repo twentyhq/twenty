@@ -6,12 +6,11 @@ import { RefreshTokenWhereInput } from './refresh-token-where.input';
 
 @ArgsType()
 export class UpdateManyRefreshTokenArgs {
+  @Field(() => RefreshTokenUpdateManyMutationInput, { nullable: false })
+  @Type(() => RefreshTokenUpdateManyMutationInput)
+  data!: RefreshTokenUpdateManyMutationInput;
 
-    @Field(() => RefreshTokenUpdateManyMutationInput, {nullable:false})
-    @Type(() => RefreshTokenUpdateManyMutationInput)
-    data!: RefreshTokenUpdateManyMutationInput;
-
-    @Field(() => RefreshTokenWhereInput, {nullable:true})
-    @Type(() => RefreshTokenWhereInput)
-    where?: RefreshTokenWhereInput;
+  @Field(() => RefreshTokenWhereInput, { nullable: true })
+  @Type(() => RefreshTokenWhereInput)
+  where?: RefreshTokenWhereInput;
 }

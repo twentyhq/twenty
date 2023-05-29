@@ -7,16 +7,15 @@ import { PersonCreateWithoutCompanyInput } from './person-create-without-company
 
 @InputType()
 export class PersonUpsertWithWhereUniqueWithoutCompanyInput {
+  @Field(() => PersonWhereUniqueInput, { nullable: false })
+  @Type(() => PersonWhereUniqueInput)
+  where!: PersonWhereUniqueInput;
 
-    @Field(() => PersonWhereUniqueInput, {nullable:false})
-    @Type(() => PersonWhereUniqueInput)
-    where!: PersonWhereUniqueInput;
+  @Field(() => PersonUpdateWithoutCompanyInput, { nullable: false })
+  @Type(() => PersonUpdateWithoutCompanyInput)
+  update!: PersonUpdateWithoutCompanyInput;
 
-    @Field(() => PersonUpdateWithoutCompanyInput, {nullable:false})
-    @Type(() => PersonUpdateWithoutCompanyInput)
-    update!: PersonUpdateWithoutCompanyInput;
-
-    @Field(() => PersonCreateWithoutCompanyInput, {nullable:false})
-    @Type(() => PersonCreateWithoutCompanyInput)
-    create!: PersonCreateWithoutCompanyInput;
+  @Field(() => PersonCreateWithoutCompanyInput, { nullable: false })
+  @Type(() => PersonCreateWithoutCompanyInput)
+  create!: PersonCreateWithoutCompanyInput;
 }

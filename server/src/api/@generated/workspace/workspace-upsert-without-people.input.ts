@@ -6,12 +6,11 @@ import { WorkspaceCreateWithoutPeopleInput } from './workspace-create-without-pe
 
 @InputType()
 export class WorkspaceUpsertWithoutPeopleInput {
+  @Field(() => WorkspaceUpdateWithoutPeopleInput, { nullable: false })
+  @Type(() => WorkspaceUpdateWithoutPeopleInput)
+  update!: WorkspaceUpdateWithoutPeopleInput;
 
-    @Field(() => WorkspaceUpdateWithoutPeopleInput, {nullable:false})
-    @Type(() => WorkspaceUpdateWithoutPeopleInput)
-    update!: WorkspaceUpdateWithoutPeopleInput;
-
-    @Field(() => WorkspaceCreateWithoutPeopleInput, {nullable:false})
-    @Type(() => WorkspaceCreateWithoutPeopleInput)
-    create!: WorkspaceCreateWithoutPeopleInput;
+  @Field(() => WorkspaceCreateWithoutPeopleInput, { nullable: false })
+  @Type(() => WorkspaceCreateWithoutPeopleInput)
+  create!: WorkspaceCreateWithoutPeopleInput;
 }

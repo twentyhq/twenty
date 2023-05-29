@@ -11,29 +11,28 @@ import { RefreshTokenMaxAggregateInput } from './refresh-token-max-aggregate.inp
 
 @ArgsType()
 export class RefreshTokenAggregateArgs {
+  @Field(() => RefreshTokenWhereInput, { nullable: true })
+  @Type(() => RefreshTokenWhereInput)
+  where?: RefreshTokenWhereInput;
 
-    @Field(() => RefreshTokenWhereInput, {nullable:true})
-    @Type(() => RefreshTokenWhereInput)
-    where?: RefreshTokenWhereInput;
+  @Field(() => [RefreshTokenOrderByWithRelationInput], { nullable: true })
+  orderBy?: Array<RefreshTokenOrderByWithRelationInput>;
 
-    @Field(() => [RefreshTokenOrderByWithRelationInput], {nullable:true})
-    orderBy?: Array<RefreshTokenOrderByWithRelationInput>;
+  @Field(() => RefreshTokenWhereUniqueInput, { nullable: true })
+  cursor?: RefreshTokenWhereUniqueInput;
 
-    @Field(() => RefreshTokenWhereUniqueInput, {nullable:true})
-    cursor?: RefreshTokenWhereUniqueInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
+  @Field(() => RefreshTokenCountAggregateInput, { nullable: true })
+  _count?: RefreshTokenCountAggregateInput;
 
-    @Field(() => RefreshTokenCountAggregateInput, {nullable:true})
-    _count?: RefreshTokenCountAggregateInput;
+  @Field(() => RefreshTokenMinAggregateInput, { nullable: true })
+  _min?: RefreshTokenMinAggregateInput;
 
-    @Field(() => RefreshTokenMinAggregateInput, {nullable:true})
-    _min?: RefreshTokenMinAggregateInput;
-
-    @Field(() => RefreshTokenMaxAggregateInput, {nullable:true})
-    _max?: RefreshTokenMaxAggregateInput;
+  @Field(() => RefreshTokenMaxAggregateInput, { nullable: true })
+  _max?: RefreshTokenMaxAggregateInput;
 }

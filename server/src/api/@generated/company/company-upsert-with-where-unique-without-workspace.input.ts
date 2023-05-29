@@ -7,16 +7,15 @@ import { CompanyCreateWithoutWorkspaceInput } from './company-create-without-wor
 
 @InputType()
 export class CompanyUpsertWithWhereUniqueWithoutWorkspaceInput {
+  @Field(() => CompanyWhereUniqueInput, { nullable: false })
+  @Type(() => CompanyWhereUniqueInput)
+  where!: CompanyWhereUniqueInput;
 
-    @Field(() => CompanyWhereUniqueInput, {nullable:false})
-    @Type(() => CompanyWhereUniqueInput)
-    where!: CompanyWhereUniqueInput;
+  @Field(() => CompanyUpdateWithoutWorkspaceInput, { nullable: false })
+  @Type(() => CompanyUpdateWithoutWorkspaceInput)
+  update!: CompanyUpdateWithoutWorkspaceInput;
 
-    @Field(() => CompanyUpdateWithoutWorkspaceInput, {nullable:false})
-    @Type(() => CompanyUpdateWithoutWorkspaceInput)
-    update!: CompanyUpdateWithoutWorkspaceInput;
-
-    @Field(() => CompanyCreateWithoutWorkspaceInput, {nullable:false})
-    @Type(() => CompanyCreateWithoutWorkspaceInput)
-    create!: CompanyCreateWithoutWorkspaceInput;
+  @Field(() => CompanyCreateWithoutWorkspaceInput, { nullable: false })
+  @Type(() => CompanyCreateWithoutWorkspaceInput)
+  create!: CompanyCreateWithoutWorkspaceInput;
 }

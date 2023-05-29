@@ -7,16 +7,15 @@ import { CompanyCreateWithoutAccountOwnerInput } from './company-create-without-
 
 @InputType()
 export class CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput {
+  @Field(() => CompanyWhereUniqueInput, { nullable: false })
+  @Type(() => CompanyWhereUniqueInput)
+  where!: CompanyWhereUniqueInput;
 
-    @Field(() => CompanyWhereUniqueInput, {nullable:false})
-    @Type(() => CompanyWhereUniqueInput)
-    where!: CompanyWhereUniqueInput;
+  @Field(() => CompanyUpdateWithoutAccountOwnerInput, { nullable: false })
+  @Type(() => CompanyUpdateWithoutAccountOwnerInput)
+  update!: CompanyUpdateWithoutAccountOwnerInput;
 
-    @Field(() => CompanyUpdateWithoutAccountOwnerInput, {nullable:false})
-    @Type(() => CompanyUpdateWithoutAccountOwnerInput)
-    update!: CompanyUpdateWithoutAccountOwnerInput;
-
-    @Field(() => CompanyCreateWithoutAccountOwnerInput, {nullable:false})
-    @Type(() => CompanyCreateWithoutAccountOwnerInput)
-    create!: CompanyCreateWithoutAccountOwnerInput;
+  @Field(() => CompanyCreateWithoutAccountOwnerInput, { nullable: false })
+  @Type(() => CompanyCreateWithoutAccountOwnerInput)
+  create!: CompanyCreateWithoutAccountOwnerInput;
 }

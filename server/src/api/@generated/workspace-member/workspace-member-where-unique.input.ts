@@ -3,10 +3,9 @@ import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberWhereUniqueInput {
+  @Field(() => String, { nullable: true })
+  id?: string;
 
-    @Field(() => String, {nullable:true})
-    id?: string;
-
-    @Field(() => String, {nullable:true})
-    userId?: string;
+  @Field(() => String, { nullable: true })
+  userId?: string;
 }

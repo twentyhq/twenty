@@ -6,12 +6,11 @@ import { PersonUpdateWithoutWorkspaceInput } from './person-update-without-works
 
 @InputType()
 export class PersonUpdateWithWhereUniqueWithoutWorkspaceInput {
+  @Field(() => PersonWhereUniqueInput, { nullable: false })
+  @Type(() => PersonWhereUniqueInput)
+  where!: PersonWhereUniqueInput;
 
-    @Field(() => PersonWhereUniqueInput, {nullable:false})
-    @Type(() => PersonWhereUniqueInput)
-    where!: PersonWhereUniqueInput;
-
-    @Field(() => PersonUpdateWithoutWorkspaceInput, {nullable:false})
-    @Type(() => PersonUpdateWithoutWorkspaceInput)
-    data!: PersonUpdateWithoutWorkspaceInput;
+  @Field(() => PersonUpdateWithoutWorkspaceInput, { nullable: false })
+  @Type(() => PersonUpdateWithoutWorkspaceInput)
+  data!: PersonUpdateWithoutWorkspaceInput;
 }

@@ -3,8 +3,8 @@ import { UserRepository } from './user.repository';
 import { PrismaModule } from 'src/database/prisma.module';
 
 @Module({
-    imports: [PrismaModule],
-    providers: [UserRepository],
-    exports: [UserRepository]
-  })
+  imports: [PrismaModule],
+  providers: [UserRepository],
+  exports: [UserRepository],
+})
 export class UserModule {}

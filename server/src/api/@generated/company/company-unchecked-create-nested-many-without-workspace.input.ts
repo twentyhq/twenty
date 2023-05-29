@@ -8,20 +8,21 @@ import { CompanyWhereUniqueInput } from './company-where-unique.input';
 
 @InputType()
 export class CompanyUncheckedCreateNestedManyWithoutWorkspaceInput {
+  @Field(() => [CompanyCreateWithoutWorkspaceInput], { nullable: true })
+  @Type(() => CompanyCreateWithoutWorkspaceInput)
+  create?: Array<CompanyCreateWithoutWorkspaceInput>;
 
-    @Field(() => [CompanyCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CompanyCreateWithoutWorkspaceInput)
-    create?: Array<CompanyCreateWithoutWorkspaceInput>;
+  @Field(() => [CompanyCreateOrConnectWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => CompanyCreateOrConnectWithoutWorkspaceInput)
+  connectOrCreate?: Array<CompanyCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => [CompanyCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CompanyCreateOrConnectWithoutWorkspaceInput)
-    connectOrCreate?: Array<CompanyCreateOrConnectWithoutWorkspaceInput>;
+  @Field(() => CompanyCreateManyWorkspaceInputEnvelope, { nullable: true })
+  @Type(() => CompanyCreateManyWorkspaceInputEnvelope)
+  createMany?: CompanyCreateManyWorkspaceInputEnvelope;
 
-    @Field(() => CompanyCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => CompanyCreateManyWorkspaceInputEnvelope)
-    createMany?: CompanyCreateManyWorkspaceInputEnvelope;
-
-    @Field(() => [CompanyWhereUniqueInput], {nullable:true})
-    @Type(() => CompanyWhereUniqueInput)
-    connect?: Array<CompanyWhereUniqueInput>;
+  @Field(() => [CompanyWhereUniqueInput], { nullable: true })
+  @Type(() => CompanyWhereUniqueInput)
+  connect?: Array<CompanyWhereUniqueInput>;
 }

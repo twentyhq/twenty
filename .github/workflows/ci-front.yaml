@@ -1,4 +1,4 @@
-name: continous-integration
+name: CI Front
 on:
   push:
 jobs:
@@ -13,12 +13,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - name: Write .env
-        run: |
-          cd front
-          touch .env
-          echo "REACT_APP_API_URL: $REACT_APP_API_URL" >> .env
-          echo "REACT_APP_AUTH_URL: $REACT_APP_AUTH_URL" >> .env
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -30,19 +24,25 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-      - name: Install Dependencies
+      - name: Front / Write .env
+        run: |
+          cd front
+          touch .env
+          echo "REACT_APP_API_URL: $REACT_APP_API_URL" >> .env
+          echo "REACT_APP_AUTH_URL: $REACT_APP_AUTH_URL" >> .env
+      - name: Front / Install Dependencies
         run: cd front && npm install
-      - name: Install Playwright
+      - name: Front / Install Playwright
         run: cd front && npx playwright install --with-deps
-      - name: Run linter
+      - name: Front / Run linter
         run: cd front && npm run lint
-      - name: Build Storybook
+      - name: Front / Build Storybook
         run: cd front && npm run build-storybook --quiet
-      - name: Serve Storybook and run storybook tests
+      - name: Front / Run storybook tests
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
             "npm run coverage"
-      - name: run jest tests
+      - name: Front / Run jest tests
         run: |
           cd front && npm run test

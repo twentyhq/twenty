@@ -4,19 +4,20 @@ import { WorkspaceCreateNestedOneWithoutWorkspaceMemberInput } from '../workspac
 
 @InputType()
 export class WorkspaceMemberCreateWithoutUserInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
-
-    @Field(() => WorkspaceCreateNestedOneWithoutWorkspaceMemberInput, {nullable:false})
-    workspace!: WorkspaceCreateNestedOneWithoutWorkspaceMemberInput;
+  @Field(() => WorkspaceCreateNestedOneWithoutWorkspaceMemberInput, {
+    nullable: false,
+  })
+  workspace!: WorkspaceCreateNestedOneWithoutWorkspaceMemberInput;
 }

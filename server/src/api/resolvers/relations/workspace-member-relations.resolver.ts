@@ -1,5 +1,4 @@
 import * as TypeGraphQL from '@nestjs/graphql';
-import type { GraphQLResolveInfo } from 'graphql';
 import { User } from 'src/api/@generated/user/user.model';
 import { WorkspaceMember } from 'src/api/@generated/workspace-member/workspace-member.model';
 import { Workspace } from 'src/api/@generated/workspace/workspace.model';
@@ -14,7 +13,6 @@ export class WorkspaceMemberRelationsResolver {
   })
   async user(
     @TypeGraphQL.Parent() workspaceMember: WorkspaceMember,
-    @TypeGraphQL.Info() info: GraphQLResolveInfo,
   ): Promise<User> {
     return await this.prismaService.workspaceMember
       .findUniqueOrThrow({
@@ -25,12 +23,11 @@ export class WorkspaceMemberRelationsResolver {
       .user({});
   }
 
-  @TypeGraphQL.ResolveField((_type) => Workspace, {
+  @TypeGraphQL.ResolveField(() => Workspace, {
     nullable: false,
   })
   async workspace(
     @TypeGraphQL.Parent() workspaceMember: WorkspaceMember,
-    @TypeGraphQL.Info() info: GraphQLResolveInfo,
   ): Promise<Workspace> {
     return this.prismaService.workspaceMember
       .findUniqueOrThrow({

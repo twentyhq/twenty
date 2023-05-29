@@ -9,23 +9,22 @@ import { CompanyScalarFieldEnum } from './company-scalar-field.enum';
 
 @ArgsType()
 export class FindFirstCompanyOrThrowArgs {
+  @Field(() => CompanyWhereInput, { nullable: true })
+  @Type(() => CompanyWhereInput)
+  where?: CompanyWhereInput;
 
-    @Field(() => CompanyWhereInput, {nullable:true})
-    @Type(() => CompanyWhereInput)
-    where?: CompanyWhereInput;
+  @Field(() => [CompanyOrderByWithRelationInput], { nullable: true })
+  orderBy?: Array<CompanyOrderByWithRelationInput>;
 
-    @Field(() => [CompanyOrderByWithRelationInput], {nullable:true})
-    orderBy?: Array<CompanyOrderByWithRelationInput>;
+  @Field(() => CompanyWhereUniqueInput, { nullable: true })
+  cursor?: CompanyWhereUniqueInput;
 
-    @Field(() => CompanyWhereUniqueInput, {nullable:true})
-    cursor?: CompanyWhereUniqueInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
-
-    @Field(() => [CompanyScalarFieldEnum], {nullable:true})
-    distinct?: Array<keyof typeof CompanyScalarFieldEnum>;
+  @Field(() => [CompanyScalarFieldEnum], { nullable: true })
+  distinct?: Array<keyof typeof CompanyScalarFieldEnum>;
 }
