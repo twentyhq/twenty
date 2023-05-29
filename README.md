@@ -36,6 +36,24 @@ It is meant to be:
 - Perfectly in-sync with your data
 - Crafted with care and enjoyable to use
 
+# Progress
+We are currently in the development phase of Twenty's alpha version:
+
+**Released**<br>
+✅  Create Companies & People<br>
+✅  View, filter and sort Companies & People<br>
+
+**In development**<br>
+⚙️  Pipe views (Opportunities)<br>
+⚙️  Comments<br>
+
+**Planned**<br>
+📅  Email logging<br>
+📅  Custom Fields<br>
+📅  Search / Cmd + K<br>
+📅  Data connexion<br>
+📅  +++
+
 
 # Documentation
 The doc is available on [docs.twenty.com](https://docs.twenty.com)
