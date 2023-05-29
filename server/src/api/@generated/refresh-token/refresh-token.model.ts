@@ -3,7 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { User } from '../user/user.model';
 
-@ObjectType()
+@ObjectType({})
 export class RefreshToken {
   @Field(() => ID, { nullable: false })
   id!: string;

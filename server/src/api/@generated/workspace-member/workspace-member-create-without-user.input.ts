@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { WorkspaceCreateNestedOneWithoutWorkspaceMemberInput } from '../workspace/workspace-create-nested-one-without-workspace-member.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberCreateWithoutUserInput {
@@ -16,8 +17,6 @@ export class WorkspaceMemberCreateWithoutUserInput {
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | string;
 
-  @Field(() => WorkspaceCreateNestedOneWithoutWorkspaceMemberInput, {
-    nullable: false,
-  })
+  @HideField()
   workspace!: WorkspaceCreateNestedOneWithoutWorkspaceMemberInput;
 }

@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { UserCreateNestedOneWithoutWorkspaceMemberInput } from '../user/user-create-nested-one-without-workspace-member.input';
 import { WorkspaceCreateNestedOneWithoutWorkspaceMemberInput } from '../workspace/workspace-create-nested-one-without-workspace-member.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberCreateInput {
@@ -22,8 +23,6 @@ export class WorkspaceMemberCreateInput {
   })
   user!: UserCreateNestedOneWithoutWorkspaceMemberInput;
 
-  @Field(() => WorkspaceCreateNestedOneWithoutWorkspaceMemberInput, {
-    nullable: false,
-  })
+  @HideField()
   workspace!: WorkspaceCreateNestedOneWithoutWorkspaceMemberInput;
 }

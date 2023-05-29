@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberUncheckedCreateWithoutUserInput {
@@ -15,6 +16,6 @@ export class WorkspaceMemberUncheckedCreateWithoutUserInput {
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 }

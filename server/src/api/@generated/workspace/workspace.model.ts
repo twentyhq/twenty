@@ -6,7 +6,7 @@ import { Company } from '../company/company.model';
 import { Person } from '../person/person.model';
 import { WorkspaceCount } from './workspace-count.output';
 
-@ObjectType()
+@ObjectType({})
 export class Workspace {
   @Field(() => ID, { nullable: false })
   id!: string;
