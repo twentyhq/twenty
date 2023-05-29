@@ -1,73 +1,113 @@
-import { MemoryRouter } from 'react-router-dom';
-import People from '../People';
+import { expect } from '@storybook/jest';
+import type { Meta, StoryObj } from '@storybook/react';
+import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from '@emotion/react';
-import { lightTheme } from '../../../layout/styles/themes';
-import { MockedProvider } from '@apollo/client/testing';
-import { mockPeopleData } from '../__tests__/__data__/mock-data';
-import { GET_PEOPLE } from '../../../services/api/people';
-import { SEARCH_PEOPLE_QUERY } from '../../../services/api/search/search';
-import {
-  GraphqlMutationPerson,
-  GraphqlQueryPerson,
-} from '../../../interfaces/entities/person.interface';
+import { MemoryRouter } from 'react-router-dom';
+import { graphql } from 'msw';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { userEvent, within } from '@storybook/testing-library';
 
-const component = {
-  title: 'People',
+import People from '../People';
+import { lightTheme } from '../../../layout/styles/themes';
+import { FullHeightStorybookLayout } from '../../../testing/FullHeightStorybookLayout';
+import { filterAndSortData } from '../../../testing/mock-data';
+import { GraphqlQueryPerson } from '../../../interfaces/entities/person.interface';
+import { mockedPeopleData } from '../../../testing/mock-data/people';
+import { GraphqlQueryCompany } from '../../../interfaces/entities/company.interface';
+import { mockCompaniesData } from '../../../testing/mock-data/companies';
+
+const meta: Meta<typeof People> = {
+  title: 'Pages/People',
   component: People,
 };
 
-export default component;
+const mockedClient = new ApolloClient({
+  uri: process.env.REACT_APP_API_URL,
+  cache: new InMemoryCache(),
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+    query: {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  },
+});
 
-const mocks = [
-  {
-    request: {
-      query: GET_PEOPLE,
-      variables: {
-        orderBy: [{ createdAt: 'desc' }],
-        where: {},
-      },
-    },
-    result: {
-      data: {
-        people: mockPeopleData,
-      },
-    },
-  },
-  {
-    request: {
-      query: GET_PEOPLE,
-      variables: {
-        orderBy: [{ createdAt: 'desc' }],
-        where: {},
-      },
-    },
-    result: {
-      data: {
-        people: mockPeopleData,
-      },
-    },
-  },
-  {
-    request: {
-      query: SEARCH_PEOPLE_QUERY, // TODO this should not be called for empty filters
-      variables: {
-        where: undefined,
-      },
-    },
-    result: {
-      data: {
-        people: [],
-      },
-    },
-  },
+export default meta;
+type Story = StoryObj<typeof People>;
+
+const render = () => (
+  <RecoilRoot>
+    <ApolloProvider client={mockedClient}>
+      <ThemeProvider theme={lightTheme}>
+        <MemoryRouter>
+          <FullHeightStorybookLayout>
+            <People />
+          </FullHeightStorybookLayout>
+        </MemoryRouter>
+      </ThemeProvider>
+    </ApolloProvider>
+  </RecoilRoot>
+);
+
+const defaultMocks = [
+  graphql.query('GetPeople', (req, res, ctx) => {
+    const returnedMockedData = filterAndSortData<GraphqlQueryPerson>(
+      mockedPeopleData,
+      req.variables.where,
+      req.variables.orderBy,
+      req.variables.limit,
+    );
+    return res(
+      ctx.data({
+        people: returnedMockedData,
+      }),
+    );
+  }),
+  graphql.query('SearchQuery', (req, res, ctx) => {
+    const returnedMockedData = filterAndSortData<GraphqlQueryCompany>(
+      mockCompaniesData,
+      req.variables.where,
+      req.variables.orderBy,
+      req.variables.limit,
+    );
+    return res(
+      ctx.data({
+        searchResults: returnedMockedData,
+      }),
+    );
+  }),
 ];
 
-export const PeopleDefault = () => (
-  <MockedProvider mocks={mocks}>
-    <ThemeProvider theme={lightTheme}>
-      <MemoryRouter>
-        <People />
-      </MemoryRouter>
-    </ThemeProvider>
-  </MockedProvider>
-);
+export const Default: Story = {
+  render,
+  parameters: {
+    msw: defaultMocks,
+  },
+};
+
+export const FilterByEmail: Story = {
+  render,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const filterButton = canvas.getByText('Filter');
+    await userEvent.click(filterButton);
+
+    const emailFilterButton = canvas.getByText('Email', { selector: 'li' });
+    await userEvent.click(emailFilterButton);
+
+    const emailInput = canvas.getByPlaceholderText('Email');
+    await userEvent.type(emailInput, 'al', {
+      delay: 200,
+    });
+
+    await expect(canvas.queryAllByText('John')).toStrictEqual([]);
+  },
+  parameters: {
+    msw: defaultMocks,
+  },
+};
