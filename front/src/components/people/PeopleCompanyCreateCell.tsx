@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { DoubleTextInput } from '../inputs/DoubleTextInput';
-import { useListenClickOutsideArrayOfRef } from '../../modules/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useListenClickOutsideArrayOfRef } from '../../modules/ui/common/hooks/useListenClickOutsideArrayOfRef';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CellBaseContainer } from '../editable-cell/CellBaseContainer';
 import { CellEditModeContainer } from '../editable-cell/CellEditModeContainer';

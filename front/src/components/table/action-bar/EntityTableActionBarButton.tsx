@@ -16,6 +16,7 @@ const StyledButton = styled.div`
 
   padding: ${(props) => props.theme.spacing(2)};
   border-radius: 4px;
+  transition: background 0.1s ease;
 
   &:hover {
     background: ${(props) => props.theme.tertiaryBackground};
@@ -27,7 +28,7 @@ const StyledButtonLabel = styled.div`
   font-weight: 500;
 `;
 
-function ActionBarButton({ label, icon, onClick }: OwnProps) {
+export function EntityTableActionBarButton({ label, icon, onClick }: OwnProps) {
   return (
     <StyledButton onClick={onClick}>
       {icon}
@@ -35,5 +36,3 @@ function ActionBarButton({ label, icon, onClick }: OwnProps) {
     </StyledButton>
   );
 }
-
-export default ActionBarButton;

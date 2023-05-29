@@ -94,6 +94,7 @@ export async function insertCompany(
   const result = await apiClient.mutate({
     mutation: INSERT_COMPANY,
     variables: mapToGqlCompany(company),
+    refetchQueries: ['GetCompanies'],
   });
 
   return result;

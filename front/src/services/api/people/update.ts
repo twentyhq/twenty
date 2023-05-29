@@ -106,6 +106,7 @@ export async function insertPerson(
   const result = await apiClient.mutate({
     mutation: INSERT_PERSON,
     variables: mapToGqlPerson(person),
+    refetchQueries: ['GetPeople'],
   });
 
   return result;
