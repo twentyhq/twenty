@@ -9,31 +9,31 @@ export const UPDATE_COMPANY = gql`
   mutation UpdateCompany(
     $id: String
     $name: String
-    $domain_name: String
-    $account_owner_id: String
-    $created_at: DateTime
+    $domainName: String
+    $accountOwnerId: String
+    $createdAt: DateTime
     $address: String
     $employees: Int
   ) {
     updateOneCompany(
       where: { id: $id }
       data: {
-        accountOwner: { connect: { id: $account_owner_id } }
+        accountOwner: { connect: { id: $accountOwnerId } }
         address: { set: $address }
-        domainName: { set: $domain_name }
+        domainName: { set: $domainName }
         employees: { set: $employees }
         name: { set: $name }
-        createdAt: { set: $created_at }
+        createdAt: { set: $createdAt }
       }
     ) {
       accountOwner {
         id
         email
-        display_name: displayName
+        displayName
       }
       address
-      created_at: createdAt
-      domain_name: domainName
+      createdAt
+      domainName
       employees
       id
       name
@@ -45,8 +45,8 @@ export const INSERT_COMPANY = gql`
   mutation InsertCompany(
     $id: String!
     $name: String!
-    $domain_name: String!
-    $created_at: DateTime
+    $domainName: String!
+    $createdAt: DateTime
     $address: String!
     $employees: Int
   ) {
@@ -54,15 +54,15 @@ export const INSERT_COMPANY = gql`
       data: {
         id: $id
         name: $name
-        domainName: $domain_name
-        createdAt: $created_at
+        domainName: $domainName
+        createdAt: $createdAt
         address: $address
         employees: $employees
       }
     ) {
       address
-      created_at: createdAt
-      domain_name: domainName
+      createdAt
+      domainName
       employees
       id
       name

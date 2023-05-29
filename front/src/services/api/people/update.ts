@@ -12,26 +12,26 @@ export const UPDATE_PERSON = gql`
     $lastname: String
     $phone: String
     $city: String
-    $company_id: String
+    $companyId: String
     $email: String
-    $created_at: DateTime
+    $createdAt: DateTime
   ) {
     updateOnePerson(
       where: { id: $id }
       data: {
         city: { set: $city }
-        company: { connect: { id: $company_id } }
+        company: { connect: { id: $companyId } }
         email: { set: $email }
         firstname: { set: $firstname }
         id: { set: $id }
         lastname: { set: $lastname }
         phone: { set: $phone }
-        createdAt: { set: $created_at }
+        createdAt: { set: $createdAt }
       }
     ) {
       city
       company {
-        domain_name: domainName
+        domainName
         name
         id
       }
@@ -40,7 +40,7 @@ export const UPDATE_PERSON = gql`
       id
       lastname
       phone
-      created_at: createdAt
+      createdAt
     }
   }
 `;
@@ -53,7 +53,7 @@ export const INSERT_PERSON = gql`
     $phone: String!
     $city: String!
     $email: String!
-    $created_at: DateTime
+    $createdAt: DateTime
   ) {
     createOnePerson(
       data: {
@@ -63,12 +63,12 @@ export const INSERT_PERSON = gql`
         phone: $phone
         city: $city
         email: $email
-        createdAt: $created_at
+        createdAt: $createdAt
       }
     ) {
       city
       company {
-        domain_name: domainName
+        domainName
         name
         id
       }
@@ -77,7 +77,7 @@ export const INSERT_PERSON = gql`
       id
       lastname
       phone
-      created_at: createdAt
+      createdAt
     }
   }
 `;

@@ -14,11 +14,11 @@ describe('User mappers', () => {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       displayName: 'John Doe',
       email: 'john.doe@gmail.com',
-      workspace_member: {
+      workspaceMember: {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e88',
         workspace: {
           id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e89',
-          display_name: 'John Doe',
+          displayName: 'John Doe',
           __typename: 'workspace',
         },
         __typename: 'workspace_members',
@@ -33,10 +33,10 @@ describe('User mappers', () => {
       displayName: graphQLUser.displayName,
       email: graphQLUser.email,
       workspaceMember: {
-        id: graphQLUser.workspace_member.id,
+        id: graphQLUser.workspaceMember.id,
         workspace: {
-          id: graphQLUser.workspace_member.workspace.id,
-          displayName: graphQLUser.workspace_member.workspace.display_name,
+          id: graphQLUser.workspaceMember.workspace.id,
+          displayName: graphQLUser.workspaceMember.workspace.displayName,
           domainName: undefined,
           logo: undefined,
         },
@@ -66,7 +66,7 @@ describe('User mappers', () => {
       id: user.id,
       displayName: user.displayName,
       email: user.email,
-      workspace_member_id: user.workspaceMember.id,
+      workspaceMemberId: user.workspaceMember.id,
       __typename: 'users',
     } satisfies GraphqlMutationUser);
   });

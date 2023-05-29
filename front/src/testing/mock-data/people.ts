@@ -10,11 +10,11 @@ export const mockedPeopleData: Array<GraphqlQueryPerson> = [
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
       name: 'Qonto',
-      domain_name: 'qonto.com',
+      domainName: 'qonto.com',
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    created_at: '2023-04-20T13:20:09.158312+00:00',
+    createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
   },
@@ -27,11 +27,11 @@ export const mockedPeopleData: Array<GraphqlQueryPerson> = [
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6e',
       name: 'LinkedIn',
-      domain_name: 'linkedin.com',
+      domainName: 'linkedin.com',
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    created_at: '2023-04-20T13:20:09.158312+00:00',
+    createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
   },
@@ -44,11 +44,11 @@ export const mockedPeopleData: Array<GraphqlQueryPerson> = [
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6g',
       name: 'Sequoia',
-      domain_name: 'sequoiacap.com',
+      domainName: 'sequoiacap.com',
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    created_at: '2023-04-20T13:20:09.158312+00:00',
+    createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
   },
@@ -62,11 +62,11 @@ export const mockedPeopleData: Array<GraphqlQueryPerson> = [
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6i',
       name: 'Facebook',
-      domain_name: 'facebook.com',
+      domainName: 'facebook.com',
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    created_at: '2023-04-20T13:20:09.158312+00:00',
+    createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
   },

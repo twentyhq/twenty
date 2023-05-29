@@ -16,12 +16,12 @@ export const GET_COMPANIES = gql`
   ) {
     companies(orderBy: $orderBy, where: $where) {
       id
-      domain_name: domainName
+      domainName
       name
-      created_at: createdAt
+      createdAt
       address
       employees
-      account_owner: accountOwner {
+      accountOwner {
         id
         email
         displayName

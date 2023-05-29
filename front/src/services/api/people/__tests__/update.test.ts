@@ -41,7 +41,7 @@ it('updates a person', async () => {
         icon: '!',
       },
     ],
-    creationDate: new Date(),
+    createdAt: new Date(),
     city: 'San Francisco',
     __typename: 'people',
   });
