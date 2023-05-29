@@ -2,6 +2,7 @@ import { Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AuthUserType } from 'src/api/resolvers/decorators/auth-user.decorator';
 
 export type JwtPayload = { userId: string; workspaceId: string };
 
@@ -24,7 +25,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: JwtPayload) {
+  async validate(payload: JwtPayload): Promise<AuthUserType> {
     return { userId: payload.userId, workspaceId: payload.workspaceId };
   }
 }

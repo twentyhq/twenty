@@ -1,7 +1,7 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { UseGuards } from '@nestjs/common';
-import { User, UserType } from './decorators/user.decorator';
+import { AuthUser, AuthUserType } from './decorators/auth-user.decorator';
 import { PrismaService } from 'src/database/prisma.service';
 import { Company } from '../@generated/company/company.model';
 import { FindManyCompanyArgs } from '../@generated/company/find-many-company.args';
@@ -52,12 +52,12 @@ export class CompanyResolver {
   })
   async createOneCompany(
     @Args() args: CreateOneCompanyArgs,
-    @User() user: UserType,
+    @AuthUser() authUser: AuthUserType,
   ): Promise<Company> {
     return this.prismaService.company.create({
       data: {
         ...args.data,
-        ...{ workspace: { connect: { id: user.workspaceId } } },
+        ...{ workspace: { connect: { id: authUser.workspaceId } } },
       },
     });
   }

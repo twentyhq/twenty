@@ -1,7 +1,7 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
-import { User, UserType } from './decorators/user.decorator';
+import { AuthUser, AuthUserType } from './decorators/auth-user.decorator';
 import { PrismaService } from 'src/database/prisma.service';
 import { Person } from '../@generated/person/person.model';
 import { FindManyPersonArgs } from '../@generated/person/find-many-person.args';
@@ -45,12 +45,12 @@ export class PeopleResolver {
   })
   async createOnePerson(
     @Args() args: CreateOnePersonArgs,
-    @User() user: UserType,
+    @AuthUser() authUser: AuthUserType,
   ): Promise<Person> {
     return this.prismaService.person.create({
       data: {
         ...args.data,
-        ...{ workspace: { connect: { id: user.workspaceId } } },
+        ...{ workspace: { connect: { id: authUser.workspaceId } } },
       },
     });
   }
