@@ -1,5 +1,4 @@
 import * as TypeGraphQL from '@nestjs/graphql';
-import type { GraphQLResolveInfo } from 'graphql';
 import { User } from 'src/api/@generated/user/user.model';
 import { WorkspaceMember } from 'src/api/@generated/workspace-member/workspace-member.model';
 import { Workspace } from 'src/api/@generated/workspace/workspace.model';
