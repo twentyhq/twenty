@@ -147,4 +147,16 @@ export const seedCompanies = async (prisma: PrismaClient) => {
       address: '',
     },
   });
+
+  await prisma.company.upsert({
+    where: { id: 'a674fa6c-1455-4c57-afaf-dd5dc086361e' },
+    update: {},
+    create: {
+      id: 'a674fa6c-1455-4c57-afaf-dd5dc086361e',
+      name: 'Instagram',
+      domainName: 'instagram.com',
+      workspaceId: '7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
+      address: '',
+    },
+  });
 };

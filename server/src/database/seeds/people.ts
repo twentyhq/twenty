@@ -209,4 +209,19 @@ export const seedPeople = async (prisma: PrismaClient) => {
       email: 'louis.duss@google.com',
     },
   });
+
+  await prisma.person.upsert({
+    where: { id: '240da2ec-2d40-4e49-8df4-9c6a049190dh' },
+    update: {},
+    create: {
+      id: '240da2ec-2d40-4e49-8df4-9c6a049190dh',
+      firstname: 'Lorie',
+      lastname: 'Vladim',
+      workspaceId: '7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
+      phone: '+33788901235',
+      city: 'Seattle',
+      companyId: 'a674fa6c-1455-4c57-afaf-dd5dc086361e',
+      email: 'lorie.vladim@google.com',
+    },
+  });
 };

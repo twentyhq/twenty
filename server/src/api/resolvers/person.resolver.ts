@@ -12,7 +12,7 @@ import { DeleteManyPersonArgs } from '../@generated/person/delete-many-person.ar
 import { Workspace } from '../@generated/workspace/workspace.model';
 
 @Resolver(() => Person)
-export class PeopleResolver {
+export class PersonResolver {
   constructor(private readonly prismaService: PrismaService) {}
 
   @UseGuards(JwtAuthGuard)
