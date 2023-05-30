@@ -28,6 +28,7 @@ import { availableFilters } from './people-filters';
 import { TbUser } from 'react-icons/tb';
 import { EntityTableActionBar } from '../../components/table/action-bar/EntityTableActionBar';
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
+import { TableActionBarButtonToggleComments } from '../../components/table/action-bar/TableActionBarButtonOpenComments';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -93,6 +94,7 @@ function People() {
           />
         </StyledPeopleContainer>
         <EntityTableActionBar>
+          <TableActionBarButtonToggleComments />
           <TableActionBarButtonDeletePeople />
         </EntityTableActionBar>
       </>
