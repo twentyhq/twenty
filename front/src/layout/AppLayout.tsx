@@ -1,4 +1,4 @@
-import Navbar from './navbar/Navbar';
+import { Navbar } from './navbar/Navbar';
 import styled from '@emotion/styled';
 import { ThemeProvider } from '@emotion/react';
 import { User } from '../interfaces/entities/user.interface';
@@ -9,13 +9,15 @@ const StyledLayout = styled.div`
   flex-direction: row;
   width: 100vw;
   height: 100vh;
+  background: ${(props) => props.theme.noisyBackground};
+  overflow: hidden;
 `;
 
-const StyledRightContainer = styled.div`
+const MainContainer = styled.div`
   display: flex;
   flex-direction: row;
-  flex: 1;
   overflow: hidden;
+  widht: calc(100% - 220px);
 `;
 
 type OwnProps = {
@@ -28,7 +30,7 @@ function AppLayout({ children, user }: OwnProps) {
     <ThemeProvider theme={lightTheme}>
       <StyledLayout>
         <Navbar user={user} workspace={user?.workspaceMember?.workspace} />
-        <StyledRightContainer>{children}</StyledRightContainer>
+        <MainContainer>{children}</MainContainer>
       </StyledLayout>
     </ThemeProvider>
   );

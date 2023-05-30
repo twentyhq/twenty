@@ -28,6 +28,7 @@ import { availableFilters } from './companies-filters';
 import { TbBuilding } from 'react-icons/tb';
 import { EntityTableActionBar } from '../../components/table/action-bar/EntityTableActionBar';
 import { TableActionBarButtonDeleteCompanies } from './table/TableActionBarButtonDeleteCompanies';
+import { TableActionBarButtonToggleComments } from '../../components/table/action-bar/TableActionBarButtonOpenComments';
 
 const StyledCompaniesContainer = styled.div`
   display: flex;
@@ -91,6 +92,7 @@ function Companies() {
           />
         </StyledCompaniesContainer>
         <EntityTableActionBar>
+          <TableActionBarButtonToggleComments />
           <TableActionBarButtonDeleteCompanies />
         </EntityTableActionBar>
       </>

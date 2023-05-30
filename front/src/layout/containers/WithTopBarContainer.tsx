@@ -1,6 +1,10 @@
 import styled from '@emotion/styled';
 import TopBar from '../top-bar/TopBar';
 import { ReactNode } from 'react';
+import { RightDrawer } from '../right-drawer/RightDrawer';
+import { Panel } from '../Panel';
+import { isRightDrawerOpenState } from '../../modules/ui/layout/right-drawer/states/isRightDrawerOpenState';
+import { useRecoilState } from 'recoil';
 
 type OwnProps = {
   children: JSX.Element;
@@ -11,30 +15,32 @@ type OwnProps = {
 
 const StyledContainer = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
-  overflow: hidden;
+  width: 100%;
 `;
 
-const ContentContainer = styled.div`
+const MainContainer = styled.div`
   display: flex;
-  position: relative;
-  flex-direction: column;
-  background: ${(props) => props.theme.noisyBackground};
-  flex: 1;
-  padding-right: ${(props) => props.theme.spacing(3)};
-  padding-bottom: ${(props) => props.theme.spacing(3)};
-  width: calc(100% - ${(props) => props.theme.spacing(3)});
-  height: calc(100% - 54px);
-`;
-
-const ContentSubContainer = styled.div`
-  display: flex;
-  background: ${(props) => props.theme.primaryBackground};
-  border-radius: 8px;
+  flex-direction: row;
   height: 100%;
-  flex: 1;
-  border: 1px solid ${(props) => props.theme.primaryBorder};
+  width: calc(100% - 16px);
+  margin-right: 8px;
+  margin-bottom: 8px;
+  gap: 8px;
+  padding: 4px;
+`;
+
+const RIGHT_DRAWER_WIDTH = '300px';
+
+type LeftContainerProps = {
+  isRightDrawerOpen?: boolean;
+};
+
+const LeftContainer = styled.div<LeftContainerProps>`
+  display: flex;
+  width: calc(
+    100% - ${(props) => (props.isRightDrawerOpen ? RIGHT_DRAWER_WIDTH : '0px')}
+  );
 `;
 
 function FullWidthContainer({
@@ -43,12 +49,17 @@ function FullWidthContainer({
   icon,
   onAddButtonClick,
 }: OwnProps) {
+  const [isRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
+
   return (
     <StyledContainer>
       <TopBar title={title} icon={icon} onAddButtonClick={onAddButtonClick} />
-      <ContentContainer>
-        <ContentSubContainer>{children}</ContentSubContainer>
-      </ContentContainer>
+      <MainContainer>
+        <LeftContainer isRightDrawerOpen={isRightDrawerOpen}>
+          <Panel>{children}</Panel>
+        </LeftContainer>
+        <RightDrawer />
+      </MainContainer>
     </StyledContainer>
   );
 }

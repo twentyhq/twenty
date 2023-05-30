@@ -28,6 +28,7 @@ export function TableActionBarButtonDeletePeople() {
     <EntityTableActionBarButton
       label="Delete"
       icon={<TbTrash size={16} />}
+      type="warning"
       onClick={handleDeleteClick}
     />
   );

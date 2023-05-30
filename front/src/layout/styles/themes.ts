@@ -30,6 +30,10 @@ const lightThemeSpecific = {
   secondaryBackgroundSmallTransparency: 'rgba(252, 252, 252, 0.97)',
 
   primaryBorder: 'rgba(0, 0, 0, 0.08)',
+  lightBorder: '#f5f5f5',
+
+  clickableElementBackgroundHover: 'rgba(0, 0, 0, 0.04)',
+  clickableElementBackgroundTransition: 'background 0.1s ease',
 
   text100: '#000',
   text80: '#333333',
@@ -62,7 +66,11 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
 
   secondaryBackgroundSmallTransparency: 'rgba(23, 23, 23, 0.97)',
 
+  clickableElementBackgroundHover: 'rgba(0, 0, 0, 0.04)',
+  clickableElementBackgroundTransition: 'background 0.1s ease',
+
   primaryBorder: 'rgba(255, 255, 255, 0.08)',
+  lightBorder: '#222222',
 
   text100: '#ffffff',
   text80: '#cccccc',

@@ -17,7 +17,6 @@ const StyledContainer = styled.div`
   align-items: center;
   padding-left: ${(props) => props.theme.spacing(2)};
   padding-right: ${(props) => props.theme.spacing(2)};
-  color: ${(props) => props.theme.red};
   left: 50%;
   transform: translateX(-50%);
 
