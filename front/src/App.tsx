@@ -24,7 +24,7 @@ function App() {
   }, [data]);
 
   return (
-    <div>
+    <>
       {
         <AppLayout user={user}>
           <Routes>
@@ -65,7 +65,7 @@ function App() {
           </Routes>
         </AppLayout>
       }
-    </div>
+    </>
   );
 }
 

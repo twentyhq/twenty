@@ -4,16 +4,20 @@ import { ReactNode } from 'react';
 type OwnProps = {
   icon: ReactNode;
   label: string;
-  color?: 'default' | 'red';
+  type?: 'standard' | 'warning';
   onClick: () => void;
 };
 
-const StyledButton = styled.div`
+type StyledButtonProps = {
+  type: 'standard' | 'warning';
+};
+
+const StyledButton = styled.div<StyledButtonProps>`
   display: flex;
   cursor: pointer;
   user-select: none;
   color: ${(props) =>
-    props.color === 'default' ? props.theme.text60 : props.theme.red};
+    props.type === 'warning' ? props.theme.red : props.theme.text60};
   justify-content: center;
 
   padding: ${(props) => props.theme.spacing(2)};
@@ -33,11 +37,11 @@ const StyledButtonLabel = styled.div`
 export function EntityTableActionBarButton({
   label,
   icon,
-  color = 'default',
+  type = 'standard',
   onClick,
 }: OwnProps) {
   return (
-    <StyledButton color={color} onClick={onClick}>
+    <StyledButton type={type} onClick={onClick}>
       {icon}
       <StyledButtonLabel>{label}</StyledButtonLabel>
     </StyledButton>

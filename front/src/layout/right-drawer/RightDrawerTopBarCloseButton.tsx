@@ -16,7 +16,7 @@ const StyledButton = styled.button`
 
   border-radius: 4px;
 
-  transition: ${(props) => props.theme.clickableElementBackgroundTransiton};
+  transition: ${(props) => props.theme.clickableElementBackgroundTransition};
   &:hover {
     background: ${(props) => props.theme.clickableElementBackgroundHover};
   }

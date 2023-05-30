@@ -10,9 +10,9 @@ import { TbBuilding, TbUser } from 'react-icons/tb';
 const NavbarContainer = styled.div`
   display: flex;
   flex-direction: column;
-  background: ${(props) => props.theme.noisyBackground};
-  min-width: 220px;
+  width: 220px;
   padding: ${(props) => props.theme.spacing(2)};
+  flex-shrink: 0;
 `;
 
 const NavItemsContainer = styled.div`
@@ -26,7 +26,7 @@ type OwnProps = {
   workspace?: Workspace;
 };
 
-function Navbar({ workspace }: OwnProps) {
+export function Navbar({ workspace }: OwnProps) {
   return (
     <>
       <NavbarContainer>
@@ -60,5 +60,3 @@ function Navbar({ workspace }: OwnProps) {
     </>
   );
 }
-
-export default Navbar;
