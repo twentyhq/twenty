@@ -3,7 +3,7 @@ import { GraphqlQueryUser } from '../../../interfaces/entities/user.interface';
 
 export const GET_CURRENT_USER = gql`
   query getCurrentUser($uuid: String) {
-    users(where: { id: { equals: $uuid } }) {
+    users: findManyUser(where: { id: { equals: $uuid } }) {
       id
       email
       displayName

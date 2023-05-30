@@ -252,7 +252,6 @@ export type Mutation = {
   createOnePerson: Person;
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
-  deleteOneCompany?: Maybe<Company>;
   updateOneCompany?: Maybe<Company>;
   updateOnePerson?: Maybe<Person>;
 };
@@ -275,11 +274,6 @@ export type MutationDeleteManyCompanyArgs = {
 
 export type MutationDeleteManyPersonArgs = {
   where?: InputMaybe<PersonWhereInput>;
-};
-
-
-export type MutationDeleteOneCompanyArgs = {
-  where: CompanyWhereUniqueInput;
 };
 
 
@@ -591,14 +585,13 @@ export type PersonWhereUniqueInput = {
 
 export type Query = {
   __typename?: 'Query';
-  companies: Array<Company>;
-  people: Array<Person>;
-  user: User;
-  users: Array<User>;
+  findManyCompany: Array<Company>;
+  findManyPerson: Array<Person>;
+  findManyUser: Array<User>;
 };
 
 
-export type QueryCompaniesArgs = {
+export type QueryFindManyCompanyArgs = {
   cursor?: InputMaybe<CompanyWhereUniqueInput>;
   distinct?: InputMaybe<Array<CompanyScalarFieldEnum>>;
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput>>;
@@ -608,7 +601,7 @@ export type QueryCompaniesArgs = {
 };
 
 
-export type QueryPeopleArgs = {
+export type QueryFindManyPersonArgs = {
   cursor?: InputMaybe<PersonWhereUniqueInput>;
   distinct?: InputMaybe<Array<PersonScalarFieldEnum>>;
   orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput>>;
@@ -618,12 +611,7 @@ export type QueryPeopleArgs = {
 };
 
 
-export type QueryUserArgs = {
-  where: UserWhereUniqueInput;
-};
-
-
-export type QueryUsersArgs = {
+export type QueryFindManyUserArgs = {
   cursor?: InputMaybe<UserWhereUniqueInput>;
   distinct?: InputMaybe<Array<UserScalarFieldEnum>>;
   orderBy?: InputMaybe<Array<UserOrderByWithRelationInput>>;
@@ -1117,7 +1105,7 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: any, address: string, employees?: number | null, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', findManyCompany: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: any, address: string, employees?: number | null, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
 
 export type UpdateCompanyMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1158,7 +1146,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: any, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', findManyPerson: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: any, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type UpdatePeopleMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1213,7 +1201,7 @@ export type SearchUserQueryQuery = { __typename?: 'Query', searchResults: Array<
 export type EmptyQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EmptyQueryQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string }> };
+export type EmptyQueryQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string }> };
 
 export type SearchCompanyQueryQueryVariables = Exact<{
   where?: InputMaybe<CompanyWhereInput>;
@@ -1228,17 +1216,17 @@ export type GetCurrentUserQueryVariables = Exact<{
 }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspaceMember?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }> };
+export type GetCurrentUserQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspaceMember?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }> };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string }> };
+export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string }> };
 
 
 export const GetCompaniesDocument = gql`
     query GetCompanies($orderBy: [CompanyOrderByWithRelationInput!], $where: CompanyWhereInput) {
-  companies(orderBy: $orderBy, where: $where) {
+  findManyCompany(orderBy: $orderBy, where: $where) {
     id
     domainName
     name
@@ -1414,7 +1402,7 @@ export type DeleteCompaniesMutationResult = Apollo.MutationResult<DeleteCompanie
 export type DeleteCompaniesMutationOptions = Apollo.BaseMutationOptions<DeleteCompaniesMutation, DeleteCompaniesMutationVariables>;
 export const GetPeopleDocument = gql`
     query GetPeople($orderBy: [PersonOrderByWithRelationInput!], $where: PersonWhereInput, $limit: Int) {
-  people(orderBy: $orderBy, where: $where, take: $limit) {
+  findManyPerson(orderBy: $orderBy, where: $where, take: $limit) {
     id
     phone
     email
@@ -1601,7 +1589,7 @@ export type DeletePeopleMutationResult = Apollo.MutationResult<DeletePeopleMutat
 export type DeletePeopleMutationOptions = Apollo.BaseMutationOptions<DeletePeopleMutation, DeletePeopleMutationVariables>;
 export const SearchPeopleQueryDocument = gql`
     query SearchPeopleQuery($where: PersonWhereInput, $limit: Int) {
-  searchResults: people(where: $where, take: $limit) {
+  searchResults: findManyPerson(where: $where, take: $limit) {
     id
     phone
     email
@@ -1643,7 +1631,7 @@ export type SearchPeopleQueryLazyQueryHookResult = ReturnType<typeof useSearchPe
 export type SearchPeopleQueryQueryResult = Apollo.QueryResult<SearchPeopleQueryQuery, SearchPeopleQueryQueryVariables>;
 export const SearchUserQueryDocument = gql`
     query SearchUserQuery($where: UserWhereInput, $limit: Int) {
-  searchResults: users(where: $where, take: $limit) {
+  searchResults: findManyUser(where: $where, take: $limit) {
     id
     email
     displayName
@@ -1681,7 +1669,7 @@ export type SearchUserQueryLazyQueryHookResult = ReturnType<typeof useSearchUser
 export type SearchUserQueryQueryResult = Apollo.QueryResult<SearchUserQueryQuery, SearchUserQueryQueryVariables>;
 export const EmptyQueryDocument = gql`
     query EmptyQuery {
-  users {
+  findManyUser {
     id
   }
 }
@@ -1715,7 +1703,7 @@ export type EmptyQueryLazyQueryHookResult = ReturnType<typeof useEmptyQueryLazyQ
 export type EmptyQueryQueryResult = Apollo.QueryResult<EmptyQueryQuery, EmptyQueryQueryVariables>;
 export const SearchCompanyQueryDocument = gql`
     query SearchCompanyQuery($where: CompanyWhereInput, $limit: Int) {
-  searchResults: companies(where: $where, take: $limit) {
+  searchResults: findManyCompany(where: $where, take: $limit) {
     id
     name
     domainName
@@ -1753,7 +1741,7 @@ export type SearchCompanyQueryLazyQueryHookResult = ReturnType<typeof useSearchC
 export type SearchCompanyQueryQueryResult = Apollo.QueryResult<SearchCompanyQueryQuery, SearchCompanyQueryQueryVariables>;
 export const GetCurrentUserDocument = gql`
     query getCurrentUser($uuid: String) {
-  users(where: {id: {equals: $uuid}}) {
+  findManyUser(where: {id: {equals: $uuid}}) {
     id
     email
     displayName
@@ -1798,7 +1786,7 @@ export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentU
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
 export const GetUsersDocument = gql`
     query getUsers {
-  users {
+  findManyUser {
     id
   }
 }

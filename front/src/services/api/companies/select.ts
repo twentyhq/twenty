@@ -14,7 +14,7 @@ export const GET_COMPANIES = gql`
     $orderBy: [CompanyOrderByWithRelationInput!]
     $where: CompanyWhereInput
   ) {
-    companies(orderBy: $orderBy, where: $where) {
+    companies: findManyCompany(orderBy: $orderBy, where: $where) {
       id
       domainName
       name

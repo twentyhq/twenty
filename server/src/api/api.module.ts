@@ -12,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthModule } from 'src/auth/auth.module';
 import { CompanyRelationsResolver } from './resolvers/relations/company-relations.resolver';
 import { PrismaModule } from 'src/database/prisma.module';
+import { ArgsService } from './resolvers/services/args.service';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PrismaModule } from 'src/database/prisma.module';
   ],
   providers: [
     ConfigService,
+    ArgsService,
 
     CompanyResolver,
     PersonResolver,

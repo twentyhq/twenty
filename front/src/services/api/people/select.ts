@@ -15,7 +15,7 @@ export const GET_PEOPLE = gql`
     $where: PersonWhereInput
     $limit: Int
   ) {
-    people(orderBy: $orderBy, where: $where, take: $limit) {
+    people: findManyPerson(orderBy: $orderBy, where: $where, take: $limit) {
       id
       phone
       email

@@ -1,7 +1,6 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
-import { AuthWorkspace } from './decorators/auth-user.decorator';
 import { PrismaService } from 'src/database/prisma.service';
 import { Person } from '../@generated/person/person.model';
 import { FindManyPersonArgs } from '../@generated/person/find-many-person.args';
@@ -10,22 +9,35 @@ import { CreateOnePersonArgs } from '../@generated/person/create-one-person.args
 import { AffectedRows } from '../@generated/prisma/affected-rows.output';
 import { DeleteManyPersonArgs } from '../@generated/person/delete-many-person.args';
 import { Workspace } from '../@generated/workspace/workspace.model';
+import { AuthWorkspace } from './decorators/auth-workspace.decorator';
+import { ArgsService } from './services/args.service';
+import { CheckWorkspaceOwnership } from 'src/auth/guards/check-workspace-ownership.guard';
 
+@UseGuards(JwtAuthGuard, CheckWorkspaceOwnership)
 @Resolver(() => Person)
 export class PersonResolver {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly argsService: ArgsService,
+  ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Query(() => [Person], {
     nullable: false,
   })
-  async people(@Args() args: FindManyPersonArgs): Promise<Person[]> {
+  async findManyPerson(
+    @Args() args: FindManyPersonArgs,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Person[]> {
+    const preparedArgs =
+      await this.argsService.prepareFindManyArgs<FindManyPersonArgs>(
+        args,
+        workspace,
+      );
     return this.prismaService.person.findMany({
-      ...args,
+      ...preparedArgs,
     });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Mutation(() => Person, {
     nullable: true,
   })
@@ -35,12 +47,23 @@ export class PersonResolver {
     if (!args.data.company?.connect?.id) {
       args.data.company = { disconnect: true };
     }
+
     return this.prismaService.person.update({
       ...args,
     });
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Mutation(() => AffectedRows, {
+    nullable: false,
+  })
+  async deleteManyPerson(
+    @Args() args: DeleteManyPersonArgs,
+  ): Promise<AffectedRows> {
+    return this.prismaService.person.deleteMany({
+      ...args,
+    });
+  }
+
   @Mutation(() => Person, {
     nullable: false,
   })
@@ -53,18 +76,6 @@ export class PersonResolver {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-    });
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Mutation(() => AffectedRows, {
-    nullable: false,
-  })
-  async deleteManyPerson(
-    @Args() args: DeleteManyPersonArgs,
-  ): Promise<AffectedRows> {
-    return this.prismaService.person.deleteMany({
-      ...args,
     });
   }
 }
