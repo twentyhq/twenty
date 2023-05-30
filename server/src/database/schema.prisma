@@ -35,6 +35,7 @@ model User {
   @@map("users")
 }
 
+/// @TypeGraphQL.omit(input: true)
 model Workspace {
   id              String            @id
   createdAt       DateTime          @default(now())
@@ -57,7 +58,9 @@ model WorkspaceMember {
   deletedAt   DateTime?
   userId      String    @unique
   user        User      @relation(fields: [userId], references: [id])
+  /// @TypeGraphQL.omit(input: true)
   workspaceId String
+  /// @TypeGraphQL.omit(input: true)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("workspace_members")
@@ -105,6 +108,7 @@ model Person {
   @@map("people")
 }
 
+/// @TypeGraphQL.omit(input: true)
 model RefreshToken {
   id           String    @id
   createdAt    DateTime  @default(now())

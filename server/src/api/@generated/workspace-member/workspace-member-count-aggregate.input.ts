@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberCountAggregateInput {
@@ -18,7 +19,7 @@ export class WorkspaceMemberCountAggregateInput {
   @Field(() => Boolean, { nullable: true })
   userId?: true;
 
-  @Field(() => Boolean, { nullable: true })
+  @HideField()
   workspaceId?: true;
 
   @Field(() => Boolean, { nullable: true })

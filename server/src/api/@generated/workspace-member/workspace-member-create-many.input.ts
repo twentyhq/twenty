@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberCreateManyInput {
@@ -18,6 +19,6 @@ export class WorkspaceMemberCreateManyInput {
   @Field(() => String, { nullable: false })
   userId!: string;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 }

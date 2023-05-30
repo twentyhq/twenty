@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberScalarWhereWithAggregatesInput {
@@ -36,6 +37,6 @@ export class WorkspaceMemberScalarWhereWithAggregatesInput {
   @Field(() => StringWithAggregatesFilter, { nullable: true })
   userId?: StringWithAggregatesFilter;
 
-  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  @HideField()
   workspaceId?: StringWithAggregatesFilter;
 }

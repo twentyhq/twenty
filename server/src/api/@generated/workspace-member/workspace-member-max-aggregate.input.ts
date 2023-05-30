@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberMaxAggregateInput {
@@ -18,6 +19,6 @@ export class WorkspaceMemberMaxAggregateInput {
   @Field(() => Boolean, { nullable: true })
   userId?: true;
 
-  @Field(() => Boolean, { nullable: true })
+  @HideField()
   workspaceId?: true;
 }

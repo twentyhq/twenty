@@ -5,6 +5,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput } from '../user/user-update-one-required-without-workspace-member-nested.input';
 import { WorkspaceUpdateOneRequiredWithoutWorkspaceMemberNestedInput } from '../workspace/workspace-update-one-required-without-workspace-member-nested.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberUpdateInput {
@@ -25,8 +26,6 @@ export class WorkspaceMemberUpdateInput {
   })
   user?: UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput;
 
-  @Field(() => WorkspaceUpdateOneRequiredWithoutWorkspaceMemberNestedInput, {
-    nullable: true,
-  })
+  @HideField()
   workspace?: WorkspaceUpdateOneRequiredWithoutWorkspaceMemberNestedInput;
 }

@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberScalarWhereInput {
@@ -30,6 +31,6 @@ export class WorkspaceMemberScalarWhereInput {
   @Field(() => StringFilter, { nullable: true })
   userId?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
+  @HideField()
   workspaceId?: StringFilter;
 }

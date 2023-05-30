@@ -1,7 +1,6 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
-import { User, UserType } from './decorators/user.decorator';
 import { PrismaService } from 'src/database/prisma.service';
 import { Person } from '../@generated/person/person.model';
 import { FindManyPersonArgs } from '../@generated/person/find-many-person.args';
@@ -9,22 +8,36 @@ import { UpdateOnePersonArgs } from '../@generated/person/update-one-person.args
 import { CreateOnePersonArgs } from '../@generated/person/create-one-person.args';
 import { AffectedRows } from '../@generated/prisma/affected-rows.output';
 import { DeleteManyPersonArgs } from '../@generated/person/delete-many-person.args';
+import { Workspace } from '../@generated/workspace/workspace.model';
+import { AuthWorkspace } from './decorators/auth-workspace.decorator';
+import { ArgsService } from './services/args.service';
+import { CheckWorkspaceOwnership } from 'src/auth/guards/check-workspace-ownership.guard';
 
+@UseGuards(JwtAuthGuard, CheckWorkspaceOwnership)
 @Resolver(() => Person)
-export class PeopleResolver {
-  constructor(private readonly prismaService: PrismaService) {}
+export class PersonResolver {
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly argsService: ArgsService,
+  ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Query(() => [Person], {
     nullable: false,
   })
-  async people(@Args() args: FindManyPersonArgs): Promise<Person[]> {
+  async findManyPerson(
+    @Args() args: FindManyPersonArgs,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Person[]> {
+    const preparedArgs =
+      await this.argsService.prepareFindManyArgs<FindManyPersonArgs>(
+        args,
+        workspace,
+      );
     return this.prismaService.person.findMany({
-      ...args,
+      ...preparedArgs,
     });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Mutation(() => Person, {
     nullable: true,
   })
@@ -34,28 +47,12 @@ export class PeopleResolver {
     if (!args.data.company?.connect?.id) {
       args.data.company = { disconnect: true };
     }
+
     return this.prismaService.person.update({
       ...args,
     });
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Mutation(() => Person, {
-    nullable: false,
-  })
-  async createOnePerson(
-    @Args() args: CreateOnePersonArgs,
-    @User() user: UserType,
-  ): Promise<Person> {
-    return this.prismaService.person.create({
-      data: {
-        ...args.data,
-        ...{ workspace: { connect: { id: user.workspaceId } } },
-      },
-    });
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Mutation(() => AffectedRows, {
     nullable: false,
   })
@@ -64,6 +61,21 @@ export class PeopleResolver {
   ): Promise<AffectedRows> {
     return this.prismaService.person.deleteMany({
       ...args,
+    });
+  }
+
+  @Mutation(() => Person, {
+    nullable: false,
+  })
+  async createOnePerson(
+    @Args() args: CreateOnePersonArgs,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Person> {
+    return this.prismaService.person.create({
+      data: {
+        ...args.data,
+        ...{ workspace: { connect: { id: workspace.id } } },
+      },
     });
   }
 }

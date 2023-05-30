@@ -74,7 +74,6 @@ export function filterAndSortData<DataT>(
   limit: number,
 ): Array<DataT> {
   let filteredData = filterData<DataT>(data, where);
-  console.log(filteredData);
 
   if (orderBy) {
     const firstOrderBy = orderBy[0];

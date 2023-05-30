@@ -9,7 +9,7 @@ import { debounce } from '../../../modules/utils/debounce';
 
 export const SEARCH_PEOPLE_QUERY = gql`
   query SearchPeopleQuery($where: PersonWhereInput, $limit: Int) {
-    searchResults: people(where: $where, take: $limit) {
+    searchResults: findManyPerson(where: $where, take: $limit) {
       id
       phone
       email
@@ -23,7 +23,7 @@ export const SEARCH_PEOPLE_QUERY = gql`
 
 export const SEARCH_USER_QUERY = gql`
   query SearchUserQuery($where: UserWhereInput, $limit: Int) {
-    searchResults: users(where: $where, take: $limit) {
+    searchResults: findManyUser(where: $where, take: $limit) {
       id
       email
       displayName
@@ -33,7 +33,7 @@ export const SEARCH_USER_QUERY = gql`
 // TODO: remove this query
 export const EMPTY_QUERY = gql`
   query EmptyQuery {
-    users {
+    searchResults: findManyUser {
       id
     }
   }
@@ -41,7 +41,7 @@ export const EMPTY_QUERY = gql`
 
 export const SEARCH_COMPANY_QUERY = gql`
   query SearchCompanyQuery($where: CompanyWhereInput, $limit: Int) {
-    searchResults: companies(where: $where, take: $limit) {
+    searchResults: findManyCompany(where: $where, take: $limit) {
       id
       name
       domainName
