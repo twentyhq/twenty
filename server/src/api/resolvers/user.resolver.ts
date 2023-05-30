@@ -2,11 +2,12 @@ import { Resolver, Query, Args } from '@nestjs/graphql';
 import { PrismaService } from 'src/database/prisma.service';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
-import { AuthUser, AuthUserType } from './decorators/auth-user.decorator';
+import { AuthWorkspace } from './decorators/auth-user.decorator';
 
 import { User } from '../@generated/user/user.model';
 import { FindManyUserArgs } from '../@generated/user/find-many-user.args';
 import { FindUniqueUserOrThrowArgs } from '../@generated/user/find-unique-user-or-throw.args';
+import { Workspace } from '@prisma/client';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -18,7 +19,7 @@ export class UserResolver {
   })
   async users(
     @Args() args: FindManyUserArgs,
-    @AuthUser() authUser: AuthUserType,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<User[]> {
     return await this.prismaService.user.findMany({
       ...args,

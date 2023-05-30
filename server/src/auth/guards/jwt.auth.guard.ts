@@ -1,6 +1,8 @@
 import {
   CanActivate,
   ExecutionContext,
+  HttpException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -8,12 +10,15 @@ import { JwtService } from '@nestjs/jwt';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { PrismaService } from 'src/database/prisma.service';
+import { JwtPayload } from '../strategies/jwt.auth.strategy';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
+    private prismaService: PrismaService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -24,10 +29,34 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.get('JWT_SECRET'),
       });
-      request['user'] = payload;
+
+      const user = this.prismaService.user.findUniqueOrThrow({
+        where: { id: payload.userId },
+      });
+
+      if (!user) {
+        throw new HttpException(
+          { reason: 'User does not exist' },
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      const workspace = this.prismaService.workspace.findUniqueOrThrow({
+        where: { id: payload.workspaceId },
+      });
+
+      if (!workspace) {
+        throw new HttpException(
+          { reason: 'Workspace does not exist' },
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      request.user = user;
+      request.workspace = workspace;
     } catch (exception) {
       throw new UnauthorizedException();
     }

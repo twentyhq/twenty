@@ -9,7 +9,10 @@ export const AuthUser = createParamDecorator(
   },
 );
 
-export type AuthUserType = {
-  workspaceId: string;
-  userId: string;
-};
+export const AuthWorkspace = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const gqlContext = GqlExecutionContext.create(ctx);
+    const request = gqlContext.getContext().req;
+    return request.workspace;
+  },
+);

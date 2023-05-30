@@ -1,7 +1,7 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { UseGuards } from '@nestjs/common';
-import { AuthUser, AuthUserType } from './decorators/auth-user.decorator';
+import { AuthWorkspace } from './decorators/auth-user.decorator';
 import { PrismaService } from 'src/database/prisma.service';
 import { Company } from '../@generated/company/company.model';
 import { FindManyCompanyArgs } from '../@generated/company/find-many-company.args';
@@ -10,6 +10,7 @@ import { UpdateOneCompanyArgs } from '../@generated/company/update-one-company.a
 import { CreateOneCompanyArgs } from '../@generated/company/create-one-company.args';
 import { AffectedRows } from '../@generated/prisma/affected-rows.output';
 import { DeleteManyCompanyArgs } from '../@generated/company/delete-many-company.args';
+import { Workspace } from '@prisma/client';
 
 @Resolver(() => Company)
 export class CompanyResolver {
@@ -52,12 +53,12 @@ export class CompanyResolver {
   })
   async createOneCompany(
     @Args() args: CreateOneCompanyArgs,
-    @AuthUser() authUser: AuthUserType,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<Company> {
     return this.prismaService.company.create({
       data: {
         ...args.data,
-        ...{ workspace: { connect: { id: authUser.workspaceId } } },
+        ...{ workspace: { connect: { id: workspace.id } } },
       },
     });
   }

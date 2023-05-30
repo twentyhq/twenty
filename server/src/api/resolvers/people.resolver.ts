@@ -1,7 +1,7 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
-import { AuthUser, AuthUserType } from './decorators/auth-user.decorator';
+import { AuthWorkspace } from './decorators/auth-user.decorator';
 import { PrismaService } from 'src/database/prisma.service';
 import { Person } from '../@generated/person/person.model';
 import { FindManyPersonArgs } from '../@generated/person/find-many-person.args';
@@ -9,6 +9,7 @@ import { UpdateOnePersonArgs } from '../@generated/person/update-one-person.args
 import { CreateOnePersonArgs } from '../@generated/person/create-one-person.args';
 import { AffectedRows } from '../@generated/prisma/affected-rows.output';
 import { DeleteManyPersonArgs } from '../@generated/person/delete-many-person.args';
+import { Workspace } from '../@generated/workspace/workspace.model';
 
 @Resolver(() => Person)
 export class PeopleResolver {
@@ -45,12 +46,12 @@ export class PeopleResolver {
   })
   async createOnePerson(
     @Args() args: CreateOnePersonArgs,
-    @AuthUser() authUser: AuthUserType,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<Person> {
     return this.prismaService.person.create({
       data: {
         ...args.data,
-        ...{ workspace: { connect: { id: authUser.workspaceId } } },
+        ...{ workspace: { connect: { id: workspace.id } } },
       },
     });
   }

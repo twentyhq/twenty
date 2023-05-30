@@ -8,6 +8,12 @@ import { RefreshTokenRepository } from 'src/entities/refresh-token/refresh-token
 import { v4 } from 'uuid';
 import { RefreshToken, User } from '@prisma/client';
 
+export type UserPayload = {
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -18,11 +24,7 @@ export class AuthService {
     private refreshTokenRepository: RefreshTokenRepository,
   ) {}
 
-  async upsertUser(rawUser: {
-    firstName: string;
-    lastName: string;
-    email: string;
-  }) {
+  async upsertUser(rawUser: UserPayload) {
     if (!rawUser.email) {
       throw new HttpException(
         { reason: 'Email is missing' },
