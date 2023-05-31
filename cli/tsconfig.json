@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "target": "es5",
+      "module": "es2020",
+      "strict": true,
+      "outDir": "lib/",
+      "moduleResolution": "nodenext",
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "declaration": true,
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": ["src/**/*.ts"]
+}
