@@ -1,5 +1,4 @@
 import { ReactElement, useMemo, useRef } from 'react';
-import { CellEditModeContainer } from './CellEditModeContainer';
 import { useRecoilState } from 'recoil';
 import { isSomeInputInEditModeState } from '../../modules/ui/tables/states/isSomeInputInEditModeState';
 import { useListenClickOutsideArrayOfRef } from '../../modules/ui/common/hooks/useListenClickOutsideArrayOfRef';
