@@ -11,6 +11,30 @@ datasource db {
 generator nestgraphql {
     provider = "node node_modules/prisma-nestjs-graphql"
     output = "../../src/api/@generated"
+
+    decorate_1_type = "*CommentThreadTargetCreateNestedManyWithoutCommentThreadInput"
+    decorate_1_field = "!(createMany)"
+    decorate_1_name = "HideField"
+    decorate_1_from = "@nestjs/graphql"
+    decorate_1_arguments = "[]"
+
+    decorate_2_type = "*CommentCreateNestedManyWithoutCommentThreadInput"
+    decorate_2_field = "!(createMany)"
+    decorate_2_name = "HideField"
+    decorate_2_from = "@nestjs/graphql"
+    decorate_2_arguments = "[]"
+
+    decorate_3_type = "*UserCreateNestedOneWithoutCommentsInput"
+    decorate_3_field = "!(connect)"
+    decorate_3_name = "HideField"
+    decorate_3_from = "@nestjs/graphql"
+    decorate_3_arguments = "[]"
+
+    decorate_4_type = "*CommentThreadCreateNestedOneWithoutCommentsInput"
+    decorate_4_field = "!(connect)"
+    decorate_4_name = "HideField"
+    decorate_4_from = "@nestjs/graphql"
+    decorate_4_arguments = "[]"
 }
 
 model User {

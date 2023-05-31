@@ -1,28 +1,24 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { CommentCreateWithoutCommentThreadInput } from './comment-create-without-comment-thread.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { CommentCreateOrConnectWithoutCommentThreadInput } from './comment-create-or-connect-without-comment-thread.input';
 import { CommentCreateManyCommentThreadInputEnvelope } from './comment-create-many-comment-thread-input-envelope.input';
+import { Type } from 'class-transformer';
 import { CommentWhereUniqueInput } from './comment-where-unique.input';
 
 @InputType()
 export class CommentCreateNestedManyWithoutCommentThreadInput {
-  @Field(() => [CommentCreateWithoutCommentThreadInput], { nullable: true })
-  @Type(() => CommentCreateWithoutCommentThreadInput)
+  @HideField()
   create?: Array<CommentCreateWithoutCommentThreadInput>;
 
-  @Field(() => [CommentCreateOrConnectWithoutCommentThreadInput], {
-    nullable: true,
-  })
-  @Type(() => CommentCreateOrConnectWithoutCommentThreadInput)
+  @HideField()
   connectOrCreate?: Array<CommentCreateOrConnectWithoutCommentThreadInput>;
 
   @Field(() => CommentCreateManyCommentThreadInputEnvelope, { nullable: true })
   @Type(() => CommentCreateManyCommentThreadInputEnvelope)
   createMany?: CommentCreateManyCommentThreadInputEnvelope;
 
-  @Field(() => [CommentWhereUniqueInput], { nullable: true })
-  @Type(() => CommentWhereUniqueInput)
+  @HideField()
   connect?: Array<CommentWhereUniqueInput>;
 }

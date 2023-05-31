@@ -98,7 +98,7 @@ export class AuthService {
     }
 
     const workspace = await this.workspaceRepository.findFirst({
-      where: { workspaceMember: { every: { userId: user.id } } },
+      where: { workspaceMember: { some: { userId: user.id } } },
     });
 
     if (!workspace) {
