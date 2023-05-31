@@ -28,6 +28,7 @@ import {
   TbUser,
 } from 'react-icons/tb';
 import { QueryMode } from '../../generated/graphql';
+import { getLogoUrlFromDomainName } from '../../services/utils';
 
 const columnHelper = createColumnHelper<Company>();
 
@@ -61,7 +62,7 @@ export const useCompaniesColumns = () => {
           <EditableChip
             value={props.row.original.name || ''}
             placeholder="Name"
-            picture={`https://www.google.com/s2/favicons?domain=${props.row.original.domainName}&sz=256`}
+            picture={getLogoUrlFromDomainName(props.row.original.domainName)}
             changeHandler={(value: string) => {
               const company = props.row.original;
               company.name = value;

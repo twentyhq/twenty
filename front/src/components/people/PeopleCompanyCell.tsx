@@ -19,6 +19,7 @@ import { SearchConfigType } from '../../interfaces/search/interface';
 import { useState } from 'react';
 import { PeopleCompanyCreateCell } from './PeopleCompanyCreateCell';
 import { v4 } from 'uuid';
+import { getLogoUrlFromDomainName } from '../../services/utils';
 
 export type OwnProps = {
   people: Person;
@@ -79,7 +80,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
       chipComponentPropsMapper={(company): CompanyChipPropsType => {
         return {
           name: company.name || '',
-          picture: `https://www.google.com/s2/favicons?domain=${company.domainName}&sz=256`,
+          picture: getLogoUrlFromDomainName(company.domainName),
         };
       }}
       onChange={async (relation) => {
