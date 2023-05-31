@@ -9,7 +9,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Twenty - Documentation',
   tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/logo-square-dark.ico',
 
   // Set the production url of your site here
   url: 'https://docs.twenty.com',
@@ -80,12 +80,13 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: 'img/social-card.png',
       navbar: {
         /*title: 'Twenty',*/
         logo: {
           alt: 'Twenty',
-          src: 'https://twenty.com/wp-content/uploads/2023/03/Screenshot-2023-03-07-at-22.21.44-2.png',
+          src: 'img/logo-square-dark.svg',
+          srcDark: 'img/logo-square-light.svg',
         },
         items: [
           {
