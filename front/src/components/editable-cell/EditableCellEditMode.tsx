@@ -75,6 +75,7 @@ export function EditableCellEditMode({
 
   return (
     <CellEditModeContainer
+      data-testid="editable-cell-edit-mode-container"
       ref={wrapperRef}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeVerticalPosition={editModeVerticalPosition}
