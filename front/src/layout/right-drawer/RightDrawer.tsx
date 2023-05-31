@@ -10,6 +10,7 @@ const StyledRightDrawer = styled.div`
   display: flex;
   flex-direction: row;
   width: 300px;
+  margin-left: ${(props) => props.theme.spacing(2)};
 `;
 
 export function RightDrawer() {
