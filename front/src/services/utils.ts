@@ -5,3 +5,7 @@ export const humanReadableDate = (date: Date) => {
     year: 'numeric',
   }).format(date);
 };
+
+export const getLogoUrlFromDomainName = (domainName?: string): string => {
+  return `https://api.faviconkit.com/${domainName}/144`;
+};

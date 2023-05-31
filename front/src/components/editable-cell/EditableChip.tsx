@@ -26,11 +26,9 @@ const StyledInplaceInput = styled.input`
 `;
 
 const StyledInplaceShow = styled.div`
-  width: 100%;
-  border: none;
-  outline: none;
-  padding-left: ${(props) => props.theme.spacing(2)};
-  padding-right: ${(props) => props.theme.spacing(2)};
+  display: flex;
+  padding-left: ${(props) => props.theme.spacing(1)};
+  padding-right: ${(props) => props.theme.spacing(1)};
 
   &::placeholder {
     font-weight: 'bold';
