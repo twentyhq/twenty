@@ -1,4 +1,5 @@
 import prompts, { PromptObject } from 'prompts';
+import open from 'open';
 
 export const selfhostQuestions: PromptObject<string>[] = [
   {

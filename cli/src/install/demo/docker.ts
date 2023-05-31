@@ -2,10 +2,10 @@ import prompts, { PromptObject } from 'prompts';
 
 export const demoDockerQuestions: PromptObject<string>[] = [
   {
-    type: 'select',
-    name: 'yyy',
-    message: 'xxx',
-    choices: [{ title: 'zzz', value: 'zz' }],
+    type: 'text',
+    name: 'not_ready_yet',
+    message: 'Not yeady yet',
+    choices: [{ title: 'XXX', value: 'XXX' }],
   },
 ];
 

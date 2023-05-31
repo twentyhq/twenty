@@ -1,6 +1,6 @@
 {
   "name": "twenty-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "description": "A simple CLI to install and interact with Twenty",
   "files": [
@@ -24,7 +24,7 @@
     "prompts": "^2.4.2"
   },
   "bin": {
-    "twenty": "./lib/index.js"
+    "twenty-cli": "./lib/index.js"
   },
   "devDependencies": {
     "@types/jest": "^29.5.1",

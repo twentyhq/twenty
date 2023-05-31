@@ -9,7 +9,7 @@ export const demoQuestions: PromptObject<string>[] = [
     message: 'How do you want to try the app?',
     choices: [
       { title: 'Cloud demo', value: 'cloud' },
-      { title: 'Local docker image', value: 'docker' },
+      { title: 'Local docker image', value: 'docker', disabled: true },
     ],
   },
 ];
