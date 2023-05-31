@@ -13,7 +13,6 @@ export class CommentThreadRelationsResolver {
   async comments(
     @TypeGraphQL.Root() commentThread: CommentThread,
   ): Promise<Comment[]> {
-    console.log('commentThread', commentThread);
     return this.prismaService.comment.findMany({
       where: {
         commentThreadId: commentThread.id,

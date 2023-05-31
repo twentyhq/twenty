@@ -22,17 +22,6 @@ export class UserRepository {
   }): Promise<User | null> {
     const { where } = params;
 
-    const user = await this.prisma.user.findFirst({
-      where,
-    });
-
-    const member = await this.prisma.workspaceMember.findFirst({
-      where: {
-        userId: user?.id,
-      },
-    });
-
-    console.log(member);
     return this.prisma.user.findFirst({
       where,
     });

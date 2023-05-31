@@ -149,7 +149,7 @@ model RefreshToken {
 
 model CommentThread {
   id                    String                @id
-  createdAt              DateTime              @default(now())
+  createdAt              DateTime             @default(now())
   updatedAt             DateTime              @updatedAt
   deletedAt             DateTime?
   commentThreadTargets  CommentThreadTarget[]
