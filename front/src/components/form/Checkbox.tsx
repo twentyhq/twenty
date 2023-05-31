@@ -45,24 +45,34 @@ const StyledContainer = styled.div`
 `;
 
 function Checkbox({ name, id, checked, onChange, indeterminate }: OwnProps) {
-  const ref = React.useRef<HTMLInputElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
   React.useEffect(() => {
-    if (ref.current === null) return;
+    if (inputRef.current === null) return;
     if (typeof indeterminate === 'boolean') {
-      ref.current.indeterminate = !checked && indeterminate;
+      inputRef.current.indeterminate = !checked && indeterminate;
     }
-  }, [ref, indeterminate, checked]);
+  }, [inputRef, indeterminate, checked]);
 
-  function handleContainerClick() {
-    if (ref.current === null) return;
-
-    ref.current.click();
+  function handleContainerClick(event: React.MouseEvent<HTMLDivElement>) {
+    if (
+      inputRef.current &&
+      containerRef.current &&
+      event.target === containerRef.current
+    ) {
+      inputRef.current.click();
+    }
   }
 
   return (
-    <StyledContainer onClick={handleContainerClick}>
+    <StyledContainer
+      ref={containerRef}
+      onClick={handleContainerClick}
+      data-testid="input-checkbox-container"
+    >
       <input
-        ref={ref}
+        ref={inputRef}
         type="checkbox"
         data-testid="input-checkbox"
         id={id}

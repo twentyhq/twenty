@@ -6,6 +6,7 @@ import People from '../People';
 import { Story } from './People.stories';
 import { mocks, render } from './shared';
 import { mockedPeopleData } from '../../../testing/mock-data/people';
+import { sleep } from '../../../testing/sleep';
 
 const meta: Meta<typeof People> = {
   title: 'Pages/People',
@@ -39,7 +40,7 @@ export const ChangeEmail: Story = {
 
     await userEvent.click(secondRowEmailCell);
 
-    await new Promise((resolve) => setTimeout(resolve, 25));
+    await sleep(25);
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
@@ -47,11 +48,42 @@ export const ChangeEmail: Story = {
 
     await userEvent.click(secondRowEmailCell);
 
-    await new Promise((resolve) => setTimeout(resolve, 25));
+    await sleep(25);
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
+  },
+  parameters: {
+    msw: mocks,
+  },
+};
+
+export const Checkbox: Story = {
+  render,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await sleep(500);
+
+    const inputCheckboxContainers = await canvas.findAllByTestId(
+      'input-checkbox-container',
+    );
+
+    const inputCheckboxes = await canvas.findAllByTestId('input-checkbox');
+
+    const secondCheckboxContainer = inputCheckboxContainers[1];
+    const secondCheckbox = inputCheckboxes[1] as HTMLInputElement;
+
+    expect(secondCheckboxContainer).toBeDefined();
+
+    await userEvent.click(secondCheckboxContainer);
+
+    expect(secondCheckbox.checked).toBe(true);
+
+    await userEvent.click(secondCheckbox);
+
+    expect(secondCheckbox.checked).toBe(false);
   },
   parameters: {
     msw: mocks,
