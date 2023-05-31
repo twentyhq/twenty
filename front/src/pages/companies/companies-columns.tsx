@@ -73,6 +73,22 @@ export const useCompaniesColumns = () => {
         ),
         size: 120,
       }),
+      columnHelper.accessor('domainName', {
+        header: () => (
+          <ColumnHead viewName="URL" viewIcon={<TbLink size={16} />} />
+        ),
+        cell: (props) => (
+          <EditableText
+            content={props.row.original.domainName || ''}
+            changeHandler={(value) => {
+              const company = props.row.original;
+              company.domainName = value;
+              updateCompany(company);
+            }}
+          />
+        ),
+        size: 100,
+      }),
       columnHelper.accessor('employees', {
         header: () => (
           <ColumnHead viewName="Employees" viewIcon={<TbSum size={16} />} />
@@ -94,22 +110,6 @@ export const useCompaniesColumns = () => {
           />
         ),
         size: 70,
-      }),
-      columnHelper.accessor('domainName', {
-        header: () => (
-          <ColumnHead viewName="URL" viewIcon={<TbLink size={16} />} />
-        ),
-        cell: (props) => (
-          <EditableText
-            content={props.row.original.domainName || ''}
-            changeHandler={(value) => {
-              const company = props.row.original;
-              company.domainName = value;
-              updateCompany(company);
-            }}
-          />
-        ),
-        size: 100,
       }),
       columnHelper.accessor('address', {
         header: () => (

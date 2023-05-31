@@ -108,7 +108,9 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
             setSelectedFilter(undefined);
           }}
         >
-          {result.render(result.value)}
+          <DropdownButton.StyledDropdownItemClipped>
+            {result.render(result.value)}
+          </DropdownButton.StyledDropdownItemClipped>
         </DropdownButton.StyledDropdownItem>
       );
     });
