@@ -3,10 +3,10 @@ import { isDefined } from '../../../utils/type-guards/isDefined';
 
 export function useListenClickOutsideArrayOfRef<T extends HTMLElement>(
   arrayOfRef: Array<React.RefObject<T>>,
-  outsideClickCallback: (event?: MouseEvent) => void,
+  outsideClickCallback: (event?: MouseEvent | TouchEvent) => void,
 ) {
   useEffect(() => {
-    function handleClickOutside(event: any) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
       const clickedOnAtLeastOneRef = arrayOfRef
         .filter((ref) => !!ref.current)
         .some((ref) => ref.current?.contains(event.target as Node));
@@ -21,13 +21,13 @@ export function useListenClickOutsideArrayOfRef<T extends HTMLElement>(
     );
 
     if (hasAtLeastOneRefDefined) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
+      document.addEventListener('mouseup', handleClickOutside);
+      document.addEventListener('touchend', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('mouseup', handleClickOutside);
+      document.removeEventListener('touchend', handleClickOutside);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arrayOfRef, outsideClickCallback]);
