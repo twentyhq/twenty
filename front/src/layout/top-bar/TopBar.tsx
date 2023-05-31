@@ -24,9 +24,10 @@ const TitleContainer = styled.div`
 const AddButtonContainer = styled.div`
   display: flex;
   justify-self: flex-end;
+  flex-shrink: 0;
   border: 1px solid ${(props) => props.theme.primaryBorder};
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   align-items: center;
   justify-content: center;
   border-radius: 4px;
