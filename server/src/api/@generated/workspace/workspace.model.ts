@@ -4,6 +4,8 @@ import { ID } from '@nestjs/graphql';
 import { WorkspaceMember } from '../workspace-member/workspace-member.model';
 import { Company } from '../company/company.model';
 import { Person } from '../person/person.model';
+import { CommentThread } from '../comment-thread/comment-thread.model';
+import { Comment } from '../comment/comment.model';
 import { WorkspaceCount } from './workspace-count.output';
 
 @ObjectType({})
@@ -37,6 +39,12 @@ export class Workspace {
 
   @Field(() => [Person], { nullable: true })
   people?: Array<Person>;
+
+  @Field(() => [CommentThread], { nullable: true })
+  commentThreads?: Array<CommentThread>;
+
+  @Field(() => [Comment], { nullable: true })
+  comments?: Array<Comment>;
 
   @Field(() => WorkspaceCount, { nullable: false })
   _count?: WorkspaceCount;

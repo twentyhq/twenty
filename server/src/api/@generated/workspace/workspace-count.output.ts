@@ -12,4 +12,10 @@ export class WorkspaceCount {
 
   @Field(() => Int, { nullable: false })
   people?: number;
+
+  @Field(() => Int, { nullable: false })
+  commentThreads?: number;
+
+  @Field(() => Int, { nullable: false })
+  comments?: number;
 }

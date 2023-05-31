@@ -4,6 +4,7 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { WorkspaceMemberUncheckedCreateNestedOneWithoutUserInput } from '../workspace-member/workspace-member-unchecked-create-nested-one-without-user.input';
 import { CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput } from '../company/company-unchecked-create-nested-many-without-account-owner.input';
 import { RefreshTokenUncheckedCreateNestedManyWithoutUserInput } from '../refresh-token/refresh-token-unchecked-create-nested-many-without-user.input';
+import { CommentUncheckedCreateNestedManyWithoutAuthorInput } from '../comment/comment-unchecked-create-nested-many-without-author.input';
 
 @InputType()
 export class UserUncheckedCreateInput {
@@ -63,4 +64,9 @@ export class UserUncheckedCreateInput {
     nullable: true,
   })
   refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
+
+  @Field(() => CommentUncheckedCreateNestedManyWithoutAuthorInput, {
+    nullable: true,
+  })
+  comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput;
 }

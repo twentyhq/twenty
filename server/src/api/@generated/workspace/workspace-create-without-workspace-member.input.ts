@@ -2,6 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { CompanyCreateNestedManyWithoutWorkspaceInput } from '../company/company-create-nested-many-without-workspace.input';
 import { PersonCreateNestedManyWithoutWorkspaceInput } from '../person/person-create-nested-many-without-workspace.input';
+import { CommentThreadCreateNestedManyWithoutWorkspaceInput } from '../comment-thread/comment-thread-create-nested-many-without-workspace.input';
+import { CommentCreateNestedManyWithoutWorkspaceInput } from '../comment/comment-create-nested-many-without-workspace.input';
 
 @InputType()
 export class WorkspaceCreateWithoutWorkspaceMemberInput {
@@ -31,4 +33,12 @@ export class WorkspaceCreateWithoutWorkspaceMemberInput {
 
   @Field(() => PersonCreateNestedManyWithoutWorkspaceInput, { nullable: true })
   people?: PersonCreateNestedManyWithoutWorkspaceInput;
+
+  @Field(() => CommentThreadCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  commentThreads?: CommentThreadCreateNestedManyWithoutWorkspaceInput;
+
+  @Field(() => CommentCreateNestedManyWithoutWorkspaceInput, { nullable: true })
+  comments?: CommentCreateNestedManyWithoutWorkspaceInput;
 }

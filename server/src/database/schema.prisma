@@ -31,6 +31,7 @@ model User {
   workspaceMember WorkspaceMember?
   companies       Company[]
   refreshTokens   RefreshToken[]
+  comments        Comment[]
 
   @@map("users")
 }
@@ -47,6 +48,8 @@ model Workspace {
   workspaceMember WorkspaceMember[]
   companies       Company[]
   people          Person[]
+  commentThreads  CommentThread[]
+  comments        Comment[]
 
   @@map("workspaces")
 }
@@ -108,7 +111,6 @@ model Person {
   @@map("people")
 }
 
-/// @TypeGraphQL.omit(input: true)
 model RefreshToken {
   id           String    @id
   createdAt    DateTime  @default(now())
@@ -119,4 +121,56 @@ model RefreshToken {
   user         User      @relation(fields: [userId], references: [id])
 
   @@map("refresh_tokens")
+}
+
+model CommentThread {
+  id                    String                @id
+  createdAt              DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  deletedAt             DateTime?
+  commentThreadTargets  CommentThreadTarget[]
+  comments              Comment[]
+  /// @TypeGraphQL.omit(input: true)
+  workspaceId           String
+  /// @TypeGraphQL.omit(input: true)
+  workspace             Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@map("comment_threads")
+}
+
+model Comment {
+  id               String        @id
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+  body             String
+  authorId         String
+  author           User          @relation(fields: [authorId], references: [id])
+  commentThreadId  String
+  commentThread    CommentThread @relation(fields: [commentThreadId], references: [id])
+  /// @TypeGraphQL.omit(input: true)
+  workspaceId      String
+  /// @TypeGraphQL.omit(input: true)
+  workspace        Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@map("comments")
+}
+
+enum CommentableType {
+  Person
+  Company
+}
+
+model CommentThreadTarget {
+  id               String        @id
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+  commentThreadId  String
+  commentThread    CommentThread @relation(fields: [commentThreadId], references: [id])
+
+  commentableType  CommentableType
+  commentableId    String
+
+  @@map("comment_thread_targets")
 }

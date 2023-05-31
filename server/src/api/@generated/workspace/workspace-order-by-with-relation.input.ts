@@ -4,6 +4,8 @@ import { SortOrder } from '../prisma/sort-order.enum';
 import { WorkspaceMemberOrderByRelationAggregateInput } from '../workspace-member/workspace-member-order-by-relation-aggregate.input';
 import { CompanyOrderByRelationAggregateInput } from '../company/company-order-by-relation-aggregate.input';
 import { PersonOrderByRelationAggregateInput } from '../person/person-order-by-relation-aggregate.input';
+import { CommentThreadOrderByRelationAggregateInput } from '../comment-thread/comment-thread-order-by-relation-aggregate.input';
+import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
 
 @InputType()
 export class WorkspaceOrderByWithRelationInput {
@@ -36,4 +38,10 @@ export class WorkspaceOrderByWithRelationInput {
 
   @Field(() => PersonOrderByRelationAggregateInput, { nullable: true })
   people?: PersonOrderByRelationAggregateInput;
+
+  @Field(() => CommentThreadOrderByRelationAggregateInput, { nullable: true })
+  commentThreads?: CommentThreadOrderByRelationAggregateInput;
+
+  @Field(() => CommentOrderByRelationAggregateInput, { nullable: true })
+  comments?: CommentOrderByRelationAggregateInput;
 }

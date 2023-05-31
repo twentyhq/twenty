@@ -5,6 +5,7 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { WorkspaceMember } from '../workspace-member/workspace-member.model';
 import { Company } from '../company/company.model';
 import { RefreshToken } from '../refresh-token/refresh-token.model';
+import { Comment } from '../comment/comment.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -59,6 +60,9 @@ export class User {
 
   @Field(() => [RefreshToken], { nullable: true })
   refreshTokens?: Array<RefreshToken>;
+
+  @Field(() => [Comment], { nullable: true })
+  comments?: Array<Comment>;
 
   @Field(() => UserCount, { nullable: false })
   _count?: UserCount;

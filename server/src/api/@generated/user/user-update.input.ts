@@ -9,6 +9,7 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { WorkspaceMemberUpdateOneWithoutUserNestedInput } from '../workspace-member/workspace-member-update-one-without-user-nested.input';
 import { CompanyUpdateManyWithoutAccountOwnerNestedInput } from '../company/company-update-many-without-account-owner-nested.input';
 import { RefreshTokenUpdateManyWithoutUserNestedInput } from '../refresh-token/refresh-token-update-many-without-user-nested.input';
+import { CommentUpdateManyWithoutAuthorNestedInput } from '../comment/comment-update-many-without-author-nested.input';
 
 @InputType()
 export class UserUpdateInput {
@@ -66,4 +67,7 @@ export class UserUpdateInput {
 
   @Field(() => RefreshTokenUpdateManyWithoutUserNestedInput, { nullable: true })
   refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput;
+
+  @Field(() => CommentUpdateManyWithoutAuthorNestedInput, { nullable: true })
+  comments?: CommentUpdateManyWithoutAuthorNestedInput;
 }

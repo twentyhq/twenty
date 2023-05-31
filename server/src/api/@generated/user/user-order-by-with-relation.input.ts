@@ -4,6 +4,7 @@ import { SortOrder } from '../prisma/sort-order.enum';
 import { WorkspaceMemberOrderByWithRelationInput } from '../workspace-member/workspace-member-order-by-with-relation.input';
 import { CompanyOrderByRelationAggregateInput } from '../company/company-order-by-relation-aggregate.input';
 import { RefreshTokenOrderByRelationAggregateInput } from '../refresh-token/refresh-token-order-by-relation-aggregate.input';
+import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -57,4 +58,7 @@ export class UserOrderByWithRelationInput {
 
   @Field(() => RefreshTokenOrderByRelationAggregateInput, { nullable: true })
   refreshTokens?: RefreshTokenOrderByRelationAggregateInput;
+
+  @Field(() => CommentOrderByRelationAggregateInput, { nullable: true })
+  comments?: CommentOrderByRelationAggregateInput;
 }

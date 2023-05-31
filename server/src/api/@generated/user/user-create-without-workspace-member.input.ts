@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CompanyCreateNestedManyWithoutAccountOwnerInput } from '../company/company-create-nested-many-without-account-owner.input';
 import { RefreshTokenCreateNestedManyWithoutUserInput } from '../refresh-token/refresh-token-create-nested-many-without-user.input';
+import { CommentCreateNestedManyWithoutAuthorInput } from '../comment/comment-create-nested-many-without-author.input';
 
 @InputType()
 export class UserCreateWithoutWorkspaceMemberInput {
@@ -55,4 +56,7 @@ export class UserCreateWithoutWorkspaceMemberInput {
 
   @Field(() => RefreshTokenCreateNestedManyWithoutUserInput, { nullable: true })
   refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput;
+
+  @Field(() => CommentCreateNestedManyWithoutAuthorInput, { nullable: true })
+  comments?: CommentCreateNestedManyWithoutAuthorInput;
 }

@@ -8,6 +8,7 @@ import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-str
 import { GraphQLJSON } from 'graphql-type-json';
 import { WorkspaceMemberUpdateOneWithoutUserNestedInput } from '../workspace-member/workspace-member-update-one-without-user-nested.input';
 import { CompanyUpdateManyWithoutAccountOwnerNestedInput } from '../company/company-update-many-without-account-owner-nested.input';
+import { CommentUpdateManyWithoutAuthorNestedInput } from '../comment/comment-update-many-without-author-nested.input';
 
 @InputType()
 export class UserUpdateWithoutRefreshTokensInput {
@@ -62,4 +63,7 @@ export class UserUpdateWithoutRefreshTokensInput {
     nullable: true,
   })
   companies?: CompanyUpdateManyWithoutAccountOwnerNestedInput;
+
+  @Field(() => CommentUpdateManyWithoutAuthorNestedInput, { nullable: true })
+  comments?: CommentUpdateManyWithoutAuthorNestedInput;
 }
