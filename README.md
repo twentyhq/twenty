@@ -2,10 +2,10 @@
 </br>
 <p align="center">
   <a href="https://www.twenty.com#gh-dark-mode-only">
-    <img src="./docs/src/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
+    <img src="./docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
   </a>
   <a href="https://www.twenty.com#gh-light-mode-only">
-    <img src="./docs/src/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
+    <img src="./docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
   </a>
 </p>
 
@@ -19,12 +19,12 @@
 
 <p align="center">
   <a href="https://www.twenty.com#gh-dark-mode-only">
-    <img src="./docs/src/img/preview-dark.png" alt="Companies view" />
+    <img src="./docs/static/img/preview-dark.png" alt="Companies view" />
   </a>
 </p>
 <p align="center">
   <a href="https://www.twenty.com#gh-light-mode-only">
-    <img src="./docs/src/img/preview-light.png" alt="Companies view" />
+    <img src="./docs/static/img/preview-light.png" alt="Companies view" />
   </a>
 </p>
 
