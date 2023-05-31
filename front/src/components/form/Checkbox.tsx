@@ -9,10 +9,17 @@ type OwnProps = {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const StyledContainer = styled.span`
+const StyledContainer = styled.div`
+  width: 32px;
+  height: 32px;
+  margin-left: -${(props) => props.theme.table.sideMarginInPx}px;
+  padding-left: ${(props) => props.theme.table.sideMarginInPx}px;
+
+  cursor: pointer;
+
   input[type='checkbox'] {
     accent-color: ${(props) => props.theme.blue};
-    margin: 8px;
+    margin: 9px;
     height: 14px;
     width: 14px;
     cursor: pointer;
@@ -46,8 +53,14 @@ function Checkbox({ name, id, checked, onChange, indeterminate }: OwnProps) {
     }
   }, [ref, indeterminate, checked]);
 
+  function handleContainerClick() {
+    if (ref.current === null) return;
+
+    ref.current.click();
+  }
+
   return (
-    <StyledContainer>
+    <StyledContainer onClick={handleContainerClick}>
       <input
         ref={ref}
         type="checkbox"
