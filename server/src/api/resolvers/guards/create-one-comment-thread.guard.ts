@@ -52,7 +52,7 @@ export class CreateOneCommentThreadGuard implements CanActivate {
         where: { id: target.commentableId },
       });
 
-      if (targetEntity.workspaceId !== workspaceId) {
+      if (!targetEntity || targetEntity.workspaceId !== workspaceId) {
         throw new HttpException(
           { reason: 'CommentThreadTarget not found' },
           HttpStatus.NOT_FOUND,
