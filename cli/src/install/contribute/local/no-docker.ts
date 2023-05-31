@@ -31,16 +31,24 @@ export const askNoDockerQuestions: () => Promise<void> = async () => {
 
   let folderExists = fs.existsSync(folderResponse.folder_name);
   while (folderExists) {
-    folderResponse = await prompts({
-      type: 'text',
-      name: 'folder_name',
-      message:
-        'Folder already exists. Please choose another name and press enter.',
-    });
+    try {
+      folderResponse = await prompts({
+        type: 'text',
+        name: 'folder_name',
+        message:
+          'Folder already exists. Please choose another name and press enter.',
+      });
+    } catch (error) {
+      if ((error as NodeJS.Signals) === 'SIGINT') {
+        process.exit(0);
+      } else {
+        throw error;
+      }
+    }
     folderExists = fs.existsSync(folderResponse.folder_name);
   }
 
-  const connectionStringResponse = await prompts(noDockerQuestion2);
+  let connectionStringResponse = await prompts(noDockerQuestion2);
 
   let postgres_connection_valid = false;
   while (!postgres_connection_valid) {
@@ -56,12 +64,21 @@ export const askNoDockerQuestions: () => Promise<void> = async () => {
       postgres_connection_valid = false;
     }
     if (!postgres_connection_valid) {
-      folderResponse = await prompts({
-        type: 'text',
-        name: 'postgres_string',
-        initial: 'postgres://postgres:postgrespassword@postgres:5432/default',
-        message: 'Connection to Postgres failed. Please enter the string again',
-      });
+      try {
+        connectionStringResponse = await prompts({
+          type: 'text',
+          name: 'postgres_string',
+          initial: 'postgres://postgres:postgrespassword@postgres:5432/default',
+          message:
+            'Connection to Postgres failed. Please enter the string again',
+        });
+      } catch (error) {
+        if ((error as NodeJS.Signals) === 'SIGINT') {
+          process.exit(0);
+        } else {
+          throw error;
+        }
+      }
     }
   }
 
@@ -71,12 +88,20 @@ export const askNoDockerQuestions: () => Promise<void> = async () => {
       await execShell('git --version');
       git_is_installed = true;
     } catch (error) {
-      await prompts({
-        type: 'text',
-        name: 'git_install',
-        message:
-          'Git does not appear to be installed. Please install it and press enter.',
-      });
+      try {
+        await prompts({
+          type: 'text',
+          name: 'git_install',
+          message:
+            'Git does not appear to be installed. Please install it and restart.',
+        });
+      } catch (error) {
+        if ((error as NodeJS.Signals) === 'SIGINT') {
+          process.exit(0);
+        } else {
+          throw error;
+        }
+      }
     }
   }
 
@@ -86,12 +111,20 @@ export const askNoDockerQuestions: () => Promise<void> = async () => {
       await execShell('npm --version');
       npm_is_installed = true;
     } catch (error) {
-      await prompts({
-        type: 'text',
-        name: 'git_install',
-        message:
-          'Npm does not appear to be installed. Please install it and press enter.',
-      });
+      try {
+        await prompts({
+          type: 'text',
+          name: 'git_install',
+          message:
+            'Npm does not appear to be installed. Please install it and press enter.',
+        });
+      } catch (error) {
+        if ((error as NodeJS.Signals) === 'SIGINT') {
+          process.exit(0);
+        } else {
+          throw error;
+        }
+      }
     }
   }
 

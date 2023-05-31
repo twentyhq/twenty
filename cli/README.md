@@ -1,2 +1,2 @@
 # Twenty CLI
-Temporary repo to play
+A simple CLI to get started with Twenty 
