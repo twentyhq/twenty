@@ -10,14 +10,15 @@ const StyledLayout = styled.div`
   width: 100vw;
   height: 100vh;
   background: ${(props) => props.theme.noisyBackground};
-  overflow: hidden;
+  position: relative;
 `;
+
+const NAVBAR_WIDTH = '236px';
 
 const MainContainer = styled.div`
   display: flex;
   flex-direction: row;
-  overflow: hidden;
-  widht: calc(100% - 220px);
+  width: calc(100% - ${NAVBAR_WIDTH});
 `;
 
 type OwnProps = {

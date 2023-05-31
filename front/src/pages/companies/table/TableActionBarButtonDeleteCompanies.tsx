@@ -4,11 +4,9 @@ import { useDeleteCompaniesMutation } from '../../../generated/graphql';
 import { selectedRowIdsState } from '../../../modules/ui/tables/states/selectedRowIdsState';
 import { useRecoilValue } from 'recoil';
 import { useResetTableRowSelection } from '../../../modules/ui/tables/hooks/useResetTableRowSelection';
-import { useTheme } from '@emotion/react';
 
 export function TableActionBarButtonDeleteCompanies() {
   const selectedRowIds = useRecoilValue(selectedRowIdsState);
-  const theme = useTheme();
 
   const resetRowSelection = useResetTableRowSelection();
 

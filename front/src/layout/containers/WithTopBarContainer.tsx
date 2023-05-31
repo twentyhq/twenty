@@ -19,15 +19,16 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const TOPBAR_HEIGHT = '48px';
+
 const MainContainer = styled.div`
   display: flex;
   flex-direction: row;
-  height: 100%;
-  width: calc(100% - 16px);
-  margin-right: 8px;
-  margin-bottom: 8px;
-  gap: 8px;
-  padding: 4px;
+  width: calc(100% - ${(props) => props.theme.spacing(3)});
+  height: calc(100% - ${TOPBAR_HEIGHT} - ${(props) => props.theme.spacing(3)});
+  background: ${(props) => props.theme.noisyBackground};
+  padding-right: ${(props) => props.theme.spacing(3)};
+  padding-bottom: ${(props) => props.theme.spacing(3)};
 `;
 
 const RIGHT_DRAWER_WIDTH = '300px';
@@ -41,6 +42,7 @@ const LeftContainer = styled.div<LeftContainerProps>`
   width: calc(
     100% - ${(props) => (props.isRightDrawerOpen ? RIGHT_DRAWER_WIDTH : '0px')}
   );
+  position: relative;
 `;
 
 function FullWidthContainer({
