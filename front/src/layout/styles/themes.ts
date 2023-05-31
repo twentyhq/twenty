@@ -13,6 +13,7 @@ const commonTheme = {
   iconSizeLarge: '1.23rem',
 
   fontWeightBold: 500,
+  fontFamily: 'Inter, sans-serif',
 
   spacing: (multiplicator: number) => `${multiplicator * 4}px`,
 };
