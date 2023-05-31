@@ -59,7 +59,9 @@ export const FilterByAccountOwner: Story = {
       delay: 200,
     });
 
-    const charlesChip = canvas.getByText('Charles Test', { selector: 'li' });
+    const charlesChip = canvas.getByText('Charles Test', {
+      selector: 'li > span',
+    });
     await userEvent.click(charlesChip);
 
     expect(await canvas.findByText('Airbnb')).toBeInTheDocument();

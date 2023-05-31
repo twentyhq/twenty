@@ -56,7 +56,7 @@ export const FilterByCompanyName: Story = {
       delay: 200,
     });
 
-    const qontoChip = canvas.getByText('Qonto', { selector: 'li' });
+    const qontoChip = canvas.getByText('Qonto', { selector: 'li > span' });
     await userEvent.click(qontoChip);
 
     expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
