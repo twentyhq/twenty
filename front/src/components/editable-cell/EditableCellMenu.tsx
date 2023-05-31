@@ -1,9 +1,9 @@
-import { ReactElement, useRef } from 'react';
-import { useOutsideAlerter } from '../../hooks/useOutsideAlerter';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { ReactElement } from 'react';
 import { CellBaseContainer } from './CellBaseContainer';
 import styled from '@emotion/styled';
-import { EditableCellMenuEditModeContainer } from './EditableCellMenuEditModeContainer';
+import { useRecoilState } from 'recoil';
+import { isSomeInputInEditModeState } from '../../modules/ui/tables/states/isSomeInputInEditModeState';
+import { EditableCellMenuEditMode } from './EditableCellMenuEditMode';
 
 const EditableCellMenuNormalModeContainer = styled.div`
   display: flex;
@@ -34,61 +34,31 @@ export function EditableCellMenu({
   onOutsideClick,
   onInsideClick,
 }: OwnProps) {
-  const wrapperRef = useRef(null);
-  const editableContainerRef = useRef(null);
-
-  useOutsideAlerter(wrapperRef, () => {
-    onOutsideClick?.();
-  });
-
-  useHotkeys(
-    'esc',
-    () => {
-      if (isEditMode) {
-        onOutsideClick?.();
-      }
-    },
-    {
-      preventDefault: true,
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
-    [isEditMode, onOutsideClick],
+  const [isSomeInputInEditMode, setIsSomeInputInEditMode] = useRecoilState(
+    isSomeInputInEditModeState,
   );
 
-  useHotkeys(
-    'enter',
-    () => {
-      if (isEditMode) {
-        onOutsideClick?.();
-      }
-    },
-    {
-      preventDefault: true,
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
-    [isEditMode, onOutsideClick],
-  );
+  function handleOnClick() {
+    if (!isSomeInputInEditMode) {
+      onInsideClick?.();
+      setIsSomeInputInEditMode(true);
+    }
+  }
 
   return (
-    <CellBaseContainer
-      ref={wrapperRef}
-      onClick={() => {
-        onInsideClick && onInsideClick();
-      }}
-    >
+    <CellBaseContainer onClick={handleOnClick}>
       <EditableCellMenuNormalModeContainer>
         {nonEditModeContent}
       </EditableCellMenuNormalModeContainer>
       {isEditMode && (
-        <EditableCellMenuEditModeContainer
-          ref={editableContainerRef}
+        <EditableCellMenuEditMode
+          editModeContent={editModeContent}
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
-        >
-          {editModeContent}
-        </EditableCellMenuEditModeContainer>
+          isEditMode={isEditMode}
+          onOutsideClick={onOutsideClick}
+          onInsideClick={onInsideClick}
+        />
       )}
     </CellBaseContainer>
   );

@@ -1,6 +1,6 @@
 import { GraphqlQueryPerson } from '../../interfaces/entities/person.interface';
 
-export const mockedPeopleData: Array<GraphqlQueryPerson> = [
+export const mockedPeopleData = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
     __typename: 'Person',
@@ -70,4 +70,4 @@ export const mockedPeopleData: Array<GraphqlQueryPerson> = [
 
     city: 'Paris',
   },
-];
+] satisfies Array<GraphqlQueryPerson>;
