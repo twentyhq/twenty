@@ -12,6 +12,7 @@ import { DeleteManyCompanyArgs } from '../@generated/company/delete-many-company
 import { Workspace } from '@prisma/client';
 import { ArgsService } from './services/args.service';
 import { CheckWorkspaceOwnership } from 'src/auth/guards/check-workspace-ownership.guard';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard, CheckWorkspaceOwnership)
 @Resolver(() => Company)
@@ -43,9 +44,10 @@ export class CompanyResolver {
     if (!args.data.accountOwner?.connect?.id) {
       args.data.accountOwner = { disconnect: true };
     }
+
     return this.prismaService.company.update({
       ...args,
-    });
+    } satisfies UpdateOneCompanyArgs as Prisma.CompanyUpdateArgs);
   }
 
   @Mutation(() => AffectedRows, {
