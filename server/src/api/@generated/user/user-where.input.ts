@@ -9,6 +9,7 @@ import { JsonNullableFilter } from '../prisma/json-nullable-filter.input';
 import { WorkspaceMemberRelationFilter } from '../workspace-member/workspace-member-relation-filter.input';
 import { CompanyListRelationFilter } from '../company/company-list-relation-filter.input';
 import { RefreshTokenListRelationFilter } from '../refresh-token/refresh-token-list-relation-filter.input';
+import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -64,11 +65,14 @@ export class UserWhereInput {
   metadata?: JsonNullableFilter;
 
   @Field(() => WorkspaceMemberRelationFilter, { nullable: true })
-  WorkspaceMember?: WorkspaceMemberRelationFilter;
+  workspaceMember?: WorkspaceMemberRelationFilter;
 
   @Field(() => CompanyListRelationFilter, { nullable: true })
   companies?: CompanyListRelationFilter;
 
   @Field(() => RefreshTokenListRelationFilter, { nullable: true })
-  RefreshTokens?: RefreshTokenListRelationFilter;
+  refreshTokens?: RefreshTokenListRelationFilter;
+
+  @Field(() => CommentListRelationFilter, { nullable: true })
+  comments?: CommentListRelationFilter;
 }

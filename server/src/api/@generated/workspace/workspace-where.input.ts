@@ -7,6 +7,8 @@ import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { WorkspaceMemberListRelationFilter } from '../workspace-member/workspace-member-list-relation-filter.input';
 import { CompanyListRelationFilter } from '../company/company-list-relation-filter.input';
 import { PersonListRelationFilter } from '../person/person-list-relation-filter.input';
+import { CommentThreadListRelationFilter } from '../comment-thread/comment-thread-list-relation-filter.input';
+import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
 
 @InputType()
 export class WorkspaceWhereInput {
@@ -41,11 +43,17 @@ export class WorkspaceWhereInput {
   logo?: StringNullableFilter;
 
   @Field(() => WorkspaceMemberListRelationFilter, { nullable: true })
-  WorkspaceMember?: WorkspaceMemberListRelationFilter;
+  workspaceMember?: WorkspaceMemberListRelationFilter;
 
   @Field(() => CompanyListRelationFilter, { nullable: true })
   companies?: CompanyListRelationFilter;
 
   @Field(() => PersonListRelationFilter, { nullable: true })
   people?: PersonListRelationFilter;
+
+  @Field(() => CommentThreadListRelationFilter, { nullable: true })
+  commentThreads?: CommentThreadListRelationFilter;
+
+  @Field(() => CommentListRelationFilter, { nullable: true })
+  comments?: CommentListRelationFilter;
 }

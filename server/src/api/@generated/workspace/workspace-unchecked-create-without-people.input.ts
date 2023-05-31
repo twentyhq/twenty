@@ -2,6 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput } from '../workspace-member/workspace-member-unchecked-create-nested-many-without-workspace.input';
 import { CompanyUncheckedCreateNestedManyWithoutWorkspaceInput } from '../company/company-unchecked-create-nested-many-without-workspace.input';
+import { CommentThreadUncheckedCreateNestedManyWithoutWorkspaceInput } from '../comment-thread/comment-thread-unchecked-create-nested-many-without-workspace.input';
+import { CommentUncheckedCreateNestedManyWithoutWorkspaceInput } from '../comment/comment-unchecked-create-nested-many-without-workspace.input';
 
 @InputType()
 export class WorkspaceUncheckedCreateWithoutPeopleInput {
@@ -29,10 +31,20 @@ export class WorkspaceUncheckedCreateWithoutPeopleInput {
   @Field(() => WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput, {
     nullable: true,
   })
-  WorkspaceMember?: WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput;
+  workspaceMember?: WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput;
 
   @Field(() => CompanyUncheckedCreateNestedManyWithoutWorkspaceInput, {
     nullable: true,
   })
   companies?: CompanyUncheckedCreateNestedManyWithoutWorkspaceInput;
+
+  @Field(() => CommentThreadUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  commentThreads?: CommentThreadUncheckedCreateNestedManyWithoutWorkspaceInput;
+
+  @Field(() => CommentUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  comments?: CommentUncheckedCreateNestedManyWithoutWorkspaceInput;
 }

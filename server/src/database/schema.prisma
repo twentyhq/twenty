@@ -11,6 +11,30 @@ datasource db {
 generator nestgraphql {
     provider = "node node_modules/prisma-nestjs-graphql"
     output = "../../src/api/@generated"
+
+    decorate_1_type = "*CommentThreadTargetCreateNestedManyWithoutCommentThreadInput"
+    decorate_1_field = "!(createMany)"
+    decorate_1_name = "HideField"
+    decorate_1_from = "@nestjs/graphql"
+    decorate_1_arguments = "[]"
+
+    decorate_2_type = "*CommentCreateNestedManyWithoutCommentThreadInput"
+    decorate_2_field = "!(createMany)"
+    decorate_2_name = "HideField"
+    decorate_2_from = "@nestjs/graphql"
+    decorate_2_arguments = "[]"
+
+    decorate_3_type = "*UserCreateNestedOneWithoutCommentsInput"
+    decorate_3_field = "!(connect)"
+    decorate_3_name = "HideField"
+    decorate_3_from = "@nestjs/graphql"
+    decorate_3_arguments = "[]"
+
+    decorate_4_type = "*CommentThreadCreateNestedOneWithoutCommentsInput"
+    decorate_4_field = "!(connect)"
+    decorate_4_name = "HideField"
+    decorate_4_from = "@nestjs/graphql"
+    decorate_4_arguments = "[]"
 }
 
 model User {
@@ -28,9 +52,10 @@ model User {
   passwordHash    String?
   emailVerified   Boolean          @default(false)
   metadata        Json?
-  WorkspaceMember WorkspaceMember?
+  workspaceMember WorkspaceMember?
   companies       Company[]
-  RefreshTokens   RefreshToken[]
+  refreshTokens   RefreshToken[]
+  comments        Comment[]
 
   @@map("users")
 }
@@ -44,9 +69,11 @@ model Workspace {
   domainName      String            @unique
   displayName     String
   logo            String?
-  WorkspaceMember WorkspaceMember[]
+  workspaceMember WorkspaceMember[]
   companies       Company[]
   people          Person[]
+  commentThreads  CommentThread[]
+  comments        Comment[]
 
   @@map("workspaces")
 }
@@ -108,7 +135,6 @@ model Person {
   @@map("people")
 }
 
-/// @TypeGraphQL.omit(input: true)
 model RefreshToken {
   id           String    @id
   createdAt    DateTime  @default(now())
@@ -119,4 +145,56 @@ model RefreshToken {
   user         User      @relation(fields: [userId], references: [id])
 
   @@map("refresh_tokens")
+}
+
+model CommentThread {
+  id                    String                @id
+  createdAt              DateTime             @default(now())
+  updatedAt             DateTime              @updatedAt
+  deletedAt             DateTime?
+  commentThreadTargets  CommentThreadTarget[]
+  comments              Comment[]
+  /// @TypeGraphQL.omit(input: true)
+  workspaceId           String
+  /// @TypeGraphQL.omit(input: true)
+  workspace             Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@map("comment_threads")
+}
+
+model Comment {
+  id               String        @id
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+  body             String
+  authorId         String
+  author           User          @relation(fields: [authorId], references: [id])
+  commentThreadId  String
+  commentThread    CommentThread @relation(fields: [commentThreadId], references: [id])
+  /// @TypeGraphQL.omit(input: true)
+  workspaceId      String
+  /// @TypeGraphQL.omit(input: true)
+  workspace        Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@map("comments")
+}
+
+enum CommentableType {
+  Person
+  Company
+}
+
+model CommentThreadTarget {
+  id               String        @id
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  deletedAt        DateTime?
+  commentThreadId  String
+  commentThread    CommentThread @relation(fields: [commentThreadId], references: [id])
+
+  commentableType  CommentableType
+  commentableId    String
+
+  @@map("comment_thread_targets")
 }

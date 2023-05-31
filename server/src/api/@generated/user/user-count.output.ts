@@ -8,5 +8,8 @@ export class UserCount {
   companies?: number;
 
   @Field(() => Int, { nullable: false })
-  RefreshTokens?: number;
+  refreshTokens?: number;
+
+  @Field(() => Int, { nullable: false })
+  comments?: number;
 }

@@ -6,6 +6,8 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { CompanyUpdateManyWithoutWorkspaceNestedInput } from '../company/company-update-many-without-workspace-nested.input';
 import { PersonUpdateManyWithoutWorkspaceNestedInput } from '../person/person-update-many-without-workspace-nested.input';
+import { CommentThreadUpdateManyWithoutWorkspaceNestedInput } from '../comment-thread/comment-thread-update-many-without-workspace-nested.input';
+import { CommentUpdateManyWithoutWorkspaceNestedInput } from '../comment/comment-update-many-without-workspace-nested.input';
 
 @InputType()
 export class WorkspaceUpdateWithoutWorkspaceMemberInput {
@@ -35,4 +37,12 @@ export class WorkspaceUpdateWithoutWorkspaceMemberInput {
 
   @Field(() => PersonUpdateManyWithoutWorkspaceNestedInput, { nullable: true })
   people?: PersonUpdateManyWithoutWorkspaceNestedInput;
+
+  @Field(() => CommentThreadUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  commentThreads?: CommentThreadUpdateManyWithoutWorkspaceNestedInput;
+
+  @Field(() => CommentUpdateManyWithoutWorkspaceNestedInput, { nullable: true })
+  comments?: CommentUpdateManyWithoutWorkspaceNestedInput;
 }
