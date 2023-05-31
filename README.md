@@ -2,14 +2,14 @@
 </br>
 <p align="center">
   <a href="https://www.twenty.com#gh-dark-mode-only">
-    <img src="./docs/src/img/logo-square-dark.svg" width="136px" alt="Twenty logo" />
+    <img src="./docs/src/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
   </a>
   <a href="https://www.twenty.com#gh-light-mode-only">
-    <img src="./docs/src/img/logo-square-dark.svg" width="136px" alt="Twenty logo" />
+    <img src="./docs/src/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
   </a>
 </p>
 
-<h2 align="center" >CRM empowering simplicity.</h3>
+<h2 align="center" >A modern CRM Alternative</h3>
 <p align="center">Engineer-Designed. Business-Ready.
 
 
