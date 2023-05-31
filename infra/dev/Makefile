@@ -32,7 +32,7 @@ server-start:
 server-prisma-generate:
 	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run prisma:generate"
 	@echo "Linting generated files..."
-	@docker-compose exec twenty-dev sh -c "cd /app/server && npx eslint src/api/@generated/* --fix"
+	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run prisma:lint"
 
 server-prisma-migrate:
 	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run prisma:migrate"
