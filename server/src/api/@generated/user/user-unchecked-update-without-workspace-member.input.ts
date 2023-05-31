@@ -61,5 +61,5 @@ export class UserUncheckedUpdateWithoutWorkspaceMemberInput {
   @Field(() => RefreshTokenUncheckedUpdateManyWithoutUserNestedInput, {
     nullable: true,
   })
-  RefreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
+  refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
 }

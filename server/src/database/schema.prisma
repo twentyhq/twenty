@@ -28,9 +28,9 @@ model User {
   passwordHash    String?
   emailVerified   Boolean          @default(false)
   metadata        Json?
-  WorkspaceMember WorkspaceMember?
+  workspaceMember WorkspaceMember?
   companies       Company[]
-  RefreshTokens   RefreshToken[]
+  refreshTokens   RefreshToken[]
 
   @@map("users")
 }
@@ -44,7 +44,7 @@ model Workspace {
   domainName      String            @unique
   displayName     String
   logo            String?
-  WorkspaceMember WorkspaceMember[]
+  workspaceMember WorkspaceMember[]
   companies       Company[]
   people          Person[]
 

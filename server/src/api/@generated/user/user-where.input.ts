@@ -64,11 +64,11 @@ export class UserWhereInput {
   metadata?: JsonNullableFilter;
 
   @Field(() => WorkspaceMemberRelationFilter, { nullable: true })
-  WorkspaceMember?: WorkspaceMemberRelationFilter;
+  workspaceMember?: WorkspaceMemberRelationFilter;
 
   @Field(() => CompanyListRelationFilter, { nullable: true })
   companies?: CompanyListRelationFilter;
 
   @Field(() => RefreshTokenListRelationFilter, { nullable: true })
-  RefreshTokens?: RefreshTokenListRelationFilter;
+  refreshTokens?: RefreshTokenListRelationFilter;
 }

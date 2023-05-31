@@ -30,7 +30,7 @@ export class Workspace {
   logo!: string | null;
 
   @Field(() => [WorkspaceMember], { nullable: true })
-  WorkspaceMember?: Array<WorkspaceMember>;
+  workspaceMember?: Array<WorkspaceMember>;
 
   @Field(() => [Company], { nullable: true })
   companies?: Array<Company>;

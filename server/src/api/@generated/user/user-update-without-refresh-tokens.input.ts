@@ -56,7 +56,7 @@ export class UserUpdateWithoutRefreshTokensInput {
   @Field(() => WorkspaceMemberUpdateOneWithoutUserNestedInput, {
     nullable: true,
   })
-  WorkspaceMember?: WorkspaceMemberUpdateOneWithoutUserNestedInput;
+  workspaceMember?: WorkspaceMemberUpdateOneWithoutUserNestedInput;
 
   @Field(() => CompanyUpdateManyWithoutAccountOwnerNestedInput, {
     nullable: true,

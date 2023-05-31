@@ -30,7 +30,7 @@ export class WorkspaceUncheckedCreateInput {
   @Field(() => WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput, {
     nullable: true,
   })
-  WorkspaceMember?: WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput;
+  workspaceMember?: WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput;
 
   @Field(() => CompanyUncheckedCreateNestedManyWithoutWorkspaceInput, {
     nullable: true,

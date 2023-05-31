@@ -57,7 +57,7 @@ export class UserUncheckedUpdateInput {
   @Field(() => WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput, {
     nullable: true,
   })
-  WorkspaceMember?: WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput;
+  workspaceMember?: WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput;
 
   @Field(() => CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput, {
     nullable: true,
@@ -67,5 +67,5 @@ export class UserUncheckedUpdateInput {
   @Field(() => RefreshTokenUncheckedUpdateManyWithoutUserNestedInput, {
     nullable: true,
   })
-  RefreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
+  refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
 }

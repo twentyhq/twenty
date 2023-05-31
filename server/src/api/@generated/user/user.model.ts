@@ -52,13 +52,13 @@ export class User {
   metadata!: any | null;
 
   @Field(() => WorkspaceMember, { nullable: true })
-  WorkspaceMember?: WorkspaceMember | null;
+  workspaceMember?: WorkspaceMember | null;
 
   @Field(() => [Company], { nullable: true })
   companies?: Array<Company>;
 
   @Field(() => [RefreshToken], { nullable: true })
-  RefreshTokens?: Array<RefreshToken>;
+  refreshTokens?: Array<RefreshToken>;
 
   @Field(() => UserCount, { nullable: false })
   _count?: UserCount;

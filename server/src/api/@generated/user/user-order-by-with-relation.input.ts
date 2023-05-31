@@ -50,11 +50,11 @@ export class UserOrderByWithRelationInput {
   metadata?: keyof typeof SortOrder;
 
   @Field(() => WorkspaceMemberOrderByWithRelationInput, { nullable: true })
-  WorkspaceMember?: WorkspaceMemberOrderByWithRelationInput;
+  workspaceMember?: WorkspaceMemberOrderByWithRelationInput;
 
   @Field(() => CompanyOrderByRelationAggregateInput, { nullable: true })
   companies?: CompanyOrderByRelationAggregateInput;
 
   @Field(() => RefreshTokenOrderByRelationAggregateInput, { nullable: true })
-  RefreshTokens?: RefreshTokenOrderByRelationAggregateInput;
+  refreshTokens?: RefreshTokenOrderByRelationAggregateInput;
 }

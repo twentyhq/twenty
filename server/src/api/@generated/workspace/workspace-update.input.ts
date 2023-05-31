@@ -34,7 +34,7 @@ export class WorkspaceUpdateInput {
   @Field(() => WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput, {
     nullable: true,
   })
-  WorkspaceMember?: WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput;
+  workspaceMember?: WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput;
 
   @Field(() => CompanyUpdateManyWithoutWorkspaceNestedInput, { nullable: true })
   companies?: CompanyUpdateManyWithoutWorkspaceNestedInput;

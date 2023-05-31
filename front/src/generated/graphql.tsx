@@ -814,8 +814,6 @@ export type StringNullableFilter = {
 
 export type User = {
   __typename?: 'User';
-  RefreshTokens?: Maybe<Array<RefreshToken>>;
-  WorkspaceMember?: Maybe<WorkspaceMember>;
   _count: UserCount;
   avatarUrl?: Maybe<Scalars['String']>;
   companies?: Maybe<Array<Company>>;
@@ -831,17 +829,9 @@ export type User = {
   metadata?: Maybe<Scalars['JSON']>;
   passwordHash?: Maybe<Scalars['String']>;
   phoneNumber?: Maybe<Scalars['String']>;
+  refreshTokens?: Maybe<Array<RefreshToken>>;
   updatedAt: Scalars['DateTime'];
-};
-
-
-export type UserRefreshTokensArgs = {
-  cursor?: InputMaybe<RefreshTokenWhereUniqueInput>;
-  distinct?: InputMaybe<Array<RefreshTokenScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<RefreshTokenOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<RefreshTokenWhereInput>;
+  workspaceMember?: Maybe<WorkspaceMember>;
 };
 
 
@@ -854,10 +844,20 @@ export type UserCompaniesArgs = {
   where?: InputMaybe<CompanyWhereInput>;
 };
 
+
+export type UserRefreshTokensArgs = {
+  cursor?: InputMaybe<RefreshTokenWhereUniqueInput>;
+  distinct?: InputMaybe<Array<RefreshTokenScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<RefreshTokenOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<RefreshTokenWhereInput>;
+};
+
 export type UserCount = {
   __typename?: 'UserCount';
-  RefreshTokens: Scalars['Int'];
   companies: Scalars['Int'];
+  refreshTokens: Scalars['Int'];
 };
 
 export type UserCreateNestedOneWithoutCompaniesInput = {
@@ -872,8 +872,6 @@ export type UserCreateOrConnectWithoutCompaniesInput = {
 };
 
 export type UserCreateWithoutCompaniesInput = {
-  RefreshTokens?: InputMaybe<RefreshTokenCreateNestedManyWithoutUserInput>;
-  WorkspaceMember?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutUserInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   deletedAt?: InputMaybe<Scalars['DateTime']>;
@@ -887,12 +885,12 @@ export type UserCreateWithoutCompaniesInput = {
   metadata?: InputMaybe<Scalars['JSON']>;
   passwordHash?: InputMaybe<Scalars['String']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
+  refreshTokens?: InputMaybe<RefreshTokenCreateNestedManyWithoutUserInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  workspaceMember?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutUserInput>;
 };
 
 export type UserOrderByWithRelationInput = {
-  RefreshTokens?: InputMaybe<RefreshTokenOrderByRelationAggregateInput>;
-  WorkspaceMember?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
   avatarUrl?: InputMaybe<SortOrder>;
   companies?: InputMaybe<CompanyOrderByRelationAggregateInput>;
   createdAt?: InputMaybe<SortOrder>;
@@ -907,7 +905,9 @@ export type UserOrderByWithRelationInput = {
   metadata?: InputMaybe<SortOrder>;
   passwordHash?: InputMaybe<SortOrder>;
   phoneNumber?: InputMaybe<SortOrder>;
+  refreshTokens?: InputMaybe<RefreshTokenOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
+  workspaceMember?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
 };
 
 export type UserRelationFilter = {
@@ -943,8 +943,6 @@ export type UserUpdateOneWithoutCompaniesNestedInput = {
 };
 
 export type UserUpdateWithoutCompaniesInput = {
-  RefreshTokens?: InputMaybe<RefreshTokenUpdateManyWithoutUserNestedInput>;
-  WorkspaceMember?: InputMaybe<WorkspaceMemberUpdateOneWithoutUserNestedInput>;
   avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
@@ -958,7 +956,9 @@ export type UserUpdateWithoutCompaniesInput = {
   metadata?: InputMaybe<Scalars['JSON']>;
   passwordHash?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  refreshTokens?: InputMaybe<RefreshTokenUpdateManyWithoutUserNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  workspaceMember?: InputMaybe<WorkspaceMemberUpdateOneWithoutUserNestedInput>;
 };
 
 export type UserUpsertWithoutCompaniesInput = {
@@ -970,8 +970,6 @@ export type UserWhereInput = {
   AND?: InputMaybe<Array<UserWhereInput>>;
   NOT?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
-  RefreshTokens?: InputMaybe<RefreshTokenListRelationFilter>;
-  WorkspaceMember?: InputMaybe<WorkspaceMemberRelationFilter>;
   avatarUrl?: InputMaybe<StringNullableFilter>;
   companies?: InputMaybe<CompanyListRelationFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
@@ -986,7 +984,9 @@ export type UserWhereInput = {
   metadata?: InputMaybe<JsonNullableFilter>;
   passwordHash?: InputMaybe<StringNullableFilter>;
   phoneNumber?: InputMaybe<StringNullableFilter>;
+  refreshTokens?: InputMaybe<RefreshTokenListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+  workspaceMember?: InputMaybe<WorkspaceMemberRelationFilter>;
 };
 
 export type UserWhereUniqueInput = {
@@ -996,7 +996,6 @@ export type UserWhereUniqueInput = {
 
 export type Workspace = {
   __typename?: 'Workspace';
-  WorkspaceMember?: Maybe<Array<WorkspaceMember>>;
   _count: WorkspaceCount;
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
@@ -1007,13 +1006,14 @@ export type Workspace = {
   logo?: Maybe<Scalars['String']>;
   people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
+  workspaceMember?: Maybe<Array<WorkspaceMember>>;
 };
 
 export type WorkspaceCount = {
   __typename?: 'WorkspaceCount';
-  WorkspaceMember: Scalars['Int'];
   companies: Scalars['Int'];
   people: Scalars['Int'];
+  workspaceMember: Scalars['Int'];
 };
 
 export type WorkspaceMember = {
@@ -1105,7 +1105,7 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', findManyCompany: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: any, address: string, employees?: number | null, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: any, address: string, employees?: number | null, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
 
 export type UpdateCompanyMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1146,7 +1146,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', findManyPerson: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: any, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: any, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type UpdatePeopleMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1201,7 +1201,7 @@ export type SearchUserQueryQuery = { __typename?: 'Query', searchResults: Array<
 export type EmptyQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type EmptyQueryQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string }> };
+export type EmptyQueryQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', id: string }> };
 
 export type SearchCompanyQueryQueryVariables = Exact<{
   where?: InputMaybe<CompanyWhereInput>;
@@ -1216,7 +1216,7 @@ export type GetCurrentUserQueryVariables = Exact<{
 }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspaceMember?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }> };
+export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspaceMember?: { __typename?: 'WorkspaceMember', workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }> };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1226,7 +1226,7 @@ export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __type
 
 export const GetCompaniesDocument = gql`
     query GetCompanies($orderBy: [CompanyOrderByWithRelationInput!], $where: CompanyWhereInput) {
-  findManyCompany(orderBy: $orderBy, where: $where) {
+  companies: findManyCompany(orderBy: $orderBy, where: $where) {
     id
     domainName
     name
@@ -1402,7 +1402,7 @@ export type DeleteCompaniesMutationResult = Apollo.MutationResult<DeleteCompanie
 export type DeleteCompaniesMutationOptions = Apollo.BaseMutationOptions<DeleteCompaniesMutation, DeleteCompaniesMutationVariables>;
 export const GetPeopleDocument = gql`
     query GetPeople($orderBy: [PersonOrderByWithRelationInput!], $where: PersonWhereInput, $limit: Int) {
-  findManyPerson(orderBy: $orderBy, where: $where, take: $limit) {
+  people: findManyPerson(orderBy: $orderBy, where: $where, take: $limit) {
     id
     phone
     email
@@ -1669,7 +1669,7 @@ export type SearchUserQueryLazyQueryHookResult = ReturnType<typeof useSearchUser
 export type SearchUserQueryQueryResult = Apollo.QueryResult<SearchUserQueryQuery, SearchUserQueryQueryVariables>;
 export const EmptyQueryDocument = gql`
     query EmptyQuery {
-  findManyUser {
+  searchResults: findManyUser {
     id
   }
 }
@@ -1741,11 +1741,11 @@ export type SearchCompanyQueryLazyQueryHookResult = ReturnType<typeof useSearchC
 export type SearchCompanyQueryQueryResult = Apollo.QueryResult<SearchCompanyQueryQuery, SearchCompanyQueryQueryVariables>;
 export const GetCurrentUserDocument = gql`
     query getCurrentUser($uuid: String) {
-  findManyUser(where: {id: {equals: $uuid}}) {
+  users: findManyUser(where: {id: {equals: $uuid}}) {
     id
     email
     displayName
-    workspaceMember: WorkspaceMember {
+    workspaceMember {
       workspace {
         id
         domainName

@@ -41,7 +41,7 @@ export class WorkspaceWhereInput {
   logo?: StringNullableFilter;
 
   @Field(() => WorkspaceMemberListRelationFilter, { nullable: true })
-  WorkspaceMember?: WorkspaceMemberListRelationFilter;
+  workspaceMember?: WorkspaceMemberListRelationFilter;
 
   @Field(() => CompanyListRelationFilter, { nullable: true })
   companies?: CompanyListRelationFilter;

@@ -56,5 +56,5 @@ export class UserUncheckedCreateWithoutWorkspaceMemberInput {
   @Field(() => RefreshTokenUncheckedCreateNestedManyWithoutUserInput, {
     nullable: true,
   })
-  RefreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
+  refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
 }

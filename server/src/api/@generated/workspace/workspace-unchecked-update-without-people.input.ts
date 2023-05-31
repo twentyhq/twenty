@@ -33,7 +33,7 @@ export class WorkspaceUncheckedUpdateWithoutPeopleInput {
   @Field(() => WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput, {
     nullable: true,
   })
-  WorkspaceMember?: WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput;
+  workspaceMember?: WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
   @Field(() => CompanyUncheckedUpdateManyWithoutWorkspaceNestedInput, {
     nullable: true,

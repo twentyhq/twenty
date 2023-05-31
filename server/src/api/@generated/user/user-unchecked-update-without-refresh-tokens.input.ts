@@ -56,7 +56,7 @@ export class UserUncheckedUpdateWithoutRefreshTokensInput {
   @Field(() => WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput, {
     nullable: true,
   })
-  WorkspaceMember?: WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput;
+  workspaceMember?: WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput;
 
   @Field(() => CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput, {
     nullable: true,

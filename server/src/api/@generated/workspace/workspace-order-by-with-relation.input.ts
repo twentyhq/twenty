@@ -29,7 +29,7 @@ export class WorkspaceOrderByWithRelationInput {
   logo?: keyof typeof SortOrder;
 
   @Field(() => WorkspaceMemberOrderByRelationAggregateInput, { nullable: true })
-  WorkspaceMember?: WorkspaceMemberOrderByRelationAggregateInput;
+  workspaceMember?: WorkspaceMemberOrderByRelationAggregateInput;
 
   @Field(() => CompanyOrderByRelationAggregateInput, { nullable: true })
   companies?: CompanyOrderByRelationAggregateInput;

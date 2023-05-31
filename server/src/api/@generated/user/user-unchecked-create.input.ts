@@ -52,7 +52,7 @@ export class UserUncheckedCreateInput {
   @Field(() => WorkspaceMemberUncheckedCreateNestedOneWithoutUserInput, {
     nullable: true,
   })
-  WorkspaceMember?: WorkspaceMemberUncheckedCreateNestedOneWithoutUserInput;
+  workspaceMember?: WorkspaceMemberUncheckedCreateNestedOneWithoutUserInput;
 
   @Field(() => CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput, {
     nullable: true,
@@ -62,5 +62,5 @@ export class UserUncheckedCreateInput {
   @Field(() => RefreshTokenUncheckedCreateNestedManyWithoutUserInput, {
     nullable: true,
   })
-  RefreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
+  refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
 }
