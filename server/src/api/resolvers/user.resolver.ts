@@ -28,7 +28,7 @@ export class UserResolver {
     args.where = {
       ...args.where,
       ...{
-        WorkspaceMember: {
+        workspaceMember: {
           is: { workspace: { is: { id: { equals: workspace.id } } } },
         },
       },
