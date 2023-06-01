@@ -1,6 +1,5 @@
 import { graphql } from 'msw';
 import { RecoilRoot } from 'recoil';
-import { ThemeProvider } from '@emotion/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 
@@ -8,7 +7,6 @@ import { filterAndSortData } from '../../../testing/mock-data';
 import { mockedCompaniesData } from '../../../testing/mock-data/companies';
 import { GraphqlQueryCompany } from '../../../interfaces/entities/company.interface';
 
-import { lightTheme } from '../../../layout/styles/themes';
 import { FullHeightStorybookLayout } from '../../../testing/FullHeightStorybookLayout';
 import { mockedClient } from '../../../testing/mockedClient';
 import Companies from '../Companies';
@@ -48,13 +46,11 @@ export function render() {
   return (
     <RecoilRoot>
       <ApolloProvider client={mockedClient}>
-        <ThemeProvider theme={lightTheme}>
-          <MemoryRouter>
-            <FullHeightStorybookLayout>
-              <Companies />
-            </FullHeightStorybookLayout>
-          </MemoryRouter>
-        </ThemeProvider>
+        <MemoryRouter>
+          <FullHeightStorybookLayout>
+            <Companies />
+          </FullHeightStorybookLayout>
+        </MemoryRouter>
       </ApolloProvider>
     </RecoilRoot>
   );

@@ -27,7 +27,8 @@ module.exports = {
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     "@storybook/preset-create-react-app",
-    "@storybook/addon-coverage"
+    "@storybook/addon-coverage",
+    "@storybook/addon-styling"
   ],
   framework: {
     name: '@storybook/react-webpack5',
