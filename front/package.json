@@ -6,6 +6,7 @@
     "@apollo/client": "^3.7.5",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.5",
+    "@tabler/icons-react": "^2.20.0",
     "@tanstack/react-table": "^8.8.5",
     "@types/node": "^16.18.4",
     "@types/react": "^18.0.25",
