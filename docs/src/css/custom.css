@@ -129,3 +129,7 @@ li.coming-soon a::after {
 .sidebar-item-icon {
   padding-right: 0.5rem;
 }
+
+.fullHeightPlayground {
+  height: calc(100vh - var(--ifm-navbar-height));
+}

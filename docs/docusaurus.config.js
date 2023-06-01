@@ -90,7 +90,7 @@ const config = {
           },
           {
             to: '/graphql/',
-            label: 'GraphQL API',
+            label: 'GraphQL Playground',
             position: 'right'
           },
           {
