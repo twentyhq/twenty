@@ -9,7 +9,6 @@ import { updateCompany } from '../../services/api/companies';
 import { User, mapToUser } from '../../interfaces/entities/user.interface';
 
 import ColumnHead from '../../components/table/ColumnHead';
-import { Checkbox } from '../../components/form/Checkbox';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 import EditableDate from '../../components/editable-cell/EditableDate';
 import EditableRelation from '../../components/editable-cell/EditableRelation';
