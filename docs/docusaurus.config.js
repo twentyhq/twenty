@@ -20,16 +20,7 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
-  headTags: [
-    {
-      tagName: 'link',
-      attributes: {
-        rel: 'stylesheet',
-        href: 'https://kit.fontawesome.com/c4eca3d765.css',
-        crossorigin: 'anonymous'
-      },
-    },
-  ],
+  headTags: [],
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want

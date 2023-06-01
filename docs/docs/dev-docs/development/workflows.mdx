@@ -1,18 +1,21 @@
-
-## Development workflow
+---
+sidebar_custom_props:
+  icon: TbTopologyStar
+---
+# Workflows
 
 The following steps assume that you have installed and configure the project with Docker.
 
-### IDE Setup
+## IDE Setup
 
 If you are using VSCode, please use the `Dev Containers` extension to open the project in a container. This will allow you to run Visual Studio on top of the docker container. This will allow you to run the project without having to install node on your machine.
 
-### Front tests
+## Front tests
 
 Run tests: `make front-test`
 Run coverage: `make front-coverage`
 Run storybook: `make front-storybook`
 
-### Note
+## Note
 
 If you are using Docker install, make sure to ssh in the docker container during development to execute commands. You can also use `Makefile` to help you

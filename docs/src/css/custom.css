@@ -97,9 +97,9 @@ li.coming-soon {
   display: flex;
 }
 
-
 li.coming-soon a {
-  display: inline-block;
+  display: flex;
+  justify-content: space-between;
   pointer-events: none;
   cursor: default;
 }
@@ -127,7 +127,14 @@ li.coming-soon a::after {
 }
 
 .sidebar-item-icon {
+  display: flex;
+  vertical-align: center;
   padding-right: 0.5rem;
+}
+
+.icon-and-text {
+  display: flex;
+  align-items: center;
 }
 
 .fullHeightPlayground {
