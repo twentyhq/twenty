@@ -65,6 +65,7 @@ const StyledDropdown = styled.ul`
     &:last-of-type {
       border-bottom-left-radius: var(--outer-border-radius);
       border-bottom-right-radius: var(--outer-border-radius);
+      border-bottom: 0;
     }
   }
 `;
@@ -125,6 +126,8 @@ const StyledSearchField = styled.li`
   user-select: none;
   color: ${(props) => props.theme.text60};
   font-weight: ${(props) => props.theme.fontWeightBold};
+  border-bottom: var(--wraper-border) solid
+    ${(props) => props.theme.primaryBorder};
 
   overflow: hidden;
   input {
