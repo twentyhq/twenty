@@ -13,8 +13,6 @@ const StyledContainer = styled.button`
   user-select: none;
   border: 0;
   background: inherit;
-  border: 1px solid ${(props) => props.theme.primaryBorder};
-  border-radius: ${(props) => props.theme.spacing(1)};
   padding: ${(props) => props.theme.spacing(2)};
   margin-left: ${(props) => props.theme.spacing(1)};
   align-self: flex-start;
