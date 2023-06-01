@@ -32,7 +32,7 @@ const lightThemeSpecific = {
   purpleBackground: '#e0e0ff',
   yellowBackground: '#fff2e7',
 
-  secondaryBackgroundSmallTransparency: 'rgba(252, 252, 252, 0.97)',
+  secondaryBackgroundTransparent: 'rgba(252, 252, 252, 0.8)',
 
   primaryBorder: 'rgba(0, 0, 0, 0.08)',
   lightBorder: '#f5f5f5',
@@ -69,7 +69,7 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
   purpleBackground: '#1111b7',
   yellowBackground: '#cc660a',
 
-  secondaryBackgroundSmallTransparency: 'rgba(23, 23, 23, 0.97)',
+  secondaryBackgroundTransparent: 'rgba(23, 23, 23, 0.8)',
 
   clickableElementBackgroundHover: 'rgba(0, 0, 0, 0.04)',
   clickableElementBackgroundTransition: 'background 0.1s ease',
@@ -96,9 +96,25 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
   blueLowTransparency: 'rgba(104, 149, 236, 0.32)',
 };
 
-export const modalBackground = (props: any) =>
+export const overlayBackground = (props: any) =>
   css`
-    background: ${props.theme.secondaryBackgroundSmallTransparency};
+    background: ${props.theme.secondaryBackgroundTransparent};
+    backdrop-filter: blur(8px);
+    box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.09);
+  `;
+
+export const textInputStyle = (props: any) =>
+  css`
+    border: none;
+    outline: none;
+    background-color: transparent;
+
+    &::placeholder,
+    &::-webkit-input-placeholder {
+      font-family: ${props.theme.fontFamily};
+      color: ${props.theme.text30};
+      font-weight: ${props.theme.fontWeightBold};
+    }
   `;
 
 export const lightTheme = { ...commonTheme, ...lightThemeSpecific };

@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { forwardRef, useState } from 'react';
 import { EditableCell } from './EditableCell';
 import DatePicker from '../form/DatePicker';
-import { modalBackground } from '../../layout/styles/themes';
 import { humanReadableDate } from '../../services/utils';
 
 export type EditableDateProps = {
@@ -28,7 +27,7 @@ const StyledCalendarContainer = styled.div<StyledCalendarContainerProps>`
   z-index: 1;
   left: -10px;
   top: 10px;
-  ${modalBackground};
+  background: ${(props) => props.theme.secondaryBackground};
 `;
 function EditableDate({
   value,

@@ -12,6 +12,7 @@ import { EditableCellMenu } from './EditableCellMenu';
 import { CellNormalModeContainer } from './CellNormalModeContainer';
 import { useRecoilState } from 'recoil';
 import { isSomeInputInEditModeState } from '../../modules/ui/tables/states/isSomeInputInEditModeState';
+import { textInputStyle } from '../../layout/styles/themes';
 
 const StyledEditModeContainer = styled.div`
   width: 200px;
@@ -23,7 +24,7 @@ const StyledEditModeSelectedContainer = styled.div`
   height: 31px;
   display: flex;
   align-items: center;
-  padding-left: ${(props) => props.theme.spacing(1)};
+  padding-left: ${(props) => props.theme.spacing(2)};
   padding-right: ${(props) => props.theme.spacing(1)};
 `;
 
@@ -47,13 +48,8 @@ const StyledEditModeCreateButtonContainer = styled.div`
 
 const StyledEditModeSearchInput = styled.input`
   width: 100%;
-  border: none;
-  outline: none;
 
-  &::placeholder {
-    font-weight: 'bold';
-    color: ${(props) => props.theme.text20};
-  }
+  ${textInputStyle}
 `;
 
 const StyledEditModeResults = styled.div`

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, ReactElement, useRef, useState } from 'react';
 import { EditableCell } from './EditableCell';
+import { textInputStyle } from '../../layout/styles/themes';
 
 type OwnProps = {
   firstValue: string;
@@ -24,14 +25,9 @@ const StyledContainer = styled.div`
 
 const StyledEditInplaceInput = styled.input`
   width: 45%;
-  border: none;
-  outline: none;
   height: 18px;
 
-  &::placeholder {
-    font-weight: bold;
-    color: ${(props) => props.theme.text20};
-  }
+  ${textInputStyle}
 `;
 
 export function EditableDoubleText({
