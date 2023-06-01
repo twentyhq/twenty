@@ -1,13 +1,5 @@
 module.exports = {
-  schema: [
-    {
-      'http://localhost:3000/graphql': {
-        headers: {
-          'x-hasura-admin-secret': process.env.HASURA_GRAPHQL_ADMIN_SECRET,
-        },
-      },
-    },
-  ],
+  schema: process.env.REACT_APP_API_URL,
   documents: ['./src/**/*.tsx', './src/**/*.ts'],
   overwrite: true,
   generates: {
