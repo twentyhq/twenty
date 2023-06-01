@@ -5,9 +5,13 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import '@emotion/react';
-import { ThemeType } from './layout/styles/themes';
 import { apiClient } from './apollo';
 import { RecoilRoot } from 'recoil';
+import { darkTheme, lightTheme, ThemeType } from './layout/styles/themes';
+import { ThemeProvider } from '@emotion/react';
+
+const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+const defaultTheme = isDarkMode ? darkTheme : lightTheme;
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -17,7 +21,9 @@ root.render(
     <ApolloProvider client={apiClient}>
       <BrowserRouter>
         <StrictMode>
-          <App />
+          <ThemeProvider theme={defaultTheme}>
+            <App />
+          </ThemeProvider>
         </StrictMode>
       </BrowserRouter>
     </ApolloProvider>

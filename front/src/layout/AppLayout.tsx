@@ -1,8 +1,6 @@
 import { Navbar } from './navbar/Navbar';
 import styled from '@emotion/styled';
-import { ThemeProvider } from '@emotion/react';
 import { User } from '../interfaces/entities/user.interface';
-import { lightTheme, darkTheme } from './styles/themes';
 
 const StyledLayout = styled.div`
   display: flex;
@@ -26,17 +24,12 @@ type OwnProps = {
   user?: User;
 };
 
-const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
-const theme = isDarkMode ? darkTheme : lightTheme;
-
 function AppLayout({ children, user }: OwnProps) {
   return (
-    <ThemeProvider theme={theme}>
-      <StyledLayout>
-        <Navbar user={user} workspace={user?.workspaceMember?.workspace} />
-        <MainContainer>{children}</MainContainer>
-      </StyledLayout>
-    </ThemeProvider>
+    <StyledLayout>
+      <Navbar user={user} workspace={user?.workspaceMember?.workspace} />
+      <MainContainer>{children}</MainContainer>
+    </StyledLayout>
   );
 }
 
