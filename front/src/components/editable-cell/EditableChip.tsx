@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, ComponentType, useRef, useState } from 'react';
 import { EditableCell } from './EditableCell';
+import { textInputStyle } from '../../layout/styles/themes';
 
 export type EditableChipProps = {
   placeholder?: string;
@@ -14,15 +15,10 @@ export type EditableChipProps = {
 // TODO: refactor
 const StyledInplaceInput = styled.input`
   width: 100%;
-  border: none;
-  outline: none;
   padding-left: ${(props) => props.theme.spacing(1)};
   padding-right: ${(props) => props.theme.spacing(1)};
 
-  &::placeholder {
-    font-weight: 'bold';
-    color: props.theme.text20;
-  }
+  ${textInputStyle}
 `;
 
 const StyledInplaceShow = styled.div`

@@ -1,7 +1,10 @@
 import styled from '@emotion/styled';
 import { useRef, ReactNode } from 'react';
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
-import { modalBackground } from '../../../layout/styles/themes';
+import {
+  overlayBackground,
+  textInputStyle,
+} from '../../../layout/styles/themes';
 import { FaAngleDown } from 'react-icons/fa';
 
 type OwnProps = {
@@ -52,11 +55,10 @@ const StyledDropdown = styled.ul`
   top: 14px;
   right: 0;
   border: var(--wraper-border) solid ${(props) => props.theme.primaryBorder};
-  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.09);
   border-radius: var(--wraper-border-radius);
   padding: 0px;
   min-width: 160px;
-  ${modalBackground}
+  ${overlayBackground}
   li {
     &:first-of-type {
       border-top-left-radius: var(--outer-border-radius);
@@ -73,7 +75,7 @@ const StyledDropdown = styled.ul`
 const StyledDropdownItem = styled.li`
   display: flex;
   align-items: center;
-  width: 160px;
+  width: calc(160px - ${(props) => props.theme.spacing(4)});
   padding: ${(props) => props.theme.spacing(2)}
     calc(${(props) => props.theme.spacing(2)} - 2px);
   margin: 2px;
@@ -133,21 +135,16 @@ const StyledSearchField = styled.li`
   input {
     height: 36px;
     width: 100%;
-    border: none;
     padding: 8px;
     box-sizing: border-box;
     font-family: ${(props) => props.theme.fontFamily};
     border-radius: 8px;
 
+    ${textInputStyle}
+
     &:focus {
       outline: 0 none;
     }
-  }
-  input::placeholder,
-  input::-webkit-input-placeholder {
-    font-family: ${(props) => props.theme.fontFamily};
-    color: ${(props) => props.theme.text30};
-    font-weight: ${(props) => props.theme.fontWeightBold};
   }
 `;
 

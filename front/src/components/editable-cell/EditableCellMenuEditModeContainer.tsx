@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { overlayBackground } from '../../layout/styles/themes';
 
 type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
@@ -13,15 +14,13 @@ export const EditableCellMenuEditModeContainer = styled.div<OwnProps>`
   min-height: 100%;
   position: absolute;
   left: ${(props) =>
-    props.editModeHorizontalAlign === 'right' ? 'auto' : '0'};
+    props.editModeHorizontalAlign === 'right' ? 'auto' : '-1px'};
   right: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? '0' : 'auto'};
   top: ${(props) => (props.editModeVerticalPosition === 'over' ? '0' : '100%')};
 
-  background: ${(props) => props.theme.primaryBackground};
   border: 1px solid ${(props) => props.theme.primaryBorder};
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.16);
   z-index: 1;
   border-radius: 4px;
-  backdrop-filter: blur(20px);
+  ${overlayBackground}
 `;

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef, useState } from 'react';
 import { EditableCell } from './EditableCell';
+import { textInputStyle } from '../../layout/styles/themes';
 
 type OwnProps = {
   placeholder?: string;
@@ -16,14 +17,7 @@ type StyledEditModeProps = {
 // TODO: refactor
 const StyledInplaceInput = styled.input<StyledEditModeProps>`
   width: 100%;
-  border: none;
-  outline: none;
-
-  &::placeholder {
-    font-weight: ${(props) => (props.isEditMode ? 'bold' : 'normal')};
-    color: ${(props) =>
-      props.isEditMode ? props.theme.text20 : 'transparent'};
-  }
+  ${textInputStyle}
 `;
 
 const StyledNoEditText = styled.div`

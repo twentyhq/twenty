@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+import { overlayBackground } from '../../layout/styles/themes';
+
 type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
@@ -12,6 +14,7 @@ export const CellEditModeContainer = styled.div<OwnProps>`
   min-height: 100%;
   padding-left: ${(props) => props.theme.spacing(2)};
   padding-right: ${(props) => props.theme.spacing(2)};
+  margin-left: -2px;
   position: absolute;
   left: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? 'auto' : '0'};
@@ -19,10 +22,8 @@ export const CellEditModeContainer = styled.div<OwnProps>`
     props.editModeHorizontalAlign === 'right' ? '0' : 'auto'};
   top: ${(props) => (props.editModeVerticalPosition === 'over' ? '0' : '100%')};
 
-  background: ${(props) => props.theme.primaryBackground};
   border: 1px solid ${(props) => props.theme.primaryBorder};
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.16);
   z-index: 1;
   border-radius: 4px;
-  backdrop-filter: blur(20px);
+  ${overlayBackground}
 `;

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef } from 'react';
+import { textInputStyle } from '../../layout/styles/themes';
 
 type OwnProps = {
   leftValue: string;
@@ -22,14 +23,9 @@ const StyledContainer = styled.div`
 
 const StyledEditInplaceInput = styled.input`
   width: 45%;
-  border: none;
-  outline: none;
   height: 18px;
 
-  &::placeholder {
-    font-weight: bold;
-    color: ${(props) => props.theme.text20};
-  }
+  ${textInputStyle}
 `;
 
 export function DoubleTextInput({

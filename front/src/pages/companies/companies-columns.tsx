@@ -80,6 +80,7 @@ export const useCompaniesColumns = () => {
         cell: (props) => (
           <EditableText
             content={props.row.original.domainName || ''}
+            placeholder="Domain name"
             changeHandler={(value) => {
               const company = props.row.original;
               company.domainName = value;
@@ -96,6 +97,7 @@ export const useCompaniesColumns = () => {
         cell: (props) => (
           <EditableText
             content={props.row.original.employees?.toString() || ''}
+            placeholder="Employees"
             changeHandler={(value) => {
               const company = props.row.original;
 
@@ -118,6 +120,7 @@ export const useCompaniesColumns = () => {
         cell: (props) => (
           <EditableText
             content={props.row.original.address || ''}
+            placeholder="Address"
             changeHandler={(value) => {
               const company = props.row.original;
               company.address = value;
