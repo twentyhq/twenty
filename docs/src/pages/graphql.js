@@ -19,7 +19,7 @@ export default function graphQL() {
     <Layout title="Hello" description="Hello React Page">
       <div className="fullHeightPlayground">
         <BrowserOnly>
-          <GraphiQLComponent />
+          {() => <GraphiQLComponent />}
         </BrowserOnly>
       </div>
     </Layout>
