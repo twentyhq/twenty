@@ -67,7 +67,7 @@ export const Checkbox: Story = {
     await sleep(500);
 
     const inputCheckboxContainers = await canvas.findAllByTestId(
-      'input-checkbox-container',
+      'input-checkbox-cell-container',
     );
 
     const inputCheckboxes = await canvas.findAllByTestId('input-checkbox');
