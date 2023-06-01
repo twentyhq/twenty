@@ -36,6 +36,9 @@ It is meant to be:
 - Perfectly in-sync with your data
 - Crafted with care and enjoyable to use
 
+# Quickstart
+No need to clone the repo, just run `npx twenty-cli` in your terminal and follow the instructions.
+
 # Progress
 We are currently in the development phase of Twenty's alpha version:
 
