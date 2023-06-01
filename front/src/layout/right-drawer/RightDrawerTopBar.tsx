@@ -12,7 +12,6 @@ const StyledRightDrawerTopBar = styled.div`
   font-size: 13px;
   color: ${(props) => props.theme.text60};
   border-bottom: 1px solid ${(props) => props.theme.lightBorder};
-  width: 100%;
 `;
 
 const StyledTopBarTitle = styled.div`
