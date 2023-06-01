@@ -6,6 +6,9 @@ import Link from '@docusaurus/Link';
 import isInternalUrl from '@docusaurus/isInternalUrl';
 import IconExternalLink from '@theme/Icon/ExternalLink';
 import styles from './styles.module.css';
+import { TbFaceIdError, TbTerminal2, TbCloud, TbServer, TbBolt, TbApps, TbTopologyStar, TbChartDots, TbBug } from "react-icons/tb";
+
+
 export default function DocSidebarItemLink({
   item,
   onItemClick,
@@ -17,6 +20,18 @@ export default function DocSidebarItemLink({
   const {href, label, className, autoAddBaseUrl, customProps = {}} = item;
   const isActive = isActiveSidebarItem(item, activePath);
   const isInternalLink = isInternalUrl(href);
+  let icons = {
+    'TbTerminal2': TbTerminal2,
+    'TbCloud': TbCloud,
+    'TbServer': TbServer,
+    'TbBolt': TbBolt,
+    'TbApps': TbApps,
+    'TbTopologyStar': TbTopologyStar,
+    'TbChartDots': TbChartDots,
+    'TbBug': TbBug,
+  };
+
+  let IconComponent = customProps && customProps.icon ? icons[customProps.icon] : TbFaceIdError;
   return (
     <li
       className={clsx(
@@ -41,8 +56,12 @@ export default function DocSidebarItemLink({
           onClick: onItemClick ? () => onItemClick(item) : undefined,
         })}
         {...props}>
-        <i className={"sidebar-item-icon fa-light " + (customProps && customProps.icon ? ("fa-"+customProps.icon) : "fa-notdef")}></i>
-        {label}
+        <span className="icon-and-text">
+          <i className="sidebar-item-icon">
+            <IconComponent />
+          </i>
+          {label}
+        </span>
         {!isInternalLink && <IconExternalLink />}
       </Link>
     </li>

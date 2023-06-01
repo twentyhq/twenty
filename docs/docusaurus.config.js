@@ -20,16 +20,7 @@ const config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
-  headTags: [
-    {
-      tagName: 'link',
-      attributes: {
-        rel: 'stylesheet',
-        href: 'https://kit.fontawesome.com/c4eca3d765.css',
-        crossorigin: 'anonymous'
-      },
-    },
-  ],
+  headTags: [],
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -56,23 +47,6 @@ const config = {
         },
       }),
 
-    ],
-    [
-      'redocusaurus',
-      {
-        // Plugin Options for loading OpenAPI files
-        specs: [
-          {
-            spec: 'docs/open-api/openapi.yaml',
-            route: '/api/',
-          },
-        ],
-        // Theme Options for modifying how redoc renders them
-        theme: {
-          // Change with your site colors
-          primaryColor: '#1890ff',
-        },
-      },
     ]
   ],
 
@@ -106,8 +80,8 @@ const config = {
             label: 'User guide',
           },
           {
-            to: '/api/',
-            label: 'API',
+            to: '/graphql/',
+            label: 'GraphQL Playground',
             position: 'right'
           },
           {
