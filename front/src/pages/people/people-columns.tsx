@@ -60,7 +60,7 @@ export const usePeopleColumns = () => {
             }}
           />
         ),
-        size: 200,
+        size: 210,
       }),
       columnHelper.accessor('email', {
         header: () => (
