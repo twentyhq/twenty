@@ -7,6 +7,7 @@ export const mockedPeopleData = [
     firstname: 'Alexandre',
     lastname: 'Prot',
     email: 'alexandre@qonto.com',
+    workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
       name: 'Qonto',
