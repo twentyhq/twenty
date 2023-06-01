@@ -109,7 +109,7 @@ export const useCompaniesColumns = () => {
             }}
           />
         ),
-        size: 70,
+        size: 75,
       }),
       columnHelper.accessor('address', {
         header: () => (
