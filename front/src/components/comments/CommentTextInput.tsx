@@ -52,11 +52,7 @@ const StyledBottomRightIconButton = styled.div`
 export function CommentTextInput({ placeholder, onSend }: OwnProps) {
   const [text, setText] = useState('');
 
-  function handleInputChange(event: React.FormEvent<HTMLTextAreaElement>) {
-    const newText = event.currentTarget.value;
-
-    setText(newText);
-  }
+  const isSendButtonDisabled = !text;
 
   useHotkeys(
     ['shift+enter', 'enter'],
@@ -78,7 +74,31 @@ export function CommentTextInput({ placeholder, onSend }: OwnProps) {
     [onSend],
   );
 
-  const isSendButtonDisabled = !text;
+  useHotkeys(
+    'esc',
+    (event: KeyboardEvent, handler: HotkeysEvent) => {
+      event.preventDefault();
+
+      setText('');
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+    },
+    [onSend],
+  );
+
+  function handleInputChange(event: React.FormEvent<HTMLTextAreaElement>) {
+    const newText = event.currentTarget.value;
+
+    setText(newText);
+  }
+
+  function handleOnClickSendButton() {
+    onSend?.(text);
+
+    setText('');
+  }
 
   return (
     <>
@@ -91,6 +111,7 @@ export function CommentTextInput({ placeholder, onSend }: OwnProps) {
         />
         <StyledBottomRightIconButton>
           <IconButton
+            onClick={handleOnClickSendButton}
             icon={<HiArrowSmRight size={15} />}
             disabled={isSendButtonDisabled}
           />
