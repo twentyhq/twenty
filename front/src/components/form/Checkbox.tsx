@@ -6,20 +6,17 @@ type OwnProps = {
   id: string;
   checked?: boolean;
   indeterminate?: boolean;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (newCheckedValue: boolean) => void;
 };
 
 const StyledContainer = styled.div`
-  width: 32px;
-  height: 32px;
-  margin-left: -${(props) => props.theme.table.sideMarginInPx}px;
-  padding-left: ${(props) => props.theme.table.sideMarginInPx}px;
-
-  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   input[type='checkbox'] {
     accent-color: ${(props) => props.theme.blue};
-    margin: 9px;
+    margin: 2px;
     height: 14px;
     width: 14px;
     cursor: pointer;
@@ -44,44 +41,39 @@ const StyledContainer = styled.div`
   }
 `;
 
-function Checkbox({ name, id, checked, onChange, indeterminate }: OwnProps) {
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
+export function Checkbox({
+  name,
+  id,
+  checked,
+  onChange,
+  indeterminate,
+}: OwnProps) {
+  const ref = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    if (inputRef.current === null) return;
+    if (ref.current === null) return;
     if (typeof indeterminate === 'boolean') {
-      inputRef.current.indeterminate = !checked && indeterminate;
+      ref.current.indeterminate = !checked && indeterminate;
     }
-  }, [inputRef, indeterminate, checked]);
+  }, [ref, indeterminate, checked]);
 
-  function handleContainerClick(event: React.MouseEvent<HTMLDivElement>) {
-    if (
-      inputRef.current &&
-      containerRef.current &&
-      event.target === containerRef.current
-    ) {
-      inputRef.current.click();
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    if (onChange) {
+      onChange(event.target.checked);
     }
   }
 
   return (
-    <StyledContainer
-      ref={containerRef}
-      onClick={handleContainerClick}
-      data-testid="input-checkbox-container"
-    >
+    <StyledContainer>
       <input
-        ref={inputRef}
+        ref={ref}
         type="checkbox"
         data-testid="input-checkbox"
         id={id}
         name={name}
         checked={checked}
-        onChange={onChange}
+        onChange={handleInputChange}
       />
     </StyledContainer>
   );
 }
-
-export default Checkbox;

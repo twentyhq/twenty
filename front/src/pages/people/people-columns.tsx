@@ -4,7 +4,6 @@ import { Person } from '../../interfaces/entities/person.interface';
 import { updatePerson } from '../../services/api/people';
 
 import ColumnHead from '../../components/table/ColumnHead';
-import Checkbox from '../../components/form/Checkbox';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 import EditablePhone from '../../components/editable-cell/EditablePhone';
 import { EditablePeopleFullName } from '../../components/people/EditablePeopleFullName';
@@ -19,6 +18,7 @@ import {
   TbUser,
 } from 'react-icons/tb';
 import { PeopleCompanyCell } from '../../components/people/PeopleCompanyCell';
+import { CheckboxCell } from '../../components/table/CheckboxCell';
 
 const columnHelper = createColumnHelper<Person>();
 
@@ -31,15 +31,15 @@ export const usePeopleColumns = () => {
           <SelectAllCheckbox
             checked={table.getIsAllRowsSelected()}
             indeterminate={table.getIsSomeRowsSelected()}
-            onChange={table.getToggleAllRowsSelectedHandler()}
+            onChange={(newValue) => table.toggleAllRowsSelected(newValue)}
           />
         ),
         cell: (props: CellContext<Person, string>) => (
-          <Checkbox
+          <CheckboxCell
             id={`person-selected-${props.row.original.id}`}
             name={`person-selected-${props.row.original.id}`}
             checked={props.row.getIsSelected()}
-            onChange={props.row.getToggleSelectedHandler()}
+            onChange={(newValue) => props.row.toggleSelected(newValue)}
           />
         ),
         size: 25,

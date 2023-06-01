@@ -9,7 +9,7 @@ import { updateCompany } from '../../services/api/companies';
 import { User, mapToUser } from '../../interfaces/entities/user.interface';
 
 import ColumnHead from '../../components/table/ColumnHead';
-import Checkbox from '../../components/form/Checkbox';
+import { Checkbox } from '../../components/form/Checkbox';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 import EditableDate from '../../components/editable-cell/EditableDate';
 import EditableRelation from '../../components/editable-cell/EditableRelation';
@@ -29,6 +29,7 @@ import {
 } from 'react-icons/tb';
 import { QueryMode } from '../../generated/graphql';
 import { getLogoUrlFromDomainName } from '../../services/utils';
+import { CheckboxCell } from '../../components/table/CheckboxCell';
 
 const columnHelper = createColumnHelper<Company>();
 
@@ -41,15 +42,15 @@ export const useCompaniesColumns = () => {
           <SelectAllCheckbox
             checked={table.getIsAllRowsSelected()}
             indeterminate={table.getIsSomeRowsSelected()}
-            onChange={table.getToggleAllRowsSelectedHandler()}
+            onChange={(newValue) => table.toggleAllRowsSelected(newValue)}
           />
         ),
         cell: (props: CellContext<Company, string>) => (
-          <Checkbox
+          <CheckboxCell
             id={`company-selected-${props.row.original.id}`}
             name={`company-selected-${props.row.original.id}`}
             checked={props.row.getIsSelected()}
-            onChange={props.row.getToggleSelectedHandler()}
+            onChange={(newValue) => props.row.toggleSelected(newValue)}
           />
         ),
         size: 25,
