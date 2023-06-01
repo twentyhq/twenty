@@ -1,9 +1,9 @@
-import { ReactElement, useRef } from 'react';
-import { useOutsideAlerter } from '../../hooks/useOutsideAlerter';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { ReactElement } from 'react';
 import { CellBaseContainer } from './CellBaseContainer';
-import { CellEditModeContainer } from './CellEditModeContainer';
 import { CellNormalModeContainer } from './CellNormalModeContainer';
+import { useRecoilState } from 'recoil';
+import { isSomeInputInEditModeState } from '../../modules/ui/tables/states/isSomeInputInEditModeState';
+import { EditableCellEditMode } from './EditableCellEditMode';
 
 type OwnProps = {
   editModeContent: ReactElement;
@@ -25,58 +25,27 @@ export function EditableCell({
   onOutsideClick,
   onInsideClick,
 }: OwnProps) {
-  const wrapperRef = useRef(null);
-  const editableContainerRef = useRef(null);
-
-  useOutsideAlerter(wrapperRef, () => {
-    onOutsideClick?.();
-  });
-
-  useHotkeys(
-    'esc',
-    () => {
-      if (isEditMode) {
-        onOutsideClick?.();
-      }
-    },
-    {
-      preventDefault: true,
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
-    [isEditMode, onOutsideClick],
+  const [isSomeInputInEditMode, setIsSomeInputInEditMode] = useRecoilState(
+    isSomeInputInEditModeState,
   );
 
-  useHotkeys(
-    'enter',
-    () => {
-      if (isEditMode) {
-        onOutsideClick?.();
-      }
-    },
-    {
-      preventDefault: true,
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
-    [isEditMode, onOutsideClick],
-  );
+  function handleOnClick() {
+    if (!isSomeInputInEditMode) {
+      onInsideClick?.();
+      setIsSomeInputInEditMode(true);
+    }
+  }
 
   return (
-    <CellBaseContainer
-      ref={wrapperRef}
-      onClick={() => {
-        onInsideClick && onInsideClick();
-      }}
-    >
+    <CellBaseContainer onClick={handleOnClick}>
       {isEditMode ? (
-        <CellEditModeContainer
-          ref={editableContainerRef}
+        <EditableCellEditMode
+          editModeContent={editModeContent}
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
-        >
-          {editModeContent}
-        </CellEditModeContainer>
+          isEditMode={isEditMode}
+          onOutsideClick={onOutsideClick}
+        />
       ) : (
         <CellNormalModeContainer>{nonEditModeContent}</CellNormalModeContainer>
       )}

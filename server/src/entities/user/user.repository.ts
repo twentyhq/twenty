@@ -21,7 +21,10 @@ export class UserRepository {
     where?: Prisma.UserWhereInput;
   }): Promise<User | null> {
     const { where } = params;
-    return this.prisma.user.findFirst({ where });
+
+    return this.prisma.user.findFirst({
+      where,
+    });
   }
 
   async upsertUser(params: {

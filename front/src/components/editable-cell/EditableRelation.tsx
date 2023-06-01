@@ -10,6 +10,8 @@ import { FaPlus } from 'react-icons/fa';
 import { HoverableMenuItem } from './HoverableMenuItem';
 import { EditableCellMenu } from './EditableCellMenu';
 import { CellNormalModeContainer } from './CellNormalModeContainer';
+import { useRecoilState } from 'recoil';
+import { isSomeInputInEditModeState } from '../../modules/ui/tables/states/isSomeInputInEditModeState';
 
 const StyledEditModeContainer = styled.div`
   width: 200px;
@@ -112,6 +114,9 @@ function EditableRelation<
   onCreate,
 }: EditableRelationProps<RelationType, ChipComponentPropsType>) {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [, setIsSomeInputInEditMode] = useRecoilState(
+    isSomeInputInEditModeState,
+  );
 
   // TODO: Tie this to a react context
   const [filterSearchResults, setSearchInput, setFilterSearch, searchInput] =
@@ -130,7 +135,12 @@ function EditableRelation<
 
   function handleCreateNewRelationButtonClick() {
     onCreate?.(searchInput);
+    closeEditMode();
+  }
+
+  function closeEditMode() {
     setIsEditMode(false);
+    setIsSomeInputInEditMode(false);
   }
 
   return (
@@ -155,6 +165,7 @@ function EditableRelation<
             </StyledEditModeSelectedContainer>
             <StyledEditModeSearchContainer>
               <StyledEditModeSearchInput
+                autoFocus
                 placeholder={searchPlaceholder}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                   setFilterSearch(searchConfig);
@@ -183,7 +194,7 @@ function EditableRelation<
                     key={index}
                     onClick={() => {
                       onChange(result.value);
-                      setIsEditMode(false);
+                      closeEditMode();
                     }}
                   >
                     <HoverableMenuItem>

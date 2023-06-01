@@ -1,4 +1,5 @@
 import * as TypeGraphQL from '@nestjs/graphql';
+import { CommentThread } from 'src/api/@generated/comment-thread/comment-thread.model';
 import { Company } from 'src/api/@generated/company/company.model';
 import { Person } from 'src/api/@generated/person/person.model';
 import { Workspace } from 'src/api/@generated/workspace/workspace.model';
@@ -32,5 +33,23 @@ export class PersonRelationsResolver {
         },
       })
       .workspace({});
+  }
+
+  @TypeGraphQL.ResolveField(() => [CommentThread], {
+    nullable: false,
+  })
+  async commentThreads(
+    @TypeGraphQL.Root() person: Person,
+  ): Promise<CommentThread[]> {
+    return await this.prismaService.commentThread.findMany({
+      where: {
+        commentThreadTargets: {
+          some: {
+            commentableId: person.id,
+            commentableType: 'Person',
+          },
+        },
+      },
+    });
   }
 }

@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 import { WorkspaceMemberUncheckedCreateNestedOneWithoutUserInput } from '../workspace-member/workspace-member-unchecked-create-nested-one-without-user.input';
 import { CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput } from '../company/company-unchecked-create-nested-many-without-account-owner.input';
+import { CommentUncheckedCreateNestedManyWithoutAuthorInput } from '../comment/comment-unchecked-create-nested-many-without-author.input';
 
 @InputType()
 export class UserUncheckedCreateWithoutRefreshTokensInput {
@@ -51,10 +52,15 @@ export class UserUncheckedCreateWithoutRefreshTokensInput {
   @Field(() => WorkspaceMemberUncheckedCreateNestedOneWithoutUserInput, {
     nullable: true,
   })
-  WorkspaceMember?: WorkspaceMemberUncheckedCreateNestedOneWithoutUserInput;
+  workspaceMember?: WorkspaceMemberUncheckedCreateNestedOneWithoutUserInput;
 
   @Field(() => CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput, {
     nullable: true,
   })
   companies?: CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput;
+
+  @Field(() => CommentUncheckedCreateNestedManyWithoutAuthorInput, {
+    nullable: true,
+  })
+  comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput;
 }

@@ -58,8 +58,6 @@ const StyledDropdown = styled.ul`
   min-width: 160px;
   ${modalBackground}
   li {
-    border-radius: 2px;
-
     &:first-of-type {
       border-top-left-radius: var(--outer-border-radius);
       border-top-right-radius: var(--outer-border-radius);
@@ -74,16 +72,24 @@ const StyledDropdown = styled.ul`
 const StyledDropdownItem = styled.li`
   display: flex;
   align-items: center;
+  width: 160px;
   padding: ${(props) => props.theme.spacing(2)}
     calc(${(props) => props.theme.spacing(2)} - 2px);
   margin: 2px;
   cursor: pointer;
   user-select: none;
   color: ${(props) => props.theme.text60};
+  border-radius: 2px;
 
   &:hover {
     background: rgba(0, 0, 0, 0.04);
   }
+`;
+
+const StyledDropdownItemClipped = styled.span`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const StyledDropdownTopOption = styled.li`
@@ -94,13 +100,12 @@ const StyledDropdownTopOption = styled.li`
     calc(${(props) => props.theme.spacing(2)});
   cursor: pointer;
   user-select: none;
-  color: ${(props) => props.theme.text60};
+  color: ${(props) => props.theme.text80};
   font-weight: ${(props) => props.theme.fontWeightBold};
 
   &:hover {
     background: rgba(0, 0, 0, 0.04);
   }
-  border-radius: 0%;
   border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
 `;
 
@@ -121,20 +126,24 @@ const StyledSearchField = styled.li`
   color: ${(props) => props.theme.text60};
   font-weight: ${(props) => props.theme.fontWeightBold};
 
-  border-radius: 0%;
-  border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
+  overflow: hidden;
   input {
     height: 36px;
     width: 100%;
     border: none;
     padding: 8px;
     box-sizing: border-box;
-    &:hover {
-      background: rgba(0, 0, 0, 0.04);
+    font-family: ${(props) => props.theme.fontFamily};
+    border-radius: 8px;
+
+    &:focus {
+      outline: 0 none;
     }
   }
-  input::placeholder {
-    color: ${(props) => props.theme.text40};
+  input::placeholder,
+  input::-webkit-input-placeholder {
+    font-family: ${(props) => props.theme.fontFamily};
+    color: ${(props) => props.theme.text30};
     font-weight: ${(props) => props.theme.fontWeightBold};
   }
 `;
@@ -188,6 +197,7 @@ function DropdownTopOptionAngleDown() {
   );
 }
 DropdownButton.StyledDropdownItem = StyledDropdownItem;
+DropdownButton.StyledDropdownItemClipped = StyledDropdownItemClipped;
 DropdownButton.StyledSearchField = StyledSearchField;
 DropdownButton.StyledDropdownTopOption = StyledDropdownTopOption;
 DropdownButton.StyledDropdownTopOptionAngleDown = DropdownTopOptionAngleDown;

@@ -7,6 +7,7 @@
 
 # testing
 /coverage
+storybook-static
 
 # production
 /build

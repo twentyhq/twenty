@@ -10,8 +10,6 @@ import { RestLink } from 'apollo-link-rest';
 import { onError } from '@apollo/client/link/error';
 import { refreshAccessToken } from './services/auth/AuthService';
 
-console.log(process.env.REACT_APP_API_URL);
-
 const apiLink = createHttpLink({
   uri: `${process.env.REACT_APP_API_URL}`,
 });

@@ -15,7 +15,7 @@ export class UserRelationsResolver {
   @TypeGraphQL.ResolveField(() => WorkspaceMember, {
     nullable: true,
   })
-  async WorkspaceMember(
+  async workspaceMember(
     @TypeGraphQL.Parent() user: User,
   ): Promise<WorkspaceMember | null> {
     return await this.prismaService.user
@@ -24,7 +24,7 @@ export class UserRelationsResolver {
           id: user.id,
         },
       })
-      .WorkspaceMember({});
+      .workspaceMember({});
   }
 
   @TypeGraphQL.ResolveField(() => [Company], {
@@ -49,7 +49,7 @@ export class UserRelationsResolver {
   @TypeGraphQL.ResolveField(() => [RefreshToken], {
     nullable: false,
   })
-  async RefreshTokens(
+  async refreshTokens(
     @TypeGraphQL.Parent() user: User,
     @TypeGraphQL.Info() info: GraphQLResolveInfo,
     @TypeGraphQL.Args() args: FindManyRefreshTokenArgs,
@@ -60,7 +60,7 @@ export class UserRelationsResolver {
           id: user.id,
         },
       })
-      .RefreshTokens({
+      .refreshTokens({
         ...args,
       });
   }

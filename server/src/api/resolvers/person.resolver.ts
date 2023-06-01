@@ -12,6 +12,7 @@ import { Workspace } from '../@generated/workspace/workspace.model';
 import { AuthWorkspace } from './decorators/auth-workspace.decorator';
 import { ArgsService } from './services/args.service';
 import { CheckWorkspaceOwnership } from 'src/auth/guards/check-workspace-ownership.guard';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard, CheckWorkspaceOwnership)
 @Resolver(() => Person)
@@ -50,7 +51,7 @@ export class PersonResolver {
 
     return this.prismaService.person.update({
       ...args,
-    });
+    } satisfies UpdateOnePersonArgs as Prisma.PersonUpdateArgs);
   }
 
   @Mutation(() => AffectedRows, {
