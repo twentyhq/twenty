@@ -18,7 +18,7 @@ const commonTheme = {
   spacing: (multiplicator: number) => `${multiplicator * 4}px`,
 
   table: {
-    sideMarginInPx: 8,
+    horizontalCellMargin: '8px',
   },
 };
 
