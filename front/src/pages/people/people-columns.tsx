@@ -64,7 +64,7 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('email', {
         header: () => (
-          <ColumnHead viewName="Email" viewIcon={<TbMail size={16} />} />
+          <ColumnHead viewName="Emails" viewIcon={<TbMail size={16} />} />
         ),
         cell: (props) => (
           <EditableText
