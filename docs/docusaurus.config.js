@@ -56,23 +56,6 @@ const config = {
         },
       }),
 
-    ],
-    [
-      'redocusaurus',
-      {
-        // Plugin Options for loading OpenAPI files
-        specs: [
-          {
-            spec: 'docs/open-api/openapi.yaml',
-            route: '/api/',
-          },
-        ],
-        // Theme Options for modifying how redoc renders them
-        theme: {
-          // Change with your site colors
-          primaryColor: '#1890ff',
-        },
-      },
     ]
   ],
 
@@ -106,8 +89,8 @@ const config = {
             label: 'User guide',
           },
           {
-            to: '/api/',
-            label: 'API',
+            to: '/graphql/',
+            label: 'GraphQL API',
             position: 'right'
           },
           {

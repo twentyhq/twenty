@@ -25,6 +25,8 @@
   "typescript.format.enable": false,
   "cSpell.enableFiletypes": [
     "!javascript",
+    "!json",
+    "md",
     "mdx"
   ],
   "cSpell.words": [
