@@ -91,7 +91,7 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('employees', {
         header: () => (
-          <ColumnHead viewName="Employees" viewIcon={<TbSum size={16} />} />
+          <ColumnHead viewName="Employes" viewIcon={<TbSum size={16} />} />
         ),
         cell: (props) => (
           <EditableText
