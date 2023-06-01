@@ -34,7 +34,8 @@
     "test-storybook": "test-storybook",
     "build-storybook": "storybook build -s public",
     "coverage": "test-storybook --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
-    "graphql:generate": "REACT_APP_GRAPHQL_ADMIN_SECRET=$REACT_APP_GRAPHQL_ADMIN_SECRET graphql-codegen --config codegen.js"
+    "graphql:generate": "dotenv cross-var graphql-codegen --config codegen.js",
+    "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
   "eslintConfig": {
     "extends": [
@@ -98,7 +99,10 @@
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "babel-plugin-named-exports-order": "^0.0.2",
+    "chromatic": "^6.18.0",
     "concurrently": "^8.0.1",
+    "cross-var": "^1.1.0",
+    "dotenv-cli": "^7.2.1",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-react-app": "^7.0.1",
