@@ -23,6 +23,8 @@ const lightThemeSpecific = {
   primaryBackground: '#fff',
   secondaryBackground: '#fcfcfc',
   tertiaryBackground: '#f5f5f5',
+  quadraryBackground: '#ebebeb',
+
   pinkBackground: '#ffe5f4',
   greenBackground: '#e6fff2',
   purpleBackground: '#e0e0ff',
@@ -60,6 +62,8 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
   primaryBackground: '#141414',
   secondaryBackground: '#171717',
   tertiaryBackground: '#333333',
+  quadraryBackground: '#444444',
+
   pinkBackground: '#cc0078',
   greenBackground: '#1e7e50',
   purpleBackground: '#1111b7',

@@ -20,6 +20,7 @@
     "react-hotkeys-hook": "^4.4.0",
     "react-icons": "^4.8.0",
     "react-router-dom": "^6.4.4",
+    "react-textarea-autosize": "^8.4.1",
     "recoil": "^0.7.7",
     "uuid": "^9.0.0",
     "web-vitals": "^2.1.4"
