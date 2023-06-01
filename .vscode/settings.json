@@ -22,5 +22,12 @@
     "editor.formatOnSave": true
   },
   "javascript.format.enable": false,
-  "typescript.format.enable": false
+  "typescript.format.enable": false,
+  "cSpell.enableFiletypes": [
+    "!javascript",
+    "mdx"
+  ],
+  "cSpell.words": [
+    "twentyhq"
+  ]
 }

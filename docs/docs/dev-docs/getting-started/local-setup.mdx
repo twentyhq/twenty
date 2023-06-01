@@ -3,42 +3,50 @@ sidebar_position: 0
 slug: '/'
 ---
 
-# Twenty
+# Local Setup
 
-Welcome to Twenty documentation!
+## Quickstart CLI
 
-## High Level Overview
+We built a CLI to guide you through the different options.
 
-Twenty development stack is composed of 3 different layers
+If you prefer to have more control and do things manually, go through the Docker section below.
+Otherwise run the following command to get started:
+```
+npx twenty-cli
+```
 
-- front: our frontend React app
-- server: our backend that contain endpoint, crm logic, scripts, jobs...
-- storages: postgres
 
-## Setup env variables
+## Docker
+
+### 1. Pre-requisites
+
+Make sure to have the latest Docker and Docker-compose versions installed on your computer.
+
+You can run `docker-compose --version` and `docker --version` to check they are installed.
+
+### 2. Git clone
+`git clone git@github.com:twentyhq/twenty.git`
+
+### 3. Setup env variables
 
 `cp ./infra/dev/.env.example ./infra/dev/.env` and fill with values
 
-## Development environment setup with docker-compose (Recommended)
+### 4. Build
 
-We also provide a containerized environment with Docker and orchestrated with docker-compose in case it is easier for you. This install will also provision a postgres container out of the box.
+We provide a containerized environment with Docker and orchestrated with docker-compose.
+This install will also provision a postgres container out of the box.
 
-### Step 1: pre-requesites
-
-Make sure to have the latest Docker and Docker-compose versions installed on your computer. You can run `docker-compose --version` to check if you have docker-compose installed and `docker --version` to check if you have docker installed.
-
-### Step 2: docker build
-
-Build docker containers.
-
-The whole setup experience is happening in `infra/dev` folder. Make sure to be in this folder:
+The configuration is stored `infra/dev` folder. 
 
 ```
 cd infra/dev
+make build
 ```
 
+### 5. Start
+
+Always in the `infra/dev` folder:
 ```
-make build
 make up
 ```
 
@@ -48,18 +56,35 @@ Once this is completed you should have:
 - server available on: http://localhost:3000/health
 - postgres: available on http://localhost:5432 that should contain `twenty` database
 
-### Step 3: IDE setup
 
-If you are using VSCode, please use the `Dev Containers` extension to open the project in a container. This will allow you to run Visual Studio on top of the docker container. This will allow you to run the project without having to install node on your machine.
+## 6. Development
 
-### Note
+Documented [here](/development/workflows.md)
 
-If you are using Docker install, make sure to ssh in the docker container during development to execute commands. You can also use `Makefile` to help you
+## Without Docker (Not recommended)
 
-## Development workflow
+While Docker is the recommended way to run Twenty, you might want to keep a light install.
 
-### Front tests
+### 1. Pre-requisites
+You need to have git, node and npm install on your computer.
+You also need to bring your own Postgres database.
 
-Run tests: `make front-test`
-Run coverage: `make front-coverage`
-Run storybook: `make front-storybook`
+### 2. Git clone
+`git clone git@github.com:twentyhq/twenty.git`
+
+### 3. Setup env variables
+
+`cp ./infra/dev/.env.example ./infra/dev/.env` and fill with values
+
+### 4. Build
+```
+cd front
+npm run
+```
+
+### 5. Start
+
+```
+cd front
+npm run
+```
