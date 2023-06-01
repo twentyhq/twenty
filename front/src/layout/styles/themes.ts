@@ -16,6 +16,10 @@ const commonTheme = {
   fontFamily: 'Inter, sans-serif',
 
   spacing: (multiplicator: number) => `${multiplicator * 4}px`,
+
+  table: {
+    horizontalCellMargin: '8px',
+  },
 };
 
 const lightThemeSpecific = {

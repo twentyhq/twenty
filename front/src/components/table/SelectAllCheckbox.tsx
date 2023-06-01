@@ -1,14 +1,14 @@
-import Checkbox from '../form/Checkbox';
+import { CheckboxCell } from './CheckboxCell';
 
 export const SelectAllCheckbox = ({
   indeterminate,
   onChange,
 }: {
   indeterminate?: boolean;
-  onChange?: any;
+  onChange?: (newCheckedValue: boolean) => void;
 } & React.HTMLProps<HTMLInputElement>) => {
   return (
-    <Checkbox
+    <CheckboxCell
       name="select-all-checkbox"
       id="select-all-checkbox"
       indeterminate={indeterminate}

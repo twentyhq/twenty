@@ -34,12 +34,12 @@ type OwnProps<
 
 const StyledTable = styled.table`
   min-width: 1000px;
-  width: calc(100% - ${(props) => props.theme.spacing(4)});
+  width: calc(100% - 2 * ${(props) => props.theme.table.horizontalCellMargin});
   border-radius: 4px;
   border-spacing: 0;
   border-collapse: collapse;
-  margin-left: ${(props) => props.theme.spacing(2)};
-  margin-right: ${(props) => props.theme.spacing(2)};
+  margin-left: ${(props) => props.theme.table.horizontalCellMargin};
+  margin-right: ${(props) => props.theme.table.horizontalCellMargin};
   table-layout: fixed;
 
   th {

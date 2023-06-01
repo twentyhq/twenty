@@ -6,13 +6,17 @@ type OwnProps = {
   id: string;
   checked?: boolean;
   indeterminate?: boolean;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (newCheckedValue: boolean) => void;
 };
 
-const StyledContainer = styled.span`
+const StyledContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   input[type='checkbox'] {
     accent-color: ${(props) => props.theme.blue};
-    margin: 8px;
+    margin: 2px;
     height: 14px;
     width: 14px;
     cursor: pointer;
@@ -37,14 +41,27 @@ const StyledContainer = styled.span`
   }
 `;
 
-function Checkbox({ name, id, checked, onChange, indeterminate }: OwnProps) {
+export function Checkbox({
+  name,
+  id,
+  checked,
+  onChange,
+  indeterminate,
+}: OwnProps) {
   const ref = React.useRef<HTMLInputElement>(null);
+
   React.useEffect(() => {
     if (ref.current === null) return;
     if (typeof indeterminate === 'boolean') {
       ref.current.indeterminate = !checked && indeterminate;
     }
   }, [ref, indeterminate, checked]);
+
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    if (onChange) {
+      onChange(event.target.checked);
+    }
+  }
 
   return (
     <StyledContainer>
@@ -55,10 +72,8 @@ function Checkbox({ name, id, checked, onChange, indeterminate }: OwnProps) {
         id={id}
         name={name}
         checked={checked}
-        onChange={onChange}
+        onChange={handleInputChange}
       />
     </StyledContainer>
   );
 }
-
-export default Checkbox;
