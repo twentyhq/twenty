@@ -2,10 +2,12 @@ import {
   CompanyOrderByWithRelationInput,
   PersonOrderByWithRelationInput,
   StringFilter,
+  UserOrderByWithRelationInput,
 } from '../../generated/graphql';
 import { Company } from '../../interfaces/entities/company.interface';
 import { BoolExpType } from '../../interfaces/entities/generic.interface';
 import { Person } from '../../interfaces/entities/person.interface';
+import { User } from '../../interfaces/entities/user.interface';
 
 function filterData<DataT>(
   data: Array<DataT>,
@@ -67,13 +69,19 @@ function filterData<DataT>(
 
 export function filterAndSortData<DataT>(
   data: Array<DataT>,
-  where: BoolExpType<Company> | BoolExpType<Person>,
-  orderBy: Array<
-    PersonOrderByWithRelationInput & CompanyOrderByWithRelationInput
+  where?: BoolExpType<Company> | BoolExpType<Person> | BoolExpType<User>,
+  orderBy?: Array<
+    PersonOrderByWithRelationInput &
+      CompanyOrderByWithRelationInput &
+      UserOrderByWithRelationInput
   >,
-  limit: number,
+  limit?: number,
 ): Array<DataT> {
-  let filteredData = filterData<DataT>(data, where);
+  let filteredData = data;
+
+  if (where) {
+    filteredData = filterData<DataT>(data, where);
+  }
 
   if (orderBy) {
     const firstOrderBy = orderBy[0];
@@ -101,5 +109,6 @@ export function filterAndSortData<DataT>(
   if (limit) {
     filteredData = filteredData.slice(0, limit);
   }
+
   return filteredData;
 }

@@ -67,7 +67,7 @@ export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
     __typename: 'companies',
   },
   {
-    id: '9d162de6-cfbf-4156-a790-e39854dcd4eb',
+    id: '9d162de6-cfbf-4156-a790-e39854dcd4ef',
     domainName: 'sequoia.com',
     name: 'Sequoia',
     createdAt: '2023-04-26T10:09:25.656555+00:00',
