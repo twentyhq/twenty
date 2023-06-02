@@ -5,7 +5,7 @@ import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { HideField } from '@nestjs/graphql';
 import { PipelineStageListRelationFilter } from '../pipeline-stage/pipeline-stage-list-relation-filter.input';
-import { PipelineAssociationListRelationFilter } from '../pipeline-association/pipeline-association-list-relation-filter.input';
+import { PipelineProgressListRelationFilter } from '../pipeline-progress/pipeline-progress-list-relation-filter.input';
 import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.input';
 
 @InputType()
@@ -43,8 +43,8 @@ export class PipelineWhereInput {
   @Field(() => PipelineStageListRelationFilter, { nullable: true })
   pipelineStages?: PipelineStageListRelationFilter;
 
-  @Field(() => PipelineAssociationListRelationFilter, { nullable: true })
-  pipelineAssociations?: PipelineAssociationListRelationFilter;
+  @Field(() => PipelineProgressListRelationFilter, { nullable: true })
+  pipelineProgresses?: PipelineProgressListRelationFilter;
 
   @HideField()
   workspace?: WorkspaceRelationFilter;

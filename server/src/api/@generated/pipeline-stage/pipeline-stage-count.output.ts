@@ -5,5 +5,5 @@ import { Int } from '@nestjs/graphql';
 @ObjectType()
 export class PipelineStageCount {
   @Field(() => Int, { nullable: false })
-  pipelineAssociations?: number;
+  pipelineProgresses?: number;
 }

@@ -218,7 +218,7 @@ model Pipeline {
   name                  String
   icon                  String
   pipelineStages        PipelineStage[]
-  pipelineAssociations  PipelineAssociation[]
+  pipelineProgresses    PipelineProgress[]
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId           String
   /// @TypeGraphQL.omit(input: true, output: true)
@@ -240,7 +240,7 @@ model PipelineStage {
   pipelineId            String
   pipeline              Pipeline @relation(fields: [pipelineId], references: [id])
   
-  pipelineAssociations  PipelineAssociation[]
+  pipelineProgresses    PipelineProgress[]
 
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId           String
@@ -250,12 +250,12 @@ model PipelineStage {
   @@map("pipeline_stages")
 }
 
-enum PipelineAssociableType {
+enum PipelineProgressableType {
   Person
   Company
 }
 
-model PipelineAssociation {
+model PipelineProgress {
   id                    String                @id
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
@@ -267,8 +267,8 @@ model PipelineAssociation {
   pipelineStageId       String
   pipelineStage         PipelineStage @relation(fields: [pipelineStageId], references: [id])
 
-  associableType        PipelineAssociableType
+  associableType        PipelineProgressableType
   associableId          String
 
-  @@map("pipeline_associations")
+  @@map("pipeline_progresses")
 }

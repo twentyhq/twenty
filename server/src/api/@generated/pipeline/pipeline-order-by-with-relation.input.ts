@@ -3,7 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { HideField } from '@nestjs/graphql';
 import { PipelineStageOrderByRelationAggregateInput } from '../pipeline-stage/pipeline-stage-order-by-relation-aggregate.input';
-import { PipelineAssociationOrderByRelationAggregateInput } from '../pipeline-association/pipeline-association-order-by-relation-aggregate.input';
+import { PipelineProgressOrderByRelationAggregateInput } from '../pipeline-progress/pipeline-progress-order-by-relation-aggregate.input';
 import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-by-with-relation.input';
 
 @InputType()
@@ -32,10 +32,10 @@ export class PipelineOrderByWithRelationInput {
   @Field(() => PipelineStageOrderByRelationAggregateInput, { nullable: true })
   pipelineStages?: PipelineStageOrderByRelationAggregateInput;
 
-  @Field(() => PipelineAssociationOrderByRelationAggregateInput, {
+  @Field(() => PipelineProgressOrderByRelationAggregateInput, {
     nullable: true,
   })
-  pipelineAssociations?: PipelineAssociationOrderByRelationAggregateInput;
+  pipelineProgresses?: PipelineProgressOrderByRelationAggregateInput;
 
   @HideField()
   workspace?: WorkspaceOrderByWithRelationInput;

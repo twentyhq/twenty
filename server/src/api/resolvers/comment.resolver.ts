@@ -7,6 +7,7 @@ import { AuthWorkspace } from './decorators/auth-workspace.decorator';
 import { CreateOneCommentArgs } from '../@generated/comment/create-one-comment.args';
 import { Comment } from '../@generated/comment/comment.model';
 import { CreateOneCommentGuard } from './guards/create-one-comment.guard';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Comment)
@@ -26,6 +27,6 @@ export class CommentResolver {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-    });
+    } satisfies CreateOneCommentArgs as Prisma.CommentCreateArgs);
   }
 }

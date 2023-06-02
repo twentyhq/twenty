@@ -8,5 +8,5 @@ export class PipelineCount {
   pipelineStages?: number;
 
   @Field(() => Int, { nullable: false })
-  pipelineAssociations?: number;
+  pipelineProgresses?: number;
 }

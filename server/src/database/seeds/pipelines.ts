@@ -76,7 +76,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
     },
   });
 
-  await prisma.pipelineAssociation.upsert({
+  await prisma.pipelineProgress.upsert({
     where: { id: 'twenty-fe256b39-3ec3-4fe7-8998-b76aa0bfb600' },
     update: {},
     create: {
@@ -112,7 +112,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
     },
   });
 
-  await prisma.pipelineAssociation.upsert({
+  await prisma.pipelineProgress.upsert({
     where: { id: 'twenty-fe256b39-3ec3-4fe7-8998-b76aa0bfb600' },
     update: {},
     create: {
@@ -200,7 +200,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
     },
   });
 
-  await prisma.pipelineAssociation.upsert({
+  await prisma.pipelineProgress.upsert({
     where: { id: 'twenty-dev-fe256b39-3ec3-4fe7-8998-b76aa0bfb600' },
     update: {},
     create: {

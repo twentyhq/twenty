@@ -77,6 +77,6 @@ export class PersonResolver {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-    });
+    } satisfies CreateOnePersonArgs as Prisma.PersonCreateArgs);
   }
 }
