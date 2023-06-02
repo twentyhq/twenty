@@ -16,6 +16,9 @@ const StyledContainer = styled.span`
   padding: ${(props) => props.theme.spacing(1)};
   gap: ${(props) => props.theme.spacing(1)};
 
+  overflow: hidden;
+  white-space: nowrap;
+
   :hover {
     filter: brightness(95%);
   }

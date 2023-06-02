@@ -49,16 +49,18 @@ export const usePeopleColumns = () => {
           <ColumnHead viewName="People" viewIcon={<TbUser size={16} />} />
         ),
         cell: (props) => (
-          <EditablePeopleFullName
-            firstname={props.row.original.firstname || ''}
-            lastname={props.row.original.lastname || ''}
-            onChange={async (firstName: string, lastName: string) => {
-              const person = props.row.original;
-              person.firstname = firstName;
-              person.lastname = lastName;
-              await updatePerson(person);
-            }}
-          />
+          <>
+            <EditablePeopleFullName
+              firstname={props.row.original.firstname || ''}
+              lastname={props.row.original.lastname || ''}
+              onChange={async (firstName: string, lastName: string) => {
+                const person = props.row.original;
+                person.firstname = firstName;
+                person.lastname = lastName;
+                await updatePerson(person);
+              }}
+            />
+          </>
         ),
         size: 210,
       }),

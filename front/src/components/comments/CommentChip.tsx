@@ -3,7 +3,7 @@ import { IconComment } from '../icons';
 
 export type CommentChipProps = {
   count: number;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 };
 
 const StyledChip = styled.div`
