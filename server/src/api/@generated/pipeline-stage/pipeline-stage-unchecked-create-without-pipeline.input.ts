@@ -1,7 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { HideField } from '@nestjs/graphql';
-import { PipelineAssociationUncheckedCreateNestedManyWithoutPipelineStageInput } from '../pipeline-association/pipeline-association-unchecked-create-nested-many-without-pipeline-stage.input';
+import { PipelineProgressUncheckedCreateNestedManyWithoutPipelineStageInput } from '../pipeline-progress/pipeline-progress-unchecked-create-nested-many-without-pipeline-stage.input';
 
 @InputType()
 export class PipelineStageUncheckedCreateWithoutPipelineInput {
@@ -30,8 +30,8 @@ export class PipelineStageUncheckedCreateWithoutPipelineInput {
   workspaceId!: string;
 
   @Field(
-    () => PipelineAssociationUncheckedCreateNestedManyWithoutPipelineStageInput,
+    () => PipelineProgressUncheckedCreateNestedManyWithoutPipelineStageInput,
     { nullable: true },
   )
-  pipelineAssociations?: PipelineAssociationUncheckedCreateNestedManyWithoutPipelineStageInput;
+  pipelineProgresses?: PipelineProgressUncheckedCreateNestedManyWithoutPipelineStageInput;
 }

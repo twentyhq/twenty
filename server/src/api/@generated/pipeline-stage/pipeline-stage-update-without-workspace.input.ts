@@ -4,7 +4,7 @@ import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput } from '../pipeline/pipeline-update-one-required-without-pipeline-stages-nested.input';
-import { PipelineAssociationUpdateManyWithoutPipelineStageNestedInput } from '../pipeline-association/pipeline-association-update-many-without-pipeline-stage-nested.input';
+import { PipelineProgressUpdateManyWithoutPipelineStageNestedInput } from '../pipeline-progress/pipeline-progress-update-many-without-pipeline-stage-nested.input';
 
 @InputType()
 export class PipelineStageUpdateWithoutWorkspaceInput {
@@ -34,8 +34,8 @@ export class PipelineStageUpdateWithoutWorkspaceInput {
   })
   pipeline?: PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput;
 
-  @Field(() => PipelineAssociationUpdateManyWithoutPipelineStageNestedInput, {
+  @Field(() => PipelineProgressUpdateManyWithoutPipelineStageNestedInput, {
     nullable: true,
   })
-  pipelineAssociations?: PipelineAssociationUpdateManyWithoutPipelineStageNestedInput;
+  pipelineProgresses?: PipelineProgressUpdateManyWithoutPipelineStageNestedInput;
 }

@@ -3,7 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { PipelineAssociationUpdateManyWithoutPipelineStageNestedInput } from '../pipeline-association/pipeline-association-update-many-without-pipeline-stage-nested.input';
+import { PipelineProgressUpdateManyWithoutPipelineStageNestedInput } from '../pipeline-progress/pipeline-progress-update-many-without-pipeline-stage-nested.input';
 import { WorkspaceUpdateOneRequiredWithoutPipelineStagesNestedInput } from '../workspace/workspace-update-one-required-without-pipeline-stages-nested.input';
 import { HideField } from '@nestjs/graphql';
 
@@ -30,10 +30,10 @@ export class PipelineStageUpdateWithoutPipelineInput {
   @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
   color?: StringFieldUpdateOperationsInput;
 
-  @Field(() => PipelineAssociationUpdateManyWithoutPipelineStageNestedInput, {
+  @Field(() => PipelineProgressUpdateManyWithoutPipelineStageNestedInput, {
     nullable: true,
   })
-  pipelineAssociations?: PipelineAssociationUpdateManyWithoutPipelineStageNestedInput;
+  pipelineProgresses?: PipelineProgressUpdateManyWithoutPipelineStageNestedInput;
 
   @HideField()
   workspace?: WorkspaceUpdateOneRequiredWithoutPipelineStagesNestedInput;

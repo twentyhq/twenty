@@ -73,6 +73,6 @@ export class CompanyResolver {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-    });
+    } satisfies CreateOneCompanyArgs as Prisma.CompanyCreateArgs);
   }
 }

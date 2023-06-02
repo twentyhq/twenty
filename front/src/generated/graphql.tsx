@@ -993,20 +993,15 @@ export type Pipeline = {
   icon: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
-  pipelineAssociations?: Maybe<Array<PipelineAssociation>>;
+  pipelineProgresses?: Maybe<Array<PipelineProgress>>;
   pipelineStages?: Maybe<Array<PipelineStage>>;
   updatedAt: Scalars['DateTime'];
 };
 
-export enum PipelineAssociableType {
-  Company = 'Company',
-  Person = 'Person'
-}
-
-export type PipelineAssociation = {
-  __typename?: 'PipelineAssociation';
+export type PipelineProgress = {
+  __typename?: 'PipelineProgress';
   associableId: Scalars['String'];
-  associableType: PipelineAssociableType;
+  associableType: PipelineProgressableType;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
@@ -1017,6 +1012,11 @@ export type PipelineAssociation = {
   updatedAt: Scalars['DateTime'];
 };
 
+export enum PipelineProgressableType {
+  Company = 'Company',
+  Person = 'Person'
+}
+
 export type PipelineStage = {
   __typename?: 'PipelineStage';
   color: Scalars['String'];
@@ -1025,8 +1025,8 @@ export type PipelineStage = {
   id: Scalars['ID'];
   name: Scalars['String'];
   pipeline: Pipeline;
-  pipelineAssociations?: Maybe<Array<PipelineAssociation>>;
   pipelineId: Scalars['String'];
+  pipelineProgresses?: Maybe<Array<PipelineProgress>>;
   type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };

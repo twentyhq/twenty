@@ -3,7 +3,7 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { HideField } from '@nestjs/graphql';
 import { PipelineStage } from '../pipeline-stage/pipeline-stage.model';
-import { PipelineAssociation } from '../pipeline-association/pipeline-association.model';
+import { PipelineProgress } from '../pipeline-progress/pipeline-progress.model';
 import { Workspace } from '../workspace/workspace.model';
 import { PipelineCount } from './pipeline-count.output';
 
@@ -33,8 +33,8 @@ export class Pipeline {
   @Field(() => [PipelineStage], { nullable: true })
   pipelineStages?: Array<PipelineStage>;
 
-  @Field(() => [PipelineAssociation], { nullable: true })
-  pipelineAssociations?: Array<PipelineAssociation>;
+  @Field(() => [PipelineProgress], { nullable: true })
+  pipelineProgresses?: Array<PipelineProgress>;
 
   @HideField()
   workspace?: Workspace;
