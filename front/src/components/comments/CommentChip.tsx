@@ -45,19 +45,14 @@ const StyledCount = styled.div`
   font-weight: 500;
 `;
 
-const StyledIcon = styled.div`
-  color: ${(props) => props.theme.text100};
-`;
-
 export function CommentChip({ count, onClick }: CommentChipProps) {
   const formattedCount = count > 99 ? '99+' : count;
 
   return (
     <StyledChip onClick={onClick}>
       <StyledCount>{formattedCount}</StyledCount>
-      <StyledIcon>
-        <IconComment size={12} />
-      </StyledIcon>
+
+      <IconComment size={12} />
     </StyledChip>
   );
 }
