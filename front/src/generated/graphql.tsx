@@ -995,6 +995,64 @@ export type PersonWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
+export type Pipeline = {
+  __typename?: 'Pipeline';
+  _count: PipelineCount;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  icon: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  pipelineAssociations?: Maybe<Array<PipelineAssociation>>;
+  pipelineStages?: Maybe<Array<PipelineStage>>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export enum PipelineAssociableType {
+  Company = 'Company',
+  Person = 'Person'
+}
+
+export type PipelineAssociation = {
+  __typename?: 'PipelineAssociation';
+  associableId: Scalars['String'];
+  associableType: PipelineAssociableType;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  pipeline: Pipeline;
+  pipelineId: Scalars['String'];
+  pipelineStage: PipelineStage;
+  pipelineStageId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type PipelineCount = {
+  __typename?: 'PipelineCount';
+  pipelineAssociations: Scalars['Int'];
+  pipelineStages: Scalars['Int'];
+};
+
+export type PipelineStage = {
+  __typename?: 'PipelineStage';
+  _count: PipelineStageCount;
+  color: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  pipeline: Pipeline;
+  pipelineAssociations?: Maybe<Array<PipelineAssociation>>;
+  pipelineId: Scalars['String'];
+  type: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type PipelineStageCount = {
+  __typename?: 'PipelineStageCount';
+  pipelineAssociations: Scalars['Int'];
+};
+
 export type Query = {
   __typename?: 'Query';
   findManyCompany: Array<Company>;
@@ -1262,6 +1320,8 @@ export type Workspace = {
   id: Scalars['ID'];
   logo?: Maybe<Scalars['String']>;
   people?: Maybe<Array<Person>>;
+  pipelineStages?: Maybe<Array<PipelineStage>>;
+  pipelines?: Maybe<Array<Pipeline>>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
 };
@@ -1272,6 +1332,8 @@ export type WorkspaceCount = {
   comments: Scalars['Int'];
   companies: Scalars['Int'];
   people: Scalars['Int'];
+  pipelineStages: Scalars['Int'];
+  pipelines: Scalars['Int'];
   workspaceMember: Scalars['Int'];
 };
 
