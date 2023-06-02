@@ -20,6 +20,8 @@ const commonTheme = {
   table: {
     horizontalCellMargin: '8px',
   },
+
+  borderRadius: '4px',
 };
 
 const lightThemeSpecific = {
