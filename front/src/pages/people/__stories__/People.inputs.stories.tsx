@@ -4,18 +4,22 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import People from '../People';
 import { Story } from './People.stories';
-import { mocks, render } from './shared';
+import { render } from './shared';
 import { mockedPeopleData } from '../../../testing/mock-data/people';
 import { sleep } from '../../../testing/sleep';
+import { graphqlMocks } from '../../../testing/graphqlMocks';
+import { graphql } from 'msw';
+import { fetchOneFromData } from '../../../testing/mock-data';
+import { GraphqlQueryCompany } from '../../../interfaces/entities/company.interface';
 
 const meta: Meta<typeof People> = {
-  title: 'Pages/People',
+  title: 'Pages/People/Input',
   component: People,
 };
 
 export default meta;
 
-export const ChangeEmail: Story = {
+export const InteractWithManyRows: Story = {
   render,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -55,16 +59,16 @@ export const ChangeEmail: Story = {
     ).toBeInTheDocument();
   },
   parameters: {
-    msw: mocks,
+    msw: graphqlMocks,
   },
 };
 
-export const Checkbox: Story = {
+export const CheckCheckboxes: Story = {
   render,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await sleep(500);
+    await canvas.findByText(mockedPeopleData[0].email);
 
     const inputCheckboxContainers = await canvas.findAllByTestId(
       'input-checkbox-cell-container',
@@ -86,6 +90,62 @@ export const Checkbox: Story = {
     expect(secondCheckbox.checked).toBe(false);
   },
   parameters: {
-    msw: mocks,
+    msw: graphqlMocks,
+  },
+};
+
+export const EditRelation: Story = {
+  render,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const secondRowCompanyCell = await canvas.findByText(
+      mockedPeopleData[1].company.name,
+    );
+
+    await userEvent.click(secondRowCompanyCell);
+
+    const relationInput = await canvas.findByPlaceholderText('Company');
+
+    await userEvent.type(relationInput, 'Air', {
+      delay: 200,
+    });
+
+    const airbnbChip = await canvas.findByText('Airbnb', {
+      selector: 'div > span',
+    });
+
+    await userEvent.click(airbnbChip);
+
+    const newSecondRowCompanyCell = await canvas.findByText('Airbnb');
+
+    await userEvent.click(newSecondRowCompanyCell);
+  },
+  parameters: {
+    actions: {},
+    msw: [
+      ...graphqlMocks.filter((graphqlMock) => {
+        return graphqlMock.info.operationName !== 'UpdatePeople';
+      }),
+      ...[
+        graphql.mutation('UpdatePeople', (req, res, ctx) => {
+          return res(
+            ctx.data({
+              updateOnePerson: {
+                ...fetchOneFromData(mockedPeopleData, req.variables.id),
+                ...{
+                  company: {
+                    id: req.variables.companyId,
+                    name: 'Airbnb',
+                    domainName: 'airbnb.com',
+                    __typename: 'Company',
+                  } satisfies GraphqlQueryCompany,
+                },
+              },
+            }),
+          );
+        }),
+      ],
+    ],
   },
 };

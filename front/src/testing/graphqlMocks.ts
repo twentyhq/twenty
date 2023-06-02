@@ -1,5 +1,5 @@
 import { graphql } from 'msw';
-import { filterAndSortData } from './mock-data';
+import { filterAndSortData, updateOneFromData } from './mock-data';
 import { GraphqlQueryCompany } from '../interfaces/entities/company.interface';
 import { mockedCompaniesData } from './mock-data/companies';
 import { GraphqlQueryUser } from '../interfaces/entities/user.interface';
@@ -61,7 +61,6 @@ export const graphqlMocks = [
       req.variables.orderBy,
       req.variables.limit,
     );
-    console.log({ returnedMockedData });
     return res(
       ctx.data({
         users: returnedMockedData,
@@ -78,6 +77,17 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         people: returnedMockedData,
+      }),
+    );
+  }),
+  graphql.mutation('UpdatePeople', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        updateOnePerson: updateOneFromData(
+          mockedPeopleData,
+          req.variables.id,
+          req.variables,
+        ),
       }),
     );
   }),
