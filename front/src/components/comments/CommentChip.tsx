@@ -22,7 +22,7 @@ const StyledChip = styled.div`
   background: ${(props) => props.theme.secondaryBackgroundTransparent};
   backdrop-filter: blur(6px);
 
-  border-radius: ${(props) => props.theme.borderRadius}};
+  border-radius: ${(props) => props.theme.borderRadius};
 
   cursor: pointer;
 
@@ -51,7 +51,6 @@ export function CommentChip({ count, onClick }: CommentChipProps) {
   return (
     <StyledChip onClick={onClick}>
       <StyledCount>{formattedCount}</StyledCount>
-
       <IconComment size={12} />
     </StyledChip>
   );
