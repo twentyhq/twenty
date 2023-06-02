@@ -7,6 +7,7 @@ import { BoolFilter } from '../prisma/bool-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { JsonNullableFilter } from '../prisma/json-nullable-filter.input';
 import { WorkspaceMemberRelationFilter } from '../workspace-member/workspace-member-relation-filter.input';
+import { HideField } from '@nestjs/graphql';
 import { CompanyListRelationFilter } from '../company/company-list-relation-filter.input';
 import { RefreshTokenListRelationFilter } from '../refresh-token/refresh-token-list-relation-filter.input';
 import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
@@ -64,13 +65,13 @@ export class UserWhereInput {
   @Field(() => JsonNullableFilter, { nullable: true })
   metadata?: JsonNullableFilter;
 
-  @Field(() => WorkspaceMemberRelationFilter, { nullable: true })
+  @HideField()
   workspaceMember?: WorkspaceMemberRelationFilter;
 
   @Field(() => CompanyListRelationFilter, { nullable: true })
   companies?: CompanyListRelationFilter;
 
-  @Field(() => RefreshTokenListRelationFilter, { nullable: true })
+  @HideField()
   refreshTokens?: RefreshTokenListRelationFilter;
 
   @Field(() => CommentListRelationFilter, { nullable: true })

@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { WorkspaceMemberCountAggregate } from './workspace-member-count-aggregate.output';
 import { WorkspaceMemberMinAggregate } from './workspace-member-min-aggregate.output';
 import { WorkspaceMemberMaxAggregate } from './workspace-member-max-aggregate.output';
@@ -21,7 +22,7 @@ export class WorkspaceMemberGroupBy {
   @Field(() => String, { nullable: false })
   userId!: string;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 
   @Field(() => WorkspaceMemberCountAggregate, { nullable: true })

@@ -7,6 +7,7 @@ import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-oper
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { GraphQLJSON } from 'graphql-type-json';
 import { WorkspaceMemberUpdateOneWithoutUserNestedInput } from '../workspace-member/workspace-member-update-one-without-user-nested.input';
+import { HideField } from '@nestjs/graphql';
 import { CompanyUpdateManyWithoutAccountOwnerNestedInput } from '../company/company-update-many-without-account-owner-nested.input';
 import { RefreshTokenUpdateManyWithoutUserNestedInput } from '../refresh-token/refresh-token-update-many-without-user-nested.input';
 import { CommentUpdateManyWithoutAuthorNestedInput } from '../comment/comment-update-many-without-author-nested.input';
@@ -55,9 +56,7 @@ export class UserUpdateInput {
   @Field(() => GraphQLJSON, { nullable: true })
   metadata?: any;
 
-  @Field(() => WorkspaceMemberUpdateOneWithoutUserNestedInput, {
-    nullable: true,
-  })
+  @HideField()
   workspaceMember?: WorkspaceMemberUpdateOneWithoutUserNestedInput;
 
   @Field(() => CompanyUpdateManyWithoutAccountOwnerNestedInput, {
@@ -65,7 +64,7 @@ export class UserUpdateInput {
   })
   companies?: CompanyUpdateManyWithoutAccountOwnerNestedInput;
 
-  @Field(() => RefreshTokenUpdateManyWithoutUserNestedInput, { nullable: true })
+  @HideField()
   refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput;
 
   @Field(() => CommentUpdateManyWithoutAuthorNestedInput, { nullable: true })

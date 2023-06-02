@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { PersonCountAggregate } from './person-count-aggregate.output';
 import { PersonMinAggregate } from './person-min-aggregate.output';
 import { PersonMaxAggregate } from './person-max-aggregate.output';
@@ -36,7 +37,7 @@ export class PersonGroupBy {
   @Field(() => String, { nullable: true })
   companyId?: string;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 
   @Field(() => PersonCountAggregate, { nullable: true })

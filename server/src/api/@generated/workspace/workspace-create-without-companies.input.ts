@@ -4,6 +4,8 @@ import { WorkspaceMemberCreateNestedManyWithoutWorkspaceInput } from '../workspa
 import { PersonCreateNestedManyWithoutWorkspaceInput } from '../person/person-create-nested-many-without-workspace.input';
 import { CommentThreadCreateNestedManyWithoutWorkspaceInput } from '../comment-thread/comment-thread-create-nested-many-without-workspace.input';
 import { CommentCreateNestedManyWithoutWorkspaceInput } from '../comment/comment-create-nested-many-without-workspace.input';
+import { PipelineCreateNestedManyWithoutWorkspaceInput } from '../pipeline/pipeline-create-nested-many-without-workspace.input';
+import { PipelineStageCreateNestedManyWithoutWorkspaceInput } from '../pipeline-stage/pipeline-stage-create-nested-many-without-workspace.input';
 
 @InputType()
 export class WorkspaceCreateWithoutCompaniesInput {
@@ -43,4 +45,14 @@ export class WorkspaceCreateWithoutCompaniesInput {
 
   @Field(() => CommentCreateNestedManyWithoutWorkspaceInput, { nullable: true })
   comments?: CommentCreateNestedManyWithoutWorkspaceInput;
+
+  @Field(() => PipelineCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  pipelines?: PipelineCreateNestedManyWithoutWorkspaceInput;
+
+  @Field(() => PipelineStageCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  pipelineStages?: PipelineStageCreateNestedManyWithoutWorkspaceInput;
 }

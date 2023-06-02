@@ -9,6 +9,8 @@ import { CompanyListRelationFilter } from '../company/company-list-relation-filt
 import { PersonListRelationFilter } from '../person/person-list-relation-filter.input';
 import { CommentThreadListRelationFilter } from '../comment-thread/comment-thread-list-relation-filter.input';
 import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
+import { PipelineListRelationFilter } from '../pipeline/pipeline-list-relation-filter.input';
+import { PipelineStageListRelationFilter } from '../pipeline-stage/pipeline-stage-list-relation-filter.input';
 
 @InputType()
 export class WorkspaceWhereInput {
@@ -56,4 +58,10 @@ export class WorkspaceWhereInput {
 
   @Field(() => CommentListRelationFilter, { nullable: true })
   comments?: CommentListRelationFilter;
+
+  @Field(() => PipelineListRelationFilter, { nullable: true })
+  pipelines?: PipelineListRelationFilter;
+
+  @Field(() => PipelineStageListRelationFilter, { nullable: true })
+  pipelineStages?: PipelineStageListRelationFilter;
 }

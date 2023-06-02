@@ -6,6 +6,8 @@ import { Company } from '../company/company.model';
 import { Person } from '../person/person.model';
 import { CommentThread } from '../comment-thread/comment-thread.model';
 import { Comment } from '../comment/comment.model';
+import { Pipeline } from '../pipeline/pipeline.model';
+import { PipelineStage } from '../pipeline-stage/pipeline-stage.model';
 import { WorkspaceCount } from './workspace-count.output';
 
 @ObjectType({})
@@ -45,6 +47,12 @@ export class Workspace {
 
   @Field(() => [Comment], { nullable: true })
   comments?: Array<Comment>;
+
+  @Field(() => [Pipeline], { nullable: true })
+  pipelines?: Array<Pipeline>;
+
+  @Field(() => [PipelineStage], { nullable: true })
+  pipelineStages?: Array<PipelineStage>;
 
   @Field(() => WorkspaceCount, { nullable: false })
   _count?: WorkspaceCount;

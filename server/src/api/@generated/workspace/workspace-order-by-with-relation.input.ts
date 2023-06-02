@@ -6,6 +6,8 @@ import { CompanyOrderByRelationAggregateInput } from '../company/company-order-b
 import { PersonOrderByRelationAggregateInput } from '../person/person-order-by-relation-aggregate.input';
 import { CommentThreadOrderByRelationAggregateInput } from '../comment-thread/comment-thread-order-by-relation-aggregate.input';
 import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
+import { PipelineOrderByRelationAggregateInput } from '../pipeline/pipeline-order-by-relation-aggregate.input';
+import { PipelineStageOrderByRelationAggregateInput } from '../pipeline-stage/pipeline-stage-order-by-relation-aggregate.input';
 
 @InputType()
 export class WorkspaceOrderByWithRelationInput {
@@ -44,4 +46,10 @@ export class WorkspaceOrderByWithRelationInput {
 
   @Field(() => CommentOrderByRelationAggregateInput, { nullable: true })
   comments?: CommentOrderByRelationAggregateInput;
+
+  @Field(() => PipelineOrderByRelationAggregateInput, { nullable: true })
+  pipelines?: PipelineOrderByRelationAggregateInput;
+
+  @Field(() => PipelineStageOrderByRelationAggregateInput, { nullable: true })
+  pipelineStages?: PipelineStageOrderByRelationAggregateInput;
 }

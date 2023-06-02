@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { CompanyCountAggregate } from './company-count-aggregate.output';
 import { CompanyAvgAggregate } from './company-avg-aggregate.output';
 import { CompanySumAggregate } from './company-sum-aggregate.output';
@@ -36,7 +37,7 @@ export class CompanyGroupBy {
   @Field(() => String, { nullable: true })
   accountOwnerId?: string;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 
   @Field(() => CompanyCountAggregate, { nullable: true })

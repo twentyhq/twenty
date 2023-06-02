@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { CommentThreadTarget } from '../comment-thread-target/comment-thread-target.model';
 import { Comment } from '../comment/comment.model';
 import { Workspace } from '../workspace/workspace.model';
@@ -20,7 +21,7 @@ export class CommentThread {
   @Field(() => Date, { nullable: true })
   deletedAt!: Date | null;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 
   @Field(() => [CommentThreadTarget], { nullable: true })
@@ -29,7 +30,7 @@ export class CommentThread {
   @Field(() => [Comment], { nullable: true })
   comments?: Array<Comment>;
 
-  @Field(() => Workspace, { nullable: false })
+  @HideField()
   workspace?: Workspace;
 
   @Field(() => CommentThreadCount, { nullable: false })

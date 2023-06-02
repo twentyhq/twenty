@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class CommentMinAggregate {
@@ -24,6 +25,6 @@ export class CommentMinAggregate {
   @Field(() => String, { nullable: true })
   commentThreadId?: string;
 
-  @Field(() => String, { nullable: true })
+  @HideField()
   workspaceId?: string;
 }

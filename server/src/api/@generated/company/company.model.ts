@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { User } from '../user/user.model';
 import { Person } from '../person/person.model';
 import { Workspace } from '../workspace/workspace.model';
@@ -36,7 +37,7 @@ export class Company {
   @Field(() => String, { nullable: true })
   accountOwnerId!: string | null;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 
   @Field(() => User, { nullable: true })
@@ -45,7 +46,7 @@ export class Company {
   @Field(() => [Person], { nullable: true })
   people?: Array<Person>;
 
-  @Field(() => Workspace, { nullable: false })
+  @HideField()
   workspace?: Workspace;
 
   @Field(() => CompanyCount, { nullable: false })

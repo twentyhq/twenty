@@ -8,6 +8,8 @@ import { WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput } from '../workspa
 import { CompanyUpdateManyWithoutWorkspaceNestedInput } from '../company/company-update-many-without-workspace-nested.input';
 import { PersonUpdateManyWithoutWorkspaceNestedInput } from '../person/person-update-many-without-workspace-nested.input';
 import { CommentThreadUpdateManyWithoutWorkspaceNestedInput } from '../comment-thread/comment-thread-update-many-without-workspace-nested.input';
+import { PipelineUpdateManyWithoutWorkspaceNestedInput } from '../pipeline/pipeline-update-many-without-workspace-nested.input';
+import { PipelineStageUpdateManyWithoutWorkspaceNestedInput } from '../pipeline-stage/pipeline-stage-update-many-without-workspace-nested.input';
 
 @InputType()
 export class WorkspaceUpdateWithoutCommentsInput {
@@ -47,4 +49,14 @@ export class WorkspaceUpdateWithoutCommentsInput {
     nullable: true,
   })
   commentThreads?: CommentThreadUpdateManyWithoutWorkspaceNestedInput;
+
+  @Field(() => PipelineUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  pipelines?: PipelineUpdateManyWithoutWorkspaceNestedInput;
+
+  @Field(() => PipelineStageUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  pipelineStages?: PipelineStageUpdateManyWithoutWorkspaceNestedInput;
 }

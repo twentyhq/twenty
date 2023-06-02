@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { CommentCountAggregate } from './comment-count-aggregate.output';
 import { CommentMinAggregate } from './comment-min-aggregate.output';
 import { CommentMaxAggregate } from './comment-max-aggregate.output';
@@ -27,7 +28,7 @@ export class CommentGroupBy {
   @Field(() => String, { nullable: false })
   commentThreadId!: string;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 
   @Field(() => CommentCountAggregate, { nullable: true })

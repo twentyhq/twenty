@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { CommentThreadCountAggregate } from './comment-thread-count-aggregate.output';
 import { CommentThreadMinAggregate } from './comment-thread-min-aggregate.output';
 import { CommentThreadMaxAggregate } from './comment-thread-max-aggregate.output';
@@ -18,7 +19,7 @@ export class CommentThreadGroupBy {
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 
   @Field(() => CommentThreadCountAggregate, { nullable: true })

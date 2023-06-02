@@ -7,6 +7,7 @@ import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-oper
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { GraphQLJSON } from 'graphql-type-json';
 import { WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput } from '../workspace-member/workspace-member-unchecked-update-one-without-user-nested.input';
+import { HideField } from '@nestjs/graphql';
 import { CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput } from '../company/company-unchecked-update-many-without-account-owner-nested.input';
 import { CommentUncheckedUpdateManyWithoutAuthorNestedInput } from '../comment/comment-unchecked-update-many-without-author-nested.input';
 
@@ -54,9 +55,7 @@ export class UserUncheckedUpdateWithoutRefreshTokensInput {
   @Field(() => GraphQLJSON, { nullable: true })
   metadata?: any;
 
-  @Field(() => WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput, {
-    nullable: true,
-  })
+  @HideField()
   workspaceMember?: WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput;
 
   @Field(() => CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput, {
