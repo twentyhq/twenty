@@ -35,6 +35,12 @@ generator nestgraphql {
     decorate_4_name = "HideField"
     decorate_4_from = "@nestjs/graphql"
     decorate_4_arguments = "[]"
+
+    decorate_5_type = "!(*Aggregate*|*GroupBy*|*OrderBy*)"
+    decorate_5_field = "_count"
+    decorate_5_name = "HideField"
+    decorate_5_from = "@nestjs/graphql"
+    decorate_5_arguments = "[]"
 }
 
 model User {
@@ -153,7 +159,7 @@ model RefreshToken {
 
 model CommentThread {
   id                    String                @id
-  createdAt              DateTime             @default(now())
+  createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
   deletedAt             DateTime?
   commentThreadTargets  CommentThreadTarget[]

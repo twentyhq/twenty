@@ -65,6 +65,6 @@ export class User {
   @Field(() => [Comment], { nullable: true })
   comments?: Array<Comment>;
 
-  @Field(() => UserCount, { nullable: false })
+  @HideField()
   _count?: UserCount;
 }

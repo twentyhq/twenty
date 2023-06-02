@@ -33,6 +33,6 @@ export class CommentThread {
   @HideField()
   workspace?: Workspace;
 
-  @Field(() => CommentThreadCount, { nullable: false })
+  @HideField()
   _count?: CommentThreadCount;
 }

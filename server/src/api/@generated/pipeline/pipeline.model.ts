@@ -39,6 +39,6 @@ export class Pipeline {
   @HideField()
   workspace?: Workspace;
 
-  @Field(() => PipelineCount, { nullable: false })
+  @HideField()
   _count?: PipelineCount;
 }

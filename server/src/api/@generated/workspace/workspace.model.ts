@@ -9,6 +9,7 @@ import { Comment } from '../comment/comment.model';
 import { Pipeline } from '../pipeline/pipeline.model';
 import { PipelineStage } from '../pipeline-stage/pipeline-stage.model';
 import { WorkspaceCount } from './workspace-count.output';
+import { HideField } from '@nestjs/graphql';
 
 @ObjectType({})
 export class Workspace {
@@ -54,6 +55,6 @@ export class Workspace {
   @Field(() => [PipelineStage], { nullable: true })
   pipelineStages?: Array<PipelineStage>;
 
-  @Field(() => WorkspaceCount, { nullable: false })
+  @HideField()
   _count?: WorkspaceCount;
 }
