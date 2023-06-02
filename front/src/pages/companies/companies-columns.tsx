@@ -12,12 +12,10 @@ import ColumnHead from '../../components/table/ColumnHead';
 import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
 import EditableDate from '../../components/editable-cell/EditableDate';
 import EditableRelation from '../../components/editable-cell/EditableRelation';
-import EditableChip from '../../components/editable-cell/EditableChip';
 import EditableText from '../../components/editable-cell/EditableText';
 import PersonChip, {
   PersonChipPropsType,
 } from '../../components/chips/PersonChip';
-import CompanyChip from '../../components/chips/CompanyChip';
 import {
   TbBuilding,
   TbCalendar,
@@ -27,8 +25,8 @@ import {
   TbUser,
 } from 'react-icons/tb';
 import { QueryMode } from '../../generated/graphql';
-import { getLogoUrlFromDomainName } from '../../services/utils';
 import { CheckboxCell } from '../../components/table/CheckboxCell';
+import { CompanyEditableNameChipCell } from '../../components/companies/CompanyEditableNameCell';
 
 const columnHelper = createColumnHelper<Company>();
 
@@ -59,17 +57,7 @@ export const useCompaniesColumns = () => {
           <ColumnHead viewName="Name" viewIcon={<TbBuilding size={16} />} />
         ),
         cell: (props) => (
-          <EditableChip
-            value={props.row.original.name || ''}
-            placeholder="Name"
-            picture={getLogoUrlFromDomainName(props.row.original.domainName)}
-            changeHandler={(value: string) => {
-              const company = props.row.original;
-              company.name = value;
-              updateCompany(company);
-            }}
-            ChipComponent={CompanyChip}
-          />
+          <CompanyEditableNameChipCell company={props.row.original} />
         ),
         size: 120,
       }),

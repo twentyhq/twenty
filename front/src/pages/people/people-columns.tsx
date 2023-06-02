@@ -19,7 +19,6 @@ import {
 } from 'react-icons/tb';
 import { PeopleCompanyCell } from '../../components/people/PeopleCompanyCell';
 import { CheckboxCell } from '../../components/table/CheckboxCell';
-import { CellCommentChip } from '../../components/comments/CellCommentChip';
 
 const columnHelper = createColumnHelper<Person>();
 

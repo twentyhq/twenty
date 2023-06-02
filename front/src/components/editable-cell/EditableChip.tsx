@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { ChangeEvent, ComponentType, useRef, useState } from 'react';
 import { EditableCell } from './EditableCell';
 import { textInputStyle } from '../../layout/styles/themes';
+import { CellCommentChip } from '../comments/CellCommentChip';
 
 export type EditableChipProps = {
   placeholder?: string;
@@ -10,6 +11,8 @@ export type EditableChipProps = {
   changeHandler: (updated: string) => void;
   editModeHorizontalAlign?: 'left' | 'right';
   ChipComponent: ComponentType<{ name: string; picture: string }>;
+  commentCount?: number;
+  onCommentClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 };
 
 // TODO: refactor
@@ -23,8 +26,7 @@ const StyledInplaceInput = styled.input`
 
 const StyledInplaceShow = styled.div`
   display: flex;
-  padding-left: ${(props) => props.theme.spacing(1)};
-  padding-right: ${(props) => props.theme.spacing(1)};
+  width: 100%;
 
   &::placeholder {
     font-weight: 'bold';
@@ -39,10 +41,21 @@ function EditableChip({
   picture,
   editModeHorizontalAlign,
   ChipComponent,
+  commentCount,
+  onCommentClick,
 }: EditableChipProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const showComment = commentCount ? commentCount > 0 : false;
+
+  function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    onCommentClick?.(event);
+  }
 
   return (
     <EditableCell
@@ -63,9 +76,17 @@ function EditableChip({
         />
       }
       nonEditModeContent={
-        <StyledInplaceShow>
-          <ChipComponent name={inputValue} picture={picture} />
-        </StyledInplaceShow>
+        <>
+          <StyledInplaceShow>
+            <ChipComponent name={inputValue} picture={picture} />
+          </StyledInplaceShow>
+          {showComment && (
+            <CellCommentChip
+              count={commentCount ?? 0}
+              onClick={handleCommentClick}
+            />
+          )}
+        </>
       }
     ></EditableCell>
   );
