@@ -47,7 +47,9 @@ export function EditableCell({
           onOutsideClick={onOutsideClick}
         />
       ) : (
-        <CellNormalModeContainer>{nonEditModeContent}</CellNormalModeContainer>
+        <CellNormalModeContainer>
+          <>{nonEditModeContent}</>
+        </CellNormalModeContainer>
       )}
     </CellBaseContainer>
   );
