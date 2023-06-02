@@ -19,10 +19,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:generate": "npx prisma generate",
+    "prisma:generate": "npx prisma generate && eslint \"src/api/@generated/**\" --fix",
     "prisma:migrate": "npx prisma migrate deploy",
-    "prisma:seed": "npx prisma db seed",
-    "prisma:lint": "eslint \"src/api/@generated/**\" --fix"
+    "prisma:seed": "npx prisma db seed"
   },
   "dependencies": {
     "@nestjs/apollo": "^11.0.5",

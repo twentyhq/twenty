@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { User } from '../user/user.model';
 import { CommentThread } from '../comment-thread/comment-thread.model';
 import { Workspace } from '../workspace/workspace.model';
@@ -28,7 +29,7 @@ export class Comment {
   @Field(() => String, { nullable: false })
   commentThreadId!: string;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 
   @Field(() => User, { nullable: false })
@@ -37,6 +38,6 @@ export class Comment {
   @Field(() => CommentThread, { nullable: false })
   commentThread?: CommentThread;
 
-  @Field(() => Workspace, { nullable: false })
+  @HideField()
   workspace?: Workspace;
 }

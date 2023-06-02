@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class PersonMinAggregate {
@@ -33,6 +34,6 @@ export class PersonMinAggregate {
   @Field(() => String, { nullable: true })
   companyId?: string;
 
-  @Field(() => String, { nullable: true })
+  @HideField()
   workspaceId?: string;
 }

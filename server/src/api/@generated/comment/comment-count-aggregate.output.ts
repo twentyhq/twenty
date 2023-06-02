@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class CommentCountAggregate {
@@ -25,7 +26,7 @@ export class CommentCountAggregate {
   @Field(() => Int, { nullable: false })
   commentThreadId!: number;
 
-  @Field(() => Int, { nullable: false })
+  @HideField()
   workspaceId!: number;
 
   @Field(() => Int, { nullable: false })

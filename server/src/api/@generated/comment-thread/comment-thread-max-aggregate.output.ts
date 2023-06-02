@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class CommentThreadMaxAggregate {
@@ -15,6 +16,6 @@ export class CommentThreadMaxAggregate {
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: true })
+  @HideField()
   workspaceId?: string;
 }

@@ -42,8 +42,6 @@ export type Comment = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
-  workspaceId: Scalars['String'];
 };
 
 export type CommentCreateInput = {
@@ -141,8 +139,6 @@ export type CommentThread = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
-  workspaceId: Scalars['String'];
 };
 
 export type CommentThreadCount = {
@@ -434,8 +430,6 @@ export type Company = {
   name: Scalars['String'];
   people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
-  workspaceId: Scalars['String'];
 };
 
 export type CompanyCount = {
@@ -803,8 +797,6 @@ export type Person = {
   lastname: Scalars['String'];
   phone: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
-  workspaceId: Scalars['String'];
 };
 
 export type PersonCreateInput = {
@@ -1045,154 +1037,6 @@ export enum QueryMode {
   Insensitive = 'insensitive'
 }
 
-export type RefreshToken = {
-  __typename?: 'RefreshToken';
-  createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
-  id: Scalars['ID'];
-  refreshToken: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-  user: User;
-  userId: Scalars['String'];
-};
-
-export type RefreshTokenCreateManyUserInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  refreshToken: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type RefreshTokenCreateManyUserInputEnvelope = {
-  data: Array<RefreshTokenCreateManyUserInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type RefreshTokenCreateNestedManyWithoutUserInput = {
-  connect?: InputMaybe<Array<RefreshTokenWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<RefreshTokenCreateOrConnectWithoutUserInput>>;
-  create?: InputMaybe<Array<RefreshTokenCreateWithoutUserInput>>;
-  createMany?: InputMaybe<RefreshTokenCreateManyUserInputEnvelope>;
-};
-
-export type RefreshTokenCreateOrConnectWithoutUserInput = {
-  create: RefreshTokenCreateWithoutUserInput;
-  where: RefreshTokenWhereUniqueInput;
-};
-
-export type RefreshTokenCreateWithoutUserInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  refreshToken: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type RefreshTokenListRelationFilter = {
-  every?: InputMaybe<RefreshTokenWhereInput>;
-  none?: InputMaybe<RefreshTokenWhereInput>;
-  some?: InputMaybe<RefreshTokenWhereInput>;
-};
-
-export type RefreshTokenOrderByRelationAggregateInput = {
-  _count?: InputMaybe<SortOrder>;
-};
-
-export type RefreshTokenOrderByWithRelationInput = {
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  refreshToken?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-  user?: InputMaybe<UserOrderByWithRelationInput>;
-  userId?: InputMaybe<SortOrder>;
-};
-
-export enum RefreshTokenScalarFieldEnum {
-  CreatedAt = 'createdAt',
-  DeletedAt = 'deletedAt',
-  Id = 'id',
-  RefreshToken = 'refreshToken',
-  UpdatedAt = 'updatedAt',
-  UserId = 'userId'
-}
-
-export type RefreshTokenScalarWhereInput = {
-  AND?: InputMaybe<Array<RefreshTokenScalarWhereInput>>;
-  NOT?: InputMaybe<Array<RefreshTokenScalarWhereInput>>;
-  OR?: InputMaybe<Array<RefreshTokenScalarWhereInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
-  id?: InputMaybe<StringFilter>;
-  refreshToken?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-  userId?: InputMaybe<StringFilter>;
-};
-
-export type RefreshTokenUpdateManyMutationInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  refreshToken?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type RefreshTokenUpdateManyWithWhereWithoutUserInput = {
-  data: RefreshTokenUpdateManyMutationInput;
-  where: RefreshTokenScalarWhereInput;
-};
-
-export type RefreshTokenUpdateManyWithoutUserNestedInput = {
-  connect?: InputMaybe<Array<RefreshTokenWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<RefreshTokenCreateOrConnectWithoutUserInput>>;
-  create?: InputMaybe<Array<RefreshTokenCreateWithoutUserInput>>;
-  createMany?: InputMaybe<RefreshTokenCreateManyUserInputEnvelope>;
-  delete?: InputMaybe<Array<RefreshTokenWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<RefreshTokenScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<RefreshTokenWhereUniqueInput>>;
-  set?: InputMaybe<Array<RefreshTokenWhereUniqueInput>>;
-  update?: InputMaybe<Array<RefreshTokenUpdateWithWhereUniqueWithoutUserInput>>;
-  updateMany?: InputMaybe<Array<RefreshTokenUpdateManyWithWhereWithoutUserInput>>;
-  upsert?: InputMaybe<Array<RefreshTokenUpsertWithWhereUniqueWithoutUserInput>>;
-};
-
-export type RefreshTokenUpdateWithWhereUniqueWithoutUserInput = {
-  data: RefreshTokenUpdateWithoutUserInput;
-  where: RefreshTokenWhereUniqueInput;
-};
-
-export type RefreshTokenUpdateWithoutUserInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  refreshToken?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type RefreshTokenUpsertWithWhereUniqueWithoutUserInput = {
-  create: RefreshTokenCreateWithoutUserInput;
-  update: RefreshTokenUpdateWithoutUserInput;
-  where: RefreshTokenWhereUniqueInput;
-};
-
-export type RefreshTokenWhereInput = {
-  AND?: InputMaybe<Array<RefreshTokenWhereInput>>;
-  NOT?: InputMaybe<Array<RefreshTokenWhereInput>>;
-  OR?: InputMaybe<Array<RefreshTokenWhereInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
-  id?: InputMaybe<StringFilter>;
-  refreshToken?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-  user?: InputMaybe<UserRelationFilter>;
-  userId?: InputMaybe<StringFilter>;
-};
-
-export type RefreshTokenWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
-};
-
 export enum SortOrder {
   Asc = 'asc',
   Desc = 'desc'
@@ -1250,7 +1094,6 @@ export type User = {
   metadata?: Maybe<Scalars['JSON']>;
   passwordHash?: Maybe<Scalars['String']>;
   phoneNumber?: Maybe<Scalars['String']>;
-  refreshTokens?: Maybe<Array<RefreshToken>>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
 };
@@ -1263,16 +1106,6 @@ export type UserCompaniesArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<CompanyWhereInput>;
-};
-
-
-export type UserRefreshTokensArgs = {
-  cursor?: InputMaybe<RefreshTokenWhereUniqueInput>;
-  distinct?: InputMaybe<Array<RefreshTokenScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<RefreshTokenOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<RefreshTokenWhereInput>;
 };
 
 export type UserCount = {
@@ -1312,9 +1145,7 @@ export type UserCreateWithoutCompaniesInput = {
   metadata?: InputMaybe<Scalars['JSON']>;
   passwordHash?: InputMaybe<Scalars['String']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
-  refreshTokens?: InputMaybe<RefreshTokenCreateNestedManyWithoutUserInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspaceMember?: InputMaybe<WorkspaceMemberCreateNestedOneWithoutUserInput>;
 };
 
 export type UserOrderByWithRelationInput = {
@@ -1333,9 +1164,7 @@ export type UserOrderByWithRelationInput = {
   metadata?: InputMaybe<SortOrder>;
   passwordHash?: InputMaybe<SortOrder>;
   phoneNumber?: InputMaybe<SortOrder>;
-  refreshTokens?: InputMaybe<RefreshTokenOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
-  workspaceMember?: InputMaybe<WorkspaceMemberOrderByWithRelationInput>;
 };
 
 export type UserRelationFilter = {
@@ -1385,9 +1214,7 @@ export type UserUpdateWithoutCompaniesInput = {
   metadata?: InputMaybe<Scalars['JSON']>;
   passwordHash?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  refreshTokens?: InputMaybe<RefreshTokenUpdateManyWithoutUserNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  workspaceMember?: InputMaybe<WorkspaceMemberUpdateOneWithoutUserNestedInput>;
 };
 
 export type UserUpsertWithoutCompaniesInput = {
@@ -1414,9 +1241,7 @@ export type UserWhereInput = {
   metadata?: InputMaybe<JsonNullableFilter>;
   passwordHash?: InputMaybe<StringNullableFilter>;
   phoneNumber?: InputMaybe<StringNullableFilter>;
-  refreshTokens?: InputMaybe<RefreshTokenListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  workspaceMember?: InputMaybe<WorkspaceMemberRelationFilter>;
 };
 
 export type UserWhereUniqueInput = {
@@ -1459,78 +1284,6 @@ export type WorkspaceMember = {
   user: User;
   userId: Scalars['String'];
   workspace: Workspace;
-  workspaceId: Scalars['String'];
-};
-
-export type WorkspaceMemberCreateNestedOneWithoutUserInput = {
-  connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<WorkspaceMemberCreateOrConnectWithoutUserInput>;
-  create?: InputMaybe<WorkspaceMemberCreateWithoutUserInput>;
-};
-
-export type WorkspaceMemberCreateOrConnectWithoutUserInput = {
-  create: WorkspaceMemberCreateWithoutUserInput;
-  where: WorkspaceMemberWhereUniqueInput;
-};
-
-export type WorkspaceMemberCreateWithoutUserInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type WorkspaceMemberOrderByWithRelationInput = {
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-  user?: InputMaybe<UserOrderByWithRelationInput>;
-  userId?: InputMaybe<SortOrder>;
-};
-
-export type WorkspaceMemberRelationFilter = {
-  is?: InputMaybe<WorkspaceMemberWhereInput>;
-  isNot?: InputMaybe<WorkspaceMemberWhereInput>;
-};
-
-export type WorkspaceMemberUpdateOneWithoutUserNestedInput = {
-  connect?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<WorkspaceMemberCreateOrConnectWithoutUserInput>;
-  create?: InputMaybe<WorkspaceMemberCreateWithoutUserInput>;
-  delete?: InputMaybe<Scalars['Boolean']>;
-  disconnect?: InputMaybe<Scalars['Boolean']>;
-  update?: InputMaybe<WorkspaceMemberUpdateWithoutUserInput>;
-  upsert?: InputMaybe<WorkspaceMemberUpsertWithoutUserInput>;
-};
-
-export type WorkspaceMemberUpdateWithoutUserInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type WorkspaceMemberUpsertWithoutUserInput = {
-  create: WorkspaceMemberCreateWithoutUserInput;
-  update: WorkspaceMemberUpdateWithoutUserInput;
-};
-
-export type WorkspaceMemberWhereInput = {
-  AND?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
-  NOT?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
-  OR?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
-  id?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-  user?: InputMaybe<UserRelationFilter>;
-  userId?: InputMaybe<StringFilter>;
-};
-
-export type WorkspaceMemberWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
 };
 
 export type GetCompaniesQueryVariables = Exact<{
@@ -2174,7 +1927,7 @@ export type SearchCompanyQueryQueryHookResult = ReturnType<typeof useSearchCompa
 export type SearchCompanyQueryLazyQueryHookResult = ReturnType<typeof useSearchCompanyQueryLazyQuery>;
 export type SearchCompanyQueryQueryResult = Apollo.QueryResult<SearchCompanyQueryQuery, SearchCompanyQueryQueryVariables>;
 export const GetCurrentUserDocument = gql`
-    query getCurrentUser($uuid: String) {
+    query GetCurrentUser($uuid: String) {
   users: findManyUser(where: {id: {equals: $uuid}}) {
     id
     email

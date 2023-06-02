@@ -2,7 +2,6 @@ import * as TypeGraphQL from '@nestjs/graphql';
 import { CommentThread } from 'src/api/@generated/comment-thread/comment-thread.model';
 import { Company } from 'src/api/@generated/company/company.model';
 import { Person } from 'src/api/@generated/person/person.model';
-import { Workspace } from 'src/api/@generated/workspace/workspace.model';
 import { PrismaService } from 'src/database/prisma.service';
 
 @TypeGraphQL.Resolver(() => Person)
@@ -20,19 +19,6 @@ export class PersonRelationsResolver {
         },
       })
       .company({});
-  }
-
-  @TypeGraphQL.ResolveField(() => Workspace, {
-    nullable: false,
-  })
-  async workspace(@TypeGraphQL.Parent() person: Person): Promise<Workspace> {
-    return this.prismaService.person
-      .findUniqueOrThrow({
-        where: {
-          id: person.id,
-        },
-      })
-      .workspace({});
   }
 
   @TypeGraphQL.ResolveField(() => [CommentThread], {

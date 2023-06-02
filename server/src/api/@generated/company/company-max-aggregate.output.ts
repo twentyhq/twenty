@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class CompanyMaxAggregate {
@@ -31,6 +32,6 @@ export class CompanyMaxAggregate {
   @Field(() => String, { nullable: true })
   accountOwnerId?: string;
 
-  @Field(() => String, { nullable: true })
+  @HideField()
   workspaceId?: string;
 }

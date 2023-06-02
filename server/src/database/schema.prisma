@@ -52,8 +52,10 @@ model User {
   passwordHash    String?
   emailVerified   Boolean          @default(false)
   metadata        Json?
+  /// @TypeGraphQL.omit(input: true)
   workspaceMember WorkspaceMember?
   companies       Company[]
+  /// @TypeGraphQL.omit(input: true, output: true)
   refreshTokens   RefreshToken[]
   comments        Comment[]
 
@@ -85,9 +87,9 @@ model WorkspaceMember {
   deletedAt   DateTime?
   userId      String    @unique
   user        User      @relation(fields: [userId], references: [id])
-  /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
-  /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("workspace_members")
@@ -106,9 +108,9 @@ model Company {
   accountOwner   User?     @relation(fields: [accountOwnerId], references: [id])
   people         Person[]
 
-  /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId    String
-  /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspace      Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("companies")
@@ -127,9 +129,9 @@ model Person {
   companyId   String?
   company     Company?  @relation(fields: [companyId], references: [id])
 
-  /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
-  /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("people")
@@ -154,9 +156,9 @@ model CommentThread {
   deletedAt             DateTime?
   commentThreadTargets  CommentThreadTarget[]
   comments              Comment[]
-  /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId           String
-  /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspace             Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("comment_threads")
@@ -172,9 +174,9 @@ model Comment {
   author           User          @relation(fields: [authorId], references: [id])
   commentThreadId  String
   commentThread    CommentThread @relation(fields: [commentThreadId], references: [id])
-  /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId      String
-  /// @TypeGraphQL.omit(input: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspace        Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("comments")

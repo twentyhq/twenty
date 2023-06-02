@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { Company } from '../company/company.model';
 import { Workspace } from '../workspace/workspace.model';
 
@@ -36,12 +37,12 @@ export class Person {
   @Field(() => String, { nullable: true })
   companyId!: string | null;
 
-  @Field(() => String, { nullable: false })
+  @HideField()
   workspaceId!: string;
 
   @Field(() => Company, { nullable: true })
   company?: Company | null;
 
-  @Field(() => Workspace, { nullable: false })
+  @HideField()
   workspace?: Workspace;
 }
