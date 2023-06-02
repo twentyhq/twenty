@@ -45,6 +45,6 @@ export class PipelineStage {
   @HideField()
   workspace?: Workspace;
 
-  @Field(() => PipelineStageCount, { nullable: false })
+  @HideField()
   _count?: PipelineStageCount;
 }

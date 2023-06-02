@@ -49,6 +49,6 @@ export class Company {
   @HideField()
   workspace?: Workspace;
 
-  @Field(() => CompanyCount, { nullable: false })
+  @HideField()
   _count?: CompanyCount;
 }

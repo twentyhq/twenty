@@ -132,19 +132,12 @@ export type CommentScalarWhereInput = {
 
 export type CommentThread = {
   __typename?: 'CommentThread';
-  _count: CommentThreadCount;
   commentThreadTargets?: Maybe<Array<CommentThreadTarget>>;
   comments?: Maybe<Array<Comment>>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-};
-
-export type CommentThreadCount = {
-  __typename?: 'CommentThreadCount';
-  commentThreadTargets: Scalars['Int'];
-  comments: Scalars['Int'];
 };
 
 export type CommentThreadCreateInput = {
@@ -417,11 +410,12 @@ export enum CommentableType {
 
 export type Company = {
   __typename?: 'Company';
-  _count: CompanyCount;
+  _commentsCount: Scalars['Int'];
   accountOwner?: Maybe<User>;
   accountOwnerId?: Maybe<Scalars['String']>;
   address: Scalars['String'];
   commentThreads: Array<CommentThread>;
+  comments: Array<Comment>;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
@@ -430,11 +424,6 @@ export type Company = {
   name: Scalars['String'];
   people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
-};
-
-export type CompanyCount = {
-  __typename?: 'CompanyCount';
-  people: Scalars['Int'];
 };
 
 export type CompanyCreateInput = {
@@ -785,8 +774,10 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type Person = {
   __typename?: 'Person';
+  _commentCount: Scalars['Int'];
   city: Scalars['String'];
   commentThreads: Array<CommentThread>;
+  comments: Array<Comment>;
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
@@ -997,7 +988,6 @@ export type PersonWhereUniqueInput = {
 
 export type Pipeline = {
   __typename?: 'Pipeline';
-  _count: PipelineCount;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
   icon: Scalars['String'];
@@ -1027,15 +1017,8 @@ export type PipelineAssociation = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type PipelineCount = {
-  __typename?: 'PipelineCount';
-  pipelineAssociations: Scalars['Int'];
-  pipelineStages: Scalars['Int'];
-};
-
 export type PipelineStage = {
   __typename?: 'PipelineStage';
-  _count: PipelineStageCount;
   color: Scalars['String'];
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
@@ -1046,11 +1029,6 @@ export type PipelineStage = {
   pipelineId: Scalars['String'];
   type: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-};
-
-export type PipelineStageCount = {
-  __typename?: 'PipelineStageCount';
-  pipelineAssociations: Scalars['Int'];
 };
 
 export type Query = {
@@ -1136,7 +1114,6 @@ export type StringNullableFilter = {
 
 export type User = {
   __typename?: 'User';
-  _count: UserCount;
   avatarUrl?: Maybe<Scalars['String']>;
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
@@ -1164,13 +1141,6 @@ export type UserCompaniesArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<CompanyWhereInput>;
-};
-
-export type UserCount = {
-  __typename?: 'UserCount';
-  comments: Scalars['Int'];
-  companies: Scalars['Int'];
-  refreshTokens: Scalars['Int'];
 };
 
 export type UserCreateNestedOneWithoutCommentsInput = {
@@ -1309,7 +1279,6 @@ export type UserWhereUniqueInput = {
 
 export type Workspace = {
   __typename?: 'Workspace';
-  _count: WorkspaceCount;
   commentThreads?: Maybe<Array<CommentThread>>;
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
@@ -1324,17 +1293,6 @@ export type Workspace = {
   pipelines?: Maybe<Array<Pipeline>>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
-};
-
-export type WorkspaceCount = {
-  __typename?: 'WorkspaceCount';
-  commentThreads: Scalars['Int'];
-  comments: Scalars['Int'];
-  companies: Scalars['Int'];
-  people: Scalars['Int'];
-  pipelineStages: Scalars['Int'];
-  pipelines: Scalars['Int'];
-  workspaceMember: Scalars['Int'];
 };
 
 export type WorkspaceMember = {
