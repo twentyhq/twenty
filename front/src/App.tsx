@@ -10,8 +10,15 @@ import Opportunities from './pages/opportunities/Opportunities';
 import { User, mapToUser } from './interfaces/entities/user.interface';
 import { useGetCurrentUserQuery } from './services/api/users';
 import { getUserIdFromToken } from './services/auth/AuthService';
+import { ThemeProvider } from '@emotion/react';
+import { lightTheme, darkTheme } from './layout/styles/themes';
+import { browserPrefersDarkMode } from './services/utils';
 
-function App() {
+type AppProps = {
+  userThemingEnabled?: boolean;
+};
+
+function App({ userThemingEnabled = true }: AppProps) {
   const [user, setUser] = useState<User | undefined>(undefined);
 
   const userIdFromToken = getUserIdFromToken();
@@ -23,7 +30,9 @@ function App() {
     }
   }, [data]);
 
-  return (
+  const defaultTheme = browserPrefersDarkMode() ? darkTheme : lightTheme;
+
+  const app = (
     <>
       {
         <AppLayout user={user}>
@@ -65,6 +74,16 @@ function App() {
           </Routes>
         </AppLayout>
       }
+    </>
+  );
+
+  return (
+    <>
+      {userThemingEnabled ? (
+        <ThemeProvider theme={defaultTheme}>{app}</ThemeProvider>
+      ) : (
+        app
+      )}
     </>
   );
 }

@@ -22,7 +22,7 @@ const render = () => (
     <ApolloProvider client={mockedClient}>
       <MemoryRouter>
         <FullHeightStorybookLayout>
-          <App />
+          <App userThemingEnabled={false} />
         </FullHeightStorybookLayout>
       </MemoryRouter>
     </ApolloProvider>
