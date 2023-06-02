@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { FaRegComment } from 'react-icons/fa';
+import { IconComment } from '../icons';
 
 export type CommentChipProps = {
   count: number;
@@ -22,7 +22,7 @@ const StyledChip = styled.div`
   background: ${(props) => props.theme.secondaryBackgroundTransparent};
   backdrop-filter: blur(6px);
 
-  border-radius: 5px;
+  border-radius: ${(props) => props.theme.borderRadius}};
 
   cursor: pointer;
 
@@ -56,7 +56,7 @@ export function CommentChip({ count, onClick }: CommentChipProps) {
     <StyledChip onClick={onClick}>
       <StyledCount>{formattedCount}</StyledCount>
       <StyledIcon>
-        <FaRegComment size={12} />
+        <IconComment size={12} />
       </StyledIcon>
     </StyledChip>
   );
