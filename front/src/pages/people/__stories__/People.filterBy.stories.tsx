@@ -4,16 +4,17 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import People from '../People';
 import { Story } from './People.stories';
-import { mocks, render } from './shared';
+import { render } from './shared';
+import { graphqlMocks } from '../../../testing/graphqlMocks';
 
 const meta: Meta<typeof People> = {
-  title: 'Pages/People',
+  title: 'Pages/People/FilterBy',
   component: People,
 };
 
 export default meta;
 
-export const FilterByEmail: Story = {
+export const Email: Story = {
   render,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -36,11 +37,11 @@ export const FilterByEmail: Story = {
     expect(await canvas.findByText('Contains al')).toBeInTheDocument();
   },
   parameters: {
-    msw: mocks,
+    msw: graphqlMocks,
   },
 };
 
-export const FilterByCompanyName: Story = {
+export const CompanyName: Story = {
   render,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -66,6 +67,6 @@ export const FilterByCompanyName: Story = {
     expect(await canvas.findByText('Is Qonto')).toBeInTheDocument();
   },
   parameters: {
-    msw: mocks,
+    msw: graphqlMocks,
   },
 };

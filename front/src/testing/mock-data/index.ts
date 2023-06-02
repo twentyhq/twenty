@@ -1,3 +1,4 @@
+import { GraphQLVariables } from 'msw';
 import {
   CompanyOrderByWithRelationInput,
   PersonOrderByWithRelationInput,
@@ -111,4 +112,22 @@ export function filterAndSortData<DataT>(
   }
 
   return filteredData;
+}
+
+export function fetchOneFromData<DataT extends { id: string }>(
+  data: Array<DataT>,
+  id: string,
+): DataT | undefined {
+  return data.filter((item) => item.id === id)[0];
+}
+
+export function updateOneFromData<DataT extends { id: string }>(
+  data: Array<DataT>,
+  id: string,
+  payload: GraphQLVariables,
+): DataT | undefined {
+  const object = data.filter((item) => item.id === id)[0];
+  const newObject = Object.assign(object, payload);
+
+  return newObject;
 }

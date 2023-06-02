@@ -130,7 +130,7 @@
     "workerDirectory": "public"
   },
   "nyc": {
-    "lines": 60,
-    "statements": 60
+    "lines": 65,
+    "statements": 65
   }
 }
