@@ -18,4 +18,10 @@ export class WorkspaceCount {
 
   @Field(() => Int, { nullable: false })
   comments?: number;
+
+  @Field(() => Int, { nullable: false })
+  pipelines?: number;
+
+  @Field(() => Int, { nullable: false })
+  pipelineStages?: number;
 }

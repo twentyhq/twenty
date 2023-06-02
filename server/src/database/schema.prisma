@@ -76,6 +76,8 @@ model Workspace {
   people          Person[]
   commentThreads  CommentThread[]
   comments        Comment[]
+  pipelines       Pipeline[]
+  pipelineStages  PipelineStage[]
 
   @@map("workspaces")
 }
@@ -199,4 +201,68 @@ model CommentThreadTarget {
   commentableId    String
 
   @@map("comment_thread_targets")
+}
+
+model Pipeline {
+  id                    String                @id
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  deletedAt             DateTime?
+
+  name                  String
+  icon                  String
+  pipelineStages        PipelineStage[]
+  pipelineAssociations  PipelineAssociation[]
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId           String
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace             Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@map("pipelines")
+}
+
+model PipelineStage {
+  id                    String                @id
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  deletedAt             DateTime?
+
+  name                  String
+  type                  String
+  color                 String
+
+  pipelineId            String
+  pipeline              Pipeline @relation(fields: [pipelineId], references: [id])
+  
+  pipelineAssociations  PipelineAssociation[]
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId           String
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace             Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@map("pipeline_stages")
+}
+
+enum PipelineAssociableType {
+  Person
+  Company
+}
+
+model PipelineAssociation {
+  id                    String                @id
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  deletedAt             DateTime?
+
+  pipelineId            String
+  pipeline              Pipeline @relation(fields: [pipelineId], references: [id])
+
+  pipelineStageId       String
+  pipelineStage         PipelineStage @relation(fields: [pipelineStageId], references: [id])
+
+  associableType        PipelineAssociableType
+  associableId          String
+
+  @@map("pipeline_associations")
 }

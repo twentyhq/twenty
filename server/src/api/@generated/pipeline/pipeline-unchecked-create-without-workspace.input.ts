@@ -1,0 +1,36 @@
+import { Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
+import { PipelineStageUncheckedCreateNestedManyWithoutPipelineInput } from '../pipeline-stage/pipeline-stage-unchecked-create-nested-many-without-pipeline.input';
+import { PipelineAssociationUncheckedCreateNestedManyWithoutPipelineInput } from '../pipeline-association/pipeline-association-unchecked-create-nested-many-without-pipeline.input';
+
+@InputType()
+export class PipelineUncheckedCreateWithoutWorkspaceInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
+
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
+
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
+
+  @Field(() => String, { nullable: false })
+  name!: string;
+
+  @Field(() => String, { nullable: false })
+  icon!: string;
+
+  @Field(() => PipelineStageUncheckedCreateNestedManyWithoutPipelineInput, {
+    nullable: true,
+  })
+  pipelineStages?: PipelineStageUncheckedCreateNestedManyWithoutPipelineInput;
+
+  @Field(
+    () => PipelineAssociationUncheckedCreateNestedManyWithoutPipelineInput,
+    { nullable: true },
+  )
+  pipelineAssociations?: PipelineAssociationUncheckedCreateNestedManyWithoutPipelineInput;
+}
