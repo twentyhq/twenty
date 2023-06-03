@@ -5,10 +5,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 import { AuthService } from './services/auth.service';
 import { GoogleAuthController } from './google.auth.controller';
 import { GoogleStrategy } from './strategies/google.auth.strategy';
-import { AuthController } from './auth.controller';
-import { UserRepository } from 'src/entities/user/user.repository';
-import { WorkspaceRepository } from 'src/entities/workspace/workspace.repository';
-import { RefreshTokenRepository } from 'src/entities/refresh-token/refresh-token.repository';
+import { TokenController } from './token.controller';
 import { PrismaService } from 'src/database/prisma.service';
 
 const jwtModule = JwtModule.registerAsync({
@@ -26,16 +23,8 @@ const jwtModule = JwtModule.registerAsync({
 
 @Module({
   imports: [jwtModule, ConfigModule.forRoot({})],
-  controllers: [GoogleAuthController, AuthController],
-  providers: [
-    AuthService,
-    JwtAuthStrategy,
-    GoogleStrategy,
-    UserRepository,
-    WorkspaceRepository,
-    RefreshTokenRepository,
-    PrismaService,
-  ],
+  controllers: [GoogleAuthController, TokenController],
+  providers: [AuthService, JwtAuthStrategy, GoogleStrategy, PrismaService],
   exports: [jwtModule],
 })
 export class AuthModule {}

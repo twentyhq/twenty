@@ -22,10 +22,6 @@ export type AffectedRows = {
   count: Scalars['Int'];
 };
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: InputMaybe<Scalars['Boolean']>;
-};
-
 export type BoolFilter = {
   equals?: InputMaybe<Scalars['Boolean']>;
   not?: InputMaybe<NestedBoolFilter>;
@@ -54,20 +50,6 @@ export type CommentCreateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type CommentCreateManyAuthorInput = {
-  body: Scalars['String'];
-  commentThreadId: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentCreateManyAuthorInputEnvelope = {
-  data: Array<CommentCreateManyAuthorInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
 export type CommentCreateManyCommentThreadInput = {
   authorId: Scalars['String'];
   body: Scalars['String'];
@@ -82,29 +64,8 @@ export type CommentCreateManyCommentThreadInputEnvelope = {
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type CommentCreateNestedManyWithoutAuthorInput = {
-  connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutAuthorInput>>;
-  create?: InputMaybe<Array<CommentCreateWithoutAuthorInput>>;
-  createMany?: InputMaybe<CommentCreateManyAuthorInputEnvelope>;
-};
-
 export type CommentCreateNestedManyWithoutCommentThreadInput = {
   createMany?: InputMaybe<CommentCreateManyCommentThreadInputEnvelope>;
-};
-
-export type CommentCreateOrConnectWithoutAuthorInput = {
-  create: CommentCreateWithoutAuthorInput;
-  where: CommentWhereUniqueInput;
-};
-
-export type CommentCreateWithoutAuthorInput = {
-  body: Scalars['String'];
-  commentThread: CommentThreadCreateNestedOneWithoutCommentsInput;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CommentListRelationFilter = {
@@ -115,19 +76,6 @@ export type CommentListRelationFilter = {
 
 export type CommentOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
-};
-
-export type CommentScalarWhereInput = {
-  AND?: InputMaybe<Array<CommentScalarWhereInput>>;
-  NOT?: InputMaybe<Array<CommentScalarWhereInput>>;
-  OR?: InputMaybe<Array<CommentScalarWhereInput>>;
-  authorId?: InputMaybe<StringFilter>;
-  body?: InputMaybe<StringFilter>;
-  commentThreadId?: InputMaybe<StringFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
-  id?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
 export type CommentThread = {
@@ -151,19 +99,6 @@ export type CommentThreadCreateInput = {
 
 export type CommentThreadCreateNestedOneWithoutCommentsInput = {
   connect?: InputMaybe<CommentThreadWhereUniqueInput>;
-};
-
-export type CommentThreadCreateOrConnectWithoutCommentsInput = {
-  create: CommentThreadCreateWithoutCommentsInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadCreateWithoutCommentsInput = {
-  commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CommentThreadRelationFilter = {
@@ -201,85 +136,10 @@ export type CommentThreadTargetCreateNestedManyWithoutCommentThreadInput = {
   createMany?: InputMaybe<CommentThreadTargetCreateManyCommentThreadInputEnvelope>;
 };
 
-export type CommentThreadTargetCreateOrConnectWithoutCommentThreadInput = {
-  create: CommentThreadTargetCreateWithoutCommentThreadInput;
-  where: CommentThreadTargetWhereUniqueInput;
-};
-
-export type CommentThreadTargetCreateWithoutCommentThreadInput = {
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
 export type CommentThreadTargetListRelationFilter = {
   every?: InputMaybe<CommentThreadTargetWhereInput>;
   none?: InputMaybe<CommentThreadTargetWhereInput>;
   some?: InputMaybe<CommentThreadTargetWhereInput>;
-};
-
-export type CommentThreadTargetScalarWhereInput = {
-  AND?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  NOT?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  OR?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  commentThreadId?: InputMaybe<StringFilter>;
-  commentableId?: InputMaybe<StringFilter>;
-  commentableType?: InputMaybe<EnumCommentableTypeFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
-  id?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
-export type CommentThreadTargetUpdateManyMutationInput = {
-  commentableId?: InputMaybe<StringFieldUpdateOperationsInput>;
-  commentableType?: InputMaybe<EnumCommentableTypeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadTargetUpdateManyWithWhereWithoutCommentThreadInput = {
-  data: CommentThreadTargetUpdateManyMutationInput;
-  where: CommentThreadTargetScalarWhereInput;
-};
-
-export type CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput = {
-  connect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>>;
-  create?: InputMaybe<Array<CommentThreadTargetCreateWithoutCommentThreadInput>>;
-  createMany?: InputMaybe<CommentThreadTargetCreateManyCommentThreadInputEnvelope>;
-  delete?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  set?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  update?: InputMaybe<Array<CommentThreadTargetUpdateWithWhereUniqueWithoutCommentThreadInput>>;
-  updateMany?: InputMaybe<Array<CommentThreadTargetUpdateManyWithWhereWithoutCommentThreadInput>>;
-  upsert?: InputMaybe<Array<CommentThreadTargetUpsertWithWhereUniqueWithoutCommentThreadInput>>;
-};
-
-export type CommentThreadTargetUpdateWithWhereUniqueWithoutCommentThreadInput = {
-  data: CommentThreadTargetUpdateWithoutCommentThreadInput;
-  where: CommentThreadTargetWhereUniqueInput;
-};
-
-export type CommentThreadTargetUpdateWithoutCommentThreadInput = {
-  commentableId?: InputMaybe<StringFieldUpdateOperationsInput>;
-  commentableType?: InputMaybe<EnumCommentableTypeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadTargetUpsertWithWhereUniqueWithoutCommentThreadInput = {
-  create: CommentThreadTargetCreateWithoutCommentThreadInput;
-  update: CommentThreadTargetUpdateWithoutCommentThreadInput;
-  where: CommentThreadTargetWhereUniqueInput;
 };
 
 export type CommentThreadTargetWhereInput = {
@@ -294,31 +154,6 @@ export type CommentThreadTargetWhereInput = {
   deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
-export type CommentThreadTargetWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
-};
-
-export type CommentThreadUpdateOneRequiredWithoutCommentsNestedInput = {
-  connect?: InputMaybe<CommentThreadWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<CommentThreadCreateOrConnectWithoutCommentsInput>;
-  create?: InputMaybe<CommentThreadCreateWithoutCommentsInput>;
-  update?: InputMaybe<CommentThreadUpdateWithoutCommentsInput>;
-  upsert?: InputMaybe<CommentThreadUpsertWithoutCommentsInput>;
-};
-
-export type CommentThreadUpdateWithoutCommentsInput = {
-  commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadUpsertWithoutCommentsInput = {
-  create: CommentThreadCreateWithoutCommentsInput;
-  update: CommentThreadUpdateWithoutCommentsInput;
 };
 
 export type CommentThreadWhereInput = {
@@ -337,53 +172,6 @@ export type CommentThreadWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
-export type CommentUpdateManyMutationInput = {
-  body?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentUpdateManyWithWhereWithoutAuthorInput = {
-  data: CommentUpdateManyMutationInput;
-  where: CommentScalarWhereInput;
-};
-
-export type CommentUpdateManyWithoutAuthorNestedInput = {
-  connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutAuthorInput>>;
-  create?: InputMaybe<Array<CommentCreateWithoutAuthorInput>>;
-  createMany?: InputMaybe<CommentCreateManyAuthorInputEnvelope>;
-  delete?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  set?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  update?: InputMaybe<Array<CommentUpdateWithWhereUniqueWithoutAuthorInput>>;
-  updateMany?: InputMaybe<Array<CommentUpdateManyWithWhereWithoutAuthorInput>>;
-  upsert?: InputMaybe<Array<CommentUpsertWithWhereUniqueWithoutAuthorInput>>;
-};
-
-export type CommentUpdateWithWhereUniqueWithoutAuthorInput = {
-  data: CommentUpdateWithoutAuthorInput;
-  where: CommentWhereUniqueInput;
-};
-
-export type CommentUpdateWithoutAuthorInput = {
-  body?: InputMaybe<StringFieldUpdateOperationsInput>;
-  commentThread?: InputMaybe<CommentThreadUpdateOneRequiredWithoutCommentsNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
-  create: CommentCreateWithoutAuthorInput;
-  update: CommentUpdateWithoutAuthorInput;
-  where: CommentWhereUniqueInput;
-};
-
 export type CommentWhereInput = {
   AND?: InputMaybe<Array<CommentWhereInput>>;
   NOT?: InputMaybe<Array<CommentWhereInput>>;
@@ -397,10 +185,6 @@ export type CommentWhereInput = {
   deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
-export type CommentWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
 };
 
 export enum CommentableType {
@@ -441,25 +225,6 @@ export type CompanyCreateInput = {
 
 export type CompanyCreateNestedOneWithoutPeopleInput = {
   connect?: InputMaybe<CompanyWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<CompanyCreateOrConnectWithoutPeopleInput>;
-  create?: InputMaybe<CompanyCreateWithoutPeopleInput>;
-};
-
-export type CompanyCreateOrConnectWithoutPeopleInput = {
-  create: CompanyCreateWithoutPeopleInput;
-  where: CompanyWhereUniqueInput;
-};
-
-export type CompanyCreateWithoutPeopleInput = {
-  accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
-  address: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  domainName: Scalars['String'];
-  employees?: InputMaybe<Scalars['Int']>;
-  id: Scalars['String'];
-  name: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CompanyListRelationFilter = {
@@ -519,29 +284,6 @@ export type CompanyUpdateInput = {
 
 export type CompanyUpdateOneWithoutPeopleNestedInput = {
   connect?: InputMaybe<CompanyWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<CompanyCreateOrConnectWithoutPeopleInput>;
-  create?: InputMaybe<CompanyCreateWithoutPeopleInput>;
-  delete?: InputMaybe<Scalars['Boolean']>;
-  disconnect?: InputMaybe<Scalars['Boolean']>;
-  update?: InputMaybe<CompanyUpdateWithoutPeopleInput>;
-  upsert?: InputMaybe<CompanyUpsertWithoutPeopleInput>;
-};
-
-export type CompanyUpdateWithoutPeopleInput = {
-  accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
-  address?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  employees?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CompanyUpsertWithoutPeopleInput = {
-  create: CompanyCreateWithoutPeopleInput;
-  update: CompanyUpdateWithoutPeopleInput;
 };
 
 export type CompanyWhereInput = {
@@ -591,15 +333,18 @@ export type DateTimeNullableFilter = {
   notIn?: InputMaybe<Array<Scalars['DateTime']>>;
 };
 
-export type EnumCommentableTypeFieldUpdateOperationsInput = {
-  set?: InputMaybe<CommentableType>;
-};
-
 export type EnumCommentableTypeFilter = {
   equals?: InputMaybe<CommentableType>;
   in?: InputMaybe<Array<CommentableType>>;
   not?: InputMaybe<NestedEnumCommentableTypeFilter>;
   notIn?: InputMaybe<Array<CommentableType>>;
+};
+
+export type EnumPipelineProgressableTypeFilter = {
+  equals?: InputMaybe<PipelineProgressableType>;
+  in?: InputMaybe<Array<PipelineProgressableType>>;
+  not?: InputMaybe<NestedEnumPipelineProgressableTypeFilter>;
+  notIn?: InputMaybe<Array<PipelineProgressableType>>;
 };
 
 export type IntNullableFilter = {
@@ -717,6 +462,13 @@ export type NestedEnumCommentableTypeFilter = {
   notIn?: InputMaybe<Array<CommentableType>>;
 };
 
+export type NestedEnumPipelineProgressableTypeFilter = {
+  equals?: InputMaybe<PipelineProgressableType>;
+  in?: InputMaybe<Array<PipelineProgressableType>>;
+  not?: InputMaybe<NestedEnumPipelineProgressableTypeFilter>;
+  notIn?: InputMaybe<Array<PipelineProgressableType>>;
+};
+
 export type NestedIntNullableFilter = {
   equals?: InputMaybe<Scalars['Int']>;
   gt?: InputMaybe<Scalars['Int']>;
@@ -768,10 +520,6 @@ export type NullableIntFieldUpdateOperationsInput = {
   set?: InputMaybe<Scalars['Int']>;
 };
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: InputMaybe<Scalars['String']>;
-};
-
 export type Person = {
   __typename?: 'Person';
   _commentCount: Scalars['Int'];
@@ -803,45 +551,8 @@ export type PersonCreateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type PersonCreateManyCompanyInput = {
-  city: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  email: Scalars['String'];
-  firstname: Scalars['String'];
-  id: Scalars['String'];
-  lastname: Scalars['String'];
-  phone: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PersonCreateManyCompanyInputEnvelope = {
-  data: Array<PersonCreateManyCompanyInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
 export type PersonCreateNestedManyWithoutCompanyInput = {
   connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PersonCreateOrConnectWithoutCompanyInput>>;
-  create?: InputMaybe<Array<PersonCreateWithoutCompanyInput>>;
-  createMany?: InputMaybe<PersonCreateManyCompanyInputEnvelope>;
-};
-
-export type PersonCreateOrConnectWithoutCompanyInput = {
-  create: PersonCreateWithoutCompanyInput;
-  where: PersonWhereUniqueInput;
-};
-
-export type PersonCreateWithoutCompanyInput = {
-  city: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  email: Scalars['String'];
-  firstname: Scalars['String'];
-  id: Scalars['String'];
-  lastname: Scalars['String'];
-  phone: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PersonListRelationFilter = {
@@ -882,22 +593,6 @@ export enum PersonScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
-export type PersonScalarWhereInput = {
-  AND?: InputMaybe<Array<PersonScalarWhereInput>>;
-  NOT?: InputMaybe<Array<PersonScalarWhereInput>>;
-  OR?: InputMaybe<Array<PersonScalarWhereInput>>;
-  city?: InputMaybe<StringFilter>;
-  companyId?: InputMaybe<StringNullableFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
-  email?: InputMaybe<StringFilter>;
-  firstname?: InputMaybe<StringFilter>;
-  id?: InputMaybe<StringFilter>;
-  lastname?: InputMaybe<StringFilter>;
-  phone?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
 export type PersonUpdateInput = {
   city?: InputMaybe<StringFieldUpdateOperationsInput>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
@@ -911,58 +606,8 @@ export type PersonUpdateInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type PersonUpdateManyMutationInput = {
-  city?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  firstname?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastname?: InputMaybe<StringFieldUpdateOperationsInput>;
-  phone?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PersonUpdateManyWithWhereWithoutCompanyInput = {
-  data: PersonUpdateManyMutationInput;
-  where: PersonScalarWhereInput;
-};
-
 export type PersonUpdateManyWithoutCompanyNestedInput = {
   connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PersonCreateOrConnectWithoutCompanyInput>>;
-  create?: InputMaybe<Array<PersonCreateWithoutCompanyInput>>;
-  createMany?: InputMaybe<PersonCreateManyCompanyInputEnvelope>;
-  delete?: InputMaybe<Array<PersonWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<PersonScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<PersonWhereUniqueInput>>;
-  set?: InputMaybe<Array<PersonWhereUniqueInput>>;
-  update?: InputMaybe<Array<PersonUpdateWithWhereUniqueWithoutCompanyInput>>;
-  updateMany?: InputMaybe<Array<PersonUpdateManyWithWhereWithoutCompanyInput>>;
-  upsert?: InputMaybe<Array<PersonUpsertWithWhereUniqueWithoutCompanyInput>>;
-};
-
-export type PersonUpdateWithWhereUniqueWithoutCompanyInput = {
-  data: PersonUpdateWithoutCompanyInput;
-  where: PersonWhereUniqueInput;
-};
-
-export type PersonUpdateWithoutCompanyInput = {
-  city?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  firstname?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastname?: InputMaybe<StringFieldUpdateOperationsInput>;
-  phone?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PersonUpsertWithWhereUniqueWithoutCompanyInput = {
-  create: PersonCreateWithoutCompanyInput;
-  update: PersonUpdateWithoutCompanyInput;
-  where: PersonWhereUniqueInput;
 };
 
 export type PersonWhereInput = {
@@ -998,6 +643,17 @@ export type Pipeline = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type PipelineOrderByWithRelationInput = {
+  createdAt?: InputMaybe<SortOrder>;
+  deletedAt?: InputMaybe<SortOrder>;
+  icon?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  name?: InputMaybe<SortOrder>;
+  pipelineProgresses?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
+  pipelineStages?: InputMaybe<PipelineStageOrderByRelationAggregateInput>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
 export type PipelineProgress = {
   __typename?: 'PipelineProgress';
   associableId: Scalars['String'];
@@ -1012,9 +668,50 @@ export type PipelineProgress = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type PipelineProgressListRelationFilter = {
+  every?: InputMaybe<PipelineProgressWhereInput>;
+  none?: InputMaybe<PipelineProgressWhereInput>;
+  some?: InputMaybe<PipelineProgressWhereInput>;
+};
+
+export type PipelineProgressOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type PipelineProgressWhereInput = {
+  AND?: InputMaybe<Array<PipelineProgressWhereInput>>;
+  NOT?: InputMaybe<Array<PipelineProgressWhereInput>>;
+  OR?: InputMaybe<Array<PipelineProgressWhereInput>>;
+  associableId?: InputMaybe<StringFilter>;
+  associableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  deletedAt?: InputMaybe<DateTimeNullableFilter>;
+  id?: InputMaybe<StringFilter>;
+  pipeline?: InputMaybe<PipelineRelationFilter>;
+  pipelineId?: InputMaybe<StringFilter>;
+  pipelineStage?: InputMaybe<PipelineStageRelationFilter>;
+  pipelineStageId?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
 export enum PipelineProgressableType {
   Company = 'Company',
   Person = 'Person'
+}
+
+export type PipelineRelationFilter = {
+  is?: InputMaybe<PipelineWhereInput>;
+  isNot?: InputMaybe<PipelineWhereInput>;
+};
+
+export enum PipelineScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Icon = 'icon',
+  Id = 'id',
+  Name = 'name',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
 }
 
 export type PipelineStage = {
@@ -1031,10 +728,90 @@ export type PipelineStage = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type PipelineStageListRelationFilter = {
+  every?: InputMaybe<PipelineStageWhereInput>;
+  none?: InputMaybe<PipelineStageWhereInput>;
+  some?: InputMaybe<PipelineStageWhereInput>;
+};
+
+export type PipelineStageOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type PipelineStageOrderByWithRelationInput = {
+  color?: InputMaybe<SortOrder>;
+  createdAt?: InputMaybe<SortOrder>;
+  deletedAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  name?: InputMaybe<SortOrder>;
+  pipeline?: InputMaybe<PipelineOrderByWithRelationInput>;
+  pipelineId?: InputMaybe<SortOrder>;
+  pipelineProgresses?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
+  type?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
+export type PipelineStageRelationFilter = {
+  is?: InputMaybe<PipelineStageWhereInput>;
+  isNot?: InputMaybe<PipelineStageWhereInput>;
+};
+
+export enum PipelineStageScalarFieldEnum {
+  Color = 'color',
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Id = 'id',
+  Name = 'name',
+  PipelineId = 'pipelineId',
+  Type = 'type',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
+
+export type PipelineStageWhereInput = {
+  AND?: InputMaybe<Array<PipelineStageWhereInput>>;
+  NOT?: InputMaybe<Array<PipelineStageWhereInput>>;
+  OR?: InputMaybe<Array<PipelineStageWhereInput>>;
+  color?: InputMaybe<StringFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  deletedAt?: InputMaybe<DateTimeNullableFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  pipeline?: InputMaybe<PipelineRelationFilter>;
+  pipelineId?: InputMaybe<StringFilter>;
+  pipelineProgresses?: InputMaybe<PipelineProgressListRelationFilter>;
+  type?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type PipelineStageWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
+export type PipelineWhereInput = {
+  AND?: InputMaybe<Array<PipelineWhereInput>>;
+  NOT?: InputMaybe<Array<PipelineWhereInput>>;
+  OR?: InputMaybe<Array<PipelineWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  deletedAt?: InputMaybe<DateTimeNullableFilter>;
+  icon?: InputMaybe<StringFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  pipelineProgresses?: InputMaybe<PipelineProgressListRelationFilter>;
+  pipelineStages?: InputMaybe<PipelineStageListRelationFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type PipelineWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
+  findManyPipeline: Array<Pipeline>;
+  findManyPipelineStage: Array<PipelineStage>;
   findManyUser: Array<User>;
 };
 
@@ -1056,6 +833,26 @@ export type QueryFindManyPersonArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<PersonWhereInput>;
+};
+
+
+export type QueryFindManyPipelineArgs = {
+  cursor?: InputMaybe<PipelineWhereUniqueInput>;
+  distinct?: InputMaybe<Array<PipelineScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<PipelineOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PipelineWhereInput>;
+};
+
+
+export type QueryFindManyPipelineStageArgs = {
+  cursor?: InputMaybe<PipelineStageWhereUniqueInput>;
+  distinct?: InputMaybe<Array<PipelineStageScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<PipelineStageOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PipelineStageWhereInput>;
 };
 
 
@@ -1149,31 +946,6 @@ export type UserCreateNestedOneWithoutCommentsInput = {
 
 export type UserCreateNestedOneWithoutCompaniesInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutCompaniesInput>;
-  create?: InputMaybe<UserCreateWithoutCompaniesInput>;
-};
-
-export type UserCreateOrConnectWithoutCompaniesInput = {
-  create: UserCreateWithoutCompaniesInput;
-  where: UserWhereUniqueInput;
-};
-
-export type UserCreateWithoutCompaniesInput = {
-  avatarUrl?: InputMaybe<Scalars['String']>;
-  comments?: InputMaybe<CommentCreateNestedManyWithoutAuthorInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
-  disabled?: InputMaybe<Scalars['Boolean']>;
-  displayName: Scalars['String'];
-  email: Scalars['String'];
-  emailVerified?: InputMaybe<Scalars['Boolean']>;
-  id: Scalars['String'];
-  lastSeen?: InputMaybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
-  metadata?: InputMaybe<Scalars['JSON']>;
-  passwordHash?: InputMaybe<Scalars['String']>;
-  phoneNumber?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type UserOrderByWithRelationInput = {
@@ -1219,35 +991,6 @@ export enum UserScalarFieldEnum {
 
 export type UserUpdateOneWithoutCompaniesNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutCompaniesInput>;
-  create?: InputMaybe<UserCreateWithoutCompaniesInput>;
-  delete?: InputMaybe<Scalars['Boolean']>;
-  disconnect?: InputMaybe<Scalars['Boolean']>;
-  update?: InputMaybe<UserUpdateWithoutCompaniesInput>;
-  upsert?: InputMaybe<UserUpsertWithoutCompaniesInput>;
-};
-
-export type UserUpdateWithoutCompaniesInput = {
-  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  passwordHash?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type UserUpsertWithoutCompaniesInput = {
-  create: UserCreateWithoutCompaniesInput;
-  update: UserUpdateWithoutCompaniesInput;
 };
 
 export type UserWhereInput = {

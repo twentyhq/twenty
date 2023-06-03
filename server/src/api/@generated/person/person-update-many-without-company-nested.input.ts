@@ -1,64 +1,49 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { PersonCreateWithoutCompanyInput } from './person-create-without-company.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { PersonCreateOrConnectWithoutCompanyInput } from './person-create-or-connect-without-company.input';
 import { PersonUpsertWithWhereUniqueWithoutCompanyInput } from './person-upsert-with-where-unique-without-company.input';
 import { PersonCreateManyCompanyInputEnvelope } from './person-create-many-company-input-envelope.input';
 import { PersonWhereUniqueInput } from './person-where-unique.input';
+import { Type } from 'class-transformer';
 import { PersonUpdateWithWhereUniqueWithoutCompanyInput } from './person-update-with-where-unique-without-company.input';
 import { PersonUpdateManyWithWhereWithoutCompanyInput } from './person-update-many-with-where-without-company.input';
 import { PersonScalarWhereInput } from './person-scalar-where.input';
 
 @InputType()
 export class PersonUpdateManyWithoutCompanyNestedInput {
-  @Field(() => [PersonCreateWithoutCompanyInput], { nullable: true })
-  @Type(() => PersonCreateWithoutCompanyInput)
+  @HideField()
   create?: Array<PersonCreateWithoutCompanyInput>;
 
-  @Field(() => [PersonCreateOrConnectWithoutCompanyInput], { nullable: true })
-  @Type(() => PersonCreateOrConnectWithoutCompanyInput)
+  @HideField()
   connectOrCreate?: Array<PersonCreateOrConnectWithoutCompanyInput>;
 
-  @Field(() => [PersonUpsertWithWhereUniqueWithoutCompanyInput], {
-    nullable: true,
-  })
-  @Type(() => PersonUpsertWithWhereUniqueWithoutCompanyInput)
+  @HideField()
   upsert?: Array<PersonUpsertWithWhereUniqueWithoutCompanyInput>;
 
-  @Field(() => PersonCreateManyCompanyInputEnvelope, { nullable: true })
-  @Type(() => PersonCreateManyCompanyInputEnvelope)
+  @HideField()
   createMany?: PersonCreateManyCompanyInputEnvelope;
 
-  @Field(() => [PersonWhereUniqueInput], { nullable: true })
-  @Type(() => PersonWhereUniqueInput)
+  @HideField()
   set?: Array<PersonWhereUniqueInput>;
 
-  @Field(() => [PersonWhereUniqueInput], { nullable: true })
-  @Type(() => PersonWhereUniqueInput)
+  @HideField()
   disconnect?: Array<PersonWhereUniqueInput>;
 
-  @Field(() => [PersonWhereUniqueInput], { nullable: true })
-  @Type(() => PersonWhereUniqueInput)
+  @HideField()
   delete?: Array<PersonWhereUniqueInput>;
 
   @Field(() => [PersonWhereUniqueInput], { nullable: true })
   @Type(() => PersonWhereUniqueInput)
   connect?: Array<PersonWhereUniqueInput>;
 
-  @Field(() => [PersonUpdateWithWhereUniqueWithoutCompanyInput], {
-    nullable: true,
-  })
-  @Type(() => PersonUpdateWithWhereUniqueWithoutCompanyInput)
+  @HideField()
   update?: Array<PersonUpdateWithWhereUniqueWithoutCompanyInput>;
 
-  @Field(() => [PersonUpdateManyWithWhereWithoutCompanyInput], {
-    nullable: true,
-  })
-  @Type(() => PersonUpdateManyWithWhereWithoutCompanyInput)
+  @HideField()
   updateMany?: Array<PersonUpdateManyWithWhereWithoutCompanyInput>;
 
-  @Field(() => [PersonScalarWhereInput], { nullable: true })
-  @Type(() => PersonScalarWhereInput)
+  @HideField()
   deleteMany?: Array<PersonScalarWhereInput>;
 }
