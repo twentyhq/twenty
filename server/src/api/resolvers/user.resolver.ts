@@ -1,23 +1,20 @@
 import { Resolver, Query, Args } from '@nestjs/graphql';
 import { PrismaService } from 'src/database/prisma.service';
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
+import { UseFilters, UseGuards } from '@nestjs/common';
 
 import { User } from '../@generated/user/user.model';
 import { FindManyUserArgs } from '../@generated/user/find-many-user.args';
 import { Workspace } from '@prisma/client';
 import { AuthWorkspace } from './decorators/auth-workspace.decorator';
-import { ArgsService } from './services/args.service';
-import { CheckWorkspaceOwnership } from 'src/auth/guards/check-workspace-ownership.guard';
+import { ExceptionFilter } from './exception-filters/exception.filter';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 
-@UseGuards(JwtAuthGuard, CheckWorkspaceOwnership)
+@UseGuards(JwtAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly argsService: ArgsService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
+  @UseFilters(ExceptionFilter)
   @Query(() => [User], {
     nullable: false,
   })

@@ -26,7 +26,7 @@ export class GoogleAuthController {
   @Get('redirect')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
-    const user = await this.authService.upsertUser(req.user);
+    const user = await this.authService.createUser(req.user);
 
     if (!user) {
       throw new HttpException(

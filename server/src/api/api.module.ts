@@ -22,6 +22,7 @@ import { CompanyRelationsResolver } from './resolvers/relations/company-relation
 import { CommentThreadRelationsResolver } from './resolvers/relations/comment-thread-relations.resolver';
 import { PipelineRelationsResolver } from './resolvers/relations/pipeline-relations.resolver';
 import { PipelineStageRelationsResolver } from './resolvers/relations/pipeline-stage-relations.resolver';
+import { GraphQLError } from 'graphql';
 
 @Module({
   imports: [
@@ -29,6 +30,10 @@ import { PipelineStageRelationsResolver } from './resolvers/relations/pipeline-s
       context: ({ req }) => ({ req }),
       driver: ApolloDriver,
       autoSchemaFile: true,
+      formatError: (error: GraphQLError) => {
+        error.extensions.stacktrace = undefined;
+        return error;
+      },
     }),
     AuthModule,
     PrismaModule,

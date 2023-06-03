@@ -1,37 +1,34 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { UserCreateWithoutCompaniesInput } from './user-create-without-companies.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { UserCreateOrConnectWithoutCompaniesInput } from './user-create-or-connect-without-companies.input';
 import { UserUpsertWithoutCompaniesInput } from './user-upsert-without-companies.input';
 import { UserWhereUniqueInput } from './user-where-unique.input';
+import { Type } from 'class-transformer';
 import { UserUpdateWithoutCompaniesInput } from './user-update-without-companies.input';
 
 @InputType()
 export class UserUpdateOneWithoutCompaniesNestedInput {
-  @Field(() => UserCreateWithoutCompaniesInput, { nullable: true })
-  @Type(() => UserCreateWithoutCompaniesInput)
+  @HideField()
   create?: UserCreateWithoutCompaniesInput;
 
-  @Field(() => UserCreateOrConnectWithoutCompaniesInput, { nullable: true })
-  @Type(() => UserCreateOrConnectWithoutCompaniesInput)
+  @HideField()
   connectOrCreate?: UserCreateOrConnectWithoutCompaniesInput;
 
-  @Field(() => UserUpsertWithoutCompaniesInput, { nullable: true })
-  @Type(() => UserUpsertWithoutCompaniesInput)
+  @HideField()
   upsert?: UserUpsertWithoutCompaniesInput;
 
-  @Field(() => Boolean, { nullable: true })
+  @HideField()
   disconnect?: boolean;
 
-  @Field(() => Boolean, { nullable: true })
+  @HideField()
   delete?: boolean;
 
   @Field(() => UserWhereUniqueInput, { nullable: true })
   @Type(() => UserWhereUniqueInput)
   connect?: UserWhereUniqueInput;
 
-  @Field(() => UserUpdateWithoutCompaniesInput, { nullable: true })
-  @Type(() => UserUpdateWithoutCompaniesInput)
+  @HideField()
   update?: UserUpdateWithoutCompaniesInput;
 }

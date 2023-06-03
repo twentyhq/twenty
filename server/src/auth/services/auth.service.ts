@@ -2,11 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../strategies/jwt.auth.strategy';
 import { ConfigService } from '@nestjs/config';
-import { UserRepository } from 'src/entities/user/user.repository';
-import { WorkspaceRepository } from 'src/entities/workspace/workspace.repository';
-import { RefreshTokenRepository } from 'src/entities/refresh-token/refresh-token.repository';
 import { v4 } from 'uuid';
 import { RefreshToken, User } from '@prisma/client';
+import { PrismaService } from 'src/database/prisma.service';
 
 export type UserPayload = {
   firstName: string;
@@ -19,12 +17,10 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
-    private userRepository: UserRepository,
-    private workspaceRepository: WorkspaceRepository,
-    private refreshTokenRepository: RefreshTokenRepository,
+    private prismaService: PrismaService,
   ) {}
 
-  async upsertUser(rawUser: UserPayload) {
+  async createUser(rawUser: UserPayload) {
     if (!rawUser.email) {
       throw new HttpException(
         { reason: 'Email is missing' },
@@ -48,7 +44,7 @@ export class AuthService {
       );
     }
 
-    const workspace = await this.workspaceRepository.findUnique({
+    const workspace = await this.prismaService.workspace.findUnique({
       where: { domainName: emailDomain },
     });
 
@@ -59,50 +55,66 @@ export class AuthService {
       );
     }
 
-    const user = await this.userRepository.upsertUser({
-      data: {
-        id: v4(),
+    const user = await this.prismaService.user.upsert({
+      where: {
         email: rawUser.email,
+      },
+      create: {
+        id: v4(),
         displayName: rawUser.firstName + ' ' + rawUser.lastName,
+        email: rawUser.email,
         locale: 'en',
       },
-      workspaceId: workspace.id,
+      update: {},
     });
 
-    await this.userRepository.upsertWorkspaceMember({
-      data: {
+    await this.prismaService.workspaceMember.upsert({
+      where: {
+        userId: user.id,
+      },
+      create: {
         id: v4(),
         userId: user.id,
         workspaceId: workspace.id,
       },
+      update: {},
     });
 
     return user;
   }
 
   async generateAccessToken(refreshToken: string): Promise<string | undefined> {
-    const refreshTokenObject = await this.refreshTokenRepository.findFirst({
+    const refreshTokenObject = await this.prismaService.refreshToken.findFirst({
       where: { refreshToken: refreshToken },
     });
 
     if (!refreshTokenObject) {
-      return;
+      throw new HttpException(
+        { reason: 'Invalid Refresh token' },
+        HttpStatus.FORBIDDEN,
+      );
     }
 
-    const user = await this.userRepository.findUnique({
+    const user = await this.prismaService.user.findUnique({
       where: { id: refreshTokenObject.userId },
     });
 
     if (!user) {
-      return;
+      throw new HttpException(
+        { reason: 'Refresh token is not associated to a valid user' },
+        HttpStatus.FORBIDDEN,
+      );
     }
 
-    const workspace = await this.workspaceRepository.findFirst({
+    const workspace = await this.prismaService.workspace.findFirst({
       where: { workspaceMember: { some: { userId: user.id } } },
     });
 
     if (!workspace) {
-      return;
+      throw new HttpException(
+        { reason: 'Refresh token is not associated to a valid workspace' },
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     const payload: JwtPayload = {
@@ -113,12 +125,16 @@ export class AuthService {
   }
 
   async registerRefreshToken(user: User): Promise<RefreshToken> {
-    const refreshToken = await this.refreshTokenRepository.upsertRefreshToken({
-      data: {
+    const refreshToken = await this.prismaService.refreshToken.upsert({
+      where: {
+        id: user.id,
+      },
+      create: {
         id: v4(),
         userId: user.id,
         refreshToken: v4(),
       },
+      update: {},
     });
 
     return refreshToken;

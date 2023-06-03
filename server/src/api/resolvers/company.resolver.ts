@@ -11,10 +11,12 @@ import { AffectedRows } from '../@generated/prisma/affected-rows.output';
 import { DeleteManyCompanyArgs } from '../@generated/company/delete-many-company.args';
 import { Workspace } from '@prisma/client';
 import { ArgsService } from './services/args.service';
-import { CheckWorkspaceOwnership } from 'src/auth/guards/check-workspace-ownership.guard';
 import { Prisma } from '@prisma/client';
+import { UpdateOneGuard } from './guards/update-one.guard';
+import { DeleteManyGuard } from './guards/delete-many.guard';
+import { CreateOneGuard } from './guards/create-one.guard';
 
-@UseGuards(JwtAuthGuard, CheckWorkspaceOwnership)
+@UseGuards(JwtAuthGuard)
 @Resolver(() => Company)
 export class CompanyResolver {
   constructor(
@@ -35,6 +37,7 @@ export class CompanyResolver {
     return this.prismaService.company.findMany(preparedArgs);
   }
 
+  @UseGuards(UpdateOneGuard)
   @Mutation(() => Company, {
     nullable: true,
   })
@@ -50,6 +53,7 @@ export class CompanyResolver {
     } satisfies UpdateOneCompanyArgs as Prisma.CompanyUpdateArgs);
   }
 
+  @UseGuards(DeleteManyGuard)
   @Mutation(() => AffectedRows, {
     nullable: false,
   })
@@ -61,6 +65,7 @@ export class CompanyResolver {
     });
   }
 
+  @UseGuards(CreateOneGuard)
   @Mutation(() => Company, {
     nullable: false,
   })

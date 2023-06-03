@@ -11,10 +11,12 @@ import { DeleteManyPersonArgs } from '../@generated/person/delete-many-person.ar
 import { Workspace } from '../@generated/workspace/workspace.model';
 import { AuthWorkspace } from './decorators/auth-workspace.decorator';
 import { ArgsService } from './services/args.service';
-import { CheckWorkspaceOwnership } from 'src/auth/guards/check-workspace-ownership.guard';
 import { Prisma } from '@prisma/client';
+import { UpdateOneGuard } from './guards/update-one.guard';
+import { DeleteManyGuard } from './guards/delete-many.guard';
+import { CreateOneGuard } from './guards/create-one.guard';
 
-@UseGuards(JwtAuthGuard, CheckWorkspaceOwnership)
+@UseGuards(JwtAuthGuard)
 @Resolver(() => Person)
 export class PersonResolver {
   constructor(
@@ -39,6 +41,7 @@ export class PersonResolver {
     });
   }
 
+  @UseGuards(UpdateOneGuard)
   @Mutation(() => Person, {
     nullable: true,
   })
@@ -54,6 +57,7 @@ export class PersonResolver {
     } satisfies UpdateOnePersonArgs as Prisma.PersonUpdateArgs);
   }
 
+  @UseGuards(DeleteManyGuard)
   @Mutation(() => AffectedRows, {
     nullable: false,
   })
@@ -65,6 +69,7 @@ export class PersonResolver {
     });
   }
 
+  @UseGuards(CreateOneGuard)
   @Mutation(() => Person, {
     nullable: false,
   })

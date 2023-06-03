@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { AuthService } from './services/auth.service';
 
 @Controller('auth/token')
-export class AuthController {
+export class TokenController {
   constructor(private authService: AuthService) {}
 
   @Post()
