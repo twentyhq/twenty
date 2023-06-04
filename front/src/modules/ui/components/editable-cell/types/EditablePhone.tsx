@@ -2,9 +2,10 @@ import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 
-import Link from '../link/Link';
+import { textInputStyle } from '@/ui/layout/styles/themes';
 
-import { EditableCell } from './EditableCell';
+import Link from '../../link/Link';
+import { EditableCell } from '../EditableCell';
 
 type OwnProps = {
   placeholder?: string;
@@ -19,13 +20,8 @@ type StyledEditModeProps = {
 // TODO: refactor
 const StyledEditInplaceInput = styled.input<StyledEditModeProps>`
   width: 100%;
-  border: none;
-  outline: none;
-
-  &::placeholder {
-    font-weight: bold;
-    color: ${(props) => props.theme.text20};
-  }
+  margin: 0px ${(props) => props.theme.spacing(2)};
+  ${textInputStyle}
 `;
 
 export function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
