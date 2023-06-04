@@ -1,9 +1,9 @@
 import { ChangeEvent, ReactElement, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '../../layout/styles/themes';
+import { textInputStyle } from '@/ui/layout/styles/themes';
 
-import { EditableCell } from './EditableCell';
+import { EditableCell } from '../EditableCell';
 
 type OwnProps = {
   firstValue: string;
@@ -28,6 +28,7 @@ const StyledContainer = styled.div`
 const StyledEditInplaceInput = styled.input`
   width: 45%;
   height: 18px;
+  margin: 0px ${(props) => props.theme.spacing(2)};
 
   ${textInputStyle}
 `;

@@ -10,7 +10,7 @@ import {
 } from '@/companies/interfaces/company.interface';
 import { SearchConfigType } from '@/search/interfaces/interface';
 import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
-import { EditableRelation } from '@/ui/components/editable-cell/EditableRelation';
+import { EditableRelation } from '@/ui/components/editable-cell/types/EditableRelation';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   QueryMode,

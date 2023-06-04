@@ -1,5 +1,5 @@
 import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
-import EditableChip from '@/ui/components/editable-cell/EditableChip';
+import EditableChip from '@/ui/components/editable-cell/types/EditableChip';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 
 import { Company } from '../interfaces/company.interface';

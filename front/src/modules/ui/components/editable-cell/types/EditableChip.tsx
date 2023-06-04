@@ -2,10 +2,9 @@ import { ChangeEvent, ComponentType, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { CellCommentChip } from '@/comments/components/comments/CellCommentChip';
+import { textInputStyle } from '@/ui/layout/styles/themes';
 
-import { textInputStyle } from '../../layout/styles/themes';
-
-import { EditableCell } from './EditableCell';
+import { EditableCell } from '../EditableCell';
 
 export type EditableChipProps = {
   placeholder?: string;
@@ -30,11 +29,6 @@ const StyledInplaceInput = styled.input`
 const StyledInplaceShow = styled.div`
   display: flex;
   width: 100%;
-
-  &::placeholder {
-    font-weight: 'bold';
-    color: props.theme.text20;
-  }
 `;
 
 function EditableChip({

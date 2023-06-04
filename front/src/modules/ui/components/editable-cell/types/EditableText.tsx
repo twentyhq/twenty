@@ -1,9 +1,9 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '../../layout/styles/themes';
+import { textInputStyle } from '@/ui/layout/styles/themes';
 
-import { EditableCell } from './EditableCell';
+import { EditableCell } from '../EditableCell';
 
 type OwnProps = {
   placeholder?: string;
@@ -19,6 +19,7 @@ type StyledEditModeProps = {
 // TODO: refactor
 const StyledInplaceInput = styled.input<StyledEditModeProps>`
   width: 100%;
+  margin: 0px ${(props) => props.theme.spacing(2)};
   ${textInputStyle}
 `;
 

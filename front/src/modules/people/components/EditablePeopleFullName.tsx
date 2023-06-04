@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { CellCommentChip } from '@/comments/components/comments/CellCommentChip';
-import { EditableDoubleText } from '@/ui/components/editable-cell/EditableDoubleText';
+import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
 
 import { PersonChip } from './PersonChip';
 

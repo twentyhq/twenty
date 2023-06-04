@@ -18,9 +18,9 @@ import {
 } from '@/people/components/PersonChip';
 import { SearchConfigType } from '@/search/interfaces/interface';
 import { SEARCH_USER_QUERY } from '@/search/services/search';
-import { EditableDate } from '@/ui/components/editable-cell/EditableDate';
-import { EditableRelation } from '@/ui/components/editable-cell/EditableRelation';
-import { EditableText } from '@/ui/components/editable-cell/EditableText';
+import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
+import { EditableRelation } from '@/ui/components/editable-cell/types/EditableRelation';
+import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { CheckboxCell } from '@/ui/components/table/CheckboxCell';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import { SelectAllCheckbox } from '@/ui/components/table/SelectAllCheckbox';

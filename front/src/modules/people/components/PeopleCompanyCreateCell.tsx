@@ -1,8 +1,6 @@
 import { useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-import { CellBaseContainer } from '@/ui/components/editable-cell/CellBaseContainer';
-import { CellEditModeContainer } from '@/ui/components/editable-cell/CellEditModeContainer';
 import { DoubleTextInput } from '@/ui/components/inputs/DoubleTextInput';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 
@@ -43,16 +41,12 @@ export function PeopleCompanyCreateCell({
   }
 
   return (
-    <CellBaseContainer ref={containerRef}>
-      <CellEditModeContainer editModeVerticalPosition="over">
-        <DoubleTextInput
-          leftValue={companyDomainName}
-          rightValue={companyName}
-          leftValuePlaceholder="URL"
-          rightValuePlaceholder="Name"
-          onChange={handleDoubleTextChange}
-        />
-      </CellEditModeContainer>
-    </CellBaseContainer>
+    <DoubleTextInput
+      leftValue={companyDomainName}
+      rightValue={companyName}
+      leftValuePlaceholder="URL"
+      rightValuePlaceholder="Name"
+      onChange={handleDoubleTextChange}
+    />
   );
 }

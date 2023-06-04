@@ -1,11 +1,22 @@
 import { ReactElement } from 'react';
+import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { isSomeInputInEditModeState } from '../../tables/states/isSomeInputInEditModeState';
 
-import { CellBaseContainer } from './CellBaseContainer';
-import { CellNormalModeContainer } from './CellNormalModeContainer';
+import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
+
+export const CellBaseContainer = styled.div`
+  position: relative;
+  box-sizing: border-box;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  user-select: none;
+`;
 
 type OwnProps = {
   editModeContent: ReactElement;
@@ -42,16 +53,15 @@ export function EditableCell({
     <CellBaseContainer onClick={handleOnClick}>
       {isEditMode ? (
         <EditableCellEditMode
-          editModeContent={editModeContent}
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
           isEditMode={isEditMode}
           onOutsideClick={onOutsideClick}
-        />
+        >
+          {editModeContent}
+        </EditableCellEditMode>
       ) : (
-        <CellNormalModeContainer>
-          <>{nonEditModeContent}</>
-        </CellNormalModeContainer>
+        <EditableCellDisplayMode>{nonEditModeContent}</EditableCellDisplayMode>
       )}
     </CellBaseContainer>
   );

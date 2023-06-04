@@ -3,9 +3,8 @@ import styled from '@emotion/styled';
 
 import { humanReadableDate } from '@/utils/utils';
 
-import DatePicker from '../form/DatePicker';
-
-import { EditableCell } from './EditableCell';
+import DatePicker from '../../form/DatePicker';
+import { EditableCell } from '../EditableCell';
 
 export type EditableDateProps = {
   value: Date;
@@ -16,6 +15,7 @@ export type EditableDateProps = {
 const StyledContainer = styled.div`
   display: flex;
   align-items: center;
+  margin: 0px ${(props) => props.theme.spacing(2)};
 `;
 
 export type StyledCalendarContainerProps = {
@@ -78,9 +78,7 @@ export function EditableDate({
         </StyledContainer>
       }
       nonEditModeContent={
-        <StyledContainer>
-          <div>{inputValue && humanReadableDate(inputValue)}</div>
-        </StyledContainer>
+        <div>{inputValue && humanReadableDate(inputValue)}</div>
       }
     ></EditableCell>
   );

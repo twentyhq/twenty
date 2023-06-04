@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { CellBaseContainer } from '@/ui/components/editable-cell/CellBaseContainer';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { CellCommentChip } from '../CellCommentChip';
@@ -46,10 +45,8 @@ export const TooManyComments: Story = {
 export const InCellDefault: Story = {
   render: getRenderWrapperForComponent(
     <TestCellContainer>
-      <CellBaseContainer>
-        <StyledFakeCellText>Fake short text</StyledFakeCellText>
-        <CellCommentChip count={12} />
-      </CellBaseContainer>
+      <StyledFakeCellText>Fake short text</StyledFakeCellText>
+      <CellCommentChip count={12} />
     </TestCellContainer>,
   ),
 };
@@ -57,12 +54,10 @@ export const InCellDefault: Story = {
 export const InCellOverlappingBlur: Story = {
   render: getRenderWrapperForComponent(
     <TestCellContainer>
-      <CellBaseContainer>
-        <StyledFakeCellText>
-          Fake long text to demonstrate blur effect
-        </StyledFakeCellText>
-        <CellCommentChip count={12} />
-      </CellBaseContainer>
+      <StyledFakeCellText>
+        Fake long text to demonstrate blur effect
+      </StyledFakeCellText>
+      <CellCommentChip count={12} />
     </TestCellContainer>,
   ),
 };

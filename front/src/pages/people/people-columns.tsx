@@ -13,9 +13,9 @@ import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullNa
 import { PeopleCompanyCell } from '@/people/components/PeopleCompanyCell';
 import { Person } from '@/people/interfaces/person.interface';
 import { updatePerson } from '@/people/services';
-import { EditableDate } from '@/ui/components/editable-cell/EditableDate';
-import { EditablePhone } from '@/ui/components/editable-cell/EditablePhone';
-import { EditableText } from '@/ui/components/editable-cell/EditableText';
+import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
+import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone';
+import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { CheckboxCell } from '@/ui/components/table/CheckboxCell';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import { SelectAllCheckbox } from '@/ui/components/table/SelectAllCheckbox';

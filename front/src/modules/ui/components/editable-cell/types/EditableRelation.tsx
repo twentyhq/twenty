@@ -5,22 +5,19 @@ import { useRecoilState } from 'recoil';
 
 import { SearchConfigType } from '@/search/interfaces/interface';
 import { useSearch } from '@/search/services/search';
+import { textInputStyle } from '@/ui/layout/styles/themes';
+import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
 import { AnyEntity } from '@/utils/interfaces/generic.interface';
 import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 
-import { textInputStyle } from '../../layout/styles/themes';
-import { isSomeInputInEditModeState } from '../../tables/states/isSomeInputInEditModeState';
+import { EditableCell } from '../EditableCell';
+import { HoverableMenuItem } from '../HoverableMenuItem';
 
-import { CellNormalModeContainer } from './CellNormalModeContainer';
-import { EditableCellMenu } from './EditableCellMenu';
 import { EditableRelationCreateButton } from './EditableRelationCreateButton';
-import { HoverableMenuItem } from './HoverableMenuItem';
 
 const StyledEditModeContainer = styled.div`
   width: 200px;
-  // margin-left: calc(-1 * ${(props) => props.theme.spacing(2)});
-  // margin-right: calc(-1 * ${(props) => props.theme.spacing(2)});
 `;
 
 const StyledEditModeSelectedContainer = styled.div`
@@ -144,7 +141,7 @@ export function EditableRelation<
 
   return (
     <>
-      <EditableCellMenu
+      <EditableCell
         editModeHorizontalAlign={editModeHorizontalAlign}
         isEditMode={isEditMode}
         onOutsideClick={() => setIsEditMode(false)}
@@ -207,13 +204,13 @@ export function EditableRelation<
           </StyledEditModeContainer>
         }
         nonEditModeContent={
-          <CellNormalModeContainer>
+          <>
             {relation ? (
               <ChipComponent {...chipComponentPropsMapper(relation)} />
             ) : (
               <></>
             )}
-          </CellNormalModeContainer>
+          </>
         }
       />
     </>
