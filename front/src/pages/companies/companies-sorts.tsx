@@ -5,8 +5,9 @@ import {
   TbMapPin,
   TbSum,
 } from 'react-icons/tb';
-import { CompanyOrderByWithRelationInput as Companies_Order_By } from '../../generated/graphql';
-import { SortType } from '../../interfaces/sorts/interface';
+
+import { SortType } from '@/filters-and-sorts/interfaces/sorts/interface';
+import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
 
 export const availableSorts = [
   {

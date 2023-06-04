@@ -1,14 +1,15 @@
 import {
   ApolloClient,
-  InMemoryCache,
-  Observable,
   createHttpLink,
   from,
+  InMemoryCache,
+  Observable,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { RestLink } from 'apollo-link-rest';
 import { onError } from '@apollo/client/link/error';
-import { refreshAccessToken } from './services/auth/AuthService';
+import { RestLink } from 'apollo-link-rest';
+
+import { refreshAccessToken } from './modules/auth/services/AuthService';
 
 const apiLink = createHttpLink({
   uri: `${process.env.REACT_APP_API_URL}`,

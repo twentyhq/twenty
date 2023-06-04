@@ -1,4 +1,4 @@
-import { GraphqlQueryCompany } from '../../interfaces/entities/company.interface';
+import { GraphqlQueryCompany } from '@/companies/interfaces/company.interface';
 
 export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
   {

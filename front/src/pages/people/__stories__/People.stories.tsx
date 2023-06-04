@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import People from '../People';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+
+import { People } from '../People';
 
 import { render } from './shared';
-import { graphqlMocks } from '../../../testing/graphqlMocks';
 
 const meta: Meta<typeof People> = {
   title: 'Pages/People',

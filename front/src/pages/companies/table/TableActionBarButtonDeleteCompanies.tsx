@@ -1,9 +1,10 @@
 import { TbTrash } from 'react-icons/tb';
-import { EntityTableActionBarButton } from '../../../components/table/action-bar/EntityTableActionBarButton';
-import { useDeleteCompaniesMutation } from '../../../generated/graphql';
-import { selectedRowIdsState } from '../../../modules/ui/tables/states/selectedRowIdsState';
 import { useRecoilValue } from 'recoil';
-import { useResetTableRowSelection } from '../../../modules/ui/tables/hooks/useResetTableRowSelection';
+
+import { EntityTableActionBarButton } from '@/ui/components/table/action-bar/EntityTableActionBarButton';
+import { useResetTableRowSelection } from '@/ui/tables/hooks/useResetTableRowSelection';
+import { selectedRowIdsState } from '@/ui/tables/states/selectedRowIdsState';
+import { useDeleteCompaniesMutation } from '~/generated/graphql';
 
 export function TableActionBarButtonDeleteCompanies() {
   const selectedRowIds = useRecoilValue(selectedRowIdsState);

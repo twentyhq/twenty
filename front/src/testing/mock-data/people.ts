@@ -1,4 +1,4 @@
-import { GraphqlQueryPerson } from '../../interfaces/entities/person.interface';
+import { GraphqlQueryPerson } from '@/people/interfaces/person.interface';
 
 export const mockedPeopleData = [
   {

@@ -1,21 +1,4 @@
 import { useMemo } from 'react';
-import { CellContext, createColumnHelper } from '@tanstack/react-table';
-
-import { SEARCH_USER_QUERY } from '../../services/api/search/search';
-import { SearchConfigType } from '../../interfaces/search/interface';
-
-import { Company } from '../../interfaces/entities/company.interface';
-import { updateCompany } from '../../services/api/companies';
-import { User, mapToUser } from '../../interfaces/entities/user.interface';
-
-import ColumnHead from '../../components/table/ColumnHead';
-import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
-import EditableDate from '../../components/editable-cell/EditableDate';
-import EditableRelation from '../../components/editable-cell/EditableRelation';
-import EditableText from '../../components/editable-cell/EditableText';
-import PersonChip, {
-  PersonChipPropsType,
-} from '../../components/chips/PersonChip';
 import {
   TbBuilding,
   TbCalendar,
@@ -24,9 +7,25 @@ import {
   TbSum,
   TbUser,
 } from 'react-icons/tb';
-import { QueryMode } from '../../generated/graphql';
-import { CheckboxCell } from '../../components/table/CheckboxCell';
-import { CompanyEditableNameChipCell } from '../../components/companies/CompanyEditableNameCell';
+import { CellContext, createColumnHelper } from '@tanstack/react-table';
+
+import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEditableNameCell';
+import { Company } from '@/companies/interfaces/company.interface';
+import { updateCompany } from '@/companies/services';
+import {
+  PersonChip,
+  PersonChipPropsType,
+} from '@/people/components/PersonChip';
+import { SearchConfigType } from '@/search/interfaces/interface';
+import { SEARCH_USER_QUERY } from '@/search/services/search';
+import { EditableDate } from '@/ui/components/editable-cell/EditableDate';
+import { EditableRelation } from '@/ui/components/editable-cell/EditableRelation';
+import { EditableText } from '@/ui/components/editable-cell/EditableText';
+import { CheckboxCell } from '@/ui/components/table/CheckboxCell';
+import { ColumnHead } from '@/ui/components/table/ColumnHead';
+import { SelectAllCheckbox } from '@/ui/components/table/SelectAllCheckbox';
+import { mapToUser, User } from '@/users/interfaces/user.interface';
+import { QueryMode } from '~/generated/graphql';
 
 const columnHelper = createColumnHelper<Company>();
 

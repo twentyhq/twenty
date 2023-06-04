@@ -1,11 +1,13 @@
 import { graphql } from 'msw';
-import { filterAndSortData, updateOneFromData } from './mock-data';
-import { GraphqlQueryCompany } from '../interfaces/entities/company.interface';
+
+import { GraphqlQueryCompany } from '@/companies/interfaces/company.interface';
+import { GraphqlQueryPerson } from '@/people/interfaces/person.interface';
+import { GraphqlQueryUser } from '@/users/interfaces/user.interface';
+
 import { mockedCompaniesData } from './mock-data/companies';
-import { GraphqlQueryUser } from '../interfaces/entities/user.interface';
-import { mockedUsersData } from './mock-data/users';
 import { mockedPeopleData } from './mock-data/people';
-import { GraphqlQueryPerson } from '../interfaces/entities/person.interface';
+import { mockedUsersData } from './mock-data/users';
+import { filterAndSortData, updateOneFromData } from './mock-data';
 
 export const graphqlMocks = [
   graphql.query('GetCompanies', (req, res, ctx) => {

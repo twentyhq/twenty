@@ -2,10 +2,12 @@ import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import People from '../People';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+
+import { People } from '../People';
+
 import { Story } from './People.stories';
 import { render } from './shared';
-import { graphqlMocks } from '../../../testing/graphqlMocks';
 
 const meta: Meta<typeof People> = {
   title: 'Pages/People/SortBy',

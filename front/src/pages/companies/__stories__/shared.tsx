@@ -1,19 +1,19 @@
-import { graphql } from 'msw';
-import { RecoilRoot } from 'recoil';
-import { ThemeProvider } from '@emotion/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
+import { ThemeProvider } from '@emotion/react';
+import { graphql } from 'msw';
+import { RecoilRoot } from 'recoil';
 
-import { filterAndSortData } from '../../../testing/mock-data';
-import { mockedCompaniesData } from '../../../testing/mock-data/companies';
-import { GraphqlQueryCompany } from '../../../interfaces/entities/company.interface';
+import { GraphqlQueryCompany } from '@/companies/interfaces/company.interface';
+import { lightTheme } from '@/ui/layout/styles/themes';
+import { GraphqlQueryUser } from '@/users/interfaces/user.interface';
+import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
+import { filterAndSortData } from '~/testing/mock-data';
+import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import { mockedUsersData } from '~/testing/mock-data/users';
+import { mockedClient } from '~/testing/mockedClient';
 
-import { lightTheme } from '../../../layout/styles/themes';
-import { FullHeightStorybookLayout } from '../../../testing/FullHeightStorybookLayout';
-import { mockedClient } from '../../../testing/mockedClient';
-import Companies from '../Companies';
-import { GraphqlQueryUser } from '../../../interfaces/entities/user.interface';
-import { mockedUsersData } from '../../../testing/mock-data/users';
+import { Companies } from '../Companies';
 
 export const mocks = [
   graphql.query('GetCompanies', (req, res, ctx) => {

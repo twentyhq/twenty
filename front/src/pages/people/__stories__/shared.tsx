@@ -1,12 +1,13 @@
-import { RecoilRoot } from 'recoil';
-import { ThemeProvider } from '@emotion/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
+import { ThemeProvider } from '@emotion/react';
+import { RecoilRoot } from 'recoil';
 
-import { lightTheme } from '../../../layout/styles/themes';
-import { FullHeightStorybookLayout } from '../../../testing/FullHeightStorybookLayout';
-import { mockedClient } from '../../../testing/mockedClient';
-import People from '../People';
+import { lightTheme } from '@/ui/layout/styles/themes';
+import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
+import { mockedClient } from '~/testing/mockedClient';
+
+import { People } from '../People';
 
 export function render() {
   return (

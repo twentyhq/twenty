@@ -1,9 +1,4 @@
 import {
-  SortOrder as Order_By,
-  PersonOrderByWithRelationInput as People_Order_By,
-} from '../../generated/graphql';
-import { SortType } from '../../interfaces/sorts/interface';
-import {
   TbBuilding,
   TbCalendar,
   TbMail,
@@ -11,6 +6,12 @@ import {
   TbPhone,
   TbUser,
 } from 'react-icons/tb';
+
+import { SortType } from '@/filters-and-sorts/interfaces/sorts/interface';
+import {
+  PersonOrderByWithRelationInput as People_Order_By,
+  SortOrder as Order_By,
+} from '~/generated/graphql';
 
 export const availableSorts = [
   {

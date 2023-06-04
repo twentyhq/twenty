@@ -2,7 +2,8 @@ import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import Companies from '../Companies';
+import { Companies } from '../Companies';
+
 import { Story } from './Companies.stories';
 import { mocks, render } from './shared';
 

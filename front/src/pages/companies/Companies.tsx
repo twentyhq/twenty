@@ -1,41 +1,42 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { FaList } from 'react-icons/fa';
+import { TbBuilding } from 'react-icons/tb';
 import styled from '@emotion/styled';
-import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 import { v4 as uuidv4 } from 'uuid';
+
+import {
+  Company,
+  mapToCompany,
+} from '@/companies/interfaces/company.interface';
 import {
   CompaniesSelectedSortType,
   defaultOrderBy,
   insertCompany,
   useCompaniesQuery,
-} from '../../services/api/companies';
-import { EntityTable } from '../../components/table/EntityTable';
-import {
-  Company,
-  mapToCompany,
-} from '../../interfaces/entities/company.interface';
-
+} from '@/companies/services';
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
-} from '../../components/table/table-header/helpers';
-import { CompanyOrderByWithRelationInput as Companies_Order_By } from '../../generated/graphql';
-import { SelectedFilterType } from '../../interfaces/filters/interface';
-import { BoolExpType } from '../../interfaces/entities/generic.interface';
-import { useCompaniesColumns } from './companies-columns';
-import { availableSorts } from './companies-sorts';
-import { availableFilters } from './companies-filters';
-import { TbBuilding } from 'react-icons/tb';
-import { EntityTableActionBar } from '../../components/table/action-bar/EntityTableActionBar';
+} from '@/filters-and-sorts/helpers';
+import { SelectedFilterType } from '@/filters-and-sorts/interfaces/filters/interface';
+import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
+import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
+import { EntityTable } from '@/ui/components/table/EntityTable';
+import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
+import { BoolExpType } from '@/utils/interfaces/generic.interface';
+import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
+
 import { TableActionBarButtonDeleteCompanies } from './table/TableActionBarButtonDeleteCompanies';
-import { TableActionBarButtonToggleComments } from '../../components/table/action-bar/TableActionBarButtonOpenComments';
+import { useCompaniesColumns } from './companies-columns';
+import { availableFilters } from './companies-filters';
+import { availableSorts } from './companies-sorts';
 
 const StyledCompaniesContainer = styled.div`
   display: flex;
   width: 100%;
 `;
 
-function Companies() {
+export function Companies() {
   const [orderBy, setOrderBy] = useState<Companies_Order_By[]>(defaultOrderBy);
   const [where, setWhere] = useState<BoolExpType<Company>>({});
 
@@ -99,5 +100,3 @@ function Companies() {
     </WithTopBarContainer>
   );
 }
-
-export default Companies;

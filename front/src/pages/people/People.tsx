@@ -1,34 +1,31 @@
 import { useCallback, useState } from 'react';
 import { FaList } from 'react-icons/fa';
-import { v4 as uuidv4 } from 'uuid';
+import { TbUser } from 'react-icons/tb';
 import styled from '@emotion/styled';
+import { v4 as uuidv4 } from 'uuid';
 
-import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
-import { EntityTable } from '../../components/table/EntityTable';
-
-import {
-  Person,
-  mapToPerson,
-} from '../../interfaces/entities/person.interface';
-import {
-  PeopleSelectedSortType,
-  defaultOrderBy,
-  insertPerson,
-  usePeopleQuery,
-} from '../../services/api/people';
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
-} from '../../components/table/table-header/helpers';
-import { SelectedFilterType } from '../../interfaces/filters/interface';
-import { BoolExpType } from '../../interfaces/entities/generic.interface';
-import { usePeopleColumns } from './people-columns';
-import { availableSorts } from './people-sorts';
-import { availableFilters } from './people-filters';
-import { TbUser } from 'react-icons/tb';
-import { EntityTableActionBar } from '../../components/table/action-bar/EntityTableActionBar';
+} from '@/filters-and-sorts/helpers';
+import { SelectedFilterType } from '@/filters-and-sorts/interfaces/filters/interface';
+import { mapToPerson, Person } from '@/people/interfaces/person.interface';
+import {
+  defaultOrderBy,
+  insertPerson,
+  PeopleSelectedSortType,
+  usePeopleQuery,
+} from '@/people/services';
+import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
+import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
+import { EntityTable } from '@/ui/components/table/EntityTable';
+import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
+import { BoolExpType } from '@/utils/interfaces/generic.interface';
+
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
-import { TableActionBarButtonToggleComments } from '../../components/table/action-bar/TableActionBarButtonOpenComments';
+import { usePeopleColumns } from './people-columns';
+import { availableFilters } from './people-filters';
+import { availableSorts } from './people-sorts';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -36,7 +33,7 @@ const StyledPeopleContainer = styled.div`
   height: 100%;
 `;
 
-function People() {
+export function People() {
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
   const [where, setWhere] = useState<BoolExpType<Person>>({});
 
@@ -101,5 +98,3 @@ function People() {
     </WithTopBarContainer>
   );
 }
-
-export default People;

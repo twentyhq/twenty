@@ -27,10 +27,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "PORT=3001 react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "PORT=3001 craco start",
+    "build": "craco build",
+    "test": "craco test",
     "lint": "eslint src --max-warnings=0",
     "storybook": "storybook dev -p 6006 -s ../public",
     "test-storybook": "test-storybook",
@@ -77,6 +76,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "@graphql-codegen/cli": "^3.3.1",
     "@graphql-codegen/typescript": "^3.0.4",
     "@graphql-codegen/typescript-operations": "^3.0.4",
@@ -114,6 +114,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-storybook": "^0.6.11",
     "http-server": "^14.1.1",
     "mock-apollo-client": "^1.2.1",
@@ -123,6 +124,7 @@
     "prop-types": "^15.8.1",
     "react-scripts": "5.0.1",
     "storybook": "^7.0.2",
+    "ts-jest": "^29.1.0",
     "typescript": "^4.9.3",
     "webpack": "^5.75.0"
   },

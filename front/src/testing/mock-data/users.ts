@@ -1,4 +1,4 @@
-import { GraphqlQueryUser } from '../../interfaces/entities/user.interface';
+import { GraphqlQueryUser } from '@/users/interfaces/user.interface';
 
 export const mockedUsersData: Array<GraphqlQueryUser> = [
   {

@@ -1,16 +1,18 @@
 import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
+import { graphql } from 'msw';
 
-import People from '../People';
+import { GraphqlQueryCompany } from '@/companies/interfaces/company.interface';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+import { fetchOneFromData } from '~/testing/mock-data';
+import { mockedPeopleData } from '~/testing/mock-data/people';
+import { sleep } from '~/testing/sleep';
+
+import { People } from '../People';
+
 import { Story } from './People.stories';
 import { render } from './shared';
-import { mockedPeopleData } from '../../../testing/mock-data/people';
-import { sleep } from '../../../testing/sleep';
-import { graphqlMocks } from '../../../testing/graphqlMocks';
-import { graphql } from 'msw';
-import { fetchOneFromData } from '../../../testing/mock-data';
-import { GraphqlQueryCompany } from '../../../interfaces/entities/company.interface';
 
 const meta: Meta<typeof People> = {
   title: 'Pages/People/Input',
