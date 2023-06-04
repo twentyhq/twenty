@@ -1,10 +1,3 @@
-import { Person } from '../../interfaces/entities/person.interface';
-import { SEARCH_COMPANY_QUERY } from '../../services/api/search/search';
-import {
-  Company,
-  mapToCompany,
-} from '../../interfaces/entities/company.interface';
-import { FilterConfigType } from '../../interfaces/filters/interface';
 import {
   TbBuilding,
   TbCalendar,
@@ -13,7 +6,15 @@ import {
   TbPhone,
   TbUser,
 } from 'react-icons/tb';
-import { QueryMode } from '../../generated/graphql';
+
+import {
+  Company,
+  mapToCompany,
+} from '@/companies/interfaces/company.interface';
+import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
+import { Person } from '@/people/interfaces/person.interface';
+import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
+import { QueryMode } from '~/generated/graphql';
 
 export const fullnameFilter = {
   key: 'fullname',

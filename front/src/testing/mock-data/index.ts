@@ -1,14 +1,15 @@
 import { GraphQLVariables } from 'msw';
+
+import { Company } from '@/companies/interfaces/company.interface';
+import { Person } from '@/people/interfaces/person.interface';
+import { User } from '@/users/interfaces/user.interface';
+import { BoolExpType } from '@/utils/interfaces/generic.interface';
 import {
   CompanyOrderByWithRelationInput,
   PersonOrderByWithRelationInput,
   StringFilter,
   UserOrderByWithRelationInput,
-} from '../../generated/graphql';
-import { Company } from '../../interfaces/entities/company.interface';
-import { BoolExpType } from '../../interfaces/entities/generic.interface';
-import { Person } from '../../interfaces/entities/person.interface';
-import { User } from '../../interfaces/entities/user.interface';
+} from '~/generated/graphql';
 
 function filterData<DataT>(
   data: Array<DataT>,

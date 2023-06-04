@@ -1,4 +1,4 @@
-import { CommentableType } from '../../../generated/graphql';
+import { CommentableType } from '~/generated/graphql';
 
 export type CommentableEntity = {
   type: keyof typeof CommentableType;

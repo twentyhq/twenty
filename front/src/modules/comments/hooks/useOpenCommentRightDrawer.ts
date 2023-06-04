@@ -1,7 +1,8 @@
 import { useRecoilState } from 'recoil';
+
 import { useOpenRightDrawer } from '../../ui/layout/right-drawer/hooks/useOpenRightDrawer';
-import { CommentableEntity } from '../types/CommentableEntity';
 import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
+import { CommentableEntity } from '../types/CommentableEntity';
 
 export function useOpenCommentRightDrawer() {
   const openRightDrawer = useOpenRightDrawer();

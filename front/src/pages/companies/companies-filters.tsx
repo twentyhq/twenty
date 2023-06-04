@@ -6,11 +6,12 @@ import {
   TbSum,
   TbUser,
 } from 'react-icons/tb';
-import { Company } from '../../interfaces/entities/company.interface';
-import { FilterConfigType } from '../../interfaces/filters/interface';
-import { SEARCH_USER_QUERY } from '../../services/api/search/search';
-import { User, mapToUser } from '../../interfaces/entities/user.interface';
-import { QueryMode } from '../../generated/graphql';
+
+import { Company } from '@/companies/interfaces/company.interface';
+import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
+import { SEARCH_USER_QUERY } from '@/search/services/search';
+import { mapToUser, User } from '@/users/interfaces/user.interface';
+import { QueryMode } from '~/generated/graphql';
 
 export const nameFilter = {
   key: 'name',

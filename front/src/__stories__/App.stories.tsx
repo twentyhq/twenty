@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { RecoilRoot } from 'recoil';
-import { ThemeProvider } from '@emotion/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
+import { ThemeProvider } from '@emotion/react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { RecoilRoot } from 'recoil';
 
-import App from '../App';
-import { FullHeightStorybookLayout } from '../testing/FullHeightStorybookLayout';
-import { lightTheme } from '../layout/styles/themes';
-import { mockedClient } from '../testing/mockedClient';
-import { graphqlMocks } from '../testing/graphqlMocks';
-import { mockedUserJWT } from '../testing/mock-data/jwt';
+import { lightTheme } from '@/ui/layout/styles/themes';
+import { App } from '~/App';
+import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedUserJWT } from '~/testing/mock-data/jwt';
+import { mockedClient } from '~/testing/mockedClient';
 
 const meta: Meta<typeof App> = {
   title: 'App/App',

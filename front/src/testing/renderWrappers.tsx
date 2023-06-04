@@ -1,12 +1,14 @@
-import { MemoryRouter } from 'react-router-dom';
-import { FullHeightStorybookLayout } from './FullHeightStorybookLayout';
-import { ThemeProvider } from '@emotion/react';
-import { ApolloProvider } from '@apollo/client';
-import { RecoilRoot } from 'recoil';
-import { mockedClient } from './mockedClient';
-import { lightTheme } from '../layout/styles/themes';
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/client';
+import { ThemeProvider } from '@emotion/react';
+import { RecoilRoot } from 'recoil';
+
+import { lightTheme } from '@/ui/layout/styles/themes';
+
 import { ComponentStorybookLayout } from './ComponentStorybookLayout';
+import { FullHeightStorybookLayout } from './FullHeightStorybookLayout';
+import { mockedClient } from './mockedClient';
 
 export function getRenderWrapperForPage(children: React.ReactElement) {
   return function render() {

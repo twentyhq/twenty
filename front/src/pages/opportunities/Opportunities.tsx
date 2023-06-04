@@ -1,12 +1,11 @@
 import { FaBullseye } from 'react-icons/fa';
-import WithTopBarContainer from '../../layout/containers/WithTopBarContainer';
 
-function Opportunities() {
+import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
+
+export function Opportunities() {
   return (
     <WithTopBarContainer title="Opportunities" icon={<FaBullseye />}>
       <></>
     </WithTopBarContainer>
   );
 }
-
-export default Opportunities;

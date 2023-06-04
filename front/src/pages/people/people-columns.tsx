@@ -1,14 +1,4 @@
 import { useMemo } from 'react';
-import { CellContext, createColumnHelper } from '@tanstack/react-table';
-import { Person } from '../../interfaces/entities/person.interface';
-import { updatePerson } from '../../services/api/people';
-
-import ColumnHead from '../../components/table/ColumnHead';
-import { SelectAllCheckbox } from '../../components/table/SelectAllCheckbox';
-import EditablePhone from '../../components/editable-cell/EditablePhone';
-import { EditablePeopleFullName } from '../../components/people/EditablePeopleFullName';
-import EditableDate from '../../components/editable-cell/EditableDate';
-import EditableText from '../../components/editable-cell/EditableText';
 import {
   TbBuilding,
   TbCalendar,
@@ -17,8 +7,18 @@ import {
   TbPhone,
   TbUser,
 } from 'react-icons/tb';
-import { PeopleCompanyCell } from '../../components/people/PeopleCompanyCell';
-import { CheckboxCell } from '../../components/table/CheckboxCell';
+import { CellContext, createColumnHelper } from '@tanstack/react-table';
+
+import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
+import { PeopleCompanyCell } from '@/people/components/PeopleCompanyCell';
+import { Person } from '@/people/interfaces/person.interface';
+import { updatePerson } from '@/people/services';
+import { EditableDate } from '@/ui/components/editable-cell/EditableDate';
+import { EditablePhone } from '@/ui/components/editable-cell/EditablePhone';
+import { EditableText } from '@/ui/components/editable-cell/EditableText';
+import { CheckboxCell } from '@/ui/components/table/CheckboxCell';
+import { ColumnHead } from '@/ui/components/table/ColumnHead';
+import { SelectAllCheckbox } from '@/ui/components/table/SelectAllCheckbox';
 
 const columnHelper = createColumnHelper<Person>();
 

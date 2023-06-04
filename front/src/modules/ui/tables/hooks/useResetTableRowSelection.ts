@@ -1,6 +1,7 @@
-import { useSetRecoilState } from 'recoil';
-import { currentRowSelectionState } from '../states/rowSelectionState';
 import { useCallback } from 'react';
+import { useSetRecoilState } from 'recoil';
+
+import { currentRowSelectionState } from '../states/rowSelectionState';
 
 export function useResetTableRowSelection() {
   const setCurrentRowSelectionState = useSetRecoilState(

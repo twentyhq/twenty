@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import Companies from '../Companies';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
-import { getRenderWrapperForPage } from '../../../testing/renderWrappers';
-import { graphqlMocks } from '../../../testing/graphqlMocks';
+import { Companies } from '../Companies';
 
 const meta: Meta<typeof Companies> = {
   title: 'Pages/Companies',
