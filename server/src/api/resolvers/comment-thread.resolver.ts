@@ -55,8 +55,6 @@ export class CommentThreadResolver {
       preparedArgs,
     );
 
-    console.log({ result });
-
     return result;
   }
 }
