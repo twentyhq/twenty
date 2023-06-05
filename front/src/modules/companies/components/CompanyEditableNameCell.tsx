@@ -2,6 +2,7 @@ import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightD
 import EditableChip from '@/ui/components/editable-cell/types/EditableChip';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 
+import { CellCommentChip } from '../../comments/components/comments/CellCommentChip';
 import { Company } from '../interfaces/company.interface';
 import { updateCompany } from '../services';
 
@@ -35,8 +36,9 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
         });
       }}
       ChipComponent={CompanyChip}
-      commentCount={12}
-      onCommentClick={handleCommentClick}
+      rightEndContents={[
+        <CellCommentChip count={12} onClick={handleCommentClick} />,
+      ]}
     />
   );
 }
