@@ -133,6 +133,9 @@
   },
   "nyc": {
     "lines": 65,
-    "statements": 65
+    "statements": 65,
+    "exclude": [
+      "src/generated/**/*"
+    ]
   }
 }
