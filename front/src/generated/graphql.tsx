@@ -78,6 +78,29 @@ export type CommentOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
+export type CommentOrderByWithRelationInput = {
+  author?: InputMaybe<UserOrderByWithRelationInput>;
+  authorId?: InputMaybe<SortOrder>;
+  body?: InputMaybe<SortOrder>;
+  commentThread?: InputMaybe<CommentThreadOrderByWithRelationInput>;
+  commentThreadId?: InputMaybe<SortOrder>;
+  createdAt?: InputMaybe<SortOrder>;
+  deletedAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
+export enum CommentScalarFieldEnum {
+  AuthorId = 'authorId',
+  Body = 'body',
+  CommentThreadId = 'commentThreadId',
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Id = 'id',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
+
 export type CommentThread = {
   __typename?: 'CommentThread';
   commentThreadTargets?: Maybe<Array<CommentThreadTarget>>;
@@ -206,6 +229,10 @@ export type CommentWhereInput = {
   deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type CommentWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
 };
 
 export enum CommentableType {
@@ -960,6 +987,16 @@ export type User = {
   phoneNumber?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
+};
+
+
+export type UserCommentsArgs = {
+  cursor?: InputMaybe<CommentWhereUniqueInput>;
+  distinct?: InputMaybe<Array<CommentScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<CommentOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<CommentWhereInput>;
 };
 
 
