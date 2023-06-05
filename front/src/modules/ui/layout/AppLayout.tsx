@@ -29,11 +29,18 @@ type OwnProps = {
 };
 
 export function AppLayout({ children, user }: OwnProps) {
+  const userIsAuthenticated = !!user;
   return (
     <ThemeProvider theme={lightTheme}>
       <StyledLayout>
-        <Navbar user={user} workspace={user?.workspaceMember?.workspace} />
-        <MainContainer>{children}</MainContainer>
+        {userIsAuthenticated ? (
+          <>
+            <Navbar user={user} workspace={user?.workspaceMember?.workspace} />
+            <MainContainer>{children}</MainContainer>
+          </>
+        ) : (
+          children
+        )}
       </StyledLayout>
     </ThemeProvider>
   );
