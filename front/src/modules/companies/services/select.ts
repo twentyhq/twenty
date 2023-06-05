@@ -1,13 +1,12 @@
-import { gql, QueryResult, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
 
 import { SelectedSortType } from '@/filters-and-sorts/interfaces/sorts/interface';
 import {
   CompanyOrderByWithRelationInput as Companies_Order_By,
   CompanyWhereInput as Companies_Bool_Exp,
   SortOrder as Order_By,
+  useGetCompaniesQuery,
 } from '~/generated/graphql';
-
-import { GraphqlQueryCompany } from '../interfaces/company.interface';
 
 export type CompaniesSelectedSortType = SelectedSortType<Companies_Order_By>;
 
@@ -35,10 +34,8 @@ export const GET_COMPANIES = gql`
 export function useCompaniesQuery(
   orderBy: Companies_Order_By[],
   where: Companies_Bool_Exp,
-): QueryResult<{ companies: GraphqlQueryCompany[] }> {
-  return useQuery<{ companies: GraphqlQueryCompany[] }>(GET_COMPANIES, {
-    variables: { orderBy, where },
-  });
+) {
+  return useGetCompaniesQuery({ variables: { orderBy, where } });
 }
 
 export const defaultOrderBy: Companies_Order_By[] = [

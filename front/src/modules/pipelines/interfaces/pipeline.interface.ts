@@ -8,5 +8,5 @@ export interface GraphqlQueryPipeline {
   id: string;
   name?: string;
   icon?: string | null;
-  __typename: string;
+  __typename?: string;
 }

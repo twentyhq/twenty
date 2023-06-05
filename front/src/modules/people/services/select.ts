@@ -1,13 +1,12 @@
-import { gql, QueryResult, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
 
 import { SelectedSortType } from '@/filters-and-sorts/interfaces/sorts/interface';
 import {
   PersonOrderByWithRelationInput as People_Order_By,
   PersonWhereInput as People_Bool_Exp,
   SortOrder,
+  useGetPeopleQuery,
 } from '~/generated/graphql';
-
-import { GraphqlQueryPerson } from '../interfaces/person.interface';
 
 export type PeopleSelectedSortType = SelectedSortType<People_Order_By>;
 
@@ -37,8 +36,8 @@ export const GET_PEOPLE = gql`
 export function usePeopleQuery(
   orderBy: People_Order_By[],
   where: People_Bool_Exp,
-): QueryResult<{ people: GraphqlQueryPerson[] }> {
-  return useQuery<{ people: GraphqlQueryPerson[] }>(GET_PEOPLE, {
+) {
+  return useGetPeopleQuery({
     variables: { orderBy, where },
   });
 }

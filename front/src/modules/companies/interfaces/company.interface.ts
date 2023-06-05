@@ -33,7 +33,7 @@ export type GraphqlQueryCompany = {
 
   accountOwner?: GraphqlQueryUser | null;
   pipes?: GraphqlQueryPipeline[] | null;
-  __typename: string;
+  __typename?: string;
 };
 
 export type GraphqlMutationCompany = {
@@ -46,7 +46,7 @@ export type GraphqlMutationCompany = {
   createdAt?: string;
 
   accountOwnerId?: string;
-  __typename: string;
+  __typename?: string;
 };
 
 export const mapToCompany = (company: GraphqlQueryCompany): Company => ({
