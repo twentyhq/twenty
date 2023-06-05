@@ -4,11 +4,14 @@ import styled from '@emotion/styled';
 import { CellCommentChip } from '@/comments/components/comments/CellCommentChip';
 import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
 
+import { usePeopleCommentsCountQuery } from '../../comments/services';
+
 import { PersonChip } from './PersonChip';
 
 type OwnProps = {
   firstname: string;
   lastname: string;
+  personId: string;
   onChange: (firstname: string, lastname: string) => void;
 };
 
@@ -23,6 +26,7 @@ export function EditablePeopleFullName({
   firstname,
   lastname,
   onChange,
+  personId,
 }: OwnProps) {
   const [firstnameValue, setFirstnameValue] = useState(firstname);
   const [lastnameValue, setLastnameValue] = useState(lastname);
@@ -43,6 +47,8 @@ export function EditablePeopleFullName({
     console.log('comment clicked');
   }
 
+  const commentCount = usePeopleCommentsCountQuery(personId);
+
   return (
     <EditableDoubleText
       firstValue={firstnameValue}
@@ -55,7 +61,12 @@ export function EditablePeopleFullName({
           <StyledDiv>
             <PersonChip name={firstname + ' ' + lastname} />
           </StyledDiv>
-          <CellCommentChip count={12} onClick={handleCommentClick} />
+          {commentCount.loading ? null : (
+            <CellCommentChip
+              count={commentCount.data || 0}
+              onClick={handleCommentClick}
+            />
+          )}
         </>
       }
     />
