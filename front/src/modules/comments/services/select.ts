@@ -1,0 +1,36 @@
+import { gql } from '@apollo/client';
+
+import {
+  useGetCompanyCountsQuery,
+  useGetPeopleCountsQuery,
+} from '../../../generated/graphql';
+
+export const GET_COMPANY_COMMENT_COUNT = gql`
+  query GetCompanyCounts($where: CompanyWhereInput) {
+    companies: findManyCompany(where: $where) {
+      commentsCount: _commentCount
+    }
+  }
+`;
+
+export const useCompanyCommentsCountQuery = (companyId: string) => {
+  const { data, ...rest } = useGetCompanyCountsQuery({
+    variables: { where: { id: { equals: companyId } } },
+  });
+  return { ...rest, data: data?.companies[0].commentsCount };
+};
+
+export const GET_PEOPLE_COMMENT_COUNT = gql`
+  query GetPeopleCounts($where: PersonWhereInput) {
+    people: findManyPerson(where: $where) {
+      commentsCount: _commentCount
+    }
+  }
+`;
+
+export const usePeopleCommentsCountQuery = (personId: string) => {
+  const { data, ...rest } = useGetPeopleCountsQuery({
+    variables: { where: { id: { equals: personId } } },
+  });
+  return { ...rest, data: data?.people[0].commentsCount };
+};

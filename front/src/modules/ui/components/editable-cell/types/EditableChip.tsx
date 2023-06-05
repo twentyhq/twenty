@@ -1,7 +1,6 @@
-import { ChangeEvent, ComponentType, useRef, useState } from 'react';
+import { ChangeEvent, ComponentType, ReactNode, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { CellCommentChip } from '@/comments/components/comments/CellCommentChip';
 import { textInputStyle } from '@/ui/layout/styles/themes';
 
 import { EditableCell } from '../EditableCell';
@@ -15,6 +14,7 @@ export type EditableChipProps = {
   ChipComponent: ComponentType<{ name: string; picture: string }>;
   commentCount?: number;
   onCommentClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  rightEndContents?: ReactNode[];
 };
 
 // TODO: refactor
@@ -38,21 +38,17 @@ function EditableChip({
   picture,
   editModeHorizontalAlign,
   ChipComponent,
-  commentCount,
-  onCommentClick,
+  rightEndContents,
 }: EditableChipProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const showComment = commentCount ? commentCount > 0 : false;
-
-  function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {
-    event.preventDefault();
+  const handleRightEndContentClick = (
+    event: React.MouseEvent<HTMLDivElement>,
+  ) => {
     event.stopPropagation();
-
-    onCommentClick?.(event);
-  }
+  };
 
   return (
     <EditableCell
@@ -77,12 +73,13 @@ function EditableChip({
           <StyledInplaceShow>
             <ChipComponent name={inputValue} picture={picture} />
           </StyledInplaceShow>
-          {showComment && (
-            <CellCommentChip
-              count={commentCount ?? 0}
-              onClick={handleCommentClick}
-            />
-          )}
+          {rightEndContents &&
+            rightEndContents.length > 0 &&
+            rightEndContents.map((content, index) => (
+              <div key={index} onClick={handleRightEndContentClick}>
+                {content}
+              </div>
+            ))}
         </>
       }
     ></EditableCell>

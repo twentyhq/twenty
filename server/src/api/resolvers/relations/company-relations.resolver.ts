@@ -63,7 +63,7 @@ export class CompanyRelationsResolver {
   @TypeGraphQL.ResolveField(() => TypeGraphQL.Int, {
     nullable: false,
   })
-  async _commentsCount(@TypeGraphQL.Root() company: Company): Promise<number> {
+  async _commentCount(@TypeGraphQL.Root() company: Company): Promise<number> {
     return this.prismaService.comment.count({
       where: {
         commentThread: {

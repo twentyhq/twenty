@@ -59,6 +59,7 @@ export const usePeopleColumns = () => {
                 person.lastname = lastName;
                 await updatePerson(person);
               }}
+              personId={props.row.original.id}
             />
           </>
         ),
