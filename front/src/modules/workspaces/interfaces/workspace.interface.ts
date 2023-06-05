@@ -10,7 +10,7 @@ export type GraphqlQueryWorkspace = {
   displayName?: string;
   domainName?: string;
   logo?: string | null;
-  __typename: string;
+  __typename?: string;
 };
 
 export type GraphqlMutationWorkspace = {
@@ -18,7 +18,7 @@ export type GraphqlMutationWorkspace = {
   displayName?: string;
   domainName?: string;
   logo?: string | null;
-  __typename: string;
+  __typename?: string;
 };
 
 export const mapToWorkspace = (

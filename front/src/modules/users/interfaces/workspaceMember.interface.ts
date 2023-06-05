@@ -12,13 +12,13 @@ export interface WorkspaceMember {
 export type GraphqlQueryWorkspaceMember = {
   id: string;
   workspace: GraphqlQueryWorkspace;
-  __typename: string;
+  __typename?: string;
 };
 
 export type GraphqlMutationWorkspaceMember = {
   id: string;
   workspace_id: string;
-  __typename: string;
+  __typename?: string;
 };
 
 export const mapToWorkspaceMember = (

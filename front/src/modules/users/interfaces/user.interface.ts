@@ -9,14 +9,14 @@ export interface User {
   id: string;
   email?: string;
   displayName?: string;
-  workspaceMember?: WorkspaceMember;
+  workspaceMember?: WorkspaceMember | null;
 }
 
 export type GraphqlQueryUser = {
   id: string;
   email?: string;
   displayName?: string;
-  workspaceMember?: GraphqlQueryWorkspaceMember;
+  workspaceMember?: GraphqlQueryWorkspaceMember | null;
   __typename?: string;
 };
 
