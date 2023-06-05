@@ -36,6 +36,7 @@ const StyledName = styled.div`
   font-family: 'Inter';
   font-weight: 500;
   font-size: ${(props) => props.theme.fontSizeLarge};
+  color: ${(props) => props.theme.text80};
 `;
 
 function WorkspaceContainer({ workspace }: OwnProps) {

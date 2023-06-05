@@ -166,10 +166,6 @@ const StyledContainer = styled.div`
     line-height: 34px;
   }
 
-  & .react-datepicker__day--selected {
-    background-color: ${(props) => props.theme.blue};
-  }
-
   & .react-datepicker__navigation--previous,
   & .react-datepicker__navigation--next {
     height: 34px;
@@ -205,12 +201,26 @@ const StyledContainer = styled.div`
     border-color: ${(props) => props.theme.text40};
   }
 
+  & .react-datepicker__day--keyboard-selected {
+    background-color: inherit;
+  }
+
+  & .react-datepicker__day,
+  .react-datepicker__time-name {
+    color: ${(props) => props.theme.text80};
+  }
+
+  & .react-datepicker__day--selected {
+    background-color: ${(props) => props.theme.blue};
+    color: ${(props) => props.theme.text0};
+  }
+
   & .react-datepicker__day--outside-month {
     color: ${(props) => props.theme.text40};
   }
 
-  & .react-datepicker__day--keyboard-selected {
-    background-color: inherit;
+  & .react-datepicker__day:hover {
+    color: ${(props) => props.theme.text40};
   }
 `;
 

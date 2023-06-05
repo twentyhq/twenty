@@ -1,10 +1,8 @@
 import { MemoryRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
-import { ThemeProvider } from '@emotion/react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { lightTheme } from '@/ui/layout/styles/themes';
 import { App } from '~/App';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -22,13 +20,11 @@ type Story = StoryObj<typeof App>;
 const render = () => (
   <RecoilRoot>
     <ApolloProvider client={mockedClient}>
-      <ThemeProvider theme={lightTheme}>
-        <MemoryRouter>
-          <FullHeightStorybookLayout>
-            <App />
-          </FullHeightStorybookLayout>
-        </MemoryRouter>
-      </ThemeProvider>
+      <MemoryRouter>
+        <FullHeightStorybookLayout>
+          <App themeEnabled={false} />
+        </FullHeightStorybookLayout>
+      </MemoryRouter>
     </ApolloProvider>
   </RecoilRoot>
 );

@@ -12,9 +12,6 @@ const StyledIconButton = styled.button`
   border: none;
   border-radius: 50%;
 
-  background: ${(props) => props.theme.text80};
-  color: ${(props) => props.theme.text100};
-
   transition: color 0.1s ease-in-out, background 0.1s ease-in-out;
 
   background: ${(props) => props.theme.blue};
@@ -22,7 +19,7 @@ const StyledIconButton = styled.button`
   cursor: pointer;
 
   &:disabled {
-    background: ${(props) => props.theme.quadraryBackground};
+    background: ${(props) => props.theme.quaternaryBackground};
     color: ${(props) => props.theme.text80};
     cursor: default;
   }

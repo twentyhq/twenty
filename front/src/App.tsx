@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { ThemeProvider } from '@emotion/react';
+
+import { browserPrefersDarkMode } from '@/utils/utils';
 
 import { RequireAuth } from './modules/auth/components/RequireAuth';
 import { getUserIdFromToken } from './modules/auth/services/AuthService';
 import { AppLayout } from './modules/ui/layout/AppLayout';
+import { darkTheme, lightTheme } from './modules/ui/layout/styles/themes';
 import { mapToUser, User } from './modules/users/interfaces/user.interface';
 import { useGetCurrentUserQuery } from './modules/users/services';
 import AuthCallback from './pages/auth/Callback';
@@ -12,7 +16,11 @@ import { Companies } from './pages/companies/Companies';
 import { Opportunities } from './pages/opportunities/Opportunities';
 import { People } from './pages/people/People';
 
-export function App() {
+type AppProps = {
+  themeEnabled?: boolean;
+};
+
+export function App({ themeEnabled = true }: AppProps) {
   const [user, setUser] = useState<User | undefined>(undefined);
 
   const userIdFromToken = getUserIdFromToken();
@@ -24,7 +32,9 @@ export function App() {
     }
   }, [data]);
 
-  return (
+  const defaultTheme = browserPrefersDarkMode() ? darkTheme : lightTheme;
+
+  const app = (
     <>
       {
         <AppLayout user={user}>
@@ -66,6 +76,16 @@ export function App() {
           </Routes>
         </AppLayout>
       }
+    </>
+  );
+
+  return (
+    <>
+      {themeEnabled ? (
+        <ThemeProvider theme={defaultTheme}>{app}</ThemeProvider>
+      ) : (
+        app
+      )}
     </>
   );
 }
