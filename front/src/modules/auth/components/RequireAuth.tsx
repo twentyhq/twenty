@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { hasAccessToken } from '../services/AuthService';
@@ -10,6 +11,20 @@ const EmptyContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
+`;
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const FadeInStyle = styled.div`
+  opacity: 0;
+  animation: ${fadeIn} 1s forwards;
 `;
 
 export function RequireAuth({
@@ -28,7 +43,9 @@ export function RequireAuth({
   if (!hasAccessToken())
     return (
       <EmptyContainer>
-        Please hold on a moment, we're directing you to our login page...
+        <FadeInStyle>
+          Please hold on a moment, we're directing you to our login page...
+        </FadeInStyle>
       </EmptyContainer>
     );
   return children;
