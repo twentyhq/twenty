@@ -12,6 +12,7 @@ sidebar_custom_props:
 We built a CLI to guide you through the different options.
 
 If you prefer to have more control and do things manually, go through the Docker section below.
+
 Otherwise run the following command to get started:
 ```
 npx twenty-cli
@@ -45,7 +46,12 @@ cd infra/dev
 make build
 ```
 
-### 5. Start
+### 5. Auth setup
+
+Right now the only way to authenticate yourself is to setup Google Sign-in in `server/.env`
+We will add an easier option soon.
+
+### 6. Start
 
 Always in the `infra/dev` folder:
 ```
@@ -59,7 +65,7 @@ Once this is completed you should have:
 - postgres: available on http://localhost:5432 that should contain `twenty` database
 
 
-## 6. Development
+### 6. Development
 
 Documented [here](../development/workflows.mdx)
 
@@ -75,18 +81,36 @@ You also need to bring your own Postgres database.
 `git clone git@github.com:twentyhq/twenty.git`
 
 ### 3. Setup env variables
-
-`cp ./infra/dev/.env.example ./infra/dev/.env` and fill with values
+`cp ./infra/dev/.env.example ./infra/dev/.env` and fill with values 
+Most default value should work out of the box, but don't forget to update the database connection string.
 
 ### 4. Build
+On the frontend:
 ```
 cd front
-npm run
+npm install
 ```
 
-### 5. Start
+On the server side:
+```
+cd server
+npm install
+npm run prisma:migrate
+```
+You can also add `npm run prisma:seed` to seed the database with mock data.
 
+### 5. Auth Setup
+Right now the only way to authenticate yourself is to setup Google Sign-in in `server/.env`
+We will add an easier option soon.
+
+### 6. Start
+On the frontend:
 ```
 cd front
-npm run
+npm run start
+```
+On the server side:
+```
+cd server
+npm run start
 ```
