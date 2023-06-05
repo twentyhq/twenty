@@ -1,5 +1,5 @@
-import { TbPlus } from 'react-icons/tb';
 import styled from '@emotion/styled';
+import { IconPlus } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -36,7 +36,7 @@ export function RightDrawerTopBarCloseButton() {
 
   return (
     <StyledButton onClick={handleButtonClick}>
-      <TbPlus size={16} />
+      <IconPlus size={16} />
     </StyledButton>
   );
 }
