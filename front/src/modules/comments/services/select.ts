@@ -10,7 +10,7 @@ import {
 export const GET_COMPANY_COMMENT_COUNT = gql`
   query GetCompanyCounts($where: CompanyWhereInput) {
     companies: findManyCompany(where: $where) {
-      commentsCount: _commentsCount
+      commentsCount: _commentCount
     }
   }
 `;
@@ -18,7 +18,7 @@ export const GET_COMPANY_COMMENT_COUNT = gql`
 export const useCompanyCommentsCountQuery = (companyId: string) => {
   const whereCompany: CompanyWhereInput = { id: { equals: companyId } };
   const { data, ...rest } = useQuery<{
-    companies: [{ commentsCount: Company['_commentsCount'] }];
+    companies: [{ commentsCount: Company['_commentCount'] }];
   }>(GET_COMPANY_COMMENT_COUNT, {
     variables: { where: whereCompany },
   });

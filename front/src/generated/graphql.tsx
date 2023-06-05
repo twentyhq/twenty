@@ -194,7 +194,7 @@ export enum CommentableType {
 
 export type Company = {
   __typename?: 'Company';
-  _commentsCount: Scalars['Int'];
+  _commentCount: Scalars['Int'];
   accountOwner?: Maybe<User>;
   accountOwnerId?: Maybe<Scalars['String']>;
   address: Scalars['String'];
@@ -1049,6 +1049,20 @@ export type WorkspaceMember = {
   workspace: Workspace;
 };
 
+export type GetCompanyCountsQueryVariables = Exact<{
+  where?: InputMaybe<CompanyWhereInput>;
+}>;
+
+
+export type GetCompanyCountsQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', commentsCount: number }> };
+
+export type GetPeopleCountsQueryVariables = Exact<{
+  where?: InputMaybe<PersonWhereInput>;
+}>;
+
+
+export type GetPeopleCountsQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', commentsCount: number }> };
+
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
   where?: InputMaybe<CompanyWhereInput>;
@@ -1174,6 +1188,76 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string }> };
 
 
+export const GetCompanyCountsDocument = gql`
+    query GetCompanyCounts($where: CompanyWhereInput) {
+  companies: findManyCompany(where: $where) {
+    commentsCount: _commentCount
+  }
+}
+    `;
+
+/**
+ * __useGetCompanyCountsQuery__
+ *
+ * To run a query within a React component, call `useGetCompanyCountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCompanyCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCompanyCountsQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetCompanyCountsQuery(baseOptions?: Apollo.QueryHookOptions<GetCompanyCountsQuery, GetCompanyCountsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCompanyCountsQuery, GetCompanyCountsQueryVariables>(GetCompanyCountsDocument, options);
+      }
+export function useGetCompanyCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCompanyCountsQuery, GetCompanyCountsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCompanyCountsQuery, GetCompanyCountsQueryVariables>(GetCompanyCountsDocument, options);
+        }
+export type GetCompanyCountsQueryHookResult = ReturnType<typeof useGetCompanyCountsQuery>;
+export type GetCompanyCountsLazyQueryHookResult = ReturnType<typeof useGetCompanyCountsLazyQuery>;
+export type GetCompanyCountsQueryResult = Apollo.QueryResult<GetCompanyCountsQuery, GetCompanyCountsQueryVariables>;
+export const GetPeopleCountsDocument = gql`
+    query GetPeopleCounts($where: PersonWhereInput) {
+  people: findManyPerson(where: $where) {
+    commentsCount: _commentCount
+  }
+}
+    `;
+
+/**
+ * __useGetPeopleCountsQuery__
+ *
+ * To run a query within a React component, call `useGetPeopleCountsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPeopleCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPeopleCountsQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetPeopleCountsQuery(baseOptions?: Apollo.QueryHookOptions<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>(GetPeopleCountsDocument, options);
+      }
+export function useGetPeopleCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>(GetPeopleCountsDocument, options);
+        }
+export type GetPeopleCountsQueryHookResult = ReturnType<typeof useGetPeopleCountsQuery>;
+export type GetPeopleCountsLazyQueryHookResult = ReturnType<typeof useGetPeopleCountsLazyQuery>;
+export type GetPeopleCountsQueryResult = Apollo.QueryResult<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>;
 export const GetCompaniesDocument = gql`
     query GetCompanies($orderBy: [CompanyOrderByWithRelationInput!], $where: CompanyWhereInput) {
   companies: findManyCompany(orderBy: $orderBy, where: $where) {
