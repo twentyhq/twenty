@@ -1,10 +1,8 @@
-import { gql, useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
 
 import {
-  Company,
-  CompanyWhereInput,
-  Person,
-  PersonWhereInput,
+  useGetCompanyCountsQuery,
+  useGetPeopleCountsQuery,
 } from '../../../generated/graphql';
 
 export const GET_COMPANY_COMMENT_COUNT = gql`
@@ -16,11 +14,8 @@ export const GET_COMPANY_COMMENT_COUNT = gql`
 `;
 
 export const useCompanyCommentsCountQuery = (companyId: string) => {
-  const whereCompany: CompanyWhereInput = { id: { equals: companyId } };
-  const { data, ...rest } = useQuery<{
-    companies: [{ commentsCount: Company['_commentCount'] }];
-  }>(GET_COMPANY_COMMENT_COUNT, {
-    variables: { where: whereCompany },
+  const { data, ...rest } = useGetCompanyCountsQuery({
+    variables: { where: { id: { equals: companyId } } },
   });
   return { ...rest, data: data?.companies[0].commentsCount };
 };
@@ -34,11 +29,8 @@ export const GET_PEOPLE_COMMENT_COUNT = gql`
 `;
 
 export const usePeopleCommentsCountQuery = (personId: string) => {
-  const wherePerson: PersonWhereInput = { id: { equals: personId } };
-  const { data, ...rest } = useQuery<{
-    people: [{ commentsCount: Person['_commentCount'] }];
-  }>(GET_PEOPLE_COMMENT_COUNT, {
-    variables: { where: wherePerson },
+  const { data, ...rest } = useGetPeopleCountsQuery({
+    variables: { where: { id: { equals: personId } } },
   });
   return { ...rest, data: data?.people[0].commentsCount };
 };
