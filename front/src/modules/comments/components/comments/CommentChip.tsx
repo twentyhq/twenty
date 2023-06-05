@@ -47,6 +47,7 @@ const StyledCount = styled.div`
 `;
 
 export function CommentChip({ count, onClick }: CommentChipProps) {
+  if (count === 0) return null;
   const formattedCount = count > 99 ? '99+' : count;
 
   return (
