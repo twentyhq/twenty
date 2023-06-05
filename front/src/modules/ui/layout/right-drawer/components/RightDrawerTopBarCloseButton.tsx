@@ -1,4 +1,4 @@
-import { FaTimes } from 'react-icons/fa';
+import { TbPlus } from 'react-icons/tb';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
@@ -13,13 +13,17 @@ const StyledButton = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 8px;
+  padding: 3px;
 
   border-radius: 4px;
 
   transition: ${(props) => props.theme.clickableElementBackgroundTransition};
   &:hover {
     background: ${(props) => props.theme.clickableElementBackgroundHover};
+  }
+  svg {
+    color: ${(props) => props.theme.text40};
+    transform: rotate(45deg);
   }
 `;
 
@@ -32,7 +36,7 @@ export function RightDrawerTopBarCloseButton() {
 
   return (
     <StyledButton onClick={handleButtonClick}>
-      <FaTimes />
+      <TbPlus size={16} />
     </StyledButton>
   );
 }
