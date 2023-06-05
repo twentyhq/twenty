@@ -1,30 +1,39 @@
 import { useRecoilState } from 'recoil';
 
+import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
 import { RightDrawerBody } from '@/ui/layout/right-drawer/components/RightDrawerBody';
 import { RightDrawerPage } from '@/ui/layout/right-drawer/components/RightDrawerPage';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
+import {
+  GetCommentThreadsByTargetsQuery,
+  useGetCommentThreadsByTargetsQuery,
+} from '~/generated/graphql';
 
 import { commentableEntityArrayState } from '../../states/commentableEntityArrayState';
 
-import { CommentTextInput } from './CommentTextInput';
+import { CommentThread } from './CommentThread';
 
 export function RightDrawerComments() {
   const [commentableEntityArray] = useRecoilState(commentableEntityArrayState);
 
-  function handleSendComment(text: string) {
-    console.log(text);
-  }
+  const { data: queryResult } = useGetCommentThreadsByTargetsQuery({
+    variables: {
+      commentThreadTargetIds: commentableEntityArray.map(
+        (commentableEntity) => commentableEntity.id,
+      ),
+    },
+  });
+
+  const commentThreads: CommentThreadForDrawer[] =
+    queryResult?.findManyCommentThreads ?? [];
 
   return (
     <RightDrawerPage>
       <RightDrawerTopBar title="Comments" />
       <RightDrawerBody>
-        {commentableEntityArray.map((commentableEntity) => (
-          <div key={commentableEntity.id}>
-            {commentableEntity.type} - {commentableEntity.id}
-          </div>
+        {commentThreads.map((commentThread) => (
+          <CommentThread commentThread={commentThread} />
         ))}
-        <CommentTextInput onSend={handleSendComment} />
       </RightDrawerBody>
     </RightDrawerPage>
   );

@@ -78,6 +78,29 @@ export type CommentOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
+export type CommentOrderByWithRelationInput = {
+  author?: InputMaybe<UserOrderByWithRelationInput>;
+  authorId?: InputMaybe<SortOrder>;
+  body?: InputMaybe<SortOrder>;
+  commentThread?: InputMaybe<CommentThreadOrderByWithRelationInput>;
+  commentThreadId?: InputMaybe<SortOrder>;
+  createdAt?: InputMaybe<SortOrder>;
+  deletedAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
+export enum CommentScalarFieldEnum {
+  AuthorId = 'authorId',
+  Body = 'body',
+  CommentThreadId = 'commentThreadId',
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Id = 'id',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
+
 export type CommentThread = {
   __typename?: 'CommentThread';
   commentThreadTargets?: Maybe<Array<CommentThreadTarget>>;
@@ -101,10 +124,27 @@ export type CommentThreadCreateNestedOneWithoutCommentsInput = {
   connect?: InputMaybe<CommentThreadWhereUniqueInput>;
 };
 
+export type CommentThreadOrderByWithRelationInput = {
+  commentThreadTargets?: InputMaybe<CommentThreadTargetOrderByRelationAggregateInput>;
+  comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
+  createdAt?: InputMaybe<SortOrder>;
+  deletedAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
 export type CommentThreadRelationFilter = {
   is?: InputMaybe<CommentThreadWhereInput>;
   isNot?: InputMaybe<CommentThreadWhereInput>;
 };
+
+export enum CommentThreadScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Id = 'id',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
 
 export type CommentThreadTarget = {
   __typename?: 'CommentThreadTarget';
@@ -140,6 +180,10 @@ export type CommentThreadTargetListRelationFilter = {
   every?: InputMaybe<CommentThreadTargetWhereInput>;
   none?: InputMaybe<CommentThreadTargetWhereInput>;
   some?: InputMaybe<CommentThreadTargetWhereInput>;
+};
+
+export type CommentThreadTargetOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
 };
 
 export type CommentThreadTargetWhereInput = {
@@ -185,6 +229,10 @@ export type CommentWhereInput = {
   deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type CommentWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
 };
 
 export enum CommentableType {
@@ -808,11 +856,22 @@ export type PipelineWhereUniqueInput = {
 
 export type Query = {
   __typename?: 'Query';
+  findManyCommentThreads: Array<CommentThread>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
   findManyPipeline: Array<Pipeline>;
   findManyPipelineStage: Array<PipelineStage>;
   findManyUser: Array<User>;
+};
+
+
+export type QueryFindManyCommentThreadsArgs = {
+  cursor?: InputMaybe<CommentThreadWhereUniqueInput>;
+  distinct?: InputMaybe<Array<CommentThreadScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<CommentThreadOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<CommentThreadWhereInput>;
 };
 
 
@@ -928,6 +987,16 @@ export type User = {
   phoneNumber?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
+};
+
+
+export type UserCommentsArgs = {
+  cursor?: InputMaybe<CommentWhereUniqueInput>;
+  distinct?: InputMaybe<Array<CommentScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<CommentOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<CommentWhereInput>;
 };
 
 

@@ -34,3 +34,28 @@ export const usePeopleCommentsCountQuery = (personId: string) => {
   });
   return { ...rest, data: data?.people[0].commentsCount };
 };
+
+export const GET_COMMENT_THREADS_BY_TARGETS = gql`
+  query GetCommentThreadsByTargets($commentThreadTargetIds: [String!]!) {
+    findManyCommentThreads(
+      where: {
+        commentThreadTargets: {
+          some: { commentableId: { in: $commentThreadTargetIds } }
+        }
+      }
+    ) {
+      id
+      comments {
+        id
+        body
+        createdAt
+        updatedAt
+        author {
+          id
+          displayName
+          avatarUrl
+        }
+      }
+    }
+  }
+`;
