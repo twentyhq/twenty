@@ -18,6 +18,7 @@ const StyledRightDrawerTopBar = styled.div`
 const StyledTopBarTitle = styled.div`
   align-items: center;
   font-weight: 500;
+  margin-right: ${(props) => props.theme.spacing(1)};
 `;
 
 export function RightDrawerTopBar({

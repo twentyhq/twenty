@@ -1,5 +1,5 @@
-import { FaTimes } from 'react-icons/fa';
 import styled from '@emotion/styled';
+import { IconPlus } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -13,13 +13,17 @@ const StyledButton = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 8px;
+  padding: 3px;
 
   border-radius: 4px;
 
   transition: ${(props) => props.theme.clickableElementBackgroundTransition};
   &:hover {
     background: ${(props) => props.theme.clickableElementBackgroundHover};
+  }
+  svg {
+    color: ${(props) => props.theme.text40};
+    transform: rotate(45deg);
   }
 `;
 
@@ -32,7 +36,7 @@ export function RightDrawerTopBarCloseButton() {
 
   return (
     <StyledButton onClick={handleButtonClick}>
-      <FaTimes />
+      <IconPlus size={16} />
     </StyledButton>
   );
 }
