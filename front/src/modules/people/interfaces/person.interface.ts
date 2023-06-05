@@ -33,7 +33,7 @@ export type GraphqlQueryPerson = {
 
   company?: GraphqlQueryCompany | null;
 
-  __typename: string;
+  __typename?: string;
 };
 
 export type GraphqlMutationPerson = {
