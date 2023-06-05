@@ -78,29 +78,6 @@ export type CommentOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
-export type CommentOrderByWithRelationInput = {
-  author?: InputMaybe<UserOrderByWithRelationInput>;
-  authorId?: InputMaybe<SortOrder>;
-  body?: InputMaybe<SortOrder>;
-  commentThread?: InputMaybe<CommentThreadOrderByWithRelationInput>;
-  commentThreadId?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-};
-
-export enum CommentScalarFieldEnum {
-  AuthorId = 'authorId',
-  Body = 'body',
-  CommentThreadId = 'commentThreadId',
-  CreatedAt = 'createdAt',
-  DeletedAt = 'deletedAt',
-  Id = 'id',
-  UpdatedAt = 'updatedAt',
-  WorkspaceId = 'workspaceId'
-}
-
 export type CommentThread = {
   __typename?: 'CommentThread';
   commentThreadTargets?: Maybe<Array<CommentThreadTarget>>;
@@ -229,10 +206,6 @@ export type CommentWhereInput = {
   deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
-export type CommentWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
 };
 
 export enum CommentableType {
@@ -990,16 +963,6 @@ export type User = {
 };
 
 
-export type UserCommentsArgs = {
-  cursor?: InputMaybe<CommentWhereUniqueInput>;
-  distinct?: InputMaybe<Array<CommentScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<CommentOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<CommentWhereInput>;
-};
-
-
 export type UserCompaniesArgs = {
   cursor?: InputMaybe<CompanyWhereUniqueInput>;
   distinct?: InputMaybe<Array<CompanyScalarFieldEnum>>;
@@ -1131,6 +1094,13 @@ export type GetPeopleCommentsCountQueryVariables = Exact<{
 
 
 export type GetPeopleCommentsCountQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', commentsCount: number }> };
+
+export type GetCommentThreadsByTargetsQueryVariables = Exact<{
+  commentThreadTargetIds: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } }> | null }> };
 
 export type GetCommentThreadsByTargetsQueryVariables = Exact<{
   commentThreadTargetIds: Array<Scalars['String']> | Scalars['String'];
