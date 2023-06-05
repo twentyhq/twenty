@@ -2,6 +2,7 @@
   "recommendations": [
     "ms-vscode-remote.remote-containers",
     "ms-vscode.makefile-tools",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "Prisma.prisma"
   ]
 }

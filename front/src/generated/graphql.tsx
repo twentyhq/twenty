@@ -101,10 +101,27 @@ export type CommentThreadCreateNestedOneWithoutCommentsInput = {
   connect?: InputMaybe<CommentThreadWhereUniqueInput>;
 };
 
+export type CommentThreadOrderByWithRelationInput = {
+  commentThreadTargets?: InputMaybe<CommentThreadTargetOrderByRelationAggregateInput>;
+  comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
+  createdAt?: InputMaybe<SortOrder>;
+  deletedAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+};
+
 export type CommentThreadRelationFilter = {
   is?: InputMaybe<CommentThreadWhereInput>;
   isNot?: InputMaybe<CommentThreadWhereInput>;
 };
+
+export enum CommentThreadScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Id = 'id',
+  UpdatedAt = 'updatedAt',
+  WorkspaceId = 'workspaceId'
+}
 
 export type CommentThreadTarget = {
   __typename?: 'CommentThreadTarget';
@@ -140,6 +157,10 @@ export type CommentThreadTargetListRelationFilter = {
   every?: InputMaybe<CommentThreadTargetWhereInput>;
   none?: InputMaybe<CommentThreadTargetWhereInput>;
   some?: InputMaybe<CommentThreadTargetWhereInput>;
+};
+
+export type CommentThreadTargetOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
 };
 
 export type CommentThreadTargetWhereInput = {
@@ -808,11 +829,22 @@ export type PipelineWhereUniqueInput = {
 
 export type Query = {
   __typename?: 'Query';
+  findManyCommentThreads: Array<CommentThread>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
   findManyPipeline: Array<Pipeline>;
   findManyPipelineStage: Array<PipelineStage>;
   findManyUser: Array<User>;
+};
+
+
+export type QueryFindManyCommentThreadsArgs = {
+  cursor?: InputMaybe<CommentThreadWhereUniqueInput>;
+  distinct?: InputMaybe<Array<CommentThreadScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<CommentThreadOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<CommentThreadWhereInput>;
 };
 
 
@@ -1063,6 +1095,13 @@ export type GetPeopleCountsQueryVariables = Exact<{
 
 export type GetPeopleCountsQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', commentsCount: number }> };
 
+export type GetCommentThreadsByTargetsQueryVariables = Exact<{
+  commentThreadTargetIds: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } }> | null }> };
+
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
   where?: InputMaybe<CompanyWhereInput>;
@@ -1258,6 +1297,54 @@ export function useGetPeopleCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetPeopleCountsQueryHookResult = ReturnType<typeof useGetPeopleCountsQuery>;
 export type GetPeopleCountsLazyQueryHookResult = ReturnType<typeof useGetPeopleCountsLazyQuery>;
 export type GetPeopleCountsQueryResult = Apollo.QueryResult<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>;
+export const GetCommentThreadsByTargetsDocument = gql`
+    query GetCommentThreadsByTargets($commentThreadTargetIds: [String!]!) {
+  findManyCommentThreads(
+    where: {commentThreadTargets: {some: {commentableId: {in: $commentThreadTargetIds}}}}
+  ) {
+    id
+    comments {
+      id
+      body
+      createdAt
+      updatedAt
+      author {
+        id
+        displayName
+        avatarUrl
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCommentThreadsByTargetsQuery__
+ *
+ * To run a query within a React component, call `useGetCommentThreadsByTargetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommentThreadsByTargetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCommentThreadsByTargetsQuery({
+ *   variables: {
+ *      commentThreadTargetIds: // value for 'commentThreadTargetIds'
+ *   },
+ * });
+ */
+export function useGetCommentThreadsByTargetsQuery(baseOptions: Apollo.QueryHookOptions<GetCommentThreadsByTargetsQuery, GetCommentThreadsByTargetsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCommentThreadsByTargetsQuery, GetCommentThreadsByTargetsQueryVariables>(GetCommentThreadsByTargetsDocument, options);
+      }
+export function useGetCommentThreadsByTargetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentThreadsByTargetsQuery, GetCommentThreadsByTargetsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCommentThreadsByTargetsQuery, GetCommentThreadsByTargetsQueryVariables>(GetCommentThreadsByTargetsDocument, options);
+        }
+export type GetCommentThreadsByTargetsQueryHookResult = ReturnType<typeof useGetCommentThreadsByTargetsQuery>;
+export type GetCommentThreadsByTargetsLazyQueryHookResult = ReturnType<typeof useGetCommentThreadsByTargetsLazyQuery>;
+export type GetCommentThreadsByTargetsQueryResult = Apollo.QueryResult<GetCommentThreadsByTargetsQuery, GetCommentThreadsByTargetsQueryVariables>;
 export const GetCompaniesDocument = gql`
     query GetCompanies($orderBy: [CompanyOrderByWithRelationInput!], $where: CompanyWhereInput) {
   companies: findManyCompany(orderBy: $orderBy, where: $where) {

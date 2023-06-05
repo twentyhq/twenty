@@ -1,4 +1,4 @@
-import { Resolver, Args, Mutation } from '@nestjs/graphql';
+import { Resolver, Args, Mutation, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { PrismaService } from 'src/database/prisma.service';
@@ -7,11 +7,16 @@ import { AuthWorkspace } from './decorators/auth-workspace.decorator';
 import { CommentThread } from '../@generated/comment-thread/comment-thread.model';
 import { CreateOneCommentThreadArgs } from '../@generated/comment-thread/create-one-comment-thread.args';
 import { CreateOneCommentThreadGuard } from './guards/create-one-comment-thread.guard';
+import { FindManyCommentThreadArgs } from '../@generated/comment-thread/find-many-comment-thread.args';
+import { ArgsService } from './services/args.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)
 export class CommentThreadResolver {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly argsService: ArgsService,
+  ) {}
 
   @UseGuards(CreateOneCommentThreadGuard)
   @Mutation(() => CommentThread, {
@@ -34,5 +39,22 @@ export class CommentThreadResolver {
         ...{ workspace: { connect: { id: workspace.id } } },
       },
     });
+  }
+
+  @Query(() => [CommentThread])
+  async findManyCommentThreads(
+    @Args() args: FindManyCommentThreadArgs,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    const preparedArgs =
+      await this.argsService.prepareFindManyArgs<FindManyCommentThreadArgs>(
+        args,
+        workspace,
+      );
+    const result = await this.prismaService.commentThread.findMany(
+      preparedArgs,
+    );
+
+    return result;
   }
 }

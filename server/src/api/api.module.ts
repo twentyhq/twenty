@@ -23,6 +23,7 @@ import { CommentThreadRelationsResolver } from './resolvers/relations/comment-th
 import { PipelineRelationsResolver } from './resolvers/relations/pipeline-relations.resolver';
 import { PipelineStageRelationsResolver } from './resolvers/relations/pipeline-stage-relations.resolver';
 import { GraphQLError } from 'graphql';
+import { CommentRelationsResolver } from './resolvers/relations/comment-relations.resolver';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { GraphQLError } from 'graphql';
     PipelineStageResolver,
 
     CompanyRelationsResolver,
+    CommentRelationsResolver,
     PersonRelationsResolver,
     UserRelationsResolver,
     WorkspaceMemberRelationsResolver,
