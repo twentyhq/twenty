@@ -24,6 +24,8 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
     ]);
   }
 
+  const commentCount = 12;
+
   return (
     <EditableChip
       value={company.name || ''}
@@ -37,7 +39,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       }}
       ChipComponent={CompanyChip}
       rightEndContents={[
-        <CellCommentChip count={12} onClick={handleCommentClick} />,
+        <CellCommentChip count={commentCount} onClick={handleCommentClick} />,
       ]}
     />
   );
