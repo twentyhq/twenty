@@ -3,7 +3,7 @@ import EditableChip from '@/ui/components/editable-cell/types/EditableChip';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 
 import { CellCommentChip } from '../../comments/components/comments/CellCommentChip';
-import { useCompanyCommentsCountQuery } from '../../comments/services/select';
+import { useCompanyCommentsCountQuery } from '../../comments/services';
 import { Company } from '../interfaces/company.interface';
 import { updateCompany } from '../services';
 
