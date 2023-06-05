@@ -23,6 +23,8 @@ const commonTheme = {
   },
 
   borderRadius: '4px',
+
+  rightDrawerWidth: '300px',
 };
 
 const lightThemeSpecific = {

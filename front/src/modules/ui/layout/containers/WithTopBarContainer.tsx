@@ -30,9 +30,8 @@ const MainContainer = styled.div`
   background: ${(props) => props.theme.noisyBackground};
   padding-right: ${(props) => props.theme.spacing(3)};
   padding-bottom: ${(props) => props.theme.spacing(3)};
+  gap: ${(props) => props.theme.spacing(2)};
 `;
-
-const RIGHT_DRAWER_WIDTH = '300px';
 
 type LeftContainerProps = {
   isRightDrawerOpen?: boolean;
@@ -41,7 +40,11 @@ type LeftContainerProps = {
 const LeftContainer = styled.div<LeftContainerProps>`
   display: flex;
   width: calc(
-    100% - ${(props) => (props.isRightDrawerOpen ? RIGHT_DRAWER_WIDTH : '0px')}
+    100% -
+      ${(props) =>
+        props.isRightDrawerOpen
+          ? `${props.theme.rightDrawerWidth} - ${props.theme.spacing(2)}`
+          : '0px'}
   );
   position: relative;
 `;
