@@ -1088,12 +1088,12 @@ export type GetCompanyCountsQueryVariables = Exact<{
 
 export type GetCompanyCountsQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', commentsCount: number }> };
 
-export type GetPeopleCountsQueryVariables = Exact<{
+export type GetPeopleCommentsCountQueryVariables = Exact<{
   where?: InputMaybe<PersonWhereInput>;
 }>;
 
 
-export type GetPeopleCountsQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', commentsCount: number }> };
+export type GetPeopleCommentsCountQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', commentsCount: number }> };
 
 export type GetCommentThreadsByTargetsQueryVariables = Exact<{
   commentThreadTargetIds: Array<Scalars['String']> | Scalars['String'];
@@ -1262,8 +1262,8 @@ export function useGetCompanyCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetCompanyCountsQueryHookResult = ReturnType<typeof useGetCompanyCountsQuery>;
 export type GetCompanyCountsLazyQueryHookResult = ReturnType<typeof useGetCompanyCountsLazyQuery>;
 export type GetCompanyCountsQueryResult = Apollo.QueryResult<GetCompanyCountsQuery, GetCompanyCountsQueryVariables>;
-export const GetPeopleCountsDocument = gql`
-    query GetPeopleCounts($where: PersonWhereInput) {
+export const GetPeopleCommentsCountDocument = gql`
+    query GetPeopleCommentsCount($where: PersonWhereInput) {
   people: findManyPerson(where: $where) {
     commentsCount: _commentCount
   }
@@ -1271,32 +1271,32 @@ export const GetPeopleCountsDocument = gql`
     `;
 
 /**
- * __useGetPeopleCountsQuery__
+ * __useGetPeopleCommentsCountQuery__
  *
- * To run a query within a React component, call `useGetPeopleCountsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPeopleCountsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetPeopleCommentsCountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPeopleCommentsCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetPeopleCountsQuery({
+ * const { data, loading, error } = useGetPeopleCommentsCountQuery({
  *   variables: {
  *      where: // value for 'where'
  *   },
  * });
  */
-export function useGetPeopleCountsQuery(baseOptions?: Apollo.QueryHookOptions<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>) {
+export function useGetPeopleCommentsCountQuery(baseOptions?: Apollo.QueryHookOptions<GetPeopleCommentsCountQuery, GetPeopleCommentsCountQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>(GetPeopleCountsDocument, options);
+        return Apollo.useQuery<GetPeopleCommentsCountQuery, GetPeopleCommentsCountQueryVariables>(GetPeopleCommentsCountDocument, options);
       }
-export function useGetPeopleCountsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>) {
+export function useGetPeopleCommentsCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPeopleCommentsCountQuery, GetPeopleCommentsCountQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>(GetPeopleCountsDocument, options);
+          return Apollo.useLazyQuery<GetPeopleCommentsCountQuery, GetPeopleCommentsCountQueryVariables>(GetPeopleCommentsCountDocument, options);
         }
-export type GetPeopleCountsQueryHookResult = ReturnType<typeof useGetPeopleCountsQuery>;
-export type GetPeopleCountsLazyQueryHookResult = ReturnType<typeof useGetPeopleCountsLazyQuery>;
-export type GetPeopleCountsQueryResult = Apollo.QueryResult<GetPeopleCountsQuery, GetPeopleCountsQueryVariables>;
+export type GetPeopleCommentsCountQueryHookResult = ReturnType<typeof useGetPeopleCommentsCountQuery>;
+export type GetPeopleCommentsCountLazyQueryHookResult = ReturnType<typeof useGetPeopleCommentsCountLazyQuery>;
+export type GetPeopleCommentsCountQueryResult = Apollo.QueryResult<GetPeopleCommentsCountQuery, GetPeopleCommentsCountQueryVariables>;
 export const GetCommentThreadsByTargetsDocument = gql`
     query GetCommentThreadsByTargets($commentThreadTargetIds: [String!]!) {
   findManyCommentThreads(

@@ -5,7 +5,6 @@ import { CellCommentChip } from '@/comments/components/comments/CellCommentChip'
 import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
 import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
 
-import { useOpenCommentRightDrawer } from '../../comments/hooks/useOpenCommentRightDrawer';
 import { usePeopleCommentsCountQuery } from '../../comments/services';
 
 import { PersonChip } from './PersonChip';
@@ -58,7 +57,7 @@ export function EditablePeopleFullName({
 
   const commentCount = usePeopleCommentsCountQuery(personId);
 
-  const displayCommentCount = !commentCount.loading && commentCount.data !== 0;
+  const displayCommentCount = !commentCount.loading;
 
   return (
     <EditableDoubleText
@@ -74,7 +73,7 @@ export function EditablePeopleFullName({
           </StyledDiv>
           {displayCommentCount && (
             <CellCommentChip
-              count={commentCount.data || 0}
+              count={commentCount.data ?? 0}
               onClick={handleCommentClick}
             />
           )}
