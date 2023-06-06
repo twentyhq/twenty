@@ -9,6 +9,7 @@ export interface User {
   id: string;
   email?: string;
   displayName?: string;
+  avatarUrl?: string;
   workspaceMember?: WorkspaceMember | null;
 }
 
@@ -17,7 +18,8 @@ export type GraphqlQueryUser = {
   email?: string;
   displayName?: string;
   workspaceMember?: GraphqlQueryWorkspaceMember | null;
-  __typename?: string;
+  avatarUrl?: string;
+  __typename: string;
 };
 
 export type GraphqlMutationUser = {

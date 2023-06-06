@@ -6,7 +6,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { CommentTextInput } from '../CommentTextInput';
 
 const meta: Meta<typeof CommentTextInput> = {
-  title: 'Components/CommentTextInput',
+  title: 'Components/Comments/CommentTextInput',
   component: CommentTextInput,
   argTypes: {
     onSend: {
