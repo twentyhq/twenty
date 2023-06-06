@@ -26,6 +26,17 @@ const StyledBar = styled.div`
   height: 40px;
 `;
 
+const StyledChipcontainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  overflow-x: auto;
+  margin-left: ${(props) => props.theme.spacing(2)};
+  gap: ${(props) => props.theme.spacing(1)};
+`;
+
 const StyledCancelButton = styled.button`
   margin-left: auto;
   border: none;
@@ -35,7 +46,7 @@ const StyledCancelButton = styled.button`
     const vert = props.theme.spacing(1);
     return `${vert} ${horiz} ${vert} ${horiz}`;
   }};
-  color: ${(props) => props.theme.text40};
+  color: ${(props) => props.theme.text60};
   font-weight: 500;
   margin-right: ${(props) => props.theme.spacing(2)};
   cursor: pointer;
@@ -56,29 +67,31 @@ function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
 }: OwnProps<SortField, TData>) {
   return (
     <StyledBar>
-      {sorts.map((sort) => {
-        return (
-          <SortOrFilterChip
-            key={sort.key}
-            labelValue={sort.label}
-            id={sort.key}
-            icon={sort.order === 'desc' ? <FaArrowDown /> : <FaArrowUp />}
-            onRemove={() => onRemoveSort(sort.key)}
-          />
-        );
-      })}
-      {filters.map((filter) => {
-        return (
-          <SortOrFilterChip
-            key={filter.key}
-            labelKey={filter.label}
-            labelValue={`${filter.operand.label} ${filter.displayValue}`}
-            id={filter.key}
-            icon={filter.icon}
-            onRemove={() => onRemoveFilter(filter.key)}
-          />
-        );
-      })}
+      <StyledChipcontainer>
+        {sorts.map((sort) => {
+          return (
+            <SortOrFilterChip
+              key={sort.key}
+              labelValue={sort.label}
+              id={sort.key}
+              icon={sort.order === 'desc' ? <FaArrowDown /> : <FaArrowUp />}
+              onRemove={() => onRemoveSort(sort.key)}
+            />
+          );
+        })}
+        {filters.map((filter) => {
+          return (
+            <SortOrFilterChip
+              key={filter.key}
+              labelKey={filter.label}
+              labelValue={`${filter.operand.label} ${filter.displayValue}`}
+              id={filter.key}
+              icon={filter.icon}
+              onRemove={() => onRemoveFilter(filter.key)}
+            />
+          );
+        })}
+      </StyledChipcontainer>
       {filters.length + sorts.length > 0 && (
         <StyledCancelButton
           data-testid={'cancel-button'}

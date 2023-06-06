@@ -18,9 +18,9 @@ const StyledChip = styled.div`
   border: 1px solid ${(props) => props.theme.blueLowTransparency};
   color: ${(props) => props.theme.blue};
   padding: ${(props) => props.theme.spacing(1) + ' ' + props.theme.spacing(2)};
-  margin-left: ${(props) => props.theme.spacing(2)};
   font-size: ${(props) => props.theme.fontSizeSmall};
   align-items: center;
+  flex-shrink: 0;
 `;
 const StyledIcon = styled.div`
   margin-right: ${(props) => props.theme.spacing(1)};
