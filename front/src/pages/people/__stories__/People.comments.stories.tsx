@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
-import { within } from '@storybook/testing-library';
+import { userEvent, within } from '@storybook/testing-library';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
@@ -28,7 +28,9 @@ export const OpenCommentsSection: Story = {
     const commentsChip = await within(firstRow).findByTestId('comment-chip');
     expect(commentsChip).toBeDefined();
 
-    // expect to see comment section
+    userEvent.click(commentsChip);
+    const commentSection = await canvas.findByText('Comments');
+    expect(commentSection).toBeDefined();
   },
   parameters: {
     msw: graphqlMocks,
