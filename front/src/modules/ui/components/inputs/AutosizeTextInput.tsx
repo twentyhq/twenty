@@ -5,7 +5,7 @@ import { HiArrowSmRight } from 'react-icons/hi';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
-import { IconButton } from '../buttons/IconButton';
+import { IconButton } from '@/ui/components/buttons/IconButton';
 
 type OwnProps = {
   onSend?: (text: string) => void;
@@ -50,7 +50,7 @@ const StyledBottomRightIconButton = styled.div`
   right: 26px;
 `;
 
-export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
+export function CommentTextInput({ placeholder, onSend }: OwnProps) {
   const [text, setText] = useState('');
 
   const isSendButtonDisabled = !text;
@@ -72,12 +72,12 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onSend, text, setText],
+    [onSend],
   );
 
   useHotkeys(
     'esc',
-    (event: KeyboardEvent) => {
+    (event: KeyboardEvent, handler: HotkeysEvent) => {
       event.preventDefault();
 
       setText('');
@@ -86,7 +86,7 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onSend, setText],
+    [onSend],
   );
 
   function handleInputChange(event: React.FormEvent<HTMLTextAreaElement>) {
