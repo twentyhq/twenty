@@ -33,6 +33,7 @@ const StyledChipcontainer = styled.div`
   justify-content: space-between;
   height: 40px;
   overflow-x: auto;
+  gap: ${(props) => props.theme.spacing(1)};
 `;
 
 const StyledCancelButton = styled.button`
