@@ -10,20 +10,16 @@ type OwnProps = {
 
 const StyledContainer = styled.div`
   display: flex;
-  align-items: flex-start;
-
   flex-direction: column;
-
+  align-items: flex-start;
   justify-content: flex-start;
-
   gap: ${(props) => props.theme.spacing(1)};
 `;
 
 const StyledCommentBody = styled.div`
-  font-size: 13px;
-  font-weight: 400;
+  font-size: ${(props) => props.theme.fontSizeMedium};
   line-height: 19.5px;
-  letter-spacing: 0em;
+
   text-align: left;
   padding-left: 24px;
 
