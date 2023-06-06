@@ -51,7 +51,7 @@ export function CommentChip({ count, onClick }: CommentChipProps) {
   const formattedCount = count > 99 ? '99+' : count;
 
   return (
-    <StyledChip onClick={onClick}>
+    <StyledChip data-testid="comment-chip" onClick={onClick}>
       <StyledCount>{formattedCount}</StyledCount>
       <IconComment size={12} />
     </StyledChip>
