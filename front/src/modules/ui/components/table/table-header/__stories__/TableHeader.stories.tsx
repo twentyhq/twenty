@@ -1,7 +1,6 @@
 import React from 'react';
 import { FaList } from 'react-icons/fa';
 import { ApolloProvider } from '@apollo/client';
-import { expect } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
@@ -10,7 +9,6 @@ import { mockedClient } from '~/testing/mockedClient';
 
 import { availableFilters } from '../../../../../../pages/companies/companies-filters';
 import { availableSorts } from '../../../../../../pages/companies/companies-sorts';
-import { sleep } from '../../../../../../testing/sleep';
 import { TableHeader } from '../TableHeader';
 
 const meta: Meta<typeof TableHeader> = {
