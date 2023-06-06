@@ -33,6 +33,7 @@ const StyledChipcontainer = styled.div`
   justify-content: space-between;
   height: 40px;
   overflow-x: auto;
+  margin-left: ${(props) => props.theme.spacing(2)};
   gap: ${(props) => props.theme.spacing(1)};
 `;
 
