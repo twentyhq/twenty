@@ -26,6 +26,15 @@ const StyledBar = styled.div`
   height: 40px;
 `;
 
+const StyledChipcontainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  overflow-x: auto;
+`;
+
 const StyledCancelButton = styled.button`
   margin-left: auto;
   border: none;
@@ -56,29 +65,31 @@ function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
 }: OwnProps<SortField, TData>) {
   return (
     <StyledBar>
-      {sorts.map((sort) => {
-        return (
-          <SortOrFilterChip
-            key={sort.key}
-            labelValue={sort.label}
-            id={sort.key}
-            icon={sort.order === 'desc' ? <FaArrowDown /> : <FaArrowUp />}
-            onRemove={() => onRemoveSort(sort.key)}
-          />
-        );
-      })}
-      {filters.map((filter) => {
-        return (
-          <SortOrFilterChip
-            key={filter.key}
-            labelKey={filter.label}
-            labelValue={`${filter.operand.label} ${filter.displayValue}`}
-            id={filter.key}
-            icon={filter.icon}
-            onRemove={() => onRemoveFilter(filter.key)}
-          />
-        );
-      })}
+      <StyledChipcontainer>
+        {sorts.map((sort) => {
+          return (
+            <SortOrFilterChip
+              key={sort.key}
+              labelValue={sort.label}
+              id={sort.key}
+              icon={sort.order === 'desc' ? <FaArrowDown /> : <FaArrowUp />}
+              onRemove={() => onRemoveSort(sort.key)}
+            />
+          );
+        })}
+        {filters.map((filter) => {
+          return (
+            <SortOrFilterChip
+              key={filter.key}
+              labelKey={filter.label}
+              labelValue={`${filter.operand.label} ${filter.displayValue}`}
+              id={filter.key}
+              icon={filter.icon}
+              onRemove={() => onRemoveFilter(filter.key)}
+            />
+          );
+        })}
+      </StyledChipcontainer>
       {filters.length + sorts.length > 0 && (
         <StyledCancelButton
           data-testid={'cancel-button'}
