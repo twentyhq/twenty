@@ -6,7 +6,7 @@ import { GraphqlQueryUser } from '@/users/interfaces/user.interface';
 
 import {
   GetCompanyCountsQuery,
-  GetPeopleCountsQuery,
+  GetPeopleCommentsCountQuery,
 } from '../generated/graphql';
 
 import { mockedCompaniesData } from './mock-data/companies';
@@ -99,7 +99,7 @@ export const graphqlMocks = [
     );
   }),
   graphql.query('GetPeopleCounts', (req, res, ctx) => {
-    const mockedData: GetPeopleCountsQuery = {
+    const mockedData: GetPeopleCommentsCountQuery = {
       people: [{ commentsCount: 12 }],
     };
     return res(ctx.data(mockedData));
