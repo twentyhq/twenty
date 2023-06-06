@@ -50,7 +50,7 @@ const StyledBottomRightIconButton = styled.div`
   right: 26px;
 `;
 
-export function CommentTextInput({ placeholder, onSend }: OwnProps) {
+export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
   const [text, setText] = useState('');
 
   const isSendButtonDisabled = !text;
@@ -77,7 +77,7 @@ export function CommentTextInput({ placeholder, onSend }: OwnProps) {
 
   useHotkeys(
     'esc',
-    (event: KeyboardEvent, handler: HotkeysEvent) => {
+    (event: KeyboardEvent) => {
       event.preventDefault();
 
       setText('');
