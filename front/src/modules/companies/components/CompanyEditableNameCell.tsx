@@ -16,7 +16,10 @@ type OwnProps = {
 export function CompanyEditableNameChipCell({ company }: OwnProps) {
   const openCommentRightDrawer = useOpenCommentRightDrawer();
 
-  function handleCommentClick() {
+  function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
     openCommentRightDrawer([
       {
         type: 'Company',
@@ -26,6 +29,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
   }
 
   const commentCount = useCompanyCommentsCountQuery(company.id);
+  const displayCommentCount = !commentCount.loading && commentCount.data !== 0;
 
   return (
     <EditableChip
@@ -40,7 +44,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       }}
       ChipComponent={CompanyChip}
       rightEndContents={[
-        commentCount.loading ? null : (
+        displayCommentCount && (
           <CellCommentChip
             count={commentCount.data || 0}
             onClick={handleCommentClick}
