@@ -29,6 +29,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
   }
 
   const commentCount = useCompanyCommentsCountQuery(company.id);
+  const displayCommentCount = !commentCount.loading && commentCount.data !== 0;
 
   return (
     <EditableChip
