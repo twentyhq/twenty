@@ -10,7 +10,7 @@ import { Story } from './Companies.stories';
 import { render } from './shared';
 
 const meta: Meta<typeof Companies> = {
-  title: 'Pages/Companies',
+  title: 'Pages/Companies/Comments',
   component: Companies,
 };
 

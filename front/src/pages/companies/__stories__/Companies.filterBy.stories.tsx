@@ -8,7 +8,7 @@ import { Story } from './Companies.stories';
 import { mocks, render } from './shared';
 
 const meta: Meta<typeof Companies> = {
-  title: 'Pages/Companies',
+  title: 'Pages/Companies/FilterBy',
   component: Companies,
 };
 
