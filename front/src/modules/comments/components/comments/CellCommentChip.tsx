@@ -4,7 +4,7 @@ import { CommentChip, CommentChipProps } from './CommentChip';
 
 const StyledCellWrapper = styled.div`
   position: relative;
-  right: 38px;
+  right: 34px;
   top: -13px;
   width: 0;
   height: 0;
