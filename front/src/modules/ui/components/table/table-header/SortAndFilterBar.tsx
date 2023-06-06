@@ -44,7 +44,7 @@ const StyledCancelButton = styled.button`
     const vert = props.theme.spacing(1);
     return `${vert} ${horiz} ${vert} ${horiz}`;
   }};
-  color: ${(props) => props.theme.text40};
+  color: ${(props) => props.theme.text60};
   font-weight: 500;
   margin-right: ${(props) => props.theme.spacing(2)};
   cursor: pointer;
