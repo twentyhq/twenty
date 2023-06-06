@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { CellCommentChip } from '@/comments/components/comments/CellCommentChip';
 import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
 
+import { useOpenCommentRightDrawer } from '../../comments/hooks/useOpenCommentRightDrawer';
 import { usePeopleCommentsCountQuery } from '../../comments/services';
 
 import { PersonChip } from './PersonChip';
@@ -41,10 +42,17 @@ export function EditablePeopleFullName({
     onChange(firstValue, secondValue);
   }
 
+  const openCommentRightDrawer = useOpenCommentRightDrawer();
+
   function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {
     event.preventDefault();
     event.stopPropagation();
-    console.log('comment clicked');
+    openCommentRightDrawer([
+      {
+        type: 'Company',
+        id: personId,
+      },
+    ]);
   }
 
   const commentCount = usePeopleCommentsCountQuery(personId);
