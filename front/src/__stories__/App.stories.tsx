@@ -5,6 +5,8 @@ import { RecoilRoot } from 'recoil';
 
 import { themeEnabledState } from '@/ui/layout/states/themeEnabledState';
 import { App } from '~/App';
+import { AppThemeProvider } from '~/providers/AppThemeProvider';
+import { AuthProvider } from '~/providers/AuthProvider';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedUserJWT } from '~/testing/mock-data/jwt';
@@ -27,7 +29,11 @@ const render = () => (
     <ApolloProvider client={mockedClient}>
       <MemoryRouter>
         <FullHeightStorybookLayout>
-          <App />
+          <AuthProvider>
+            <AppThemeProvider>
+              <App />
+            </AppThemeProvider>
+          </AuthProvider>
         </FullHeightStorybookLayout>
       </MemoryRouter>
     </ApolloProvider>
