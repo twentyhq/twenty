@@ -30,7 +30,7 @@ export function App({ themeEnabled = true }: AppProps) {
     if (data?.users[0]) {
       setUser(mapToUser(data?.users[0]));
     }
-  }, [data]);
+  }, [data, setUser]);
 
   const defaultTheme = browserPrefersDarkMode() ? darkTheme : lightTheme;
 
