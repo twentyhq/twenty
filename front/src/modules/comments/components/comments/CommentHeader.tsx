@@ -44,6 +44,15 @@ const StyledDate = styled.div`
 
 const StyledTooltip = styled(Tooltip)`
   padding: 8px;
+
+  opacity: 1;
+
+  background-color: ${(props) => props.theme.primaryBackground};
+
+  color: ${(props) => props.theme.text100};
+
+  box-shadow: 2px 4px 16px 6px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 2px 4px 3px rgba(0, 0, 0, 0.04);
 `;
 
 export function CommentHeader({ comment }: OwnProps) {
