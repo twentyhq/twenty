@@ -8,10 +8,7 @@ import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
 import { logError } from '@/utils/logs/logError';
 import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
-import {
-  GetPeopleCountsDocument,
-  useCreateCommentMutation,
-} from '~/generated/graphql';
+import { useCreateCommentMutation } from '~/generated/graphql';
 
 import { CommentThreadItem } from './CommentThreadItem';
 
@@ -49,9 +46,6 @@ export function CommentThread({ commentThread }: OwnProps) {
   const currentUser = useRecoilValue(currentUserState);
 
   function handleSendComment(commentText: string) {
-    console.log({
-      GetPeopleCountsDocument: GetPeopleCountsDocument.definitions[0],
-    });
     if (!isDefined(currentUser)) {
       logError(
         'In handleSendComment, currentUser is not defined, this should not happen.',
@@ -67,13 +61,6 @@ export function CommentThread({ commentThread }: OwnProps) {
     }
 
     if (isDefined(currentUser)) {
-      console.log({
-        commentId: v4(),
-        authorId: currentUser.id,
-        commentThreadId: commentThread.id,
-        commentText: commentText,
-        createdAt: new Date().toISOString(),
-      });
       createCommentMutation({
         variables: {
           commentId: v4(),
@@ -82,11 +69,11 @@ export function CommentThread({ commentThread }: OwnProps) {
           commentText,
           createdAt: new Date().toISOString(),
         },
-        // TODO: find a way to have this configuration dynamic
+        // TODO: find a way to have this configuration dynamic and typed
         refetchQueries: [
           'GetCommentThreadsByTargets',
-          'GetPeopleCounts',
-          'GetCompanyCounts',
+          'GetPeopleCommentsCount',
+          'GetCompanyCommentsCount',
         ],
         onError: (error) => {
           logError(

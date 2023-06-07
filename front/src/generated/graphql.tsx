@@ -1081,6 +1081,17 @@ export type WorkspaceMember = {
   workspace: Workspace;
 };
 
+export type CreateCommentMutationVariables = Exact<{
+  commentId: Scalars['String'];
+  commentText: Scalars['String'];
+  authorId: Scalars['String'];
+  commentThreadId: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+}>;
+
+
+export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, commentThreadId: string, author: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } } };
+
 export type GetCompanyCommentsCountQueryVariables = Exact<{
   where?: InputMaybe<CompanyWhereInput>;
 }>;
@@ -1094,13 +1105,6 @@ export type GetPeopleCommentsCountQueryVariables = Exact<{
 
 
 export type GetPeopleCommentsCountQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', commentsCount: number }> };
-
-export type GetCommentThreadsByTargetsQueryVariables = Exact<{
-  commentThreadTargetIds: Array<Scalars['String']> | Scalars['String'];
-}>;
-
-
-export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: any, updatedAt: any, author: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } }> | null }> };
 
 export type GetCommentThreadsByTargetsQueryVariables = Exact<{
   commentThreadTargetIds: Array<Scalars['String']> | Scalars['String'];
@@ -1234,6 +1238,53 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string }> };
 
 
+export const CreateCommentDocument = gql`
+    mutation CreateComment($commentId: String!, $commentText: String!, $authorId: String!, $commentThreadId: String!, $createdAt: DateTime!) {
+  createOneComment(
+    data: {id: $commentId, createdAt: $createdAt, body: $commentText, author: {connect: {id: $authorId}}, commentThread: {connect: {id: $commentThreadId}}}
+  ) {
+    id
+    createdAt
+    body
+    author {
+      id
+      displayName
+      avatarUrl
+    }
+    commentThreadId
+  }
+}
+    `;
+export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
+
+/**
+ * __useCreateCommentMutation__
+ *
+ * To run a mutation, you first call `useCreateCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
+ *   variables: {
+ *      commentId: // value for 'commentId'
+ *      commentText: // value for 'commentText'
+ *      authorId: // value for 'authorId'
+ *      commentThreadId: // value for 'commentThreadId'
+ *      createdAt: // value for 'createdAt'
+ *   },
+ * });
+ */
+export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommentMutation, CreateCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument, options);
+      }
+export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
+export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
+export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
 export const GetCompanyCommentsCountDocument = gql`
     query GetCompanyCommentsCount($where: CompanyWhereInput) {
   companies: findManyCompany(where: $where) {
