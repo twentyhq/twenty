@@ -29,7 +29,7 @@ export function RightDrawerComments() {
       <RightDrawerTopBar title="Comments" />
       <RightDrawerBody>
         {commentThreads.map((commentThread) => (
-          <CommentThread commentThread={commentThread} />
+          <CommentThread key={commentThread.id} commentThread={commentThread} />
         ))}
       </RightDrawerBody>
     </RightDrawerPage>

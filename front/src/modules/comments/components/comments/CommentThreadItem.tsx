@@ -29,11 +29,7 @@ const StyledCommentBody = styled.div`
 export function CommentThreadItem({ comment }: OwnProps) {
   return (
     <StyledContainer>
-      <CommentHeader
-        avatarUrl={comment.author.avatarUrl}
-        username={comment.author.displayName}
-        createdAt={comment.createdAt}
-      />
+      <CommentHeader comment={comment} />
       <StyledCommentBody>{comment.body}</StyledCommentBody>
     </StyledContainer>
   );

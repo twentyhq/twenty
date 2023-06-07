@@ -23,11 +23,12 @@ const MainContainer = styled.div`
 
 type OwnProps = {
   children: JSX.Element;
-  user?: User;
+  user?: User | null;
 };
 
 export function AppLayout({ children, user }: OwnProps) {
   const userIsAuthenticated = !!user;
+
   return (
     <StyledLayout>
       {userIsAuthenticated ? (
