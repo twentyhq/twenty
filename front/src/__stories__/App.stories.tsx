@@ -3,6 +3,7 @@ import { ApolloProvider } from '@apollo/client';
 import type { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
+import { themeEnabledState } from '@/ui/layout/states/themeEnabledState';
 import { App } from '~/App';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -18,11 +19,15 @@ export default meta;
 type Story = StoryObj<typeof App>;
 
 const render = () => (
-  <RecoilRoot>
+  <RecoilRoot
+    initializeState={(initialSnapshot) => {
+      initialSnapshot.set(themeEnabledState, false);
+    }}
+  >
     <ApolloProvider client={mockedClient}>
       <MemoryRouter>
         <FullHeightStorybookLayout>
-          <App themeEnabled={false} />
+          <App />
         </FullHeightStorybookLayout>
       </MemoryRouter>
     </ApolloProvider>

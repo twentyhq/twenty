@@ -7,6 +7,8 @@ import { RecoilRoot } from 'recoil';
 import '@emotion/react';
 
 import { ThemeType } from './modules/ui/layout/styles/themes';
+import { AppThemeProvider } from './providers/AppThemeProvider';
+import { AuthProvider } from './providers/AuthProvider';
 import { apiClient } from './apollo';
 import { App } from './App';
 
@@ -19,9 +21,13 @@ root.render(
   <RecoilRoot>
     <ApolloProvider client={apiClient}>
       <BrowserRouter>
-        <StrictMode>
-          <App />
-        </StrictMode>
+        <AuthProvider>
+          <AppThemeProvider>
+            <StrictMode>
+              <App />
+            </StrictMode>
+          </AppThemeProvider>
+        </AuthProvider>
       </BrowserRouter>
     </ApolloProvider>
   </RecoilRoot>,
