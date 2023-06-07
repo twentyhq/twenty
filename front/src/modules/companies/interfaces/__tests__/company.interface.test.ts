@@ -21,6 +21,7 @@ describe('Company mappers', () => {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
         email: 'john@example.com',
         displayName: 'John Doe',
+        avatarUrl: 'https://example.com/avatar.png',
         __typename: 'User',
       },
       pipes: [
@@ -47,6 +48,7 @@ describe('Company mappers', () => {
         __typename: 'users',
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
         email: 'john@example.com',
+        avatarUrl: 'https://example.com/avatar.png',
         displayName: 'John Doe',
         workspaceMember: undefined,
       },
@@ -67,6 +69,7 @@ describe('Company mappers', () => {
       accountOwner: {
         id: '522d4ec4-c46b-4360-a0a7-df8df170be81',
         email: 'john@example.com',
+        avatarUrl: 'https://example.com/avatar.png',
         displayName: 'John Doe',
         __typename: 'users',
       },

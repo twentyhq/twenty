@@ -13,6 +13,7 @@ describe('User mappers', () => {
     const graphQLUser = {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       displayName: 'John Doe',
+      avatarUrl: 'https://example.com/avatar.png',
       email: 'john.doe@gmail.com',
       workspaceMember: {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e88',
@@ -31,6 +32,7 @@ describe('User mappers', () => {
       __typename: 'users',
       id: graphQLUser.id,
       displayName: graphQLUser.displayName,
+      avatarUrl: graphQLUser.avatarUrl,
       email: graphQLUser.email,
       workspaceMember: {
         id: graphQLUser.workspaceMember.id,
@@ -51,6 +53,7 @@ describe('User mappers', () => {
       __typename: 'users',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       displayName: 'John Doe',
+      avatarUrl: 'https://example.com/avatar.png',
       email: 'john.doe@gmail.com',
       workspaceMember: {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e88',
@@ -65,6 +68,7 @@ describe('User mappers', () => {
     expect(graphQLUser).toStrictEqual({
       id: user.id,
       displayName: user.displayName,
+      avatarUrl: user.avatarUrl,
       email: user.email,
       workspaceMemberId: user.workspaceMember.id,
       __typename: 'users',

@@ -9,6 +9,7 @@ export interface User {
   id: string;
   email?: string;
   displayName?: string;
+  avatarUrl?: string;
   workspaceMember?: WorkspaceMember | null;
 }
 
@@ -17,6 +18,7 @@ export type GraphqlQueryUser = {
   email?: string;
   displayName?: string;
   workspaceMember?: GraphqlQueryWorkspaceMember | null;
+  avatarUrl?: string;
   __typename?: string;
 };
 
@@ -24,6 +26,7 @@ export type GraphqlMutationUser = {
   id: string;
   email?: string;
   displayName?: string;
+  avatarUrl?: string;
   workspaceMemberId?: string;
   __typename?: string;
 };
@@ -33,6 +36,7 @@ export const mapToUser = (user: GraphqlQueryUser): User => ({
   id: user.id,
   email: user.email,
   displayName: user.displayName,
+  avatarUrl: user.avatarUrl,
   workspaceMember: user.workspaceMember
     ? mapToWorkspaceMember(user.workspaceMember)
     : user.workspaceMember,
@@ -42,6 +46,7 @@ export const mapToGqlUser = (user: User): GraphqlMutationUser => ({
   id: user.id,
   email: user.email,
   displayName: user.displayName,
+  avatarUrl: user.avatarUrl,
   workspaceMemberId: user.workspaceMember?.id,
   __typename: 'users',
 });

@@ -23,6 +23,8 @@ const commonTheme = {
   },
 
   borderRadius: '4px',
+
+  rightDrawerWidth: '300px',
 };
 
 const lightThemeSpecific = {
@@ -38,6 +40,7 @@ const lightThemeSpecific = {
   purpleBackground: '#e0e0ff',
   yellowBackground: '#fff2e7',
 
+  primaryBackgroundTransparent: 'rgba(255, 255, 255, 0.8)',
   secondaryBackgroundTransparent: 'rgba(252, 252, 252, 0.8)',
 
   primaryBorder: 'rgba(0, 0, 0, 0.08)',
@@ -77,6 +80,7 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
   purpleBackground: '#1111b7',
   yellowBackground: '#cc660a',
 
+  primaryBackgroundTransparent: 'rgba(20, 20, 20, 0.8)',
   secondaryBackgroundTransparent: 'rgba(23, 23, 23, 0.8)',
 
   clickableElementBackgroundHover: 'rgba(0, 0, 0, 0.04)',

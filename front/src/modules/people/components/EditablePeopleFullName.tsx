@@ -2,9 +2,9 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { CellCommentChip } from '@/comments/components/comments/CellCommentChip';
+import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
 import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
 
-import { useOpenCommentRightDrawer } from '../../comments/hooks/useOpenCommentRightDrawer';
 import { usePeopleCommentsCountQuery } from '../../comments/services';
 
 import { PersonChip } from './PersonChip';
@@ -31,6 +31,7 @@ export function EditablePeopleFullName({
 }: OwnProps) {
   const [firstnameValue, setFirstnameValue] = useState(firstname);
   const [lastnameValue, setLastnameValue] = useState(lastname);
+  const openCommentRightDrawer = useOpenCommentRightDrawer();
 
   function handleDoubleTextChange(
     firstValue: string,
@@ -42,20 +43,21 @@ export function EditablePeopleFullName({
     onChange(firstValue, secondValue);
   }
 
-  const openCommentRightDrawer = useOpenCommentRightDrawer();
-
   function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {
     event.preventDefault();
     event.stopPropagation();
+
     openCommentRightDrawer([
       {
-        type: 'Company',
+        type: 'Person',
         id: personId,
       },
     ]);
   }
 
   const commentCount = usePeopleCommentsCountQuery(personId);
+
+  const displayCommentCount = !commentCount.loading;
 
   return (
     <EditableDoubleText
@@ -69,9 +71,9 @@ export function EditablePeopleFullName({
           <StyledDiv>
             <PersonChip name={firstname + ' ' + lastname} />
           </StyledDiv>
-          {commentCount.loading ? null : (
+          {displayCommentCount && (
             <CellCommentChip
-              count={commentCount.data || 0}
+              count={commentCount.data ?? 0}
               onClick={handleCommentClick}
             />
           )}

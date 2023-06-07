@@ -1,12 +1,12 @@
 import { gql } from '@apollo/client';
 
 import {
-  useGetCompanyCountsQuery,
-  useGetPeopleCountsQuery,
+  useGetCompanyCommentsCountQuery,
+  useGetPeopleCommentsCountQuery,
 } from '../../../generated/graphql';
 
 export const GET_COMPANY_COMMENT_COUNT = gql`
-  query GetCompanyCounts($where: CompanyWhereInput) {
+  query GetCompanyCommentsCount($where: CompanyWhereInput) {
     companies: findManyCompany(where: $where) {
       commentsCount: _commentCount
     }
@@ -14,14 +14,14 @@ export const GET_COMPANY_COMMENT_COUNT = gql`
 `;
 
 export const useCompanyCommentsCountQuery = (companyId: string) => {
-  const { data, ...rest } = useGetCompanyCountsQuery({
+  const { data, ...rest } = useGetCompanyCommentsCountQuery({
     variables: { where: { id: { equals: companyId } } },
   });
   return { ...rest, data: data?.companies[0].commentsCount };
 };
 
 export const GET_PEOPLE_COMMENT_COUNT = gql`
-  query GetPeopleCounts($where: PersonWhereInput) {
+  query GetPeopleCommentsCount($where: PersonWhereInput) {
     people: findManyPerson(where: $where) {
       commentsCount: _commentCount
     }
@@ -29,7 +29,7 @@ export const GET_PEOPLE_COMMENT_COUNT = gql`
 `;
 
 export const usePeopleCommentsCountQuery = (personId: string) => {
-  const { data, ...rest } = useGetPeopleCountsQuery({
+  const { data, ...rest } = useGetPeopleCommentsCountQuery({
     variables: { where: { id: { equals: personId } } },
   });
   return { ...rest, data: data?.people[0].commentsCount };

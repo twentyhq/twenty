@@ -12,8 +12,7 @@ import { RightDrawerRouter } from './RightDrawerRouter';
 const StyledRightDrawer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 300px;
-  margin-left: ${(props) => props.theme.spacing(2)};
+  width: ${(props) => props.theme.rightDrawerWidth};
 `;
 
 export function RightDrawer() {

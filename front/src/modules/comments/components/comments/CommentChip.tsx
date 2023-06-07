@@ -9,18 +9,18 @@ export type CommentChipProps = {
 
 const StyledChip = styled.div`
   height: 26px;
-  min-width: 34px;
+  width: fit-content;
 
-  padding-left: 2px;
-  padding-right: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
 
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: row;
-  gap: 2px;
+  gap: 4px;
 
-  background: ${(props) => props.theme.secondaryBackgroundTransparent};
+  background: ${(props) => props.theme.primaryBackgroundTransparent};
   backdrop-filter: blur(6px);
 
   border-radius: ${(props) => props.theme.borderRadius};
@@ -53,7 +53,7 @@ export function CommentChip({ count, onClick }: CommentChipProps) {
   return (
     <StyledChip data-testid="comment-chip" onClick={onClick}>
       <StyledCount>{formattedCount}</StyledCount>
-      <IconComment size={12} />
+      <IconComment size={16} />
     </StyledChip>
   );
 }
