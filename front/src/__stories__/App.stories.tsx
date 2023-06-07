@@ -21,18 +21,12 @@ export default meta;
 type Story = StoryObj<typeof App>;
 
 const render = () => (
-  <RecoilRoot
-    initializeState={(initialSnapshot) => {
-      initialSnapshot.set(themeEnabledState, false);
-    }}
-  >
+  <RecoilRoot>
     <ApolloProvider client={mockedClient}>
       <MemoryRouter>
         <FullHeightStorybookLayout>
           <AuthProvider>
-            <AppThemeProvider>
-              <App />
-            </AppThemeProvider>
+            <App />
           </AuthProvider>
         </FullHeightStorybookLayout>
       </MemoryRouter>
