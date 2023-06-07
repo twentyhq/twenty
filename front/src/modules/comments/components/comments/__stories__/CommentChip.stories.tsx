@@ -17,9 +17,14 @@ type Story = StoryObj<typeof CellCommentChip>;
 const TestCellContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
 
   min-width: 250px;
+  max-width: 250px;
+
+  text-wrap: nowrap;
+  overflow: hidden;
+
   height: fit-content;
 
   background: ${(props) => props.theme.primaryBackground};
