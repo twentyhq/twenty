@@ -72,7 +72,7 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onSend],
+    [onSend, text, setText],
   );
 
   useHotkeys(
@@ -86,7 +86,7 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onSend],
+    [onSend, setText],
   );
 
   function handleInputChange(event: React.FormEvent<HTMLTextAreaElement>) {
