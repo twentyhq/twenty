@@ -1,3 +1,4 @@
+import { DraggableProvided } from 'react-beautiful-dnd';
 import styled from '@emotion/styled';
 
 const StyledCard = styled.div`
@@ -9,8 +10,17 @@ const StyledCard = styled.div`
 
 type BoardCardProps = {
   content: string;
+  draggableProvided: DraggableProvided;
 };
 
-export const BoardCard = ({ content }: BoardCardProps) => {
-  return <StyledCard>{content}</StyledCard>;
+export const BoardCard = ({ content, draggableProvided }: BoardCardProps) => {
+  return (
+    <StyledCard
+      ref={draggableProvided?.innerRef}
+      {...draggableProvided.dragHandleProps}
+      {...draggableProvided.draggableProps}
+    >
+      {content}
+    </StyledCard>
+  );
 };

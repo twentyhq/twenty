@@ -1,4 +1,4 @@
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import styled from '@emotion/styled';
 
 import { BoardCard } from './BoardCard';
@@ -34,13 +34,25 @@ export const Board = () => {
       <StyledBoard>
         {columns.map((column) => (
           <Droppable droppableId={column.id}>
-            {(provided) => (
-              <BoardColumn title={column.title} droppableProvided={provided}>
-                {items.map((item) => (
-                  <BoardCard content={item.content} />
-                ))}
-              </BoardColumn>
-            )}
+            {(provided) =>
+              provided && (
+                <BoardColumn title={column.title} droppableProvided={provided}>
+                  {items.map((item, index) => (
+                    <Draggable draggableId={item.id} index={index}>
+                      {(provided) =>
+                        provided && (
+                          <BoardCard
+                            key={item.id}
+                            content={item.content}
+                            draggableProvided={provided}
+                          />
+                        )
+                      }
+                    </Draggable>
+                  ))}
+                </BoardColumn>
+              )
+            }
           </Droppable>
         ))}
       </StyledBoard>
