@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Board, Column, Items } from '../Board';
+import { Board } from '../Board';
 
 import { initialBoard, items } from './mock-data';
 
