@@ -10,18 +10,24 @@ const StyledBoard = styled.div`
   height: 100%;
 `;
 
-const items = [
-  { id: 'item-1', content: 'Item 1' },
-  { id: 'item-2', content: 'Item 2' },
-  { id: 'item-3', content: 'Item 3' },
-  { id: 'item-4', content: 'Item 4' },
-];
-
 const columns = [
   {
     id: 'column-1',
     title: 'Column 1',
-    itemIds: ['item-1', 'item-2'],
+    items: [
+      { id: 'item-1', content: 'Item 1' },
+      { id: 'item-2', content: 'Item 2' },
+      { id: 'item-3', content: 'Item 3' },
+      { id: 'item-4', content: 'Item 4' },
+    ],
+  },
+  {
+    id: 'column-2',
+    title: 'Column 2',
+    items: [
+      { id: 'item-5', content: 'Item 5' },
+      { id: 'item-6', content: 'Item 6' },
+    ],
   },
 ];
 
@@ -37,7 +43,7 @@ export const Board = () => {
             {(provided) =>
               provided && (
                 <BoardColumn title={column.title} droppableProvided={provided}>
-                  {items.map((item, index) => (
+                  {column.items.map((item, index) => (
                     <Draggable draggableId={item.id} index={index}>
                       {(provided) =>
                         provided && (
