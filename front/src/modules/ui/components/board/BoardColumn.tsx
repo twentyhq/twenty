@@ -5,20 +5,31 @@ const StyledColumn = styled.div`
   display: flex;
   flex-direction: column;
   width: 300px;
-  margin-right: 16px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  padding: 16px;
+  gap: ${({ theme }) => theme.spacing(2)};
+  background-color: ${({ theme }) => theme.primaryBackground};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledColumnTitle = styled.h3`
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: ${({ theme }) => theme.fontWeightBold};
+  font-size: ${({ theme }) => theme.fontSizeMedium};
+  line-height: ${({ theme }) => theme.lineHeight};
+  color: ${({ color }) => color};
+  margin: 0;
 `;
 
 type BoardColumnProps = {
   title: string;
+  colorCode?: string;
   children: any[];
   droppableProvided: DroppableProvided;
 };
 
 export const BoardColumn = ({
   title,
+  colorCode,
   children,
   droppableProvided,
 }: BoardColumnProps) => {
@@ -27,7 +38,7 @@ export const BoardColumn = ({
       ref={droppableProvided.innerRef}
       {...droppableProvided.droppableProps}
     >
-      <h3>{title}</h3>
+      <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
       {children}
       {droppableProvided.placeholder}
     </StyledColumn>

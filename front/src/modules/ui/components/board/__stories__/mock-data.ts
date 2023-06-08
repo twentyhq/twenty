@@ -8,30 +8,47 @@ export const items: Items = {
   'item-5': { id: 'item-5', content: 'Item 5' },
   'item-6': { id: 'item-6', content: 'Item 6' },
 };
+for (let i = 7; i <= 20; i++) {
+  const key = `item-${i}`;
+  items[key] = { id: key, content: `Item ${i}` };
+}
 
 export const initialBoard = [
   {
     id: 'column-1',
     title: 'New',
-    itemKeys: ['item-1', 'item-2', 'item-3', 'item-4'],
+    colorCode: '#B76796',
+    itemKeys: [
+      'item-1',
+      'item-2',
+      'item-3',
+      'item-4',
+      'item-7',
+      'item-8',
+      'item-9',
+    ],
   },
   {
     id: 'column-2',
     title: 'Screening',
+    colorCode: '#CB912F',
     itemKeys: ['item-5', 'item-6'],
   },
   {
     id: 'column-3',
+    colorCode: '#9065B0',
     title: 'Meeting',
     itemKeys: [],
   },
   {
     id: 'column-4',
-    title: 'Meeting',
+    title: 'Proposal',
+    colorCode: '#337EA9',
     itemKeys: [],
   },
   {
     id: 'column-5',
+    colorCode: '#079039',
     title: 'Customer',
     itemKeys: [],
   },

@@ -67,6 +67,8 @@ const lightThemeSpecific = {
 
   blueHighTransparency: 'rgba(25, 97, 237, 0.03)',
   blueLowTransparency: 'rgba(25, 97, 237, 0.32)',
+
+  boxShadow: '0px 2px 4px 0px #0F0F0F0A',
 };
 
 const darkThemeSpecific: typeof lightThemeSpecific = {
@@ -107,6 +109,7 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
 
   blueHighTransparency: 'rgba(104, 149, 236, 0.03)',
   blueLowTransparency: 'rgba(104, 149, 236, 0.32)',
+  boxShadow: '0px 2px 4px 0px #0F0F0F0A', // TODO change color for dark theme
 };
 
 export const overlayBackground = (props: any) =>

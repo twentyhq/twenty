@@ -29,6 +29,7 @@ export interface Items {
 export interface Column {
   id: string;
   title: string;
+  colorCode?: string;
   itemKeys: ItemKey[];
 }
 
@@ -84,7 +85,11 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
           <Droppable key={column.id} droppableId={column.id}>
             {(provided) =>
               provided && (
-                <BoardColumn title={column.title} droppableProvided={provided}>
+                <BoardColumn
+                  title={column.title}
+                  colorCode={column.colorCode}
+                  droppableProvided={provided}
+                >
                   {column.itemKeys.map((itemKey, index) => (
                     <Draggable
                       key={itemKey}
