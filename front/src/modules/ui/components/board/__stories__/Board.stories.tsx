@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { Board, Column, Items } from '../Board';
@@ -33,5 +34,9 @@ const initialBoard = [
 ] satisfies Column[];
 
 export const OneColumnBoard: Story = {
-  render: () => <Board initialBoard={initialBoard} items={items} />,
+  render: () => (
+    <StrictMode>
+      <Board initialBoard={initialBoard} items={items} />
+    </StrictMode>
+  ),
 };
