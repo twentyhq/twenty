@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { CommandMenu } from '@/search/components/CommandMenu';
 
 import { Navbar } from './navbar/Navbar';
 
@@ -34,6 +35,7 @@ export function AppLayout({ children }: OwnProps) {
     <StyledLayout>
       {userIsAuthenticated ? (
         <>
+          <CommandMenu />
           <Navbar />
           <MainContainer>{children}</MainContainer>
         </>
