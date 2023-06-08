@@ -5,7 +5,9 @@ export const StyledDialog = styled(Command.Dialog)`
   position: fixed;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
   max-width: 640px;
+  padding: 25px;
   width: 100%;
   background: ${(props) => props.theme.primaryBackground};
   border-radius: ${(props) => props.theme.borderRadius};
@@ -79,12 +81,14 @@ export const StyledList = styled(Command.List)`
 `;
 
 export const StyledGroup = styled(Command.Group)`
-  user-select: none;
-  font-size: ${(props) => props.theme.fontSizeExtraSmall};
-  color: ${(props) => props.theme.text30};
-  padding: 0 ${(props) => props.theme.spacing(2)};
-  display: flex;
-  align-items: center;
+  [cmdk-group-heading] {
+    user-select: none;
+    font-size: ${(props) => props.theme.fontSizeExtraSmall};
+    color: ${(props) => props.theme.text30};
+    padding: ${(props) => props.theme.spacing(2)};
+    display: flex;
+    align-items: center;
+  }
 `;
 
 export const StyledEmpty = styled(Command.Empty)`
@@ -96,3 +100,5 @@ export const StyledEmpty = styled(Command.Empty)`
   white-space: pre-wrap;
   color: ${(props) => props.theme.text30};
 `;
+
+export const StyledSeparator = styled(Command.Separator)``;

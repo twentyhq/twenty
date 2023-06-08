@@ -1,5 +1,5 @@
 import React from 'react';
-import { Command } from 'cmdk';
+import { useNavigate } from 'react-router-dom';
 
 import {
   StyledDialog,
@@ -8,6 +8,7 @@ import {
   StyledInput,
   StyledItem,
   StyledList,
+  StyledSeparator,
 } from './CommandMenuStyles';
 
 export const CommandMenu = () => {
@@ -26,6 +27,8 @@ export const CommandMenu = () => {
     return () => document.removeEventListener('keydown', down);
   }, []);
 
+  const navigate = useNavigate();
+
   return (
     <StyledDialog
       open={open}
@@ -36,14 +39,24 @@ export const CommandMenu = () => {
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
 
-        <StyledGroup heading="Letters">
-          <StyledItem>a</StyledItem>
-          <StyledItem>b</StyledItem>
-          <Command.Separator />
-          <StyledItem>c</StyledItem>
+        <StyledGroup heading="Go to">
+          <StyledItem
+            onSelect={() => {
+              setOpen(false);
+              navigate('/people');
+            }}
+          >
+            People
+          </StyledItem>
+          <StyledItem
+            onSelect={() => {
+              setOpen(false);
+              navigate('/companies');
+            }}
+          >
+            Companies
+          </StyledItem>
         </StyledGroup>
-
-        <StyledItem>Apple</StyledItem>
       </StyledList>
     </StyledDialog>
   );
