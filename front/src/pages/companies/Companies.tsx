@@ -26,6 +26,7 @@ import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer'
 import { BoolExpType } from '@/utils/interfaces/generic.interface';
 import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
 
+import { TableActionBarButtonCreateCommentThreadCompany } from './table/TableActionBarButtonCreateCommentThreadCompany';
 import { TableActionBarButtonDeleteCompanies } from './table/TableActionBarButtonDeleteCompanies';
 import { useCompaniesColumns } from './companies-columns';
 import { availableFilters } from './companies-filters';
@@ -93,7 +94,7 @@ export function Companies() {
           />
         </StyledCompaniesContainer>
         <EntityTableActionBar>
-          <TableActionBarButtonToggleComments />
+          <TableActionBarButtonCreateCommentThreadCompany />
           <TableActionBarButtonDeleteCompanies />
         </EntityTableActionBar>
       </>

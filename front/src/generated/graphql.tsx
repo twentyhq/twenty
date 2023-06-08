@@ -1092,6 +1092,18 @@ export type CreateCommentMutationVariables = Exact<{
 
 export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, commentThreadId: string, author: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } } };
 
+export type CreateCommentThreadWithCommentMutationVariables = Exact<{
+  commentThreadId: Scalars['String'];
+  commentText: Scalars['String'];
+  authorId: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  commentId: Scalars['String'];
+  commentThreadTargetArray: Array<CommentThreadTargetCreateManyCommentThreadInput> | CommentThreadTargetCreateManyCommentThreadInput;
+}>;
+
+
+export type CreateCommentThreadWithCommentMutation = { __typename?: 'Mutation', createOneCommentThread: { __typename?: 'CommentThread', id: string, createdAt: string, updatedAt: string, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, createdAt: string, updatedAt: string, commentThreadId: string, commentableType: CommentableType, commentableId: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
+
 export type GetCompanyCommentsCountQueryVariables = Exact<{
   where?: InputMaybe<CompanyWhereInput>;
 }>;
@@ -1292,6 +1304,65 @@ export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
 export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
 export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
+export const CreateCommentThreadWithCommentDocument = gql`
+    mutation CreateCommentThreadWithComment($commentThreadId: String!, $commentText: String!, $authorId: String!, $createdAt: DateTime!, $commentId: String!, $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!) {
+  createOneCommentThread(
+    data: {id: $commentThreadId, createdAt: $createdAt, updatedAt: $createdAt, comments: {createMany: {data: {authorId: $authorId, id: $commentId, createdAt: $createdAt, body: $commentText}}}, commentThreadTargets: {createMany: {data: $commentThreadTargetArray, skipDuplicates: true}}}
+  ) {
+    id
+    createdAt
+    updatedAt
+    commentThreadTargets {
+      id
+      createdAt
+      updatedAt
+      commentThreadId
+      commentableType
+      commentableId
+    }
+    comments {
+      id
+      createdAt
+      updatedAt
+      body
+      author {
+        id
+      }
+    }
+  }
+}
+    `;
+export type CreateCommentThreadWithCommentMutationFn = Apollo.MutationFunction<CreateCommentThreadWithCommentMutation, CreateCommentThreadWithCommentMutationVariables>;
+
+/**
+ * __useCreateCommentThreadWithCommentMutation__
+ *
+ * To run a mutation, you first call `useCreateCommentThreadWithCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCommentThreadWithCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCommentThreadWithCommentMutation, { data, loading, error }] = useCreateCommentThreadWithCommentMutation({
+ *   variables: {
+ *      commentThreadId: // value for 'commentThreadId'
+ *      commentText: // value for 'commentText'
+ *      authorId: // value for 'authorId'
+ *      createdAt: // value for 'createdAt'
+ *      commentId: // value for 'commentId'
+ *      commentThreadTargetArray: // value for 'commentThreadTargetArray'
+ *   },
+ * });
+ */
+export function useCreateCommentThreadWithCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommentThreadWithCommentMutation, CreateCommentThreadWithCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCommentThreadWithCommentMutation, CreateCommentThreadWithCommentMutationVariables>(CreateCommentThreadWithCommentDocument, options);
+      }
+export type CreateCommentThreadWithCommentMutationHookResult = ReturnType<typeof useCreateCommentThreadWithCommentMutation>;
+export type CreateCommentThreadWithCommentMutationResult = Apollo.MutationResult<CreateCommentThreadWithCommentMutation>;
+export type CreateCommentThreadWithCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentThreadWithCommentMutation, CreateCommentThreadWithCommentMutationVariables>;
 export const GetCompanyCommentsCountDocument = gql`
     query GetCompanyCommentsCount($where: CompanyWhereInput) {
   companies: findManyCompany(where: $where) {

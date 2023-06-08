@@ -17,11 +17,11 @@ import {
   usePeopleQuery,
 } from '@/people/services';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
-import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
 import { EntityTable } from '@/ui/components/table/EntityTable';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { BoolExpType } from '@/utils/interfaces/generic.interface';
 
+import { TableActionBarButtonCreateCommentThreadPeople } from './table/TableActionBarButtonCreateCommentThreadPeople';
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
 import { usePeopleColumns } from './people-columns';
 import { availableFilters } from './people-filters';
@@ -91,7 +91,7 @@ export function People() {
           />
         </StyledPeopleContainer>
         <EntityTableActionBar>
-          <TableActionBarButtonToggleComments />
+          <TableActionBarButtonCreateCommentThreadPeople />
           <TableActionBarButtonDeletePeople />
         </EntityTableActionBar>
       </>

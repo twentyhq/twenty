@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { CellCommentChip } from '@/comments/components/comments/CellCommentChip';
 import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
 import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
+import { CommentableType } from '~/generated/graphql';
 
 import { usePeopleCommentsCountQuery } from '../../comments/services';
 
@@ -49,7 +50,7 @@ export function EditablePeopleFullName({
 
     openCommentRightDrawer([
       {
-        type: 'Person',
+        type: CommentableType.Person,
         id: personId,
       },
     ]);

@@ -7,8 +7,11 @@ import styled from '@emotion/styled';
 
 import { IconButton } from '@/ui/components/buttons/IconButton';
 
+const MAX_ROWS = 5;
+
 type OwnProps = {
-  onSend?: (text: string) => void;
+  onValidate?: (text: string) => void;
+  minRows?: number;
   placeholder?: string;
 };
 
@@ -50,7 +53,11 @@ const StyledBottomRightIconButton = styled.div`
   right: 26px;
 `;
 
-export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
+export function AutosizeTextInput({
+  placeholder,
+  onValidate,
+  minRows = 1,
+}: OwnProps) {
   const [text, setText] = useState('');
 
   const isSendButtonDisabled = !text;
@@ -63,7 +70,7 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
       } else {
         event.preventDefault();
 
-        onSend?.(text);
+        onValidate?.(text);
 
         setText('');
       }
@@ -72,7 +79,7 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onSend, text, setText],
+    [onValidate, text, setText],
   );
 
   useHotkeys(
@@ -86,7 +93,7 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onSend, setText],
+    [onValidate, setText],
   );
 
   function handleInputChange(event: React.FormEvent<HTMLTextAreaElement>) {
@@ -96,17 +103,20 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
   }
 
   function handleOnClickSendButton() {
-    onSend?.(text);
+    onValidate?.(text);
 
     setText('');
   }
+
+  const computedMinRows = minRows > MAX_ROWS ? MAX_ROWS : minRows;
 
   return (
     <>
       <StyledContainer>
         <StyledTextArea
           placeholder={placeholder || 'Write something...'}
-          maxRows={5}
+          maxRows={MAX_ROWS}
+          minRows={computedMinRows}
           onChange={handleInputChange}
           value={text}
         />

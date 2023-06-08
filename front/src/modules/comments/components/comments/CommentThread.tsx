@@ -91,7 +91,7 @@ export function CommentThread({ commentThread }: OwnProps) {
           <CommentThreadItem key={comment.id} comment={comment} />
         ))}
       </StyledThreadItemListContainer>
-      <AutosizeTextInput onSend={handleSendComment} />
+      <AutosizeTextInput onValidate={handleSendComment} />
     </StyledContainer>
   );
 }

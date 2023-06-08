@@ -46,18 +46,18 @@ export class CreateOneCommentThreadGuard implements CanActivate {
         );
       }
 
-      const targetEntity = await this.prismaService[
-        target.commentableType
-      ].findUnique({
-        where: { id: target.commentableId },
-      });
+      // const targetEntity = await this.prismaService[
+      //   target.commentableType
+      // ].findUnique({
+      //   where: { id: target.commentableId },
+      // });
 
-      if (!targetEntity || targetEntity.workspaceId !== workspaceId) {
-        throw new HttpException(
-          { reason: 'CommentThreadTarget not found' },
-          HttpStatus.NOT_FOUND,
-        );
-      }
+      // if (!targetEntity || targetEntity.workspaceId !== workspaceId) {
+      //   throw new HttpException(
+      //     { reason: 'CommentThreadTarget not found' },
+      //     HttpStatus.NOT_FOUND,
+      //   );
+      // }
     });
 
     if (!comments) {
@@ -93,7 +93,7 @@ export class CreateOneCommentThreadGuard implements CanActivate {
         userWorkspaceMember.workspaceId !== workspaceId
       ) {
         throw new HttpException(
-          { reason: 'Comment.authorId not found' },
+          { reason: 'userWorkspaceMember.workspaceId not found' },
           HttpStatus.NOT_FOUND,
         );
       }
