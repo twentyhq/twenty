@@ -1,6 +1,6 @@
-import * as React from 'react';
 import styled from '@emotion/styled';
 
+import { BoardCard } from './BoardCard';
 import { BoardColumn } from './BoardColumn';
 
 const StyledBoard = styled.div`
@@ -28,7 +28,11 @@ export const Board = () => {
   return (
     <StyledBoard>
       {columns.map((column) => (
-        <BoardColumn title={column.title} items={items} />
+        <BoardColumn title={column.title}>
+          {items.map((item) => (
+            <BoardCard content={item.content} />
+          ))}
+        </BoardColumn>
       ))}
     </StyledBoard>
   );

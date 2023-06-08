@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
 
-import { BoardCard } from './BoardCard';
-
 const StyledColumn = styled.div`
   display: flex;
   flex-direction: column;
@@ -14,16 +12,14 @@ const StyledColumn = styled.div`
 
 type BoardColumnProps = {
   title: string;
-  items: any[];
+  children: any[];
 };
 
-export const BoardColumn = ({ title, items }: BoardColumnProps) => {
+export const BoardColumn = ({ title, children }: BoardColumnProps) => {
   return (
     <StyledColumn>
       <h3>{title}</h3>
-      {items.map((item) => (
-        <BoardCard content={item.content} />
-      ))}
+      {children}
     </StyledColumn>
   );
 };
