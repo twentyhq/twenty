@@ -1,16 +1,16 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
+import { CommentForDrawer } from '@/comments/types/CommentForDrawer';
 import { UserAvatar } from '@/users/components/UserAvatar';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
 } from '@/utils/datetime/date-utils';
+import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 
 type OwnProps = {
-  avatarUrl: string | null | undefined;
-  username: string;
-  createdAt: Date;
+  comment: Pick<CommentForDrawer, 'id' | 'author' | 'createdAt'>;
 };
 
 const StyledContainer = styled.div`
@@ -44,15 +44,30 @@ const StyledDate = styled.div`
 
 const StyledTooltip = styled(Tooltip)`
   padding: 8px;
+
+  opacity: 1;
+
+  background-color: ${(props) => props.theme.primaryBackground};
+
+  color: ${(props) => props.theme.text100};
+
+  box-shadow: 2px 4px 16px 6px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 2px 4px 3px rgba(0, 0, 0, 0.04);
 `;
 
-export function CommentHeader({ avatarUrl, username, createdAt }: OwnProps) {
-  const beautifiedCreatedAt = beautifyPastDateRelativeToNow(createdAt);
-  const exactCreatedAt = beautifyExactDate(createdAt);
+export function CommentHeader({ comment }: OwnProps) {
+  const beautifiedCreatedAt = beautifyPastDateRelativeToNow(comment.createdAt);
+  const exactCreatedAt = beautifyExactDate(comment.createdAt);
   const showDate = beautifiedCreatedAt !== '';
 
-  const capitalizedFirstUsernameLetter =
-    username !== '' ? username.toLocaleUpperCase()[0] : '';
+  const author = comment.author;
+  const authorName = author.displayName;
+  const avatarUrl = author.avatarUrl;
+  const commentId = comment.id;
+
+  const capitalizedFirstUsernameLetter = isNonEmptyString(authorName)
+    ? authorName.toLocaleUpperCase()[0]
+    : '';
 
   return (
     <StyledContainer>
@@ -61,14 +76,12 @@ export function CommentHeader({ avatarUrl, username, createdAt }: OwnProps) {
         size={16}
         placeholderLetter={capitalizedFirstUsernameLetter}
       />
-      <StyledName>{username}</StyledName>
+      <StyledName>{authorName}</StyledName>
       {showDate && (
         <>
-          <StyledDate className="comment-created-at">
-            {beautifiedCreatedAt}
-          </StyledDate>
+          <StyledDate id={`id-${commentId}`}>{beautifiedCreatedAt}</StyledDate>
           <StyledTooltip
-            anchorSelect=".comment-created-at"
+            anchorSelect={`#id-${commentId}`}
             content={exactCreatedAt}
             clickable
             noArrow

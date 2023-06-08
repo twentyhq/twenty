@@ -2,9 +2,6 @@ import { TbBuilding, TbUser } from 'react-icons/tb';
 import { useMatch, useResolvedPath } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { User } from '@/users/interfaces/user.interface';
-import { Workspace } from '@/workspaces/interfaces/workspace.interface';
-
 import NavItem from './NavItem';
 import NavTitle from './NavTitle';
 import WorkspaceContainer from './WorkspaceContainer';
@@ -23,16 +20,11 @@ const NavItemsContainer = styled.div`
   margin-top: 40px;
 `;
 
-type OwnProps = {
-  user?: User;
-  workspace?: Workspace;
-};
-
-export function Navbar({ workspace }: OwnProps) {
+export function Navbar() {
   return (
     <>
       <NavbarContainer>
-        {workspace && <WorkspaceContainer workspace={workspace} />}
+        <WorkspaceContainer />
         <NavItemsContainer>
           <NavTitle label="Workspace" />
           <NavItem

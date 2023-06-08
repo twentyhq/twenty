@@ -3,6 +3,7 @@ export interface Workspace {
   domainName?: string;
   displayName?: string;
   logo?: string | null;
+  __typename?: string;
 }
 
 export type GraphqlQueryWorkspace = {

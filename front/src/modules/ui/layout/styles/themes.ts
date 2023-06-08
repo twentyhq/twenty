@@ -15,6 +15,7 @@ const commonTheme = {
 
   fontWeightBold: 500,
   fontFamily: 'Inter, sans-serif',
+  lineHeight: '150%',
 
   spacing: (multiplicator: number) => `${multiplicator * 4}px`,
 

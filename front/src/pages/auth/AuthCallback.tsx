@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { refreshAccessToken } from '@/auth/services/AuthService';
 
-function Callback() {
+export function AuthCallback() {
   const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -25,5 +25,3 @@ function Callback() {
 
   return <></>;
 }
-
-export default Callback;

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
-import { User } from '@/users/interfaces/user.interface';
+import { currentUserState } from '@/auth/states/currentUserState';
 
 import { Navbar } from './navbar/Navbar';
 
@@ -23,16 +24,17 @@ const MainContainer = styled.div`
 
 type OwnProps = {
   children: JSX.Element;
-  user?: User;
 };
 
-export function AppLayout({ children, user }: OwnProps) {
-  const userIsAuthenticated = !!user;
+export function AppLayout({ children }: OwnProps) {
+  const currentUser = useRecoilState(currentUserState);
+  const userIsAuthenticated = !!currentUser;
+
   return (
     <StyledLayout>
       {userIsAuthenticated ? (
         <>
-          <Navbar user={user} workspace={user?.workspaceMember?.workspace} />
+          <Navbar />
           <MainContainer>{children}</MainContainer>
         </>
       ) : (
