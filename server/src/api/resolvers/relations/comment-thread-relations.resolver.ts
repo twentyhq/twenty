@@ -17,6 +17,10 @@ export class CommentThreadRelationsResolver {
       where: {
         commentThreadId: commentThread.id,
       },
+      orderBy: {
+        // TODO: find a way to pass it in the query
+        createdAt: 'desc',
+      },
     });
   }
 }

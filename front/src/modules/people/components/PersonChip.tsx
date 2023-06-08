@@ -30,6 +30,8 @@ const StyledContainer = styled.span`
     border-radius: 100%;
     object-fit: cover;
   }
+
+  height: 12px;
 `;
 
 export function PersonChip({ name, picture }: PersonChipPropsType) {

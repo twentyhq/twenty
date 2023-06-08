@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { App } from '~/App';
+import { AuthProvider } from '~/providers/AuthProvider';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedUserJWT } from '~/testing/mock-data/jwt';
@@ -22,7 +23,9 @@ const render = () => (
     <ApolloProvider client={mockedClient}>
       <MemoryRouter>
         <FullHeightStorybookLayout>
-          <App themeEnabled={false} />
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </FullHeightStorybookLayout>
       </MemoryRouter>
     </ApolloProvider>

@@ -18,22 +18,20 @@ const StyledContainer = styled.div`
 
 const StyledCommentBody = styled.div`
   font-size: ${(props) => props.theme.fontSizeMedium};
-  line-height: 19.5px;
+  line-height: ${(props) => props.theme.lineHeight};
 
   text-align: left;
   padding-left: 24px;
 
   color: ${(props) => props.theme.text60};
+
+  overflow-wrap: anywhere;
 `;
 
 export function CommentThreadItem({ comment }: OwnProps) {
   return (
     <StyledContainer>
-      <CommentHeader
-        avatarUrl={comment.author.avatarUrl}
-        username={comment.author.displayName}
-        createdAt={comment.createdAt}
-      />
+      <CommentHeader comment={comment} />
       <StyledCommentBody>{comment.body}</StyledCommentBody>
     </StyledContainer>
   );

@@ -1,10 +1,7 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
-import { Workspace } from '@/workspaces/interfaces/workspace.interface';
-
-type OwnProps = {
-  workspace: Workspace;
-};
+import { currentUserState } from '@/auth/states/currentUserState';
 
 const StyledContainer = styled.button`
   display: inline-flex;
@@ -39,11 +36,19 @@ const StyledName = styled.div`
   color: ${(props) => props.theme.text80};
 `;
 
-function WorkspaceContainer({ workspace }: OwnProps) {
+function WorkspaceContainer() {
+  const currentUser = useRecoilValue(currentUserState);
+
+  const currentWorkspace = currentUser?.workspaceMember?.workspace;
+
+  if (!currentWorkspace) {
+    return null;
+  }
+
   return (
     <StyledContainer>
-      <StyledLogo logo={workspace.logo}></StyledLogo>
-      <StyledName>{workspace?.displayName}</StyledName>
+      <StyledLogo logo={currentWorkspace?.logo}></StyledLogo>
+      <StyledName>{currentWorkspace?.displayName}</StyledName>
     </StyledContainer>
   );
 }
