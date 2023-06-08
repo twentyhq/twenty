@@ -1,19 +1,29 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { IconSidebarLeftCollapse } from '@/ui/icons';
 
-const StyledContainer = styled.button`
-  display: inline-flex;
+import { navbarState } from '../states/navbarState';
+
+const StyledContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
   height: 34px;
   align-items: center;
-  cursor: pointer;
   user-select: none;
   border: 0;
   background: inherit;
   padding: ${(props) => props.theme.spacing(2)};
   margin-left: ${(props) => props.theme.spacing(1)};
   align-self: flex-start;
+  width: 100%;
+`;
+
+const LogoAndNameContainer = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 `;
 
 type StyledLogoProps = {
@@ -36,8 +46,27 @@ const StyledName = styled.div`
   color: ${(props) => props.theme.text80};
 `;
 
+const CollapseButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  user-select: none;
+  border: 0;
+  background: inherit;
+
+  padding: 0;
+  cursor: pointer;
+
+  color: ${(props) => props.theme.text30};
+`;
+
 function WorkspaceContainer() {
   const currentUser = useRecoilValue(currentUserState);
+  const [isNavOpen, setIsNavOpen] = useRecoilState(navbarState);
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;
 
@@ -47,8 +76,15 @@ function WorkspaceContainer() {
 
   return (
     <StyledContainer>
-      <StyledLogo logo={currentWorkspace?.logo}></StyledLogo>
-      <StyledName>{currentWorkspace?.displayName}</StyledName>
+      <LogoAndNameContainer>
+        <StyledLogo logo={currentWorkspace?.logo}></StyledLogo>
+        <StyledName>{currentWorkspace?.displayName}</StyledName>
+      </LogoAndNameContainer>
+      {isNavOpen && (
+        <CollapseButton onClick={() => setIsNavOpen(!isNavOpen)}>
+          <IconSidebarLeftCollapse size={16} />
+        </CollapseButton>
+      )}
     </StyledContainer>
   );
 }

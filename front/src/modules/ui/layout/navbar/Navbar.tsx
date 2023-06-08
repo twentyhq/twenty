@@ -1,6 +1,9 @@
 import { TbBuilding, TbUser } from 'react-icons/tb';
 import { useMatch, useResolvedPath } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
+
+import { navbarState } from '../states/navbarState';
 
 import NavItem from './NavItem';
 import NavTitle from './NavTitle';
@@ -9,7 +12,7 @@ import WorkspaceContainer from './WorkspaceContainer';
 const NavbarContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 220px;
+  width: ${() => (useRecoilValue(navbarState) ? '220px' : '0')};
   padding: ${(props) => props.theme.spacing(2)};
   flex-shrink: 0;
 `;
