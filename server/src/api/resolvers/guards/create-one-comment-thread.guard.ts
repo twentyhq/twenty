@@ -89,8 +89,6 @@ export class CreateOneCommentThreadGuard implements CanActivate {
           where: { userId: author.id },
         });
 
-      console.log({ userWorkspaceMember, workspace, author });
-
       if (
         !userWorkspaceMember ||
         userWorkspaceMember.workspaceId !== workspace.id
