@@ -53,7 +53,7 @@ export const StyledItem = styled(Command.Item)`
       content: '';
       position: absolute;
       left: 0;
-      z-index: 123;
+      z-index: ${(props) => props.theme.lastLayerZIndex};
       width: 3px;
       height: 100%;
       background: ${(props) => props.theme.blue};

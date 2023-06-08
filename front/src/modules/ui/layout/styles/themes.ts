@@ -26,6 +26,8 @@ const commonTheme = {
   borderRadius: '4px',
 
   rightDrawerWidth: '300px',
+
+  lastLayerZIndex: 2147483647,
 };
 
 const lightThemeSpecific = {

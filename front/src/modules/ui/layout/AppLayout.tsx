@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { CommandMenu } from '@/search/components/CommandMenu';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { CommandMenu } from '@/search/components/CommandMenu';
 
 import { Navbar } from './navbar/Navbar';
 

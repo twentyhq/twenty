@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -14,18 +15,18 @@ import {
 export const CommandMenu = ({ initiallyOpen = false }) => {
   const [open, setOpen] = React.useState(initiallyOpen);
 
-  // Toggle the menu when ⌘K is pressed
-  React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
-      }
-    };
-
-    document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
-  }, []);
+  useHotkeys(
+    'ctrl+k,meta+k',
+    () => {
+      setOpen((prevOpen) => !prevOpen);
+    },
+    {
+      preventDefault: true,
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+    },
+    [setOpen],
+  );
 
   const navigate = useNavigate();
 
