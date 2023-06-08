@@ -1,3 +1,4 @@
+import { DroppableProvided } from 'react-beautiful-dnd';
 import styled from '@emotion/styled';
 
 const StyledColumn = styled.div`
@@ -13,13 +14,22 @@ const StyledColumn = styled.div`
 type BoardColumnProps = {
   title: string;
   children: any[];
+  droppableProvided: DroppableProvided;
 };
 
-export const BoardColumn = ({ title, children }: BoardColumnProps) => {
+export const BoardColumn = ({
+  title,
+  children,
+  droppableProvided,
+}: BoardColumnProps) => {
   return (
-    <StyledColumn>
+    <StyledColumn
+      ref={droppableProvided.innerRef}
+      {...droppableProvided.droppableProps}
+    >
       <h3>{title}</h3>
       {children}
+      {droppableProvided.placeholder}
     </StyledColumn>
   );
 };
