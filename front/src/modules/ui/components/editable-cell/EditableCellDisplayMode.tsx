@@ -10,6 +10,16 @@ export const EditableCellNormalModeOuterContainer = styled.div`
 
   padding-left: ${(props) => props.theme.spacing(2)};
   padding-right: ${(props) => props.theme.spacing(1)};
+
+  &:hover {
+    background: ${(props) => props.theme.secondaryBackgroundTransparent};
+
+    -webkit-box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
+    -moz-box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
+    box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
+
+    border-radius: ${(props) => props.theme.borderRadius};
+  }
 `;
 
 export const EditableCellNormalModeInnerContainer = styled.div`
