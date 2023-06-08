@@ -5,7 +5,8 @@ const StyledCard = styled.div`
   background-color: ${({ theme }) => theme.secondaryBackground};
   border: 1px solid ${({ theme }) => theme.quaternaryBackground};
   border-radius: 4px;
-  padding: 16px;
+  padding: 8px;
+  margin-bottom: 8px;
   box-shadow: ${({ theme }) => theme.boxShadow};
 `;
 
