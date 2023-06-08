@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { TbPlus } from 'react-icons/tb';
 import styled from '@emotion/styled';
 
-export const TOP_BAR_MIN_HEIGHT = '48px';
+export const TOP_BAR_MIN_HEIGHT = '40px';
 
 const TopBarContainer = styled.div`
   display: flex;
