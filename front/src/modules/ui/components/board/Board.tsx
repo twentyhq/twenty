@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import styled from '@emotion/styled';
 
@@ -10,7 +11,7 @@ const StyledBoard = styled.div`
   height: 100%;
 `;
 
-const columns = [
+const initialBoard = [
   {
     id: 'column-1',
     title: 'Column 1',
@@ -32,13 +33,15 @@ const columns = [
 ];
 
 export const Board = () => {
+  const [board] = useState(initialBoard);
+
   const onDragEnd = (waouh: any) => {
     console.log(waouh);
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <StyledBoard>
-        {columns.map((column) => (
+        {board.map((column) => (
           <Droppable droppableId={column.id}>
             {(provided) =>
               provided && (
