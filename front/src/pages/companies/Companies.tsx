@@ -20,12 +20,12 @@ import {
 } from '@/filters-and-sorts/helpers';
 import { SelectedFilterType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
-import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
 import { EntityTable } from '@/ui/components/table/EntityTable';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { BoolExpType } from '@/utils/interfaces/generic.interface';
 import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
 
+import { TableActionBarButtonCreateCommentThreadCompany } from './table/TableActionBarButtonCreateCommentThreadCompany';
 import { TableActionBarButtonDeleteCompanies } from './table/TableActionBarButtonDeleteCompanies';
 import { useCompaniesColumns } from './companies-columns';
 import { availableFilters } from './companies-filters';
@@ -93,7 +93,7 @@ export function Companies() {
           />
         </StyledCompaniesContainer>
         <EntityTableActionBar>
-          <TableActionBarButtonToggleComments />
+          <TableActionBarButtonCreateCommentThreadCompany />
           <TableActionBarButtonDeleteCompanies />
         </EntityTableActionBar>
       </>

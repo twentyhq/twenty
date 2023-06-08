@@ -5,7 +5,7 @@ import { RightDrawerTopBarCloseButton } from './RightDrawerTopBarCloseButton';
 const StyledRightDrawerTopBar = styled.div`
   display: flex;
   flex-direction: row;
-  height: 40px;
+  min-height: 40px;
   align-items: center;
   justify-content: space-between;
   padding-left: 8px;

@@ -5,7 +5,7 @@ import { useRecoilState } from 'recoil';
 import { Panel } from '../Panel';
 import { RightDrawer } from '../right-drawer/components/RightDrawer';
 import { isRightDrawerOpenState } from '../right-drawer/states/isRightDrawerOpenState';
-import { TopBar } from '../top-bar/TopBar';
+import { TOP_BAR_MIN_HEIGHT, TopBar } from '../top-bar/TopBar';
 
 type OwnProps = {
   children: JSX.Element;
@@ -20,13 +20,14 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const TOPBAR_HEIGHT = '48px';
-
 const MainContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: calc(100% - ${(props) => props.theme.spacing(3)});
-  height: calc(100% - ${TOPBAR_HEIGHT} - ${(props) => props.theme.spacing(3)});
+  height: calc(
+    100% - ${TOP_BAR_MIN_HEIGHT} - ${(props) => props.theme.spacing(2)} -
+      ${(props) => props.theme.spacing(5)}
+  );
   background: ${(props) => props.theme.noisyBackground};
   padding-right: ${(props) => props.theme.spacing(3)};
   padding-bottom: ${(props) => props.theme.spacing(3)};

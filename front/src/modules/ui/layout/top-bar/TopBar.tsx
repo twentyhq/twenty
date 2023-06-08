@@ -2,13 +2,15 @@ import { ReactNode } from 'react';
 import { TbPlus } from 'react-icons/tb';
 import styled from '@emotion/styled';
 
+export const TOP_BAR_MIN_HEIGHT = '40px';
+
 const TopBarContainer = styled.div`
   display: flex;
   flex-direction: row;
-  height: 38px;
+  min-height: ${TOP_BAR_MIN_HEIGHT};
   align-items: center;
   background: ${(props) => props.theme.noisyBackground};
-  padding: 8px;
+  padding: ${(props) => props.theme.spacing(2)};
   font-size: 14px;
   color: ${(props) => props.theme.text80};
 `;

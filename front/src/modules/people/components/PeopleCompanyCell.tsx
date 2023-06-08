@@ -11,6 +11,7 @@ import {
 import { SearchConfigType } from '@/search/interfaces/interface';
 import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import { EditableRelation } from '@/ui/components/editable-cell/types/EditableRelation';
+import { logError } from '@/utils/logs/logError';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   QueryMode,
@@ -57,7 +58,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
       });
     } catch (error) {
       // TODO: handle error better
-      console.log(error);
+      logError(error);
     }
 
     setIsCreating(false);

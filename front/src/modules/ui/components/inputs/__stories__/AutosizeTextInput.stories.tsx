@@ -7,11 +7,6 @@ import { AutosizeTextInput } from '../AutosizeTextInput';
 const meta: Meta<typeof AutosizeTextInput> = {
   title: 'Components/Common/AutosizeTextInput',
   component: AutosizeTextInput,
-  argTypes: {
-    onSend: {
-      action: 'onSend',
-    },
-  },
 };
 
 export default meta;

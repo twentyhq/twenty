@@ -32,13 +32,48 @@ export class CommentThreadResolver {
           ...{ workspaceId: workspace.id },
         }))
       : [];
-    return this.prismaService.commentThread.create({
+
+    const createdCommentThread = await this.prismaService.commentThread.create({
       data: {
         ...args.data,
+        ...{ commentThreadTargets: undefined },
         ...{ comments: { createMany: { data: newCommentData } } },
         ...{ workspace: { connect: { id: workspace.id } } },
       },
     });
+
+    if (args.data.commentThreadTargets?.createMany?.data) {
+      await this.prismaService.commentThreadTarget.createMany({
+        data: args.data.commentThreadTargets?.createMany?.data?.map(
+          (target) => ({
+            ...target,
+            commentThreadId: args.data.id,
+          }),
+        ),
+        skipDuplicates:
+          args.data.commentThreadTargets?.createMany?.skipDuplicates ?? false,
+      });
+
+      return await this.prismaService.commentThread.update({
+        where: { id: args.data.id },
+        data: {
+          commentThreadTargets: {
+            connect: args.data.commentThreadTargets?.connect,
+          },
+        },
+      });
+    }
+
+    return createdCommentThread;
+
+    // return this.prismaService.commentThread.create({
+    //   data: {
+    //     ...args.data,
+    //     ...{ commentThreadTargets: undefined },
+    //     ...{ comments: { createMany: { data: newCommentData } } },
+    //     ...{ workspace: { connect: { id: workspace.id } } },
+    //   },
+    // });
   }
 
   @Query(() => [CommentThread])
