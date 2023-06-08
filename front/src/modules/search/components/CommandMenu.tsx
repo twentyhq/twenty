@@ -8,11 +8,11 @@ import {
   StyledInput,
   StyledItem,
   StyledList,
-  StyledSeparator,
+  // StyledSeparator,
 } from './CommandMenuStyles';
 
-export const CommandMenu = () => {
-  const [open, setOpen] = React.useState(false);
+export const CommandMenu = ({ initiallyOpen = false }) => {
+  const [open, setOpen] = React.useState(initiallyOpen);
 
   // Toggle the menu when ⌘K is pressed
   React.useEffect(() => {
