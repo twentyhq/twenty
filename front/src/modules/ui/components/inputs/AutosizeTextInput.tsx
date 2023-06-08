@@ -1,10 +1,9 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import { HiArrowSmRight } from 'react-icons/hi';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
-import { is } from 'date-fns/locale';
 
 import { IconButton } from '@/ui/components/buttons/IconButton';
 

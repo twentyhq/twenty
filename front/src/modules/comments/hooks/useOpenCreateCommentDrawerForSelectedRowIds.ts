@@ -5,6 +5,7 @@ import { CommentableType } from '~/generated/graphql';
 
 import { useOpenRightDrawer } from '../../ui/layout/right-drawer/hooks/useOpenRightDrawer';
 import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
+import { createdCommentThreadIdState } from '../states/createdCommentThreadIdState';
 import { CommentableEntity } from '../types/CommentableEntity';
 
 export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
@@ -12,6 +13,10 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
 
   const [, setCommentableEntityArray] = useRecoilState(
     commentableEntityArrayState,
+  );
+
+  const [, setCreatedCommentThreadId] = useRecoilState(
+    createdCommentThreadIdState,
   );
 
   const selectedPeopleIds = useRecoilValue(selectedRowIdsState);
@@ -26,6 +31,7 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
       }),
     );
 
+    setCreatedCommentThreadId(null);
     setCommentableEntityArray(commentableEntityArray);
     openRightDrawer('create-comment-thread');
   };

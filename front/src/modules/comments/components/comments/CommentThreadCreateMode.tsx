@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { commentableEntityArrayState } from '@/comments/states/commentableEntityArrayState';
+import { createdCommentThreadIdState } from '@/comments/states/createdCommentThreadIdState';
 import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
 import { logError } from '@/utils/logs/logError';
 import { isDefined } from '@/utils/type-guards/isDefined';
@@ -45,9 +45,9 @@ const StyledThreadItemListContainer = styled.div`
 export function CommentThreadCreateMode() {
   const [commentableEntityArray] = useRecoilState(commentableEntityArrayState);
 
-  const [createdCommmentThreadId, setCreatedCommentThreadId] = useState<
-    string | null
-  >(null);
+  const [createdCommmentThreadId, setCreatedCommentThreadId] = useRecoilState(
+    createdCommentThreadIdState,
+  );
 
   const [createCommentMutation] = useCreateCommentMutation();
 
@@ -62,6 +62,8 @@ export function CommentThreadCreateMode() {
   });
 
   const comments = data?.findManyCommentThreads[0]?.comments;
+
+  const displayCommentList = (comments?.length ?? 0) > 0;
 
   const currentUser = useRecoilValue(currentUserState);
 
@@ -125,11 +127,13 @@ export function CommentThreadCreateMode() {
 
   return (
     <StyledContainer>
-      <StyledThreadItemListContainer>
-        {comments?.map((comment) => (
-          <CommentThreadItem key={comment.id} comment={comment} />
-        ))}
-      </StyledThreadItemListContainer>
+      {displayCommentList && (
+        <StyledThreadItemListContainer>
+          {comments?.map((comment) => (
+            <CommentThreadItem key={comment.id} comment={comment} />
+          ))}
+        </StyledThreadItemListContainer>
+      )}
       <AutosizeTextInput minRows={5} onValidate={handleNewComment} />
     </StyledContainer>
   );
