@@ -1,3 +1,4 @@
+import { DragDropContext } from 'react-beautiful-dnd';
 import styled from '@emotion/styled';
 
 import { BoardCard } from './BoardCard';
@@ -25,15 +26,20 @@ const columns = [
 ];
 
 export const Board = () => {
+  const onDragEnd = (waouh: any) => {
+    console.log(waouh);
+  };
   return (
-    <StyledBoard>
-      {columns.map((column) => (
-        <BoardColumn title={column.title}>
-          {items.map((item) => (
-            <BoardCard content={item.content} />
-          ))}
-        </BoardColumn>
-      ))}
-    </StyledBoard>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <StyledBoard>
+        {columns.map((column) => (
+          <BoardColumn title={column.title}>
+            {items.map((item) => (
+              <BoardCard content={item.content} />
+            ))}
+          </BoardColumn>
+        ))}
+      </StyledBoard>
+    </DragDropContext>
   );
 };
