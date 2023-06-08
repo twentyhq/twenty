@@ -45,16 +45,19 @@ export const Board = () => {
     <DragDropContext onDragEnd={onDragEnd}>
       <StyledBoard>
         {board.map((column) => (
-          <Droppable droppableId={column.id}>
+          <Droppable key={column.id} droppableId={column.id}>
             {(provided) =>
               provided && (
                 <BoardColumn title={column.title} droppableProvided={provided}>
                   {column.itemKeys.map((itemKey, index) => (
-                    <Draggable draggableId={itemKey} index={index}>
+                    <Draggable
+                      key={itemKey}
+                      draggableId={itemKey}
+                      index={index}
+                    >
                       {(provided) =>
                         provided && (
                           <BoardCard
-                            key={itemKey}
                             content={items[itemKey].content}
                             draggableProvided={provided}
                           />
