@@ -12,12 +12,27 @@ export const items: Items = {
 export const initialBoard = [
   {
     id: 'column-1',
-    title: 'Column 1',
+    title: 'New',
     itemKeys: ['item-1', 'item-2', 'item-3', 'item-4'],
   },
   {
     id: 'column-2',
-    title: 'Column 2',
+    title: 'Screening',
     itemKeys: ['item-5', 'item-6'],
+  },
+  {
+    id: 'column-3',
+    title: 'Meeting',
+    itemKeys: [],
+  },
+  {
+    id: 'column-4',
+    title: 'Meeting',
+    itemKeys: [],
+  },
+  {
+    id: 'column-5',
+    title: 'Customer',
+    itemKeys: [],
   },
 ] satisfies Column[];
