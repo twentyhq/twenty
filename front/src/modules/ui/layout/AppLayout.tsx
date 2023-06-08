@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { CommandMenu } from '@/search/components/CommandMenu';
 import { User } from '@/users/interfaces/user.interface';
 
 import { Navbar } from './navbar/Navbar';
@@ -32,6 +33,7 @@ export function AppLayout({ children, user }: OwnProps) {
     <StyledLayout>
       {userIsAuthenticated ? (
         <>
+          <CommandMenu />
           <Navbar user={user} workspace={user?.workspaceMember?.workspace} />
           <MainContainer>{children}</MainContainer>
         </>
