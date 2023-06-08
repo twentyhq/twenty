@@ -15,6 +15,7 @@ const StyledContainer = styled.div`
   border: 0;
   background: inherit;
   padding: ${(props) => props.theme.spacing(2)};
+  padding-top: ${(props) => props.theme.spacing(1)};
   margin-left: ${(props) => props.theme.spacing(1)};
   align-self: flex-start;
   width: 100%;
