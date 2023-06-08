@@ -47,16 +47,13 @@ export function CommentThread({ commentThread }: OwnProps) {
   const currentUser = useRecoilValue(currentUserState);
 
   function handleSendComment(commentText: string) {
-    if (!isDefined(currentUser)) {
-      logError(
-        'In handleSendComment, currentUser is not defined, this should not happen.',
-      );
+    if (!isNonEmptyString(commentText)) {
       return;
     }
 
-    if (!isNonEmptyString(commentText)) {
+    if (!isDefined(currentUser)) {
       logError(
-        'In handleSendComment, trying to send empty text, this should not happen.',
+        'In handleSendComment, currentUser is not defined, this should not happen.',
       );
       return;
     }
@@ -70,6 +67,7 @@ export function CommentThread({ commentThread }: OwnProps) {
         createdAt: new Date().toISOString(),
       },
       // TODO: find a way to have this configuration dynamic and typed
+      // Also it cannot refetch queries than are not in the cache
       refetchQueries: [
         'GetCommentThreadsByTargets',
         'GetPeopleCommentsCount',

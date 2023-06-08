@@ -66,16 +66,13 @@ export function CommentThreadCreateMode() {
   const currentUser = useRecoilValue(currentUserState);
 
   function handleNewComment(commentText: string) {
-    if (!isDefined(currentUser)) {
-      logError(
-        'In handleCreateCommentThread, currentUser is not defined, this should not happen.',
-      );
+    if (!isNonEmptyString(commentText)) {
       return;
     }
 
-    if (!isNonEmptyString(commentText)) {
+    if (!isDefined(currentUser)) {
       logError(
-        'In handleCreateCommentThread, trying to send empty text, this should not happen.',
+        'In handleCreateCommentThread, currentUser is not defined, this should not happen.',
       );
       return;
     }
@@ -119,7 +116,7 @@ export function CommentThreadCreateMode() {
         ],
         onError: (error) => {
           logError(
-            `In handleSendComment, createCommentMutation onError, error: ${error}`,
+            `In handleCreateCommentThread, createCommentMutation onError, error: ${error}`,
           );
         },
       });

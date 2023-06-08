@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import { HiArrowSmRight } from 'react-icons/hi';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
+import { is } from 'date-fns/locale';
 
 import { IconButton } from '@/ui/components/buttons/IconButton';
 
@@ -60,6 +61,7 @@ export function AutosizeTextInput({
   onValidate,
   minRows = 1,
 }: OwnProps) {
+  const [isFocused, setIsFocused] = useState(false);
   const [text, setText] = useState('');
 
   const isSendButtonDisabled = !text;
@@ -67,7 +69,7 @@ export function AutosizeTextInput({
   useHotkeys(
     ['shift+enter', 'enter'],
     (event: KeyboardEvent, handler: HotkeysEvent) => {
-      if (handler.shift) {
+      if (handler.shift || !isFocused) {
         return;
       } else {
         event.preventDefault();
@@ -81,12 +83,16 @@ export function AutosizeTextInput({
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onValidate, text, setText],
+    [onValidate, text, setText, isFocused],
   );
 
   useHotkeys(
     'esc',
     (event: KeyboardEvent) => {
+      if (!isFocused) {
+        return;
+      }
+
       event.preventDefault();
 
       setText('');
@@ -95,7 +101,7 @@ export function AutosizeTextInput({
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onValidate, setText],
+    [onValidate, setText, isFocused],
   );
 
   function handleInputChange(event: React.FormEvent<HTMLTextAreaElement>) {
@@ -121,6 +127,8 @@ export function AutosizeTextInput({
           minRows={computedMinRows}
           onChange={handleInputChange}
           value={text}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
         />
         <StyledBottomRightIconButton>
           <IconButton
