@@ -1,27 +1,12 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
+import { BoardColumn } from './BoardColumn';
+
 const StyledBoard = styled.div`
   display: flex;
   flex-direction: row;
   height: 100%;
-`;
-
-const StyledColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 300px;
-  margin-right: 16px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  padding: 16px;
-`;
-
-const StyledCard = styled.div`
-  background-color: #ffffff;
-  border-radius: 4px;
-  padding: 16px;
-  margin-bottom: 16px;
 `;
 
 const items = [
@@ -43,12 +28,7 @@ export const Board = () => {
   return (
     <StyledBoard>
       {columns.map((column) => (
-        <StyledColumn>
-          <h3>{column.title}</h3>
-          {items.map((item) => (
-            <StyledCard>{item.content}</StyledCard>
-          ))}
-        </StyledColumn>
+        <BoardColumn title={column.title} items={items} />
       ))}
     </StyledBoard>
   );
