@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { DroppableProvided } from '@hello-pangea/dnd';
 
+import { NewButton } from './BoardNewButton';
+
 const StyledColumn = styled.div`
   display: flex;
   flex-direction: column;
@@ -41,6 +43,7 @@ export const BoardColumn = ({
       <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
       {children}
       {droppableProvided.placeholder}
+      <NewButton />
     </StyledColumn>
   );
 };
