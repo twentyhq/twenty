@@ -37,6 +37,7 @@ const StyledThreadItemListContainer = styled.div`
 
   max-height: 400px;
   overflow: auto;
+  width: 100%;
 
   gap: ${(props) => props.theme.spacing(4)};
 `;
@@ -60,28 +61,26 @@ export function CommentThread({ commentThread }: OwnProps) {
       return;
     }
 
-    if (isDefined(currentUser)) {
-      createCommentMutation({
-        variables: {
-          commentId: v4(),
-          authorId: currentUser.id,
-          commentThreadId: commentThread.id,
-          commentText,
-          createdAt: new Date().toISOString(),
-        },
-        // TODO: find a way to have this configuration dynamic and typed
-        refetchQueries: [
-          'GetCommentThreadsByTargets',
-          'GetPeopleCommentsCount',
-          'GetCompanyCommentsCount',
-        ],
-        onError: (error) => {
-          logError(
-            `In handleSendComment, createCommentMutation onError, error: ${error}`,
-          );
-        },
-      });
-    }
+    createCommentMutation({
+      variables: {
+        commentId: v4(),
+        authorId: currentUser.id,
+        commentThreadId: commentThread.id,
+        commentText,
+        createdAt: new Date().toISOString(),
+      },
+      // TODO: find a way to have this configuration dynamic and typed
+      refetchQueries: [
+        'GetCommentThreadsByTargets',
+        'GetPeopleCommentsCount',
+        'GetCompanyCommentsCount',
+      ],
+      onError: (error) => {
+        logError(
+          `In handleSendComment, createCommentMutation onError, error: ${error}`,
+        );
+      },
+    });
   }
 
   return (

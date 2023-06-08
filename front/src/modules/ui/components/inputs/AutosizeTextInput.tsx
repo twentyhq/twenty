@@ -17,7 +17,7 @@ type OwnProps = {
 
 const StyledContainer = styled.div`
   display: flex;
-  min-height: 32px;
+  // min-height: 32px;
   width: 100%;
 `;
 
@@ -46,6 +46,7 @@ const StyledTextArea = styled(TextareaAutosize)`
   }
 `;
 
+// TODO: this messes with the layout, fix it
 const StyledBottomRightIconButton = styled.div`
   width: 0px;
   position: relative;
