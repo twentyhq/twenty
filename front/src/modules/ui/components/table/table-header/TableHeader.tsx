@@ -38,7 +38,7 @@ const StyledTableHeader = styled.div`
   color: ${(props) => props.theme.text60};
   font-weight: 500;
   padding-left: ${(props) => props.theme.spacing(3)};
-  padding-right: ${(props) => props.theme.spacing(1)};
+  padding-right: ${(props) => props.theme.spacing(2)};
 `;
 
 const StyledIcon = styled.div`
@@ -57,7 +57,7 @@ const StyledViewSection = styled.div`
 const StyledFilters = styled.div`
   display: flex;
   font-weight: 400;
-  margin-right: ${(props) => props.theme.spacing(2)};
+  gap: 2px;
 `;
 
 export function TableHeader<SortField, TData extends FilterableFieldsType>({

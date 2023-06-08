@@ -31,12 +31,15 @@ type StyledDropdownButtonProps = {
 
 const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   display: flex;
-  margin-left: ${(props) => props.theme.spacing(3)};
   cursor: pointer;
   user-select: none;
   background: ${(props) => props.theme.primaryBackground};
   color: ${(props) => (props.isActive ? props.theme.blue : 'none')};
   padding: ${(props) => props.theme.spacing(1)};
+
+  padding-right: ${(props) => props.theme.spacing(2)};
+  padding-left: ${(props) => props.theme.spacing(2)};
+
   border-radius: 4px;
   filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};
 
