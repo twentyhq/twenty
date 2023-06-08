@@ -11,24 +11,27 @@ const StyledBoard = styled.div`
   height: 100%;
 `;
 
+type ItemKey = `item-${number}`;
+
+const items = {
+  'item-1': { id: 'item-1', content: 'Item 1' },
+  'item-2': { id: 'item-2', content: 'Item 2' },
+  'item-3': { id: 'item-3', content: 'Item 3' },
+  'item-4': { id: 'item-4', content: 'Item 4' },
+  'item-5': { id: 'item-5', content: 'Item 5' },
+  'item-6': { id: 'item-6', content: 'Item 6' },
+} satisfies Record<ItemKey, { id: ItemKey; content: string }>;
+
 const initialBoard = [
   {
     id: 'column-1',
     title: 'Column 1',
-    items: [
-      { id: 'item-1', content: 'Item 1' },
-      { id: 'item-2', content: 'Item 2' },
-      { id: 'item-3', content: 'Item 3' },
-      { id: 'item-4', content: 'Item 4' },
-    ],
+    itemKeys: ['item-1', 'item-2', 'item-3', 'item-4'] satisfies ItemKey[],
   },
   {
     id: 'column-2',
     title: 'Column 2',
-    items: [
-      { id: 'item-5', content: 'Item 5' },
-      { id: 'item-6', content: 'Item 6' },
-    ],
+    itemKeys: ['item-5', 'item-6'] satisfies ItemKey[],
   },
 ];
 
@@ -46,13 +49,13 @@ export const Board = () => {
             {(provided) =>
               provided && (
                 <BoardColumn title={column.title} droppableProvided={provided}>
-                  {column.items.map((item, index) => (
-                    <Draggable draggableId={item.id} index={index}>
+                  {column.itemKeys.map((itemKey, index) => (
+                    <Draggable draggableId={itemKey} index={index}>
                       {(provided) =>
                         provided && (
                           <BoardCard
-                            key={item.id}
-                            content={item.content}
+                            key={itemKey}
+                            content={items[itemKey].content}
                             draggableProvided={provided}
                           />
                         )
