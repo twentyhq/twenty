@@ -17,7 +17,7 @@ type OwnProps = {
 
 const StyledContainer = styled.div`
   display: flex;
-  // min-height: 32px;
+
   width: 100%;
 `;
 
@@ -52,6 +52,7 @@ const StyledBottomRightIconButton = styled.div`
   position: relative;
   top: calc(100% - 26.5px);
   right: 26px;
+  height: 0;
 `;
 
 export function AutosizeTextInput({
