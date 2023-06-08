@@ -1,5 +1,5 @@
-import { DraggableProvided } from 'react-beautiful-dnd';
 import styled from '@emotion/styled';
+import { DraggableProvided } from '@hello-pangea/dnd';
 
 const StyledCard = styled.div`
   background-color: #ffffff;

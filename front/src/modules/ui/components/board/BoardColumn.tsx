@@ -1,5 +1,5 @@
-import { DroppableProvided } from 'react-beautiful-dnd';
 import styled from '@emotion/styled';
+import { DroppableProvided } from '@hello-pangea/dnd';
 
 const StyledColumn = styled.div`
   display: flex;
