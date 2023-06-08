@@ -3,7 +3,6 @@ import { ApolloProvider } from '@apollo/client';
 import type { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { themeEnabledState } from '@/ui/layout/states/themeEnabledState';
 import { App } from '~/App';
 import { AuthProvider } from '~/providers/AuthProvider';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';

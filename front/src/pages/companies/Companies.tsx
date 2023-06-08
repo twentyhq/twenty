@@ -20,7 +20,6 @@ import {
 } from '@/filters-and-sorts/helpers';
 import { SelectedFilterType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
-import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
 import { EntityTable } from '@/ui/components/table/EntityTable';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { BoolExpType } from '@/utils/interfaces/generic.interface';
