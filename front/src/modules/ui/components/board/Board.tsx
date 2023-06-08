@@ -1,5 +1,10 @@
-import { useState } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { useCallback, useState } from 'react';
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  OnDragEndResponder,
+} from 'react-beautiful-dnd';
 import styled from '@emotion/styled';
 
 import { BoardCard } from './BoardCard';
@@ -38,9 +43,10 @@ const initialBoard = [
 export const Board = () => {
   const [board] = useState(initialBoard);
 
-  const onDragEnd = (waouh: any) => {
-    console.log(waouh);
-  };
+  const onDragEnd: OnDragEndResponder = useCallback((result) => {
+    console.log(result);
+  }, []);
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <StyledBoard>
