@@ -18,7 +18,7 @@ const StyledBoard = styled.div`
   height: 100%;
 `;
 
-export type ItemKey = `item-${number}`;
+export type BoardItemKey = `item-${number}`;
 export interface Item {
   id: string;
   content: string;
@@ -30,7 +30,7 @@ export interface Column {
   id: string;
   title: string;
   colorCode?: string;
-  itemKeys: ItemKey[];
+  itemKeys: BoardItemKey[];
 }
 
 type BoardProps = {
