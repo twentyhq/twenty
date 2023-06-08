@@ -9,7 +9,7 @@ export type CommentChipProps = {
 
 const StyledChip = styled.div`
   height: 26px;
-  width: fit-content;
+  max-width: 42px;
 
   padding-left: 4px;
   padding-right: 4px;

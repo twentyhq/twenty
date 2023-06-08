@@ -14,12 +14,13 @@ export class CreateOneCommentThreadGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
+    // TODO: type request
     const request = gqlContext.getContext().req;
     const args = gqlContext.getArgs();
 
     const targets = args.data?.commentThreadTargets?.createMany?.data;
     const comments = args.data?.comments?.createMany?.data;
-    const workspaceId = await request.workspace;
+    const workspace = await request.workspace;
 
     if (!targets || targets.length === 0) {
       throw new HttpException(
@@ -52,7 +53,7 @@ export class CreateOneCommentThreadGuard implements CanActivate {
         where: { id: target.commentableId },
       });
 
-      if (!targetEntity || targetEntity.workspaceId !== workspaceId) {
+      if (!targetEntity || targetEntity.workspaceId !== workspace.id) {
         throw new HttpException(
           { reason: 'CommentThreadTarget not found' },
           HttpStatus.NOT_FOUND,
@@ -90,10 +91,10 @@ export class CreateOneCommentThreadGuard implements CanActivate {
 
       if (
         !userWorkspaceMember ||
-        userWorkspaceMember.workspaceId !== workspaceId
+        userWorkspaceMember.workspaceId !== workspace.id
       ) {
         throw new HttpException(
-          { reason: 'Comment.authorId not found' },
+          { reason: 'userWorkspaceMember.workspaceId not found' },
           HttpStatus.NOT_FOUND,
         );
       }

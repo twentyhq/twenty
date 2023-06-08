@@ -18,7 +18,6 @@ export class UpdateOneGuard implements CanActivate {
     const entity = gqlContext.getArgByIndex(3).returnType?.name;
     const args = gqlContext.getArgs();
 
-    console.log(args.data);
     if (!entity || !args.where?.id) {
       throw new HttpException(
         { reason: 'Invalid Request' },

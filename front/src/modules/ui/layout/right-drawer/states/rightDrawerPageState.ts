@@ -4,5 +4,5 @@ import { RightDrawerPage } from '../types/RightDrawerPage';
 
 export const rightDrawerPageState = atom<RightDrawerPage | null>({
   key: 'ui/layout/right-drawer-page',
-  default: 'comments',
+  default: null,
 });

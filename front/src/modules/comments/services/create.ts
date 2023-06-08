@@ -29,3 +29,56 @@ export const CREATE_COMMENT = gql`
     }
   }
 `;
+
+export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
+  mutation CreateCommentThreadWithComment(
+    $commentThreadId: String!
+    $commentText: String!
+    $authorId: String!
+    $createdAt: DateTime!
+    $commentId: String!
+    $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!
+  ) {
+    createOneCommentThread(
+      data: {
+        id: $commentThreadId
+        createdAt: $createdAt
+        updatedAt: $createdAt
+        comments: {
+          createMany: {
+            data: {
+              authorId: $authorId
+              id: $commentId
+              createdAt: $createdAt
+              body: $commentText
+            }
+          }
+        }
+        commentThreadTargets: {
+          createMany: { data: $commentThreadTargetArray, skipDuplicates: true }
+        }
+      }
+    ) {
+      id
+      createdAt
+      updatedAt
+      commentThreadTargets {
+        id
+        createdAt
+        updatedAt
+        commentThreadId
+        commentableType
+        commentableId
+      }
+      comments {
+        id
+        createdAt
+        updatedAt
+        body
+        author {
+          id
+        }
+      }
+    }
+  }
+`;

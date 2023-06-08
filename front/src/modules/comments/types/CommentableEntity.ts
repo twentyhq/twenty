@@ -1,6 +1,6 @@
 import { CommentableType } from '~/generated/graphql';
 
 export type CommentableEntity = {
-  type: keyof typeof CommentableType;
+  type: CommentableType;
   id: string;
 };

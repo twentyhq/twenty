@@ -37,6 +37,7 @@ const StyledThreadItemListContainer = styled.div`
 
   max-height: 400px;
   overflow: auto;
+  width: 100%;
 
   gap: ${(props) => props.theme.spacing(4)};
 `;
@@ -46,6 +47,10 @@ export function CommentThread({ commentThread }: OwnProps) {
   const currentUser = useRecoilValue(currentUserState);
 
   function handleSendComment(commentText: string) {
+    if (!isNonEmptyString(commentText)) {
+      return;
+    }
+
     if (!isDefined(currentUser)) {
       logError(
         'In handleSendComment, currentUser is not defined, this should not happen.',
@@ -53,35 +58,27 @@ export function CommentThread({ commentThread }: OwnProps) {
       return;
     }
 
-    if (!isNonEmptyString(commentText)) {
-      logError(
-        'In handleSendComment, trying to send empty text, this should not happen.',
-      );
-      return;
-    }
-
-    if (isDefined(currentUser)) {
-      createCommentMutation({
-        variables: {
-          commentId: v4(),
-          authorId: currentUser.id,
-          commentThreadId: commentThread.id,
-          commentText,
-          createdAt: new Date().toISOString(),
-        },
-        // TODO: find a way to have this configuration dynamic and typed
-        refetchQueries: [
-          'GetCommentThreadsByTargets',
-          'GetPeopleCommentsCount',
-          'GetCompanyCommentsCount',
-        ],
-        onError: (error) => {
-          logError(
-            `In handleSendComment, createCommentMutation onError, error: ${error}`,
-          );
-        },
-      });
-    }
+    createCommentMutation({
+      variables: {
+        commentId: v4(),
+        authorId: currentUser.id,
+        commentThreadId: commentThread.id,
+        commentText,
+        createdAt: new Date().toISOString(),
+      },
+      // TODO: find a way to have this configuration dynamic and typed
+      // Also it cannot refetch queries than are not in the cache
+      refetchQueries: [
+        'GetCommentThreadsByTargets',
+        'GetPeopleCommentsCount',
+        'GetCompanyCommentsCount',
+      ],
+      onError: (error) => {
+        logError(
+          `In handleSendComment, createCommentMutation onError, error: ${error}`,
+        );
+      },
+    });
   }
 
   return (
@@ -91,7 +88,7 @@ export function CommentThread({ commentThread }: OwnProps) {
           <CommentThreadItem key={comment.id} comment={comment} />
         ))}
       </StyledThreadItemListContainer>
-      <AutosizeTextInput onSend={handleSendComment} />
+      <AutosizeTextInput onValidate={handleSendComment} />
     </StyledContainer>
   );
 }

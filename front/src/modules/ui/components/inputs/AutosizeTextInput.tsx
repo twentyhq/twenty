@@ -5,16 +5,19 @@ import { HiArrowSmRight } from 'react-icons/hi';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
-import { IconButton } from '../buttons/IconButton';
+import { IconButton } from '@/ui/components/buttons/IconButton';
+
+const MAX_ROWS = 5;
 
 type OwnProps = {
-  onSend?: (text: string) => void;
+  onValidate?: (text: string) => void;
+  minRows?: number;
   placeholder?: string;
 };
 
 const StyledContainer = styled.div`
   display: flex;
-  min-height: 32px;
+
   width: 100%;
 `;
 
@@ -43,14 +46,21 @@ const StyledTextArea = styled(TextareaAutosize)`
   }
 `;
 
+// TODO: this messes with the layout, fix it
 const StyledBottomRightIconButton = styled.div`
   width: 0px;
   position: relative;
   top: calc(100% - 26.5px);
   right: 26px;
+  height: 0;
 `;
 
-export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
+export function AutosizeTextInput({
+  placeholder,
+  onValidate,
+  minRows = 1,
+}: OwnProps) {
+  const [isFocused, setIsFocused] = useState(false);
   const [text, setText] = useState('');
 
   const isSendButtonDisabled = !text;
@@ -58,12 +68,12 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
   useHotkeys(
     ['shift+enter', 'enter'],
     (event: KeyboardEvent, handler: HotkeysEvent) => {
-      if (handler.shift) {
+      if (handler.shift || !isFocused) {
         return;
       } else {
         event.preventDefault();
 
-        onSend?.(text);
+        onValidate?.(text);
 
         setText('');
       }
@@ -72,12 +82,16 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onSend, text, setText],
+    [onValidate, text, setText, isFocused],
   );
 
   useHotkeys(
     'esc',
     (event: KeyboardEvent) => {
+      if (!isFocused) {
+        return;
+      }
+
       event.preventDefault();
 
       setText('');
@@ -86,7 +100,7 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [onSend, setText],
+    [onValidate, setText, isFocused],
   );
 
   function handleInputChange(event: React.FormEvent<HTMLTextAreaElement>) {
@@ -96,19 +110,24 @@ export function AutosizeTextInput({ placeholder, onSend }: OwnProps) {
   }
 
   function handleOnClickSendButton() {
-    onSend?.(text);
+    onValidate?.(text);
 
     setText('');
   }
+
+  const computedMinRows = minRows > MAX_ROWS ? MAX_ROWS : minRows;
 
   return (
     <>
       <StyledContainer>
         <StyledTextArea
           placeholder={placeholder || 'Write something...'}
-          maxRows={5}
+          maxRows={MAX_ROWS}
+          minRows={computedMinRows}
           onChange={handleInputChange}
           value={text}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
         />
         <StyledBottomRightIconButton>
           <IconButton

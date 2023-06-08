@@ -3,6 +3,7 @@ import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightD
 import { useCompanyCommentsCountQuery } from '@/comments/services';
 import EditableChip from '@/ui/components/editable-cell/types/EditableChip';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
+import { CommentableType } from '~/generated/graphql';
 
 import { Company } from '../interfaces/company.interface';
 import { updateCompany } from '../services';
@@ -22,7 +23,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
 
     openCommentRightDrawer([
       {
-        type: 'Company',
+        type: CommentableType.Company,
         id: company.id,
       },
     ]);
