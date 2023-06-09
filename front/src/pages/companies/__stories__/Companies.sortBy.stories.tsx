@@ -33,7 +33,7 @@ export const SortByName: Story = {
       (await canvas.findAllByRole('checkbox')).map((item) => {
         return item.getAttribute('id');
       })[1],
-    ).toStrictEqual('company-selected-89bb825c-171e-4bcc-9cf7-43448d6fb278');
+    ).toStrictEqual('checkbox-selected-89bb825c-171e-4bcc-9cf7-43448d6fb278');
 
     const cancelButton = canvas.getByText('Cancel');
     await userEvent.click(cancelButton);

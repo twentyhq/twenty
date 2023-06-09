@@ -25,36 +25,16 @@ import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { CheckboxCell } from '@/ui/components/table/CheckboxCell';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import { SelectAllCheckbox } from '@/ui/components/table/SelectAllCheckbox';
+import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 import { mapToUser, User } from '@/users/interfaces/user.interface';
 import { QueryMode } from '~/generated/graphql';
 
 const columnHelper = createColumnHelper<Company>();
 
 export const useCompaniesColumns = () => {
-  const theme = useTheme();
-
   return useMemo(() => {
     return [
-      {
-        id: 'select',
-        header: ({ table }: any) => (
-          <SelectAllCheckbox
-            checked={table.getIsAllRowsSelected()}
-            indeterminate={table.getIsSomeRowsSelected()}
-            onChange={(newValue) => table.toggleAllRowsSelected(newValue)}
-          />
-        ),
-        cell: (props: CellContext<Company, string>) => (
-          <CheckboxCell
-            id={`company-selected-${props.row.original.id}`}
-            name={`company-selected-${props.row.original.id}`}
-            checked={props.row.getIsSelected()}
-            onChange={(newValue) => props.row.toggleSelected(newValue)}
-          />
-        ),
-        minSize: theme.table.checkboxColumnWidth,
-        maxSize: theme.table.checkboxColumnWidth,
-      },
+      getCheckBoxColumn(),
       columnHelper.accessor('name', {
         header: () => (
           <ColumnHead viewName="Name" viewIcon={<TbBuilding size={16} />} />

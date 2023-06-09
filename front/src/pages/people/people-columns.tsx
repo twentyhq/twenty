@@ -20,34 +20,14 @@ import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { CheckboxCell } from '@/ui/components/table/CheckboxCell';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import { SelectAllCheckbox } from '@/ui/components/table/SelectAllCheckbox';
+import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 
 const columnHelper = createColumnHelper<Person>();
 
 export const usePeopleColumns = () => {
-  const theme = useTheme();
-
   return useMemo(() => {
     return [
-      {
-        id: 'select',
-        header: ({ table }: any) => (
-          <SelectAllCheckbox
-            checked={table.getIsAllRowsSelected()}
-            indeterminate={table.getIsSomeRowsSelected()}
-            onChange={(newValue) => table.toggleAllRowsSelected(newValue)}
-          />
-        ),
-        cell: (props: CellContext<Person, string>) => (
-          <CheckboxCell
-            id={`person-selected-${props.row.original.id}`}
-            name={`person-selected-${props.row.original.id}`}
-            checked={props.row.getIsSelected()}
-            onChange={(newValue) => props.row.toggleSelected(newValue)}
-          />
-        ),
-        minSize: theme.table.checkboxColumnWidth,
-        maxSize: theme.table.checkboxColumnWidth,
-      },
+      getCheckBoxColumn(),
       columnHelper.accessor('firstname', {
         header: () => (
           <ColumnHead viewName="People" viewIcon={<TbUser size={16} />} />

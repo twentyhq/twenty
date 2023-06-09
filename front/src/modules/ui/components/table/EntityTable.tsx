@@ -39,8 +39,8 @@ type OwnProps<
 };
 
 const StyledTable = styled.table`
-  min-width: 1000px;
-  width: calc(100% - 2 * ${(props) => props.theme.table.horizontalCellMargin});
+  width: calc(100% - ${(props) => props.theme.spacing(4)});
+
   border-radius: 4px;
   border-spacing: 0;
   border-collapse: collapse;
@@ -58,11 +58,14 @@ const StyledTable = styled.table`
       border-right-color: transparent;
     }
     :first-of-type {
+      min-width: ${(props) => props.theme.table.checkboxColumnWidth};
+      width: ${(props) => props.theme.table.checkboxColumnWidth};
+
       border-left-color: transparent;
       border-right-color: transparent;
-      min-width: 24px;
-      max-width: 24px;
     }
+
+    overflow: hidden;
   }
 
   td {
@@ -75,11 +78,17 @@ const StyledTable = styled.table`
       border-right-color: transparent;
     }
     :first-of-type {
+      min-width: ${(props) => props.theme.table.checkboxColumnWidth};
+      width: ${(props) => props.theme.table.checkboxColumnWidth};
+
       border-left-color: transparent;
       border-right-color: transparent;
-      min-width: 24px;
-      max-width: 24px;
     }
+
+    // min-width: ${(props) => props.theme.table.cellMinWidth};
+    // max-width: ${(props) => props.theme.table.cellMaxWidth};
+
+    overflow: hidden;
   }
 `;
 
@@ -166,7 +175,7 @@ export function EntityTable<
                   <th
                     key={header.id}
                     style={{
-                      width: `${header.getSize()}px`,
+                      maxWidth: header.column.getSize(),
                     }}
                   >
                     {header.isPlaceholder
@@ -194,6 +203,9 @@ export function EntityTable<
                       onContextMenu={(event) =>
                         handleContextMenu(event, row.original.id)
                       }
+                      style={{
+                        maxWidth: cell.column.getSize(),
+                      }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
