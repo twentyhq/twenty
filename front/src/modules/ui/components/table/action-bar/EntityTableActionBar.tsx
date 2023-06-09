@@ -2,18 +2,16 @@ import React, { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import {
-  contextMenuPositionState,
-  PositionState,
-} from '@/ui/tables/states/contextMenuPositionState';
+import { contextMenuPositionState } from '@/ui/tables/states/contextMenuPositionState';
 import { selectedRowIdsState } from '@/ui/tables/states/selectedRowIdsState';
+import { PositionType } from '@/ui/types/PositionType';
 
 type OwnProps = {
   children: React.ReactNode | React.ReactNode[];
 };
 
 type StyledContainerProps = {
-  position: PositionState;
+  position: PositionType;
 };
 
 const StyledContainer = styled.div<StyledContainerProps>`

@@ -90,6 +90,11 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
+const StyledRow = styled.tr<{ selected: boolean }>`
+  background: ${(props) =>
+    props.selected ? props.theme.secondaryBackground : 'none'};
+`;
+
 export function EntityTable<
   TData extends { id: string; __typename: 'companies' | 'people' },
   SortField,
@@ -128,10 +133,6 @@ export function EntityTable<
 
   function handleContextMenu(event: React.MouseEvent, id: string) {
     event.preventDefault();
-    console.log({
-      x: event.clientX,
-      y: event.clientY,
-    });
     setCurrentRowSelection((prev) => ({ ...prev, [id]: true }));
 
     setContextMenuPosition({
@@ -175,7 +176,11 @@ export function EntityTable<
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row, index) => (
-              <tr key={row.id} data-testid={`row-id-${row.index}`}>
+              <StyledRow
+                key={row.id}
+                data-testid={`row-id-${row.index}`}
+                selected={!!currentRowSelection[row.id]}
+              >
                 {row.getVisibleCells().map((cell) => {
                   return (
                     <td
@@ -191,7 +196,7 @@ export function EntityTable<
                     </td>
                   );
                 })}
-              </tr>
+              </StyledRow>
             ))}
           </tbody>
         </StyledTable>
