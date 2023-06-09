@@ -7,6 +7,7 @@ import {
   TbSum,
   TbUser,
 } from 'react-icons/tb';
+import { useTheme } from '@emotion/react';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
 
 import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEditableNameCell';
@@ -30,6 +31,8 @@ import { QueryMode } from '~/generated/graphql';
 const columnHelper = createColumnHelper<Company>();
 
 export const useCompaniesColumns = () => {
+  const theme = useTheme();
+
   return useMemo(() => {
     return [
       {
@@ -49,7 +52,8 @@ export const useCompaniesColumns = () => {
             onChange={(newValue) => props.row.toggleSelected(newValue)}
           />
         ),
-        size: 25,
+        minSize: theme.table.checkboxColumnWidth,
+        maxSize: theme.table.checkboxColumnWidth,
       },
       columnHelper.accessor('name', {
         header: () => (

@@ -7,6 +7,7 @@ import {
   TbPhone,
   TbUser,
 } from 'react-icons/tb';
+import { useTheme } from '@emotion/react';
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
@@ -23,6 +24,8 @@ import { SelectAllCheckbox } from '@/ui/components/table/SelectAllCheckbox';
 const columnHelper = createColumnHelper<Person>();
 
 export const usePeopleColumns = () => {
+  const theme = useTheme();
+
   return useMemo(() => {
     return [
       {
@@ -42,7 +45,8 @@ export const usePeopleColumns = () => {
             onChange={(newValue) => props.row.toggleSelected(newValue)}
           />
         ),
-        size: 25,
+        minSize: theme.table.checkboxColumnWidth,
+        maxSize: theme.table.checkboxColumnWidth,
       },
       columnHelper.accessor('firstname', {
         header: () => (

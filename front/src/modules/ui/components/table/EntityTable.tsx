@@ -59,6 +59,9 @@ const StyledTable = styled.table`
     }
     :first-of-type {
       border-left-color: transparent;
+      border-right-color: transparent;
+      min-width: 24px;
+      max-width: 24px;
     }
   }
 
@@ -73,6 +76,9 @@ const StyledTable = styled.table`
     }
     :first-of-type {
       border-left-color: transparent;
+      border-right-color: transparent;
+      min-width: 24px;
+      max-width: 24px;
     }
   }
 `;
