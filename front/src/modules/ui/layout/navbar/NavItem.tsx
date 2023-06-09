@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { MOBILE_VIEWPORT } from '../styles/themes';
+
 type OwnProps = {
   label: string;
   to: string;
@@ -33,6 +35,10 @@ const StyledItem = styled.button<StyledItemProps>`
     color: ${(props) => props.theme.text100};
   }
   margin-bottom: calc(${(props) => props.theme.spacing(1)} / 2);
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    font-size: ${(props) => props.theme.fontSizeLarge};
+  }
 `;
 
 const StyledItemLabel = styled.div`
