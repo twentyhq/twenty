@@ -7,8 +7,7 @@ import {
   TbSum,
   TbUser,
 } from 'react-icons/tb';
-import { useTheme } from '@emotion/react';
-import { CellContext, createColumnHelper } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 
 import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEditableNameCell';
 import { Company } from '@/companies/interfaces/company.interface';
@@ -22,9 +21,7 @@ import { SEARCH_USER_QUERY } from '@/search/services/search';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditableRelation } from '@/ui/components/editable-cell/types/EditableRelation';
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
-import { CheckboxCell } from '@/ui/components/table/CheckboxCell';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
-import { SelectAllCheckbox } from '@/ui/components/table/SelectAllCheckbox';
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 import { mapToUser, User } from '@/users/interfaces/user.interface';
 import { QueryMode } from '~/generated/graphql';
