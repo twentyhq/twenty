@@ -5,7 +5,7 @@ import { useRecoilState } from 'recoil';
 
 import { IconSidebarRightCollapse } from '@/ui/icons';
 
-import { navbarState } from '../states/navbarState';
+import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 
 export const TOP_BAR_MIN_HEIGHT = '40px';
 
@@ -69,7 +69,7 @@ type OwnProps = {
 };
 
 export function TopBar({ title, icon, onAddButtonClick }: OwnProps) {
-  const [isNavOpen, setIsNavOpen] = useRecoilState(navbarState);
+  const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
 
   return (
     <>

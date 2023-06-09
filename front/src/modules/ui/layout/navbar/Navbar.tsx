@@ -3,7 +3,7 @@ import { useMatch, useResolvedPath } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { navbarState } from '../states/navbarState';
+import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 import { MOBILE_VIEWPORT } from '../styles/themes';
 
 import NavItem from './NavItem';
@@ -11,19 +11,19 @@ import NavTitle from './NavTitle';
 import WorkspaceContainer from './WorkspaceContainer';
 
 const NavbarContent = styled.div`
-  display: ${() => (useRecoilValue(navbarState) ? 'block' : 'none')};
+  display: ${() => (useRecoilValue(isNavbarOpenedState) ? 'block' : 'none')};
 `;
 
 const NavbarContainer = styled.div`
   flex-direction: column;
-  width: ${() => (useRecoilValue(navbarState) ? '220px' : '0')};
+  width: ${() => (useRecoilValue(isNavbarOpenedState) ? '220px' : '0')};
   padding: ${(props) => props.theme.spacing(2)};
   flex-shrink: 0;
   overflow: hidden;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: ${(props) =>
-      useRecoilValue(navbarState)
+      useRecoilValue(isNavbarOpenedState)
         ? `calc(100% - ` + props.theme.spacing(4) + `)`
         : '0'};
 `;

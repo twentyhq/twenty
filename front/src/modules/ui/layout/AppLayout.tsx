@@ -5,7 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { CommandMenu } from '@/search/components/CommandMenu';
 
 import { Navbar } from './navbar/Navbar';
-import { navbarState } from './states/navbarState';
+import { isNavbarOpenedState } from './states/isNavbarOpenedState';
 import { MOBILE_VIEWPORT } from './styles/themes';
 
 const StyledLayout = styled.div`
@@ -24,10 +24,12 @@ const MainContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: ${() =>
-    useRecoilValue(navbarState) ? `(calc(100% -  ${NAVBAR_WIDTH})` : '100%'};
+    useRecoilValue(isNavbarOpenedState)
+      ? `(calc(100% -  ${NAVBAR_WIDTH})`
+      : '100%'};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: ${() => (useRecoilValue(navbarState) ? '0' : '100%')};
+    width: ${() => (useRecoilValue(isNavbarOpenedState) ? '0' : '100%')};
   }
 `;
 

@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { IconSidebarLeftCollapse } from '@/ui/icons';
 
-import { navbarState } from '../states/navbarState';
+import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -67,7 +67,7 @@ const CollapseButton = styled.button`
 
 function WorkspaceContainer() {
   const currentUser = useRecoilValue(currentUserState);
-  const [isNavOpen, setIsNavOpen] = useRecoilState(navbarState);
+  const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;
 
