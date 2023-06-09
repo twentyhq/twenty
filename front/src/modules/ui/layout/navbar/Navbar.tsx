@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { navbarState } from '../states/navbarState';
+import { MOBILE_VIEWPORT } from '../styles/themes';
 
 import NavItem from './NavItem';
 import NavTitle from './NavTitle';
@@ -15,6 +16,13 @@ const NavbarContainer = styled.div`
   width: ${() => (useRecoilValue(navbarState) ? '220px' : '0')};
   padding: ${(props) => props.theme.spacing(2)};
   flex-shrink: 0;
+  overflow: hidden;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    width: ${(props) =>
+      useRecoilValue(navbarState)
+        ? `calc(100% - ` + props.theme.spacing(4) + `)`
+        : '0'};
 `;
 
 const NavItemsContainer = styled.div`
