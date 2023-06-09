@@ -1,10 +1,12 @@
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { CommandMenu } from '@/search/components/CommandMenu';
 
 import { Navbar } from './navbar/Navbar';
+import { isNavbarOpenedState } from './states/isNavbarOpenedState';
+import { MOBILE_VIEWPORT } from './styles/themes';
 
 const StyledLayout = styled.div`
   display: flex;
@@ -18,9 +20,17 @@ const StyledLayout = styled.div`
 const NAVBAR_WIDTH = '236px';
 
 const MainContainer = styled.div`
+  overflow: hidden;
   display: flex;
   flex-direction: row;
-  width: calc(100% - ${NAVBAR_WIDTH});
+  width: ${() =>
+    useRecoilValue(isNavbarOpenedState)
+      ? `(calc(100% -  ${NAVBAR_WIDTH})`
+      : '100%'};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    width: ${() => (useRecoilValue(isNavbarOpenedState) ? '0' : '100%')};
+  }
 `;
 
 type OwnProps = {

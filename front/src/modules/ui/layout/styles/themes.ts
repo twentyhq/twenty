@@ -139,4 +139,6 @@ export const textInputStyle = (props: any) =>
 export const lightTheme = { ...commonTheme, ...lightThemeSpecific };
 export const darkTheme = { ...commonTheme, ...darkThemeSpecific };
 
+export const MOBILE_VIEWPORT = 768;
+
 export type ThemeType = typeof lightTheme;
