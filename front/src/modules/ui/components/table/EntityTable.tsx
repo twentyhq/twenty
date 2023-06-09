@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import {
   FilterConfigType,
@@ -16,6 +16,7 @@ import {
   SelectedSortType,
   SortType,
 } from '@/filters-and-sorts/interfaces/sorts/interface';
+import { contextMenuPositionState } from '@/ui/tables/states/contextMenuPositionState';
 
 import { useResetTableRowSelection } from '../../tables/hooks/useResetTableRowSelection';
 import { currentRowSelectionState } from '../../tables/states/rowSelectionState';
@@ -89,6 +90,11 @@ const StyledTableScrollableContainer = styled.div`
   flex: 1;
 `;
 
+const StyledRow = styled.tr<{ selected: boolean }>`
+  background: ${(props) =>
+    props.selected ? props.theme.secondaryBackground : 'none'};
+`;
+
 export function EntityTable<
   TData extends { id: string; __typename: 'companies' | 'people' },
   SortField,
@@ -105,6 +111,7 @@ export function EntityTable<
   const [currentRowSelection, setCurrentRowSelection] = useRecoilState(
     currentRowSelectionState,
   );
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
 
   const resetTableRowSelection = useResetTableRowSelection();
 
@@ -123,6 +130,16 @@ export function EntityTable<
     onRowSelectionChange: setCurrentRowSelection,
     getRowId: (row) => row.id,
   });
+
+  function handleContextMenu(event: React.MouseEvent, id: string) {
+    event.preventDefault();
+    setCurrentRowSelection((prev) => ({ ...prev, [id]: true }));
+
+    setContextMenuPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+  }
 
   return (
     <StyledTableWithHeader>
@@ -159,10 +176,19 @@ export function EntityTable<
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row, index) => (
-              <tr key={row.id} data-testid={`row-id-${row.index}`}>
+              <StyledRow
+                key={row.id}
+                data-testid={`row-id-${row.index}`}
+                selected={!!currentRowSelection[row.id]}
+              >
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <td key={cell.id + row.original.id}>
+                    <td
+                      key={cell.id + row.original.id}
+                      onContextMenu={(event) =>
+                        handleContextMenu(event, row.original.id)
+                      }
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -170,7 +196,7 @@ export function EntityTable<
                     </td>
                   );
                 })}
-              </tr>
+              </StyledRow>
             ))}
           </tbody>
         </StyledTable>

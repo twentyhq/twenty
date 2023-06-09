@@ -1,5 +1,8 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+import { useSetRecoilState } from 'recoil';
+
+import { contextMenuPositionState } from '@/ui/tables/states/contextMenuPositionState';
 
 import { Checkbox } from '../form/Checkbox';
 
@@ -32,6 +35,7 @@ export function CheckboxCell({
   indeterminate,
 }: OwnProps) {
   const [internalChecked, setInternalChecked] = React.useState(checked);
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
 
   function handleContainerClick() {
     handleCheckboxChange(!internalChecked);
@@ -43,6 +47,7 @@ export function CheckboxCell({
 
   function handleCheckboxChange(newCheckedValue: boolean) {
     setInternalChecked(newCheckedValue);
+    setContextMenuPosition({ x: null, y: null });
 
     if (onChange) {
       onChange(newCheckedValue);
