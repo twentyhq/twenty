@@ -39,10 +39,6 @@ type OwnProps<
 };
 
 const StyledTable = styled.table`
-  // width: calc(100% - ${(props) => props.theme.spacing(4)});
-  // width: calc(100% - 2 * ${(props) =>
-    props.theme.table.horizontalCellMargin});
-
   border-radius: 4px;
   border-spacing: 0;
   border-collapse: collapse;
