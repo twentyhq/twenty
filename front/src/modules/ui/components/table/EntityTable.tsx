@@ -39,7 +39,9 @@ type OwnProps<
 };
 
 const StyledTable = styled.table`
-  width: calc(100% - ${(props) => props.theme.spacing(4)});
+  // width: calc(100% - ${(props) => props.theme.spacing(4)});
+  // width: calc(100% - 2 * ${(props) =>
+    props.theme.table.horizontalCellMargin});
 
   border-radius: 4px;
   border-spacing: 0;
@@ -54,6 +56,10 @@ const StyledTable = styled.table`
     padding: 0;
     border: 1px solid ${(props) => props.theme.tertiaryBackground};
     text-align: left;
+
+    min-width: ${(props) => props.theme.table.cellMinWidth};
+    max-width: ${(props) => props.theme.table.cellMaxWidth};
+
     :last-child {
       border-right-color: transparent;
     }
@@ -63,6 +69,10 @@ const StyledTable = styled.table`
 
       border-left-color: transparent;
       border-right-color: transparent;
+    }
+    :last-of-type {
+      width: 100%;
+      min-width: 0;
     }
 
     overflow: hidden;
@@ -73,7 +83,12 @@ const StyledTable = styled.table`
     color: ${(props) => props.theme.text80};
     padding: 0;
     border: 1px solid ${(props) => props.theme.tertiaryBackground};
+
+    min-width: ${(props) => props.theme.table.cellMinWidth};
+    max-width: ${(props) => props.theme.table.cellMaxWidth};
+
     text-align: left;
+
     :last-child {
       border-right-color: transparent;
     }
@@ -84,9 +99,10 @@ const StyledTable = styled.table`
       border-left-color: transparent;
       border-right-color: transparent;
     }
-
-    // min-width: ${(props) => props.theme.table.cellMinWidth};
-    // max-width: ${(props) => props.theme.table.cellMaxWidth};
+    :last-of-type {
+      width: 100%;
+      min-width: 0;
+    }
 
     overflow: hidden;
   }
@@ -171,11 +187,12 @@ export function EntityTable<
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
+                {headerGroup.headers.map((header, headerIndex) => (
                   <th
                     key={header.id}
                     style={{
-                      maxWidth: header.column.getSize(),
+                      width: header.column.getSize(),
+                      minWidth: header.column.getSize(),
                     }}
                   >
                     {header.isPlaceholder
@@ -186,6 +203,7 @@ export function EntityTable<
                         )}
                   </th>
                 ))}
+                <th></th>
               </tr>
             ))}
           </thead>
@@ -204,7 +222,8 @@ export function EntityTable<
                         handleContextMenu(event, row.original.id)
                       }
                       style={{
-                        maxWidth: cell.column.getSize(),
+                        width: cell.column.getSize(),
+                        minWidth: cell.column.getSize(),
                       }}
                     >
                       {flexRender(

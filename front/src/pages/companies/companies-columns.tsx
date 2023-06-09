@@ -42,7 +42,7 @@ export const useCompaniesColumns = () => {
         cell: (props) => (
           <CompanyEditableNameChipCell company={props.row.original} />
         ),
-        size: 120,
+        size: 180,
       }),
       columnHelper.accessor('domainName', {
         header: () => (
@@ -82,7 +82,7 @@ export const useCompaniesColumns = () => {
             }}
           />
         ),
-        size: 70,
+        size: 150,
       }),
       columnHelper.accessor('address', {
         header: () => (
@@ -115,7 +115,7 @@ export const useCompaniesColumns = () => {
             }}
           />
         ),
-        size: 70,
+        size: 150,
       }),
       columnHelper.accessor('accountOwner', {
         header: () => (

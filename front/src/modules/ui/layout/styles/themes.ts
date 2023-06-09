@@ -23,7 +23,7 @@ const commonTheme = {
     horizontalCellMargin: '8px',
     checkboxColumnWidth: '32px',
     cellMaxWidth: '300px',
-    cellMinWidth: '200px',
+    cellMinWidth: '50px',
   },
 
   borderRadius: '4px',

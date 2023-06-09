@@ -21,5 +21,7 @@ export function getCheckBoxColumn() {
         onChange={(newValue) => props.row.toggleSelected(newValue)}
       />
     ),
+    size: 32,
+    maxSize: 32,
   };
 }
