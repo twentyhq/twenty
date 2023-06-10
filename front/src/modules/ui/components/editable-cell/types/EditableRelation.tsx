@@ -144,13 +144,14 @@ export function EditableRelation<
       <EditableCell
         editModeHorizontalAlign={editModeHorizontalAlign}
         isEditMode={isEditMode}
+        letCellControlOnBlur={true}
+        tabIndex={0}
         onOutsideClick={() => setIsEditMode(false)}
         onInsideClick={() => {
           if (!isEditMode) {
             setIsEditMode(true);
           }
         }}
-        tabIndex={0}
         editModeContent={
           <StyledEditModeContainer>
             <StyledEditModeSelectedContainer>

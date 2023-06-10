@@ -28,6 +28,7 @@ type OwnProps = {
   onOutsideClick?: () => void;
   onInsideClick?: () => void;
   tabIndex?: number;
+  letCellControlOnBlur?: boolean;
 };
 
 export function EditableCell({
@@ -39,6 +40,7 @@ export function EditableCell({
   onOutsideClick,
   onInsideClick,
   tabIndex,
+  letCellControlOnBlur,
 }: OwnProps) {
   const [isSomeInputInEditMode, setIsSomeInputInEditMode] = useRecoilState(
     isSomeInputInEditModeState,
@@ -59,7 +61,7 @@ export function EditableCell({
   }
 
   function handleOnBlur() {
-    if (tabIndex !== undefined) {
+    if (tabIndex !== undefined && letCellControlOnBlur !== true) {
       onOutsideClick?.();
       setIsSomeInputInEditMode(false);
     }
