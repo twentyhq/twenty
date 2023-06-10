@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { Cell } from '@tanstack/react-table';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import {

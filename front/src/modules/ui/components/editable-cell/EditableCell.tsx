@@ -27,6 +27,7 @@ type OwnProps = {
   isCreateMode?: boolean;
   onOutsideClick?: () => void;
   onInsideClick?: () => void;
+  tabIndex?: number;
 };
 
 export function EditableCell({
@@ -37,6 +38,7 @@ export function EditableCell({
   isEditMode = false,
   onOutsideClick,
   onInsideClick,
+  tabIndex,
 }: OwnProps) {
   const [isSomeInputInEditMode, setIsSomeInputInEditMode] = useRecoilState(
     isSomeInputInEditModeState,
@@ -49,8 +51,27 @@ export function EditableCell({
     }
   }
 
+  function handleOnFocus() {
+    if (tabIndex !== undefined) {
+      onInsideClick?.();
+      setIsSomeInputInEditMode(true);
+    }
+  }
+
+  function handleOnBlur() {
+    if (tabIndex !== undefined) {
+      onOutsideClick?.();
+      setIsSomeInputInEditMode(false);
+    }
+  }
+
   return (
-    <CellBaseContainer onClick={handleOnClick}>
+    <CellBaseContainer
+      onClick={handleOnClick}
+      onFocus={handleOnFocus}
+      onBlur={handleOnBlur}
+      tabIndex={0}
+    >
       {isEditMode ? (
         <EditableCellEditMode
           editModeHorizontalAlign={editModeHorizontalAlign}

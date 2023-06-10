@@ -150,6 +150,7 @@ export function EditableRelation<
             setIsEditMode(true);
           }
         }}
+        tabIndex={0}
         editModeContent={
           <StyledEditModeContainer>
             <StyledEditModeSelectedContainer>

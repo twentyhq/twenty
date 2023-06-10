@@ -56,6 +56,7 @@ export function EditableDoubleText({
             placeholder={firstValuePlaceholder}
             ref={firstValueInputRef}
             value={firstValue}
+            tabIndex={0}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               onChange(event.target.value, secondValue);
             }}
@@ -64,8 +65,12 @@ export function EditableDoubleText({
             placeholder={secondValuePlaceholder}
             ref={firstValueInputRef}
             value={secondValue}
+            tabIndex={0}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               onChange(firstValue, event.target.value);
+            }}
+            onBlur={() => {
+              setIsEditMode(false);
             }}
           />
         </StyledContainer>

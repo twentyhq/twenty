@@ -34,6 +34,7 @@ export function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
       isEditMode={isEditMode}
       onOutsideClick={() => setIsEditMode(false)}
       onInsideClick={() => setIsEditMode(true)}
+      tabIndex={0}
       editModeContent={
         <StyledEditInplaceInput
           autoFocus
