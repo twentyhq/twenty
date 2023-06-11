@@ -18,7 +18,6 @@ describe('beautifyExactDate', () => {
     const mockDate = '2023-01-01T12:13:24';
     const actualDate = new Date(mockDate);
     const expected = DateTime.fromJSDate(actualDate)
-      .toUTC()
       .setLocale(DEFAULT_DATE_LOCALE)
       .toFormat('DD · TT');
 
