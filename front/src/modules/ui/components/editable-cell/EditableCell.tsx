@@ -47,16 +47,13 @@ export function EditableCell({
   );
 
   function handleOnClick() {
-    console.log('click');
     if (!isSomeInputInEditMode) {
       onInsideClick?.();
       setIsSomeInputInEditMode(true);
     }
   }
 
-  function handleOnFocus(event: React.FocusEvent) {
-    console.log('focus');
-    console.log(event);
+  function handleOnFocus() {
     if (disableFocus !== true) {
       onInsideClick?.();
       setIsSomeInputInEditMode(true);
