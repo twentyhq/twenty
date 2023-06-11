@@ -1,0 +1,13 @@
+name: CD deply main
+on:
+  push:
+jobs:
+  deploy-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
+          repository: twentyhq/twenty-infra
+          event-type: commit-on-main
