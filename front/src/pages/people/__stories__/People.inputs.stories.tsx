@@ -206,3 +206,55 @@ export const NavigateAndSelectWithKeys: Story = {
     ],
   },
 };
+
+export const InputWithTabNavigation: Story = {
+  render,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const firstRowEmailCell = await canvas.findByText(
+      mockedPeopleData[0].email,
+    );
+
+    await userEvent.click(firstRowEmailCell);
+
+    await userEvent.tab();
+
+    // Now the focus should be on the company input field
+    const companyInput = document.activeElement;
+    expect(companyInput).toBeDefined();
+
+    if (companyInput) {
+      await userEvent.type(companyInput, 'Air', {
+        delay: 200,
+      });
+    }
+  },
+  parameters: {
+    actions: {},
+    msw: [
+      ...graphqlMocks.filter((graphqlMock) => {
+        return graphqlMock.info.operationName !== 'UpdatePeople';
+      }),
+      ...[
+        graphql.mutation('UpdatePeople', (req, res, ctx) => {
+          return res(
+            ctx.data({
+              updateOnePerson: {
+                ...fetchOneFromData(mockedPeopleData, req.variables.id),
+                ...{
+                  company: {
+                    id: req.variables.companyId,
+                    name: 'Airbnb',
+                    domainName: 'airbnb.com',
+                    __typename: 'Company',
+                  } satisfies GraphqlQueryCompany,
+                },
+              },
+            }),
+          );
+        }),
+      ],
+    ],
+  },
+};
