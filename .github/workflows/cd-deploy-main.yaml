@@ -1,6 +1,8 @@
 name: CD deply main
 on:
   push:
+    branches:
+      - main
 jobs:
   deploy-main:
     runs-on: ubuntu-latest
@@ -10,4 +12,4 @@ jobs:
         with:
           token: ${{ secrets.TWENTY_INFRA_TOKEN }}
           repository: twentyhq/twenty-infra
-          event-type: commit-on-main
+          event-type: auto-deploy-main
