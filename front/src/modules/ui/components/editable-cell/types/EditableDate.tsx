@@ -64,6 +64,7 @@ export function EditableDate({
       onOutsideClick={() => setIsEditMode(false)}
       onInsideClick={() => setIsEditMode(true)}
       editModeHorizontalAlign={editModeHorizontalAlign}
+      disableFocus={true}
       editModeContent={
         <StyledContainer>
           <DatePicker

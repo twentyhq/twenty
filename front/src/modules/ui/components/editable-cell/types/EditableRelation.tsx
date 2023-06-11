@@ -222,7 +222,6 @@ export function EditableRelation<
         editModeHorizontalAlign={editModeHorizontalAlign}
         isEditMode={isEditMode}
         letCellControlOnBlur={true}
-        tabIndex={0}
         onOutsideClick={() => setIsEditMode(false)}
         onInsideClick={() => {
           if (!isEditMode) {

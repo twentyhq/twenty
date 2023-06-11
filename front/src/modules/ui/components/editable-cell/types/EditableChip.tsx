@@ -56,7 +56,6 @@ function EditableChip({
       onInsideClick={() => setIsEditMode(true)}
       isEditMode={isEditMode}
       editModeHorizontalAlign={editModeHorizontalAlign}
-      tabIndex={0}
       editModeContent={
         <StyledInplaceInput
           placeholder={placeholder || ''}

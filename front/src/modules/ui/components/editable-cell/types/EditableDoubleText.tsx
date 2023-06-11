@@ -50,7 +50,6 @@ export function EditableDoubleText({
       onOutsideClick={() => setIsEditMode(false)}
       isEditMode={isEditMode}
       letCellControlOnBlur={true}
-      tabIndex={0}
       editModeContent={
         <StyledContainer>
           <StyledEditInplaceInput

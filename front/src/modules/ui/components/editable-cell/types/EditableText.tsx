@@ -43,7 +43,6 @@ export function EditableText({
       onOutsideClick={() => setIsEditMode(false)}
       onInsideClick={() => setIsEditMode(true)}
       editModeHorizontalAlign={editModeHorizontalAlign}
-      tabIndex={0}
       editModeContent={
         <StyledInplaceInput
           isEditMode={isEditMode}
