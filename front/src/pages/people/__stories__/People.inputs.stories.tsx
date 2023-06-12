@@ -157,11 +157,11 @@ export const SelectRelationWithKeys: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const secondRowCompanyCell = await canvas.findByText(
-      mockedPeopleData[1].company.name,
+    const thirdRowCompanyCell = await canvas.findByText(
+      mockedPeopleData[2].company.name,
     );
 
-    await userEvent.click(secondRowCompanyCell);
+    await userEvent.click(thirdRowCompanyCell);
 
     const relationInput = await canvas.findByPlaceholderText('Company');
 
@@ -175,8 +175,8 @@ export const SelectRelationWithKeys: Story = {
     await userEvent.type(relationInput, '{arrowdown}');
     await userEvent.type(relationInput, '{enter}');
 
-    const newSecondRowCompanyCell = await canvas.findByText('Aircall');
-    await userEvent.click(newSecondRowCompanyCell);
+    const newThirdRowCompanyCell = await canvas.findByText('Aircall');
+    await userEvent.click(newThirdRowCompanyCell);
   },
   parameters: {
     actions: {},
