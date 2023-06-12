@@ -22,6 +22,7 @@ export const GET_COMPANIES = gql`
       createdAt
       address
       employees
+      _commentCount
       accountOwner {
         id
         email

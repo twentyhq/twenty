@@ -4,11 +4,6 @@ import { GraphqlQueryCompany } from '@/companies/interfaces/company.interface';
 import { GraphqlQueryPerson } from '@/people/interfaces/person.interface';
 import { GraphqlQueryUser } from '@/users/interfaces/user.interface';
 
-import {
-  GetCompanyCommentsCountQuery,
-  GetPeopleCommentsCountQuery,
-} from '../generated/graphql';
-
 import { mockedCompaniesData } from './mock-data/companies';
 import { mockedPeopleData } from './mock-data/people';
 import { mockedUsersData } from './mock-data/users';
@@ -97,18 +92,5 @@ export const graphqlMocks = [
         ),
       }),
     );
-  }),
-  graphql.query('GetPeopleCommentsCount', (req, res, ctx) => {
-    const mockedData: GetPeopleCommentsCountQuery = {
-      people: [{ commentsCount: 12 }],
-    };
-    return res(ctx.data(mockedData));
-  }),
-
-  graphql.query('GetCompanyCommentsCount', (req, res, ctx) => {
-    const mockedData: GetCompanyCommentsCountQuery = {
-      companies: [{ commentsCount: 20 }],
-    };
-    return res(ctx.data(mockedData));
   }),
 ];

@@ -24,6 +24,7 @@ export const GET_PEOPLE = gql`
       firstname
       lastname
       createdAt
+      _commentCount
       company {
         id
         name

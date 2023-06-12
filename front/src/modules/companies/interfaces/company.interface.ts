@@ -20,6 +20,8 @@ export type Company = {
 
   pipes?: Pipeline[];
   accountOwner?: User | null;
+
+  _commentCount?: number;
 };
 
 export type GraphqlQueryCompany = {
@@ -34,6 +36,8 @@ export type GraphqlQueryCompany = {
   accountOwner?: GraphqlQueryUser | null;
   pipes?: GraphqlQueryPipeline[] | null;
   __typename?: string;
+
+  _commentCount?: number;
 };
 
 export type GraphqlMutationCompany = {
@@ -62,6 +66,8 @@ export const mapToCompany = (company: GraphqlQueryCompany): Company => ({
     ? mapToUser(company.accountOwner)
     : company.accountOwner,
   pipes: [],
+
+  _commentCount: company._commentCount,
 });
 
 export const mapToGqlCompany = (company: Company): GraphqlMutationCompany => ({

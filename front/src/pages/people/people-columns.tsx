@@ -32,15 +32,13 @@ export const usePeopleColumns = () => {
         cell: (props) => (
           <>
             <EditablePeopleFullName
-              firstname={props.row.original.firstname || ''}
-              lastname={props.row.original.lastname || ''}
+              person={props.row.original}
               onChange={async (firstName: string, lastName: string) => {
                 const person = props.row.original;
                 person.firstname = firstName;
                 person.lastname = lastName;
                 await updatePerson(person);
               }}
-              personId={props.row.original.id}
             />
           </>
         ),

@@ -4,7 +4,10 @@ import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer'
 import { RightDrawerBody } from '@/ui/layout/right-drawer/components/RightDrawerBody';
 import { RightDrawerPage } from '@/ui/layout/right-drawer/components/RightDrawerPage';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
-import { useGetCommentThreadsByTargetsQuery } from '~/generated/graphql';
+import {
+  SortOrder,
+  useGetCommentThreadsByTargetsQuery,
+} from '~/generated/graphql';
 
 import { commentableEntityArrayState } from '../../states/commentableEntityArrayState';
 
@@ -18,6 +21,11 @@ export function RightDrawerComments() {
       commentThreadTargetIds: commentableEntityArray.map(
         (commentableEntity) => commentableEntity.id,
       ),
+      orderBy: [
+        {
+          createdAt: SortOrder.Desc,
+        },
+      ],
     },
   });
 

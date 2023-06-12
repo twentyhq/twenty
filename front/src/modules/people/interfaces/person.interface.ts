@@ -19,6 +19,8 @@ export type Person = {
 
   company?: Company | null;
   pipes?: Pipeline[] | null;
+
+  _commentCount?: number;
 };
 
 export type GraphqlQueryPerson = {
@@ -32,6 +34,8 @@ export type GraphqlQueryPerson = {
   createdAt?: string;
 
   company?: GraphqlQueryCompany | null;
+
+  _commentCount?: number;
 
   __typename?: string;
 };
@@ -60,6 +64,7 @@ export const mapToPerson = (person: GraphqlQueryPerson): Person => ({
   createdAt: person.createdAt ? new Date(person.createdAt) : undefined,
 
   company: person.company ? mapToCompany(person.company) : null,
+  _commentCount: person._commentCount,
 });
 
 export const mapToGqlPerson = (person: Person): GraphqlMutationPerson => ({
