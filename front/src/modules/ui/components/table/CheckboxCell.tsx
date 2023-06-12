@@ -16,8 +16,6 @@ type OwnProps = {
 
 const StyledContainer = styled.div`
   height: 32px;
-  margin-left: -${(props) => props.theme.table.horizontalCellMargin};
-  padding-left: ${(props) => props.theme.table.horizontalCellMargin};
 
   display: flex;
   align-items: center;
