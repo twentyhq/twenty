@@ -5,7 +5,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { AutosizeTextInput } from '../AutosizeTextInput';
 
 const meta: Meta<typeof AutosizeTextInput> = {
-  title: 'Components/Common/AutosizeTextInput',
+  title: 'UI/Inputs/AutosizeTextInput',
   component: AutosizeTextInput,
 };
 

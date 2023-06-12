@@ -7,7 +7,7 @@ import { CellCommentChip } from '../CellCommentChip';
 import { CommentChip } from '../CommentChip';
 
 const meta: Meta<typeof CellCommentChip> = {
-  title: 'Components/Comments/CellCommentChip',
+  title: 'Comments/CellCommentChip',
   component: CellCommentChip,
 };
 

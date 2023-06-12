@@ -9,7 +9,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { CommentHeader } from '../CommentHeader';
 
 const meta: Meta<typeof CommentHeader> = {
-  title: 'Components/Comments/CommentHeader',
+  title: 'Comments/CommentHeader',
   component: CommentHeader,
 };
 
@@ -23,6 +23,19 @@ const mockComment: Pick<CommentForDrawer, 'id' | 'author' | 'createdAt'> = {
   author: {
     id: v4(),
     displayName: mockUser.displayName ?? '',
+    avatarUrl: mockUser.avatarUrl,
+  },
+  createdAt: DateTime.now().minus({ hours: 2 }).toISO() ?? '',
+};
+
+const mockCommentWithLongName: Pick<
+  CommentForDrawer,
+  'id' | 'author' | 'createdAt'
+> = {
+  id: v4(),
+  author: {
+    id: v4(),
+    displayName: mockUser.displayName + ' with a very long suffix' ?? '',
     avatarUrl: mockUser.avatarUrl,
   },
   createdAt: DateTime.now().minus({ hours: 2 }).toISO() ?? '',
@@ -79,6 +92,21 @@ export const WithoutAvatar: Story = {
         ...mockComment,
         author: {
           ...mockComment.author,
+          avatarUrl: '',
+        },
+        createdAt: DateTime.now().minus({ hours: 2 }).toISO() ?? '',
+      }}
+    />,
+  ),
+};
+
+export const WithLongUserName: Story = {
+  render: getRenderWrapperForComponent(
+    <CommentHeader
+      comment={{
+        ...mockCommentWithLongName,
+        author: {
+          ...mockCommentWithLongName.author,
           avatarUrl: '',
         },
         createdAt: DateTime.now().minus({ hours: 2 }).toISO() ?? '',

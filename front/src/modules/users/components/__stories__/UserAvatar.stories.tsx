@@ -5,7 +5,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { UserAvatar } from '../UserAvatar';
 
 const meta: Meta<typeof UserAvatar> = {
-  title: 'Components/User/UserAvatar',
+  title: 'Users/UserAvatar',
   component: UserAvatar,
 };
 
