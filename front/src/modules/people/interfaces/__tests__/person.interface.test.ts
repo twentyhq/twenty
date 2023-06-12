@@ -18,6 +18,7 @@ describe('Person mappers', () => {
       email: 'john.doe@gmail.com',
       phone: '+1 (555) 123-4567',
       city: 'Paris',
+      _commentCount: 1,
       company: {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
         name: 'John Doe',
@@ -36,6 +37,7 @@ describe('Person mappers', () => {
       email: graphQLPerson.email,
       city: graphQLPerson.city,
       phone: graphQLPerson.phone,
+      _commentCount: 1,
       company: {
         __typename: 'companies',
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
@@ -44,6 +46,7 @@ describe('Person mappers', () => {
         createdAt: undefined,
         domainName: undefined,
         employees: undefined,
+        _commentCount: undefined,
         name: 'John Doe',
         pipes: [],
       },
@@ -61,6 +64,7 @@ describe('Person mappers', () => {
       email: 'john.doe@gmail.com',
       phone: '+1 (555) 123-4567',
       city: 'Paris',
+      _commentCount: 1,
       company: {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
       },

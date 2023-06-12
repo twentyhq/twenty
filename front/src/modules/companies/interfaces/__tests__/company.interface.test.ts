@@ -17,6 +17,7 @@ describe('Company mappers', () => {
       createdAt: now.toUTCString(),
       employees: 10,
       address: '1 Infinite Loop, 95014 Cupertino, California, USA',
+      _commentCount: 1,
       accountOwner: {
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
         email: 'john@example.com',
@@ -44,6 +45,7 @@ describe('Company mappers', () => {
       createdAt: new Date(now.toUTCString()),
       employees: graphQLCompany.employees,
       address: graphQLCompany.address,
+      _commentCount: 1,
       accountOwner: {
         __typename: 'users',
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
@@ -66,6 +68,7 @@ describe('Company mappers', () => {
       employees: 10,
       address: '1 Infinite Loop, 95014 Cupertino, California, USA',
       pipes: [],
+      _commentCount: 1,
       accountOwner: {
         id: '522d4ec4-c46b-4360-a0a7-df8df170be81',
         email: 'john@example.com',
