@@ -4,7 +4,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { CommandMenu } from '@/search/components/CommandMenu';
 
-import { AppNavbar } from './navbar/AppNavbar';
+import { AppNavbar } from '../components/navbars/AppNavbar';
+
 import { isNavbarOpenedState } from './states/isNavbarOpenedState';
 import { MOBILE_VIEWPORT } from './styles/themes';
 

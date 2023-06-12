@@ -2,6 +2,10 @@ import { TbChevronLeft } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+type OwnProps = {
+  title: string;
+};
+
 const StyledContainer = styled.button`
   display: flex;
   flex-direction: row;
@@ -16,7 +20,7 @@ const StyledContainer = styled.button`
   cursor: pointer;
 `;
 
-export function SettingsBackbuttonContainer() {
+export default function NavBackButton({ title }: OwnProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,7 +29,7 @@ export function SettingsBackbuttonContainer() {
       onClick={() => navigate(location.state?.from || '/', { replace: true })}
     >
       <TbChevronLeft strokeWidth={3} />
-      <span>Settings</span>
+      <span>{title}</span>
     </StyledContainer>
   );
 }
