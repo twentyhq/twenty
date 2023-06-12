@@ -49,6 +49,7 @@ const lightThemeSpecific = {
 
   primaryBorder: 'rgba(0, 0, 0, 0.08)',
   lightBorder: '#f5f5f5',
+  mediumBorder: '#ebebeb',
 
   clickableElementBackgroundHover: 'rgba(0, 0, 0, 0.04)',
   clickableElementBackgroundTransition: 'background 0.1s ease',
@@ -94,6 +95,7 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
 
   primaryBorder: 'rgba(255, 255, 255, 0.08)',
   lightBorder: '#222222',
+  mediumBorder: '#141414',
 
   text100: '#ffffff',
   text80: '#cccccc',
