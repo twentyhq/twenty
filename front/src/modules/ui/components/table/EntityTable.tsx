@@ -39,6 +39,8 @@ type OwnProps<
 };
 
 const StyledTable = styled.table`
+  width: calc(100% - ${(props) => props.theme.table.horizontalCellMargin} * 2);
+
   border-radius: 4px;
   border-spacing: 0;
   border-collapse: collapse;
@@ -215,6 +217,7 @@ export function EntityTable<
                     </td>
                   );
                 })}
+                <td></td>
               </StyledRow>
             ))}
           </tbody>
