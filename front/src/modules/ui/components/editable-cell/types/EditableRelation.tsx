@@ -1,4 +1,5 @@
 import { ChangeEvent, ComponentType, useEffect, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { FaPlus } from 'react-icons/fa';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -58,12 +59,21 @@ const StyledEditModeResults = styled.div`
   padding-right: ${(props) => props.theme.spacing(1)};
 `;
 
-const StyledEditModeResultItem = styled.div`
+type StyledEditModeResultItemProps = {
+  isSelected: boolean;
+};
+
+const StyledEditModeResultItem = styled.div<StyledEditModeResultItemProps>`
   height: 32px;
   display: flex;
   align-items: center;
   cursor: pointer;
   user-select: none;
+  ${(props) =>
+    props.isSelected &&
+    `
+  background-color: ${props.theme.tertiaryBackground};
+`}
 `;
 
 const StyledCreateButtonIcon = styled.div`
@@ -139,6 +149,72 @@ export function EditableRelation<
     setIsSomeInputInEditMode(false);
   }
 
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  useHotkeys(
+    'down',
+    () => {
+      setSelectedIndex((prevSelectedIndex) =>
+        Math.min(
+          prevSelectedIndex + 1,
+          filterSearchResults.results?.length - 1 ?? 0,
+        ),
+      );
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+      preventDefault: true,
+    },
+    [setSelectedIndex, filterSearchResults.results],
+  );
+
+  useHotkeys(
+    'up',
+    () => {
+      setSelectedIndex((prevSelectedIndex) =>
+        Math.max(prevSelectedIndex - 1, 0),
+      );
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+      preventDefault: true,
+    },
+    [setSelectedIndex],
+  );
+
+  useHotkeys(
+    'enter',
+    () => {
+      if (isEditMode) {
+        if (
+          filterSearchResults.results &&
+          selectedIndex < filterSearchResults.results.length
+        ) {
+          const selectedResult = filterSearchResults.results[selectedIndex];
+          onChange(selectedResult.value);
+          closeEditMode();
+        } else if (canCreate && isNonEmptyString(searchInput)) {
+          onCreate(searchInput);
+          closeEditMode();
+        }
+      }
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+    },
+    [
+      filterSearchResults.results,
+      selectedIndex,
+      onChange,
+      closeEditMode,
+      canCreate,
+      searchInput,
+      onCreate,
+    ],
+  );
+
   return (
     <>
       <EditableCell
@@ -188,6 +264,7 @@ export function EditableRelation<
                 filterSearchResults.results.map((result, index) => (
                   <StyledEditModeResultItem
                     key={index}
+                    isSelected={index === selectedIndex}
                     onClick={() => {
                       onChange(result.value);
                       closeEditMode();
