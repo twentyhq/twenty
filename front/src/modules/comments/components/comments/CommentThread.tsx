@@ -70,8 +70,8 @@ export function CommentThread({ commentThread }: OwnProps) {
       // Also it cannot refetch queries than are not in the cache
       refetchQueries: [
         'GetCommentThreadsByTargets',
-        'GetPeopleCommentsCount',
-        'GetCompanyCommentsCount',
+        'GetCompanies',
+        'GetPeople',
       ],
       onError: (error) => {
         logError(

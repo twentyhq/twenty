@@ -6,6 +6,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { commentableEntityArrayState } from '@/comments/states/commentableEntityArrayState';
 import { createdCommentThreadIdState } from '@/comments/states/createdCommentThreadIdState';
 import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
+import { useOpenRightDrawer } from '@/ui/layout/right-drawer/hooks/useOpenRightDrawer';
 import { logError } from '@/utils/logs/logError';
 import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
@@ -48,6 +49,8 @@ export function CommentThreadCreateMode() {
   const [createdCommmentThreadId, setCreatedCommentThreadId] = useRecoilState(
     createdCommentThreadIdState,
   );
+
+  const openRightDrawer = useOpenRightDrawer();
 
   const [createCommentMutation] = useCreateCommentMutation();
 
@@ -96,9 +99,10 @@ export function CommentThreadCreateMode() {
             }),
           ),
         },
-        refetchQueries: ['GetCommentThread'],
+        refetchQueries: ['GetCommentThread', 'GetCompanies', 'GetPeople'],
         onCompleted(data) {
           setCreatedCommentThreadId(data.createOneCommentThread.id);
+          openRightDrawer('comments');
         },
       });
     } else {
@@ -111,11 +115,7 @@ export function CommentThreadCreateMode() {
           createdAt: new Date().toISOString(),
         },
         // TODO: find a way to have this configuration dynamic and typed
-        refetchQueries: [
-          'GetCommentThread',
-          'GetPeopleCommentsCount',
-          'GetCompanyCommentsCount',
-        ],
+        refetchQueries: ['GetCommentThread'],
         onError: (error) => {
           logError(
             `In handleCreateCommentThread, createCommentMutation onError, error: ${error}`,

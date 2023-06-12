@@ -6,14 +6,12 @@ import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightD
 import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
 import { CommentableType } from '~/generated/graphql';
 
-import { usePeopleCommentsCountQuery } from '../../comments/services';
+import { Person } from '../interfaces/person.interface';
 
 import { PersonChip } from './PersonChip';
 
 type OwnProps = {
-  firstname: string;
-  lastname: string;
-  personId: string;
+  person: Person;
   onChange: (firstname: string, lastname: string) => void;
 };
 
@@ -24,14 +22,9 @@ const StyledDiv = styled.div`
   width: 100%;
 `;
 
-export function EditablePeopleFullName({
-  firstname,
-  lastname,
-  onChange,
-  personId,
-}: OwnProps) {
-  const [firstnameValue, setFirstnameValue] = useState(firstname);
-  const [lastnameValue, setLastnameValue] = useState(lastname);
+export function EditablePeopleFullName({ person, onChange }: OwnProps) {
+  const [firstnameValue, setFirstnameValue] = useState(person.firstname ?? '');
+  const [lastnameValue, setLastnameValue] = useState(person.lastname ?? '');
   const openCommentRightDrawer = useOpenCommentRightDrawer();
 
   function handleDoubleTextChange(
@@ -51,14 +44,10 @@ export function EditablePeopleFullName({
     openCommentRightDrawer([
       {
         type: CommentableType.Person,
-        id: personId,
+        id: person.id,
       },
     ]);
   }
-
-  const commentCount = usePeopleCommentsCountQuery(personId);
-
-  const displayCommentCount = !commentCount.loading;
 
   return (
     <EditableDoubleText
@@ -70,14 +59,12 @@ export function EditablePeopleFullName({
       nonEditModeContent={
         <>
           <StyledDiv>
-            <PersonChip name={firstname + ' ' + lastname} />
+            <PersonChip name={person.firstname + ' ' + person.lastname} />
           </StyledDiv>
-          {displayCommentCount && (
-            <CellCommentChip
-              count={commentCount.data ?? 0}
-              onClick={handleCommentClick}
-            />
-          )}
+          <CellCommentChip
+            count={person._commentCount ?? 0}
+            onClick={handleCommentClick}
+          />
         </>
       }
     />

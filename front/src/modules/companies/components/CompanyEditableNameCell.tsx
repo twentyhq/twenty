@@ -1,6 +1,5 @@
 import { CellCommentChip } from '@/comments/components/comments/CellCommentChip';
 import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
-import { useCompanyCommentsCountQuery } from '@/comments/services';
 import EditableChip from '@/ui/components/editable-cell/types/EditableChip';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import { CommentableType } from '~/generated/graphql';
@@ -29,8 +28,6 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
     ]);
   }
 
-  const commentCount = useCompanyCommentsCountQuery(company.id);
-
   return (
     <EditableChip
       value={company.name || ''}
@@ -45,7 +42,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       ChipComponent={CompanyChip}
       rightEndContents={[
         <CellCommentChip
-          count={commentCount.data ?? 0}
+          count={company._commentCount ?? 0}
           onClick={handleCommentClick}
         />,
       ]}

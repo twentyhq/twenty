@@ -14,6 +14,7 @@ export const mockedPeopleData = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
+    _commentCount: 1,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
@@ -31,6 +32,7 @@ export const mockedPeopleData = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
+    _commentCount: 1,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
@@ -48,6 +50,7 @@ export const mockedPeopleData = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
+    _commentCount: 1,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
@@ -66,6 +69,7 @@ export const mockedPeopleData = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
+    _commentCount: 2,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',

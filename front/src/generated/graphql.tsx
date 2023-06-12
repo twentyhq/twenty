@@ -1104,22 +1104,9 @@ export type CreateCommentThreadWithCommentMutationVariables = Exact<{
 
 export type CreateCommentThreadWithCommentMutation = { __typename?: 'Mutation', createOneCommentThread: { __typename?: 'CommentThread', id: string, createdAt: string, updatedAt: string, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, createdAt: string, updatedAt: string, commentThreadId: string, commentableType: CommentableType, commentableId: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
 
-export type GetCompanyCommentsCountQueryVariables = Exact<{
-  where?: InputMaybe<CompanyWhereInput>;
-}>;
-
-
-export type GetCompanyCommentsCountQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', commentsCount: number }> };
-
-export type GetPeopleCommentsCountQueryVariables = Exact<{
-  where?: InputMaybe<PersonWhereInput>;
-}>;
-
-
-export type GetPeopleCommentsCountQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', commentsCount: number }> };
-
 export type GetCommentThreadsByTargetsQueryVariables = Exact<{
   commentThreadTargetIds: Array<Scalars['String']> | Scalars['String'];
+  orderBy?: InputMaybe<Array<CommentThreadOrderByWithRelationInput> | CommentThreadOrderByWithRelationInput>;
 }>;
 
 
@@ -1138,7 +1125,7 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
 
 export type UpdateCompanyMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1179,7 +1166,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: string, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: string, _commentCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type UpdatePeopleMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1363,79 +1350,10 @@ export function useCreateCommentThreadWithCommentMutation(baseOptions?: Apollo.M
 export type CreateCommentThreadWithCommentMutationHookResult = ReturnType<typeof useCreateCommentThreadWithCommentMutation>;
 export type CreateCommentThreadWithCommentMutationResult = Apollo.MutationResult<CreateCommentThreadWithCommentMutation>;
 export type CreateCommentThreadWithCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentThreadWithCommentMutation, CreateCommentThreadWithCommentMutationVariables>;
-export const GetCompanyCommentsCountDocument = gql`
-    query GetCompanyCommentsCount($where: CompanyWhereInput) {
-  companies: findManyCompany(where: $where) {
-    commentsCount: _commentCount
-  }
-}
-    `;
-
-/**
- * __useGetCompanyCommentsCountQuery__
- *
- * To run a query within a React component, call `useGetCompanyCommentsCountQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCompanyCommentsCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCompanyCommentsCountQuery({
- *   variables: {
- *      where: // value for 'where'
- *   },
- * });
- */
-export function useGetCompanyCommentsCountQuery(baseOptions?: Apollo.QueryHookOptions<GetCompanyCommentsCountQuery, GetCompanyCommentsCountQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCompanyCommentsCountQuery, GetCompanyCommentsCountQueryVariables>(GetCompanyCommentsCountDocument, options);
-      }
-export function useGetCompanyCommentsCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCompanyCommentsCountQuery, GetCompanyCommentsCountQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCompanyCommentsCountQuery, GetCompanyCommentsCountQueryVariables>(GetCompanyCommentsCountDocument, options);
-        }
-export type GetCompanyCommentsCountQueryHookResult = ReturnType<typeof useGetCompanyCommentsCountQuery>;
-export type GetCompanyCommentsCountLazyQueryHookResult = ReturnType<typeof useGetCompanyCommentsCountLazyQuery>;
-export type GetCompanyCommentsCountQueryResult = Apollo.QueryResult<GetCompanyCommentsCountQuery, GetCompanyCommentsCountQueryVariables>;
-export const GetPeopleCommentsCountDocument = gql`
-    query GetPeopleCommentsCount($where: PersonWhereInput) {
-  people: findManyPerson(where: $where) {
-    commentsCount: _commentCount
-  }
-}
-    `;
-
-/**
- * __useGetPeopleCommentsCountQuery__
- *
- * To run a query within a React component, call `useGetPeopleCommentsCountQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPeopleCommentsCountQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetPeopleCommentsCountQuery({
- *   variables: {
- *      where: // value for 'where'
- *   },
- * });
- */
-export function useGetPeopleCommentsCountQuery(baseOptions?: Apollo.QueryHookOptions<GetPeopleCommentsCountQuery, GetPeopleCommentsCountQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPeopleCommentsCountQuery, GetPeopleCommentsCountQueryVariables>(GetPeopleCommentsCountDocument, options);
-      }
-export function useGetPeopleCommentsCountLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPeopleCommentsCountQuery, GetPeopleCommentsCountQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPeopleCommentsCountQuery, GetPeopleCommentsCountQueryVariables>(GetPeopleCommentsCountDocument, options);
-        }
-export type GetPeopleCommentsCountQueryHookResult = ReturnType<typeof useGetPeopleCommentsCountQuery>;
-export type GetPeopleCommentsCountLazyQueryHookResult = ReturnType<typeof useGetPeopleCommentsCountLazyQuery>;
-export type GetPeopleCommentsCountQueryResult = Apollo.QueryResult<GetPeopleCommentsCountQuery, GetPeopleCommentsCountQueryVariables>;
 export const GetCommentThreadsByTargetsDocument = gql`
-    query GetCommentThreadsByTargets($commentThreadTargetIds: [String!]!) {
+    query GetCommentThreadsByTargets($commentThreadTargetIds: [String!]!, $orderBy: [CommentThreadOrderByWithRelationInput!]) {
   findManyCommentThreads(
+    orderBy: $orderBy
     where: {commentThreadTargets: {some: {commentableId: {in: $commentThreadTargetIds}}}}
   ) {
     id
@@ -1467,6 +1385,7 @@ export const GetCommentThreadsByTargetsDocument = gql`
  * const { data, loading, error } = useGetCommentThreadsByTargetsQuery({
  *   variables: {
  *      commentThreadTargetIds: // value for 'commentThreadTargetIds'
+ *      orderBy: // value for 'orderBy'
  *   },
  * });
  */
@@ -1536,6 +1455,7 @@ export const GetCompaniesDocument = gql`
     createdAt
     address
     employees
+    _commentCount
     accountOwner {
       id
       email
@@ -1713,6 +1633,7 @@ export const GetPeopleDocument = gql`
     firstname
     lastname
     createdAt
+    _commentCount
     company {
       id
       name
