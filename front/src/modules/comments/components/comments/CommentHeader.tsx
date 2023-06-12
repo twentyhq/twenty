@@ -30,6 +30,10 @@ const StyledName = styled.div`
   font-size: 13px;
   font-weight: 400;
   color: ${(props) => props.theme.text80};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 160px;
 `;
 
 const StyledDate = styled.div`

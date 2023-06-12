@@ -12,7 +12,7 @@ import { availableSorts } from '../../../../../../pages/companies/companies-sort
 import { TableHeader } from '../TableHeader';
 
 const meta: Meta<typeof TableHeader> = {
-  title: 'Components/Table/TableHeader',
+  title: 'UI/Table/TableHeader',
   component: TableHeader,
 };
 

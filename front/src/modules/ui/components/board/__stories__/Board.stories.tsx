@@ -6,7 +6,7 @@ import { Board } from '../Board';
 import { initialBoard, items } from './mock-data';
 
 const meta: Meta<typeof Board> = {
-  title: 'Components/Board',
+  title: 'UI/Board/Board',
   component: Board,
 };
 

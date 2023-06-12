@@ -6,7 +6,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { RightDrawerTopBar } from '../RightDrawerTopBar';
 
 const meta: Meta<typeof RightDrawerTopBar> = {
-  title: 'Components/RightDrawer/RightDrawerTopBar',
+  title: 'UI/RightDrawer/RightDrawerTopBar',
   component: RightDrawerTopBar,
   argTypes: {
     title: {
