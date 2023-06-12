@@ -50,6 +50,7 @@ export function SettingsNavbar() {
               label="Experience"
               to="/settings/profile/experience"
               icon={<TbColorSwatch size={16} />}
+              soon={true}
               active={
                 !!useMatch({
                   path: useResolvedPath('/settings/profile/experience')
@@ -63,6 +64,7 @@ export function SettingsNavbar() {
               label="General"
               to="/settings/workspace"
               icon={<TbSettings size={16} />}
+              soon={true}
               active={
                 !!useMatch({
                   path: useResolvedPath('/settings/workspace').pathname,
@@ -73,7 +75,7 @@ export function SettingsNavbar() {
             <NavTitle label="Other" />
             <NavItem
               label="Logout"
-              to="/settings/logout"
+              to="/logout"
               icon={<TbLogout size={16} />}
               danger={true}
             />

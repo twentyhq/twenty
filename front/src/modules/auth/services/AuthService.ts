@@ -50,3 +50,8 @@ export const refreshAccessToken = async () => {
     localStorage.removeItem('accessToken');
   }
 };
+
+export const logout = () => {
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('accessToken');
+};

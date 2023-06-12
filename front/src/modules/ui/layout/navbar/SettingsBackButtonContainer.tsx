@@ -24,7 +24,7 @@ export function SettingsBackbuttonContainer() {
     <StyledContainer
       onClick={() => navigate(location.state?.from || '/', { replace: true })}
     >
-      <TbChevronLeft />
+      <TbChevronLeft strokeWidth={3} />
       <span>Settings</span>
     </StyledContainer>
   );
