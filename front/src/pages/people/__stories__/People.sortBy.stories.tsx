@@ -35,7 +35,7 @@ export const Email: Story = {
       (await canvas.findAllByRole('checkbox')).map((item) => {
         return item.getAttribute('id');
       })[1],
-    ).toStrictEqual('person-selected-7dfbc3f7-6e5e-4128-957e-8d86808cdf6b');
+    ).toStrictEqual('checkbox-selected-7dfbc3f7-6e5e-4128-957e-8d86808cdf6b');
   },
   parameters: {
     msw: graphqlMocks,

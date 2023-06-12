@@ -7,7 +7,7 @@ import {
   TbPhone,
   TbUser,
 } from 'react-icons/tb';
-import { CellContext, createColumnHelper } from '@tanstack/react-table';
+import { createColumnHelper } from '@tanstack/react-table';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
 import { PeopleCompanyCell } from '@/people/components/PeopleCompanyCell';
@@ -16,34 +16,15 @@ import { updatePerson } from '@/people/services';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone';
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
-import { CheckboxCell } from '@/ui/components/table/CheckboxCell';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
-import { SelectAllCheckbox } from '@/ui/components/table/SelectAllCheckbox';
+import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 
 const columnHelper = createColumnHelper<Person>();
 
 export const usePeopleColumns = () => {
   return useMemo(() => {
     return [
-      {
-        id: 'select',
-        header: ({ table }: any) => (
-          <SelectAllCheckbox
-            checked={table.getIsAllRowsSelected()}
-            indeterminate={table.getIsSomeRowsSelected()}
-            onChange={(newValue) => table.toggleAllRowsSelected(newValue)}
-          />
-        ),
-        cell: (props: CellContext<Person, string>) => (
-          <CheckboxCell
-            id={`person-selected-${props.row.original.id}`}
-            name={`person-selected-${props.row.original.id}`}
-            checked={props.row.getIsSelected()}
-            onChange={(newValue) => props.row.toggleSelected(newValue)}
-          />
-        ),
-        size: 25,
-      },
+      getCheckBoxColumn(),
       columnHelper.accessor('firstname', {
         header: () => (
           <ColumnHead viewName="People" viewIcon={<TbUser size={16} />} />

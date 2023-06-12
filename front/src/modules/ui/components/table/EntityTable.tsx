@@ -39,8 +39,8 @@ type OwnProps<
 };
 
 const StyledTable = styled.table`
-  min-width: 1000px;
-  width: calc(100% - 2 * ${(props) => props.theme.table.horizontalCellMargin});
+  width: calc(100% - ${(props) => props.theme.table.horizontalCellMargin} * 2);
+
   border-radius: 4px;
   border-spacing: 0;
   border-collapse: collapse;
@@ -54,11 +54,17 @@ const StyledTable = styled.table`
     padding: 0;
     border: 1px solid ${(props) => props.theme.tertiaryBackground};
     text-align: left;
+
     :last-child {
       border-right-color: transparent;
     }
     :first-of-type {
       border-left-color: transparent;
+      border-right-color: transparent;
+    }
+    :last-of-type {
+      width: 100%;
+      min-width: 0;
     }
   }
 
@@ -67,12 +73,19 @@ const StyledTable = styled.table`
     color: ${(props) => props.theme.text80};
     padding: 0;
     border: 1px solid ${(props) => props.theme.tertiaryBackground};
+
     text-align: left;
+
     :last-child {
       border-right-color: transparent;
     }
     :first-of-type {
       border-left-color: transparent;
+      border-right-color: transparent;
+    }
+    :last-of-type {
+      width: 100%;
+      min-width: 0;
     }
   }
 `;
@@ -160,7 +173,9 @@ export function EntityTable<
                   <th
                     key={header.id}
                     style={{
-                      width: `${header.getSize()}px`,
+                      width: header.column.getSize(),
+                      minWidth: header.column.getSize(),
+                      maxWidth: header.column.getSize(),
                     }}
                   >
                     {header.isPlaceholder
@@ -171,6 +186,7 @@ export function EntityTable<
                         )}
                   </th>
                 ))}
+                <th></th>
               </tr>
             ))}
           </thead>
@@ -188,6 +204,11 @@ export function EntityTable<
                       onContextMenu={(event) =>
                         handleContextMenu(event, row.original.id)
                       }
+                      style={{
+                        width: cell.column.getSize(),
+                        minWidth: cell.column.getSize(),
+                        maxWidth: cell.column.getSize(),
+                      }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -196,6 +217,7 @@ export function EntityTable<
                     </td>
                   );
                 })}
+                <td></td>
               </StyledRow>
             ))}
           </tbody>
