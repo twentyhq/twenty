@@ -64,8 +64,6 @@ const StyledTable = styled.table`
       width: 100%;
       min-width: 0;
     }
-
-    overflow: hidden;
   }
 
   td {
@@ -87,8 +85,6 @@ const StyledTable = styled.table`
       width: 100%;
       min-width: 0;
     }
-
-    overflow: hidden;
   }
 `;
 
