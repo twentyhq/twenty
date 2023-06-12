@@ -156,7 +156,7 @@ export function EditableRelation<
       setSelectedIndex((prevSelectedIndex) =>
         Math.min(
           prevSelectedIndex + 1,
-          filterSearchResults.results?.length - 1 ?? 0,
+          (filterSearchResults.results?.length ?? 0) - 1,
         ),
       );
     },
