@@ -13,7 +13,9 @@ const commonTheme = {
   iconSizeMedium: '1.08rem',
   iconSizeLarge: '1.23rem',
 
-  fontWeightBold: 500,
+  fontWeightMedium: 500,
+  fontWeightSemibold: 600,
+  fontWeightBold: 700,
   fontFamily: 'Inter, sans-serif',
   lineHeight: '150%',
 
@@ -133,7 +135,7 @@ export const textInputStyle = (props: any) =>
     &::-webkit-input-placeholder {
       font-family: ${props.theme.fontFamily};
       color: ${props.theme.text30};
-      font-weight: ${props.theme.fontWeightBold};
+      font-weight: ${props.theme.fontWeightMedium};
     }
   `;
 

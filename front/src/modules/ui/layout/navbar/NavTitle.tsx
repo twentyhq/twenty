@@ -10,7 +10,7 @@ const StyledTitle = styled.div`
   color: ${(props) => props.theme.text30};
   font-size: ${(props) => props.theme.fontSizeExtraSmall};
   font-weight: 600;
-  padding-top: ${(props) => props.theme.spacing(1)};
+  padding-top: ${(props) => props.theme.spacing(8)};
   padding-bottom: ${(props) => props.theme.spacing(2)};
   padding-left: ${(props) => props.theme.spacing(1)};
 `;

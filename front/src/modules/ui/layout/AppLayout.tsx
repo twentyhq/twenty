@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { CommandMenu } from '@/search/components/CommandMenu';
 
-import { Navbar } from './navbar/Navbar';
+import { AppNavbar } from './navbar/AppNavbar';
 import { isNavbarOpenedState } from './states/isNavbarOpenedState';
 import { MOBILE_VIEWPORT } from './styles/themes';
 
@@ -46,7 +46,7 @@ export function AppLayout({ children }: OwnProps) {
       {userIsAuthenticated ? (
         <>
           <CommandMenu />
-          <Navbar />
+          <AppNavbar />
           <MainContainer>{children}</MainContainer>
         </>
       ) : (

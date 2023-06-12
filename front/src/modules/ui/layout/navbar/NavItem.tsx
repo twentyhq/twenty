@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { MOBILE_VIEWPORT } from '../styles/themes';
@@ -9,10 +9,12 @@ type OwnProps = {
   to: string;
   active?: boolean;
   icon: ReactNode;
+  danger?: boolean;
 };
 
 type StyledItemProps = {
   active?: boolean;
+  danger?: boolean;
 };
 
 const StyledItem = styled.button<StyledItemProps>`
@@ -27,12 +29,19 @@ const StyledItem = styled.button<StyledItemProps>`
   padding-bottom: ${(props) => props.theme.spacing(1)};
   padding-left: ${(props) => props.theme.spacing(1)};
   font-family: 'Inter';
-  color: ${(props) =>
-    props.active ? props.theme.text100 : props.theme.text60};
+  color: ${(props) => {
+    if (props.active) {
+      return props.theme.text100;
+    }
+    if (props.danger) {
+      return props.theme.red;
+    }
+    return props.theme.text60;
+  }};
   border-radius: 4px;
   :hover {
     background: rgba(0, 0, 0, 0.04);
-    color: ${(props) => props.theme.text100};
+    color: ${(props) => (props.danger ? props.theme.red : props.theme.text100)};
   }
   margin-bottom: calc(${(props) => props.theme.spacing(1)} / 2);
 
@@ -46,16 +55,18 @@ const StyledItemLabel = styled.div`
   margin-left: ${(props) => props.theme.spacing(2)};
 `;
 
-function NavItem({ label, icon, to, active }: OwnProps) {
+function NavItem({ label, icon, to, active, danger }: OwnProps) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <StyledItem
       onClick={() => {
-        navigate(to);
+        navigate(to, { state: { from: location } });
       }}
       active={active}
       aria-selected={active}
+      danger={danger}
     >
       {icon}
       <StyledItemLabel>{label}</StyledItemLabel>

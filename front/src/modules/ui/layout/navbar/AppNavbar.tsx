@@ -1,4 +1,4 @@
-import { TbBuilding, TbUser } from 'react-icons/tb';
+import { TbBuilding, TbSettings, TbUser } from 'react-icons/tb';
 import { useMatch, useResolvedPath } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -34,13 +34,19 @@ const NavItemsContainer = styled.div`
   margin-top: 40px;
 `;
 
-export function Navbar() {
+export function AppNavbar() {
   return (
     <>
       <NavbarContainer>
         <NavbarContent>
           <WorkspaceContainer />
           <NavItemsContainer>
+            <NavItem
+              label="Settings"
+              to="/settings"
+              icon={<TbSettings size={16} />}
+            />
+
             <NavTitle label="Workspace" />
             <NavItem
               label="People"

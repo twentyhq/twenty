@@ -1,0 +1,31 @@
+import { TbChevronLeft } from 'react-icons/tb';
+import { useLocation, useNavigate } from 'react-router-dom';
+import styled from '@emotion/styled';
+
+const StyledContainer = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: ${(props) => props.theme.spacing(1)};
+  gap: ${(props) => props.theme.spacing(1)};
+  font-size: ${(props) => props.theme.fontSizeLarge};
+  font-weight: ${(props) => props.theme.fontWeightSemibold};
+  color: ${(props) => props.theme.text60};
+  border: none;
+  background: inherit;
+  cursor: pointer;
+`;
+
+export function SettingsBackbuttonContainer() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <StyledContainer
+      onClick={() => navigate(location.state?.from || '/', { replace: true })}
+    >
+      <TbChevronLeft />
+      <span>Settings</span>
+    </StyledContainer>
+  );
+}

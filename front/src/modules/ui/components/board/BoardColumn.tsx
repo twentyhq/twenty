@@ -14,7 +14,7 @@ const StyledColumn = styled.div`
 const StyledColumnTitle = styled.h3`
   font-family: 'Inter';
   font-style: normal;
-  font-weight: ${({ theme }) => theme.fontWeightBold};
+  font-weight: ${({ theme }) => theme.fontWeightMedium};
   font-size: ${({ theme }) => theme.fontSizeMedium};
   line-height: ${({ theme }) => theme.lineHeight};
   color: ${({ color }) => color};
