@@ -53,16 +53,10 @@ const StyledTable = styled.table`
     border: 1px solid ${(props) => props.theme.tertiaryBackground};
     text-align: left;
 
-    min-width: ${(props) => props.theme.table.cellMinWidth};
-    max-width: ${(props) => props.theme.table.cellMaxWidth};
-
     :last-child {
       border-right-color: transparent;
     }
     :first-of-type {
-      min-width: ${(props) => props.theme.table.checkboxColumnWidth};
-      width: ${(props) => props.theme.table.checkboxColumnWidth};
-
       border-left-color: transparent;
       border-right-color: transparent;
     }
@@ -80,18 +74,12 @@ const StyledTable = styled.table`
     padding: 0;
     border: 1px solid ${(props) => props.theme.tertiaryBackground};
 
-    min-width: ${(props) => props.theme.table.cellMinWidth};
-    max-width: ${(props) => props.theme.table.cellMaxWidth};
-
     text-align: left;
 
     :last-child {
       border-right-color: transparent;
     }
     :first-of-type {
-      min-width: ${(props) => props.theme.table.checkboxColumnWidth};
-      width: ${(props) => props.theme.table.checkboxColumnWidth};
-
       border-left-color: transparent;
       border-right-color: transparent;
     }
@@ -183,12 +171,13 @@ export function EntityTable<
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, headerIndex) => (
+                {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
                     style={{
                       width: header.column.getSize(),
                       minWidth: header.column.getSize(),
+                      maxWidth: header.column.getSize(),
                     }}
                   >
                     {header.isPlaceholder
@@ -220,6 +209,7 @@ export function EntityTable<
                       style={{
                         width: cell.column.getSize(),
                         minWidth: cell.column.getSize(),
+                        maxWidth: cell.column.getSize(),
                       }}
                     >
                       {flexRender(

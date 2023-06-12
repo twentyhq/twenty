@@ -22,8 +22,6 @@ const commonTheme = {
   table: {
     horizontalCellMargin: '8px',
     checkboxColumnWidth: '32px',
-    cellMaxWidth: '300px',
-    cellMinWidth: '50px',
   },
 
   borderRadius: '4px',
