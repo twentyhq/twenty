@@ -41,8 +41,8 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
   );
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <StyledBoard>
+    <StyledBoard>
+      <DragDropContext onDragEnd={onDragEnd}>
         {board.map((column) => (
           <Droppable key={column.id} droppableId={column.id}>
             {(droppableProvided) => (
@@ -70,7 +70,7 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
             )}
           </Droppable>
         ))}
-      </StyledBoard>
-    </DragDropContext>
+      </DragDropContext>
+    </StyledBoard>
   );
 };
