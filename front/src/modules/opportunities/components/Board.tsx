@@ -8,14 +8,15 @@ import {
 
 import { Column, Items, StyledBoard } from '../../ui/components/board/Board';
 import {
-  ItemContainer,
+  ItemsContainer,
   StyledColumn,
-  StyledColumnTitle,
 } from '../../ui/components/board/BoardColumn';
 // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd
 // https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { BoardItem } from '../../ui/components/board/BoardItem';
 import { NewButton } from '../../ui/components/board/BoardNewButton';
+
+import { StyledColumnTitle } from './BoardColumn';
 
 type BoardProps = {
   initialBoard: Column[];
@@ -73,7 +74,7 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
                   <StyledColumnTitle color={column.colorCode}>
                     • {column.title}
                   </StyledColumnTitle>
-                  <ItemContainer droppableProvided={droppableProvided}>
+                  <ItemsContainer droppableProvided={droppableProvided}>
                     {column.itemKeys.map((itemKey, index) => (
                       <Draggable
                         key={itemKey}
@@ -89,7 +90,7 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
                         }
                       </Draggable>
                     ))}
-                  </ItemContainer>
+                  </ItemsContainer>
                   <NewButton />
                 </StyledColumn>
               )
