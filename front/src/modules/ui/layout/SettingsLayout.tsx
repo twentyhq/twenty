@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { SettingsNavbar } from '../components/navbars/SettingsNavbar';
+import { SettingsNavbar } from '../../settings/components/SettingsNavbar';
 
 type OwnProps = {
   children: JSX.Element;
