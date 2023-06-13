@@ -1,4 +1,4 @@
-import { Column, Items } from '../Board';
+import { Column, Items } from '../../../ui/components/board/Board';
 
 export const items: Items = {
   'item-1': { id: 'item-1', content: 'Item 1' },
