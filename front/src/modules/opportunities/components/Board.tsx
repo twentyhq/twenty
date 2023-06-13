@@ -3,7 +3,6 @@ import {
   DragDropContext,
   Draggable,
   Droppable,
-  DropResult,
   OnDragEndResponder,
 } from '@hello-pangea/dnd';
 
