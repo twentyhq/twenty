@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
-import { TbX } from 'react-icons/tb';
 import styled from '@emotion/styled';
+
+import { IconX } from '@/ui/icons/index';
 
 type OwnProps = {
   id: string;
@@ -55,7 +56,7 @@ function SortOrFilterChip({
       {labelKey && <StyledLabelKey>{labelKey}:&nbsp;</StyledLabelKey>}
       {labelValue}
       <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
-        <TbX />
+        <IconX />
       </StyledDelete>
     </StyledChip>
   );

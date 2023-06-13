@@ -1,12 +1,12 @@
-import {
-  TbBuilding,
-  TbInbox,
-  TbSearch,
-  TbSettings,
-  TbUser,
-} from 'react-icons/tb';
 import { useMatch, useResolvedPath } from 'react-router-dom';
 
+import {
+  IconBuilding,
+  IconInbox,
+  IconSearch,
+  IconSettings,
+  IconUser,
+} from '@/ui/icons/index';
 import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
 
 import NavItem from './modules/ui/layout/navbar/NavItem';
@@ -21,25 +21,25 @@ export function AppNavbar() {
         <NavItem
           label="Search"
           to="/search"
-          icon={<TbSearch size={16} />}
+          icon={<IconSearch size={16} />}
           soon={true}
         />
         <NavItem
           label="Inbox"
           to="/inbox"
-          icon={<TbInbox size={16} />}
+          icon={<IconInbox size={16} />}
           soon={true}
         />
         <NavItem
           label="Settings"
           to="/settings/profile"
-          icon={<TbSettings size={16} />}
+          icon={<IconSettings size={16} />}
         />
         <NavTitle label="Workspace" />
         <NavItem
           label="People"
           to="/people"
-          icon={<TbUser size={16} />}
+          icon={<IconUser size={16} />}
           active={
             !!useMatch({
               path: useResolvedPath('/people').pathname,
@@ -50,7 +50,7 @@ export function AppNavbar() {
         <NavItem
           label="Companies"
           to="/companies"
-          icon={<TbBuilding size={16} />}
+          icon={<IconBuilding size={16} />}
           active={
             !!useMatch({
               path: useResolvedPath('/companies').pathname,

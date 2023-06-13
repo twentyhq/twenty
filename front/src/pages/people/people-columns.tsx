@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import {
-  TbBuilding,
-  TbCalendar,
-  TbMail,
-  TbMapPin,
-  TbPhone,
-  TbUser,
-} from 'react-icons/tb';
+  IconBuilding,
+  IconCalendar,
+  IconMail,
+  IconMapPin,
+  IconPhone,
+  IconUser,
+} from '@/ui/icons/index';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
@@ -27,7 +27,7 @@ export const usePeopleColumns = () => {
       getCheckBoxColumn(),
       columnHelper.accessor('firstname', {
         header: () => (
-          <ColumnHead viewName="People" viewIcon={<TbUser size={16} />} />
+          <ColumnHead viewName="People" viewIcon={<IconUser size={16} />} />
         ),
         cell: (props) => (
           <>
@@ -46,7 +46,7 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('email', {
         header: () => (
-          <ColumnHead viewName="Email" viewIcon={<TbMail size={16} />} />
+          <ColumnHead viewName="Email" viewIcon={<IconMail size={16} />} />
         ),
         cell: (props) => (
           <EditableText
@@ -63,14 +63,14 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('company', {
         header: () => (
-          <ColumnHead viewName="Company" viewIcon={<TbBuilding size={16} />} />
+          <ColumnHead viewName="Company" viewIcon={<IconBuilding size={16} />} />
         ),
         cell: (props) => <PeopleCompanyCell people={props.row.original} />,
         size: 150,
       }),
       columnHelper.accessor('phone', {
         header: () => (
-          <ColumnHead viewName="Phone" viewIcon={<TbPhone size={16} />} />
+          <ColumnHead viewName="Phone" viewIcon={<IconPhone size={16} />} />
         ),
         cell: (props) => (
           <EditablePhone
@@ -87,7 +87,7 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('createdAt', {
         header: () => (
-          <ColumnHead viewName="Creation" viewIcon={<TbCalendar size={16} />} />
+          <ColumnHead viewName="Creation" viewIcon={<IconCalendar size={16} />} />
         ),
         cell: (props) => (
           <EditableDate
@@ -103,7 +103,7 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('city', {
         header: () => (
-          <ColumnHead viewName="City" viewIcon={<TbMapPin size={16} />} />
+          <ColumnHead viewName="City" viewIcon={<IconMapPin size={16} />} />
         ),
         cell: (props) => (
           <EditableText

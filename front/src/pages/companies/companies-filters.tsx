@@ -1,22 +1,21 @@
-import {
-  TbBuilding,
-  TbCalendar,
-  TbLink,
-  TbMapPin,
-  TbSum,
-  TbUser,
-} from 'react-icons/tb';
-
 import { Company } from '@/companies/interfaces/company.interface';
 import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { SEARCH_USER_QUERY } from '@/search/services/search';
+import {
+  IconBuilding,
+  IconCalendar,
+  IconLink,
+  IconMapPin,
+  IconSum,
+  IconUser,
+} from '@/ui/icons/index';
 import { mapToUser, User } from '@/users/interfaces/user.interface';
 import { QueryMode } from '~/generated/graphql';
 
 export const nameFilter = {
   key: 'name',
   label: 'Name',
-  icon: <TbBuilding size={16} />,
+  icon: <IconBuilding size={16} />,
   type: 'text',
   operands: [
     {
@@ -46,7 +45,7 @@ export const nameFilter = {
 export const employeesFilter = {
   key: 'employees',
   label: 'Employees',
-  icon: <TbSum size={16} />,
+  icon: <IconSum size={16} />,
   type: 'text',
   operands: [
     {
@@ -73,7 +72,7 @@ export const employeesFilter = {
 export const urlFilter = {
   key: 'domainName',
   label: 'Url',
-  icon: <TbLink size={16} />,
+  icon: <IconLink size={16} />,
   type: 'text',
   operands: [
     {
@@ -106,7 +105,7 @@ export const urlFilter = {
 export const addressFilter = {
   key: 'address',
   label: 'Address',
-  icon: <TbMapPin size={16} />,
+  icon: <IconMapPin size={16} />,
   type: 'text',
   operands: [
     {
@@ -136,7 +135,7 @@ export const addressFilter = {
 export const ccreatedAtFilter = {
   key: 'createdAt',
   label: 'Created At',
-  icon: <TbCalendar size={16} />,
+  icon: <IconCalendar size={16} />,
   type: 'date',
   operands: [
     {
@@ -163,7 +162,7 @@ export const ccreatedAtFilter = {
 export const accountOwnerFilter = {
   key: 'accountOwner',
   label: 'Account Owner',
-  icon: <TbUser size={16} />,
+  icon: <IconUser size={16} />,
   type: 'relation',
   searchConfig: {
     query: SEARCH_USER_QUERY,

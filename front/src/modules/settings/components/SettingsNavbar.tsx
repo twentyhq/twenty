@@ -1,7 +1,12 @@
-import { TbColorSwatch, TbLogout, TbSettings, TbUser } from 'react-icons/tb';
 import { useMatch, useResolvedPath } from 'react-router-dom';
 
 import { removeTokens } from '@/auth/services/AuthService';
+import {
+  IconColorSwatch,
+  IconLogout,
+  IconSettings,
+  IconUser,
+} from '@/ui/icons/index';
 import NavBackButton from '@/ui/layout/navbar//NavBackButton';
 import NavItem from '@/ui/layout/navbar/NavItem';
 import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
@@ -16,7 +21,7 @@ export function SettingsNavbar() {
         <NavItem
           label="Profile"
           to="/settings/profile"
-          icon={<TbUser size={16} />}
+          icon={<IconUser size={16} />}
           active={
             !!useMatch({
               path: useResolvedPath('/people').pathname,
@@ -27,7 +32,7 @@ export function SettingsNavbar() {
         <NavItem
           label="Experience"
           to="/settings/profile/experience"
-          icon={<TbColorSwatch size={16} />}
+          icon={<IconColorSwatch size={16} />}
           soon={true}
           active={
             !!useMatch({
@@ -40,7 +45,7 @@ export function SettingsNavbar() {
         <NavItem
           label="General"
           to="/settings/workspace"
-          icon={<TbSettings size={16} />}
+          icon={<IconSettings size={16} />}
           soon={true}
           active={
             !!useMatch({
@@ -53,7 +58,7 @@ export function SettingsNavbar() {
         <NavItem
           label="Logout"
           onClick={removeTokens}
-          icon={<TbLogout size={16} />}
+          icon={<IconLogout size={16} />}
           danger={true}
         />
       </NavItemsContainer>

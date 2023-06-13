@@ -1,7 +1,10 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { IconSidebarLeftCollapse, IconSidebarRightCollapse } from '@/ui/icons';
+import {
+  IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarRightCollapse,
+} from '@/ui/icons';
 
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 import { MOBILE_VIEWPORT } from '../styles/themes';
@@ -50,7 +53,7 @@ export default function NavCollapseButton({
           onClick={() => setIsNavOpen(!isNavOpen)}
           hideOnDesktop={hideOnDesktop}
         >
-          <IconSidebarLeftCollapse size={16} />
+          <IconLayoutSidebarLeftCollapse size={16} />
         </CollapseButton>
       )}
       {!isNavOpen && (
@@ -58,7 +61,7 @@ export default function NavCollapseButton({
           onClick={() => setIsNavOpen(!isNavOpen)}
           hideOnDesktop={hideOnDesktop}
         >
-          <IconSidebarRightCollapse size={16} />
+          <IconLayoutSidebarRightCollapse size={16} />
         </CollapseButton>
       )}
     </>

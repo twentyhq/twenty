@@ -1,6 +1,4 @@
 import { useCallback, useState } from 'react';
-import { FaList } from 'react-icons/fa';
-import { TbUser } from 'react-icons/tb';
 import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -18,6 +16,7 @@ import {
 } from '@/people/services';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
 import { EntityTable } from '@/ui/components/table/EntityTable';
+import { IconList, IconUser } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { BoolExpType } from '@/utils/interfaces/generic.interface';
 import { AppPage } from '~/AppPage';
@@ -76,7 +75,7 @@ export function People() {
     <AppPage>
       <WithTopBarContainer
         title="People"
-        icon={<TbUser size={16} />}
+        icon={<IconUser size={16} />}
         onAddButtonClick={handleAddButtonClick}
       >
         <>
@@ -85,7 +84,7 @@ export function People() {
               data={people}
               columns={peopleColumns}
               viewName="All People"
-              viewIcon={<FaList />}
+              viewIcon={<IconList />}
               availableSorts={availableSorts}
               availableFilters={availableFilters}
               onSortsUpdate={updateSorts}

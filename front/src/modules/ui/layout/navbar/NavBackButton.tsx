@@ -1,6 +1,7 @@
-import { TbChevronLeft } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+
+import { IconChevronLeft } from '@/ui/icons/index';
 
 import NavCollapseButton from './NavCollapseButton';
 
@@ -38,7 +39,7 @@ export default function NavBackButton({ title }: OwnProps) {
         <IconAndButtonContainer
           onClick={() => navigate('/', { replace: true })}
         >
-          <TbChevronLeft strokeWidth={3} />
+          <IconChevronLeft strokeWidth={3} />
           <span>{title}</span>
         </IconAndButtonContainer>
         <NavCollapseButton hideOnDesktop={true} />

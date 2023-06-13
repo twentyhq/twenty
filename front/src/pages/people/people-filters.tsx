@@ -1,11 +1,11 @@
 import {
-  TbBuilding,
-  TbCalendar,
-  TbMail,
-  TbMapPin,
-  TbPhone,
-  TbUser,
-} from 'react-icons/tb';
+  IconBuilding,
+  IconCalendar,
+  IconMail,
+  IconMapPin,
+  IconPhone,
+  IconUser,
+} from '@/ui/icons/index';
 
 import {
   Company,
@@ -19,7 +19,7 @@ import { QueryMode } from '~/generated/graphql';
 export const fullnameFilter = {
   key: 'fullname',
   label: 'People',
-  icon: <TbUser size={16} />,
+  icon: <IconUser size={16} />,
   type: 'text',
   operands: [
     {
@@ -72,7 +72,7 @@ export const fullnameFilter = {
 export const emailFilter = {
   key: 'email',
   label: 'Email',
-  icon: <TbMail size={16} />,
+  icon: <IconMail size={16} />,
   type: 'text',
   operands: [
     {
@@ -102,7 +102,7 @@ export const emailFilter = {
 export const companyFilter = {
   key: 'company_name',
   label: 'Company',
-  icon: <TbBuilding size={16} />,
+  icon: <IconBuilding size={16} />,
   type: 'relation',
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
@@ -136,7 +136,7 @@ export const companyFilter = {
 export const phoneFilter = {
   key: 'phone',
   label: 'Phone',
-  icon: <TbPhone size={16} />,
+  icon: <IconPhone size={16} />,
   type: 'text',
   operands: [
     {
@@ -166,7 +166,7 @@ export const phoneFilter = {
 export const createdAtFilter = {
   key: 'createdAt',
   label: 'Created At',
-  icon: <TbCalendar size={16} />,
+  icon: <IconCalendar size={16} />,
   type: 'date',
   operands: [
     {
@@ -193,7 +193,7 @@ export const createdAtFilter = {
 export const cityFilter = {
   key: 'city',
   label: 'City',
-  icon: <TbMapPin size={16} />,
+  icon: <IconMapPin size={16} />,
   type: 'text',
   operands: [
     {
