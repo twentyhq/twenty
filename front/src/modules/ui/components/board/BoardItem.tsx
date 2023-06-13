@@ -19,8 +19,8 @@ export const BoardItem = ({ children, draggableProvided }: BoardCardProps) => {
   return (
     <StyledCard
       ref={draggableProvided?.innerRef}
-      {...draggableProvided.dragHandleProps}
-      {...draggableProvided.draggableProps}
+      {...draggableProvided?.dragHandleProps}
+      {...draggableProvided?.draggableProps}
     >
       {children}
     </StyledCard>

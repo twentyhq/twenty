@@ -47,33 +47,29 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
       <StyledBoard>
         {board.map((column) => (
           <Droppable key={column.id} droppableId={column.id}>
-            {(droppableProvided) =>
-              droppableProvided && (
-                <StyledColumn>
-                  <StyledColumnTitle color={column.colorCode}>
-                    • {column.title}
-                  </StyledColumnTitle>
-                  <ItemsContainer droppableProvided={droppableProvided}>
-                    {column.itemKeys.map((itemKey, index) => (
-                      <Draggable
-                        key={itemKey}
-                        draggableId={itemKey}
-                        index={index}
-                      >
-                        {(draggableProvided) =>
-                          draggableProvided && (
-                            <BoardItem draggableProvided={draggableProvided}>
-                              <p>{items[itemKey].content}</p>
-                            </BoardItem>
-                          )
-                        }
-                      </Draggable>
-                    ))}
-                  </ItemsContainer>
-                  <NewButton />
-                </StyledColumn>
-              )
-            }
+            {(droppableProvided) => (
+              <StyledColumn>
+                <StyledColumnTitle color={column.colorCode}>
+                  • {column.title}
+                </StyledColumnTitle>
+                <ItemsContainer droppableProvided={droppableProvided}>
+                  {column.itemKeys.map((itemKey, index) => (
+                    <Draggable
+                      key={itemKey}
+                      draggableId={itemKey}
+                      index={index}
+                    >
+                      {(draggableProvided) => (
+                        <BoardItem draggableProvided={draggableProvided}>
+                          <p>{items[itemKey].content}</p>
+                        </BoardItem>
+                      )}
+                    </Draggable>
+                  ))}
+                </ItemsContainer>
+                <NewButton />
+              </StyledColumn>
+            )}
           </Droppable>
         ))}
       </StyledBoard>

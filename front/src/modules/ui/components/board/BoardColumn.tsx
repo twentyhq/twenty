@@ -21,11 +21,11 @@ export const ItemsContainer = ({
 }) => {
   return (
     <StyledItemContainer
-      ref={droppableProvided.innerRef}
-      {...droppableProvided.droppableProps}
+      ref={droppableProvided?.innerRef}
+      {...droppableProvided?.droppableProps}
     >
       {children}
-      {droppableProvided.placeholder}
+      {droppableProvided?.placeholder}
     </StyledItemContainer>
   );
 };
