@@ -1,4 +1,4 @@
-import { FaRegComment } from 'react-icons/fa';
+import { IconComment } from '@/ui/icons/index';
 
 import { EntityTableActionBarButton } from './EntityTableActionBarButton';
 
@@ -10,7 +10,7 @@ export function TableActionBarButtonToggleComments({ onClick }: OwnProps) {
   return (
     <EntityTableActionBarButton
       label="Comment"
-      icon={<FaRegComment size={16} />}
+      icon={<IconComment size={16} />}
       onClick={onClick}
     />
   );

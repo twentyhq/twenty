@@ -1,4 +1,11 @@
 import {
+  Company,
+  mapToCompany,
+} from '@/companies/interfaces/company.interface';
+import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
+import { Person } from '@/people/interfaces/person.interface';
+import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
+import {
   IconBuilding,
   IconCalendar,
   IconMail,
@@ -6,14 +13,6 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/icons/index';
-
-import {
-  Company,
-  mapToCompany,
-} from '@/companies/interfaces/company.interface';
-import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
-import { Person } from '@/people/interfaces/person.interface';
-import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import { QueryMode } from '~/generated/graphql';
 
 export const fullnameFilter = {

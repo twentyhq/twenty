@@ -1,11 +1,11 @@
 import { ChangeEvent, ComponentType, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { FaPlus } from 'react-icons/fa';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { SearchConfigType } from '@/search/interfaces/interface';
 import { useSearch } from '@/search/services/search';
+import { IconPlus } from '@/ui/icons/index';
 import { textInputStyle } from '@/ui/layout/styles/themes';
 import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
 import { AnyEntity } from '@/utils/interfaces/generic.interface';
@@ -252,7 +252,7 @@ export function EditableRelation<
                     onClick={handleCreateNewRelationButtonClick}
                   >
                     <StyledCreateButtonIcon>
-                      <FaPlus />
+                      <IconPlus />
                     </StyledCreateButtonIcon>
                     <StyledCreateButtonText>Create new</StyledCreateButtonText>
                   </EditableRelationCreateButton>

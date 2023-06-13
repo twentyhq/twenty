@@ -1,12 +1,4 @@
 import { useMemo } from 'react';
-import {
-  IconBuilding,
-  IconCalendar,
-  IconMail,
-  IconMapPin,
-  IconPhone,
-  IconUser,
-} from '@/ui/icons/index';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
@@ -17,6 +9,14 @@ import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone';
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
+import {
+  IconBuilding,
+  IconCalendar,
+  IconMail,
+  IconMapPin,
+  IconPhone,
+  IconUser,
+} from '@/ui/icons/index';
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 
 const columnHelper = createColumnHelper<Person>();
@@ -63,7 +63,10 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('company', {
         header: () => (
-          <ColumnHead viewName="Company" viewIcon={<IconBuilding size={16} />} />
+          <ColumnHead
+            viewName="Company"
+            viewIcon={<IconBuilding size={16} />}
+          />
         ),
         cell: (props) => <PeopleCompanyCell people={props.row.original} />,
         size: 150,
@@ -87,7 +90,10 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('createdAt', {
         header: () => (
-          <ColumnHead viewName="Creation" viewIcon={<IconCalendar size={16} />} />
+          <ColumnHead
+            viewName="Creation"
+            viewIcon={<IconCalendar size={16} />}
+          />
         ),
         cell: (props) => (
           <EditableDate

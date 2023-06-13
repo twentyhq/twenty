@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { IconCheck } from '@tabler/icons-react';
 
+import { IconCheck } from '@/ui/icons/index';
 import { hoverBackground } from '@/ui/layout/styles/themes';
 
 import { DropdownMenuButton } from './DropdownMenuButton';

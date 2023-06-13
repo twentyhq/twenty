@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
-import { IconPlus } from '@tabler/icons-react';
+
+import { IconPlus } from '@/ui/icons/index';
 
 const StyledButton = styled.button`
   display: flex;

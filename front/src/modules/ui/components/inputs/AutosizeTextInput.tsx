@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
-import { HiArrowSmRight } from 'react-icons/hi';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
 import { IconButton } from '@/ui/components/buttons/IconButton';
+import { IconArrowRight } from '@/ui/icons/index';
 
 const MAX_ROWS = 5;
 
@@ -132,7 +132,7 @@ export function AutosizeTextInput({
         <StyledBottomRightIconButton>
           <IconButton
             onClick={handleOnClickSendButton}
-            icon={<HiArrowSmRight size={15} />}
+            icon={<IconArrowRight size={15} />}
             disabled={isSendButtonDisabled}
           />
         </StyledBottomRightIconButton>

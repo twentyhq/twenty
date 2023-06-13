@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
-import { IconPlus } from '@tabler/icons-react';
 
+import { IconPlus } from '@/ui/icons/index';
 import { Avatar } from '@/users/components/Avatar';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
