@@ -7,6 +7,7 @@ import { Navbar } from '@/ui/layout/navbar/Navbar';
 import NavItem from '@/ui/layout/navbar/NavItem';
 import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
 import NavTitle from '@/ui/layout/navbar/NavTitle';
+import { MOBILE_VIEWPORT } from '@/ui/layout/styles/themes';
 
 const NavbarSubContainer = styled.div`
   display: flex;
@@ -14,6 +15,10 @@ const NavbarSubContainer = styled.div`
   flex-direction: column;
   margin-top: 41px;
   margin-left: auto;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    width: 100%;
+  }
 `;
 
 export function SettingsNavbar() {

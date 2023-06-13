@@ -6,9 +6,16 @@ import { TopTitle } from '@/ui/layout/top-bar/TopTitle';
 export function SettingsProfile() {
   const currentUser = useRecoilValue(currentUserState);
   return (
-    <div>
+    <>
       <TopTitle title="Profile" />
-      {currentUser?.displayName} <br /> {currentUser?.email}
-    </div>
+      <div>
+        <h5>Name</h5>
+        <span>{currentUser?.displayName} </span>
+      </div>
+      <div>
+        <h5>Email</h5>
+        <span>{currentUser?.email} </span>
+      </div>
+    </>
   );
 }

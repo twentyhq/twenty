@@ -8,7 +8,7 @@ type OwnProps = {
   title: string;
 };
 
-const StyledContainer = styled.button`
+const IconAndButtonContainer = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -20,6 +20,13 @@ const StyledContainer = styled.button`
   border: none;
   background: inherit;
   cursor: pointer;
+  width: 100%;
+`;
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 export default function NavBackButton({ title }: OwnProps) {
@@ -28,13 +35,17 @@ export default function NavBackButton({ title }: OwnProps) {
 
   return (
     <>
-      <StyledContainer
-        onClick={() => navigate(location.state?.from || '/', { replace: true })}
-      >
-        <TbChevronLeft strokeWidth={3} />
-        <span>{title}</span>
+      <StyledContainer>
+        <IconAndButtonContainer
+          onClick={() =>
+            navigate(location.state?.from || '/', { replace: true })
+          }
+        >
+          <TbChevronLeft strokeWidth={3} />
+          <span>{title}</span>
+        </IconAndButtonContainer>
+        <NavCollapseButton hideOnDesktop={true} />
       </StyledContainer>
-      <NavCollapseButton hideOnDesktop={true} />
     </>
   );
 }

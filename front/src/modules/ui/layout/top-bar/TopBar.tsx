@@ -1,12 +1,8 @@
 import { ReactNode } from 'react';
 import { TbPlus } from 'react-icons/tb';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
-
-import { IconSidebarRightCollapse } from '@/ui/icons';
 
 import NavCollapseButton from '../navbar/NavCollapseButton';
-import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 
 export const TOP_BAR_MIN_HEIGHT = '40px';
 
