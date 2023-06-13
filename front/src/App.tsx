@@ -1,9 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import { SettingsLayout } from '@/ui/layout/SettingsLayout';
-
 import { RequireAuth } from './modules/auth/components/RequireAuth';
-import { AppLayout } from './modules/ui/layout/AppLayout';
 import { AuthCallback } from './pages/auth/AuthCallback';
 import { Login } from './pages/auth/Login';
 import { Companies } from './pages/companies/Companies';
@@ -17,39 +14,31 @@ export function App() {
       <Route
         path="/*"
         element={
-          <AppLayout>
-            <RequireAuth>
-              <Routes>
-                <Route path="/" element={<Navigate to="/people" replace />} />
-                <Route path="/people" element={<People />} />
-                <Route path="/companies" element={<Companies />} />
-                <Route path="/opportunities" element={<Opportunities />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
-                <Route path="/auth/login" element={<Login />} />
-              </Routes>
-            </RequireAuth>
-          </AppLayout>
+          <RequireAuth>
+            <Routes>
+              <Route path="/" element={<Navigate to="/people" replace />} />
+              <Route path="/people" element={<People />} />
+              <Route path="/companies" element={<Companies />} />
+              <Route path="/opportunities" element={<Opportunities />} />
+            </Routes>
+          </RequireAuth>
         }
       />
       <Route
         path="auth/*"
         element={
-          <AppLayout>
-            <Routes>
-              <Route path="callback" element={<AuthCallback />} />
-              <Route path="login" element={<Login />} />
-            </Routes>
-          </AppLayout>
+          <Routes>
+            <Route path="callback" element={<AuthCallback />} />
+            <Route path="login" element={<Login />} />
+          </Routes>
         }
       />
       <Route
         path="settings/*"
         element={
-          <SettingsLayout>
-            <Routes>
-              <Route path="profile" element={<SettingsProfile />} />
-            </Routes>
-          </SettingsLayout>
+          <Routes>
+            <Route path="profile" element={<SettingsProfile />} />
+          </Routes>
         }
       />
     </Routes>

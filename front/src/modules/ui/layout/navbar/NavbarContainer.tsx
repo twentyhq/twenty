@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 import { MOBILE_VIEWPORT } from '../styles/themes';
 
-const NavbarContainer = styled.div<{ width: string }>`
+const StyledNavbarContainer = styled.div<{ width: string }>`
   flex-direction: column;
   width: ${(props) =>
     useRecoilValue(isNavbarOpenedState) ? props.width : '0'};
@@ -28,8 +28,8 @@ interface NavbarProps {
   width: string;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ children, width }) => (
-  <NavbarContainer width={width}>
+export const NavbarContainer: React.FC<NavbarProps> = ({ children, width }) => (
+  <StyledNavbarContainer width={width}>
     <NavbarContent>{children}</NavbarContent>
-  </NavbarContainer>
+  </StyledNavbarContainer>
 );

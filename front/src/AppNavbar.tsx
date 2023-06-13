@@ -9,14 +9,13 @@ import { useMatch, useResolvedPath } from 'react-router-dom';
 
 import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
 
-import { Navbar } from './modules/ui/layout/navbar/Navbar';
 import NavItem from './modules/ui/layout/navbar/NavItem';
 import NavTitle from './modules/ui/layout/navbar/NavTitle';
 import NavWorkspaceButton from './modules/ui/layout/navbar/NavWorkspaceButton';
 
 export function AppNavbar() {
   return (
-    <Navbar width="220px">
+    <>
       <NavWorkspaceButton />
       <NavItemsContainer>
         <NavItem
@@ -60,6 +59,6 @@ export function AppNavbar() {
           }
         />
       </NavItemsContainer>
-    </Navbar>
+    </>
   );
 }

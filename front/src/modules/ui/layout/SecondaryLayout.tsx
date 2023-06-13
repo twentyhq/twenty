@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
-import { SettingsNavbar } from '../../settings/components/SettingsNavbar';
-
+import { NavbarContainer } from './navbar/NavbarContainer';
 import { MOBILE_VIEWPORT } from './styles/themes';
 
 type OwnProps = {
   children: JSX.Element;
+  navbar: JSX.Element;
 };
 
 const StyledLayout = styled.div`
@@ -53,10 +53,10 @@ const SubSubContainer = styled.div`
   }
 `;
 
-export const SettingsLayout = ({ children }: OwnProps) => {
+export const SecondaryLayout = ({ children, navbar }: OwnProps) => {
   return (
     <StyledLayout>
-      <SettingsNavbar />
+      <NavbarContainer width="500px">{navbar}</NavbarContainer>
       <MainContainer>
         <SubContainer>
           <SubSubContainer>{children}</SubSubContainer>
