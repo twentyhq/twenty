@@ -73,10 +73,7 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
                   <StyledColumnTitle color={column.colorCode}>
                     • {column.title}
                   </StyledColumnTitle>
-                  <ItemContainer
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
+                  <ItemContainer droppableProvided={provided}>
                     {column.itemKeys.map((itemKey, index) => (
                       <Draggable
                         key={itemKey}
@@ -93,7 +90,6 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
                         }
                       </Draggable>
                     ))}
-                    {provided.placeholder}
                   </ItemContainer>
                   <NewButton />
                 </StyledColumn>
