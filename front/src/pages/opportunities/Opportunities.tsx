@@ -6,7 +6,7 @@ import { AppPage } from '~/AppPage';
 import { useGetPipelinesQuery } from '../../generated/graphql';
 import { items } from '../../modules/opportunities/components/__stories__/mock-data';
 import { Board } from '../../modules/opportunities/components/Board';
-import { Column } from '../../modules/ui/components/board/Board';
+import { BoardItemKey, Column } from '../../modules/ui/components/board/Board';
 
 export function Opportunities() {
   const pipelines = useGetPipelinesQuery();
@@ -16,7 +16,10 @@ export function Opportunities() {
         id: pipelineStage.name,
         title: pipelineStage.name,
         colorCode: pipelineStage.color,
-        itemKeys: [],
+        itemKeys:
+          pipelineStage.pipelineProgresses?.map(
+            (item) => `item-${item.id}` as BoardItemKey,
+          ) || [],
       }),
     ) || [];
 
