@@ -80,11 +80,11 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
                         draggableId={itemKey}
                         index={index}
                       >
-                        {(provided) =>
-                          provided && (
+                        {(draggableProvided) =>
+                          draggableProvided && (
                             <BoardCard
                               content={items[itemKey].content}
-                              draggableProvided={provided}
+                              draggableProvided={draggableProvided}
                             />
                           )
                         }
