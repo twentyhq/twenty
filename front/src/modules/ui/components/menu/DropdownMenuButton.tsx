@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 
+import { hoverBackground } from '@/ui/layout/styles/themes';
+
 export const DropdownMenuButton = styled.div`
-  --horizontal-padding: 6px;
-  --vertical-padding: 9px;
+  --horizontal-padding: ${(props) => props.theme.spacing(1.5)};
+  --vertical-padding: ${(props) => props.theme.spacing(2)};
 
   padding: var(--vertical-padding) var(--horizontal-padding);
 
@@ -13,7 +15,7 @@ export const DropdownMenuButton = styled.div`
   flex-direction: row;
   align-items: center;
 
-  gap: 8px;
+  gap: ${(props) => props.theme.spacing(2)};
 
   border-radius: ${(props) => props.theme.borderRadius};
 
@@ -21,10 +23,7 @@ export const DropdownMenuButton = styled.div`
 
   user-select: none;
 
-  transition: background 0.1s ease;
-  &:hover {
-    background: rgba(0, 0, 0, 0.04);
-  }
+  ${hoverBackground};
 
   color: ${(props) => props.theme.text60};
   font-size: ${(props) => props.theme.fontSizeSmall};

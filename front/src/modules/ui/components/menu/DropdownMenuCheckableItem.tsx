@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { Checkbox } from '../form/Checkbox';
 
 import { DropdownMenuButton } from './DropdownMenuButton';
-import { DropdownMenuItem } from './DropdownMenuItem';
 
 type Props = {
   checked: boolean;
@@ -13,8 +12,6 @@ type Props = {
 };
 
 const DropdownMenuCheckableItemContainer = styled(DropdownMenuButton)`
-  transition: background 0.1s ease;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -24,7 +21,7 @@ const StyledLeftContainer = styled.div`
   display: flex;
   align-items: center;
 
-  gap: 8px;
+  gap: ${(props) => props.theme.spacing(2)};
 `;
 
 const StyledChildrenContainer = styled.div`
@@ -32,7 +29,7 @@ const StyledChildrenContainer = styled.div`
 
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: ${(props) => props.theme.spacing(2)};
 `;
 
 export function DropdownMenuCheckableItem({

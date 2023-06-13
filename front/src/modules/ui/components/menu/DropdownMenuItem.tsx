@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
 export const DropdownMenuItem = styled.div`
-  --horizontal-padding: 6px;
-  --vertical-padding: 9px;
+  --horizontal-padding: ${(props) => props.theme.spacing(1.5)};
+  --vertical-padding: ${(props) => props.theme.spacing(2)};
 
   padding: var(--vertical-padding) var(--horizontal-padding);
 
@@ -13,7 +13,7 @@ export const DropdownMenuItem = styled.div`
   flex-direction: row;
   align-items: center;
 
-  gap: 8px;
+  gap: ${(props) => props.theme.spacing(2)};
 
   border-radius: ${(props) => props.theme.borderRadius};
 

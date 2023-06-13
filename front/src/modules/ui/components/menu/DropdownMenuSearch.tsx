@@ -4,8 +4,8 @@ import styled from '@emotion/styled';
 import { textInputStyle } from '@/ui/layout/styles/themes';
 
 export const DropdownMenuSearchContainer = styled.div`
-  --horizontal-padding: 8px;
-  --vertical-padding: 4px;
+  --horizontal-padding: ${(props) => props.theme.spacing(2)};
+  --vertical-padding: ${(props) => props.theme.spacing(1)};
 
   width: calc(100% - 2 * var(--horizontal-padding));
   height: calc(36px - 2 * var(--vertical-padding));

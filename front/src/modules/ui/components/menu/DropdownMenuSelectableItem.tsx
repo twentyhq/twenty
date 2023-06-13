@@ -2,6 +2,8 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { IconCheck } from '@tabler/icons-react';
 
+import { hoverBackground } from '@/ui/layout/styles/themes';
+
 import { DropdownMenuButton } from './DropdownMenuButton';
 
 type Props = {
@@ -10,9 +12,8 @@ type Props = {
 };
 
 const DropdownMenuSelectableItemContainer = styled(DropdownMenuButton)<Props>`
-  transition: background 0.1s ease;
+  ${hoverBackground};
 
-  background: ${(props) => (props.selected ? 'rgba(0, 0, 0, 0.04);' : 'none;')};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -22,7 +23,7 @@ const StyledLeftContainer = styled.div`
   display: flex;
   align-items: center;
 
-  gap: 8px;
+  gap: ${(props) => props.theme.spacing(2)};
 `;
 
 const StyledRightIcon = styled.div`

@@ -14,7 +14,7 @@ export const DropdownMenu = styled.div`
 
   border-radius: calc(${(props) => props.theme.borderRadius} * 2);
 
-  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.09);
+  box-shadow: ${(props) => props.theme.modalBoxShadow};
 
   backdrop-filter: blur(20px);
 `;

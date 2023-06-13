@@ -15,5 +15,5 @@ export const EditableRelationCreateButton = styled.button`
   width: 100%;
   height: 31px;
   background: none;
-  gap: 8px;
+  gap: ${(props) => props.theme.spacing(2)};
 `;

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const DropdownMenuItemContainer = styled.div`
-  --padding: 2px;
+  --padding: ${(props) => props.theme.spacing(1 / 2)};
 
   width: calc(100% - 2 * var(--padding));
   height: 100%;
