@@ -22,6 +22,8 @@ import {
 import { BoardItem } from '../../ui/components/board/BoardItem';
 import { NewButton } from '../../ui/components/board/BoardNewButton';
 
+import { BoardCard } from './BoardCard';
+
 type BoardProps = {
   initialBoard: Column[];
   items: Items;
@@ -59,7 +61,9 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
                     >
                       {(draggableProvided) => (
                         <BoardItem draggableProvided={draggableProvided}>
-                          <p>{items[itemKey]?.content || 'Item not found'}</p>
+                          <BoardCard>
+                            {items[itemKey]?.content || 'Item not found'}
+                          </BoardCard>
                         </BoardItem>
                       )}
                     </Draggable>
