@@ -15,19 +15,19 @@ export default meta;
 type Story = StoryObj<typeof CellCommentChip>;
 
 const TestCellContainer = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: flex-start;
-
-  min-width: 250px;
-  max-width: 250px;
-
-  text-wrap: nowrap;
-  overflow: hidden;
+  background: ${(props) => props.theme.primaryBackground};
+  display: flex;
 
   height: fit-content;
+  justify-content: flex-start;
 
-  background: ${(props) => props.theme.primaryBackground};
+  max-width: 250px;
+  min-width: 250px;
+
+  overflow: hidden;
+
+  text-wrap: nowrap;
 `;
 
 const StyledFakeCellText = styled.div`

@@ -12,23 +12,23 @@ type Props = {
 };
 
 const DropdownMenuCheckableItemContainer = styled(DropdownMenuButton)`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: space-between;
 `;
 
 const StyledLeftContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
 
   gap: ${(props) => props.theme.spacing(2)};
 `;
 
 const StyledChildrenContainer = styled.div`
-  font-size: ${(props) => props.theme.fontSizeSmall};
+  align-items: center;
 
   display: flex;
-  align-items: center;
+  font-size: ${(props) => props.theme.fontSizeSmall};
   gap: ${(props) => props.theme.spacing(2)};
 `;
 

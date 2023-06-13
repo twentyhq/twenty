@@ -124,22 +124,22 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
 
 export const overlayBackground = (props: any) =>
   css`
-    background: ${props.theme.secondaryBackgroundTransparent};
     backdrop-filter: blur(8px);
+    background: ${props.theme.secondaryBackgroundTransparent};
     box-shadow: ${props.theme.modalBoxShadow};
   `;
 
 export const textInputStyle = (props: any) =>
   css`
-    border: none;
-    outline: none;
     background-color: transparent;
+    border: none;
     color: ${props.theme.text80};
+    outline: none;
 
     &::placeholder,
     &::-webkit-input-placeholder {
-      font-family: ${props.theme.fontFamily};
       color: ${props.theme.text30};
+      font-family: ${props.theme.fontFamily};
       font-weight: ${props.theme.fontWeightMedium};
     }
   `;

@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 const StyledLayout = styled.div`
   display: flex;
   flex-direction: row;
-  width: calc(100vw - 32px);
   height: calc(100vh - 32px);
+  width: calc(100vw - 32px);
 `;
 
 type OwnProps = {

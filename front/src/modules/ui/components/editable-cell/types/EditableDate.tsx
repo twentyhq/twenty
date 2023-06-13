@@ -13,8 +13,8 @@ export type EditableDateProps = {
 };
 
 const StyledContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   margin: 0px ${(props) => props.theme.spacing(2)};
 `;
 
@@ -23,14 +23,14 @@ export type StyledCalendarContainerProps = {
 };
 
 const StyledCalendarContainer = styled.div<StyledCalendarContainerProps>`
-  position: absolute;
+  background: ${(props) => props.theme.secondaryBackground};
   border: 1px solid ${(props) => props.theme.primaryBorder};
   border-radius: 8px;
   box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.09);
-  z-index: 1;
   left: -10px;
+  position: absolute;
   top: 10px;
-  background: ${(props) => props.theme.secondaryBackground};
+  z-index: 1;
 `;
 export function EditableDate({
   value,

@@ -7,13 +7,13 @@ export type CompanyChipPropsType = {
 };
 
 const StyledContainer = styled.span`
+  align-items: center;
   background-color: ${(props) => props.theme.tertiaryBackground};
   border-radius: ${(props) => props.theme.spacing(1)};
   color: ${(props) => props.theme.text80};
   display: inline-flex;
-  align-items: center;
-  padding: ${(props) => props.theme.spacing(1)};
   gap: ${(props) => props.theme.spacing(1)};
+  padding: ${(props) => props.theme.spacing(1)};
 
   :hover {
     filter: brightness(95%);
@@ -21,8 +21,8 @@ const StyledContainer = styled.span`
 
   img {
     height: 14px;
-    width: 14px;
     object-fit: cover;
+    width: 14px;
   }
 `;
 

@@ -18,43 +18,43 @@ type OwnProps<SortField, TData extends FilterableFieldsType> = {
 };
 
 const StyledBar = styled.div`
+  align-items: center;
+  border-top: 1px solid ${(props) => props.theme.primaryBorder};
   display: flex;
   flex-direction: row;
-  border-top: 1px solid ${(props) => props.theme.primaryBorder};
-  align-items: center;
-  justify-content: space-between;
   height: 40px;
+  justify-content: space-between;
 `;
 
 const StyledChipcontainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  height: 40px;
-  overflow-x: auto;
-  margin-left: ${(props) => props.theme.spacing(2)};
   gap: ${(props) => props.theme.spacing(1)};
+  height: 40px;
+  justify-content: space-between;
+  margin-left: ${(props) => props.theme.spacing(2)};
+  overflow-x: auto;
 `;
 
 const StyledCancelButton = styled.button`
-  margin-left: auto;
-  border: none;
   background-color: inherit;
+  border: none;
+  color: ${(props) => props.theme.text60};
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: auto;
+  margin-right: ${(props) => props.theme.spacing(2)};
   padding: ${(props) => {
     const horiz = props.theme.spacing(2);
     const vert = props.theme.spacing(1);
     return `${vert} ${horiz} ${vert} ${horiz}`;
   }};
-  color: ${(props) => props.theme.text60};
-  font-weight: 500;
-  margin-right: ${(props) => props.theme.spacing(2)};
-  cursor: pointer;
   user-select: none;
 
   &:hover {
-    border-radius: ${(props) => props.theme.spacing(1)};
     background-color: ${(props) => props.theme.tertiaryBackground};
+    border-radius: ${(props) => props.theme.spacing(1)};
   }
 `;
 

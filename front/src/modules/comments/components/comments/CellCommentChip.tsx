@@ -10,12 +10,12 @@ const StyledCellWrapper = styled.div`
 `;
 
 const StyledCommentChipContainer = styled.div`
-  position: relative;
-  right: 50px;
-  width: 50px;
-
   display: flex;
   justify-content: flex-end;
+  position: relative;
+
+  right: 50px;
+  width: 50px;
 `;
 
 export function CellCommentChip(props: CommentChipProps) {

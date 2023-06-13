@@ -1,22 +1,22 @@
 import styled from '@emotion/styled';
 
 const StyledIconButton = styled.button`
-  display: flex;
   align-items: center;
-  justify-content: center;
+  background: ${(props) => props.theme.blue};
+  border: none;
 
-  width: 20px;
+  border-radius: 50%;
+  color: ${(props) => props.theme.text0};
+
+  cursor: pointer;
+  display: flex;
   height: 20px;
 
+  justify-content: center;
+
   padding: 0;
-  border: none;
-  border-radius: 50%;
-
   transition: color 0.1s ease-in-out, background 0.1s ease-in-out;
-
-  background: ${(props) => props.theme.blue};
-  color: ${(props) => props.theme.text0};
-  cursor: pointer;
+  width: 20px;
 
   &:disabled {
     background: ${(props) => props.theme.quaternaryBackground};

@@ -30,13 +30,13 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTableHeader = styled.div`
+  align-items: center;
+  color: ${(props) => props.theme.text60};
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  height: 40px;
-  color: ${(props) => props.theme.text60};
   font-weight: 500;
+  height: 40px;
+  justify-content: space-between;
   padding-left: ${(props) => props.theme.spacing(3)};
   padding-right: ${(props) => props.theme.spacing(2)};
 `;

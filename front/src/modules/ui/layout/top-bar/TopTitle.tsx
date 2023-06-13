@@ -3,15 +3,15 @@ import styled from '@emotion/styled';
 import NavCollapseButton from '../navbar/NavCollapseButton';
 
 const TitleAndCollapseContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
 `;
 
 const TitleContainer = styled.div`
+  display: flex;
   font-size: ${(props) => props.theme.fontSizeLarge};
   font-weight: ${(props) => props.theme.fontWeightSemibold};
-  display: flex;
   width: 100%;
 `;
 

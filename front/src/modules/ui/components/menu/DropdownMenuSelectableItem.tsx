@@ -14,14 +14,14 @@ type Props = {
 const DropdownMenuSelectableItemContainer = styled(DropdownMenuButton)<Props>`
   ${hoverBackground};
 
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: space-between;
 `;
 
 const StyledLeftContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
 
   gap: ${(props) => props.theme.spacing(2)};
 `;

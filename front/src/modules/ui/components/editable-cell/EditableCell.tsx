@@ -8,14 +8,14 @@ import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
 
 export const CellBaseContainer = styled.div`
-  position: relative;
-  box-sizing: border-box;
-  height: 32px;
-  display: flex;
   align-items: center;
-  width: 100%;
+  box-sizing: border-box;
   cursor: pointer;
+  display: flex;
+  height: 32px;
+  position: relative;
   user-select: none;
+  width: 100%;
 `;
 
 type OwnProps = {

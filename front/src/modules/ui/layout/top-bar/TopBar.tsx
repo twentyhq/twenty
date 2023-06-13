@@ -7,38 +7,38 @@ import NavCollapseButton from '../navbar/NavCollapseButton';
 export const TOP_BAR_MIN_HEIGHT = '40px';
 
 const TopBarContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  min-height: ${TOP_BAR_MIN_HEIGHT};
   align-items: center;
   background: ${(props) => props.theme.noisyBackground};
-  padding: ${(props) => props.theme.spacing(2)};
-  font-size: 14px;
   color: ${(props) => props.theme.text80};
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+  min-height: ${TOP_BAR_MIN_HEIGHT};
+  padding: ${(props) => props.theme.spacing(2)};
 `;
 
 const TitleContainer = styled.div`
-  font-family: 'Inter';
-  margin-left: 4px;
-  font-size: 14px;
   display: flex;
+  font-family: 'Inter';
+  font-size: 14px;
+  margin-left: 4px;
   width: 100%;
 `;
 
 const AddButtonContainer = styled.div`
-  display: flex;
-  justify-self: flex-end;
-  flex-shrink: 0;
-  border: 1px solid ${(props) => props.theme.primaryBorder};
-  width: 28px;
-  height: 28px;
   align-items: center;
-  justify-content: center;
+  border: 1px solid ${(props) => props.theme.primaryBorder};
   border-radius: 4px;
   color: ${(props) => props.theme.text80};
   cursor: pointer;
-  user-select: none;
+  display: flex;
+  flex-shrink: 0;
+  height: 28px;
+  justify-content: center;
+  justify-self: flex-end;
   margin-right: ${(props) => props.theme.spacing(1)};
+  user-select: none;
+  width: 28px;
 `;
 
 type OwnProps = {

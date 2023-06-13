@@ -22,29 +22,29 @@ const StyledEditModeContainer = styled.div`
 `;
 
 const StyledEditModeSelectedContainer = styled.div`
-  height: 31px;
-  display: flex;
   align-items: center;
+  display: flex;
+  height: 31px;
   padding-left: ${(props) => props.theme.spacing(2)};
   padding-right: ${(props) => props.theme.spacing(1)};
 `;
 
 const StyledEditModeSearchContainer = styled.div`
-  height: 32px;
-  display: flex;
   align-items: center;
   border-top: 1px solid ${(props) => props.theme.primaryBorder};
+  display: flex;
+  height: 32px;
   padding-left: ${(props) => props.theme.spacing(1)};
   padding-right: ${(props) => props.theme.spacing(1)};
 `;
 
 const StyledEditModeCreateButtonContainer = styled.div`
-  height: 36px;
-  display: flex;
   align-items: center;
   border-top: 1px solid ${(props) => props.theme.primaryBorder};
-  padding: ${(props) => props.theme.spacing(1)};
   color: ${(props) => props.theme.text60};
+  display: flex;
+  height: 36px;
+  padding: ${(props) => props.theme.spacing(1)};
 `;
 
 const StyledEditModeSearchInput = styled.input`
@@ -64,10 +64,10 @@ type StyledEditModeResultItemProps = {
 };
 
 const StyledEditModeResultItem = styled.div<StyledEditModeResultItemProps>`
-  height: 32px;
-  display: flex;
   align-items: center;
   cursor: pointer;
+  display: flex;
+  height: 32px;
   user-select: none;
   ${(props) =>
     props.isSelected &&
@@ -77,8 +77,8 @@ const StyledEditModeResultItem = styled.div<StyledEditModeResultItemProps>`
 `;
 
 const StyledCreateButtonIcon = styled.div`
-  color: ${(props) => props.theme.text100};
   align-self: center;
+  color: ${(props) => props.theme.text100};
   padding-top: 4px;
 `;
 

@@ -15,22 +15,22 @@ type StyledContainerProps = {
 };
 
 const StyledContainer = styled.div<StyledContainerProps>`
-  display: flex;
-  position: ${(props) => (props.position.x ? 'fixed' : 'absolute')};
-  z-index: 1;
-  height: 48px;
-  bottom: ${(props) => (props.position.x ? 'auto' : '38px')};
-  left: ${(props) => (props.position.x ? `${props.position.x}px` : '50%')};
-  top: ${(props) => (props.position.y ? `${props.position.y}px` : 'auto')};
-
-  background: ${(props) => props.theme.secondaryBackground};
   align-items: center;
+  background: ${(props) => props.theme.secondaryBackground};
+  border: 1px solid ${(props) => props.theme.primaryBorder};
+  border-radius: 8px;
+  bottom: ${(props) => (props.position.x ? 'auto' : '38px')};
+  display: flex;
+  height: 48px;
+
+  left: ${(props) => (props.position.x ? `${props.position.x}px` : '50%')};
   padding-left: ${(props) => props.theme.spacing(2)};
   padding-right: ${(props) => props.theme.spacing(2)};
-  transform: translateX(-50%);
+  position: ${(props) => (props.position.x ? 'fixed' : 'absolute')};
+  top: ${(props) => (props.position.y ? `${props.position.y}px` : 'auto')};
 
-  border-radius: 8px;
-  border: 1px solid ${(props) => props.theme.primaryBorder};
+  transform: translateX(-50%);
+  z-index: 1;
 `;
 
 export function EntityTableActionBar({ children }: OwnProps) {

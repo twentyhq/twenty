@@ -16,8 +16,8 @@ type OwnProps = {
 };
 
 const StyledDiv = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: space-between;
   width: 100%;
 `;

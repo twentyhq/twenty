@@ -9,20 +9,20 @@ import { isNavbarOpenedState } from './states/isNavbarOpenedState';
 import { MOBILE_VIEWPORT } from './styles/themes';
 
 const StyledLayout = styled.div`
+  background: ${(props) => props.theme.noisyBackground};
   display: flex;
   flex-direction: row;
-  width: 100vw;
   height: 100vh;
-  background: ${(props) => props.theme.noisyBackground};
   position: relative;
+  width: 100vw;
 `;
 
 const NAVBAR_WIDTH = '236px';
 
 const MainContainer = styled.div`
-  overflow: hidden;
   display: flex;
   flex-direction: row;
+  overflow: hidden;
   width: ${() =>
     useRecoilValue(isNavbarOpenedState)
       ? `(calc(100% -  ${NAVBAR_WIDTH})`

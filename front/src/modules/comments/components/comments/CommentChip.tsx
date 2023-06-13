@@ -8,26 +8,26 @@ export type CommentChipProps = {
 };
 
 const StyledChip = styled.div`
-  height: 26px;
-  max-width: 42px;
-
-  padding-left: 4px;
-  padding-right: 4px;
-
-  display: flex;
   align-items: center;
-  justify-content: center;
+  backdrop-filter: blur(6px);
+
+  background: ${(props) => props.theme.primaryBackgroundTransparent};
+  border-radius: ${(props) => props.theme.borderRadius};
+
+  color: ${(props) => props.theme.text30};
+  cursor: pointer;
+  display: flex;
   flex-direction: row;
   gap: 4px;
 
-  background: ${(props) => props.theme.primaryBackgroundTransparent};
-  backdrop-filter: blur(6px);
+  height: 26px;
+  justify-content: center;
 
-  border-radius: ${(props) => props.theme.borderRadius};
+  max-width: 42px;
 
-  cursor: pointer;
+  padding-left: 4px;
 
-  color: ${(props) => props.theme.text30};
+  padding-right: 4px;
 
   &:hover {
     background: ${(props) => props.theme.tertiaryBackground};
@@ -38,12 +38,12 @@ const StyledChip = styled.div`
 `;
 
 const StyledCount = styled.div`
-  display: flex;
   align-items: center;
-  justify-content: center;
-
+  display: flex;
   font-size: 12px;
+
   font-weight: 500;
+  justify-content: center;
 `;
 
 export function CommentChip({ count, onClick }: CommentChipProps) {

@@ -14,49 +14,49 @@ type OwnProps = {
 };
 
 const StyledContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
 
   flex-direction: row;
+
+  gap: ${(props) => props.theme.spacing(1)};
 
   justify-content: flex-start;
 
   padding: ${(props) => props.theme.spacing(1)};
-
-  gap: ${(props) => props.theme.spacing(1)};
 `;
 
 const StyledName = styled.div`
+  color: ${(props) => props.theme.text80};
   font-size: 13px;
   font-weight: 400;
-  color: ${(props) => props.theme.text80};
+  max-width: 160px;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow: hidden;
-  max-width: 160px;
 `;
 
 const StyledDate = styled.div`
+  color: ${(props) => props.theme.text30};
   font-size: 12px;
   font-weight: 400;
-  color: ${(props) => props.theme.text30};
-
-  padding-top: 1.5px;
 
   margin-left: ${(props) => props.theme.spacing(1)};
+
+  padding-top: 1.5px;
 `;
 
 const StyledTooltip = styled(Tooltip)`
-  padding: 8px;
-
-  opacity: 1;
-
   background-color: ${(props) => props.theme.primaryBackground};
+
+  box-shadow: 0px 2px 4px 3px rgba(0, 0, 0, 0.04);
+
+  box-shadow: 2px 4px 16px 6px rgba(0, 0, 0, 0.12);
 
   color: ${(props) => props.theme.text100};
 
-  box-shadow: 2px 4px 16px 6px rgba(0, 0, 0, 0.12);
-  box-shadow: 0px 2px 4px 3px rgba(0, 0, 0, 0.04);
+  opacity: 1;
+  padding: 8px;
 `;
 
 export function CommentHeader({ comment }: OwnProps) {

@@ -19,28 +19,28 @@ import {
 import { CommentThreadItem } from './CommentThreadItem';
 
 const StyledContainer = styled.div`
-  display: flex;
   align-items: flex-start;
+  display: flex;
   flex-direction: column;
+  gap: ${(props) => props.theme.spacing(4)};
+
   justify-content: flex-start;
 
   max-height: calc(100% - 16px);
-
-  gap: ${(props) => props.theme.spacing(4)};
   padding: ${(props) => props.theme.spacing(2)};
 `;
 
 const StyledThreadItemListContainer = styled.div`
-  display: flex;
-  flex-direction: column-reverse;
-
   align-items: flex-start;
-  justify-content: flex-start;
+  display: flex;
 
-  overflow: auto;
-  width: 100%;
-
+  flex-direction: column-reverse;
   gap: ${(props) => props.theme.spacing(4)};
+
+  justify-content: flex-start;
+  overflow: auto;
+
+  width: 100%;
 `;
 
 export function CommentThreadCreateMode() {

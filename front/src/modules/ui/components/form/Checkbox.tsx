@@ -10,26 +10,26 @@ type OwnProps = {
 };
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
 
   input[type='checkbox'] {
     accent-color: ${(props) => props.theme.blue};
-    margin: 2px;
-    height: 14px;
-    width: 14px;
     cursor: pointer;
+    height: 14px;
+    margin: 2px;
     user-select: none;
+    width: 14px;
   }
 
   input[type='checkbox']::before {
-    content: '';
     border: 1px solid ${(props) => props.theme.text40};
-    width: 12px;
-    height: 12px;
     border-radius: 2px;
+    content: '';
     display: block;
+    height: 12px;
+    width: 12px;
   }
 
   input[type='checkbox']:hover::before {

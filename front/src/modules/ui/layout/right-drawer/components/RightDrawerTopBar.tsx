@@ -3,16 +3,16 @@ import styled from '@emotion/styled';
 import { RightDrawerTopBarCloseButton } from './RightDrawerTopBarCloseButton';
 
 const StyledRightDrawerTopBar = styled.div`
+  align-items: center;
+  border-bottom: 1px solid ${(props) => props.theme.lightBorder};
+  color: ${(props) => props.theme.text60};
   display: flex;
   flex-direction: row;
-  min-height: 40px;
-  align-items: center;
+  font-size: 13px;
   justify-content: space-between;
+  min-height: 40px;
   padding-left: 8px;
   padding-right: 8px;
-  font-size: 13px;
-  color: ${(props) => props.theme.text60};
-  border-bottom: 1px solid ${(props) => props.theme.lightBorder};
 `;
 
 const StyledTopBarTitle = styled.div`

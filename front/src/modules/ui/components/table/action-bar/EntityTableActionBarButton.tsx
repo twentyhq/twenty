@@ -13,16 +13,16 @@ type StyledButtonProps = {
 };
 
 const StyledButton = styled.div<StyledButtonProps>`
-  display: flex;
-  cursor: pointer;
-  user-select: none;
+  border-radius: 4px;
   color: ${(props) =>
     props.type === 'warning' ? props.theme.red : props.theme.text60};
+  cursor: pointer;
+  display: flex;
   justify-content: center;
 
   padding: ${(props) => props.theme.spacing(2)};
-  border-radius: 4px;
   transition: background 0.1s ease;
+  user-select: none;
 
   &:hover {
     background: ${(props) => props.theme.tertiaryBackground};
@@ -30,8 +30,8 @@ const StyledButton = styled.div<StyledButtonProps>`
 `;
 
 const StyledButtonLabel = styled.div`
-  margin-left: ${(props) => props.theme.spacing(2)};
   font-weight: 500;
+  margin-left: ${(props) => props.theme.spacing(2)};
 `;
 
 export function EntityTableActionBarButton({

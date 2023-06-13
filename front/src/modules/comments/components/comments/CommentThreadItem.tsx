@@ -9,23 +9,23 @@ type OwnProps = {
 };
 
 const StyledContainer = styled.div`
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
   gap: ${(props) => props.theme.spacing(1)};
+  justify-content: flex-start;
 `;
 
 const StyledCommentBody = styled.div`
+  color: ${(props) => props.theme.text60};
   font-size: ${(props) => props.theme.fontSizeMedium};
-  line-height: ${(props) => props.theme.lineHeight};
 
-  text-align: left;
+  line-height: ${(props) => props.theme.lineHeight};
+  overflow-wrap: anywhere;
+
   padding-left: 24px;
 
-  color: ${(props) => props.theme.text60};
-
-  overflow-wrap: anywhere;
+  text-align: left;
 `;
 
 export function CommentThreadItem({ comment }: OwnProps) {

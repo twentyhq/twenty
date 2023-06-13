@@ -15,20 +15,20 @@ type OwnProps = {
 };
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 
   & > input:last-child {
-    padding-left: ${(props) => props.theme.spacing(2)};
     border-left: 1px solid ${(props) => props.theme.primaryBorder};
+    padding-left: ${(props) => props.theme.spacing(2)};
   }
 `;
 
 const StyledEditInplaceInput = styled.input`
-  width: 45%;
   height: 18px;
   margin: 0px ${(props) => props.theme.spacing(2)};
+  width: 45%;
 
   ${textInputStyle}
 `;

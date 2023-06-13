@@ -10,21 +10,21 @@ import { overlayBackground } from '../../layout/styles/themes';
 import { isSomeInputInEditModeState } from '../../tables/states/isSomeInputInEditModeState';
 
 export const EditableCellEditModeContainer = styled.div<OwnProps>`
-  display: flex;
   align-items: center;
-  min-width: calc(100% + 20px);
-  min-height: 100%;
-  margin-left: -2px;
-  position: absolute;
+  border: 1px solid ${(props) => props.theme.primaryBorder};
+  border-radius: 4px;
+  display: flex;
   left: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? 'auto' : '0'};
+  margin-left: -2px;
+  min-height: 100%;
+  min-width: calc(100% + 20px);
+  position: absolute;
+
   right: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? '0' : 'auto'};
   top: ${(props) => (props.editModeVerticalPosition === 'over' ? '0' : '100%')};
-
-  border: 1px solid ${(props) => props.theme.primaryBorder};
   z-index: 1;
-  border-radius: 4px;
   ${overlayBackground}
 `;
 

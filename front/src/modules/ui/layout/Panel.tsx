@@ -2,10 +2,10 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 const StyledPanel = styled.div`
-  display: flex;
   background: ${(props) => props.theme.primaryBackground};
-  border-radius: 8px;
   border: 1px solid ${(props) => props.theme.primaryBorder};
+  border-radius: 8px;
+  display: flex;
   width: 100%;
 `;
 

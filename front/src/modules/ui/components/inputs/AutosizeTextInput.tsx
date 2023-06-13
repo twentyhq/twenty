@@ -22,22 +22,22 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTextArea = styled(TextareaAutosize)`
-  width: 100%;
-  padding: 8px;
-  font-size: 13px;
-  font-family: inherit;
-  font-weight: 400;
-  line-height: 16px;
+  background: ${(props) => props.theme.tertiaryBackground};
   border: none;
   border-radius: 5px;
-  background: ${(props) => props.theme.tertiaryBackground};
   color: ${(props) => props.theme.text80};
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 16px;
   overflow: auto;
+  padding: 8px;
   resize: none;
+  width: 100%;
 
   &:focus {
-    outline: none;
     border: none;
+    outline: none;
   }
 
   &::placeholder {
@@ -48,11 +48,11 @@ const StyledTextArea = styled(TextareaAutosize)`
 
 // TODO: this messes with the layout, fix it
 const StyledBottomRightIconButton = styled.div`
-  width: 0px;
-  position: relative;
-  top: calc(100% - 26.5px);
-  right: 26px;
   height: 0;
+  position: relative;
+  right: 26px;
+  top: calc(100% - 26.5px);
+  width: 0px;
 `;
 
 export function AutosizeTextInput({

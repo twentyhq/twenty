@@ -5,9 +5,9 @@ const StyledCard = styled.div`
   background-color: ${({ theme }) => theme.secondaryBackground};
   border: 1px solid ${({ theme }) => theme.quaternaryBackground};
   border-radius: ${({ theme }) => theme.borderRadius};
-  padding: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
   box-shadow: ${({ theme }) => theme.boxShadow};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 type BoardCardProps = {

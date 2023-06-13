@@ -39,20 +39,20 @@ type OwnProps<
 };
 
 const StyledTable = styled.table`
-  width: calc(100% - ${(props) => props.theme.table.horizontalCellMargin} * 2);
+  border-collapse: collapse;
 
   border-radius: 4px;
   border-spacing: 0;
-  border-collapse: collapse;
   margin-left: ${(props) => props.theme.table.horizontalCellMargin};
   margin-right: ${(props) => props.theme.table.horizontalCellMargin};
   table-layout: fixed;
+  width: calc(100% - ${(props) => props.theme.table.horizontalCellMargin} * 2);
 
   th {
+    border: 1px solid ${(props) => props.theme.tertiaryBackground};
     border-collapse: collapse;
     color: ${(props) => props.theme.text40};
     padding: 0;
-    border: 1px solid ${(props) => props.theme.tertiaryBackground};
     text-align: left;
 
     :last-child {
@@ -63,16 +63,16 @@ const StyledTable = styled.table`
       border-right-color: transparent;
     }
     :last-of-type {
-      width: 100%;
       min-width: 0;
+      width: 100%;
     }
   }
 
   td {
+    border: 1px solid ${(props) => props.theme.tertiaryBackground};
     border-collapse: collapse;
     color: ${(props) => props.theme.text80};
     padding: 0;
-    border: 1px solid ${(props) => props.theme.tertiaryBackground};
 
     text-align: left;
 
@@ -84,23 +84,23 @@ const StyledTable = styled.table`
       border-right-color: transparent;
     }
     :last-of-type {
-      width: 100%;
       min-width: 0;
+      width: 100%;
     }
   }
 `;
 
 const StyledTableWithHeader = styled.div`
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
   width: 100%;
 `;
 
 const StyledTableScrollableContainer = styled.div`
-  overflow: auto;
-  height: 100%;
   flex: 1;
+  height: 100%;
+  overflow: auto;
 `;
 
 const StyledRow = styled.tr<{ selected: boolean }>`
