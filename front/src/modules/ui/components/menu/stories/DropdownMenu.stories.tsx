@@ -3,10 +3,11 @@ import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 import { IconPlus } from '@tabler/icons-react';
 
-import { Avatar } from '@/users/components/UserAvatar';
+import { Avatar } from '@/users/components/Avatar';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { DropdownMenu } from '../DropdownMenu';
+import { DropdownMenuButton } from '../DropdownMenuButton';
 import { DropdownMenuCheckableItem } from '../DropdownMenuCheckableItem';
 import { DropdownMenuItem } from '../DropdownMenuItem';
 import { DropdownMenuItemContainer } from '../DropdownMenuItemContainer';
@@ -149,28 +150,6 @@ export const Search: Story = {
   ),
 };
 
-export const Button: Story = {
-  render: getRenderWrapperForComponent(
-    <FakeBelowContainer>
-      <FakeContentBelow />
-      <MenuAbsolutePositionWrapper>
-        <DropdownMenu>
-          <DropdownMenuItemContainer>
-            <DropdownMenuItem>
-              <IconPlus size={16} />
-              <div>Create new</div>
-            </DropdownMenuItem>
-          </DropdownMenuItemContainer>
-          <DropdownMenuSeparator />
-          <DropdownMenuItemContainer>
-            <FakeMenuItemList />
-          </DropdownMenuItemContainer>
-        </DropdownMenu>
-      </MenuAbsolutePositionWrapper>
-    </FakeBelowContainer>,
-  ),
-};
-
 const FakeSelectableMenuItemList = () => {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
@@ -187,6 +166,28 @@ const FakeSelectableMenuItemList = () => {
       ))}
     </>
   );
+};
+
+export const Button: Story = {
+  render: getRenderWrapperForComponent(
+    <FakeBelowContainer>
+      <FakeContentBelow />
+      <MenuAbsolutePositionWrapper>
+        <DropdownMenu>
+          <DropdownMenuItemContainer>
+            <DropdownMenuButton>
+              <IconPlus size={16} />
+              <div>Create new</div>
+            </DropdownMenuButton>
+          </DropdownMenuItemContainer>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemContainer>
+            <FakeSelectableMenuItemList />
+          </DropdownMenuItemContainer>
+        </DropdownMenu>
+      </MenuAbsolutePositionWrapper>
+    </FakeBelowContainer>,
+  ),
 };
 
 export const SelectableMenuItem: Story = {

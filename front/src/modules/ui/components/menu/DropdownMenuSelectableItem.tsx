@@ -2,14 +2,14 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { IconCheck } from '@tabler/icons-react';
 
-import { DropdownMenuItem } from './DropdownMenuItem';
+import { DropdownMenuButton } from './DropdownMenuButton';
 
 type Props = {
   selected: boolean;
   onClick: () => void;
 };
 
-const DropdownMenuSelectableItemContainer = styled(DropdownMenuItem)<Props>`
+const DropdownMenuSelectableItemContainer = styled(DropdownMenuButton)<Props>`
   transition: background 0.1s ease;
 
   background: ${(props) => (props.selected ? 'rgba(0, 0, 0, 0.04);' : 'none;')};

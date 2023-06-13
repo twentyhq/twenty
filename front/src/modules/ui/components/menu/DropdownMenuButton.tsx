@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const DropdownMenuItem = styled.div`
+export const DropdownMenuButton = styled.div`
   --horizontal-padding: 6px;
   --vertical-padding: 9px;
 
@@ -16,6 +16,15 @@ export const DropdownMenuItem = styled.div`
   gap: 8px;
 
   border-radius: ${(props) => props.theme.borderRadius};
+
+  cursor: pointer;
+
+  user-select: none;
+
+  transition: background 0.1s ease;
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
 
   color: ${(props) => props.theme.text60};
   font-size: ${(props) => props.theme.fontSizeSmall};

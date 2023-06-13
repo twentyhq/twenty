@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { Checkbox } from '../form/Checkbox';
 
+import { DropdownMenuButton } from './DropdownMenuButton';
 import { DropdownMenuItem } from './DropdownMenuItem';
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
   id: string;
 };
 
-const DropdownMenuCheckableItemContainer = styled(DropdownMenuItem)`
+const DropdownMenuCheckableItemContainer = styled(DropdownMenuButton)`
   transition: background 0.1s ease;
 
   display: flex;
