@@ -25,7 +25,7 @@ const CollapseButton = styled.button<{ hideOnDesktop: boolean | undefined }>`
 
   ${(props) =>
     props.hideOnDesktop &&
-    `  @media (min-width: ${MOBILE_VIEWPORT}px) {
+    `@media (min-width: ${MOBILE_VIEWPORT}px) {
         display:none;
     }
     `}

@@ -1,13 +1,13 @@
 import { ReactNode } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { logout } from '../../../auth/services/AuthService';
 import { MOBILE_VIEWPORT } from '../styles/themes';
 
 type OwnProps = {
   label: string;
-  to: string;
+  to?: string;
+  onClick?: () => void;
   active?: boolean;
   icon: ReactNode;
   danger?: boolean;
@@ -75,24 +75,23 @@ const StyledSoonPill = styled.div`
   margin-left: auto; // this aligns the pill to the right
 `;
 
-function NavItem({ label, icon, to, active, danger, soon }: OwnProps) {
+function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const handleNavigation = () => {
-    if (to === '/logout') {
-      logout();
-      navigate('/');
-    } else if (to === '/settings') {
-      navigate(to, { state: { from: location } });
-    } else {
+  const onItemClick = () => {
+    if (onClick) {
+      onClick();
+      return;
+    }
+    if (to) {
       navigate(to);
+      return;
     }
   };
 
   return (
     <StyledItem
-      onClick={handleNavigation}
+      onClick={onItemClick}
       active={active}
       aria-selected={active}
       danger={danger}

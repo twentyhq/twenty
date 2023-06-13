@@ -63,7 +63,7 @@ export const CommandMenu = ({ initiallyOpen = false }) => {
               navigate('/settings/profile');
             }}
           >
-            People
+            Settings
           </StyledItem>
         </StyledGroup>
       </StyledList>

@@ -19,17 +19,44 @@ const StyledNavbarContainer = styled.div<{ width: string }>`
         : '0'};
 `;
 
+const NavbarSubContainer = styled.div`
+  display: flex;
+  width: 160px;
+  flex-direction: column;
+  margin-top: 41px;
+  margin-left: auto;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    width: 100%;
+  }
+`;
+
 const NavbarContent = styled.div`
   display: ${() => (useRecoilValue(isNavbarOpenedState) ? 'block' : 'none')};
 `;
 
 interface NavbarProps {
   children: React.ReactNode;
-  width: string;
+  layout?: string;
 }
 
-export const NavbarContainer: React.FC<NavbarProps> = ({ children, width }) => (
-  <StyledNavbarContainer width={width}>
-    <NavbarContent>{children}</NavbarContent>
-  </StyledNavbarContainer>
-);
+export const NavbarContainer: React.FC<NavbarProps> = ({
+  children,
+  layout,
+}) => {
+  if (layout === 'secondary') {
+    return (
+      <StyledNavbarContainer width="500px">
+        <NavbarSubContainer>
+          <NavbarContent>{children}</NavbarContent>
+        </NavbarSubContainer>
+      </StyledNavbarContainer>
+    );
+  }
+
+  return (
+    <StyledNavbarContainer width="220px">
+      <NavbarContent>{children}</NavbarContent>
+    </StyledNavbarContainer>
+  );
+};

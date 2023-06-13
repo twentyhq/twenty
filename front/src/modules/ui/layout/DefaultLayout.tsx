@@ -35,10 +35,10 @@ const MainContainer = styled.div`
 
 type OwnProps = {
   children: JSX.Element;
-  navbar: JSX.Element;
+  Navbar: () => JSX.Element;
 };
 
-export function DefaultLayout({ children, navbar }: OwnProps) {
+export function DefaultLayout({ children, Navbar }: OwnProps) {
   const currentUser = useRecoilState(currentUserState);
   const userIsAuthenticated = !!currentUser;
 
@@ -47,7 +47,9 @@ export function DefaultLayout({ children, navbar }: OwnProps) {
       {userIsAuthenticated ? (
         <>
           <CommandMenu />
-          <NavbarContainer width="220px">{navbar}</NavbarContainer>
+          <NavbarContainer>
+            <Navbar />
+          </NavbarContainer>
           <MainContainer>{children}</MainContainer>
         </>
       ) : (

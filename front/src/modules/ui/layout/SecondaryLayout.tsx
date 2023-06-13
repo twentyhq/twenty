@@ -5,7 +5,7 @@ import { MOBILE_VIEWPORT } from './styles/themes';
 
 type OwnProps = {
   children: JSX.Element;
-  navbar: JSX.Element;
+  Navbar: () => JSX.Element;
 };
 
 const StyledLayout = styled.div`
@@ -53,10 +53,12 @@ const SubSubContainer = styled.div`
   }
 `;
 
-export const SecondaryLayout = ({ children, navbar }: OwnProps) => {
+export const SecondaryLayout = ({ children, Navbar }: OwnProps) => {
   return (
     <StyledLayout>
-      <NavbarContainer width="500px">{navbar}</NavbarContainer>
+      <NavbarContainer layout="secondary">
+        <Navbar />
+      </NavbarContainer>
       <MainContainer>
         <SubContainer>
           <SubSubContainer>{children}</SubSubContainer>

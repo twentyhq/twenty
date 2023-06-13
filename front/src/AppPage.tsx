@@ -7,5 +7,5 @@ type OwnProps = {
 };
 
 export function AppPage({ children }: OwnProps) {
-  return <DefaultLayout navbar={AppNavbar()}>{children}</DefaultLayout>;
+  return <DefaultLayout Navbar={AppNavbar}>{children}</DefaultLayout>;
 }

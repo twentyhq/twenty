@@ -12,14 +12,14 @@ export function App() {
   return (
     <Routes>
       <Route
-        path="/*"
+        path="*"
         element={
           <RequireAuth>
             <Routes>
-              <Route path="/" element={<Navigate to="/people" replace />} />
-              <Route path="/people" element={<People />} />
-              <Route path="/companies" element={<Companies />} />
-              <Route path="/opportunities" element={<Opportunities />} />
+              <Route path="" element={<Navigate to="/people" replace />} />
+              <Route path="people" element={<People />} />
+              <Route path="companies" element={<Companies />} />
+              <Route path="opportunities" element={<Opportunities />} />
             </Routes>
           </RequireAuth>
         }

@@ -7,7 +7,5 @@ type OwnProps = {
 };
 
 export function SettingsPage({ children }: OwnProps) {
-  return (
-    <SecondaryLayout navbar={SettingsNavbar()}>{children}</SecondaryLayout>
-  );
+  return <SecondaryLayout Navbar={SettingsNavbar}>{children}</SecondaryLayout>;
 }

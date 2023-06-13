@@ -1,28 +1,15 @@
 import { TbColorSwatch, TbLogout, TbSettings, TbUser } from 'react-icons/tb';
 import { useMatch, useResolvedPath } from 'react-router-dom';
-import styled from '@emotion/styled';
 
+import { removeTokens } from '@/auth/services/AuthService';
 import NavBackButton from '@/ui/layout/navbar//NavBackButton';
 import NavItem from '@/ui/layout/navbar/NavItem';
 import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
 import NavTitle from '@/ui/layout/navbar/NavTitle';
-import { MOBILE_VIEWPORT } from '@/ui/layout/styles/themes';
-
-const NavbarSubContainer = styled.div`
-  display: flex;
-  width: 160px;
-  flex-direction: column;
-  margin-top: 41px;
-  margin-left: auto;
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 100%;
-  }
-`;
 
 export function SettingsNavbar() {
   return (
-    <NavbarSubContainer>
+    <>
       <NavBackButton title="Settings" />
       <NavItemsContainer>
         <NavTitle label="User" />
@@ -65,11 +52,11 @@ export function SettingsNavbar() {
         <NavTitle label="Other" />
         <NavItem
           label="Logout"
-          to="/logout"
+          onClick={removeTokens}
           icon={<TbLogout size={16} />}
           danger={true}
         />
       </NavItemsContainer>
-    </NavbarSubContainer>
+    </>
   );
 }
