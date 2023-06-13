@@ -9,7 +9,7 @@ import {
 import { Column, Items, StyledBoard } from '../../ui/components/board/Board';
 // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd
 // https://github.com/atlassian/react-beautiful-dnd/issues/2350
-import { BoardCard } from '../../ui/components/board/BoardCard';
+import { BoardItem } from '../../ui/components/board/BoardCard';
 import {
   ItemContainer,
   StyledColumn,
@@ -82,7 +82,7 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
                       >
                         {(draggableProvided) =>
                           draggableProvided && (
-                            <BoardCard
+                            <BoardItem
                               content={items[itemKey].content}
                               draggableProvided={draggableProvided}
                             />

@@ -15,7 +15,7 @@ type BoardCardProps = {
   draggableProvided: DraggableProvided;
 };
 
-export const BoardCard = ({ content, draggableProvided }: BoardCardProps) => {
+export const BoardItem = ({ content, draggableProvided }: BoardCardProps) => {
   return (
     <StyledCard
       ref={draggableProvided?.innerRef}
