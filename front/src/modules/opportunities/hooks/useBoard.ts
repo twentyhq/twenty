@@ -39,5 +39,10 @@ export const useBoard = () => {
       {},
     ) || {};
 
-  return { initialBoard, items, pipelines, entities };
+  return {
+    initialBoard,
+    items,
+    loading: pipelines.loading || entities.loading,
+    error: pipelines.error || entities.error,
+  };
 };

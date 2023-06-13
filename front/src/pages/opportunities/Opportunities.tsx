@@ -7,10 +7,10 @@ import { Board } from '../../modules/opportunities/components/Board';
 import { useBoard } from '../../modules/opportunities/hooks/useBoard';
 
 export function Opportunities() {
-  const { initialBoard, items, pipelines, entities } = useBoard();
+  const { initialBoard, items, loading, error } = useBoard();
 
-  if (pipelines.loading || entities.loading) return <div>Loading...</div>;
-  if (pipelines.error || entities.error) return <div>Error...</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error...</div>;
   return (
     <AppPage>
       <WithTopBarContainer title="Opportunities" icon={<FaBullseye />}>
