@@ -49,6 +49,7 @@ const lightThemeSpecific = {
 
   primaryBorder: 'rgba(0, 0, 0, 0.08)',
   lightBorder: '#f5f5f5',
+  mediumBorder: '#ebebeb',
 
   clickableElementBackgroundHover: 'rgba(0, 0, 0, 0.04)',
   clickableElementBackgroundTransition: 'background 0.1s ease',
@@ -72,6 +73,8 @@ const lightThemeSpecific = {
   blueLowTransparency: 'rgba(25, 97, 237, 0.32)',
 
   boxShadow: '0px 2px 4px 0px #0F0F0F0A',
+
+  modalBoxShadow: '0px 3px 12px rgba(0, 0, 0, 0.09)',
 };
 
 const darkThemeSpecific: typeof lightThemeSpecific = {
@@ -94,6 +97,7 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
 
   primaryBorder: 'rgba(255, 255, 255, 0.08)',
   lightBorder: '#222222',
+  mediumBorder: '#141414',
 
   text100: '#ffffff',
   text80: '#cccccc',
@@ -113,13 +117,14 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
   blueHighTransparency: 'rgba(104, 149, 236, 0.03)',
   blueLowTransparency: 'rgba(104, 149, 236, 0.32)',
   boxShadow: '0px 2px 4px 0px #0F0F0F0A', // TODO change color for dark theme
+  modalBoxShadow: '0px 3px 12px rgba(0, 0, 0, 0.09)', // TODO change color for dark theme
 };
 
 export const overlayBackground = (props: any) =>
   css`
     background: ${props.theme.secondaryBackgroundTransparent};
     backdrop-filter: blur(8px);
-    box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.09);
+    box-shadow: ${props.theme.modalBoxShadow};
   `;
 
 export const textInputStyle = (props: any) =>
@@ -134,6 +139,14 @@ export const textInputStyle = (props: any) =>
       font-family: ${props.theme.fontFamily};
       color: ${props.theme.text30};
       font-weight: ${props.theme.fontWeightBold};
+    }
+  `;
+
+export const hoverBackground = (props: any) =>
+  css`
+    transition: background 0.1s ease;
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
     }
   `;
 

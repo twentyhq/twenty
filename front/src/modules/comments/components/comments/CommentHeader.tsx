@@ -2,7 +2,7 @@ import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
 import { CommentForDrawer } from '@/comments/types/CommentForDrawer';
-import { UserAvatar } from '@/users/components/UserAvatar';
+import { Avatar } from '@/users/components/Avatar';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
@@ -75,7 +75,7 @@ export function CommentHeader({ comment }: OwnProps) {
 
   return (
     <StyledContainer>
-      <UserAvatar
+      <Avatar
         avatarUrl={avatarUrl}
         size={16}
         placeholderLetter={capitalizedFirstUsernameLetter}
