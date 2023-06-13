@@ -6,29 +6,27 @@ import { BoardItemKey, Column, Items } from '../../ui/components/board/Board';
 
 export const useBoard = () => {
   const pipelines = useGetPipelinesQuery();
+  const pipelineStages = pipelines.data?.findManyPipeline[0].pipelineStages;
   const initialBoard: Column[] =
-    pipelines.data?.findManyPipeline[0].pipelineStages?.map(
-      (pipelineStage) => ({
-        id: pipelineStage.name,
-        title: pipelineStage.name,
-        colorCode: pipelineStage.color,
-        itemKeys:
-          pipelineStage.pipelineProgresses?.map(
-            (item) => `item-${item.associableId}` as BoardItemKey,
-          ) || [],
-      }),
-    ) || [];
+    pipelineStages?.map((pipelineStage) => ({
+      id: pipelineStage.name,
+      title: pipelineStage.name,
+      colorCode: pipelineStage.color,
+      itemKeys:
+        pipelineStage.pipelineProgresses?.map(
+          (item) => `item-${item.associableId}` as BoardItemKey,
+        ) || [],
+    })) || [];
 
-  const pipelineEntityIds =
-    pipelines.data?.findManyPipeline[0].pipelineStages?.reduce(
-      (acc, pipelineStage) => [
-        ...acc,
-        ...(pipelineStage.pipelineProgresses?.map(
-          (item) => item.associableId,
-        ) || []),
-      ],
-      [] as string[],
-    );
+  const pipelineEntityIds = pipelineStages?.reduce(
+    (acc, pipelineStage) => [
+      ...acc,
+      ...(pipelineStage.pipelineProgresses?.map((item) => item.associableId) ||
+        []),
+    ],
+    [] as string[],
+  );
+
   const entities = useGetPeopleQuery({
     variables: { where: { id: { in: pipelineEntityIds } } },
   });
