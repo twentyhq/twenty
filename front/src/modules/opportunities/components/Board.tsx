@@ -67,13 +67,13 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
       <StyledBoard>
         {board.map((column) => (
           <Droppable key={column.id} droppableId={column.id}>
-            {(provided) =>
-              provided && (
+            {(droppableProvided) =>
+              droppableProvided && (
                 <StyledColumn>
                   <StyledColumnTitle color={column.colorCode}>
                     • {column.title}
                   </StyledColumnTitle>
-                  <ItemContainer droppableProvided={provided}>
+                  <ItemContainer droppableProvided={droppableProvided}>
                     {column.itemKeys.map((itemKey, index) => (
                       <Draggable
                         key={itemKey}
