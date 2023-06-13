@@ -8,7 +8,7 @@ const StyledButton = styled.button`
   background-color: ${({ theme }) => theme.primaryBackground};
   color: ${({ theme }) => theme.text40};
   border: none;
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.borderRadius};
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
   align-self: baseline;

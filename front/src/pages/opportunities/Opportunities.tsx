@@ -5,8 +5,8 @@ import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer'
 import {
   initialBoard,
   items,
-} from '../../modules/ui/components/board/__stories__/mock-data';
-import { Board } from '../../modules/ui/components/board/Board';
+} from '../../modules/opportunities/components/__stories__/mock-data';
+import { Board } from '../../modules/opportunities/components/Board';
 
 export function Opportunities() {
   return (
