@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { CommandMenu } from '@/search/components/CommandMenu';
 
-import { Navbar } from './navbar/Navbar';
+import { NavbarContainer } from './navbar/NavbarContainer';
 import { isNavbarOpenedState } from './states/isNavbarOpenedState';
 import { MOBILE_VIEWPORT } from './styles/themes';
 
@@ -35,9 +35,10 @@ const MainContainer = styled.div`
 
 type OwnProps = {
   children: JSX.Element;
+  Navbar: () => JSX.Element;
 };
 
-export function AppLayout({ children }: OwnProps) {
+export function DefaultLayout({ children, Navbar }: OwnProps) {
   const currentUser = useRecoilState(currentUserState);
   const userIsAuthenticated = !!currentUser;
 
@@ -46,7 +47,9 @@ export function AppLayout({ children }: OwnProps) {
       {userIsAuthenticated ? (
         <>
           <CommandMenu />
-          <Navbar />
+          <NavbarContainer>
+            <Navbar />
+          </NavbarContainer>
           <MainContainer>{children}</MainContainer>
         </>
       ) : (

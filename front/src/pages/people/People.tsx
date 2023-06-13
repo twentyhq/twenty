@@ -20,6 +20,7 @@ import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTab
 import { EntityTable } from '@/ui/components/table/EntityTable';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { BoolExpType } from '@/utils/interfaces/generic.interface';
+import { AppPage } from '~/AppPage';
 
 import { TableActionBarButtonCreateCommentThreadPeople } from './table/TableActionBarButtonCreateCommentThreadPeople';
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
@@ -72,29 +73,31 @@ export function People() {
   const peopleColumns = usePeopleColumns();
 
   return (
-    <WithTopBarContainer
-      title="People"
-      icon={<TbUser size={16} />}
-      onAddButtonClick={handleAddButtonClick}
-    >
-      <>
-        <StyledPeopleContainer>
-          <EntityTable
-            data={people}
-            columns={peopleColumns}
-            viewName="All People"
-            viewIcon={<FaList />}
-            availableSorts={availableSorts}
-            availableFilters={availableFilters}
-            onSortsUpdate={updateSorts}
-            onFiltersUpdate={updateFilters}
-          />
-        </StyledPeopleContainer>
-        <EntityTableActionBar>
-          <TableActionBarButtonCreateCommentThreadPeople />
-          <TableActionBarButtonDeletePeople />
-        </EntityTableActionBar>
-      </>
-    </WithTopBarContainer>
+    <AppPage>
+      <WithTopBarContainer
+        title="People"
+        icon={<TbUser size={16} />}
+        onAddButtonClick={handleAddButtonClick}
+      >
+        <>
+          <StyledPeopleContainer>
+            <EntityTable
+              data={people}
+              columns={peopleColumns}
+              viewName="All People"
+              viewIcon={<FaList />}
+              availableSorts={availableSorts}
+              availableFilters={availableFilters}
+              onSortsUpdate={updateSorts}
+              onFiltersUpdate={updateFilters}
+            />
+          </StyledPeopleContainer>
+          <EntityTableActionBar>
+            <TableActionBarButtonCreateCommentThreadPeople />
+            <TableActionBarButtonDeletePeople />
+          </EntityTableActionBar>
+        </>
+      </WithTopBarContainer>
+    </AppPage>
   );
 }

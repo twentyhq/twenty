@@ -108,7 +108,7 @@ const StyledDropdownTopOption = styled.li`
   cursor: pointer;
   user-select: none;
   color: ${(props) => props.theme.text80};
-  font-weight: ${(props) => props.theme.fontWeightBold};
+  font-weight: ${(props) => props.theme.fontWeightMedium};
 
   &:hover {
     background: rgba(0, 0, 0, 0.04);
@@ -131,7 +131,7 @@ const StyledSearchField = styled.li`
   cursor: pointer;
   user-select: none;
   color: ${(props) => props.theme.text60};
-  font-weight: ${(props) => props.theme.fontWeightBold};
+  font-weight: ${(props) => props.theme.fontWeightMedium};
   border-bottom: var(--wraper-border) solid
     ${(props) => props.theme.primaryBorder};
 

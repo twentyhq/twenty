@@ -1,11 +1,8 @@
 import { ReactNode } from 'react';
 import { TbPlus } from 'react-icons/tb';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
-import { IconSidebarRightCollapse } from '@/ui/icons';
-
-import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
+import NavCollapseButton from '../navbar/NavCollapseButton';
 
 export const TOP_BAR_MIN_HEIGHT = '40px';
 
@@ -44,24 +41,6 @@ const AddButtonContainer = styled.div`
   margin-right: ${(props) => props.theme.spacing(1)};
 `;
 
-const CollapseButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 32px;
-  height: 32px;
-
-  user-select: none;
-  border: 0;
-  background: inherit;
-
-  padding: 0;
-  cursor: pointer;
-
-  color: ${(props) => props.theme.text30};
-`;
-
 type OwnProps = {
   title: string;
   icon: ReactNode;
@@ -69,16 +48,10 @@ type OwnProps = {
 };
 
 export function TopBar({ title, icon, onAddButtonClick }: OwnProps) {
-  const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
-
   return (
     <>
       <TopBarContainer>
-        {!isNavOpen && (
-          <CollapseButton onClick={() => setIsNavOpen(!isNavOpen)}>
-            <IconSidebarRightCollapse size={16} />
-          </CollapseButton>
-        )}
+        <NavCollapseButton hideIfOpen={true} />
         {icon}
         <TitleContainer data-testid="top-bar-title">{title}</TitleContainer>
         {onAddButtonClick && (

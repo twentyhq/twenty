@@ -57,6 +57,14 @@ export const CommandMenu = ({ initiallyOpen = false }) => {
           >
             Companies
           </StyledItem>
+          <StyledItem
+            onSelect={() => {
+              setOpen(false);
+              navigate('/settings/profile');
+            }}
+          >
+            Settings
+          </StyledItem>
         </StyledGroup>
       </StyledList>
     </StyledDialog>

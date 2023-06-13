@@ -23,6 +23,7 @@ import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTab
 import { EntityTable } from '@/ui/components/table/EntityTable';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { BoolExpType } from '@/utils/interfaces/generic.interface';
+import { AppPage } from '~/AppPage';
 import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
 
 import { TableActionBarButtonCreateCommentThreadCompany } from './table/TableActionBarButtonCreateCommentThreadCompany';
@@ -74,29 +75,31 @@ export function Companies() {
   const companiesColumns = useCompaniesColumns();
 
   return (
-    <WithTopBarContainer
-      title="Companies"
-      icon={<TbBuilding size={16} />}
-      onAddButtonClick={handleAddButtonClick}
-    >
-      <>
-        <StyledCompaniesContainer>
-          <EntityTable
-            data={companies}
-            columns={companiesColumns}
-            viewName="All Companies"
-            viewIcon={<FaList />}
-            availableSorts={availableSorts}
-            availableFilters={availableFilters}
-            onSortsUpdate={updateSorts}
-            onFiltersUpdate={updateFilters}
-          />
-        </StyledCompaniesContainer>
-        <EntityTableActionBar>
-          <TableActionBarButtonCreateCommentThreadCompany />
-          <TableActionBarButtonDeleteCompanies />
-        </EntityTableActionBar>
-      </>
-    </WithTopBarContainer>
+    <AppPage>
+      <WithTopBarContainer
+        title="Companies"
+        icon={<TbBuilding size={16} />}
+        onAddButtonClick={handleAddButtonClick}
+      >
+        <>
+          <StyledCompaniesContainer>
+            <EntityTable
+              data={companies}
+              columns={companiesColumns}
+              viewName="All Companies"
+              viewIcon={<FaList />}
+              availableSorts={availableSorts}
+              availableFilters={availableFilters}
+              onSortsUpdate={updateSorts}
+              onFiltersUpdate={updateFilters}
+            />
+          </StyledCompaniesContainer>
+          <EntityTableActionBar>
+            <TableActionBarButtonCreateCommentThreadCompany />
+            <TableActionBarButtonDeleteCompanies />
+          </EntityTableActionBar>
+        </>
+      </WithTopBarContainer>
+    </AppPage>
   );
 }

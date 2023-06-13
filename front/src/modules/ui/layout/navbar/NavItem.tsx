@@ -6,13 +6,18 @@ import { MOBILE_VIEWPORT } from '../styles/themes';
 
 type OwnProps = {
   label: string;
-  to: string;
+  to?: string;
+  onClick?: () => void;
   active?: boolean;
   icon: ReactNode;
+  danger?: boolean;
+  soon?: boolean;
 };
 
 type StyledItemProps = {
   active?: boolean;
+  danger?: boolean;
+  soon?: boolean;
 };
 
 const StyledItem = styled.button<StyledItemProps>`
@@ -20,19 +25,30 @@ const StyledItem = styled.button<StyledItemProps>`
   align-items: center;
   border: none;
   font-size: ${(props) => props.theme.fontSizeMedium};
-  cursor: pointer;
+  cursor: ${(props) => (props.soon ? 'default' : 'pointer')};
+  pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
   user-select: none;
   background: ${(props) => (props.active ? 'rgba(0, 0, 0, 0.04)' : 'inherit')};
   padding-top: ${(props) => props.theme.spacing(1)};
   padding-bottom: ${(props) => props.theme.spacing(1)};
   padding-left: ${(props) => props.theme.spacing(1)};
   font-family: 'Inter';
-  color: ${(props) =>
-    props.active ? props.theme.text100 : props.theme.text60};
+  color: ${(props) => {
+    if (props.active) {
+      return props.theme.text100;
+    }
+    if (props.danger) {
+      return props.theme.red;
+    }
+    if (props.soon) {
+      return props.theme.text20;
+    }
+    return props.theme.text60;
+  }};
   border-radius: 4px;
   :hover {
     background: rgba(0, 0, 0, 0.04);
-    color: ${(props) => props.theme.text100};
+    color: ${(props) => (props.danger ? props.theme.red : props.theme.text100)};
   }
   margin-bottom: calc(${(props) => props.theme.spacing(1)} / 2);
 
@@ -46,19 +62,44 @@ const StyledItemLabel = styled.div`
   margin-left: ${(props) => props.theme.spacing(2)};
 `;
 
-function NavItem({ label, icon, to, active }: OwnProps) {
+const StyledSoonPill = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50px;
+  background-color: rgba(0, 0, 0, 0.04);
+  font-size: ${(props) => props.theme.fontSizeExtraSmall};
+  padding: ${(props) => props.theme.spacing(1)}
+    ${(props) => props.theme.spacing(2)} ${(props) => props.theme.spacing(1)}
+    ${(props) => props.theme.spacing(2)};
+  margin-left: auto; // this aligns the pill to the right
+`;
+
+function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
   const navigate = useNavigate();
+
+  const onItemClick = () => {
+    if (onClick) {
+      onClick();
+      return;
+    }
+    if (to) {
+      navigate(to);
+      return;
+    }
+  };
 
   return (
     <StyledItem
-      onClick={() => {
-        navigate(to);
-      }}
+      onClick={onItemClick}
       active={active}
       aria-selected={active}
+      danger={danger}
+      soon={soon}
     >
       {icon}
       <StyledItemLabel>{label}</StyledItemLabel>
+      {soon && <StyledSoonPill>Soon</StyledSoonPill>}
     </StyledItem>
   );
 }

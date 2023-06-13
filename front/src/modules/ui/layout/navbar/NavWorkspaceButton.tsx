@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { IconSidebarLeftCollapse } from '@/ui/icons';
 
-import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
+import NavCollapseButton from './NavCollapseButton';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -47,27 +46,8 @@ const StyledName = styled.div`
   color: ${(props) => props.theme.text80};
 `;
 
-const CollapseButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 32px;
-  height: 32px;
-
-  user-select: none;
-  border: 0;
-  background: inherit;
-
-  padding: 0;
-  cursor: pointer;
-
-  color: ${(props) => props.theme.text30};
-`;
-
-function WorkspaceContainer() {
+function NavWorkspaceButton() {
   const currentUser = useRecoilValue(currentUserState);
-  const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;
 
@@ -81,13 +61,9 @@ function WorkspaceContainer() {
         <StyledLogo logo={currentWorkspace?.logo}></StyledLogo>
         <StyledName>{currentWorkspace?.displayName}</StyledName>
       </LogoAndNameContainer>
-      {isNavOpen && (
-        <CollapseButton onClick={() => setIsNavOpen(!isNavOpen)}>
-          <IconSidebarLeftCollapse size={16} />
-        </CollapseButton>
-      )}
+      <NavCollapseButton />
     </StyledContainer>
   );
 }
 
-export default WorkspaceContainer;
+export default NavWorkspaceButton;
