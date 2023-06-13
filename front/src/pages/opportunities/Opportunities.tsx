@@ -11,6 +11,8 @@ export function Opportunities() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error...</div>;
+  if (!initialBoard || !items)
+    return <div>Initial board or items not found</div>;
   return (
     <AppPage>
       <WithTopBarContainer title="Opportunities" icon={<FaBullseye />}>

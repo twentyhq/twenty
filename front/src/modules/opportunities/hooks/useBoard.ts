@@ -1,8 +1,23 @@
 import {
+  GetCompaniesQuery,
+  GetPeopleQuery,
+  useGetCompaniesQuery,
   useGetPeopleQuery,
   useGetPipelinesQuery,
 } from '../../../generated/graphql';
 import { BoardItemKey, Column, Items } from '../../ui/components/board/Board';
+
+type Entities = GetCompaniesQuery | GetPeopleQuery;
+
+function isGetCompaniesQuery(
+  entities: Entities,
+): entities is GetCompaniesQuery {
+  return (entities as GetCompaniesQuery).companies !== undefined;
+}
+
+function isGetPeopleQuery(entities: Entities): entities is GetPeopleQuery {
+  return (entities as GetPeopleQuery).people !== undefined;
+}
 
 export const useBoard = () => {
   const pipelines = useGetPipelinesQuery();
@@ -27,20 +42,34 @@ export const useBoard = () => {
     [] as string[],
   );
 
-  const entities = useGetPeopleQuery({
+  const pipelineEntityType: 'Person' | 'Company' | undefined =
+    pipelineStages?.[0].pipelineProgresses?.[0].associableType;
+  console.log(pipelineEntityType);
+
+  const query =
+    pipelineEntityType === 'Person' ? useGetPeopleQuery : useGetCompaniesQuery;
+
+  const entitiesQueryResult = query({
     variables: { where: { id: { in: pipelineEntityIds } } },
   });
 
-  const items: Items =
-    entities.data?.people.reduce(
-      (acc, person) => ({ ...acc, [`item-${person.id}`]: person }),
-      {},
-    ) || {};
+  const indexByIdReducer = (acc: Items, entity: { id: string }) => ({
+    ...acc,
+    [`item-${entity.id}`]: entity,
+  });
+
+  const items: Items | undefined = entitiesQueryResult.data
+    ? isGetCompaniesQuery(entitiesQueryResult.data)
+      ? entitiesQueryResult.data.companies.reduce(indexByIdReducer, {} as Items)
+      : isGetPeopleQuery(entitiesQueryResult.data)
+      ? entitiesQueryResult.data.people.reduce(indexByIdReducer, {} as Items)
+      : undefined
+    : undefined;
 
   return {
     initialBoard,
     items,
-    loading: pipelines.loading || entities.loading,
-    error: pipelines.error || entities.error,
+    loading: pipelines.loading || entitiesQueryResult.loading,
+    error: pipelines.error || entitiesQueryResult.error,
   };
 };
