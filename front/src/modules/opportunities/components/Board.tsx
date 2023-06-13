@@ -15,13 +15,12 @@ import {
 import {
   ItemsContainer,
   StyledColumn,
+  StyledColumnTitle,
 } from '../../ui/components/board/BoardColumn';
 // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd
 // https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { BoardItem } from '../../ui/components/board/BoardItem';
 import { NewButton } from '../../ui/components/board/BoardNewButton';
-
-import { StyledColumnTitle } from './BoardColumn';
 
 type BoardProps = {
   initialBoard: Column[];

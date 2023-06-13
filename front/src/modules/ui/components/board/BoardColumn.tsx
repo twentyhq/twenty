@@ -10,6 +10,17 @@ export const StyledColumn = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+export const StyledColumnTitle = styled.h3`
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: ${({ theme }) => theme.fontWeightBold};
+  font-size: ${({ theme }) => theme.fontSizeMedium};
+  line-height: ${({ theme }) => theme.lineHeight};
+  color: ${({ color }) => color};
+  margin: 0;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const StyledItemContainer = styled.div``;
 
 export const ItemsContainer = ({
