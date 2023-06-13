@@ -10,6 +10,8 @@ export const GET_PIPELINES = gql`
         color
         pipelineProgresses {
           id
+          associableType
+          associableId
         }
       }
     }

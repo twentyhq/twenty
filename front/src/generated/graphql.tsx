@@ -1162,7 +1162,7 @@ export type DeleteCompaniesMutation = { __typename?: 'Mutation', deleteManyCompa
 export type GetPipelinesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineStages?: Array<{ __typename?: 'PipelineStage', name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string }> | null }> | null }> };
+export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineStages?: Array<{ __typename?: 'PipelineStage', name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, associableType: PipelineProgressableType, associableId: string }> | null }> | null }> };
 
 export type GetPeopleQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
@@ -1638,6 +1638,8 @@ export const GetPipelinesDocument = gql`
       color
       pipelineProgresses {
         id
+        associableType
+        associableId
       }
     }
   }

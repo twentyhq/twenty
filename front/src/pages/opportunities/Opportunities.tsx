@@ -3,10 +3,16 @@ import { FaBullseye } from 'react-icons/fa';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { AppPage } from '~/AppPage';
 
-import { useGetPipelinesQuery } from '../../generated/graphql';
-import { items } from '../../modules/opportunities/components/__stories__/mock-data';
+import {
+  useGetPeopleQuery,
+  useGetPipelinesQuery,
+} from '../../generated/graphql';
 import { Board } from '../../modules/opportunities/components/Board';
-import { BoardItemKey, Column } from '../../modules/ui/components/board/Board';
+import {
+  BoardItemKey,
+  Column,
+  Items,
+} from '../../modules/ui/components/board/Board';
 
 export function Opportunities() {
   const pipelines = useGetPipelinesQuery();
@@ -18,13 +24,33 @@ export function Opportunities() {
         colorCode: pipelineStage.color,
         itemKeys:
           pipelineStage.pipelineProgresses?.map(
-            (item) => `item-${item.id}` as BoardItemKey,
+            (item) => `item-${item.associableId}` as BoardItemKey,
           ) || [],
       }),
     ) || [];
 
-  if (pipelines.loading) return <div>Loading...</div>;
-  if (pipelines.error) return <div>Error...</div>;
+  const pipelineEntityIds =
+    pipelines.data?.findManyPipeline[0].pipelineStages?.reduce(
+      (acc, pipelineStage) => [
+        ...acc,
+        ...(pipelineStage.pipelineProgresses?.map(
+          (item) => item.associableId,
+        ) || []),
+      ],
+      [] as string[],
+    );
+  const persons = useGetPeopleQuery({
+    variables: { where: { id: { in: pipelineEntityIds } } },
+  });
+
+  const items: Items =
+    persons.data?.people.reduce(
+      (acc, person) => ({ ...acc, [`item-${person.id}`]: person }),
+      {},
+    ) || {};
+
+  if (pipelines.loading || persons.loading) return <div>Loading...</div>;
+  if (pipelines.error || persons.error) return <div>Error...</div>;
   return (
     <AppPage>
       <WithTopBarContainer title="Opportunities" icon={<FaBullseye />}>
