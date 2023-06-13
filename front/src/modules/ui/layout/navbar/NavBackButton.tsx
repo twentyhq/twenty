@@ -2,6 +2,8 @@ import { TbChevronLeft } from 'react-icons/tb';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import NavCollapseButton from './NavCollapseButton';
+
 type OwnProps = {
   title: string;
 };
@@ -25,11 +27,14 @@ export default function NavBackButton({ title }: OwnProps) {
   const location = useLocation();
 
   return (
-    <StyledContainer
-      onClick={() => navigate(location.state?.from || '/', { replace: true })}
-    >
-      <TbChevronLeft strokeWidth={3} />
-      <span>{title}</span>
-    </StyledContainer>
+    <>
+      <StyledContainer
+        onClick={() => navigate(location.state?.from || '/', { replace: true })}
+      >
+        <TbChevronLeft strokeWidth={3} />
+        <span>{title}</span>
+      </StyledContainer>
+      <NavCollapseButton hideOnDesktop={true} />
+    </>
   );
 }

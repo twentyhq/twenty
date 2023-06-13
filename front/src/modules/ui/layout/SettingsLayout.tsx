@@ -23,7 +23,7 @@ const MainContainer = styled.div`
 
 const SubContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   background: ${(props) => props.theme.primaryBackground};
   border-radius: ${(props) => props.theme.spacing(2)};
   border: 1px solid ${(props) => props.theme.primaryBorder};
@@ -31,14 +31,22 @@ const SubContainer = styled.div`
   margin: ${(props) => props.theme.spacing(4)};
   width: 100%;
   max-width: calc(100vw - 500px);
+  padding: 32px;
 `;
 
+const SubSubContainer = styled.div`
+  display: flex;
+  width: 350px;
+  flex-direction: row;
+`;
 export const SettingsLayout = ({ children }: OwnProps) => {
   return (
     <StyledLayout>
       <SettingsNavbar />
       <MainContainer>
-        <SubContainer>{children}</SubContainer>
+        <SubContainer>
+          <SubSubContainer>{children}</SubSubContainer>
+        </SubContainer>
       </MainContainer>
     </StyledLayout>
   );

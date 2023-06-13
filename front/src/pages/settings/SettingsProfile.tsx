@@ -1,3 +1,14 @@
+import { useRecoilValue } from 'recoil';
+
+import { currentUserState } from '@/auth/states/currentUserState';
+import { TopTitle } from '@/ui/layout/top-bar/TopTitle';
+
 export function SettingsProfile() {
-  return <div>Profile</div>;
+  const currentUser = useRecoilValue(currentUserState);
+  return (
+    <div>
+      <TopTitle title="Profile" />
+      {currentUser?.displayName} <br /> {currentUser?.email}
+    </div>
+  );
 }

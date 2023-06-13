@@ -33,7 +33,7 @@ export function AppNavbar() {
         />
         <NavItem
           label="Settings"
-          to="/settings"
+          to="/settings/profile"
           icon={<TbSettings size={16} />}
         />
         <NavTitle label="Workspace" />

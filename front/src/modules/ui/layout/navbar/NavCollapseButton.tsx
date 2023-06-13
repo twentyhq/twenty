@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { IconSidebarLeftCollapse } from '@/ui/icons';
+import { IconSidebarLeftCollapse, IconSidebarRightCollapse } from '@/ui/icons';
 
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
+import { MOBILE_VIEWPORT } from '../styles/themes';
 
-const CollapseButton = styled.button`
+const CollapseButton = styled.button<{ hideOnDesktop: boolean | undefined }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,16 +22,43 @@ const CollapseButton = styled.button`
   cursor: pointer;
 
   color: ${(props) => props.theme.text30};
+
+  ${(props) =>
+    props.hideOnDesktop &&
+    `  @media (min-width: ${MOBILE_VIEWPORT}px) {
+        display:none;
+    }
+    `}
 `;
 
-export default function NavCollapseButton() {
+interface CollapseButtonProps {
+  hideIfOpen?: boolean;
+  hideIfClosed?: boolean;
+  hideOnDesktop?: boolean;
+}
+
+export default function NavCollapseButton({
+  hideIfOpen,
+  hideOnDesktop,
+}: CollapseButtonProps) {
   const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
 
   return (
     <>
-      {isNavOpen && (
-        <CollapseButton onClick={() => setIsNavOpen(!isNavOpen)}>
+      {isNavOpen && !hideIfOpen && (
+        <CollapseButton
+          onClick={() => setIsNavOpen(!isNavOpen)}
+          hideOnDesktop={hideOnDesktop}
+        >
           <IconSidebarLeftCollapse size={16} />
+        </CollapseButton>
+      )}
+      {!isNavOpen && (
+        <CollapseButton
+          onClick={() => setIsNavOpen(!isNavOpen)}
+          hideOnDesktop={hideOnDesktop}
+        >
+          <IconSidebarRightCollapse size={16} />
         </CollapseButton>
       )}
     </>
