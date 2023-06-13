@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '@/ui/layout/styles/themes';
-
 export const DropdownMenu = styled.div`
   width: 200px;
+  height: fit-content;
 
   display: flex;
+  flex-direction: column;
   align-items: center;
 
   background: ${(props) => props.theme.secondaryBackgroundTransparent};

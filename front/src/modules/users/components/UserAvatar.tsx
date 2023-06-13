@@ -6,12 +6,13 @@ type OwnProps = {
   avatarUrl: string | null | undefined;
   size: number;
   placeholderLetter: string;
+  type?: 'squared' | 'rounded';
 };
 
-export const StyledUserAvatar = styled.div<Omit<OwnProps, 'placeholderLetter'>>`
+export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholderLetter'>>`
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
-  border-radius: 50%;
+  border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   background-image: url(${(props) =>
     isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
   background-color: ${(props) =>
@@ -46,16 +47,21 @@ export const StyledPlaceholderLetter = styled.div<StyledPlaceholderLetterProps>`
   color: ${(props) => props.theme.text80};
 `;
 
-export function UserAvatar({ avatarUrl, size, placeholderLetter }: OwnProps) {
+export function Avatar({
+  avatarUrl,
+  size,
+  placeholderLetter,
+  type = 'squared',
+}: OwnProps) {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
 
   return (
-    <StyledUserAvatar avatarUrl={avatarUrl} size={size}>
+    <StyledAvatar avatarUrl={avatarUrl} size={size} type={type}>
       {noAvatarUrl && (
         <StyledPlaceholderLetter size={size}>
           {placeholderLetter}
         </StyledPlaceholderLetter>
       )}
-    </StyledUserAvatar>
+    </StyledAvatar>
   );
 }
