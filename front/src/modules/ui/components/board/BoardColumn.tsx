@@ -28,7 +28,7 @@ export const ItemContainer = ({
   children,
   droppableProvided,
 }: {
-  children: React.ReactNode[];
+  children: React.ReactNode;
   droppableProvided: DroppableProvided;
 }) => {
   return (

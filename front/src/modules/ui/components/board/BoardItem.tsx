@@ -11,18 +11,18 @@ const StyledCard = styled.div`
 `;
 
 type BoardCardProps = {
-  content: string;
+  children: React.ReactNode;
   draggableProvided: DraggableProvided;
 };
 
-export const BoardItem = ({ content, draggableProvided }: BoardCardProps) => {
+export const BoardItem = ({ children, draggableProvided }: BoardCardProps) => {
   return (
     <StyledCard
       ref={draggableProvided?.innerRef}
       {...draggableProvided.dragHandleProps}
       {...draggableProvided.draggableProps}
     >
-      {content}
+      {children}
     </StyledCard>
   );
 };
