@@ -29,15 +29,16 @@ export const useBoard = () => {
       colorCode: pipelineStage.color,
       itemKeys:
         pipelineStage.pipelineProgresses?.map(
-          (item) => `item-${item.associableId}` as BoardItemKey,
+          (item) => `item-${item.progressableId}` as BoardItemKey,
         ) || [],
     })) || [];
 
   const pipelineEntityIds = pipelineStages?.reduce(
     (acc, pipelineStage) => [
       ...acc,
-      ...(pipelineStage.pipelineProgresses?.map((item) => item.associableId) ||
-        []),
+      ...(pipelineStage.pipelineProgresses?.map(
+        (item) => item.progressableId,
+      ) || []),
     ],
     [] as string[],
   );
