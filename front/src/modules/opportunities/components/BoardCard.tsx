@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { Company, Person } from '../../../generated/graphql';
+import PersonPlaceholder from '../../people/components/person-placeholder.png';
 import { PersonChip } from '../../people/components/PersonChip';
 import { IconCalendar, IconSum, IconUser } from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
@@ -45,10 +46,16 @@ export const BoardCard = ({ item }: { item: Person | Company }) => {
 };
 
 const PersonBoardCard = ({ person }: { person: Person }) => {
+  const fullname = `${person.firstname} ${person.lastname}`;
   return (
     <StyledBoardCard>
       <StyledBoardCardHeader>
-        <span>{`${person.firstname} ${person.lastname}`}</span>
+        <img
+          data-testid="person-chip-image"
+          src={PersonPlaceholder.toString()}
+          alt="person"
+        />
+        {fullname}
       </StyledBoardCardHeader>
     </StyledBoardCard>
   );
