@@ -12,59 +12,59 @@ type OwnProps = {
 };
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
   gap: ${(props) => props.theme.spacing(2)};
+  justify-content: flex-start;
 `;
 
 const StyledRelationLabel = styled.div`
+  color: ${(props) => props.theme.text60};
   display: flex;
   flex-direction: row;
-  color: ${(props) => props.theme.text60};
 `;
 
 const StyledRelationContainer = styled.div`
   --horizontal-padding: ${(props) => props.theme.spacing(1)};
   --vertical-padding: ${(props) => props.theme.spacing(1.5)};
 
-  padding: var(--vertical-padding) var(--horizontal-padding);
-
-  width: calc(100% - 2 * var(--horizontal-padding));
-  height: calc(32px - 2 * var(--vertical-padding));
-
-  display: flex;
-  gap: ${(props) => props.theme.spacing(2)};
+  border: 1px solid ${(props) => props.theme.lightBorder};
 
   border: 1px solid transparent;
+  display: flex;
+
+  gap: ${(props) => props.theme.spacing(2)};
+  height: calc(32px - 2 * var(--vertical-padding));
+
+  padding: var(--vertical-padding) var(--horizontal-padding);
 
   &:hover {
     background-color: ${(props) => props.theme.secondaryBackground};
   }
 
-  border: 1px solid ${(props) => props.theme.lightBorder};
+  width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
 // TODO: refactor icon button with new figma and merge
 const StyledAddButton = styled.div`
+  align-items: center;
+  background: ${(props) => props.theme.primaryBackgroundTransparent};
+  border-radius: ${(props) => props.theme.borderRadius};
+  box-shadow: ${(props) => props.theme.modalBoxShadow};
+
+  cursor: pointer;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: ${(props) => props.theme.borderRadius};
-  background: ${(props) => props.theme.primaryBackgroundTransparent};
-  box-shadow: ${(props) => props.theme.modalBoxShadow};
 
   &:hover {
     background-color: ${(props) => props.theme.tertiaryBackground};
   }
 
-  width: 20px;
   height: 20px;
+  justify-content: center;
 
-  cursor: pointer;
+  width: 20px;
 `;
 
 export function CommentThreadRelationPicker({ commentThread }: OwnProps) {

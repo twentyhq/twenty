@@ -17,23 +17,13 @@ const avatarUrl =
 
 export const Rounded: Story = {
   render: getRenderWrapperForComponent(
-    <Avatar
-      avatarUrl={avatarUrl}
-      size={16}
-      placeholder="L"
-      type="rounded"
-    />,
+    <Avatar avatarUrl={avatarUrl} size={16} placeholder="L" type="rounded" />,
   ),
 };
 
 export const Squared: Story = {
   render: getRenderWrapperForComponent(
-    <Avatar
-      avatarUrl={avatarUrl}
-      size={16}
-      placeholder="L"
-      type="squared"
-    />,
+    <Avatar avatarUrl={avatarUrl} size={16} placeholder="L" type="squared" />,
   ),
 };
 

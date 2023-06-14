@@ -10,25 +10,25 @@ type OwnProps = {
 };
 
 export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholder'>>`
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
-  border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
-  background-image: url(${(props) =>
-    isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
   background-color: ${(props) =>
     !isNonEmptyString(props.avatarUrl)
       ? props.theme.tertiaryBackground
       : 'none'};
   background-image: url(${(props) =>
     isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
+  background-image: url(${(props) =>
+    isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
+  border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   display: flex;
-
   height: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+
   justify-content: center;
+  width: ${(props) => props.size}px;
 
   width: ${(props) => props.size}px;
 `;
