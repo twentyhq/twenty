@@ -31,7 +31,7 @@ jobs:
           echo "REACT_APP_API_URL: $REACT_APP_API_URL" >> .env
           echo "REACT_APP_AUTH_URL: $REACT_APP_AUTH_URL" >> .env
       - name: Front / Install Dependencies
-        run: cd front && npm install
+        run: cd front && npm install --install-links
       - name: Front / Install Playwright
         run: cd front && npx playwright install --with-deps
       - name: Front / Run linter

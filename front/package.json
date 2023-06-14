@@ -122,7 +122,7 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-storybook": "^0.6.11",
-    "eslint-plugin-twenty": "file:./../packages/eslint-plugin-twenty",
+    "eslint-plugin-twenty": "file:../packages/eslint-plugin-twenty",
     "http-server": "^14.1.1",
     "mock-apollo-client": "^1.2.1",
     "msw": "^1.2.1",

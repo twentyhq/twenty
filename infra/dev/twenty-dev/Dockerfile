@@ -11,7 +11,7 @@ WORKDIR /app/server
 
 COPY ../../server/package.json .
 COPY ../../server/package-lock.json .
-RUN npm install
+RUN npm install --install-links
 
 WORKDIR /app
 

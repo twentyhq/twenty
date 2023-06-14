@@ -6,7 +6,7 @@ ARG REACT_APP_AUTH_URL
 WORKDIR /app/front
 COPY ./front .
 
-RUN npm install
+RUN npm install --install-links
 RUN npm run build
 
 RUN npm install -g serve
