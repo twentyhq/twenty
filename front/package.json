@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.5",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.5",
     "@hello-pangea/dnd": "^16.2.0",

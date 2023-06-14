@@ -4,5 +4,8 @@ WORKDIR /app/docs
 
 COPY ../../docs/package.json .
 COPY ../../docs/yarn.lock .
-CMD ["tail", "-f", "/dev/null"]
+RUN yarn
 
+COPY ../../docs .
+
+CMD ["npm", "run", "start"]
