@@ -9,6 +9,6 @@ RUN yarn install --prod
 COPY ./docs .
 RUN npm run build
 
-RUN yarn install -g serve
+RUN yarn global add serve
 
 CMD ["serve", "-s", "./build"]
