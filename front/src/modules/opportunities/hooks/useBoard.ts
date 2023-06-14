@@ -29,21 +29,22 @@ export const useBoard = () => {
       colorCode: pipelineStage.color,
       itemKeys:
         pipelineStage.pipelineProgresses?.map(
-          (item) => `item-${item.associableId}` as BoardItemKey,
+          (item) => `item-${item.progressableId}` as BoardItemKey,
         ) || [],
     })) || [];
 
   const pipelineEntityIds = pipelineStages?.reduce(
     (acc, pipelineStage) => [
       ...acc,
-      ...(pipelineStage.pipelineProgresses?.map((item) => item.associableId) ||
-        []),
+      ...(pipelineStage.pipelineProgresses?.map(
+        (item) => item.progressableId,
+      ) || []),
     ],
     [] as string[],
   );
 
   const pipelineEntityType: 'Person' | 'Company' | undefined =
-    pipelineStages?.[0].pipelineProgresses?.[0].associableType;
+    pipelineStages?.[0].pipelineProgresses?.[0].progressableType;
   console.log(pipelineEntityType);
 
   const query =
