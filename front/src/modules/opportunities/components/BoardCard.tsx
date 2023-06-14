@@ -1,9 +1,17 @@
 import styled from '@emotion/styled';
 
 import { Company, Person } from '../../../generated/graphql';
+import CompanyChip from '../../companies/components/CompanyChip';
 import PersonPlaceholder from '../../people/components/person-placeholder.png';
 import { PersonChip } from '../../people/components/PersonChip';
-import { IconCalendar, IconSum, IconUser } from '../../ui/icons';
+import {
+  IconBuilding,
+  IconCalendar,
+  IconMail,
+  IconPhone,
+  IconSum,
+  IconUser,
+} from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
 
 const StyledBoardCard = styled.div`
@@ -33,6 +41,7 @@ const StyledBoardCardBody = styled.div`
     display: flex;
     flex-direction: row;
     svg {
+      color: ${(props) => props.theme.text40};
       margin-right: ${(props) => props.theme.spacing(2)};
     }
   }
@@ -57,6 +66,29 @@ const PersonBoardCard = ({ person }: { person: Person }) => {
         />
         {fullname}
       </StyledBoardCardHeader>
+      <StyledBoardCardBody>
+        <span>
+          <IconBuilding size={16} />
+          <CompanyChip
+            name={person.company?.name || ''}
+            picture={getLogoUrlFromDomainName(
+              person.company?.domainName,
+            ).toString()}
+          />
+        </span>
+        <span>
+          <IconMail size={16} />
+          {person.email}
+        </span>
+        <span>
+          <IconPhone size={16} />
+          {person.phone}
+        </span>
+        <span>
+          <IconCalendar size={16} />
+          {humanReadableDate(new Date(person.createdAt as string))}
+        </span>
+      </StyledBoardCardBody>
     </StyledBoardCard>
   );
 };
