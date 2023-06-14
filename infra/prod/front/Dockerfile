@@ -11,6 +11,6 @@ COPY ./front .
 RUN yarn install
 RUN yarn build
 
-RUN yarn install -g serve
+RUN yarn global add serve
 
 CMD ["serve", "-s", "build"]
