@@ -23,9 +23,7 @@ type StyledItemProps = {
 const StyledItem = styled.button<StyledItemProps>`
   align-items: center;
   background: ${(props) =>
-    props.active
-      ? '${(props) => props.theme.lightbackgroundtransparent};'
-      : 'inherit'};
+    props.active ? props.theme.lightBackgroundTransparent : 'inherit'};
   border: none;
   border-radius: 4px;
   color: ${(props) => {

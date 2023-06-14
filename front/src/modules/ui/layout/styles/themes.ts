@@ -97,7 +97,7 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
   primaryBackgroundTransparent: 'rgba(20, 20, 20, 0.8)',
   secondaryBackgroundTransparent: 'rgba(23, 23, 23, 0.8)',
   strongBackgroundTransparent: 'rgba(255, 255, 255, 0.09)',
-  mediumBackgroundTransparent: ' rgba(255, 255, 255, 0.06)',
+  mediumBackgroundTransparent: 'rgba(255, 255, 255, 0.06)',
   lightBackgroundTransparent: 'rgba(255, 255, 255, 0.03)',
   lighterBackgroundTransparent: 'rgba(255, 255, 255, 0.02)',
 
