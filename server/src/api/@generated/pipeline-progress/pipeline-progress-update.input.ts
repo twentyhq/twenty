@@ -6,6 +6,8 @@ import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-d
 import { EnumPipelineProgressableTypeFieldUpdateOperationsInput } from '../prisma/enum-pipeline-progressable-type-field-update-operations.input';
 import { PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput } from '../pipeline/pipeline-update-one-required-without-pipeline-progresses-nested.input';
 import { PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput } from '../pipeline-stage/pipeline-stage-update-one-required-without-pipeline-progresses-nested.input';
+import { WorkspaceUpdateOneRequiredWithoutPipelineProgressesNestedInput } from '../workspace/workspace-update-one-required-without-pipeline-progresses-nested.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressUpdateInput {
@@ -24,10 +26,10 @@ export class PipelineProgressUpdateInput {
   @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {
     nullable: true,
   })
-  associableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+  progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
 
   @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  associableId?: StringFieldUpdateOperationsInput;
+  progressableId?: StringFieldUpdateOperationsInput;
 
   @Field(() => PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput, {
     nullable: true,
@@ -39,4 +41,7 @@ export class PipelineProgressUpdateInput {
     { nullable: true },
   )
   pipelineStage?: PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput;
+
+  @HideField()
+  workspace?: WorkspaceUpdateOneRequiredWithoutPipelineProgressesNestedInput;
 }

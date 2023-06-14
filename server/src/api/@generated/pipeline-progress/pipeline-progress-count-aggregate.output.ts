@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class PipelineProgressCountAggregate {
@@ -23,10 +24,13 @@ export class PipelineProgressCountAggregate {
   pipelineStageId!: number;
 
   @Field(() => Int, { nullable: false })
-  associableType!: number;
+  progressableType!: number;
 
   @Field(() => Int, { nullable: false })
-  associableId!: number;
+  progressableId!: number;
+
+  @HideField()
+  workspaceId!: number;
 
   @Field(() => Int, { nullable: false })
   _all!: number;

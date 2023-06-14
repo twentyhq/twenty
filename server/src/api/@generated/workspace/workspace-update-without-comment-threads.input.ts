@@ -10,6 +10,7 @@ import { PersonUpdateManyWithoutWorkspaceNestedInput } from '../person/person-up
 import { CommentUpdateManyWithoutWorkspaceNestedInput } from '../comment/comment-update-many-without-workspace-nested.input';
 import { PipelineUpdateManyWithoutWorkspaceNestedInput } from '../pipeline/pipeline-update-many-without-workspace-nested.input';
 import { PipelineStageUpdateManyWithoutWorkspaceNestedInput } from '../pipeline-stage/pipeline-stage-update-many-without-workspace-nested.input';
+import { PipelineProgressUpdateManyWithoutWorkspaceNestedInput } from '../pipeline-progress/pipeline-progress-update-many-without-workspace-nested.input';
 
 @InputType()
 export class WorkspaceUpdateWithoutCommentThreadsInput {
@@ -57,4 +58,9 @@ export class WorkspaceUpdateWithoutCommentThreadsInput {
     nullable: true,
   })
   pipelineStages?: PipelineStageUpdateManyWithoutWorkspaceNestedInput;
+
+  @Field(() => PipelineProgressUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  pipelineProgresses?: PipelineProgressUpdateManyWithoutWorkspaceNestedInput;
 }

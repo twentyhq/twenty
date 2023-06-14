@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressUncheckedCreateInput {
@@ -23,8 +24,11 @@ export class PipelineProgressUncheckedCreateInput {
   pipelineStageId!: string;
 
   @Field(() => PipelineProgressableType, { nullable: false })
-  associableType!: keyof typeof PipelineProgressableType;
+  progressableType!: keyof typeof PipelineProgressableType;
 
   @Field(() => String, { nullable: false })
-  associableId!: string;
+  progressableId!: string;
+
+  @HideField()
+  workspaceId!: string;
 }

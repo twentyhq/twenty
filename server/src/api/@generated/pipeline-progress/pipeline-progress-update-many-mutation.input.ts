@@ -22,8 +22,8 @@ export class PipelineProgressUpdateManyMutationInput {
   @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {
     nullable: true,
   })
-  associableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+  progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
 
   @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  associableId?: StringFieldUpdateOperationsInput;
+  progressableId?: StringFieldUpdateOperationsInput;
 }

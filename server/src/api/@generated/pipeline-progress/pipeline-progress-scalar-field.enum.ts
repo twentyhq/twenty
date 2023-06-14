@@ -7,8 +7,9 @@ export enum PipelineProgressScalarFieldEnum {
   deletedAt = 'deletedAt',
   pipelineId = 'pipelineId',
   pipelineStageId = 'pipelineStageId',
-  associableType = 'associableType',
-  associableId = 'associableId',
+  progressableType = 'progressableType',
+  progressableId = 'progressableId',
+  workspaceId = 'workspaceId',
 }
 
 registerEnumType(PipelineProgressScalarFieldEnum, {

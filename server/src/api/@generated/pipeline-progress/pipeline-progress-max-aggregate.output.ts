@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
+import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class PipelineProgressMaxAggregate {
@@ -23,8 +24,11 @@ export class PipelineProgressMaxAggregate {
   pipelineStageId?: string;
 
   @Field(() => PipelineProgressableType, { nullable: true })
-  associableType?: keyof typeof PipelineProgressableType;
+  progressableType?: keyof typeof PipelineProgressableType;
 
   @Field(() => String, { nullable: true })
-  associableId?: string;
+  progressableId?: string;
+
+  @HideField()
+  workspaceId?: string;
 }

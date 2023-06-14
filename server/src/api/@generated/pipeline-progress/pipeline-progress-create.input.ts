@@ -3,6 +3,8 @@ import { InputType } from '@nestjs/graphql';
 import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { PipelineCreateNestedOneWithoutPipelineProgressesInput } from '../pipeline/pipeline-create-nested-one-without-pipeline-progresses.input';
 import { PipelineStageCreateNestedOneWithoutPipelineProgressesInput } from '../pipeline-stage/pipeline-stage-create-nested-one-without-pipeline-progresses.input';
+import { WorkspaceCreateNestedOneWithoutPipelineProgressesInput } from '../workspace/workspace-create-nested-one-without-pipeline-progresses.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressCreateInput {
@@ -19,10 +21,10 @@ export class PipelineProgressCreateInput {
   deletedAt?: Date | string;
 
   @Field(() => PipelineProgressableType, { nullable: false })
-  associableType!: keyof typeof PipelineProgressableType;
+  progressableType!: keyof typeof PipelineProgressableType;
 
   @Field(() => String, { nullable: false })
-  associableId!: string;
+  progressableId!: string;
 
   @Field(() => PipelineCreateNestedOneWithoutPipelineProgressesInput, {
     nullable: false,
@@ -33,4 +35,7 @@ export class PipelineProgressCreateInput {
     nullable: false,
   })
   pipelineStage!: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
+
+  @HideField()
+  workspace!: WorkspaceCreateNestedOneWithoutPipelineProgressesInput;
 }

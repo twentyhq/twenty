@@ -4,6 +4,7 @@ import { StringFilter } from '../prisma/string-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { EnumPipelineProgressableTypeFilter } from '../prisma/enum-pipeline-progressable-type-filter.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressScalarWhereInput {
@@ -35,8 +36,11 @@ export class PipelineProgressScalarWhereInput {
   pipelineStageId?: StringFilter;
 
   @Field(() => EnumPipelineProgressableTypeFilter, { nullable: true })
-  associableType?: EnumPipelineProgressableTypeFilter;
+  progressableType?: EnumPipelineProgressableTypeFilter;
 
   @Field(() => StringFilter, { nullable: true })
-  associableId?: StringFilter;
+  progressableId?: StringFilter;
+
+  @HideField()
+  workspaceId?: StringFilter;
 }

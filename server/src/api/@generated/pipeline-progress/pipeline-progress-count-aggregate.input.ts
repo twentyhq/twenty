@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressCountAggregateInput {
@@ -22,10 +23,13 @@ export class PipelineProgressCountAggregateInput {
   pipelineStageId?: true;
 
   @Field(() => Boolean, { nullable: true })
-  associableType?: true;
+  progressableType?: true;
 
   @Field(() => Boolean, { nullable: true })
-  associableId?: true;
+  progressableId?: true;
+
+  @HideField()
+  workspaceId?: true;
 
   @Field(() => Boolean, { nullable: true })
   _all?: true;

@@ -4,6 +4,7 @@ import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { EnumPipelineProgressableTypeFieldUpdateOperationsInput } from '../prisma/enum-pipeline-progressable-type-field-update-operations.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressUncheckedUpdateManyInput {
@@ -28,8 +29,11 @@ export class PipelineProgressUncheckedUpdateManyInput {
   @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {
     nullable: true,
   })
-  associableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+  progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
 
   @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  associableId?: StringFieldUpdateOperationsInput;
+  progressableId?: StringFieldUpdateOperationsInput;
+
+  @HideField()
+  workspaceId?: StringFieldUpdateOperationsInput;
 }

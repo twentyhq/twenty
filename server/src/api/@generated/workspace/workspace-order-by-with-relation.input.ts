@@ -8,6 +8,7 @@ import { CommentThreadOrderByRelationAggregateInput } from '../comment-thread/co
 import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
 import { PipelineOrderByRelationAggregateInput } from '../pipeline/pipeline-order-by-relation-aggregate.input';
 import { PipelineStageOrderByRelationAggregateInput } from '../pipeline-stage/pipeline-stage-order-by-relation-aggregate.input';
+import { PipelineProgressOrderByRelationAggregateInput } from '../pipeline-progress/pipeline-progress-order-by-relation-aggregate.input';
 
 @InputType()
 export class WorkspaceOrderByWithRelationInput {
@@ -52,4 +53,9 @@ export class WorkspaceOrderByWithRelationInput {
 
   @Field(() => PipelineStageOrderByRelationAggregateInput, { nullable: true })
   pipelineStages?: PipelineStageOrderByRelationAggregateInput;
+
+  @Field(() => PipelineProgressOrderByRelationAggregateInput, {
+    nullable: true,
+  })
+  pipelineProgresses?: PipelineProgressOrderByRelationAggregateInput;
 }

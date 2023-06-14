@@ -21,9 +21,11 @@ import { WorkspaceMemberRelationsResolver } from './resolvers/relations/workspac
 import { CompanyRelationsResolver } from './resolvers/relations/company-relations.resolver';
 import { CommentThreadRelationsResolver } from './resolvers/relations/comment-thread-relations.resolver';
 import { PipelineRelationsResolver } from './resolvers/relations/pipeline-relations.resolver';
-import { PipelineStageRelationsResolver } from './resolvers/relations/pipeline-stage-relations.resolver';
 import { GraphQLError } from 'graphql';
 import { CommentRelationsResolver } from './resolvers/relations/comment-relations.resolver';
+import { PipelineProgressResolver } from './resolvers/pipeline-progress.resolver';
+import { PipelineStageRelationsResolver } from './resolvers/relations/pipeline-stage-relations.resolver';
+import { PipelineProgressRelationsResolver } from './resolvers/relations/pipeline-progress-relations.resolver';
 
 @Module({
   imports: [
@@ -50,6 +52,7 @@ import { CommentRelationsResolver } from './resolvers/relations/comment-relation
     CommentThreadResolver,
     PipelineResolver,
     PipelineStageResolver,
+    PipelineProgressResolver,
 
     CompanyRelationsResolver,
     CommentRelationsResolver,
@@ -59,6 +62,7 @@ import { CommentRelationsResolver } from './resolvers/relations/comment-relation
     CommentThreadRelationsResolver,
     PipelineRelationsResolver,
     PipelineStageRelationsResolver,
+    PipelineProgressRelationsResolver,
   ],
 })
 export class ApiModule {}

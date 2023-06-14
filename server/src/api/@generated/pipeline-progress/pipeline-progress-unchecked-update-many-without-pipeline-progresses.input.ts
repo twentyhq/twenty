@@ -20,13 +20,16 @@ export class PipelineProgressUncheckedUpdateManyWithoutPipelineProgressesInput {
   deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
   @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  pipelineId?: StringFieldUpdateOperationsInput;
+
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
   pipelineStageId?: StringFieldUpdateOperationsInput;
 
   @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {
     nullable: true,
   })
-  associableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+  progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
 
   @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  associableId?: StringFieldUpdateOperationsInput;
+  progressableId?: StringFieldUpdateOperationsInput;
 }
