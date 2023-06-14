@@ -2,6 +2,8 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { PipelineStageCreateNestedOneWithoutPipelineProgressesInput } from '../pipeline-stage/pipeline-stage-create-nested-one-without-pipeline-progresses.input';
+import { WorkspaceCreateNestedOneWithoutPipelineProgressesInput } from '../workspace/workspace-create-nested-one-without-pipeline-progresses.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressCreateWithoutPipelineInput {
@@ -18,13 +20,16 @@ export class PipelineProgressCreateWithoutPipelineInput {
   deletedAt?: Date | string;
 
   @Field(() => PipelineProgressableType, { nullable: false })
-  associableType!: keyof typeof PipelineProgressableType;
+  progressableType!: keyof typeof PipelineProgressableType;
 
   @Field(() => String, { nullable: false })
-  associableId!: string;
+  progressableId!: string;
 
   @Field(() => PipelineStageCreateNestedOneWithoutPipelineProgressesInput, {
     nullable: false,
   })
   pipelineStage!: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
+
+  @HideField()
+  workspace!: WorkspaceCreateNestedOneWithoutPipelineProgressesInput;
 }

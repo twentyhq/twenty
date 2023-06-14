@@ -113,20 +113,21 @@ model User {
 
 /// @TypeGraphQL.omit(input: true)
 model Workspace {
-  id              String            @id
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  deletedAt       DateTime?
-  domainName      String            @unique
-  displayName     String
-  logo            String?
-  workspaceMember WorkspaceMember[]
-  companies       Company[]
-  people          Person[]
-  commentThreads  CommentThread[]
-  comments        Comment[]
-  pipelines       Pipeline[]
-  pipelineStages  PipelineStage[]
+  id                 String            @id
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  deletedAt          DateTime?
+  domainName         String            @unique
+  displayName        String
+  logo               String?
+  workspaceMember    WorkspaceMember[]
+  companies          Company[]
+  people             Person[]
+  commentThreads     CommentThread[]
+  comments           Comment[]
+  pipelines          Pipeline[]
+  pipelineStages     PipelineStage[]
+  pipelineProgresses PipelineProgress[]
 
   @@map("workspaces")
 }
@@ -310,8 +311,13 @@ model PipelineProgress {
   pipelineStageId       String
   pipelineStage         PipelineStage @relation(fields: [pipelineStageId], references: [id])
 
-  associableType        PipelineProgressableType
-  associableId          String
+  progressableType      PipelineProgressableType
+  progressableId        String
+
+    /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId           String
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace             Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("pipeline_progresses")
 }

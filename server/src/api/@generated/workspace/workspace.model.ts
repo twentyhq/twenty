@@ -8,6 +8,7 @@ import { CommentThread } from '../comment-thread/comment-thread.model';
 import { Comment } from '../comment/comment.model';
 import { Pipeline } from '../pipeline/pipeline.model';
 import { PipelineStage } from '../pipeline-stage/pipeline-stage.model';
+import { PipelineProgress } from '../pipeline-progress/pipeline-progress.model';
 import { WorkspaceCount } from './workspace-count.output';
 import { HideField } from '@nestjs/graphql';
 
@@ -54,6 +55,9 @@ export class Workspace {
 
   @Field(() => [PipelineStage], { nullable: true })
   pipelineStages?: Array<PipelineStage>;
+
+  @Field(() => [PipelineProgress], { nullable: true })
+  pipelineProgresses?: Array<PipelineProgress>;
 
   @HideField()
   _count?: WorkspaceCount;

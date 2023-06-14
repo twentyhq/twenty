@@ -10,6 +10,7 @@ import { PersonUncheckedUpdateManyWithoutWorkspaceNestedInput } from '../person/
 import { CommentThreadUncheckedUpdateManyWithoutWorkspaceNestedInput } from '../comment-thread/comment-thread-unchecked-update-many-without-workspace-nested.input';
 import { PipelineUncheckedUpdateManyWithoutWorkspaceNestedInput } from '../pipeline/pipeline-unchecked-update-many-without-workspace-nested.input';
 import { PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput } from '../pipeline-stage/pipeline-stage-unchecked-update-many-without-workspace-nested.input';
+import { PipelineProgressUncheckedUpdateManyWithoutWorkspaceNestedInput } from '../pipeline-progress/pipeline-progress-unchecked-update-many-without-workspace-nested.input';
 
 @InputType()
 export class WorkspaceUncheckedUpdateWithoutCommentsInput {
@@ -63,4 +64,9 @@ export class WorkspaceUncheckedUpdateWithoutCommentsInput {
     nullable: true,
   })
   pipelineStages?: PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput;
+
+  @Field(() => PipelineProgressUncheckedUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  pipelineProgresses?: PipelineProgressUncheckedUpdateManyWithoutWorkspaceNestedInput;
 }

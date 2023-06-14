@@ -21,7 +21,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate": "npx prisma generate && eslint \"src/api/@generated/**\" --fix",
     "prisma:migrate": "npx prisma migrate deploy",
-    "prisma:seed": "npx prisma db seed"
+    "prisma:seed": "npx prisma db seed",
+    "prisma:reset": "npm run prisma:generate && npx prisma migrate reset"
   },
   "dependencies": {
     "@apollo/server": "^4.7.3",

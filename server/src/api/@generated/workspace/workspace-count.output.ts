@@ -24,4 +24,7 @@ export class WorkspaceCount {
 
   @Field(() => Int, { nullable: false })
   pipelineStages?: number;
+
+  @Field(() => Int, { nullable: false })
+  pipelineProgresses?: number;
 }

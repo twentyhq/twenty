@@ -11,6 +11,7 @@ import { CommentThreadListRelationFilter } from '../comment-thread/comment-threa
 import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
 import { PipelineListRelationFilter } from '../pipeline/pipeline-list-relation-filter.input';
 import { PipelineStageListRelationFilter } from '../pipeline-stage/pipeline-stage-list-relation-filter.input';
+import { PipelineProgressListRelationFilter } from '../pipeline-progress/pipeline-progress-list-relation-filter.input';
 
 @InputType()
 export class WorkspaceWhereInput {
@@ -64,4 +65,7 @@ export class WorkspaceWhereInput {
 
   @Field(() => PipelineStageListRelationFilter, { nullable: true })
   pipelineStages?: PipelineStageListRelationFilter;
+
+  @Field(() => PipelineProgressListRelationFilter, { nullable: true })
+  pipelineProgresses?: PipelineProgressListRelationFilter;
 }

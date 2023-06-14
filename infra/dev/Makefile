@@ -37,3 +37,6 @@ server-prisma-migrate:
 
 server-prisma-seed:
 	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:seed"
+
+server-prisma-reset:
+	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:reset"

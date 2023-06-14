@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
+import { HideField } from '@nestjs/graphql';
 import { PipelineProgressCountOrderByAggregateInput } from './pipeline-progress-count-order-by-aggregate.input';
 import { PipelineProgressMaxOrderByAggregateInput } from './pipeline-progress-max-order-by-aggregate.input';
 import { PipelineProgressMinOrderByAggregateInput } from './pipeline-progress-min-order-by-aggregate.input';
@@ -26,10 +27,13 @@ export class PipelineProgressOrderByWithAggregationInput {
   pipelineStageId?: keyof typeof SortOrder;
 
   @Field(() => SortOrder, { nullable: true })
-  associableType?: keyof typeof SortOrder;
+  progressableType?: keyof typeof SortOrder;
 
   @Field(() => SortOrder, { nullable: true })
-  associableId?: keyof typeof SortOrder;
+  progressableId?: keyof typeof SortOrder;
+
+  @HideField()
+  workspaceId?: keyof typeof SortOrder;
 
   @Field(() => PipelineProgressCountOrderByAggregateInput, { nullable: true })
   _count?: PipelineProgressCountOrderByAggregateInput;
