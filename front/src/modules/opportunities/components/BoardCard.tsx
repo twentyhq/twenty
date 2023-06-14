@@ -22,6 +22,7 @@ const StyledBoardCardHeader = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+  font-weight: ${(props) => props.theme.fontWeightBold};
   height: 24px;
   padding: ${(props) => props.theme.spacing(2)};
   img {
