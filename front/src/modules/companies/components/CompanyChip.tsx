@@ -1,5 +1,6 @@
-import * as React from 'react';
 import styled from '@emotion/styled';
+
+import { Avatar } from '@/users/components/Avatar';
 
 export type CompanyChipPropsType = {
   name: string;
@@ -30,10 +31,11 @@ function CompanyChip({ name, picture }: CompanyChipPropsType) {
   return (
     <StyledContainer data-testid="company-chip">
       {picture && (
-        <img
-          data-testid="company-chip-image"
-          src={picture?.toString()}
-          alt={`${name}-company-logo`}
+        <Avatar
+          avatarUrl={picture?.toString()}
+          placeholder={name}
+          type="squared"
+          size={14}
         />
       )}
       {name}

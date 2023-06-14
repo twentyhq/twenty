@@ -217,7 +217,7 @@ const FakeSelectableMenuItemWithAvatarList = () => {
           onClick={() => setSelectedItem(item.id)}
         >
           <Avatar
-            placeholderLetter="A"
+            placeholder="A"
             avatarUrl={item.avatarUrl}
             size={16}
             type="squared"
@@ -303,7 +303,7 @@ const FakeCheckableMenuItemWithAvatarList = () => {
           }}
         >
           <Avatar
-            placeholderLetter="A"
+            placeholder="A"
             avatarUrl={item.avatarUrl}
             size={16}
             type="squared"

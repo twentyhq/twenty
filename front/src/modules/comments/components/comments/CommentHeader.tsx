@@ -80,7 +80,7 @@ export function CommentHeader({ comment }: OwnProps) {
       <Avatar
         avatarUrl={avatarUrl}
         size={16}
-        placeholderLetter={capitalizedFirstUsernameLetter}
+        placeholder={capitalizedFirstUsernameLetter}
       />
       <StyledName>{authorName}</StyledName>
       {showDate && (
