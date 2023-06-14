@@ -12,32 +12,31 @@ import { PipelineStageMaxAggregateInput } from './pipeline-stage-max-aggregate.i
 
 @ArgsType()
 export class PipelineStageGroupByArgs {
+  @Field(() => PipelineStageWhereInput, { nullable: true })
+  @Type(() => PipelineStageWhereInput)
+  where?: PipelineStageWhereInput;
 
-    @Field(() => PipelineStageWhereInput, {nullable:true})
-    @Type(() => PipelineStageWhereInput)
-    where?: PipelineStageWhereInput;
+  @Field(() => [PipelineStageOrderByWithAggregationInput], { nullable: true })
+  orderBy?: Array<PipelineStageOrderByWithAggregationInput>;
 
-    @Field(() => [PipelineStageOrderByWithAggregationInput], {nullable:true})
-    orderBy?: Array<PipelineStageOrderByWithAggregationInput>;
+  @Field(() => [PipelineStageScalarFieldEnum], { nullable: false })
+  by!: Array<keyof typeof PipelineStageScalarFieldEnum>;
 
-    @Field(() => [PipelineStageScalarFieldEnum], {nullable:false})
-    by!: Array<keyof typeof PipelineStageScalarFieldEnum>;
+  @Field(() => PipelineStageScalarWhereWithAggregatesInput, { nullable: true })
+  having?: PipelineStageScalarWhereWithAggregatesInput;
 
-    @Field(() => PipelineStageScalarWhereWithAggregatesInput, {nullable:true})
-    having?: PipelineStageScalarWhereWithAggregatesInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
+  @Field(() => PipelineStageCountAggregateInput, { nullable: true })
+  _count?: PipelineStageCountAggregateInput;
 
-    @Field(() => PipelineStageCountAggregateInput, {nullable:true})
-    _count?: PipelineStageCountAggregateInput;
+  @Field(() => PipelineStageMinAggregateInput, { nullable: true })
+  _min?: PipelineStageMinAggregateInput;
 
-    @Field(() => PipelineStageMinAggregateInput, {nullable:true})
-    _min?: PipelineStageMinAggregateInput;
-
-    @Field(() => PipelineStageMaxAggregateInput, {nullable:true})
-    _max?: PipelineStageMaxAggregateInput;
+  @Field(() => PipelineStageMaxAggregateInput, { nullable: true })
+  _max?: PipelineStageMaxAggregateInput;
 }

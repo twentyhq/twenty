@@ -8,37 +8,36 @@ import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-
 
 @InputType()
 export class CommentOrderByWithRelationInput {
+  @Field(() => SortOrder, { nullable: true })
+  id?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    id?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  createdAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  updatedAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  deletedAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  body?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    body?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  authorId?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    authorId?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  commentThreadId?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    commentThreadId?: keyof typeof SortOrder;
+  @HideField()
+  workspaceId?: keyof typeof SortOrder;
 
-    @HideField()
-    workspaceId?: keyof typeof SortOrder;
+  @Field(() => UserOrderByWithRelationInput, { nullable: true })
+  author?: UserOrderByWithRelationInput;
 
-    @Field(() => UserOrderByWithRelationInput, {nullable:true})
-    author?: UserOrderByWithRelationInput;
+  @Field(() => CommentThreadOrderByWithRelationInput, { nullable: true })
+  commentThread?: CommentThreadOrderByWithRelationInput;
 
-    @Field(() => CommentThreadOrderByWithRelationInput, {nullable:true})
-    commentThread?: CommentThreadOrderByWithRelationInput;
-
-    @HideField()
-    workspace?: WorkspaceOrderByWithRelationInput;
+  @HideField()
+  workspace?: WorkspaceOrderByWithRelationInput;
 }

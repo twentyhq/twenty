@@ -6,12 +6,11 @@ import { CompanyUpdateWithoutAccountOwnerInput } from './company-update-without-
 
 @InputType()
 export class CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput {
+  @Field(() => CompanyWhereUniqueInput, { nullable: false })
+  @Type(() => CompanyWhereUniqueInput)
+  where!: CompanyWhereUniqueInput;
 
-    @Field(() => CompanyWhereUniqueInput, {nullable:false})
-    @Type(() => CompanyWhereUniqueInput)
-    where!: CompanyWhereUniqueInput;
-
-    @Field(() => CompanyUpdateWithoutAccountOwnerInput, {nullable:false})
-    @Type(() => CompanyUpdateWithoutAccountOwnerInput)
-    data!: CompanyUpdateWithoutAccountOwnerInput;
+  @Field(() => CompanyUpdateWithoutAccountOwnerInput, { nullable: false })
+  @Type(() => CompanyUpdateWithoutAccountOwnerInput)
+  data!: CompanyUpdateWithoutAccountOwnerInput;
 }

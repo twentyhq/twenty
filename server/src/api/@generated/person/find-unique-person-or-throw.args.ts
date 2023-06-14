@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class FindUniquePersonOrThrowArgs {
-
-    @Field(() => PersonWhereUniqueInput, {nullable:false})
-    @Type(() => PersonWhereUniqueInput)
-    where!: PersonWhereUniqueInput;
+  @Field(() => PersonWhereUniqueInput, { nullable: false })
+  @Type(() => PersonWhereUniqueInput)
+  where!: PersonWhereUniqueInput;
 }

@@ -8,20 +8,19 @@ import { CommentWhereUniqueInput } from './comment-where-unique.input';
 
 @InputType()
 export class CommentUncheckedCreateNestedManyWithoutAuthorInput {
+  @Field(() => [CommentCreateWithoutAuthorInput], { nullable: true })
+  @Type(() => CommentCreateWithoutAuthorInput)
+  create?: Array<CommentCreateWithoutAuthorInput>;
 
-    @Field(() => [CommentCreateWithoutAuthorInput], {nullable:true})
-    @Type(() => CommentCreateWithoutAuthorInput)
-    create?: Array<CommentCreateWithoutAuthorInput>;
+  @Field(() => [CommentCreateOrConnectWithoutAuthorInput], { nullable: true })
+  @Type(() => CommentCreateOrConnectWithoutAuthorInput)
+  connectOrCreate?: Array<CommentCreateOrConnectWithoutAuthorInput>;
 
-    @Field(() => [CommentCreateOrConnectWithoutAuthorInput], {nullable:true})
-    @Type(() => CommentCreateOrConnectWithoutAuthorInput)
-    connectOrCreate?: Array<CommentCreateOrConnectWithoutAuthorInput>;
+  @Field(() => CommentCreateManyAuthorInputEnvelope, { nullable: true })
+  @Type(() => CommentCreateManyAuthorInputEnvelope)
+  createMany?: CommentCreateManyAuthorInputEnvelope;
 
-    @Field(() => CommentCreateManyAuthorInputEnvelope, {nullable:true})
-    @Type(() => CommentCreateManyAuthorInputEnvelope)
-    createMany?: CommentCreateManyAuthorInputEnvelope;
-
-    @Field(() => [CommentWhereUniqueInput], {nullable:true})
-    @Type(() => CommentWhereUniqueInput)
-    connect?: Array<CommentWhereUniqueInput>;
+  @Field(() => [CommentWhereUniqueInput], { nullable: true })
+  @Type(() => CommentWhereUniqueInput)
+  connect?: Array<CommentWhereUniqueInput>;
 }

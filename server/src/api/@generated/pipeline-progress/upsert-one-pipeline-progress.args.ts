@@ -7,16 +7,15 @@ import { PipelineProgressUpdateInput } from './pipeline-progress-update.input';
 
 @ArgsType()
 export class UpsertOnePipelineProgressArgs {
+  @Field(() => PipelineProgressWhereUniqueInput, { nullable: false })
+  @Type(() => PipelineProgressWhereUniqueInput)
+  where!: PipelineProgressWhereUniqueInput;
 
-    @Field(() => PipelineProgressWhereUniqueInput, {nullable:false})
-    @Type(() => PipelineProgressWhereUniqueInput)
-    where!: PipelineProgressWhereUniqueInput;
+  @Field(() => PipelineProgressCreateInput, { nullable: false })
+  @Type(() => PipelineProgressCreateInput)
+  create!: PipelineProgressCreateInput;
 
-    @Field(() => PipelineProgressCreateInput, {nullable:false})
-    @Type(() => PipelineProgressCreateInput)
-    create!: PipelineProgressCreateInput;
-
-    @Field(() => PipelineProgressUpdateInput, {nullable:false})
-    @Type(() => PipelineProgressUpdateInput)
-    update!: PipelineProgressUpdateInput;
+  @Field(() => PipelineProgressUpdateInput, { nullable: false })
+  @Type(() => PipelineProgressUpdateInput)
+  update!: PipelineProgressUpdateInput;
 }

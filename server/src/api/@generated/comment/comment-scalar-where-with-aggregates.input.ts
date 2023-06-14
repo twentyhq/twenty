@@ -7,37 +7,36 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CommentScalarWhereWithAggregatesInput {
+  @Field(() => [CommentScalarWhereWithAggregatesInput], { nullable: true })
+  AND?: Array<CommentScalarWhereWithAggregatesInput>;
 
-    @Field(() => [CommentScalarWhereWithAggregatesInput], {nullable:true})
-    AND?: Array<CommentScalarWhereWithAggregatesInput>;
+  @Field(() => [CommentScalarWhereWithAggregatesInput], { nullable: true })
+  OR?: Array<CommentScalarWhereWithAggregatesInput>;
 
-    @Field(() => [CommentScalarWhereWithAggregatesInput], {nullable:true})
-    OR?: Array<CommentScalarWhereWithAggregatesInput>;
+  @Field(() => [CommentScalarWhereWithAggregatesInput], { nullable: true })
+  NOT?: Array<CommentScalarWhereWithAggregatesInput>;
 
-    @Field(() => [CommentScalarWhereWithAggregatesInput], {nullable:true})
-    NOT?: Array<CommentScalarWhereWithAggregatesInput>;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  id?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    id?: StringWithAggregatesFilter;
+  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
+  createdAt?: DateTimeWithAggregatesFilter;
 
-    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
-    createdAt?: DateTimeWithAggregatesFilter;
+  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
+  updatedAt?: DateTimeWithAggregatesFilter;
 
-    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
-    updatedAt?: DateTimeWithAggregatesFilter;
+  @Field(() => DateTimeNullableWithAggregatesFilter, { nullable: true })
+  deletedAt?: DateTimeNullableWithAggregatesFilter;
 
-    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
-    deletedAt?: DateTimeNullableWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  body?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    body?: StringWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  authorId?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    authorId?: StringWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  commentThreadId?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    commentThreadId?: StringWithAggregatesFilter;
-
-    @HideField()
-    workspaceId?: StringWithAggregatesFilter;
+  @HideField()
+  workspaceId?: StringWithAggregatesFilter;
 }

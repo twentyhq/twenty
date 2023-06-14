@@ -12,48 +12,53 @@ import { PersonScalarWhereInput } from './person-scalar-where.input';
 
 @InputType()
 export class PersonUncheckedUpdateManyWithoutCompanyNestedInput {
+  @Field(() => [PersonCreateWithoutCompanyInput], { nullable: true })
+  @Type(() => PersonCreateWithoutCompanyInput)
+  create?: Array<PersonCreateWithoutCompanyInput>;
 
-    @Field(() => [PersonCreateWithoutCompanyInput], {nullable:true})
-    @Type(() => PersonCreateWithoutCompanyInput)
-    create?: Array<PersonCreateWithoutCompanyInput>;
+  @Field(() => [PersonCreateOrConnectWithoutCompanyInput], { nullable: true })
+  @Type(() => PersonCreateOrConnectWithoutCompanyInput)
+  connectOrCreate?: Array<PersonCreateOrConnectWithoutCompanyInput>;
 
-    @Field(() => [PersonCreateOrConnectWithoutCompanyInput], {nullable:true})
-    @Type(() => PersonCreateOrConnectWithoutCompanyInput)
-    connectOrCreate?: Array<PersonCreateOrConnectWithoutCompanyInput>;
+  @Field(() => [PersonUpsertWithWhereUniqueWithoutCompanyInput], {
+    nullable: true,
+  })
+  @Type(() => PersonUpsertWithWhereUniqueWithoutCompanyInput)
+  upsert?: Array<PersonUpsertWithWhereUniqueWithoutCompanyInput>;
 
-    @Field(() => [PersonUpsertWithWhereUniqueWithoutCompanyInput], {nullable:true})
-    @Type(() => PersonUpsertWithWhereUniqueWithoutCompanyInput)
-    upsert?: Array<PersonUpsertWithWhereUniqueWithoutCompanyInput>;
+  @Field(() => PersonCreateManyCompanyInputEnvelope, { nullable: true })
+  @Type(() => PersonCreateManyCompanyInputEnvelope)
+  createMany?: PersonCreateManyCompanyInputEnvelope;
 
-    @Field(() => PersonCreateManyCompanyInputEnvelope, {nullable:true})
-    @Type(() => PersonCreateManyCompanyInputEnvelope)
-    createMany?: PersonCreateManyCompanyInputEnvelope;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  set?: Array<PersonWhereUniqueInput>;
 
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    set?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  disconnect?: Array<PersonWhereUniqueInput>;
 
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    disconnect?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  delete?: Array<PersonWhereUniqueInput>;
 
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    delete?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  connect?: Array<PersonWhereUniqueInput>;
 
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    connect?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonUpdateWithWhereUniqueWithoutCompanyInput], {
+    nullable: true,
+  })
+  @Type(() => PersonUpdateWithWhereUniqueWithoutCompanyInput)
+  update?: Array<PersonUpdateWithWhereUniqueWithoutCompanyInput>;
 
-    @Field(() => [PersonUpdateWithWhereUniqueWithoutCompanyInput], {nullable:true})
-    @Type(() => PersonUpdateWithWhereUniqueWithoutCompanyInput)
-    update?: Array<PersonUpdateWithWhereUniqueWithoutCompanyInput>;
+  @Field(() => [PersonUpdateManyWithWhereWithoutCompanyInput], {
+    nullable: true,
+  })
+  @Type(() => PersonUpdateManyWithWhereWithoutCompanyInput)
+  updateMany?: Array<PersonUpdateManyWithWhereWithoutCompanyInput>;
 
-    @Field(() => [PersonUpdateManyWithWhereWithoutCompanyInput], {nullable:true})
-    @Type(() => PersonUpdateManyWithWhereWithoutCompanyInput)
-    updateMany?: Array<PersonUpdateManyWithWhereWithoutCompanyInput>;
-
-    @Field(() => [PersonScalarWhereInput], {nullable:true})
-    @Type(() => PersonScalarWhereInput)
-    deleteMany?: Array<PersonScalarWhereInput>;
+  @Field(() => [PersonScalarWhereInput], { nullable: true })
+  @Type(() => PersonScalarWhereInput)
+  deleteMany?: Array<PersonScalarWhereInput>;
 }

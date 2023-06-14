@@ -9,24 +9,25 @@ import { WorkspaceUpdateWithoutWorkspaceMemberInput } from './workspace-update-w
 
 @InputType()
 export class WorkspaceUpdateOneRequiredWithoutWorkspaceMemberNestedInput {
+  @Field(() => WorkspaceCreateWithoutWorkspaceMemberInput, { nullable: true })
+  @Type(() => WorkspaceCreateWithoutWorkspaceMemberInput)
+  create?: WorkspaceCreateWithoutWorkspaceMemberInput;
 
-    @Field(() => WorkspaceCreateWithoutWorkspaceMemberInput, {nullable:true})
-    @Type(() => WorkspaceCreateWithoutWorkspaceMemberInput)
-    create?: WorkspaceCreateWithoutWorkspaceMemberInput;
+  @Field(() => WorkspaceCreateOrConnectWithoutWorkspaceMemberInput, {
+    nullable: true,
+  })
+  @Type(() => WorkspaceCreateOrConnectWithoutWorkspaceMemberInput)
+  connectOrCreate?: WorkspaceCreateOrConnectWithoutWorkspaceMemberInput;
 
-    @Field(() => WorkspaceCreateOrConnectWithoutWorkspaceMemberInput, {nullable:true})
-    @Type(() => WorkspaceCreateOrConnectWithoutWorkspaceMemberInput)
-    connectOrCreate?: WorkspaceCreateOrConnectWithoutWorkspaceMemberInput;
+  @Field(() => WorkspaceUpsertWithoutWorkspaceMemberInput, { nullable: true })
+  @Type(() => WorkspaceUpsertWithoutWorkspaceMemberInput)
+  upsert?: WorkspaceUpsertWithoutWorkspaceMemberInput;
 
-    @Field(() => WorkspaceUpsertWithoutWorkspaceMemberInput, {nullable:true})
-    @Type(() => WorkspaceUpsertWithoutWorkspaceMemberInput)
-    upsert?: WorkspaceUpsertWithoutWorkspaceMemberInput;
+  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
+  @Type(() => WorkspaceWhereUniqueInput)
+  connect?: WorkspaceWhereUniqueInput;
 
-    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
-    @Type(() => WorkspaceWhereUniqueInput)
-    connect?: WorkspaceWhereUniqueInput;
-
-    @Field(() => WorkspaceUpdateWithoutWorkspaceMemberInput, {nullable:true})
-    @Type(() => WorkspaceUpdateWithoutWorkspaceMemberInput)
-    update?: WorkspaceUpdateWithoutWorkspaceMemberInput;
+  @Field(() => WorkspaceUpdateWithoutWorkspaceMemberInput, { nullable: true })
+  @Type(() => WorkspaceUpdateWithoutWorkspaceMemberInput)
+  update?: WorkspaceUpdateWithoutWorkspaceMemberInput;
 }

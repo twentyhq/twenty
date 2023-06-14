@@ -6,12 +6,13 @@ import { PipelineStageCreateWithoutPipelineProgressesInput } from './pipeline-st
 
 @InputType()
 export class PipelineStageCreateOrConnectWithoutPipelineProgressesInput {
+  @Field(() => PipelineStageWhereUniqueInput, { nullable: false })
+  @Type(() => PipelineStageWhereUniqueInput)
+  where!: PipelineStageWhereUniqueInput;
 
-    @Field(() => PipelineStageWhereUniqueInput, {nullable:false})
-    @Type(() => PipelineStageWhereUniqueInput)
-    where!: PipelineStageWhereUniqueInput;
-
-    @Field(() => PipelineStageCreateWithoutPipelineProgressesInput, {nullable:false})
-    @Type(() => PipelineStageCreateWithoutPipelineProgressesInput)
-    create!: PipelineStageCreateWithoutPipelineProgressesInput;
+  @Field(() => PipelineStageCreateWithoutPipelineProgressesInput, {
+    nullable: false,
+  })
+  @Type(() => PipelineStageCreateWithoutPipelineProgressesInput)
+  create!: PipelineStageCreateWithoutPipelineProgressesInput;
 }

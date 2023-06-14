@@ -7,31 +7,36 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberScalarWhereWithAggregatesInput {
+  @Field(() => [WorkspaceMemberScalarWhereWithAggregatesInput], {
+    nullable: true,
+  })
+  AND?: Array<WorkspaceMemberScalarWhereWithAggregatesInput>;
 
-    @Field(() => [WorkspaceMemberScalarWhereWithAggregatesInput], {nullable:true})
-    AND?: Array<WorkspaceMemberScalarWhereWithAggregatesInput>;
+  @Field(() => [WorkspaceMemberScalarWhereWithAggregatesInput], {
+    nullable: true,
+  })
+  OR?: Array<WorkspaceMemberScalarWhereWithAggregatesInput>;
 
-    @Field(() => [WorkspaceMemberScalarWhereWithAggregatesInput], {nullable:true})
-    OR?: Array<WorkspaceMemberScalarWhereWithAggregatesInput>;
+  @Field(() => [WorkspaceMemberScalarWhereWithAggregatesInput], {
+    nullable: true,
+  })
+  NOT?: Array<WorkspaceMemberScalarWhereWithAggregatesInput>;
 
-    @Field(() => [WorkspaceMemberScalarWhereWithAggregatesInput], {nullable:true})
-    NOT?: Array<WorkspaceMemberScalarWhereWithAggregatesInput>;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  id?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    id?: StringWithAggregatesFilter;
+  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
+  createdAt?: DateTimeWithAggregatesFilter;
 
-    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
-    createdAt?: DateTimeWithAggregatesFilter;
+  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
+  updatedAt?: DateTimeWithAggregatesFilter;
 
-    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
-    updatedAt?: DateTimeWithAggregatesFilter;
+  @Field(() => DateTimeNullableWithAggregatesFilter, { nullable: true })
+  deletedAt?: DateTimeNullableWithAggregatesFilter;
 
-    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
-    deletedAt?: DateTimeNullableWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  userId?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    userId?: StringWithAggregatesFilter;
-
-    @HideField()
-    workspaceId?: StringWithAggregatesFilter;
+  @HideField()
+  workspaceId?: StringWithAggregatesFilter;
 }

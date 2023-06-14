@@ -9,58 +9,57 @@ import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-b
 
 @InputType()
 export class UserOrderByWithRelationInput {
+  @Field(() => SortOrder, { nullable: true })
+  id?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    id?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  createdAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  updatedAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  deletedAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  lastSeen?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    lastSeen?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  disabled?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    disabled?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  displayName?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    displayName?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  email?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    email?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  avatarUrl?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    avatarUrl?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  locale?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    locale?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  phoneNumber?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    phoneNumber?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  passwordHash?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    passwordHash?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  emailVerified?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    emailVerified?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  metadata?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    metadata?: keyof typeof SortOrder;
+  @HideField()
+  workspaceMember?: WorkspaceMemberOrderByWithRelationInput;
 
-    @HideField()
-    workspaceMember?: WorkspaceMemberOrderByWithRelationInput;
+  @Field(() => CompanyOrderByRelationAggregateInput, { nullable: true })
+  companies?: CompanyOrderByRelationAggregateInput;
 
-    @Field(() => CompanyOrderByRelationAggregateInput, {nullable:true})
-    companies?: CompanyOrderByRelationAggregateInput;
+  @HideField()
+  refreshTokens?: RefreshTokenOrderByRelationAggregateInput;
 
-    @HideField()
-    refreshTokens?: RefreshTokenOrderByRelationAggregateInput;
-
-    @Field(() => CommentOrderByRelationAggregateInput, {nullable:true})
-    comments?: CommentOrderByRelationAggregateInput;
+  @Field(() => CommentOrderByRelationAggregateInput, { nullable: true })
+  comments?: CommentOrderByRelationAggregateInput;
 }

@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class FindUniqueRefreshTokenArgs {
-
-    @Field(() => RefreshTokenWhereUniqueInput, {nullable:false})
-    @Type(() => RefreshTokenWhereUniqueInput)
-    where!: RefreshTokenWhereUniqueInput;
+  @Field(() => RefreshTokenWhereUniqueInput, { nullable: false })
+  @Type(() => RefreshTokenWhereUniqueInput)
+  where!: RefreshTokenWhereUniqueInput;
 }

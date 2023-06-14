@@ -9,17 +9,18 @@ import { CommentThreadTargetWhereUniqueInput } from './comment-thread-target-whe
 
 @InputType()
 export class CommentThreadTargetCreateNestedManyWithoutCommentThreadInput {
+  @HideField()
+  create?: Array<CommentThreadTargetCreateWithoutCommentThreadInput>;
 
-    @HideField()
-    create?: Array<CommentThreadTargetCreateWithoutCommentThreadInput>;
+  @HideField()
+  connectOrCreate?: Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>;
 
-    @HideField()
-    connectOrCreate?: Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>;
+  @Field(() => CommentThreadTargetCreateManyCommentThreadInputEnvelope, {
+    nullable: true,
+  })
+  @Type(() => CommentThreadTargetCreateManyCommentThreadInputEnvelope)
+  createMany?: CommentThreadTargetCreateManyCommentThreadInputEnvelope;
 
-    @Field(() => CommentThreadTargetCreateManyCommentThreadInputEnvelope, {nullable:true})
-    @Type(() => CommentThreadTargetCreateManyCommentThreadInputEnvelope)
-    createMany?: CommentThreadTargetCreateManyCommentThreadInputEnvelope;
-
-    @HideField()
-    connect?: Array<CommentThreadTargetWhereUniqueInput>;
+  @HideField()
+  connect?: Array<CommentThreadTargetWhereUniqueInput>;
 }

@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class DeleteManyRefreshTokenArgs {
-
-    @Field(() => RefreshTokenWhereInput, {nullable:true})
-    @Type(() => RefreshTokenWhereInput)
-    where?: RefreshTokenWhereInput;
+  @Field(() => RefreshTokenWhereInput, { nullable: true })
+  @Type(() => RefreshTokenWhereInput)
+  where?: RefreshTokenWhereInput;
 }

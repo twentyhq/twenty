@@ -8,14 +8,13 @@ import { Type } from 'class-transformer';
 
 @InputType()
 export class CompanyCreateNestedOneWithoutPeopleInput {
+  @HideField()
+  create?: CompanyCreateWithoutPeopleInput;
 
-    @HideField()
-    create?: CompanyCreateWithoutPeopleInput;
+  @HideField()
+  connectOrCreate?: CompanyCreateOrConnectWithoutPeopleInput;
 
-    @HideField()
-    connectOrCreate?: CompanyCreateOrConnectWithoutPeopleInput;
-
-    @Field(() => CompanyWhereUniqueInput, {nullable:true})
-    @Type(() => CompanyWhereUniqueInput)
-    connect?: CompanyWhereUniqueInput;
+  @Field(() => CompanyWhereUniqueInput, { nullable: true })
+  @Type(() => CompanyWhereUniqueInput)
+  connect?: CompanyWhereUniqueInput;
 }

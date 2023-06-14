@@ -6,12 +6,11 @@ import { RefreshTokenWhereUniqueInput } from './refresh-token-where-unique.input
 
 @ArgsType()
 export class UpdateOneRefreshTokenArgs {
+  @Field(() => RefreshTokenUpdateInput, { nullable: false })
+  @Type(() => RefreshTokenUpdateInput)
+  data!: RefreshTokenUpdateInput;
 
-    @Field(() => RefreshTokenUpdateInput, {nullable:false})
-    @Type(() => RefreshTokenUpdateInput)
-    data!: RefreshTokenUpdateInput;
-
-    @Field(() => RefreshTokenWhereUniqueInput, {nullable:false})
-    @Type(() => RefreshTokenWhereUniqueInput)
-    where!: RefreshTokenWhereUniqueInput;
+  @Field(() => RefreshTokenWhereUniqueInput, { nullable: false })
+  @Type(() => RefreshTokenWhereUniqueInput)
+  where!: RefreshTokenWhereUniqueInput;
 }

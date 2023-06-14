@@ -7,40 +7,45 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineStageScalarWhereWithAggregatesInput {
+  @Field(() => [PipelineStageScalarWhereWithAggregatesInput], {
+    nullable: true,
+  })
+  AND?: Array<PipelineStageScalarWhereWithAggregatesInput>;
 
-    @Field(() => [PipelineStageScalarWhereWithAggregatesInput], {nullable:true})
-    AND?: Array<PipelineStageScalarWhereWithAggregatesInput>;
+  @Field(() => [PipelineStageScalarWhereWithAggregatesInput], {
+    nullable: true,
+  })
+  OR?: Array<PipelineStageScalarWhereWithAggregatesInput>;
 
-    @Field(() => [PipelineStageScalarWhereWithAggregatesInput], {nullable:true})
-    OR?: Array<PipelineStageScalarWhereWithAggregatesInput>;
+  @Field(() => [PipelineStageScalarWhereWithAggregatesInput], {
+    nullable: true,
+  })
+  NOT?: Array<PipelineStageScalarWhereWithAggregatesInput>;
 
-    @Field(() => [PipelineStageScalarWhereWithAggregatesInput], {nullable:true})
-    NOT?: Array<PipelineStageScalarWhereWithAggregatesInput>;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  id?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    id?: StringWithAggregatesFilter;
+  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
+  createdAt?: DateTimeWithAggregatesFilter;
 
-    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
-    createdAt?: DateTimeWithAggregatesFilter;
+  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
+  updatedAt?: DateTimeWithAggregatesFilter;
 
-    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
-    updatedAt?: DateTimeWithAggregatesFilter;
+  @Field(() => DateTimeNullableWithAggregatesFilter, { nullable: true })
+  deletedAt?: DateTimeNullableWithAggregatesFilter;
 
-    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
-    deletedAt?: DateTimeNullableWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  name?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    name?: StringWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  type?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    type?: StringWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  color?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    color?: StringWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  pipelineId?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    pipelineId?: StringWithAggregatesFilter;
-
-    @HideField()
-    workspaceId?: StringWithAggregatesFilter;
+  @HideField()
+  workspaceId?: StringWithAggregatesFilter;
 }

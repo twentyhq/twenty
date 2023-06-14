@@ -6,12 +6,11 @@ import { CompanyWhereInput } from './company-where.input';
 
 @ArgsType()
 export class UpdateManyCompanyArgs {
+  @Field(() => CompanyUpdateManyMutationInput, { nullable: false })
+  @Type(() => CompanyUpdateManyMutationInput)
+  data!: CompanyUpdateManyMutationInput;
 
-    @Field(() => CompanyUpdateManyMutationInput, {nullable:false})
-    @Type(() => CompanyUpdateManyMutationInput)
-    data!: CompanyUpdateManyMutationInput;
-
-    @Field(() => CompanyWhereInput, {nullable:true})
-    @Type(() => CompanyWhereInput)
-    where?: CompanyWhereInput;
+  @Field(() => CompanyWhereInput, { nullable: true })
+  @Type(() => CompanyWhereInput)
+  where?: CompanyWhereInput;
 }

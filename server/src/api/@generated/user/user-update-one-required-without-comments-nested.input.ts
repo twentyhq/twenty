@@ -9,24 +9,23 @@ import { UserUpdateWithoutCommentsInput } from './user-update-without-comments.i
 
 @InputType()
 export class UserUpdateOneRequiredWithoutCommentsNestedInput {
+  @Field(() => UserCreateWithoutCommentsInput, { nullable: true })
+  @Type(() => UserCreateWithoutCommentsInput)
+  create?: UserCreateWithoutCommentsInput;
 
-    @Field(() => UserCreateWithoutCommentsInput, {nullable:true})
-    @Type(() => UserCreateWithoutCommentsInput)
-    create?: UserCreateWithoutCommentsInput;
+  @Field(() => UserCreateOrConnectWithoutCommentsInput, { nullable: true })
+  @Type(() => UserCreateOrConnectWithoutCommentsInput)
+  connectOrCreate?: UserCreateOrConnectWithoutCommentsInput;
 
-    @Field(() => UserCreateOrConnectWithoutCommentsInput, {nullable:true})
-    @Type(() => UserCreateOrConnectWithoutCommentsInput)
-    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput;
+  @Field(() => UserUpsertWithoutCommentsInput, { nullable: true })
+  @Type(() => UserUpsertWithoutCommentsInput)
+  upsert?: UserUpsertWithoutCommentsInput;
 
-    @Field(() => UserUpsertWithoutCommentsInput, {nullable:true})
-    @Type(() => UserUpsertWithoutCommentsInput)
-    upsert?: UserUpsertWithoutCommentsInput;
+  @Field(() => UserWhereUniqueInput, { nullable: true })
+  @Type(() => UserWhereUniqueInput)
+  connect?: UserWhereUniqueInput;
 
-    @Field(() => UserWhereUniqueInput, {nullable:true})
-    @Type(() => UserWhereUniqueInput)
-    connect?: UserWhereUniqueInput;
-
-    @Field(() => UserUpdateWithoutCommentsInput, {nullable:true})
-    @Type(() => UserUpdateWithoutCommentsInput)
-    update?: UserUpdateWithoutCommentsInput;
+  @Field(() => UserUpdateWithoutCommentsInput, { nullable: true })
+  @Type(() => UserUpdateWithoutCommentsInput)
+  update?: UserUpdateWithoutCommentsInput;
 }

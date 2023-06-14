@@ -9,23 +9,22 @@ import { PipelineProgressScalarFieldEnum } from './pipeline-progress-scalar-fiel
 
 @ArgsType()
 export class FindFirstPipelineProgressOrThrowArgs {
+  @Field(() => PipelineProgressWhereInput, { nullable: true })
+  @Type(() => PipelineProgressWhereInput)
+  where?: PipelineProgressWhereInput;
 
-    @Field(() => PipelineProgressWhereInput, {nullable:true})
-    @Type(() => PipelineProgressWhereInput)
-    where?: PipelineProgressWhereInput;
+  @Field(() => [PipelineProgressOrderByWithRelationInput], { nullable: true })
+  orderBy?: Array<PipelineProgressOrderByWithRelationInput>;
 
-    @Field(() => [PipelineProgressOrderByWithRelationInput], {nullable:true})
-    orderBy?: Array<PipelineProgressOrderByWithRelationInput>;
+  @Field(() => PipelineProgressWhereUniqueInput, { nullable: true })
+  cursor?: PipelineProgressWhereUniqueInput;
 
-    @Field(() => PipelineProgressWhereUniqueInput, {nullable:true})
-    cursor?: PipelineProgressWhereUniqueInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
-
-    @Field(() => [PipelineProgressScalarFieldEnum], {nullable:true})
-    distinct?: Array<keyof typeof PipelineProgressScalarFieldEnum>;
+  @Field(() => [PipelineProgressScalarFieldEnum], { nullable: true })
+  distinct?: Array<keyof typeof PipelineProgressScalarFieldEnum>;
 }

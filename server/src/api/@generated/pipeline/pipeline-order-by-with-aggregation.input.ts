@@ -8,34 +8,33 @@ import { PipelineMinOrderByAggregateInput } from './pipeline-min-order-by-aggreg
 
 @InputType()
 export class PipelineOrderByWithAggregationInput {
+  @Field(() => SortOrder, { nullable: true })
+  id?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    id?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  createdAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  updatedAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  deletedAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  name?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    name?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  icon?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    icon?: keyof typeof SortOrder;
+  @HideField()
+  workspaceId?: keyof typeof SortOrder;
 
-    @HideField()
-    workspaceId?: keyof typeof SortOrder;
+  @Field(() => PipelineCountOrderByAggregateInput, { nullable: true })
+  _count?: PipelineCountOrderByAggregateInput;
 
-    @Field(() => PipelineCountOrderByAggregateInput, {nullable:true})
-    _count?: PipelineCountOrderByAggregateInput;
+  @Field(() => PipelineMaxOrderByAggregateInput, { nullable: true })
+  _max?: PipelineMaxOrderByAggregateInput;
 
-    @Field(() => PipelineMaxOrderByAggregateInput, {nullable:true})
-    _max?: PipelineMaxOrderByAggregateInput;
-
-    @Field(() => PipelineMinOrderByAggregateInput, {nullable:true})
-    _min?: PipelineMinOrderByAggregateInput;
+  @Field(() => PipelineMinOrderByAggregateInput, { nullable: true })
+  _min?: PipelineMinOrderByAggregateInput;
 }

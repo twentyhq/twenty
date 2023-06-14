@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class DeleteManyCompanyArgs {
-
-    @Field(() => CompanyWhereInput, {nullable:true})
-    @Type(() => CompanyWhereInput)
-    where?: CompanyWhereInput;
+  @Field(() => CompanyWhereInput, { nullable: true })
+  @Type(() => CompanyWhereInput)
+  where?: CompanyWhereInput;
 }

@@ -9,43 +9,42 @@ import { PipelineStageRelationFilter } from '../pipeline-stage/pipeline-stage-re
 
 @InputType()
 export class PipelineProgressWhereInput {
+  @Field(() => [PipelineProgressWhereInput], { nullable: true })
+  AND?: Array<PipelineProgressWhereInput>;
 
-    @Field(() => [PipelineProgressWhereInput], {nullable:true})
-    AND?: Array<PipelineProgressWhereInput>;
+  @Field(() => [PipelineProgressWhereInput], { nullable: true })
+  OR?: Array<PipelineProgressWhereInput>;
 
-    @Field(() => [PipelineProgressWhereInput], {nullable:true})
-    OR?: Array<PipelineProgressWhereInput>;
+  @Field(() => [PipelineProgressWhereInput], { nullable: true })
+  NOT?: Array<PipelineProgressWhereInput>;
 
-    @Field(() => [PipelineProgressWhereInput], {nullable:true})
-    NOT?: Array<PipelineProgressWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @Field(() => StringFilter, { nullable: true })
+  pipelineId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    pipelineId?: StringFilter;
+  @Field(() => StringFilter, { nullable: true })
+  pipelineStageId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    pipelineStageId?: StringFilter;
+  @Field(() => EnumPipelineProgressableTypeFilter, { nullable: true })
+  associableType?: EnumPipelineProgressableTypeFilter;
 
-    @Field(() => EnumPipelineProgressableTypeFilter, {nullable:true})
-    associableType?: EnumPipelineProgressableTypeFilter;
+  @Field(() => StringFilter, { nullable: true })
+  associableId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    associableId?: StringFilter;
+  @Field(() => PipelineRelationFilter, { nullable: true })
+  pipeline?: PipelineRelationFilter;
 
-    @Field(() => PipelineRelationFilter, {nullable:true})
-    pipeline?: PipelineRelationFilter;
-
-    @Field(() => PipelineStageRelationFilter, {nullable:true})
-    pipelineStage?: PipelineStageRelationFilter;
+  @Field(() => PipelineStageRelationFilter, { nullable: true })
+  pipelineStage?: PipelineStageRelationFilter;
 }

@@ -12,48 +12,53 @@ import { PersonScalarWhereInput } from './person-scalar-where.input';
 
 @InputType()
 export class PersonUncheckedUpdateManyWithoutWorkspaceNestedInput {
+  @Field(() => [PersonCreateWithoutWorkspaceInput], { nullable: true })
+  @Type(() => PersonCreateWithoutWorkspaceInput)
+  create?: Array<PersonCreateWithoutWorkspaceInput>;
 
-    @Field(() => [PersonCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PersonCreateWithoutWorkspaceInput)
-    create?: Array<PersonCreateWithoutWorkspaceInput>;
+  @Field(() => [PersonCreateOrConnectWithoutWorkspaceInput], { nullable: true })
+  @Type(() => PersonCreateOrConnectWithoutWorkspaceInput)
+  connectOrCreate?: Array<PersonCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => [PersonCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PersonCreateOrConnectWithoutWorkspaceInput)
-    connectOrCreate?: Array<PersonCreateOrConnectWithoutWorkspaceInput>;
+  @Field(() => [PersonUpsertWithWhereUniqueWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => PersonUpsertWithWhereUniqueWithoutWorkspaceInput)
+  upsert?: Array<PersonUpsertWithWhereUniqueWithoutWorkspaceInput>;
 
-    @Field(() => [PersonUpsertWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PersonUpsertWithWhereUniqueWithoutWorkspaceInput)
-    upsert?: Array<PersonUpsertWithWhereUniqueWithoutWorkspaceInput>;
+  @Field(() => PersonCreateManyWorkspaceInputEnvelope, { nullable: true })
+  @Type(() => PersonCreateManyWorkspaceInputEnvelope)
+  createMany?: PersonCreateManyWorkspaceInputEnvelope;
 
-    @Field(() => PersonCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => PersonCreateManyWorkspaceInputEnvelope)
-    createMany?: PersonCreateManyWorkspaceInputEnvelope;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  set?: Array<PersonWhereUniqueInput>;
 
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    set?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  disconnect?: Array<PersonWhereUniqueInput>;
 
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    disconnect?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  delete?: Array<PersonWhereUniqueInput>;
 
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    delete?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  connect?: Array<PersonWhereUniqueInput>;
 
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    connect?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonUpdateWithWhereUniqueWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => PersonUpdateWithWhereUniqueWithoutWorkspaceInput)
+  update?: Array<PersonUpdateWithWhereUniqueWithoutWorkspaceInput>;
 
-    @Field(() => [PersonUpdateWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PersonUpdateWithWhereUniqueWithoutWorkspaceInput)
-    update?: Array<PersonUpdateWithWhereUniqueWithoutWorkspaceInput>;
+  @Field(() => [PersonUpdateManyWithWhereWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => PersonUpdateManyWithWhereWithoutWorkspaceInput)
+  updateMany?: Array<PersonUpdateManyWithWhereWithoutWorkspaceInput>;
 
-    @Field(() => [PersonUpdateManyWithWhereWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PersonUpdateManyWithWhereWithoutWorkspaceInput)
-    updateMany?: Array<PersonUpdateManyWithWhereWithoutWorkspaceInput>;
-
-    @Field(() => [PersonScalarWhereInput], {nullable:true})
-    @Type(() => PersonScalarWhereInput)
-    deleteMany?: Array<PersonScalarWhereInput>;
+  @Field(() => [PersonScalarWhereInput], { nullable: true })
+  @Type(() => PersonScalarWhereInput)
+  deleteMany?: Array<PersonScalarWhereInput>;
 }

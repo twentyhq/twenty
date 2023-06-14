@@ -5,16 +5,15 @@ import { NestedEnumCommentableTypeFilter } from './nested-enum-commentable-type-
 
 @InputType()
 export class EnumCommentableTypeFilter {
+  @Field(() => CommentableType, { nullable: true })
+  equals?: keyof typeof CommentableType;
 
-    @Field(() => CommentableType, {nullable:true})
-    equals?: keyof typeof CommentableType;
+  @Field(() => [CommentableType], { nullable: true })
+  in?: Array<keyof typeof CommentableType>;
 
-    @Field(() => [CommentableType], {nullable:true})
-    in?: Array<keyof typeof CommentableType>;
+  @Field(() => [CommentableType], { nullable: true })
+  notIn?: Array<keyof typeof CommentableType>;
 
-    @Field(() => [CommentableType], {nullable:true})
-    notIn?: Array<keyof typeof CommentableType>;
-
-    @Field(() => NestedEnumCommentableTypeFilter, {nullable:true})
-    not?: NestedEnumCommentableTypeFilter;
+  @Field(() => NestedEnumCommentableTypeFilter, { nullable: true })
+  not?: NestedEnumCommentableTypeFilter;
 }

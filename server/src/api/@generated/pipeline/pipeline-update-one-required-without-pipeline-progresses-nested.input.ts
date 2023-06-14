@@ -9,24 +9,25 @@ import { PipelineUpdateWithoutPipelineProgressesInput } from './pipeline-update-
 
 @InputType()
 export class PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput {
+  @Field(() => PipelineCreateWithoutPipelineProgressesInput, { nullable: true })
+  @Type(() => PipelineCreateWithoutPipelineProgressesInput)
+  create?: PipelineCreateWithoutPipelineProgressesInput;
 
-    @Field(() => PipelineCreateWithoutPipelineProgressesInput, {nullable:true})
-    @Type(() => PipelineCreateWithoutPipelineProgressesInput)
-    create?: PipelineCreateWithoutPipelineProgressesInput;
+  @Field(() => PipelineCreateOrConnectWithoutPipelineProgressesInput, {
+    nullable: true,
+  })
+  @Type(() => PipelineCreateOrConnectWithoutPipelineProgressesInput)
+  connectOrCreate?: PipelineCreateOrConnectWithoutPipelineProgressesInput;
 
-    @Field(() => PipelineCreateOrConnectWithoutPipelineProgressesInput, {nullable:true})
-    @Type(() => PipelineCreateOrConnectWithoutPipelineProgressesInput)
-    connectOrCreate?: PipelineCreateOrConnectWithoutPipelineProgressesInput;
+  @Field(() => PipelineUpsertWithoutPipelineProgressesInput, { nullable: true })
+  @Type(() => PipelineUpsertWithoutPipelineProgressesInput)
+  upsert?: PipelineUpsertWithoutPipelineProgressesInput;
 
-    @Field(() => PipelineUpsertWithoutPipelineProgressesInput, {nullable:true})
-    @Type(() => PipelineUpsertWithoutPipelineProgressesInput)
-    upsert?: PipelineUpsertWithoutPipelineProgressesInput;
+  @Field(() => PipelineWhereUniqueInput, { nullable: true })
+  @Type(() => PipelineWhereUniqueInput)
+  connect?: PipelineWhereUniqueInput;
 
-    @Field(() => PipelineWhereUniqueInput, {nullable:true})
-    @Type(() => PipelineWhereUniqueInput)
-    connect?: PipelineWhereUniqueInput;
-
-    @Field(() => PipelineUpdateWithoutPipelineProgressesInput, {nullable:true})
-    @Type(() => PipelineUpdateWithoutPipelineProgressesInput)
-    update?: PipelineUpdateWithoutPipelineProgressesInput;
+  @Field(() => PipelineUpdateWithoutPipelineProgressesInput, { nullable: true })
+  @Type(() => PipelineUpdateWithoutPipelineProgressesInput)
+  update?: PipelineUpdateWithoutPipelineProgressesInput;
 }

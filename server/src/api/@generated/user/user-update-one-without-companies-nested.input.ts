@@ -10,26 +10,25 @@ import { UserUpdateWithoutCompaniesInput } from './user-update-without-companies
 
 @InputType()
 export class UserUpdateOneWithoutCompaniesNestedInput {
+  @HideField()
+  create?: UserCreateWithoutCompaniesInput;
 
-    @HideField()
-    create?: UserCreateWithoutCompaniesInput;
+  @HideField()
+  connectOrCreate?: UserCreateOrConnectWithoutCompaniesInput;
 
-    @HideField()
-    connectOrCreate?: UserCreateOrConnectWithoutCompaniesInput;
+  @HideField()
+  upsert?: UserUpsertWithoutCompaniesInput;
 
-    @HideField()
-    upsert?: UserUpsertWithoutCompaniesInput;
+  @HideField()
+  disconnect?: boolean;
 
-    @HideField()
-    disconnect?: boolean;
+  @HideField()
+  delete?: boolean;
 
-    @HideField()
-    delete?: boolean;
+  @Field(() => UserWhereUniqueInput, { nullable: true })
+  @Type(() => UserWhereUniqueInput)
+  connect?: UserWhereUniqueInput;
 
-    @Field(() => UserWhereUniqueInput, {nullable:true})
-    @Type(() => UserWhereUniqueInput)
-    connect?: UserWhereUniqueInput;
-
-    @HideField()
-    update?: UserUpdateWithoutCompaniesInput;
+  @HideField()
+  update?: UserUpdateWithoutCompaniesInput;
 }

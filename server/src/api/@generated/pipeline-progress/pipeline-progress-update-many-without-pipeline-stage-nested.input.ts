@@ -12,48 +12,61 @@ import { PipelineProgressScalarWhereInput } from './pipeline-progress-scalar-whe
 
 @InputType()
 export class PipelineProgressUpdateManyWithoutPipelineStageNestedInput {
+  @Field(() => [PipelineProgressCreateWithoutPipelineStageInput], {
+    nullable: true,
+  })
+  @Type(() => PipelineProgressCreateWithoutPipelineStageInput)
+  create?: Array<PipelineProgressCreateWithoutPipelineStageInput>;
 
-    @Field(() => [PipelineProgressCreateWithoutPipelineStageInput], {nullable:true})
-    @Type(() => PipelineProgressCreateWithoutPipelineStageInput)
-    create?: Array<PipelineProgressCreateWithoutPipelineStageInput>;
+  @Field(() => [PipelineProgressCreateOrConnectWithoutPipelineStageInput], {
+    nullable: true,
+  })
+  @Type(() => PipelineProgressCreateOrConnectWithoutPipelineStageInput)
+  connectOrCreate?: Array<PipelineProgressCreateOrConnectWithoutPipelineStageInput>;
 
-    @Field(() => [PipelineProgressCreateOrConnectWithoutPipelineStageInput], {nullable:true})
-    @Type(() => PipelineProgressCreateOrConnectWithoutPipelineStageInput)
-    connectOrCreate?: Array<PipelineProgressCreateOrConnectWithoutPipelineStageInput>;
+  @Field(
+    () => [PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput],
+    { nullable: true },
+  )
+  @Type(() => PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput)
+  upsert?: Array<PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput>;
 
-    @Field(() => [PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput], {nullable:true})
-    @Type(() => PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput)
-    upsert?: Array<PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput>;
+  @Field(() => PipelineProgressCreateManyPipelineStageInputEnvelope, {
+    nullable: true,
+  })
+  @Type(() => PipelineProgressCreateManyPipelineStageInputEnvelope)
+  createMany?: PipelineProgressCreateManyPipelineStageInputEnvelope;
 
-    @Field(() => PipelineProgressCreateManyPipelineStageInputEnvelope, {nullable:true})
-    @Type(() => PipelineProgressCreateManyPipelineStageInputEnvelope)
-    createMany?: PipelineProgressCreateManyPipelineStageInputEnvelope;
+  @Field(() => [PipelineProgressWhereUniqueInput], { nullable: true })
+  @Type(() => PipelineProgressWhereUniqueInput)
+  set?: Array<PipelineProgressWhereUniqueInput>;
 
-    @Field(() => [PipelineProgressWhereUniqueInput], {nullable:true})
-    @Type(() => PipelineProgressWhereUniqueInput)
-    set?: Array<PipelineProgressWhereUniqueInput>;
+  @Field(() => [PipelineProgressWhereUniqueInput], { nullable: true })
+  @Type(() => PipelineProgressWhereUniqueInput)
+  disconnect?: Array<PipelineProgressWhereUniqueInput>;
 
-    @Field(() => [PipelineProgressWhereUniqueInput], {nullable:true})
-    @Type(() => PipelineProgressWhereUniqueInput)
-    disconnect?: Array<PipelineProgressWhereUniqueInput>;
+  @Field(() => [PipelineProgressWhereUniqueInput], { nullable: true })
+  @Type(() => PipelineProgressWhereUniqueInput)
+  delete?: Array<PipelineProgressWhereUniqueInput>;
 
-    @Field(() => [PipelineProgressWhereUniqueInput], {nullable:true})
-    @Type(() => PipelineProgressWhereUniqueInput)
-    delete?: Array<PipelineProgressWhereUniqueInput>;
+  @Field(() => [PipelineProgressWhereUniqueInput], { nullable: true })
+  @Type(() => PipelineProgressWhereUniqueInput)
+  connect?: Array<PipelineProgressWhereUniqueInput>;
 
-    @Field(() => [PipelineProgressWhereUniqueInput], {nullable:true})
-    @Type(() => PipelineProgressWhereUniqueInput)
-    connect?: Array<PipelineProgressWhereUniqueInput>;
+  @Field(
+    () => [PipelineProgressUpdateWithWhereUniqueWithoutPipelineStageInput],
+    { nullable: true },
+  )
+  @Type(() => PipelineProgressUpdateWithWhereUniqueWithoutPipelineStageInput)
+  update?: Array<PipelineProgressUpdateWithWhereUniqueWithoutPipelineStageInput>;
 
-    @Field(() => [PipelineProgressUpdateWithWhereUniqueWithoutPipelineStageInput], {nullable:true})
-    @Type(() => PipelineProgressUpdateWithWhereUniqueWithoutPipelineStageInput)
-    update?: Array<PipelineProgressUpdateWithWhereUniqueWithoutPipelineStageInput>;
+  @Field(() => [PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput], {
+    nullable: true,
+  })
+  @Type(() => PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput)
+  updateMany?: Array<PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput>;
 
-    @Field(() => [PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput], {nullable:true})
-    @Type(() => PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput)
-    updateMany?: Array<PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput>;
-
-    @Field(() => [PipelineProgressScalarWhereInput], {nullable:true})
-    @Type(() => PipelineProgressScalarWhereInput)
-    deleteMany?: Array<PipelineProgressScalarWhereInput>;
+  @Field(() => [PipelineProgressScalarWhereInput], { nullable: true })
+  @Type(() => PipelineProgressScalarWhereInput)
+  deleteMany?: Array<PipelineProgressScalarWhereInput>;
 }

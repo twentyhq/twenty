@@ -7,16 +7,15 @@ import { PersonCreateWithoutWorkspaceInput } from './person-create-without-works
 
 @InputType()
 export class PersonUpsertWithWhereUniqueWithoutWorkspaceInput {
+  @Field(() => PersonWhereUniqueInput, { nullable: false })
+  @Type(() => PersonWhereUniqueInput)
+  where!: PersonWhereUniqueInput;
 
-    @Field(() => PersonWhereUniqueInput, {nullable:false})
-    @Type(() => PersonWhereUniqueInput)
-    where!: PersonWhereUniqueInput;
+  @Field(() => PersonUpdateWithoutWorkspaceInput, { nullable: false })
+  @Type(() => PersonUpdateWithoutWorkspaceInput)
+  update!: PersonUpdateWithoutWorkspaceInput;
 
-    @Field(() => PersonUpdateWithoutWorkspaceInput, {nullable:false})
-    @Type(() => PersonUpdateWithoutWorkspaceInput)
-    update!: PersonUpdateWithoutWorkspaceInput;
-
-    @Field(() => PersonCreateWithoutWorkspaceInput, {nullable:false})
-    @Type(() => PersonCreateWithoutWorkspaceInput)
-    create!: PersonCreateWithoutWorkspaceInput;
+  @Field(() => PersonCreateWithoutWorkspaceInput, { nullable: false })
+  @Type(() => PersonCreateWithoutWorkspaceInput)
+  create!: PersonCreateWithoutWorkspaceInput;
 }

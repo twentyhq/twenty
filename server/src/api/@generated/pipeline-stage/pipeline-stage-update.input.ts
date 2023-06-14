@@ -10,34 +10,37 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineStageUpdateInput {
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  createdAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
+  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  name?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    name?: StringFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  type?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    type?: StringFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  color?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    color?: StringFieldUpdateOperationsInput;
+  @Field(() => PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput, {
+    nullable: true,
+  })
+  pipeline?: PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput;
 
-    @Field(() => PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput, {nullable:true})
-    pipeline?: PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput;
+  @Field(() => PipelineProgressUpdateManyWithoutPipelineStageNestedInput, {
+    nullable: true,
+  })
+  pipelineProgresses?: PipelineProgressUpdateManyWithoutPipelineStageNestedInput;
 
-    @Field(() => PipelineProgressUpdateManyWithoutPipelineStageNestedInput, {nullable:true})
-    pipelineProgresses?: PipelineProgressUpdateManyWithoutPipelineStageNestedInput;
-
-    @HideField()
-    workspace?: WorkspaceUpdateOneRequiredWithoutPipelineStagesNestedInput;
+  @HideField()
+  workspace?: WorkspaceUpdateOneRequiredWithoutPipelineStagesNestedInput;
 }

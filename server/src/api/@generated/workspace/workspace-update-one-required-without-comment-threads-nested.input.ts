@@ -9,24 +9,25 @@ import { WorkspaceUpdateWithoutCommentThreadsInput } from './workspace-update-wi
 
 @InputType()
 export class WorkspaceUpdateOneRequiredWithoutCommentThreadsNestedInput {
+  @Field(() => WorkspaceCreateWithoutCommentThreadsInput, { nullable: true })
+  @Type(() => WorkspaceCreateWithoutCommentThreadsInput)
+  create?: WorkspaceCreateWithoutCommentThreadsInput;
 
-    @Field(() => WorkspaceCreateWithoutCommentThreadsInput, {nullable:true})
-    @Type(() => WorkspaceCreateWithoutCommentThreadsInput)
-    create?: WorkspaceCreateWithoutCommentThreadsInput;
+  @Field(() => WorkspaceCreateOrConnectWithoutCommentThreadsInput, {
+    nullable: true,
+  })
+  @Type(() => WorkspaceCreateOrConnectWithoutCommentThreadsInput)
+  connectOrCreate?: WorkspaceCreateOrConnectWithoutCommentThreadsInput;
 
-    @Field(() => WorkspaceCreateOrConnectWithoutCommentThreadsInput, {nullable:true})
-    @Type(() => WorkspaceCreateOrConnectWithoutCommentThreadsInput)
-    connectOrCreate?: WorkspaceCreateOrConnectWithoutCommentThreadsInput;
+  @Field(() => WorkspaceUpsertWithoutCommentThreadsInput, { nullable: true })
+  @Type(() => WorkspaceUpsertWithoutCommentThreadsInput)
+  upsert?: WorkspaceUpsertWithoutCommentThreadsInput;
 
-    @Field(() => WorkspaceUpsertWithoutCommentThreadsInput, {nullable:true})
-    @Type(() => WorkspaceUpsertWithoutCommentThreadsInput)
-    upsert?: WorkspaceUpsertWithoutCommentThreadsInput;
+  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
+  @Type(() => WorkspaceWhereUniqueInput)
+  connect?: WorkspaceWhereUniqueInput;
 
-    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
-    @Type(() => WorkspaceWhereUniqueInput)
-    connect?: WorkspaceWhereUniqueInput;
-
-    @Field(() => WorkspaceUpdateWithoutCommentThreadsInput, {nullable:true})
-    @Type(() => WorkspaceUpdateWithoutCommentThreadsInput)
-    update?: WorkspaceUpdateWithoutCommentThreadsInput;
+  @Field(() => WorkspaceUpdateWithoutCommentThreadsInput, { nullable: true })
+  @Type(() => WorkspaceUpdateWithoutCommentThreadsInput)
+  update?: WorkspaceUpdateWithoutCommentThreadsInput;
 }

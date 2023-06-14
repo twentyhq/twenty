@@ -5,34 +5,33 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CompanyCreateManyInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+  @Field(() => String, { nullable: false })
+  name!: string;
 
-    @Field(() => String, {nullable:false})
-    name!: string;
+  @Field(() => String, { nullable: false })
+  domainName!: string;
 
-    @Field(() => String, {nullable:false})
-    domainName!: string;
+  @Field(() => String, { nullable: false })
+  address!: string;
 
-    @Field(() => String, {nullable:false})
-    address!: string;
+  @Field(() => Int, { nullable: true })
+  employees?: number;
 
-    @Field(() => Int, {nullable:true})
-    employees?: number;
+  @Field(() => String, { nullable: true })
+  accountOwnerId?: string;
 
-    @Field(() => String, {nullable:true})
-    accountOwnerId?: string;
-
-    @HideField()
-    workspaceId!: string;
+  @HideField()
+  workspaceId!: string;
 }

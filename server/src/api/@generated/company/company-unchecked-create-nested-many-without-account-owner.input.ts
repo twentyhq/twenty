@@ -8,20 +8,21 @@ import { CompanyWhereUniqueInput } from './company-where-unique.input';
 
 @InputType()
 export class CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput {
+  @Field(() => [CompanyCreateWithoutAccountOwnerInput], { nullable: true })
+  @Type(() => CompanyCreateWithoutAccountOwnerInput)
+  create?: Array<CompanyCreateWithoutAccountOwnerInput>;
 
-    @Field(() => [CompanyCreateWithoutAccountOwnerInput], {nullable:true})
-    @Type(() => CompanyCreateWithoutAccountOwnerInput)
-    create?: Array<CompanyCreateWithoutAccountOwnerInput>;
+  @Field(() => [CompanyCreateOrConnectWithoutAccountOwnerInput], {
+    nullable: true,
+  })
+  @Type(() => CompanyCreateOrConnectWithoutAccountOwnerInput)
+  connectOrCreate?: Array<CompanyCreateOrConnectWithoutAccountOwnerInput>;
 
-    @Field(() => [CompanyCreateOrConnectWithoutAccountOwnerInput], {nullable:true})
-    @Type(() => CompanyCreateOrConnectWithoutAccountOwnerInput)
-    connectOrCreate?: Array<CompanyCreateOrConnectWithoutAccountOwnerInput>;
+  @Field(() => CompanyCreateManyAccountOwnerInputEnvelope, { nullable: true })
+  @Type(() => CompanyCreateManyAccountOwnerInputEnvelope)
+  createMany?: CompanyCreateManyAccountOwnerInputEnvelope;
 
-    @Field(() => CompanyCreateManyAccountOwnerInputEnvelope, {nullable:true})
-    @Type(() => CompanyCreateManyAccountOwnerInputEnvelope)
-    createMany?: CompanyCreateManyAccountOwnerInputEnvelope;
-
-    @Field(() => [CompanyWhereUniqueInput], {nullable:true})
-    @Type(() => CompanyWhereUniqueInput)
-    connect?: Array<CompanyWhereUniqueInput>;
+  @Field(() => [CompanyWhereUniqueInput], { nullable: true })
+  @Type(() => CompanyWhereUniqueInput)
+  connect?: Array<CompanyWhereUniqueInput>;
 }

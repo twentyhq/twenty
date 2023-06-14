@@ -7,34 +7,33 @@ import { CommentThreadTargetMaxAggregate } from './comment-thread-target-max-agg
 
 @ObjectType()
 export class CommentThreadTargetGroupBy {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: false })
+  createdAt!: Date | string;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date | string;
+  @Field(() => Date, { nullable: false })
+  updatedAt!: Date | string;
 
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+  @Field(() => String, { nullable: false })
+  commentThreadId!: string;
 
-    @Field(() => String, {nullable:false})
-    commentThreadId!: string;
+  @Field(() => CommentableType, { nullable: false })
+  commentableType!: keyof typeof CommentableType;
 
-    @Field(() => CommentableType, {nullable:false})
-    commentableType!: keyof typeof CommentableType;
+  @Field(() => String, { nullable: false })
+  commentableId!: string;
 
-    @Field(() => String, {nullable:false})
-    commentableId!: string;
+  @Field(() => CommentThreadTargetCountAggregate, { nullable: true })
+  _count?: CommentThreadTargetCountAggregate;
 
-    @Field(() => CommentThreadTargetCountAggregate, {nullable:true})
-    _count?: CommentThreadTargetCountAggregate;
+  @Field(() => CommentThreadTargetMinAggregate, { nullable: true })
+  _min?: CommentThreadTargetMinAggregate;
 
-    @Field(() => CommentThreadTargetMinAggregate, {nullable:true})
-    _min?: CommentThreadTargetMinAggregate;
-
-    @Field(() => CommentThreadTargetMaxAggregate, {nullable:true})
-    _max?: CommentThreadTargetMaxAggregate;
+  @Field(() => CommentThreadTargetMaxAggregate, { nullable: true })
+  _max?: CommentThreadTargetMaxAggregate;
 }

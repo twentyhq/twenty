@@ -9,23 +9,22 @@ import { WorkspaceMemberScalarFieldEnum } from './workspace-member-scalar-field.
 
 @ArgsType()
 export class FindManyWorkspaceMemberArgs {
+  @Field(() => WorkspaceMemberWhereInput, { nullable: true })
+  @Type(() => WorkspaceMemberWhereInput)
+  where?: WorkspaceMemberWhereInput;
 
-    @Field(() => WorkspaceMemberWhereInput, {nullable:true})
-    @Type(() => WorkspaceMemberWhereInput)
-    where?: WorkspaceMemberWhereInput;
+  @Field(() => [WorkspaceMemberOrderByWithRelationInput], { nullable: true })
+  orderBy?: Array<WorkspaceMemberOrderByWithRelationInput>;
 
-    @Field(() => [WorkspaceMemberOrderByWithRelationInput], {nullable:true})
-    orderBy?: Array<WorkspaceMemberOrderByWithRelationInput>;
+  @Field(() => WorkspaceMemberWhereUniqueInput, { nullable: true })
+  cursor?: WorkspaceMemberWhereUniqueInput;
 
-    @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:true})
-    cursor?: WorkspaceMemberWhereUniqueInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
-
-    @Field(() => [WorkspaceMemberScalarFieldEnum], {nullable:true})
-    distinct?: Array<keyof typeof WorkspaceMemberScalarFieldEnum>;
+  @Field(() => [WorkspaceMemberScalarFieldEnum], { nullable: true })
+  distinct?: Array<keyof typeof WorkspaceMemberScalarFieldEnum>;
 }

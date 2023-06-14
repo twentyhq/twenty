@@ -7,16 +7,19 @@ import { PipelineProgressCreateWithoutPipelineStageInput } from './pipeline-prog
 
 @InputType()
 export class PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput {
+  @Field(() => PipelineProgressWhereUniqueInput, { nullable: false })
+  @Type(() => PipelineProgressWhereUniqueInput)
+  where!: PipelineProgressWhereUniqueInput;
 
-    @Field(() => PipelineProgressWhereUniqueInput, {nullable:false})
-    @Type(() => PipelineProgressWhereUniqueInput)
-    where!: PipelineProgressWhereUniqueInput;
+  @Field(() => PipelineProgressUpdateWithoutPipelineStageInput, {
+    nullable: false,
+  })
+  @Type(() => PipelineProgressUpdateWithoutPipelineStageInput)
+  update!: PipelineProgressUpdateWithoutPipelineStageInput;
 
-    @Field(() => PipelineProgressUpdateWithoutPipelineStageInput, {nullable:false})
-    @Type(() => PipelineProgressUpdateWithoutPipelineStageInput)
-    update!: PipelineProgressUpdateWithoutPipelineStageInput;
-
-    @Field(() => PipelineProgressCreateWithoutPipelineStageInput, {nullable:false})
-    @Type(() => PipelineProgressCreateWithoutPipelineStageInput)
-    create!: PipelineProgressCreateWithoutPipelineStageInput;
+  @Field(() => PipelineProgressCreateWithoutPipelineStageInput, {
+    nullable: false,
+  })
+  @Type(() => PipelineProgressCreateWithoutPipelineStageInput)
+  create!: PipelineProgressCreateWithoutPipelineStageInput;
 }

@@ -8,46 +8,45 @@ import { PersonMinOrderByAggregateInput } from './person-min-order-by-aggregate.
 
 @InputType()
 export class PersonOrderByWithAggregationInput {
+  @Field(() => SortOrder, { nullable: true })
+  id?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    id?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  createdAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  updatedAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  deletedAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  firstname?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    firstname?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  lastname?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    lastname?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  email?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    email?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  phone?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    phone?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  city?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    city?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  companyId?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    companyId?: keyof typeof SortOrder;
+  @HideField()
+  workspaceId?: keyof typeof SortOrder;
 
-    @HideField()
-    workspaceId?: keyof typeof SortOrder;
+  @Field(() => PersonCountOrderByAggregateInput, { nullable: true })
+  _count?: PersonCountOrderByAggregateInput;
 
-    @Field(() => PersonCountOrderByAggregateInput, {nullable:true})
-    _count?: PersonCountOrderByAggregateInput;
+  @Field(() => PersonMaxOrderByAggregateInput, { nullable: true })
+  _max?: PersonMaxOrderByAggregateInput;
 
-    @Field(() => PersonMaxOrderByAggregateInput, {nullable:true})
-    _max?: PersonMaxOrderByAggregateInput;
-
-    @Field(() => PersonMinOrderByAggregateInput, {nullable:true})
-    _min?: PersonMinOrderByAggregateInput;
+  @Field(() => PersonMinOrderByAggregateInput, { nullable: true })
+  _min?: PersonMinOrderByAggregateInput;
 }

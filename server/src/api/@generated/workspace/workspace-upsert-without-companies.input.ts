@@ -6,12 +6,11 @@ import { WorkspaceCreateWithoutCompaniesInput } from './workspace-create-without
 
 @InputType()
 export class WorkspaceUpsertWithoutCompaniesInput {
+  @Field(() => WorkspaceUpdateWithoutCompaniesInput, { nullable: false })
+  @Type(() => WorkspaceUpdateWithoutCompaniesInput)
+  update!: WorkspaceUpdateWithoutCompaniesInput;
 
-    @Field(() => WorkspaceUpdateWithoutCompaniesInput, {nullable:false})
-    @Type(() => WorkspaceUpdateWithoutCompaniesInput)
-    update!: WorkspaceUpdateWithoutCompaniesInput;
-
-    @Field(() => WorkspaceCreateWithoutCompaniesInput, {nullable:false})
-    @Type(() => WorkspaceCreateWithoutCompaniesInput)
-    create!: WorkspaceCreateWithoutCompaniesInput;
+  @Field(() => WorkspaceCreateWithoutCompaniesInput, { nullable: false })
+  @Type(() => WorkspaceCreateWithoutCompaniesInput)
+  create!: WorkspaceCreateWithoutCompaniesInput;
 }

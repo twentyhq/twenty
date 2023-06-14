@@ -8,14 +8,13 @@ import { Type } from 'class-transformer';
 
 @InputType()
 export class CommentThreadCreateNestedOneWithoutCommentsInput {
+  @HideField()
+  create?: CommentThreadCreateWithoutCommentsInput;
 
-    @HideField()
-    create?: CommentThreadCreateWithoutCommentsInput;
+  @HideField()
+  connectOrCreate?: CommentThreadCreateOrConnectWithoutCommentsInput;
 
-    @HideField()
-    connectOrCreate?: CommentThreadCreateOrConnectWithoutCommentsInput;
-
-    @Field(() => CommentThreadWhereUniqueInput, {nullable:true})
-    @Type(() => CommentThreadWhereUniqueInput)
-    connect?: CommentThreadWhereUniqueInput;
+  @Field(() => CommentThreadWhereUniqueInput, { nullable: true })
+  @Type(() => CommentThreadWhereUniqueInput)
+  connect?: CommentThreadWhereUniqueInput;
 }

@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class CreateOneCommentThreadArgs {
-
-    @Field(() => CommentThreadCreateInput, {nullable:false})
-    @Type(() => CommentThreadCreateInput)
-    data!: CommentThreadCreateInput;
+  @Field(() => CommentThreadCreateInput, { nullable: false })
+  @Type(() => CommentThreadCreateInput)
+  data!: CommentThreadCreateInput;
 }

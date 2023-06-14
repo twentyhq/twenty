@@ -13,35 +13,34 @@ import { CompanyMaxAggregateInput } from './company-max-aggregate.input';
 
 @ArgsType()
 export class CompanyAggregateArgs {
+  @Field(() => CompanyWhereInput, { nullable: true })
+  @Type(() => CompanyWhereInput)
+  where?: CompanyWhereInput;
 
-    @Field(() => CompanyWhereInput, {nullable:true})
-    @Type(() => CompanyWhereInput)
-    where?: CompanyWhereInput;
+  @Field(() => [CompanyOrderByWithRelationInput], { nullable: true })
+  orderBy?: Array<CompanyOrderByWithRelationInput>;
 
-    @Field(() => [CompanyOrderByWithRelationInput], {nullable:true})
-    orderBy?: Array<CompanyOrderByWithRelationInput>;
+  @Field(() => CompanyWhereUniqueInput, { nullable: true })
+  cursor?: CompanyWhereUniqueInput;
 
-    @Field(() => CompanyWhereUniqueInput, {nullable:true})
-    cursor?: CompanyWhereUniqueInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
+  @Field(() => CompanyCountAggregateInput, { nullable: true })
+  _count?: CompanyCountAggregateInput;
 
-    @Field(() => CompanyCountAggregateInput, {nullable:true})
-    _count?: CompanyCountAggregateInput;
+  @Field(() => CompanyAvgAggregateInput, { nullable: true })
+  _avg?: CompanyAvgAggregateInput;
 
-    @Field(() => CompanyAvgAggregateInput, {nullable:true})
-    _avg?: CompanyAvgAggregateInput;
+  @Field(() => CompanySumAggregateInput, { nullable: true })
+  _sum?: CompanySumAggregateInput;
 
-    @Field(() => CompanySumAggregateInput, {nullable:true})
-    _sum?: CompanySumAggregateInput;
+  @Field(() => CompanyMinAggregateInput, { nullable: true })
+  _min?: CompanyMinAggregateInput;
 
-    @Field(() => CompanyMinAggregateInput, {nullable:true})
-    _min?: CompanyMinAggregateInput;
-
-    @Field(() => CompanyMaxAggregateInput, {nullable:true})
-    _max?: CompanyMaxAggregateInput;
+  @Field(() => CompanyMaxAggregateInput, { nullable: true })
+  _max?: CompanyMaxAggregateInput;
 }

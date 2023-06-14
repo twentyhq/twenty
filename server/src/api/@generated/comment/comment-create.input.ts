@@ -7,28 +7,29 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CommentCreateInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+  @Field(() => String, { nullable: false })
+  body!: string;
 
-    @Field(() => String, {nullable:false})
-    body!: string;
+  @Field(() => UserCreateNestedOneWithoutCommentsInput, { nullable: false })
+  author!: UserCreateNestedOneWithoutCommentsInput;
 
-    @Field(() => UserCreateNestedOneWithoutCommentsInput, {nullable:false})
-    author!: UserCreateNestedOneWithoutCommentsInput;
+  @Field(() => CommentThreadCreateNestedOneWithoutCommentsInput, {
+    nullable: false,
+  })
+  commentThread!: CommentThreadCreateNestedOneWithoutCommentsInput;
 
-    @Field(() => CommentThreadCreateNestedOneWithoutCommentsInput, {nullable:false})
-    commentThread!: CommentThreadCreateNestedOneWithoutCommentsInput;
-
-    @HideField()
-    workspace!: WorkspaceCreateNestedOneWithoutCommentsInput;
+  @HideField()
+  workspace!: WorkspaceCreateNestedOneWithoutCommentsInput;
 }

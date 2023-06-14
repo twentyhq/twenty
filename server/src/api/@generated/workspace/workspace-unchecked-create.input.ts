@@ -10,46 +10,59 @@ import { PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput } from '../
 
 @InputType()
 export class WorkspaceUncheckedCreateInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+  @Field(() => String, { nullable: false })
+  domainName!: string;
 
-    @Field(() => String, {nullable:false})
-    domainName!: string;
+  @Field(() => String, { nullable: false })
+  displayName!: string;
 
-    @Field(() => String, {nullable:false})
-    displayName!: string;
+  @Field(() => String, { nullable: true })
+  logo?: string;
 
-    @Field(() => String, {nullable:true})
-    logo?: string;
+  @Field(() => WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  workspaceMember?: WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput;
 
-    @Field(() => WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    workspaceMember?: WorkspaceMemberUncheckedCreateNestedManyWithoutWorkspaceInput;
+  @Field(() => CompanyUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  companies?: CompanyUncheckedCreateNestedManyWithoutWorkspaceInput;
 
-    @Field(() => CompanyUncheckedCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    companies?: CompanyUncheckedCreateNestedManyWithoutWorkspaceInput;
+  @Field(() => PersonUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  people?: PersonUncheckedCreateNestedManyWithoutWorkspaceInput;
 
-    @Field(() => PersonUncheckedCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    people?: PersonUncheckedCreateNestedManyWithoutWorkspaceInput;
+  @Field(() => CommentThreadUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  commentThreads?: CommentThreadUncheckedCreateNestedManyWithoutWorkspaceInput;
 
-    @Field(() => CommentThreadUncheckedCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    commentThreads?: CommentThreadUncheckedCreateNestedManyWithoutWorkspaceInput;
+  @Field(() => CommentUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  comments?: CommentUncheckedCreateNestedManyWithoutWorkspaceInput;
 
-    @Field(() => CommentUncheckedCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    comments?: CommentUncheckedCreateNestedManyWithoutWorkspaceInput;
+  @Field(() => PipelineUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  pipelines?: PipelineUncheckedCreateNestedManyWithoutWorkspaceInput;
 
-    @Field(() => PipelineUncheckedCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    pipelines?: PipelineUncheckedCreateNestedManyWithoutWorkspaceInput;
-
-    @Field(() => PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput, {nullable:true})
-    pipelineStages?: PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput;
+  @Field(() => PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput, {
+    nullable: true,
+  })
+  pipelineStages?: PipelineStageUncheckedCreateNestedManyWithoutWorkspaceInput;
 }

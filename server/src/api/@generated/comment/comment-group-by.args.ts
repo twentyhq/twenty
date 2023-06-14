@@ -12,32 +12,31 @@ import { CommentMaxAggregateInput } from './comment-max-aggregate.input';
 
 @ArgsType()
 export class CommentGroupByArgs {
+  @Field(() => CommentWhereInput, { nullable: true })
+  @Type(() => CommentWhereInput)
+  where?: CommentWhereInput;
 
-    @Field(() => CommentWhereInput, {nullable:true})
-    @Type(() => CommentWhereInput)
-    where?: CommentWhereInput;
+  @Field(() => [CommentOrderByWithAggregationInput], { nullable: true })
+  orderBy?: Array<CommentOrderByWithAggregationInput>;
 
-    @Field(() => [CommentOrderByWithAggregationInput], {nullable:true})
-    orderBy?: Array<CommentOrderByWithAggregationInput>;
+  @Field(() => [CommentScalarFieldEnum], { nullable: false })
+  by!: Array<keyof typeof CommentScalarFieldEnum>;
 
-    @Field(() => [CommentScalarFieldEnum], {nullable:false})
-    by!: Array<keyof typeof CommentScalarFieldEnum>;
+  @Field(() => CommentScalarWhereWithAggregatesInput, { nullable: true })
+  having?: CommentScalarWhereWithAggregatesInput;
 
-    @Field(() => CommentScalarWhereWithAggregatesInput, {nullable:true})
-    having?: CommentScalarWhereWithAggregatesInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
+  @Field(() => CommentCountAggregateInput, { nullable: true })
+  _count?: CommentCountAggregateInput;
 
-    @Field(() => CommentCountAggregateInput, {nullable:true})
-    _count?: CommentCountAggregateInput;
+  @Field(() => CommentMinAggregateInput, { nullable: true })
+  _min?: CommentMinAggregateInput;
 
-    @Field(() => CommentMinAggregateInput, {nullable:true})
-    _min?: CommentMinAggregateInput;
-
-    @Field(() => CommentMaxAggregateInput, {nullable:true})
-    _max?: CommentMaxAggregateInput;
+  @Field(() => CommentMaxAggregateInput, { nullable: true })
+  _max?: CommentMaxAggregateInput;
 }

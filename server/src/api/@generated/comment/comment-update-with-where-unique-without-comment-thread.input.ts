@@ -6,12 +6,11 @@ import { CommentUpdateWithoutCommentThreadInput } from './comment-update-without
 
 @InputType()
 export class CommentUpdateWithWhereUniqueWithoutCommentThreadInput {
+  @Field(() => CommentWhereUniqueInput, { nullable: false })
+  @Type(() => CommentWhereUniqueInput)
+  where!: CommentWhereUniqueInput;
 
-    @Field(() => CommentWhereUniqueInput, {nullable:false})
-    @Type(() => CommentWhereUniqueInput)
-    where!: CommentWhereUniqueInput;
-
-    @Field(() => CommentUpdateWithoutCommentThreadInput, {nullable:false})
-    @Type(() => CommentUpdateWithoutCommentThreadInput)
-    data!: CommentUpdateWithoutCommentThreadInput;
+  @Field(() => CommentUpdateWithoutCommentThreadInput, { nullable: false })
+  @Type(() => CommentUpdateWithoutCommentThreadInput)
+  data!: CommentUpdateWithoutCommentThreadInput;
 }

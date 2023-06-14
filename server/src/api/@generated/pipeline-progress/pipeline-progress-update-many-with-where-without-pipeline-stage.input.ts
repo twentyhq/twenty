@@ -6,12 +6,11 @@ import { PipelineProgressUpdateManyMutationInput } from './pipeline-progress-upd
 
 @InputType()
 export class PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput {
+  @Field(() => PipelineProgressScalarWhereInput, { nullable: false })
+  @Type(() => PipelineProgressScalarWhereInput)
+  where!: PipelineProgressScalarWhereInput;
 
-    @Field(() => PipelineProgressScalarWhereInput, {nullable:false})
-    @Type(() => PipelineProgressScalarWhereInput)
-    where!: PipelineProgressScalarWhereInput;
-
-    @Field(() => PipelineProgressUpdateManyMutationInput, {nullable:false})
-    @Type(() => PipelineProgressUpdateManyMutationInput)
-    data!: PipelineProgressUpdateManyMutationInput;
+  @Field(() => PipelineProgressUpdateManyMutationInput, { nullable: false })
+  @Type(() => PipelineProgressUpdateManyMutationInput)
+  data!: PipelineProgressUpdateManyMutationInput;
 }

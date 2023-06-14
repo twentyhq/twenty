@@ -7,16 +7,15 @@ import { RefreshTokenCreateWithoutUserInput } from './refresh-token-create-witho
 
 @InputType()
 export class RefreshTokenUpsertWithWhereUniqueWithoutUserInput {
+  @Field(() => RefreshTokenWhereUniqueInput, { nullable: false })
+  @Type(() => RefreshTokenWhereUniqueInput)
+  where!: RefreshTokenWhereUniqueInput;
 
-    @Field(() => RefreshTokenWhereUniqueInput, {nullable:false})
-    @Type(() => RefreshTokenWhereUniqueInput)
-    where!: RefreshTokenWhereUniqueInput;
+  @Field(() => RefreshTokenUpdateWithoutUserInput, { nullable: false })
+  @Type(() => RefreshTokenUpdateWithoutUserInput)
+  update!: RefreshTokenUpdateWithoutUserInput;
 
-    @Field(() => RefreshTokenUpdateWithoutUserInput, {nullable:false})
-    @Type(() => RefreshTokenUpdateWithoutUserInput)
-    update!: RefreshTokenUpdateWithoutUserInput;
-
-    @Field(() => RefreshTokenCreateWithoutUserInput, {nullable:false})
-    @Type(() => RefreshTokenCreateWithoutUserInput)
-    create!: RefreshTokenCreateWithoutUserInput;
+  @Field(() => RefreshTokenCreateWithoutUserInput, { nullable: false })
+  @Type(() => RefreshTokenCreateWithoutUserInput)
+  create!: RefreshTokenCreateWithoutUserInput;
 }

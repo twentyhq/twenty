@@ -6,12 +6,11 @@ import { PipelineCreateWithoutWorkspaceInput } from './pipeline-create-without-w
 
 @InputType()
 export class PipelineCreateOrConnectWithoutWorkspaceInput {
+  @Field(() => PipelineWhereUniqueInput, { nullable: false })
+  @Type(() => PipelineWhereUniqueInput)
+  where!: PipelineWhereUniqueInput;
 
-    @Field(() => PipelineWhereUniqueInput, {nullable:false})
-    @Type(() => PipelineWhereUniqueInput)
-    where!: PipelineWhereUniqueInput;
-
-    @Field(() => PipelineCreateWithoutWorkspaceInput, {nullable:false})
-    @Type(() => PipelineCreateWithoutWorkspaceInput)
-    create!: PipelineCreateWithoutWorkspaceInput;
+  @Field(() => PipelineCreateWithoutWorkspaceInput, { nullable: false })
+  @Type(() => PipelineCreateWithoutWorkspaceInput)
+  create!: PipelineCreateWithoutWorkspaceInput;
 }

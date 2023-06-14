@@ -7,16 +7,17 @@ import { PipelineWhereUniqueInput } from './pipeline-where-unique.input';
 
 @InputType()
 export class PipelineCreateNestedOneWithoutPipelineStagesInput {
+  @Field(() => PipelineCreateWithoutPipelineStagesInput, { nullable: true })
+  @Type(() => PipelineCreateWithoutPipelineStagesInput)
+  create?: PipelineCreateWithoutPipelineStagesInput;
 
-    @Field(() => PipelineCreateWithoutPipelineStagesInput, {nullable:true})
-    @Type(() => PipelineCreateWithoutPipelineStagesInput)
-    create?: PipelineCreateWithoutPipelineStagesInput;
+  @Field(() => PipelineCreateOrConnectWithoutPipelineStagesInput, {
+    nullable: true,
+  })
+  @Type(() => PipelineCreateOrConnectWithoutPipelineStagesInput)
+  connectOrCreate?: PipelineCreateOrConnectWithoutPipelineStagesInput;
 
-    @Field(() => PipelineCreateOrConnectWithoutPipelineStagesInput, {nullable:true})
-    @Type(() => PipelineCreateOrConnectWithoutPipelineStagesInput)
-    connectOrCreate?: PipelineCreateOrConnectWithoutPipelineStagesInput;
-
-    @Field(() => PipelineWhereUniqueInput, {nullable:true})
-    @Type(() => PipelineWhereUniqueInput)
-    connect?: PipelineWhereUniqueInput;
+  @Field(() => PipelineWhereUniqueInput, { nullable: true })
+  @Type(() => PipelineWhereUniqueInput)
+  connect?: PipelineWhereUniqueInput;
 }

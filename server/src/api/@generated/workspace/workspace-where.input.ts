@@ -14,55 +14,54 @@ import { PipelineStageListRelationFilter } from '../pipeline-stage/pipeline-stag
 
 @InputType()
 export class WorkspaceWhereInput {
+  @Field(() => [WorkspaceWhereInput], { nullable: true })
+  AND?: Array<WorkspaceWhereInput>;
 
-    @Field(() => [WorkspaceWhereInput], {nullable:true})
-    AND?: Array<WorkspaceWhereInput>;
+  @Field(() => [WorkspaceWhereInput], { nullable: true })
+  OR?: Array<WorkspaceWhereInput>;
 
-    @Field(() => [WorkspaceWhereInput], {nullable:true})
-    OR?: Array<WorkspaceWhereInput>;
+  @Field(() => [WorkspaceWhereInput], { nullable: true })
+  NOT?: Array<WorkspaceWhereInput>;
 
-    @Field(() => [WorkspaceWhereInput], {nullable:true})
-    NOT?: Array<WorkspaceWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @Field(() => StringFilter, { nullable: true })
+  domainName?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    domainName?: StringFilter;
+  @Field(() => StringFilter, { nullable: true })
+  displayName?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    displayName?: StringFilter;
+  @Field(() => StringNullableFilter, { nullable: true })
+  logo?: StringNullableFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    logo?: StringNullableFilter;
+  @Field(() => WorkspaceMemberListRelationFilter, { nullable: true })
+  workspaceMember?: WorkspaceMemberListRelationFilter;
 
-    @Field(() => WorkspaceMemberListRelationFilter, {nullable:true})
-    workspaceMember?: WorkspaceMemberListRelationFilter;
+  @Field(() => CompanyListRelationFilter, { nullable: true })
+  companies?: CompanyListRelationFilter;
 
-    @Field(() => CompanyListRelationFilter, {nullable:true})
-    companies?: CompanyListRelationFilter;
+  @Field(() => PersonListRelationFilter, { nullable: true })
+  people?: PersonListRelationFilter;
 
-    @Field(() => PersonListRelationFilter, {nullable:true})
-    people?: PersonListRelationFilter;
+  @Field(() => CommentThreadListRelationFilter, { nullable: true })
+  commentThreads?: CommentThreadListRelationFilter;
 
-    @Field(() => CommentThreadListRelationFilter, {nullable:true})
-    commentThreads?: CommentThreadListRelationFilter;
+  @Field(() => CommentListRelationFilter, { nullable: true })
+  comments?: CommentListRelationFilter;
 
-    @Field(() => CommentListRelationFilter, {nullable:true})
-    comments?: CommentListRelationFilter;
+  @Field(() => PipelineListRelationFilter, { nullable: true })
+  pipelines?: PipelineListRelationFilter;
 
-    @Field(() => PipelineListRelationFilter, {nullable:true})
-    pipelines?: PipelineListRelationFilter;
-
-    @Field(() => PipelineStageListRelationFilter, {nullable:true})
-    pipelineStages?: PipelineStageListRelationFilter;
+  @Field(() => PipelineStageListRelationFilter, { nullable: true })
+  pipelineStages?: PipelineStageListRelationFilter;
 }

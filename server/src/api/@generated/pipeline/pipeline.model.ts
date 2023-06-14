@@ -9,37 +9,36 @@ import { PipelineCount } from './pipeline-count.output';
 
 @ObjectType()
 export class Pipeline {
+  @Field(() => ID, { nullable: false })
+  id!: string;
 
-    @Field(() => ID, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: false })
+  createdAt!: Date;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
+  @Field(() => Date, { nullable: false })
+  updatedAt!: Date;
 
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
+  @Field(() => Date, { nullable: true })
+  deletedAt!: Date | null;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
+  @Field(() => String, { nullable: false })
+  name!: string;
 
-    @Field(() => String, {nullable:false})
-    name!: string;
+  @Field(() => String, { nullable: false })
+  icon!: string;
 
-    @Field(() => String, {nullable:false})
-    icon!: string;
+  @HideField()
+  workspaceId!: string;
 
-    @HideField()
-    workspaceId!: string;
+  @Field(() => [PipelineStage], { nullable: true })
+  pipelineStages?: Array<PipelineStage>;
 
-    @Field(() => [PipelineStage], {nullable:true})
-    pipelineStages?: Array<PipelineStage>;
+  @Field(() => [PipelineProgress], { nullable: true })
+  pipelineProgresses?: Array<PipelineProgress>;
 
-    @Field(() => [PipelineProgress], {nullable:true})
-    pipelineProgresses?: Array<PipelineProgress>;
+  @HideField()
+  workspace?: Workspace;
 
-    @HideField()
-    workspace?: Workspace;
-
-    @HideField()
-    _count?: PipelineCount;
+  @HideField()
+  _count?: PipelineCount;
 }

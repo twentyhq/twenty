@@ -4,10 +4,9 @@ import { Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class CommentThreadCount {
+  @Field(() => Int, { nullable: false })
+  commentThreadTargets?: number;
 
-    @Field(() => Int, {nullable:false})
-    commentThreadTargets?: number;
-
-    @Field(() => Int, {nullable:false})
-    comments?: number;
+  @Field(() => Int, { nullable: false })
+  comments?: number;
 }
