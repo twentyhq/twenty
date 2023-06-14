@@ -17,4 +17,6 @@ export const DropdownMenu = styled.div`
   height: fit-content;
 
   width: 200px;
+
+  z-index: ${(props) => props.theme.lastLayerZIndex};
 `;

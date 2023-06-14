@@ -65,15 +65,6 @@ export class CommentThreadResolver {
     }
 
     return createdCommentThread;
-
-    // return this.prismaService.commentThread.create({
-    //   data: {
-    //     ...args.data,
-    //     ...{ commentThreadTargets: undefined },
-    //     ...{ comments: { createMany: { data: newCommentData } } },
-    //     ...{ workspace: { connect: { id: workspace.id } } },
-    //   },
-    // });
   }
 
   @Query(() => [CommentThread])
@@ -86,6 +77,7 @@ export class CommentThreadResolver {
         args,
         workspace,
       );
+
     const result = await this.prismaService.commentThread.findMany(
       preparedArgs,
     );

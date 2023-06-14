@@ -32,6 +32,8 @@ export function RightDrawerComments() {
   const commentThreads: CommentThreadForDrawer[] =
     queryResult?.findManyCommentThreads ?? [];
 
+  console.log({ commentThreads });
+
   return (
     <RightDrawerPage>
       <RightDrawerTopBar title="Comments" />
