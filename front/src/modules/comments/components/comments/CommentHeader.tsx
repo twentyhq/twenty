@@ -49,9 +49,11 @@ const StyledDate = styled.div`
 const StyledTooltip = styled(Tooltip)`
   background-color: ${(props) => props.theme.primaryBackground};
 
-  box-shadow: 0px 2px 4px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0px 2px 4px 3px
+    ${(props) => props.theme.lightBackgroundTransparent};
 
-  box-shadow: 2px 4px 16px 6px rgba(0, 0, 0, 0.12);
+  box-shadow: 2px 4px 16px 6px
+    ${(props) => props.theme.lightBackgroundTransparent};
 
   color: ${(props) => props.theme.text100};
 

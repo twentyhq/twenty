@@ -90,7 +90,7 @@ const StyledDropdownItem = styled.li`
   width: calc(160px - ${(props) => props.theme.spacing(4)});
 
   &:hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: ${(props) => props.theme.lightBackgroundTransparent};
   }
 `;
 
@@ -112,7 +112,7 @@ const StyledDropdownTopOption = styled.li`
     calc(${(props) => props.theme.spacing(2)});
 
   &:hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: ${(props) => props.theme.lightBackgroundTransparent};
   }
   user-select: none;
 `;

@@ -22,7 +22,10 @@ type StyledItemProps = {
 
 const StyledItem = styled.button<StyledItemProps>`
   align-items: center;
-  background: ${(props) => (props.active ? 'rgba(0, 0, 0, 0.04)' : 'inherit')};
+  background: ${(props) =>
+    props.active
+      ? '${(props) => props.theme.lightbackgroundtransparent};'
+      : 'inherit'};
   border: none;
   border-radius: 4px;
   color: ${(props) => {
@@ -47,7 +50,7 @@ const StyledItem = styled.button<StyledItemProps>`
   padding-top: ${(props) => props.theme.spacing(1)};
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
   :hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: ${(props) => props.theme.lightBackgroundTransparent};
     color: ${(props) => (props.danger ? props.theme.red : props.theme.text100)};
   }
   user-select: none;
@@ -67,7 +70,7 @@ const StyledSoonPill = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 50px;
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: ${(props) => props.theme.lightBackgroundTransparent};
   font-size: ${(props) => props.theme.fontSizeExtraSmall};
   padding: ${(props) => props.theme.spacing(1)}
     ${(props) => props.theme.spacing(2)} ${(props) => props.theme.spacing(1)}

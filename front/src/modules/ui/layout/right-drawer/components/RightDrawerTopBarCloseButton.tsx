@@ -20,7 +20,7 @@ const StyledButton = styled.button`
 
   width: 24px;
   &:hover {
-    background: ${(props) => props.theme.clickableElementBackgroundHover};
+    background: ${(props) => props.theme.lightBackgroundTransparent};
   }
   svg {
     color: ${(props) => props.theme.text40};

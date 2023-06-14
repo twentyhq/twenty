@@ -26,7 +26,7 @@ const StyledCalendarContainer = styled.div<StyledCalendarContainerProps>`
   background: ${(props) => props.theme.secondaryBackground};
   border: 1px solid ${(props) => props.theme.primaryBorder};
   border-radius: 8px;
-  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.09);
+  box-shadow: ${(props) => props.theme.modalBoxShadow};
   left: -10px;
   position: absolute;
   top: 10px;

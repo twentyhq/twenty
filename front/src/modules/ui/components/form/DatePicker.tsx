@@ -127,7 +127,7 @@ const StyledContainer = styled.div`
     margin: 2px;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.04);
+      background: ${(props) => props.theme.lightBackgroundTransparent};
     }
 
     &:first-of-type {
@@ -172,7 +172,7 @@ const StyledContainer = styled.div`
     border-radius: 4px;
     padding-top: 6px;
     &:hover {
-      background: rgba(0, 0, 0, 0.04);
+      background: ${(props) => props.theme.lightBackgroundTransparent};
     }
   }
   & .react-datepicker__navigation--previous {
