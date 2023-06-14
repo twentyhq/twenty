@@ -7,12 +7,13 @@ const StyledCard = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius};
   box-shadow: ${({ theme }) => theme.boxShadow};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
+  max-width: 300px;
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 type BoardCardProps = {
   children: React.ReactNode;
-  draggableProvided: DraggableProvided;
+  draggableProvided?: DraggableProvided;
 };
 
 export const BoardItem = ({ children, draggableProvided }: BoardCardProps) => {

@@ -4,6 +4,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { Company, Person } from '../../../../generated/graphql';
 import { mockedCompaniesData } from '../../../../testing/mock-data/companies';
 import { mockedPeopleData } from '../../../../testing/mock-data/people';
+import { BoardItem } from '../../../ui/components/board/BoardItem';
 import { BoardCard } from '../BoardCard';
 
 const meta: Meta<typeof BoardCard> = {
@@ -17,7 +18,9 @@ type Story = StoryObj<typeof BoardCard>;
 export const CompanyBoardCard: Story = {
   render: () => (
     <StrictMode>
-      <BoardCard item={mockedCompaniesData[0] as Company} />
+      <BoardItem draggableProvided={undefined}>
+        <BoardCard item={mockedCompaniesData[0] as Company} />
+      </BoardItem>
     </StrictMode>
   ),
 };
@@ -25,7 +28,9 @@ export const CompanyBoardCard: Story = {
 export const PersonBoardCard: Story = {
   render: () => (
     <StrictMode>
-      <BoardCard item={mockedPeopleData[0] as Person} />
+      <BoardItem draggableProvided={undefined}>
+        <BoardCard item={mockedPeopleData[0] as Person} />
+      </BoardItem>
     </StrictMode>
   ),
 };
