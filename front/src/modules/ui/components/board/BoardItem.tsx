@@ -8,7 +8,6 @@ const StyledCard = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   max-width: 300px;
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 type BoardCardProps = {
