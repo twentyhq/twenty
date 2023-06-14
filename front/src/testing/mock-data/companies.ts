@@ -15,7 +15,7 @@ export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       __typename: 'users',
     },
-    __typename: 'companies',
+    __typename: 'Company',
   },
   {
     id: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
@@ -26,7 +26,7 @@ export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
     employees: 1,
     _commentCount: 1,
     accountOwner: null,
-    __typename: 'companies',
+    __typename: 'Company',
   },
   {
     id: 'a674fa6c-1455-4c57-afaf-dd5dc086361d',
@@ -37,7 +37,7 @@ export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
     employees: 1,
     _commentCount: 1,
     accountOwner: null,
-    __typename: 'companies',
+    __typename: 'Company',
   },
   {
     id: 'b1cfd51b-a831-455f-ba07-4e30671e1dc3',
@@ -48,7 +48,7 @@ export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
     employees: 10,
     _commentCount: 0,
     accountOwner: null,
-    __typename: 'companies',
+    __typename: 'Company',
   },
   {
     id: '5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
@@ -59,7 +59,7 @@ export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
     employees: 1,
     _commentCount: 2,
     accountOwner: null,
-    __typename: 'companies',
+    __typename: 'Company',
   },
   {
     id: '9d162de6-cfbf-4156-a790-e39854dcd4eb',
@@ -70,7 +70,7 @@ export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
     employees: 1,
     _commentCount: 13,
     accountOwner: null,
-    __typename: 'companies',
+    __typename: 'Company',
   },
   {
     id: '9d162de6-cfbf-4156-a790-e39854dcd4ef',
@@ -81,6 +81,6 @@ export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
     employees: 1,
     _commentCount: 1,
     accountOwner: null,
-    __typename: 'companies',
+    __typename: 'Company',
   },
 ];

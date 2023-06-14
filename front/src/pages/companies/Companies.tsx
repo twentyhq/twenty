@@ -66,7 +66,7 @@ export function Companies() {
       pipes: [],
       createdAt: new Date(),
       accountOwner: null,
-      __typename: 'companies',
+      __typename: 'Company',
     };
 
     await insertCompany(newCompany);
