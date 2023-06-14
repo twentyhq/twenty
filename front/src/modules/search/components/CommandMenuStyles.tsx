@@ -4,7 +4,7 @@ import { Command } from 'cmdk';
 export const StyledDialog = styled(Command.Dialog)`
   background: ${(props) => props.theme.primaryBackground};
   border-radius: ${(props) => props.theme.borderRadius};
-  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.09);
+  box-shadow: ${(props) => props.theme.modalBoxShadow};
   font-family: ${(props) => props.theme.fontFamily};
   left: 50%;
   max-width: 640px;
@@ -45,7 +45,7 @@ export const StyledItem = styled(Command.Item)`
   transition-property: none;
   user-select: none;
   &:hover {
-    background: ${(props) => props.theme.clickableElementBackgroundHover};
+    background: ${(props) => props.theme.lightBackgroundTransparent};
   }
   &[data-selected='true'] {
     background: ${(props) => props.theme.secondaryBackground};

@@ -88,16 +88,16 @@ Most default value should work out of the box, but don't forget to update the da
 On the frontend:
 ```
 cd front
-npm install
+yarn
 ```
 
 On the server side:
 ```
 cd server
-npm install
-npm run prisma:migrate
+yarn
+yarn prisma:migrate
 ```
-You can also add `npm run prisma:seed` to seed the database with mock data.
+You can also add `yarn prisma:seed` to seed the database with mock data.
 
 ### 5. Auth Setup
 Right now the only way to authenticate yourself is to setup Google Sign-in in `server/.env`
@@ -107,10 +107,10 @@ We will add an easier option soon.
 On the frontend:
 ```
 cd front
-npm run start
+yarn start
 ```
 On the server side:
 ```
 cd server
-npm run start
+yarn start
 ```

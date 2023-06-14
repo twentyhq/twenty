@@ -1,0 +1,8 @@
+{
+    "name": "eslint-plugin-twenty",
+    "version": "0.0.1",
+    "main": "index.js",
+    "dependencies": {
+        "postcss": "^8.4.24"
+    }
+}

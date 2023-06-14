@@ -36,26 +36,26 @@ $ npm install
 
 ```bash
 # development
-$ npm run start
+$ npm start
 
 # watch mode
-$ npm run start:dev
+$ npm start:dev
 
 # production mode
-$ npm run start:prod
+$ npm start:prod
 ```
 
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+$ npm test
 
 # e2e tests
-$ npm run test:e2e
+$ npm test:e2e
 
 # test coverage
-$ npm run test:cov
+$ npm test:cov
 ```
 
 ## Support

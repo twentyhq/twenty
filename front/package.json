@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.5",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.5",
     "@hello-pangea/dnd": "^16.2.0",
@@ -115,7 +116,6 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-config-standard-with-typescript": "^23.0.0",
-    "eslint-plugin-better-styled-components": "^1.1.2",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.5.1",
     "eslint-plugin-prettier": "^4.2.1",
@@ -123,6 +123,7 @@
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-storybook": "^0.6.11",
+    "eslint-plugin-twenty": "file:../packages/eslint-plugin-twenty",
     "http-server": "^14.1.1",
     "mock-apollo-client": "^1.2.1",
     "msw": "^1.2.1",

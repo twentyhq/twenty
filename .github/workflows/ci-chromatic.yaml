@@ -16,17 +16,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
       - name: Front / Write .env
         run: |
           cd front
@@ -34,7 +23,7 @@ jobs:
           echo "REACT_APP_API_URL: $REACT_APP_API_URL" >> .env
           echo "REACT_APP_AUTH_URL: $REACT_APP_AUTH_URL" >> .env
       - name: Front / Install Dependencies
-        run: cd front && npm install
+        run: cd front && yarn
       - name: Publish to Chromatic
         uses: chromaui/action@v1
         with:
