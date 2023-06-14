@@ -22,6 +22,8 @@ import {
 import { BoardItem } from '../../ui/components/board/BoardItem';
 import { NewButton } from '../../ui/components/board/BoardNewButton';
 
+import { BoardCard } from './BoardCard';
+
 type BoardProps = {
   initialBoard: Column[];
   items: Items;
@@ -41,8 +43,8 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
   );
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <StyledBoard>
+    <StyledBoard>
+      <DragDropContext onDragEnd={onDragEnd}>
         {board.map((column) => (
           <Droppable key={column.id} droppableId={column.id}>
             {(droppableProvided) => (
@@ -59,7 +61,9 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
                     >
                       {(draggableProvided) => (
                         <BoardItem draggableProvided={draggableProvided}>
-                          <p>{items[itemKey].content}</p>
+                          <BoardCard>
+                            {items[itemKey]?.id || 'Item not found'}
+                          </BoardCard>
                         </BoardItem>
                       )}
                     </Draggable>
@@ -70,7 +74,7 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
             )}
           </Droppable>
         ))}
-      </StyledBoard>
-    </DragDropContext>
+      </DragDropContext>
+    </StyledBoard>
   );
 };
