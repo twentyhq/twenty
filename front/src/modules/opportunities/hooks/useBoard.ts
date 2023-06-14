@@ -43,7 +43,7 @@ export const useBoard = () => {
   );
 
   const pipelineEntityType: 'Person' | 'Company' | undefined =
-    pipelineStages?.[0].pipelineProgresses?.[0].associableType;
+    pipelineStages?.[0].pipelineProgresses?.[0].progressableType;
   console.log(pipelineEntityType);
 
   const query =
