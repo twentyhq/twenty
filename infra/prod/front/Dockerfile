@@ -6,7 +6,7 @@ ARG REACT_APP_AUTH_URL
 WORKDIR /app/front
 COPY ./front .
 
-RUN yarn install --prod
+RUN yarn install
 RUN yarn build
 
 RUN yarn global add serve
