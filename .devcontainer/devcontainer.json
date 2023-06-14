@@ -1,10 +1,28 @@
 
 {
-	"name": "Twenty Codespace",
-	"image": "node:18.16.0",
-	"features": {
-	  "ghcr.io/devcontainers-contrib/features/jshint:2": {}
-	},
-	"forwardPorts": [3000, 3001, 5432],
-	 "postCreateCommand": "cd front && yarn && cd ../server && yarn"
+  "name": "Twenty Codespace",
+  "image": "node:18.16.0",
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/jshint:2": {}
+  },
+  "forwardPorts": [3000, 3001, 5432],
+  "postCreateCommand": "cd front && yarn && cd ../server && yarn",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "styled-components.vscode-styled-components",
+        "dbaeumer.vscode-eslint",
+        "unifiedjs.vscode-mdx",
+        "ms-vscode.makefile-tools",
+        "ms-azuretools.vscode-docker",
+        "esbenp.prettier-vscode",
+        "GraphQL.vscode-graphql",
+        "prisma.prisma",
+         "unifiedjs.vscode-mdx",
+         "yoavbls.pretty-ts-errors",
+         "graphql.vscode-graphql-syntax",
+         "graphql.vscode-graphql"
+      ]
+    }
   }
+}
