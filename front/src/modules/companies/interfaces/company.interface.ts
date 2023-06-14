@@ -9,7 +9,7 @@ import {
 } from '../../users/interfaces/user.interface';
 
 export type Company = {
-  __typename: 'companies';
+  __typename: 'Company';
   id: string;
   name?: string;
   domainName?: string;
@@ -54,7 +54,7 @@ export type GraphqlMutationCompany = {
 };
 
 export const mapToCompany = (company: GraphqlQueryCompany): Company => ({
-  __typename: 'companies',
+  __typename: 'Company',
   id: company.id,
   employees: company.employees,
   name: company.name,
@@ -80,5 +80,5 @@ export const mapToGqlCompany = (company: Company): GraphqlMutationCompany => ({
   createdAt: company.createdAt ? company.createdAt.toUTCString() : undefined,
 
   accountOwnerId: company.accountOwner?.id,
-  __typename: 'companies',
+  __typename: 'Company',
 });

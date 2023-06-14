@@ -39,7 +39,7 @@ describe('Person mappers', () => {
       phone: graphQLPerson.phone,
       _commentCount: 1,
       company: {
-        __typename: 'companies',
+        __typename: 'Company',
         id: '7af20dea-0412-4c4c-8b13-d6f0e6e09e87',
         accountOwner: undefined,
         address: undefined,

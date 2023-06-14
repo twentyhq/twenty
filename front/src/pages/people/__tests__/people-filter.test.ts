@@ -7,7 +7,7 @@ describe('PeopleFilter', () => {
         id: 'test-id',
         name: 'test-name',
         domainName: 'test-domain-name',
-        __typename: 'companies',
+        __typename: 'Company',
       }),
     ).toMatchSnapshot();
   });

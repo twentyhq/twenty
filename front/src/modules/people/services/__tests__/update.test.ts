@@ -31,7 +31,7 @@ it('updates a person', async () => {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       name: 'ACME',
       domainName: 'example.com',
-      __typename: 'companies',
+      __typename: 'Company',
     },
     phone: '+1 (555) 123-4567',
     pipes: [

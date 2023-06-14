@@ -1,16 +1,22 @@
+import { mockedCompaniesData } from '../../../../testing/mock-data/companies';
+import { mockedPeopleData } from '../../../../testing/mock-data/people';
 import { Column, Items } from '../../../ui/components/board/Board';
 
 export const items: Items = {
-  'item-1': { id: 'item-1', content: 'Item 1' },
-  'item-2': { id: 'item-2', content: 'Item 2' },
-  'item-3': { id: 'item-3', content: 'Item 3' },
-  'item-4': { id: 'item-4', content: 'Item 4' },
-  'item-5': { id: 'item-5', content: 'Item 5' },
-  'item-6': { id: 'item-6', content: 'Item 6' },
+  'item-1': mockedCompaniesData[0],
+  'item-2': mockedCompaniesData[1],
+  'item-3': mockedCompaniesData[2],
+  'item-4': mockedPeopleData[0],
+  'item-5': mockedPeopleData[1],
+  'item-6': mockedPeopleData[2],
 };
+
 for (let i = 7; i <= 20; i++) {
   const key = `item-${i}`;
-  items[key] = { id: key, content: `Item ${i}` };
+  items[key] = {
+    ...mockedCompaniesData[i % mockedCompaniesData.length],
+    id: key,
+  };
 }
 
 export const initialBoard = [

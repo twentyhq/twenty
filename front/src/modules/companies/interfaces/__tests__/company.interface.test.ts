@@ -33,12 +33,12 @@ describe('Company mappers', () => {
           __typename: 'Pipe',
         },
       ],
-      __typename: 'companies',
+      __typename: 'Company',
     } satisfies GraphqlQueryCompany;
 
     const company = mapToCompany(graphQLCompany);
     expect(company).toStrictEqual({
-      __typename: 'companies',
+      __typename: 'Company',
       id: graphQLCompany.id,
       name: graphQLCompany.name,
       domainName: graphQLCompany.domainName,
@@ -77,7 +77,7 @@ describe('Company mappers', () => {
         __typename: 'users',
       },
       createdAt: now,
-      __typename: 'companies',
+      __typename: 'Company',
     } satisfies Company;
     const graphQLCompany = mapToGqlCompany(company);
     expect(graphQLCompany).toStrictEqual({
@@ -88,7 +88,7 @@ describe('Company mappers', () => {
       employees: company.employees,
       address: company.address,
       accountOwnerId: '522d4ec4-c46b-4360-a0a7-df8df170be81',
-      __typename: 'companies',
+      __typename: 'Company',
     } satisfies GraphqlMutationCompany);
   });
 });
