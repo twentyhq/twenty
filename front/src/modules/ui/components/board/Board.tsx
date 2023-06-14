@@ -8,10 +8,7 @@ export const StyledBoard = styled.div`
 `;
 
 export type BoardItemKey = `item-${number | string}`;
-export interface Item {
-  id: string;
-  content?: string;
-}
+export type Item = any & { id: string };
 export interface Items {
   [key: string]: Item;
 }

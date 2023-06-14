@@ -61,9 +61,7 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
                     >
                       {(draggableProvided) => (
                         <BoardItem draggableProvided={draggableProvided}>
-                          <BoardCard>
-                            {items[itemKey]?.id || 'Item not found'}
-                          </BoardCard>
+                          <BoardCard item={items[itemKey]} />
                         </BoardItem>
                       )}
                     </Draggable>
