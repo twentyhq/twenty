@@ -1,12 +1,4 @@
 import { useMemo } from 'react';
-import {
-  TbBuilding,
-  TbCalendar,
-  TbLink,
-  TbMapPin,
-  TbSum,
-  TbUser,
-} from 'react-icons/tb';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEditableNameCell';
@@ -22,6 +14,14 @@ import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditableRelation } from '@/ui/components/editable-cell/types/EditableRelation';
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
+import {
+  IconBuilding,
+  IconCalendar,
+  IconLink,
+  IconMapPin,
+  IconSum,
+  IconUser,
+} from '@/ui/icons/index';
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 import { mapToUser, User } from '@/users/interfaces/user.interface';
 import { QueryMode } from '~/generated/graphql';
@@ -34,7 +34,7 @@ export const useCompaniesColumns = () => {
       getCheckBoxColumn(),
       columnHelper.accessor('name', {
         header: () => (
-          <ColumnHead viewName="Name" viewIcon={<TbBuilding size={16} />} />
+          <ColumnHead viewName="Name" viewIcon={<IconBuilding size={16} />} />
         ),
         cell: (props) => (
           <CompanyEditableNameChipCell company={props.row.original} />
@@ -43,7 +43,7 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('domainName', {
         header: () => (
-          <ColumnHead viewName="URL" viewIcon={<TbLink size={16} />} />
+          <ColumnHead viewName="URL" viewIcon={<IconLink size={16} />} />
         ),
         cell: (props) => (
           <EditableText
@@ -60,7 +60,7 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('employees', {
         header: () => (
-          <ColumnHead viewName="Employees" viewIcon={<TbSum size={16} />} />
+          <ColumnHead viewName="Employees" viewIcon={<IconSum size={16} />} />
         ),
         cell: (props) => (
           <EditableText
@@ -83,7 +83,7 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('address', {
         header: () => (
-          <ColumnHead viewName="Address" viewIcon={<TbMapPin size={16} />} />
+          <ColumnHead viewName="Address" viewIcon={<IconMapPin size={16} />} />
         ),
         cell: (props) => (
           <EditableText
@@ -100,7 +100,10 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('createdAt', {
         header: () => (
-          <ColumnHead viewName="Creation" viewIcon={<TbCalendar size={16} />} />
+          <ColumnHead
+            viewName="Creation"
+            viewIcon={<IconCalendar size={16} />}
+          />
         ),
         cell: (props) => (
           <EditableDate
@@ -118,7 +121,7 @@ export const useCompaniesColumns = () => {
         header: () => (
           <ColumnHead
             viewName="Account Owner"
-            viewIcon={<TbUser size={16} />}
+            viewIcon={<IconUser size={16} />}
           />
         ),
         cell: (props) => (

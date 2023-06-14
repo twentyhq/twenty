@@ -1,6 +1,7 @@
 import { ReactNode, useRef } from 'react';
-import { FaAngleDown } from 'react-icons/fa';
 import styled from '@emotion/styled';
+
+import { IconChevronDown } from '@/ui/icons/index';
 
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
 import {
@@ -196,7 +197,7 @@ const StyleAngleDownContainer = styled.div`
 function DropdownTopOptionAngleDown() {
   return (
     <StyleAngleDownContainer>
-      <FaAngleDown />
+      <IconChevronDown />
     </StyleAngleDownContainer>
   );
 }

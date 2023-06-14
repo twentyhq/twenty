@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
-import { IconPlus } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
+
+import { IconPlus } from '@/ui/icons/index';
 
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 

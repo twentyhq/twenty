@@ -1,6 +1,4 @@
 import { useCallback, useState } from 'react';
-import { FaList } from 'react-icons/fa';
-import { TbBuilding } from 'react-icons/tb';
 import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -21,6 +19,8 @@ import {
 import { SelectedFilterType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
 import { EntityTable } from '@/ui/components/table/EntityTable';
+import { IconBuilding } from '@/ui/icons/index';
+import { IconList } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { BoolExpType } from '@/utils/interfaces/generic.interface';
 import { AppPage } from '~/AppPage';
@@ -78,7 +78,7 @@ export function Companies() {
     <AppPage>
       <WithTopBarContainer
         title="Companies"
-        icon={<TbBuilding size={16} />}
+        icon={<IconBuilding size={16} />}
         onAddButtonClick={handleAddButtonClick}
       >
         <>
@@ -87,7 +87,7 @@ export function Companies() {
               data={companies}
               columns={companiesColumns}
               viewName="All Companies"
-              viewIcon={<FaList />}
+              viewIcon={<IconList />}
               availableSorts={availableSorts}
               availableFilters={availableFilters}
               onSortsUpdate={updateSorts}

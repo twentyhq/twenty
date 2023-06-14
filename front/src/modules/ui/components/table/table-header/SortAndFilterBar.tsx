@@ -1,4 +1,3 @@
-import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import styled from '@emotion/styled';
 
 import {
@@ -6,6 +5,7 @@ import {
   SelectedFilterType,
 } from '@/filters-and-sorts/interfaces/filters/interface';
 import { SelectedSortType } from '@/filters-and-sorts/interfaces/sorts/interface';
+import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icons/index';
 
 import SortOrFilterChip from './SortOrFilterChip';
 
@@ -74,7 +74,13 @@ function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
               key={sort.key}
               labelValue={sort.label}
               id={sort.key}
-              icon={sort.order === 'desc' ? <FaArrowDown /> : <FaArrowUp />}
+              icon={
+                sort.order === 'desc' ? (
+                  <IconArrowNarrowDown />
+                ) : (
+                  <IconArrowNarrowUp />
+                )
+              }
               onRemove={() => onRemoveSort(sort.key)}
             />
           );

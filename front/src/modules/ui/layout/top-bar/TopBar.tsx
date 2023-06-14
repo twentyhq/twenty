@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
-import { TbPlus } from 'react-icons/tb';
 import styled from '@emotion/styled';
+
+import { IconPlus } from '@/ui/icons/index';
 
 import NavCollapseButton from '../navbar/NavCollapseButton';
 
@@ -59,7 +60,7 @@ export function TopBar({ title, icon, onAddButtonClick }: OwnProps) {
             data-testid="add-button"
             onClick={onAddButtonClick}
           >
-            <TbPlus size={16} />
+            <IconPlus size={16} />
           </AddButtonContainer>
         )}
       </TopBarContainer>

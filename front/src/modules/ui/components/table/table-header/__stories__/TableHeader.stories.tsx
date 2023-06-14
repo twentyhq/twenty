@@ -1,9 +1,9 @@
 import React from 'react';
-import { FaList } from 'react-icons/fa';
 import { ApolloProvider } from '@apollo/client';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
+import { IconList } from '@/ui/icons/index';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { mockedClient } from '~/testing/mockedClient';
 
@@ -25,7 +25,7 @@ export const Empty: Story = {
       <FullHeightStorybookLayout>
         <TableHeader
           viewName="ViewName"
-          viewIcon={<FaList />}
+          viewIcon={<IconList />}
           availableSorts={availableSorts}
           availableFilters={availableFilters}
         />
@@ -40,7 +40,7 @@ export const WithSortsAndFilters: Story = {
       <FullHeightStorybookLayout>
         <TableHeader
           viewName="ViewName"
-          viewIcon={<FaList />}
+          viewIcon={<IconList />}
           availableSorts={availableSorts}
           availableFilters={availableFilters}
         />
