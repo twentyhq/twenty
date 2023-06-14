@@ -4,7 +4,7 @@ WORKDIR /app/docs
 
 COPY ./docs/package.json .
 COPY ./docs/yarn.lock .
-RUN yarn install
+RUN yarn install --prod
 
 COPY ./docs .
 RUN npm run build

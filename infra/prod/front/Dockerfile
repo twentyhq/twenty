@@ -8,7 +8,7 @@ COPY ../packages/ /app/packages
 WORKDIR /app/front
 COPY ./front .
 
-RUN yarn install
+RUN yarn install --prod
 RUN yarn build
 
 RUN yarn global add serve

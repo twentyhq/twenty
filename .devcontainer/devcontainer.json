@@ -18,10 +18,10 @@
         "esbenp.prettier-vscode",
         "GraphQL.vscode-graphql",
         "prisma.prisma",
-         "unifiedjs.vscode-mdx",
-         "yoavbls.pretty-ts-errors",
-         "graphql.vscode-graphql-syntax",
-         "graphql.vscode-graphql"
+        "unifiedjs.vscode-mdx",
+        "yoavbls.pretty-ts-errors",
+        "graphql.vscode-graphql-syntax",
+        "graphql.vscode-graphql"
       ]
     }
   }
