@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
 
 export const HoverableMenuItem = styled.div`
-  position: relative;
-  box-sizing: border-box;
-  height: 100%;
-  width: 100%;
-  display: flex;
   align-items: center;
-  cursor: pointer;
-  user-select: none;
-  border-radius: 4px;
   background: rgba(0, 0, 0, 0);
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: 100%;
+  position: relative;
   transition: background 0.1s ease;
+  user-select: none;
+  width: 100%;
 
   &:hover {
     background: rgba(0, 0, 0, 0.04);

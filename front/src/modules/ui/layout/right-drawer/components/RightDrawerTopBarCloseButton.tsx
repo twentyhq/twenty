@@ -6,19 +6,19 @@ import { IconPlus } from '@/ui/icons/index';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 
 const StyledButton = styled.button`
-  height: 24px;
-  width: 24px;
-  border: 1px solid ${(props) => props.theme.lightBorder};
+  align-items: center;
   background: none;
+  border: 1px solid ${(props) => props.theme.lightBorder};
+  border-radius: 4px;
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  height: 24px;
   padding: 3px;
 
-  border-radius: 4px;
-
   transition: ${(props) => props.theme.clickableElementBackgroundTransition};
+
+  width: 24px;
   &:hover {
     background: ${(props) => props.theme.clickableElementBackgroundHover};
   }

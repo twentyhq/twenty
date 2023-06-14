@@ -7,23 +7,23 @@ export const DropdownMenuSearchContainer = styled.div`
   --horizontal-padding: ${(props) => props.theme.spacing(2)};
   --vertical-padding: ${(props) => props.theme.spacing(1)};
 
-  width: calc(100% - 2 * var(--horizontal-padding));
-  height: calc(36px - 2 * var(--vertical-padding));
+  align-items: center;
+  border-bottom: 1px solid ${(props) => props.theme.lightBorder};
 
   display: flex;
   flex-direction: row;
-  align-items: center;
+  height: calc(36px - 2 * var(--vertical-padding));
   padding: var(--vertical-padding) var(--horizontal-padding);
 
-  border-bottom: 1px solid ${(props) => props.theme.lightBorder};
+  width: calc(100% - 2 * var(--horizontal-padding));
 `;
 
 const StyledEditModeSearchInput = styled.input`
-  width: 100%;
+  font-size: ${(props) => props.theme.fontSizeSmall};
 
   ${textInputStyle}
 
-  font-size: ${(props) => props.theme.fontSizeSmall};
+  width: 100%;
 `;
 
 export function DropdownMenuSearch(

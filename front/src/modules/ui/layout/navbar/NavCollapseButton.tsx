@@ -10,21 +10,21 @@ import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 import { MOBILE_VIEWPORT } from '../styles/themes';
 
 const CollapseButton = styled.button<{ hideOnDesktop: boolean | undefined }>`
-  display: flex;
   align-items: center;
-  justify-content: center;
-
-  width: 32px;
-  height: 32px;
-
-  user-select: none;
-  border: 0;
   background: inherit;
-
-  padding: 0;
-  cursor: pointer;
+  border: 0;
 
   color: ${(props) => props.theme.text30};
+  cursor: pointer;
+
+  display: flex;
+  height: 32px;
+  justify-content: center;
+
+  padding: 0;
+  user-select: none;
+
+  width: 32px;
 
   ${(props) =>
     props.hideOnDesktop &&

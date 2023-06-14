@@ -21,10 +21,10 @@ const StyledNavbarContainer = styled.div<{ width: string }>`
 
 const NavbarSubContainer = styled.div`
   display: flex;
-  width: 160px;
   flex-direction: column;
-  margin-top: 41px;
   margin-left: auto;
+  margin-top: 41px;
+  width: 160px;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;

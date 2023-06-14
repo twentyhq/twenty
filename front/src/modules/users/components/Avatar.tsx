@@ -10,23 +10,23 @@ type OwnProps = {
 };
 
 export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholderLetter'>>`
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
-  border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
-  background-image: url(${(props) =>
-    isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
+  align-items: center;
   background-color: ${(props) =>
     !isNonEmptyString(props.avatarUrl)
       ? props.theme.tertiaryBackground
       : 'none'};
-  background-repeat: no-repeat;
+  background-image: url(${(props) =>
+    isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
   background-position: center center;
+  background-repeat: no-repeat;
   background-size: cover;
-
+  border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   display: flex;
-  align-items: center;
 
+  height: ${(props) => props.size}px;
   justify-content: center;
+
+  width: ${(props) => props.size}px;
 `;
 
 type StyledPlaceholderLetterProps = {
@@ -34,17 +34,17 @@ type StyledPlaceholderLetterProps = {
 };
 
 export const StyledPlaceholderLetter = styled.div<StyledPlaceholderLetterProps>`
-  width: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
-
-  font-size: 12px;
-  font-weight: 500;
+  align-items: center;
+  color: ${(props) => props.theme.text80};
 
   display: flex;
-  align-items: center;
+  font-size: 12px;
+
+  font-weight: 500;
+  height: ${(props) => props.size}px;
   justify-content: center;
 
-  color: ${(props) => props.theme.text80};
+  width: ${(props) => props.size}px;
 `;
 
 export function Avatar({

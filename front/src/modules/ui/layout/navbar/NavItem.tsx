@@ -21,18 +21,10 @@ type StyledItemProps = {
 };
 
 const StyledItem = styled.button<StyledItemProps>`
-  display: flex;
   align-items: center;
-  border: none;
-  font-size: ${(props) => props.theme.fontSizeMedium};
-  cursor: ${(props) => (props.soon ? 'default' : 'pointer')};
-  pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
-  user-select: none;
   background: ${(props) => (props.active ? 'rgba(0, 0, 0, 0.04)' : 'inherit')};
-  padding-top: ${(props) => props.theme.spacing(1)};
-  padding-bottom: ${(props) => props.theme.spacing(1)};
-  padding-left: ${(props) => props.theme.spacing(1)};
-  font-family: 'Inter';
+  border: none;
+  border-radius: 4px;
   color: ${(props) => {
     if (props.active) {
       return props.theme.text100;
@@ -45,12 +37,20 @@ const StyledItem = styled.button<StyledItemProps>`
     }
     return props.theme.text60;
   }};
-  border-radius: 4px;
+  cursor: ${(props) => (props.soon ? 'default' : 'pointer')};
+  display: flex;
+  font-family: 'Inter';
+  font-size: ${(props) => props.theme.fontSizeMedium};
+  margin-bottom: calc(${(props) => props.theme.spacing(1)} / 2);
+  padding-bottom: ${(props) => props.theme.spacing(1)};
+  padding-left: ${(props) => props.theme.spacing(1)};
+  padding-top: ${(props) => props.theme.spacing(1)};
+  pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
   :hover {
     background: rgba(0, 0, 0, 0.04);
     color: ${(props) => (props.danger ? props.theme.red : props.theme.text100)};
   }
-  margin-bottom: calc(${(props) => props.theme.spacing(1)} / 2);
+  user-select: none;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     font-size: ${(props) => props.theme.fontSizeLarge};

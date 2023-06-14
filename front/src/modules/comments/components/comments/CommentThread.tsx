@@ -17,29 +17,29 @@ type OwnProps = {
 };
 
 const StyledContainer = styled.div`
-  display: flex;
   align-items: flex-start;
+  display: flex;
 
   flex-direction: column;
 
-  justify-content: flex-start;
-
   gap: ${(props) => props.theme.spacing(4)};
+
+  justify-content: flex-start;
   padding: ${(props) => props.theme.spacing(2)};
 `;
 
 const StyledThreadItemListContainer = styled.div`
-  display: flex;
-  flex-direction: column-reverse;
-
   align-items: flex-start;
-  justify-content: flex-start;
+  display: flex;
 
+  flex-direction: column-reverse;
+  gap: ${(props) => props.theme.spacing(4)};
+
+  justify-content: flex-start;
   max-height: 400px;
   overflow: auto;
-  width: 100%;
 
-  gap: ${(props) => props.theme.spacing(4)};
+  width: 100%;
 `;
 
 export function CommentThread({ commentThread }: OwnProps) {

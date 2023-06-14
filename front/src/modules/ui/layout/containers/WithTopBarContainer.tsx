@@ -21,17 +21,17 @@ const StyledContainer = styled.div`
 `;
 
 const MainContainer = styled.div`
+  background: ${(props) => props.theme.noisyBackground};
   display: flex;
   flex-direction: row;
-  width: calc(100% - ${(props) => props.theme.spacing(3)});
+  gap: ${(props) => props.theme.spacing(2)};
   height: calc(
     100% - ${TOP_BAR_MIN_HEIGHT} - ${(props) => props.theme.spacing(2)} -
       ${(props) => props.theme.spacing(5)}
   );
-  background: ${(props) => props.theme.noisyBackground};
-  padding-right: ${(props) => props.theme.spacing(3)};
   padding-bottom: ${(props) => props.theme.spacing(3)};
-  gap: ${(props) => props.theme.spacing(2)};
+  padding-right: ${(props) => props.theme.spacing(3)};
+  width: calc(100% - ${(props) => props.theme.spacing(3)});
 `;
 
 type LeftContainerProps = {
@@ -40,6 +40,7 @@ type LeftContainerProps = {
 
 const LeftContainer = styled.div<LeftContainerProps>`
   display: flex;
+  position: relative;
   width: calc(
     100% -
       ${(props) =>
@@ -47,7 +48,6 @@ const LeftContainer = styled.div<LeftContainerProps>`
           ? `${props.theme.rightDrawerWidth} - ${props.theme.spacing(2)}`
           : '0px'}
   );
-  position: relative;
 `;
 
 export function WithTopBarContainer({

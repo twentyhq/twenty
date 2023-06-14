@@ -15,13 +15,13 @@ type OwnProps = {
 };
 
 const StyledContainer = styled.div`
-  height: 32px;
-
-  display: flex;
   align-items: center;
-  justify-content: center;
 
   cursor: pointer;
+  display: flex;
+  height: 32px;
+
+  justify-content: center;
 `;
 
 export function CheckboxCell({

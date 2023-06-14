@@ -3,17 +3,17 @@ import styled from '@emotion/styled';
 import { IconPlus } from '@/ui/icons/index';
 
 const StyledButton = styled.button`
-  display: flex;
   align-items: center;
-  justify-content: center;
+  align-self: baseline;
   background-color: ${({ theme }) => theme.primaryBackground};
-  color: ${({ theme }) => theme.text40};
   border: none;
   border-radius: ${({ theme }) => theme.borderRadius};
+  color: ${({ theme }) => theme.text40};
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-  align-self: baseline;
+  display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: center;
+  transition: background-color 0.2s ease-in-out;
 
   &:hover {
     background-color: ${({ theme }) => theme.secondaryBackground};

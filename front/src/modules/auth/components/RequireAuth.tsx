@@ -6,11 +6,11 @@ import styled from '@emotion/styled';
 import { hasAccessToken } from '../services/AuthService';
 
 const EmptyContainer = styled.div`
-  display: flex;
-  justify-content: center;
   align-items: center;
-  width: 100%;
+  display: flex;
   height: 100%;
+  justify-content: center;
+  width: 100%;
 `;
 
 const fadeIn = keyframes`
@@ -23,8 +23,8 @@ const fadeIn = keyframes`
 `;
 
 const FadeInStyle = styled.div`
-  opacity: 0;
   animation: ${fadeIn} 1s forwards;
+  opacity: 0;
 `;
 
 export function RequireAuth({

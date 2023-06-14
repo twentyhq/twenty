@@ -2,32 +2,32 @@ import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
 export const EditableCellNormalModeOuterContainer = styled.div`
-  display: flex;
   align-items: center;
-  width: 100%;
+  display: flex;
   height: 100%;
   overflow: hidden;
-
   padding-left: ${(props) => props.theme.spacing(2)};
+
   padding-right: ${(props) => props.theme.spacing(1)};
+  width: 100%;
 
   &:hover {
-    background: ${(props) => props.theme.secondaryBackgroundTransparent};
+    -moz-box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
 
     -webkit-box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
-    -moz-box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
-    box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
-
+    background: ${(props) => props.theme.secondaryBackgroundTransparent};
     border-radius: ${(props) => props.theme.borderRadius};
+
+    box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
   }
 `;
 
 export const EditableCellNormalModeInnerContainer = styled.div`
-  display: flex;
   align-items: center;
-  width: 100%;
+  display: flex;
   height: 100%;
   overflow: hidden;
+  width: 100%;
 `;
 
 type OwnProps = {

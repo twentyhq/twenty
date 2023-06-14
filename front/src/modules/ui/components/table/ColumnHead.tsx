@@ -7,11 +7,11 @@ type OwnProps = {
 };
 
 const StyledTitle = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  height: ${(props) => props.theme.spacing(8)};
   font-weight: 500;
+  height: ${(props) => props.theme.spacing(8)};
   padding-left: ${(props) => props.theme.spacing(2)};
 `;
 

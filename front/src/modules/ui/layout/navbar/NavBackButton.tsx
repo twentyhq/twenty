@@ -10,17 +10,17 @@ type OwnProps = {
 };
 
 const IconAndButtonContainer = styled.button`
+  align-items: center;
+  background: inherit;
+  border: none;
+  color: ${(props) => props.theme.text60};
+  cursor: pointer;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  padding: ${(props) => props.theme.spacing(1)};
-  gap: ${(props) => props.theme.spacing(1)};
   font-size: ${(props) => props.theme.fontSizeLarge};
   font-weight: ${(props) => props.theme.fontWeightSemibold};
-  color: ${(props) => props.theme.text60};
-  border: none;
-  background: inherit;
-  cursor: pointer;
+  gap: ${(props) => props.theme.spacing(1)};
+  padding: ${(props) => props.theme.spacing(1)};
   width: 100%;
 `;
 
