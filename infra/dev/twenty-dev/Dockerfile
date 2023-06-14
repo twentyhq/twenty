@@ -1,4 +1,4 @@
-FROM node:18.16.0 as front
+FROM node:18.16-bullseye as front
 
 WORKDIR /app/front
 
