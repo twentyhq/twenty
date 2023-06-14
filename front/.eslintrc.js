@@ -5,7 +5,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin', 'simple-import-sort', 'better-styled-components', 'twenty'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'simple-import-sort', 'twenty'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
@@ -45,7 +45,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
-    'better-styled-components/sort-declarations-alphabetically': 'error',
+    'twenty/sort-css-properties-alphabetically': 'error',
     'twenty/no-hardcoded-colors': 'error'
   }
 };
