@@ -10,36 +10,37 @@ import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.
 
 @InputType()
 export class CommentThreadWhereInput {
-  @Field(() => [CommentThreadWhereInput], { nullable: true })
-  AND?: Array<CommentThreadWhereInput>;
 
-  @Field(() => [CommentThreadWhereInput], { nullable: true })
-  OR?: Array<CommentThreadWhereInput>;
+    @Field(() => [CommentThreadWhereInput], {nullable:true})
+    AND?: Array<CommentThreadWhereInput>;
 
-  @Field(() => [CommentThreadWhereInput], { nullable: true })
-  NOT?: Array<CommentThreadWhereInput>;
+    @Field(() => [CommentThreadWhereInput], {nullable:true})
+    OR?: Array<CommentThreadWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [CommentThreadWhereInput], {nullable:true})
+    NOT?: Array<CommentThreadWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @HideField()
-  workspaceId?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @Field(() => CommentThreadTargetListRelationFilter, { nullable: true })
-  commentThreadTargets?: CommentThreadTargetListRelationFilter;
+    @HideField()
+    workspaceId?: StringFilter;
 
-  @Field(() => CommentListRelationFilter, { nullable: true })
-  comments?: CommentListRelationFilter;
+    @Field(() => CommentThreadTargetListRelationFilter, {nullable:true})
+    commentThreadTargets?: CommentThreadTargetListRelationFilter;
 
-  @HideField()
-  workspace?: WorkspaceRelationFilter;
+    @Field(() => CommentListRelationFilter, {nullable:true})
+    comments?: CommentListRelationFilter;
+
+    @HideField()
+    workspace?: WorkspaceRelationFilter;
 }

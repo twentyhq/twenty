@@ -12,55 +12,48 @@ import { CompanyScalarWhereInput } from './company-scalar-where.input';
 
 @InputType()
 export class CompanyUpdateManyWithoutAccountOwnerNestedInput {
-  @Field(() => [CompanyCreateWithoutAccountOwnerInput], { nullable: true })
-  @Type(() => CompanyCreateWithoutAccountOwnerInput)
-  create?: Array<CompanyCreateWithoutAccountOwnerInput>;
 
-  @Field(() => [CompanyCreateOrConnectWithoutAccountOwnerInput], {
-    nullable: true,
-  })
-  @Type(() => CompanyCreateOrConnectWithoutAccountOwnerInput)
-  connectOrCreate?: Array<CompanyCreateOrConnectWithoutAccountOwnerInput>;
+    @Field(() => [CompanyCreateWithoutAccountOwnerInput], {nullable:true})
+    @Type(() => CompanyCreateWithoutAccountOwnerInput)
+    create?: Array<CompanyCreateWithoutAccountOwnerInput>;
 
-  @Field(() => [CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput], {
-    nullable: true,
-  })
-  @Type(() => CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput)
-  upsert?: Array<CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput>;
+    @Field(() => [CompanyCreateOrConnectWithoutAccountOwnerInput], {nullable:true})
+    @Type(() => CompanyCreateOrConnectWithoutAccountOwnerInput)
+    connectOrCreate?: Array<CompanyCreateOrConnectWithoutAccountOwnerInput>;
 
-  @Field(() => CompanyCreateManyAccountOwnerInputEnvelope, { nullable: true })
-  @Type(() => CompanyCreateManyAccountOwnerInputEnvelope)
-  createMany?: CompanyCreateManyAccountOwnerInputEnvelope;
+    @Field(() => [CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput], {nullable:true})
+    @Type(() => CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput)
+    upsert?: Array<CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput>;
 
-  @Field(() => [CompanyWhereUniqueInput], { nullable: true })
-  @Type(() => CompanyWhereUniqueInput)
-  set?: Array<CompanyWhereUniqueInput>;
+    @Field(() => CompanyCreateManyAccountOwnerInputEnvelope, {nullable:true})
+    @Type(() => CompanyCreateManyAccountOwnerInputEnvelope)
+    createMany?: CompanyCreateManyAccountOwnerInputEnvelope;
 
-  @Field(() => [CompanyWhereUniqueInput], { nullable: true })
-  @Type(() => CompanyWhereUniqueInput)
-  disconnect?: Array<CompanyWhereUniqueInput>;
+    @Field(() => [CompanyWhereUniqueInput], {nullable:true})
+    @Type(() => CompanyWhereUniqueInput)
+    set?: Array<CompanyWhereUniqueInput>;
 
-  @Field(() => [CompanyWhereUniqueInput], { nullable: true })
-  @Type(() => CompanyWhereUniqueInput)
-  delete?: Array<CompanyWhereUniqueInput>;
+    @Field(() => [CompanyWhereUniqueInput], {nullable:true})
+    @Type(() => CompanyWhereUniqueInput)
+    disconnect?: Array<CompanyWhereUniqueInput>;
 
-  @Field(() => [CompanyWhereUniqueInput], { nullable: true })
-  @Type(() => CompanyWhereUniqueInput)
-  connect?: Array<CompanyWhereUniqueInput>;
+    @Field(() => [CompanyWhereUniqueInput], {nullable:true})
+    @Type(() => CompanyWhereUniqueInput)
+    delete?: Array<CompanyWhereUniqueInput>;
 
-  @Field(() => [CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput], {
-    nullable: true,
-  })
-  @Type(() => CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput)
-  update?: Array<CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput>;
+    @Field(() => [CompanyWhereUniqueInput], {nullable:true})
+    @Type(() => CompanyWhereUniqueInput)
+    connect?: Array<CompanyWhereUniqueInput>;
 
-  @Field(() => [CompanyUpdateManyWithWhereWithoutAccountOwnerInput], {
-    nullable: true,
-  })
-  @Type(() => CompanyUpdateManyWithWhereWithoutAccountOwnerInput)
-  updateMany?: Array<CompanyUpdateManyWithWhereWithoutAccountOwnerInput>;
+    @Field(() => [CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput], {nullable:true})
+    @Type(() => CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput)
+    update?: Array<CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput>;
 
-  @Field(() => [CompanyScalarWhereInput], { nullable: true })
-  @Type(() => CompanyScalarWhereInput)
-  deleteMany?: Array<CompanyScalarWhereInput>;
+    @Field(() => [CompanyUpdateManyWithWhereWithoutAccountOwnerInput], {nullable:true})
+    @Type(() => CompanyUpdateManyWithWhereWithoutAccountOwnerInput)
+    updateMany?: Array<CompanyUpdateManyWithWhereWithoutAccountOwnerInput>;
+
+    @Field(() => [CompanyScalarWhereInput], {nullable:true})
+    @Type(() => CompanyScalarWhereInput)
+    deleteMany?: Array<CompanyScalarWhereInput>;
 }

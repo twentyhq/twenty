@@ -7,36 +7,37 @@ import { PipelineProgressMinOrderByAggregateInput } from './pipeline-progress-mi
 
 @InputType()
 export class PipelineProgressOrderByWithAggregationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  pipelineId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  pipelineStageId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    pipelineId?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  associableType?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    pipelineStageId?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  associableId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    associableType?: keyof typeof SortOrder;
 
-  @Field(() => PipelineProgressCountOrderByAggregateInput, { nullable: true })
-  _count?: PipelineProgressCountOrderByAggregateInput;
+    @Field(() => SortOrder, {nullable:true})
+    associableId?: keyof typeof SortOrder;
 
-  @Field(() => PipelineProgressMaxOrderByAggregateInput, { nullable: true })
-  _max?: PipelineProgressMaxOrderByAggregateInput;
+    @Field(() => PipelineProgressCountOrderByAggregateInput, {nullable:true})
+    _count?: PipelineProgressCountOrderByAggregateInput;
 
-  @Field(() => PipelineProgressMinOrderByAggregateInput, { nullable: true })
-  _min?: PipelineProgressMinOrderByAggregateInput;
+    @Field(() => PipelineProgressMaxOrderByAggregateInput, {nullable:true})
+    _max?: PipelineProgressMaxOrderByAggregateInput;
+
+    @Field(() => PipelineProgressMinOrderByAggregateInput, {nullable:true})
+    _min?: PipelineProgressMinOrderByAggregateInput;
 }

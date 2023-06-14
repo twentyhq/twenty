@@ -6,11 +6,12 @@ import { CommentThreadCreateWithoutWorkspaceInput } from './comment-thread-creat
 
 @InputType()
 export class CommentThreadCreateOrConnectWithoutWorkspaceInput {
-  @Field(() => CommentThreadWhereUniqueInput, { nullable: false })
-  @Type(() => CommentThreadWhereUniqueInput)
-  where!: CommentThreadWhereUniqueInput;
 
-  @Field(() => CommentThreadCreateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => CommentThreadCreateWithoutWorkspaceInput)
-  create!: CommentThreadCreateWithoutWorkspaceInput;
+    @Field(() => CommentThreadWhereUniqueInput, {nullable:false})
+    @Type(() => CommentThreadWhereUniqueInput)
+    where!: CommentThreadWhereUniqueInput;
+
+    @Field(() => CommentThreadCreateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => CommentThreadCreateWithoutWorkspaceInput)
+    create!: CommentThreadCreateWithoutWorkspaceInput;
 }

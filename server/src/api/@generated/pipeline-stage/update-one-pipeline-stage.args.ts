@@ -6,11 +6,12 @@ import { PipelineStageWhereUniqueInput } from './pipeline-stage-where-unique.inp
 
 @ArgsType()
 export class UpdateOnePipelineStageArgs {
-  @Field(() => PipelineStageUpdateInput, { nullable: false })
-  @Type(() => PipelineStageUpdateInput)
-  data!: PipelineStageUpdateInput;
 
-  @Field(() => PipelineStageWhereUniqueInput, { nullable: false })
-  @Type(() => PipelineStageWhereUniqueInput)
-  where!: PipelineStageWhereUniqueInput;
+    @Field(() => PipelineStageUpdateInput, {nullable:false})
+    @Type(() => PipelineStageUpdateInput)
+    data!: PipelineStageUpdateInput;
+
+    @Field(() => PipelineStageWhereUniqueInput, {nullable:false})
+    @Type(() => PipelineStageWhereUniqueInput)
+    where!: PipelineStageWhereUniqueInput;
 }

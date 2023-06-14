@@ -7,39 +7,40 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineStageScalarWhereInput {
-  @Field(() => [PipelineStageScalarWhereInput], { nullable: true })
-  AND?: Array<PipelineStageScalarWhereInput>;
 
-  @Field(() => [PipelineStageScalarWhereInput], { nullable: true })
-  OR?: Array<PipelineStageScalarWhereInput>;
+    @Field(() => [PipelineStageScalarWhereInput], {nullable:true})
+    AND?: Array<PipelineStageScalarWhereInput>;
 
-  @Field(() => [PipelineStageScalarWhereInput], { nullable: true })
-  NOT?: Array<PipelineStageScalarWhereInput>;
+    @Field(() => [PipelineStageScalarWhereInput], {nullable:true})
+    OR?: Array<PipelineStageScalarWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [PipelineStageScalarWhereInput], {nullable:true})
+    NOT?: Array<PipelineStageScalarWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  name?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  type?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    name?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  color?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    type?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  pipelineId?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    color?: StringFilter;
 
-  @HideField()
-  workspaceId?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    pipelineId?: StringFilter;
+
+    @HideField()
+    workspaceId?: StringFilter;
 }

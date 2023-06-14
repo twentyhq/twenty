@@ -4,27 +4,28 @@ import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.e
 
 @ObjectType()
 export class PipelineProgressMaxAggregate {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => String, { nullable: true })
-  pipelineId?: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: true })
-  pipelineStageId?: string;
+    @Field(() => String, {nullable:true})
+    pipelineId?: string;
 
-  @Field(() => PipelineProgressableType, { nullable: true })
-  associableType?: keyof typeof PipelineProgressableType;
+    @Field(() => String, {nullable:true})
+    pipelineStageId?: string;
 
-  @Field(() => String, { nullable: true })
-  associableId?: string;
+    @Field(() => PipelineProgressableType, {nullable:true})
+    associableType?: keyof typeof PipelineProgressableType;
+
+    @Field(() => String, {nullable:true})
+    associableId?: string;
 }

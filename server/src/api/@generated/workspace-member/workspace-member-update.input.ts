@@ -9,23 +9,22 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberUpdateInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput, {
-    nullable: true,
-  })
-  user?: UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @HideField()
-  workspace?: WorkspaceUpdateOneRequiredWithoutWorkspaceMemberNestedInput;
+    @Field(() => UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput, {nullable:true})
+    user?: UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput;
+
+    @HideField()
+    workspace?: WorkspaceUpdateOneRequiredWithoutWorkspaceMemberNestedInput;
 }

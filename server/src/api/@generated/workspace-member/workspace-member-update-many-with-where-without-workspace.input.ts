@@ -6,11 +6,12 @@ import { WorkspaceMemberUpdateManyMutationInput } from './workspace-member-updat
 
 @InputType()
 export class WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput {
-  @Field(() => WorkspaceMemberScalarWhereInput, { nullable: false })
-  @Type(() => WorkspaceMemberScalarWhereInput)
-  where!: WorkspaceMemberScalarWhereInput;
 
-  @Field(() => WorkspaceMemberUpdateManyMutationInput, { nullable: false })
-  @Type(() => WorkspaceMemberUpdateManyMutationInput)
-  data!: WorkspaceMemberUpdateManyMutationInput;
+    @Field(() => WorkspaceMemberScalarWhereInput, {nullable:false})
+    @Type(() => WorkspaceMemberScalarWhereInput)
+    where!: WorkspaceMemberScalarWhereInput;
+
+    @Field(() => WorkspaceMemberUpdateManyMutationInput, {nullable:false})
+    @Type(() => WorkspaceMemberUpdateManyMutationInput)
+    data!: WorkspaceMemberUpdateManyMutationInput;
 }

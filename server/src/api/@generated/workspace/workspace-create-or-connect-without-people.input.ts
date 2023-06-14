@@ -6,11 +6,12 @@ import { WorkspaceCreateWithoutPeopleInput } from './workspace-create-without-pe
 
 @InputType()
 export class WorkspaceCreateOrConnectWithoutPeopleInput {
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: false })
-  @Type(() => WorkspaceWhereUniqueInput)
-  where!: WorkspaceWhereUniqueInput;
 
-  @Field(() => WorkspaceCreateWithoutPeopleInput, { nullable: false })
-  @Type(() => WorkspaceCreateWithoutPeopleInput)
-  create!: WorkspaceCreateWithoutPeopleInput;
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:false})
+    @Type(() => WorkspaceWhereUniqueInput)
+    where!: WorkspaceWhereUniqueInput;
+
+    @Field(() => WorkspaceCreateWithoutPeopleInput, {nullable:false})
+    @Type(() => WorkspaceCreateWithoutPeopleInput)
+    create!: WorkspaceCreateWithoutPeopleInput;
 }

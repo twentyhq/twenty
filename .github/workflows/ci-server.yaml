@@ -10,21 +10,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - name: Cache node modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
       - name: Server / Install Dependencies
-        run: cd server && npm install
+        run: cd server && yarn install
       - name: Server / Run linter
-        run: cd server && npm run lint
+        run: cd server && yarn lint
       - name: Server / Run jest tests
         run: |
-          cd server && npm run test
+          cd server && yarn test

@@ -11,28 +11,29 @@ import { PipelineProgressMaxAggregateInput } from '../pipeline-progress/pipeline
 
 @ArgsType()
 export class PipelineProgressAggregateArgs {
-  @Field(() => PipelineProgressWhereInput, { nullable: true })
-  @Type(() => PipelineProgressWhereInput)
-  where?: PipelineProgressWhereInput;
 
-  @Field(() => [PipelineProgressOrderByWithRelationInput], { nullable: true })
-  orderBy?: Array<PipelineProgressOrderByWithRelationInput>;
+    @Field(() => PipelineProgressWhereInput, {nullable:true})
+    @Type(() => PipelineProgressWhereInput)
+    where?: PipelineProgressWhereInput;
 
-  @Field(() => PipelineProgressWhereUniqueInput, { nullable: true })
-  cursor?: PipelineProgressWhereUniqueInput;
+    @Field(() => [PipelineProgressOrderByWithRelationInput], {nullable:true})
+    orderBy?: Array<PipelineProgressOrderByWithRelationInput>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => PipelineProgressWhereUniqueInput, {nullable:true})
+    cursor?: PipelineProgressWhereUniqueInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => PipelineProgressCountAggregateInput, { nullable: true })
-  _count?: PipelineProgressCountAggregateInput;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
 
-  @Field(() => PipelineProgressMinAggregateInput, { nullable: true })
-  _min?: PipelineProgressMinAggregateInput;
+    @Field(() => PipelineProgressCountAggregateInput, {nullable:true})
+    _count?: PipelineProgressCountAggregateInput;
 
-  @Field(() => PipelineProgressMaxAggregateInput, { nullable: true })
-  _max?: PipelineProgressMaxAggregateInput;
+    @Field(() => PipelineProgressMinAggregateInput, {nullable:true})
+    _min?: PipelineProgressMinAggregateInput;
+
+    @Field(() => PipelineProgressMaxAggregateInput, {nullable:true})
+    _max?: PipelineProgressMaxAggregateInput;
 }

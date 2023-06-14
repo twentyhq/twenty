@@ -7,33 +7,34 @@ import { PipelineStage } from '../pipeline-stage/pipeline-stage.model';
 
 @ObjectType()
 export class PipelineProgress {
-  @Field(() => ID, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date;
+    @Field(() => ID, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt!: Date | null;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
-  @Field(() => String, { nullable: false })
-  pipelineId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt!: Date | null;
 
-  @Field(() => String, { nullable: false })
-  pipelineStageId!: string;
+    @Field(() => String, {nullable:false})
+    pipelineId!: string;
 
-  @Field(() => PipelineProgressableType, { nullable: false })
-  associableType!: keyof typeof PipelineProgressableType;
+    @Field(() => String, {nullable:false})
+    pipelineStageId!: string;
 
-  @Field(() => String, { nullable: false })
-  associableId!: string;
+    @Field(() => PipelineProgressableType, {nullable:false})
+    associableType!: keyof typeof PipelineProgressableType;
 
-  @Field(() => Pipeline, { nullable: false })
-  pipeline?: Pipeline;
+    @Field(() => String, {nullable:false})
+    associableId!: string;
 
-  @Field(() => PipelineStage, { nullable: false })
-  pipelineStage?: PipelineStage;
+    @Field(() => Pipeline, {nullable:false})
+    pipeline?: Pipeline;
+
+    @Field(() => PipelineStage, {nullable:false})
+    pipelineStage?: PipelineStage;
 }

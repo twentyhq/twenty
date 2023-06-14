@@ -9,25 +9,24 @@ import { WorkspaceUpdateWithoutPipelinesInput } from './workspace-update-without
 
 @InputType()
 export class WorkspaceUpdateOneRequiredWithoutPipelinesNestedInput {
-  @Field(() => WorkspaceCreateWithoutPipelinesInput, { nullable: true })
-  @Type(() => WorkspaceCreateWithoutPipelinesInput)
-  create?: WorkspaceCreateWithoutPipelinesInput;
 
-  @Field(() => WorkspaceCreateOrConnectWithoutPipelinesInput, {
-    nullable: true,
-  })
-  @Type(() => WorkspaceCreateOrConnectWithoutPipelinesInput)
-  connectOrCreate?: WorkspaceCreateOrConnectWithoutPipelinesInput;
+    @Field(() => WorkspaceCreateWithoutPipelinesInput, {nullable:true})
+    @Type(() => WorkspaceCreateWithoutPipelinesInput)
+    create?: WorkspaceCreateWithoutPipelinesInput;
 
-  @Field(() => WorkspaceUpsertWithoutPipelinesInput, { nullable: true })
-  @Type(() => WorkspaceUpsertWithoutPipelinesInput)
-  upsert?: WorkspaceUpsertWithoutPipelinesInput;
+    @Field(() => WorkspaceCreateOrConnectWithoutPipelinesInput, {nullable:true})
+    @Type(() => WorkspaceCreateOrConnectWithoutPipelinesInput)
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutPipelinesInput;
 
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
-  @Type(() => WorkspaceWhereUniqueInput)
-  connect?: WorkspaceWhereUniqueInput;
+    @Field(() => WorkspaceUpsertWithoutPipelinesInput, {nullable:true})
+    @Type(() => WorkspaceUpsertWithoutPipelinesInput)
+    upsert?: WorkspaceUpsertWithoutPipelinesInput;
 
-  @Field(() => WorkspaceUpdateWithoutPipelinesInput, { nullable: true })
-  @Type(() => WorkspaceUpdateWithoutPipelinesInput)
-  update?: WorkspaceUpdateWithoutPipelinesInput;
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
+    @Type(() => WorkspaceWhereUniqueInput)
+    connect?: WorkspaceWhereUniqueInput;
+
+    @Field(() => WorkspaceUpdateWithoutPipelinesInput, {nullable:true})
+    @Type(() => WorkspaceUpdateWithoutPipelinesInput)
+    update?: WorkspaceUpdateWithoutPipelinesInput;
 }

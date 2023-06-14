@@ -6,11 +6,12 @@ import { PipelineStageWhereInput } from './pipeline-stage-where.input';
 
 @ArgsType()
 export class UpdateManyPipelineStageArgs {
-  @Field(() => PipelineStageUpdateManyMutationInput, { nullable: false })
-  @Type(() => PipelineStageUpdateManyMutationInput)
-  data!: PipelineStageUpdateManyMutationInput;
 
-  @Field(() => PipelineStageWhereInput, { nullable: true })
-  @Type(() => PipelineStageWhereInput)
-  where?: PipelineStageWhereInput;
+    @Field(() => PipelineStageUpdateManyMutationInput, {nullable:false})
+    @Type(() => PipelineStageUpdateManyMutationInput)
+    data!: PipelineStageUpdateManyMutationInput;
+
+    @Field(() => PipelineStageWhereInput, {nullable:true})
+    @Type(() => PipelineStageWhereInput)
+    where?: PipelineStageWhereInput;
 }

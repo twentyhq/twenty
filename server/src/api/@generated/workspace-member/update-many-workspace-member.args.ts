@@ -6,11 +6,12 @@ import { WorkspaceMemberWhereInput } from './workspace-member-where.input';
 
 @ArgsType()
 export class UpdateManyWorkspaceMemberArgs {
-  @Field(() => WorkspaceMemberUpdateManyMutationInput, { nullable: false })
-  @Type(() => WorkspaceMemberUpdateManyMutationInput)
-  data!: WorkspaceMemberUpdateManyMutationInput;
 
-  @Field(() => WorkspaceMemberWhereInput, { nullable: true })
-  @Type(() => WorkspaceMemberWhereInput)
-  where?: WorkspaceMemberWhereInput;
+    @Field(() => WorkspaceMemberUpdateManyMutationInput, {nullable:false})
+    @Type(() => WorkspaceMemberUpdateManyMutationInput)
+    data!: WorkspaceMemberUpdateManyMutationInput;
+
+    @Field(() => WorkspaceMemberWhereInput, {nullable:true})
+    @Type(() => WorkspaceMemberWhereInput)
+    where?: WorkspaceMemberWhereInput;
 }

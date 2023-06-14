@@ -6,11 +6,12 @@ import { CommentThreadUpdateManyMutationInput } from './comment-thread-update-ma
 
 @InputType()
 export class CommentThreadUpdateManyWithWhereWithoutWorkspaceInput {
-  @Field(() => CommentThreadScalarWhereInput, { nullable: false })
-  @Type(() => CommentThreadScalarWhereInput)
-  where!: CommentThreadScalarWhereInput;
 
-  @Field(() => CommentThreadUpdateManyMutationInput, { nullable: false })
-  @Type(() => CommentThreadUpdateManyMutationInput)
-  data!: CommentThreadUpdateManyMutationInput;
+    @Field(() => CommentThreadScalarWhereInput, {nullable:false})
+    @Type(() => CommentThreadScalarWhereInput)
+    where!: CommentThreadScalarWhereInput;
+
+    @Field(() => CommentThreadUpdateManyMutationInput, {nullable:false})
+    @Type(() => CommentThreadUpdateManyMutationInput)
+    data!: CommentThreadUpdateManyMutationInput;
 }

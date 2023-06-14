@@ -4,6 +4,7 @@ import { CommentableType } from './commentable-type.enum';
 
 @InputType()
 export class EnumCommentableTypeFieldUpdateOperationsInput {
-  @Field(() => CommentableType, { nullable: true })
-  set?: keyof typeof CommentableType;
+
+    @Field(() => CommentableType, {nullable:true})
+    set?: keyof typeof CommentableType;
 }

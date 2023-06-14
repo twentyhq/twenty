@@ -6,11 +6,12 @@ import { PipelineStageCreateWithoutPipelineInput } from './pipeline-stage-create
 
 @InputType()
 export class PipelineStageCreateOrConnectWithoutPipelineInput {
-  @Field(() => PipelineStageWhereUniqueInput, { nullable: false })
-  @Type(() => PipelineStageWhereUniqueInput)
-  where!: PipelineStageWhereUniqueInput;
 
-  @Field(() => PipelineStageCreateWithoutPipelineInput, { nullable: false })
-  @Type(() => PipelineStageCreateWithoutPipelineInput)
-  create!: PipelineStageCreateWithoutPipelineInput;
+    @Field(() => PipelineStageWhereUniqueInput, {nullable:false})
+    @Type(() => PipelineStageWhereUniqueInput)
+    where!: PipelineStageWhereUniqueInput;
+
+    @Field(() => PipelineStageCreateWithoutPipelineInput, {nullable:false})
+    @Type(() => PipelineStageCreateWithoutPipelineInput)
+    create!: PipelineStageCreateWithoutPipelineInput;
 }

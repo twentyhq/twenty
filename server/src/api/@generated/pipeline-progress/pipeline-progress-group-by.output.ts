@@ -7,36 +7,37 @@ import { PipelineProgressMaxAggregate } from './pipeline-progress-max-aggregate.
 
 @ObjectType()
 export class PipelineProgressGroupBy {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date | string;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
-  @Field(() => String, { nullable: false })
-  pipelineId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  pipelineStageId!: string;
+    @Field(() => String, {nullable:false})
+    pipelineId!: string;
 
-  @Field(() => PipelineProgressableType, { nullable: false })
-  associableType!: keyof typeof PipelineProgressableType;
+    @Field(() => String, {nullable:false})
+    pipelineStageId!: string;
 
-  @Field(() => String, { nullable: false })
-  associableId!: string;
+    @Field(() => PipelineProgressableType, {nullable:false})
+    associableType!: keyof typeof PipelineProgressableType;
 
-  @Field(() => PipelineProgressCountAggregate, { nullable: true })
-  _count?: PipelineProgressCountAggregate;
+    @Field(() => String, {nullable:false})
+    associableId!: string;
 
-  @Field(() => PipelineProgressMinAggregate, { nullable: true })
-  _min?: PipelineProgressMinAggregate;
+    @Field(() => PipelineProgressCountAggregate, {nullable:true})
+    _count?: PipelineProgressCountAggregate;
 
-  @Field(() => PipelineProgressMaxAggregate, { nullable: true })
-  _max?: PipelineProgressMaxAggregate;
+    @Field(() => PipelineProgressMinAggregate, {nullable:true})
+    _min?: PipelineProgressMinAggregate;
+
+    @Field(() => PipelineProgressMaxAggregate, {nullable:true})
+    _max?: PipelineProgressMaxAggregate;
 }

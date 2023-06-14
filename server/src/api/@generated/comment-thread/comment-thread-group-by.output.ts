@@ -7,27 +7,28 @@ import { CommentThreadMaxAggregate } from './comment-thread-max-aggregate.output
 
 @ObjectType()
 export class CommentThreadGroupBy {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date | string;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
-  @HideField()
-  workspaceId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => CommentThreadCountAggregate, { nullable: true })
-  _count?: CommentThreadCountAggregate;
+    @HideField()
+    workspaceId!: string;
 
-  @Field(() => CommentThreadMinAggregate, { nullable: true })
-  _min?: CommentThreadMinAggregate;
+    @Field(() => CommentThreadCountAggregate, {nullable:true})
+    _count?: CommentThreadCountAggregate;
 
-  @Field(() => CommentThreadMaxAggregate, { nullable: true })
-  _max?: CommentThreadMaxAggregate;
+    @Field(() => CommentThreadMinAggregate, {nullable:true})
+    _min?: CommentThreadMinAggregate;
+
+    @Field(() => CommentThreadMaxAggregate, {nullable:true})
+    _max?: CommentThreadMaxAggregate;
 }

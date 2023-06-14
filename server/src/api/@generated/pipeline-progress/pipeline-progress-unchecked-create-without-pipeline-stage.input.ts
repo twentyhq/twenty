@@ -4,24 +4,25 @@ import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.e
 
 @InputType()
 export class PipelineProgressUncheckedCreateWithoutPipelineStageInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  pipelineId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => PipelineProgressableType, { nullable: false })
-  associableType!: keyof typeof PipelineProgressableType;
+    @Field(() => String, {nullable:false})
+    pipelineId!: string;
 
-  @Field(() => String, { nullable: false })
-  associableId!: string;
+    @Field(() => PipelineProgressableType, {nullable:false})
+    associableType!: keyof typeof PipelineProgressableType;
+
+    @Field(() => String, {nullable:false})
+    associableId!: string;
 }

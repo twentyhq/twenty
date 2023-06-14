@@ -2,12 +2,12 @@ FROM node:18.16.0-alpine as server
 
 WORKDIR /app/server
 COPY ./server/package.json ./
-COPY ./server/package-lock.json ./
-RUN npm install
+COPY ./server/yarn.lock ./
+RUN yarn install
 
 COPY ./server .
 RUN npx prisma generate
 
-RUN npm run build
+RUN yarn build
 
 CMD ["node", "dist/main"]

@@ -7,33 +7,34 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineScalarWhereInput {
-  @Field(() => [PipelineScalarWhereInput], { nullable: true })
-  AND?: Array<PipelineScalarWhereInput>;
 
-  @Field(() => [PipelineScalarWhereInput], { nullable: true })
-  OR?: Array<PipelineScalarWhereInput>;
+    @Field(() => [PipelineScalarWhereInput], {nullable:true})
+    AND?: Array<PipelineScalarWhereInput>;
 
-  @Field(() => [PipelineScalarWhereInput], { nullable: true })
-  NOT?: Array<PipelineScalarWhereInput>;
+    @Field(() => [PipelineScalarWhereInput], {nullable:true})
+    OR?: Array<PipelineScalarWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [PipelineScalarWhereInput], {nullable:true})
+    NOT?: Array<PipelineScalarWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  name?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  icon?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    name?: StringFilter;
 
-  @HideField()
-  workspaceId?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    icon?: StringFilter;
+
+    @HideField()
+    workspaceId?: StringFilter;
 }

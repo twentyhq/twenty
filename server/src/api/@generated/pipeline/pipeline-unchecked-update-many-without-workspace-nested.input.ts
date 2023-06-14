@@ -12,55 +12,48 @@ import { PipelineScalarWhereInput } from './pipeline-scalar-where.input';
 
 @InputType()
 export class PipelineUncheckedUpdateManyWithoutWorkspaceNestedInput {
-  @Field(() => [PipelineCreateWithoutWorkspaceInput], { nullable: true })
-  @Type(() => PipelineCreateWithoutWorkspaceInput)
-  create?: Array<PipelineCreateWithoutWorkspaceInput>;
 
-  @Field(() => [PipelineCreateOrConnectWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineCreateOrConnectWithoutWorkspaceInput)
-  connectOrCreate?: Array<PipelineCreateOrConnectWithoutWorkspaceInput>;
+    @Field(() => [PipelineCreateWithoutWorkspaceInput], {nullable:true})
+    @Type(() => PipelineCreateWithoutWorkspaceInput)
+    create?: Array<PipelineCreateWithoutWorkspaceInput>;
 
-  @Field(() => [PipelineUpsertWithWhereUniqueWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineUpsertWithWhereUniqueWithoutWorkspaceInput)
-  upsert?: Array<PipelineUpsertWithWhereUniqueWithoutWorkspaceInput>;
+    @Field(() => [PipelineCreateOrConnectWithoutWorkspaceInput], {nullable:true})
+    @Type(() => PipelineCreateOrConnectWithoutWorkspaceInput)
+    connectOrCreate?: Array<PipelineCreateOrConnectWithoutWorkspaceInput>;
 
-  @Field(() => PipelineCreateManyWorkspaceInputEnvelope, { nullable: true })
-  @Type(() => PipelineCreateManyWorkspaceInputEnvelope)
-  createMany?: PipelineCreateManyWorkspaceInputEnvelope;
+    @Field(() => [PipelineUpsertWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
+    @Type(() => PipelineUpsertWithWhereUniqueWithoutWorkspaceInput)
+    upsert?: Array<PipelineUpsertWithWhereUniqueWithoutWorkspaceInput>;
 
-  @Field(() => [PipelineWhereUniqueInput], { nullable: true })
-  @Type(() => PipelineWhereUniqueInput)
-  set?: Array<PipelineWhereUniqueInput>;
+    @Field(() => PipelineCreateManyWorkspaceInputEnvelope, {nullable:true})
+    @Type(() => PipelineCreateManyWorkspaceInputEnvelope)
+    createMany?: PipelineCreateManyWorkspaceInputEnvelope;
 
-  @Field(() => [PipelineWhereUniqueInput], { nullable: true })
-  @Type(() => PipelineWhereUniqueInput)
-  disconnect?: Array<PipelineWhereUniqueInput>;
+    @Field(() => [PipelineWhereUniqueInput], {nullable:true})
+    @Type(() => PipelineWhereUniqueInput)
+    set?: Array<PipelineWhereUniqueInput>;
 
-  @Field(() => [PipelineWhereUniqueInput], { nullable: true })
-  @Type(() => PipelineWhereUniqueInput)
-  delete?: Array<PipelineWhereUniqueInput>;
+    @Field(() => [PipelineWhereUniqueInput], {nullable:true})
+    @Type(() => PipelineWhereUniqueInput)
+    disconnect?: Array<PipelineWhereUniqueInput>;
 
-  @Field(() => [PipelineWhereUniqueInput], { nullable: true })
-  @Type(() => PipelineWhereUniqueInput)
-  connect?: Array<PipelineWhereUniqueInput>;
+    @Field(() => [PipelineWhereUniqueInput], {nullable:true})
+    @Type(() => PipelineWhereUniqueInput)
+    delete?: Array<PipelineWhereUniqueInput>;
 
-  @Field(() => [PipelineUpdateWithWhereUniqueWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineUpdateWithWhereUniqueWithoutWorkspaceInput)
-  update?: Array<PipelineUpdateWithWhereUniqueWithoutWorkspaceInput>;
+    @Field(() => [PipelineWhereUniqueInput], {nullable:true})
+    @Type(() => PipelineWhereUniqueInput)
+    connect?: Array<PipelineWhereUniqueInput>;
 
-  @Field(() => [PipelineUpdateManyWithWhereWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineUpdateManyWithWhereWithoutWorkspaceInput)
-  updateMany?: Array<PipelineUpdateManyWithWhereWithoutWorkspaceInput>;
+    @Field(() => [PipelineUpdateWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
+    @Type(() => PipelineUpdateWithWhereUniqueWithoutWorkspaceInput)
+    update?: Array<PipelineUpdateWithWhereUniqueWithoutWorkspaceInput>;
 
-  @Field(() => [PipelineScalarWhereInput], { nullable: true })
-  @Type(() => PipelineScalarWhereInput)
-  deleteMany?: Array<PipelineScalarWhereInput>;
+    @Field(() => [PipelineUpdateManyWithWhereWithoutWorkspaceInput], {nullable:true})
+    @Type(() => PipelineUpdateManyWithWhereWithoutWorkspaceInput)
+    updateMany?: Array<PipelineUpdateManyWithWhereWithoutWorkspaceInput>;
+
+    @Field(() => [PipelineScalarWhereInput], {nullable:true})
+    @Type(() => PipelineScalarWhereInput)
+    deleteMany?: Array<PipelineScalarWhereInput>;
 }

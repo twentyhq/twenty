@@ -5,10 +5,11 @@ import { Type } from 'class-transformer';
 
 @InputType()
 export class RefreshTokenCreateManyUserInputEnvelope {
-  @Field(() => [RefreshTokenCreateManyUserInput], { nullable: false })
-  @Type(() => RefreshTokenCreateManyUserInput)
-  data!: Array<RefreshTokenCreateManyUserInput>;
 
-  @Field(() => Boolean, { nullable: true })
-  skipDuplicates?: boolean;
+    @Field(() => [RefreshTokenCreateManyUserInput], {nullable:false})
+    @Type(() => RefreshTokenCreateManyUserInput)
+    data!: Array<RefreshTokenCreateManyUserInput>;
+
+    @Field(() => Boolean, {nullable:true})
+    skipDuplicates?: boolean;
 }

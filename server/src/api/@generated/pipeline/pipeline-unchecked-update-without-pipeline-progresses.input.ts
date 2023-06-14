@@ -8,29 +8,28 @@ import { PipelineStageUncheckedUpdateManyWithoutPipelineNestedInput } from '../p
 
 @InputType()
 export class PipelineUncheckedUpdateWithoutPipelineProgressesInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  name?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  icon?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    name?: StringFieldUpdateOperationsInput;
 
-  @HideField()
-  workspaceId?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    icon?: StringFieldUpdateOperationsInput;
 
-  @Field(() => PipelineStageUncheckedUpdateManyWithoutPipelineNestedInput, {
-    nullable: true,
-  })
-  pipelineStages?: PipelineStageUncheckedUpdateManyWithoutPipelineNestedInput;
+    @HideField()
+    workspaceId?: StringFieldUpdateOperationsInput;
+
+    @Field(() => PipelineStageUncheckedUpdateManyWithoutPipelineNestedInput, {nullable:true})
+    pipelineStages?: PipelineStageUncheckedUpdateManyWithoutPipelineNestedInput;
 }

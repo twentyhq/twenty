@@ -6,13 +6,12 @@ import { CommentThreadCreateWithoutCommentThreadTargetsInput } from './comment-t
 
 @InputType()
 export class CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput {
-  @Field(() => CommentThreadWhereUniqueInput, { nullable: false })
-  @Type(() => CommentThreadWhereUniqueInput)
-  where!: CommentThreadWhereUniqueInput;
 
-  @Field(() => CommentThreadCreateWithoutCommentThreadTargetsInput, {
-    nullable: false,
-  })
-  @Type(() => CommentThreadCreateWithoutCommentThreadTargetsInput)
-  create!: CommentThreadCreateWithoutCommentThreadTargetsInput;
+    @Field(() => CommentThreadWhereUniqueInput, {nullable:false})
+    @Type(() => CommentThreadWhereUniqueInput)
+    where!: CommentThreadWhereUniqueInput;
+
+    @Field(() => CommentThreadCreateWithoutCommentThreadTargetsInput, {nullable:false})
+    @Type(() => CommentThreadCreateWithoutCommentThreadTargetsInput)
+    create!: CommentThreadCreateWithoutCommentThreadTargetsInput;
 }

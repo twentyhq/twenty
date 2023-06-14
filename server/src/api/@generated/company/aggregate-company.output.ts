@@ -8,18 +8,19 @@ import { CompanyMaxAggregate } from './company-max-aggregate.output';
 
 @ObjectType()
 export class AggregateCompany {
-  @Field(() => CompanyCountAggregate, { nullable: true })
-  _count?: CompanyCountAggregate;
 
-  @Field(() => CompanyAvgAggregate, { nullable: true })
-  _avg?: CompanyAvgAggregate;
+    @Field(() => CompanyCountAggregate, {nullable:true})
+    _count?: CompanyCountAggregate;
 
-  @Field(() => CompanySumAggregate, { nullable: true })
-  _sum?: CompanySumAggregate;
+    @Field(() => CompanyAvgAggregate, {nullable:true})
+    _avg?: CompanyAvgAggregate;
 
-  @Field(() => CompanyMinAggregate, { nullable: true })
-  _min?: CompanyMinAggregate;
+    @Field(() => CompanySumAggregate, {nullable:true})
+    _sum?: CompanySumAggregate;
 
-  @Field(() => CompanyMaxAggregate, { nullable: true })
-  _max?: CompanyMaxAggregate;
+    @Field(() => CompanyMinAggregate, {nullable:true})
+    _min?: CompanyMinAggregate;
+
+    @Field(() => CompanyMaxAggregate, {nullable:true})
+    _max?: CompanyMaxAggregate;
 }

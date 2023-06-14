@@ -7,19 +7,16 @@ import { CommentThreadTargetCreateWithoutCommentThreadInput } from './comment-th
 
 @InputType()
 export class CommentThreadTargetUpsertWithWhereUniqueWithoutCommentThreadInput {
-  @Field(() => CommentThreadTargetWhereUniqueInput, { nullable: false })
-  @Type(() => CommentThreadTargetWhereUniqueInput)
-  where!: CommentThreadTargetWhereUniqueInput;
 
-  @Field(() => CommentThreadTargetUpdateWithoutCommentThreadInput, {
-    nullable: false,
-  })
-  @Type(() => CommentThreadTargetUpdateWithoutCommentThreadInput)
-  update!: CommentThreadTargetUpdateWithoutCommentThreadInput;
+    @Field(() => CommentThreadTargetWhereUniqueInput, {nullable:false})
+    @Type(() => CommentThreadTargetWhereUniqueInput)
+    where!: CommentThreadTargetWhereUniqueInput;
 
-  @Field(() => CommentThreadTargetCreateWithoutCommentThreadInput, {
-    nullable: false,
-  })
-  @Type(() => CommentThreadTargetCreateWithoutCommentThreadInput)
-  create!: CommentThreadTargetCreateWithoutCommentThreadInput;
+    @Field(() => CommentThreadTargetUpdateWithoutCommentThreadInput, {nullable:false})
+    @Type(() => CommentThreadTargetUpdateWithoutCommentThreadInput)
+    update!: CommentThreadTargetUpdateWithoutCommentThreadInput;
+
+    @Field(() => CommentThreadTargetCreateWithoutCommentThreadInput, {nullable:false})
+    @Type(() => CommentThreadTargetCreateWithoutCommentThreadInput)
+    create!: CommentThreadTargetCreateWithoutCommentThreadInput;
 }

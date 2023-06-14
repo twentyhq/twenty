@@ -13,54 +13,43 @@ import { PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput } from '../
 
 @InputType()
 export class WorkspaceUncheckedUpdateWithoutCommentsInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  domainName?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  displayName?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    domainName?: StringFieldUpdateOperationsInput;
 
-  @Field(() => NullableStringFieldUpdateOperationsInput, { nullable: true })
-  logo?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    displayName?: StringFieldUpdateOperationsInput;
 
-  @Field(() => WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput, {
-    nullable: true,
-  })
-  workspaceMember?: WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    logo?: NullableStringFieldUpdateOperationsInput;
 
-  @Field(() => CompanyUncheckedUpdateManyWithoutWorkspaceNestedInput, {
-    nullable: true,
-  })
-  companies?: CompanyUncheckedUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    workspaceMember?: WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
-  @Field(() => PersonUncheckedUpdateManyWithoutWorkspaceNestedInput, {
-    nullable: true,
-  })
-  people?: PersonUncheckedUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => CompanyUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    companies?: CompanyUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
-  @Field(() => CommentThreadUncheckedUpdateManyWithoutWorkspaceNestedInput, {
-    nullable: true,
-  })
-  commentThreads?: CommentThreadUncheckedUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => PersonUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    people?: PersonUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
-  @Field(() => PipelineUncheckedUpdateManyWithoutWorkspaceNestedInput, {
-    nullable: true,
-  })
-  pipelines?: PipelineUncheckedUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => CommentThreadUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    commentThreads?: CommentThreadUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
-  @Field(() => PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput, {
-    nullable: true,
-  })
-  pipelineStages?: PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => PipelineUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    pipelines?: PipelineUncheckedUpdateManyWithoutWorkspaceNestedInput;
+
+    @Field(() => PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    pipelineStages?: PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput;
 }

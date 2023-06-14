@@ -9,33 +9,34 @@ import { PersonUpdateManyWithoutCompanyNestedInput } from '../person/person-upda
 
 @InputType()
 export class CompanyUpdateWithoutWorkspaceInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  name?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  domainName?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    name?: StringFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  address?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    domainName?: StringFieldUpdateOperationsInput;
 
-  @Field(() => NullableIntFieldUpdateOperationsInput, { nullable: true })
-  employees?: NullableIntFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    address?: StringFieldUpdateOperationsInput;
 
-  @Field(() => UserUpdateOneWithoutCompaniesNestedInput, { nullable: true })
-  accountOwner?: UserUpdateOneWithoutCompaniesNestedInput;
+    @Field(() => NullableIntFieldUpdateOperationsInput, {nullable:true})
+    employees?: NullableIntFieldUpdateOperationsInput;
 
-  @Field(() => PersonUpdateManyWithoutCompanyNestedInput, { nullable: true })
-  people?: PersonUpdateManyWithoutCompanyNestedInput;
+    @Field(() => UserUpdateOneWithoutCompaniesNestedInput, {nullable:true})
+    accountOwner?: UserUpdateOneWithoutCompaniesNestedInput;
+
+    @Field(() => PersonUpdateManyWithoutCompanyNestedInput, {nullable:true})
+    people?: PersonUpdateManyWithoutCompanyNestedInput;
 }

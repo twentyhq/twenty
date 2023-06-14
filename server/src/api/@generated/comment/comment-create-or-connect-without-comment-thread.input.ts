@@ -6,11 +6,12 @@ import { CommentCreateWithoutCommentThreadInput } from './comment-create-without
 
 @InputType()
 export class CommentCreateOrConnectWithoutCommentThreadInput {
-  @Field(() => CommentWhereUniqueInput, { nullable: false })
-  @Type(() => CommentWhereUniqueInput)
-  where!: CommentWhereUniqueInput;
 
-  @Field(() => CommentCreateWithoutCommentThreadInput, { nullable: false })
-  @Type(() => CommentCreateWithoutCommentThreadInput)
-  create!: CommentCreateWithoutCommentThreadInput;
+    @Field(() => CommentWhereUniqueInput, {nullable:false})
+    @Type(() => CommentWhereUniqueInput)
+    where!: CommentWhereUniqueInput;
+
+    @Field(() => CommentCreateWithoutCommentThreadInput, {nullable:false})
+    @Type(() => CommentCreateWithoutCommentThreadInput)
+    create!: CommentCreateWithoutCommentThreadInput;
 }

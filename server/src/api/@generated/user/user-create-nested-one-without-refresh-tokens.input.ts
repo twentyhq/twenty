@@ -7,15 +7,16 @@ import { UserWhereUniqueInput } from './user-where-unique.input';
 
 @InputType()
 export class UserCreateNestedOneWithoutRefreshTokensInput {
-  @Field(() => UserCreateWithoutRefreshTokensInput, { nullable: true })
-  @Type(() => UserCreateWithoutRefreshTokensInput)
-  create?: UserCreateWithoutRefreshTokensInput;
 
-  @Field(() => UserCreateOrConnectWithoutRefreshTokensInput, { nullable: true })
-  @Type(() => UserCreateOrConnectWithoutRefreshTokensInput)
-  connectOrCreate?: UserCreateOrConnectWithoutRefreshTokensInput;
+    @Field(() => UserCreateWithoutRefreshTokensInput, {nullable:true})
+    @Type(() => UserCreateWithoutRefreshTokensInput)
+    create?: UserCreateWithoutRefreshTokensInput;
 
-  @Field(() => UserWhereUniqueInput, { nullable: true })
-  @Type(() => UserWhereUniqueInput)
-  connect?: UserWhereUniqueInput;
+    @Field(() => UserCreateOrConnectWithoutRefreshTokensInput, {nullable:true})
+    @Type(() => UserCreateOrConnectWithoutRefreshTokensInput)
+    connectOrCreate?: UserCreateOrConnectWithoutRefreshTokensInput;
+
+    @Field(() => UserWhereUniqueInput, {nullable:true})
+    @Type(() => UserWhereUniqueInput)
+    connect?: UserWhereUniqueInput;
 }

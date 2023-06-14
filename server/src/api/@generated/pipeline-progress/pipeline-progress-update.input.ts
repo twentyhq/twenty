@@ -9,34 +9,28 @@ import { PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput } fr
 
 @InputType()
 export class PipelineProgressUpdateInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {
-    nullable: true,
-  })
-  associableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  associableId?: StringFieldUpdateOperationsInput;
+    @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {nullable:true})
+    associableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
 
-  @Field(() => PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput, {
-    nullable: true,
-  })
-  pipeline?: PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    associableId?: StringFieldUpdateOperationsInput;
 
-  @Field(
-    () => PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput,
-    { nullable: true },
-  )
-  pipelineStage?: PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput;
+    @Field(() => PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput, {nullable:true})
+    pipeline?: PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput;
+
+    @Field(() => PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput, {nullable:true})
+    pipelineStage?: PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput;
 }

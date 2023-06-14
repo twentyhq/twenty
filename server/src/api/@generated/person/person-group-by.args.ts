@@ -12,31 +12,32 @@ import { PersonMaxAggregateInput } from './person-max-aggregate.input';
 
 @ArgsType()
 export class PersonGroupByArgs {
-  @Field(() => PersonWhereInput, { nullable: true })
-  @Type(() => PersonWhereInput)
-  where?: PersonWhereInput;
 
-  @Field(() => [PersonOrderByWithAggregationInput], { nullable: true })
-  orderBy?: Array<PersonOrderByWithAggregationInput>;
+    @Field(() => PersonWhereInput, {nullable:true})
+    @Type(() => PersonWhereInput)
+    where?: PersonWhereInput;
 
-  @Field(() => [PersonScalarFieldEnum], { nullable: false })
-  by!: Array<keyof typeof PersonScalarFieldEnum>;
+    @Field(() => [PersonOrderByWithAggregationInput], {nullable:true})
+    orderBy?: Array<PersonOrderByWithAggregationInput>;
 
-  @Field(() => PersonScalarWhereWithAggregatesInput, { nullable: true })
-  having?: PersonScalarWhereWithAggregatesInput;
+    @Field(() => [PersonScalarFieldEnum], {nullable:false})
+    by!: Array<keyof typeof PersonScalarFieldEnum>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => PersonScalarWhereWithAggregatesInput, {nullable:true})
+    having?: PersonScalarWhereWithAggregatesInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => PersonCountAggregateInput, { nullable: true })
-  _count?: PersonCountAggregateInput;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
 
-  @Field(() => PersonMinAggregateInput, { nullable: true })
-  _min?: PersonMinAggregateInput;
+    @Field(() => PersonCountAggregateInput, {nullable:true})
+    _count?: PersonCountAggregateInput;
 
-  @Field(() => PersonMaxAggregateInput, { nullable: true })
-  _max?: PersonMaxAggregateInput;
+    @Field(() => PersonMinAggregateInput, {nullable:true})
+    _min?: PersonMinAggregateInput;
+
+    @Field(() => PersonMaxAggregateInput, {nullable:true})
+    _max?: PersonMaxAggregateInput;
 }

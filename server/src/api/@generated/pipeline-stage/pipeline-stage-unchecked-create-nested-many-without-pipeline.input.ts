@@ -8,21 +8,20 @@ import { PipelineStageWhereUniqueInput } from './pipeline-stage-where-unique.inp
 
 @InputType()
 export class PipelineStageUncheckedCreateNestedManyWithoutPipelineInput {
-  @Field(() => [PipelineStageCreateWithoutPipelineInput], { nullable: true })
-  @Type(() => PipelineStageCreateWithoutPipelineInput)
-  create?: Array<PipelineStageCreateWithoutPipelineInput>;
 
-  @Field(() => [PipelineStageCreateOrConnectWithoutPipelineInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineStageCreateOrConnectWithoutPipelineInput)
-  connectOrCreate?: Array<PipelineStageCreateOrConnectWithoutPipelineInput>;
+    @Field(() => [PipelineStageCreateWithoutPipelineInput], {nullable:true})
+    @Type(() => PipelineStageCreateWithoutPipelineInput)
+    create?: Array<PipelineStageCreateWithoutPipelineInput>;
 
-  @Field(() => PipelineStageCreateManyPipelineInputEnvelope, { nullable: true })
-  @Type(() => PipelineStageCreateManyPipelineInputEnvelope)
-  createMany?: PipelineStageCreateManyPipelineInputEnvelope;
+    @Field(() => [PipelineStageCreateOrConnectWithoutPipelineInput], {nullable:true})
+    @Type(() => PipelineStageCreateOrConnectWithoutPipelineInput)
+    connectOrCreate?: Array<PipelineStageCreateOrConnectWithoutPipelineInput>;
 
-  @Field(() => [PipelineStageWhereUniqueInput], { nullable: true })
-  @Type(() => PipelineStageWhereUniqueInput)
-  connect?: Array<PipelineStageWhereUniqueInput>;
+    @Field(() => PipelineStageCreateManyPipelineInputEnvelope, {nullable:true})
+    @Type(() => PipelineStageCreateManyPipelineInputEnvelope)
+    createMany?: PipelineStageCreateManyPipelineInputEnvelope;
+
+    @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
+    @Type(() => PipelineStageWhereUniqueInput)
+    connect?: Array<PipelineStageWhereUniqueInput>;
 }

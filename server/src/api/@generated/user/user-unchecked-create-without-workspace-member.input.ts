@@ -8,58 +8,55 @@ import { CommentUncheckedCreateNestedManyWithoutAuthorInput } from '../comment/c
 
 @InputType()
 export class UserUncheckedCreateWithoutWorkspaceMemberInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  lastSeen?: Date | string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => Boolean, { nullable: true })
-  disabled?: boolean;
+    @Field(() => Date, {nullable:true})
+    lastSeen?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  displayName!: string;
+    @Field(() => Boolean, {nullable:true})
+    disabled?: boolean;
 
-  @Field(() => String, { nullable: false })
-  email!: string;
+    @Field(() => String, {nullable:false})
+    displayName!: string;
 
-  @Field(() => String, { nullable: true })
-  avatarUrl?: string;
+    @Field(() => String, {nullable:false})
+    email!: string;
 
-  @Field(() => String, { nullable: false })
-  locale!: string;
+    @Field(() => String, {nullable:true})
+    avatarUrl?: string;
 
-  @Field(() => String, { nullable: true })
-  phoneNumber?: string;
+    @Field(() => String, {nullable:false})
+    locale!: string;
 
-  @Field(() => String, { nullable: true })
-  passwordHash?: string;
+    @Field(() => String, {nullable:true})
+    phoneNumber?: string;
 
-  @Field(() => Boolean, { nullable: true })
-  emailVerified?: boolean;
+    @Field(() => String, {nullable:true})
+    passwordHash?: string;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  metadata?: any;
+    @Field(() => Boolean, {nullable:true})
+    emailVerified?: boolean;
 
-  @Field(() => CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput, {
-    nullable: true,
-  })
-  companies?: CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput;
+    @Field(() => GraphQLJSON, {nullable:true})
+    metadata?: any;
 
-  @HideField()
-  refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
+    @Field(() => CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput, {nullable:true})
+    companies?: CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput;
 
-  @Field(() => CommentUncheckedCreateNestedManyWithoutAuthorInput, {
-    nullable: true,
-  })
-  comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput;
+    @HideField()
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
+
+    @Field(() => CommentUncheckedCreateNestedManyWithoutAuthorInput, {nullable:true})
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput;
 }

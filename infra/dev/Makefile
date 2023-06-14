@@ -15,25 +15,25 @@ sh:
 	@docker-compose exec twenty-dev sh
 
 front-start:
-	@docker-compose exec twenty-dev sh -c "cd /app/front && npm run start"
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn start"
 
 front-test:
-	@docker-compose exec twenty-dev sh -c "cd /app/front && npm run test"
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn test"
 
 front-graphql-generate:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run graphql:generate"
+	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn graphql:generate"
 
 front-storybook:
-	@docker-compose exec twenty-dev sh -c "cd /app/front && npm run storybook"
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn storybook"
 
 server-start:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run start:dev"
+	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn start:dev"
 
 server-prisma-generate:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run prisma:generate"
+	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:generate"
 
 server-prisma-migrate:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run prisma:migrate"
+	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:migrate"
 
 server-prisma-seed:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && npm run prisma:seed"
+	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:seed"

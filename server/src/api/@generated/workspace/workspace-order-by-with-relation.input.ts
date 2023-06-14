@@ -11,45 +11,46 @@ import { PipelineStageOrderByRelationAggregateInput } from '../pipeline-stage/pi
 
 @InputType()
 export class WorkspaceOrderByWithRelationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  domainName?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  displayName?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    domainName?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  logo?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    displayName?: keyof typeof SortOrder;
 
-  @Field(() => WorkspaceMemberOrderByRelationAggregateInput, { nullable: true })
-  workspaceMember?: WorkspaceMemberOrderByRelationAggregateInput;
+    @Field(() => SortOrder, {nullable:true})
+    logo?: keyof typeof SortOrder;
 
-  @Field(() => CompanyOrderByRelationAggregateInput, { nullable: true })
-  companies?: CompanyOrderByRelationAggregateInput;
+    @Field(() => WorkspaceMemberOrderByRelationAggregateInput, {nullable:true})
+    workspaceMember?: WorkspaceMemberOrderByRelationAggregateInput;
 
-  @Field(() => PersonOrderByRelationAggregateInput, { nullable: true })
-  people?: PersonOrderByRelationAggregateInput;
+    @Field(() => CompanyOrderByRelationAggregateInput, {nullable:true})
+    companies?: CompanyOrderByRelationAggregateInput;
 
-  @Field(() => CommentThreadOrderByRelationAggregateInput, { nullable: true })
-  commentThreads?: CommentThreadOrderByRelationAggregateInput;
+    @Field(() => PersonOrderByRelationAggregateInput, {nullable:true})
+    people?: PersonOrderByRelationAggregateInput;
 
-  @Field(() => CommentOrderByRelationAggregateInput, { nullable: true })
-  comments?: CommentOrderByRelationAggregateInput;
+    @Field(() => CommentThreadOrderByRelationAggregateInput, {nullable:true})
+    commentThreads?: CommentThreadOrderByRelationAggregateInput;
 
-  @Field(() => PipelineOrderByRelationAggregateInput, { nullable: true })
-  pipelines?: PipelineOrderByRelationAggregateInput;
+    @Field(() => CommentOrderByRelationAggregateInput, {nullable:true})
+    comments?: CommentOrderByRelationAggregateInput;
 
-  @Field(() => PipelineStageOrderByRelationAggregateInput, { nullable: true })
-  pipelineStages?: PipelineStageOrderByRelationAggregateInput;
+    @Field(() => PipelineOrderByRelationAggregateInput, {nullable:true})
+    pipelines?: PipelineOrderByRelationAggregateInput;
+
+    @Field(() => PipelineStageOrderByRelationAggregateInput, {nullable:true})
+    pipelineStages?: PipelineStageOrderByRelationAggregateInput;
 }

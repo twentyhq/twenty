@@ -13,50 +13,43 @@ import { PipelineStageUpdateManyWithoutWorkspaceNestedInput } from '../pipeline-
 
 @InputType()
 export class WorkspaceUpdateWithoutCompaniesInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  domainName?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  displayName?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    domainName?: StringFieldUpdateOperationsInput;
 
-  @Field(() => NullableStringFieldUpdateOperationsInput, { nullable: true })
-  logo?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    displayName?: StringFieldUpdateOperationsInput;
 
-  @Field(() => WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput, {
-    nullable: true,
-  })
-  workspaceMember?: WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    logo?: NullableStringFieldUpdateOperationsInput;
 
-  @Field(() => PersonUpdateManyWithoutWorkspaceNestedInput, { nullable: true })
-  people?: PersonUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    workspaceMember?: WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput;
 
-  @Field(() => CommentThreadUpdateManyWithoutWorkspaceNestedInput, {
-    nullable: true,
-  })
-  commentThreads?: CommentThreadUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => PersonUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    people?: PersonUpdateManyWithoutWorkspaceNestedInput;
 
-  @Field(() => CommentUpdateManyWithoutWorkspaceNestedInput, { nullable: true })
-  comments?: CommentUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => CommentThreadUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    commentThreads?: CommentThreadUpdateManyWithoutWorkspaceNestedInput;
 
-  @Field(() => PipelineUpdateManyWithoutWorkspaceNestedInput, {
-    nullable: true,
-  })
-  pipelines?: PipelineUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => CommentUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    comments?: CommentUpdateManyWithoutWorkspaceNestedInput;
 
-  @Field(() => PipelineStageUpdateManyWithoutWorkspaceNestedInput, {
-    nullable: true,
-  })
-  pipelineStages?: PipelineStageUpdateManyWithoutWorkspaceNestedInput;
+    @Field(() => PipelineUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    pipelines?: PipelineUpdateManyWithoutWorkspaceNestedInput;
+
+    @Field(() => PipelineStageUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
+    pipelineStages?: PipelineStageUpdateManyWithoutWorkspaceNestedInput;
 }

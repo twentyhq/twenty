@@ -6,30 +6,31 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 
 @InputType()
 export class RefreshTokenScalarWhereInput {
-  @Field(() => [RefreshTokenScalarWhereInput], { nullable: true })
-  AND?: Array<RefreshTokenScalarWhereInput>;
 
-  @Field(() => [RefreshTokenScalarWhereInput], { nullable: true })
-  OR?: Array<RefreshTokenScalarWhereInput>;
+    @Field(() => [RefreshTokenScalarWhereInput], {nullable:true})
+    AND?: Array<RefreshTokenScalarWhereInput>;
 
-  @Field(() => [RefreshTokenScalarWhereInput], { nullable: true })
-  NOT?: Array<RefreshTokenScalarWhereInput>;
+    @Field(() => [RefreshTokenScalarWhereInput], {nullable:true})
+    OR?: Array<RefreshTokenScalarWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [RefreshTokenScalarWhereInput], {nullable:true})
+    NOT?: Array<RefreshTokenScalarWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  refreshToken?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  userId?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    refreshToken?: StringFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    userId?: StringFilter;
 }

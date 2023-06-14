@@ -11,28 +11,29 @@ import { PipelineStageMaxAggregateInput } from './pipeline-stage-max-aggregate.i
 
 @ArgsType()
 export class PipelineStageAggregateArgs {
-  @Field(() => PipelineStageWhereInput, { nullable: true })
-  @Type(() => PipelineStageWhereInput)
-  where?: PipelineStageWhereInput;
 
-  @Field(() => [PipelineStageOrderByWithRelationInput], { nullable: true })
-  orderBy?: Array<PipelineStageOrderByWithRelationInput>;
+    @Field(() => PipelineStageWhereInput, {nullable:true})
+    @Type(() => PipelineStageWhereInput)
+    where?: PipelineStageWhereInput;
 
-  @Field(() => PipelineStageWhereUniqueInput, { nullable: true })
-  cursor?: PipelineStageWhereUniqueInput;
+    @Field(() => [PipelineStageOrderByWithRelationInput], {nullable:true})
+    orderBy?: Array<PipelineStageOrderByWithRelationInput>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => PipelineStageWhereUniqueInput, {nullable:true})
+    cursor?: PipelineStageWhereUniqueInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => PipelineStageCountAggregateInput, { nullable: true })
-  _count?: PipelineStageCountAggregateInput;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
 
-  @Field(() => PipelineStageMinAggregateInput, { nullable: true })
-  _min?: PipelineStageMinAggregateInput;
+    @Field(() => PipelineStageCountAggregateInput, {nullable:true})
+    _count?: PipelineStageCountAggregateInput;
 
-  @Field(() => PipelineStageMaxAggregateInput, { nullable: true })
-  _max?: PipelineStageMaxAggregateInput;
+    @Field(() => PipelineStageMinAggregateInput, {nullable:true})
+    _min?: PipelineStageMinAggregateInput;
+
+    @Field(() => PipelineStageMaxAggregateInput, {nullable:true})
+    _max?: PipelineStageMaxAggregateInput;
 }

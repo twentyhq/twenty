@@ -7,33 +7,34 @@ import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-wi
 
 @InputType()
 export class WorkspaceScalarWhereWithAggregatesInput {
-  @Field(() => [WorkspaceScalarWhereWithAggregatesInput], { nullable: true })
-  AND?: Array<WorkspaceScalarWhereWithAggregatesInput>;
 
-  @Field(() => [WorkspaceScalarWhereWithAggregatesInput], { nullable: true })
-  OR?: Array<WorkspaceScalarWhereWithAggregatesInput>;
+    @Field(() => [WorkspaceScalarWhereWithAggregatesInput], {nullable:true})
+    AND?: Array<WorkspaceScalarWhereWithAggregatesInput>;
 
-  @Field(() => [WorkspaceScalarWhereWithAggregatesInput], { nullable: true })
-  NOT?: Array<WorkspaceScalarWhereWithAggregatesInput>;
+    @Field(() => [WorkspaceScalarWhereWithAggregatesInput], {nullable:true})
+    OR?: Array<WorkspaceScalarWhereWithAggregatesInput>;
 
-  @Field(() => StringWithAggregatesFilter, { nullable: true })
-  id?: StringWithAggregatesFilter;
+    @Field(() => [WorkspaceScalarWhereWithAggregatesInput], {nullable:true})
+    NOT?: Array<WorkspaceScalarWhereWithAggregatesInput>;
 
-  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
-  createdAt?: DateTimeWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    id?: StringWithAggregatesFilter;
 
-  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
-  updatedAt?: DateTimeWithAggregatesFilter;
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    createdAt?: DateTimeWithAggregatesFilter;
 
-  @Field(() => DateTimeNullableWithAggregatesFilter, { nullable: true })
-  deletedAt?: DateTimeNullableWithAggregatesFilter;
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    updatedAt?: DateTimeWithAggregatesFilter;
 
-  @Field(() => StringWithAggregatesFilter, { nullable: true })
-  domainName?: StringWithAggregatesFilter;
+    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
+    deletedAt?: DateTimeNullableWithAggregatesFilter;
 
-  @Field(() => StringWithAggregatesFilter, { nullable: true })
-  displayName?: StringWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    domainName?: StringWithAggregatesFilter;
 
-  @Field(() => StringNullableWithAggregatesFilter, { nullable: true })
-  logo?: StringNullableWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    displayName?: StringWithAggregatesFilter;
+
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    logo?: StringNullableWithAggregatesFilter;
 }

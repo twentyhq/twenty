@@ -7,19 +7,16 @@ import { PipelineStageWhereUniqueInput } from './pipeline-stage-where-unique.inp
 
 @InputType()
 export class PipelineStageCreateNestedOneWithoutPipelineProgressesInput {
-  @Field(() => PipelineStageCreateWithoutPipelineProgressesInput, {
-    nullable: true,
-  })
-  @Type(() => PipelineStageCreateWithoutPipelineProgressesInput)
-  create?: PipelineStageCreateWithoutPipelineProgressesInput;
 
-  @Field(() => PipelineStageCreateOrConnectWithoutPipelineProgressesInput, {
-    nullable: true,
-  })
-  @Type(() => PipelineStageCreateOrConnectWithoutPipelineProgressesInput)
-  connectOrCreate?: PipelineStageCreateOrConnectWithoutPipelineProgressesInput;
+    @Field(() => PipelineStageCreateWithoutPipelineProgressesInput, {nullable:true})
+    @Type(() => PipelineStageCreateWithoutPipelineProgressesInput)
+    create?: PipelineStageCreateWithoutPipelineProgressesInput;
 
-  @Field(() => PipelineStageWhereUniqueInput, { nullable: true })
-  @Type(() => PipelineStageWhereUniqueInput)
-  connect?: PipelineStageWhereUniqueInput;
+    @Field(() => PipelineStageCreateOrConnectWithoutPipelineProgressesInput, {nullable:true})
+    @Type(() => PipelineStageCreateOrConnectWithoutPipelineProgressesInput)
+    connectOrCreate?: PipelineStageCreateOrConnectWithoutPipelineProgressesInput;
+
+    @Field(() => PipelineStageWhereUniqueInput, {nullable:true})
+    @Type(() => PipelineStageWhereUniqueInput)
+    connect?: PipelineStageWhereUniqueInput;
 }

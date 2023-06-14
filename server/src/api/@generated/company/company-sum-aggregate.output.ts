@@ -4,6 +4,7 @@ import { Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class CompanySumAggregate {
-  @Field(() => Int, { nullable: true })
-  employees?: number;
+
+    @Field(() => Int, {nullable:true})
+    employees?: number;
 }

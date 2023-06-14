@@ -6,11 +6,12 @@ import { PipelineUpdateWithoutWorkspaceInput } from './pipeline-update-without-w
 
 @InputType()
 export class PipelineUpdateWithWhereUniqueWithoutWorkspaceInput {
-  @Field(() => PipelineWhereUniqueInput, { nullable: false })
-  @Type(() => PipelineWhereUniqueInput)
-  where!: PipelineWhereUniqueInput;
 
-  @Field(() => PipelineUpdateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => PipelineUpdateWithoutWorkspaceInput)
-  data!: PipelineUpdateWithoutWorkspaceInput;
+    @Field(() => PipelineWhereUniqueInput, {nullable:false})
+    @Type(() => PipelineWhereUniqueInput)
+    where!: PipelineWhereUniqueInput;
+
+    @Field(() => PipelineUpdateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => PipelineUpdateWithoutWorkspaceInput)
+    data!: PipelineUpdateWithoutWorkspaceInput;
 }

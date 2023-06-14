@@ -5,7 +5,8 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class CreateOnePipelineProgressArgs {
-  @Field(() => PipelineProgressCreateInput, { nullable: false })
-  @Type(() => PipelineProgressCreateInput)
-  data!: PipelineProgressCreateInput;
+
+    @Field(() => PipelineProgressCreateInput, {nullable:false})
+    @Type(() => PipelineProgressCreateInput)
+    data!: PipelineProgressCreateInput;
 }

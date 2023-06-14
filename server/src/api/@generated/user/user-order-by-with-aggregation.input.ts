@@ -7,54 +7,55 @@ import { UserMinOrderByAggregateInput } from './user-min-order-by-aggregate.inpu
 
 @InputType()
 export class UserOrderByWithAggregationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  lastSeen?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  disabled?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    lastSeen?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  displayName?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    disabled?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  email?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    displayName?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  avatarUrl?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    email?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  locale?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    avatarUrl?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  phoneNumber?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    locale?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  passwordHash?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    phoneNumber?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  emailVerified?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    passwordHash?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  metadata?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    emailVerified?: keyof typeof SortOrder;
 
-  @Field(() => UserCountOrderByAggregateInput, { nullable: true })
-  _count?: UserCountOrderByAggregateInput;
+    @Field(() => SortOrder, {nullable:true})
+    metadata?: keyof typeof SortOrder;
 
-  @Field(() => UserMaxOrderByAggregateInput, { nullable: true })
-  _max?: UserMaxOrderByAggregateInput;
+    @Field(() => UserCountOrderByAggregateInput, {nullable:true})
+    _count?: UserCountOrderByAggregateInput;
 
-  @Field(() => UserMinOrderByAggregateInput, { nullable: true })
-  _min?: UserMinOrderByAggregateInput;
+    @Field(() => UserMaxOrderByAggregateInput, {nullable:true})
+    _max?: UserMaxOrderByAggregateInput;
+
+    @Field(() => UserMinOrderByAggregateInput, {nullable:true})
+    _min?: UserMinOrderByAggregateInput;
 }

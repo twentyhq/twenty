@@ -9,31 +9,24 @@ import { PipelineStageUpdateWithoutPipelineProgressesInput } from './pipeline-st
 
 @InputType()
 export class PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput {
-  @Field(() => PipelineStageCreateWithoutPipelineProgressesInput, {
-    nullable: true,
-  })
-  @Type(() => PipelineStageCreateWithoutPipelineProgressesInput)
-  create?: PipelineStageCreateWithoutPipelineProgressesInput;
 
-  @Field(() => PipelineStageCreateOrConnectWithoutPipelineProgressesInput, {
-    nullable: true,
-  })
-  @Type(() => PipelineStageCreateOrConnectWithoutPipelineProgressesInput)
-  connectOrCreate?: PipelineStageCreateOrConnectWithoutPipelineProgressesInput;
+    @Field(() => PipelineStageCreateWithoutPipelineProgressesInput, {nullable:true})
+    @Type(() => PipelineStageCreateWithoutPipelineProgressesInput)
+    create?: PipelineStageCreateWithoutPipelineProgressesInput;
 
-  @Field(() => PipelineStageUpsertWithoutPipelineProgressesInput, {
-    nullable: true,
-  })
-  @Type(() => PipelineStageUpsertWithoutPipelineProgressesInput)
-  upsert?: PipelineStageUpsertWithoutPipelineProgressesInput;
+    @Field(() => PipelineStageCreateOrConnectWithoutPipelineProgressesInput, {nullable:true})
+    @Type(() => PipelineStageCreateOrConnectWithoutPipelineProgressesInput)
+    connectOrCreate?: PipelineStageCreateOrConnectWithoutPipelineProgressesInput;
 
-  @Field(() => PipelineStageWhereUniqueInput, { nullable: true })
-  @Type(() => PipelineStageWhereUniqueInput)
-  connect?: PipelineStageWhereUniqueInput;
+    @Field(() => PipelineStageUpsertWithoutPipelineProgressesInput, {nullable:true})
+    @Type(() => PipelineStageUpsertWithoutPipelineProgressesInput)
+    upsert?: PipelineStageUpsertWithoutPipelineProgressesInput;
 
-  @Field(() => PipelineStageUpdateWithoutPipelineProgressesInput, {
-    nullable: true,
-  })
-  @Type(() => PipelineStageUpdateWithoutPipelineProgressesInput)
-  update?: PipelineStageUpdateWithoutPipelineProgressesInput;
+    @Field(() => PipelineStageWhereUniqueInput, {nullable:true})
+    @Type(() => PipelineStageWhereUniqueInput)
+    connect?: PipelineStageWhereUniqueInput;
+
+    @Field(() => PipelineStageUpdateWithoutPipelineProgressesInput, {nullable:true})
+    @Type(() => PipelineStageUpdateWithoutPipelineProgressesInput)
+    update?: PipelineStageUpdateWithoutPipelineProgressesInput;
 }

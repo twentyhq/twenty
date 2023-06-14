@@ -6,5 +6,5 @@
 	  "ghcr.io/devcontainers-contrib/features/jshint:2": {}
 	},
 	"forwardPorts": [3000, 3001, 5432],
-	 "postCreateCommand": "cd front && npm install && cd ../server && npm install"
+	 "postCreateCommand": "cd front && yarn && cd ../server && yarn"
   }

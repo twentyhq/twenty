@@ -6,33 +6,34 @@ import { WorkspaceMaxAggregate } from './workspace-max-aggregate.output';
 
 @ObjectType()
 export class WorkspaceGroupBy {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date | string;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
-  @Field(() => String, { nullable: false })
-  domainName!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  displayName!: string;
+    @Field(() => String, {nullable:false})
+    domainName!: string;
 
-  @Field(() => String, { nullable: true })
-  logo?: string;
+    @Field(() => String, {nullable:false})
+    displayName!: string;
 
-  @Field(() => WorkspaceCountAggregate, { nullable: true })
-  _count?: WorkspaceCountAggregate;
+    @Field(() => String, {nullable:true})
+    logo?: string;
 
-  @Field(() => WorkspaceMinAggregate, { nullable: true })
-  _min?: WorkspaceMinAggregate;
+    @Field(() => WorkspaceCountAggregate, {nullable:true})
+    _count?: WorkspaceCountAggregate;
 
-  @Field(() => WorkspaceMaxAggregate, { nullable: true })
-  _max?: WorkspaceMaxAggregate;
+    @Field(() => WorkspaceMinAggregate, {nullable:true})
+    _min?: WorkspaceMinAggregate;
+
+    @Field(() => WorkspaceMaxAggregate, {nullable:true})
+    _max?: WorkspaceMaxAggregate;
 }

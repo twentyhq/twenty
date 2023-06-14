@@ -9,23 +9,24 @@ import { UserUpdateWithoutRefreshTokensInput } from './user-update-without-refre
 
 @InputType()
 export class UserUpdateOneRequiredWithoutRefreshTokensNestedInput {
-  @Field(() => UserCreateWithoutRefreshTokensInput, { nullable: true })
-  @Type(() => UserCreateWithoutRefreshTokensInput)
-  create?: UserCreateWithoutRefreshTokensInput;
 
-  @Field(() => UserCreateOrConnectWithoutRefreshTokensInput, { nullable: true })
-  @Type(() => UserCreateOrConnectWithoutRefreshTokensInput)
-  connectOrCreate?: UserCreateOrConnectWithoutRefreshTokensInput;
+    @Field(() => UserCreateWithoutRefreshTokensInput, {nullable:true})
+    @Type(() => UserCreateWithoutRefreshTokensInput)
+    create?: UserCreateWithoutRefreshTokensInput;
 
-  @Field(() => UserUpsertWithoutRefreshTokensInput, { nullable: true })
-  @Type(() => UserUpsertWithoutRefreshTokensInput)
-  upsert?: UserUpsertWithoutRefreshTokensInput;
+    @Field(() => UserCreateOrConnectWithoutRefreshTokensInput, {nullable:true})
+    @Type(() => UserCreateOrConnectWithoutRefreshTokensInput)
+    connectOrCreate?: UserCreateOrConnectWithoutRefreshTokensInput;
 
-  @Field(() => UserWhereUniqueInput, { nullable: true })
-  @Type(() => UserWhereUniqueInput)
-  connect?: UserWhereUniqueInput;
+    @Field(() => UserUpsertWithoutRefreshTokensInput, {nullable:true})
+    @Type(() => UserUpsertWithoutRefreshTokensInput)
+    upsert?: UserUpsertWithoutRefreshTokensInput;
 
-  @Field(() => UserUpdateWithoutRefreshTokensInput, { nullable: true })
-  @Type(() => UserUpdateWithoutRefreshTokensInput)
-  update?: UserUpdateWithoutRefreshTokensInput;
+    @Field(() => UserWhereUniqueInput, {nullable:true})
+    @Type(() => UserWhereUniqueInput)
+    connect?: UserWhereUniqueInput;
+
+    @Field(() => UserUpdateWithoutRefreshTokensInput, {nullable:true})
+    @Type(() => UserUpdateWithoutRefreshTokensInput)
+    update?: UserUpdateWithoutRefreshTokensInput;
 }
