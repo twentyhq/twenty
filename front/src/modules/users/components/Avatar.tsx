@@ -5,26 +5,30 @@ import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 type OwnProps = {
   avatarUrl: string | null | undefined;
   size: number;
-  placeholderLetter: string;
+  placeholder: string;
   type?: 'squared' | 'rounded';
 };
 
-export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholderLetter'>>`
-  align-items: center;
+export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholder'>>`
   background-color: ${(props) =>
     !isNonEmptyString(props.avatarUrl)
       ? props.theme.tertiaryBackground
       : 'none'};
   background-image: url(${(props) =>
     isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
+  background-image: url(${(props) =>
+    isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
+  border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   display: flex;
-
   height: ${(props) => props.size}px;
+  height: ${(props) => props.size}px;
+
   justify-content: center;
+  width: ${(props) => props.size}px;
 
   width: ${(props) => props.size}px;
 `;
@@ -50,7 +54,7 @@ export const StyledPlaceholderLetter = styled.div<StyledPlaceholderLetterProps>`
 export function Avatar({
   avatarUrl,
   size,
-  placeholderLetter,
+  placeholder,
   type = 'squared',
 }: OwnProps) {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
@@ -59,7 +63,7 @@ export function Avatar({
     <StyledAvatar avatarUrl={avatarUrl} size={size} type={type}>
       {noAvatarUrl && (
         <StyledPlaceholderLetter size={size}>
-          {placeholderLetter}
+          {placeholder[0]?.toLocaleUpperCase()}
         </StyledPlaceholderLetter>
       )}
     </StyledAvatar>

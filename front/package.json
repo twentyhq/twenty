@@ -7,6 +7,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.5",
+    "@floating-ui/react": "^0.24.3",
     "@hello-pangea/dnd": "^16.2.0",
     "@tabler/icons-react": "^2.20.0",
     "@tanstack/react-table": "^8.8.5",

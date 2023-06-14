@@ -17,34 +17,24 @@ const avatarUrl =
 
 export const Rounded: Story = {
   render: getRenderWrapperForComponent(
-    <Avatar
-      avatarUrl={avatarUrl}
-      size={16}
-      placeholderLetter="L"
-      type="rounded"
-    />,
+    <Avatar avatarUrl={avatarUrl} size={16} placeholder="L" type="rounded" />,
   ),
 };
 
 export const Squared: Story = {
   render: getRenderWrapperForComponent(
-    <Avatar
-      avatarUrl={avatarUrl}
-      size={16}
-      placeholderLetter="L"
-      type="squared"
-    />,
+    <Avatar avatarUrl={avatarUrl} size={16} placeholder="L" type="squared" />,
   ),
 };
 
 export const NoAvatarPictureRounded: Story = {
   render: getRenderWrapperForComponent(
-    <Avatar avatarUrl={''} size={16} placeholderLetter="L" type="rounded" />,
+    <Avatar avatarUrl={''} size={16} placeholder="L" type="rounded" />,
   ),
 };
 
 export const NoAvatarPictureSquared: Story = {
   render: getRenderWrapperForComponent(
-    <Avatar avatarUrl={''} size={16} placeholderLetter="L" type="squared" />,
+    <Avatar avatarUrl={''} size={16} placeholder="L" type="squared" />,
   ),
 };

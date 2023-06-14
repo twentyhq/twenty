@@ -8,7 +8,7 @@ import { DropdownMenuButton } from './DropdownMenuButton';
 type Props = {
   checked: boolean;
   onChange?: (newCheckedValue: boolean) => void;
-  id: string;
+  id?: string;
 };
 
 const DropdownMenuCheckableItemContainer = styled(DropdownMenuButton)`

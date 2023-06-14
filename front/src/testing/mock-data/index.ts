@@ -52,6 +52,11 @@ function filterData<DataT>(
               filterElement.contains.replaceAll('%', '').toLocaleLowerCase(),
             );
         }
+        if (filterElement.in) {
+          const itemValue = item[key as keyof typeof item] as string;
+
+          return filterElement.in.includes(itemValue);
+        }
       }
       return false;
     });

@@ -11,6 +11,7 @@ import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 import { useCreateCommentMutation } from '~/generated/graphql';
 
 import { CommentThreadItem } from './CommentThreadItem';
+import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
 
 type OwnProps = {
   commentThread: CommentThreadForDrawer;
@@ -88,6 +89,7 @@ export function CommentThread({ commentThread }: OwnProps) {
           <CommentThreadItem key={comment.id} comment={comment} />
         ))}
       </StyledThreadItemListContainer>
+      <CommentThreadRelationPicker commentThread={commentThread} />
       <AutosizeTextInput onValidate={handleSendComment} />
     </StyledContainer>
   );

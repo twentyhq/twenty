@@ -2,8 +2,8 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 
 type OwnProps = {
-  name: string;
-  id: string;
+  name?: string;
+  id?: string;
   checked?: boolean;
   indeterminate?: boolean;
   onChange?: (newCheckedValue: boolean) => void;

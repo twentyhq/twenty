@@ -25,6 +25,10 @@ export const GET_COMMENT_THREADS_BY_TARGETS = gql`
           avatarUrl
         }
       }
+      commentThreadTargets {
+        commentableId
+        commentableType
+      }
     }
   }
 `;
@@ -43,6 +47,10 @@ export const GET_COMMENT_THREAD = gql`
           displayName
           avatarUrl
         }
+      }
+      commentThreadTargets {
+        commentableId
+        commentableType
       }
     }
   }

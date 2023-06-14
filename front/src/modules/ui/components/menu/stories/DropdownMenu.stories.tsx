@@ -25,8 +25,10 @@ type Story = StoryObj<typeof DropdownMenu>;
 
 const FakeContentBelow = () => (
   <div style={{ position: 'absolute' }}>
-    askjdlaksjdlaksjdlakjsdlkj lkajsldkjalskd jalksdj alksjd alskjd alksjd
-    alksjd laksjd askjdlaksjdlaksjdlakjsdlkj lkajsldkjalskd jalksdj alksjd
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat.
   </div>
 );
 
@@ -217,7 +219,7 @@ const FakeSelectableMenuItemWithAvatarList = () => {
           onClick={() => setSelectedItem(item.id)}
         >
           <Avatar
-            placeholderLetter="A"
+            placeholder="A"
             avatarUrl={item.avatarUrl}
             size={16}
             type="squared"
@@ -303,7 +305,7 @@ const FakeCheckableMenuItemWithAvatarList = () => {
           }}
         >
           <Avatar
-            placeholderLetter="A"
+            placeholder="A"
             avatarUrl={item.avatarUrl}
             size={16}
             type="squared"

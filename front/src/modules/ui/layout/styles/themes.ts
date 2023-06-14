@@ -54,7 +54,7 @@ const lightThemeSpecific = {
   lighterBackgroundTransparent: 'rgba(0, 0, 0, 0.02)',
 
   primaryBorder: 'rgba(0, 0, 0, 0.08)',
-  lightBorder: '#f5f5f5',
+  lightBorder: 'rgba(245, 245, 245, 1)',
   mediumBorder: '#ebebeb',
 
   clickableElementBackgroundTransition: 'background 0.1s ease',
