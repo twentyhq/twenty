@@ -21,7 +21,7 @@ export { IconCalendarEvent } from '@tabler/icons-react';
 export { IconMap } from '@tabler/icons-react';
 export { IconMail } from '@tabler/icons-react';
 export { IconPhone } from '@tabler/icons-react';
-export { IconTarget } from '@tabler/icons-react';
+export { IconTargetArrow } from '@tabler/icons-react';
 export { IconChevronDown } from '@tabler/icons-react';
 export { IconArrowNarrowDown } from '@tabler/icons-react';
 export { IconArrowNarrowUp } from '@tabler/icons-react';

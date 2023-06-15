@@ -39,7 +39,7 @@ export default function NavBackButton({ title }: OwnProps) {
         <IconAndButtonContainer
           onClick={() => navigate('/', { replace: true })}
         >
-          <IconChevronLeft strokeWidth={3} />
+          <IconChevronLeft />
           <span>{title}</span>
         </IconAndButtonContainer>
         <NavCollapseButton hideOnDesktop={true} />

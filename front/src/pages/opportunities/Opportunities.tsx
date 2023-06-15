@@ -1,4 +1,4 @@
-import { IconTarget } from '@/ui/icons/index';
+import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { AppPage } from '~/AppPage';
 
@@ -14,7 +14,7 @@ export function Opportunities() {
     return <div>Initial board or items not found</div>;
   return (
     <AppPage>
-      <WithTopBarContainer title="Opportunities" icon={<IconTarget />}>
+      <WithTopBarContainer title="Opportunities" icon={<IconTargetArrow />}>
         <Board initialBoard={initialBoard} items={items} />
       </WithTopBarContainer>
     </AppPage>
