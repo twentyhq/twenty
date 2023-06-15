@@ -19,10 +19,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:generate": "npx prisma generate && eslint \"src/api/@generated/**\" --fix",
+    "prisma:generate-client": "npx prisma generate --generator client",
+    "prisma:generate-nest-graphql": "npx prisma generate --generator nestgraphql && eslint \"src/api/@generated/**\" --fix",
     "prisma:migrate": "npx prisma migrate deploy",
     "prisma:seed": "npx prisma db seed",
-    "prisma:reset": "npm run prisma:generate && npx prisma migrate reset"
+    "prisma:reset": "yarn prisma:generate-client && yarn prisma:generate-nest-grapql && npx prisma migrate reset"
   },
   "dependencies": {
     "@apollo/server": "^4.7.3",

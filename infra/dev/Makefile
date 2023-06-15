@@ -29,8 +29,11 @@ front-storybook:
 server-start:
 	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn start:dev"
 
-server-prisma-generate:
-	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:generate"
+server-prisma-generate-client:
+	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:generate-client"
+
+server-prisma-generate-nest-graphql:
+	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:generate-nest-graphql"
 
 server-prisma-migrate:
 	@docker-compose exec twenty-dev sh -c "cd /app/server && yarn prisma:migrate"
