@@ -77,6 +77,32 @@ generator nestgraphql {
     decorate_updateCompanyPerson_name = "HideField"
     decorate_updateCompanyPerson_from = "@nestjs/graphql"
     decorate_updateCompanyPerson_arguments = "[]"
+
+    // PipelineProgress create: Only Allow pipelineStage and pipeline connect
+    decorate_createPipelineProgressPipeline_type = "*PipelineCreateNestedOneWithoutPipelineProgressesInput"
+    decorate_createPipelineProgressPipeline_field = "!(connect)"
+    decorate_createPipelineProgressPipeline_name = "HideField"
+    decorate_createPipelineProgressPipeline_from = "@nestjs/graphql"
+    decorate_createPipelineProgressPipeline_arguments = "[]"
+
+    decorate_createPipelineProgressPipelineStage_type = "*PipelineStageCreateNestedOneWithoutPipelineProgressesInput"
+    decorate_createPipelineProgressPipelineStage_field = "!(connect)"
+    decorate_createPipelineProgressPipelineStage_name = "HideField"
+    decorate_createPipelineProgressPipelineStage_from = "@nestjs/graphql"
+    decorate_createPipelineProgressPipelineStage_arguments = "[]"
+
+    // PipelineProgress update: Only Allow pipelineStage and pipeline connect
+    decorate_updatePipelineProgressPipeline_type = "*PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput"
+    decorate_updatePipelineProgressPipeline_field = "!(connect)"
+    decorate_updatePipelineProgressPipeline_name = "HideField"
+    decorate_updatePipelineProgressPipeline_from = "@nestjs/graphql"
+    decorate_updatePipelineProgressPipeline_arguments = "[]"
+
+    decorate_updatePipelineProgressPipelineStage_type = "*PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput"
+    decorate_updatePipelineProgressPipelineStage_field = "!(connect)"
+    decorate_updatePipelineProgressPipelineStage_name = "HideField"
+    decorate_updatePipelineProgressPipelineStage_from = "@nestjs/graphql"
+    decorate_updatePipelineProgressPipelineStage_arguments = "[]"
     
     // Disable _count on all models except Aggregation use case
     decorate_count_type = "!(*Aggregate*|*GroupBy*|*OrderBy*)"
