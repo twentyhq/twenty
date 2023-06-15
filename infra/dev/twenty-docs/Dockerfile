@@ -8,4 +8,4 @@ RUN yarn
 
 COPY ../../docs .
 
-CMD ["npm", "run", "start"]
+CMD ["yarn", "start"]
