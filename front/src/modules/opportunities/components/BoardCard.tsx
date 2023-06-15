@@ -6,7 +6,7 @@ import PersonPlaceholder from '../../people/components/person-placeholder.png';
 import { PersonChip } from '../../people/components/PersonChip';
 import {
   IconBuildingSkyscraper,
-  IconCalendar,
+  IconCalendarEvent,
   IconMail,
   IconPhone,
   IconUsers,
@@ -86,7 +86,7 @@ const PersonBoardCard = ({ person }: { person: Person }) => {
           {person.phone}
         </span>
         <span>
-          <IconCalendar size={16} />
+          <IconCalendarEvent size={16} />
           {humanReadableDate(new Date(person.createdAt as string))}
         </span>
       </StyledBoardCardBody>
@@ -113,7 +113,7 @@ const CompanyBoardCard = ({ company }: { company: Company }) => {
           <IconUsers size={16} /> {company.employees}
         </span>
         <span>
-          <IconCalendar size={16} />
+          <IconCalendarEvent size={16} />
           {humanReadableDate(new Date(company.createdAt as string))}
         </span>
       </StyledBoardCardBody>

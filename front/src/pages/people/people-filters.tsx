@@ -7,7 +7,7 @@ import { Person } from '@/people/interfaces/person.interface';
 import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import {
   IconBuildingSkyscraper,
-  IconCalendar,
+  IconCalendarEvent,
   IconMail,
   IconMap,
   IconPhone,
@@ -165,7 +165,7 @@ export const phoneFilter = {
 export const createdAtFilter = {
   key: 'createdAt',
   label: 'Created At',
-  icon: <IconCalendar size={16} />,
+  icon: <IconCalendarEvent size={16} />,
   type: 'date',
   operands: [
     {

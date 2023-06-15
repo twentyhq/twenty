@@ -3,7 +3,7 @@ import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interfa
 import { SEARCH_USER_QUERY } from '@/search/services/search';
 import {
   IconBuildingSkyscraper,
-  IconCalendar,
+  IconCalendarEvent,
   IconLink,
   IconMap,
   IconUsers,
@@ -135,7 +135,7 @@ export const addressFilter = {
 export const ccreatedAtFilter = {
   key: 'createdAt',
   label: 'Created At',
-  icon: <IconCalendar size={16} />,
+  icon: <IconCalendarEvent size={16} />,
   type: 'date',
   operands: [
     {

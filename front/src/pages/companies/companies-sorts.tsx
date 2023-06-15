@@ -1,7 +1,7 @@
 import { SortType } from '@/filters-and-sorts/interfaces/sorts/interface';
 import {
   IconBuildingSkyscraper,
-  IconCalendar,
+  IconCalendarEvent,
   IconLink,
   IconMap,
   IconUsers,
@@ -36,7 +36,7 @@ export const availableSorts = [
   {
     key: 'createdAt',
     label: 'Creation',
-    icon: <IconCalendar size={16} />,
+    icon: <IconCalendarEvent size={16} />,
     _type: 'default_sort',
   },
 ] satisfies Array<SortType<Companies_Order_By>>;

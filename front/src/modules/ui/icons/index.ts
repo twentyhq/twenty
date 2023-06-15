@@ -17,7 +17,7 @@ export { IconChevronLeft } from '@tabler/icons-react';
 export { IconPlus } from '@tabler/icons-react';
 export { IconLink } from '@tabler/icons-react';
 export { IconUsers } from '@tabler/icons-react';
-export { IconCalendar } from '@tabler/icons-react';
+export { IconCalendarEvent } from '@tabler/icons-react';
 export { IconMap } from '@tabler/icons-react';
 export { IconMail } from '@tabler/icons-react';
 export { IconPhone } from '@tabler/icons-react';

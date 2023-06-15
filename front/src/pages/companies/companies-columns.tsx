@@ -16,7 +16,7 @@ import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
   IconBuildingSkyscraper,
-  IconCalendar,
+  IconCalendarEvent,
   IconLink,
   IconMap,
   IconUser,
@@ -105,7 +105,7 @@ export const useCompaniesColumns = () => {
         header: () => (
           <ColumnHead
             viewName="Creation"
-            viewIcon={<IconCalendar size={16} />}
+            viewIcon={<IconCalendarEvent size={16} />}
           />
         ),
         cell: (props) => (
