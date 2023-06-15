@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { PrismaService } from 'src/database/prisma.service';
+import { prismaMock } from 'src/prisma-mock/jest-prisma-singleton';
 
 describe('UserService', () => {
   let service: UserService;
@@ -11,7 +12,7 @@ describe('UserService', () => {
         UserService,
         {
           provide: PrismaService,
-          useValue: {},
+          useValue: prismaMock,
         },
       ],
     }).compile();
