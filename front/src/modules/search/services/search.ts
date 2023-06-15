@@ -39,8 +39,16 @@ export const EMPTY_QUERY = gql`
 `;
 
 export const SEARCH_COMPANY_QUERY = gql`
-  query SearchCompanyQuery($where: CompanyWhereInput, $limit: Int) {
-    searchResults: findManyCompany(where: $where, take: $limit) {
+  query SearchCompanyQuery(
+    $where: CompanyWhereInput
+    $limit: Int
+    $orderBy: [CompanyOrderByWithRelationInput!]
+  ) {
+    searchResults: findManyCompany(
+      where: $where
+      take: $limit
+      orderBy: $orderBy
+    ) {
       id
       name
       domainName

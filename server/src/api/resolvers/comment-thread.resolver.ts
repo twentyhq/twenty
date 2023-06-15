@@ -9,6 +9,7 @@ import { CreateOneCommentThreadArgs } from '../@generated/comment-thread/create-
 import { CreateOneCommentThreadGuard } from './guards/create-one-comment-thread.guard';
 import { FindManyCommentThreadArgs } from '../@generated/comment-thread/find-many-comment-thread.args';
 import { ArgsService } from './services/args.service';
+import { UpdateOneCommentThreadArgs } from '../@generated/comment-thread/update-one-comment-thread.args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)
@@ -65,6 +66,26 @@ export class CommentThreadResolver {
     }
 
     return createdCommentThread;
+  }
+
+  @Mutation(() => CommentThread, {
+    nullable: false,
+  })
+  async updateOneCommentThread(
+    @Args() args: UpdateOneCommentThreadArgs,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<CommentThread> {
+    const preparedArgs =
+      await this.argsService.prepareFindManyArgs<UpdateOneCommentThreadArgs>(
+        args,
+        workspace,
+      );
+
+    const updatedCommentThread = await this.prismaService.commentThread.update(
+      preparedArgs,
+    );
+
+    return updatedCommentThread;
   }
 
   @Query(() => [CommentThread])

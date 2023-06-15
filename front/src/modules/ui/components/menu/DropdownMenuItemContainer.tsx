@@ -9,6 +9,9 @@ export const DropdownMenuItemContainer = styled.div`
   flex-direction: column;
   gap: 2px;
   height: 100%;
+  max-height: 180px;
+  overflow-y: auto;
+
   padding: var(--padding);
   width: calc(100% - 2 * var(--padding));
 `;
