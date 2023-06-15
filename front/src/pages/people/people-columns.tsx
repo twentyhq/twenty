@@ -10,7 +10,7 @@ import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
-  IconBuilding,
+  IconBuildingSkyscraper,
   IconCalendar,
   IconMail,
   IconMapPin,
@@ -65,7 +65,7 @@ export const usePeopleColumns = () => {
         header: () => (
           <ColumnHead
             viewName="Company"
-            viewIcon={<IconBuilding size={16} />}
+            viewIcon={<IconBuildingSkyscraper size={16} />}
           />
         ),
         cell: (props) => <PeopleCompanyCell people={props.row.original} />,

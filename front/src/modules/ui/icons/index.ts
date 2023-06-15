@@ -1,5 +1,5 @@
 export { IconAddressBook } from './components/IconAddressBook';
-export { IconBuilding } from '@tabler/icons-react';
+export { IconBuildingSkyscraper } from '@tabler/icons-react';
 export { IconMessageCircle as IconComment } from '@tabler/icons-react';
 export { IconCheck } from '@tabler/icons-react';
 export { IconTrash } from '@tabler/icons-react';

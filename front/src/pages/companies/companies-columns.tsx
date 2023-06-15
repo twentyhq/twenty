@@ -15,7 +15,7 @@ import { EditableRelation } from '@/ui/components/editable-cell/types/EditableRe
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
-  IconBuilding,
+  IconBuildingSkyscraper,
   IconCalendar,
   IconLink,
   IconMapPin,
@@ -34,7 +34,10 @@ export const useCompaniesColumns = () => {
       getCheckBoxColumn(),
       columnHelper.accessor('name', {
         header: () => (
-          <ColumnHead viewName="Name" viewIcon={<IconBuilding size={16} />} />
+          <ColumnHead
+            viewName="Name"
+            viewIcon={<IconBuildingSkyscraper size={16} />}
+          />
         ),
         cell: (props) => (
           <CompanyEditableNameChipCell company={props.row.original} />

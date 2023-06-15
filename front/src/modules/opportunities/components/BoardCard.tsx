@@ -5,7 +5,7 @@ import CompanyChip from '../../companies/components/CompanyChip';
 import PersonPlaceholder from '../../people/components/person-placeholder.png';
 import { PersonChip } from '../../people/components/PersonChip';
 import {
-  IconBuilding,
+  IconBuildingSkyscraper,
   IconCalendar,
   IconMail,
   IconPhone,
@@ -69,7 +69,7 @@ const PersonBoardCard = ({ person }: { person: Person }) => {
       </StyledBoardCardHeader>
       <StyledBoardCardBody>
         <span>
-          <IconBuilding size={16} />
+          <IconBuildingSkyscraper size={16} />
           <CompanyChip
             name={person.company?.name || ''}
             picture={getLogoUrlFromDomainName(

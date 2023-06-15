@@ -19,7 +19,7 @@ import {
 import { SelectedFilterType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
 import { EntityTable } from '@/ui/components/table/EntityTable';
-import { IconBuilding } from '@/ui/icons/index';
+import { IconBuildingSkyscraper } from '@/ui/icons/index';
 import { IconList } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { BoolExpType } from '@/utils/interfaces/generic.interface';
@@ -78,7 +78,7 @@ export function Companies() {
     <AppPage>
       <WithTopBarContainer
         title="Companies"
-        icon={<IconBuilding size={16} />}
+        icon={<IconBuildingSkyscraper size={16} />}
         onAddButtonClick={handleAddButtonClick}
       >
         <>

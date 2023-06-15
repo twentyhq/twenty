@@ -6,7 +6,7 @@ import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interfa
 import { Person } from '@/people/interfaces/person.interface';
 import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import {
-  IconBuilding,
+  IconBuildingSkyscraper,
   IconCalendar,
   IconMail,
   IconMapPin,
@@ -101,7 +101,7 @@ export const emailFilter = {
 export const companyFilter = {
   key: 'company_name',
   label: 'Company',
-  icon: <IconBuilding size={16} />,
+  icon: <IconBuildingSkyscraper size={16} />,
   type: 'relation',
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,

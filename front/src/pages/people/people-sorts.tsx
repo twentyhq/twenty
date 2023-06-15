@@ -1,6 +1,6 @@
 import { SortType } from '@/filters-and-sorts/interfaces/sorts/interface';
 import {
-  IconBuilding,
+  IconBuildingSkyscraper,
   IconCalendar,
   IconMail,
   IconMapPin,
@@ -30,7 +30,7 @@ export const availableSorts = [
   {
     key: 'company_name',
     label: 'Company',
-    icon: <IconBuilding size={16} />,
+    icon: <IconBuildingSkyscraper size={16} />,
     _type: 'custom_sort',
     orderByTemplates: [(order: Order_By) => ({ company: { name: order } })],
   },

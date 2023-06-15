@@ -2,7 +2,7 @@ import { Company } from '@/companies/interfaces/company.interface';
 import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { SEARCH_USER_QUERY } from '@/search/services/search';
 import {
-  IconBuilding,
+  IconBuildingSkyscraper,
   IconCalendar,
   IconLink,
   IconMapPin,
@@ -15,7 +15,7 @@ import { QueryMode } from '~/generated/graphql';
 export const nameFilter = {
   key: 'name',
   label: 'Name',
-  icon: <IconBuilding size={16} />,
+  icon: <IconBuildingSkyscraper size={16} />,
   type: 'text',
   operands: [
     {

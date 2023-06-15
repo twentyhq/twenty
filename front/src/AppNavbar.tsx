@@ -1,7 +1,7 @@
 import { useMatch, useResolvedPath } from 'react-router-dom';
 
 import {
-  IconBuilding,
+  IconBuildingSkyscraper,
   IconInbox,
   IconSearch,
   IconSettings,
@@ -50,7 +50,7 @@ export function AppNavbar() {
         <NavItem
           label="Companies"
           to="/companies"
-          icon={<IconBuilding size={16} />}
+          icon={<IconBuildingSkyscraper size={16} />}
           active={
             !!useMatch({
               path: useResolvedPath('/companies').pathname,
