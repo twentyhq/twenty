@@ -19,7 +19,7 @@ import {
   IconCalendar,
   IconLink,
   IconMapPin,
-  IconSum,
+  IconUsers,
   IconUser,
 } from '@/ui/icons/index';
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
@@ -63,7 +63,7 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('employees', {
         header: () => (
-          <ColumnHead viewName="Employees" viewIcon={<IconSum size={16} />} />
+          <ColumnHead viewName="Employees" viewIcon={<IconUsers size={16} />} />
         ),
         cell: (props) => (
           <EditableText

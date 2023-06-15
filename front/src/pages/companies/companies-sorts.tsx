@@ -4,7 +4,7 @@ import {
   IconCalendar,
   IconLink,
   IconMapPin,
-  IconSum,
+  IconUsers,
 } from '@/ui/icons/index';
 import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
 
@@ -18,7 +18,7 @@ export const availableSorts = [
   {
     key: 'employees',
     label: 'Employees',
-    icon: <IconSum size={16} />,
+    icon: <IconUsers size={16} />,
     _type: 'default_sort',
   },
   {

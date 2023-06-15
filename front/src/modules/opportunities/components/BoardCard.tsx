@@ -9,7 +9,7 @@ import {
   IconCalendar,
   IconMail,
   IconPhone,
-  IconSum,
+  IconUsers,
   IconUser,
 } from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
@@ -110,7 +110,7 @@ const CompanyBoardCard = ({ company }: { company: Company }) => {
           <PersonChip name={company.accountOwner?.displayName || ''} />
         </span>
         <span>
-          <IconSum size={16} /> {company.employees}
+          <IconUsers size={16} /> {company.employees}
         </span>
         <span>
           <IconCalendar size={16} />

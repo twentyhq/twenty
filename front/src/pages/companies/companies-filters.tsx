@@ -6,7 +6,7 @@ import {
   IconCalendar,
   IconLink,
   IconMapPin,
-  IconSum,
+  IconUsers,
   IconUser,
 } from '@/ui/icons/index';
 import { mapToUser, User } from '@/users/interfaces/user.interface';
@@ -45,7 +45,7 @@ export const nameFilter = {
 export const employeesFilter = {
   key: 'employees',
   label: 'Employees',
-  icon: <IconSum size={16} />,
+  icon: <IconUsers size={16} />,
   type: 'text',
   operands: [
     {

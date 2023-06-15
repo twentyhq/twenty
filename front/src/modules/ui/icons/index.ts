@@ -16,7 +16,7 @@ export { IconX } from '@tabler/icons-react';
 export { IconChevronLeft } from '@tabler/icons-react';
 export { IconPlus } from '@tabler/icons-react';
 export { IconLink } from '@tabler/icons-react';
-export { IconSum } from '@tabler/icons-react';
+export { IconUsers } from '@tabler/icons-react';
 export { IconCalendar } from '@tabler/icons-react';
 export { IconMapPin } from '@tabler/icons-react';
 export { IconMail } from '@tabler/icons-react';
