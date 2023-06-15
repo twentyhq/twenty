@@ -1,5 +1,5 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
-import { JwtAuthGuard } from 'src/core/auth/guards/jwt.auth.guard';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { AuthWorkspace } from '../../decorators/auth-workspace.decorator';
 import { Company } from '../../core/@generated/company/company.model';

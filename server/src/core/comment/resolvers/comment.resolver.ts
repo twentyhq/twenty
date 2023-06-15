@@ -1,6 +1,6 @@
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/core/auth/guards/jwt.auth.guard';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from '../../../core/@generated/workspace/workspace.model';
 import { AuthWorkspace } from '../../../decorators/auth-workspace.decorator';
 import { CreateOneCommentArgs } from '../../../core/@generated/comment/create-one-comment.args';

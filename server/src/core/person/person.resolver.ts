@@ -1,6 +1,6 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/core/auth/guards/jwt.auth.guard';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Person } from '../../core/@generated/person/person.model';
 import { FindManyPersonArgs } from '../../core/@generated/person/find-many-person.args';
 import { UpdateOnePersonArgs } from '../../core/@generated/person/update-one-person.args';

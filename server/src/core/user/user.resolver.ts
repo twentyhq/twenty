@@ -6,7 +6,7 @@ import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { User } from 'src/core/@generated/user/user.model';
 import { ExceptionFilter } from 'src/exception-filters/exception.filter';
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/core/auth/guards/jwt.auth.guard';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)

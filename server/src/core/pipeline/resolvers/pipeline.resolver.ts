@@ -1,6 +1,6 @@
 import { Resolver, Args, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/core/auth/guards/jwt.auth.guard';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from '../../@generated/workspace/workspace.model';
 import { AuthWorkspace } from '../../../decorators/auth-workspace.decorator';
 import { Pipeline } from '../../@generated/pipeline/pipeline.model';
