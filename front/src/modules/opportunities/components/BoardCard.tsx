@@ -9,8 +9,8 @@ import {
   IconCalendarEvent,
   IconMail,
   IconPhone,
-  IconUsers,
   IconUser,
+  IconUsers,
 } from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
 

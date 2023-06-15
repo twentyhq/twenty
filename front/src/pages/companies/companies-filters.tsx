@@ -6,8 +6,8 @@ import {
   IconCalendarEvent,
   IconLink,
   IconMap,
-  IconUsers,
   IconUser,
+  IconUsers,
 } from '@/ui/icons/index';
 import { mapToUser, User } from '@/users/interfaces/user.interface';
 import { QueryMode } from '~/generated/graphql';
