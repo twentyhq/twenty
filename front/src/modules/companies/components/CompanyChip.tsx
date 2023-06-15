@@ -14,6 +14,8 @@ const StyledContainer = styled.span`
   color: ${(props) => props.theme.text80};
   display: inline-flex;
   gap: ${(props) => props.theme.spacing(1)};
+  height: calc(20px - 2 * ${(props) => props.theme.spacing(1)});
+
   padding: ${(props) => props.theme.spacing(1)};
 
   user-select: none;

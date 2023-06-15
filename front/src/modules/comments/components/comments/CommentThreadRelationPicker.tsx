@@ -1,15 +1,16 @@
 import { useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   autoUpdate,
   flip,
   offset,
-  shift,
   size,
   useFloating,
 } from '@floating-ui/react';
 import { debounce } from 'lodash';
+import { v4 } from 'uuid';
 
 import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
 import CompanyChip from '@/companies/components/CompanyChip';
@@ -19,17 +20,25 @@ import { DropdownMenuItem } from '@/ui/components/menu/DropdownMenuItem';
 import { DropdownMenuItemContainer } from '@/ui/components/menu/DropdownMenuItemContainer';
 import { DropdownMenuSearch } from '@/ui/components/menu/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/components/menu/DropdownMenuSeparator';
+import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { IconArrowUpRight } from '@/ui/icons';
 import { Avatar } from '@/users/components/Avatar';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
-import { QueryMode, useSearchCompanyQueryQuery } from '~/generated/graphql';
+import {
+  CommentableType,
+  QueryMode,
+  SortOrder,
+  useAddCommentThreadTargetOnCommentThreadMutation,
+  useRemoveCommentThreadTargetOnCommentThreadMutation,
+  useSearchCompanyQueryQuery,
+} from '~/generated/graphql';
 
 type OwnProps = {
   commentThread: CommentThreadForDrawer;
 };
 
 const StyledContainer = styled.div`
-  align-items: center;
+  align-items: flex-start;
   display: flex;
   flex-direction: row;
   gap: ${(props) => props.theme.spacing(2)};
@@ -38,10 +47,23 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const StyledLabelContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+
+  gap: ${(props) => props.theme.spacing(2)};
+
+  padding-bottom: ${(props) => props.theme.spacing(2)};
+  padding-top: ${(props) => props.theme.spacing(2)};
+`;
+
 const StyledRelationLabel = styled.div`
   color: ${(props) => props.theme.text60};
   display: flex;
   flex-direction: row;
+
+  user-select: none;
 `;
 
 const StyledRelationContainer = styled.div`
@@ -53,42 +75,22 @@ const StyledRelationContainer = styled.div`
   cursor: pointer;
 
   display: flex;
-  gap: ${(props) => props.theme.spacing(2)};
+  flex-wrap: wrap;
 
-  height: calc(32px - 2 * var(--vertical-padding));
+  gap: ${(props) => props.theme.spacing(2)};
 
   &:hover {
     background-color: ${(props) => props.theme.secondaryBackground};
     border: 1px solid ${(props) => props.theme.lightBorder};
   }
 
+  min-height: calc(32px - 2 * var(--vertical-padding));
+
   overflow: hidden;
 
   padding: var(--vertical-padding) var(--horizontal-padding);
-
   width: calc(100% - 2 * var(--horizontal-padding));
 `;
-
-// TODO: refactor icon button with new figma and merge
-// const StyledAddButton = styled.div`
-//   align-items: center;
-//   background: ${(props) => props.theme.primaryBackgroundTransparent};
-//   border-radius: ${(props) => props.theme.borderRadius};
-//   box-shadow: ${(props) => props.theme.modalBoxShadow};
-
-//   cursor: pointer;
-//   display: flex;
-//   flex-direction: row;
-
-//   &:hover {
-//     background-color: ${(props) => props.theme.tertiaryBackground};
-//   }
-
-//   height: 20px;
-//   justify-content: center;
-
-//   width: 20px;
-// `;
 
 export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -98,11 +100,33 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     leading: true,
   });
 
+  function exitEditMode() {
+    setIsMenuOpen(false);
+    setSearchFilter('');
+  }
+
+  useHotkeys(
+    ['esc', 'enter'],
+    () => {
+      exitEditMode();
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+    },
+    [exitEditMode],
+  );
+
   const { refs, floatingStyles } = useFloating({
-    strategy: 'fixed',
-    middleware: [offset(), flip(), shift(), size()],
+    strategy: 'absolute',
+    middleware: [offset(), flip(), size()],
     whileElementsMounted: autoUpdate,
     open: isMenuOpen,
+    placement: 'bottom-start',
+  });
+
+  useListenClickOutsideArrayOfRef([refs.floating, refs.domReference], () => {
+    exitEditMode();
   });
 
   const theme = useTheme();
@@ -111,29 +135,63 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     ?.filter((relation) => relation.commentableType === 'Company')
     .map((relation) => relation.commentableId);
 
-  // const personIds = commentThread.commentThreadTargets
-  //   ?.filter((relation) => relation.commentableType === 'Person')
-  //   .map((relation) => relation.commentableId);
-
-  const { data: dataForChips } = useSearchCompanyQueryQuery({
+  const { data: selectedCompaniesData } = useSearchCompanyQueryQuery({
     variables: {
       where: {
         id: {
           in: companyIds,
         },
       },
+      orderBy: {
+        name: SortOrder.Asc,
+      },
     },
   });
 
-  const { data: dataForSelect } = useSearchCompanyQueryQuery({
+  const { data: filteredSelectedCompaniesData } = useSearchCompanyQueryQuery({
     variables: {
       where: {
-        name: {
-          contains: `%${searchFilter}%`,
-          mode: QueryMode.Insensitive,
-        },
+        AND: [
+          {
+            name: {
+              contains: `%${searchFilter}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+          {
+            id: {
+              in: companyIds,
+            },
+          },
+        ],
       },
-      limit: 5,
+      orderBy: {
+        name: SortOrder.Asc,
+      },
+    },
+  });
+
+  const { data: companiesToSelectData } = useSearchCompanyQueryQuery({
+    variables: {
+      where: {
+        AND: [
+          {
+            name: {
+              contains: `%${searchFilter}%`,
+              mode: QueryMode.Insensitive,
+            },
+          },
+          {
+            id: {
+              notIn: companyIds,
+            },
+          },
+        ],
+      },
+      limit: 10,
+      orderBy: {
+        name: SortOrder.Asc,
+      },
     },
   });
 
@@ -145,18 +203,65 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     setIsMenuOpen((isOpen) => !isOpen);
   }
 
-  const companiesForChips = dataForChips?.searchResults ?? [];
-  const companiesForSelect = dataForSelect?.searchResults ?? [];
+  const [addCommentThreadTargetOnCommentThread] =
+    useAddCommentThreadTargetOnCommentThreadMutation({
+      refetchQueries: ['GetCompanies'],
+    });
+
+  const [removeCommentThreadTargetOnCommentThread] =
+    useRemoveCommentThreadTargetOnCommentThreadMutation({
+      refetchQueries: ['GetCompanies'],
+    });
+
+  function handleCheckItemChange(newCheckedValue: boolean, itemId: string) {
+    if (newCheckedValue) {
+      addCommentThreadTargetOnCommentThread({
+        variables: {
+          commentableEntityId: itemId,
+          commentableEntityType: CommentableType.Company,
+          commentThreadId: commentThread.id,
+          commentThreadTargetCreationDate: new Date().toISOString(),
+          commentThreadTargetId: v4(),
+        },
+      });
+    } else {
+      const foundCorrespondingTarget = commentThread.commentThreadTargets?.find(
+        (target) => target.commentableId === itemId,
+      );
+
+      if (foundCorrespondingTarget) {
+        removeCommentThreadTargetOnCommentThread({
+          variables: {
+            commentThreadId: commentThread.id,
+            commentThreadTargetId: foundCorrespondingTarget.id,
+          },
+        });
+      }
+    }
+  }
+
+  const selectedCompanies = selectedCompaniesData?.searchResults ?? [];
+
+  const filteredSelectedCompanies =
+    filteredSelectedCompaniesData?.searchResults ?? [];
+  const companiesToSelect = companiesToSelectData?.searchResults ?? [];
+
+  const companiesInDropdown = [
+    ...filteredSelectedCompanies,
+    ...companiesToSelect,
+  ];
 
   return (
     <StyledContainer>
-      <IconArrowUpRight size={20} color={theme.text40} />
-      <StyledRelationLabel>Relations</StyledRelationLabel>
+      <StyledLabelContainer>
+        <IconArrowUpRight size={16} color={theme.text40} />
+        <StyledRelationLabel>Relations</StyledRelationLabel>
+      </StyledLabelContainer>
       <StyledRelationContainer
         ref={refs.setReference}
         onClick={handleChangeRelationsClick}
       >
-        {companiesForChips?.map((company) => (
+        {selectedCompanies?.map((company) => (
           <CompanyChip
             key={company.id}
             name={company.name}
@@ -164,9 +269,6 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
           />
         ))}
       </StyledRelationContainer>
-      {/* <StyledAddButton id="add-button" onClick={handleAddButtonClick}>
-        <IconPlus size={14} color={theme.text40} strokeWidth={1.5} />
-      </StyledAddButton> */}
       {isMenuOpen && (
         <DropdownMenu ref={refs.setFloating} style={floatingStyles}>
           <DropdownMenuSearch
@@ -175,17 +277,17 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
           />
           <DropdownMenuSeparator />
           <DropdownMenuItemContainer>
-            {companiesForSelect?.slice(0, 5)?.map((company) => (
+            {companiesInDropdown?.map((company) => (
               <DropdownMenuCheckableItem
+                key={company.id}
                 checked={
-                  companiesForChips
-                    ?.map((companyForChip) => companyForChip.id)
+                  selectedCompanies
+                    ?.map((selectedCompany) => selectedCompany.id)
                     ?.includes(company.id) ?? false
                 }
-                onChange={(newCheckedValue) => {
-                  if (newCheckedValue) {
-                  }
-                }}
+                onChange={(newCheckedValue) =>
+                  handleCheckItemChange(newCheckedValue, company.id)
+                }
               >
                 <Avatar
                   avatarUrl={getLogoUrlFromDomainName(company.domainName)}
@@ -195,7 +297,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
                 {company.name}
               </DropdownMenuCheckableItem>
             ))}
-            {companiesForSelect?.length === 0 && (
+            {companiesInDropdown?.length === 0 && (
               <DropdownMenuItem>No result</DropdownMenuItem>
             )}
           </DropdownMenuItemContainer>

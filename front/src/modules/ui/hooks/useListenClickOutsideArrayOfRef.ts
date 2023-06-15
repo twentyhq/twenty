@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 import { isDefined } from '@/utils/type-guards/isDefined';
 
-export function useListenClickOutsideArrayOfRef<T extends HTMLElement>(
+export function useListenClickOutsideArrayOfRef<T extends Element>(
   arrayOfRef: Array<React.RefObject<T>>,
   outsideClickCallback: (event?: MouseEvent | TouchEvent) => void,
 ) {

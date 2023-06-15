@@ -9,6 +9,7 @@ import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { RestLink } from 'apollo-link-rest';
 
+import { CommentThreadTarget } from './generated/graphql';
 import { refreshAccessToken } from './modules/auth/services/AuthService';
 
 const apiLink = createHttpLink({
@@ -65,7 +66,27 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
 
 export const apiClient = new ApolloClient({
   link: from([errorLink, withAuthHeadersLink, apiLink]),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      CommentThread: {
+        fields: {
+          commentThreadTargets: {
+            merge(
+              existing: CommentThreadTarget[] = [],
+              incoming: CommentThreadTarget[],
+            ) {
+              return [...incoming];
+            },
+          },
+        },
+      },
+    },
+  }),
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'cache-first',
+    },
+  },
 });
 
 const authLink = new RestLink({
