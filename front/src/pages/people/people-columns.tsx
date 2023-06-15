@@ -13,7 +13,7 @@ import {
   IconBuildingSkyscraper,
   IconCalendar,
   IconMail,
-  IconMapPin,
+  IconMap,
   IconPhone,
   IconUser,
 } from '@/ui/icons/index';
@@ -109,7 +109,7 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('city', {
         header: () => (
-          <ColumnHead viewName="City" viewIcon={<IconMapPin size={16} />} />
+          <ColumnHead viewName="City" viewIcon={<IconMap size={16} />} />
         ),
         cell: (props) => (
           <EditableText

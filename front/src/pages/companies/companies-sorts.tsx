@@ -3,7 +3,7 @@ import {
   IconBuildingSkyscraper,
   IconCalendar,
   IconLink,
-  IconMapPin,
+  IconMap,
   IconUsers,
 } from '@/ui/icons/index';
 import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
@@ -30,7 +30,7 @@ export const availableSorts = [
   {
     key: 'address',
     label: 'Address',
-    icon: <IconMapPin size={16} />,
+    icon: <IconMap size={16} />,
     _type: 'default_sort',
   },
   {

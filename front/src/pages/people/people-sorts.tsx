@@ -3,7 +3,7 @@ import {
   IconBuildingSkyscraper,
   IconCalendar,
   IconMail,
-  IconMapPin,
+  IconMap,
   IconPhone,
   IconUser,
 } from '@/ui/icons/index';
@@ -55,7 +55,7 @@ export const availableSorts = [
   {
     key: 'city',
     label: 'City',
-    icon: <IconMapPin size={16} />,
+    icon: <IconMap size={16} />,
     _type: 'default_sort',
   },
 ] satisfies Array<SortType<People_Order_By>>;

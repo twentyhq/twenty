@@ -5,7 +5,7 @@ import {
   IconBuildingSkyscraper,
   IconCalendar,
   IconLink,
-  IconMapPin,
+  IconMap,
   IconUsers,
   IconUser,
 } from '@/ui/icons/index';
@@ -105,7 +105,7 @@ export const urlFilter = {
 export const addressFilter = {
   key: 'address',
   label: 'Address',
-  icon: <IconMapPin size={16} />,
+  icon: <IconMap size={16} />,
   type: 'text',
   operands: [
     {

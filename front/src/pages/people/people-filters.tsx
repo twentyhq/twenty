@@ -9,7 +9,7 @@ import {
   IconBuildingSkyscraper,
   IconCalendar,
   IconMail,
-  IconMapPin,
+  IconMap,
   IconPhone,
   IconUser,
 } from '@/ui/icons/index';
@@ -192,7 +192,7 @@ export const createdAtFilter = {
 export const cityFilter = {
   key: 'city',
   label: 'City',
-  icon: <IconMapPin size={16} />,
+  icon: <IconMap size={16} />,
   type: 'text',
   operands: [
     {

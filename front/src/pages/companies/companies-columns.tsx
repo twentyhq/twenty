@@ -18,9 +18,9 @@ import {
   IconBuildingSkyscraper,
   IconCalendar,
   IconLink,
-  IconMapPin,
-  IconUsers,
+  IconMap,
   IconUser,
+  IconUsers,
 } from '@/ui/icons/index';
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 import { mapToUser, User } from '@/users/interfaces/user.interface';
@@ -86,7 +86,7 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('address', {
         header: () => (
-          <ColumnHead viewName="Address" viewIcon={<IconMapPin size={16} />} />
+          <ColumnHead viewName="Address" viewIcon={<IconMap size={16} />} />
         ),
         cell: (props) => (
           <EditableText
