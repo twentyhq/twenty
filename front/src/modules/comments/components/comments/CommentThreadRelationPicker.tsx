@@ -6,7 +6,6 @@ import {
   autoUpdate,
   flip,
   offset,
-  shift,
   size,
   useFloating,
 } from '@floating-ui/react';

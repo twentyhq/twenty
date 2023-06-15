@@ -73,17 +73,11 @@ export class CommentThreadResolver {
   })
   async updateOneCommentThread(
     @Args() args: UpdateOneCommentThreadArgs,
-    @AuthWorkspace() workspace: Workspace,
   ): Promise<CommentThread> {
-    const preparedArgs =
-      await this.argsService.prepareFindManyArgs<UpdateOneCommentThreadArgs>(
-        args,
-        workspace,
-      );
-
-    const updatedCommentThread = await this.prismaService.commentThread.update(
-      preparedArgs,
-    );
+    const updatedCommentThread = await this.prismaService.commentThread.update({
+      data: args.data,
+      where: args.where,
+    });
 
     return updatedCommentThread;
   }
