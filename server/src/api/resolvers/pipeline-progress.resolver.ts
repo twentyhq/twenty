@@ -1,4 +1,4 @@
-import { Resolver, Args, Query } from '@nestjs/graphql';
+import { Resolver, Args, Query, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guard';
 import { PrismaService } from 'src/database/prisma.service';
@@ -7,6 +7,11 @@ import { AuthWorkspace } from './decorators/auth-workspace.decorator';
 import { ArgsService } from './services/args.service';
 import { FindManyPipelineProgressArgs } from '../@generated/pipeline-progress/find-many-pipeline-progress.args';
 import { PipelineProgress } from '../@generated/pipeline-progress/pipeline-progress.model';
+import { UpdateOnePipelineProgressArgs } from '../@generated/pipeline-progress/update-one-pipeline-progress.args';
+import { Prisma } from '@prisma/client';
+import { AffectedRows } from '../@generated/prisma/affected-rows.output';
+import { DeleteManyPipelineProgressArgs } from '../@generated/pipeline-progress/delete-many-pipeline-progress.args';
+import { CreateOnePipelineProgressArgs } from '../@generated/pipeline-progress/create-one-pipeline-progress.args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => PipelineProgress)
@@ -27,5 +32,42 @@ export class PipelineProgressResolver {
         workspace,
       );
     return this.prismaService.pipelineProgress.findMany(preparedArgs);
+  }
+
+  @Mutation(() => PipelineProgress, {
+    nullable: true,
+  })
+  async updateOnePipelineProgress(
+    @Args() args: UpdateOnePipelineProgressArgs,
+  ): Promise<PipelineProgress | null> {
+    return this.prismaService.pipelineProgress.update({
+      ...args,
+    } satisfies UpdateOnePipelineProgressArgs as Prisma.PipelineProgressUpdateArgs);
+  }
+
+  @Mutation(() => AffectedRows, {
+    nullable: false,
+  })
+  async deleteManyPipelineProgress(
+    @Args() args: DeleteManyPipelineProgressArgs,
+  ): Promise<AffectedRows> {
+    return this.prismaService.pipelineProgress.deleteMany({
+      ...args,
+    });
+  }
+
+  @Mutation(() => PipelineProgress, {
+    nullable: false,
+  })
+  async createOnePipelineProgress(
+    @Args() args: CreateOnePipelineProgressArgs,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<PipelineProgress> {
+    return this.prismaService.pipelineProgress.create({
+      data: {
+        ...args.data,
+        ...{ workspace: { connect: { id: workspace.id } } },
+      },
+    } satisfies CreateOnePipelineProgressArgs as Prisma.PipelineProgressCreateArgs);
   }
 }

@@ -361,6 +361,10 @@ export type EnumCommentableTypeFilter = {
   notIn?: InputMaybe<Array<CommentableType>>;
 };
 
+export type EnumPipelineProgressableTypeFieldUpdateOperationsInput = {
+  set?: InputMaybe<PipelineProgressableType>;
+};
+
 export type EnumPipelineProgressableTypeFilter = {
   equals?: InputMaybe<PipelineProgressableType>;
   in?: InputMaybe<Array<PipelineProgressableType>>;
@@ -401,10 +405,13 @@ export type Mutation = {
   createOneCommentThread: CommentThread;
   createOneCompany: Company;
   createOnePerson: Person;
+  createOnePipelineProgress: PipelineProgress;
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
+  deleteManyPipelineProgress: AffectedRows;
   updateOneCompany?: Maybe<Company>;
   updateOnePerson?: Maybe<Person>;
+  updateOnePipelineProgress?: Maybe<PipelineProgress>;
 };
 
 
@@ -428,6 +435,11 @@ export type MutationCreateOnePersonArgs = {
 };
 
 
+export type MutationCreateOnePipelineProgressArgs = {
+  data: PipelineProgressCreateInput;
+};
+
+
 export type MutationDeleteManyCompanyArgs = {
   where?: InputMaybe<CompanyWhereInput>;
 };
@@ -435,6 +447,11 @@ export type MutationDeleteManyCompanyArgs = {
 
 export type MutationDeleteManyPersonArgs = {
   where?: InputMaybe<PersonWhereInput>;
+};
+
+
+export type MutationDeleteManyPipelineProgressArgs = {
+  where?: InputMaybe<PipelineProgressWhereInput>;
 };
 
 
@@ -447,6 +464,12 @@ export type MutationUpdateOneCompanyArgs = {
 export type MutationUpdateOnePersonArgs = {
   data: PersonUpdateInput;
   where: PersonWhereUniqueInput;
+};
+
+
+export type MutationUpdateOnePipelineProgressArgs = {
+  data: PipelineProgressUpdateInput;
+  where: PipelineProgressWhereUniqueInput;
 };
 
 export type NestedBoolFilter = {
@@ -664,6 +687,10 @@ export type Pipeline = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type PipelineCreateNestedOneWithoutPipelineProgressesInput = {
+  connect?: InputMaybe<PipelineWhereUniqueInput>;
+};
+
 export type PipelineOrderByWithRelationInput = {
   createdAt?: InputMaybe<SortOrder>;
   deletedAt?: InputMaybe<SortOrder>;
@@ -687,6 +714,17 @@ export type PipelineProgress = {
   progressableId: Scalars['String'];
   progressableType: PipelineProgressableType;
   updatedAt: Scalars['DateTime'];
+};
+
+export type PipelineProgressCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  deletedAt?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
+  pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
+  progressableId: Scalars['String'];
+  progressableType: PipelineProgressableType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PipelineProgressListRelationFilter = {
@@ -723,6 +761,17 @@ export enum PipelineProgressScalarFieldEnum {
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
 }
+
+export type PipelineProgressUpdateInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
+  pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
+  progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
+  progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
 
 export type PipelineProgressWhereInput = {
   AND?: InputMaybe<Array<PipelineProgressWhereInput>>;
@@ -778,6 +827,10 @@ export type PipelineStage = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type PipelineStageCreateNestedOneWithoutPipelineProgressesInput = {
+  connect?: InputMaybe<PipelineStageWhereUniqueInput>;
+};
+
 export type PipelineStageListRelationFilter = {
   every?: InputMaybe<PipelineStageWhereInput>;
   none?: InputMaybe<PipelineStageWhereInput>;
@@ -818,6 +871,10 @@ export enum PipelineStageScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
+export type PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput = {
+  connect?: InputMaybe<PipelineStageWhereUniqueInput>;
+};
+
 export type PipelineStageWhereInput = {
   AND?: InputMaybe<Array<PipelineStageWhereInput>>;
   NOT?: InputMaybe<Array<PipelineStageWhereInput>>;
@@ -836,6 +893,10 @@ export type PipelineStageWhereInput = {
 
 export type PipelineStageWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
+};
+
+export type PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput = {
+  connect?: InputMaybe<PipelineWhereUniqueInput>;
 };
 
 export type PipelineWhereInput = {
