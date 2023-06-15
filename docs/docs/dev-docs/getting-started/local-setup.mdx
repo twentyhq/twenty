@@ -33,6 +33,8 @@ You can run `docker-compose --version` and `docker --version` to check they are 
 ### 3. Setup env variables
 
 `cp ./infra/dev/.env.example ./infra/dev/.env` and fill with values
+`cp ./front/.env.example ./front/.env` and fill with values
+`cp ./server/.env.example ./server/.env` and fill with values
 
 ### 4. Build
 
@@ -51,21 +53,52 @@ make build
 Right now the only way to authenticate yourself is to setup Google Sign-in in `server/.env`
 We will add an easier option soon.
 
-### 6. Start
+### 6. Migrate & seed
 
-Always in the `infra/dev` folder:
+Before running the project, we need to apply database init and migrations and run the seed.
+
+Always in the `infra/dev` folder.
+
+Run the containers:
 ```
 make up
 ```
 
-Once this is completed you should have:
+Generate database init and migrations:
+```
+make server-prisma-migrate
+```
+
+Generate prisma client
+```
+make server-prisma-generate-client
+```
+
+Seed the database:
+```
+make server-prisma-seed
+```
+
+### 7. Start
+
+Once this is completed you can run the project with the following commands:
+
+front:
+```
+make front-start
+```
+
+server:
+```
+make-server start
+```
 
 - front available on: http://localhost:3001
-- server available on: http://localhost:3000/health
+- server available on: http://localhost:3000/healthz
 - postgres: available on http://localhost:5432 that should contain `twenty` database
 
 
-### 6. Development
+### 8. Development
 
 Documented [here](../development/workflows.mdx)
 
