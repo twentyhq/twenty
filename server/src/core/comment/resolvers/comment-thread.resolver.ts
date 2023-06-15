@@ -10,6 +10,7 @@ import { FindManyCommentThreadArgs } from '../../../core/@generated/comment-thre
 import { CommentThreadService } from '../services/comment-thread.service';
 import { prepareFindManyArgs } from 'src/utils/prepare-find-many';
 import { UpdateOneCommentThreadArgs } from 'src/core/@generated/comment-thread/update-one-comment-thread.args';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)
@@ -48,10 +49,9 @@ export class CommentThreadResolver {
   async updateOneCommentThread(
     @Args() args: UpdateOneCommentThreadArgs,
   ): Promise<CommentThread> {
-    const updatedCommentThread = await this.commentThreadService.update({
-      data: args.data,
-      where: args.where,
-    });
+    const updatedCommentThread = await this.commentThreadService.update(
+      args satisfies UpdateOneCommentThreadArgs as Prisma.CommentThreadUpdateArgs,
+    );
 
     return updatedCommentThread;
   }
