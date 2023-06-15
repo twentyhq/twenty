@@ -87,7 +87,7 @@ export function Companies() {
               data={companies}
               columns={companiesColumns}
               viewName="All Companies"
-              viewIcon={<IconList />}
+              viewIcon={<IconList size={16} />}
               availableSorts={availableSorts}
               availableFilters={availableFilters}
               onSortsUpdate={updateSorts}
