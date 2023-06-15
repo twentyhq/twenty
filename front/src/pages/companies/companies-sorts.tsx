@@ -1,10 +1,10 @@
 import { SortType } from '@/filters-and-sorts/interfaces/sorts/interface';
 import {
-  IconBuilding,
-  IconCalendar,
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
   IconLink,
-  IconMapPin,
-  IconSum,
+  IconMap,
+  IconUsers,
 } from '@/ui/icons/index';
 import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
 
@@ -12,13 +12,13 @@ export const availableSorts = [
   {
     key: 'name',
     label: 'Name',
-    icon: <IconBuilding size={16} />,
+    icon: <IconBuildingSkyscraper size={16} />,
     _type: 'default_sort',
   },
   {
     key: 'employees',
     label: 'Employees',
-    icon: <IconSum size={16} />,
+    icon: <IconUsers size={16} />,
     _type: 'default_sort',
   },
   {
@@ -30,13 +30,13 @@ export const availableSorts = [
   {
     key: 'address',
     label: 'Address',
-    icon: <IconMapPin size={16} />,
+    icon: <IconMap size={16} />,
     _type: 'default_sort',
   },
   {
     key: 'createdAt',
     label: 'Creation',
-    icon: <IconCalendar size={16} />,
+    icon: <IconCalendarEvent size={16} />,
     _type: 'default_sort',
   },
 ] satisfies Array<SortType<Companies_Order_By>>;

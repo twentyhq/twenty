@@ -5,12 +5,12 @@ import CompanyChip from '../../companies/components/CompanyChip';
 import PersonPlaceholder from '../../people/components/person-placeholder.png';
 import { PersonChip } from '../../people/components/PersonChip';
 import {
-  IconBuilding,
-  IconCalendar,
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
   IconMail,
   IconPhone,
-  IconSum,
   IconUser,
+  IconUsers,
 } from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
 
@@ -69,7 +69,7 @@ const PersonBoardCard = ({ person }: { person: Person }) => {
       </StyledBoardCardHeader>
       <StyledBoardCardBody>
         <span>
-          <IconBuilding size={16} />
+          <IconBuildingSkyscraper size={16} />
           <CompanyChip
             name={person.company?.name || ''}
             picture={getLogoUrlFromDomainName(
@@ -86,7 +86,7 @@ const PersonBoardCard = ({ person }: { person: Person }) => {
           {person.phone}
         </span>
         <span>
-          <IconCalendar size={16} />
+          <IconCalendarEvent size={16} />
           {humanReadableDate(new Date(person.createdAt as string))}
         </span>
       </StyledBoardCardBody>
@@ -110,10 +110,10 @@ const CompanyBoardCard = ({ company }: { company: Company }) => {
           <PersonChip name={company.accountOwner?.displayName || ''} />
         </span>
         <span>
-          <IconSum size={16} /> {company.employees}
+          <IconUsers size={16} /> {company.employees}
         </span>
         <span>
-          <IconCalendar size={16} />
+          <IconCalendarEvent size={16} />
           {humanReadableDate(new Date(company.createdAt as string))}
         </span>
       </StyledBoardCardBody>

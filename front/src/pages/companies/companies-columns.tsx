@@ -15,12 +15,12 @@ import { EditableRelation } from '@/ui/components/editable-cell/types/EditableRe
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
-  IconBuilding,
-  IconCalendar,
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
   IconLink,
-  IconMapPin,
-  IconSum,
+  IconMap,
   IconUser,
+  IconUsers,
 } from '@/ui/icons/index';
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 import { mapToUser, User } from '@/users/interfaces/user.interface';
@@ -34,7 +34,10 @@ export const useCompaniesColumns = () => {
       getCheckBoxColumn(),
       columnHelper.accessor('name', {
         header: () => (
-          <ColumnHead viewName="Name" viewIcon={<IconBuilding size={16} />} />
+          <ColumnHead
+            viewName="Name"
+            viewIcon={<IconBuildingSkyscraper size={16} />}
+          />
         ),
         cell: (props) => (
           <CompanyEditableNameChipCell company={props.row.original} />
@@ -60,7 +63,7 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('employees', {
         header: () => (
-          <ColumnHead viewName="Employees" viewIcon={<IconSum size={16} />} />
+          <ColumnHead viewName="Employees" viewIcon={<IconUsers size={16} />} />
         ),
         cell: (props) => (
           <EditableText
@@ -83,7 +86,7 @@ export const useCompaniesColumns = () => {
       }),
       columnHelper.accessor('address', {
         header: () => (
-          <ColumnHead viewName="Address" viewIcon={<IconMapPin size={16} />} />
+          <ColumnHead viewName="Address" viewIcon={<IconMap size={16} />} />
         ),
         cell: (props) => (
           <EditableText
@@ -102,7 +105,7 @@ export const useCompaniesColumns = () => {
         header: () => (
           <ColumnHead
             viewName="Creation"
-            viewIcon={<IconCalendar size={16} />}
+            viewIcon={<IconCalendarEvent size={16} />}
           />
         ),
         cell: (props) => (

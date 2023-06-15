@@ -6,10 +6,10 @@ import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interfa
 import { Person } from '@/people/interfaces/person.interface';
 import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import {
-  IconBuilding,
-  IconCalendar,
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
   IconMail,
-  IconMapPin,
+  IconMap,
   IconPhone,
   IconUser,
 } from '@/ui/icons/index';
@@ -101,7 +101,7 @@ export const emailFilter = {
 export const companyFilter = {
   key: 'company_name',
   label: 'Company',
-  icon: <IconBuilding size={16} />,
+  icon: <IconBuildingSkyscraper size={16} />,
   type: 'relation',
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
@@ -165,7 +165,7 @@ export const phoneFilter = {
 export const createdAtFilter = {
   key: 'createdAt',
   label: 'Created At',
-  icon: <IconCalendar size={16} />,
+  icon: <IconCalendarEvent size={16} />,
   type: 'date',
   operands: [
     {
@@ -192,7 +192,7 @@ export const createdAtFilter = {
 export const cityFilter = {
   key: 'city',
   label: 'City',
-  icon: <IconMapPin size={16} />,
+  icon: <IconMap size={16} />,
   type: 'text',
   operands: [
     {

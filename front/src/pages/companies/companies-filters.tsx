@@ -2,12 +2,12 @@ import { Company } from '@/companies/interfaces/company.interface';
 import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { SEARCH_USER_QUERY } from '@/search/services/search';
 import {
-  IconBuilding,
-  IconCalendar,
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
   IconLink,
-  IconMapPin,
-  IconSum,
+  IconMap,
   IconUser,
+  IconUsers,
 } from '@/ui/icons/index';
 import { mapToUser, User } from '@/users/interfaces/user.interface';
 import { QueryMode } from '~/generated/graphql';
@@ -15,7 +15,7 @@ import { QueryMode } from '~/generated/graphql';
 export const nameFilter = {
   key: 'name',
   label: 'Name',
-  icon: <IconBuilding size={16} />,
+  icon: <IconBuildingSkyscraper size={16} />,
   type: 'text',
   operands: [
     {
@@ -45,7 +45,7 @@ export const nameFilter = {
 export const employeesFilter = {
   key: 'employees',
   label: 'Employees',
-  icon: <IconSum size={16} />,
+  icon: <IconUsers size={16} />,
   type: 'text',
   operands: [
     {
@@ -105,7 +105,7 @@ export const urlFilter = {
 export const addressFilter = {
   key: 'address',
   label: 'Address',
-  icon: <IconMapPin size={16} />,
+  icon: <IconMap size={16} />,
   type: 'text',
   operands: [
     {
@@ -135,7 +135,7 @@ export const addressFilter = {
 export const ccreatedAtFilter = {
   key: 'createdAt',
   label: 'Created At',
-  icon: <IconCalendar size={16} />,
+  icon: <IconCalendarEvent size={16} />,
   type: 'date',
   operands: [
     {

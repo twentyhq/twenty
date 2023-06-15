@@ -31,8 +31,7 @@ const SubContainer = styled.div`
   flex-direction: column;
   margin: ${(props) => props.theme.spacing(4)};
   max-width: calc(100vw - 500px);
-  padding: 32px;
-  padding: ${(props) => props.theme.spacing(2)};
+  padding: ${(props) => props.theme.spacing(8)};
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {

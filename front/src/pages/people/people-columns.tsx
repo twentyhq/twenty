@@ -10,10 +10,10 @@ import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
-  IconBuilding,
-  IconCalendar,
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
   IconMail,
-  IconMapPin,
+  IconMap,
   IconPhone,
   IconUser,
 } from '@/ui/icons/index';
@@ -65,7 +65,7 @@ export const usePeopleColumns = () => {
         header: () => (
           <ColumnHead
             viewName="Company"
-            viewIcon={<IconBuilding size={16} />}
+            viewIcon={<IconBuildingSkyscraper size={16} />}
           />
         ),
         cell: (props) => <PeopleCompanyCell people={props.row.original} />,
@@ -92,7 +92,7 @@ export const usePeopleColumns = () => {
         header: () => (
           <ColumnHead
             viewName="Creation"
-            viewIcon={<IconCalendar size={16} />}
+            viewIcon={<IconCalendarEvent size={16} />}
           />
         ),
         cell: (props) => (
@@ -109,7 +109,7 @@ export const usePeopleColumns = () => {
       }),
       columnHelper.accessor('city', {
         header: () => (
-          <ColumnHead viewName="City" viewIcon={<IconMapPin size={16} />} />
+          <ColumnHead viewName="City" viewIcon={<IconMap size={16} />} />
         ),
         cell: (props) => (
           <EditableText

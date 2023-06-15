@@ -1,9 +1,9 @@
 import { SortType } from '@/filters-and-sorts/interfaces/sorts/interface';
 import {
-  IconBuilding,
-  IconCalendar,
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
   IconMail,
-  IconMapPin,
+  IconMap,
   IconPhone,
   IconUser,
 } from '@/ui/icons/index';
@@ -30,7 +30,7 @@ export const availableSorts = [
   {
     key: 'company_name',
     label: 'Company',
-    icon: <IconBuilding size={16} />,
+    icon: <IconBuildingSkyscraper size={16} />,
     _type: 'custom_sort',
     orderByTemplates: [(order: Order_By) => ({ company: { name: order } })],
   },
@@ -49,13 +49,13 @@ export const availableSorts = [
   {
     key: 'createdAt',
     label: 'Created at',
-    icon: <IconCalendar size={16} />,
+    icon: <IconCalendarEvent size={16} />,
     _type: 'default_sort',
   },
   {
     key: 'city',
     label: 'City',
-    icon: <IconMapPin size={16} />,
+    icon: <IconMap size={16} />,
     _type: 'default_sort',
   },
 ] satisfies Array<SortType<People_Order_By>>;
