@@ -20,7 +20,7 @@ const StyledCommentBody = styled.div`
   color: ${(props) => props.theme.text60};
   font-size: ${(props) => props.theme.fontSizeMedium};
 
-  line-height: 1.5;
+  line-height: ${(props) => props.theme.lineHeight};
   overflow-wrap: anywhere;
 
   padding-left: 24px;

@@ -53,21 +53,19 @@ export const Board = ({ initialBoard, items }: BoardProps) => {
                   • {column.title}
                 </StyledColumnTitle>
                 <ItemsContainer droppableProvided={droppableProvided}>
-                  {column.itemKeys.map((itemKey, index) => {
-                    return (
-                      <Draggable
-                        key={itemKey}
-                        draggableId={itemKey}
-                        index={index}
-                      >
-                        {(draggableProvided) => (
-                          <BoardItem draggableProvided={draggableProvided}>
-                            <BoardCard item={items[itemKey]} />
-                          </BoardItem>
-                        )}
-                      </Draggable>
-                    );
-                  })}
+                  {column.itemKeys.map((itemKey, index) => (
+                    <Draggable
+                      key={itemKey}
+                      draggableId={itemKey}
+                      index={index}
+                    >
+                      {(draggableProvided) => (
+                        <BoardItem draggableProvided={draggableProvided}>
+                          <BoardCard item={items[itemKey]} />
+                        </BoardItem>
+                      )}
+                    </Draggable>
+                  ))}
                 </ItemsContainer>
                 <NewButton />
               </StyledColumn>
