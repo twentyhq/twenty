@@ -36,7 +36,7 @@ export class UpdateOneGuard implements CanActivate {
       );
     }
 
-    const workspace = await request.workspace;
+    const workspace = request.user.workspace;
 
     if (object.workspaceId !== workspace.id) {
       throw new HttpException(

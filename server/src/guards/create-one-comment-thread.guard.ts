@@ -20,7 +20,7 @@ export class CreateOneCommentThreadGuard implements CanActivate {
 
     const targets = args.data?.commentThreadTargets?.createMany?.data;
     const comments = args.data?.comments?.createMany?.data;
-    const workspace = await request.workspace;
+    const workspace = request.user.workspace;
 
     if (!targets || targets.length === 0) {
       throw new HttpException(

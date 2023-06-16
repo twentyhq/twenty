@@ -54,7 +54,7 @@ export class CreateOneCommentGuard implements CanActivate {
       );
     }
 
-    const workspace = await request.workspace;
+    const workspace = request.user.workspace;
 
     if (
       userWorkspaceMember.workspaceId !== workspace.id ||
