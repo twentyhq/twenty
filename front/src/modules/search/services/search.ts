@@ -7,7 +7,7 @@ import { AnyEntity, UnknownType } from '@/utils/interfaces/generic.interface';
 import { SearchConfigType } from '../interfaces/interface';
 
 export const SEARCH_PEOPLE_QUERY = gql`
-  query SearchPeopleQuery(
+  query SearchPeople(
     $where: PersonWhereInput
     $limit: Int
     $orderBy: [PersonOrderByWithRelationInput!]
@@ -29,7 +29,7 @@ export const SEARCH_PEOPLE_QUERY = gql`
 `;
 
 export const SEARCH_USER_QUERY = gql`
-  query SearchUserQuery($where: UserWhereInput, $limit: Int) {
+  query SearchUser($where: UserWhereInput, $limit: Int) {
     searchResults: findManyUser(where: $where, take: $limit) {
       id
       email
@@ -47,7 +47,7 @@ export const EMPTY_QUERY = gql`
 `;
 
 export const SEARCH_COMPANY_QUERY = gql`
-  query SearchCompanyQuery(
+  query SearchCompany(
     $where: CompanyWhereInput
     $limit: Int
     $orderBy: [CompanyOrderByWithRelationInput!]

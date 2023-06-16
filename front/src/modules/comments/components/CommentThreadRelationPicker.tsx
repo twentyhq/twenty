@@ -20,8 +20,8 @@ import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flat
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
-  useSearchCompanyQueryQuery,
-  useSearchPeopleQueryQuery,
+  useSearchCompanyQuery,
+  useSearchPeopleQuery,
 } from '~/generated/graphql';
 
 import { useHandleCheckableCommentThreadTargetChange } from '../hooks/useHandleCheckableCommentThreadTargetChange';
@@ -108,7 +108,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
       .map((relation) => relation.commentableId) ?? [];
 
   const personsForMultiSelect = useFilteredSearchEntityQuery({
-    queryHook: useSearchPeopleQueryQuery,
+    queryHook: useSearchPeopleQuery,
     searchOnFields: ['firstname', 'lastname'],
     orderByField: 'lastname',
     selectedIds: peopleIds,
@@ -122,7 +122,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   });
 
   const companiesForMultiSelect = useFilteredSearchEntityQuery({
-    queryHook: useSearchCompanyQueryQuery,
+    queryHook: useSearchCompanyQuery,
     searchOnFields: ['name'],
     orderByField: 'name',
     selectedIds: companyIds,

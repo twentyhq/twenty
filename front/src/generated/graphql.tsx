@@ -1675,36 +1675,36 @@ export type DeletePeopleMutationVariables = Exact<{
 
 export type DeletePeopleMutation = { __typename?: 'Mutation', deleteManyPerson: { __typename?: 'AffectedRows', count: number } };
 
-export type SearchPeopleQueryQueryVariables = Exact<{
+export type SearchPeopleQueryVariables = Exact<{
   where?: InputMaybe<PersonWhereInput>;
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
 }>;
 
 
-export type SearchPeopleQueryQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: string }> };
+export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: string }> };
 
-export type SearchUserQueryQueryVariables = Exact<{
+export type SearchUserQueryVariables = Exact<{
   where?: InputMaybe<UserWhereInput>;
   limit?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type SearchUserQueryQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', id: string, email: string, displayName: string }> };
+export type SearchUserQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', id: string, email: string, displayName: string }> };
 
 export type EmptyQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type EmptyQueryQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', id: string }> };
 
-export type SearchCompanyQueryQueryVariables = Exact<{
+export type SearchCompanyQueryVariables = Exact<{
   where?: InputMaybe<CompanyWhereInput>;
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
 }>;
 
 
-export type SearchCompanyQueryQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> };
+export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> };
 
 export type GetCurrentUserQueryVariables = Exact<{
   uuid?: InputMaybe<Scalars['String']>;
@@ -2434,8 +2434,8 @@ export function useDeletePeopleMutation(baseOptions?: Apollo.MutationHookOptions
 export type DeletePeopleMutationHookResult = ReturnType<typeof useDeletePeopleMutation>;
 export type DeletePeopleMutationResult = Apollo.MutationResult<DeletePeopleMutation>;
 export type DeletePeopleMutationOptions = Apollo.BaseMutationOptions<DeletePeopleMutation, DeletePeopleMutationVariables>;
-export const SearchPeopleQueryDocument = gql`
-    query SearchPeopleQuery($where: PersonWhereInput, $limit: Int, $orderBy: [PersonOrderByWithRelationInput!]) {
+export const SearchPeopleDocument = gql`
+    query SearchPeople($where: PersonWhereInput, $limit: Int, $orderBy: [PersonOrderByWithRelationInput!]) {
   searchResults: findManyPerson(where: $where, take: $limit, orderBy: $orderBy) {
     id
     phone
@@ -2449,16 +2449,16 @@ export const SearchPeopleQueryDocument = gql`
     `;
 
 /**
- * __useSearchPeopleQueryQuery__
+ * __useSearchPeopleQuery__
  *
- * To run a query within a React component, call `useSearchPeopleQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchPeopleQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSearchPeopleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchPeopleQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSearchPeopleQueryQuery({
+ * const { data, loading, error } = useSearchPeopleQuery({
  *   variables: {
  *      where: // value for 'where'
  *      limit: // value for 'limit'
@@ -2466,19 +2466,19 @@ export const SearchPeopleQueryDocument = gql`
  *   },
  * });
  */
-export function useSearchPeopleQueryQuery(baseOptions?: Apollo.QueryHookOptions<SearchPeopleQueryQuery, SearchPeopleQueryQueryVariables>) {
+export function useSearchPeopleQuery(baseOptions?: Apollo.QueryHookOptions<SearchPeopleQuery, SearchPeopleQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchPeopleQueryQuery, SearchPeopleQueryQueryVariables>(SearchPeopleQueryDocument, options);
+        return Apollo.useQuery<SearchPeopleQuery, SearchPeopleQueryVariables>(SearchPeopleDocument, options);
       }
-export function useSearchPeopleQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPeopleQueryQuery, SearchPeopleQueryQueryVariables>) {
+export function useSearchPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchPeopleQuery, SearchPeopleQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchPeopleQueryQuery, SearchPeopleQueryQueryVariables>(SearchPeopleQueryDocument, options);
+          return Apollo.useLazyQuery<SearchPeopleQuery, SearchPeopleQueryVariables>(SearchPeopleDocument, options);
         }
-export type SearchPeopleQueryQueryHookResult = ReturnType<typeof useSearchPeopleQueryQuery>;
-export type SearchPeopleQueryLazyQueryHookResult = ReturnType<typeof useSearchPeopleQueryLazyQuery>;
-export type SearchPeopleQueryQueryResult = Apollo.QueryResult<SearchPeopleQueryQuery, SearchPeopleQueryQueryVariables>;
-export const SearchUserQueryDocument = gql`
-    query SearchUserQuery($where: UserWhereInput, $limit: Int) {
+export type SearchPeopleQueryHookResult = ReturnType<typeof useSearchPeopleQuery>;
+export type SearchPeopleLazyQueryHookResult = ReturnType<typeof useSearchPeopleLazyQuery>;
+export type SearchPeopleQueryResult = Apollo.QueryResult<SearchPeopleQuery, SearchPeopleQueryVariables>;
+export const SearchUserDocument = gql`
+    query SearchUser($where: UserWhereInput, $limit: Int) {
   searchResults: findManyUser(where: $where, take: $limit) {
     id
     email
@@ -2488,33 +2488,33 @@ export const SearchUserQueryDocument = gql`
     `;
 
 /**
- * __useSearchUserQueryQuery__
+ * __useSearchUserQuery__
  *
- * To run a query within a React component, call `useSearchUserQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchUserQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSearchUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSearchUserQueryQuery({
+ * const { data, loading, error } = useSearchUserQuery({
  *   variables: {
  *      where: // value for 'where'
  *      limit: // value for 'limit'
  *   },
  * });
  */
-export function useSearchUserQueryQuery(baseOptions?: Apollo.QueryHookOptions<SearchUserQueryQuery, SearchUserQueryQueryVariables>) {
+export function useSearchUserQuery(baseOptions?: Apollo.QueryHookOptions<SearchUserQuery, SearchUserQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchUserQueryQuery, SearchUserQueryQueryVariables>(SearchUserQueryDocument, options);
+        return Apollo.useQuery<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, options);
       }
-export function useSearchUserQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchUserQueryQuery, SearchUserQueryQueryVariables>) {
+export function useSearchUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchUserQuery, SearchUserQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchUserQueryQuery, SearchUserQueryQueryVariables>(SearchUserQueryDocument, options);
+          return Apollo.useLazyQuery<SearchUserQuery, SearchUserQueryVariables>(SearchUserDocument, options);
         }
-export type SearchUserQueryQueryHookResult = ReturnType<typeof useSearchUserQueryQuery>;
-export type SearchUserQueryLazyQueryHookResult = ReturnType<typeof useSearchUserQueryLazyQuery>;
-export type SearchUserQueryQueryResult = Apollo.QueryResult<SearchUserQueryQuery, SearchUserQueryQueryVariables>;
+export type SearchUserQueryHookResult = ReturnType<typeof useSearchUserQuery>;
+export type SearchUserLazyQueryHookResult = ReturnType<typeof useSearchUserLazyQuery>;
+export type SearchUserQueryResult = Apollo.QueryResult<SearchUserQuery, SearchUserQueryVariables>;
 export const EmptyQueryDocument = gql`
     query EmptyQuery {
   searchResults: findManyUser {
@@ -2549,8 +2549,8 @@ export function useEmptyQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type EmptyQueryQueryHookResult = ReturnType<typeof useEmptyQueryQuery>;
 export type EmptyQueryLazyQueryHookResult = ReturnType<typeof useEmptyQueryLazyQuery>;
 export type EmptyQueryQueryResult = Apollo.QueryResult<EmptyQueryQuery, EmptyQueryQueryVariables>;
-export const SearchCompanyQueryDocument = gql`
-    query SearchCompanyQuery($where: CompanyWhereInput, $limit: Int, $orderBy: [CompanyOrderByWithRelationInput!]) {
+export const SearchCompanyDocument = gql`
+    query SearchCompany($where: CompanyWhereInput, $limit: Int, $orderBy: [CompanyOrderByWithRelationInput!]) {
   searchResults: findManyCompany(where: $where, take: $limit, orderBy: $orderBy) {
     id
     name
@@ -2560,16 +2560,16 @@ export const SearchCompanyQueryDocument = gql`
     `;
 
 /**
- * __useSearchCompanyQueryQuery__
+ * __useSearchCompanyQuery__
  *
- * To run a query within a React component, call `useSearchCompanyQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useSearchCompanyQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSearchCompanyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchCompanyQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSearchCompanyQueryQuery({
+ * const { data, loading, error } = useSearchCompanyQuery({
  *   variables: {
  *      where: // value for 'where'
  *      limit: // value for 'limit'
@@ -2577,17 +2577,17 @@ export const SearchCompanyQueryDocument = gql`
  *   },
  * });
  */
-export function useSearchCompanyQueryQuery(baseOptions?: Apollo.QueryHookOptions<SearchCompanyQueryQuery, SearchCompanyQueryQueryVariables>) {
+export function useSearchCompanyQuery(baseOptions?: Apollo.QueryHookOptions<SearchCompanyQuery, SearchCompanyQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchCompanyQueryQuery, SearchCompanyQueryQueryVariables>(SearchCompanyQueryDocument, options);
+        return Apollo.useQuery<SearchCompanyQuery, SearchCompanyQueryVariables>(SearchCompanyDocument, options);
       }
-export function useSearchCompanyQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchCompanyQueryQuery, SearchCompanyQueryQueryVariables>) {
+export function useSearchCompanyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchCompanyQuery, SearchCompanyQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchCompanyQueryQuery, SearchCompanyQueryQueryVariables>(SearchCompanyQueryDocument, options);
+          return Apollo.useLazyQuery<SearchCompanyQuery, SearchCompanyQueryVariables>(SearchCompanyDocument, options);
         }
-export type SearchCompanyQueryQueryHookResult = ReturnType<typeof useSearchCompanyQueryQuery>;
-export type SearchCompanyQueryLazyQueryHookResult = ReturnType<typeof useSearchCompanyQueryLazyQuery>;
-export type SearchCompanyQueryQueryResult = Apollo.QueryResult<SearchCompanyQueryQuery, SearchCompanyQueryQueryVariables>;
+export type SearchCompanyQueryHookResult = ReturnType<typeof useSearchCompanyQuery>;
+export type SearchCompanyLazyQueryHookResult = ReturnType<typeof useSearchCompanyLazyQuery>;
+export type SearchCompanyQueryResult = Apollo.QueryResult<SearchCompanyQuery, SearchCompanyQueryVariables>;
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser($uuid: String) {
   users: findManyUser(where: {id: {equals: $uuid}}) {
