@@ -5,7 +5,7 @@ import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 import { CommandMenu } from '../CommandMenu';
 
 const meta: Meta<typeof CommandMenu> = {
-  title: 'Pages/Search/CommandMenu',
+  title: 'Modules/Search/CommandMenu',
   component: CommandMenu,
 };
 

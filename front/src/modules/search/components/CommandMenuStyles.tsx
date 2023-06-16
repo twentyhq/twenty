@@ -10,7 +10,6 @@ export const StyledDialog = styled(Command.Dialog)`
   max-width: 640px;
   overflow: hidden;
   padding: 0;
-  padding: 25px;
   position: fixed;
   top: 50%;
   transform: translate(-50%, -50%);
