@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconPlus } from '@/ui/icons/index';
@@ -21,9 +22,10 @@ const StyledButton = styled.button`
 `;
 
 export const NewButton = () => {
+  const theme = useTheme();
   return (
     <StyledButton>
-      <IconPlus size={16} />
+      <IconPlus size={theme.iconSizeMedium} />
       New
     </StyledButton>
   );

@@ -1,5 +1,5 @@
-import DarkNoise from './../dark-noise.jpg';
-import LightNoise from './../light-noise.jpg';
+import DarkNoise from '../assets/dark-noise.jpg';
+import LightNoise from '../assets/light-noise.jpg';
 
 export const backgroundColorsLight = {
   noisyBackground: `url(${LightNoise.toString()});`,

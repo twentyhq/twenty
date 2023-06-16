@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { Company, Person } from '../../../generated/graphql';
@@ -26,10 +27,10 @@ const StyledBoardCardHeader = styled.div`
   height: 24px;
   padding: ${(props) => props.theme.spacing(2)};
   img {
-    height: 16px;
+    height: theme.iconSizeMediumpx;
     margin-right: ${(props) => props.theme.spacing(2)};
     object-fit: cover;
-    width: 16px;
+    width: theme.iconSizeMediumpx;
   }
 `;
 const StyledBoardCardBody = styled.div`
@@ -57,6 +58,7 @@ export const BoardCard = ({ item }: { item: Person | Company }) => {
 
 const PersonBoardCard = ({ person }: { person: Person }) => {
   const fullname = `${person.firstname} ${person.lastname}`;
+  const theme = useTheme();
   return (
     <StyledBoardCard>
       <StyledBoardCardHeader>
@@ -69,7 +71,7 @@ const PersonBoardCard = ({ person }: { person: Person }) => {
       </StyledBoardCardHeader>
       <StyledBoardCardBody>
         <span>
-          <IconBuildingSkyscraper size={16} />
+          <IconBuildingSkyscraper size={theme.iconSizeMedium} />
           <CompanyChip
             name={person.company?.name || ''}
             picture={getLogoUrlFromDomainName(
@@ -78,15 +80,15 @@ const PersonBoardCard = ({ person }: { person: Person }) => {
           />
         </span>
         <span>
-          <IconMail size={16} />
+          <IconMail size={theme.iconSizeMedium} />
           {person.email}
         </span>
         <span>
-          <IconPhone size={16} />
+          <IconPhone size={theme.iconSizeMedium} />
           {person.phone}
         </span>
         <span>
-          <IconCalendarEvent size={16} />
+          <IconCalendarEvent size={theme.iconSizeMedium} />
           {humanReadableDate(new Date(person.createdAt as string))}
         </span>
       </StyledBoardCardBody>
@@ -95,6 +97,7 @@ const PersonBoardCard = ({ person }: { person: Person }) => {
 };
 
 const CompanyBoardCard = ({ company }: { company: Company }) => {
+  const theme = useTheme();
   return (
     <StyledBoardCard>
       <StyledBoardCardHeader>
@@ -106,14 +109,14 @@ const CompanyBoardCard = ({ company }: { company: Company }) => {
       </StyledBoardCardHeader>
       <StyledBoardCardBody>
         <span>
-          <IconUser size={16} />
+          <IconUser size={theme.iconSizeMedium} />
           <PersonChip name={company.accountOwner?.displayName || ''} />
         </span>
         <span>
-          <IconUsers size={16} /> {company.employees}
+          <IconUsers size={theme.iconSizeMedium} /> {company.employees}
         </span>
         <span>
-          <IconCalendarEvent size={16} />
+          <IconCalendarEvent size={theme.iconSizeMedium} />
           {humanReadableDate(new Date(company.createdAt as string))}
         </span>
       </StyledBoardCardBody>

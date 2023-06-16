@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconCheck } from '@/ui/icons/index';
@@ -35,10 +36,13 @@ export function DropdownMenuSelectableItem({
   onClick,
   children,
 }: React.PropsWithChildren<Props>) {
+  const theme = useTheme();
   return (
     <DropdownMenuSelectableItemContainer onClick={onClick} selected={selected}>
       <StyledLeftContainer>{children}</StyledLeftContainer>
-      <StyledRightIcon>{selected && <IconCheck size={16} />}</StyledRightIcon>
+      <StyledRightIcon>
+        {selected && <IconCheck size={theme.iconSizeMedium} />}
+      </StyledRightIcon>
     </DropdownMenuSelectableItemContainer>
   );
 }

@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import {
@@ -65,6 +66,7 @@ function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
   onRemoveFilter,
   onCancelClick,
 }: OwnProps<SortField, TData>) {
+  const theme = useTheme();
   return (
     <StyledBar>
       <StyledChipcontainer>
@@ -76,9 +78,9 @@ function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
               id={sort.key}
               icon={
                 sort.order === 'desc' ? (
-                  <IconArrowNarrowDown size={16} />
+                  <IconArrowNarrowDown size={theme.iconSizeMedium} />
                 ) : (
-                  <IconArrowNarrowUp size={16} />
+                  <IconArrowNarrowUp size={theme.iconSizeMedium} />
                 )
               }
               onRemove={() => onRemoveSort(sort.key)}
