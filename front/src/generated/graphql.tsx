@@ -1678,6 +1678,7 @@ export type DeletePeopleMutation = { __typename?: 'Mutation', deleteManyPerson: 
 export type SearchPeopleQueryQueryVariables = Exact<{
   where?: InputMaybe<PersonWhereInput>;
   limit?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
 }>;
 
 
@@ -2434,8 +2435,8 @@ export type DeletePeopleMutationHookResult = ReturnType<typeof useDeletePeopleMu
 export type DeletePeopleMutationResult = Apollo.MutationResult<DeletePeopleMutation>;
 export type DeletePeopleMutationOptions = Apollo.BaseMutationOptions<DeletePeopleMutation, DeletePeopleMutationVariables>;
 export const SearchPeopleQueryDocument = gql`
-    query SearchPeopleQuery($where: PersonWhereInput, $limit: Int) {
-  searchResults: findManyPerson(where: $where, take: $limit) {
+    query SearchPeopleQuery($where: PersonWhereInput, $limit: Int, $orderBy: [PersonOrderByWithRelationInput!]) {
+  searchResults: findManyPerson(where: $where, take: $limit, orderBy: $orderBy) {
     id
     phone
     email
@@ -2461,6 +2462,7 @@ export const SearchPeopleQueryDocument = gql`
  *   variables: {
  *      where: // value for 'where'
  *      limit: // value for 'limit'
+ *      orderBy: // value for 'orderBy'
  *   },
  * });
  */

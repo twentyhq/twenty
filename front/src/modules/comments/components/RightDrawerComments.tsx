@@ -9,7 +9,7 @@ import {
   useGetCommentThreadsByTargetsQuery,
 } from '~/generated/graphql';
 
-import { commentableEntityArrayState } from '../../states/commentableEntityArrayState';
+import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
 
 import { CommentThread } from './CommentThread';
 

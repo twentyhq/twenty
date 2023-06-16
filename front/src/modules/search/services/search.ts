@@ -7,8 +7,16 @@ import { AnyEntity, UnknownType } from '@/utils/interfaces/generic.interface';
 import { SearchConfigType } from '../interfaces/interface';
 
 export const SEARCH_PEOPLE_QUERY = gql`
-  query SearchPeopleQuery($where: PersonWhereInput, $limit: Int) {
-    searchResults: findManyPerson(where: $where, take: $limit) {
+  query SearchPeopleQuery(
+    $where: PersonWhereInput
+    $limit: Int
+    $orderBy: [PersonOrderByWithRelationInput!]
+  ) {
+    searchResults: findManyPerson(
+      where: $where
+      take: $limit
+      orderBy: $orderBy
+    ) {
       id
       phone
       email

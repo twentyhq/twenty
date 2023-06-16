@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 
-import { CellCommentChip } from '@/comments/components/comments/CellCommentChip';
+import { CellCommentChip } from '@/comments/components/CellCommentChip';
 import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
 import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
 import { CommentableType } from '~/generated/graphql';
