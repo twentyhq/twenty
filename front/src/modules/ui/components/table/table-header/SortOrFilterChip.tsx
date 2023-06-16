@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconX } from '@/ui/icons/index';
@@ -50,13 +51,14 @@ function SortOrFilterChip({
   icon,
   onRemove,
 }: OwnProps) {
+  const theme = useTheme();
   return (
     <StyledChip>
       <StyledIcon>{icon}</StyledIcon>
       {labelKey && <StyledLabelKey>{labelKey}:&nbsp;</StyledLabelKey>}
       {labelValue}
       <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
-        <IconX />
+        <IconX size={theme.iconSizeMedium} />
       </StyledDelete>
     </StyledChip>
   );

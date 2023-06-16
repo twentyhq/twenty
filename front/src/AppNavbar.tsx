@@ -1,4 +1,5 @@
 import { useMatch, useResolvedPath } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 
 import {
   IconBuildingSkyscraper,
@@ -14,6 +15,7 @@ import NavTitle from './modules/ui/layout/navbar/NavTitle';
 import NavWorkspaceButton from './modules/ui/layout/navbar/NavWorkspaceButton';
 
 export function AppNavbar() {
+  const theme = useTheme();
   return (
     <>
       <NavWorkspaceButton />
@@ -21,25 +23,25 @@ export function AppNavbar() {
         <NavItem
           label="Search"
           to="/search"
-          icon={<IconSearch size={16} />}
+          icon={<IconSearch size={theme.iconSizeMedium} />}
           soon={true}
         />
         <NavItem
           label="Inbox"
           to="/inbox"
-          icon={<IconInbox size={16} />}
+          icon={<IconInbox size={theme.iconSizeMedium} />}
           soon={true}
         />
         <NavItem
           label="Settings"
           to="/settings/profile"
-          icon={<IconSettings size={16} />}
+          icon={<IconSettings size={theme.iconSizeMedium} />}
         />
         <NavTitle label="Workspace" />
         <NavItem
           label="People"
           to="/people"
-          icon={<IconUser size={16} />}
+          icon={<IconUser size={theme.iconSizeMedium} />}
           active={
             !!useMatch({
               path: useResolvedPath('/people').pathname,
@@ -50,7 +52,7 @@ export function AppNavbar() {
         <NavItem
           label="Companies"
           to="/companies"
-          icon={<IconBuildingSkyscraper size={16} />}
+          icon={<IconBuildingSkyscraper size={theme.iconSizeMedium} />}
           active={
             !!useMatch({
               path: useResolvedPath('/companies').pathname,

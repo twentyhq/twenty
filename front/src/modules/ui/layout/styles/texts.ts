@@ -4,13 +4,12 @@ export const commonText = {
   fontSizeMedium: '1rem',
   fontSizeLarge: '1.08rem',
 
-  iconSizeSmall: '0.92rem',
-  iconSizeMedium: '1.08rem',
-  iconSizeLarge: '1.23rem',
-
   fontWeightMedium: 500,
   fontWeightSemibold: 600,
   fontWeightBold: 700,
   fontFamily: 'Inter, sans-serif',
-  lineHeight: '150%',
+
+  lineHeight: 1.5,
+
+  iconSizeMedium: 16,
 };

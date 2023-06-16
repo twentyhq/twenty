@@ -1,4 +1,5 @@
 import { useMatch, useResolvedPath } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 
 import { removeTokens } from '@/auth/services/AuthService';
 import {
@@ -13,6 +14,7 @@ import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
 import NavTitle from '@/ui/layout/navbar/NavTitle';
 
 export function SettingsNavbar() {
+  const theme = useTheme();
   return (
     <>
       <NavBackButton title="Settings" />
@@ -21,7 +23,7 @@ export function SettingsNavbar() {
         <NavItem
           label="Profile"
           to="/settings/profile"
-          icon={<IconUser size={16} />}
+          icon={<IconUser size={theme.iconSizeMedium} />}
           active={
             !!useMatch({
               path: useResolvedPath('/people').pathname,
@@ -32,7 +34,7 @@ export function SettingsNavbar() {
         <NavItem
           label="Experience"
           to="/settings/profile/experience"
-          icon={<IconColorSwatch size={16} />}
+          icon={<IconColorSwatch size={theme.iconSizeMedium} />}
           soon={true}
           active={
             !!useMatch({
@@ -45,7 +47,7 @@ export function SettingsNavbar() {
         <NavItem
           label="General"
           to="/settings/workspace"
-          icon={<IconSettings size={16} />}
+          icon={<IconSettings size={theme.iconSizeMedium} />}
           soon={true}
           active={
             !!useMatch({
@@ -58,7 +60,7 @@ export function SettingsNavbar() {
         <NavItem
           label="Logout"
           onClick={removeTokens}
-          icon={<IconLogout size={16} />}
+          icon={<IconLogout size={theme.iconSizeMedium} />}
           danger={true}
         />
       </NavItemsContainer>

@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconComment } from '@/ui/icons';
@@ -47,13 +48,15 @@ const StyledCount = styled.div`
 `;
 
 export function CommentChip({ count, onClick }: CommentChipProps) {
+  const theme = useTheme();
+
   if (count === 0) return null;
   const formattedCount = count > 99 ? '99+' : count;
 
   return (
     <StyledChip data-testid="comment-chip" onClick={onClick}>
       <StyledCount>{formattedCount}</StyledCount>
-      <IconComment size={16} />
+      <IconComment size={theme.iconSizeMedium} />
     </StyledChip>
   );
 }

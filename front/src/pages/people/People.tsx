@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -71,11 +72,12 @@ export function People() {
 
   const peopleColumns = usePeopleColumns();
 
+  const theme = useTheme();
   return (
     <AppPage>
       <WithTopBarContainer
         title="People"
-        icon={<IconUser size={16} />}
+        icon={<IconUser size={theme.iconSizeMedium} />}
         onAddButtonClick={handleAddButtonClick}
       >
         <>
@@ -84,7 +86,7 @@ export function People() {
               data={people}
               columns={peopleColumns}
               viewName="All People"
-              viewIcon={<IconList />}
+              viewIcon={<IconList size={theme.iconSizeMedium} />}
               availableSorts={availableSorts}
               availableFilters={availableFilters}
               onSortsUpdate={updateSorts}

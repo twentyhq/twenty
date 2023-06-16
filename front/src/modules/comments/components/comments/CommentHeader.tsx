@@ -1,4 +1,5 @@
 import { Tooltip } from 'react-tooltip';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { CommentForDrawer } from '@/comments/types/CommentForDrawer';
@@ -62,6 +63,7 @@ const StyledTooltip = styled(Tooltip)`
 `;
 
 export function CommentHeader({ comment }: OwnProps) {
+  const theme = useTheme();
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(comment.createdAt);
   const exactCreatedAt = beautifyExactDate(comment.createdAt);
   const showDate = beautifiedCreatedAt !== '';
@@ -79,7 +81,7 @@ export function CommentHeader({ comment }: OwnProps) {
     <StyledContainer>
       <Avatar
         avatarUrl={avatarUrl}
-        size={16}
+        size={theme.iconSizeMedium}
         placeholder={capitalizedFirstUsernameLetter}
       />
       <StyledName>{authorName}</StyledName>
