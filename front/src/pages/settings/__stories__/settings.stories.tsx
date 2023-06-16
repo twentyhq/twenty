@@ -7,7 +7,7 @@ import { SettingsProfile } from '../SettingsProfile';
 import { render } from './shared';
 
 const meta: Meta<typeof SettingsProfile> = {
-  title: 'Pages/SettingsProfile',
+  title: 'Pages/Settings/SettingsProfile',
   component: SettingsProfile,
 };
 
