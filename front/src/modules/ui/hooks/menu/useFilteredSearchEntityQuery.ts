@@ -18,7 +18,7 @@ type SelectStringKeys<T> = NonNullable<
   }[keyof T]
 >;
 
-type ExtractEntityTypeFromQueryResult<T> = T extends {
+type ExtractEntityTypeFromQueryResponse<T> = T extends {
   searchResults: Array<infer U>;
 }
   ? U
@@ -27,7 +27,7 @@ type ExtractEntityTypeFromQueryResult<T> = T extends {
 const DEFAULT_SEARCH_REQUEST_LIMIT = 10;
 
 export function useFilteredSearchEntityQuery<
-  EntityType extends ExtractEntityTypeFromQueryResult<QueryResponseForExtract> & {
+  EntityType extends ExtractEntityTypeFromQueryResponse<QueryResponseForExtract> & {
     id: string;
   },
   EntityStringField extends SelectStringKeys<EntityType>,
