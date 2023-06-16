@@ -10,4 +10,4 @@ RUN npx prisma generate
 
 RUN yarn build
 
-CMD ["node", "dist/main"]
+CMD ["node", "dist/src/main"]
