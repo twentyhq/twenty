@@ -1,5 +1,4 @@
-import { IsEmail, IsNotEmpty, Matches, MinLength } from 'class-validator';
-import { PASSWORD_REGEX } from '../auth.util';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class ChallengeInput {
   @IsNotEmpty()
@@ -7,7 +6,6 @@ export class ChallengeInput {
   email: string;
 
   @IsNotEmpty()
-  @MinLength(8)
-  @Matches(PASSWORD_REGEX, { message: 'password too weak' })
+  @IsString()
   password: string;
 }

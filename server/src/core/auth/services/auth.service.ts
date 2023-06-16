@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
@@ -85,13 +86,15 @@ export class AuthService {
   }
 
   async verify(email: string): Promise<VerifyEntity> {
-    const user = await this.userService.findUnique({
+    const data = await this.userService.findUnique({
       where: {
         email,
       },
     });
 
-    assert(user, "This user doens't exist", NotFoundException);
+    assert(data, "This user doens't exist", NotFoundException);
+
+    const { passwordHash: _, ...user } = data;
 
     const accessToken = await this.generateAccessToken(user.id);
     const refreshToken = await this.generateRefreshToken(user.id);
@@ -106,8 +109,10 @@ export class AuthService {
   }
 
   async generateAccessToken(userId: string): Promise<TokenEntity> {
-    const expires = this.configService.get('ACCESS_TOKEN_EXPIRES_IN');
-    const expiresAt = addMilliseconds(new Date().getTime(), expires);
+    const expires = this.configService.get<string>('ACCESS_TOKEN_EXPIRES_IN');
+    assert(expires, '', InternalServerErrorException);
+    const expiresIn = ms(expires);
+    const expiresAt = addMilliseconds(new Date().getTime(), expiresIn);
 
     const user = await this.prismaService.user.findUnique({
       where: { id: userId },
@@ -137,9 +142,10 @@ export class AuthService {
 
   async generateRefreshToken(userId: string): Promise<TokenEntity> {
     const secret = this.configService.get('REFRESH_TOKEN_SECRET');
-    const expires = this.configService.get('REFRESH_TOKEN_EXPIRES_IN');
+    const expires = this.configService.get<string>('REFRESH_TOKEN_EXPIRES_IN');
+    assert(expires, '', InternalServerErrorException);
     const expiresIn = ms(expires);
-    const expiresAt = addMilliseconds(new Date().getTime(), expires);
+    const expiresAt = addMilliseconds(new Date().getTime(), expiresIn);
 
     const refreshTokenPayload = {
       userId,
@@ -166,9 +172,10 @@ export class AuthService {
 
   async generateLoginToken(email: string): Promise<TokenEntity> {
     const secret = this.configService.get('LOGIN_TOKEN_SECRET');
-    const expires = this.configService.get('LOGIN_TOKEN_EXPIRES_IN');
+    const expires = this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN');
+    assert(expires, '', InternalServerErrorException);
     const expiresIn = ms(expires);
-    const expiresAt = addMilliseconds(new Date().getTime(), expires);
+    const expiresAt = addMilliseconds(new Date().getTime(), expiresIn);
     const jwtPayload = {
       sub: email,
     };

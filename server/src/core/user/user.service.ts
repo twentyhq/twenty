@@ -5,19 +5,13 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { assert } from 'src/utils/assert';
 
 export type UserPayload = {
   displayName: string | undefined | null;
   email: string;
 };
-
-type SelectOrIncludePayload<T, U> = T extends Prisma.UserSelect
-  ? Prisma.UserGetPayload<{ select: T }>
-  : U extends Prisma.UserInclude
-  ? Prisma.UserGetPayload<{ include: U }>
-  : User;
 
 @Injectable()
 export class UserService {
