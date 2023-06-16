@@ -27,10 +27,10 @@ const StyledBoardCardHeader = styled.div`
   height: 24px;
   padding: ${(props) => props.theme.spacing(2)};
   img {
-    height: theme.iconSizeMediumpx;
+    height: ${(props) => props.theme.iconSizeMedium}px;
     margin-right: ${(props) => props.theme.spacing(2)};
     object-fit: cover;
-    width: theme.iconSizeMediumpx;
+    width: ${(props) => props.theme.iconSizeMedium}px;
   }
 `;
 const StyledBoardCardBody = styled.div`
