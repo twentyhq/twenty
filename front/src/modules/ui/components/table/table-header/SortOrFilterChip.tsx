@@ -56,7 +56,7 @@ function SortOrFilterChip({
       {labelKey && <StyledLabelKey>{labelKey}:&nbsp;</StyledLabelKey>}
       {labelValue}
       <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
-        <IconX />
+        <IconX size={16} />
       </StyledDelete>
     </StyledChip>
   );

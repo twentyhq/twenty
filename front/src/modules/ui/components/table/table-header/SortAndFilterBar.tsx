@@ -76,9 +76,9 @@ function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
               id={sort.key}
               icon={
                 sort.order === 'desc' ? (
-                  <IconArrowNarrowDown />
+                  <IconArrowNarrowDown size={16} />
                 ) : (
-                  <IconArrowNarrowUp />
+                  <IconArrowNarrowUp size={16} />
                 )
               }
               onRemove={() => onRemoveSort(sort.key)}

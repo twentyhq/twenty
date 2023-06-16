@@ -19,8 +19,8 @@ export type EditableChipProps = {
 
 // TODO: refactor
 const StyledInplaceInput = styled.input`
-  padding-left: ${(props) => props.theme.spacing(1)};
-  padding-right: ${(props) => props.theme.spacing(1)};
+  padding-left: ${(props) => props.theme.spacing(2)};
+  padding-right: ${(props) => props.theme.spacing(2)};
   width: 100%;
 
   ${textInputStyle}

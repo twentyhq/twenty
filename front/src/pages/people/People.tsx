@@ -84,7 +84,7 @@ export function People() {
               data={people}
               columns={peopleColumns}
               viewName="All People"
-              viewIcon={<IconList />}
+              viewIcon={<IconList size={16} />}
               availableSorts={availableSorts}
               availableFilters={availableFilters}
               onSortsUpdate={updateSorts}
