@@ -11,10 +11,14 @@ import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { AuthService } from './services/auth.service';
 import { GoogleRequest } from './strategies/google.auth.strategy';
+import { UserService } from '../user/user.service';
 
 @Controller('auth/google')
 export class GoogleAuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get()
   @UseGuards(AuthGuard('google'))
@@ -26,7 +30,7 @@ export class GoogleAuthController {
   @Get('redirect')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
-    const user = await this.authService.createUser(req.user);
+    const user = await this.userService.createUser(req.user);
 
     if (!user) {
       throw new HttpException(

@@ -20,69 +20,6 @@ export class AuthService {
     private prismaService: PrismaService,
   ) {}
 
-  async createUser(rawUser: UserPayload) {
-    if (!rawUser.email) {
-      throw new HttpException(
-        { reason: 'Email is missing' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    if (!rawUser.firstName || !rawUser.lastName) {
-      throw new HttpException(
-        { reason: 'Firstname or lastname is missing' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const emailDomain = rawUser.email.split('@')[1];
-
-    if (!emailDomain) {
-      throw new HttpException(
-        { reason: 'Email is malformed' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    const workspace = await this.prismaService.workspace.findUnique({
-      where: { domainName: emailDomain },
-    });
-
-    if (!workspace) {
-      throw new HttpException(
-        { reason: 'User email domain does not match an existing workspace' },
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    const user = await this.prismaService.user.upsert({
-      where: {
-        email: rawUser.email,
-      },
-      create: {
-        id: v4(),
-        displayName: rawUser.firstName + ' ' + rawUser.lastName,
-        email: rawUser.email,
-        locale: 'en',
-      },
-      update: {},
-    });
-
-    await this.prismaService.workspaceMember.upsert({
-      where: {
-        userId: user.id,
-      },
-      create: {
-        id: v4(),
-        userId: user.id,
-        workspaceId: workspace.id,
-      },
-      update: {},
-    });
-
-    return user;
-  }
-
   async generateAccessToken(refreshToken: string): Promise<string | undefined> {
     const refreshTokenObject = await this.prismaService.refreshToken.findFirst({
       where: { refreshToken: refreshToken },

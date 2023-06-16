@@ -7,6 +7,7 @@ import { GoogleAuthController } from './google.auth.controller';
 import { GoogleStrategy } from './strategies/google.auth.strategy';
 import { TokenController } from './token.controller';
 import { PrismaService } from 'src/database/prisma.service';
+import { UserModule } from '../user/user.module';
 
 const jwtModule = JwtModule.registerAsync({
   useFactory: async (configService: ConfigService) => {
@@ -22,7 +23,7 @@ const jwtModule = JwtModule.registerAsync({
 });
 
 @Module({
-  imports: [jwtModule, ConfigModule.forRoot({})],
+  imports: [jwtModule, ConfigModule.forRoot({}), UserModule],
   controllers: [GoogleAuthController, TokenController],
   providers: [AuthService, JwtAuthStrategy, GoogleStrategy, PrismaService],
   exports: [jwtModule],
