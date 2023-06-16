@@ -6,8 +6,8 @@ import { PipelineStageCreateNestedOneWithoutPipelineProgressesInput } from '../p
 
 @InputType()
 export class PipelineProgressCreateWithoutWorkspaceInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;

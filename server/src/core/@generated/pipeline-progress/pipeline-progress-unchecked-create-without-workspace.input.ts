@@ -4,8 +4,8 @@ import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.e
 
 @InputType()
 export class PipelineProgressUncheckedCreateWithoutWorkspaceInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;

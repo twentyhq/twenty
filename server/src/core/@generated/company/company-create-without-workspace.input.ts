@@ -6,8 +6,8 @@ import { PersonCreateNestedManyWithoutCompanyInput } from '../person/person-crea
 
 @InputType()
 export class CompanyCreateWithoutWorkspaceInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;

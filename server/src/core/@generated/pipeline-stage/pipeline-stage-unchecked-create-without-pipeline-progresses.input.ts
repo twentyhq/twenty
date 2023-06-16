@@ -4,8 +4,8 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineStageUncheckedCreateWithoutPipelineProgressesInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;

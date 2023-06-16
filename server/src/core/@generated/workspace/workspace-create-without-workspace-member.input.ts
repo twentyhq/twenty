@@ -10,8 +10,8 @@ import { PipelineProgressCreateNestedManyWithoutWorkspaceInput } from '../pipeli
 
 @InputType()
 export class WorkspaceCreateWithoutWorkspaceMemberInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;

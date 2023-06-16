@@ -5,8 +5,8 @@ import { CommentUncheckedCreateNestedManyWithoutCommentThreadInput } from '../co
 
 @InputType()
 export class CommentThreadUncheckedCreateWithoutWorkspaceInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;

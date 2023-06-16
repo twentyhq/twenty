@@ -5,9 +5,9 @@ import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { HideField } from '@nestjs/graphql';
 import { JsonNullableFilter } from '../prisma/json-nullable-filter.input';
 import { WorkspaceMemberRelationFilter } from '../workspace-member/workspace-member-relation-filter.input';
-import { HideField } from '@nestjs/graphql';
 import { CompanyListRelationFilter } from '../company/company-list-relation-filter.input';
 import { RefreshTokenListRelationFilter } from '../refresh-token/refresh-token-list-relation-filter.input';
 import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
@@ -56,7 +56,7 @@ export class UserWhereInput {
   @Field(() => StringNullableFilter, { nullable: true })
   phoneNumber?: StringNullableFilter;
 
-  @Field(() => StringNullableFilter, { nullable: true })
+  @HideField()
   passwordHash?: StringNullableFilter;
 
   @Field(() => BoolFilter, { nullable: true })

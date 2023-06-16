@@ -113,7 +113,7 @@ generator nestgraphql {
 }
 
 model User {
-  id              String           @id
+  id              String           @id @default(uuid())
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   deletedAt       DateTime?
@@ -124,6 +124,7 @@ model User {
   avatarUrl       String?
   locale          String
   phoneNumber     String?
+  /// @TypeGraphQL.omit(input: true, output: true)
   passwordHash    String?
   emailVerified   Boolean          @default(false)
   metadata        Json?
@@ -139,7 +140,7 @@ model User {
 
 /// @TypeGraphQL.omit(input: true)
 model Workspace {
-  id                 String            @id
+  id                 String            @id @default(uuid())
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
   deletedAt          DateTime?
@@ -159,7 +160,7 @@ model Workspace {
 }
 
 model WorkspaceMember {
-  id          String    @id
+  id          String    @id @default(uuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
@@ -174,7 +175,7 @@ model WorkspaceMember {
 }
 
 model Company {
-  id             String    @id
+  id             String    @id @default(uuid())
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
@@ -195,7 +196,7 @@ model Company {
 }
 
 model Person {
-  id          String    @id
+  id          String    @id @default(uuid())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
@@ -216,19 +217,22 @@ model Person {
 }
 
 model RefreshToken {
-  id           String    @id
+  id           String    @id @default(uuid())
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  isRevoked    Boolean   @default(false)
+  expiresAt    DateTime
   deletedAt    DateTime?
-  refreshToken String
+  /// @TypeGraphQL.omit(input: true, output: true)
   userId       String
+  /// @TypeGraphQL.omit(input: true, output: true)
   user         User      @relation(fields: [userId], references: [id])
 
   @@map("refresh_tokens")
 }
 
 model CommentThread {
-  id                    String                @id
+  id                    String                @id @default(uuid())
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
   deletedAt             DateTime?
@@ -243,7 +247,7 @@ model CommentThread {
 }
 
 model Comment {
-  id               String        @id
+  id               String        @id @default(uuid())
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   deletedAt        DateTime?
@@ -266,7 +270,7 @@ enum CommentableType {
 }
 
 model CommentThreadTarget {
-  id               String        @id
+  id               String        @id @default(uuid())
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   deletedAt        DateTime?
@@ -280,7 +284,7 @@ model CommentThreadTarget {
 }
 
 model Pipeline {
-  id                    String                @id
+  id                    String                @id @default(uuid())
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
   deletedAt             DateTime?
@@ -298,7 +302,7 @@ model Pipeline {
 }
 
 model PipelineStage {
-  id                    String                @id
+  id                    String                @id @default(uuid())
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
   deletedAt             DateTime?
@@ -326,7 +330,7 @@ enum PipelineProgressableType {
 }
 
 model PipelineProgress {
-  id                    String                @id
+  id                    String                @id @default(uuid())
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
   deletedAt             DateTime?
@@ -340,7 +344,7 @@ model PipelineProgress {
   progressableType      PipelineProgressableType
   progressableId        String
 
-    /// @TypeGraphQL.omit(input: true, output: true)
+  /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId           String
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace             Workspace @relation(fields: [workspaceId], references: [id])

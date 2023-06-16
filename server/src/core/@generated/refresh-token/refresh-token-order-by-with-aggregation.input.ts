@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
+import { HideField } from '@nestjs/graphql';
 import { RefreshTokenCountOrderByAggregateInput } from './refresh-token-count-order-by-aggregate.input';
 import { RefreshTokenMaxOrderByAggregateInput } from './refresh-token-max-order-by-aggregate.input';
 import { RefreshTokenMinOrderByAggregateInput } from './refresh-token-min-order-by-aggregate.input';
@@ -17,12 +18,15 @@ export class RefreshTokenOrderByWithAggregationInput {
   updatedAt?: keyof typeof SortOrder;
 
   @Field(() => SortOrder, { nullable: true })
+  isRevoked?: keyof typeof SortOrder;
+
+  @Field(() => SortOrder, { nullable: true })
+  expiresAt?: keyof typeof SortOrder;
+
+  @Field(() => SortOrder, { nullable: true })
   deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  refreshToken?: keyof typeof SortOrder;
-
-  @Field(() => SortOrder, { nullable: true })
+  @HideField()
   userId?: keyof typeof SortOrder;
 
   @Field(() => RefreshTokenCountOrderByAggregateInput, { nullable: true })

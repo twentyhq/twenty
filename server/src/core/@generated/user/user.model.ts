@@ -1,11 +1,11 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 import { WorkspaceMember } from '../workspace-member/workspace-member.model';
 import { Company } from '../company/company.model';
 import { RefreshToken } from '../refresh-token/refresh-token.model';
-import { HideField } from '@nestjs/graphql';
 import { Comment } from '../comment/comment.model';
 import { UserCount } from './user-count.output';
 
@@ -44,7 +44,7 @@ export class User {
   @Field(() => String, { nullable: true })
   phoneNumber!: string | null;
 
-  @Field(() => String, { nullable: true })
+  @HideField()
   passwordHash!: string | null;
 
   @Field(() => Boolean, { nullable: false, defaultValue: false })

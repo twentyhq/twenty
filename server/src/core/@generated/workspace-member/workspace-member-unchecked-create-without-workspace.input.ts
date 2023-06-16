@@ -3,8 +3,8 @@ import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberUncheckedCreateWithoutWorkspaceInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;

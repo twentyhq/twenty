@@ -6,7 +6,11 @@ import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 
 export type GoogleRequest = Request & {
-  user: { firstName: string; lastName: string; email: string };
+  user: {
+    firstName: string | undefined | null;
+    lastName: string | undefined | null;
+    email: string;
+  };
 };
 
 @Injectable()

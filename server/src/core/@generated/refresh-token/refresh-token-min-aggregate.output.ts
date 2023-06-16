@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class RefreshTokenMinAggregate {
@@ -12,12 +13,15 @@ export class RefreshTokenMinAggregate {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date | string;
 
+  @Field(() => Boolean, { nullable: true })
+  isRevoked?: boolean;
+
+  @Field(() => Date, { nullable: true })
+  expiresAt?: Date | string;
+
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: true })
-  refreshToken?: string;
-
-  @Field(() => String, { nullable: true })
+  @HideField()
   userId?: string;
 }

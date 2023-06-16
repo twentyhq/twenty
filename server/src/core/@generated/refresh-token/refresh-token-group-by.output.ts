@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { RefreshTokenCountAggregate } from './refresh-token-count-aggregate.output';
 import { RefreshTokenMinAggregate } from './refresh-token-min-aggregate.output';
 import { RefreshTokenMaxAggregate } from './refresh-token-max-aggregate.output';
@@ -15,13 +16,16 @@ export class RefreshTokenGroupBy {
   @Field(() => Date, { nullable: false })
   updatedAt!: Date | string;
 
+  @Field(() => Boolean, { nullable: false })
+  isRevoked!: boolean;
+
+  @Field(() => Date, { nullable: false })
+  expiresAt!: Date | string;
+
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  refreshToken!: string;
-
-  @Field(() => String, { nullable: false })
+  @HideField()
   userId!: string;
 
   @Field(() => RefreshTokenCountAggregate, { nullable: true })

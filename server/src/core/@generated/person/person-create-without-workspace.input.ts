@@ -4,8 +4,8 @@ import { CompanyCreateNestedOneWithoutPeopleInput } from '../company/company-cre
 
 @InputType()
 export class PersonCreateWithoutWorkspaceInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;

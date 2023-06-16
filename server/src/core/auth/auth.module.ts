@@ -8,13 +8,14 @@ import { GoogleStrategy } from './strategies/google.auth.strategy';
 import { TokenController } from './token.controller';
 import { PrismaService } from 'src/database/prisma.service';
 import { UserModule } from '../user/user.module';
+import { AuthController } from './auth.controller';
 
 const jwtModule = JwtModule.registerAsync({
   useFactory: async (configService: ConfigService) => {
     return {
-      secret: configService.get<string>('JWT_SECRET'),
+      secret: configService.get<string>('ACCESS_TOKEN_SECRET'),
       signOptions: {
-        expiresIn: configService.get<string>('JWT_EXPIRES_IN') + 's',
+        expiresIn: configService.get<string>('ACCESS_TOKEN_EXPIRES_IN'),
       },
     };
   },
@@ -24,7 +25,7 @@ const jwtModule = JwtModule.registerAsync({
 
 @Module({
   imports: [jwtModule, ConfigModule.forRoot({}), UserModule],
-  controllers: [GoogleAuthController, TokenController],
+  controllers: [GoogleAuthController, TokenController, AuthController],
   providers: [AuthService, JwtAuthStrategy, GoogleStrategy, PrismaService],
   exports: [jwtModule],
 })

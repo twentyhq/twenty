@@ -3,8 +3,8 @@ import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class RefreshTokenUncheckedCreateWithoutUserInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;
@@ -12,9 +12,12 @@ export class RefreshTokenUncheckedCreateWithoutUserInput {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date | string;
 
+  @Field(() => Boolean, { nullable: true })
+  isRevoked?: boolean;
+
+  @Field(() => Date, { nullable: false })
+  expiresAt!: Date | string;
+
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | string;
-
-  @Field(() => String, { nullable: false })
-  refreshToken!: string;
 }

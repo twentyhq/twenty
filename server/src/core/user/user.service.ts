@@ -3,23 +3,27 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { v4 } from 'uuid';
 import { PrismaService } from 'src/database/prisma.service';
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
-import { WorkspaceMemberService } from 'src/core/workspace/services/workspace-member.service';
+import { Prisma, User } from '@prisma/client';
+import { assert } from 'src/utils/assert';
 
 export type UserPayload = {
-  firstName: string;
-  lastName: string;
+  displayName: string | undefined | null;
   email: string;
 };
+
+type SelectOrIncludePayload<T, U> = T extends Prisma.UserSelect
+  ? Prisma.UserGetPayload<{ select: T }>
+  : U extends Prisma.UserInclude
+  ? Prisma.UserGetPayload<{ include: U }>
+  : User;
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly workspaceService: WorkspaceService,
-    private readonly workspaceMemberService: WorkspaceMemberService,
   ) {}
 
   // Find
@@ -54,56 +58,49 @@ export class UserService {
   groupBy = this.prismaService.user.groupBy;
 
   // Customs
-  async createUser(rawUser: UserPayload) {
-    if (!rawUser.email) {
-      throw new BadRequestException('Email is missing');
-    }
+  async createUser<T extends Prisma.UserCreateArgs>(
+    args: Prisma.SelectSubset<T, Prisma.UserCreateArgs>,
+  ): Promise<Prisma.UserGetPayload<T>> {
+    assert(args.data.email, 'Email is missing', BadRequestException);
+    assert(
+      args.data.displayName,
+      'DisplayName is missing',
+      BadRequestException,
+    );
 
-    if (!rawUser.firstName || !rawUser.lastName) {
-      throw new BadRequestException('Firstname or lastname is missing');
-    }
+    const emailDomain = args.data.email.split('@')[1];
 
-    const emailDomain = rawUser.email.split('@')[1];
-
-    if (!emailDomain) {
-      throw new BadRequestException('Email is malformed');
-    }
+    assert(emailDomain, 'Email is malformed', BadRequestException);
 
     const workspace = await this.workspaceService.findUnique({
       where: { domainName: emailDomain },
     });
 
-    if (!workspace) {
-      throw new ForbiddenException(
-        'User email domain does not match an existing workspace',
-      );
-    }
+    assert(
+      workspace,
+      'User email domain does not match an existing workspace',
+      ForbiddenException,
+    );
 
     const user = await this.prismaService.user.upsert({
       where: {
-        email: rawUser.email,
+        email: args.data.email,
       },
       create: {
-        id: v4(),
-        displayName: rawUser.firstName + ' ' + rawUser.lastName,
-        email: rawUser.email,
+        ...(args.data as Prisma.UserCreateInput),
+        workspaceMember: {
+          connectOrCreate: {
+            where: { id: workspace.id },
+            create: { workspaceId: workspace.id },
+          },
+        },
         locale: 'en',
       },
       update: {},
+      ...(args.select ? { select: args.select } : {}),
+      ...(args.include ? { include: args.include } : {}),
     });
 
-    await this.workspaceMemberService.upsert({
-      where: {
-        userId: user.id,
-      },
-      create: {
-        id: v4(),
-        userId: user.id,
-        workspaceId: workspace.id,
-      },
-      update: {},
-    });
-
-    return user;
+    return user as Prisma.UserGetPayload<T>;
   }
 }

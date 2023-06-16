@@ -1,20 +1,21 @@
-import { Controller, Post, Req, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
+import { RefreshTokenInput } from './dto/refresh-token.input';
 
 @Controller('auth/token')
 export class TokenController {
   constructor(private authService: AuthService) {}
 
   @Post()
-  async generateAccessToken(@Req() req: Request, @Res() res: Response) {
-    const refreshToken = req.body.refreshToken;
-
-    if (!refreshToken) {
-      return res.status(400).send('Refresh token not found');
+  async generateAccessToken(@Body() body: RefreshTokenInput) {
+    if (!body.refreshToken) {
+      throw new BadRequestException('Refresh token is mendatory');
     }
 
-    const token = await this.authService.generateAccessToken(refreshToken);
-    return res.send({ accessToken: token });
+    const tokens = await this.authService.generateTokensFromRefreshToken(
+      body.refreshToken,
+    );
+
+    return tokens;
   }
 }
