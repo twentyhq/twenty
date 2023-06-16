@@ -43,6 +43,7 @@
     "graphql": "^16.6.0",
     "graphql-type-json": "^0.3.2",
     "jest-mock-extended": "^3.0.4",
+    "jsonwebtoken": "^9.0.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
@@ -60,7 +61,9 @@
     "@types/jest": "28.1.8",
     "@types/node": "^16.0.0",
     "@types/passport-google-oauth20": "^2.0.11",
+    "@types/passport-jwt": "^3.0.8",
     "@types/supertest": "^2.0.11",
+    "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
@@ -77,23 +80,6 @@
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.1.0",
     "typescript": "^4.9.4"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   },
   "prisma": {
     "schema": "src/database/schema.prisma",

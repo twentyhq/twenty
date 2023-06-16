@@ -10,7 +10,7 @@ datasource db {
 
 generator nestgraphql {
     provider = "node node_modules/prisma-nestjs-graphql"
-    output = "../../src/api/@generated"
+    output = "../../src/core/@generated"
 
     // CommentThread create: Only Allow targets createMany and comments createMany
     decorate_createCommentThreadTargets_type = "*CommentThreadTargetCreateNestedManyWithoutCommentThreadInput"
