@@ -1,10 +1,10 @@
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
+import { getRequest } from 'src/utils/extract-request';
 
 export const AuthWorkspace = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
-    const gqlContext = GqlExecutionContext.create(ctx);
-    const request = gqlContext.getContext().req;
-    return request.workspace;
+    const request = getRequest(ctx);
+
+    return request.user ? request.user.workspace : undefined;
   },
 );
