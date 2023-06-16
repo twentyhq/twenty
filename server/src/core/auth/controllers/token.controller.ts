@@ -1,10 +1,10 @@
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
-import { AuthService } from './services/auth.service';
-import { RefreshTokenInput } from './dto/refresh-token.input';
+import { RefreshTokenInput } from '../dto/refresh-token.input';
+import { TokenService } from '../services/token.service';
 
 @Controller('auth/token')
 export class TokenController {
-  constructor(private authService: AuthService) {}
+  constructor(private tokenService: TokenService) {}
 
   @Post()
   async generateAccessToken(@Body() body: RefreshTokenInput) {
@@ -12,7 +12,7 @@ export class TokenController {
       throw new BadRequestException('Refresh token is mendatory');
     }
 
-    const tokens = await this.authService.generateTokensFromRefreshToken(
+    const tokens = await this.tokenService.generateTokensFromRefreshToken(
       body.refreshToken,
     );
 

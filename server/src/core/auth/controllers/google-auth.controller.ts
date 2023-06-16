@@ -8,15 +8,15 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
-import { AuthService } from './services/auth.service';
-import { GoogleRequest } from './strategies/google.auth.strategy';
-import { UserService } from '../user/user.service';
+import { GoogleRequest } from '../strategies/google.auth.strategy';
+import { UserService } from '../../user/user.service';
 import { assertNotNull } from 'src/utils/assert';
+import { TokenService } from '../services/token.service';
 
 @Controller('auth/google')
 export class GoogleAuthController {
   constructor(
-    private readonly authService: AuthService,
+    private readonly tokenService: TokenService,
     private readonly userService: UserService,
   ) {}
 
@@ -47,8 +47,8 @@ export class GoogleAuthController {
       );
     }
 
-    const loginToken = await this.authService.generateLoginToken(user.email);
+    const loginToken = await this.tokenService.generateLoginToken(user.email);
 
-    return res.redirect(this.authService.computeRedirectURI(loginToken.token));
+    return res.redirect(this.tokenService.computeRedirectURI(loginToken.token));
   }
 }
