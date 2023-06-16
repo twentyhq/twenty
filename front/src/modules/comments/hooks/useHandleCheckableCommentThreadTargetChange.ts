@@ -15,12 +15,12 @@ export function useHandleCheckableCommentThreadTargetChange({
 }) {
   const [addCommentThreadTargetOnCommentThread] =
     useAddCommentThreadTargetOnCommentThreadMutation({
-      refetchQueries: ['GetCompanies', 'GetPersons'],
+      refetchQueries: ['GetCompanies', 'GetPeople'],
     });
 
   const [removeCommentThreadTargetOnCommentThread] =
     useRemoveCommentThreadTargetOnCommentThreadMutation({
-      refetchQueries: ['GetCompanies', 'GetPersons'],
+      refetchQueries: ['GetCompanies', 'GetPeople'],
     });
 
   return function handleCheckItemChange(
