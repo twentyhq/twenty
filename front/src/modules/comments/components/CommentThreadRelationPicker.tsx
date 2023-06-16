@@ -140,7 +140,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     setIsMenuOpen((isOpen) => !isOpen);
   }
 
-  // Place in a scoped recoil atom family
+  // TODO: Place in a scoped recoil atom family
   function handleFilterChange(newSearchFilter: string) {
     setSearchFilter(newSearchFilter);
   }
