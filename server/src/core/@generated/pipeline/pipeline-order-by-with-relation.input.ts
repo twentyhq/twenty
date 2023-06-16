@@ -8,35 +8,34 @@ import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-
 
 @InputType()
 export class PipelineOrderByWithRelationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  name?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  icon?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    name?: keyof typeof SortOrder;
 
-  @HideField()
-  workspaceId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    icon?: keyof typeof SortOrder;
 
-  @Field(() => PipelineStageOrderByRelationAggregateInput, { nullable: true })
-  pipelineStages?: PipelineStageOrderByRelationAggregateInput;
+    @HideField()
+    workspaceId?: keyof typeof SortOrder;
 
-  @Field(() => PipelineProgressOrderByRelationAggregateInput, {
-    nullable: true,
-  })
-  pipelineProgresses?: PipelineProgressOrderByRelationAggregateInput;
+    @Field(() => PipelineStageOrderByRelationAggregateInput, {nullable:true})
+    pipelineStages?: PipelineStageOrderByRelationAggregateInput;
 
-  @HideField()
-  workspace?: WorkspaceOrderByWithRelationInput;
+    @Field(() => PipelineProgressOrderByRelationAggregateInput, {nullable:true})
+    pipelineProgresses?: PipelineProgressOrderByRelationAggregateInput;
+
+    @HideField()
+    workspace?: WorkspaceOrderByWithRelationInput;
 }

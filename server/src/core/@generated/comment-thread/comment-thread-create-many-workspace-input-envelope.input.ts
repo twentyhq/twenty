@@ -5,10 +5,11 @@ import { Type } from 'class-transformer';
 
 @InputType()
 export class CommentThreadCreateManyWorkspaceInputEnvelope {
-  @Field(() => [CommentThreadCreateManyWorkspaceInput], { nullable: false })
-  @Type(() => CommentThreadCreateManyWorkspaceInput)
-  data!: Array<CommentThreadCreateManyWorkspaceInput>;
 
-  @Field(() => Boolean, { nullable: true })
-  skipDuplicates?: boolean;
+    @Field(() => [CommentThreadCreateManyWorkspaceInput], {nullable:false})
+    @Type(() => CommentThreadCreateManyWorkspaceInput)
+    data!: Array<CommentThreadCreateManyWorkspaceInput>;
+
+    @Field(() => Boolean, {nullable:true})
+    skipDuplicates?: boolean;
 }

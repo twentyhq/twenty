@@ -8,34 +8,31 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressCreateInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => PipelineProgressableType, { nullable: false })
-  progressableType!: keyof typeof PipelineProgressableType;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  progressableId!: string;
+    @Field(() => PipelineProgressableType, {nullable:false})
+    progressableType!: keyof typeof PipelineProgressableType;
 
-  @Field(() => PipelineCreateNestedOneWithoutPipelineProgressesInput, {
-    nullable: false,
-  })
-  pipeline!: PipelineCreateNestedOneWithoutPipelineProgressesInput;
+    @Field(() => String, {nullable:false})
+    progressableId!: string;
 
-  @Field(() => PipelineStageCreateNestedOneWithoutPipelineProgressesInput, {
-    nullable: false,
-  })
-  pipelineStage!: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
+    @Field(() => PipelineCreateNestedOneWithoutPipelineProgressesInput, {nullable:false})
+    pipeline!: PipelineCreateNestedOneWithoutPipelineProgressesInput;
 
-  @HideField()
-  workspace!: WorkspaceCreateNestedOneWithoutPipelineProgressesInput;
+    @Field(() => PipelineStageCreateNestedOneWithoutPipelineProgressesInput, {nullable:false})
+    pipelineStage!: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
+
+    @HideField()
+    workspace!: WorkspaceCreateNestedOneWithoutPipelineProgressesInput;
 }

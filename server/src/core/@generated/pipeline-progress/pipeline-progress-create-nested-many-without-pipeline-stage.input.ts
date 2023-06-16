@@ -8,25 +8,20 @@ import { PipelineProgressWhereUniqueInput } from './pipeline-progress-where-uniq
 
 @InputType()
 export class PipelineProgressCreateNestedManyWithoutPipelineStageInput {
-  @Field(() => [PipelineProgressCreateWithoutPipelineStageInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineProgressCreateWithoutPipelineStageInput)
-  create?: Array<PipelineProgressCreateWithoutPipelineStageInput>;
 
-  @Field(() => [PipelineProgressCreateOrConnectWithoutPipelineStageInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineProgressCreateOrConnectWithoutPipelineStageInput)
-  connectOrCreate?: Array<PipelineProgressCreateOrConnectWithoutPipelineStageInput>;
+    @Field(() => [PipelineProgressCreateWithoutPipelineStageInput], {nullable:true})
+    @Type(() => PipelineProgressCreateWithoutPipelineStageInput)
+    create?: Array<PipelineProgressCreateWithoutPipelineStageInput>;
 
-  @Field(() => PipelineProgressCreateManyPipelineStageInputEnvelope, {
-    nullable: true,
-  })
-  @Type(() => PipelineProgressCreateManyPipelineStageInputEnvelope)
-  createMany?: PipelineProgressCreateManyPipelineStageInputEnvelope;
+    @Field(() => [PipelineProgressCreateOrConnectWithoutPipelineStageInput], {nullable:true})
+    @Type(() => PipelineProgressCreateOrConnectWithoutPipelineStageInput)
+    connectOrCreate?: Array<PipelineProgressCreateOrConnectWithoutPipelineStageInput>;
 
-  @Field(() => [PipelineProgressWhereUniqueInput], { nullable: true })
-  @Type(() => PipelineProgressWhereUniqueInput)
-  connect?: Array<PipelineProgressWhereUniqueInput>;
+    @Field(() => PipelineProgressCreateManyPipelineStageInputEnvelope, {nullable:true})
+    @Type(() => PipelineProgressCreateManyPipelineStageInputEnvelope)
+    createMany?: PipelineProgressCreateManyPipelineStageInputEnvelope;
+
+    @Field(() => [PipelineProgressWhereUniqueInput], {nullable:true})
+    @Type(() => PipelineProgressWhereUniqueInput)
+    connect?: Array<PipelineProgressWhereUniqueInput>;
 }

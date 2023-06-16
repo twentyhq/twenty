@@ -9,23 +9,24 @@ import { WorkspaceUpdateWithoutPeopleInput } from './workspace-update-without-pe
 
 @InputType()
 export class WorkspaceUpdateOneRequiredWithoutPeopleNestedInput {
-  @Field(() => WorkspaceCreateWithoutPeopleInput, { nullable: true })
-  @Type(() => WorkspaceCreateWithoutPeopleInput)
-  create?: WorkspaceCreateWithoutPeopleInput;
 
-  @Field(() => WorkspaceCreateOrConnectWithoutPeopleInput, { nullable: true })
-  @Type(() => WorkspaceCreateOrConnectWithoutPeopleInput)
-  connectOrCreate?: WorkspaceCreateOrConnectWithoutPeopleInput;
+    @Field(() => WorkspaceCreateWithoutPeopleInput, {nullable:true})
+    @Type(() => WorkspaceCreateWithoutPeopleInput)
+    create?: WorkspaceCreateWithoutPeopleInput;
 
-  @Field(() => WorkspaceUpsertWithoutPeopleInput, { nullable: true })
-  @Type(() => WorkspaceUpsertWithoutPeopleInput)
-  upsert?: WorkspaceUpsertWithoutPeopleInput;
+    @Field(() => WorkspaceCreateOrConnectWithoutPeopleInput, {nullable:true})
+    @Type(() => WorkspaceCreateOrConnectWithoutPeopleInput)
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutPeopleInput;
 
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
-  @Type(() => WorkspaceWhereUniqueInput)
-  connect?: WorkspaceWhereUniqueInput;
+    @Field(() => WorkspaceUpsertWithoutPeopleInput, {nullable:true})
+    @Type(() => WorkspaceUpsertWithoutPeopleInput)
+    upsert?: WorkspaceUpsertWithoutPeopleInput;
 
-  @Field(() => WorkspaceUpdateWithoutPeopleInput, { nullable: true })
-  @Type(() => WorkspaceUpdateWithoutPeopleInput)
-  update?: WorkspaceUpdateWithoutPeopleInput;
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
+    @Type(() => WorkspaceWhereUniqueInput)
+    connect?: WorkspaceWhereUniqueInput;
+
+    @Field(() => WorkspaceUpdateWithoutPeopleInput, {nullable:true})
+    @Type(() => WorkspaceUpdateWithoutPeopleInput)
+    update?: WorkspaceUpdateWithoutPeopleInput;
 }

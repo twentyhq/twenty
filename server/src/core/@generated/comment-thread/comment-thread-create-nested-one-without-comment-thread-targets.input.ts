@@ -7,19 +7,16 @@ import { CommentThreadWhereUniqueInput } from './comment-thread-where-unique.inp
 
 @InputType()
 export class CommentThreadCreateNestedOneWithoutCommentThreadTargetsInput {
-  @Field(() => CommentThreadCreateWithoutCommentThreadTargetsInput, {
-    nullable: true,
-  })
-  @Type(() => CommentThreadCreateWithoutCommentThreadTargetsInput)
-  create?: CommentThreadCreateWithoutCommentThreadTargetsInput;
 
-  @Field(() => CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput, {
-    nullable: true,
-  })
-  @Type(() => CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput)
-  connectOrCreate?: CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput;
+    @Field(() => CommentThreadCreateWithoutCommentThreadTargetsInput, {nullable:true})
+    @Type(() => CommentThreadCreateWithoutCommentThreadTargetsInput)
+    create?: CommentThreadCreateWithoutCommentThreadTargetsInput;
 
-  @Field(() => CommentThreadWhereUniqueInput, { nullable: true })
-  @Type(() => CommentThreadWhereUniqueInput)
-  connect?: CommentThreadWhereUniqueInput;
+    @Field(() => CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput, {nullable:true})
+    @Type(() => CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput)
+    connectOrCreate?: CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput;
+
+    @Field(() => CommentThreadWhereUniqueInput, {nullable:true})
+    @Type(() => CommentThreadWhereUniqueInput)
+    connect?: CommentThreadWhereUniqueInput;
 }

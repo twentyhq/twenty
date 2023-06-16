@@ -5,10 +5,11 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class CreateManyRefreshTokenArgs {
-  @Field(() => [RefreshTokenCreateManyInput], { nullable: false })
-  @Type(() => RefreshTokenCreateManyInput)
-  data!: Array<RefreshTokenCreateManyInput>;
 
-  @Field(() => Boolean, { nullable: true })
-  skipDuplicates?: boolean;
+    @Field(() => [RefreshTokenCreateManyInput], {nullable:false})
+    @Type(() => RefreshTokenCreateManyInput)
+    data!: Array<RefreshTokenCreateManyInput>;
+
+    @Field(() => Boolean, {nullable:true})
+    skipDuplicates?: boolean;
 }

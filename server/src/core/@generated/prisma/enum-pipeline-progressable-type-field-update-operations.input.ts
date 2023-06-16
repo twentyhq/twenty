@@ -4,6 +4,7 @@ import { PipelineProgressableType } from './pipeline-progressable-type.enum';
 
 @InputType()
 export class EnumPipelineProgressableTypeFieldUpdateOperationsInput {
-  @Field(() => PipelineProgressableType, { nullable: true })
-  set?: keyof typeof PipelineProgressableType;
+
+    @Field(() => PipelineProgressableType, {nullable:true})
+    set?: keyof typeof PipelineProgressableType;
 }

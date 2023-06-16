@@ -6,11 +6,12 @@ import { UserCreateWithoutWorkspaceMemberInput } from './user-create-without-wor
 
 @InputType()
 export class UserCreateOrConnectWithoutWorkspaceMemberInput {
-  @Field(() => UserWhereUniqueInput, { nullable: false })
-  @Type(() => UserWhereUniqueInput)
-  where!: UserWhereUniqueInput;
 
-  @Field(() => UserCreateWithoutWorkspaceMemberInput, { nullable: false })
-  @Type(() => UserCreateWithoutWorkspaceMemberInput)
-  create!: UserCreateWithoutWorkspaceMemberInput;
+    @Field(() => UserWhereUniqueInput, {nullable:false})
+    @Type(() => UserWhereUniqueInput)
+    where!: UserWhereUniqueInput;
+
+    @Field(() => UserCreateWithoutWorkspaceMemberInput, {nullable:false})
+    @Type(() => UserCreateWithoutWorkspaceMemberInput)
+    create!: UserCreateWithoutWorkspaceMemberInput;
 }

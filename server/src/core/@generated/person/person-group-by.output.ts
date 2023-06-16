@@ -7,45 +7,46 @@ import { PersonMaxAggregate } from './person-max-aggregate.output';
 
 @ObjectType()
 export class PersonGroupBy {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date | string;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
-  @Field(() => String, { nullable: false })
-  firstname!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  lastname!: string;
+    @Field(() => String, {nullable:false})
+    firstname!: string;
 
-  @Field(() => String, { nullable: false })
-  email!: string;
+    @Field(() => String, {nullable:false})
+    lastname!: string;
 
-  @Field(() => String, { nullable: false })
-  phone!: string;
+    @Field(() => String, {nullable:false})
+    email!: string;
 
-  @Field(() => String, { nullable: false })
-  city!: string;
+    @Field(() => String, {nullable:false})
+    phone!: string;
 
-  @Field(() => String, { nullable: true })
-  companyId?: string;
+    @Field(() => String, {nullable:false})
+    city!: string;
 
-  @HideField()
-  workspaceId!: string;
+    @Field(() => String, {nullable:true})
+    companyId?: string;
 
-  @Field(() => PersonCountAggregate, { nullable: true })
-  _count?: PersonCountAggregate;
+    @HideField()
+    workspaceId!: string;
 
-  @Field(() => PersonMinAggregate, { nullable: true })
-  _min?: PersonMinAggregate;
+    @Field(() => PersonCountAggregate, {nullable:true})
+    _count?: PersonCountAggregate;
 
-  @Field(() => PersonMaxAggregate, { nullable: true })
-  _max?: PersonMaxAggregate;
+    @Field(() => PersonMinAggregate, {nullable:true})
+    _min?: PersonMinAggregate;
+
+    @Field(() => PersonMaxAggregate, {nullable:true})
+    _max?: PersonMaxAggregate;
 }

@@ -6,11 +6,12 @@ import { UserCreateWithoutRefreshTokensInput } from './user-create-without-refre
 
 @InputType()
 export class UserCreateOrConnectWithoutRefreshTokensInput {
-  @Field(() => UserWhereUniqueInput, { nullable: false })
-  @Type(() => UserWhereUniqueInput)
-  where!: UserWhereUniqueInput;
 
-  @Field(() => UserCreateWithoutRefreshTokensInput, { nullable: false })
-  @Type(() => UserCreateWithoutRefreshTokensInput)
-  create!: UserCreateWithoutRefreshTokensInput;
+    @Field(() => UserWhereUniqueInput, {nullable:false})
+    @Type(() => UserWhereUniqueInput)
+    where!: UserWhereUniqueInput;
+
+    @Field(() => UserCreateWithoutRefreshTokensInput, {nullable:false})
+    @Type(() => UserCreateWithoutRefreshTokensInput)
+    create!: UserCreateWithoutRefreshTokensInput;
 }

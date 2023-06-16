@@ -6,11 +6,12 @@ import { UserCreateWithoutCompaniesInput } from './user-create-without-companies
 
 @InputType()
 export class UserCreateOrConnectWithoutCompaniesInput {
-  @Field(() => UserWhereUniqueInput, { nullable: false })
-  @Type(() => UserWhereUniqueInput)
-  where!: UserWhereUniqueInput;
 
-  @Field(() => UserCreateWithoutCompaniesInput, { nullable: false })
-  @Type(() => UserCreateWithoutCompaniesInput)
-  create!: UserCreateWithoutCompaniesInput;
+    @Field(() => UserWhereUniqueInput, {nullable:false})
+    @Type(() => UserWhereUniqueInput)
+    where!: UserWhereUniqueInput;
+
+    @Field(() => UserCreateWithoutCompaniesInput, {nullable:false})
+    @Type(() => UserCreateWithoutCompaniesInput)
+    create!: UserCreateWithoutCompaniesInput;
 }

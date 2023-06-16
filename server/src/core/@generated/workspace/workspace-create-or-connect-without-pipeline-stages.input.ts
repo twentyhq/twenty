@@ -6,11 +6,12 @@ import { WorkspaceCreateWithoutPipelineStagesInput } from './workspace-create-wi
 
 @InputType()
 export class WorkspaceCreateOrConnectWithoutPipelineStagesInput {
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: false })
-  @Type(() => WorkspaceWhereUniqueInput)
-  where!: WorkspaceWhereUniqueInput;
 
-  @Field(() => WorkspaceCreateWithoutPipelineStagesInput, { nullable: false })
-  @Type(() => WorkspaceCreateWithoutPipelineStagesInput)
-  create!: WorkspaceCreateWithoutPipelineStagesInput;
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:false})
+    @Type(() => WorkspaceWhereUniqueInput)
+    where!: WorkspaceWhereUniqueInput;
+
+    @Field(() => WorkspaceCreateWithoutPipelineStagesInput, {nullable:false})
+    @Type(() => WorkspaceCreateWithoutPipelineStagesInput)
+    create!: WorkspaceCreateWithoutPipelineStagesInput;
 }

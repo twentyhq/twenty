@@ -9,22 +9,23 @@ import { CommentThreadScalarFieldEnum } from './comment-thread-scalar-field.enum
 
 @ArgsType()
 export class FindFirstCommentThreadOrThrowArgs {
-  @Field(() => CommentThreadWhereInput, { nullable: true })
-  @Type(() => CommentThreadWhereInput)
-  where?: CommentThreadWhereInput;
 
-  @Field(() => [CommentThreadOrderByWithRelationInput], { nullable: true })
-  orderBy?: Array<CommentThreadOrderByWithRelationInput>;
+    @Field(() => CommentThreadWhereInput, {nullable:true})
+    @Type(() => CommentThreadWhereInput)
+    where?: CommentThreadWhereInput;
 
-  @Field(() => CommentThreadWhereUniqueInput, { nullable: true })
-  cursor?: CommentThreadWhereUniqueInput;
+    @Field(() => [CommentThreadOrderByWithRelationInput], {nullable:true})
+    orderBy?: Array<CommentThreadOrderByWithRelationInput>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => CommentThreadWhereUniqueInput, {nullable:true})
+    cursor?: CommentThreadWhereUniqueInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => [CommentThreadScalarFieldEnum], { nullable: true })
-  distinct?: Array<keyof typeof CommentThreadScalarFieldEnum>;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
+
+    @Field(() => [CommentThreadScalarFieldEnum], {nullable:true})
+    distinct?: Array<keyof typeof CommentThreadScalarFieldEnum>;
 }

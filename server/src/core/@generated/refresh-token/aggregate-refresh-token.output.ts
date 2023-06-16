@@ -6,12 +6,13 @@ import { RefreshTokenMaxAggregate } from './refresh-token-max-aggregate.output';
 
 @ObjectType()
 export class AggregateRefreshToken {
-  @Field(() => RefreshTokenCountAggregate, { nullable: true })
-  _count?: RefreshTokenCountAggregate;
 
-  @Field(() => RefreshTokenMinAggregate, { nullable: true })
-  _min?: RefreshTokenMinAggregate;
+    @Field(() => RefreshTokenCountAggregate, {nullable:true})
+    _count?: RefreshTokenCountAggregate;
 
-  @Field(() => RefreshTokenMaxAggregate, { nullable: true })
-  _max?: RefreshTokenMaxAggregate;
+    @Field(() => RefreshTokenMinAggregate, {nullable:true})
+    _min?: RefreshTokenMinAggregate;
+
+    @Field(() => RefreshTokenMaxAggregate, {nullable:true})
+    _max?: RefreshTokenMaxAggregate;
 }

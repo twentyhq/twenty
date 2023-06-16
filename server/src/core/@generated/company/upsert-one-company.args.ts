@@ -7,15 +7,16 @@ import { CompanyUpdateInput } from './company-update.input';
 
 @ArgsType()
 export class UpsertOneCompanyArgs {
-  @Field(() => CompanyWhereUniqueInput, { nullable: false })
-  @Type(() => CompanyWhereUniqueInput)
-  where!: CompanyWhereUniqueInput;
 
-  @Field(() => CompanyCreateInput, { nullable: false })
-  @Type(() => CompanyCreateInput)
-  create!: CompanyCreateInput;
+    @Field(() => CompanyWhereUniqueInput, {nullable:false})
+    @Type(() => CompanyWhereUniqueInput)
+    where!: CompanyWhereUniqueInput;
 
-  @Field(() => CompanyUpdateInput, { nullable: false })
-  @Type(() => CompanyUpdateInput)
-  update!: CompanyUpdateInput;
+    @Field(() => CompanyCreateInput, {nullable:false})
+    @Type(() => CompanyCreateInput)
+    create!: CompanyCreateInput;
+
+    @Field(() => CompanyUpdateInput, {nullable:false})
+    @Type(() => CompanyUpdateInput)
+    update!: CompanyUpdateInput;
 }

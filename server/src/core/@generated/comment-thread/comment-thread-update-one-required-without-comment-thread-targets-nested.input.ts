@@ -9,31 +9,24 @@ import { CommentThreadUpdateWithoutCommentThreadTargetsInput } from './comment-t
 
 @InputType()
 export class CommentThreadUpdateOneRequiredWithoutCommentThreadTargetsNestedInput {
-  @Field(() => CommentThreadCreateWithoutCommentThreadTargetsInput, {
-    nullable: true,
-  })
-  @Type(() => CommentThreadCreateWithoutCommentThreadTargetsInput)
-  create?: CommentThreadCreateWithoutCommentThreadTargetsInput;
 
-  @Field(() => CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput, {
-    nullable: true,
-  })
-  @Type(() => CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput)
-  connectOrCreate?: CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput;
+    @Field(() => CommentThreadCreateWithoutCommentThreadTargetsInput, {nullable:true})
+    @Type(() => CommentThreadCreateWithoutCommentThreadTargetsInput)
+    create?: CommentThreadCreateWithoutCommentThreadTargetsInput;
 
-  @Field(() => CommentThreadUpsertWithoutCommentThreadTargetsInput, {
-    nullable: true,
-  })
-  @Type(() => CommentThreadUpsertWithoutCommentThreadTargetsInput)
-  upsert?: CommentThreadUpsertWithoutCommentThreadTargetsInput;
+    @Field(() => CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput, {nullable:true})
+    @Type(() => CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput)
+    connectOrCreate?: CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput;
 
-  @Field(() => CommentThreadWhereUniqueInput, { nullable: true })
-  @Type(() => CommentThreadWhereUniqueInput)
-  connect?: CommentThreadWhereUniqueInput;
+    @Field(() => CommentThreadUpsertWithoutCommentThreadTargetsInput, {nullable:true})
+    @Type(() => CommentThreadUpsertWithoutCommentThreadTargetsInput)
+    upsert?: CommentThreadUpsertWithoutCommentThreadTargetsInput;
 
-  @Field(() => CommentThreadUpdateWithoutCommentThreadTargetsInput, {
-    nullable: true,
-  })
-  @Type(() => CommentThreadUpdateWithoutCommentThreadTargetsInput)
-  update?: CommentThreadUpdateWithoutCommentThreadTargetsInput;
+    @Field(() => CommentThreadWhereUniqueInput, {nullable:true})
+    @Type(() => CommentThreadWhereUniqueInput)
+    connect?: CommentThreadWhereUniqueInput;
+
+    @Field(() => CommentThreadUpdateWithoutCommentThreadTargetsInput, {nullable:true})
+    @Type(() => CommentThreadUpdateWithoutCommentThreadTargetsInput)
+    update?: CommentThreadUpdateWithoutCommentThreadTargetsInput;
 }

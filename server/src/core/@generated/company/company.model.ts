@@ -10,45 +10,46 @@ import { CompanyCount } from './company-count.output';
 
 @ObjectType()
 export class Company {
-  @Field(() => ID, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date;
+    @Field(() => ID, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt!: Date | null;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
-  @Field(() => String, { nullable: false })
-  name!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt!: Date | null;
 
-  @Field(() => String, { nullable: false })
-  domainName!: string;
+    @Field(() => String, {nullable:false})
+    name!: string;
 
-  @Field(() => String, { nullable: false })
-  address!: string;
+    @Field(() => String, {nullable:false})
+    domainName!: string;
 
-  @Field(() => Int, { nullable: true })
-  employees!: number | null;
+    @Field(() => String, {nullable:false})
+    address!: string;
 
-  @Field(() => String, { nullable: true })
-  accountOwnerId!: string | null;
+    @Field(() => Int, {nullable:true})
+    employees!: number | null;
 
-  @HideField()
-  workspaceId!: string;
+    @Field(() => String, {nullable:true})
+    accountOwnerId!: string | null;
 
-  @Field(() => User, { nullable: true })
-  accountOwner?: User | null;
+    @HideField()
+    workspaceId!: string;
 
-  @Field(() => [Person], { nullable: true })
-  people?: Array<Person>;
+    @Field(() => User, {nullable:true})
+    accountOwner?: User | null;
 
-  @HideField()
-  workspace?: Workspace;
+    @Field(() => [Person], {nullable:true})
+    people?: Array<Person>;
 
-  @HideField()
-  _count?: CompanyCount;
+    @HideField()
+    workspace?: Workspace;
+
+    @HideField()
+    _count?: CompanyCount;
 }

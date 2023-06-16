@@ -6,23 +6,22 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberCreateInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => UserCreateNestedOneWithoutWorkspaceMemberInput, {
-    nullable: false,
-  })
-  user!: UserCreateNestedOneWithoutWorkspaceMemberInput;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @HideField()
-  workspace!: WorkspaceCreateNestedOneWithoutWorkspaceMemberInput;
+    @Field(() => UserCreateNestedOneWithoutWorkspaceMemberInput, {nullable:false})
+    user!: UserCreateNestedOneWithoutWorkspaceMemberInput;
+
+    @HideField()
+    workspace!: WorkspaceCreateNestedOneWithoutWorkspaceMemberInput;
 }

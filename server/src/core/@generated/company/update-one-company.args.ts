@@ -6,11 +6,12 @@ import { CompanyWhereUniqueInput } from './company-where-unique.input';
 
 @ArgsType()
 export class UpdateOneCompanyArgs {
-  @Field(() => CompanyUpdateInput, { nullable: false })
-  @Type(() => CompanyUpdateInput)
-  data!: CompanyUpdateInput;
 
-  @Field(() => CompanyWhereUniqueInput, { nullable: false })
-  @Type(() => CompanyWhereUniqueInput)
-  where!: CompanyWhereUniqueInput;
+    @Field(() => CompanyUpdateInput, {nullable:false})
+    @Type(() => CompanyUpdateInput)
+    data!: CompanyUpdateInput;
+
+    @Field(() => CompanyWhereUniqueInput, {nullable:false})
+    @Type(() => CompanyWhereUniqueInput)
+    where!: CompanyWhereUniqueInput;
 }

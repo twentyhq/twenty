@@ -4,9 +4,10 @@ import { CompanyWhereInput } from './company-where.input';
 
 @InputType()
 export class CompanyRelationFilter {
-  @Field(() => CompanyWhereInput, { nullable: true })
-  is?: CompanyWhereInput;
 
-  @Field(() => CompanyWhereInput, { nullable: true })
-  isNot?: CompanyWhereInput;
+    @Field(() => CompanyWhereInput, {nullable:true})
+    is?: CompanyWhereInput;
+
+    @Field(() => CompanyWhereInput, {nullable:true})
+    isNot?: CompanyWhereInput;
 }

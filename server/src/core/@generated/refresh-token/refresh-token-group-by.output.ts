@@ -6,30 +6,31 @@ import { RefreshTokenMaxAggregate } from './refresh-token-max-aggregate.output';
 
 @ObjectType()
 export class RefreshTokenGroupBy {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date | string;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
-  @Field(() => String, { nullable: false })
-  refreshToken!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  userId!: string;
+    @Field(() => String, {nullable:false})
+    refreshToken!: string;
 
-  @Field(() => RefreshTokenCountAggregate, { nullable: true })
-  _count?: RefreshTokenCountAggregate;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
-  @Field(() => RefreshTokenMinAggregate, { nullable: true })
-  _min?: RefreshTokenMinAggregate;
+    @Field(() => RefreshTokenCountAggregate, {nullable:true})
+    _count?: RefreshTokenCountAggregate;
 
-  @Field(() => RefreshTokenMaxAggregate, { nullable: true })
-  _max?: RefreshTokenMaxAggregate;
+    @Field(() => RefreshTokenMinAggregate, {nullable:true})
+    _min?: RefreshTokenMinAggregate;
+
+    @Field(() => RefreshTokenMaxAggregate, {nullable:true})
+    _max?: RefreshTokenMaxAggregate;
 }

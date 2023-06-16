@@ -6,11 +6,12 @@ import { PersonCreateWithoutWorkspaceInput } from './person-create-without-works
 
 @InputType()
 export class PersonCreateOrConnectWithoutWorkspaceInput {
-  @Field(() => PersonWhereUniqueInput, { nullable: false })
-  @Type(() => PersonWhereUniqueInput)
-  where!: PersonWhereUniqueInput;
 
-  @Field(() => PersonCreateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => PersonCreateWithoutWorkspaceInput)
-  create!: PersonCreateWithoutWorkspaceInput;
+    @Field(() => PersonWhereUniqueInput, {nullable:false})
+    @Type(() => PersonWhereUniqueInput)
+    where!: PersonWhereUniqueInput;
+
+    @Field(() => PersonCreateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => PersonCreateWithoutWorkspaceInput)
+    create!: PersonCreateWithoutWorkspaceInput;
 }

@@ -9,31 +9,24 @@ import { WorkspaceUpdateWithoutPipelineProgressesInput } from './workspace-updat
 
 @InputType()
 export class WorkspaceUpdateOneRequiredWithoutPipelineProgressesNestedInput {
-  @Field(() => WorkspaceCreateWithoutPipelineProgressesInput, {
-    nullable: true,
-  })
-  @Type(() => WorkspaceCreateWithoutPipelineProgressesInput)
-  create?: WorkspaceCreateWithoutPipelineProgressesInput;
 
-  @Field(() => WorkspaceCreateOrConnectWithoutPipelineProgressesInput, {
-    nullable: true,
-  })
-  @Type(() => WorkspaceCreateOrConnectWithoutPipelineProgressesInput)
-  connectOrCreate?: WorkspaceCreateOrConnectWithoutPipelineProgressesInput;
+    @Field(() => WorkspaceCreateWithoutPipelineProgressesInput, {nullable:true})
+    @Type(() => WorkspaceCreateWithoutPipelineProgressesInput)
+    create?: WorkspaceCreateWithoutPipelineProgressesInput;
 
-  @Field(() => WorkspaceUpsertWithoutPipelineProgressesInput, {
-    nullable: true,
-  })
-  @Type(() => WorkspaceUpsertWithoutPipelineProgressesInput)
-  upsert?: WorkspaceUpsertWithoutPipelineProgressesInput;
+    @Field(() => WorkspaceCreateOrConnectWithoutPipelineProgressesInput, {nullable:true})
+    @Type(() => WorkspaceCreateOrConnectWithoutPipelineProgressesInput)
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutPipelineProgressesInput;
 
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
-  @Type(() => WorkspaceWhereUniqueInput)
-  connect?: WorkspaceWhereUniqueInput;
+    @Field(() => WorkspaceUpsertWithoutPipelineProgressesInput, {nullable:true})
+    @Type(() => WorkspaceUpsertWithoutPipelineProgressesInput)
+    upsert?: WorkspaceUpsertWithoutPipelineProgressesInput;
 
-  @Field(() => WorkspaceUpdateWithoutPipelineProgressesInput, {
-    nullable: true,
-  })
-  @Type(() => WorkspaceUpdateWithoutPipelineProgressesInput)
-  update?: WorkspaceUpdateWithoutPipelineProgressesInput;
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
+    @Type(() => WorkspaceWhereUniqueInput)
+    connect?: WorkspaceWhereUniqueInput;
+
+    @Field(() => WorkspaceUpdateWithoutPipelineProgressesInput, {nullable:true})
+    @Type(() => WorkspaceUpdateWithoutPipelineProgressesInput)
+    update?: WorkspaceUpdateWithoutPipelineProgressesInput;
 }

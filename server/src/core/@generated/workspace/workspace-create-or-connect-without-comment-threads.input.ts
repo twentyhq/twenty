@@ -6,11 +6,12 @@ import { WorkspaceCreateWithoutCommentThreadsInput } from './workspace-create-wi
 
 @InputType()
 export class WorkspaceCreateOrConnectWithoutCommentThreadsInput {
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: false })
-  @Type(() => WorkspaceWhereUniqueInput)
-  where!: WorkspaceWhereUniqueInput;
 
-  @Field(() => WorkspaceCreateWithoutCommentThreadsInput, { nullable: false })
-  @Type(() => WorkspaceCreateWithoutCommentThreadsInput)
-  create!: WorkspaceCreateWithoutCommentThreadsInput;
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:false})
+    @Type(() => WorkspaceWhereUniqueInput)
+    where!: WorkspaceWhereUniqueInput;
+
+    @Field(() => WorkspaceCreateWithoutCommentThreadsInput, {nullable:false})
+    @Type(() => WorkspaceCreateWithoutCommentThreadsInput)
+    create!: WorkspaceCreateWithoutCommentThreadsInput;
 }

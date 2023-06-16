@@ -12,57 +12,48 @@ import { PipelineStageScalarWhereInput } from './pipeline-stage-scalar-where.inp
 
 @InputType()
 export class PipelineStageUpdateManyWithoutWorkspaceNestedInput {
-  @Field(() => [PipelineStageCreateWithoutWorkspaceInput], { nullable: true })
-  @Type(() => PipelineStageCreateWithoutWorkspaceInput)
-  create?: Array<PipelineStageCreateWithoutWorkspaceInput>;
 
-  @Field(() => [PipelineStageCreateOrConnectWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineStageCreateOrConnectWithoutWorkspaceInput)
-  connectOrCreate?: Array<PipelineStageCreateOrConnectWithoutWorkspaceInput>;
+    @Field(() => [PipelineStageCreateWithoutWorkspaceInput], {nullable:true})
+    @Type(() => PipelineStageCreateWithoutWorkspaceInput)
+    create?: Array<PipelineStageCreateWithoutWorkspaceInput>;
 
-  @Field(() => [PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput)
-  upsert?: Array<PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput>;
+    @Field(() => [PipelineStageCreateOrConnectWithoutWorkspaceInput], {nullable:true})
+    @Type(() => PipelineStageCreateOrConnectWithoutWorkspaceInput)
+    connectOrCreate?: Array<PipelineStageCreateOrConnectWithoutWorkspaceInput>;
 
-  @Field(() => PipelineStageCreateManyWorkspaceInputEnvelope, {
-    nullable: true,
-  })
-  @Type(() => PipelineStageCreateManyWorkspaceInputEnvelope)
-  createMany?: PipelineStageCreateManyWorkspaceInputEnvelope;
+    @Field(() => [PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
+    @Type(() => PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput)
+    upsert?: Array<PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput>;
 
-  @Field(() => [PipelineStageWhereUniqueInput], { nullable: true })
-  @Type(() => PipelineStageWhereUniqueInput)
-  set?: Array<PipelineStageWhereUniqueInput>;
+    @Field(() => PipelineStageCreateManyWorkspaceInputEnvelope, {nullable:true})
+    @Type(() => PipelineStageCreateManyWorkspaceInputEnvelope)
+    createMany?: PipelineStageCreateManyWorkspaceInputEnvelope;
 
-  @Field(() => [PipelineStageWhereUniqueInput], { nullable: true })
-  @Type(() => PipelineStageWhereUniqueInput)
-  disconnect?: Array<PipelineStageWhereUniqueInput>;
+    @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
+    @Type(() => PipelineStageWhereUniqueInput)
+    set?: Array<PipelineStageWhereUniqueInput>;
 
-  @Field(() => [PipelineStageWhereUniqueInput], { nullable: true })
-  @Type(() => PipelineStageWhereUniqueInput)
-  delete?: Array<PipelineStageWhereUniqueInput>;
+    @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
+    @Type(() => PipelineStageWhereUniqueInput)
+    disconnect?: Array<PipelineStageWhereUniqueInput>;
 
-  @Field(() => [PipelineStageWhereUniqueInput], { nullable: true })
-  @Type(() => PipelineStageWhereUniqueInput)
-  connect?: Array<PipelineStageWhereUniqueInput>;
+    @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
+    @Type(() => PipelineStageWhereUniqueInput)
+    delete?: Array<PipelineStageWhereUniqueInput>;
 
-  @Field(() => [PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput)
-  update?: Array<PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput>;
+    @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
+    @Type(() => PipelineStageWhereUniqueInput)
+    connect?: Array<PipelineStageWhereUniqueInput>;
 
-  @Field(() => [PipelineStageUpdateManyWithWhereWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => PipelineStageUpdateManyWithWhereWithoutWorkspaceInput)
-  updateMany?: Array<PipelineStageUpdateManyWithWhereWithoutWorkspaceInput>;
+    @Field(() => [PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
+    @Type(() => PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput)
+    update?: Array<PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput>;
 
-  @Field(() => [PipelineStageScalarWhereInput], { nullable: true })
-  @Type(() => PipelineStageScalarWhereInput)
-  deleteMany?: Array<PipelineStageScalarWhereInput>;
+    @Field(() => [PipelineStageUpdateManyWithWhereWithoutWorkspaceInput], {nullable:true})
+    @Type(() => PipelineStageUpdateManyWithWhereWithoutWorkspaceInput)
+    updateMany?: Array<PipelineStageUpdateManyWithWhereWithoutWorkspaceInput>;
+
+    @Field(() => [PipelineStageScalarWhereInput], {nullable:true})
+    @Type(() => PipelineStageScalarWhereInput)
+    deleteMany?: Array<PipelineStageScalarWhereInput>;
 }

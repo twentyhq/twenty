@@ -12,55 +12,48 @@ import { RefreshTokenScalarWhereInput } from './refresh-token-scalar-where.input
 
 @InputType()
 export class RefreshTokenUncheckedUpdateManyWithoutUserNestedInput {
-  @Field(() => [RefreshTokenCreateWithoutUserInput], { nullable: true })
-  @Type(() => RefreshTokenCreateWithoutUserInput)
-  create?: Array<RefreshTokenCreateWithoutUserInput>;
 
-  @Field(() => [RefreshTokenCreateOrConnectWithoutUserInput], {
-    nullable: true,
-  })
-  @Type(() => RefreshTokenCreateOrConnectWithoutUserInput)
-  connectOrCreate?: Array<RefreshTokenCreateOrConnectWithoutUserInput>;
+    @Field(() => [RefreshTokenCreateWithoutUserInput], {nullable:true})
+    @Type(() => RefreshTokenCreateWithoutUserInput)
+    create?: Array<RefreshTokenCreateWithoutUserInput>;
 
-  @Field(() => [RefreshTokenUpsertWithWhereUniqueWithoutUserInput], {
-    nullable: true,
-  })
-  @Type(() => RefreshTokenUpsertWithWhereUniqueWithoutUserInput)
-  upsert?: Array<RefreshTokenUpsertWithWhereUniqueWithoutUserInput>;
+    @Field(() => [RefreshTokenCreateOrConnectWithoutUserInput], {nullable:true})
+    @Type(() => RefreshTokenCreateOrConnectWithoutUserInput)
+    connectOrCreate?: Array<RefreshTokenCreateOrConnectWithoutUserInput>;
 
-  @Field(() => RefreshTokenCreateManyUserInputEnvelope, { nullable: true })
-  @Type(() => RefreshTokenCreateManyUserInputEnvelope)
-  createMany?: RefreshTokenCreateManyUserInputEnvelope;
+    @Field(() => [RefreshTokenUpsertWithWhereUniqueWithoutUserInput], {nullable:true})
+    @Type(() => RefreshTokenUpsertWithWhereUniqueWithoutUserInput)
+    upsert?: Array<RefreshTokenUpsertWithWhereUniqueWithoutUserInput>;
 
-  @Field(() => [RefreshTokenWhereUniqueInput], { nullable: true })
-  @Type(() => RefreshTokenWhereUniqueInput)
-  set?: Array<RefreshTokenWhereUniqueInput>;
+    @Field(() => RefreshTokenCreateManyUserInputEnvelope, {nullable:true})
+    @Type(() => RefreshTokenCreateManyUserInputEnvelope)
+    createMany?: RefreshTokenCreateManyUserInputEnvelope;
 
-  @Field(() => [RefreshTokenWhereUniqueInput], { nullable: true })
-  @Type(() => RefreshTokenWhereUniqueInput)
-  disconnect?: Array<RefreshTokenWhereUniqueInput>;
+    @Field(() => [RefreshTokenWhereUniqueInput], {nullable:true})
+    @Type(() => RefreshTokenWhereUniqueInput)
+    set?: Array<RefreshTokenWhereUniqueInput>;
 
-  @Field(() => [RefreshTokenWhereUniqueInput], { nullable: true })
-  @Type(() => RefreshTokenWhereUniqueInput)
-  delete?: Array<RefreshTokenWhereUniqueInput>;
+    @Field(() => [RefreshTokenWhereUniqueInput], {nullable:true})
+    @Type(() => RefreshTokenWhereUniqueInput)
+    disconnect?: Array<RefreshTokenWhereUniqueInput>;
 
-  @Field(() => [RefreshTokenWhereUniqueInput], { nullable: true })
-  @Type(() => RefreshTokenWhereUniqueInput)
-  connect?: Array<RefreshTokenWhereUniqueInput>;
+    @Field(() => [RefreshTokenWhereUniqueInput], {nullable:true})
+    @Type(() => RefreshTokenWhereUniqueInput)
+    delete?: Array<RefreshTokenWhereUniqueInput>;
 
-  @Field(() => [RefreshTokenUpdateWithWhereUniqueWithoutUserInput], {
-    nullable: true,
-  })
-  @Type(() => RefreshTokenUpdateWithWhereUniqueWithoutUserInput)
-  update?: Array<RefreshTokenUpdateWithWhereUniqueWithoutUserInput>;
+    @Field(() => [RefreshTokenWhereUniqueInput], {nullable:true})
+    @Type(() => RefreshTokenWhereUniqueInput)
+    connect?: Array<RefreshTokenWhereUniqueInput>;
 
-  @Field(() => [RefreshTokenUpdateManyWithWhereWithoutUserInput], {
-    nullable: true,
-  })
-  @Type(() => RefreshTokenUpdateManyWithWhereWithoutUserInput)
-  updateMany?: Array<RefreshTokenUpdateManyWithWhereWithoutUserInput>;
+    @Field(() => [RefreshTokenUpdateWithWhereUniqueWithoutUserInput], {nullable:true})
+    @Type(() => RefreshTokenUpdateWithWhereUniqueWithoutUserInput)
+    update?: Array<RefreshTokenUpdateWithWhereUniqueWithoutUserInput>;
 
-  @Field(() => [RefreshTokenScalarWhereInput], { nullable: true })
-  @Type(() => RefreshTokenScalarWhereInput)
-  deleteMany?: Array<RefreshTokenScalarWhereInput>;
+    @Field(() => [RefreshTokenUpdateManyWithWhereWithoutUserInput], {nullable:true})
+    @Type(() => RefreshTokenUpdateManyWithWhereWithoutUserInput)
+    updateMany?: Array<RefreshTokenUpdateManyWithWhereWithoutUserInput>;
+
+    @Field(() => [RefreshTokenScalarWhereInput], {nullable:true})
+    @Type(() => RefreshTokenScalarWhereInput)
+    deleteMany?: Array<RefreshTokenScalarWhereInput>;
 }

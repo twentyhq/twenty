@@ -9,22 +9,23 @@ import { WorkspaceScalarFieldEnum } from './workspace-scalar-field.enum';
 
 @ArgsType()
 export class FindManyWorkspaceArgs {
-  @Field(() => WorkspaceWhereInput, { nullable: true })
-  @Type(() => WorkspaceWhereInput)
-  where?: WorkspaceWhereInput;
 
-  @Field(() => [WorkspaceOrderByWithRelationInput], { nullable: true })
-  orderBy?: Array<WorkspaceOrderByWithRelationInput>;
+    @Field(() => WorkspaceWhereInput, {nullable:true})
+    @Type(() => WorkspaceWhereInput)
+    where?: WorkspaceWhereInput;
 
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
-  cursor?: WorkspaceWhereUniqueInput;
+    @Field(() => [WorkspaceOrderByWithRelationInput], {nullable:true})
+    orderBy?: Array<WorkspaceOrderByWithRelationInput>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
+    cursor?: WorkspaceWhereUniqueInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => [WorkspaceScalarFieldEnum], { nullable: true })
-  distinct?: Array<keyof typeof WorkspaceScalarFieldEnum>;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
+
+    @Field(() => [WorkspaceScalarFieldEnum], {nullable:true})
+    distinct?: Array<keyof typeof WorkspaceScalarFieldEnum>;
 }

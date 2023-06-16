@@ -8,56 +8,55 @@ import { RefreshTokenCreateNestedManyWithoutUserInput } from '../refresh-token/r
 
 @InputType()
 export class UserCreateWithoutCommentsInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  lastSeen?: Date | string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => Boolean, { nullable: true })
-  disabled?: boolean;
+    @Field(() => Date, {nullable:true})
+    lastSeen?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  displayName!: string;
+    @Field(() => Boolean, {nullable:true})
+    disabled?: boolean;
 
-  @Field(() => String, { nullable: false })
-  email!: string;
+    @Field(() => String, {nullable:false})
+    displayName!: string;
 
-  @Field(() => String, { nullable: true })
-  avatarUrl?: string;
+    @Field(() => String, {nullable:false})
+    email!: string;
 
-  @Field(() => String, { nullable: false })
-  locale!: string;
+    @Field(() => String, {nullable:true})
+    avatarUrl?: string;
 
-  @Field(() => String, { nullable: true })
-  phoneNumber?: string;
+    @Field(() => String, {nullable:false})
+    locale!: string;
 
-  @Field(() => String, { nullable: true })
-  passwordHash?: string;
+    @Field(() => String, {nullable:true})
+    phoneNumber?: string;
 
-  @Field(() => Boolean, { nullable: true })
-  emailVerified?: boolean;
+    @Field(() => String, {nullable:true})
+    passwordHash?: string;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  metadata?: any;
+    @Field(() => Boolean, {nullable:true})
+    emailVerified?: boolean;
 
-  @HideField()
-  workspaceMember?: WorkspaceMemberCreateNestedOneWithoutUserInput;
+    @Field(() => GraphQLJSON, {nullable:true})
+    metadata?: any;
 
-  @Field(() => CompanyCreateNestedManyWithoutAccountOwnerInput, {
-    nullable: true,
-  })
-  companies?: CompanyCreateNestedManyWithoutAccountOwnerInput;
+    @HideField()
+    workspaceMember?: WorkspaceMemberCreateNestedOneWithoutUserInput;
 
-  @HideField()
-  refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput;
+    @Field(() => CompanyCreateNestedManyWithoutAccountOwnerInput, {nullable:true})
+    companies?: CompanyCreateNestedManyWithoutAccountOwnerInput;
+
+    @HideField()
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput;
 }

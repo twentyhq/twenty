@@ -6,11 +6,12 @@ import { WorkspaceMemberWhereUniqueInput } from './workspace-member-where-unique
 
 @ArgsType()
 export class UpdateOneWorkspaceMemberArgs {
-  @Field(() => WorkspaceMemberUpdateInput, { nullable: false })
-  @Type(() => WorkspaceMemberUpdateInput)
-  data!: WorkspaceMemberUpdateInput;
 
-  @Field(() => WorkspaceMemberWhereUniqueInput, { nullable: false })
-  @Type(() => WorkspaceMemberWhereUniqueInput)
-  where!: WorkspaceMemberWhereUniqueInput;
+    @Field(() => WorkspaceMemberUpdateInput, {nullable:false})
+    @Type(() => WorkspaceMemberUpdateInput)
+    data!: WorkspaceMemberUpdateInput;
+
+    @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:false})
+    @Type(() => WorkspaceMemberWhereUniqueInput)
+    where!: WorkspaceMemberWhereUniqueInput;
 }

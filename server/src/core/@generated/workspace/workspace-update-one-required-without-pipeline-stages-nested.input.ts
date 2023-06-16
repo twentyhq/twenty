@@ -9,25 +9,24 @@ import { WorkspaceUpdateWithoutPipelineStagesInput } from './workspace-update-wi
 
 @InputType()
 export class WorkspaceUpdateOneRequiredWithoutPipelineStagesNestedInput {
-  @Field(() => WorkspaceCreateWithoutPipelineStagesInput, { nullable: true })
-  @Type(() => WorkspaceCreateWithoutPipelineStagesInput)
-  create?: WorkspaceCreateWithoutPipelineStagesInput;
 
-  @Field(() => WorkspaceCreateOrConnectWithoutPipelineStagesInput, {
-    nullable: true,
-  })
-  @Type(() => WorkspaceCreateOrConnectWithoutPipelineStagesInput)
-  connectOrCreate?: WorkspaceCreateOrConnectWithoutPipelineStagesInput;
+    @Field(() => WorkspaceCreateWithoutPipelineStagesInput, {nullable:true})
+    @Type(() => WorkspaceCreateWithoutPipelineStagesInput)
+    create?: WorkspaceCreateWithoutPipelineStagesInput;
 
-  @Field(() => WorkspaceUpsertWithoutPipelineStagesInput, { nullable: true })
-  @Type(() => WorkspaceUpsertWithoutPipelineStagesInput)
-  upsert?: WorkspaceUpsertWithoutPipelineStagesInput;
+    @Field(() => WorkspaceCreateOrConnectWithoutPipelineStagesInput, {nullable:true})
+    @Type(() => WorkspaceCreateOrConnectWithoutPipelineStagesInput)
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutPipelineStagesInput;
 
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
-  @Type(() => WorkspaceWhereUniqueInput)
-  connect?: WorkspaceWhereUniqueInput;
+    @Field(() => WorkspaceUpsertWithoutPipelineStagesInput, {nullable:true})
+    @Type(() => WorkspaceUpsertWithoutPipelineStagesInput)
+    upsert?: WorkspaceUpsertWithoutPipelineStagesInput;
 
-  @Field(() => WorkspaceUpdateWithoutPipelineStagesInput, { nullable: true })
-  @Type(() => WorkspaceUpdateWithoutPipelineStagesInput)
-  update?: WorkspaceUpdateWithoutPipelineStagesInput;
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
+    @Type(() => WorkspaceWhereUniqueInput)
+    connect?: WorkspaceWhereUniqueInput;
+
+    @Field(() => WorkspaceUpdateWithoutPipelineStagesInput, {nullable:true})
+    @Type(() => WorkspaceUpdateWithoutPipelineStagesInput)
+    update?: WorkspaceUpdateWithoutPipelineStagesInput;
 }

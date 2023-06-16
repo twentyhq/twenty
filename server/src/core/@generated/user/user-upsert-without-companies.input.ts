@@ -6,11 +6,12 @@ import { UserCreateWithoutCompaniesInput } from './user-create-without-companies
 
 @InputType()
 export class UserUpsertWithoutCompaniesInput {
-  @Field(() => UserUpdateWithoutCompaniesInput, { nullable: false })
-  @Type(() => UserUpdateWithoutCompaniesInput)
-  update!: UserUpdateWithoutCompaniesInput;
 
-  @Field(() => UserCreateWithoutCompaniesInput, { nullable: false })
-  @Type(() => UserCreateWithoutCompaniesInput)
-  create!: UserCreateWithoutCompaniesInput;
+    @Field(() => UserUpdateWithoutCompaniesInput, {nullable:false})
+    @Type(() => UserUpdateWithoutCompaniesInput)
+    update!: UserUpdateWithoutCompaniesInput;
+
+    @Field(() => UserCreateWithoutCompaniesInput, {nullable:false})
+    @Type(() => UserCreateWithoutCompaniesInput)
+    create!: UserCreateWithoutCompaniesInput;
 }

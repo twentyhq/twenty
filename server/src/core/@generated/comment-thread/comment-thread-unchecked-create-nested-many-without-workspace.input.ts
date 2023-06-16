@@ -8,23 +8,20 @@ import { CommentThreadWhereUniqueInput } from './comment-thread-where-unique.inp
 
 @InputType()
 export class CommentThreadUncheckedCreateNestedManyWithoutWorkspaceInput {
-  @Field(() => [CommentThreadCreateWithoutWorkspaceInput], { nullable: true })
-  @Type(() => CommentThreadCreateWithoutWorkspaceInput)
-  create?: Array<CommentThreadCreateWithoutWorkspaceInput>;
 
-  @Field(() => [CommentThreadCreateOrConnectWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => CommentThreadCreateOrConnectWithoutWorkspaceInput)
-  connectOrCreate?: Array<CommentThreadCreateOrConnectWithoutWorkspaceInput>;
+    @Field(() => [CommentThreadCreateWithoutWorkspaceInput], {nullable:true})
+    @Type(() => CommentThreadCreateWithoutWorkspaceInput)
+    create?: Array<CommentThreadCreateWithoutWorkspaceInput>;
 
-  @Field(() => CommentThreadCreateManyWorkspaceInputEnvelope, {
-    nullable: true,
-  })
-  @Type(() => CommentThreadCreateManyWorkspaceInputEnvelope)
-  createMany?: CommentThreadCreateManyWorkspaceInputEnvelope;
+    @Field(() => [CommentThreadCreateOrConnectWithoutWorkspaceInput], {nullable:true})
+    @Type(() => CommentThreadCreateOrConnectWithoutWorkspaceInput)
+    connectOrCreate?: Array<CommentThreadCreateOrConnectWithoutWorkspaceInput>;
 
-  @Field(() => [CommentThreadWhereUniqueInput], { nullable: true })
-  @Type(() => CommentThreadWhereUniqueInput)
-  connect?: Array<CommentThreadWhereUniqueInput>;
+    @Field(() => CommentThreadCreateManyWorkspaceInputEnvelope, {nullable:true})
+    @Type(() => CommentThreadCreateManyWorkspaceInputEnvelope)
+    createMany?: CommentThreadCreateManyWorkspaceInputEnvelope;
+
+    @Field(() => [CommentThreadWhereUniqueInput], {nullable:true})
+    @Type(() => CommentThreadWhereUniqueInput)
+    connect?: Array<CommentThreadWhereUniqueInput>;
 }

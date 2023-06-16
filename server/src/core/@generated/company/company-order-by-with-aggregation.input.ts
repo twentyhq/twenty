@@ -10,48 +10,49 @@ import { CompanySumOrderByAggregateInput } from './company-sum-order-by-aggregat
 
 @InputType()
 export class CompanyOrderByWithAggregationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  name?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  domainName?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    name?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  address?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    domainName?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  employees?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    address?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  accountOwnerId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    employees?: keyof typeof SortOrder;
 
-  @HideField()
-  workspaceId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    accountOwnerId?: keyof typeof SortOrder;
 
-  @Field(() => CompanyCountOrderByAggregateInput, { nullable: true })
-  _count?: CompanyCountOrderByAggregateInput;
+    @HideField()
+    workspaceId?: keyof typeof SortOrder;
 
-  @Field(() => CompanyAvgOrderByAggregateInput, { nullable: true })
-  _avg?: CompanyAvgOrderByAggregateInput;
+    @Field(() => CompanyCountOrderByAggregateInput, {nullable:true})
+    _count?: CompanyCountOrderByAggregateInput;
 
-  @Field(() => CompanyMaxOrderByAggregateInput, { nullable: true })
-  _max?: CompanyMaxOrderByAggregateInput;
+    @Field(() => CompanyAvgOrderByAggregateInput, {nullable:true})
+    _avg?: CompanyAvgOrderByAggregateInput;
 
-  @Field(() => CompanyMinOrderByAggregateInput, { nullable: true })
-  _min?: CompanyMinOrderByAggregateInput;
+    @Field(() => CompanyMaxOrderByAggregateInput, {nullable:true})
+    _max?: CompanyMaxOrderByAggregateInput;
 
-  @Field(() => CompanySumOrderByAggregateInput, { nullable: true })
-  _sum?: CompanySumOrderByAggregateInput;
+    @Field(() => CompanyMinOrderByAggregateInput, {nullable:true})
+    _min?: CompanyMinOrderByAggregateInput;
+
+    @Field(() => CompanySumOrderByAggregateInput, {nullable:true})
+    _sum?: CompanySumOrderByAggregateInput;
 }

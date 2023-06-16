@@ -8,25 +8,22 @@ import { CommentUpdateManyWithoutCommentThreadNestedInput } from '../comment/com
 
 @InputType()
 export class CommentThreadUpdateWithoutWorkspaceInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput, {
-    nullable: true,
-  })
-  commentThreadTargets?: CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => CommentUpdateManyWithoutCommentThreadNestedInput, {
-    nullable: true,
-  })
-  comments?: CommentUpdateManyWithoutCommentThreadNestedInput;
+    @Field(() => CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput, {nullable:true})
+    commentThreadTargets?: CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput;
+
+    @Field(() => CommentUpdateManyWithoutCommentThreadNestedInput, {nullable:true})
+    comments?: CommentUpdateManyWithoutCommentThreadNestedInput;
 }

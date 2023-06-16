@@ -7,17 +7,16 @@ import { WorkspaceWhereUniqueInput } from './workspace-where-unique.input';
 
 @InputType()
 export class WorkspaceCreateNestedOneWithoutCommentThreadsInput {
-  @Field(() => WorkspaceCreateWithoutCommentThreadsInput, { nullable: true })
-  @Type(() => WorkspaceCreateWithoutCommentThreadsInput)
-  create?: WorkspaceCreateWithoutCommentThreadsInput;
 
-  @Field(() => WorkspaceCreateOrConnectWithoutCommentThreadsInput, {
-    nullable: true,
-  })
-  @Type(() => WorkspaceCreateOrConnectWithoutCommentThreadsInput)
-  connectOrCreate?: WorkspaceCreateOrConnectWithoutCommentThreadsInput;
+    @Field(() => WorkspaceCreateWithoutCommentThreadsInput, {nullable:true})
+    @Type(() => WorkspaceCreateWithoutCommentThreadsInput)
+    create?: WorkspaceCreateWithoutCommentThreadsInput;
 
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
-  @Type(() => WorkspaceWhereUniqueInput)
-  connect?: WorkspaceWhereUniqueInput;
+    @Field(() => WorkspaceCreateOrConnectWithoutCommentThreadsInput, {nullable:true})
+    @Type(() => WorkspaceCreateOrConnectWithoutCommentThreadsInput)
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutCommentThreadsInput;
+
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
+    @Type(() => WorkspaceWhereUniqueInput)
+    connect?: WorkspaceWhereUniqueInput;
 }

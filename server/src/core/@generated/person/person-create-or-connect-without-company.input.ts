@@ -6,11 +6,12 @@ import { PersonCreateWithoutCompanyInput } from './person-create-without-company
 
 @InputType()
 export class PersonCreateOrConnectWithoutCompanyInput {
-  @Field(() => PersonWhereUniqueInput, { nullable: false })
-  @Type(() => PersonWhereUniqueInput)
-  where!: PersonWhereUniqueInput;
 
-  @Field(() => PersonCreateWithoutCompanyInput, { nullable: false })
-  @Type(() => PersonCreateWithoutCompanyInput)
-  create!: PersonCreateWithoutCompanyInput;
+    @Field(() => PersonWhereUniqueInput, {nullable:false})
+    @Type(() => PersonWhereUniqueInput)
+    where!: PersonWhereUniqueInput;
+
+    @Field(() => PersonCreateWithoutCompanyInput, {nullable:false})
+    @Type(() => PersonCreateWithoutCompanyInput)
+    create!: PersonCreateWithoutCompanyInput;
 }

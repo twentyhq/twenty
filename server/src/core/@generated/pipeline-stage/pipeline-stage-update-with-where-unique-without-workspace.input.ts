@@ -6,11 +6,12 @@ import { PipelineStageUpdateWithoutWorkspaceInput } from './pipeline-stage-updat
 
 @InputType()
 export class PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput {
-  @Field(() => PipelineStageWhereUniqueInput, { nullable: false })
-  @Type(() => PipelineStageWhereUniqueInput)
-  where!: PipelineStageWhereUniqueInput;
 
-  @Field(() => PipelineStageUpdateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => PipelineStageUpdateWithoutWorkspaceInput)
-  data!: PipelineStageUpdateWithoutWorkspaceInput;
+    @Field(() => PipelineStageWhereUniqueInput, {nullable:false})
+    @Type(() => PipelineStageWhereUniqueInput)
+    where!: PipelineStageWhereUniqueInput;
+
+    @Field(() => PipelineStageUpdateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => PipelineStageUpdateWithoutWorkspaceInput)
+    data!: PipelineStageUpdateWithoutWorkspaceInput;
 }

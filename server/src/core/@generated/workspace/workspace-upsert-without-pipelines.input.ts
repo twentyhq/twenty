@@ -6,11 +6,12 @@ import { WorkspaceCreateWithoutPipelinesInput } from './workspace-create-without
 
 @InputType()
 export class WorkspaceUpsertWithoutPipelinesInput {
-  @Field(() => WorkspaceUpdateWithoutPipelinesInput, { nullable: false })
-  @Type(() => WorkspaceUpdateWithoutPipelinesInput)
-  update!: WorkspaceUpdateWithoutPipelinesInput;
 
-  @Field(() => WorkspaceCreateWithoutPipelinesInput, { nullable: false })
-  @Type(() => WorkspaceCreateWithoutPipelinesInput)
-  create!: WorkspaceCreateWithoutPipelinesInput;
+    @Field(() => WorkspaceUpdateWithoutPipelinesInput, {nullable:false})
+    @Type(() => WorkspaceUpdateWithoutPipelinesInput)
+    update!: WorkspaceUpdateWithoutPipelinesInput;
+
+    @Field(() => WorkspaceCreateWithoutPipelinesInput, {nullable:false})
+    @Type(() => WorkspaceCreateWithoutPipelinesInput)
+    create!: WorkspaceCreateWithoutPipelinesInput;
 }

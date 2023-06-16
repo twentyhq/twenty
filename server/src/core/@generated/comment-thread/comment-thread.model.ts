@@ -9,30 +9,31 @@ import { CommentThreadCount } from '../comment/comment-thread-count.output';
 
 @ObjectType()
 export class CommentThread {
-  @Field(() => ID, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date;
+    @Field(() => ID, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt!: Date | null;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
-  @HideField()
-  workspaceId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt!: Date | null;
 
-  @Field(() => [CommentThreadTarget], { nullable: true })
-  commentThreadTargets?: Array<CommentThreadTarget>;
+    @HideField()
+    workspaceId!: string;
 
-  @Field(() => [Comment], { nullable: true })
-  comments?: Array<Comment>;
+    @Field(() => [CommentThreadTarget], {nullable:true})
+    commentThreadTargets?: Array<CommentThreadTarget>;
 
-  @HideField()
-  workspace?: Workspace;
+    @Field(() => [Comment], {nullable:true})
+    comments?: Array<Comment>;
 
-  @HideField()
-  _count?: CommentThreadCount;
+    @HideField()
+    workspace?: Workspace;
+
+    @HideField()
+    _count?: CommentThreadCount;
 }

@@ -10,48 +10,49 @@ import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.
 
 @InputType()
 export class PipelineStageWhereInput {
-  @Field(() => [PipelineStageWhereInput], { nullable: true })
-  AND?: Array<PipelineStageWhereInput>;
 
-  @Field(() => [PipelineStageWhereInput], { nullable: true })
-  OR?: Array<PipelineStageWhereInput>;
+    @Field(() => [PipelineStageWhereInput], {nullable:true})
+    AND?: Array<PipelineStageWhereInput>;
 
-  @Field(() => [PipelineStageWhereInput], { nullable: true })
-  NOT?: Array<PipelineStageWhereInput>;
+    @Field(() => [PipelineStageWhereInput], {nullable:true})
+    OR?: Array<PipelineStageWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [PipelineStageWhereInput], {nullable:true})
+    NOT?: Array<PipelineStageWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  name?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  type?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    name?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  color?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    type?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  pipelineId?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    color?: StringFilter;
 
-  @HideField()
-  workspaceId?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    pipelineId?: StringFilter;
 
-  @Field(() => PipelineRelationFilter, { nullable: true })
-  pipeline?: PipelineRelationFilter;
+    @HideField()
+    workspaceId?: StringFilter;
 
-  @Field(() => PipelineProgressListRelationFilter, { nullable: true })
-  pipelineProgresses?: PipelineProgressListRelationFilter;
+    @Field(() => PipelineRelationFilter, {nullable:true})
+    pipeline?: PipelineRelationFilter;
 
-  @HideField()
-  workspace?: WorkspaceRelationFilter;
+    @Field(() => PipelineProgressListRelationFilter, {nullable:true})
+    pipelineProgresses?: PipelineProgressListRelationFilter;
+
+    @HideField()
+    workspace?: WorkspaceRelationFilter;
 }

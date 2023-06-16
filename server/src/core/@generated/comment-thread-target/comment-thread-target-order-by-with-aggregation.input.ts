@@ -7,35 +7,34 @@ import { CommentThreadTargetMinOrderByAggregateInput } from './comment-thread-ta
 
 @InputType()
 export class CommentThreadTargetOrderByWithAggregationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  commentThreadId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  commentableType?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    commentThreadId?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  commentableId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    commentableType?: keyof typeof SortOrder;
 
-  @Field(() => CommentThreadTargetCountOrderByAggregateInput, {
-    nullable: true,
-  })
-  _count?: CommentThreadTargetCountOrderByAggregateInput;
+    @Field(() => SortOrder, {nullable:true})
+    commentableId?: keyof typeof SortOrder;
 
-  @Field(() => CommentThreadTargetMaxOrderByAggregateInput, { nullable: true })
-  _max?: CommentThreadTargetMaxOrderByAggregateInput;
+    @Field(() => CommentThreadTargetCountOrderByAggregateInput, {nullable:true})
+    _count?: CommentThreadTargetCountOrderByAggregateInput;
 
-  @Field(() => CommentThreadTargetMinOrderByAggregateInput, { nullable: true })
-  _min?: CommentThreadTargetMinOrderByAggregateInput;
+    @Field(() => CommentThreadTargetMaxOrderByAggregateInput, {nullable:true})
+    _max?: CommentThreadTargetMaxOrderByAggregateInput;
+
+    @Field(() => CommentThreadTargetMinOrderByAggregateInput, {nullable:true})
+    _min?: CommentThreadTargetMinOrderByAggregateInput;
 }

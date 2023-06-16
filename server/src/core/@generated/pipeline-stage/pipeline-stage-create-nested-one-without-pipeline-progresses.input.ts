@@ -8,13 +8,14 @@ import { Type } from 'class-transformer';
 
 @InputType()
 export class PipelineStageCreateNestedOneWithoutPipelineProgressesInput {
-  @HideField()
-  create?: PipelineStageCreateWithoutPipelineProgressesInput;
 
-  @HideField()
-  connectOrCreate?: PipelineStageCreateOrConnectWithoutPipelineProgressesInput;
+    @HideField()
+    create?: PipelineStageCreateWithoutPipelineProgressesInput;
 
-  @Field(() => PipelineStageWhereUniqueInput, { nullable: true })
-  @Type(() => PipelineStageWhereUniqueInput)
-  connect?: PipelineStageWhereUniqueInput;
+    @HideField()
+    connectOrCreate?: PipelineStageCreateOrConnectWithoutPipelineProgressesInput;
+
+    @Field(() => PipelineStageWhereUniqueInput, {nullable:true})
+    @Type(() => PipelineStageWhereUniqueInput)
+    connect?: PipelineStageWhereUniqueInput;
 }
