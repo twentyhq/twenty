@@ -45,7 +45,6 @@ const SubSubContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
-  width: 350px;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;

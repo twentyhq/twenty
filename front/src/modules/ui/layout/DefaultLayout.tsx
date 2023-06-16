@@ -17,15 +17,15 @@ const StyledLayout = styled.div`
   width: 100vw;
 `;
 
-const NAVBAR_WIDTH = '236px';
+const DEFAULT_NAVBAR_WIDTH = 236;
 
-const MainContainer = styled.div`
+const MainContainer = styled.div<{ navbarWidth: number }>`
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  width: ${() =>
+  width: ${(props) =>
     useRecoilValue(isNavbarOpenedState)
-      ? `(calc(100% -  ${NAVBAR_WIDTH})`
+      ? `(calc(100% - ${props.navbarWidth}px)`
       : '100%'};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -36,9 +36,10 @@ const MainContainer = styled.div`
 type OwnProps = {
   children: JSX.Element;
   Navbar: () => JSX.Element;
+  navbarWidth?: number;
 };
 
-export function DefaultLayout({ children, Navbar }: OwnProps) {
+export function DefaultLayout({ children, Navbar, navbarWidth }: OwnProps) {
   const currentUser = useRecoilState(currentUserState);
   const userIsAuthenticated = !!currentUser;
 
@@ -50,7 +51,9 @@ export function DefaultLayout({ children, Navbar }: OwnProps) {
           <NavbarContainer>
             <Navbar />
           </NavbarContainer>
-          <MainContainer>{children}</MainContainer>
+          <MainContainer navbarWidth={navbarWidth ?? DEFAULT_NAVBAR_WIDTH}>
+            {children}
+          </MainContainer>
         </>
       ) : (
         children
