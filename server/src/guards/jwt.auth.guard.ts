@@ -5,10 +5,8 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JsonWebTokenError } from 'jsonwebtoken';
-import { PassportUser } from 'src/core/auth/strategies/jwt.auth.strategy';
+import { assert } from 'src/utils/assert';
 import { getRequest } from 'src/utils/extract-request';
-
-type PassportUserOrFalse = PassportUser | false;
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard(['jwt']) {
@@ -22,11 +20,9 @@ export class JwtAuthGuard extends AuthGuard(['jwt']) {
     return request;
   }
 
-  handleRequest<PassportUserOrFalse>(
-    err: any,
-    user: PassportUserOrFalse,
-    info: any,
-  ) {
+  handleRequest(err: any, user: any, info: any) {
+    assert(user, '', UnauthorizedException);
+
     if (err) {
       throw err;
     }
