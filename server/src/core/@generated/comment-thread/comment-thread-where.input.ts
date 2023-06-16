@@ -10,37 +10,36 @@ import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.
 
 @InputType()
 export class CommentThreadWhereInput {
+  @Field(() => [CommentThreadWhereInput], { nullable: true })
+  AND?: Array<CommentThreadWhereInput>;
 
-    @Field(() => [CommentThreadWhereInput], {nullable:true})
-    AND?: Array<CommentThreadWhereInput>;
+  @Field(() => [CommentThreadWhereInput], { nullable: true })
+  OR?: Array<CommentThreadWhereInput>;
 
-    @Field(() => [CommentThreadWhereInput], {nullable:true})
-    OR?: Array<CommentThreadWhereInput>;
+  @Field(() => [CommentThreadWhereInput], { nullable: true })
+  NOT?: Array<CommentThreadWhereInput>;
 
-    @Field(() => [CommentThreadWhereInput], {nullable:true})
-    NOT?: Array<CommentThreadWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @HideField()
+  workspaceId?: StringFilter;
 
-    @HideField()
-    workspaceId?: StringFilter;
+  @Field(() => CommentThreadTargetListRelationFilter, { nullable: true })
+  commentThreadTargets?: CommentThreadTargetListRelationFilter;
 
-    @Field(() => CommentThreadTargetListRelationFilter, {nullable:true})
-    commentThreadTargets?: CommentThreadTargetListRelationFilter;
+  @Field(() => CommentListRelationFilter, { nullable: true })
+  comments?: CommentListRelationFilter;
 
-    @Field(() => CommentListRelationFilter, {nullable:true})
-    comments?: CommentListRelationFilter;
-
-    @HideField()
-    workspace?: WorkspaceRelationFilter;
+  @HideField()
+  workspace?: WorkspaceRelationFilter;
 }

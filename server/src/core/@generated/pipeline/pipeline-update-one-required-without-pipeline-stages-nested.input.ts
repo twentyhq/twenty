@@ -9,24 +9,25 @@ import { PipelineUpdateWithoutPipelineStagesInput } from './pipeline-update-with
 
 @InputType()
 export class PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput {
+  @Field(() => PipelineCreateWithoutPipelineStagesInput, { nullable: true })
+  @Type(() => PipelineCreateWithoutPipelineStagesInput)
+  create?: PipelineCreateWithoutPipelineStagesInput;
 
-    @Field(() => PipelineCreateWithoutPipelineStagesInput, {nullable:true})
-    @Type(() => PipelineCreateWithoutPipelineStagesInput)
-    create?: PipelineCreateWithoutPipelineStagesInput;
+  @Field(() => PipelineCreateOrConnectWithoutPipelineStagesInput, {
+    nullable: true,
+  })
+  @Type(() => PipelineCreateOrConnectWithoutPipelineStagesInput)
+  connectOrCreate?: PipelineCreateOrConnectWithoutPipelineStagesInput;
 
-    @Field(() => PipelineCreateOrConnectWithoutPipelineStagesInput, {nullable:true})
-    @Type(() => PipelineCreateOrConnectWithoutPipelineStagesInput)
-    connectOrCreate?: PipelineCreateOrConnectWithoutPipelineStagesInput;
+  @Field(() => PipelineUpsertWithoutPipelineStagesInput, { nullable: true })
+  @Type(() => PipelineUpsertWithoutPipelineStagesInput)
+  upsert?: PipelineUpsertWithoutPipelineStagesInput;
 
-    @Field(() => PipelineUpsertWithoutPipelineStagesInput, {nullable:true})
-    @Type(() => PipelineUpsertWithoutPipelineStagesInput)
-    upsert?: PipelineUpsertWithoutPipelineStagesInput;
+  @Field(() => PipelineWhereUniqueInput, { nullable: true })
+  @Type(() => PipelineWhereUniqueInput)
+  connect?: PipelineWhereUniqueInput;
 
-    @Field(() => PipelineWhereUniqueInput, {nullable:true})
-    @Type(() => PipelineWhereUniqueInput)
-    connect?: PipelineWhereUniqueInput;
-
-    @Field(() => PipelineUpdateWithoutPipelineStagesInput, {nullable:true})
-    @Type(() => PipelineUpdateWithoutPipelineStagesInput)
-    update?: PipelineUpdateWithoutPipelineStagesInput;
+  @Field(() => PipelineUpdateWithoutPipelineStagesInput, { nullable: true })
+  @Type(() => PipelineUpdateWithoutPipelineStagesInput)
+  update?: PipelineUpdateWithoutPipelineStagesInput;
 }

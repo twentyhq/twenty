@@ -9,25 +9,26 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CommentUpdateWithoutCommentThreadInput {
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  createdAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
+  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  body?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    body?: StringFieldUpdateOperationsInput;
+  @Field(() => UserUpdateOneRequiredWithoutCommentsNestedInput, {
+    nullable: true,
+  })
+  author?: UserUpdateOneRequiredWithoutCommentsNestedInput;
 
-    @Field(() => UserUpdateOneRequiredWithoutCommentsNestedInput, {nullable:true})
-    author?: UserUpdateOneRequiredWithoutCommentsNestedInput;
-
-    @HideField()
-    workspace?: WorkspaceUpdateOneRequiredWithoutCommentsNestedInput;
+  @HideField()
+  workspace?: WorkspaceUpdateOneRequiredWithoutCommentsNestedInput;
 }

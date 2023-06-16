@@ -5,28 +5,27 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressUncheckedCreateWithoutPipelineInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+  @Field(() => String, { nullable: false })
+  pipelineStageId!: string;
 
-    @Field(() => String, {nullable:false})
-    pipelineStageId!: string;
+  @Field(() => PipelineProgressableType, { nullable: false })
+  progressableType!: keyof typeof PipelineProgressableType;
 
-    @Field(() => PipelineProgressableType, {nullable:false})
-    progressableType!: keyof typeof PipelineProgressableType;
+  @Field(() => String, { nullable: false })
+  progressableId!: string;
 
-    @Field(() => String, {nullable:false})
-    progressableId!: string;
-
-    @HideField()
-    workspaceId!: string;
+  @HideField()
+  workspaceId!: string;
 }

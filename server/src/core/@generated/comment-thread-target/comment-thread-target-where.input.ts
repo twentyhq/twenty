@@ -8,37 +8,36 @@ import { CommentThreadRelationFilter } from '../comment-thread/comment-thread-re
 
 @InputType()
 export class CommentThreadTargetWhereInput {
+  @Field(() => [CommentThreadTargetWhereInput], { nullable: true })
+  AND?: Array<CommentThreadTargetWhereInput>;
 
-    @Field(() => [CommentThreadTargetWhereInput], {nullable:true})
-    AND?: Array<CommentThreadTargetWhereInput>;
+  @Field(() => [CommentThreadTargetWhereInput], { nullable: true })
+  OR?: Array<CommentThreadTargetWhereInput>;
 
-    @Field(() => [CommentThreadTargetWhereInput], {nullable:true})
-    OR?: Array<CommentThreadTargetWhereInput>;
+  @Field(() => [CommentThreadTargetWhereInput], { nullable: true })
+  NOT?: Array<CommentThreadTargetWhereInput>;
 
-    @Field(() => [CommentThreadTargetWhereInput], {nullable:true})
-    NOT?: Array<CommentThreadTargetWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @Field(() => StringFilter, { nullable: true })
+  commentThreadId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    commentThreadId?: StringFilter;
+  @Field(() => EnumCommentableTypeFilter, { nullable: true })
+  commentableType?: EnumCommentableTypeFilter;
 
-    @Field(() => EnumCommentableTypeFilter, {nullable:true})
-    commentableType?: EnumCommentableTypeFilter;
+  @Field(() => StringFilter, { nullable: true })
+  commentableId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    commentableId?: StringFilter;
-
-    @Field(() => CommentThreadRelationFilter, {nullable:true})
-    commentThread?: CommentThreadRelationFilter;
+  @Field(() => CommentThreadRelationFilter, { nullable: true })
+  commentThread?: CommentThreadRelationFilter;
 }

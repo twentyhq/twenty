@@ -10,46 +10,45 @@ import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.
 
 @InputType()
 export class CommentWhereInput {
+  @Field(() => [CommentWhereInput], { nullable: true })
+  AND?: Array<CommentWhereInput>;
 
-    @Field(() => [CommentWhereInput], {nullable:true})
-    AND?: Array<CommentWhereInput>;
+  @Field(() => [CommentWhereInput], { nullable: true })
+  OR?: Array<CommentWhereInput>;
 
-    @Field(() => [CommentWhereInput], {nullable:true})
-    OR?: Array<CommentWhereInput>;
+  @Field(() => [CommentWhereInput], { nullable: true })
+  NOT?: Array<CommentWhereInput>;
 
-    @Field(() => [CommentWhereInput], {nullable:true})
-    NOT?: Array<CommentWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @Field(() => StringFilter, { nullable: true })
+  body?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    body?: StringFilter;
+  @Field(() => StringFilter, { nullable: true })
+  authorId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    authorId?: StringFilter;
+  @Field(() => StringFilter, { nullable: true })
+  commentThreadId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    commentThreadId?: StringFilter;
+  @HideField()
+  workspaceId?: StringFilter;
 
-    @HideField()
-    workspaceId?: StringFilter;
+  @Field(() => UserRelationFilter, { nullable: true })
+  author?: UserRelationFilter;
 
-    @Field(() => UserRelationFilter, {nullable:true})
-    author?: UserRelationFilter;
+  @Field(() => CommentThreadRelationFilter, { nullable: true })
+  commentThread?: CommentThreadRelationFilter;
 
-    @Field(() => CommentThreadRelationFilter, {nullable:true})
-    commentThread?: CommentThreadRelationFilter;
-
-    @HideField()
-    workspace?: WorkspaceRelationFilter;
+  @HideField()
+  workspace?: WorkspaceRelationFilter;
 }

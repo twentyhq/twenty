@@ -5,28 +5,29 @@ import { PipelineStageUncheckedCreateNestedManyWithoutPipelineInput } from '../p
 
 @InputType()
 export class PipelineUncheckedCreateWithoutPipelineProgressesInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+  @Field(() => String, { nullable: false })
+  name!: string;
 
-    @Field(() => String, {nullable:false})
-    name!: string;
+  @Field(() => String, { nullable: false })
+  icon!: string;
 
-    @Field(() => String, {nullable:false})
-    icon!: string;
+  @HideField()
+  workspaceId!: string;
 
-    @HideField()
-    workspaceId!: string;
-
-    @Field(() => PipelineStageUncheckedCreateNestedManyWithoutPipelineInput, {nullable:true})
-    pipelineStages?: PipelineStageUncheckedCreateNestedManyWithoutPipelineInput;
+  @Field(() => PipelineStageUncheckedCreateNestedManyWithoutPipelineInput, {
+    nullable: true,
+  })
+  pipelineStages?: PipelineStageUncheckedCreateNestedManyWithoutPipelineInput;
 }

@@ -8,37 +8,36 @@ import { CommentMinOrderByAggregateInput } from './comment-min-order-by-aggregat
 
 @InputType()
 export class CommentOrderByWithAggregationInput {
+  @Field(() => SortOrder, { nullable: true })
+  id?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    id?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  createdAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  updatedAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  deletedAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  body?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    body?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  authorId?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    authorId?: keyof typeof SortOrder;
+  @Field(() => SortOrder, { nullable: true })
+  commentThreadId?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    commentThreadId?: keyof typeof SortOrder;
+  @HideField()
+  workspaceId?: keyof typeof SortOrder;
 
-    @HideField()
-    workspaceId?: keyof typeof SortOrder;
+  @Field(() => CommentCountOrderByAggregateInput, { nullable: true })
+  _count?: CommentCountOrderByAggregateInput;
 
-    @Field(() => CommentCountOrderByAggregateInput, {nullable:true})
-    _count?: CommentCountOrderByAggregateInput;
+  @Field(() => CommentMaxOrderByAggregateInput, { nullable: true })
+  _max?: CommentMaxOrderByAggregateInput;
 
-    @Field(() => CommentMaxOrderByAggregateInput, {nullable:true})
-    _max?: CommentMaxOrderByAggregateInput;
-
-    @Field(() => CommentMinOrderByAggregateInput, {nullable:true})
-    _min?: CommentMinOrderByAggregateInput;
+  @Field(() => CommentMinOrderByAggregateInput, { nullable: true })
+  _min?: CommentMinOrderByAggregateInput;
 }

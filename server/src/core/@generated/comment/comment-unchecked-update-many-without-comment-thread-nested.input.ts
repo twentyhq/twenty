@@ -12,48 +12,55 @@ import { CommentScalarWhereInput } from './comment-scalar-where.input';
 
 @InputType()
 export class CommentUncheckedUpdateManyWithoutCommentThreadNestedInput {
+  @Field(() => [CommentCreateWithoutCommentThreadInput], { nullable: true })
+  @Type(() => CommentCreateWithoutCommentThreadInput)
+  create?: Array<CommentCreateWithoutCommentThreadInput>;
 
-    @Field(() => [CommentCreateWithoutCommentThreadInput], {nullable:true})
-    @Type(() => CommentCreateWithoutCommentThreadInput)
-    create?: Array<CommentCreateWithoutCommentThreadInput>;
+  @Field(() => [CommentCreateOrConnectWithoutCommentThreadInput], {
+    nullable: true,
+  })
+  @Type(() => CommentCreateOrConnectWithoutCommentThreadInput)
+  connectOrCreate?: Array<CommentCreateOrConnectWithoutCommentThreadInput>;
 
-    @Field(() => [CommentCreateOrConnectWithoutCommentThreadInput], {nullable:true})
-    @Type(() => CommentCreateOrConnectWithoutCommentThreadInput)
-    connectOrCreate?: Array<CommentCreateOrConnectWithoutCommentThreadInput>;
+  @Field(() => [CommentUpsertWithWhereUniqueWithoutCommentThreadInput], {
+    nullable: true,
+  })
+  @Type(() => CommentUpsertWithWhereUniqueWithoutCommentThreadInput)
+  upsert?: Array<CommentUpsertWithWhereUniqueWithoutCommentThreadInput>;
 
-    @Field(() => [CommentUpsertWithWhereUniqueWithoutCommentThreadInput], {nullable:true})
-    @Type(() => CommentUpsertWithWhereUniqueWithoutCommentThreadInput)
-    upsert?: Array<CommentUpsertWithWhereUniqueWithoutCommentThreadInput>;
+  @Field(() => CommentCreateManyCommentThreadInputEnvelope, { nullable: true })
+  @Type(() => CommentCreateManyCommentThreadInputEnvelope)
+  createMany?: CommentCreateManyCommentThreadInputEnvelope;
 
-    @Field(() => CommentCreateManyCommentThreadInputEnvelope, {nullable:true})
-    @Type(() => CommentCreateManyCommentThreadInputEnvelope)
-    createMany?: CommentCreateManyCommentThreadInputEnvelope;
+  @Field(() => [CommentWhereUniqueInput], { nullable: true })
+  @Type(() => CommentWhereUniqueInput)
+  set?: Array<CommentWhereUniqueInput>;
 
-    @Field(() => [CommentWhereUniqueInput], {nullable:true})
-    @Type(() => CommentWhereUniqueInput)
-    set?: Array<CommentWhereUniqueInput>;
+  @Field(() => [CommentWhereUniqueInput], { nullable: true })
+  @Type(() => CommentWhereUniqueInput)
+  disconnect?: Array<CommentWhereUniqueInput>;
 
-    @Field(() => [CommentWhereUniqueInput], {nullable:true})
-    @Type(() => CommentWhereUniqueInput)
-    disconnect?: Array<CommentWhereUniqueInput>;
+  @Field(() => [CommentWhereUniqueInput], { nullable: true })
+  @Type(() => CommentWhereUniqueInput)
+  delete?: Array<CommentWhereUniqueInput>;
 
-    @Field(() => [CommentWhereUniqueInput], {nullable:true})
-    @Type(() => CommentWhereUniqueInput)
-    delete?: Array<CommentWhereUniqueInput>;
+  @Field(() => [CommentWhereUniqueInput], { nullable: true })
+  @Type(() => CommentWhereUniqueInput)
+  connect?: Array<CommentWhereUniqueInput>;
 
-    @Field(() => [CommentWhereUniqueInput], {nullable:true})
-    @Type(() => CommentWhereUniqueInput)
-    connect?: Array<CommentWhereUniqueInput>;
+  @Field(() => [CommentUpdateWithWhereUniqueWithoutCommentThreadInput], {
+    nullable: true,
+  })
+  @Type(() => CommentUpdateWithWhereUniqueWithoutCommentThreadInput)
+  update?: Array<CommentUpdateWithWhereUniqueWithoutCommentThreadInput>;
 
-    @Field(() => [CommentUpdateWithWhereUniqueWithoutCommentThreadInput], {nullable:true})
-    @Type(() => CommentUpdateWithWhereUniqueWithoutCommentThreadInput)
-    update?: Array<CommentUpdateWithWhereUniqueWithoutCommentThreadInput>;
+  @Field(() => [CommentUpdateManyWithWhereWithoutCommentThreadInput], {
+    nullable: true,
+  })
+  @Type(() => CommentUpdateManyWithWhereWithoutCommentThreadInput)
+  updateMany?: Array<CommentUpdateManyWithWhereWithoutCommentThreadInput>;
 
-    @Field(() => [CommentUpdateManyWithWhereWithoutCommentThreadInput], {nullable:true})
-    @Type(() => CommentUpdateManyWithWhereWithoutCommentThreadInput)
-    updateMany?: Array<CommentUpdateManyWithWhereWithoutCommentThreadInput>;
-
-    @Field(() => [CommentScalarWhereInput], {nullable:true})
-    @Type(() => CommentScalarWhereInput)
-    deleteMany?: Array<CommentScalarWhereInput>;
+  @Field(() => [CommentScalarWhereInput], { nullable: true })
+  @Type(() => CommentScalarWhereInput)
+  deleteMany?: Array<CommentScalarWhereInput>;
 }

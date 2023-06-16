@@ -8,20 +8,25 @@ import { PipelineProgressWhereUniqueInput } from './pipeline-progress-where-uniq
 
 @InputType()
 export class PipelineProgressCreateNestedManyWithoutWorkspaceInput {
+  @Field(() => [PipelineProgressCreateWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => PipelineProgressCreateWithoutWorkspaceInput)
+  create?: Array<PipelineProgressCreateWithoutWorkspaceInput>;
 
-    @Field(() => [PipelineProgressCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PipelineProgressCreateWithoutWorkspaceInput)
-    create?: Array<PipelineProgressCreateWithoutWorkspaceInput>;
+  @Field(() => [PipelineProgressCreateOrConnectWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => PipelineProgressCreateOrConnectWithoutWorkspaceInput)
+  connectOrCreate?: Array<PipelineProgressCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => [PipelineProgressCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PipelineProgressCreateOrConnectWithoutWorkspaceInput)
-    connectOrCreate?: Array<PipelineProgressCreateOrConnectWithoutWorkspaceInput>;
+  @Field(() => PipelineProgressCreateManyWorkspaceInputEnvelope, {
+    nullable: true,
+  })
+  @Type(() => PipelineProgressCreateManyWorkspaceInputEnvelope)
+  createMany?: PipelineProgressCreateManyWorkspaceInputEnvelope;
 
-    @Field(() => PipelineProgressCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => PipelineProgressCreateManyWorkspaceInputEnvelope)
-    createMany?: PipelineProgressCreateManyWorkspaceInputEnvelope;
-
-    @Field(() => [PipelineProgressWhereUniqueInput], {nullable:true})
-    @Type(() => PipelineProgressWhereUniqueInput)
-    connect?: Array<PipelineProgressWhereUniqueInput>;
+  @Field(() => [PipelineProgressWhereUniqueInput], { nullable: true })
+  @Type(() => PipelineProgressWhereUniqueInput)
+  connect?: Array<PipelineProgressWhereUniqueInput>;
 }

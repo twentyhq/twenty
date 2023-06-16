@@ -6,13 +6,12 @@ import { PipelineProgressMaxAggregate } from './pipeline-progress-max-aggregate.
 
 @ObjectType()
 export class AggregatePipelineProgress {
+  @Field(() => PipelineProgressCountAggregate, { nullable: true })
+  _count?: PipelineProgressCountAggregate;
 
-    @Field(() => PipelineProgressCountAggregate, {nullable:true})
-    _count?: PipelineProgressCountAggregate;
+  @Field(() => PipelineProgressMinAggregate, { nullable: true })
+  _min?: PipelineProgressMinAggregate;
 
-    @Field(() => PipelineProgressMinAggregate, {nullable:true})
-    _min?: PipelineProgressMinAggregate;
-
-    @Field(() => PipelineProgressMaxAggregate, {nullable:true})
-    _max?: PipelineProgressMaxAggregate;
+  @Field(() => PipelineProgressMaxAggregate, { nullable: true })
+  _max?: PipelineProgressMaxAggregate;
 }

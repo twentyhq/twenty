@@ -7,16 +7,15 @@ import { WorkspaceMemberCreateWithoutWorkspaceInput } from './workspace-member-c
 
 @InputType()
 export class WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput {
+  @Field(() => WorkspaceMemberWhereUniqueInput, { nullable: false })
+  @Type(() => WorkspaceMemberWhereUniqueInput)
+  where!: WorkspaceMemberWhereUniqueInput;
 
-    @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:false})
-    @Type(() => WorkspaceMemberWhereUniqueInput)
-    where!: WorkspaceMemberWhereUniqueInput;
+  @Field(() => WorkspaceMemberUpdateWithoutWorkspaceInput, { nullable: false })
+  @Type(() => WorkspaceMemberUpdateWithoutWorkspaceInput)
+  update!: WorkspaceMemberUpdateWithoutWorkspaceInput;
 
-    @Field(() => WorkspaceMemberUpdateWithoutWorkspaceInput, {nullable:false})
-    @Type(() => WorkspaceMemberUpdateWithoutWorkspaceInput)
-    update!: WorkspaceMemberUpdateWithoutWorkspaceInput;
-
-    @Field(() => WorkspaceMemberCreateWithoutWorkspaceInput, {nullable:false})
-    @Type(() => WorkspaceMemberCreateWithoutWorkspaceInput)
-    create!: WorkspaceMemberCreateWithoutWorkspaceInput;
+  @Field(() => WorkspaceMemberCreateWithoutWorkspaceInput, { nullable: false })
+  @Type(() => WorkspaceMemberCreateWithoutWorkspaceInput)
+  create!: WorkspaceMemberCreateWithoutWorkspaceInput;
 }

@@ -5,11 +5,10 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class CreateManyWorkspaceArgs {
+  @Field(() => [WorkspaceCreateManyInput], { nullable: false })
+  @Type(() => WorkspaceCreateManyInput)
+  data!: Array<WorkspaceCreateManyInput>;
 
-    @Field(() => [WorkspaceCreateManyInput], {nullable:false})
-    @Type(() => WorkspaceCreateManyInput)
-    data!: Array<WorkspaceCreateManyInput>;
-
-    @Field(() => Boolean, {nullable:true})
-    skipDuplicates?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  skipDuplicates?: boolean;
 }

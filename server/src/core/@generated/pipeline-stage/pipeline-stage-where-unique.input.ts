@@ -3,7 +3,6 @@ import { InputType } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineStageWhereUniqueInput {
-
-    @Field(() => String, {nullable:true})
-    id?: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 }

@@ -11,31 +11,37 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressUpdateInput {
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  createdAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
+  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+  @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {
+    nullable: true,
+  })
+  progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
 
-    @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {nullable:true})
-    progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  progressableId?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    progressableId?: StringFieldUpdateOperationsInput;
+  @Field(() => PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput, {
+    nullable: true,
+  })
+  pipeline?: PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput;
 
-    @Field(() => PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput, {nullable:true})
-    pipeline?: PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput;
+  @Field(
+    () => PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput,
+    { nullable: true },
+  )
+  pipelineStage?: PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput;
 
-    @Field(() => PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput, {nullable:true})
-    pipelineStage?: PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput;
-
-    @HideField()
-    workspace?: WorkspaceUpdateOneRequiredWithoutPipelineProgressesNestedInput;
+  @HideField()
+  workspace?: WorkspaceUpdateOneRequiredWithoutPipelineProgressesNestedInput;
 }

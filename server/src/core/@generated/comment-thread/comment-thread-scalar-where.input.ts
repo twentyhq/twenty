@@ -7,28 +7,27 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CommentThreadScalarWhereInput {
+  @Field(() => [CommentThreadScalarWhereInput], { nullable: true })
+  AND?: Array<CommentThreadScalarWhereInput>;
 
-    @Field(() => [CommentThreadScalarWhereInput], {nullable:true})
-    AND?: Array<CommentThreadScalarWhereInput>;
+  @Field(() => [CommentThreadScalarWhereInput], { nullable: true })
+  OR?: Array<CommentThreadScalarWhereInput>;
 
-    @Field(() => [CommentThreadScalarWhereInput], {nullable:true})
-    OR?: Array<CommentThreadScalarWhereInput>;
+  @Field(() => [CommentThreadScalarWhereInput], { nullable: true })
+  NOT?: Array<CommentThreadScalarWhereInput>;
 
-    @Field(() => [CommentThreadScalarWhereInput], {nullable:true})
-    NOT?: Array<CommentThreadScalarWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
-
-    @HideField()
-    workspaceId?: StringFilter;
+  @HideField()
+  workspaceId?: StringFilter;
 }

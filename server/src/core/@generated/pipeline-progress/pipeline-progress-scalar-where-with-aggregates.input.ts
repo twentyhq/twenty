@@ -8,40 +8,47 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressScalarWhereWithAggregatesInput {
+  @Field(() => [PipelineProgressScalarWhereWithAggregatesInput], {
+    nullable: true,
+  })
+  AND?: Array<PipelineProgressScalarWhereWithAggregatesInput>;
 
-    @Field(() => [PipelineProgressScalarWhereWithAggregatesInput], {nullable:true})
-    AND?: Array<PipelineProgressScalarWhereWithAggregatesInput>;
+  @Field(() => [PipelineProgressScalarWhereWithAggregatesInput], {
+    nullable: true,
+  })
+  OR?: Array<PipelineProgressScalarWhereWithAggregatesInput>;
 
-    @Field(() => [PipelineProgressScalarWhereWithAggregatesInput], {nullable:true})
-    OR?: Array<PipelineProgressScalarWhereWithAggregatesInput>;
+  @Field(() => [PipelineProgressScalarWhereWithAggregatesInput], {
+    nullable: true,
+  })
+  NOT?: Array<PipelineProgressScalarWhereWithAggregatesInput>;
 
-    @Field(() => [PipelineProgressScalarWhereWithAggregatesInput], {nullable:true})
-    NOT?: Array<PipelineProgressScalarWhereWithAggregatesInput>;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  id?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    id?: StringWithAggregatesFilter;
+  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
+  createdAt?: DateTimeWithAggregatesFilter;
 
-    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
-    createdAt?: DateTimeWithAggregatesFilter;
+  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
+  updatedAt?: DateTimeWithAggregatesFilter;
 
-    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
-    updatedAt?: DateTimeWithAggregatesFilter;
+  @Field(() => DateTimeNullableWithAggregatesFilter, { nullable: true })
+  deletedAt?: DateTimeNullableWithAggregatesFilter;
 
-    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
-    deletedAt?: DateTimeNullableWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  pipelineId?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    pipelineId?: StringWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  pipelineStageId?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    pipelineStageId?: StringWithAggregatesFilter;
+  @Field(() => EnumPipelineProgressableTypeWithAggregatesFilter, {
+    nullable: true,
+  })
+  progressableType?: EnumPipelineProgressableTypeWithAggregatesFilter;
 
-    @Field(() => EnumPipelineProgressableTypeWithAggregatesFilter, {nullable:true})
-    progressableType?: EnumPipelineProgressableTypeWithAggregatesFilter;
+  @Field(() => StringWithAggregatesFilter, { nullable: true })
+  progressableId?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    progressableId?: StringWithAggregatesFilter;
-
-    @HideField()
-    workspaceId?: StringWithAggregatesFilter;
+  @HideField()
+  workspaceId?: StringWithAggregatesFilter;
 }

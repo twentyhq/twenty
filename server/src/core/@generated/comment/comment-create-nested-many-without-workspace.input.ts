@@ -8,20 +8,21 @@ import { CommentWhereUniqueInput } from './comment-where-unique.input';
 
 @InputType()
 export class CommentCreateNestedManyWithoutWorkspaceInput {
+  @Field(() => [CommentCreateWithoutWorkspaceInput], { nullable: true })
+  @Type(() => CommentCreateWithoutWorkspaceInput)
+  create?: Array<CommentCreateWithoutWorkspaceInput>;
 
-    @Field(() => [CommentCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CommentCreateWithoutWorkspaceInput)
-    create?: Array<CommentCreateWithoutWorkspaceInput>;
+  @Field(() => [CommentCreateOrConnectWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => CommentCreateOrConnectWithoutWorkspaceInput)
+  connectOrCreate?: Array<CommentCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => [CommentCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CommentCreateOrConnectWithoutWorkspaceInput)
-    connectOrCreate?: Array<CommentCreateOrConnectWithoutWorkspaceInput>;
+  @Field(() => CommentCreateManyWorkspaceInputEnvelope, { nullable: true })
+  @Type(() => CommentCreateManyWorkspaceInputEnvelope)
+  createMany?: CommentCreateManyWorkspaceInputEnvelope;
 
-    @Field(() => CommentCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => CommentCreateManyWorkspaceInputEnvelope)
-    createMany?: CommentCreateManyWorkspaceInputEnvelope;
-
-    @Field(() => [CommentWhereUniqueInput], {nullable:true})
-    @Type(() => CommentWhereUniqueInput)
-    connect?: Array<CommentWhereUniqueInput>;
+  @Field(() => [CommentWhereUniqueInput], { nullable: true })
+  @Type(() => CommentWhereUniqueInput)
+  connect?: Array<CommentWhereUniqueInput>;
 }

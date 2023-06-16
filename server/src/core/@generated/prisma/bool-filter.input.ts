@@ -4,10 +4,9 @@ import { NestedBoolFilter } from './nested-bool-filter.input';
 
 @InputType()
 export class BoolFilter {
+  @Field(() => Boolean, { nullable: true })
+  equals?: boolean;
 
-    @Field(() => Boolean, {nullable:true})
-    equals?: boolean;
-
-    @Field(() => NestedBoolFilter, {nullable:true})
-    not?: NestedBoolFilter;
+  @Field(() => NestedBoolFilter, { nullable: true })
+  not?: NestedBoolFilter;
 }

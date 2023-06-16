@@ -10,26 +10,25 @@ import { CompanyUpdateWithoutPeopleInput } from './company-update-without-people
 
 @InputType()
 export class CompanyUpdateOneWithoutPeopleNestedInput {
+  @HideField()
+  create?: CompanyCreateWithoutPeopleInput;
 
-    @HideField()
-    create?: CompanyCreateWithoutPeopleInput;
+  @HideField()
+  connectOrCreate?: CompanyCreateOrConnectWithoutPeopleInput;
 
-    @HideField()
-    connectOrCreate?: CompanyCreateOrConnectWithoutPeopleInput;
+  @HideField()
+  upsert?: CompanyUpsertWithoutPeopleInput;
 
-    @HideField()
-    upsert?: CompanyUpsertWithoutPeopleInput;
+  @HideField()
+  disconnect?: boolean;
 
-    @HideField()
-    disconnect?: boolean;
+  @HideField()
+  delete?: boolean;
 
-    @HideField()
-    delete?: boolean;
+  @Field(() => CompanyWhereUniqueInput, { nullable: true })
+  @Type(() => CompanyWhereUniqueInput)
+  connect?: CompanyWhereUniqueInput;
 
-    @Field(() => CompanyWhereUniqueInput, {nullable:true})
-    @Type(() => CompanyWhereUniqueInput)
-    connect?: CompanyWhereUniqueInput;
-
-    @HideField()
-    update?: CompanyUpdateWithoutPeopleInput;
+  @HideField()
+  update?: CompanyUpdateWithoutPeopleInput;
 }

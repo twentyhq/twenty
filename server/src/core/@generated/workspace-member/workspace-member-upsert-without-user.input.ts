@@ -6,12 +6,11 @@ import { WorkspaceMemberCreateWithoutUserInput } from './workspace-member-create
 
 @InputType()
 export class WorkspaceMemberUpsertWithoutUserInput {
+  @Field(() => WorkspaceMemberUpdateWithoutUserInput, { nullable: false })
+  @Type(() => WorkspaceMemberUpdateWithoutUserInput)
+  update!: WorkspaceMemberUpdateWithoutUserInput;
 
-    @Field(() => WorkspaceMemberUpdateWithoutUserInput, {nullable:false})
-    @Type(() => WorkspaceMemberUpdateWithoutUserInput)
-    update!: WorkspaceMemberUpdateWithoutUserInput;
-
-    @Field(() => WorkspaceMemberCreateWithoutUserInput, {nullable:false})
-    @Type(() => WorkspaceMemberCreateWithoutUserInput)
-    create!: WorkspaceMemberCreateWithoutUserInput;
+  @Field(() => WorkspaceMemberCreateWithoutUserInput, { nullable: false })
+  @Type(() => WorkspaceMemberCreateWithoutUserInput)
+  create!: WorkspaceMemberCreateWithoutUserInput;
 }

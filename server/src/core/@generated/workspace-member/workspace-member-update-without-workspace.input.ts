@@ -7,19 +7,20 @@ import { UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput } from '../user/
 
 @InputType()
 export class WorkspaceMemberUpdateWithoutWorkspaceInput {
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  createdAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
+  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
-
-    @Field(() => UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput, {nullable:true})
-    user?: UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput;
+  @Field(() => UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput, {
+    nullable: true,
+  })
+  user?: UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput;
 }

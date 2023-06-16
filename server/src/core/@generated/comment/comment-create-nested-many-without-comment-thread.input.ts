@@ -9,17 +9,16 @@ import { CommentWhereUniqueInput } from './comment-where-unique.input';
 
 @InputType()
 export class CommentCreateNestedManyWithoutCommentThreadInput {
+  @HideField()
+  create?: Array<CommentCreateWithoutCommentThreadInput>;
 
-    @HideField()
-    create?: Array<CommentCreateWithoutCommentThreadInput>;
+  @HideField()
+  connectOrCreate?: Array<CommentCreateOrConnectWithoutCommentThreadInput>;
 
-    @HideField()
-    connectOrCreate?: Array<CommentCreateOrConnectWithoutCommentThreadInput>;
+  @Field(() => CommentCreateManyCommentThreadInputEnvelope, { nullable: true })
+  @Type(() => CommentCreateManyCommentThreadInputEnvelope)
+  createMany?: CommentCreateManyCommentThreadInputEnvelope;
 
-    @Field(() => CommentCreateManyCommentThreadInputEnvelope, {nullable:true})
-    @Type(() => CommentCreateManyCommentThreadInputEnvelope)
-    createMany?: CommentCreateManyCommentThreadInputEnvelope;
-
-    @HideField()
-    connect?: Array<CommentWhereUniqueInput>;
+  @HideField()
+  connect?: Array<CommentWhereUniqueInput>;
 }

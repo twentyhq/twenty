@@ -6,12 +6,13 @@ import { WorkspaceCreateWithoutPipelineProgressesInput } from './workspace-creat
 
 @InputType()
 export class WorkspaceCreateOrConnectWithoutPipelineProgressesInput {
+  @Field(() => WorkspaceWhereUniqueInput, { nullable: false })
+  @Type(() => WorkspaceWhereUniqueInput)
+  where!: WorkspaceWhereUniqueInput;
 
-    @Field(() => WorkspaceWhereUniqueInput, {nullable:false})
-    @Type(() => WorkspaceWhereUniqueInput)
-    where!: WorkspaceWhereUniqueInput;
-
-    @Field(() => WorkspaceCreateWithoutPipelineProgressesInput, {nullable:false})
-    @Type(() => WorkspaceCreateWithoutPipelineProgressesInput)
-    create!: WorkspaceCreateWithoutPipelineProgressesInput;
+  @Field(() => WorkspaceCreateWithoutPipelineProgressesInput, {
+    nullable: false,
+  })
+  @Type(() => WorkspaceCreateWithoutPipelineProgressesInput)
+  create!: WorkspaceCreateWithoutPipelineProgressesInput;
 }

@@ -14,52 +14,51 @@ import { HideField } from '@nestjs/graphql';
 
 @ObjectType({})
 export class Workspace {
+  @Field(() => ID, { nullable: false })
+  id!: string;
 
-    @Field(() => ID, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: false })
+  createdAt!: Date;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
+  @Field(() => Date, { nullable: false })
+  updatedAt!: Date;
 
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
+  @Field(() => Date, { nullable: true })
+  deletedAt!: Date | null;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
+  @Field(() => String, { nullable: false })
+  domainName!: string;
 
-    @Field(() => String, {nullable:false})
-    domainName!: string;
+  @Field(() => String, { nullable: false })
+  displayName!: string;
 
-    @Field(() => String, {nullable:false})
-    displayName!: string;
+  @Field(() => String, { nullable: true })
+  logo!: string | null;
 
-    @Field(() => String, {nullable:true})
-    logo!: string | null;
+  @Field(() => [WorkspaceMember], { nullable: true })
+  workspaceMember?: Array<WorkspaceMember>;
 
-    @Field(() => [WorkspaceMember], {nullable:true})
-    workspaceMember?: Array<WorkspaceMember>;
+  @Field(() => [Company], { nullable: true })
+  companies?: Array<Company>;
 
-    @Field(() => [Company], {nullable:true})
-    companies?: Array<Company>;
+  @Field(() => [Person], { nullable: true })
+  people?: Array<Person>;
 
-    @Field(() => [Person], {nullable:true})
-    people?: Array<Person>;
+  @Field(() => [CommentThread], { nullable: true })
+  commentThreads?: Array<CommentThread>;
 
-    @Field(() => [CommentThread], {nullable:true})
-    commentThreads?: Array<CommentThread>;
+  @Field(() => [Comment], { nullable: true })
+  comments?: Array<Comment>;
 
-    @Field(() => [Comment], {nullable:true})
-    comments?: Array<Comment>;
+  @Field(() => [Pipeline], { nullable: true })
+  pipelines?: Array<Pipeline>;
 
-    @Field(() => [Pipeline], {nullable:true})
-    pipelines?: Array<Pipeline>;
+  @Field(() => [PipelineStage], { nullable: true })
+  pipelineStages?: Array<PipelineStage>;
 
-    @Field(() => [PipelineStage], {nullable:true})
-    pipelineStages?: Array<PipelineStage>;
+  @Field(() => [PipelineProgress], { nullable: true })
+  pipelineProgresses?: Array<PipelineProgress>;
 
-    @Field(() => [PipelineProgress], {nullable:true})
-    pipelineProgresses?: Array<PipelineProgress>;
-
-    @HideField()
-    _count?: WorkspaceCount;
+  @HideField()
+  _count?: WorkspaceCount;
 }

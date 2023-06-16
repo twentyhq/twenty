@@ -7,16 +7,15 @@ import { CommentThreadUpdateInput } from './comment-thread-update.input';
 
 @ArgsType()
 export class UpsertOneCommentThreadArgs {
+  @Field(() => CommentThreadWhereUniqueInput, { nullable: false })
+  @Type(() => CommentThreadWhereUniqueInput)
+  where!: CommentThreadWhereUniqueInput;
 
-    @Field(() => CommentThreadWhereUniqueInput, {nullable:false})
-    @Type(() => CommentThreadWhereUniqueInput)
-    where!: CommentThreadWhereUniqueInput;
+  @Field(() => CommentThreadCreateInput, { nullable: false })
+  @Type(() => CommentThreadCreateInput)
+  create!: CommentThreadCreateInput;
 
-    @Field(() => CommentThreadCreateInput, {nullable:false})
-    @Type(() => CommentThreadCreateInput)
-    create!: CommentThreadCreateInput;
-
-    @Field(() => CommentThreadUpdateInput, {nullable:false})
-    @Type(() => CommentThreadUpdateInput)
-    update!: CommentThreadUpdateInput;
+  @Field(() => CommentThreadUpdateInput, { nullable: false })
+  @Type(() => CommentThreadUpdateInput)
+  update!: CommentThreadUpdateInput;
 }

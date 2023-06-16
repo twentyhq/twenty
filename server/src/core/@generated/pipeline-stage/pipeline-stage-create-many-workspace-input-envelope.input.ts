@@ -5,11 +5,10 @@ import { Type } from 'class-transformer';
 
 @InputType()
 export class PipelineStageCreateManyWorkspaceInputEnvelope {
+  @Field(() => [PipelineStageCreateManyWorkspaceInput], { nullable: false })
+  @Type(() => PipelineStageCreateManyWorkspaceInput)
+  data!: Array<PipelineStageCreateManyWorkspaceInput>;
 
-    @Field(() => [PipelineStageCreateManyWorkspaceInput], {nullable:false})
-    @Type(() => PipelineStageCreateManyWorkspaceInput)
-    data!: Array<PipelineStageCreateManyWorkspaceInput>;
-
-    @Field(() => Boolean, {nullable:true})
-    skipDuplicates?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  skipDuplicates?: boolean;
 }

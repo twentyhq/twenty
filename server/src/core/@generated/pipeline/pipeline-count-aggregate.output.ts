@@ -5,28 +5,27 @@ import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class PipelineCountAggregate {
+  @Field(() => Int, { nullable: false })
+  id!: number;
 
-    @Field(() => Int, {nullable:false})
-    id!: number;
+  @Field(() => Int, { nullable: false })
+  createdAt!: number;
 
-    @Field(() => Int, {nullable:false})
-    createdAt!: number;
+  @Field(() => Int, { nullable: false })
+  updatedAt!: number;
 
-    @Field(() => Int, {nullable:false})
-    updatedAt!: number;
+  @Field(() => Int, { nullable: false })
+  deletedAt!: number;
 
-    @Field(() => Int, {nullable:false})
-    deletedAt!: number;
+  @Field(() => Int, { nullable: false })
+  name!: number;
 
-    @Field(() => Int, {nullable:false})
-    name!: number;
+  @Field(() => Int, { nullable: false })
+  icon!: number;
 
-    @Field(() => Int, {nullable:false})
-    icon!: number;
+  @HideField()
+  workspaceId!: number;
 
-    @HideField()
-    workspaceId!: number;
-
-    @Field(() => Int, {nullable:false})
-    _all!: number;
+  @Field(() => Int, { nullable: false })
+  _all!: number;
 }

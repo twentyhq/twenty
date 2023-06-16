@@ -7,28 +7,27 @@ import { Workspace } from '../workspace/workspace.model';
 
 @ObjectType()
 export class WorkspaceMember {
+  @Field(() => ID, { nullable: false })
+  id!: string;
 
-    @Field(() => ID, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: false })
+  createdAt!: Date;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
+  @Field(() => Date, { nullable: false })
+  updatedAt!: Date;
 
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
+  @Field(() => Date, { nullable: true })
+  deletedAt!: Date | null;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
+  @Field(() => String, { nullable: false })
+  userId!: string;
 
-    @Field(() => String, {nullable:false})
-    userId!: string;
+  @HideField()
+  workspaceId!: string;
 
-    @HideField()
-    workspaceId!: string;
+  @Field(() => User, { nullable: false })
+  user?: User;
 
-    @Field(() => User, {nullable:false})
-    user?: User;
-
-    @HideField()
-    workspace?: Workspace;
+  @HideField()
+  workspace?: Workspace;
 }

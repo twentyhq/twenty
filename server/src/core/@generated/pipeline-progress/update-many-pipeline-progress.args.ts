@@ -6,12 +6,11 @@ import { PipelineProgressWhereInput } from './pipeline-progress-where.input';
 
 @ArgsType()
 export class UpdateManyPipelineProgressArgs {
+  @Field(() => PipelineProgressUpdateManyMutationInput, { nullable: false })
+  @Type(() => PipelineProgressUpdateManyMutationInput)
+  data!: PipelineProgressUpdateManyMutationInput;
 
-    @Field(() => PipelineProgressUpdateManyMutationInput, {nullable:false})
-    @Type(() => PipelineProgressUpdateManyMutationInput)
-    data!: PipelineProgressUpdateManyMutationInput;
-
-    @Field(() => PipelineProgressWhereInput, {nullable:true})
-    @Type(() => PipelineProgressWhereInput)
-    where?: PipelineProgressWhereInput;
+  @Field(() => PipelineProgressWhereInput, { nullable: true })
+  @Type(() => PipelineProgressWhereInput)
+  where?: PipelineProgressWhereInput;
 }

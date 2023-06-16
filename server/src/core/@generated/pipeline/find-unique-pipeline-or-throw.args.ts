@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class FindUniquePipelineOrThrowArgs {
-
-    @Field(() => PipelineWhereUniqueInput, {nullable:false})
-    @Type(() => PipelineWhereUniqueInput)
-    where!: PipelineWhereUniqueInput;
+  @Field(() => PipelineWhereUniqueInput, { nullable: false })
+  @Type(() => PipelineWhereUniqueInput)
+  where!: PipelineWhereUniqueInput;
 }

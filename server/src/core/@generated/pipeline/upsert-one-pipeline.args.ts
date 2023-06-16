@@ -7,16 +7,15 @@ import { PipelineUpdateInput } from './pipeline-update.input';
 
 @ArgsType()
 export class UpsertOnePipelineArgs {
+  @Field(() => PipelineWhereUniqueInput, { nullable: false })
+  @Type(() => PipelineWhereUniqueInput)
+  where!: PipelineWhereUniqueInput;
 
-    @Field(() => PipelineWhereUniqueInput, {nullable:false})
-    @Type(() => PipelineWhereUniqueInput)
-    where!: PipelineWhereUniqueInput;
+  @Field(() => PipelineCreateInput, { nullable: false })
+  @Type(() => PipelineCreateInput)
+  create!: PipelineCreateInput;
 
-    @Field(() => PipelineCreateInput, {nullable:false})
-    @Type(() => PipelineCreateInput)
-    create!: PipelineCreateInput;
-
-    @Field(() => PipelineUpdateInput, {nullable:false})
-    @Type(() => PipelineUpdateInput)
-    update!: PipelineUpdateInput;
+  @Field(() => PipelineUpdateInput, { nullable: false })
+  @Type(() => PipelineUpdateInput)
+  update!: PipelineUpdateInput;
 }

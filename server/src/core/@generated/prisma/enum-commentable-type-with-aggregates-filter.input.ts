@@ -7,25 +7,26 @@ import { NestedEnumCommentableTypeFilter } from './nested-enum-commentable-type-
 
 @InputType()
 export class EnumCommentableTypeWithAggregatesFilter {
+  @Field(() => CommentableType, { nullable: true })
+  equals?: keyof typeof CommentableType;
 
-    @Field(() => CommentableType, {nullable:true})
-    equals?: keyof typeof CommentableType;
+  @Field(() => [CommentableType], { nullable: true })
+  in?: Array<keyof typeof CommentableType>;
 
-    @Field(() => [CommentableType], {nullable:true})
-    in?: Array<keyof typeof CommentableType>;
+  @Field(() => [CommentableType], { nullable: true })
+  notIn?: Array<keyof typeof CommentableType>;
 
-    @Field(() => [CommentableType], {nullable:true})
-    notIn?: Array<keyof typeof CommentableType>;
+  @Field(() => NestedEnumCommentableTypeWithAggregatesFilter, {
+    nullable: true,
+  })
+  not?: NestedEnumCommentableTypeWithAggregatesFilter;
 
-    @Field(() => NestedEnumCommentableTypeWithAggregatesFilter, {nullable:true})
-    not?: NestedEnumCommentableTypeWithAggregatesFilter;
+  @Field(() => NestedIntFilter, { nullable: true })
+  _count?: NestedIntFilter;
 
-    @Field(() => NestedIntFilter, {nullable:true})
-    _count?: NestedIntFilter;
+  @Field(() => NestedEnumCommentableTypeFilter, { nullable: true })
+  _min?: NestedEnumCommentableTypeFilter;
 
-    @Field(() => NestedEnumCommentableTypeFilter, {nullable:true})
-    _min?: NestedEnumCommentableTypeFilter;
-
-    @Field(() => NestedEnumCommentableTypeFilter, {nullable:true})
-    _max?: NestedEnumCommentableTypeFilter;
+  @Field(() => NestedEnumCommentableTypeFilter, { nullable: true })
+  _max?: NestedEnumCommentableTypeFilter;
 }

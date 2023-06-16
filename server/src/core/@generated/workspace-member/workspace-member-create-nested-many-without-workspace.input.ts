@@ -8,20 +8,23 @@ import { WorkspaceMemberWhereUniqueInput } from './workspace-member-where-unique
 
 @InputType()
 export class WorkspaceMemberCreateNestedManyWithoutWorkspaceInput {
+  @Field(() => [WorkspaceMemberCreateWithoutWorkspaceInput], { nullable: true })
+  @Type(() => WorkspaceMemberCreateWithoutWorkspaceInput)
+  create?: Array<WorkspaceMemberCreateWithoutWorkspaceInput>;
 
-    @Field(() => [WorkspaceMemberCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => WorkspaceMemberCreateWithoutWorkspaceInput)
-    create?: Array<WorkspaceMemberCreateWithoutWorkspaceInput>;
+  @Field(() => [WorkspaceMemberCreateOrConnectWithoutWorkspaceInput], {
+    nullable: true,
+  })
+  @Type(() => WorkspaceMemberCreateOrConnectWithoutWorkspaceInput)
+  connectOrCreate?: Array<WorkspaceMemberCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => [WorkspaceMemberCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => WorkspaceMemberCreateOrConnectWithoutWorkspaceInput)
-    connectOrCreate?: Array<WorkspaceMemberCreateOrConnectWithoutWorkspaceInput>;
+  @Field(() => WorkspaceMemberCreateManyWorkspaceInputEnvelope, {
+    nullable: true,
+  })
+  @Type(() => WorkspaceMemberCreateManyWorkspaceInputEnvelope)
+  createMany?: WorkspaceMemberCreateManyWorkspaceInputEnvelope;
 
-    @Field(() => WorkspaceMemberCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => WorkspaceMemberCreateManyWorkspaceInputEnvelope)
-    createMany?: WorkspaceMemberCreateManyWorkspaceInputEnvelope;
-
-    @Field(() => [WorkspaceMemberWhereUniqueInput], {nullable:true})
-    @Type(() => WorkspaceMemberWhereUniqueInput)
-    connect?: Array<WorkspaceMemberWhereUniqueInput>;
+  @Field(() => [WorkspaceMemberWhereUniqueInput], { nullable: true })
+  @Type(() => WorkspaceMemberWhereUniqueInput)
+  connect?: Array<WorkspaceMemberWhereUniqueInput>;
 }

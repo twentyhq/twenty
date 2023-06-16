@@ -9,23 +9,22 @@ import { PipelineStageScalarFieldEnum } from './pipeline-stage-scalar-field.enum
 
 @ArgsType()
 export class FindManyPipelineStageArgs {
+  @Field(() => PipelineStageWhereInput, { nullable: true })
+  @Type(() => PipelineStageWhereInput)
+  where?: PipelineStageWhereInput;
 
-    @Field(() => PipelineStageWhereInput, {nullable:true})
-    @Type(() => PipelineStageWhereInput)
-    where?: PipelineStageWhereInput;
+  @Field(() => [PipelineStageOrderByWithRelationInput], { nullable: true })
+  orderBy?: Array<PipelineStageOrderByWithRelationInput>;
 
-    @Field(() => [PipelineStageOrderByWithRelationInput], {nullable:true})
-    orderBy?: Array<PipelineStageOrderByWithRelationInput>;
+  @Field(() => PipelineStageWhereUniqueInput, { nullable: true })
+  cursor?: PipelineStageWhereUniqueInput;
 
-    @Field(() => PipelineStageWhereUniqueInput, {nullable:true})
-    cursor?: PipelineStageWhereUniqueInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
-
-    @Field(() => [PipelineStageScalarFieldEnum], {nullable:true})
-    distinct?: Array<keyof typeof PipelineStageScalarFieldEnum>;
+  @Field(() => [PipelineStageScalarFieldEnum], { nullable: true })
+  distinct?: Array<keyof typeof PipelineStageScalarFieldEnum>;
 }

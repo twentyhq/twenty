@@ -9,17 +9,16 @@ import { Type } from 'class-transformer';
 
 @InputType()
 export class PersonCreateNestedManyWithoutCompanyInput {
+  @HideField()
+  create?: Array<PersonCreateWithoutCompanyInput>;
 
-    @HideField()
-    create?: Array<PersonCreateWithoutCompanyInput>;
+  @HideField()
+  connectOrCreate?: Array<PersonCreateOrConnectWithoutCompanyInput>;
 
-    @HideField()
-    connectOrCreate?: Array<PersonCreateOrConnectWithoutCompanyInput>;
+  @HideField()
+  createMany?: PersonCreateManyCompanyInputEnvelope;
 
-    @HideField()
-    createMany?: PersonCreateManyCompanyInputEnvelope;
-
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    connect?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  connect?: Array<PersonWhereUniqueInput>;
 }

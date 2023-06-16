@@ -7,43 +7,42 @@ import { Workspace } from '../workspace/workspace.model';
 
 @ObjectType()
 export class Person {
+  @Field(() => ID, { nullable: false })
+  id!: string;
 
-    @Field(() => ID, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: false })
+  createdAt!: Date;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
+  @Field(() => Date, { nullable: false })
+  updatedAt!: Date;
 
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
+  @Field(() => Date, { nullable: true })
+  deletedAt!: Date | null;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
+  @Field(() => String, { nullable: false })
+  firstname!: string;
 
-    @Field(() => String, {nullable:false})
-    firstname!: string;
+  @Field(() => String, { nullable: false })
+  lastname!: string;
 
-    @Field(() => String, {nullable:false})
-    lastname!: string;
+  @Field(() => String, { nullable: false })
+  email!: string;
 
-    @Field(() => String, {nullable:false})
-    email!: string;
+  @Field(() => String, { nullable: false })
+  phone!: string;
 
-    @Field(() => String, {nullable:false})
-    phone!: string;
+  @Field(() => String, { nullable: false })
+  city!: string;
 
-    @Field(() => String, {nullable:false})
-    city!: string;
+  @Field(() => String, { nullable: true })
+  companyId!: string | null;
 
-    @Field(() => String, {nullable:true})
-    companyId!: string | null;
+  @HideField()
+  workspaceId!: string;
 
-    @HideField()
-    workspaceId!: string;
+  @Field(() => Company, { nullable: true })
+  company?: Company | null;
 
-    @Field(() => Company, {nullable:true})
-    company?: Company | null;
-
-    @HideField()
-    workspace?: Workspace;
+  @HideField()
+  workspace?: Workspace;
 }

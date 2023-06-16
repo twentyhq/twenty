@@ -8,25 +8,29 @@ import { CommentThreadUpdateOneRequiredWithoutCommentThreadTargetsNestedInput } 
 
 @InputType()
 export class CommentThreadTargetUpdateInput {
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  createdAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
+  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+  @Field(() => EnumCommentableTypeFieldUpdateOperationsInput, {
+    nullable: true,
+  })
+  commentableType?: EnumCommentableTypeFieldUpdateOperationsInput;
 
-    @Field(() => EnumCommentableTypeFieldUpdateOperationsInput, {nullable:true})
-    commentableType?: EnumCommentableTypeFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  commentableId?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    commentableId?: StringFieldUpdateOperationsInput;
-
-    @Field(() => CommentThreadUpdateOneRequiredWithoutCommentThreadTargetsNestedInput, {nullable:true})
-    commentThread?: CommentThreadUpdateOneRequiredWithoutCommentThreadTargetsNestedInput;
+  @Field(
+    () => CommentThreadUpdateOneRequiredWithoutCommentThreadTargetsNestedInput,
+    { nullable: true },
+  )
+  commentThread?: CommentThreadUpdateOneRequiredWithoutCommentThreadTargetsNestedInput;
 }

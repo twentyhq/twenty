@@ -5,11 +5,10 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class CreateManyPipelineStageArgs {
+  @Field(() => [PipelineStageCreateManyInput], { nullable: false })
+  @Type(() => PipelineStageCreateManyInput)
+  data!: Array<PipelineStageCreateManyInput>;
 
-    @Field(() => [PipelineStageCreateManyInput], {nullable:false})
-    @Type(() => PipelineStageCreateManyInput)
-    data!: Array<PipelineStageCreateManyInput>;
-
-    @Field(() => Boolean, {nullable:true})
-    skipDuplicates?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  skipDuplicates?: boolean;
 }

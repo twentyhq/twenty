@@ -6,12 +6,15 @@ import { PipelineStageCreateWithoutPipelineProgressesInput } from './pipeline-st
 
 @InputType()
 export class PipelineStageUpsertWithoutPipelineProgressesInput {
+  @Field(() => PipelineStageUpdateWithoutPipelineProgressesInput, {
+    nullable: false,
+  })
+  @Type(() => PipelineStageUpdateWithoutPipelineProgressesInput)
+  update!: PipelineStageUpdateWithoutPipelineProgressesInput;
 
-    @Field(() => PipelineStageUpdateWithoutPipelineProgressesInput, {nullable:false})
-    @Type(() => PipelineStageUpdateWithoutPipelineProgressesInput)
-    update!: PipelineStageUpdateWithoutPipelineProgressesInput;
-
-    @Field(() => PipelineStageCreateWithoutPipelineProgressesInput, {nullable:false})
-    @Type(() => PipelineStageCreateWithoutPipelineProgressesInput)
-    create!: PipelineStageCreateWithoutPipelineProgressesInput;
+  @Field(() => PipelineStageCreateWithoutPipelineProgressesInput, {
+    nullable: false,
+  })
+  @Type(() => PipelineStageCreateWithoutPipelineProgressesInput)
+  create!: PipelineStageCreateWithoutPipelineProgressesInput;
 }

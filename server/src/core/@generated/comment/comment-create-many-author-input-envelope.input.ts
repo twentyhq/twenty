@@ -5,11 +5,10 @@ import { Type } from 'class-transformer';
 
 @InputType()
 export class CommentCreateManyAuthorInputEnvelope {
+  @Field(() => [CommentCreateManyAuthorInput], { nullable: false })
+  @Type(() => CommentCreateManyAuthorInput)
+  data!: Array<CommentCreateManyAuthorInput>;
 
-    @Field(() => [CommentCreateManyAuthorInput], {nullable:false})
-    @Type(() => CommentCreateManyAuthorInput)
-    data!: Array<CommentCreateManyAuthorInput>;
-
-    @Field(() => Boolean, {nullable:true})
-    skipDuplicates?: boolean;
+  @Field(() => Boolean, { nullable: true })
+  skipDuplicates?: boolean;
 }

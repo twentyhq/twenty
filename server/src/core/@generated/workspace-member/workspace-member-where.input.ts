@@ -9,37 +9,36 @@ import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.
 
 @InputType()
 export class WorkspaceMemberWhereInput {
+  @Field(() => [WorkspaceMemberWhereInput], { nullable: true })
+  AND?: Array<WorkspaceMemberWhereInput>;
 
-    @Field(() => [WorkspaceMemberWhereInput], {nullable:true})
-    AND?: Array<WorkspaceMemberWhereInput>;
+  @Field(() => [WorkspaceMemberWhereInput], { nullable: true })
+  OR?: Array<WorkspaceMemberWhereInput>;
 
-    @Field(() => [WorkspaceMemberWhereInput], {nullable:true})
-    OR?: Array<WorkspaceMemberWhereInput>;
+  @Field(() => [WorkspaceMemberWhereInput], { nullable: true })
+  NOT?: Array<WorkspaceMemberWhereInput>;
 
-    @Field(() => [WorkspaceMemberWhereInput], {nullable:true})
-    NOT?: Array<WorkspaceMemberWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @Field(() => StringFilter, { nullable: true })
+  userId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    userId?: StringFilter;
+  @HideField()
+  workspaceId?: StringFilter;
 
-    @HideField()
-    workspaceId?: StringFilter;
+  @Field(() => UserRelationFilter, { nullable: true })
+  user?: UserRelationFilter;
 
-    @Field(() => UserRelationFilter, {nullable:true})
-    user?: UserRelationFilter;
-
-    @HideField()
-    workspace?: WorkspaceRelationFilter;
+  @HideField()
+  workspace?: WorkspaceRelationFilter;
 }

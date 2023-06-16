@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class CreateOneCommentArgs {
-
-    @Field(() => CommentCreateInput, {nullable:false})
-    @Type(() => CommentCreateInput)
-    data!: CommentCreateInput;
+  @Field(() => CommentCreateInput, { nullable: false })
+  @Type(() => CommentCreateInput)
+  data!: CommentCreateInput;
 }

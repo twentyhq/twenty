@@ -13,38 +13,37 @@ import { PersonScalarWhereInput } from './person-scalar-where.input';
 
 @InputType()
 export class PersonUpdateManyWithoutCompanyNestedInput {
+  @HideField()
+  create?: Array<PersonCreateWithoutCompanyInput>;
 
-    @HideField()
-    create?: Array<PersonCreateWithoutCompanyInput>;
+  @HideField()
+  connectOrCreate?: Array<PersonCreateOrConnectWithoutCompanyInput>;
 
-    @HideField()
-    connectOrCreate?: Array<PersonCreateOrConnectWithoutCompanyInput>;
+  @HideField()
+  upsert?: Array<PersonUpsertWithWhereUniqueWithoutCompanyInput>;
 
-    @HideField()
-    upsert?: Array<PersonUpsertWithWhereUniqueWithoutCompanyInput>;
+  @HideField()
+  createMany?: PersonCreateManyCompanyInputEnvelope;
 
-    @HideField()
-    createMany?: PersonCreateManyCompanyInputEnvelope;
+  @HideField()
+  set?: Array<PersonWhereUniqueInput>;
 
-    @HideField()
-    set?: Array<PersonWhereUniqueInput>;
+  @HideField()
+  disconnect?: Array<PersonWhereUniqueInput>;
 
-    @HideField()
-    disconnect?: Array<PersonWhereUniqueInput>;
+  @HideField()
+  delete?: Array<PersonWhereUniqueInput>;
 
-    @HideField()
-    delete?: Array<PersonWhereUniqueInput>;
+  @Field(() => [PersonWhereUniqueInput], { nullable: true })
+  @Type(() => PersonWhereUniqueInput)
+  connect?: Array<PersonWhereUniqueInput>;
 
-    @Field(() => [PersonWhereUniqueInput], {nullable:true})
-    @Type(() => PersonWhereUniqueInput)
-    connect?: Array<PersonWhereUniqueInput>;
+  @HideField()
+  update?: Array<PersonUpdateWithWhereUniqueWithoutCompanyInput>;
 
-    @HideField()
-    update?: Array<PersonUpdateWithWhereUniqueWithoutCompanyInput>;
+  @HideField()
+  updateMany?: Array<PersonUpdateManyWithWhereWithoutCompanyInput>;
 
-    @HideField()
-    updateMany?: Array<PersonUpdateManyWithWhereWithoutCompanyInput>;
-
-    @HideField()
-    deleteMany?: Array<PersonScalarWhereInput>;
+  @HideField()
+  deleteMany?: Array<PersonScalarWhereInput>;
 }

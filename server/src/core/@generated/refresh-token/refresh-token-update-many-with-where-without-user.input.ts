@@ -6,12 +6,11 @@ import { RefreshTokenUpdateManyMutationInput } from './refresh-token-update-many
 
 @InputType()
 export class RefreshTokenUpdateManyWithWhereWithoutUserInput {
+  @Field(() => RefreshTokenScalarWhereInput, { nullable: false })
+  @Type(() => RefreshTokenScalarWhereInput)
+  where!: RefreshTokenScalarWhereInput;
 
-    @Field(() => RefreshTokenScalarWhereInput, {nullable:false})
-    @Type(() => RefreshTokenScalarWhereInput)
-    where!: RefreshTokenScalarWhereInput;
-
-    @Field(() => RefreshTokenUpdateManyMutationInput, {nullable:false})
-    @Type(() => RefreshTokenUpdateManyMutationInput)
-    data!: RefreshTokenUpdateManyMutationInput;
+  @Field(() => RefreshTokenUpdateManyMutationInput, { nullable: false })
+  @Type(() => RefreshTokenUpdateManyMutationInput)
+  data!: RefreshTokenUpdateManyMutationInput;
 }

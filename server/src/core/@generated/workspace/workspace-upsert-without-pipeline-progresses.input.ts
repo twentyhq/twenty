@@ -6,12 +6,15 @@ import { WorkspaceCreateWithoutPipelineProgressesInput } from './workspace-creat
 
 @InputType()
 export class WorkspaceUpsertWithoutPipelineProgressesInput {
+  @Field(() => WorkspaceUpdateWithoutPipelineProgressesInput, {
+    nullable: false,
+  })
+  @Type(() => WorkspaceUpdateWithoutPipelineProgressesInput)
+  update!: WorkspaceUpdateWithoutPipelineProgressesInput;
 
-    @Field(() => WorkspaceUpdateWithoutPipelineProgressesInput, {nullable:false})
-    @Type(() => WorkspaceUpdateWithoutPipelineProgressesInput)
-    update!: WorkspaceUpdateWithoutPipelineProgressesInput;
-
-    @Field(() => WorkspaceCreateWithoutPipelineProgressesInput, {nullable:false})
-    @Type(() => WorkspaceCreateWithoutPipelineProgressesInput)
-    create!: WorkspaceCreateWithoutPipelineProgressesInput;
+  @Field(() => WorkspaceCreateWithoutPipelineProgressesInput, {
+    nullable: false,
+  })
+  @Type(() => WorkspaceCreateWithoutPipelineProgressesInput)
+  create!: WorkspaceCreateWithoutPipelineProgressesInput;
 }

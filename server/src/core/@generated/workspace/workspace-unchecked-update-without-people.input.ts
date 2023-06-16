@@ -14,46 +14,59 @@ import { PipelineProgressUncheckedUpdateManyWithoutWorkspaceNestedInput } from '
 
 @InputType()
 export class WorkspaceUncheckedUpdateWithoutPeopleInput {
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  createdAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
+  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  domainName?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    domainName?: StringFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  displayName?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    displayName?: StringFieldUpdateOperationsInput;
+  @Field(() => NullableStringFieldUpdateOperationsInput, { nullable: true })
+  logo?: NullableStringFieldUpdateOperationsInput;
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    logo?: NullableStringFieldUpdateOperationsInput;
+  @Field(() => WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  workspaceMember?: WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
-    @Field(() => WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
-    workspaceMember?: WorkspaceMemberUncheckedUpdateManyWithoutWorkspaceNestedInput;
+  @Field(() => CompanyUncheckedUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  companies?: CompanyUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
-    @Field(() => CompanyUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
-    companies?: CompanyUncheckedUpdateManyWithoutWorkspaceNestedInput;
+  @Field(() => CommentThreadUncheckedUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  commentThreads?: CommentThreadUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
-    @Field(() => CommentThreadUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
-    commentThreads?: CommentThreadUncheckedUpdateManyWithoutWorkspaceNestedInput;
+  @Field(() => CommentUncheckedUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  comments?: CommentUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
-    @Field(() => CommentUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
-    comments?: CommentUncheckedUpdateManyWithoutWorkspaceNestedInput;
+  @Field(() => PipelineUncheckedUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  pipelines?: PipelineUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
-    @Field(() => PipelineUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
-    pipelines?: PipelineUncheckedUpdateManyWithoutWorkspaceNestedInput;
+  @Field(() => PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  pipelineStages?: PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput;
 
-    @Field(() => PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
-    pipelineStages?: PipelineStageUncheckedUpdateManyWithoutWorkspaceNestedInput;
-
-    @Field(() => PipelineProgressUncheckedUpdateManyWithoutWorkspaceNestedInput, {nullable:true})
-    pipelineProgresses?: PipelineProgressUncheckedUpdateManyWithoutWorkspaceNestedInput;
+  @Field(() => PipelineProgressUncheckedUpdateManyWithoutWorkspaceNestedInput, {
+    nullable: true,
+  })
+  pipelineProgresses?: PipelineProgressUncheckedUpdateManyWithoutWorkspaceNestedInput;
 }

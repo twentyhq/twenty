@@ -11,29 +11,28 @@ import { WorkspaceMemberMaxAggregateInput } from './workspace-member-max-aggrega
 
 @ArgsType()
 export class WorkspaceMemberAggregateArgs {
+  @Field(() => WorkspaceMemberWhereInput, { nullable: true })
+  @Type(() => WorkspaceMemberWhereInput)
+  where?: WorkspaceMemberWhereInput;
 
-    @Field(() => WorkspaceMemberWhereInput, {nullable:true})
-    @Type(() => WorkspaceMemberWhereInput)
-    where?: WorkspaceMemberWhereInput;
+  @Field(() => [WorkspaceMemberOrderByWithRelationInput], { nullable: true })
+  orderBy?: Array<WorkspaceMemberOrderByWithRelationInput>;
 
-    @Field(() => [WorkspaceMemberOrderByWithRelationInput], {nullable:true})
-    orderBy?: Array<WorkspaceMemberOrderByWithRelationInput>;
+  @Field(() => WorkspaceMemberWhereUniqueInput, { nullable: true })
+  cursor?: WorkspaceMemberWhereUniqueInput;
 
-    @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:true})
-    cursor?: WorkspaceMemberWhereUniqueInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
+  @Field(() => WorkspaceMemberCountAggregateInput, { nullable: true })
+  _count?: WorkspaceMemberCountAggregateInput;
 
-    @Field(() => WorkspaceMemberCountAggregateInput, {nullable:true})
-    _count?: WorkspaceMemberCountAggregateInput;
+  @Field(() => WorkspaceMemberMinAggregateInput, { nullable: true })
+  _min?: WorkspaceMemberMinAggregateInput;
 
-    @Field(() => WorkspaceMemberMinAggregateInput, {nullable:true})
-    _min?: WorkspaceMemberMinAggregateInput;
-
-    @Field(() => WorkspaceMemberMaxAggregateInput, {nullable:true})
-    _max?: WorkspaceMemberMaxAggregateInput;
+  @Field(() => WorkspaceMemberMaxAggregateInput, { nullable: true })
+  _max?: WorkspaceMemberMaxAggregateInput;
 }

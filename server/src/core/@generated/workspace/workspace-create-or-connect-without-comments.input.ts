@@ -6,12 +6,11 @@ import { WorkspaceCreateWithoutCommentsInput } from './workspace-create-without-
 
 @InputType()
 export class WorkspaceCreateOrConnectWithoutCommentsInput {
+  @Field(() => WorkspaceWhereUniqueInput, { nullable: false })
+  @Type(() => WorkspaceWhereUniqueInput)
+  where!: WorkspaceWhereUniqueInput;
 
-    @Field(() => WorkspaceWhereUniqueInput, {nullable:false})
-    @Type(() => WorkspaceWhereUniqueInput)
-    where!: WorkspaceWhereUniqueInput;
-
-    @Field(() => WorkspaceCreateWithoutCommentsInput, {nullable:false})
-    @Type(() => WorkspaceCreateWithoutCommentsInput)
-    create!: WorkspaceCreateWithoutCommentsInput;
+  @Field(() => WorkspaceCreateWithoutCommentsInput, { nullable: false })
+  @Type(() => WorkspaceCreateWithoutCommentsInput)
+  create!: WorkspaceCreateWithoutCommentsInput;
 }

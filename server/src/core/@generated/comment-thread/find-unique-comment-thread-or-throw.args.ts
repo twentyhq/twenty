@@ -5,8 +5,7 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class FindUniqueCommentThreadOrThrowArgs {
-
-    @Field(() => CommentThreadWhereUniqueInput, {nullable:false})
-    @Type(() => CommentThreadWhereUniqueInput)
-    where!: CommentThreadWhereUniqueInput;
+  @Field(() => CommentThreadWhereUniqueInput, { nullable: false })
+  @Type(() => CommentThreadWhereUniqueInput)
+  where!: CommentThreadWhereUniqueInput;
 }

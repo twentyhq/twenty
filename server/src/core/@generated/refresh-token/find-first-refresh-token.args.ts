@@ -9,23 +9,22 @@ import { RefreshTokenScalarFieldEnum } from './refresh-token-scalar-field.enum';
 
 @ArgsType()
 export class FindFirstRefreshTokenArgs {
+  @Field(() => RefreshTokenWhereInput, { nullable: true })
+  @Type(() => RefreshTokenWhereInput)
+  where?: RefreshTokenWhereInput;
 
-    @Field(() => RefreshTokenWhereInput, {nullable:true})
-    @Type(() => RefreshTokenWhereInput)
-    where?: RefreshTokenWhereInput;
+  @Field(() => [RefreshTokenOrderByWithRelationInput], { nullable: true })
+  orderBy?: Array<RefreshTokenOrderByWithRelationInput>;
 
-    @Field(() => [RefreshTokenOrderByWithRelationInput], {nullable:true})
-    orderBy?: Array<RefreshTokenOrderByWithRelationInput>;
+  @Field(() => RefreshTokenWhereUniqueInput, { nullable: true })
+  cursor?: RefreshTokenWhereUniqueInput;
 
-    @Field(() => RefreshTokenWhereUniqueInput, {nullable:true})
-    cursor?: RefreshTokenWhereUniqueInput;
+  @Field(() => Int, { nullable: true })
+  take?: number;
 
-    @Field(() => Int, {nullable:true})
-    take?: number;
+  @Field(() => Int, { nullable: true })
+  skip?: number;
 
-    @Field(() => Int, {nullable:true})
-    skip?: number;
-
-    @Field(() => [RefreshTokenScalarFieldEnum], {nullable:true})
-    distinct?: Array<keyof typeof RefreshTokenScalarFieldEnum>;
+  @Field(() => [RefreshTokenScalarFieldEnum], { nullable: true })
+  distinct?: Array<keyof typeof RefreshTokenScalarFieldEnum>;
 }

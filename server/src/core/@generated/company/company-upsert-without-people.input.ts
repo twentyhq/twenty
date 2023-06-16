@@ -6,12 +6,11 @@ import { CompanyCreateWithoutPeopleInput } from './company-create-without-people
 
 @InputType()
 export class CompanyUpsertWithoutPeopleInput {
+  @Field(() => CompanyUpdateWithoutPeopleInput, { nullable: false })
+  @Type(() => CompanyUpdateWithoutPeopleInput)
+  update!: CompanyUpdateWithoutPeopleInput;
 
-    @Field(() => CompanyUpdateWithoutPeopleInput, {nullable:false})
-    @Type(() => CompanyUpdateWithoutPeopleInput)
-    update!: CompanyUpdateWithoutPeopleInput;
-
-    @Field(() => CompanyCreateWithoutPeopleInput, {nullable:false})
-    @Type(() => CompanyCreateWithoutPeopleInput)
-    create!: CompanyCreateWithoutPeopleInput;
+  @Field(() => CompanyCreateWithoutPeopleInput, { nullable: false })
+  @Type(() => CompanyCreateWithoutPeopleInput)
+  create!: CompanyCreateWithoutPeopleInput;
 }

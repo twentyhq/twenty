@@ -9,28 +9,29 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineUpdateWithoutPipelineStagesInput {
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  id?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  createdAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
+  updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
+  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  name?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    name?: StringFieldUpdateOperationsInput;
+  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
+  icon?: StringFieldUpdateOperationsInput;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    icon?: StringFieldUpdateOperationsInput;
+  @Field(() => PipelineProgressUpdateManyWithoutPipelineNestedInput, {
+    nullable: true,
+  })
+  pipelineProgresses?: PipelineProgressUpdateManyWithoutPipelineNestedInput;
 
-    @Field(() => PipelineProgressUpdateManyWithoutPipelineNestedInput, {nullable:true})
-    pipelineProgresses?: PipelineProgressUpdateManyWithoutPipelineNestedInput;
-
-    @HideField()
-    workspace?: WorkspaceUpdateOneRequiredWithoutPipelinesNestedInput;
+  @HideField()
+  workspace?: WorkspaceUpdateOneRequiredWithoutPipelinesNestedInput;
 }

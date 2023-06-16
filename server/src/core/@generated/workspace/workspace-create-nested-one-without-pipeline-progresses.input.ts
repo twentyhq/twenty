@@ -7,16 +7,19 @@ import { WorkspaceWhereUniqueInput } from './workspace-where-unique.input';
 
 @InputType()
 export class WorkspaceCreateNestedOneWithoutPipelineProgressesInput {
+  @Field(() => WorkspaceCreateWithoutPipelineProgressesInput, {
+    nullable: true,
+  })
+  @Type(() => WorkspaceCreateWithoutPipelineProgressesInput)
+  create?: WorkspaceCreateWithoutPipelineProgressesInput;
 
-    @Field(() => WorkspaceCreateWithoutPipelineProgressesInput, {nullable:true})
-    @Type(() => WorkspaceCreateWithoutPipelineProgressesInput)
-    create?: WorkspaceCreateWithoutPipelineProgressesInput;
+  @Field(() => WorkspaceCreateOrConnectWithoutPipelineProgressesInput, {
+    nullable: true,
+  })
+  @Type(() => WorkspaceCreateOrConnectWithoutPipelineProgressesInput)
+  connectOrCreate?: WorkspaceCreateOrConnectWithoutPipelineProgressesInput;
 
-    @Field(() => WorkspaceCreateOrConnectWithoutPipelineProgressesInput, {nullable:true})
-    @Type(() => WorkspaceCreateOrConnectWithoutPipelineProgressesInput)
-    connectOrCreate?: WorkspaceCreateOrConnectWithoutPipelineProgressesInput;
-
-    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
-    @Type(() => WorkspaceWhereUniqueInput)
-    connect?: WorkspaceWhereUniqueInput;
+  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
+  @Type(() => WorkspaceWhereUniqueInput)
+  connect?: WorkspaceWhereUniqueInput;
 }

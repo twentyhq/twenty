@@ -8,20 +8,25 @@ import { CommentThreadTargetWhereUniqueInput } from './comment-thread-target-whe
 
 @InputType()
 export class CommentThreadTargetUncheckedCreateNestedManyWithoutCommentThreadInput {
+  @Field(() => [CommentThreadTargetCreateWithoutCommentThreadInput], {
+    nullable: true,
+  })
+  @Type(() => CommentThreadTargetCreateWithoutCommentThreadInput)
+  create?: Array<CommentThreadTargetCreateWithoutCommentThreadInput>;
 
-    @Field(() => [CommentThreadTargetCreateWithoutCommentThreadInput], {nullable:true})
-    @Type(() => CommentThreadTargetCreateWithoutCommentThreadInput)
-    create?: Array<CommentThreadTargetCreateWithoutCommentThreadInput>;
+  @Field(() => [CommentThreadTargetCreateOrConnectWithoutCommentThreadInput], {
+    nullable: true,
+  })
+  @Type(() => CommentThreadTargetCreateOrConnectWithoutCommentThreadInput)
+  connectOrCreate?: Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>;
 
-    @Field(() => [CommentThreadTargetCreateOrConnectWithoutCommentThreadInput], {nullable:true})
-    @Type(() => CommentThreadTargetCreateOrConnectWithoutCommentThreadInput)
-    connectOrCreate?: Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>;
+  @Field(() => CommentThreadTargetCreateManyCommentThreadInputEnvelope, {
+    nullable: true,
+  })
+  @Type(() => CommentThreadTargetCreateManyCommentThreadInputEnvelope)
+  createMany?: CommentThreadTargetCreateManyCommentThreadInputEnvelope;
 
-    @Field(() => CommentThreadTargetCreateManyCommentThreadInputEnvelope, {nullable:true})
-    @Type(() => CommentThreadTargetCreateManyCommentThreadInputEnvelope)
-    createMany?: CommentThreadTargetCreateManyCommentThreadInputEnvelope;
-
-    @Field(() => [CommentThreadTargetWhereUniqueInput], {nullable:true})
-    @Type(() => CommentThreadTargetWhereUniqueInput)
-    connect?: Array<CommentThreadTargetWhereUniqueInput>;
+  @Field(() => [CommentThreadTargetWhereUniqueInput], { nullable: true })
+  @Type(() => CommentThreadTargetWhereUniqueInput)
+  connect?: Array<CommentThreadTargetWhereUniqueInput>;
 }

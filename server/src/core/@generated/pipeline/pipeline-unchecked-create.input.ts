@@ -6,31 +6,34 @@ import { PipelineProgressUncheckedCreateNestedManyWithoutPipelineInput } from '.
 
 @InputType()
 export class PipelineUncheckedCreateInput {
+  @Field(() => String, { nullable: false })
+  id!: string;
 
-    @Field(() => String, {nullable:false})
-    id!: string;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
+  @Field(() => Date, { nullable: true })
+  deletedAt?: Date | string;
 
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+  @Field(() => String, { nullable: false })
+  name!: string;
 
-    @Field(() => String, {nullable:false})
-    name!: string;
+  @Field(() => String, { nullable: false })
+  icon!: string;
 
-    @Field(() => String, {nullable:false})
-    icon!: string;
+  @HideField()
+  workspaceId!: string;
 
-    @HideField()
-    workspaceId!: string;
+  @Field(() => PipelineStageUncheckedCreateNestedManyWithoutPipelineInput, {
+    nullable: true,
+  })
+  pipelineStages?: PipelineStageUncheckedCreateNestedManyWithoutPipelineInput;
 
-    @Field(() => PipelineStageUncheckedCreateNestedManyWithoutPipelineInput, {nullable:true})
-    pipelineStages?: PipelineStageUncheckedCreateNestedManyWithoutPipelineInput;
-
-    @Field(() => PipelineProgressUncheckedCreateNestedManyWithoutPipelineInput, {nullable:true})
-    pipelineProgresses?: PipelineProgressUncheckedCreateNestedManyWithoutPipelineInput;
+  @Field(() => PipelineProgressUncheckedCreateNestedManyWithoutPipelineInput, {
+    nullable: true,
+  })
+  pipelineProgresses?: PipelineProgressUncheckedCreateNestedManyWithoutPipelineInput;
 }

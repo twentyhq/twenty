@@ -11,49 +11,48 @@ import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.
 
 @InputType()
 export class PipelineProgressWhereInput {
+  @Field(() => [PipelineProgressWhereInput], { nullable: true })
+  AND?: Array<PipelineProgressWhereInput>;
 
-    @Field(() => [PipelineProgressWhereInput], {nullable:true})
-    AND?: Array<PipelineProgressWhereInput>;
+  @Field(() => [PipelineProgressWhereInput], { nullable: true })
+  OR?: Array<PipelineProgressWhereInput>;
 
-    @Field(() => [PipelineProgressWhereInput], {nullable:true})
-    OR?: Array<PipelineProgressWhereInput>;
+  @Field(() => [PipelineProgressWhereInput], { nullable: true })
+  NOT?: Array<PipelineProgressWhereInput>;
 
-    @Field(() => [PipelineProgressWhereInput], {nullable:true})
-    NOT?: Array<PipelineProgressWhereInput>;
+  @Field(() => StringFilter, { nullable: true })
+  id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  createdAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
+  @Field(() => DateTimeFilter, { nullable: true })
+  updatedAt?: DateTimeFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
+  @Field(() => DateTimeNullableFilter, { nullable: true })
+  deletedAt?: DateTimeNullableFilter;
 
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
+  @Field(() => StringFilter, { nullable: true })
+  pipelineId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    pipelineId?: StringFilter;
+  @Field(() => StringFilter, { nullable: true })
+  pipelineStageId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    pipelineStageId?: StringFilter;
+  @Field(() => EnumPipelineProgressableTypeFilter, { nullable: true })
+  progressableType?: EnumPipelineProgressableTypeFilter;
 
-    @Field(() => EnumPipelineProgressableTypeFilter, {nullable:true})
-    progressableType?: EnumPipelineProgressableTypeFilter;
+  @Field(() => StringFilter, { nullable: true })
+  progressableId?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    progressableId?: StringFilter;
+  @HideField()
+  workspaceId?: StringFilter;
 
-    @HideField()
-    workspaceId?: StringFilter;
+  @Field(() => PipelineRelationFilter, { nullable: true })
+  pipeline?: PipelineRelationFilter;
 
-    @Field(() => PipelineRelationFilter, {nullable:true})
-    pipeline?: PipelineRelationFilter;
+  @Field(() => PipelineStageRelationFilter, { nullable: true })
+  pipelineStage?: PipelineStageRelationFilter;
 
-    @Field(() => PipelineStageRelationFilter, {nullable:true})
-    pipelineStage?: PipelineStageRelationFilter;
-
-    @HideField()
-    workspace?: WorkspaceRelationFilter;
+  @HideField()
+  workspace?: WorkspaceRelationFilter;
 }

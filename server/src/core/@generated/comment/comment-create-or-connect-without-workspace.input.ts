@@ -6,12 +6,11 @@ import { CommentCreateWithoutWorkspaceInput } from './comment-create-without-wor
 
 @InputType()
 export class CommentCreateOrConnectWithoutWorkspaceInput {
+  @Field(() => CommentWhereUniqueInput, { nullable: false })
+  @Type(() => CommentWhereUniqueInput)
+  where!: CommentWhereUniqueInput;
 
-    @Field(() => CommentWhereUniqueInput, {nullable:false})
-    @Type(() => CommentWhereUniqueInput)
-    where!: CommentWhereUniqueInput;
-
-    @Field(() => CommentCreateWithoutWorkspaceInput, {nullable:false})
-    @Type(() => CommentCreateWithoutWorkspaceInput)
-    create!: CommentCreateWithoutWorkspaceInput;
+  @Field(() => CommentCreateWithoutWorkspaceInput, { nullable: false })
+  @Type(() => CommentCreateWithoutWorkspaceInput)
+  create!: CommentCreateWithoutWorkspaceInput;
 }

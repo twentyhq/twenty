@@ -9,24 +9,25 @@ import { CommentThreadUpdateWithoutCommentsInput } from './comment-thread-update
 
 @InputType()
 export class CommentThreadUpdateOneRequiredWithoutCommentsNestedInput {
+  @Field(() => CommentThreadCreateWithoutCommentsInput, { nullable: true })
+  @Type(() => CommentThreadCreateWithoutCommentsInput)
+  create?: CommentThreadCreateWithoutCommentsInput;
 
-    @Field(() => CommentThreadCreateWithoutCommentsInput, {nullable:true})
-    @Type(() => CommentThreadCreateWithoutCommentsInput)
-    create?: CommentThreadCreateWithoutCommentsInput;
+  @Field(() => CommentThreadCreateOrConnectWithoutCommentsInput, {
+    nullable: true,
+  })
+  @Type(() => CommentThreadCreateOrConnectWithoutCommentsInput)
+  connectOrCreate?: CommentThreadCreateOrConnectWithoutCommentsInput;
 
-    @Field(() => CommentThreadCreateOrConnectWithoutCommentsInput, {nullable:true})
-    @Type(() => CommentThreadCreateOrConnectWithoutCommentsInput)
-    connectOrCreate?: CommentThreadCreateOrConnectWithoutCommentsInput;
+  @Field(() => CommentThreadUpsertWithoutCommentsInput, { nullable: true })
+  @Type(() => CommentThreadUpsertWithoutCommentsInput)
+  upsert?: CommentThreadUpsertWithoutCommentsInput;
 
-    @Field(() => CommentThreadUpsertWithoutCommentsInput, {nullable:true})
-    @Type(() => CommentThreadUpsertWithoutCommentsInput)
-    upsert?: CommentThreadUpsertWithoutCommentsInput;
+  @Field(() => CommentThreadWhereUniqueInput, { nullable: true })
+  @Type(() => CommentThreadWhereUniqueInput)
+  connect?: CommentThreadWhereUniqueInput;
 
-    @Field(() => CommentThreadWhereUniqueInput, {nullable:true})
-    @Type(() => CommentThreadWhereUniqueInput)
-    connect?: CommentThreadWhereUniqueInput;
-
-    @Field(() => CommentThreadUpdateWithoutCommentsInput, {nullable:true})
-    @Type(() => CommentThreadUpdateWithoutCommentsInput)
-    update?: CommentThreadUpdateWithoutCommentsInput;
+  @Field(() => CommentThreadUpdateWithoutCommentsInput, { nullable: true })
+  @Type(() => CommentThreadUpdateWithoutCommentsInput)
+  update?: CommentThreadUpdateWithoutCommentsInput;
 }

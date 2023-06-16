@@ -6,12 +6,11 @@ import { PipelineProgressWhereUniqueInput } from './pipeline-progress-where-uniq
 
 @ArgsType()
 export class UpdateOnePipelineProgressArgs {
+  @Field(() => PipelineProgressUpdateInput, { nullable: false })
+  @Type(() => PipelineProgressUpdateInput)
+  data!: PipelineProgressUpdateInput;
 
-    @Field(() => PipelineProgressUpdateInput, {nullable:false})
-    @Type(() => PipelineProgressUpdateInput)
-    data!: PipelineProgressUpdateInput;
-
-    @Field(() => PipelineProgressWhereUniqueInput, {nullable:false})
-    @Type(() => PipelineProgressWhereUniqueInput)
-    where!: PipelineProgressWhereUniqueInput;
+  @Field(() => PipelineProgressWhereUniqueInput, { nullable: false })
+  @Type(() => PipelineProgressWhereUniqueInput)
+  where!: PipelineProgressWhereUniqueInput;
 }
