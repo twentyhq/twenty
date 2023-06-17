@@ -2,6 +2,7 @@ import { Meta } from '@storybook/react';
 
 import { App } from '~/App';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedUserJWT } from '~/testing/mock-data/jwt';
 
 import { Story } from './App.stories';
 import { renderWithDarkMode } from './shared';
@@ -15,14 +16,14 @@ export default meta;
 
 export const DarkMode: Story = {
   render: () => renderWithDarkMode(true),
-  play: async ({ canvasElement }) => {
-    /* const canvas = within(canvasElement);
-
-    const someButton = canvas.getByText('Some Button');
-    await userEvent.click(someButton);
-
-    expect(await canvas.findByText('Expected Result')).toBeInTheDocument();*/
-  },
+  loaders: [
+    async () => ({
+      accessTokenStored: window.localStorage.setItem(
+        'accessToken',
+        mockedUserJWT,
+      ),
+    }),
+  ],
   parameters: {
     msw: graphqlMocks,
   },
