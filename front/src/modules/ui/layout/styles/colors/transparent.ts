@@ -5,6 +5,7 @@ export const transparentColorsLight = {
   mediumBackgroundTransparent: 'rgba(0, 0, 0, 0.08)',
   lightBackgroundTransparent: 'rgba(0, 0, 0, 0.04)',
   lighterBackgroundTransparent: 'rgba(0, 0, 0, 0.02)',
+  modalBackgroundTransparent: 'rgba(23, 23, 23, 0.8)',
 };
 
 export const transparentColorsDark = {
@@ -14,4 +15,5 @@ export const transparentColorsDark = {
   mediumBackgroundTransparent: 'rgba(255, 255, 255, 0.06)',
   lightBackgroundTransparent: 'rgba(255, 255, 255, 0.03)',
   lighterBackgroundTransparent: 'rgba(255, 255, 255, 0.02)',
+  modalBackgroundTransparent: 'rgba(23, 23, 23, 0.8)',
 };
