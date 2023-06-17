@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { IconChevronLeft } from '@/ui/icons/index';
 
-import NavCollapseButton from './NavCollapseButton';
+import NavCollapseButton from '../NavCollapseButton';
 
 type OwnProps = {
   title: string;

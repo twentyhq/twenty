@@ -1,6 +1,7 @@
+import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { getRenderWrapperForPage } from '~/testing/renderWrappers';
+import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { CommandMenu } from '../CommandMenu';
 
@@ -13,5 +14,9 @@ export default meta;
 type Story = StoryObj<typeof CommandMenu>;
 
 export const Default: Story = {
-  render: getRenderWrapperForPage(<CommandMenu initiallyOpen={true} />),
+  render: getRenderWrapperForComponent(
+    <MemoryRouter>
+      <CommandMenu initiallyOpen={true} />
+    </MemoryRouter>,
+  ),
 };

@@ -3,11 +3,11 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
 import { People } from '../People';
 
 import { Story } from './People.stories';
-import { render } from './shared';
 
 const meta: Meta<typeof People> = {
   title: 'Pages/People/Comments',
@@ -17,7 +17,7 @@ const meta: Meta<typeof People> = {
 export default meta;
 
 export const OpenCommentsSection: Story = {
-  render,
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

@@ -5,7 +5,7 @@ import { IconPlus } from '@/ui/icons/index';
 
 import NavCollapseButton from '../navbar/NavCollapseButton';
 
-export const TOP_BAR_MIN_HEIGHT = '40px';
+export const TOP_BAR_MIN_HEIGHT = 40;
 
 const TopBarContainer = styled.div`
   align-items: center;
@@ -14,7 +14,7 @@ const TopBarContainer = styled.div`
   display: flex;
   flex-direction: row;
   font-size: 14px;
-  min-height: ${TOP_BAR_MIN_HEIGHT};
+  min-height: ${TOP_BAR_MIN_HEIGHT}px;
   padding: ${(props) => props.theme.spacing(2)};
 `;
 

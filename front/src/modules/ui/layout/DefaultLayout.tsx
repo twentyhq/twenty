@@ -3,6 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { CommandMenu } from '@/search/components/CommandMenu';
+import { AppNavbar } from '~/AppNavbar';
 
 import { NavbarContainer } from './navbar/NavbarContainer';
 import { isNavbarOpenedState } from './states/isNavbarOpenedState';
@@ -25,9 +26,8 @@ const MainContainer = styled.div`
   overflow: hidden;
   width: ${() =>
     useRecoilValue(isNavbarOpenedState)
-      ? `(calc(100% -  ${NAVBAR_WIDTH})`
+      ? `calc(100% - ${NAVBAR_WIDTH})`
       : '100%'};
-
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: ${() => (useRecoilValue(isNavbarOpenedState) ? '0' : '100%')};
   }
@@ -35,10 +35,9 @@ const MainContainer = styled.div`
 
 type OwnProps = {
   children: JSX.Element;
-  Navbar: () => JSX.Element;
 };
 
-export function DefaultLayout({ children, Navbar }: OwnProps) {
+export function DefaultLayout({ children }: OwnProps) {
   const currentUser = useRecoilState(currentUserState);
   const userIsAuthenticated = !!currentUser;
 
@@ -48,7 +47,7 @@ export function DefaultLayout({ children, Navbar }: OwnProps) {
         <>
           <CommandMenu />
           <NavbarContainer>
-            <Navbar />
+            <AppNavbar />
           </NavbarContainer>
           <MainContainer>{children}</MainContainer>
         </>

@@ -8,16 +8,15 @@ import {
   IconSettings,
   IconUser,
 } from '@/ui/icons/index';
-import NavBackButton from '@/ui/layout/navbar//NavBackButton';
 import NavItem from '@/ui/layout/navbar/NavItem';
 import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
 import NavTitle from '@/ui/layout/navbar/NavTitle';
+import SubNavbarContainer from '@/ui/layout/navbar/sub-navbar/SubNavBarContainer';
 
 export function SettingsNavbar() {
   const theme = useTheme();
   return (
-    <>
-      <NavBackButton title="Settings" />
+    <SubNavbarContainer backButtonTitle="Settings">
       <NavItemsContainer>
         <NavTitle label="User" />
         <NavItem
@@ -64,6 +63,6 @@ export function SettingsNavbar() {
           danger={true}
         />
       </NavItemsContainer>
-    </>
+    </SubNavbarContainer>
   );
 }

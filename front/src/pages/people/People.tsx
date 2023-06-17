@@ -20,7 +20,6 @@ import { EntityTable } from '@/ui/components/table/EntityTable';
 import { IconList, IconUser } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { BoolExpType } from '@/utils/interfaces/generic.interface';
-import { AppPage } from '~/AppPage';
 
 import { TableActionBarButtonCreateCommentThreadPeople } from './table/TableActionBarButtonCreateCommentThreadPeople';
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
@@ -74,31 +73,29 @@ export function People() {
 
   const theme = useTheme();
   return (
-    <AppPage>
-      <WithTopBarContainer
-        title="People"
-        icon={<IconUser size={theme.iconSizeMedium} />}
-        onAddButtonClick={handleAddButtonClick}
-      >
-        <>
-          <StyledPeopleContainer>
-            <EntityTable
-              data={people}
-              columns={peopleColumns}
-              viewName="All People"
-              viewIcon={<IconList size={theme.iconSizeMedium} />}
-              availableSorts={availableSorts}
-              availableFilters={availableFilters}
-              onSortsUpdate={updateSorts}
-              onFiltersUpdate={updateFilters}
-            />
-          </StyledPeopleContainer>
-          <EntityTableActionBar>
-            <TableActionBarButtonCreateCommentThreadPeople />
-            <TableActionBarButtonDeletePeople />
-          </EntityTableActionBar>
-        </>
-      </WithTopBarContainer>
-    </AppPage>
+    <WithTopBarContainer
+      title="People"
+      icon={<IconUser size={theme.iconSizeMedium} />}
+      onAddButtonClick={handleAddButtonClick}
+    >
+      <>
+        <StyledPeopleContainer>
+          <EntityTable
+            data={people}
+            columns={peopleColumns}
+            viewName="All People"
+            viewIcon={<IconList size={theme.iconSizeMedium} />}
+            availableSorts={availableSorts}
+            availableFilters={availableFilters}
+            onSortsUpdate={updateSorts}
+            onFiltersUpdate={updateFilters}
+          />
+        </StyledPeopleContainer>
+        <EntityTableActionBar>
+          <TableActionBarButtonCreateCommentThreadPeople />
+          <TableActionBarButtonDeletePeople />
+        </EntityTableActionBar>
+      </>
+    </WithTopBarContainer>
   );
 }

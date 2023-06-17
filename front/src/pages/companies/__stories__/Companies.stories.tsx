@@ -15,7 +15,7 @@ export default meta;
 export type Story = StoryObj<typeof Companies>;
 
 export const Default: Story = {
-  render: getRenderWrapperForPage(<Companies />),
+  render: getRenderWrapperForPage(<Companies />, '/companies'),
   parameters: {
     msw: graphqlMocks,
   },

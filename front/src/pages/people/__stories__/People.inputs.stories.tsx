@@ -7,12 +7,12 @@ import { GraphqlQueryCompany } from '@/companies/interfaces/company.interface';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { fetchOneFromData } from '~/testing/mock-data';
 import { mockedPeopleData } from '~/testing/mock-data/people';
+import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 import { sleep } from '~/testing/sleep';
 
 import { People } from '../People';
 
 import { Story } from './People.stories';
-import { render } from './shared';
 
 const meta: Meta<typeof People> = {
   title: 'Pages/People/Input',
@@ -22,7 +22,7 @@ const meta: Meta<typeof People> = {
 export default meta;
 
 export const InteractWithManyRows: Story = {
-  render,
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -66,7 +66,7 @@ export const InteractWithManyRows: Story = {
 };
 
 export const CheckCheckboxes: Story = {
-  render,
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -97,7 +97,7 @@ export const CheckCheckboxes: Story = {
 };
 
 export const EditRelation: Story = {
-  render,
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -153,7 +153,7 @@ export const EditRelation: Story = {
 };
 
 export const SelectRelationWithKeys: Story = {
-  render,
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
