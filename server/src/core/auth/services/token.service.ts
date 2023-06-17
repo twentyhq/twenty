@@ -46,7 +46,7 @@ export class TokenService {
     }
 
     const jwtPayload: JwtPayload = {
-      userId: user.id,
+      sub: user.id,
       workspaceId: user.workspaceMember.workspaceId,
     };
 

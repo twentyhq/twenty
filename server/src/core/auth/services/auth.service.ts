@@ -82,6 +82,7 @@ export class AuthService {
 
     assert(data, "This user doens't exist", NotFoundException);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash: _, ...user } = data;
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);

@@ -16,6 +16,7 @@ export function AuthProvider({ children }: OwnProps) {
   const [, setIsAuthenticating] = useRecoilState(isAuthenticatingState);
 
   const userIdFromToken = getUserIdFromToken();
+
   const { data } = useGetCurrentUserQuery(userIdFromToken);
 
   useEffect(() => {

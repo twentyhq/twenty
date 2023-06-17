@@ -1,27 +1,30 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { refreshAccessToken } from '@/auth/services/AuthService';
+import { getTokensFromLoginToken } from '@/auth/services/AuthService';
 
 export function AuthCallback() {
   const [searchParams] = useSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const refreshToken = searchParams.get('refreshToken');
-  localStorage.setItem('refreshToken', refreshToken || '');
+  const loginToken = searchParams.get('loginToken');
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function getAccessToken() {
-      await refreshAccessToken();
+    async function getTokens() {
+      if (!loginToken) {
+        return;
+      }
+      setIsLoading(true);
+      await getTokensFromLoginToken(loginToken);
       setIsLoading(false);
       navigate('/');
     }
 
-    if (isLoading) {
-      getAccessToken();
+    if (!isLoading) {
+      getTokens();
     }
-  }, [isLoading, navigate]);
+  }, [isLoading, navigate, loginToken]);
 
   return <></>;
 }

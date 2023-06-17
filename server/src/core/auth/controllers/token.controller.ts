@@ -16,6 +16,6 @@ export class TokenController {
       body.refreshToken,
     );
 
-    return tokens;
+    return { tokens: tokens };
   }
 }

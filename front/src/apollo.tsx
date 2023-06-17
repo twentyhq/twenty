@@ -10,7 +10,7 @@ import { onError } from '@apollo/client/link/error';
 import { RestLink } from 'apollo-link-rest';
 
 import { CommentThreadTarget } from './generated/graphql';
-import { refreshAccessToken } from './modules/auth/services/AuthService';
+import { getTokensFromRefreshToken } from './modules/auth/services/AuthService';
 
 const apiLink = createHttpLink({
   uri: `${process.env.REACT_APP_API_URL}`,
@@ -34,7 +34,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
           return new Observable((observer) => {
             (async () => {
               try {
-                await refreshAccessToken();
+                await getTokensFromRefreshToken();
 
                 const oldHeaders = operation.getContext().headers;
 
