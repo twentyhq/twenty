@@ -8,7 +8,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { CommentThreadRelationPicker } from '../CommentThreadRelationPicker';
 
 const meta: Meta<typeof CommentThreadRelationPicker> = {
-  title: 'Comments/CommentThreadRelationPicker',
+  title: 'Modules/Comments/CommentThreadRelationPicker',
   component: CommentThreadRelationPicker,
   parameters: {
     msw: graphqlMocks,

@@ -9,7 +9,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { CommentHeader } from '../CommentHeader';
 
 const meta: Meta<typeof CommentHeader> = {
-  title: 'Comments/CommentHeader',
+  title: 'Modules/Comments/CommentHeader',
   component: CommentHeader,
 };
 
