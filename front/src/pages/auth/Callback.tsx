@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { getTokensFromLoginToken } from '@/auth/services/AuthService';
 
-export function AuthCallback() {
+export function Callback() {
   const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
 
