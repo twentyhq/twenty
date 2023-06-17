@@ -3,11 +3,11 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
 import { People } from '../People';
 
 import { Story } from './People.stories';
-import { render } from './shared';
 
 const meta: Meta<typeof People> = {
   title: 'Pages/People/SortBy',
@@ -17,7 +17,7 @@ const meta: Meta<typeof People> = {
 export default meta;
 
 export const Email: Story = {
-  render,
+  render: getRenderWrapperForPage(<People />),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -43,7 +43,7 @@ export const Email: Story = {
 };
 
 export const Cancel: Story = {
-  render,
+  render: getRenderWrapperForPage(<People />),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

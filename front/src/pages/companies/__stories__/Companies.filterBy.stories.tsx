@@ -2,10 +2,12 @@ import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
+import { graphqlMocks } from '~/testing/graphqlMocks';
+import { getRenderWrapperForPage } from '~/testing/renderWrappers';
+
 import { Companies } from '../Companies';
 
 import { Story } from './Companies.stories';
-import { mocks, render } from './shared';
 
 const meta: Meta<typeof Companies> = {
   title: 'Pages/Companies/FilterBy',
@@ -15,7 +17,7 @@ const meta: Meta<typeof Companies> = {
 export default meta;
 
 export const FilterByName: Story = {
-  render,
+  render: getRenderWrapperForPage(<Companies />),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -38,12 +40,12 @@ export const FilterByName: Story = {
     expect(await canvas.findByText('Contains Air')).toBeInTheDocument();
   },
   parameters: {
-    msw: mocks,
+    msw: graphqlMocks,
   },
 };
 
 export const FilterByAccountOwner: Story = {
-  render,
+  render: getRenderWrapperForPage(<Companies />),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -72,6 +74,6 @@ export const FilterByAccountOwner: Story = {
     expect(await canvas.findByText('Is Charles Test')).toBeInTheDocument();
   },
   parameters: {
-    msw: mocks,
+    msw: graphqlMocks,
   },
 };

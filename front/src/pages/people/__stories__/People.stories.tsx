@@ -1,10 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
 import { People } from '../People';
-
-import { render } from './shared';
 
 const meta: Meta<typeof People> = {
   title: 'Pages/People',
@@ -16,7 +15,7 @@ export default meta;
 export type Story = StoryObj<typeof People>;
 
 export const Default: Story = {
-  render,
+  render: getRenderWrapperForPage(<People />),
   parameters: {
     msw: graphqlMocks,
   },
