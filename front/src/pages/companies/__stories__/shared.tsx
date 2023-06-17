@@ -27,7 +27,7 @@ export const mocks = [
       }),
     );
   }),
-  graphql.query('SearchUserQuery', (req, res, ctx) => {
+  graphql.query('SearchUser', (req, res, ctx) => {
     const returnedMockedData = filterAndSortData<GraphqlQueryUser>(
       mockedUsersData,
       req.variables.where,

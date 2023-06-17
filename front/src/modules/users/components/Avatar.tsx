@@ -2,11 +2,13 @@ import styled from '@emotion/styled';
 
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 
+export type AvatarType = 'squared' | 'rounded';
+
 type OwnProps = {
   avatarUrl: string | null | undefined;
   size: number;
   placeholder: string;
-  type?: 'squared' | 'rounded';
+  type?: AvatarType;
 };
 
 export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholder'>>`

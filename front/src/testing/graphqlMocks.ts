@@ -23,7 +23,7 @@ export const graphqlMocks = [
       }),
     );
   }),
-  graphql.query('SearchCompanyQuery', (req, res, ctx) => {
+  graphql.query('SearchCompany', (req, res, ctx) => {
     const returnedMockedData = filterAndSortData<GraphqlQueryCompany>(
       mockedCompaniesData,
       req.variables.where,
@@ -36,7 +36,7 @@ export const graphqlMocks = [
       }),
     );
   }),
-  graphql.query('SearchUserQuery', (req, res, ctx) => {
+  graphql.query('SearchUser', (req, res, ctx) => {
     const returnedMockedData = filterAndSortData<GraphqlQueryUser>(
       mockedUsersData,
       req.variables.where,

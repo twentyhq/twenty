@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
-import { RightDrawerComments } from '@/comments/components/comments/RightDrawerComments';
-import { RightDrawerCreateCommentThread } from '@/comments/components/comments/RightDrawerCreateCommentThread';
+import { RightDrawerComments } from '@/comments/components/RightDrawerComments';
+import { RightDrawerCreateCommentThread } from '@/comments/components/RightDrawerCreateCommentThread';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
