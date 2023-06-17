@@ -127,7 +127,7 @@
     "eslint-plugin-twenty": "file:../packages/eslint-plugin-twenty",
     "http-server": "^14.1.1",
     "mock-apollo-client": "^1.2.1",
-    "msw": "^1.2.1",
+    "msw": "1.2.1",
     "msw-storybook-addon": "^1.8.0",
     "prettier": "^2.8.0",
     "prop-types": "^15.8.1",

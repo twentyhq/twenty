@@ -17,7 +17,7 @@ const meta: Meta<typeof Companies> = {
 export default meta;
 
 export const SortByName: Story = {
-  render: getRenderWrapperForPage(<Companies />),
+  render: getRenderWrapperForPage(<Companies />, '/companies'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

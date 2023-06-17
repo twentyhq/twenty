@@ -17,7 +17,7 @@ const meta: Meta<typeof People> = {
 export default meta;
 
 export const OpenCommentsSection: Story = {
-  render: getRenderWrapperForPage(<People />),
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

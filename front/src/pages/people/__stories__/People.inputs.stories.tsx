@@ -22,7 +22,7 @@ const meta: Meta<typeof People> = {
 export default meta;
 
 export const InteractWithManyRows: Story = {
-  render: getRenderWrapperForPage(<People />),
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -66,7 +66,7 @@ export const InteractWithManyRows: Story = {
 };
 
 export const CheckCheckboxes: Story = {
-  render: getRenderWrapperForPage(<People />),
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -97,7 +97,7 @@ export const CheckCheckboxes: Story = {
 };
 
 export const EditRelation: Story = {
-  render: getRenderWrapperForPage(<People />),
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -153,7 +153,7 @@ export const EditRelation: Story = {
 };
 
 export const SelectRelationWithKeys: Story = {
-  render: getRenderWrapperForPage(<People />),
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

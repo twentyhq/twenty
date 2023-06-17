@@ -15,7 +15,7 @@ export default meta;
 export type Story = StoryObj<typeof SettingsProfile>;
 
 export const Default: Story = {
-  render: getRenderWrapperForPage(<SettingsProfile />),
+  render: getRenderWrapperForPage(<SettingsProfile />, '/settings/profile'),
   parameters: {
     msw: graphqlMocks,
   },

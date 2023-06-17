@@ -17,7 +17,7 @@ const meta: Meta<typeof Companies> = {
 export default meta;
 
 export const FilterByName: Story = {
-  render: getRenderWrapperForPage(<Companies />),
+  render: getRenderWrapperForPage(<Companies />, '/companies'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -45,7 +45,7 @@ export const FilterByName: Story = {
 };
 
 export const FilterByAccountOwner: Story = {
-  render: getRenderWrapperForPage(<Companies />),
+  render: getRenderWrapperForPage(<Companies />, '/companies'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

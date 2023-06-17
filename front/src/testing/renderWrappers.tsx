@@ -10,12 +10,15 @@ import { ComponentStorybookLayout } from './ComponentStorybookLayout';
 import { FullHeightStorybookLayout } from './FullHeightStorybookLayout';
 import { mockedClient } from './mockedClient';
 
-export function getRenderWrapperForPage(children: React.ReactElement) {
+export function getRenderWrapperForPage(
+  children: React.ReactElement,
+  currentPath: string,
+) {
   return function render() {
     return (
       <RecoilRoot>
         <ApolloProvider client={mockedClient}>
-          <MemoryRouter>
+          <MemoryRouter initialEntries={[currentPath]}>
             <FullHeightStorybookLayout>
               <AuthProvider>
                 <DefaultLayout>{children}</DefaultLayout>

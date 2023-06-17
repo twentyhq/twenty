@@ -17,7 +17,7 @@ const meta: Meta<typeof People> = {
 export default meta;
 
 export const Email: Story = {
-  render: getRenderWrapperForPage(<People />),
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -44,7 +44,7 @@ export const Email: Story = {
 };
 
 export const CompanyName: Story = {
-  render: getRenderWrapperForPage(<People />),
+  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
