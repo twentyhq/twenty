@@ -6,6 +6,7 @@ const StyledPanel = styled.div`
   border: 1px solid ${(props) => props.theme.primaryBorder};
   border-radius: 8px;
   display: flex;
+  flex-direction: row;
   width: 100%;
 `;
 
