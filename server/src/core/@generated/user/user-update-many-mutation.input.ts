@@ -5,6 +5,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { HideField } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 
 @InputType()
@@ -42,7 +43,7 @@ export class UserUpdateManyMutationInput {
   @Field(() => NullableStringFieldUpdateOperationsInput, { nullable: true })
   phoneNumber?: NullableStringFieldUpdateOperationsInput;
 
-  @Field(() => NullableStringFieldUpdateOperationsInput, { nullable: true })
+  @HideField()
   passwordHash?: NullableStringFieldUpdateOperationsInput;
 
   @Field(() => BoolFieldUpdateOperationsInput, { nullable: true })

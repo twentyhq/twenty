@@ -2,7 +2,9 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
+import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class RefreshTokenScalarWhereInput {
@@ -24,12 +26,15 @@ export class RefreshTokenScalarWhereInput {
   @Field(() => DateTimeFilter, { nullable: true })
   updatedAt?: DateTimeFilter;
 
+  @Field(() => BoolFilter, { nullable: true })
+  isRevoked?: BoolFilter;
+
+  @Field(() => DateTimeFilter, { nullable: true })
+  expiresAt?: DateTimeFilter;
+
   @Field(() => DateTimeNullableFilter, { nullable: true })
   deletedAt?: DateTimeNullableFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  refreshToken?: StringFilter;
-
-  @Field(() => StringFilter, { nullable: true })
+  @HideField()
   userId?: StringFilter;
 }

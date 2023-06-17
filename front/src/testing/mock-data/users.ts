@@ -2,7 +2,7 @@ import { GraphqlQueryUser } from '@/users/interfaces/user.interface';
 
 export const mockedUsersData: Array<GraphqlQueryUser> = [
   {
-    id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+    id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
     __typename: 'User',
     email: 'charles@test.com',
     displayName: 'Charles Test',

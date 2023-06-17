@@ -5,8 +5,8 @@ import { PipelineProgressUncheckedCreateNestedManyWithoutPipelineInput } from '.
 
 @InputType()
 export class PipelineUncheckedCreateWithoutWorkspaceInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;

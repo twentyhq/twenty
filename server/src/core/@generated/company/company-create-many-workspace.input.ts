@@ -4,8 +4,8 @@ import { Int } from '@nestjs/graphql';
 
 @InputType()
 export class CompanyCreateManyWorkspaceInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;

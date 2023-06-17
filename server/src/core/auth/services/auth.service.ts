@@ -1,10 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from '../strategies/jwt.auth.strategy';
-import { ConfigService } from '@nestjs/config';
-import { v4 } from 'uuid';
-import { RefreshToken, User } from '@prisma/client';
-import { PrismaService } from 'src/database/prisma.service';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { ChallengeInput } from '../dto/challenge.input';
+import { UserService } from 'src/core/user/user.service';
+import { assert } from 'src/utils/assert';
+import { RegisterInput } from '../dto/register.input';
+import { PASSWORD_REGEX, compareHash, hashPassword } from '../auth.util';
+import { VerifyEntity } from '../dto/verify.entity';
+import { TokenService } from './token.service';
 
 export type UserPayload = {
   firstName: string;
@@ -15,71 +21,79 @@ export type UserPayload = {
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
-    private configService: ConfigService,
-    private prismaService: PrismaService,
+    private readonly tokenService: TokenService,
+    private readonly userService: UserService,
   ) {}
 
-  async generateAccessToken(refreshToken: string): Promise<string | undefined> {
-    const refreshTokenObject = await this.prismaService.refreshToken.findFirst({
-      where: { refreshToken: refreshToken },
-    });
-
-    if (!refreshTokenObject) {
-      throw new HttpException(
-        { reason: 'Invalid Refresh token' },
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    const user = await this.prismaService.user.findUnique({
-      where: { id: refreshTokenObject.userId },
-    });
-
-    if (!user) {
-      throw new HttpException(
-        { reason: 'Refresh token is not associated to a valid user' },
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    const workspace = await this.prismaService.workspace.findFirst({
-      where: { workspaceMember: { some: { userId: user.id } } },
-    });
-
-    if (!workspace) {
-      throw new HttpException(
-        { reason: 'Refresh token is not associated to a valid workspace' },
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    const payload: JwtPayload = {
-      userId: user.id,
-      workspaceId: workspace.id,
-    };
-    return this.jwtService.sign(payload);
-  }
-
-  async registerRefreshToken(user: User): Promise<RefreshToken> {
-    const refreshToken = await this.prismaService.refreshToken.upsert({
+  async register(registerInput: RegisterInput) {
+    const existingUser = await this.userService.findUnique({
       where: {
-        id: user.id,
+        email: registerInput.email,
       },
-      create: {
-        id: v4(),
-        userId: user.id,
-        refreshToken: v4(),
-      },
-      update: {},
     });
 
-    return refreshToken;
+    assert(!existingUser, 'This user already exist', NotFoundException);
+    assert(
+      PASSWORD_REGEX.test(registerInput.password),
+      'Password too weak',
+      BadRequestException,
+    );
+
+    const passwordHash = await hashPassword(registerInput.password);
+
+    const user = await this.userService.createUser({
+      data: {
+        displayName: registerInput.displayName,
+        email: registerInput.email,
+        passwordHash,
+        locale: 'en',
+      },
+    });
+
+    return user;
   }
 
-  computeRedirectURI(refreshToken: string): string {
-    return `${this.configService.get<string>(
-      'FRONT_AUTH_CALLBACK_URL',
-    )}?refreshToken=${refreshToken}`;
+  async challenge(challengeInput: ChallengeInput) {
+    const user = await this.userService.findUnique({
+      where: {
+        email: challengeInput.email,
+      },
+    });
+
+    assert(user, "This user doens't exist", NotFoundException);
+    assert(user.passwordHash, 'Something wrong happened', ForbiddenException);
+
+    const isValid = await compareHash(
+      challengeInput.password,
+      user.passwordHash,
+    );
+
+    assert(isValid, 'Something wrong happened', ForbiddenException);
+
+    return user;
+  }
+
+  async verify(email: string): Promise<VerifyEntity> {
+    const data = await this.userService.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    assert(data, "This user doens't exist", NotFoundException);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordHash: _, ...user } = data;
+
+    const accessToken = await this.tokenService.generateAccessToken(user.id);
+    const refreshToken = await this.tokenService.generateRefreshToken(user.id);
+
+    return {
+      user,
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
+    };
   }
 }

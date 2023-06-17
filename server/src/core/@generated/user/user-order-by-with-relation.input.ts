@@ -1,8 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
-import { WorkspaceMemberOrderByWithRelationInput } from '../workspace-member/workspace-member-order-by-with-relation.input';
 import { HideField } from '@nestjs/graphql';
+import { WorkspaceMemberOrderByWithRelationInput } from '../workspace-member/workspace-member-order-by-with-relation.input';
 import { CompanyOrderByRelationAggregateInput } from '../company/company-order-by-relation-aggregate.input';
 import { RefreshTokenOrderByRelationAggregateInput } from '../refresh-token/refresh-token-order-by-relation-aggregate.input';
 import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
@@ -42,7 +42,7 @@ export class UserOrderByWithRelationInput {
   @Field(() => SortOrder, { nullable: true })
   phoneNumber?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
+  @HideField()
   passwordHash?: keyof typeof SortOrder;
 
   @Field(() => SortOrder, { nullable: true })

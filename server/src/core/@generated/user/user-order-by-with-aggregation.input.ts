@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
+import { HideField } from '@nestjs/graphql';
 import { UserCountOrderByAggregateInput } from './user-count-order-by-aggregate.input';
 import { UserMaxOrderByAggregateInput } from './user-max-order-by-aggregate.input';
 import { UserMinOrderByAggregateInput } from './user-min-order-by-aggregate.input';
@@ -40,7 +41,7 @@ export class UserOrderByWithAggregationInput {
   @Field(() => SortOrder, { nullable: true })
   phoneNumber?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
+  @HideField()
   passwordHash?: keyof typeof SortOrder;
 
   @Field(() => SortOrder, { nullable: true })

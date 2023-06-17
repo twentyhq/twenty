@@ -4,8 +4,9 @@ export enum RefreshTokenScalarFieldEnum {
   id = 'id',
   createdAt = 'createdAt',
   updatedAt = 'updatedAt',
+  isRevoked = 'isRevoked',
+  expiresAt = 'expiresAt',
   deletedAt = 'deletedAt',
-  refreshToken = 'refreshToken',
   userId = 'userId',
 }
 

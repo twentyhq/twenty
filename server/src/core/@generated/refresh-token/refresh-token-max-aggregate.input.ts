@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class RefreshTokenMaxAggregateInput {
@@ -13,11 +14,14 @@ export class RefreshTokenMaxAggregateInput {
   updatedAt?: true;
 
   @Field(() => Boolean, { nullable: true })
+  isRevoked?: true;
+
+  @Field(() => Boolean, { nullable: true })
+  expiresAt?: true;
+
+  @Field(() => Boolean, { nullable: true })
   deletedAt?: true;
 
-  @Field(() => Boolean, { nullable: true })
-  refreshToken?: true;
-
-  @Field(() => Boolean, { nullable: true })
+  @HideField()
   userId?: true;
 }

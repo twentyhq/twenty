@@ -6,6 +6,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "esModuleInterop": true,
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
@@ -14,9 +16,11 @@
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
+    "alwaysStrict": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "resolveJsonModule": true
   }
 }

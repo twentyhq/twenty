@@ -5,6 +5,7 @@ import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregate
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
 import { BoolWithAggregatesFilter } from '../prisma/bool-with-aggregates-filter.input';
 import { StringNullableWithAggregatesFilter } from '../prisma/string-nullable-with-aggregates-filter.input';
+import { HideField } from '@nestjs/graphql';
 import { JsonNullableWithAggregatesFilter } from '../prisma/json-nullable-with-aggregates-filter.input';
 
 @InputType()
@@ -51,7 +52,7 @@ export class UserScalarWhereWithAggregatesInput {
   @Field(() => StringNullableWithAggregatesFilter, { nullable: true })
   phoneNumber?: StringNullableWithAggregatesFilter;
 
-  @Field(() => StringNullableWithAggregatesFilter, { nullable: true })
+  @HideField()
   passwordHash?: StringNullableWithAggregatesFilter;
 
   @Field(() => BoolWithAggregatesFilter, { nullable: true })

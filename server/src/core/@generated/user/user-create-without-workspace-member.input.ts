@@ -1,15 +1,15 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 import { CompanyCreateNestedManyWithoutAccountOwnerInput } from '../company/company-create-nested-many-without-account-owner.input';
 import { RefreshTokenCreateNestedManyWithoutUserInput } from '../refresh-token/refresh-token-create-nested-many-without-user.input';
-import { HideField } from '@nestjs/graphql';
 import { CommentCreateNestedManyWithoutAuthorInput } from '../comment/comment-create-nested-many-without-author.input';
 
 @InputType()
 export class UserCreateWithoutWorkspaceMemberInput {
-  @Field(() => String, { nullable: false })
-  id!: string;
+  @Field(() => String, { nullable: true })
+  id?: string;
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date | string;
@@ -41,7 +41,7 @@ export class UserCreateWithoutWorkspaceMemberInput {
   @Field(() => String, { nullable: true })
   phoneNumber?: string;
 
-  @Field(() => String, { nullable: true })
+  @HideField()
   passwordHash?: string;
 
   @Field(() => Boolean, { nullable: true })

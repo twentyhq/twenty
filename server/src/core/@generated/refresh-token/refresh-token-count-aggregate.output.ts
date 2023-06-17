@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class RefreshTokenCountAggregate {
@@ -14,12 +15,15 @@ export class RefreshTokenCountAggregate {
   updatedAt!: number;
 
   @Field(() => Int, { nullable: false })
+  isRevoked!: number;
+
+  @Field(() => Int, { nullable: false })
+  expiresAt!: number;
+
+  @Field(() => Int, { nullable: false })
   deletedAt!: number;
 
-  @Field(() => Int, { nullable: false })
-  refreshToken!: number;
-
-  @Field(() => Int, { nullable: false })
+  @HideField()
   userId!: number;
 
   @Field(() => Int, { nullable: false })

@@ -13,7 +13,7 @@ export const getUserIdFromToken: () => string | null = () => {
   }
 
   try {
-    return jwt<{ userId: string }>(accessToken).userId;
+    return jwt<{ sub: string }>(accessToken).sub;
   } catch (error) {
     return null;
   }
@@ -25,10 +25,41 @@ export const hasRefreshToken = () => {
   return refreshToken ? true : false;
 };
 
-export const refreshAccessToken = async () => {
+export const getTokensFromLoginToken = async (loginToken: string) => {
+  if (!loginToken) {
+    return;
+  }
+
+  const response = await fetch(
+    process.env.REACT_APP_AUTH_URL + '/verify' || '',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ loginToken }),
+    },
+  );
+
+  if (response.ok) {
+    const { tokens } = await response.json();
+    if (!tokens) {
+      return;
+    }
+
+    localStorage.setItem('accessToken', tokens.accessToken.token);
+    localStorage.setItem('refreshToken', tokens.refreshToken.token);
+  } else {
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('accessToken');
+  }
+};
+
+export const getTokensFromRefreshToken = async () => {
   const refreshToken = localStorage.getItem('refreshToken');
   if (!refreshToken) {
     localStorage.removeItem('accessToken');
+    return;
   }
 
   const response = await fetch(
@@ -43,8 +74,13 @@ export const refreshAccessToken = async () => {
   );
 
   if (response.ok) {
-    const { accessToken } = await response.json();
-    localStorage.setItem('accessToken', accessToken);
+    const { tokens } = await response.json();
+
+    if (!tokens) {
+      return;
+    }
+    localStorage.setItem('accessToken', tokens.accessToken.token);
+    localStorage.setItem('refreshToken', tokens.refreshToken.token);
   } else {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('accessToken');
