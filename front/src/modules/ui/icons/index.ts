@@ -27,3 +27,4 @@ export { IconArrowNarrowDown } from '@tabler/icons-react';
 export { IconArrowNarrowUp } from '@tabler/icons-react';
 export { IconArrowRight } from '@tabler/icons-react';
 export { IconArrowUpRight } from '@tabler/icons-react';
+export { IconBrandGoogle } from '@tabler/icons-react';
