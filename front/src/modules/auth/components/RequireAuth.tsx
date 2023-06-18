@@ -36,7 +36,7 @@ export function RequireAuth({
 
   useEffect(() => {
     if (!hasAccessToken()) {
-      navigate('/auth/login');
+      navigate('/auth');
     }
   }, [navigate]);
 

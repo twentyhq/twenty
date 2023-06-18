@@ -7,6 +7,7 @@ export function Modal({ children }: { children: React.ReactNode }) {
   return (
     <ReactModal
       isOpen
+      ariaHideApp={false}
       style={{
         overlay: {
           backgroundColor: theme.modalBackgroundTransparent,
@@ -15,7 +16,7 @@ export function Modal({ children }: { children: React.ReactNode }) {
           justifyContent: 'center',
           alignItems: 'center',
         },
-        content: { zIndex: 1000, minWidth: 200, inset: 'auto' },
+        content: { zIndex: 1000, minWidth: 200, inset: 'auto', padding: 0 },
       }}
     >
       {children}
