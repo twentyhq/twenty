@@ -97,7 +97,6 @@
     "@storybook/addon-styling": "^1.0.8",
     "@storybook/jest": "^0.1.0",
     "@storybook/node-logger": "^7.0.2",
-    "@storybook/preset-create-react-app": "^7.0.2",
     "@storybook/react": "^7.0.2",
     "@storybook/react-webpack5": "^7.0.2",
     "@storybook/test-runner": "^0.10.0",
