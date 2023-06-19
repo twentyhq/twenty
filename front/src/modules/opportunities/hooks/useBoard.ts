@@ -44,7 +44,7 @@ export const useBoard = () => {
   );
 
   const pipelineEntityType: 'Person' | 'Company' | undefined =
-    pipelineStages?.[0].pipelineProgresses?.[0].progressableType;
+    pipelines.data?.findManyPipeline[0].pipelineProgressableType;
 
   const query =
     pipelineEntityType === 'Person' ? useGetPeopleQuery : useGetCompaniesQuery;

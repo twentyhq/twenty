@@ -5,6 +5,7 @@ export const GET_PIPELINES = gql`
     findManyPipeline(skip: 1) {
       id
       name
+      pipelineProgressableType
       pipelineStages {
         name
         color

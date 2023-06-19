@@ -975,6 +975,7 @@ export type Pipeline = {
   icon: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  pipelineProgressableType: PipelineProgressableType;
   pipelineProgresses?: Maybe<Array<PipelineProgress>>;
   pipelineStages?: Maybe<Array<PipelineStage>>;
   updatedAt: Scalars['DateTime'];
@@ -990,6 +991,7 @@ export type PipelineOrderByWithRelationInput = {
   icon?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
+  pipelineProgressableType?: InputMaybe<SortOrder>;
   pipelineProgresses?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   pipelineStages?: InputMaybe<PipelineStageOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
@@ -1102,6 +1104,7 @@ export enum PipelineScalarFieldEnum {
   Icon = 'icon',
   Id = 'id',
   Name = 'name',
+  PipelineProgressableType = 'pipelineProgressableType',
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
 }
@@ -1201,6 +1204,7 @@ export type PipelineWhereInput = {
   icon?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
+  pipelineProgressableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
   pipelineProgresses?: InputMaybe<PipelineProgressListRelationFilter>;
   pipelineStages?: InputMaybe<PipelineStageListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
@@ -1625,7 +1629,7 @@ export type DeleteCompaniesMutation = { __typename?: 'Mutation', deleteManyCompa
 export type GetPipelinesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineStages?: Array<{ __typename?: 'PipelineStage', name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string }> | null }> | null }> };
+export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string }> | null }> | null }> };
 
 export type GetPeopleQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
@@ -2202,6 +2206,7 @@ export const GetPipelinesDocument = gql`
   findManyPipeline(skip: 1) {
     id
     name
+    pipelineProgressableType
     pipelineStages {
       name
       color
