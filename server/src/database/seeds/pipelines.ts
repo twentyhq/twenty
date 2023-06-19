@@ -8,6 +8,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       name: 'Sales pipeline',
       icon: '💰',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      pipelineProgressableType: 'Person',
     },
   });
 
@@ -97,6 +98,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       name: 'Customer support pipeline',
       icon: '📔',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      pipelineProgressableType: 'Person',
     },
   });
 
@@ -134,6 +136,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       name: 'Sales pipeline',
       icon: '💰',
       workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
+      pipelineProgressableType: 'Person',
     },
   });
 

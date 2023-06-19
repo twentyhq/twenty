@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
@@ -21,6 +22,9 @@ export class PipelineMinAggregate {
 
   @Field(() => String, { nullable: true })
   icon?: string;
+
+  @Field(() => PipelineProgressableType, { nullable: true })
+  pipelineProgressableType?: keyof typeof PipelineProgressableType;
 
   @HideField()
   workspaceId?: string;

@@ -293,6 +293,7 @@ model Pipeline {
   icon                  String
   pipelineStages        PipelineStage[]
   pipelineProgresses    PipelineProgress[]
+  pipelineProgressableType      PipelineProgressableType @default(Company)
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId           String
   /// @TypeGraphQL.omit(input: true, output: true)

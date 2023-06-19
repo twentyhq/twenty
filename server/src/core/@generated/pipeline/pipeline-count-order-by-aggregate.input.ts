@@ -23,6 +23,9 @@ export class PipelineCountOrderByAggregateInput {
   @Field(() => SortOrder, { nullable: true })
   icon?: keyof typeof SortOrder;
 
+  @Field(() => SortOrder, { nullable: true })
+  pipelineProgressableType?: keyof typeof SortOrder;
+
   @HideField()
   workspaceId?: keyof typeof SortOrder;
 }

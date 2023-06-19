@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 
 @InputType()
 export class PipelineCreateManyWorkspaceInput {
@@ -20,4 +21,7 @@ export class PipelineCreateManyWorkspaceInput {
 
   @Field(() => String, { nullable: false })
   icon!: string;
+
+  @Field(() => PipelineProgressableType, { nullable: true })
+  pipelineProgressableType?: keyof typeof PipelineProgressableType;
 }

@@ -23,6 +23,9 @@ export class PipelineCountAggregate {
   @Field(() => Int, { nullable: false })
   icon!: number;
 
+  @Field(() => Int, { nullable: false })
+  pipelineProgressableType!: number;
+
   @HideField()
   workspaceId!: number;
 

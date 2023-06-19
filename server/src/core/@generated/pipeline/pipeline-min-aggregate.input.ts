@@ -22,6 +22,9 @@ export class PipelineMinAggregateInput {
   @Field(() => Boolean, { nullable: true })
   icon?: true;
 
+  @Field(() => Boolean, { nullable: true })
+  pipelineProgressableType?: true;
+
   @HideField()
   workspaceId?: true;
 }
