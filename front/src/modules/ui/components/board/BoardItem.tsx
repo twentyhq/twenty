@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { DraggableProvided } from '@hello-pangea/dnd';
+import { DraggableProvided } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 
 const StyledCard = styled.div`
   background-color: ${({ theme }) => theme.secondaryBackground};
