@@ -1,9 +1,12 @@
 import { FetchResult, gql } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 
 import { apiClient } from '~/apollo';
 
 import { UpdateCompanyMutationVariables } from '../../../generated/graphql';
 import { Company, mapToGqlCompany } from '../interfaces/company.interface';
+
+import { GET_COMPANIES } from './select';
 
 export const UPDATE_COMPANY = gql`
   mutation UpdateCompany(
@@ -94,7 +97,7 @@ export async function insertCompany(
   const result = await apiClient.mutate({
     mutation: INSERT_COMPANY,
     variables: mapToGqlCompany(company),
-    refetchQueries: ['GetCompanies'],
+    refetchQueries: [getOperationName(GET_COMPANIES) ?? ''],
   });
 
   return result;
