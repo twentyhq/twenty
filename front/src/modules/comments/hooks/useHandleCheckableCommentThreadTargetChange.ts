@@ -8,8 +8,8 @@ import {
   useRemoveCommentThreadTargetOnCommentThreadMutation,
 } from '~/generated/graphql';
 
-import { EntityForSelect } from '../components/MultipleEntitySelect';
 import { GET_COMMENT_THREADS_BY_TARGETS } from '../services';
+import { CommentableEntityForSelect } from '../types/CommentableEntityForSelect';
 import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
 export function useHandleCheckableCommentThreadTargetChange({
@@ -37,7 +37,7 @@ export function useHandleCheckableCommentThreadTargetChange({
 
   return function handleCheckItemChange(
     newCheckedValue: boolean,
-    entity: EntityForSelect,
+    entity: CommentableEntityForSelect,
   ) {
     if (newCheckedValue) {
       addCommentThreadTargetOnCommentThread({
