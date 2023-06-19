@@ -55,7 +55,11 @@ export function MultipleEntitySelect({
 
   return (
     <DropdownMenu>
-      <DropdownMenuSearch value={searchFilter} onChange={handleFilterChange} />
+      <DropdownMenuSearch
+        value={searchFilter}
+        onChange={handleFilterChange}
+        autoFocus
+      />
       <DropdownMenuSeparator />
       <DropdownMenuItemContainer>
         {entitiesInDropdown?.map((entity) => (

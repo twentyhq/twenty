@@ -168,7 +168,13 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
 
   const { refs, floatingStyles } = useFloating({
     strategy: 'absolute',
-    middleware: [offset(), flip(), size()],
+    middleware: [
+      offset(({ rects }) => {
+        return -rects.reference.height;
+      }),
+      flip(),
+      size(),
+    ],
     whileElementsMounted: autoUpdate,
     open: isMenuOpen,
     placement: 'bottom-start',
