@@ -40,13 +40,12 @@ export const Board = ({ initialBoard, items, onUpdate }: BoardProps) => {
       try {
         const draggedEntityId = items[result.draggableId]?.id;
         const destinationColumnId = result.destination?.droppableId;
-        destinationColumnId &&
+        draggedEntityId &&
           destinationColumnId &&
           onUpdate &&
           (await onUpdate(draggedEntityId, destinationColumnId));
       } catch (e) {
         console.error(e);
-        alert('Error updating board');
       }
     },
     [board, onUpdate, items],

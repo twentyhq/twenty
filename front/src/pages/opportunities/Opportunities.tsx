@@ -3,22 +3,30 @@ import { useCallback } from 'react';
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 
-import { PipelineProgress, PipelineStage } from '../../generated/graphql';
+import {
+  PipelineProgress,
+  PipelineStage,
+  useUpdateOnePipelineProgressMutation,
+} from '../../generated/graphql';
 import { Board } from '../../modules/opportunities/components/Board';
 import { useBoard } from '../../modules/opportunities/hooks/useBoard';
 
 export function Opportunities() {
-  const { initialBoard, items, loading, error } = useBoard();
+  const { initialBoard, items, loading, error, pipelineEntityIdsMapper } =
+    useBoard();
+  const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
 
   const onUpdate = useCallback(
-    (
-      pipelineEntityId: NonNullable<PipelineProgress['progressableId']>,
+    async (
+      entityId: NonNullable<PipelineProgress['progressableId']>,
       pipelineStageId: NonNullable<PipelineStage['id']>,
     ) => {
-      console.log(pipelineEntityId, pipelineStageId);
-      throw new Error('Not implemented');
+      const pipelineProgressId = pipelineEntityIdsMapper(entityId);
+      updatePipelineProgress({
+        variables: { id: pipelineProgressId, pipelineStageId },
+      });
     },
-    [],
+    [updatePipelineProgress, pipelineEntityIdsMapper],
   );
 
   if (loading) return <div>Loading...</div>;

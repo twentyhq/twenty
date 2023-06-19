@@ -7,7 +7,7 @@ export const StyledBoard = styled.div`
   height: 100%;
 `;
 
-export type BoardItemKey = `item-${number | string}`;
+export type BoardItemKey = string;
 export type Item = any & { id: string };
 export interface Items {
   [key: string]: Item;
