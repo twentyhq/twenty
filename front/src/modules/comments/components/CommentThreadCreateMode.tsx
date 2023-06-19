@@ -1,3 +1,4 @@
+import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
@@ -5,6 +6,8 @@ import { v4 } from 'uuid';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { commentableEntityArrayState } from '@/comments/states/commentableEntityArrayState';
 import { createdCommentThreadIdState } from '@/comments/states/createdCommentThreadIdState';
+import { GET_COMPANIES } from '@/companies/services';
+import { GET_PEOPLE } from '@/people/services';
 import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
 import { useOpenRightDrawer } from '@/ui/layout/right-drawer/hooks/useOpenRightDrawer';
 import { logError } from '@/utils/logs/logError';
@@ -15,6 +18,8 @@ import {
   useCreateCommentThreadWithCommentMutation,
   useGetCommentThreadQuery,
 } from '~/generated/graphql';
+
+import { GET_COMMENT_THREAD } from '../services';
 
 import { CommentThreadItem } from './CommentThreadItem';
 
@@ -99,7 +104,11 @@ export function CommentThreadCreateMode() {
             }),
           ),
         },
-        refetchQueries: ['GetCommentThread', 'GetCompanies', 'GetPeople'],
+        refetchQueries: [
+          getOperationName(GET_COMPANIES) ?? '',
+          getOperationName(GET_PEOPLE) ?? '',
+          getOperationName(GET_COMMENT_THREAD) ?? '',
+        ],
         onCompleted(data) {
           setCreatedCommentThreadId(data.createOneCommentThread.id);
           openRightDrawer('comments');
@@ -114,8 +123,7 @@ export function CommentThreadCreateMode() {
           commentText,
           createdAt: new Date().toISOString(),
         },
-        // TODO: find a way to have this configuration dynamic and typed
-        refetchQueries: ['GetCommentThread'],
+        refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
         onError: (error) => {
           logError(
             `In handleCreateCommentThread, createCommentMutation onError, error: ${error}`,

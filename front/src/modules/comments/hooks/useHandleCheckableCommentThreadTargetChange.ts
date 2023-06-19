@@ -1,11 +1,15 @@
+import { getOperationName } from '@apollo/client/utilities';
 import { v4 } from 'uuid';
 
+import { GET_COMPANIES } from '@/companies/services';
+import { GET_PEOPLE } from '@/people/services';
 import {
   useAddCommentThreadTargetOnCommentThreadMutation,
   useRemoveCommentThreadTargetOnCommentThreadMutation,
 } from '~/generated/graphql';
 
 import { EntityForSelect } from '../components/MultipleEntitySelect';
+import { GET_COMMENT_THREADS_BY_TARGETS } from '../services';
 import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
 export function useHandleCheckableCommentThreadTargetChange({
@@ -15,12 +19,20 @@ export function useHandleCheckableCommentThreadTargetChange({
 }) {
   const [addCommentThreadTargetOnCommentThread] =
     useAddCommentThreadTargetOnCommentThreadMutation({
-      refetchQueries: ['GetCompanies', 'GetPeople'],
+      refetchQueries: [
+        getOperationName(GET_COMPANIES) ?? '',
+        getOperationName(GET_PEOPLE) ?? '',
+        getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
+      ],
     });
 
   const [removeCommentThreadTargetOnCommentThread] =
     useRemoveCommentThreadTargetOnCommentThreadMutation({
-      refetchQueries: ['GetCompanies', 'GetPeople'],
+      refetchQueries: [
+        getOperationName(GET_COMPANIES) ?? '',
+        getOperationName(GET_PEOPLE) ?? '',
+        getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
+      ],
     });
 
   return function handleCheckItemChange(

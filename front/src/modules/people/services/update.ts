@@ -1,7 +1,10 @@
 import { FetchResult, gql } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 
 import { apiClient } from '../../../apollo';
 import { mapToGqlPerson, Person } from '../interfaces/person.interface';
+
+import { GET_PEOPLE } from './select';
 
 export const UPDATE_PERSON = gql`
   mutation UpdatePeople(
@@ -104,7 +107,7 @@ export async function insertPerson(
   const result = await apiClient.mutate({
     mutation: INSERT_PERSON,
     variables: mapToGqlPerson(person),
-    refetchQueries: ['GetPeople'],
+    refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
   });
 
   return result;
