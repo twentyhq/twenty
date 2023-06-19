@@ -3,7 +3,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
 import { PeopleCompanyCell } from '@/people/components/PeopleCompanyCell';
-import { Person } from '@/people/interfaces/person.interface';
 import { updatePerson } from '@/people/services';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone';
@@ -19,7 +18,9 @@ import {
 } from '@/ui/icons/index';
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 
-const columnHelper = createColumnHelper<Person>();
+import { GetPeopleQueryHookResult } from '../../generated/graphql';
+
+const columnHelper = createColumnHelper<GetPeopleQueryHookResult>();
 
 export const usePeopleColumns = () => {
   return useMemo(() => {
@@ -34,7 +35,7 @@ export const usePeopleColumns = () => {
             <EditablePeopleFullName
               person={props.row.original}
               onChange={async (firstName: string, lastName: string) => {
-                const person = props.row.original;
+                const person = { ...props.row.original };
                 person.firstname = firstName;
                 person.lastname = lastName;
                 await updatePerson(person);
@@ -80,7 +81,7 @@ export const usePeopleColumns = () => {
             placeholder="Phone"
             value={props.row.original.phone || ''}
             changeHandler={(value: string) => {
-              const person = props.row.original;
+              const person = { ...props.row.original };
               person.phone = value;
               updatePerson(person);
             }}
@@ -97,10 +98,14 @@ export const usePeopleColumns = () => {
         ),
         cell: (props) => (
           <EditableDate
-            value={props.row.original.createdAt || new Date()}
+            value={
+              props.row.original.createdAt
+                ? new Date(props.row.original.createdAt)
+                : new Date()
+            }
             changeHandler={(value: Date) => {
-              const person = props.row.original;
-              person.createdAt = value;
+              const person = { ...props.row.original };
+              person.createdAt = value.toISOString();
               updatePerson(person);
             }}
           />
@@ -117,7 +122,7 @@ export const usePeopleColumns = () => {
             placeholder="City"
             content={props.row.original.city || ''}
             changeHandler={(value: string) => {
-              const person = props.row.original;
+              const person = { ...props.row.original };
               person.city = value;
               updatePerson(person);
             }}

@@ -1,4 +1,4 @@
-import { GraphqlQueryPerson } from '@/people/interfaces/person.interface';
+import { Person } from '../../modules/people/interfaces/person.interface';
 
 export const mockedPeopleData = [
   {
@@ -55,7 +55,6 @@ export const mockedPeopleData = [
 
     city: 'Paris',
   },
-
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6h',
     __typename: 'Person',
@@ -74,4 +73,4 @@ export const mockedPeopleData = [
 
     city: 'Paris',
   },
-] satisfies Array<GraphqlQueryPerson>;
+] satisfies Array<Person>;

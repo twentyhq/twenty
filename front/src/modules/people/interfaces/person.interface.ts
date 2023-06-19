@@ -1,82 +1,12 @@
-import {
-  Company,
-  GraphqlQueryCompany,
-  mapToCompany,
-} from '@/companies/interfaces/company.interface';
-import { Pipeline } from '@/pipelines/interfaces/pipeline.interface';
+import { Person as GQLPerson } from '../../../generated/graphql';
+import { DeepPartial } from '../../utils/utils';
 
-export type Person = {
-  __typename: 'people';
-  id: string;
-  firstname?: string;
-  lastname?: string;
-  picture?: string | null;
-  email?: string;
-  phone?: string;
-  city?: string;
+export type Person = DeepPartial<GQLPerson> & { id: GQLPerson['id'] };
 
-  createdAt?: Date;
+export type GraphqlQueryPerson = Person;
 
-  company?: Company | null;
-  pipes?: Pipeline[] | null;
+export type GraphqlMutationPerson = Person;
 
-  _commentCount?: number;
-};
+export const mapToPerson = (person: GraphqlQueryPerson): Person => person;
 
-export type GraphqlQueryPerson = {
-  id: string;
-  firstname?: string;
-  lastname?: string;
-  city?: string;
-  email?: string;
-  phone?: string;
-
-  createdAt?: string;
-
-  company?: GraphqlQueryCompany | null;
-
-  _commentCount?: number;
-
-  __typename?: string;
-};
-
-export type GraphqlMutationPerson = {
-  id: string;
-  firstname?: string;
-  lastname?: string;
-  email?: string;
-  phone?: string;
-  city?: string;
-  createdAt?: string;
-  companyId?: string;
-  __typename: 'people';
-};
-
-export const mapToPerson = (person: GraphqlQueryPerson): Person => ({
-  __typename: 'people',
-  id: person.id,
-  firstname: person.firstname,
-  lastname: person.lastname,
-  email: person.email,
-  phone: person.phone,
-  city: person.city,
-
-  createdAt: person.createdAt ? new Date(person.createdAt) : undefined,
-
-  company: person.company ? mapToCompany(person.company) : null,
-  _commentCount: person._commentCount,
-});
-
-export const mapToGqlPerson = (person: Person): GraphqlMutationPerson => ({
-  id: person.id,
-  firstname: person.firstname,
-  lastname: person.lastname,
-  email: person.email,
-  phone: person.phone,
-  city: person.city,
-
-  createdAt: person.createdAt ? person.createdAt.toUTCString() : undefined,
-
-  companyId: person.company?.id,
-  __typename: 'people',
-});
+export const mapToGqlPerson = (person: Person): GraphqlMutationPerson => person;

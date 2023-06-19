@@ -41,9 +41,9 @@ it('updates a person', async () => {
         icon: '!',
       },
     ],
-    createdAt: new Date(),
+    createdAt: new Date().toISOString(),
     city: 'San Francisco',
-    __typename: 'people',
+    __typename: 'Person',
   });
   expect(result.data).toBeDefined();
   result.data && expect(result.data.email).toBe('john@example.com');

@@ -23,10 +23,7 @@ import { currentRowSelectionState } from '../../tables/states/rowSelectionState'
 
 import { TableHeader } from './table-header/TableHeader';
 
-type OwnProps<
-  TData extends { id: string; __typename: 'Company' | 'people' },
-  SortField,
-> = {
+type OwnProps<TData extends { id: string }, SortField> = {
   data: Array<TData>;
   columns: Array<ColumnDef<TData, any>>;
   viewName: string;
@@ -108,10 +105,7 @@ const StyledRow = styled.tr<{ selected: boolean }>`
     props.selected ? props.theme.secondaryBackground : 'none'};
 `;
 
-export function EntityTable<
-  TData extends { id: string; __typename: 'Company' | 'people' },
-  SortField,
->({
+export function EntityTable<TData extends { id: string }, SortField>({
   data,
   columns,
   viewName,

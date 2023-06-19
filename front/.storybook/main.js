@@ -20,6 +20,24 @@ module.exports = {
       include: /node_modules/,
       type: 'javascript/auto'
     });
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: [
+        {
+          loader: '@svgr/webpack'
+        },
+        {
+          loader: 'file-loader',
+          options: {
+            name: 'static/media/[path][name].[ext]'
+          }
+        }
+      ],
+      type: 'javascript/auto',
+      issuer: {
+        and: [/\.(ts|tsx|js|jsx|md|mdx)$/]
+      }
+    });
     config.resolve.extensions.push('.mjs');
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -33,7 +51,6 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
-    "@storybook/preset-create-react-app",
     "@storybook/addon-coverage",
     "@storybook/addon-styling"
 

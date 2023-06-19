@@ -4,7 +4,6 @@ import { useRecoilState } from 'recoil';
 import { getUserIdFromToken } from '@/auth/services/AuthService';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isAuthenticatingState } from '@/auth/states/isAuthenticatingState';
-import { mapToUser } from '@/users/interfaces/user.interface';
 import { useGetCurrentUserQuery } from '@/users/services';
 
 type OwnProps = {
@@ -18,13 +17,13 @@ export function AuthProvider({ children }: OwnProps) {
   const userIdFromToken = getUserIdFromToken();
 
   const { data } = useGetCurrentUserQuery(userIdFromToken);
-
+  const user = data?.users?.[0];
   useEffect(() => {
-    if (data?.users[0]) {
-      setCurrentUser(mapToUser(data?.users?.[0]));
+    if (user) {
+      setCurrentUser(user);
       setIsAuthenticating(false);
     }
-  }, [data, setCurrentUser, setIsAuthenticating]);
+  }, [user, setCurrentUser, setIsAuthenticating]);
 
   return <>{children}</>;
 }
