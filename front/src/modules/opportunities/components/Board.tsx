@@ -7,6 +7,7 @@ import {
 } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 
 import {
+  BoardItemKey,
   Column,
   getOptimisticlyUpdatedBoard,
   Items,
@@ -25,19 +26,30 @@ import { BoardCard } from './BoardCard';
 type BoardProps = {
   initialBoard: Column[];
   items: Items;
+  onUpdate?: (itemKey: BoardItemKey, columnId: Column['id']) => Promise<void>;
 };
 
-export const Board = ({ initialBoard, items }: BoardProps) => {
+export const Board = ({ initialBoard, items, onUpdate }: BoardProps) => {
   const [board, setBoard] = useState<Column[]>(initialBoard);
 
   const onDragEnd: OnDragEndResponder = useCallback(
-    (result) => {
+    async (result) => {
       const newBoard = getOptimisticlyUpdatedBoard(board, result);
       if (!newBoard) return;
       setBoard(newBoard);
-      // TODO implement update board mutation
+      try {
+        const draggedEntityId = items[result.draggableId]?.id;
+        const destinationColumnId = result.destination?.droppableId;
+        destinationColumnId &&
+          destinationColumnId &&
+          onUpdate &&
+          (await onUpdate(draggedEntityId, destinationColumnId));
+      } catch (e) {
+        console.error(e);
+        alert('Error updating board');
+      }
     },
-    [board],
+    [board, onUpdate, items],
   );
 
   return (
