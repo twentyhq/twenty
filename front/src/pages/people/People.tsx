@@ -8,7 +8,7 @@ import {
   reduceSortsToOrderBy,
 } from '@/filters-and-sorts/helpers';
 import { SelectedFilterType } from '@/filters-and-sorts/interfaces/filters/interface';
-import { mapToPerson, Person } from '@/people/interfaces/person.interface';
+import { Person } from '@/people/interfaces/person.interface';
 import {
   defaultOrderBy,
   insertPerson,
@@ -50,21 +50,20 @@ export function People() {
 
   const { data } = usePeopleQuery(orderBy, where);
 
-  const people = data?.people.map(mapToPerson) ?? [];
+  const people = data?.people ?? [];
 
   async function handleAddButtonClick() {
-    const newPerson: Person = {
-      __typename: 'people',
+    const newPerson = {
+      __typename: 'Person',
       id: uuidv4(),
       firstname: '',
       lastname: '',
       email: '',
       phone: '',
       company: null,
-      pipes: [],
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
       city: '',
-    };
+    } as const;
 
     await insertPerson(newPerson);
   }

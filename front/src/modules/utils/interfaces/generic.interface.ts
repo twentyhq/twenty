@@ -15,7 +15,7 @@ import {
 
 export type AnyEntity = {
   id: string;
-  __typename: string;
+  __typename?: string;
 } & Record<string, any>;
 
 export type UnknownType = void;

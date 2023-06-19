@@ -1,6 +1,6 @@
-import { GraphqlQueryCompany } from '@/companies/interfaces/company.interface';
+import { Company } from '../../generated/graphql';
 
-export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
+export const mockedCompaniesData = [
   {
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
     domainName: 'airbnb.com',
@@ -13,7 +13,7 @@ export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
       email: 'charles@test.com',
       displayName: 'Charles Test',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      __typename: 'users',
+      __typename: 'User',
     },
     __typename: 'Company',
   },
@@ -83,4 +83,4 @@ export const mockedCompaniesData: Array<GraphqlQueryCompany> = [
     accountOwner: null,
     __typename: 'Company',
   },
-];
+] as Array<Company>;

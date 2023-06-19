@@ -1,39 +1,18 @@
-import {
-  GraphqlQueryWorkspace,
-  mapToWorkspace,
-  Workspace,
-} from '../../workspaces/interfaces/workspace.interface';
+import { WorkspaceMember as GQLWorkspaceMember } from '../../../generated/graphql';
+import { DeepPartial } from '../../utils/utils';
 
-export interface WorkspaceMember {
-  id: string;
-  workspace: Workspace;
-}
-
-export type GraphqlQueryWorkspaceMember = {
-  id: string;
-  workspace: GraphqlQueryWorkspace;
-  __typename?: string;
+export type WorkspaceMember = DeepPartial<GQLWorkspaceMember> & {
+  id: GQLWorkspaceMember['id'];
 };
 
-export type GraphqlMutationWorkspaceMember = {
-  id: string;
-  workspace_id: string;
-  __typename?: string;
-};
+export type GraphqlQueryWorkspaceMember = WorkspaceMember;
+
+export type GraphqlMutationWorkspaceMember = WorkspaceMember;
 
 export const mapToWorkspaceMember = (
   workspaceMember: GraphqlQueryWorkspaceMember,
-): WorkspaceMember => ({
-  id: workspaceMember.id,
-  workspace: workspaceMember.workspace
-    ? mapToWorkspace(workspaceMember.workspace)
-    : workspaceMember.workspace,
-});
+): WorkspaceMember => workspaceMember;
 
 export const mapToGqlWorkspaceMember = (
   workspaceMember: WorkspaceMember,
-): GraphqlMutationWorkspaceMember => ({
-  id: workspaceMember.id,
-  workspace_id: workspaceMember.workspace?.id,
-  __typename: 'workspace_members',
-});
+): GraphqlMutationWorkspaceMember => workspaceMember;

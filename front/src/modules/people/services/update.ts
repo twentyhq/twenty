@@ -93,7 +93,7 @@ export async function updatePerson(
 ): Promise<FetchResult<Person>> {
   const result = await apiClient.mutate({
     mutation: UPDATE_PERSON,
-    variables: mapToGqlPerson(person),
+    variables: person,
   });
   return result;
 }

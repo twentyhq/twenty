@@ -1,52 +1,12 @@
-import {
-  GraphqlQueryWorkspaceMember,
-  mapToWorkspaceMember,
-  WorkspaceMember,
-} from './workspaceMember.interface';
+import { User as GQLUser } from '../../../generated/graphql';
+import { DeepPartial } from '../../utils/utils';
 
-export interface User {
-  __typename: 'users';
-  id: string;
-  email?: string;
-  displayName?: string;
-  avatarUrl?: string;
-  workspaceMember?: WorkspaceMember | null;
-}
+export type User = DeepPartial<GQLUser> & { id: string };
 
-export type GraphqlQueryUser = {
-  id: string;
-  email?: string;
-  displayName?: string;
-  workspaceMember?: GraphqlQueryWorkspaceMember | null;
-  avatarUrl?: string;
-  __typename?: string;
-};
+export type GraphqlQueryUser = User;
 
-export type GraphqlMutationUser = {
-  id: string;
-  email?: string;
-  displayName?: string;
-  avatarUrl?: string;
-  workspaceMemberId?: string;
-  __typename?: string;
-};
+export type GraphqlMutationUser = User;
 
-export const mapToUser = (user: GraphqlQueryUser): User => ({
-  __typename: 'users',
-  id: user.id,
-  email: user.email,
-  displayName: user.displayName,
-  avatarUrl: user.avatarUrl,
-  workspaceMember: user.workspaceMember
-    ? mapToWorkspaceMember(user.workspaceMember)
-    : user.workspaceMember,
-});
+export const mapToUser = (user: GraphqlQueryUser): User => user;
 
-export const mapToGqlUser = (user: User): GraphqlMutationUser => ({
-  id: user.id,
-  email: user.email,
-  displayName: user.displayName,
-  avatarUrl: user.avatarUrl,
-  workspaceMemberId: user.workspaceMember?.id,
-  __typename: 'users',
-});
+export const mapToGqlUser = (user: User): GraphqlMutationUser => user;

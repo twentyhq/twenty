@@ -1525,7 +1525,7 @@ export type WorkspaceMember = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-  user: User;
+  userrrr: User;
   userId: Scalars['String'];
   workspace: Workspace;
 };

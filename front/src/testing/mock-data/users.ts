@@ -37,4 +37,4 @@ export const mockedUsersData: Array<GraphqlQueryUser> = [
       },
     },
   },
-];
+] as GraphqlQueryUser[];

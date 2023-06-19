@@ -2,6 +2,7 @@ import { FetchResult, gql } from '@apollo/client';
 
 import { apiClient } from '~/apollo';
 
+import { UpdateCompanyMutationVariables } from '../../../generated/graphql';
 import { Company, mapToGqlCompany } from '../interfaces/company.interface';
 
 export const UPDATE_COMPANY = gql`
@@ -78,11 +79,11 @@ export const DELETE_COMPANIES = gql`
 `;
 
 export async function updateCompany(
-  company: Company,
+  company: UpdateCompanyMutationVariables,
 ): Promise<FetchResult<Company>> {
   const result = await apiClient.mutate({
     mutation: UPDATE_COMPANY,
-    variables: mapToGqlCompany(company),
+    variables: company,
   });
   return result;
 }

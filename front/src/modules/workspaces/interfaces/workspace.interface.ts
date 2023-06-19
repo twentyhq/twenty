@@ -1,26 +1,11 @@
-export interface Workspace {
-  id: string;
-  domainName?: string;
-  displayName?: string;
-  logo?: string | null;
-  __typename?: string;
-}
+import { Workspace as GQLWorkspace } from '../../../generated/graphql';
+import { DeepPartial } from '../../utils/utils';
 
-export type GraphqlQueryWorkspace = {
-  id: string;
-  displayName?: string;
-  domainName?: string;
-  logo?: string | null;
-  __typename?: string;
-};
+export type Workspace = DeepPartial<GQLWorkspace> & { id: GQLWorkspace['id'] };
 
-export type GraphqlMutationWorkspace = {
-  id: string;
-  displayName?: string;
-  domainName?: string;
-  logo?: string | null;
-  __typename?: string;
-};
+export type GraphqlQueryWorkspace = Workspace;
+
+export type GraphqlMutationWorkspace = Workspace;
 
 export const mapToWorkspace = (
   workspace: GraphqlQueryWorkspace,
@@ -33,10 +18,4 @@ export const mapToWorkspace = (
 
 export const mapToGqlWorkspace = (
   workspace: Workspace,
-): GraphqlMutationWorkspace => ({
-  id: workspace.id,
-  domainName: workspace.domainName,
-  displayName: workspace.displayName,
-  logo: workspace.logo,
-  __typename: 'workspaces',
-});
+): GraphqlMutationWorkspace => workspace;

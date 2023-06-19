@@ -63,8 +63,7 @@ export function Companies() {
       domainName: '',
       employees: null,
       address: '',
-      pipes: [],
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
       accountOwner: null,
       __typename: 'Company',
     };

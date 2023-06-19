@@ -3,7 +3,10 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { GraphqlQueryCompany } from '@/companies/interfaces/company.interface';
+import {
+  Company,
+  GraphqlQueryCompany,
+} from '@/companies/interfaces/company.interface';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { fetchOneFromData } from '~/testing/mock-data';
 import { mockedPeopleData } from '~/testing/mock-data/people';

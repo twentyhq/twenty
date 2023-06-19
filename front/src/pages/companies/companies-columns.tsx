@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEditableNameCell';
-import { Company } from '@/companies/interfaces/company.interface';
 import { updateCompany } from '@/companies/services';
 import {
   PersonChip,
@@ -24,9 +23,9 @@ import {
 } from '@/ui/icons/index';
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 import { mapToUser, User } from '@/users/interfaces/user.interface';
-import { QueryMode } from '~/generated/graphql';
+import { GetCompaniesQueryHookResult, QueryMode } from '~/generated/graphql';
 
-const columnHelper = createColumnHelper<Company>();
+const columnHelper = createColumnHelper<GetCompaniesQueryHookResult>();
 
 export const useCompaniesColumns = () => {
   return useMemo(() => {
@@ -53,7 +52,7 @@ export const useCompaniesColumns = () => {
             content={props.row.original.domainName || ''}
             placeholder="Domain name"
             changeHandler={(value) => {
-              const company = props.row.original;
+              const company = { ...props.row.original };
               company.domainName = value;
               updateCompany(company);
             }}
@@ -70,7 +69,7 @@ export const useCompaniesColumns = () => {
             content={props.row.original.employees?.toString() || ''}
             placeholder="Employees"
             changeHandler={(value) => {
-              const company = props.row.original;
+              const company = { ...props.row.original };
 
               if (value === '') {
                 company.employees = null;
@@ -93,7 +92,7 @@ export const useCompaniesColumns = () => {
             content={props.row.original.address || ''}
             placeholder="Address"
             changeHandler={(value) => {
-              const company = props.row.original;
+              const company = { ...props.row.original };
               company.address = value;
               updateCompany(company);
             }}
@@ -110,10 +109,14 @@ export const useCompaniesColumns = () => {
         ),
         cell: (props) => (
           <EditableDate
-            value={props.row.original.createdAt || new Date()}
+            value={
+              props.row.original.createdAt
+                ? new Date(props.row.original.createdAt)
+                : new Date()
+            }
             changeHandler={(value: Date) => {
-              const company = props.row.original;
-              company.createdAt = value;
+              const company = { ...props.row.original };
+              company.createdAt = value.toISOString();
               updateCompany(company);
             }}
           />
@@ -140,17 +143,8 @@ export const useCompaniesColumns = () => {
               };
             }}
             onChange={(relation: User) => {
-              const company = props.row.original;
-              if (company.accountOwner) {
-                company.accountOwner.id = relation.id;
-              } else {
-                company.accountOwner = {
-                  __typename: 'users',
-                  id: relation.id,
-                  email: relation.email,
-                  displayName: relation.displayName,
-                };
-              }
+              const company = { ...props.row.original };
+              company.accountOwnerId = relation.id;
               updateCompany(company);
             }}
             searchConfig={
