@@ -50,7 +50,7 @@ export type CommentCreateInput = {
   commentThread: CommentThreadCreateNestedOneWithoutCommentsInput;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -59,7 +59,7 @@ export type CommentCreateManyCommentThreadInput = {
   body: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
   deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -82,7 +82,7 @@ export type CommentCreateWithoutCommentThreadInput = {
   body: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
   deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -124,7 +124,7 @@ export type CommentThreadCreateInput = {
   comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -171,7 +171,7 @@ export type CommentThreadTargetCreateManyCommentThreadInput = {
   commentableType: CommentableType;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -194,7 +194,7 @@ export type CommentThreadTargetCreateWithoutCommentThreadInput = {
   commentableType: CommentableType;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -408,7 +408,7 @@ export type CompanyCreateInput = {
   deletedAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -420,7 +420,7 @@ export type CompanyCreateManyAccountOwnerInput = {
   deletedAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -452,7 +452,7 @@ export type CompanyCreateWithoutAccountOwnerInput = {
   deletedAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -882,7 +882,7 @@ export type PersonCreateInput = {
   deletedAt?: InputMaybe<Scalars['DateTime']>;
   email: Scalars['String'];
   firstname: Scalars['String'];
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   lastname: Scalars['String'];
   phone: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -1012,7 +1012,7 @@ export type PipelineProgress = {
 export type PipelineProgressCreateInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   deletedAt?: InputMaybe<Scalars['DateTime']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
   pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
   progressableId: Scalars['String'];
@@ -1350,7 +1350,6 @@ export type User = {
   lastSeen?: Maybe<Scalars['DateTime']>;
   locale: Scalars['String'];
   metadata?: Maybe<Scalars['JSON']>;
-  passwordHash?: Maybe<Scalars['String']>;
   phoneNumber?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -1388,11 +1387,10 @@ export type UserCreateWithoutCommentsInput = {
   displayName: Scalars['String'];
   email: Scalars['String'];
   emailVerified?: InputMaybe<Scalars['Boolean']>;
-  id: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
   lastSeen?: InputMaybe<Scalars['DateTime']>;
   locale: Scalars['String'];
   metadata?: InputMaybe<Scalars['JSON']>;
-  passwordHash?: InputMaybe<Scalars['String']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -1411,7 +1409,6 @@ export type UserOrderByWithRelationInput = {
   lastSeen?: InputMaybe<SortOrder>;
   locale?: InputMaybe<SortOrder>;
   metadata?: InputMaybe<SortOrder>;
-  passwordHash?: InputMaybe<SortOrder>;
   phoneNumber?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
@@ -1463,7 +1460,6 @@ export type UserUpdateWithoutCommentsInput = {
   lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   metadata?: InputMaybe<Scalars['JSON']>;
-  passwordHash?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
@@ -1490,7 +1486,6 @@ export type UserWhereInput = {
   lastSeen?: InputMaybe<DateTimeNullableFilter>;
   locale?: InputMaybe<StringFilter>;
   metadata?: InputMaybe<JsonNullableFilter>;
-  passwordHash?: InputMaybe<StringNullableFilter>;
   phoneNumber?: InputMaybe<StringNullableFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -1525,7 +1520,7 @@ export type WorkspaceMember = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-  userrrr: User;
+  user: User;
   userId: Scalars['String'];
   workspace: Workspace;
 };
