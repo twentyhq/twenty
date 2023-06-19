@@ -12,6 +12,14 @@ import { DeleteManyPipelineProgressArgs } from '../../@generated/pipeline-progre
 import { CreateOnePipelineProgressArgs } from '../../@generated/pipeline-progress/create-one-pipeline-progress.args';
 import { PipelineProgressService } from '../services/pipeline-progress.service';
 import { prepareFindManyArgs } from 'src/utils/prepare-find-many';
+import { AbilityGuard } from 'src/guards/ability.guard';
+import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
+import {
+  CreatePipelineProgressAbilityHandler,
+  ReadPipelineProgressAbilityHandler,
+  UpdatePipelineProgressAbilityHandler,
+  DeletePipelineProgressAbilityHandler,
+} from 'src/ability/handlers/pipeline-progress.ability-handler';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => PipelineProgress)
@@ -21,6 +29,8 @@ export class PipelineProgressResolver {
   ) {}
 
   @Query(() => [PipelineProgress])
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(ReadPipelineProgressAbilityHandler)
   async findManyPipelineProgress(
     @Args() args: FindManyPipelineProgressArgs,
     @AuthWorkspace() workspace: Workspace,
@@ -35,6 +45,8 @@ export class PipelineProgressResolver {
   @Mutation(() => PipelineProgress, {
     nullable: true,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(UpdatePipelineProgressAbilityHandler)
   async updateOnePipelineProgress(
     @Args() args: UpdateOnePipelineProgressArgs,
   ): Promise<PipelineProgress | null> {
@@ -46,6 +58,8 @@ export class PipelineProgressResolver {
   @Mutation(() => AffectedRows, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeletePipelineProgressAbilityHandler)
   async deleteManyPipelineProgress(
     @Args() args: DeleteManyPipelineProgressArgs,
   ): Promise<AffectedRows> {
@@ -57,6 +71,8 @@ export class PipelineProgressResolver {
   @Mutation(() => PipelineProgress, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreatePipelineProgressAbilityHandler)
   async createOnePipelineProgress(
     @Args() args: CreateOnePipelineProgressArgs,
     @AuthWorkspace() workspace: Workspace,
