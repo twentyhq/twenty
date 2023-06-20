@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PipelineStageResolver } from './pipeline-stage.resolver';
 import { PipelineStageService } from '../services/pipeline-stage.service';
+import { AbilityFactory } from 'src/ability/ability.factory';
 
 describe('PipelineStageResolver', () => {
   let resolver: PipelineStageResolver;
@@ -11,6 +12,10 @@ describe('PipelineStageResolver', () => {
         PipelineStageResolver,
         {
           provide: PipelineStageService,
+          useValue: {},
+        },
+        {
+          provide: AbilityFactory,
           useValue: {},
         },
       ],
