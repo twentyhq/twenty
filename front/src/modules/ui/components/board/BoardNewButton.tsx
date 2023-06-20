@@ -29,8 +29,7 @@ export const NewButton = ({
 }) => {
   const theme = useTheme();
   const onInnerClick = useCallback(() => {
-    console.log('onInnerClick');
-    onClick && onClick();
+    onClick && onClick({ id: 'twenty-aaffcfbd-f86b-419f-b794-02319abe8637' });
   }, [onClick]);
   return (
     <StyledButton onClick={onInnerClick}>

@@ -30,3 +30,23 @@ export const UPDATE_PIPELINE_STAGE = gql`
     }
   }
 `;
+
+export const ADD_ENTITY_TO_PIPELINE = gql`
+  mutation CreateOnePipelineProgress(
+    $entityType: PipelineProgressableType!
+    $entityId: String!
+    $pipelineId: String!
+    $pipelineStageId: String!
+  ) {
+    createOnePipelineProgress(
+      data: {
+        progressableType: $entityType
+        progressableId: $entityId
+        pipeline: { connect: { id: $pipelineId } }
+        pipelineStage: { connect: { id: $pipelineStageId } }
+      }
+    ) {
+      id
+    }
+  }
+`;

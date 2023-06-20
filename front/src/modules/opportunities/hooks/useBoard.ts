@@ -1,6 +1,7 @@
 import {
   GetCompaniesQuery,
   GetPeopleQuery,
+  PipelineProgressableType,
   useGetCompaniesQuery,
   useGetPeopleQuery,
   useGetPipelinesQuery,
@@ -52,7 +53,7 @@ export const useBoard = () => {
     return pipelineProgressId;
   };
 
-  const pipelineEntityType: 'Person' | 'Company' | undefined =
+  const pipelineEntityType =
     pipelines.data?.findManyPipeline[0].pipelineProgressableType;
 
   const query =
@@ -83,5 +84,7 @@ export const useBoard = () => {
     loading: pipelines.loading || entitiesQueryResult.loading,
     error: pipelines.error || entitiesQueryResult.error,
     pipelineEntityIdsMapper,
+    pipelineId: pipelines.data?.findManyPipeline[0].id,
+    pipelineEntityType,
   };
 };
