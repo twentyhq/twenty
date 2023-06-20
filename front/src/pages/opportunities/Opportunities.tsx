@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
@@ -11,6 +12,12 @@ import {
 } from '../../generated/graphql';
 import { Board } from '../../modules/opportunities/components/Board';
 import { useBoard } from '../../modules/opportunities/hooks/useBoard';
+
+const StyledDiv = styled.div`
+  border: 1px solid red;
+  border-radius: ${({ theme }) => theme.spacing(2)};
+  overflow-x: auto;
+`;
 
 export function Opportunities() {
   const theme = useTheme();
@@ -41,7 +48,9 @@ export function Opportunities() {
       title="Opportunities"
       icon={<IconTargetArrow size={theme.iconSizeMedium} />}
     >
-      <Board initialBoard={initialBoard} items={items} onUpdate={onUpdate} />
+      <StyledDiv>
+        <Board initialBoard={initialBoard} items={items} onUpdate={onUpdate} />
+      </StyledDiv>
     </WithTopBarContainer>
   );
 }

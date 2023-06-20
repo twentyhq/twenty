@@ -5,6 +5,7 @@ export const StyledBoard = styled.div`
   display: flex;
   flex-direction: row;
   height: 100%;
+  width: 100%;
 `;
 
 export type BoardItemKey = string;
