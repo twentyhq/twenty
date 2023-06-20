@@ -45,19 +45,17 @@ export function Index() {
         <Logo />
         <Title title="Welcome to Twenty" />
         <StyledContentContainer>
-          <PrimaryButton
-            fullWidth={true}
-            label="Continue With Google"
-            icon={<IconBrandGoogle size={theme.iconSizeSmall} stroke={4} />}
-            onClick={onGoogleLoginClick}
-          />
+          <PrimaryButton fullWidth={true} onClick={onGoogleLoginClick}>
+            <IconBrandGoogle size={theme.iconSizeSmall} stroke={4} />
+            Continue With Google
+          </PrimaryButton>
           <HorizontalSeparator />
           <TextInput
             initialValue=""
             onChange={(value) => console.log(value)}
             fullWidth={true}
           />
-          <SecondaryButton label="Continue" fullWidth={true} />
+          <SecondaryButton fullWidth={true}>Continue</SecondaryButton>
         </StyledContentContainer>
         <FooterNote>
           By using Twenty, you agree to the Terms of Service and Data Processing

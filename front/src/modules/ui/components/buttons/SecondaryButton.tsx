@@ -2,10 +2,9 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 type OwnProps = {
-  label: string;
-  icon?: React.ReactNode;
+  children: React.ReactNode;
   fullWidth?: boolean;
-};
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const StyledButton = styled.button<{ fullWidth: boolean }>`
   align-items: center;
@@ -31,14 +30,13 @@ const StyledButton = styled.button<{ fullWidth: boolean }>`
 `;
 
 export function SecondaryButton({
-  label,
-  icon,
+  children,
   fullWidth,
+  ...props
 }: OwnProps): JSX.Element {
   return (
-    <StyledButton fullWidth={fullWidth ?? false}>
-      {icon}
-      {label}
+    <StyledButton fullWidth={fullWidth ?? false} {...props}>
+      {children}
     </StyledButton>
   );
 }

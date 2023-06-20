@@ -17,7 +17,7 @@ const StyledClickable = styled.div`
   }
 `;
 
-function Link({ href, children, onClick }: OwnProps) {
+export function RawLink({ href, children, onClick }: OwnProps) {
   return (
     <StyledClickable>
       <ReactLink onClick={onClick} to={href}>
@@ -26,5 +26,3 @@ function Link({ href, children, onClick }: OwnProps) {
     </StyledClickable>
   );
 }
-
-export default Link;

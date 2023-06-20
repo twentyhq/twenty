@@ -2,12 +2,14 @@ import styled from '@emotion/styled';
 
 const StyledLayout = styled.div`
   background: ${(props) => props.theme.primaryBackground};
+  border: 1px solid ${(props) => props.theme.lightBorder};
   border-radius: 5px;
-  box-shadow: 0px 0px 2px;
-  display: flex;
 
+  display: flex;
   flex-direction: row;
+
   height: fit-content;
+  min-width: 300px;
   padding: 20px;
   width: fit-content;
 `;
