@@ -16,7 +16,7 @@ type Story = StoryObj<typeof Board>;
 export const OneColumnBoard: Story = {
   render: () => (
     <StrictMode>
-      <Board initialBoard={initialBoard} items={items} />
+      <Board columns={initialBoard} initialBoard={initialBoard} items={items} />
     </StrictMode>
   ),
 };

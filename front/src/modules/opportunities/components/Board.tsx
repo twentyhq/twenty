@@ -26,6 +26,7 @@ import { NewButton } from '../../ui/components/board/BoardNewButton';
 import { BoardCard } from './BoardCard';
 
 type BoardProps = {
+  columns: Omit<Column, 'itemKeys'>[];
   initialBoard: Column[];
   items: Items;
   onUpdate?: (itemKey: BoardItemKey, columnId: Column['id']) => Promise<void>;
@@ -36,6 +37,7 @@ type BoardProps = {
 };
 
 export const Board = ({
+  columns,
   initialBoard,
   items,
   onUpdate,
@@ -73,10 +75,11 @@ export const Board = ({
     [board, onUpdate],
   );
 
+  console.log('board', board);
   return (
     <StyledBoard>
       <DragDropContext onDragEnd={onDragEnd}>
-        {board.map((column) => (
+        {columns.map((column, columnIndex) => (
           <Droppable key={column.id} droppableId={column.id}>
             {(droppableProvided) => (
               <StyledColumn>
@@ -85,7 +88,7 @@ export const Board = ({
                 </StyledColumnTitle>
                 <ScrollableColumn>
                   <ItemsContainer droppableProvided={droppableProvided}>
-                    {column.itemKeys.map((itemKey, index) => (
+                    {board[columnIndex].itemKeys.map((itemKey, index) => (
                       <Draggable
                         key={itemKey}
                         draggableId={itemKey}

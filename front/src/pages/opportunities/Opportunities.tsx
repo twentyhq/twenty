@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 
@@ -18,14 +18,17 @@ import { GET_PIPELINES } from '../../modules/opportunities/queries';
 export function Opportunities() {
   const theme = useTheme();
 
-  const {
-    initialBoard,
-    items,
-    loading,
-    error,
-    pipelineId,
-    pipelineEntityType,
-  } = useBoard();
+  const { initialBoard, items, error, pipelineId, pipelineEntityType } =
+    useBoard();
+  const columns = useMemo(
+    () =>
+      initialBoard?.map(({ id, colorCode, title }) => ({
+        id,
+        colorCode,
+        title,
+      })),
+    [initialBoard],
+  );
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
   const [createPipelineProgress] = useCreateOnePipelineProgressMutation();
 
@@ -61,16 +64,18 @@ export function Opportunities() {
     [pipelineId, pipelineEntityType, createPipelineProgress],
   );
 
-  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error...</div>;
-  if (!initialBoard || !items)
+  if (!initialBoard || !items) {
     return <div>Initial board or items not found</div>;
+  }
+
   return (
     <WithTopBarContainer
       title="Opportunities"
       icon={<IconTargetArrow size={theme.iconSizeMedium} />}
     >
       <Board
+        columns={columns || []}
         initialBoard={initialBoard}
         items={items}
         onUpdate={onUpdate}
