@@ -14,7 +14,7 @@ const StyledButton = styled.button`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  transition: background-color 0.2s ease-in-out;
+  padding: ${(props) => props.theme.spacing(1)};
 
   &:hover {
     background-color: ${({ theme }) => theme.secondaryBackground};
