@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useTheme } from '@emotion/react';
 
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
@@ -12,6 +13,8 @@ import { Board } from '../../modules/opportunities/components/Board';
 import { useBoard } from '../../modules/opportunities/hooks/useBoard';
 
 export function Opportunities() {
+  const theme = useTheme();
+
   const { initialBoard, items, loading, error, pipelineEntityIdsMapper } =
     useBoard();
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
@@ -34,7 +37,10 @@ export function Opportunities() {
   if (!initialBoard || !items)
     return <div>Initial board or items not found</div>;
   return (
-    <WithTopBarContainer title="Opportunities" icon={<IconTargetArrow />}>
+    <WithTopBarContainer
+      title="Opportunities"
+      icon={<IconTargetArrow size={theme.iconSizeMedium} />}
+    >
       <Board initialBoard={initialBoard} items={items} onUpdate={onUpdate} />
     </WithTopBarContainer>
   );
