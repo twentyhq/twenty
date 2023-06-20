@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { HideField } from '@nestjs/graphql';
 import { PipelineCountAggregate } from './pipeline-count-aggregate.output';
 import { PipelineMinAggregate } from './pipeline-min-aggregate.output';
@@ -24,6 +25,9 @@ export class PipelineGroupBy {
 
   @Field(() => String, { nullable: false })
   icon!: string;
+
+  @Field(() => PipelineProgressableType, { nullable: false })
+  pipelineProgressableType!: keyof typeof PipelineProgressableType;
 
   @HideField()
   workspaceId!: string;

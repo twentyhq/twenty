@@ -24,38 +24,49 @@ export const useBoard = () => {
   const pipelineStages = pipelines.data?.findManyPipeline[0].pipelineStages;
   const initialBoard: Column[] =
     pipelineStages?.map((pipelineStage) => ({
-      id: pipelineStage.name,
+      id: pipelineStage.id,
       title: pipelineStage.name,
       colorCode: pipelineStage.color,
       itemKeys:
         pipelineStage.pipelineProgresses?.map(
-          (item) => `item-${item.progressableId}` as BoardItemKey,
+          (item) => item.progressableId as BoardItemKey,
         ) || [],
     })) || [];
 
   const pipelineEntityIds = pipelineStages?.reduce(
     (acc, pipelineStage) => [
       ...acc,
-      ...(pipelineStage.pipelineProgresses?.map(
-        (item) => item.progressableId,
-      ) || []),
+      ...(pipelineStage.pipelineProgresses?.map((item) => ({
+        entityId: item?.progressableId,
+        pipelineProgressId: item?.id,
+      })) || []),
     ],
-    [] as string[],
+    [] as { entityId: string; pipelineProgressId: string }[],
   );
 
+  const pipelineEntityIdsMapper = (entityId: string) => {
+    const pipelineProgressId = pipelineEntityIds?.find(
+      (item) => item.entityId === entityId,
+    )?.pipelineProgressId;
+
+    return pipelineProgressId;
+  };
+
   const pipelineEntityType: 'Person' | 'Company' | undefined =
-    pipelineStages?.[0].pipelineProgresses?.[0].progressableType;
+    pipelines.data?.findManyPipeline[0].pipelineProgressableType;
 
   const query =
     pipelineEntityType === 'Person' ? useGetPeopleQuery : useGetCompaniesQuery;
 
   const entitiesQueryResult = query({
-    variables: { where: { id: { in: pipelineEntityIds } } },
+    variables: {
+      where: { id: { in: pipelineEntityIds?.map((item) => item.entityId) } },
+    },
   });
 
   const indexByIdReducer = (acc: Items, entity: { id: string }) => ({
     ...acc,
-    [`item-${entity.id}`]: entity,
+    [entity.id]: entity,
   });
 
   const items: Items | undefined = entitiesQueryResult.data
@@ -71,5 +82,6 @@ export const useBoard = () => {
     items,
     loading: pipelines.loading || entitiesQueryResult.loading,
     error: pipelines.error || entitiesQueryResult.error,
+    pipelineEntityIdsMapper,
   };
 };

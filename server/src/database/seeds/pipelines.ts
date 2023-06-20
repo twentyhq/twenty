@@ -8,6 +8,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       name: 'Sales pipeline',
       icon: '💰',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      pipelineProgressableType: 'Person',
     },
   });
 
@@ -97,6 +98,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       name: 'Customer support pipeline',
       icon: '📔',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      pipelineProgressableType: 'Person',
     },
   });
 
@@ -134,6 +136,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       name: 'Sales pipeline',
       icon: '💰',
       workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
+      pipelineProgressableType: 'Person',
     },
   });
 
@@ -198,19 +201,6 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       color: '#079039',
       type: 'won',
       pipelineId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
-      workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
-    },
-  });
-
-  await prisma.pipelineProgress.upsert({
-    where: { id: 'twenty-dev-fe256b39-3ec3-4fe7-8998-b76aa0bfb600' },
-    update: {},
-    create: {
-      id: 'twenty-dev-fe256b39-3ec3-4fe7-8998-b76aa0bfb600',
-      pipelineId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
-      pipelineStageId: 'twenty-dev-fe256b39-3ec3-4fe3-8998-b76aa0bfb600',
-      progressableType: 'Company',
-      progressableId: 'twenty-dev-a674fa6c-1455-4c57-afaf-dd5dc086361e',
       workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
     },
   });

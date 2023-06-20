@@ -50,8 +50,9 @@ const StyledBoardCardBody = styled.div`
 `;
 
 export const BoardCard = ({ item }: { item: Person | Company }) => {
-  if (item.__typename === 'Person') return <PersonBoardCard person={item} />;
-  if (item.__typename === 'Company') return <CompanyBoardCard company={item} />;
+  if (item?.__typename === 'Person') return <PersonBoardCard person={item} />;
+  if (item?.__typename === 'Company')
+    return <CompanyBoardCard company={item} />;
   // @todo return card skeleton
   return null;
 };

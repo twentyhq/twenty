@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { HideField } from '@nestjs/graphql';
 import { PipelineStage } from '../pipeline-stage/pipeline-stage.model';
 import { PipelineProgress } from '../pipeline-progress/pipeline-progress.model';
@@ -26,6 +27,12 @@ export class Pipeline {
 
   @Field(() => String, { nullable: false })
   icon!: string;
+
+  @Field(() => PipelineProgressableType, {
+    nullable: false,
+    defaultValue: 'Company',
+  })
+  pipelineProgressableType!: keyof typeof PipelineProgressableType;
 
   @HideField()
   workspaceId!: string;

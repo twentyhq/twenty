@@ -7,6 +7,7 @@ export enum PipelineScalarFieldEnum {
   deletedAt = 'deletedAt',
   name = 'name',
   icon = 'icon',
+  pipelineProgressableType = 'pipelineProgressableType',
   workspaceId = 'workspaceId',
 }
 

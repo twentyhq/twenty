@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { StringWithAggregatesFilter } from '../prisma/string-with-aggregates-filter.input';
 import { DateTimeWithAggregatesFilter } from '../prisma/date-time-with-aggregates-filter.input';
 import { DateTimeNullableWithAggregatesFilter } from '../prisma/date-time-nullable-with-aggregates-filter.input';
+import { EnumPipelineProgressableTypeWithAggregatesFilter } from '../prisma/enum-pipeline-progressable-type-with-aggregates-filter.input';
 import { HideField } from '@nestjs/graphql';
 
 @InputType()
@@ -33,6 +34,11 @@ export class PipelineScalarWhereWithAggregatesInput {
 
   @Field(() => StringWithAggregatesFilter, { nullable: true })
   icon?: StringWithAggregatesFilter;
+
+  @Field(() => EnumPipelineProgressableTypeWithAggregatesFilter, {
+    nullable: true,
+  })
+  pipelineProgressableType?: EnumPipelineProgressableTypeWithAggregatesFilter;
 
   @HideField()
   workspaceId?: StringWithAggregatesFilter;

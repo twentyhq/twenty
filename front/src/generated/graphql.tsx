@@ -975,6 +975,7 @@ export type Pipeline = {
   icon: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
+  pipelineProgressableType: PipelineProgressableType;
   pipelineProgresses?: Maybe<Array<PipelineProgress>>;
   pipelineStages?: Maybe<Array<PipelineStage>>;
   updatedAt: Scalars['DateTime'];
@@ -990,6 +991,7 @@ export type PipelineOrderByWithRelationInput = {
   icon?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
+  pipelineProgressableType?: InputMaybe<SortOrder>;
   pipelineProgresses?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   pipelineStages?: InputMaybe<PipelineStageOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
@@ -1102,6 +1104,7 @@ export enum PipelineScalarFieldEnum {
   Icon = 'icon',
   Id = 'id',
   Name = 'name',
+  PipelineProgressableType = 'pipelineProgressableType',
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
 }
@@ -1201,6 +1204,7 @@ export type PipelineWhereInput = {
   icon?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
+  pipelineProgressableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
   pipelineProgresses?: InputMaybe<PipelineProgressListRelationFilter>;
   pipelineStages?: InputMaybe<PipelineStageListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
@@ -1625,7 +1629,15 @@ export type DeleteCompaniesMutation = { __typename?: 'Mutation', deleteManyCompa
 export type GetPipelinesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineStages?: Array<{ __typename?: 'PipelineStage', name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string }> | null }> | null }> };
+export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string }> | null }> | null }> };
+
+export type UpdateOnePipelineProgressMutationVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+  pipelineStageId?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UpdateOnePipelineProgressMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string } | null };
 
 export type GetPeopleQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
@@ -2199,10 +2211,12 @@ export type DeleteCompaniesMutationResult = Apollo.MutationResult<DeleteCompanie
 export type DeleteCompaniesMutationOptions = Apollo.BaseMutationOptions<DeleteCompaniesMutation, DeleteCompaniesMutationVariables>;
 export const GetPipelinesDocument = gql`
     query GetPipelines {
-  findManyPipeline(skip: 1) {
+  findManyPipeline {
     id
     name
+    pipelineProgressableType
     pipelineStages {
+      id
       name
       color
       pipelineProgresses {
@@ -2241,6 +2255,43 @@ export function useGetPipelinesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetPipelinesQueryHookResult = ReturnType<typeof useGetPipelinesQuery>;
 export type GetPipelinesLazyQueryHookResult = ReturnType<typeof useGetPipelinesLazyQuery>;
 export type GetPipelinesQueryResult = Apollo.QueryResult<GetPipelinesQuery, GetPipelinesQueryVariables>;
+export const UpdateOnePipelineProgressDocument = gql`
+    mutation UpdateOnePipelineProgress($id: String, $pipelineStageId: String) {
+  updateOnePipelineProgress(
+    where: {id: $id}
+    data: {pipelineStage: {connect: {id: $pipelineStageId}}}
+  ) {
+    id
+  }
+}
+    `;
+export type UpdateOnePipelineProgressMutationFn = Apollo.MutationFunction<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>;
+
+/**
+ * __useUpdateOnePipelineProgressMutation__
+ *
+ * To run a mutation, you first call `useUpdateOnePipelineProgressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOnePipelineProgressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOnePipelineProgressMutation, { data, loading, error }] = useUpdateOnePipelineProgressMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      pipelineStageId: // value for 'pipelineStageId'
+ *   },
+ * });
+ */
+export function useUpdateOnePipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>(UpdateOnePipelineProgressDocument, options);
+      }
+export type UpdateOnePipelineProgressMutationHookResult = ReturnType<typeof useUpdateOnePipelineProgressMutation>;
+export type UpdateOnePipelineProgressMutationResult = Apollo.MutationResult<UpdateOnePipelineProgressMutation>;
+export type UpdateOnePipelineProgressMutationOptions = Apollo.BaseMutationOptions<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>;
 export const GetPeopleDocument = gql`
     query GetPeople($orderBy: [PersonOrderByWithRelationInput!], $where: PersonWhereInput, $limit: Int) {
   people: findManyPerson(orderBy: $orderBy, where: $where, take: $limit) {
