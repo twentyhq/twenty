@@ -13,7 +13,7 @@ const StyledLogo = styled.div`
 export function Logo(): JSX.Element {
   return (
     <StyledLogo>
-      <img src="icons/android/android-launchericon-192-192.png" alt="logo" />
+      <img src="/icons/android/android-launchericon-192-192.png" alt="logo" />
     </StyledLogo>
   );
 }

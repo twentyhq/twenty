@@ -1,15 +1,15 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import { RequireAuth } from '@/auth/components/RequireAuth';
+import { RequireNotAuth } from '@/auth/components/RequireNotAuth';
 import { DefaultLayout } from '@/ui/layout/DefaultLayout';
-
-import { RequireAuth } from './modules/auth/components/RequireAuth';
-import { Callback } from './pages/auth/Callback';
-import { Index } from './pages/auth/Index';
-import { Login } from './pages/auth/Login';
-import { Companies } from './pages/companies/Companies';
-import { Opportunities } from './pages/opportunities/Opportunities';
-import { People } from './pages/people/People';
-import { SettingsProfile } from './pages/settings/SettingsProfile';
+import { Index } from '~/pages/auth/Index';
+import { PasswordLogin } from '~/pages/auth/PasswordLogin';
+import { Verify } from '~/pages/auth/Verify';
+import { Companies } from '~/pages/companies/Companies';
+import { Opportunities } from '~/pages/opportunities/Opportunities';
+import { People } from '~/pages/people/People';
+import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 
 export function App() {
   return (
@@ -39,11 +39,13 @@ export function App() {
         <Route
           path="auth/*"
           element={
-            <Routes>
-              <Route path="" element={<Index />} />
-              <Route path="callback" element={<Callback />} />
-              <Route path="login" element={<Login />} />
-            </Routes>
+            <RequireNotAuth>
+              <Routes>
+                <Route path="" element={<Index />} />
+                <Route path="callback" element={<Verify />} />
+                <Route path="password-login" element={<PasswordLogin />} />
+              </Routes>
+            </RequireNotAuth>
           }
         />
       </Routes>
