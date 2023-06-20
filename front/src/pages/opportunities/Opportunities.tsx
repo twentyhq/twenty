@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
-import { assertNonNullType } from 'graphql';
 
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
@@ -13,6 +13,7 @@ import {
 } from '../../generated/graphql';
 import { Board } from '../../modules/opportunities/components/Board';
 import { useBoard } from '../../modules/opportunities/hooks/useBoard';
+import { GET_PIPELINES } from '../../modules/opportunities/queries';
 
 export function Opportunities() {
   const theme = useTheme();
@@ -56,6 +57,7 @@ export function Opportunities() {
       };
       createPipelineProgress({
         variables,
+        refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
       });
     },
     [pipelineId, pipelineEntityType, createPipelineProgress],
