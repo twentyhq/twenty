@@ -10,6 +10,11 @@ export const StyledColumn = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+export const ScrollableColumn = styled.div`
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+`;
+
 export const StyledColumnTitle = styled.h3`
   color: ${({ color }) => color};
   font-family: 'Inter';

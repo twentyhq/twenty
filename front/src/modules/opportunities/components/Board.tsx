@@ -15,6 +15,7 @@ import {
 } from '../../ui/components/board/Board';
 import {
   ItemsContainer,
+  ScrollableColumn,
   StyledColumn,
   StyledColumnTitle,
 } from '../../ui/components/board/BoardColumn';
@@ -61,22 +62,24 @@ export const Board = ({ initialBoard, items, onUpdate }: BoardProps) => {
                 <StyledColumnTitle color={column.colorCode}>
                   • {column.title}
                 </StyledColumnTitle>
-                <ItemsContainer droppableProvided={droppableProvided}>
-                  {column.itemKeys.map((itemKey, index) => (
-                    <Draggable
-                      key={itemKey}
-                      draggableId={itemKey}
-                      index={index}
-                    >
-                      {(draggableProvided) => (
-                        <BoardItem draggableProvided={draggableProvided}>
-                          <BoardCard item={items[itemKey]} />
-                        </BoardItem>
-                      )}
-                    </Draggable>
-                  ))}
-                </ItemsContainer>
-                <NewButton />
+                <ScrollableColumn>
+                  <ItemsContainer droppableProvided={droppableProvided}>
+                    {column.itemKeys.map((itemKey, index) => (
+                      <Draggable
+                        key={itemKey}
+                        draggableId={itemKey}
+                        index={index}
+                      >
+                        {(draggableProvided) => (
+                          <BoardItem draggableProvided={draggableProvided}>
+                            <BoardCard item={items[itemKey]} />
+                          </BoardItem>
+                        )}
+                      </Draggable>
+                    ))}
+                  </ItemsContainer>
+                  <NewButton />
+                </ScrollableColumn>
               </StyledColumn>
             )}
           </Droppable>
