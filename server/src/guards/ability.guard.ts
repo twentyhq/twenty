@@ -2,17 +2,13 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  Type,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ModuleRef, Reflector } from '@nestjs/core';
 import { PassportUser } from 'src/core/auth/strategies/jwt.auth.strategy';
 import { CHECK_ABILITIES_KEY } from 'src/decorators/check-abilities.decorator';
 import { AbilityFactory, AppAbility } from 'src/ability/ability.factory';
-import {
-  AbilityHandler,
-  IAbilityHandler,
-} from 'src/ability/interfaces/ability-handler.interface';
+import { AbilityHandler } from 'src/ability/interfaces/ability-handler.interface';
 import { assert } from 'src/utils/assert';
 import { getRequest } from 'src/utils/extract-request';
 
@@ -25,8 +21,8 @@ export class AbilityGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const handlerTypes =
-      this.reflector.get<Type<IAbilityHandler>[]>(
+    const handlers =
+      this.reflector.get<AbilityHandler[]>(
         CHECK_ABILITIES_KEY,
         context.getHandler(),
       ) || [];
@@ -43,14 +39,8 @@ export class AbilityGuard implements CanActivate {
 
     request.ability = ability;
 
-    for (const handlerType of handlerTypes) {
-      const handler = this.moduleRef.get(handlerType, { strict: false });
-
-      if (!handler) {
-        throw new Error(`Handler of type ${handlerType.name} not provided`);
-      }
-
-      const result = await this._execAbilityHandler(handler, ability);
+    for (const handler of handlers) {
+      const result = await this._execAbilityHandler(handler, ability, context);
 
       if (!result) {
         return false;
@@ -61,14 +51,17 @@ export class AbilityGuard implements CanActivate {
   }
 
   private async _execAbilityHandler(
-    handler: AbilityHandler,
+    abilityHandler: AbilityHandler,
     ability: AppAbility,
+    context: ExecutionContext,
   ) {
-    if (typeof handler === 'function') {
-      return await handler(ability);
+    const handler = this.moduleRef.get(abilityHandler, { strict: false });
+
+    if (!handler) {
+      throw new Error(`Handler of type ${abilityHandler.name} not provided`);
     }
 
-    const res = await handler.handle(ability);
+    const res = await handler.handle(ability, context);
 
     return res;
   }

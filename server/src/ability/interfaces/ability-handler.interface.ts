@@ -1,10 +1,11 @@
+import { ExecutionContext, Type } from '@nestjs/common';
 import { AppAbility } from '../ability.factory';
 
 export interface IAbilityHandler {
-  handle(ability: AppAbility): Promise<boolean> | boolean;
+  handle(
+    ability: AppAbility,
+    executionContext: ExecutionContext,
+  ): Promise<boolean> | boolean;
 }
-type AbilityHandlerCallback = (
-  ability: AppAbility,
-) => Promise<boolean> | boolean;
 
-export type AbilityHandler = IAbilityHandler | AbilityHandlerCallback;
+export type AbilityHandler = Type<IAbilityHandler>;
