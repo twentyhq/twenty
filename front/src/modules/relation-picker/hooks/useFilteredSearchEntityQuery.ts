@@ -1,9 +1,7 @@
 import * as Apollo from '@apollo/client';
 
-import {
-  EntitiesForMultipleEntitySelect,
-  EntityForSelect,
-} from '@/comments/components/MultipleEntitySelect';
+import { EntitiesForMultipleEntitySelect } from '@/relation-picker/components/MultipleEntitySelect';
+import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import {
   Exact,
   InputMaybe,
@@ -46,6 +44,7 @@ export function useFilteredSearchEntityQuery<
       Array<EntityOrderByWithRelationInput> | EntityOrderByWithRelationInput
     >;
   }>,
+  CustomEntityForSelect extends EntityForSelect,
 >({
   queryHook,
   searchOnFields,
@@ -66,10 +65,10 @@ export function useFilteredSearchEntityQuery<
   orderByField: OrderByField;
   sortOrder?: SortOrder;
   selectedIds: string[];
-  mappingFunction: (entity: EntityType) => EntityForSelect;
+  mappingFunction: (entity: EntityType) => CustomEntityForSelect;
   limit?: number;
   searchFilter: string;
-}): EntitiesForMultipleEntitySelect {
+}): EntitiesForMultipleEntitySelect<CustomEntityForSelect> {
   const { data: selectedEntitiesData } = queryHook({
     variables: {
       where: {

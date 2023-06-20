@@ -1,42 +1,36 @@
 import { debounce } from 'lodash';
 
+import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { DropdownMenu } from '@/ui/components/menu/DropdownMenu';
 import { DropdownMenuCheckableItem } from '@/ui/components/menu/DropdownMenuCheckableItem';
 import { DropdownMenuItem } from '@/ui/components/menu/DropdownMenuItem';
 import { DropdownMenuItemContainer } from '@/ui/components/menu/DropdownMenuItemContainer';
 import { DropdownMenuSearch } from '@/ui/components/menu/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/components/menu/DropdownMenuSeparator';
-import { Avatar, AvatarType } from '@/users/components/Avatar';
-import { CommentableType } from '~/generated/graphql';
+import { Avatar } from '@/users/components/Avatar';
 
-export type EntitiesForMultipleEntitySelect = {
-  selectedEntities: EntityForSelect[];
-  filteredSelectedEntities: EntityForSelect[];
-  entitiesToSelect: EntityForSelect[];
+export type EntitiesForMultipleEntitySelect<
+  CustomEntityForSelect extends EntityForSelect,
+> = {
+  selectedEntities: CustomEntityForSelect[];
+  filteredSelectedEntities: CustomEntityForSelect[];
+  entitiesToSelect: CustomEntityForSelect[];
 };
 
-export type EntityTypeForSelect = CommentableType; // TODO: derivate from all usable entity types
-
-export type EntityForSelect = {
-  id: string;
-  entityType: EntityTypeForSelect;
-  name: string;
-  avatarUrl?: string;
-  avatarType?: AvatarType;
-};
-
-export function MultipleEntitySelect({
+export function MultipleEntitySelect<
+  CustomEntityForSelect extends EntityForSelect,
+>({
   entities,
   onItemCheckChange,
   onSearchFilterChange,
   searchFilter,
 }: {
-  entities: EntitiesForMultipleEntitySelect;
+  entities: EntitiesForMultipleEntitySelect<CustomEntityForSelect>;
   searchFilter: string;
   onSearchFilterChange: (newSearchFilter: string) => void;
   onItemCheckChange: (
     newCheckedValue: boolean,
-    entity: EntityForSelect,
+    entity: CustomEntityForSelect,
   ) => void;
 }) {
   const debouncedSetSearchFilter = debounce(onSearchFilterChange, 100, {

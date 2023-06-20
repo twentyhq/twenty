@@ -14,7 +14,7 @@ import { IconArrowUpRight } from '@tabler/icons-react';
 import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
 import CompanyChip from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
-import { useFilteredSearchEntityQuery } from '@/ui/hooks/menu/useFilteredSearchEntityQuery';
+import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flatMapAndSortEntityForSelectArrayByName';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
@@ -24,9 +24,9 @@ import {
   useSearchPeopleQuery,
 } from '~/generated/graphql';
 
+import { MultipleEntitySelect } from '../../relation-picker/components/MultipleEntitySelect';
 import { useHandleCheckableCommentThreadTargetChange } from '../hooks/useHandleCheckableCommentThreadTargetChange';
-
-import { MultipleEntitySelect } from './MultipleEntitySelect';
+import { CommentableEntityForSelect } from '../types/CommentableEntityForSelect';
 
 type OwnProps = {
   commentThread: CommentThreadForDrawer;
@@ -112,12 +112,13 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     searchOnFields: ['firstname', 'lastname'],
     orderByField: 'lastname',
     selectedIds: peopleIds,
-    mappingFunction: (entity) => ({
-      id: entity.id,
-      entityType: CommentableType.Person,
-      name: `${entity.firstname} ${entity.lastname}`,
-      avatarType: 'rounded',
-    }),
+    mappingFunction: (entity) =>
+      ({
+        id: entity.id,
+        entityType: CommentableType.Person,
+        name: `${entity.firstname} ${entity.lastname}`,
+        avatarType: 'rounded',
+      } as CommentableEntityForSelect),
     searchFilter,
   });
 
@@ -126,13 +127,14 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     searchOnFields: ['name'],
     orderByField: 'name',
     selectedIds: companyIds,
-    mappingFunction: (company) => ({
-      id: company.id,
-      entityType: CommentableType.Company,
-      name: company.name,
-      avatarUrl: getLogoUrlFromDomainName(company.domainName),
-      avatarType: 'squared',
-    }),
+    mappingFunction: (company) =>
+      ({
+        id: company.id,
+        entityType: CommentableType.Company,
+        name: company.name,
+        avatarUrl: getLogoUrlFromDomainName(company.domainName),
+        avatarType: 'squared',
+      } as CommentableEntityForSelect),
     searchFilter,
   });
 
