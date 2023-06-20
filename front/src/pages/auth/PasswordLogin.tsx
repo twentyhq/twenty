@@ -1,3 +1,6 @@
+import { useCallback, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
@@ -6,13 +9,14 @@ import { Logo } from '@/auth/components/ui/Logo';
 import { Modal } from '@/auth/components/ui/Modal';
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
+import { getTokensFromLoginToken } from '@/auth/services/AuthService';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { PrimaryButton } from '@/ui/components/buttons/PrimaryButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { Companies } from '~/pages/companies/Companies';
 
 const StyledContentContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(8)};
+  padding-bottom: ${({ theme }) => theme.spacing(4)};
   padding-top: ${({ theme }) => theme.spacing(6)};
   width: 320px;
 `;
@@ -26,8 +30,49 @@ const StyledButtonContainer = styled.div`
 `;
 
 export function PasswordLogin() {
+  const navigate = useNavigate();
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
+  );
+
+  const [internalPassword, setInternalPassword] = useState('');
+
+  const userLogin = useCallback(async () => {
+    const response = await fetch(
+      process.env.REACT_APP_AUTH_URL + '/password' || '',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: authFlowUserEmail,
+          password: internalPassword,
+        }),
+      },
+    );
+
+    if (response.ok) {
+      const { loginToken } = await response.json();
+      if (!loginToken) {
+        // TODO Display error message
+        return;
+      }
+      await getTokensFromLoginToken(loginToken.token);
+      navigate('/');
+    }
+  }, [authFlowUserEmail, internalPassword, navigate]);
+
+  useHotkeys(
+    'enter',
+    () => {
+      userLogin();
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+    },
+    [userLogin],
   );
 
   return (
@@ -50,13 +95,16 @@ export function PasswordLogin() {
           <StyledInputContainer>
             <InputLabel label="Password" />
             <TextInput
-              value=""
+              value={internalPassword}
               placeholder="Password"
+              onChange={(value) => setInternalPassword(value)}
               fullWidth
               type="password"
             />
             <StyledButtonContainer>
-              <PrimaryButton fullWidth>Continue</PrimaryButton>
+              <PrimaryButton fullWidth onClick={userLogin}>
+                Continue
+              </PrimaryButton>
             </StyledButtonContainer>
           </StyledInputContainer>
         </StyledContentContainer>

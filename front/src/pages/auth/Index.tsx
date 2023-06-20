@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -44,6 +45,18 @@ export function Index() {
   const onPasswordLoginClick = useCallback(() => {
     navigate('/auth/password-login');
   }, [navigate]);
+
+  useHotkeys(
+    'enter',
+    () => {
+      onPasswordLoginClick();
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+    },
+    [onPasswordLoginClick],
+  );
 
   return (
     <>
