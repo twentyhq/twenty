@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -10,6 +10,7 @@ import {
   BoardItemKey,
   Column,
   getOptimisticlyUpdatedBoard,
+  Item,
   Items,
   StyledBoard,
 } from '../../ui/components/board/Board';
@@ -28,10 +29,28 @@ type BoardProps = {
   initialBoard: Column[];
   items: Items;
   onUpdate?: (itemKey: BoardItemKey, columnId: Column['id']) => Promise<void>;
+  onClickNew?: (columnId: Column['id'], newItem: Partial<Item>) => void;
 };
 
-export const Board = ({ initialBoard, items, onUpdate }: BoardProps) => {
+export const Board = ({
+  initialBoard,
+  items,
+  onUpdate,
+  onClickNew,
+}: BoardProps) => {
   const [board, setBoard] = useState<Column[]>(initialBoard);
+
+  const onClickFunctions = useMemo<
+    Record<Column['id'], (newItem: Partial<Item>) => void>
+  >(() => {
+    return board.reduce((acc, column) => {
+      console.log('column.id', column.id);
+      acc[column.id] = (newItem: Partial<Item>) => {
+        onClickNew && onClickNew(column.id, newItem);
+      };
+      return acc;
+    }, {} as Record<Column['id'], (newItem: Partial<Item>) => void>);
+  }, [board, onClickNew]);
 
   const onDragEnd: OnDragEndResponder = useCallback(
     async (result) => {
@@ -78,7 +97,7 @@ export const Board = ({ initialBoard, items, onUpdate }: BoardProps) => {
                       </Draggable>
                     ))}
                   </ItemsContainer>
-                  <NewButton />
+                  <NewButton onClick={onClickFunctions[column.id]} />
                 </ScrollableColumn>
               </StyledColumn>
             )}
