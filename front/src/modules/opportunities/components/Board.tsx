@@ -60,7 +60,7 @@ export const Board = ({
       if (!newBoard) return;
       setBoard(newBoard);
       try {
-        const draggedEntityId = items[result.draggableId]?.id;
+        const draggedEntityId = result.draggableId;
         const destinationColumnId = result.destination?.droppableId;
         draggedEntityId &&
           destinationColumnId &&
@@ -70,7 +70,7 @@ export const Board = ({
         console.error(e);
       }
     },
-    [board, onUpdate, items],
+    [board, onUpdate],
   );
 
   return (

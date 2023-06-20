@@ -23,7 +23,6 @@ export function Opportunities() {
     items,
     loading,
     error,
-    pipelineEntityIdsMapper,
     pipelineId,
     pipelineEntityType,
   } = useBoard();
@@ -32,15 +31,14 @@ export function Opportunities() {
 
   const onUpdate = useCallback(
     async (
-      entityId: NonNullable<PipelineProgress['progressableId']>,
+      pipelineProgressId: NonNullable<PipelineProgress['id']>,
       pipelineStageId: NonNullable<PipelineStage['id']>,
     ) => {
-      const pipelineProgressId = pipelineEntityIdsMapper(entityId);
       updatePipelineProgress({
         variables: { id: pipelineProgressId, pipelineStageId },
       });
     },
-    [updatePipelineProgress, pipelineEntityIdsMapper],
+    [updatePipelineProgress],
   );
 
   const onClickNew = useCallback(
