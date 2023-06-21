@@ -1,5 +1,6 @@
 import { Resolver, Args, Query, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+import { accessibleBy } from '@casl/prisma';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from '../../../core/@generated/workspace/workspace.model';
 import { AuthWorkspace } from '../../../decorators/auth-workspace.decorator';
@@ -11,7 +12,16 @@ import { AffectedRows } from '../../@generated/prisma/affected-rows.output';
 import { DeleteManyPipelineProgressArgs } from '../../@generated/pipeline-progress/delete-many-pipeline-progress.args';
 import { CreateOnePipelineProgressArgs } from '../../@generated/pipeline-progress/create-one-pipeline-progress.args';
 import { PipelineProgressService } from '../services/pipeline-progress.service';
-import { prepareFindManyArgs } from 'src/utils/prepare-find-many';
+import { AbilityGuard } from 'src/guards/ability.guard';
+import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
+import {
+  CreatePipelineProgressAbilityHandler,
+  ReadPipelineProgressAbilityHandler,
+  UpdatePipelineProgressAbilityHandler,
+  DeletePipelineProgressAbilityHandler,
+} from 'src/ability/handlers/pipeline-progress.ability-handler';
+import { UserAbility } from 'src/decorators/user-ability.decorator';
+import { AppAbility } from 'src/ability/ability.factory';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => PipelineProgress)
@@ -21,20 +31,26 @@ export class PipelineProgressResolver {
   ) {}
 
   @Query(() => [PipelineProgress])
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(ReadPipelineProgressAbilityHandler)
   async findManyPipelineProgress(
     @Args() args: FindManyPipelineProgressArgs,
-    @AuthWorkspace() workspace: Workspace,
+    @UserAbility() ability: AppAbility,
   ) {
-    const preparedArgs = prepareFindManyArgs<FindManyPipelineProgressArgs>(
-      args,
-      workspace,
-    );
-    return this.pipelineProgressService.findMany(preparedArgs);
+    return this.pipelineProgressService.findMany({
+      ...args,
+      where: {
+        ...args.where,
+        AND: [accessibleBy(ability).PipelineProgress],
+      },
+    });
   }
 
   @Mutation(() => PipelineProgress, {
     nullable: true,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(UpdatePipelineProgressAbilityHandler)
   async updateOnePipelineProgress(
     @Args() args: UpdateOnePipelineProgressArgs,
   ): Promise<PipelineProgress | null> {
@@ -46,6 +62,8 @@ export class PipelineProgressResolver {
   @Mutation(() => AffectedRows, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeletePipelineProgressAbilityHandler)
   async deleteManyPipelineProgress(
     @Args() args: DeleteManyPipelineProgressArgs,
   ): Promise<AffectedRows> {
@@ -57,6 +75,8 @@ export class PipelineProgressResolver {
   @Mutation(() => PipelineProgress, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreatePipelineProgressAbilityHandler)
   async createOnePipelineProgress(
     @Args() args: CreateOnePipelineProgressArgs,
     @AuthWorkspace() workspace: Workspace,

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommentThreadTargetService } from './comment-thread-target.service';
 import { PrismaService } from 'src/database/prisma.service';
-import { prismaMock } from 'src/prisma-mock/jest-prisma-singleton';
+import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
 
 describe('CommentThreadTargetService', () => {
   let service: CommentThreadTargetService;
