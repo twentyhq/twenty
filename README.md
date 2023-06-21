@@ -39,7 +39,7 @@ Twenty is an Open Source CRM designed to be:
 - Contributions are, of course, most welcome! It doesn't have to be code, you could also create an issue to report a bug you've spotted, join discussions or write documentation.
 
 # Quickstart
-By the first week of July, you should be able to try a demo directly on [app.twenty.com], our cloud offering with a generous free tier. We'll also release click-to-deploy buttons for Render and Railway.
+By the first week of July, you should be able to try a demo directly on [app.twenty.com](https://app.twenty.com), our cloud offering with a generous free tier. We'll also release click-to-deploy buttons for Render and Railway.
 
 In the meantime, you can check [the documentation](/start/local-setup). It shouldn't take more than a few minutes to install locally.
 
