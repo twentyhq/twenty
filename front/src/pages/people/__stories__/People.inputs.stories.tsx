@@ -2,6 +2,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
+import exp from 'constants';
 import { graphql } from 'msw';
 
 import { UPDATE_PERSON } from '@/people/services';
@@ -99,16 +100,97 @@ export const CheckCheckboxes: Story = {
   },
 };
 
+const editRelationMocks = (
+  initiallySelectedCompanyName: string,
+  searchCompanyNames: Array<string>,
+  updateSelectedCompanyName: string,
+) => [
+  ...graphqlMocks.filter((graphqlMock) => {
+    if (
+      typeof graphqlMock.info.operationName === 'string' &&
+      [
+        getOperationName(UPDATE_PERSON),
+        getOperationName(SEARCH_COMPANY_QUERY),
+      ].includes(graphqlMock.info.operationName)
+    ) {
+      return false;
+    }
+    return true;
+  }),
+  ...[
+    graphql.mutation(getOperationName(UPDATE_PERSON) ?? '', (req, res, ctx) => {
+      return res(
+        ctx.data({
+          updateOnePerson: {
+            ...fetchOneFromData(mockedPeopleData, req.variables.id),
+            ...{
+              company: {
+                id: req.variables.companyId,
+                name: updateSelectedCompanyName,
+                domainName: 'airbnb.com',
+                __typename: 'Company',
+              },
+            },
+          },
+        }),
+      );
+    }),
+    graphql.query(
+      getOperationName(SEARCH_COMPANY_QUERY) ?? '',
+      (req, res, ctx) => {
+        if (!req.variables.where?.AND) {
+          // Selected company case
+          const searchResults = mockedCompaniesData.filter((company) =>
+            [initiallySelectedCompanyName].includes(company.name),
+          );
+          return res(
+            ctx.data({
+              searchResults: searchResults,
+            }),
+          );
+        }
+
+        if (
+          req.variables.where?.AND?.some(
+            (where: { id?: { in: Array<string> } }) => where.id?.in,
+          )
+        ) {
+          // Selected company case
+          const searchResults = mockedCompaniesData.filter((company) =>
+            [initiallySelectedCompanyName].includes(company.name),
+          );
+          return res(
+            ctx.data({
+              searchResults: searchResults,
+            }),
+          );
+        } else {
+          // Search case
+
+          const searchResults = mockedCompaniesData.filter((company) =>
+            searchCompanyNames.includes(company.name),
+          );
+          return res(
+            ctx.data({
+              searchResults: searchResults,
+            }),
+          );
+        }
+      },
+    ),
+  ],
+];
+
 export const EditRelation: Story = {
   render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const secondRowCompanyCell = await canvas.findByText(
+    const firstRowCompanyCell = await canvas.findByText(
       mockedPeopleData[1].company.name,
     );
 
-    await userEvent.click(secondRowCompanyCell);
+    await userEvent.click(firstRowCompanyCell);
 
     const relationInput = await canvas.findByPlaceholderText('Search');
 
@@ -117,77 +199,19 @@ export const EditRelation: Story = {
     });
 
     const airbnbChip = await canvas.findByText('Airbnb', {
-      selector: 'div > span',
+      selector: 'div',
     });
 
     await userEvent.click(airbnbChip);
 
-    const newSecondRowCompanyCell = await canvas.findByText('Airbnb');
+    const otherCell = await canvas.findByText('Janice Dane');
+    await userEvent.click(otherCell);
 
-    await userEvent.click(newSecondRowCompanyCell);
+    await canvas.findByText('Airbnb');
   },
   parameters: {
     actions: {},
-    msw: [
-      ...graphqlMocks.filter((graphqlMock) => {
-        if (
-          typeof graphqlMock.info.operationName === 'string' &&
-          [
-            getOperationName(UPDATE_PERSON),
-            getOperationName(SEARCH_COMPANY_QUERY),
-          ].includes(graphqlMock.info.operationName)
-        ) {
-          return false;
-        }
-        return true;
-      }),
-      ...[
-        graphql.mutation(
-          getOperationName(UPDATE_PERSON) ?? '',
-          (req, res, ctx) => {
-            return res(
-              ctx.data({
-                updateOnePerson: {
-                  ...fetchOneFromData(mockedPeopleData, req.variables.id),
-                  ...{
-                    company: {
-                      id: req.variables.companyId,
-                      name: 'Airbnb',
-                      domainName: 'airbnb.com',
-                      __typename: 'Company',
-                    },
-                  },
-                },
-              }),
-            );
-          },
-        ),
-        graphql.query(
-          getOperationName(SEARCH_COMPANY_QUERY) ?? '',
-          (req, res, ctx) => {
-            let searchResults = mockedCompaniesData.filter((company) =>
-              ['Airbnb', 'Aircall'].includes(company.name),
-            );
-
-            req.variables.where?.AND?.forEach(
-              (where: { id: { notIn: string } }) => {
-                if (where.id?.notIn) {
-                  console.log(where.id?.notIn);
-                  searchResults = searchResults.filter(
-                    (company) => company.id !== where.id.notIn,
-                  );
-                }
-              },
-            );
-            return res(
-              ctx.data({
-                searchResults: searchResults,
-              }),
-            );
-          },
-        ),
-      ],
-    ],
+    msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], 'Airbnb'),
   },
 };
 
@@ -197,51 +221,29 @@ export const SelectRelationWithKeys: Story = {
     const canvas = within(canvasElement);
 
     const thirdRowCompanyCell = await canvas.findByText(
-      mockedPeopleData[2].company.name,
+      mockedPeopleData[0].company.name,
     );
 
     await userEvent.click(thirdRowCompanyCell);
 
-    const relationInput = await canvas.findByPlaceholderText('Company');
+    const relationInput = await canvas.findByPlaceholderText('Search');
 
     await userEvent.type(relationInput, 'Air', {
       delay: 200,
     });
 
     await userEvent.type(relationInput, '{arrowdown}');
-    await userEvent.type(relationInput, '{arrowdown}');
     await userEvent.type(relationInput, '{arrowup}');
     await userEvent.type(relationInput, '{arrowdown}');
+    await userEvent.type(relationInput, '{arrowdown}');
     await userEvent.type(relationInput, '{enter}');
+    sleep(25);
 
-    const newThirdRowCompanyCell = await canvas.findByText('Aircall');
-    await userEvent.click(newThirdRowCompanyCell);
+    const allAirbns = await canvas.findAllByText('Airbnb');
+    expect(allAirbns.length).toBe(1);
   },
   parameters: {
     actions: {},
-    msw: [
-      ...graphqlMocks.filter((graphqlMock) => {
-        return graphqlMock.info.operationName !== 'UpdatePeople';
-      }),
-      ...[
-        graphql.mutation('UpdatePeople', (req, res, ctx) => {
-          return res(
-            ctx.data({
-              updateOnePerson: {
-                ...fetchOneFromData(mockedPeopleData, req.variables.id),
-                ...{
-                  company: {
-                    id: req.variables.companyId,
-                    name: 'Aircall',
-                    domainName: 'aircall.io',
-                    __typename: 'Company',
-                  },
-                },
-              },
-            }),
-          );
-        }),
-      ],
-    ],
+    msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], 'Aircall'),
   },
 };

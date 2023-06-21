@@ -23,7 +23,7 @@ export const mockedPeopleData: Array<MockedPerson> = [
     lastname: 'Prot',
     email: 'alexandre@qonto.com',
     company: {
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
+      id: '5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
       name: 'Qonto',
       domainName: 'qonto.com',
       __typename: 'Company',

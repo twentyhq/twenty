@@ -46,7 +46,6 @@ export function DropdownMenuSelectableItem({
 
   useEffect(() => {
     if (hovered) {
-      console.log('scroll');
       window.scrollTo({
         behavior: 'smooth',
       });
