@@ -4,27 +4,25 @@ import { v4 } from 'uuid';
 import CompanyChip, {
   CompanyChipPropsType,
 } from '@/companies/components/CompanyChip';
-import {
-  Company,
-  mapToCompany,
-} from '@/companies/interfaces/company.interface';
 import { SearchConfigType } from '@/search/interfaces/interface';
 import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import { EditableRelation } from '@/ui/components/editable-cell/types/EditableRelation';
 import { logError } from '@/utils/logs/logError';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
+  Company,
+  Person,
   QueryMode,
   useInsertCompanyMutation,
   useUpdatePeopleMutation,
 } from '~/generated/graphql';
 
-import { mapToGqlPerson, Person } from '../interfaces/person.interface';
-
 import { PeopleCompanyCreateCell } from './PeopleCompanyCreateCell';
 
 export type OwnProps = {
-  people: Person;
+  people: Pick<Person, 'id'> & {
+    company?: Pick<Company, 'id' | 'name'> | null;
+  };
 };
 
 export function PeopleCompanyCell({ people }: OwnProps) {
@@ -52,7 +50,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
 
       await updatePeople({
         variables: {
-          ...mapToGqlPerson(people),
+          ...people,
           companyId: newCompanyId,
         },
       });
@@ -75,7 +73,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
       onCreate={handleCompanyCreate}
     />
   ) : (
-    <EditableRelation<Company, CompanyChipPropsType>
+    <EditableRelation<any, CompanyChipPropsType>
       relation={people.company}
       searchPlaceholder="Company"
       ChipComponent={CompanyChip}
@@ -88,7 +86,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
       onChange={async (relation) => {
         await updatePeople({
           variables: {
-            ...mapToGqlPerson(people),
+            ...people,
             companyId: relation.id,
           },
         });
@@ -101,10 +99,10 @@ export function PeopleCompanyCell({ people }: OwnProps) {
             name: { contains: `%${searchInput}%`, mode: QueryMode.Insensitive },
           }),
           resultMapper: (company) => ({
-            render: (company) => company.name,
-            value: mapToCompany(company),
+            render: (company: any) => company.name,
+            value: company,
           }),
-        } satisfies SearchConfigType<Company>
+        } satisfies SearchConfigType
       }
       onCreate={() => {
         setIsCreating(true);

@@ -8,7 +8,6 @@ import { useSearch } from '@/search/services/search';
 import { IconPlus } from '@/ui/icons/index';
 import { textInputStyle } from '@/ui/layout/styles/themes';
 import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
-import { AnyEntity } from '@/utils/interfaces/generic.interface';
 import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 
@@ -86,13 +85,10 @@ const StyledCreateButtonText = styled.div`
   color: ${(props) => props.theme.text60};
 `;
 
-export type EditableRelationProps<
-  RelationType extends AnyEntity,
-  ChipComponentPropsType,
-> = {
-  relation?: RelationType | null;
+export type EditableRelationProps<RelationType, ChipComponentPropsType> = {
+  relation?: any;
   searchPlaceholder: string;
-  searchConfig: SearchConfigType<RelationType>;
+  searchConfig: SearchConfigType;
   onChange: (relation: RelationType) => void;
   onChangeSearchInput?: (searchInput: string) => void;
   editModeHorizontalAlign?: 'left' | 'right';
@@ -105,10 +101,7 @@ export type EditableRelationProps<
 };
 
 // TODO: split this component
-export function EditableRelation<
-  RelationType extends AnyEntity,
-  ChipComponentPropsType,
->({
+export function EditableRelation<RelationType, ChipComponentPropsType>({
   relation,
   searchPlaceholder,
   searchConfig,

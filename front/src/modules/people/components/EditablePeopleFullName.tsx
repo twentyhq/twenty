@@ -4,14 +4,12 @@ import styled from '@emotion/styled';
 import { CellCommentChip } from '@/comments/components/CellCommentChip';
 import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
 import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
-import { CommentableType } from '~/generated/graphql';
-
-import { Person } from '../interfaces/person.interface';
+import { CommentableType, Person } from '~/generated/graphql';
 
 import { PersonChip } from './PersonChip';
 
 type OwnProps = {
-  person: Person;
+  person: Pick<Person, 'id' | 'firstname' | 'lastname' | '_commentCount'>;
   onChange: (firstname: string, lastname: string) => void;
 };
 

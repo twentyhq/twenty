@@ -1,80 +1,64 @@
 import { ReactNode } from 'react';
 
 import { SearchConfigType } from '@/search/interfaces/interface';
-import {
-  AnyEntity,
-  BoolExpType,
-  UnknownType,
-} from '@/utils/interfaces/generic.interface';
 
-export type FilterableFieldsType = AnyEntity;
-export type FilterWhereRelationType = AnyEntity;
-export type FilterWhereType = FilterWhereRelationType | string | UnknownType;
+export type FilterableFieldsType = any;
+export type FilterWhereRelationType = any;
+export type FilterWhereType = FilterWhereRelationType | string | unknown;
 
-export type FilterConfigType<
-  FilteredType extends FilterableFieldsType,
-  WhereType extends FilterWhereType = UnknownType,
-> = {
+export type FilterConfigType<WhereType extends FilterWhereType = unknown> = {
   key: string;
   label: string;
   icon: ReactNode;
-  type: WhereType extends UnknownType
+  type: WhereType extends unknown
     ? 'relation' | 'text' | 'date'
-    : WhereType extends AnyEntity
+    : WhereType extends any
     ? 'relation'
     : WhereType extends string
     ? 'text' | 'date'
     : never;
-  operands: FilterOperandType<FilteredType, WhereType>[];
-} & (WhereType extends UnknownType
-  ? { searchConfig?: SearchConfigType<UnknownType> }
-  : WhereType extends AnyEntity
-  ? { searchConfig: SearchConfigType<WhereType> }
+  operands: FilterOperandType<WhereType>[];
+} & (WhereType extends unknown
+  ? { searchConfig?: SearchConfigType }
+  : WhereType extends any
+  ? { searchConfig: SearchConfigType }
   : WhereType extends string
   ? object
   : never) &
-  (WhereType extends UnknownType
+  (WhereType extends unknown
     ? { selectedValueRender?: (selected: any) => string }
-    : WhereType extends AnyEntity
+    : WhereType extends any
     ? { selectedValueRender: (selected: WhereType) => string }
     : WhereType extends string
     ? object
     : never);
 
-export type FilterOperandType<
-  FilteredType extends FilterableFieldsType,
-  WhereType extends FilterWhereType = UnknownType,
-> = WhereType extends UnknownType
-  ? any
-  : WhereType extends FilterWhereRelationType
-  ? FilterOperandRelationType<FilteredType, WhereType>
-  : WhereType extends string
-  ? FilterOperandFieldType<FilteredType>
-  : never;
+export type FilterOperandType<WhereType extends FilterWhereType = unknown> =
+  WhereType extends unknown
+    ? any
+    : WhereType extends FilterWhereRelationType
+    ? FilterOperandRelationType<WhereType>
+    : WhereType extends string
+    ? FilterOperandFieldType
+    : never;
 
-type FilterOperandRelationType<
-  FilteredType extends FilterableFieldsType,
-  WhereType extends FilterWhereType,
-> = {
+type FilterOperandRelationType<WhereType extends FilterWhereType> = {
   label: 'Is' | 'Is not';
   id: 'is' | 'is_not';
-  whereTemplate: (value: WhereType) => BoolExpType<FilteredType>;
+  whereTemplate: (value: WhereType) => any;
 };
 
-type FilterOperandFieldType<FilteredType extends FilterableFieldsType> = {
+type FilterOperandFieldType = {
   label: 'Contains' | 'Does not contain' | 'Greater than' | 'Less than';
   id: 'like' | 'not_like' | 'greater_than' | 'less_than';
-  whereTemplate: (value: string) => BoolExpType<FilteredType>;
+  whereTemplate: (value: string) => any;
 };
 
-export type SelectedFilterType<
-  FilteredType extends FilterableFieldsType,
-  WhereType extends FilterWhereType = UnknownType,
-> = {
+export type SelectedFilterType<WhereType> = {
   key: string;
-  value: WhereType extends UnknownType ? any : WhereType;
+  value: WhereType;
   displayValue: string;
   label: string;
   icon: ReactNode;
-  operand: FilterOperandType<FilteredType, WhereType>;
+  operand: FilterOperandType<WhereType>;
 };

@@ -3,7 +3,6 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { GraphqlQueryCompany } from '@/companies/interfaces/company.interface';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { fetchOneFromData } from '~/testing/mock-data';
 import { mockedPeopleData } from '~/testing/mock-data/people';
@@ -141,7 +140,7 @@ export const EditRelation: Story = {
                     name: 'Airbnb',
                     domainName: 'airbnb.com',
                     __typename: 'Company',
-                  } satisfies GraphqlQueryCompany,
+                  },
                 },
               },
             }),
@@ -196,7 +195,7 @@ export const SelectRelationWithKeys: Story = {
                     name: 'Aircall',
                     domainName: 'aircall.io',
                     __typename: 'Company',
-                  } satisfies GraphqlQueryCompany,
+                  },
                 },
               },
             }),

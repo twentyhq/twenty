@@ -13,9 +13,3 @@ export const getLogoUrlFromDomainName = (domainName?: string): string => {
 export const browserPrefersDarkMode = (): boolean => {
   return window.matchMedia('(prefers-color-scheme: dark)').matches;
 };
-
-export type DeepPartial<T> = T extends object
-  ? {
-      [P in keyof T]?: DeepPartial<T[P]>;
-    }
-  : T;

@@ -1,9 +1,4 @@
-import {
-  Company,
-  mapToCompany,
-} from '@/companies/interfaces/company.interface';
 import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
-import { Person } from '@/people/interfaces/person.interface';
 import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import {
   IconBuildingSkyscraper,
@@ -13,7 +8,7 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/icons/index';
-import { QueryMode } from '~/generated/graphql';
+import { Company, QueryMode } from '~/generated/graphql';
 
 export const fullnameFilter = {
   key: 'fullname',
@@ -24,7 +19,7 @@ export const fullnameFilter = {
     {
       label: 'Contains',
       id: 'like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         OR: [
           {
             firstname: {
@@ -44,7 +39,7 @@ export const fullnameFilter = {
     {
       label: 'Does not contain',
       id: 'not_like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         NOT: [
           {
             AND: [
@@ -66,7 +61,7 @@ export const fullnameFilter = {
       }),
     },
   ],
-} satisfies FilterConfigType<Person, string>;
+} satisfies FilterConfigType<string>;
 
 export const emailFilter = {
   key: 'email',
@@ -77,14 +72,14 @@ export const emailFilter = {
     {
       label: 'Contains',
       id: 'like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         email: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         NOT: [
           {
             email: {
@@ -96,7 +91,7 @@ export const emailFilter = {
       }),
     },
   ],
-} satisfies FilterConfigType<Person, string>;
+} satisfies FilterConfigType<string>;
 
 export const companyFilter = {
   key: 'company_name',
@@ -109,8 +104,8 @@ export const companyFilter = {
       name: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
     }),
     resultMapper: (data) => ({
-      value: mapToCompany(data),
-      render: (company) => company.name,
+      value: data,
+      render: (company: { name: string }) => company.name,
     }),
   },
   selectedValueRender: (company) => company.name || '',
@@ -118,19 +113,19 @@ export const companyFilter = {
     {
       label: 'Is',
       id: 'is',
-      whereTemplate: (company) => ({
+      whereTemplate: (company: { name: string }) => ({
         company: { is: { name: { equals: company.name } } },
       }),
     },
     {
       label: 'Is not',
       id: 'is_not',
-      whereTemplate: (company) => ({
+      whereTemplate: (company: { name: string }) => ({
         NOT: [{ company: { is: { name: { equals: company.name } } } }],
       }),
     },
   ],
-} satisfies FilterConfigType<Person, Company>;
+} satisfies FilterConfigType<Company>;
 
 export const phoneFilter = {
   key: 'phone',
@@ -141,14 +136,14 @@ export const phoneFilter = {
     {
       label: 'Contains',
       id: 'like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         phone: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         NOT: [
           {
             phone: {
@@ -160,7 +155,7 @@ export const phoneFilter = {
       }),
     },
   ],
-} satisfies FilterConfigType<Person, string>;
+} satisfies FilterConfigType<string>;
 
 export const createdAtFilter = {
   key: 'createdAt',
@@ -171,7 +166,7 @@ export const createdAtFilter = {
     {
       label: 'Greater than',
       id: 'greater_than',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         createdAt: {
           gte: searchString,
         },
@@ -180,14 +175,14 @@ export const createdAtFilter = {
     {
       label: 'Less than',
       id: 'less_than',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         createdAt: {
           lte: searchString,
         },
       }),
     },
   ],
-} satisfies FilterConfigType<Company, string>;
+} satisfies FilterConfigType<string>;
 
 export const cityFilter = {
   key: 'city',
@@ -198,14 +193,14 @@ export const cityFilter = {
     {
       label: 'Contains',
       id: 'like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         city: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         NOT: [
           {
             city: {
@@ -217,7 +212,7 @@ export const cityFilter = {
       }),
     },
   ],
-} satisfies FilterConfigType<Person, string>;
+} satisfies FilterConfigType<string>;
 
 export const availableFilters = [
   fullnameFilter,
@@ -226,4 +221,4 @@ export const availableFilters = [
   phoneFilter,
   createdAtFilter,
   cityFilter,
-] satisfies FilterConfigType<Person>[];
+];

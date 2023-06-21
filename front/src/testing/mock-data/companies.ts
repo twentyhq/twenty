@@ -1,6 +1,23 @@
-import { Company } from '../../generated/graphql';
+import { Company, User } from '../../generated/graphql';
 
-export const mockedCompaniesData = [
+type MockedCompany = Pick<
+  Company,
+  | 'id'
+  | 'name'
+  | 'domainName'
+  | '__typename'
+  | 'createdAt'
+  | 'address'
+  | 'employees'
+  | '_commentCount'
+> & {
+  accountOwner: Pick<
+    User,
+    'id' | 'email' | 'displayName' | '__typename'
+  > | null;
+};
+
+export const mockedCompaniesData: Array<MockedCompany> = [
   {
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
     domainName: 'airbnb.com',
@@ -83,4 +100,4 @@ export const mockedCompaniesData = [
     accountOwner: null,
     __typename: 'Company',
   },
-] as Array<Company>;
+];

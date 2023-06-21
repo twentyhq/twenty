@@ -2,19 +2,24 @@ import { CellCommentChip } from '@/comments/components/CellCommentChip';
 import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
 import EditableChip from '@/ui/components/editable-cell/types/EditableChip';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
-import { CommentableType } from '~/generated/graphql';
-
-import { Company } from '../interfaces/company.interface';
-import { updateCompany } from '../services';
+import {
+  CommentableType,
+  GetCompaniesQuery,
+  useUpdateCompanyMutation,
+} from '~/generated/graphql';
 
 import CompanyChip from './CompanyChip';
 
 type OwnProps = {
-  company: Company;
+  company: Pick<
+    GetCompaniesQuery['companies'][0],
+    'id' | 'name' | 'domainName' | '_commentCount' | 'accountOwner'
+  >;
 };
 
 export function CompanyEditableNameChipCell({ company }: OwnProps) {
   const openCommentRightDrawer = useOpenCommentRightDrawer();
+  const [updateCompany] = useUpdateCompanyMutation();
 
   function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {
     event.preventDefault();
@@ -35,8 +40,11 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       picture={getLogoUrlFromDomainName(company.domainName)}
       changeHandler={(value: string) => {
         updateCompany({
-          ...company,
-          name: value,
+          variables: {
+            ...company,
+            name: value,
+            accountOwnerId: company.accountOwner?.id,
+          },
         });
       }}
       ChipComponent={CompanyChip}

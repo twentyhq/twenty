@@ -1,9 +1,5 @@
 import { GraphQLVariables } from 'msw';
 
-import { Company } from '@/companies/interfaces/company.interface';
-import { Person } from '@/people/interfaces/person.interface';
-import { User } from '@/users/interfaces/user.interface';
-import { BoolExpType } from '@/utils/interfaces/generic.interface';
 import {
   CompanyOrderByWithRelationInput,
   PersonOrderByWithRelationInput,
@@ -13,7 +9,7 @@ import {
 
 function filterData<DataT>(
   data: Array<DataT>,
-  where: BoolExpType<Company> | BoolExpType<Person>,
+  where: Record<string, any>,
 ): Array<DataT> {
   return data.filter((item) => {
     // { firstname: {contains: '%string%' }}
@@ -76,7 +72,7 @@ function filterData<DataT>(
 
 export function filterAndSortData<DataT>(
   data: Array<DataT>,
-  where?: BoolExpType<Company> | BoolExpType<Person> | BoolExpType<User>,
+  where?: Record<string, any>,
   orderBy?: Array<
     PersonOrderByWithRelationInput &
       CompanyOrderByWithRelationInput &

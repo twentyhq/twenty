@@ -40,7 +40,8 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
     FilterOperandType<TData> | undefined
   >(undefined);
 
-  const [filterSearchResults, setSearchInput, setFilterSearch] = useSearch();
+  const [filterSearchResults, setSearchInput, setFilterSearch] =
+    useSearch<TData>();
 
   const resetState = useCallback(() => {
     setIsOperandSelectionUnfolded(false);
@@ -79,7 +80,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   ));
 
   const renderSearchResults = (
-    filterSearchResults: SearchResultsType,
+    filterSearchResults: SearchResultsType<TData>,
     selectedFilter: FilterConfigType<TData>,
     selectedFilterOperand: FilterOperandType<TData>,
   ) => {
@@ -155,7 +156,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
                       displayValue: event.target.value,
                       icon: selectedFilter.icon,
                       operand: selectedFilterOperand,
-                    });
+                    } as SelectedFilterType<TData>);
                   }
                 }
               }}
@@ -172,7 +173,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
                   displayValue: humanReadableDate(date),
                   icon: selectedFilter.icon,
                   operand: selectedFilterOperand,
-                });
+                } as SelectedFilterType<TData>);
               }}
               customInput={<></>}
               customCalendarContainer={styled.div`
@@ -200,7 +201,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
       setIsUnfolded={setIsUnfolded}
       resetState={resetState}
     >
-      {selectedFilter
+      {selectedFilter && selectedFilterOperand
         ? isOperandSelectionUnfolded
           ? renderOperandSelection
           : renderValueSelection(selectedFilter, selectedFilterOperand)

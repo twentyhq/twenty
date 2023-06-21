@@ -1,6 +1,21 @@
-import { Person } from '../../modules/people/interfaces/person.interface';
+import { Company, Person } from '~/generated/graphql';
 
-export const mockedPeopleData = [
+type MockedPerson = Pick<
+  Person,
+  | 'id'
+  | 'firstname'
+  | 'lastname'
+  | 'email'
+  | '__typename'
+  | 'phone'
+  | 'city'
+  | '_commentCount'
+  | 'createdAt'
+> & {
+  company: Pick<Company, 'id' | 'name' | 'domainName' | '__typename'>;
+};
+
+export const mockedPeopleData: Array<MockedPerson> = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
     __typename: 'Person',
@@ -73,4 +88,4 @@ export const mockedPeopleData = [
 
     city: 'Paris',
   },
-] satisfies Array<Person>;
+];

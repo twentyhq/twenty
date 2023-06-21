@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 
 import { debounce } from '@/utils/debounce';
-import { AnyEntity, UnknownType } from '@/utils/interfaces/generic.interface';
 
 import { SearchConfigType } from '../interfaces/interface';
 
@@ -64,22 +63,21 @@ export const SEARCH_COMPANY_QUERY = gql`
   }
 `;
 
-export type SearchResultsType<T extends AnyEntity | UnknownType = UnknownType> =
-  {
-    results: {
-      render: (value: T) => string;
-      value: T;
-    }[];
-    loading: boolean;
-  };
+export type SearchResultsType<T> = {
+  results: {
+    render: (value: T) => string;
+    value: T;
+  }[];
+  loading: boolean;
+};
 
-export const useSearch = <T extends AnyEntity | UnknownType = UnknownType>(): [
+export const useSearch = <T>(): [
   SearchResultsType<T>,
   React.Dispatch<React.SetStateAction<string>>,
-  React.Dispatch<React.SetStateAction<SearchConfigType<T> | null>>,
+  React.Dispatch<React.SetStateAction<SearchConfigType | null>>,
   string,
 ] => {
-  const [searchConfig, setSearchConfig] = useState<SearchConfigType<T> | null>(
+  const [searchConfig, setSearchConfig] = useState<SearchConfigType | null>(
     null,
   );
   const [searchInput, setSearchInput] = useState<string>('');
