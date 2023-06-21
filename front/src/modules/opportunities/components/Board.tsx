@@ -75,7 +75,6 @@ export const Board = ({
     [board, onUpdate],
   );
 
-  console.log('board', board);
   return (
     <StyledBoard>
       <DragDropContext onDragEnd={onDragEnd}>

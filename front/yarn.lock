@@ -5070,6 +5070,11 @@
   resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.3.tgz#cef09e3ec9af1d63d2a6cc5b383a737e24e6dcf5"
   integrity sha512-5cJ8CB4yAx7BH1oMvdU0Jh9lrEXyPkar6F9G/ERswkCuvP4KQZfZkSjcMbAICCpQTN4OuZn8tz0HiKv9TGZgrQ==
 
+"@types/scroll-into-view@^1.16.0":
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/@types/scroll-into-view/-/scroll-into-view-1.16.0.tgz#bd02094307624cc0243c34dca478510a0a8515e8"
+  integrity sha512-WT0YBP7CLi3XH/gDbWdtBf4mQVyE7zQrpEZ2rNrxz9tVoIPJf97zGlfRqnkECj7P8rPkFxVlo1KbOOMetcchdA==
+
 "@types/semver@^7.3.12", "@types/semver@^7.3.4":
   version "7.5.0"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.5.0.tgz#591c1ce3a702c45ee15f47a42ade72c2fd78978a"
@@ -15136,6 +15141,11 @@ schema-utils@^4.0.0:
     ajv "^8.9.0"
     ajv-formats "^2.1.1"
     ajv-keywords "^5.1.0"
+
+scroll-into-view@^1.16.2:
+  version "1.16.2"
+  resolved "https://registry.yarnpkg.com/scroll-into-view/-/scroll-into-view-1.16.2.tgz#ea3e810dacc861fb9c115eac7bf603e564f0104a"
+  integrity sha512-vyTE0i27o6eldt9xinjHec41Dw05y+faoI+s2zNKJAVOdbA5M2XZrYq/obJ8E+QDQulJ2gDjgui9w9m9RZSRng==
 
 scuid@^1.1.0:
   version "1.1.0"

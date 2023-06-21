@@ -1,112 +1,33 @@
-import { useState } from 'react';
-import { v4 } from 'uuid';
-
-import CompanyChip, {
-  CompanyChipPropsType,
-} from '@/companies/components/CompanyChip';
-import { SearchConfigType } from '@/search/interfaces/interface';
-import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
-import { EditableRelation } from '@/ui/components/editable-cell/types/EditableRelation';
-import { logError } from '@/utils/logs/logError';
+import CompanyChip from '@/companies/components/CompanyChip';
+import { EditableCellV2 } from '@/ui/components/editable-cell/EditableCellV2';
+import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
+import { useRecoilScopedState } from '@/ui/hooks/useRecoilScopedState';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
-import {
-  Company,
-  Person,
-  QueryMode,
-  useInsertCompanyMutation,
-  useUpdatePeopleMutation,
-} from '~/generated/graphql';
+import { Company, Person } from '~/generated/graphql';
 
 import { PeopleCompanyCreateCell } from './PeopleCompanyCreateCell';
+import { PeopleCompanyPicker } from './PeopleCompanyPicker';
 
 export type OwnProps = {
   people: Pick<Person, 'id'> & {
-    company?: Pick<Company, 'id' | 'name'> | null;
+    company?: Pick<Company, 'id' | 'name' | 'domainName'> | null;
   };
 };
 
 export function PeopleCompanyCell({ people }: OwnProps) {
-  const [isCreating, setIsCreating] = useState(false);
-  const [insertCompany] = useInsertCompanyMutation();
-  const [updatePeople] = useUpdatePeopleMutation();
-  const [initialCompanyName, setInitialCompanyName] = useState('');
-
-  async function handleCompanyCreate(
-    companyName: string,
-    companyDomainName: string,
-  ) {
-    const newCompanyId = v4();
-
-    try {
-      await insertCompany({
-        variables: {
-          id: newCompanyId,
-          name: companyName,
-          domainName: companyDomainName,
-          address: '',
-          createdAt: new Date().toISOString(),
-        },
-      });
-
-      await updatePeople({
-        variables: {
-          ...people,
-          companyId: newCompanyId,
-        },
-      });
-    } catch (error) {
-      // TODO: handle error better
-      logError(error);
-    }
-
-    setIsCreating(false);
-  }
-
-  // TODO: should be replaced with search context
-  function handleChangeSearchInput(searchInput: string) {
-    setInitialCompanyName(searchInput);
-  }
+  const [isCreating] = useRecoilScopedState(isCreateModeScopedState);
 
   return isCreating ? (
-    <PeopleCompanyCreateCell
-      initialCompanyName={initialCompanyName}
-      onCreate={handleCompanyCreate}
-    />
+    <PeopleCompanyCreateCell people={people} />
   ) : (
-    <EditableRelation<any, CompanyChipPropsType>
-      relation={people.company}
-      searchPlaceholder="Company"
-      ChipComponent={CompanyChip}
-      chipComponentPropsMapper={(company): CompanyChipPropsType => {
-        return {
-          name: company.name || '',
-          picture: getLogoUrlFromDomainName(company.domainName),
-        };
-      }}
-      onChange={async (relation) => {
-        await updatePeople({
-          variables: {
-            ...people,
-            companyId: relation.id,
-          },
-        });
-      }}
-      onChangeSearchInput={handleChangeSearchInput}
-      searchConfig={
-        {
-          query: SEARCH_COMPANY_QUERY,
-          template: (searchInput: string) => ({
-            name: { contains: `%${searchInput}%`, mode: QueryMode.Insensitive },
-          }),
-          resultMapper: (company) => ({
-            render: (company: any) => company.name,
-            value: company,
-          }),
-        } satisfies SearchConfigType
+    <EditableCellV2
+      editModeContent={<PeopleCompanyPicker people={people} />}
+      nonEditModeContent={
+        <CompanyChip
+          name={people.company?.name ?? ''}
+          picture={getLogoUrlFromDomainName(people.company?.domainName)}
+        />
       }
-      onCreate={() => {
-        setIsCreating(true);
-      }}
     />
   );
 }
