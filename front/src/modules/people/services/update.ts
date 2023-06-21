@@ -1,10 +1,4 @@
-import { FetchResult, gql } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
-
-import { apiClient } from '../../../apollo';
-import { mapToGqlPerson, Person } from '../interfaces/person.interface';
-
-import { GET_PEOPLE } from './select';
+import { gql } from '@apollo/client';
 
 export const UPDATE_PERSON = gql`
   mutation UpdatePeople(
@@ -90,36 +84,3 @@ export const DELETE_PEOPLE = gql`
     }
   }
 `;
-
-export async function updatePerson(
-  person: Person,
-): Promise<FetchResult<Person>> {
-  const result = await apiClient.mutate({
-    mutation: UPDATE_PERSON,
-    variables: person,
-  });
-  return result;
-}
-
-export async function insertPerson(
-  person: Person,
-): Promise<FetchResult<Person>> {
-  const result = await apiClient.mutate({
-    mutation: INSERT_PERSON,
-    variables: mapToGqlPerson(person),
-    refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-  });
-
-  return result;
-}
-
-export async function deletePeople(
-  peopleIds: string[],
-): Promise<FetchResult<Person>> {
-  const result = await apiClient.mutate({
-    mutation: DELETE_PEOPLE,
-    variables: { ids: peopleIds },
-  });
-
-  return result;
-}

@@ -1,12 +1,4 @@
-import { FetchResult, gql } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
-
-import { apiClient } from '~/apollo';
-
-import { UpdateCompanyMutationVariables } from '../../../generated/graphql';
-import { Company, mapToGqlCompany } from '../interfaces/company.interface';
-
-import { GET_COMPANIES } from './select';
+import { gql } from '@apollo/client';
 
 export const UPDATE_COMPANY = gql`
   mutation UpdateCompany(
@@ -80,36 +72,3 @@ export const DELETE_COMPANIES = gql`
     }
   }
 `;
-
-export async function updateCompany(
-  company: UpdateCompanyMutationVariables,
-): Promise<FetchResult<Company>> {
-  const result = await apiClient.mutate({
-    mutation: UPDATE_COMPANY,
-    variables: company,
-  });
-  return result;
-}
-
-export async function insertCompany(
-  company: Company,
-): Promise<FetchResult<Company>> {
-  const result = await apiClient.mutate({
-    mutation: INSERT_COMPANY,
-    variables: mapToGqlCompany(company),
-    refetchQueries: [getOperationName(GET_COMPANIES) ?? ''],
-  });
-
-  return result;
-}
-
-export async function deleteCompanies(
-  peopleIds: string[],
-): Promise<FetchResult<Company>> {
-  const result = await apiClient.mutate({
-    mutation: DELETE_COMPANIES,
-    variables: { ids: peopleIds },
-  });
-
-  return result;
-}

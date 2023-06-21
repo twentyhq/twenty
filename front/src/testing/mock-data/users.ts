@@ -1,6 +1,18 @@
-import { GraphqlQueryUser } from '@/users/interfaces/user.interface';
+import { User, Workspace, WorkspaceMember } from '~/generated/graphql';
 
-export const mockedUsersData: Array<GraphqlQueryUser> = [
+type MockedUser = Pick<
+  User,
+  'id' | 'email' | 'displayName' | 'avatarUrl' | '__typename'
+> & {
+  workspaceMember: Pick<WorkspaceMember, 'id' | '__typename'> & {
+    workspace: Pick<
+      Workspace,
+      'id' | 'displayName' | 'domainName' | 'logo' | '__typename'
+    >;
+  };
+};
+
+export const mockedUsersData: Array<MockedUser> = [
   {
     id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
     __typename: 'User',
@@ -37,4 +49,4 @@ export const mockedUsersData: Array<GraphqlQueryUser> = [
       },
     },
   },
-] as GraphqlQueryUser[];
+];

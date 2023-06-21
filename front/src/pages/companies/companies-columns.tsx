@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEditableNameCell';
-import { updateCompany } from '@/companies/services';
 import {
   PersonChip,
   PersonChipPropsType,
@@ -22,12 +21,16 @@ import {
   IconUsers,
 } from '@/ui/icons/index';
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
-import { mapToUser, User } from '@/users/interfaces/user.interface';
-import { GetCompaniesQueryHookResult, QueryMode } from '~/generated/graphql';
+import {
+  GetCompaniesQuery,
+  QueryMode,
+  useUpdateCompanyMutation,
+} from '~/generated/graphql';
 
-const columnHelper = createColumnHelper<GetCompaniesQueryHookResult>();
+const columnHelper = createColumnHelper<GetCompaniesQuery['companies'][0]>();
 
 export const useCompaniesColumns = () => {
+  const [updateCompany] = useUpdateCompanyMutation();
   return useMemo(() => {
     return [
       getCheckBoxColumn(),
@@ -54,7 +57,12 @@ export const useCompaniesColumns = () => {
             changeHandler={(value) => {
               const company = { ...props.row.original };
               company.domainName = value;
-              updateCompany(company);
+              updateCompany({
+                variables: {
+                  ...company,
+                  accountOwnerId: company.accountOwner?.id,
+                },
+              });
             }}
           />
         ),
@@ -71,13 +79,13 @@ export const useCompaniesColumns = () => {
             changeHandler={(value) => {
               const company = { ...props.row.original };
 
-              if (value === '') {
-                company.employees = null;
-                updateCompany(company);
-              } else if (!Number.isNaN(Number(value))) {
-                company.employees = Number(value);
-                updateCompany(company);
-              }
+              updateCompany({
+                variables: {
+                  ...company,
+                  employees: value === '' ? null : Number(value),
+                  accountOwnerId: company.accountOwner?.id,
+                },
+              });
             }}
           />
         ),
@@ -94,7 +102,12 @@ export const useCompaniesColumns = () => {
             changeHandler={(value) => {
               const company = { ...props.row.original };
               company.address = value;
-              updateCompany(company);
+              updateCompany({
+                variables: {
+                  ...company,
+                  accountOwnerId: company.accountOwner?.id,
+                },
+              });
             }}
           />
         ),
@@ -117,7 +130,12 @@ export const useCompaniesColumns = () => {
             changeHandler={(value: Date) => {
               const company = { ...props.row.original };
               company.createdAt = value.toISOString();
-              updateCompany(company);
+              updateCompany({
+                variables: {
+                  ...company,
+                  accountOwnerId: company.accountOwner?.id,
+                },
+              });
             }}
           />
         ),
@@ -131,21 +149,24 @@ export const useCompaniesColumns = () => {
           />
         ),
         cell: (props) => (
-          <EditableRelation<User, PersonChipPropsType>
+          <EditableRelation<any, PersonChipPropsType>
             relation={props.row.original.accountOwner}
             searchPlaceholder="Account Owner"
             ChipComponent={PersonChip}
             chipComponentPropsMapper={(
-              accountOwner: User,
+              accountOwner: any,
             ): PersonChipPropsType => {
               return {
                 name: accountOwner.displayName || '',
               };
             }}
-            onChange={(relation: User) => {
-              const company = { ...props.row.original };
-              company.accountOwnerId = relation.id;
-              updateCompany(company);
+            onChange={(relation: any) => {
+              updateCompany({
+                variables: {
+                  ...props.row.original,
+                  accountOwnerId: relation.id,
+                },
+              });
             }}
             searchConfig={
               {
@@ -156,15 +177,15 @@ export const useCompaniesColumns = () => {
                     mode: QueryMode.Insensitive,
                   },
                 }),
-                resultMapper: (accountOwner) => ({
-                  render: (accountOwner) => accountOwner.displayName,
-                  value: mapToUser(accountOwner),
+                resultMapper: (accountOwner: any) => ({
+                  render: (accountOwner: any) => accountOwner.displayName,
+                  value: accountOwner,
                 }),
-              } satisfies SearchConfigType<User>
+              } satisfies SearchConfigType
             }
           />
         ),
       }),
     ];
-  }, []);
+  }, [updateCompany]);
 };

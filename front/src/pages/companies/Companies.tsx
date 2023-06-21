@@ -4,13 +4,8 @@ import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  Company,
-  mapToCompany,
-} from '@/companies/interfaces/company.interface';
-import {
   CompaniesSelectedSortType,
   defaultOrderBy,
-  insertCompany,
   useCompaniesQuery,
 } from '@/companies/services';
 import {
@@ -23,8 +18,13 @@ import { EntityTable } from '@/ui/components/table/EntityTable';
 import { IconBuildingSkyscraper } from '@/ui/icons/index';
 import { IconList } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
-import { BoolExpType } from '@/utils/interfaces/generic.interface';
-import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
+import {
+  CompanyOrderByWithRelationInput as Companies_Order_By,
+  CompanyWhereInput,
+  GetCompaniesQuery,
+  InsertCompanyMutationVariables,
+  useInsertCompanyMutation,
+} from '~/generated/graphql';
 
 import { TableActionBarButtonCreateCommentThreadCompany } from './table/TableActionBarButtonCreateCommentThreadCompany';
 import { TableActionBarButtonDeleteCompanies } from './table/TableActionBarButtonDeleteCompanies';
@@ -38,15 +38,16 @@ const StyledCompaniesContainer = styled.div`
 `;
 
 export function Companies() {
+  const [insertCompany] = useInsertCompanyMutation();
   const [orderBy, setOrderBy] = useState<Companies_Order_By[]>(defaultOrderBy);
-  const [where, setWhere] = useState<BoolExpType<Company>>({});
+  const [where, setWhere] = useState<CompanyWhereInput>({});
 
   const updateSorts = useCallback((sorts: Array<CompaniesSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
   const updateFilters = useCallback(
-    (filters: Array<SelectedFilterType<Company>>) => {
+    (filters: Array<SelectedFilterType<GetCompaniesQuery['companies'][0]>>) => {
       setWhere(reduceFiltersToWhere(filters));
     },
     [],
@@ -54,21 +55,19 @@ export function Companies() {
 
   const { data } = useCompaniesQuery(orderBy, where);
 
-  const companies = data?.companies.map(mapToCompany) ?? [];
+  const companies = data?.companies ?? [];
 
   async function handleAddButtonClick() {
-    const newCompany: Company = {
+    const newCompany: InsertCompanyMutationVariables = {
       id: uuidv4(),
       name: '',
       domainName: '',
       employees: null,
       address: '',
       createdAt: new Date().toISOString(),
-      accountOwner: null,
-      __typename: 'Company',
     };
 
-    await insertCompany(newCompany);
+    await insertCompany({ variables: newCompany });
   }
 
   const companiesColumns = useCompaniesColumns();

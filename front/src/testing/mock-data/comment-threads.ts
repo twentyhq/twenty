@@ -1,6 +1,28 @@
-import { CommentableType, CommentThread } from '~/generated/graphql';
+import {
+  CommentableType,
+  CommentThread,
+  CommentThreadTarget,
+} from '~/generated/graphql';
 
-export const mockedCommentThreads: Array<CommentThread> = [
+type MockedCommentThread = Pick<
+  CommentThread,
+  'id' | 'createdAt' | 'updatedAt' | '__typename'
+> & {
+  commentThreadTargets: Array<
+    Pick<
+      CommentThreadTarget,
+      | 'id'
+      | '__typename'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'commentableType'
+      | 'commentableId'
+      | 'commentThreadId'
+    > & { commentThread: Pick<CommentThread, 'id' | 'createdAt' | 'updatedAt'> }
+  >;
+};
+
+export const mockedCommentThreads: Array<MockedCommentThread> = [
   {
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
     createdAt: '2023-04-26T10:12:42.33625+00:00',

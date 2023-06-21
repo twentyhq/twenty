@@ -3,7 +3,6 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
 import { PeopleCompanyCell } from '@/people/components/PeopleCompanyCell';
-import { updatePerson } from '@/people/services';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone';
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
@@ -17,12 +16,13 @@ import {
   IconUser,
 } from '@/ui/icons/index';
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
+import { GetPeopleQuery, useUpdatePeopleMutation } from '~/generated/graphql';
 
-import { GetPeopleQueryHookResult } from '../../generated/graphql';
-
-const columnHelper = createColumnHelper<GetPeopleQueryHookResult>();
+const columnHelper = createColumnHelper<GetPeopleQuery['people'][0]>();
 
 export const usePeopleColumns = () => {
+  const [updatePerson] = useUpdatePeopleMutation();
+
   return useMemo(() => {
     return [
       getCheckBoxColumn(),
@@ -36,9 +36,14 @@ export const usePeopleColumns = () => {
               person={props.row.original}
               onChange={async (firstName: string, lastName: string) => {
                 const person = { ...props.row.original };
-                person.firstname = firstName;
-                person.lastname = lastName;
-                await updatePerson(person);
+                await updatePerson({
+                  variables: {
+                    ...person,
+                    firstname: firstName,
+                    lastname: lastName,
+                    companyId: person.company?.id,
+                  },
+                });
               }}
             />
           </>
@@ -53,10 +58,15 @@ export const usePeopleColumns = () => {
           <EditableText
             placeholder="Email"
             content={props.row.original.email || ''}
-            changeHandler={(value: string) => {
+            changeHandler={async (value: string) => {
               const person = props.row.original;
-              person.email = value;
-              updatePerson(person);
+              await updatePerson({
+                variables: {
+                  ...person,
+                  email: value,
+                  companyId: person.company?.id,
+                },
+              });
             }}
           />
         ),
@@ -80,10 +90,15 @@ export const usePeopleColumns = () => {
           <EditablePhone
             placeholder="Phone"
             value={props.row.original.phone || ''}
-            changeHandler={(value: string) => {
+            changeHandler={async (value: string) => {
               const person = { ...props.row.original };
-              person.phone = value;
-              updatePerson(person);
+              await updatePerson({
+                variables: {
+                  ...person,
+                  phone: value,
+                  companyId: person.company?.id,
+                },
+              });
             }}
           />
         ),
@@ -103,10 +118,15 @@ export const usePeopleColumns = () => {
                 ? new Date(props.row.original.createdAt)
                 : new Date()
             }
-            changeHandler={(value: Date) => {
+            changeHandler={async (value: Date) => {
               const person = { ...props.row.original };
-              person.createdAt = value.toISOString();
-              updatePerson(person);
+              await updatePerson({
+                variables: {
+                  ...person,
+                  createdAt: value.toISOString(),
+                  companyId: person.company?.id,
+                },
+              });
             }}
           />
         ),
@@ -121,14 +141,19 @@ export const usePeopleColumns = () => {
             editModeHorizontalAlign="right"
             placeholder="City"
             content={props.row.original.city || ''}
-            changeHandler={(value: string) => {
+            changeHandler={async (value: string) => {
               const person = { ...props.row.original };
-              person.city = value;
-              updatePerson(person);
+              await updatePerson({
+                variables: {
+                  ...person,
+                  city: value,
+                  companyId: person.company?.id,
+                },
+              });
             }}
           />
         ),
       }),
     ];
-  }, []);
+  }, [updatePerson]);
 };

@@ -1,4 +1,3 @@
-import { Company } from '@/companies/interfaces/company.interface';
 import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { SEARCH_USER_QUERY } from '@/search/services/search';
 import {
@@ -9,8 +8,7 @@ import {
   IconUser,
   IconUsers,
 } from '@/ui/icons/index';
-import { mapToUser, User } from '@/users/interfaces/user.interface';
-import { QueryMode } from '~/generated/graphql';
+import { QueryMode, User } from '~/generated/graphql';
 
 export const nameFilter = {
   key: 'name',
@@ -21,14 +19,14 @@ export const nameFilter = {
     {
       label: 'Contains',
       id: 'like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         name: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         NOT: [
           {
             name: {
@@ -40,7 +38,7 @@ export const nameFilter = {
       }),
     },
   ],
-} satisfies FilterConfigType<Company, string>;
+} satisfies FilterConfigType<string>;
 
 export const employeesFilter = {
   key: 'employees',
@@ -51,7 +49,7 @@ export const employeesFilter = {
     {
       label: 'Greater than',
       id: 'greater_than',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         employees: {
           gte: isNaN(Number(searchString)) ? undefined : Number(searchString),
         },
@@ -60,14 +58,14 @@ export const employeesFilter = {
     {
       label: 'Less than',
       id: 'less_than',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         employees: {
           lte: isNaN(Number(searchString)) ? undefined : Number(searchString),
         },
       }),
     },
   ],
-} satisfies FilterConfigType<Company, string>;
+} satisfies FilterConfigType<string>;
 
 export const urlFilter = {
   key: 'domainName',
@@ -78,7 +76,7 @@ export const urlFilter = {
     {
       label: 'Contains',
       id: 'like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         domainName: {
           contains: `%${searchString}%`,
           mode: QueryMode.Insensitive,
@@ -88,7 +86,7 @@ export const urlFilter = {
     {
       label: 'Does not contain',
       id: 'not_like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         NOT: [
           {
             domainName: {
@@ -100,7 +98,7 @@ export const urlFilter = {
       }),
     },
   ],
-} satisfies FilterConfigType<Company, string>;
+} satisfies FilterConfigType<string>;
 
 export const addressFilter = {
   key: 'address',
@@ -111,14 +109,14 @@ export const addressFilter = {
     {
       label: 'Contains',
       id: 'like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         address: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
       }),
     },
     {
       label: 'Does not contain',
       id: 'not_like',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         NOT: [
           {
             address: {
@@ -130,7 +128,7 @@ export const addressFilter = {
       }),
     },
   ],
-} satisfies FilterConfigType<Company, string>;
+} satisfies FilterConfigType<string>;
 
 export const ccreatedAtFilter = {
   key: 'createdAt',
@@ -141,7 +139,7 @@ export const ccreatedAtFilter = {
     {
       label: 'Greater than',
       id: 'greater_than',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         createdAt: {
           gte: searchString,
         },
@@ -150,14 +148,14 @@ export const ccreatedAtFilter = {
     {
       label: 'Less than',
       id: 'less_than',
-      whereTemplate: (searchString) => ({
+      whereTemplate: (searchString: string) => ({
         createdAt: {
           lte: searchString,
         },
       }),
     },
   ],
-} satisfies FilterConfigType<Company, string>;
+} satisfies FilterConfigType<string>;
 
 export const accountOwnerFilter = {
   key: 'accountOwner',
@@ -172,24 +170,24 @@ export const accountOwnerFilter = {
         mode: QueryMode.Insensitive,
       },
     }),
-    resultMapper: (data) => ({
-      value: mapToUser(data),
-      render: (owner) => owner.displayName,
+    resultMapper: (data: any) => ({
+      value: data,
+      render: (owner: any) => owner.displayName,
     }),
   },
-  selectedValueRender: (owner) => owner.displayName || '',
+  selectedValueRender: (owner: any) => owner.displayName || '',
   operands: [
     {
       label: 'Is',
       id: 'is',
-      whereTemplate: (owner) => ({
+      whereTemplate: (owner: any) => ({
         accountOwner: { is: { displayName: { equals: owner.displayName } } },
       }),
     },
     {
       label: 'Is not',
       id: 'is_not',
-      whereTemplate: (owner) => ({
+      whereTemplate: (owner: any) => ({
         NOT: [
           {
             accountOwner: {
@@ -200,7 +198,7 @@ export const accountOwnerFilter = {
       }),
     },
   ],
-} satisfies FilterConfigType<Company, User>;
+} satisfies FilterConfigType<User>;
 
 export const availableFilters = [
   nameFilter,

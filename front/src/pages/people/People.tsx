@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,10 +9,9 @@ import {
   reduceSortsToOrderBy,
 } from '@/filters-and-sorts/helpers';
 import { SelectedFilterType } from '@/filters-and-sorts/interfaces/filters/interface';
-import { Person } from '@/people/interfaces/person.interface';
 import {
   defaultOrderBy,
-  insertPerson,
+  GET_PEOPLE,
   PeopleSelectedSortType,
   usePeopleQuery,
 } from '@/people/services';
@@ -19,7 +19,11 @@ import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTab
 import { EntityTable } from '@/ui/components/table/EntityTable';
 import { IconList, IconUser } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
-import { BoolExpType } from '@/utils/interfaces/generic.interface';
+import {
+  GetPeopleQuery,
+  PersonWhereInput,
+  useInsertPersonMutation,
+} from '~/generated/graphql';
 
 import { TableActionBarButtonCreateCommentThreadPeople } from './table/TableActionBarButtonCreateCommentThreadPeople';
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
@@ -35,37 +39,38 @@ const StyledPeopleContainer = styled.div`
 
 export function People() {
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
-  const [where, setWhere] = useState<BoolExpType<Person>>({});
+  const [where, setWhere] = useState<PersonWhereInput>({});
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
   const updateFilters = useCallback(
-    (filters: Array<SelectedFilterType<Person>>) => {
+    (filters: Array<SelectedFilterType<GetPeopleQuery['people'][0]>>) => {
       setWhere(reduceFiltersToWhere(filters));
     },
     [],
   );
+
+  const [insertPersonMutation] = useInsertPersonMutation();
 
   const { data } = usePeopleQuery(orderBy, where);
 
   const people = data?.people ?? [];
 
   async function handleAddButtonClick() {
-    const newPerson = {
-      __typename: 'Person',
-      id: uuidv4(),
-      firstname: '',
-      lastname: '',
-      email: '',
-      phone: '',
-      company: null,
-      createdAt: new Date().toISOString(),
-      city: '',
-    } as const;
-
-    await insertPerson(newPerson);
+    await insertPersonMutation({
+      variables: {
+        id: uuidv4(),
+        firstname: '',
+        lastname: '',
+        email: '',
+        phone: '',
+        createdAt: new Date().toISOString(),
+        city: '',
+      },
+      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+    });
   }
 
   const peopleColumns = usePeopleColumns();
