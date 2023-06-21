@@ -1,45 +1,40 @@
 ---
 sidebar_position: 0
-slug: '/'
 sidebar_custom_props:
   icon: TbBolt
 ---
 
 # Local Setup
 
-## Quickstart CLI
+We recommend using Docker to avoid potential problems with version compatibility, but it's also fairly simple to run the app directly on your machine.
 
-We built a CLI to guide you through the different options.
-
-If you prefer to have more control and do things manually, go through the Docker section below.
-
-Otherwise run the following command to get started:
-```
-npx twenty-cli
-```
-
-
-## Docker
+## With Docker
 
 ### 1. Pre-requisites
 
-Make sure to have the latest Docker and Docker-compose versions installed on your computer.
+Make sure you have the latest Docker and Docker-compose versions installed on your computer.
 
 You can run `docker-compose --version` and `docker --version` to check they are installed.
 
 ### 2. Git clone
-`git clone git@github.com:twentyhq/twenty.git`
+```
+git clone git@github.com:twentyhq/twenty.git
+```
 
 ### 3. Setup env variables
 
-`cp ./infra/dev/.env.example ./infra/dev/.env` and fill with values
-`cp ./front/.env.example ./front/.env` and fill with values
-`cp ./server/.env.example ./server/.env` and fill with values
+Go to the cloned folder (`cd twenty`). Then copy the env files:
+```
+cp ./infra/dev/.env.example ./infra/dev/.env
+cp ./front/.env.example ./front/.env
+cp ./server/.env.example ./server/.env 
+```
+Default values should work out of the box with the docker setup.
 
 ### 4. Build
 
 We provide a containerized environment with Docker and orchestrated with docker-compose.
-This install will also provision a postgres container out of the box.
+This install will also provision a Postgres container.
 
 The configuration is stored `infra/dev` folder. 
 
@@ -57,14 +52,14 @@ We will add an easier option soon.
 
 Before running the project, we need to apply database init and migrations and run the seed.
 
-Always in the `infra/dev` folder.
+Always go the `infra/dev` folder to run the `make` commands.
 
-Run the containers:
+Start the containers:
 ```
 make up
 ```
 
-Generate database init and migrations:
+Run database migrations:
 ```
 make server-prisma-migrate
 ```
@@ -95,26 +90,33 @@ make-server start
 
 - front available on: http://localhost:3001
 - server available on: http://localhost:3000/healthz
-- postgres: available on http://localhost:5432 that should contain `twenty` database
+- postgres: available on http://localhost:5432 and should contain database named `twenty` 
 
 
 ### 8. Development
 
-Documented [here](../development/workflows.mdx)
+Documented [here](../dev/workflows.mdx)
 
-## Without Docker (Not recommended)
+## Without Docker
 
-While Docker is the recommended way to run Twenty, you might want to keep a light install.
+While Docker is the recommended way to run Twenty, you might want to run the project directly on your machine.
 
 ### 1. Pre-requisites
-You need to have git, node and npm install on your computer.
+You need to have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [node](https://nodejs.org/en/download) and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) installed on your computer.
 You also need to bring your own Postgres database.
 
 ### 2. Git clone
-`git clone git@github.com:twentyhq/twenty.git`
+```
+git clone git@github.com:twentyhq/twenty.git
+```
 
 ### 3. Setup env variables
-`cp ./infra/dev/.env.example ./infra/dev/.env` and fill with values 
+Make a copy of .env.example files:
+```
+cp ./front/.env.example ./front/.env
+cp ./server/.env.example ./server/.env
+```
+
 Most default value should work out of the box, but don't forget to update the database connection string.
 
 ### 4. Build
@@ -130,7 +132,7 @@ cd server
 yarn
 yarn prisma:migrate
 ```
-You can also add `yarn prisma:seed` to seed the database with mock data.
+You can also run `yarn prisma:seed` to seed the database with mock data.
 
 ### 5. Auth Setup
 Right now the only way to authenticate yourself is to setup Google Sign-in in `server/.env`
