@@ -31,6 +31,7 @@
     "react-textarea-autosize": "^8.4.1",
     "react-tooltip": "^5.13.1",
     "recoil": "^0.7.7",
+    "scroll-into-view": "^1.16.2",
     "uuid": "^9.0.0",
     "web-vitals": "^2.1.4"
   },
@@ -108,6 +109,7 @@
     "@types/jest": "^27.5.2",
     "@types/luxon": "^3.3.0",
     "@types/react-datepicker": "^4.11.2",
+    "@types/scroll-into-view": "^1.16.0",
     "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "babel-plugin-named-exports-order": "^0.0.2",

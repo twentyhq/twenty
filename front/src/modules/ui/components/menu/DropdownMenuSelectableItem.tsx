@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -10,12 +10,17 @@ import { DropdownMenuButton } from './DropdownMenuButton';
 type Props = {
   selected: boolean;
   onClick: () => void;
+  hovered?: boolean;
 };
 
 const DropdownMenuSelectableItemContainer = styled(DropdownMenuButton)<Props>`
   ${hoverBackground};
 
   align-items: center;
+
+  background: ${(props) =>
+    props.hovered ? props.theme.lightBackgroundTransparent : 'transparent'};
+
   display: flex;
   justify-content: space-between;
 `;
@@ -35,10 +40,25 @@ export function DropdownMenuSelectableItem({
   selected,
   onClick,
   children,
+  hovered,
 }: React.PropsWithChildren<Props>) {
   const theme = useTheme();
+
+  useEffect(() => {
+    if (hovered) {
+      console.log('scroll');
+      window.scrollTo({
+        behavior: 'smooth',
+      });
+    }
+  }, [hovered]);
+
   return (
-    <DropdownMenuSelectableItemContainer onClick={onClick} selected={selected}>
+    <DropdownMenuSelectableItemContainer
+      onClick={onClick}
+      selected={selected}
+      hovered={hovered}
+    >
       <StyledLeftContainer>{children}</StyledLeftContainer>
       <StyledRightIcon>
         {selected && <IconCheck size={theme.iconSizeMedium} />}

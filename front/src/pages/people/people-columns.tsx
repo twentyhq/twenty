@@ -7,6 +7,7 @@ import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone';
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
+import { RecoilScope } from '@/ui/hooks/RecoilScope';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -79,7 +80,11 @@ export const usePeopleColumns = () => {
             viewIcon={<IconBuildingSkyscraper size={16} />}
           />
         ),
-        cell: (props) => <PeopleCompanyCell people={props.row.original} />,
+        cell: (props) => (
+          <RecoilScope>
+            <PeopleCompanyCell people={props.row.original} />
+          </RecoilScope>
+        ),
         size: 150,
       }),
       columnHelper.accessor('phone', {
