@@ -29,21 +29,19 @@
 </p>
 
 # About
-Twenty is an Open Source CRM designed to solve the issues that are still prevalent among existing solutions.  
-It is meant to be:
+Twenty is an Open Source CRM designed to be:
 - Easily extendable
 - Perfectly in-sync with your data
 - Crafted with care and enjoyable to use
 
 # Helping us
 - The easiest way to help us is to star the repo and helping us getting visibility
-- Contributions are what makes the open source community such an amazing place. It doesn't have to be code, you can create an issue to report a bug you've spotted, join discussions or write documentation.
-
+- Contributions are, of course, most welcome! It doesn't have to be code, you could also create an issue to report a bug you've spotted, join discussions or write documentation.
 
 # Quickstart
 By the first week of July, you should be able to try a demo directly on [app.twenty.com], our cloud offering with a generous free tier. We'll also release click-to-deploy buttons for Render and Railway.
 
-In the meantime, you can check [the documentation](/start/local-setup). It shouldn't take more than a few minutes to install.
+In the meantime, you can check [the documentation](/start/local-setup). It shouldn't take more than a few minutes to install locally.
 
 # Progress
 We are currently in the development phase of Twenty's alpha version:

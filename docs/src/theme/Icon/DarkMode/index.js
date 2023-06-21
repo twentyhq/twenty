@@ -4,6 +4,6 @@ import {useColorMode} from '@docusaurus/theme-common';
 
 
 export default function IconDarkMode(props) {
-  const { isDarkTheme } = useColorMode();
-  return isDarkTheme ? <TbMoon /> : <></>;
+  const { colorMode } = useColorMode().colorMode;
+  return colorMode === 'dark' ? <TbMoon /> : <></>;
 }
