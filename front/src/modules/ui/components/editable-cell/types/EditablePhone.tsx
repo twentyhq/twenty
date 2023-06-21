@@ -4,7 +4,7 @@ import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 
 import { textInputStyle } from '@/ui/layout/styles/themes';
 
-import Link from '../../link/Link';
+import { RawLink } from '../../links/RawLink';
 import { EditableCell } from '../EditableCell';
 
 type OwnProps = {
@@ -50,7 +50,7 @@ export function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
       nonEditModeContent={
         <div>
           {isValidPhoneNumber(inputValue) ? (
-            <Link
+            <RawLink
               href={parsePhoneNumber(inputValue, 'FR')?.getURI()}
               onClick={(event: MouseEvent<HTMLElement>) => {
                 event.stopPropagation();
@@ -58,9 +58,9 @@ export function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
             >
               {parsePhoneNumber(inputValue, 'FR')?.formatInternational() ||
                 inputValue}
-            </Link>
+            </RawLink>
           ) : (
-            <Link href="#">{inputValue}</Link>
+            <RawLink href="#">{inputValue}</RawLink>
           )}
         </div>
       }

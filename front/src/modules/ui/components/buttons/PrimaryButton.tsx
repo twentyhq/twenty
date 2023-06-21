@@ -2,11 +2,9 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 type OwnProps = {
-  label: string;
-  icon?: React.ReactNode;
+  children: React.ReactNode;
   fullWidth?: boolean;
-  onClick?: () => void;
-};
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const StyledButton = styled.button<{ fullWidth: boolean }>`
   align-items: center;
@@ -24,29 +22,20 @@ const StyledButton = styled.button<{ fullWidth: boolean }>`
   display: flex;
   flex-direction: row;
   font-weight: ${({ theme }) => theme.fontWeightBold};
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing(2)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
 export function PrimaryButton({
-  label,
-  icon,
+  children,
   fullWidth,
-  onClick,
+  ...props
 }: OwnProps): JSX.Element {
   return (
-    <StyledButton
-      fullWidth={fullWidth ?? false}
-      onClick={() => {
-        if (onClick) {
-          onClick();
-        }
-      }}
-    >
-      {icon}
-      {label}
+    <StyledButton fullWidth={fullWidth ?? false} {...props}>
+      {children}
     </StyledButton>
   );
 }

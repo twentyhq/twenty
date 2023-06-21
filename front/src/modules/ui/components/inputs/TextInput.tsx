@@ -2,8 +2,9 @@ import { ChangeEvent, useState } from 'react';
 import styled from '@emotion/styled';
 
 type OwnProps = {
-  initialValue: string;
-  onChange: (text: string) => void;
+  value: string;
+  onChange?: (text: string) => void;
+  placeholder?: string;
   fullWidth?: boolean;
 };
 
@@ -29,20 +30,23 @@ const StyledInput = styled.input<{ fullWidth: boolean }>`
 `;
 
 export function TextInput({
-  initialValue,
+  value,
   onChange,
+  placeholder,
   fullWidth,
 }: OwnProps): JSX.Element {
-  const [value, setValue] = useState(initialValue);
+  const [internalValue, setInternalValue] = useState(value);
 
   return (
     <StyledInput
       fullWidth={fullWidth ?? false}
-      value={value}
-      placeholder="Email"
+      value={internalValue}
+      placeholder={placeholder}
       onChange={(event: ChangeEvent<HTMLInputElement>) => {
-        setValue(event.target.value);
-        onChange(event.target.value);
+        setInternalValue(event.target.value);
+        if (onChange) {
+          onChange(event.target.value);
+        }
       }}
     />
   );
