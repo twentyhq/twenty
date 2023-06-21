@@ -38,8 +38,7 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           sidebarCollapsible: false,
           routeBasePath: '/',
-          editUrl:
-            'https://github.com/twentyhq/twenty/edit/main/docs/docs/',
+          editUrl: 'https://github.com/twentyhq/twenty/edit/main/docs/docs/',
         },
         blog: false,
         theme: {
@@ -68,18 +67,6 @@ const config = {
             position: 'left',
           },
           {
-            type: 'docSidebar',
-            sidebarId: 'docsSidebar',
-            position: 'right',
-            label: 'Developer Docs',
-          },
-          {
-            type: 'docSidebar',
-            sidebarId: 'userGuideSidebar',
-            position: 'right',
-            label: 'User guide',
-          },
-          {
             to: '/graphql/',
             label: 'GraphQL Playground',
             position: 'right'
@@ -89,11 +76,6 @@ const config = {
             label: 'Releases',
             position: 'right'
           }
-          /*{
-            href: 'https://github.com/twentyhq/twenty',
-            label: 'GitHub',
-            position: 'right',
-          }*/,
         ],
       },
       algolia: {
