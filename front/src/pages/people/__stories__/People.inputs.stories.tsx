@@ -6,6 +6,7 @@ import { graphql } from 'msw';
 
 import { UPDATE_PERSON } from '@/people/services';
 import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
+import { Company } from '~/generated/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { fetchOneFromData } from '~/testing/mock-data';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
@@ -102,7 +103,7 @@ export const CheckCheckboxes: Story = {
 const editRelationMocks = (
   initiallySelectedCompanyName: string,
   searchCompanyNames: Array<string>,
-  updateSelectedCompanyName: string,
+  updateSelectedCompany: Pick<Company, 'name' | 'domainName'>,
 ) => [
   ...graphqlMocks.filter((graphqlMock) => {
     if (
@@ -125,8 +126,8 @@ const editRelationMocks = (
             ...{
               company: {
                 id: req.variables.companyId,
-                name: updateSelectedCompanyName,
-                domainName: 'airbnb.com',
+                name: updateSelectedCompany.name,
+                domainName: updateSelectedCompany.domainName,
                 __typename: 'Company',
               },
             },
@@ -210,7 +211,10 @@ export const EditRelation: Story = {
   },
   parameters: {
     actions: {},
-    msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], 'Airbnb'),
+    msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], {
+      name: 'Airbnb',
+      domainName: 'airbnb.com',
+    }),
   },
 };
 
@@ -238,11 +242,14 @@ export const SelectRelationWithKeys: Story = {
     await userEvent.type(relationInput, '{enter}');
     sleep(25);
 
-    const allAirbns = await canvas.findAllByText('Airbnb');
+    const allAirbns = await canvas.findAllByText('Aircall');
     expect(allAirbns.length).toBe(1);
   },
   parameters: {
     actions: {},
-    msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], 'Aircall'),
+    msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], {
+      name: 'Aircall',
+      domainName: 'aircall.io',
+    }),
   },
 };
