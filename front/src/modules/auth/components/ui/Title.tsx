@@ -1,7 +1,8 @@
+import React from 'react';
 import styled from '@emotion/styled';
 
 type OwnProps = {
-  title: string;
+  children: React.ReactNode;
 };
 
 const StyledTitle = styled.div`
@@ -10,6 +11,6 @@ const StyledTitle = styled.div`
   margin-top: ${({ theme }) => theme.spacing(10)};
 `;
 
-export function Title({ title }: OwnProps): JSX.Element {
-  return <StyledTitle>{title}</StyledTitle>;
+export function Title({ children }: OwnProps): JSX.Element {
+  return <StyledTitle>{children}</StyledTitle>;
 }
