@@ -7,6 +7,7 @@ import {
   IconInbox,
   IconSearch,
   IconSettings,
+  IconTargetArrow,
   IconUser,
 } from '@/ui/icons/index';
 import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
@@ -56,6 +57,12 @@ export function AppNavbar() {
               to="/companies"
               icon={<IconBuildingSkyscraper size={theme.iconSizeMedium} />}
               active={currentPath === '/companies'}
+            />
+            <NavItem
+              label="Opportunities"
+              to="/opportunities"
+              icon={<IconTargetArrow size={theme.iconSizeMedium} />}
+              active={currentPath === '/opportunities'}
             />
           </NavItemsContainer>
         </>

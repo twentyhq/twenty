@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -14,17 +15,24 @@ const StyledButton = styled.button`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  transition: background-color 0.2s ease-in-out;
+  padding: ${(props) => props.theme.spacing(1)};
 
   &:hover {
     background-color: ${({ theme }) => theme.secondaryBackground};
   }
 `;
 
-export const NewButton = () => {
+export const NewButton = ({
+  onClick,
+}: {
+  onClick?: (...args: any[]) => void;
+}) => {
   const theme = useTheme();
+  const onInnerClick = useCallback(() => {
+    onClick && onClick({ id: 'twenty-aaffcfbd-f86b-419f-b794-02319abe8637' });
+  }, [onClick]);
   return (
-    <StyledButton>
+    <StyledButton onClick={onInnerClick}>
       <IconPlus size={theme.iconSizeMedium} />
       New
     </StyledButton>

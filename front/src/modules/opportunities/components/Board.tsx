@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -10,11 +10,13 @@ import {
   BoardItemKey,
   Column,
   getOptimisticlyUpdatedBoard,
+  Item,
   Items,
   StyledBoard,
 } from '../../ui/components/board/Board';
 import {
   ItemsContainer,
+  ScrollableColumn,
   StyledColumn,
   StyledColumnTitle,
 } from '../../ui/components/board/BoardColumn';
@@ -24,13 +26,35 @@ import { NewButton } from '../../ui/components/board/BoardNewButton';
 import { BoardCard } from './BoardCard';
 
 type BoardProps = {
+  columns: Omit<Column, 'itemKeys'>[];
   initialBoard: Column[];
   items: Items;
   onUpdate?: (itemKey: BoardItemKey, columnId: Column['id']) => Promise<void>;
+  onClickNew?: (
+    columnId: Column['id'],
+    newItem: Partial<Item> & { id: string },
+  ) => void;
 };
 
-export const Board = ({ initialBoard, items, onUpdate }: BoardProps) => {
+export const Board = ({
+  columns,
+  initialBoard,
+  items,
+  onUpdate,
+  onClickNew,
+}: BoardProps) => {
   const [board, setBoard] = useState<Column[]>(initialBoard);
+
+  const onClickFunctions = useMemo<
+    Record<Column['id'], (newItem: Partial<Item> & { id: string }) => void>
+  >(() => {
+    return board.reduce((acc, column) => {
+      acc[column.id] = (newItem: Partial<Item> & { id: string }) => {
+        onClickNew && onClickNew(column.id, newItem);
+      };
+      return acc;
+    }, {} as Record<Column['id'], (newItem: Partial<Item> & { id: string }) => void>);
+  }, [board, onClickNew]);
 
   const onDragEnd: OnDragEndResponder = useCallback(
     async (result) => {
@@ -38,7 +62,7 @@ export const Board = ({ initialBoard, items, onUpdate }: BoardProps) => {
       if (!newBoard) return;
       setBoard(newBoard);
       try {
-        const draggedEntityId = items[result.draggableId]?.id;
+        const draggedEntityId = result.draggableId;
         const destinationColumnId = result.destination?.droppableId;
         draggedEntityId &&
           destinationColumnId &&
@@ -48,35 +72,38 @@ export const Board = ({ initialBoard, items, onUpdate }: BoardProps) => {
         console.error(e);
       }
     },
-    [board, onUpdate, items],
+    [board, onUpdate],
   );
 
+  console.log('board', board);
   return (
     <StyledBoard>
       <DragDropContext onDragEnd={onDragEnd}>
-        {board.map((column) => (
+        {columns.map((column, columnIndex) => (
           <Droppable key={column.id} droppableId={column.id}>
             {(droppableProvided) => (
               <StyledColumn>
                 <StyledColumnTitle color={column.colorCode}>
                   • {column.title}
                 </StyledColumnTitle>
-                <ItemsContainer droppableProvided={droppableProvided}>
-                  {column.itemKeys.map((itemKey, index) => (
-                    <Draggable
-                      key={itemKey}
-                      draggableId={itemKey}
-                      index={index}
-                    >
-                      {(draggableProvided) => (
-                        <BoardItem draggableProvided={draggableProvided}>
-                          <BoardCard item={items[itemKey]} />
-                        </BoardItem>
-                      )}
-                    </Draggable>
-                  ))}
-                </ItemsContainer>
-                <NewButton />
+                <ScrollableColumn>
+                  <ItemsContainer droppableProvided={droppableProvided}>
+                    {board[columnIndex].itemKeys.map((itemKey, index) => (
+                      <Draggable
+                        key={itemKey}
+                        draggableId={itemKey}
+                        index={index}
+                      >
+                        {(draggableProvided) => (
+                          <BoardItem draggableProvided={draggableProvided}>
+                            <BoardCard item={items[itemKey]} />
+                          </BoardItem>
+                        )}
+                      </Draggable>
+                    ))}
+                  </ItemsContainer>
+                  <NewButton onClick={onClickFunctions[column.id]} />
+                </ScrollableColumn>
               </StyledColumn>
             )}
           </Droppable>

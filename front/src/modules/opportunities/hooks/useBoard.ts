@@ -29,7 +29,7 @@ export const useBoard = () => {
       colorCode: pipelineStage.color,
       itemKeys:
         pipelineStage.pipelineProgresses?.map(
-          (item) => item.progressableId as BoardItemKey,
+          (item) => item.id as BoardItemKey,
         ) || [],
     })) || [];
 
@@ -44,15 +44,15 @@ export const useBoard = () => {
     [] as { entityId: string; pipelineProgressId: string }[],
   );
 
-  const pipelineEntityIdsMapper = (entityId: string) => {
-    const pipelineProgressId = pipelineEntityIds?.find(
-      (item) => item.entityId === entityId,
-    )?.pipelineProgressId;
+  const pipelineProgressableIdsMapper = (pipelineProgressId: string) => {
+    const entityId = pipelineEntityIds?.find(
+      (item) => item.pipelineProgressId === pipelineProgressId,
+    )?.entityId;
 
-    return pipelineProgressId;
+    return entityId;
   };
 
-  const pipelineEntityType: 'Person' | 'Company' | undefined =
+  const pipelineEntityType =
     pipelines.data?.findManyPipeline[0].pipelineProgressableType;
 
   const query =
@@ -69,7 +69,7 @@ export const useBoard = () => {
     [entity.id]: entity,
   });
 
-  const items: Items | undefined = entitiesQueryResult.data
+  const entityItems = entitiesQueryResult.data
     ? isGetCompaniesQuery(entitiesQueryResult.data)
       ? entitiesQueryResult.data.companies.reduce(indexByIdReducer, {} as Items)
       : isGetPeopleQuery(entitiesQueryResult.data)
@@ -77,11 +77,20 @@ export const useBoard = () => {
       : undefined
     : undefined;
 
+  const items = pipelineEntityIds?.reduce((acc, item) => {
+    const entityId = pipelineProgressableIdsMapper(item.pipelineProgressId);
+    if (entityId) {
+      acc[item.pipelineProgressId] = entityItems?.[entityId];
+    }
+    return acc;
+  }, {} as Items);
+
   return {
     initialBoard,
     items,
     loading: pipelines.loading || entitiesQueryResult.loading,
     error: pipelines.error || entitiesQueryResult.error,
-    pipelineEntityIdsMapper,
+    pipelineId: pipelines.data?.findManyPipeline[0].id,
+    pipelineEntityType,
   };
 };

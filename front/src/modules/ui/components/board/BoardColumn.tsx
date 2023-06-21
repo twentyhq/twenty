@@ -6,8 +6,13 @@ export const StyledColumn = styled.div`
   background-color: ${({ theme }) => theme.primaryBackground};
   display: flex;
   flex-direction: column;
+  min-width: 300px;
   padding: ${({ theme }) => theme.spacing(2)};
-  width: 300px;
+`;
+
+export const ScrollableColumn = styled.div`
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 `;
 
 export const StyledColumnTitle = styled.h3`
@@ -19,6 +24,10 @@ export const StyledColumnTitle = styled.h3`
   line-height: ${({ theme }) => theme.lineHeight};
   margin: 0;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledPlaceholder = styled.div`
+  min-height: 1px;
 `;
 
 export const StyledItemContainer = styled.div``;
@@ -36,7 +45,7 @@ export const ItemsContainer = ({
       {...droppableProvided?.droppableProps}
     >
       {children}
-      {droppableProvided?.placeholder}
+      <StyledPlaceholder>{droppableProvided?.placeholder}</StyledPlaceholder>
     </StyledItemContainer>
   );
 };
