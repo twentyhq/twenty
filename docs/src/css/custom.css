@@ -74,11 +74,27 @@ html {
 }
 
 .DocSearch-Button {
+  height: 32px !important;
   border-radius: 8px !important;
 }
 
 .DocSearch-Button-Placeholder {
   padding: 0 100px 0 6px !important;
+}
+
+.DocSearch-Button .DocSearch-Search-Icon {
+  color: inherit !important;
+  width: 13px;
+}
+
+.DocSearch-Button-Key {
+  height: 14px !important;
+  width: 14px !important;
+  font-size: 9px !important;
+}
+
+.DocSearch-Button-Keys {
+  min-width: inherit !important;
 }
 
 .theme-edit-this-page {
