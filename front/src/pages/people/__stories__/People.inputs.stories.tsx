@@ -2,7 +2,6 @@ import { getOperationName } from '@apollo/client/utilities';
 import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-import exp from 'constants';
 import { graphql } from 'msw';
 
 import { UPDATE_PERSON } from '@/people/services';
