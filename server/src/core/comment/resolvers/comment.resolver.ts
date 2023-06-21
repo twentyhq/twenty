@@ -1,4 +1,4 @@
-import { Resolver, Args, Mutation } from '@nestjs/graphql';
+import { Resolver, Args, Mutation, Info } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from '../../../core/@generated/workspace/workspace.model';
@@ -8,6 +8,8 @@ import { Comment } from '../../../core/@generated/comment/comment.model';
 import { CreateOneCommentGuard } from '../../../guards/create-one-comment.guard';
 import { Prisma } from '@prisma/client';
 import { CommentService } from '../services/comment.service';
+import { GraphQLResolveInfo } from 'graphql';
+import { PrismaSelect } from 'src/utils/prisma-select';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Comment)
@@ -21,12 +23,22 @@ export class CommentResolver {
   async createOneComment(
     @Args() args: CreateOneCommentArgs,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<Comment> {
+    @Info() info: GraphQLResolveInfo,
+  ): Promise<Partial<Comment>> {
+    const select = new PrismaSelect('Comment', info, {
+      defaultFields: {
+        Comment: {
+          id: true,
+        },
+      },
+    }).value;
+
     return this.commentService.create({
       data: {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-    } satisfies CreateOneCommentArgs as Prisma.CommentCreateArgs);
+      select,
+    } as Prisma.CommentCreateArgs);
   }
 }
