@@ -1,10 +1,14 @@
+import { getOperationName } from '@apollo/client/utilities';
 import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
+import { UPDATE_PERSON } from '@/people/services';
+import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { fetchOneFromData } from '~/testing/mock-data';
+import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 import { sleep } from '~/testing/sleep';
@@ -106,7 +110,7 @@ export const EditRelation: Story = {
 
     await userEvent.click(secondRowCompanyCell);
 
-    const relationInput = await canvas.findByPlaceholderText('Company');
+    const relationInput = await canvas.findByPlaceholderText('Search');
 
     await userEvent.type(relationInput, 'Air', {
       delay: 200,
@@ -126,26 +130,62 @@ export const EditRelation: Story = {
     actions: {},
     msw: [
       ...graphqlMocks.filter((graphqlMock) => {
-        return graphqlMock.info.operationName !== 'UpdatePeople';
+        if (
+          typeof graphqlMock.info.operationName === 'string' &&
+          [
+            getOperationName(UPDATE_PERSON),
+            getOperationName(SEARCH_COMPANY_QUERY),
+          ].includes(graphqlMock.info.operationName)
+        ) {
+          return false;
+        }
+        return true;
       }),
       ...[
-        graphql.mutation('UpdatePeople', (req, res, ctx) => {
-          return res(
-            ctx.data({
-              updateOnePerson: {
-                ...fetchOneFromData(mockedPeopleData, req.variables.id),
-                ...{
-                  company: {
-                    id: req.variables.companyId,
-                    name: 'Airbnb',
-                    domainName: 'airbnb.com',
-                    __typename: 'Company',
+        graphql.mutation(
+          getOperationName(UPDATE_PERSON) ?? '',
+          (req, res, ctx) => {
+            return res(
+              ctx.data({
+                updateOnePerson: {
+                  ...fetchOneFromData(mockedPeopleData, req.variables.id),
+                  ...{
+                    company: {
+                      id: req.variables.companyId,
+                      name: 'Airbnb',
+                      domainName: 'airbnb.com',
+                      __typename: 'Company',
+                    },
                   },
                 },
+              }),
+            );
+          },
+        ),
+        graphql.query(
+          getOperationName(SEARCH_COMPANY_QUERY) ?? '',
+          (req, res, ctx) => {
+            let searchResults = mockedCompaniesData.filter((company) =>
+              ['Airbnb', 'Aircall'].includes(company.name),
+            );
+
+            req.variables.where?.AND?.forEach(
+              (where: { id: { notIn: string } }) => {
+                if (where.id?.notIn) {
+                  console.log(where.id?.notIn);
+                  searchResults = searchResults.filter(
+                    (company) => company.id !== where.id.notIn,
+                  );
+                }
               },
-            }),
-          );
-        }),
+            );
+            return res(
+              ctx.data({
+                searchResults: searchResults,
+              }),
+            );
+          },
+        ),
       ],
     ],
   },

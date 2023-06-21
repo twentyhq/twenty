@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useState } from 'react';
 import { v4 } from 'uuid';
 
-import { atomsForScopeGarbageCollectorState } from './atomsForScopeGarbageCollectorState';
 import { RecoilScopeContext } from './RecoilScopeContext';
 
 export function RecoilScope({ children }: { children: React.ReactNode }) {

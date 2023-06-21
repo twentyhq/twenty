@@ -9,14 +9,14 @@ import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEdit
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
+  Company,
+  Person,
   useSearchCompanyQuery,
   useUpdatePeopleMutation,
 } from '~/generated/graphql';
 
-import { Person } from '../interfaces/person.interface';
-
 export type OwnProps = {
-  people: Person;
+  people: Pick<Person, 'id'> & { company?: Pick<Company, 'id'> | null };
 };
 
 export function PeopleCompanyPicker({ people }: OwnProps) {

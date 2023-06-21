@@ -10,9 +10,7 @@ export function useRecoilScopedValue<T>(
 
   if (!recoilScopeId)
     throw new Error(
-      `Using a scoped atom without a RecoilScope : ${
-        recoilState(recoilScopeId).key
-      }`,
+      `Using a scoped atom without a RecoilScope : ${recoilState('').key}`,
     );
 
   return useRecoilValue<T>(recoilState(recoilScopeId));

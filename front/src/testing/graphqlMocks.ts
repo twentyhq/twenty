@@ -45,7 +45,7 @@ export const graphqlMocks = [
       >(
         mockedCompaniesData,
         req.variables.where,
-        req.variables.orderBy,
+        [req.variables.orderBy],
         req.variables.limit,
       );
       return res(

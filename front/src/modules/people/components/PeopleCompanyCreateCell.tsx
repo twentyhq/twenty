@@ -3,22 +3,19 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { v4 } from 'uuid';
 
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
-import { CellBaseContainer } from '@/ui/components/editable-cell/EditableCell';
-import { EditableCellEditMode } from '@/ui/components/editable-cell/EditableCellEditMode';
 import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
 import { DoubleTextInput } from '@/ui/components/inputs/DoubleTextInput';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { useRecoilScopedState } from '@/ui/hooks/useRecoilScopedState';
 import { logError } from '@/utils/logs/logError';
 import {
+  Person,
   useInsertCompanyMutation,
   useUpdatePeopleMutation,
 } from '~/generated/graphql';
 
-import { Person } from '../interfaces/person.interface';
-
 type OwnProps = {
-  people: Person;
+  people: Pick<Person, 'id'>;
 };
 
 export function PeopleCompanyCreateCell({ people }: OwnProps) {
