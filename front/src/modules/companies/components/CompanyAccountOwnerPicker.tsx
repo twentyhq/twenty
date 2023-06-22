@@ -5,6 +5,7 @@ import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFiltere
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
+import { useCloseEditableCell } from '@/ui/components/editable-cell/hooks/useCloseEditableCell';
 import { useRecoilScopedState } from '@/ui/hooks/useRecoilScopedState';
 import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
 import {
@@ -29,9 +30,8 @@ export function CompanyAccountOwnerPicker({ company }: OwnProps) {
     relationPickerSearchFilterScopedState,
   );
   const [updateCompany] = useUpdateCompanyMutation();
-  const [, setIsSomeInputInEditMode] = useRecoilState(
-    isSomeInputInEditModeState,
-  );
+
+  const closeEditableCell = useCloseEditableCell();
 
   const companies = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
@@ -48,14 +48,14 @@ export function CompanyAccountOwnerPicker({ company }: OwnProps) {
   });
 
   async function handleEntitySelected(selectedUser: UserForSelect) {
-    setIsSomeInputInEditMode(false);
-
     await updateCompany({
       variables: {
         ...company,
         accountOwnerId: selectedUser.id,
       },
     });
+
+    closeEditableCell();
   }
 
   return (
