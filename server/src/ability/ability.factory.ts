@@ -75,6 +75,7 @@ export class AbilityFactory {
     // CommentThread
     can(AbilityAction.Read, 'CommentThread', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'CommentThread');
+    can(AbilityAction.Update, 'CommentThread', { workspaceId: workspace.id });
 
     // Comment
     can(AbilityAction.Read, 'Comment', { workspaceId: workspace.id });

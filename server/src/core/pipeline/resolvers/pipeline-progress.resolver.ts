@@ -45,11 +45,11 @@ export class PipelineProgressResolver {
   ): Promise<Partial<PipelineProgress>[]> {
     return this.pipelineProgressService.findMany({
       ...args,
-      where: {
-        ...args.where,
-        AND: [accessibleBy(ability).PipelineProgress],
-      },
-      select: prismaSelect.value,
+      where: args.where
+        ? {
+            AND: [args.where, accessibleBy(ability).PipelineProgress],
+          }
+        : accessibleBy(ability).PipelineProgress,
     });
   }
 

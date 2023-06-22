@@ -31,10 +31,11 @@ export class PipelineResolver {
   ): Promise<Partial<Pipeline>[]> {
     return this.pipelineService.findMany({
       ...args,
-      where: {
-        ...args.where,
-        AND: [accessibleBy(ability).Pipeline],
-      },
+      where: args.where
+        ? {
+            AND: [args.where, accessibleBy(ability).Pipeline],
+          }
+        : accessibleBy(ability).Pipeline,
       select: prismaSelect.value,
     });
   }

@@ -38,10 +38,11 @@ export class UserResolver {
   ): Promise<Partial<User>[]> {
     return await this.userService.findMany({
       ...args,
-      where: {
-        ...args.where,
-        AND: [accessibleBy(ability).User],
-      },
+      where: args.where
+        ? {
+            AND: [args.where, accessibleBy(ability).User],
+          }
+        : accessibleBy(ability).User,
       select: prismaSelect.value,
     });
   }

@@ -48,10 +48,11 @@ export class PersonResolver {
   ): Promise<Partial<Person>[]> {
     return this.personService.findMany({
       ...args,
-      where: {
-        ...args.where,
-        AND: [accessibleBy(ability).Person],
-      },
+      where: args.where
+        ? {
+            AND: [args.where, accessibleBy(ability).Person],
+          }
+        : accessibleBy(ability).Person,
       select: prismaSelect.value,
     });
   }

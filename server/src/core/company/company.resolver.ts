@@ -46,10 +46,11 @@ export class CompanyResolver {
   ): Promise<Partial<Company>[]> {
     return this.companyService.findMany({
       ...args,
-      where: {
-        ...args.where,
-        AND: [accessibleBy(ability).Company],
-      },
+      where: args.where
+        ? {
+            AND: [args.where, accessibleBy(ability).Company],
+          }
+        : accessibleBy(ability).Company,
       select: prismaSelect.value,
     });
   }
