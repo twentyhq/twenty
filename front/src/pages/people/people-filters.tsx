@@ -100,8 +100,18 @@ export const companyFilter = {
   type: 'relation',
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
-    template: (searchString: string) => ({
-      name: { contains: `%${searchString}%`, mode: QueryMode.Insensitive },
+    template: (searchString: string, currentSelectedId?: string) => ({
+      OR: [
+        {
+          name: {
+            contains: `%${searchString}%`,
+            mode: QueryMode.Insensitive,
+          },
+        },
+        {
+          id: currentSelectedId ? { equals: currentSelectedId } : undefined,
+        },
+      ],
     }),
     resultMapper: (data) => ({
       value: data,
