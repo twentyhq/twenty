@@ -48,6 +48,7 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
       setBoard(newBoard);
       await createOnePipelineProgress({
         variables: {
+          uuid: newUuid,
           pipelineStageId: columnId,
           pipelineId,
           entityId: company.id,

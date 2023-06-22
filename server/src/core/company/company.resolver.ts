@@ -24,11 +24,11 @@ import {
   CreateCompanyAbilityHandler,
   DeleteCompanyAbilityHandler,
   ReadCompanyAbilityHandler,
+  UpdateCompanyAbilityHandler,
 } from 'src/ability/handlers/company.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
 import { accessibleBy } from '@casl/prisma';
-import { UpdateCommentAbilityHandler } from 'src/ability/handlers/comment.ability-handler';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Company)
@@ -59,7 +59,7 @@ export class CompanyResolver {
     nullable: true,
   })
   @UseGuards(AbilityGuard)
-  @CheckAbilities(UpdateCommentAbilityHandler)
+  @CheckAbilities(UpdateCompanyAbilityHandler)
   async updateOneCompany(
     @Args() args: UpdateOneCompanyArgs,
     @PrismaSelector({ modelName: 'Company' })

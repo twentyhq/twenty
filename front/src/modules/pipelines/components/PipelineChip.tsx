@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
-import { Pipeline } from '../interfaces/pipeline.interface';
+import { Pipeline } from '~/generated/graphql';
 
 type OwnProps = {
   opportunity: Pipeline;
