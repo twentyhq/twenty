@@ -5,18 +5,19 @@ import { NestedBoolFilter } from './nested-bool-filter.input';
 
 @InputType()
 export class NestedBoolWithAggregatesFilter {
-  @Field(() => Boolean, { nullable: true })
-  equals?: boolean;
 
-  @Field(() => NestedBoolWithAggregatesFilter, { nullable: true })
-  not?: NestedBoolWithAggregatesFilter;
+    @Field(() => Boolean, {nullable:true})
+    equals?: boolean;
 
-  @Field(() => NestedIntFilter, { nullable: true })
-  _count?: NestedIntFilter;
+    @Field(() => NestedBoolWithAggregatesFilter, {nullable:true})
+    not?: NestedBoolWithAggregatesFilter;
 
-  @Field(() => NestedBoolFilter, { nullable: true })
-  _min?: NestedBoolFilter;
+    @Field(() => NestedIntFilter, {nullable:true})
+    _count?: NestedIntFilter;
 
-  @Field(() => NestedBoolFilter, { nullable: true })
-  _max?: NestedBoolFilter;
+    @Field(() => NestedBoolFilter, {nullable:true})
+    _min?: NestedBoolFilter;
+
+    @Field(() => NestedBoolFilter, {nullable:true})
+    _max?: NestedBoolFilter;
 }

@@ -6,11 +6,12 @@ import { RefreshTokenUpdateWithoutUserInput } from './refresh-token-update-witho
 
 @InputType()
 export class RefreshTokenUpdateWithWhereUniqueWithoutUserInput {
-  @Field(() => RefreshTokenWhereUniqueInput, { nullable: false })
-  @Type(() => RefreshTokenWhereUniqueInput)
-  where!: RefreshTokenWhereUniqueInput;
 
-  @Field(() => RefreshTokenUpdateWithoutUserInput, { nullable: false })
-  @Type(() => RefreshTokenUpdateWithoutUserInput)
-  data!: RefreshTokenUpdateWithoutUserInput;
+    @Field(() => RefreshTokenWhereUniqueInput, {nullable:false})
+    @Type(() => RefreshTokenWhereUniqueInput)
+    where!: RefreshTokenWhereUniqueInput;
+
+    @Field(() => RefreshTokenUpdateWithoutUserInput, {nullable:false})
+    @Type(() => RefreshTokenUpdateWithoutUserInput)
+    data!: RefreshTokenUpdateWithoutUserInput;
 }

@@ -5,10 +5,11 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class CreateManyCommentThreadTargetArgs {
-  @Field(() => [CommentThreadTargetCreateManyInput], { nullable: false })
-  @Type(() => CommentThreadTargetCreateManyInput)
-  data!: Array<CommentThreadTargetCreateManyInput>;
 
-  @Field(() => Boolean, { nullable: true })
-  skipDuplicates?: boolean;
+    @Field(() => [CommentThreadTargetCreateManyInput], {nullable:false})
+    @Type(() => CommentThreadTargetCreateManyInput)
+    data!: Array<CommentThreadTargetCreateManyInput>;
+
+    @Field(() => Boolean, {nullable:true})
+    skipDuplicates?: boolean;
 }

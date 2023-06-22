@@ -8,36 +8,37 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CompanyCreateInput {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  name!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  domainName!: string;
+    @Field(() => String, {nullable:false})
+    name!: string;
 
-  @Field(() => String, { nullable: false })
-  address!: string;
+    @Field(() => String, {nullable:false})
+    domainName!: string;
 
-  @Field(() => Int, { nullable: true })
-  employees?: number;
+    @Field(() => String, {nullable:false})
+    address!: string;
 
-  @Field(() => UserCreateNestedOneWithoutCompaniesInput, { nullable: true })
-  accountOwner?: UserCreateNestedOneWithoutCompaniesInput;
+    @Field(() => Int, {nullable:true})
+    employees?: number;
 
-  @Field(() => PersonCreateNestedManyWithoutCompanyInput, { nullable: true })
-  people?: PersonCreateNestedManyWithoutCompanyInput;
+    @Field(() => UserCreateNestedOneWithoutCompaniesInput, {nullable:true})
+    accountOwner?: UserCreateNestedOneWithoutCompaniesInput;
 
-  @HideField()
-  workspace!: WorkspaceCreateNestedOneWithoutCompaniesInput;
+    @Field(() => PersonCreateNestedManyWithoutCompanyInput, {nullable:true})
+    people?: PersonCreateNestedManyWithoutCompanyInput;
+
+    @HideField()
+    workspace!: WorkspaceCreateNestedOneWithoutCompaniesInput;
 }

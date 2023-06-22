@@ -7,39 +7,40 @@ import { PipelineStageMaxAggregate } from './pipeline-stage-max-aggregate.output
 
 @ObjectType()
 export class PipelineStageGroupBy {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date | string;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
-  @Field(() => String, { nullable: false })
-  name!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  type!: string;
+    @Field(() => String, {nullable:false})
+    name!: string;
 
-  @Field(() => String, { nullable: false })
-  color!: string;
+    @Field(() => String, {nullable:false})
+    type!: string;
 
-  @Field(() => String, { nullable: false })
-  pipelineId!: string;
+    @Field(() => String, {nullable:false})
+    color!: string;
 
-  @HideField()
-  workspaceId!: string;
+    @Field(() => String, {nullable:false})
+    pipelineId!: string;
 
-  @Field(() => PipelineStageCountAggregate, { nullable: true })
-  _count?: PipelineStageCountAggregate;
+    @HideField()
+    workspaceId!: string;
 
-  @Field(() => PipelineStageMinAggregate, { nullable: true })
-  _min?: PipelineStageMinAggregate;
+    @Field(() => PipelineStageCountAggregate, {nullable:true})
+    _count?: PipelineStageCountAggregate;
 
-  @Field(() => PipelineStageMaxAggregate, { nullable: true })
-  _max?: PipelineStageMaxAggregate;
+    @Field(() => PipelineStageMinAggregate, {nullable:true})
+    _min?: PipelineStageMinAggregate;
+
+    @Field(() => PipelineStageMaxAggregate, {nullable:true})
+    _max?: PipelineStageMaxAggregate;
 }

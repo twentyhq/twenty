@@ -5,12 +5,11 @@ import { Type } from 'class-transformer';
 
 @InputType()
 export class PipelineProgressCreateManyPipelineStageInputEnvelope {
-  @Field(() => [PipelineProgressCreateManyPipelineStageInput], {
-    nullable: false,
-  })
-  @Type(() => PipelineProgressCreateManyPipelineStageInput)
-  data!: Array<PipelineProgressCreateManyPipelineStageInput>;
 
-  @Field(() => Boolean, { nullable: true })
-  skipDuplicates?: boolean;
+    @Field(() => [PipelineProgressCreateManyPipelineStageInput], {nullable:false})
+    @Type(() => PipelineProgressCreateManyPipelineStageInput)
+    data!: Array<PipelineProgressCreateManyPipelineStageInput>;
+
+    @Field(() => Boolean, {nullable:true})
+    skipDuplicates?: boolean;
 }

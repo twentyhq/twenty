@@ -6,7 +6,7 @@
     "ghcr.io/devcontainers-contrib/features/jshint:2": {}
   },
   "forwardPorts": [3000, 3001, 5432],
-  "postCreateCommand": "cd front && yarn && cd ../server && yarn",
+  "postCreateCommand": "echo 'To start the server, run yarn start command in server and front folder'",
   "customizations": {
     "vscode": {
       "extensions": [

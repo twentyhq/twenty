@@ -4,27 +4,28 @@ import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class CommentMinAggregate {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => String, { nullable: true })
-  body?: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: true })
-  authorId?: string;
+    @Field(() => String, {nullable:true})
+    body?: string;
 
-  @Field(() => String, { nullable: true })
-  commentThreadId?: string;
+    @Field(() => String, {nullable:true})
+    authorId?: string;
 
-  @HideField()
-  workspaceId?: string;
+    @Field(() => String, {nullable:true})
+    commentThreadId?: string;
+
+    @HideField()
+    workspaceId?: string;
 }

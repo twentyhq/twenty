@@ -5,27 +5,28 @@ import { CommentThreadOrderByWithRelationInput } from '../comment-thread/comment
 
 @InputType()
 export class CommentThreadTargetOrderByWithRelationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  commentThreadId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  commentableType?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    commentThreadId?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  commentableId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    commentableType?: keyof typeof SortOrder;
 
-  @Field(() => CommentThreadOrderByWithRelationInput, { nullable: true })
-  commentThread?: CommentThreadOrderByWithRelationInput;
+    @Field(() => SortOrder, {nullable:true})
+    commentableId?: keyof typeof SortOrder;
+
+    @Field(() => CommentThreadOrderByWithRelationInput, {nullable:true})
+    commentThread?: CommentThreadOrderByWithRelationInput;
 }

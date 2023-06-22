@@ -6,27 +6,28 @@ import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relatio
 
 @InputType()
 export class RefreshTokenOrderByWithRelationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  isRevoked?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  expiresAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    isRevoked?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    expiresAt?: keyof typeof SortOrder;
 
-  @HideField()
-  userId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @HideField()
-  user?: UserOrderByWithRelationInput;
+    @HideField()
+    userId?: keyof typeof SortOrder;
+
+    @HideField()
+    user?: UserOrderByWithRelationInput;
 }

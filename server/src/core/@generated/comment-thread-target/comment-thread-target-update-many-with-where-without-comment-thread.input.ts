@@ -6,11 +6,12 @@ import { CommentThreadTargetUpdateManyMutationInput } from './comment-thread-tar
 
 @InputType()
 export class CommentThreadTargetUpdateManyWithWhereWithoutCommentThreadInput {
-  @Field(() => CommentThreadTargetScalarWhereInput, { nullable: false })
-  @Type(() => CommentThreadTargetScalarWhereInput)
-  where!: CommentThreadTargetScalarWhereInput;
 
-  @Field(() => CommentThreadTargetUpdateManyMutationInput, { nullable: false })
-  @Type(() => CommentThreadTargetUpdateManyMutationInput)
-  data!: CommentThreadTargetUpdateManyMutationInput;
+    @Field(() => CommentThreadTargetScalarWhereInput, {nullable:false})
+    @Type(() => CommentThreadTargetScalarWhereInput)
+    where!: CommentThreadTargetScalarWhereInput;
+
+    @Field(() => CommentThreadTargetUpdateManyMutationInput, {nullable:false})
+    @Type(() => CommentThreadTargetUpdateManyMutationInput)
+    data!: CommentThreadTargetUpdateManyMutationInput;
 }

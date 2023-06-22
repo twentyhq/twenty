@@ -9,31 +9,30 @@ import { WorkspaceMemberUpdateWithoutUserInput } from './workspace-member-update
 
 @InputType()
 export class WorkspaceMemberUpdateOneWithoutUserNestedInput {
-  @Field(() => WorkspaceMemberCreateWithoutUserInput, { nullable: true })
-  @Type(() => WorkspaceMemberCreateWithoutUserInput)
-  create?: WorkspaceMemberCreateWithoutUserInput;
 
-  @Field(() => WorkspaceMemberCreateOrConnectWithoutUserInput, {
-    nullable: true,
-  })
-  @Type(() => WorkspaceMemberCreateOrConnectWithoutUserInput)
-  connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput;
+    @Field(() => WorkspaceMemberCreateWithoutUserInput, {nullable:true})
+    @Type(() => WorkspaceMemberCreateWithoutUserInput)
+    create?: WorkspaceMemberCreateWithoutUserInput;
 
-  @Field(() => WorkspaceMemberUpsertWithoutUserInput, { nullable: true })
-  @Type(() => WorkspaceMemberUpsertWithoutUserInput)
-  upsert?: WorkspaceMemberUpsertWithoutUserInput;
+    @Field(() => WorkspaceMemberCreateOrConnectWithoutUserInput, {nullable:true})
+    @Type(() => WorkspaceMemberCreateOrConnectWithoutUserInput)
+    connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput;
 
-  @Field(() => Boolean, { nullable: true })
-  disconnect?: boolean;
+    @Field(() => WorkspaceMemberUpsertWithoutUserInput, {nullable:true})
+    @Type(() => WorkspaceMemberUpsertWithoutUserInput)
+    upsert?: WorkspaceMemberUpsertWithoutUserInput;
 
-  @Field(() => Boolean, { nullable: true })
-  delete?: boolean;
+    @Field(() => Boolean, {nullable:true})
+    disconnect?: boolean;
 
-  @Field(() => WorkspaceMemberWhereUniqueInput, { nullable: true })
-  @Type(() => WorkspaceMemberWhereUniqueInput)
-  connect?: WorkspaceMemberWhereUniqueInput;
+    @Field(() => Boolean, {nullable:true})
+    delete?: boolean;
 
-  @Field(() => WorkspaceMemberUpdateWithoutUserInput, { nullable: true })
-  @Type(() => WorkspaceMemberUpdateWithoutUserInput)
-  update?: WorkspaceMemberUpdateWithoutUserInput;
+    @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:true})
+    @Type(() => WorkspaceMemberWhereUniqueInput)
+    connect?: WorkspaceMemberWhereUniqueInput;
+
+    @Field(() => WorkspaceMemberUpdateWithoutUserInput, {nullable:true})
+    @Type(() => WorkspaceMemberUpdateWithoutUserInput)
+    update?: WorkspaceMemberUpdateWithoutUserInput;
 }

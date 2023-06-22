@@ -5,7 +5,8 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class DeleteManyCommentThreadArgs {
-  @Field(() => CommentThreadWhereInput, { nullable: true })
-  @Type(() => CommentThreadWhereInput)
-  where?: CommentThreadWhereInput;
+
+    @Field(() => CommentThreadWhereInput, {nullable:true})
+    @Type(() => CommentThreadWhereInput)
+    where?: CommentThreadWhereInput;
 }

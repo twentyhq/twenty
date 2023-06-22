@@ -5,7 +5,8 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class CreateOneWorkspaceMemberArgs {
-  @Field(() => WorkspaceMemberCreateInput, { nullable: false })
-  @Type(() => WorkspaceMemberCreateInput)
-  data!: WorkspaceMemberCreateInput;
+
+    @Field(() => WorkspaceMemberCreateInput, {nullable:false})
+    @Type(() => WorkspaceMemberCreateInput)
+    data!: WorkspaceMemberCreateInput;
 }

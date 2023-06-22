@@ -5,33 +5,34 @@ import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class CompanyMaxAggregate {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => String, { nullable: true })
-  name?: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: true })
-  domainName?: string;
+    @Field(() => String, {nullable:true})
+    name?: string;
 
-  @Field(() => String, { nullable: true })
-  address?: string;
+    @Field(() => String, {nullable:true})
+    domainName?: string;
 
-  @Field(() => Int, { nullable: true })
-  employees?: number;
+    @Field(() => String, {nullable:true})
+    address?: string;
 
-  @Field(() => String, { nullable: true })
-  accountOwnerId?: string;
+    @Field(() => Int, {nullable:true})
+    employees?: number;
 
-  @HideField()
-  workspaceId?: string;
+    @Field(() => String, {nullable:true})
+    accountOwnerId?: string;
+
+    @HideField()
+    workspaceId?: string;
 }

@@ -6,27 +6,28 @@ import { CommentThread } from '../comment-thread/comment-thread.model';
 
 @ObjectType()
 export class CommentThreadTarget {
-  @Field(() => ID, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date;
+    @Field(() => ID, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt!: Date | null;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
-  @Field(() => String, { nullable: false })
-  commentThreadId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt!: Date | null;
 
-  @Field(() => CommentableType, { nullable: false })
-  commentableType!: keyof typeof CommentableType;
+    @Field(() => String, {nullable:false})
+    commentThreadId!: string;
 
-  @Field(() => String, { nullable: false })
-  commentableId!: string;
+    @Field(() => CommentableType, {nullable:false})
+    commentableType!: keyof typeof CommentableType;
 
-  @Field(() => CommentThread, { nullable: false })
-  commentThread?: CommentThread;
+    @Field(() => String, {nullable:false})
+    commentableId!: string;
+
+    @Field(() => CommentThread, {nullable:false})
+    commentThread?: CommentThread;
 }

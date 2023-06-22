@@ -12,55 +12,48 @@ import { CommentScalarWhereInput } from './comment-scalar-where.input';
 
 @InputType()
 export class CommentUncheckedUpdateManyWithoutWorkspaceNestedInput {
-  @Field(() => [CommentCreateWithoutWorkspaceInput], { nullable: true })
-  @Type(() => CommentCreateWithoutWorkspaceInput)
-  create?: Array<CommentCreateWithoutWorkspaceInput>;
 
-  @Field(() => [CommentCreateOrConnectWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => CommentCreateOrConnectWithoutWorkspaceInput)
-  connectOrCreate?: Array<CommentCreateOrConnectWithoutWorkspaceInput>;
+    @Field(() => [CommentCreateWithoutWorkspaceInput], {nullable:true})
+    @Type(() => CommentCreateWithoutWorkspaceInput)
+    create?: Array<CommentCreateWithoutWorkspaceInput>;
 
-  @Field(() => [CommentUpsertWithWhereUniqueWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => CommentUpsertWithWhereUniqueWithoutWorkspaceInput)
-  upsert?: Array<CommentUpsertWithWhereUniqueWithoutWorkspaceInput>;
+    @Field(() => [CommentCreateOrConnectWithoutWorkspaceInput], {nullable:true})
+    @Type(() => CommentCreateOrConnectWithoutWorkspaceInput)
+    connectOrCreate?: Array<CommentCreateOrConnectWithoutWorkspaceInput>;
 
-  @Field(() => CommentCreateManyWorkspaceInputEnvelope, { nullable: true })
-  @Type(() => CommentCreateManyWorkspaceInputEnvelope)
-  createMany?: CommentCreateManyWorkspaceInputEnvelope;
+    @Field(() => [CommentUpsertWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
+    @Type(() => CommentUpsertWithWhereUniqueWithoutWorkspaceInput)
+    upsert?: Array<CommentUpsertWithWhereUniqueWithoutWorkspaceInput>;
 
-  @Field(() => [CommentWhereUniqueInput], { nullable: true })
-  @Type(() => CommentWhereUniqueInput)
-  set?: Array<CommentWhereUniqueInput>;
+    @Field(() => CommentCreateManyWorkspaceInputEnvelope, {nullable:true})
+    @Type(() => CommentCreateManyWorkspaceInputEnvelope)
+    createMany?: CommentCreateManyWorkspaceInputEnvelope;
 
-  @Field(() => [CommentWhereUniqueInput], { nullable: true })
-  @Type(() => CommentWhereUniqueInput)
-  disconnect?: Array<CommentWhereUniqueInput>;
+    @Field(() => [CommentWhereUniqueInput], {nullable:true})
+    @Type(() => CommentWhereUniqueInput)
+    set?: Array<CommentWhereUniqueInput>;
 
-  @Field(() => [CommentWhereUniqueInput], { nullable: true })
-  @Type(() => CommentWhereUniqueInput)
-  delete?: Array<CommentWhereUniqueInput>;
+    @Field(() => [CommentWhereUniqueInput], {nullable:true})
+    @Type(() => CommentWhereUniqueInput)
+    disconnect?: Array<CommentWhereUniqueInput>;
 
-  @Field(() => [CommentWhereUniqueInput], { nullable: true })
-  @Type(() => CommentWhereUniqueInput)
-  connect?: Array<CommentWhereUniqueInput>;
+    @Field(() => [CommentWhereUniqueInput], {nullable:true})
+    @Type(() => CommentWhereUniqueInput)
+    delete?: Array<CommentWhereUniqueInput>;
 
-  @Field(() => [CommentUpdateWithWhereUniqueWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => CommentUpdateWithWhereUniqueWithoutWorkspaceInput)
-  update?: Array<CommentUpdateWithWhereUniqueWithoutWorkspaceInput>;
+    @Field(() => [CommentWhereUniqueInput], {nullable:true})
+    @Type(() => CommentWhereUniqueInput)
+    connect?: Array<CommentWhereUniqueInput>;
 
-  @Field(() => [CommentUpdateManyWithWhereWithoutWorkspaceInput], {
-    nullable: true,
-  })
-  @Type(() => CommentUpdateManyWithWhereWithoutWorkspaceInput)
-  updateMany?: Array<CommentUpdateManyWithWhereWithoutWorkspaceInput>;
+    @Field(() => [CommentUpdateWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
+    @Type(() => CommentUpdateWithWhereUniqueWithoutWorkspaceInput)
+    update?: Array<CommentUpdateWithWhereUniqueWithoutWorkspaceInput>;
 
-  @Field(() => [CommentScalarWhereInput], { nullable: true })
-  @Type(() => CommentScalarWhereInput)
-  deleteMany?: Array<CommentScalarWhereInput>;
+    @Field(() => [CommentUpdateManyWithWhereWithoutWorkspaceInput], {nullable:true})
+    @Type(() => CommentUpdateManyWithWhereWithoutWorkspaceInput)
+    updateMany?: Array<CommentUpdateManyWithWhereWithoutWorkspaceInput>;
+
+    @Field(() => [CommentScalarWhereInput], {nullable:true})
+    @Type(() => CommentScalarWhereInput)
+    deleteMany?: Array<CommentScalarWhereInput>;
 }

@@ -12,51 +12,52 @@ import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.
 
 @InputType()
 export class CompanyWhereInput {
-  @Field(() => [CompanyWhereInput], { nullable: true })
-  AND?: Array<CompanyWhereInput>;
 
-  @Field(() => [CompanyWhereInput], { nullable: true })
-  OR?: Array<CompanyWhereInput>;
+    @Field(() => [CompanyWhereInput], {nullable:true})
+    AND?: Array<CompanyWhereInput>;
 
-  @Field(() => [CompanyWhereInput], { nullable: true })
-  NOT?: Array<CompanyWhereInput>;
+    @Field(() => [CompanyWhereInput], {nullable:true})
+    OR?: Array<CompanyWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [CompanyWhereInput], {nullable:true})
+    NOT?: Array<CompanyWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  name?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  domainName?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    name?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  address?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    domainName?: StringFilter;
 
-  @Field(() => IntNullableFilter, { nullable: true })
-  employees?: IntNullableFilter;
+    @Field(() => StringFilter, {nullable:true})
+    address?: StringFilter;
 
-  @Field(() => StringNullableFilter, { nullable: true })
-  accountOwnerId?: StringNullableFilter;
+    @Field(() => IntNullableFilter, {nullable:true})
+    employees?: IntNullableFilter;
 
-  @HideField()
-  workspaceId?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    accountOwnerId?: StringNullableFilter;
 
-  @Field(() => UserRelationFilter, { nullable: true })
-  accountOwner?: UserRelationFilter;
+    @HideField()
+    workspaceId?: StringFilter;
 
-  @Field(() => PersonListRelationFilter, { nullable: true })
-  people?: PersonListRelationFilter;
+    @Field(() => UserRelationFilter, {nullable:true})
+    accountOwner?: UserRelationFilter;
 
-  @HideField()
-  workspace?: WorkspaceRelationFilter;
+    @Field(() => PersonListRelationFilter, {nullable:true})
+    people?: PersonListRelationFilter;
+
+    @HideField()
+    workspace?: WorkspaceRelationFilter;
 }

@@ -7,33 +7,28 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CommentThreadScalarWhereWithAggregatesInput {
-  @Field(() => [CommentThreadScalarWhereWithAggregatesInput], {
-    nullable: true,
-  })
-  AND?: Array<CommentThreadScalarWhereWithAggregatesInput>;
 
-  @Field(() => [CommentThreadScalarWhereWithAggregatesInput], {
-    nullable: true,
-  })
-  OR?: Array<CommentThreadScalarWhereWithAggregatesInput>;
+    @Field(() => [CommentThreadScalarWhereWithAggregatesInput], {nullable:true})
+    AND?: Array<CommentThreadScalarWhereWithAggregatesInput>;
 
-  @Field(() => [CommentThreadScalarWhereWithAggregatesInput], {
-    nullable: true,
-  })
-  NOT?: Array<CommentThreadScalarWhereWithAggregatesInput>;
+    @Field(() => [CommentThreadScalarWhereWithAggregatesInput], {nullable:true})
+    OR?: Array<CommentThreadScalarWhereWithAggregatesInput>;
 
-  @Field(() => StringWithAggregatesFilter, { nullable: true })
-  id?: StringWithAggregatesFilter;
+    @Field(() => [CommentThreadScalarWhereWithAggregatesInput], {nullable:true})
+    NOT?: Array<CommentThreadScalarWhereWithAggregatesInput>;
 
-  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
-  createdAt?: DateTimeWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    id?: StringWithAggregatesFilter;
 
-  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
-  updatedAt?: DateTimeWithAggregatesFilter;
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    createdAt?: DateTimeWithAggregatesFilter;
 
-  @Field(() => DateTimeNullableWithAggregatesFilter, { nullable: true })
-  deletedAt?: DateTimeNullableWithAggregatesFilter;
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    updatedAt?: DateTimeWithAggregatesFilter;
 
-  @HideField()
-  workspaceId?: StringWithAggregatesFilter;
+    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
+    deletedAt?: DateTimeNullableWithAggregatesFilter;
+
+    @HideField()
+    workspaceId?: StringWithAggregatesFilter;
 }

@@ -8,34 +8,31 @@ import { PipelineProgressUpdateManyWithoutPipelineStageNestedInput } from '../pi
 
 @InputType()
 export class PipelineStageUpdateWithoutWorkspaceInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  name?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  type?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    name?: StringFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  color?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    type?: StringFieldUpdateOperationsInput;
 
-  @Field(() => PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput, {
-    nullable: true,
-  })
-  pipeline?: PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    color?: StringFieldUpdateOperationsInput;
 
-  @Field(() => PipelineProgressUpdateManyWithoutPipelineStageNestedInput, {
-    nullable: true,
-  })
-  pipelineProgresses?: PipelineProgressUpdateManyWithoutPipelineStageNestedInput;
+    @Field(() => PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput, {nullable:true})
+    pipeline?: PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput;
+
+    @Field(() => PipelineProgressUpdateManyWithoutPipelineStageNestedInput, {nullable:true})
+    pipelineProgresses?: PipelineProgressUpdateManyWithoutPipelineStageNestedInput;
 }

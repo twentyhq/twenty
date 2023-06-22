@@ -7,15 +7,16 @@ import { CommentCreateWithoutCommentThreadInput } from './comment-create-without
 
 @InputType()
 export class CommentUpsertWithWhereUniqueWithoutCommentThreadInput {
-  @Field(() => CommentWhereUniqueInput, { nullable: false })
-  @Type(() => CommentWhereUniqueInput)
-  where!: CommentWhereUniqueInput;
 
-  @Field(() => CommentUpdateWithoutCommentThreadInput, { nullable: false })
-  @Type(() => CommentUpdateWithoutCommentThreadInput)
-  update!: CommentUpdateWithoutCommentThreadInput;
+    @Field(() => CommentWhereUniqueInput, {nullable:false})
+    @Type(() => CommentWhereUniqueInput)
+    where!: CommentWhereUniqueInput;
 
-  @Field(() => CommentCreateWithoutCommentThreadInput, { nullable: false })
-  @Type(() => CommentCreateWithoutCommentThreadInput)
-  create!: CommentCreateWithoutCommentThreadInput;
+    @Field(() => CommentUpdateWithoutCommentThreadInput, {nullable:false})
+    @Type(() => CommentUpdateWithoutCommentThreadInput)
+    update!: CommentUpdateWithoutCommentThreadInput;
+
+    @Field(() => CommentCreateWithoutCommentThreadInput, {nullable:false})
+    @Type(() => CommentCreateWithoutCommentThreadInput)
+    create!: CommentCreateWithoutCommentThreadInput;
 }

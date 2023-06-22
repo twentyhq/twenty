@@ -13,58 +13,55 @@ import { CommentUncheckedUpdateManyWithoutAuthorNestedInput } from '../comment/c
 
 @InputType()
 export class UserUncheckedUpdateWithoutWorkspaceMemberInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  lastSeen?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => BoolFieldUpdateOperationsInput, { nullable: true })
-  disabled?: BoolFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    lastSeen?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  displayName?: StringFieldUpdateOperationsInput;
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    disabled?: BoolFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  email?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    displayName?: StringFieldUpdateOperationsInput;
 
-  @Field(() => NullableStringFieldUpdateOperationsInput, { nullable: true })
-  avatarUrl?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    email?: StringFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  locale?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    avatarUrl?: NullableStringFieldUpdateOperationsInput;
 
-  @Field(() => NullableStringFieldUpdateOperationsInput, { nullable: true })
-  phoneNumber?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    locale?: StringFieldUpdateOperationsInput;
 
-  @HideField()
-  passwordHash?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    phoneNumber?: NullableStringFieldUpdateOperationsInput;
 
-  @Field(() => BoolFieldUpdateOperationsInput, { nullable: true })
-  emailVerified?: BoolFieldUpdateOperationsInput;
+    @HideField()
+    passwordHash?: NullableStringFieldUpdateOperationsInput;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  metadata?: any;
+    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
+    emailVerified?: BoolFieldUpdateOperationsInput;
 
-  @Field(() => CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput, {
-    nullable: true,
-  })
-  companies?: CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput;
+    @Field(() => GraphQLJSON, {nullable:true})
+    metadata?: any;
 
-  @HideField()
-  refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
+    @Field(() => CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput, {nullable:true})
+    companies?: CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput;
 
-  @Field(() => CommentUncheckedUpdateManyWithoutAuthorNestedInput, {
-    nullable: true,
-  })
-  comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput;
+    @HideField()
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
+
+    @Field(() => CommentUncheckedUpdateManyWithoutAuthorNestedInput, {nullable:true})
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput;
 }

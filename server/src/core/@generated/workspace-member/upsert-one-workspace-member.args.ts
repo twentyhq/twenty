@@ -7,15 +7,16 @@ import { WorkspaceMemberUpdateInput } from './workspace-member-update.input';
 
 @ArgsType()
 export class UpsertOneWorkspaceMemberArgs {
-  @Field(() => WorkspaceMemberWhereUniqueInput, { nullable: false })
-  @Type(() => WorkspaceMemberWhereUniqueInput)
-  where!: WorkspaceMemberWhereUniqueInput;
 
-  @Field(() => WorkspaceMemberCreateInput, { nullable: false })
-  @Type(() => WorkspaceMemberCreateInput)
-  create!: WorkspaceMemberCreateInput;
+    @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:false})
+    @Type(() => WorkspaceMemberWhereUniqueInput)
+    where!: WorkspaceMemberWhereUniqueInput;
 
-  @Field(() => WorkspaceMemberUpdateInput, { nullable: false })
-  @Type(() => WorkspaceMemberUpdateInput)
-  update!: WorkspaceMemberUpdateInput;
+    @Field(() => WorkspaceMemberCreateInput, {nullable:false})
+    @Type(() => WorkspaceMemberCreateInput)
+    create!: WorkspaceMemberCreateInput;
+
+    @Field(() => WorkspaceMemberUpdateInput, {nullable:false})
+    @Type(() => WorkspaceMemberUpdateInput)
+    update!: WorkspaceMemberUpdateInput;
 }

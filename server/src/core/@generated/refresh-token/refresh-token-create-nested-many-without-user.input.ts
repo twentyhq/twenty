@@ -8,21 +8,20 @@ import { RefreshTokenWhereUniqueInput } from './refresh-token-where-unique.input
 
 @InputType()
 export class RefreshTokenCreateNestedManyWithoutUserInput {
-  @Field(() => [RefreshTokenCreateWithoutUserInput], { nullable: true })
-  @Type(() => RefreshTokenCreateWithoutUserInput)
-  create?: Array<RefreshTokenCreateWithoutUserInput>;
 
-  @Field(() => [RefreshTokenCreateOrConnectWithoutUserInput], {
-    nullable: true,
-  })
-  @Type(() => RefreshTokenCreateOrConnectWithoutUserInput)
-  connectOrCreate?: Array<RefreshTokenCreateOrConnectWithoutUserInput>;
+    @Field(() => [RefreshTokenCreateWithoutUserInput], {nullable:true})
+    @Type(() => RefreshTokenCreateWithoutUserInput)
+    create?: Array<RefreshTokenCreateWithoutUserInput>;
 
-  @Field(() => RefreshTokenCreateManyUserInputEnvelope, { nullable: true })
-  @Type(() => RefreshTokenCreateManyUserInputEnvelope)
-  createMany?: RefreshTokenCreateManyUserInputEnvelope;
+    @Field(() => [RefreshTokenCreateOrConnectWithoutUserInput], {nullable:true})
+    @Type(() => RefreshTokenCreateOrConnectWithoutUserInput)
+    connectOrCreate?: Array<RefreshTokenCreateOrConnectWithoutUserInput>;
 
-  @Field(() => [RefreshTokenWhereUniqueInput], { nullable: true })
-  @Type(() => RefreshTokenWhereUniqueInput)
-  connect?: Array<RefreshTokenWhereUniqueInput>;
+    @Field(() => RefreshTokenCreateManyUserInputEnvelope, {nullable:true})
+    @Type(() => RefreshTokenCreateManyUserInputEnvelope)
+    createMany?: RefreshTokenCreateManyUserInputEnvelope;
+
+    @Field(() => [RefreshTokenWhereUniqueInput], {nullable:true})
+    @Type(() => RefreshTokenWhereUniqueInput)
+    connect?: Array<RefreshTokenWhereUniqueInput>;
 }

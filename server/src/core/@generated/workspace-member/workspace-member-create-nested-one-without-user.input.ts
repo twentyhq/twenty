@@ -7,17 +7,16 @@ import { WorkspaceMemberWhereUniqueInput } from './workspace-member-where-unique
 
 @InputType()
 export class WorkspaceMemberCreateNestedOneWithoutUserInput {
-  @Field(() => WorkspaceMemberCreateWithoutUserInput, { nullable: true })
-  @Type(() => WorkspaceMemberCreateWithoutUserInput)
-  create?: WorkspaceMemberCreateWithoutUserInput;
 
-  @Field(() => WorkspaceMemberCreateOrConnectWithoutUserInput, {
-    nullable: true,
-  })
-  @Type(() => WorkspaceMemberCreateOrConnectWithoutUserInput)
-  connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput;
+    @Field(() => WorkspaceMemberCreateWithoutUserInput, {nullable:true})
+    @Type(() => WorkspaceMemberCreateWithoutUserInput)
+    create?: WorkspaceMemberCreateWithoutUserInput;
 
-  @Field(() => WorkspaceMemberWhereUniqueInput, { nullable: true })
-  @Type(() => WorkspaceMemberWhereUniqueInput)
-  connect?: WorkspaceMemberWhereUniqueInput;
+    @Field(() => WorkspaceMemberCreateOrConnectWithoutUserInput, {nullable:true})
+    @Type(() => WorkspaceMemberCreateOrConnectWithoutUserInput)
+    connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput;
+
+    @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:true})
+    @Type(() => WorkspaceMemberWhereUniqueInput)
+    connect?: WorkspaceMemberWhereUniqueInput;
 }

@@ -9,23 +9,24 @@ import { WorkspaceUpdateWithoutCommentsInput } from './workspace-update-without-
 
 @InputType()
 export class WorkspaceUpdateOneRequiredWithoutCommentsNestedInput {
-  @Field(() => WorkspaceCreateWithoutCommentsInput, { nullable: true })
-  @Type(() => WorkspaceCreateWithoutCommentsInput)
-  create?: WorkspaceCreateWithoutCommentsInput;
 
-  @Field(() => WorkspaceCreateOrConnectWithoutCommentsInput, { nullable: true })
-  @Type(() => WorkspaceCreateOrConnectWithoutCommentsInput)
-  connectOrCreate?: WorkspaceCreateOrConnectWithoutCommentsInput;
+    @Field(() => WorkspaceCreateWithoutCommentsInput, {nullable:true})
+    @Type(() => WorkspaceCreateWithoutCommentsInput)
+    create?: WorkspaceCreateWithoutCommentsInput;
 
-  @Field(() => WorkspaceUpsertWithoutCommentsInput, { nullable: true })
-  @Type(() => WorkspaceUpsertWithoutCommentsInput)
-  upsert?: WorkspaceUpsertWithoutCommentsInput;
+    @Field(() => WorkspaceCreateOrConnectWithoutCommentsInput, {nullable:true})
+    @Type(() => WorkspaceCreateOrConnectWithoutCommentsInput)
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutCommentsInput;
 
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
-  @Type(() => WorkspaceWhereUniqueInput)
-  connect?: WorkspaceWhereUniqueInput;
+    @Field(() => WorkspaceUpsertWithoutCommentsInput, {nullable:true})
+    @Type(() => WorkspaceUpsertWithoutCommentsInput)
+    upsert?: WorkspaceUpsertWithoutCommentsInput;
 
-  @Field(() => WorkspaceUpdateWithoutCommentsInput, { nullable: true })
-  @Type(() => WorkspaceUpdateWithoutCommentsInput)
-  update?: WorkspaceUpdateWithoutCommentsInput;
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
+    @Type(() => WorkspaceWhereUniqueInput)
+    connect?: WorkspaceWhereUniqueInput;
+
+    @Field(() => WorkspaceUpdateWithoutCommentsInput, {nullable:true})
+    @Type(() => WorkspaceUpdateWithoutCommentsInput)
+    update?: WorkspaceUpdateWithoutCommentsInput;
 }

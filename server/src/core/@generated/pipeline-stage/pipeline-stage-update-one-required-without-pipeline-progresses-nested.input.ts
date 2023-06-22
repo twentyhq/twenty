@@ -10,19 +10,20 @@ import { PipelineStageUpdateWithoutPipelineProgressesInput } from './pipeline-st
 
 @InputType()
 export class PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput {
-  @HideField()
-  create?: PipelineStageCreateWithoutPipelineProgressesInput;
 
-  @HideField()
-  connectOrCreate?: PipelineStageCreateOrConnectWithoutPipelineProgressesInput;
+    @HideField()
+    create?: PipelineStageCreateWithoutPipelineProgressesInput;
 
-  @HideField()
-  upsert?: PipelineStageUpsertWithoutPipelineProgressesInput;
+    @HideField()
+    connectOrCreate?: PipelineStageCreateOrConnectWithoutPipelineProgressesInput;
 
-  @Field(() => PipelineStageWhereUniqueInput, { nullable: true })
-  @Type(() => PipelineStageWhereUniqueInput)
-  connect?: PipelineStageWhereUniqueInput;
+    @HideField()
+    upsert?: PipelineStageUpsertWithoutPipelineProgressesInput;
 
-  @HideField()
-  update?: PipelineStageUpdateWithoutPipelineProgressesInput;
+    @Field(() => PipelineStageWhereUniqueInput, {nullable:true})
+    @Type(() => PipelineStageWhereUniqueInput)
+    connect?: PipelineStageWhereUniqueInput;
+
+    @HideField()
+    update?: PipelineStageUpdateWithoutPipelineProgressesInput;
 }

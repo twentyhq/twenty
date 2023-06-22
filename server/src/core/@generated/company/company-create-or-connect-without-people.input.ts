@@ -6,11 +6,12 @@ import { CompanyCreateWithoutPeopleInput } from './company-create-without-people
 
 @InputType()
 export class CompanyCreateOrConnectWithoutPeopleInput {
-  @Field(() => CompanyWhereUniqueInput, { nullable: false })
-  @Type(() => CompanyWhereUniqueInput)
-  where!: CompanyWhereUniqueInput;
 
-  @Field(() => CompanyCreateWithoutPeopleInput, { nullable: false })
-  @Type(() => CompanyCreateWithoutPeopleInput)
-  create!: CompanyCreateWithoutPeopleInput;
+    @Field(() => CompanyWhereUniqueInput, {nullable:false})
+    @Type(() => CompanyWhereUniqueInput)
+    where!: CompanyWhereUniqueInput;
+
+    @Field(() => CompanyCreateWithoutPeopleInput, {nullable:false})
+    @Type(() => CompanyCreateWithoutPeopleInput)
+    create!: CompanyCreateWithoutPeopleInput;
 }

@@ -5,7 +5,8 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class DeleteManyWorkspaceMemberArgs {
-  @Field(() => WorkspaceMemberWhereInput, { nullable: true })
-  @Type(() => WorkspaceMemberWhereInput)
-  where?: WorkspaceMemberWhereInput;
+
+    @Field(() => WorkspaceMemberWhereInput, {nullable:true})
+    @Type(() => WorkspaceMemberWhereInput)
+    where?: WorkspaceMemberWhereInput;
 }

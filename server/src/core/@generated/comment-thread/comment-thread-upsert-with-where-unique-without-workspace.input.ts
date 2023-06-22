@@ -7,15 +7,16 @@ import { CommentThreadCreateWithoutWorkspaceInput } from './comment-thread-creat
 
 @InputType()
 export class CommentThreadUpsertWithWhereUniqueWithoutWorkspaceInput {
-  @Field(() => CommentThreadWhereUniqueInput, { nullable: false })
-  @Type(() => CommentThreadWhereUniqueInput)
-  where!: CommentThreadWhereUniqueInput;
 
-  @Field(() => CommentThreadUpdateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => CommentThreadUpdateWithoutWorkspaceInput)
-  update!: CommentThreadUpdateWithoutWorkspaceInput;
+    @Field(() => CommentThreadWhereUniqueInput, {nullable:false})
+    @Type(() => CommentThreadWhereUniqueInput)
+    where!: CommentThreadWhereUniqueInput;
 
-  @Field(() => CommentThreadCreateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => CommentThreadCreateWithoutWorkspaceInput)
-  create!: CommentThreadCreateWithoutWorkspaceInput;
+    @Field(() => CommentThreadUpdateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => CommentThreadUpdateWithoutWorkspaceInput)
+    update!: CommentThreadUpdateWithoutWorkspaceInput;
+
+    @Field(() => CommentThreadCreateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => CommentThreadCreateWithoutWorkspaceInput)
+    create!: CommentThreadCreateWithoutWorkspaceInput;
 }

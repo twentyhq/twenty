@@ -9,25 +9,24 @@ import { UserUpdateWithoutWorkspaceMemberInput } from './user-update-without-wor
 
 @InputType()
 export class UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput {
-  @Field(() => UserCreateWithoutWorkspaceMemberInput, { nullable: true })
-  @Type(() => UserCreateWithoutWorkspaceMemberInput)
-  create?: UserCreateWithoutWorkspaceMemberInput;
 
-  @Field(() => UserCreateOrConnectWithoutWorkspaceMemberInput, {
-    nullable: true,
-  })
-  @Type(() => UserCreateOrConnectWithoutWorkspaceMemberInput)
-  connectOrCreate?: UserCreateOrConnectWithoutWorkspaceMemberInput;
+    @Field(() => UserCreateWithoutWorkspaceMemberInput, {nullable:true})
+    @Type(() => UserCreateWithoutWorkspaceMemberInput)
+    create?: UserCreateWithoutWorkspaceMemberInput;
 
-  @Field(() => UserUpsertWithoutWorkspaceMemberInput, { nullable: true })
-  @Type(() => UserUpsertWithoutWorkspaceMemberInput)
-  upsert?: UserUpsertWithoutWorkspaceMemberInput;
+    @Field(() => UserCreateOrConnectWithoutWorkspaceMemberInput, {nullable:true})
+    @Type(() => UserCreateOrConnectWithoutWorkspaceMemberInput)
+    connectOrCreate?: UserCreateOrConnectWithoutWorkspaceMemberInput;
 
-  @Field(() => UserWhereUniqueInput, { nullable: true })
-  @Type(() => UserWhereUniqueInput)
-  connect?: UserWhereUniqueInput;
+    @Field(() => UserUpsertWithoutWorkspaceMemberInput, {nullable:true})
+    @Type(() => UserUpsertWithoutWorkspaceMemberInput)
+    upsert?: UserUpsertWithoutWorkspaceMemberInput;
 
-  @Field(() => UserUpdateWithoutWorkspaceMemberInput, { nullable: true })
-  @Type(() => UserUpdateWithoutWorkspaceMemberInput)
-  update?: UserUpdateWithoutWorkspaceMemberInput;
+    @Field(() => UserWhereUniqueInput, {nullable:true})
+    @Type(() => UserWhereUniqueInput)
+    connect?: UserWhereUniqueInput;
+
+    @Field(() => UserUpdateWithoutWorkspaceMemberInput, {nullable:true})
+    @Type(() => UserUpdateWithoutWorkspaceMemberInput)
+    update?: UserUpdateWithoutWorkspaceMemberInput;
 }

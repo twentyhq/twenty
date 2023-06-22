@@ -6,11 +6,12 @@ import { CompanyUpdateManyMutationInput } from './company-update-many-mutation.i
 
 @InputType()
 export class CompanyUpdateManyWithWhereWithoutAccountOwnerInput {
-  @Field(() => CompanyScalarWhereInput, { nullable: false })
-  @Type(() => CompanyScalarWhereInput)
-  where!: CompanyScalarWhereInput;
 
-  @Field(() => CompanyUpdateManyMutationInput, { nullable: false })
-  @Type(() => CompanyUpdateManyMutationInput)
-  data!: CompanyUpdateManyMutationInput;
+    @Field(() => CompanyScalarWhereInput, {nullable:false})
+    @Type(() => CompanyScalarWhereInput)
+    where!: CompanyScalarWhereInput;
+
+    @Field(() => CompanyUpdateManyMutationInput, {nullable:false})
+    @Type(() => CompanyUpdateManyMutationInput)
+    data!: CompanyUpdateManyMutationInput;
 }

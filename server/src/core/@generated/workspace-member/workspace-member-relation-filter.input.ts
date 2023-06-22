@@ -4,9 +4,10 @@ import { WorkspaceMemberWhereInput } from './workspace-member-where.input';
 
 @InputType()
 export class WorkspaceMemberRelationFilter {
-  @Field(() => WorkspaceMemberWhereInput, { nullable: true })
-  is?: WorkspaceMemberWhereInput;
 
-  @Field(() => WorkspaceMemberWhereInput, { nullable: true })
-  isNot?: WorkspaceMemberWhereInput;
+    @Field(() => WorkspaceMemberWhereInput, {nullable:true})
+    is?: WorkspaceMemberWhereInput;
+
+    @Field(() => WorkspaceMemberWhereInput, {nullable:true})
+    isNot?: WorkspaceMemberWhereInput;
 }

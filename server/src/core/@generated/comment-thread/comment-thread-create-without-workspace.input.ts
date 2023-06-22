@@ -5,25 +5,22 @@ import { CommentCreateNestedManyWithoutCommentThreadInput } from '../comment/com
 
 @InputType()
 export class CommentThreadCreateWithoutWorkspaceInput {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => CommentThreadTargetCreateNestedManyWithoutCommentThreadInput, {
-    nullable: true,
-  })
-  commentThreadTargets?: CommentThreadTargetCreateNestedManyWithoutCommentThreadInput;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => CommentCreateNestedManyWithoutCommentThreadInput, {
-    nullable: true,
-  })
-  comments?: CommentCreateNestedManyWithoutCommentThreadInput;
+    @Field(() => CommentThreadTargetCreateNestedManyWithoutCommentThreadInput, {nullable:true})
+    commentThreadTargets?: CommentThreadTargetCreateNestedManyWithoutCommentThreadInput;
+
+    @Field(() => CommentCreateNestedManyWithoutCommentThreadInput, {nullable:true})
+    comments?: CommentCreateNestedManyWithoutCommentThreadInput;
 }

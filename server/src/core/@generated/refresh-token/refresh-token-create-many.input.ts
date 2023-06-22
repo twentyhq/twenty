@@ -4,24 +4,25 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class RefreshTokenCreateManyInput {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Boolean, { nullable: true })
-  isRevoked?: boolean;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => Date, { nullable: false })
-  expiresAt!: Date | string;
+    @Field(() => Boolean, {nullable:true})
+    isRevoked?: boolean;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:false})
+    expiresAt!: Date | string;
 
-  @HideField()
-  userId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
+
+    @HideField()
+    userId!: string;
 }

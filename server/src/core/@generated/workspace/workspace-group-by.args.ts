@@ -12,31 +12,32 @@ import { WorkspaceMaxAggregateInput } from './workspace-max-aggregate.input';
 
 @ArgsType()
 export class WorkspaceGroupByArgs {
-  @Field(() => WorkspaceWhereInput, { nullable: true })
-  @Type(() => WorkspaceWhereInput)
-  where?: WorkspaceWhereInput;
 
-  @Field(() => [WorkspaceOrderByWithAggregationInput], { nullable: true })
-  orderBy?: Array<WorkspaceOrderByWithAggregationInput>;
+    @Field(() => WorkspaceWhereInput, {nullable:true})
+    @Type(() => WorkspaceWhereInput)
+    where?: WorkspaceWhereInput;
 
-  @Field(() => [WorkspaceScalarFieldEnum], { nullable: false })
-  by!: Array<keyof typeof WorkspaceScalarFieldEnum>;
+    @Field(() => [WorkspaceOrderByWithAggregationInput], {nullable:true})
+    orderBy?: Array<WorkspaceOrderByWithAggregationInput>;
 
-  @Field(() => WorkspaceScalarWhereWithAggregatesInput, { nullable: true })
-  having?: WorkspaceScalarWhereWithAggregatesInput;
+    @Field(() => [WorkspaceScalarFieldEnum], {nullable:false})
+    by!: Array<keyof typeof WorkspaceScalarFieldEnum>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => WorkspaceScalarWhereWithAggregatesInput, {nullable:true})
+    having?: WorkspaceScalarWhereWithAggregatesInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => WorkspaceCountAggregateInput, { nullable: true })
-  _count?: WorkspaceCountAggregateInput;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
 
-  @Field(() => WorkspaceMinAggregateInput, { nullable: true })
-  _min?: WorkspaceMinAggregateInput;
+    @Field(() => WorkspaceCountAggregateInput, {nullable:true})
+    _count?: WorkspaceCountAggregateInput;
 
-  @Field(() => WorkspaceMaxAggregateInput, { nullable: true })
-  _max?: WorkspaceMaxAggregateInput;
+    @Field(() => WorkspaceMinAggregateInput, {nullable:true})
+    _min?: WorkspaceMinAggregateInput;
+
+    @Field(() => WorkspaceMaxAggregateInput, {nullable:true})
+    _max?: WorkspaceMaxAggregateInput;
 }

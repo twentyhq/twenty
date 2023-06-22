@@ -7,48 +7,49 @@ import { NestedStringNullableFilter } from './nested-string-nullable-filter.inpu
 
 @InputType()
 export class StringNullableWithAggregatesFilter {
-  @Field(() => String, { nullable: true })
-  equals?: string;
 
-  @Field(() => [String], { nullable: true })
-  in?: Array<string>;
+    @Field(() => String, {nullable:true})
+    equals?: string;
 
-  @Field(() => [String], { nullable: true })
-  notIn?: Array<string>;
+    @Field(() => [String], {nullable:true})
+    in?: Array<string>;
 
-  @Field(() => String, { nullable: true })
-  lt?: string;
+    @Field(() => [String], {nullable:true})
+    notIn?: Array<string>;
 
-  @Field(() => String, { nullable: true })
-  lte?: string;
+    @Field(() => String, {nullable:true})
+    lt?: string;
 
-  @Field(() => String, { nullable: true })
-  gt?: string;
+    @Field(() => String, {nullable:true})
+    lte?: string;
 
-  @Field(() => String, { nullable: true })
-  gte?: string;
+    @Field(() => String, {nullable:true})
+    gt?: string;
 
-  @Field(() => String, { nullable: true })
-  contains?: string;
+    @Field(() => String, {nullable:true})
+    gte?: string;
 
-  @Field(() => String, { nullable: true })
-  startsWith?: string;
+    @Field(() => String, {nullable:true})
+    contains?: string;
 
-  @Field(() => String, { nullable: true })
-  endsWith?: string;
+    @Field(() => String, {nullable:true})
+    startsWith?: string;
 
-  @Field(() => QueryMode, { nullable: true })
-  mode?: keyof typeof QueryMode;
+    @Field(() => String, {nullable:true})
+    endsWith?: string;
 
-  @Field(() => NestedStringNullableWithAggregatesFilter, { nullable: true })
-  not?: NestedStringNullableWithAggregatesFilter;
+    @Field(() => QueryMode, {nullable:true})
+    mode?: keyof typeof QueryMode;
 
-  @Field(() => NestedIntNullableFilter, { nullable: true })
-  _count?: NestedIntNullableFilter;
+    @Field(() => NestedStringNullableWithAggregatesFilter, {nullable:true})
+    not?: NestedStringNullableWithAggregatesFilter;
 
-  @Field(() => NestedStringNullableFilter, { nullable: true })
-  _min?: NestedStringNullableFilter;
+    @Field(() => NestedIntNullableFilter, {nullable:true})
+    _count?: NestedIntNullableFilter;
 
-  @Field(() => NestedStringNullableFilter, { nullable: true })
-  _max?: NestedStringNullableFilter;
+    @Field(() => NestedStringNullableFilter, {nullable:true})
+    _min?: NestedStringNullableFilter;
+
+    @Field(() => NestedStringNullableFilter, {nullable:true})
+    _max?: NestedStringNullableFilter;
 }

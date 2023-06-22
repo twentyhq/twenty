@@ -6,11 +6,12 @@ import { PipelineProgressUpdateWithoutWorkspaceInput } from './pipeline-progress
 
 @InputType()
 export class PipelineProgressUpdateWithWhereUniqueWithoutWorkspaceInput {
-  @Field(() => PipelineProgressWhereUniqueInput, { nullable: false })
-  @Type(() => PipelineProgressWhereUniqueInput)
-  where!: PipelineProgressWhereUniqueInput;
 
-  @Field(() => PipelineProgressUpdateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => PipelineProgressUpdateWithoutWorkspaceInput)
-  data!: PipelineProgressUpdateWithoutWorkspaceInput;
+    @Field(() => PipelineProgressWhereUniqueInput, {nullable:false})
+    @Type(() => PipelineProgressWhereUniqueInput)
+    where!: PipelineProgressWhereUniqueInput;
+
+    @Field(() => PipelineProgressUpdateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => PipelineProgressUpdateWithoutWorkspaceInput)
+    data!: PipelineProgressUpdateWithoutWorkspaceInput;
 }

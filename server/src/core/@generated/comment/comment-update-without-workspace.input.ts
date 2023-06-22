@@ -8,28 +8,25 @@ import { CommentThreadUpdateOneRequiredWithoutCommentsNestedInput } from '../com
 
 @InputType()
 export class CommentUpdateWithoutWorkspaceInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  body?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => UserUpdateOneRequiredWithoutCommentsNestedInput, {
-    nullable: true,
-  })
-  author?: UserUpdateOneRequiredWithoutCommentsNestedInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    body?: StringFieldUpdateOperationsInput;
 
-  @Field(() => CommentThreadUpdateOneRequiredWithoutCommentsNestedInput, {
-    nullable: true,
-  })
-  commentThread?: CommentThreadUpdateOneRequiredWithoutCommentsNestedInput;
+    @Field(() => UserUpdateOneRequiredWithoutCommentsNestedInput, {nullable:true})
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput;
+
+    @Field(() => CommentThreadUpdateOneRequiredWithoutCommentsNestedInput, {nullable:true})
+    commentThread?: CommentThreadUpdateOneRequiredWithoutCommentsNestedInput;
 }

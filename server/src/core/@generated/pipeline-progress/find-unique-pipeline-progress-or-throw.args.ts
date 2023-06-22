@@ -5,7 +5,8 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class FindUniquePipelineProgressOrThrowArgs {
-  @Field(() => PipelineProgressWhereUniqueInput, { nullable: false })
-  @Type(() => PipelineProgressWhereUniqueInput)
-  where!: PipelineProgressWhereUniqueInput;
+
+    @Field(() => PipelineProgressWhereUniqueInput, {nullable:false})
+    @Type(() => PipelineProgressWhereUniqueInput)
+    where!: PipelineProgressWhereUniqueInput;
 }

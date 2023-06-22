@@ -15,57 +15,58 @@ import { PipelineProgressListRelationFilter } from '../pipeline-progress/pipelin
 
 @InputType()
 export class WorkspaceWhereInput {
-  @Field(() => [WorkspaceWhereInput], { nullable: true })
-  AND?: Array<WorkspaceWhereInput>;
 
-  @Field(() => [WorkspaceWhereInput], { nullable: true })
-  OR?: Array<WorkspaceWhereInput>;
+    @Field(() => [WorkspaceWhereInput], {nullable:true})
+    AND?: Array<WorkspaceWhereInput>;
 
-  @Field(() => [WorkspaceWhereInput], { nullable: true })
-  NOT?: Array<WorkspaceWhereInput>;
+    @Field(() => [WorkspaceWhereInput], {nullable:true})
+    OR?: Array<WorkspaceWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [WorkspaceWhereInput], {nullable:true})
+    NOT?: Array<WorkspaceWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  domainName?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  displayName?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    domainName?: StringFilter;
 
-  @Field(() => StringNullableFilter, { nullable: true })
-  logo?: StringNullableFilter;
+    @Field(() => StringFilter, {nullable:true})
+    displayName?: StringFilter;
 
-  @Field(() => WorkspaceMemberListRelationFilter, { nullable: true })
-  workspaceMember?: WorkspaceMemberListRelationFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    logo?: StringNullableFilter;
 
-  @Field(() => CompanyListRelationFilter, { nullable: true })
-  companies?: CompanyListRelationFilter;
+    @Field(() => WorkspaceMemberListRelationFilter, {nullable:true})
+    workspaceMember?: WorkspaceMemberListRelationFilter;
 
-  @Field(() => PersonListRelationFilter, { nullable: true })
-  people?: PersonListRelationFilter;
+    @Field(() => CompanyListRelationFilter, {nullable:true})
+    companies?: CompanyListRelationFilter;
 
-  @Field(() => CommentThreadListRelationFilter, { nullable: true })
-  commentThreads?: CommentThreadListRelationFilter;
+    @Field(() => PersonListRelationFilter, {nullable:true})
+    people?: PersonListRelationFilter;
 
-  @Field(() => CommentListRelationFilter, { nullable: true })
-  comments?: CommentListRelationFilter;
+    @Field(() => CommentThreadListRelationFilter, {nullable:true})
+    commentThreads?: CommentThreadListRelationFilter;
 
-  @Field(() => PipelineListRelationFilter, { nullable: true })
-  pipelines?: PipelineListRelationFilter;
+    @Field(() => CommentListRelationFilter, {nullable:true})
+    comments?: CommentListRelationFilter;
 
-  @Field(() => PipelineStageListRelationFilter, { nullable: true })
-  pipelineStages?: PipelineStageListRelationFilter;
+    @Field(() => PipelineListRelationFilter, {nullable:true})
+    pipelines?: PipelineListRelationFilter;
 
-  @Field(() => PipelineProgressListRelationFilter, { nullable: true })
-  pipelineProgresses?: PipelineProgressListRelationFilter;
+    @Field(() => PipelineStageListRelationFilter, {nullable:true})
+    pipelineStages?: PipelineStageListRelationFilter;
+
+    @Field(() => PipelineProgressListRelationFilter, {nullable:true})
+    pipelineProgresses?: PipelineProgressListRelationFilter;
 }

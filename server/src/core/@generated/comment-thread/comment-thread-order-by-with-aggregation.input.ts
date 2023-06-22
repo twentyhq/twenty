@@ -8,27 +8,28 @@ import { CommentThreadMinOrderByAggregateInput } from './comment-thread-min-orde
 
 @InputType()
 export class CommentThreadOrderByWithAggregationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @HideField()
-  workspaceId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => CommentThreadCountOrderByAggregateInput, { nullable: true })
-  _count?: CommentThreadCountOrderByAggregateInput;
+    @HideField()
+    workspaceId?: keyof typeof SortOrder;
 
-  @Field(() => CommentThreadMaxOrderByAggregateInput, { nullable: true })
-  _max?: CommentThreadMaxOrderByAggregateInput;
+    @Field(() => CommentThreadCountOrderByAggregateInput, {nullable:true})
+    _count?: CommentThreadCountOrderByAggregateInput;
 
-  @Field(() => CommentThreadMinOrderByAggregateInput, { nullable: true })
-  _min?: CommentThreadMinOrderByAggregateInput;
+    @Field(() => CommentThreadMaxOrderByAggregateInput, {nullable:true})
+    _max?: CommentThreadMaxOrderByAggregateInput;
+
+    @Field(() => CommentThreadMinOrderByAggregateInput, {nullable:true})
+    _min?: CommentThreadMinOrderByAggregateInput;
 }

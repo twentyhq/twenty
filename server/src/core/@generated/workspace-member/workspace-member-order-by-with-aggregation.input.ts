@@ -8,30 +8,31 @@ import { WorkspaceMemberMinOrderByAggregateInput } from './workspace-member-min-
 
 @InputType()
 export class WorkspaceMemberOrderByWithAggregationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  userId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @HideField()
-  workspaceId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    userId?: keyof typeof SortOrder;
 
-  @Field(() => WorkspaceMemberCountOrderByAggregateInput, { nullable: true })
-  _count?: WorkspaceMemberCountOrderByAggregateInput;
+    @HideField()
+    workspaceId?: keyof typeof SortOrder;
 
-  @Field(() => WorkspaceMemberMaxOrderByAggregateInput, { nullable: true })
-  _max?: WorkspaceMemberMaxOrderByAggregateInput;
+    @Field(() => WorkspaceMemberCountOrderByAggregateInput, {nullable:true})
+    _count?: WorkspaceMemberCountOrderByAggregateInput;
 
-  @Field(() => WorkspaceMemberMinOrderByAggregateInput, { nullable: true })
-  _min?: WorkspaceMemberMinOrderByAggregateInput;
+    @Field(() => WorkspaceMemberMaxOrderByAggregateInput, {nullable:true})
+    _max?: WorkspaceMemberMaxOrderByAggregateInput;
+
+    @Field(() => WorkspaceMemberMinOrderByAggregateInput, {nullable:true})
+    _min?: WorkspaceMemberMinOrderByAggregateInput;
 }

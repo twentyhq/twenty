@@ -5,27 +5,28 @@ import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class PipelineMaxAggregate {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => String, { nullable: true })
-  name?: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: true })
-  icon?: string;
+    @Field(() => String, {nullable:true})
+    name?: string;
 
-  @Field(() => PipelineProgressableType, { nullable: true })
-  pipelineProgressableType?: keyof typeof PipelineProgressableType;
+    @Field(() => String, {nullable:true})
+    icon?: string;
 
-  @HideField()
-  workspaceId?: string;
+    @Field(() => PipelineProgressableType, {nullable:true})
+    pipelineProgressableType?: keyof typeof PipelineProgressableType;
+
+    @HideField()
+    workspaceId?: string;
 }

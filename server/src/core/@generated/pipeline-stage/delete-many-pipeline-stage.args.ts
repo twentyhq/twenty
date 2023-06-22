@@ -5,7 +5,8 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class DeleteManyPipelineStageArgs {
-  @Field(() => PipelineStageWhereInput, { nullable: true })
-  @Type(() => PipelineStageWhereInput)
-  where?: PipelineStageWhereInput;
+
+    @Field(() => PipelineStageWhereInput, {nullable:true})
+    @Type(() => PipelineStageWhereInput)
+    where?: PipelineStageWhereInput;
 }

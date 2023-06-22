@@ -8,29 +8,28 @@ import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-
 
 @InputType()
 export class CommentThreadOrderByWithRelationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @HideField()
-  workspaceId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => CommentThreadTargetOrderByRelationAggregateInput, {
-    nullable: true,
-  })
-  commentThreadTargets?: CommentThreadTargetOrderByRelationAggregateInput;
+    @HideField()
+    workspaceId?: keyof typeof SortOrder;
 
-  @Field(() => CommentOrderByRelationAggregateInput, { nullable: true })
-  comments?: CommentOrderByRelationAggregateInput;
+    @Field(() => CommentThreadTargetOrderByRelationAggregateInput, {nullable:true})
+    commentThreadTargets?: CommentThreadTargetOrderByRelationAggregateInput;
 
-  @HideField()
-  workspace?: WorkspaceOrderByWithRelationInput;
+    @Field(() => CommentOrderByRelationAggregateInput, {nullable:true})
+    comments?: CommentOrderByRelationAggregateInput;
+
+    @HideField()
+    workspace?: WorkspaceOrderByWithRelationInput;
 }

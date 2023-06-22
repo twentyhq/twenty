@@ -7,15 +7,16 @@ import { PersonUpdateInput } from './person-update.input';
 
 @ArgsType()
 export class UpsertOnePersonArgs {
-  @Field(() => PersonWhereUniqueInput, { nullable: false })
-  @Type(() => PersonWhereUniqueInput)
-  where!: PersonWhereUniqueInput;
 
-  @Field(() => PersonCreateInput, { nullable: false })
-  @Type(() => PersonCreateInput)
-  create!: PersonCreateInput;
+    @Field(() => PersonWhereUniqueInput, {nullable:false})
+    @Type(() => PersonWhereUniqueInput)
+    where!: PersonWhereUniqueInput;
 
-  @Field(() => PersonUpdateInput, { nullable: false })
-  @Type(() => PersonUpdateInput)
-  update!: PersonUpdateInput;
+    @Field(() => PersonCreateInput, {nullable:false})
+    @Type(() => PersonCreateInput)
+    create!: PersonCreateInput;
+
+    @Field(() => PersonUpdateInput, {nullable:false})
+    @Type(() => PersonUpdateInput)
+    update!: PersonUpdateInput;
 }

@@ -12,31 +12,32 @@ import { CommentThreadMaxAggregateInput } from './comment-thread-max-aggregate.i
 
 @ArgsType()
 export class CommentThreadGroupByArgs {
-  @Field(() => CommentThreadWhereInput, { nullable: true })
-  @Type(() => CommentThreadWhereInput)
-  where?: CommentThreadWhereInput;
 
-  @Field(() => [CommentThreadOrderByWithAggregationInput], { nullable: true })
-  orderBy?: Array<CommentThreadOrderByWithAggregationInput>;
+    @Field(() => CommentThreadWhereInput, {nullable:true})
+    @Type(() => CommentThreadWhereInput)
+    where?: CommentThreadWhereInput;
 
-  @Field(() => [CommentThreadScalarFieldEnum], { nullable: false })
-  by!: Array<keyof typeof CommentThreadScalarFieldEnum>;
+    @Field(() => [CommentThreadOrderByWithAggregationInput], {nullable:true})
+    orderBy?: Array<CommentThreadOrderByWithAggregationInput>;
 
-  @Field(() => CommentThreadScalarWhereWithAggregatesInput, { nullable: true })
-  having?: CommentThreadScalarWhereWithAggregatesInput;
+    @Field(() => [CommentThreadScalarFieldEnum], {nullable:false})
+    by!: Array<keyof typeof CommentThreadScalarFieldEnum>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => CommentThreadScalarWhereWithAggregatesInput, {nullable:true})
+    having?: CommentThreadScalarWhereWithAggregatesInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => CommentThreadCountAggregateInput, { nullable: true })
-  _count?: CommentThreadCountAggregateInput;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
 
-  @Field(() => CommentThreadMinAggregateInput, { nullable: true })
-  _min?: CommentThreadMinAggregateInput;
+    @Field(() => CommentThreadCountAggregateInput, {nullable:true})
+    _count?: CommentThreadCountAggregateInput;
 
-  @Field(() => CommentThreadMaxAggregateInput, { nullable: true })
-  _max?: CommentThreadMaxAggregateInput;
+    @Field(() => CommentThreadMinAggregateInput, {nullable:true})
+    _min?: CommentThreadMinAggregateInput;
+
+    @Field(() => CommentThreadMaxAggregateInput, {nullable:true})
+    _max?: CommentThreadMaxAggregateInput;
 }

@@ -6,12 +6,13 @@ import { CommentThreadMaxAggregate } from './comment-thread-max-aggregate.output
 
 @ObjectType()
 export class AggregateCommentThread {
-  @Field(() => CommentThreadCountAggregate, { nullable: true })
-  _count?: CommentThreadCountAggregate;
 
-  @Field(() => CommentThreadMinAggregate, { nullable: true })
-  _min?: CommentThreadMinAggregate;
+    @Field(() => CommentThreadCountAggregate, {nullable:true})
+    _count?: CommentThreadCountAggregate;
 
-  @Field(() => CommentThreadMaxAggregate, { nullable: true })
-  _max?: CommentThreadMaxAggregate;
+    @Field(() => CommentThreadMinAggregate, {nullable:true})
+    _min?: CommentThreadMinAggregate;
+
+    @Field(() => CommentThreadMaxAggregate, {nullable:true})
+    _max?: CommentThreadMaxAggregate;
 }

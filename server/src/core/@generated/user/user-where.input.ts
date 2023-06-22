@@ -14,66 +14,67 @@ import { CommentListRelationFilter } from '../comment/comment-list-relation-filt
 
 @InputType()
 export class UserWhereInput {
-  @Field(() => [UserWhereInput], { nullable: true })
-  AND?: Array<UserWhereInput>;
 
-  @Field(() => [UserWhereInput], { nullable: true })
-  OR?: Array<UserWhereInput>;
+    @Field(() => [UserWhereInput], {nullable:true})
+    AND?: Array<UserWhereInput>;
 
-  @Field(() => [UserWhereInput], { nullable: true })
-  NOT?: Array<UserWhereInput>;
+    @Field(() => [UserWhereInput], {nullable:true})
+    OR?: Array<UserWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [UserWhereInput], {nullable:true})
+    NOT?: Array<UserWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  lastSeen?: DateTimeNullableFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @Field(() => BoolFilter, { nullable: true })
-  disabled?: BoolFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    lastSeen?: DateTimeNullableFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  displayName?: StringFilter;
+    @Field(() => BoolFilter, {nullable:true})
+    disabled?: BoolFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  email?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    displayName?: StringFilter;
 
-  @Field(() => StringNullableFilter, { nullable: true })
-  avatarUrl?: StringNullableFilter;
+    @Field(() => StringFilter, {nullable:true})
+    email?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  locale?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    avatarUrl?: StringNullableFilter;
 
-  @Field(() => StringNullableFilter, { nullable: true })
-  phoneNumber?: StringNullableFilter;
+    @Field(() => StringFilter, {nullable:true})
+    locale?: StringFilter;
 
-  @HideField()
-  passwordHash?: StringNullableFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    phoneNumber?: StringNullableFilter;
 
-  @Field(() => BoolFilter, { nullable: true })
-  emailVerified?: BoolFilter;
+    @HideField()
+    passwordHash?: StringNullableFilter;
 
-  @Field(() => JsonNullableFilter, { nullable: true })
-  metadata?: JsonNullableFilter;
+    @Field(() => BoolFilter, {nullable:true})
+    emailVerified?: BoolFilter;
 
-  @HideField()
-  workspaceMember?: WorkspaceMemberRelationFilter;
+    @Field(() => JsonNullableFilter, {nullable:true})
+    metadata?: JsonNullableFilter;
 
-  @Field(() => CompanyListRelationFilter, { nullable: true })
-  companies?: CompanyListRelationFilter;
+    @HideField()
+    workspaceMember?: WorkspaceMemberRelationFilter;
 
-  @HideField()
-  refreshTokens?: RefreshTokenListRelationFilter;
+    @Field(() => CompanyListRelationFilter, {nullable:true})
+    companies?: CompanyListRelationFilter;
 
-  @Field(() => CommentListRelationFilter, { nullable: true })
-  comments?: CommentListRelationFilter;
+    @HideField()
+    refreshTokens?: RefreshTokenListRelationFilter;
+
+    @Field(() => CommentListRelationFilter, {nullable:true})
+    comments?: CommentListRelationFilter;
 }

@@ -12,35 +12,32 @@ import { CommentThreadTargetMaxAggregateInput } from './comment-thread-target-ma
 
 @ArgsType()
 export class CommentThreadTargetGroupByArgs {
-  @Field(() => CommentThreadTargetWhereInput, { nullable: true })
-  @Type(() => CommentThreadTargetWhereInput)
-  where?: CommentThreadTargetWhereInput;
 
-  @Field(() => [CommentThreadTargetOrderByWithAggregationInput], {
-    nullable: true,
-  })
-  orderBy?: Array<CommentThreadTargetOrderByWithAggregationInput>;
+    @Field(() => CommentThreadTargetWhereInput, {nullable:true})
+    @Type(() => CommentThreadTargetWhereInput)
+    where?: CommentThreadTargetWhereInput;
 
-  @Field(() => [CommentThreadTargetScalarFieldEnum], { nullable: false })
-  by!: Array<keyof typeof CommentThreadTargetScalarFieldEnum>;
+    @Field(() => [CommentThreadTargetOrderByWithAggregationInput], {nullable:true})
+    orderBy?: Array<CommentThreadTargetOrderByWithAggregationInput>;
 
-  @Field(() => CommentThreadTargetScalarWhereWithAggregatesInput, {
-    nullable: true,
-  })
-  having?: CommentThreadTargetScalarWhereWithAggregatesInput;
+    @Field(() => [CommentThreadTargetScalarFieldEnum], {nullable:false})
+    by!: Array<keyof typeof CommentThreadTargetScalarFieldEnum>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => CommentThreadTargetScalarWhereWithAggregatesInput, {nullable:true})
+    having?: CommentThreadTargetScalarWhereWithAggregatesInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => CommentThreadTargetCountAggregateInput, { nullable: true })
-  _count?: CommentThreadTargetCountAggregateInput;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
 
-  @Field(() => CommentThreadTargetMinAggregateInput, { nullable: true })
-  _min?: CommentThreadTargetMinAggregateInput;
+    @Field(() => CommentThreadTargetCountAggregateInput, {nullable:true})
+    _count?: CommentThreadTargetCountAggregateInput;
 
-  @Field(() => CommentThreadTargetMaxAggregateInput, { nullable: true })
-  _max?: CommentThreadTargetMaxAggregateInput;
+    @Field(() => CommentThreadTargetMinAggregateInput, {nullable:true})
+    _min?: CommentThreadTargetMinAggregateInput;
+
+    @Field(() => CommentThreadTargetMaxAggregateInput, {nullable:true})
+    _max?: CommentThreadTargetMaxAggregateInput;
 }

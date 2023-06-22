@@ -6,11 +6,12 @@ import { CommentThreadUpdateWithoutWorkspaceInput } from './comment-thread-updat
 
 @InputType()
 export class CommentThreadUpdateWithWhereUniqueWithoutWorkspaceInput {
-  @Field(() => CommentThreadWhereUniqueInput, { nullable: false })
-  @Type(() => CommentThreadWhereUniqueInput)
-  where!: CommentThreadWhereUniqueInput;
 
-  @Field(() => CommentThreadUpdateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => CommentThreadUpdateWithoutWorkspaceInput)
-  data!: CommentThreadUpdateWithoutWorkspaceInput;
+    @Field(() => CommentThreadWhereUniqueInput, {nullable:false})
+    @Type(() => CommentThreadWhereUniqueInput)
+    where!: CommentThreadWhereUniqueInput;
+
+    @Field(() => CommentThreadUpdateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => CommentThreadUpdateWithoutWorkspaceInput)
+    data!: CommentThreadUpdateWithoutWorkspaceInput;
 }

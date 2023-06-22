@@ -8,41 +8,40 @@ import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-
 
 @InputType()
 export class PipelineStageOrderByWithRelationInput {
-  @Field(() => SortOrder, { nullable: true })
-  id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  createdAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    id?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  updatedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  deletedAt?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  name?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    deletedAt?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  type?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    name?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  color?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    type?: keyof typeof SortOrder;
 
-  @Field(() => SortOrder, { nullable: true })
-  pipelineId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    color?: keyof typeof SortOrder;
 
-  @HideField()
-  workspaceId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    pipelineId?: keyof typeof SortOrder;
 
-  @Field(() => PipelineOrderByWithRelationInput, { nullable: true })
-  pipeline?: PipelineOrderByWithRelationInput;
+    @HideField()
+    workspaceId?: keyof typeof SortOrder;
 
-  @Field(() => PipelineProgressOrderByRelationAggregateInput, {
-    nullable: true,
-  })
-  pipelineProgresses?: PipelineProgressOrderByRelationAggregateInput;
+    @Field(() => PipelineOrderByWithRelationInput, {nullable:true})
+    pipeline?: PipelineOrderByWithRelationInput;
 
-  @HideField()
-  workspace?: WorkspaceOrderByWithRelationInput;
+    @Field(() => PipelineProgressOrderByRelationAggregateInput, {nullable:true})
+    pipelineProgresses?: PipelineProgressOrderByRelationAggregateInput;
+
+    @HideField()
+    workspace?: WorkspaceOrderByWithRelationInput;
 }

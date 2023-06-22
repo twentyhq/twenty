@@ -10,48 +10,49 @@ import { CompanyMaxAggregate } from './company-max-aggregate.output';
 
 @ObjectType()
 export class CompanyGroupBy {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date | string;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
-  @Field(() => String, { nullable: false })
-  name!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  domainName!: string;
+    @Field(() => String, {nullable:false})
+    name!: string;
 
-  @Field(() => String, { nullable: false })
-  address!: string;
+    @Field(() => String, {nullable:false})
+    domainName!: string;
 
-  @Field(() => Int, { nullable: true })
-  employees?: number;
+    @Field(() => String, {nullable:false})
+    address!: string;
 
-  @Field(() => String, { nullable: true })
-  accountOwnerId?: string;
+    @Field(() => Int, {nullable:true})
+    employees?: number;
 
-  @HideField()
-  workspaceId!: string;
+    @Field(() => String, {nullable:true})
+    accountOwnerId?: string;
 
-  @Field(() => CompanyCountAggregate, { nullable: true })
-  _count?: CompanyCountAggregate;
+    @HideField()
+    workspaceId!: string;
 
-  @Field(() => CompanyAvgAggregate, { nullable: true })
-  _avg?: CompanyAvgAggregate;
+    @Field(() => CompanyCountAggregate, {nullable:true})
+    _count?: CompanyCountAggregate;
 
-  @Field(() => CompanySumAggregate, { nullable: true })
-  _sum?: CompanySumAggregate;
+    @Field(() => CompanyAvgAggregate, {nullable:true})
+    _avg?: CompanyAvgAggregate;
 
-  @Field(() => CompanyMinAggregate, { nullable: true })
-  _min?: CompanyMinAggregate;
+    @Field(() => CompanySumAggregate, {nullable:true})
+    _sum?: CompanySumAggregate;
 
-  @Field(() => CompanyMaxAggregate, { nullable: true })
-  _max?: CompanyMaxAggregate;
+    @Field(() => CompanyMinAggregate, {nullable:true})
+    _min?: CompanyMinAggregate;
+
+    @Field(() => CompanyMaxAggregate, {nullable:true})
+    _max?: CompanyMaxAggregate;
 }

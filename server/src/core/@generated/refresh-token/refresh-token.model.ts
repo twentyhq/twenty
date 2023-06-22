@@ -6,27 +6,28 @@ import { User } from '../user/user.model';
 
 @ObjectType()
 export class RefreshToken {
-  @Field(() => ID, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date;
+    @Field(() => ID, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
 
-  @Field(() => Boolean, { nullable: false, defaultValue: false })
-  isRevoked!: boolean;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
-  @Field(() => Date, { nullable: false })
-  expiresAt!: Date;
+    @Field(() => Boolean, {nullable:false,defaultValue:false})
+    isRevoked!: boolean;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt!: Date | null;
+    @Field(() => Date, {nullable:false})
+    expiresAt!: Date;
 
-  @HideField()
-  userId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt!: Date | null;
 
-  @HideField()
-  user?: User;
+    @HideField()
+    userId!: string;
+
+    @HideField()
+    user?: User;
 }
