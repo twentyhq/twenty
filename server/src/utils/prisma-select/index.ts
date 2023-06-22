@@ -3,11 +3,13 @@ import { DMMF } from '@prisma/client/runtime';
 import { GraphQLResolveInfo } from 'graphql';
 import { ModelSelectMap } from './model-select-map';
 
-type DefaultFieldsMap = {
+export type DefaultFieldsMap = {
   readonly [K in keyof ModelSelectMap]?:
     | ModelSelectMap[K]
     | ((select: any) => ModelSelectMap[K]);
 };
+
+export { ModelSelectMap };
 
 export class PrismaSelect<
   K extends keyof ModelSelectMap,

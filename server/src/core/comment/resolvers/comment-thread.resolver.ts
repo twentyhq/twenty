@@ -1,4 +1,4 @@
-import { Resolver, Args, Mutation, Query, Info } from '@nestjs/graphql';
+import { Resolver, Args, Mutation, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from '../../../core/@generated/workspace/workspace.model';
@@ -11,8 +11,10 @@ import { CommentThreadService } from '../services/comment-thread.service';
 import { prepareFindManyArgs } from 'src/utils/prepare-find-many';
 import { UpdateOneCommentThreadArgs } from 'src/core/@generated/comment-thread/update-one-comment-thread.args';
 import { Prisma } from '@prisma/client';
-import { PrismaSelect } from 'src/utils/prisma-select';
-import { GraphQLResolveInfo } from 'graphql';
+import {
+  PrismaSelector,
+  PrismaSelect,
+} from 'src/decorators/prisma-select.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)
@@ -26,7 +28,8 @@ export class CommentThreadResolver {
   async createOneCommentThread(
     @Args() args: CreateOneCommentThreadArgs,
     @AuthWorkspace() workspace: Workspace,
-    @Info() info: GraphQLResolveInfo,
+    @PrismaSelector({ modelName: 'CommentThread' })
+    prismaSelect: PrismaSelect<'CommentThread'>,
   ): Promise<Partial<CommentThread>> {
     const newCommentData = args.data.comments?.createMany?.data
       ? args.data.comments?.createMany?.data?.map((comment) => ({
@@ -34,13 +37,6 @@ export class CommentThreadResolver {
           ...{ workspaceId: workspace.id },
         }))
       : [];
-    const select = new PrismaSelect('CommentThread', info, {
-      defaultFields: {
-        CommentThread: {
-          id: true,
-        },
-      },
-    }).value;
 
     const createdCommentThread = await this.commentThreadService.create({
       data: {
@@ -48,7 +44,7 @@ export class CommentThreadResolver {
         ...{ comments: { createMany: { data: newCommentData } } },
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-      select,
+      select: prismaSelect.value,
     });
 
     return createdCommentThread;
@@ -59,18 +55,12 @@ export class CommentThreadResolver {
   })
   async updateOneCommentThread(
     @Args() args: UpdateOneCommentThreadArgs,
-    @Info() info: GraphQLResolveInfo,
+    @PrismaSelector({ modelName: 'CommentThread' })
+    prismaSelect: PrismaSelect<'CommentThread'>,
   ): Promise<Partial<CommentThread>> {
-    const select = new PrismaSelect('CommentThread', info, {
-      defaultFields: {
-        CommentThread: {
-          id: true,
-        },
-      },
-    }).value;
     const updatedCommentThread = await this.commentThreadService.update({
       ...args,
-      select,
+      select: prismaSelect.value,
     } as Prisma.CommentThreadUpdateArgs);
 
     return updatedCommentThread;
@@ -80,15 +70,9 @@ export class CommentThreadResolver {
   async findManyCommentThreads(
     @Args() args: FindManyCommentThreadArgs,
     @AuthWorkspace() workspace: Workspace,
-    @Info() info: GraphQLResolveInfo,
+    @PrismaSelector({ modelName: 'CommentThread' })
+    prismaSelect: PrismaSelect<'CommentThread'>,
   ): Promise<Partial<CommentThread>[]> {
-    const select = new PrismaSelect('CommentThread', info, {
-      defaultFields: {
-        CommentThread: {
-          id: true,
-        },
-      },
-    }).value;
     const preparedArgs = prepareFindManyArgs<FindManyCommentThreadArgs>(
       args,
       workspace,
@@ -96,7 +80,7 @@ export class CommentThreadResolver {
 
     const result = await this.commentThreadService.findMany({
       ...preparedArgs,
-      select,
+      select: prismaSelect.value,
     });
 
     return result;

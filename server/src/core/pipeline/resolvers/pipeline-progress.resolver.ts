@@ -1,4 +1,4 @@
-import { Resolver, Args, Query, Mutation, Info } from '@nestjs/graphql';
+import { Resolver, Args, Query, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { accessibleBy } from '@casl/prisma';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
@@ -22,8 +22,10 @@ import {
 } from 'src/ability/handlers/pipeline-progress.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
-import { PrismaSelect } from 'src/utils/prisma-select';
-import { GraphQLResolveInfo } from 'graphql';
+import {
+  PrismaSelector,
+  PrismaSelect,
+} from 'src/decorators/prisma-select.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => PipelineProgress)
@@ -38,23 +40,16 @@ export class PipelineProgressResolver {
   async findManyPipelineProgress(
     @Args() args: FindManyPipelineProgressArgs,
     @UserAbility() ability: AppAbility,
-    @Info() info: GraphQLResolveInfo,
+    @PrismaSelector({ modelName: 'PipelineProgress' })
+    prismaSelect: PrismaSelect<'PipelineProgress'>,
   ): Promise<Partial<PipelineProgress>[]> {
-    const select = new PrismaSelect('PipelineProgress', info, {
-      defaultFields: {
-        PipelineProgress: {
-          id: true,
-        },
-      },
-    }).value;
-
     return this.pipelineProgressService.findMany({
       ...args,
       where: {
         ...args.where,
         AND: [accessibleBy(ability).PipelineProgress],
       },
-      select,
+      select: prismaSelect.value,
     });
   }
 
@@ -65,19 +60,12 @@ export class PipelineProgressResolver {
   @CheckAbilities(UpdatePipelineProgressAbilityHandler)
   async updateOnePipelineProgress(
     @Args() args: UpdateOnePipelineProgressArgs,
-    @Info() info: GraphQLResolveInfo,
+    @PrismaSelector({ modelName: 'PipelineProgress' })
+    prismaSelect: PrismaSelect<'PipelineProgress'>,
   ): Promise<Partial<PipelineProgress> | null> {
-    const select = new PrismaSelect('PipelineProgress', info, {
-      defaultFields: {
-        PipelineProgress: {
-          id: true,
-        },
-      },
-    }).value;
-
     return this.pipelineProgressService.update({
       ...args,
-      select,
+      select: prismaSelect.value,
     } as Prisma.PipelineProgressUpdateArgs);
   }
 
@@ -102,22 +90,15 @@ export class PipelineProgressResolver {
   async createOnePipelineProgress(
     @Args() args: CreateOnePipelineProgressArgs,
     @AuthWorkspace() workspace: Workspace,
-    @Info() info: GraphQLResolveInfo,
+    @PrismaSelector({ modelName: 'PipelineProgress' })
+    prismaSelect: PrismaSelect<'PipelineProgress'>,
   ): Promise<Partial<PipelineProgress>> {
-    const select = new PrismaSelect('PipelineProgress', info, {
-      defaultFields: {
-        PipelineProgress: {
-          id: true,
-        },
-      },
-    }).value;
-
     return this.pipelineProgressService.create({
       data: {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-      select,
+      select: prismaSelect.value,
     } as Prisma.PipelineProgressCreateArgs);
   }
 }

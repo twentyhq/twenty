@@ -1,4 +1,4 @@
-import { Resolver, Args, Query, Info } from '@nestjs/graphql';
+import { Resolver, Args, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { accessibleBy } from '@casl/prisma';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
@@ -10,8 +10,10 @@ import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import { ReadPipelineAbilityHandler } from 'src/ability/handlers/pipeline.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
-import { GraphQLResolveInfo } from 'graphql';
-import { PrismaSelect } from 'src/utils/prisma-select';
+import {
+  PrismaSelector,
+  PrismaSelect,
+} from 'src/decorators/prisma-select.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Pipeline)
@@ -24,23 +26,16 @@ export class PipelineResolver {
   async findManyPipeline(
     @Args() args: FindManyPipelineArgs,
     @UserAbility() ability: AppAbility,
-    @Info() info: GraphQLResolveInfo,
+    @PrismaSelector({ modelName: 'Pipeline' })
+    prismaSelect: PrismaSelect<'Pipeline'>,
   ): Promise<Partial<Pipeline>[]> {
-    const select = new PrismaSelect('Pipeline', info, {
-      defaultFields: {
-        Pipeline: {
-          id: true,
-        },
-      },
-    }).value;
-
     return this.pipelineService.findMany({
       ...args,
       where: {
         ...args.where,
         AND: [accessibleBy(ability).Pipeline],
       },
-      select,
+      select: prismaSelect.value,
     });
   }
 }
