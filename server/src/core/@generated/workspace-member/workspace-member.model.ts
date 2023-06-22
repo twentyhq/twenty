@@ -28,6 +28,6 @@ export class WorkspaceMember {
   @Field(() => User, { nullable: false })
   user?: User;
 
-  @HideField()
+  @Field(() => Workspace, { nullable: false })
   workspace?: Workspace;
 }
