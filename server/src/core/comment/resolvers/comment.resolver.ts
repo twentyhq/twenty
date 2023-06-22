@@ -12,6 +12,11 @@ import {
   PrismaSelector,
   PrismaSelect,
 } from 'src/decorators/prisma-select.decorator';
+import { AbilityGuard } from 'src/guards/ability.guard';
+import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
+import { CreateCommentAbilityHandler } from 'src/ability/handlers/comment.ability-handler';
+import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { User } from 'src/core/@generated/user/user.model';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Comment)
@@ -22,8 +27,11 @@ export class CommentResolver {
   @Mutation(() => Comment, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreateCommentAbilityHandler)
   async createOneComment(
     @Args() args: CreateOneCommentArgs,
+    @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
     @PrismaSelector({ modelName: 'Comment' })
     prismaSelect: PrismaSelect<'Comment'>,

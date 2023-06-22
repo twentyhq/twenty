@@ -14,11 +14,21 @@ import { UpdateOneGuard } from '../../guards/update-one.guard';
 import { DeleteManyGuard } from '../../guards/delete-many.guard';
 import { CreateOneGuard } from '../../guards/create-one.guard';
 import { CompanyService } from './company.service';
-import { prepareFindManyArgs } from 'src/utils/prepare-find-many';
 import {
   PrismaSelect,
   PrismaSelector,
 } from 'src/decorators/prisma-select.decorator';
+import { AbilityGuard } from 'src/guards/ability.guard';
+import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
+import {
+  CreateCompanyAbilityHandler,
+  DeleteCompanyAbilityHandler,
+  ReadCompanyAbilityHandler,
+} from 'src/ability/handlers/company.ability-handler';
+import { UserAbility } from 'src/decorators/user-ability.decorator';
+import { AppAbility } from 'src/ability/ability.factory';
+import { accessibleBy } from '@casl/prisma';
+import { UpdateCommentAbilityHandler } from 'src/ability/handlers/comment.ability-handler';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Company)
@@ -26,18 +36,20 @@ export class CompanyResolver {
   constructor(private readonly companyService: CompanyService) {}
 
   @Query(() => [Company])
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(ReadCompanyAbilityHandler)
   async findManyCompany(
     @Args() args: FindManyCompanyArgs,
-    @AuthWorkspace() workspace: Workspace,
+    @UserAbility() ability: AppAbility,
     @PrismaSelector({ modelName: 'Company' })
     prismaSelect: PrismaSelect<'Company'>,
   ): Promise<Partial<Company>[]> {
-    const preparedArgs = prepareFindManyArgs<FindManyCompanyArgs>(
-      args,
-      workspace,
-    );
     return this.companyService.findMany({
-      ...preparedArgs,
+      ...args,
+      where: {
+        ...args.where,
+        AND: [accessibleBy(ability).Company],
+      },
       select: prismaSelect.value,
     });
   }
@@ -46,6 +58,8 @@ export class CompanyResolver {
   @Mutation(() => Company, {
     nullable: true,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(UpdateCommentAbilityHandler)
   async updateOneCompany(
     @Args() args: UpdateOneCompanyArgs,
     @PrismaSelector({ modelName: 'Company' })
@@ -65,6 +79,8 @@ export class CompanyResolver {
   @Mutation(() => AffectedRows, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeleteCompanyAbilityHandler)
   async deleteManyCompany(
     @Args() args: DeleteManyCompanyArgs,
   ): Promise<AffectedRows> {
@@ -77,6 +93,8 @@ export class CompanyResolver {
   @Mutation(() => Company, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreateCompanyAbilityHandler)
   async createOneCompany(
     @Args() args: CreateOneCompanyArgs,
     @AuthWorkspace() workspace: Workspace,

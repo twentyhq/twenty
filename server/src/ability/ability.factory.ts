@@ -45,6 +45,11 @@ export class AbilityFactory {
     );
 
     // User
+    can(AbilityAction.Read, 'User', {
+      workspaceMember: {
+        workspaceId: workspace.id,
+      },
+    });
     can(AbilityAction.Update, 'User', { id: user.id });
     cannot(AbilityAction.Delete, 'User');
 

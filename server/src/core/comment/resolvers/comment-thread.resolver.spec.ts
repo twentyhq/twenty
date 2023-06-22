@@ -4,6 +4,7 @@ import { CommentThreadService } from '../services/comment-thread.service';
 import { CanActivate } from '@nestjs/common';
 import { CreateOneCommentGuard } from 'src/guards/create-one-comment.guard';
 import { CreateOneCommentThreadGuard } from 'src/guards/create-one-comment-thread.guard';
+import { AbilityFactory } from 'src/ability/ability.factory';
 
 describe('CommentThreadResolver', () => {
   let resolver: CommentThreadResolver;
@@ -16,6 +17,10 @@ describe('CommentThreadResolver', () => {
         CommentThreadResolver,
         {
           provide: CommentThreadService,
+          useValue: {},
+        },
+        {
+          provide: AbilityFactory,
           useValue: {},
         },
       ],

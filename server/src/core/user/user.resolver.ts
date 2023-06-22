@@ -11,6 +11,12 @@ import {
   PrismaSelect,
   PrismaSelector,
 } from 'src/decorators/prisma-select.decorator';
+import { AbilityGuard } from 'src/guards/ability.guard';
+import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
+import { ReadUserAbilityHandler } from 'src/ability/handlers/user.ability-handler';
+import { UserAbility } from 'src/decorators/user-ability.decorator';
+import { AppAbility } from 'src/ability/ability.factory';
+import { accessibleBy } from '@casl/prisma';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
@@ -21,9 +27,12 @@ export class UserResolver {
   @Query(() => [User], {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(ReadUserAbilityHandler)
   async findManyUser(
     @Args() args: FindManyUserArgs,
     @AuthWorkspace() workspace: Workspace,
+    @UserAbility() ability: AppAbility,
     @PrismaSelector({ modelName: 'User' })
     prismaSelect: PrismaSelect<'User'>,
   ): Promise<Partial<User>[]> {
@@ -31,9 +40,7 @@ export class UserResolver {
       ...args,
       where: {
         ...args.where,
-        workspaceMember: {
-          is: { workspace: { is: { id: { equals: workspace.id } } } },
-        },
+        AND: [accessibleBy(ability).User],
       },
       select: prismaSelect.value,
     });

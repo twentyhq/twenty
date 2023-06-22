@@ -2,14 +2,24 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from '../ability.action';
 import { AppAbility } from '../ability.factory';
 import { IAbilityHandler } from '../interfaces/ability-handler.interface';
-import { Injectable } from '@nestjs/common';
+import {
+  ExecutionContext,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CommentThreadTargetWhereInput } from 'src/core/@generated/comment-thread-target/comment-thread-target-where.input';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { assert } from 'src/utils/assert';
+import { subject } from '@casl/ability';
+
+class CommentThreadTargetArgs {
+  where?: CommentThreadTargetWhereInput;
+}
 
 @Injectable()
 export class ManageCommentThreadTargetAbilityHandler
   implements IAbilityHandler
 {
-  constructor(private readonly prismaService: PrismaService) {}
-
   async handle(ability: AppAbility) {
     return ability.can(AbilityAction.Manage, 'CommentThreadTarget');
   }
@@ -35,8 +45,21 @@ export class CreateCommentThreadTargetAbilityHandler
 export class UpdateCommentThreadTargetAbilityHandler
   implements IAbilityHandler
 {
-  handle(ability: AppAbility) {
-    return ability.can(AbilityAction.Update, 'CommentThreadTarget');
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs<CommentThreadTargetArgs>();
+    const commentThreadTarget =
+      await this.prismaService.commentThreadTarget.findFirst({
+        where: args.where,
+      });
+    assert(commentThreadTarget, '', NotFoundException);
+
+    return ability.can(
+      AbilityAction.Update,
+      subject('CommentThreadTarget', commentThreadTarget),
+    );
   }
 }
 
@@ -44,7 +67,20 @@ export class UpdateCommentThreadTargetAbilityHandler
 export class DeleteCommentThreadTargetAbilityHandler
   implements IAbilityHandler
 {
-  handle(ability: AppAbility) {
-    return ability.can(AbilityAction.Delete, 'CommentThreadTarget');
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs<CommentThreadTargetArgs>();
+    const commentThreadTarget =
+      await this.prismaService.commentThreadTarget.findFirst({
+        where: args.where,
+      });
+    assert(commentThreadTarget, '', NotFoundException);
+
+    return ability.can(
+      AbilityAction.Delete,
+      subject('CommentThreadTarget', commentThreadTarget),
+    );
   }
 }

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
+import { AbilityFactory } from 'src/ability/ability.factory';
 
 describe('UserResolver', () => {
   let resolver: UserResolver;
@@ -11,6 +12,10 @@ describe('UserResolver', () => {
         UserResolver,
         {
           provide: UserService,
+          useValue: {},
+        },
+        {
+          provide: AbilityFactory,
           useValue: {},
         },
       ],
