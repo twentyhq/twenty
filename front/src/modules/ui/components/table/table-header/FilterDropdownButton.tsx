@@ -97,15 +97,6 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
       );
     }
 
-    // TODO : get actually selected entity
-
-    console.log({
-      availableFilters,
-      filterSearchResults,
-      selectedFilter,
-      selectedFilterOperand,
-    });
-
     function resultIsEntity(result: any): result is { id: string } {
       return Object.keys(result ?? {}).includes('id');
     }
