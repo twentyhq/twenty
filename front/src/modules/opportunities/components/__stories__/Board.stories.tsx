@@ -1,5 +1,6 @@
-import { StrictMode } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+
+import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { Board } from '../Board';
 
@@ -14,14 +15,12 @@ export default meta;
 type Story = StoryObj<typeof Board>;
 
 export const OneColumnBoard: Story = {
-  render: () => (
-    <StrictMode>
-      <Board
-        pipelineId={'xxx-test'}
-        columns={initialBoard}
-        initialBoard={initialBoard}
-        initialItems={items}
-      />
-    </StrictMode>
+  render: getRenderWrapperForComponent(
+    <Board
+      pipelineId={'xxx-test'}
+      columns={initialBoard}
+      initialBoard={initialBoard}
+      initialItems={items}
+    />,
   ),
 };
