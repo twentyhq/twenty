@@ -1,5 +1,6 @@
 import {
   ApolloClient,
+  ApolloLink,
   createHttpLink,
   from,
   InMemoryCache,
@@ -11,6 +12,8 @@ import { RestLink } from 'apollo-link-rest';
 
 import { CommentThreadTarget } from './generated/graphql';
 import { getTokensFromRefreshToken } from './modules/auth/services/AuthService';
+import { mockedCompaniesData } from './testing/mock-data/companies';
+import { mockedUsersData } from './testing/mock-data/users';
 
 const apiLink = createHttpLink({
   uri: `${process.env.REACT_APP_API_URL}`,
@@ -97,4 +100,26 @@ const authLink = new RestLink({
 export const authClient = new ApolloClient({
   link: authLink,
   cache: new InMemoryCache(),
+});
+
+const mockLink = new ApolloLink((operation, forward) => {
+  return forward(operation).map((response) => {
+    if (operation.operationName === 'GetCompanies') {
+      return { data: { companies: mockedCompaniesData } };
+    }
+    if (operation.operationName === 'GetCurrentUser') {
+      return { data: { users: [mockedUsersData[0]] } };
+    }
+    return response;
+  });
+});
+
+export const mockClient = new ApolloClient({
+  link: from([mockLink, apiLink]),
+  cache: new InMemoryCache(),
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'cache-first',
+    },
+  },
 });
