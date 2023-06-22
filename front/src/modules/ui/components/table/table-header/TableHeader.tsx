@@ -46,7 +46,7 @@ const StyledIcon = styled.div`
   margin-right: ${(props) => props.theme.spacing(2)};
 
   & > svg {
-    font-size: ${(props) => props.theme.fontSizeLarge};
+    font-size: ${(props) => props.theme.iconSizeSmall};
   }
 `;
 

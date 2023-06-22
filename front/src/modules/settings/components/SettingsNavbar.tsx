@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useMatch, useResolvedPath } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
@@ -14,6 +15,10 @@ import NavTitle from '@/ui/layout/navbar/NavTitle';
 import SubNavbarContainer from '@/ui/layout/navbar/sub-navbar/SubNavBarContainer';
 
 export function SettingsNavbar() {
+  const logout = useCallback(() => {
+    removeTokens();
+    window.location.href = '/';
+  }, []);
   const theme = useTheme();
   return (
     <SubNavbarContainer backButtonTitle="Settings">
@@ -58,7 +63,7 @@ export function SettingsNavbar() {
         <NavTitle label="Other" />
         <NavItem
           label="Logout"
-          onClick={removeTokens}
+          onClick={logout}
           icon={<IconLogout size={theme.iconSizeMedium} />}
           danger={true}
         />

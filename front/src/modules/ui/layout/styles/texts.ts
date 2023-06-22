@@ -2,7 +2,7 @@ export const commonText = {
   fontSizeExtraSmall: '0.85rem',
   fontSizeSmall: '0.92rem',
   fontSizeMedium: '1rem',
-  fontSizeLarge: '1.08rem',
+  fontSizeLarge: '1.23rem',
   fontSizeExtraLarge: '1.54rem',
 
   fontWeightMedium: 500,
