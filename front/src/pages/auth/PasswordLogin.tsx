@@ -11,6 +11,7 @@ import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { getTokensFromLoginToken } from '@/auth/services/AuthService';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
+import { isMockModeState } from '@/auth/states/isMockModeState';
 import { PrimaryButton } from '@/ui/components/buttons/PrimaryButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { Companies } from '~/pages/companies/Companies';
@@ -35,6 +36,7 @@ const StyledErrorContainer = styled.div`
 
 export function PasswordLogin() {
   const navigate = useNavigate();
+  const [, setMockMode] = useRecoilState(isMockModeState);
 
   const prefillPassword =
     process.env.NODE_ENV === 'development' ? 'applecar2025' : '';
@@ -60,19 +62,22 @@ export function PasswordLogin() {
       },
     );
 
-    if (response.ok) {
-      const { loginToken } = await response.json();
-      if (!loginToken) {
-        // TODO Display error message
-        return;
-      }
-      await getTokensFromLoginToken(loginToken.token);
-      navigate('/');
+    if (!response.ok) {
+      const errorData = await response.json();
+      setFormError(errorData.message);
       return;
     }
-    const errorData = await response.json();
-    setFormError(errorData.message);
-  }, [authFlowUserEmail, internalPassword, navigate]);
+    const { loginToken } = await response.json();
+
+    if (!loginToken) {
+      return;
+    }
+
+    await getTokensFromLoginToken(loginToken.token);
+    setMockMode(false);
+
+    navigate('/');
+  }, [authFlowUserEmail, internalPassword, navigate, setMockMode]);
 
   useHotkeys(
     'enter',

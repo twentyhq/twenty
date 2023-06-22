@@ -10,9 +10,9 @@ import { HorizontalSeparator } from '@/auth/components/ui/HorizontalSeparator';
 import { Logo } from '@/auth/components/ui/Logo';
 import { Modal } from '@/auth/components/ui/Modal';
 import { Title } from '@/auth/components/ui/Title';
-import { useMockData } from '@/auth/hooks/useMockData';
 import { hasAccessToken } from '@/auth/services/AuthService';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
+import { isMockModeState } from '@/auth/states/isMockModeState';
 import { PrimaryButton } from '@/ui/components/buttons/PrimaryButton';
 import { SecondaryButton } from '@/ui/components/buttons/SecondaryButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
@@ -28,17 +28,19 @@ const StyledContentContainer = styled.div`
 export function Index() {
   const navigate = useNavigate();
   const theme = useTheme();
-  useMockData();
+  const [, setMockMode] = useRecoilState(isMockModeState);
 
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
   );
 
   useEffect(() => {
+    setMockMode(true);
+
     if (hasAccessToken()) {
       navigate('/');
     }
-  }, [navigate]);
+  }, [navigate, setMockMode]);
 
   const onGoogleLoginClick = useCallback(() => {
     window.location.href = process.env.REACT_APP_AUTH_URL + '/google' || '';
