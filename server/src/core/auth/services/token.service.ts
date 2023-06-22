@@ -25,10 +25,9 @@ export class TokenService {
   ) {}
 
   async generateAccessToken(userId: string): Promise<TokenEntity> {
-    const expires = this.configService.get<string>('ACCESS_TOKEN_EXPIRES_IN');
-    assert(expires, '', InternalServerErrorException);
-    const expiresIn = ms(expires);
-    const expiresAt = addMilliseconds(new Date().getTime(), expiresIn);
+    const expiresIn = this.configService.get<string>('ACCESS_TOKEN_EXPIRES_IN');
+    assert(expiresIn, '', InternalServerErrorException);
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     const user = await this.prismaService.user.findUnique({
       where: { id: userId },
@@ -58,10 +57,11 @@ export class TokenService {
 
   async generateRefreshToken(userId: string): Promise<TokenEntity> {
     const secret = this.configService.get('REFRESH_TOKEN_SECRET');
-    const expires = this.configService.get<string>('REFRESH_TOKEN_EXPIRES_IN');
-    assert(expires, '', InternalServerErrorException);
-    const expiresIn = ms(expires);
-    const expiresAt = addMilliseconds(new Date().getTime(), expiresIn);
+    const expiresIn = this.configService.get<string>(
+      'REFRESH_TOKEN_EXPIRES_IN',
+    );
+    assert(expiresIn, '', InternalServerErrorException);
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     const refreshTokenPayload = {
       userId,
@@ -88,10 +88,9 @@ export class TokenService {
 
   async generateLoginToken(email: string): Promise<TokenEntity> {
     const secret = this.configService.get('LOGIN_TOKEN_SECRET');
-    const expires = this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN');
-    assert(expires, '', InternalServerErrorException);
-    const expiresIn = ms(expires);
-    const expiresAt = addMilliseconds(new Date().getTime(), expiresIn);
+    const expiresIn = this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN');
+    assert(expiresIn, '', InternalServerErrorException);
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
     const jwtPayload = {
       sub: email,
     };
