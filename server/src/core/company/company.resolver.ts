@@ -15,6 +15,10 @@ import { DeleteManyGuard } from '../../guards/delete-many.guard';
 import { CreateOneGuard } from '../../guards/create-one.guard';
 import { CompanyService } from './company.service';
 import { prepareFindManyArgs } from 'src/utils/prepare-find-many';
+import {
+  PrismaSelect,
+  PrismaSelector,
+} from 'src/decorators/prisma-select.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Company)
@@ -25,12 +29,17 @@ export class CompanyResolver {
   async findManyCompany(
     @Args() args: FindManyCompanyArgs,
     @AuthWorkspace() workspace: Workspace,
-  ) {
+    @PrismaSelector({ modelName: 'Company' })
+    prismaSelect: PrismaSelect<'Company'>,
+  ): Promise<Partial<Company>[]> {
     const preparedArgs = prepareFindManyArgs<FindManyCompanyArgs>(
       args,
       workspace,
     );
-    return this.companyService.findMany(preparedArgs);
+    return this.companyService.findMany({
+      ...preparedArgs,
+      select: prismaSelect.value,
+    });
   }
 
   @UseGuards(UpdateOneGuard)
@@ -39,14 +48,17 @@ export class CompanyResolver {
   })
   async updateOneCompany(
     @Args() args: UpdateOneCompanyArgs,
-  ): Promise<Company | null> {
+    @PrismaSelector({ modelName: 'Company' })
+    prismaSelect: PrismaSelect<'Company'>,
+  ): Promise<Partial<Company> | null> {
     if (!args.data.accountOwner?.connect?.id) {
       args.data.accountOwner = { disconnect: true };
     }
 
     return this.companyService.update({
       ...args,
-    } satisfies UpdateOneCompanyArgs as Prisma.CompanyUpdateArgs);
+      select: prismaSelect.value,
+    } as Prisma.CompanyUpdateArgs);
   }
 
   @UseGuards(DeleteManyGuard)
@@ -68,12 +80,15 @@ export class CompanyResolver {
   async createOneCompany(
     @Args() args: CreateOneCompanyArgs,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<Company> {
+    @PrismaSelector({ modelName: 'Company' })
+    prismaSelect: PrismaSelect<'Company'>,
+  ): Promise<Partial<Company>> {
     return this.companyService.create({
       data: {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-    } satisfies CreateOneCompanyArgs as Prisma.CompanyCreateArgs);
+      select: prismaSelect.value,
+    } as Prisma.CompanyCreateArgs);
   }
 }
