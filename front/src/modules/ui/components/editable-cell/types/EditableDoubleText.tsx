@@ -27,7 +27,7 @@ const StyledContainer = styled.div`
 
 const StyledEditInplaceInput = styled.input`
   height: 18px;
-  margin: 0px ${(props) => props.theme.spacing(2)};
+  margin: 0;
   width: 45%;
 
   ${textInputStyle}
