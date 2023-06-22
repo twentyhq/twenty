@@ -29,6 +29,10 @@ const StyledButtonContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(7)};
 `;
 
+const StyledErrorContainer = styled.div`
+  color: ${({ theme }) => theme.red};
+`;
+
 export function PasswordLogin() {
   const navigate = useNavigate();
 
@@ -114,7 +118,9 @@ export function PasswordLogin() {
               </PrimaryButton>
             </StyledButtonContainer>
           </StyledInputContainer>
-          {formError && <p style={{ color: 'red' }}>{formError}</p>}
+          {formError && (
+            <StyledErrorContainer>{formError}</StyledErrorContainer>
+          )}
         </StyledContentContainer>
       </Modal>
     </>
