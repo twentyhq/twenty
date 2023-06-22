@@ -41,7 +41,7 @@ const StyledLogo = styled.div<StyledLogoProps>`
 const StyledName = styled.div`
   color: ${(props) => props.theme.text80};
   font-family: 'Inter';
-  font-size: ${(props) => props.theme.fontSizeLarge};
+  font-size: ${(props) => props.theme.fontSizeMedium};
   font-weight: 500;
   margin-left: ${(props) => props.theme.spacing(1)};
 `;

@@ -19,7 +19,7 @@ type StyledEditModeProps = {
 
 // TODO: refactor
 const StyledEditInplaceInput = styled.input<StyledEditModeProps>`
-  margin: 0px ${(props) => props.theme.spacing(2)};
+  margin: 0;
   width: 100%;
   ${textInputStyle}
 `;

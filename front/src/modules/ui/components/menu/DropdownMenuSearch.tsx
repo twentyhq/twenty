@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { textInputStyle } from '@/ui/layout/styles/themes';
 
 export const DropdownMenuSearchContainer = styled.div`
-  --horizontal-padding: ${(props) => props.theme.spacing(2)};
   --vertical-padding: ${(props) => props.theme.spacing(1)};
 
   align-items: center;
@@ -13,9 +12,9 @@ export const DropdownMenuSearchContainer = styled.div`
   display: flex;
   flex-direction: row;
   height: calc(36px - 2 * var(--vertical-padding));
-  padding: var(--vertical-padding) var(--horizontal-padding);
+  padding: var(--vertical-padding) 0;
 
-  width: calc(100% - 2 * var(--horizontal-padding));
+  width: calc(100%);
 `;
 
 const StyledEditModeSearchInput = styled.input`

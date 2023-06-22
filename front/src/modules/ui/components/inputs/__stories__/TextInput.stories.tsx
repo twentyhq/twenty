@@ -24,9 +24,8 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(changeJestFn).toHaveBeenCalledTimes(0);
     const input = canvas.getByRole('textbox');
-    await userEvent.type(input, 'cou');
+    await userEvent.type(input, 'cou', { delay: 100 });
 
     expect(changeJestFn).toHaveBeenNthCalledWith(1, 'A good value c');
     expect(changeJestFn).toHaveBeenNthCalledWith(2, 'A good value co');

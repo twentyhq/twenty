@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
@@ -6,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   CompaniesSelectedSortType,
   defaultOrderBy,
+  GET_COMPANIES,
   useCompaniesQuery,
 } from '@/companies/services';
 import {
@@ -67,7 +69,10 @@ export function Companies() {
       createdAt: new Date().toISOString(),
     };
 
-    await insertCompany({ variables: newCompany });
+    await insertCompany({
+      variables: newCompany,
+      refetchQueries: [getOperationName(GET_COMPANIES) ?? ''],
+    });
   }
 
   const companiesColumns = useCompaniesColumns();
