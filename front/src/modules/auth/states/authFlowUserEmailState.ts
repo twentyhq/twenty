@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-export const authFlowUserEmailState = atom<string>({
+export const authFlowUserEmailState = atom({
   key: 'authFlowUserEmailState',
-  default: '',
+  default: process.env.NODE_ENV === 'development' ? 'tim@apple.dev' : '',
 });

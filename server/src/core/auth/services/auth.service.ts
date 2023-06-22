@@ -60,15 +60,15 @@ export class AuthService {
       },
     });
 
-    assert(user, "This user doens't exist", NotFoundException);
-    assert(user.passwordHash, 'Something wrong happened', ForbiddenException);
+    assert(user, "This user doesn't exist", NotFoundException);
+    assert(user.passwordHash, 'Incorrect login method', ForbiddenException);
 
     const isValid = await compareHash(
       challengeInput.password,
       user.passwordHash,
     );
 
-    assert(isValid, 'Something wrong happened', ForbiddenException);
+    assert(isValid, 'Wrong password', ForbiddenException);
 
     return user;
   }
@@ -80,7 +80,7 @@ export class AuthService {
       },
     });
 
-    assert(data, "This user doens't exist", NotFoundException);
+    assert(data, "This user doesn't exist", NotFoundException);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash: _, ...user } = data;

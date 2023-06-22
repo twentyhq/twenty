@@ -29,13 +29,21 @@ const StyledButtonContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(7)};
 `;
 
+const StyledErrorContainer = styled.div`
+  color: ${({ theme }) => theme.red};
+`;
+
 export function PasswordLogin() {
   const navigate = useNavigate();
+
+  const prefillPassword =
+    process.env.NODE_ENV === 'development' ? 'applecar2025' : '';
+
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
   );
-
-  const [internalPassword, setInternalPassword] = useState('');
+  const [internalPassword, setInternalPassword] = useState(prefillPassword);
+  const [formError, setFormError] = useState('');
 
   const userLogin = useCallback(async () => {
     const response = await fetch(
@@ -60,7 +68,10 @@ export function PasswordLogin() {
       }
       await getTokensFromLoginToken(loginToken.token);
       navigate('/');
+      return;
     }
+    const errorData = await response.json();
+    setFormError(errorData.message);
   }, [authFlowUserEmail, internalPassword, navigate]);
 
   useHotkeys(
@@ -107,6 +118,9 @@ export function PasswordLogin() {
               </PrimaryButton>
             </StyledButtonContainer>
           </StyledInputContainer>
+          {formError && (
+            <StyledErrorContainer>{formError}</StyledErrorContainer>
+          )}
         </StyledContentContainer>
       </Modal>
     </>
