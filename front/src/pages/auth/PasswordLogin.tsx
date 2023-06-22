@@ -36,6 +36,7 @@ export function PasswordLogin() {
   );
 
   const [internalPassword, setInternalPassword] = useState('');
+  const [formError, setFormError] = useState('');
 
   const userLogin = useCallback(async () => {
     const response = await fetch(
@@ -60,7 +61,10 @@ export function PasswordLogin() {
       }
       await getTokensFromLoginToken(loginToken.token);
       navigate('/');
+      return;
     }
+    const errorData = await response.json();
+    setFormError(errorData.message);
   }, [authFlowUserEmail, internalPassword, navigate]);
 
   useHotkeys(
@@ -107,6 +111,7 @@ export function PasswordLogin() {
               </PrimaryButton>
             </StyledButtonContainer>
           </StyledInputContainer>
+          {formError && <p style={{ color: 'red' }}>{formError}</p>}
         </StyledContentContainer>
       </Modal>
     </>
