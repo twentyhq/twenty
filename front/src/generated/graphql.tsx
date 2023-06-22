@@ -1626,7 +1626,9 @@ export type DeleteCompaniesMutationVariables = Exact<{
 
 export type DeleteCompaniesMutation = { __typename?: 'Mutation', deleteManyCompany: { __typename?: 'AffectedRows', count: number } };
 
-export type GetPipelinesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetPipelinesQueryVariables = Exact<{
+  where?: InputMaybe<PipelineWhereInput>;
+}>;
 
 
 export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string }> | null }> | null }> };
@@ -1733,7 +1735,7 @@ export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typen
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string }> };
+export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string }> };
 
 
 export const CreateCommentDocument = gql`
@@ -2220,8 +2222,8 @@ export type DeleteCompaniesMutationHookResult = ReturnType<typeof useDeleteCompa
 export type DeleteCompaniesMutationResult = Apollo.MutationResult<DeleteCompaniesMutation>;
 export type DeleteCompaniesMutationOptions = Apollo.BaseMutationOptions<DeleteCompaniesMutation, DeleteCompaniesMutationVariables>;
 export const GetPipelinesDocument = gql`
-    query GetPipelines {
-  findManyPipeline {
+    query GetPipelines($where: PipelineWhereInput) {
+  findManyPipeline(where: $where) {
     id
     name
     pipelineProgressableType
@@ -2251,6 +2253,7 @@ export const GetPipelinesDocument = gql`
  * @example
  * const { data, loading, error } = useGetPipelinesQuery({
  *   variables: {
+ *      where: // value for 'where'
  *   },
  * });
  */
@@ -2729,9 +2732,11 @@ export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQ
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
 export const GetUsersDocument = gql`
-    query getUsers {
+    query GetUsers {
   findManyUser {
     id
+    email
+    displayName
   }
 }
     `;

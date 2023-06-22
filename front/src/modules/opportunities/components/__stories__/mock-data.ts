@@ -1,14 +1,13 @@
-import { mockedCompaniesData } from '../../../../testing/mock-data/companies';
-import { mockedPeopleData } from '../../../../testing/mock-data/people';
-import { Column, Items } from '../../../ui/components/board/Board';
+import { Column } from '@/ui/components/board/Board';
+import { mockedCompaniesData } from '~/testing/mock-data/companies';
 
-export const items: Items = {
+import { CompanyProgressDict } from '../Board';
+
+export const items: CompanyProgressDict = {
   'item-1': mockedCompaniesData[0],
   'item-2': mockedCompaniesData[1],
   'item-3': mockedCompaniesData[2],
-  'item-4': mockedPeopleData[0],
-  'item-5': mockedPeopleData[1],
-  'item-6': mockedPeopleData[2],
+  'item-4': mockedCompaniesData[3],
 };
 
 for (let i = 7; i <= 20; i++) {

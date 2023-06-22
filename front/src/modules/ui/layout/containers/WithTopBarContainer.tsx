@@ -27,7 +27,7 @@ export function WithTopBarContainer({
   return (
     <StyledContainer>
       <TopBar title={title} icon={icon} onAddButtonClick={onAddButtonClick} />
-      <ContentContainer topMargin={TOP_BAR_MIN_HEIGHT}>
+      <ContentContainer topMargin={TOP_BAR_MIN_HEIGHT + 16 + 16}>
         {children}
       </ContentContainer>
     </StyledContainer>

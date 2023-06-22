@@ -1,86 +1,62 @@
 import {
-  GetCompaniesQuery,
-  GetPeopleQuery,
+  Company,
   useGetCompaniesQuery,
-  useGetPeopleQuery,
   useGetPipelinesQuery,
 } from '../../../generated/graphql';
-import { BoardItemKey, Column, Items } from '../../ui/components/board/Board';
+import { Column } from '../../ui/components/board/Board';
 
-type Entities = GetCompaniesQuery | GetPeopleQuery;
+type Item = Pick<Company, 'id' | 'name' | 'createdAt' | 'domainName'>;
+type Items = { [key: string]: Item };
 
-function isGetCompaniesQuery(
-  entities: Entities,
-): entities is GetCompaniesQuery {
-  return (entities as GetCompaniesQuery).companies !== undefined;
-}
+export function useBoard(pipelineId: string) {
+  const pipelines = useGetPipelinesQuery({
+    variables: { where: { id: { equals: pipelineId } } },
+  });
+  const pipelineStages = pipelines.data?.findManyPipeline[0]?.pipelineStages;
 
-function isGetPeopleQuery(entities: Entities): entities is GetPeopleQuery {
-  return (entities as GetPeopleQuery).people !== undefined;
-}
-
-export const useBoard = () => {
-  const pipelines = useGetPipelinesQuery();
-  const pipelineStages = pipelines.data?.findManyPipeline[0].pipelineStages;
   const initialBoard: Column[] =
     pipelineStages?.map((pipelineStage) => ({
       id: pipelineStage.id,
       title: pipelineStage.name,
       colorCode: pipelineStage.color,
       itemKeys:
-        pipelineStage.pipelineProgresses?.map(
-          (item) => item.id as BoardItemKey,
-        ) || [],
+        pipelineStage.pipelineProgresses?.map((item) => item.id as string) ||
+        [],
     })) || [];
 
-  const pipelineEntityIds = pipelineStages?.reduce(
+  const pipelineProgresses = pipelineStages?.reduce(
     (acc, pipelineStage) => [
       ...acc,
       ...(pipelineStage.pipelineProgresses?.map((item) => ({
-        entityId: item?.progressableId,
+        progressableId: item?.progressableId,
         pipelineProgressId: item?.id,
       })) || []),
     ],
-    [] as { entityId: string; pipelineProgressId: string }[],
+    [] as { progressableId: string; pipelineProgressId: string }[],
   );
 
-  const pipelineProgressableIdsMapper = (pipelineProgressId: string) => {
-    const entityId = pipelineEntityIds?.find(
-      (item) => item.pipelineProgressId === pipelineProgressId,
-    )?.entityId;
-
-    return entityId;
-  };
-
-  const pipelineEntityType =
-    pipelines.data?.findManyPipeline[0].pipelineProgressableType;
-
-  const query =
-    pipelineEntityType === 'Person' ? useGetPeopleQuery : useGetCompaniesQuery;
-
-  const entitiesQueryResult = query({
+  const entitiesQueryResult = useGetCompaniesQuery({
     variables: {
-      where: { id: { in: pipelineEntityIds?.map((item) => item.entityId) } },
+      where: {
+        id: { in: pipelineProgresses?.map((item) => item.progressableId) },
+      },
     },
   });
 
-  const indexByIdReducer = (acc: Items, entity: { id: string }) => ({
+  const indexByIdReducer = (acc: Items, entity: Item) => ({
     ...acc,
     [entity.id]: entity,
   });
 
-  const entityItems = entitiesQueryResult.data
-    ? isGetCompaniesQuery(entitiesQueryResult.data)
-      ? entitiesQueryResult.data.companies.reduce(indexByIdReducer, {} as Items)
-      : isGetPeopleQuery(entitiesQueryResult.data)
-      ? entitiesQueryResult.data.people.reduce(indexByIdReducer, {} as Items)
-      : undefined
-    : undefined;
+  const companiesDict = entitiesQueryResult.data?.companies.reduce(
+    indexByIdReducer,
+    {} as Items,
+  );
 
-  const items = pipelineEntityIds?.reduce((acc, item) => {
-    const entityId = pipelineProgressableIdsMapper(item.pipelineProgressId);
-    if (entityId) {
-      acc[item.pipelineProgressId] = entityItems?.[entityId];
+  const items = pipelineProgresses?.reduce((acc, pipelineProgress) => {
+    if (companiesDict?.[pipelineProgress.progressableId]) {
+      acc[pipelineProgress.pipelineProgressId] =
+        companiesDict[pipelineProgress.progressableId];
     }
     return acc;
   }, {} as Items);
@@ -90,7 +66,5 @@ export const useBoard = () => {
     items,
     loading: pipelines.loading || entitiesQueryResult.loading,
     error: pipelines.error || entitiesQueryResult.error,
-    pipelineId: pipelines.data?.findManyPipeline[0].id,
-    pipelineEntityType,
   };
-};
+}

@@ -32,6 +32,8 @@ const lightThemeSpecific = {
   blueLowTransparency: 'rgba(25, 97, 237, 0.32)',
   boxShadow: '0px 2px 4px 0px #0F0F0F0A',
   modalBoxShadow: '0px 3px 12px rgba(0, 0, 0, 0.09)',
+  lightBoxShadow:
+    '0px 2px 4px 0px rgba(0, 0, 0, 0.04), 0px 0px 4px 0px rgba(0, 0, 0, 0.08)',
 };
 
 const darkThemeSpecific: typeof lightThemeSpecific = {
@@ -48,6 +50,8 @@ const darkThemeSpecific: typeof lightThemeSpecific = {
   blueLowTransparency: 'rgba(104, 149, 236, 0.32)',
   boxShadow: '0px 2px 4px 0px #0F0F0F0A', // TODO change color for dark theme
   modalBoxShadow: '0px 3px 12px rgba(0, 0, 0, 0.09)', // TODO change color for dark theme
+  lightBoxShadow:
+    '0px 2px 4px 0px rgba(0, 0, 0, 0.04), 0px 0px 4px 0px rgba(0, 0, 0, 0.08)',
 };
 
 export const lightTheme = { ...commonTheme, ...lightThemeSpecific };
