@@ -5,37 +5,33 @@ export const StyledBoard = styled.div`
   border-radius: ${({ theme }) => theme.spacing(2)};
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: calc(100%);
   overflow-x: auto;
   width: 100%;
 `;
 
-export type BoardItemKey = string;
-export type Item = any & { id: string };
-export interface Items {
-  [key: string]: Item;
-}
 export interface Column {
   id: string;
   title: string;
   colorCode?: string;
-  itemKeys: BoardItemKey[];
+  itemKeys: string[];
 }
 
-export const getOptimisticlyUpdatedBoard = (
+export function getOptimisticlyUpdatedBoard(
   board: Column[],
   result: DropResult,
-) => {
+) {
+  const newBoard = JSON.parse(JSON.stringify(board));
   const { destination, source } = result;
   if (!destination) return;
-  const sourceColumnIndex = board.findIndex(
-    (column) => column.id === source.droppableId,
+  const sourceColumnIndex = newBoard.findIndex(
+    (column: Column) => column.id === source.droppableId,
   );
-  const sourceColumn = board[sourceColumnIndex];
-  const destinationColumnIndex = board.findIndex(
-    (column) => column.id === destination.droppableId,
+  const sourceColumn = newBoard[sourceColumnIndex];
+  const destinationColumnIndex = newBoard.findIndex(
+    (column: Column) => column.id === destination.droppableId,
   );
-  const destinationColumn = board[destinationColumnIndex];
+  const destinationColumn = newBoard[destinationColumnIndex];
   if (!destinationColumn || !sourceColumn) return;
   const sourceItems = sourceColumn.itemKeys;
   const destinationItems = destinationColumn.itemKeys;
@@ -53,8 +49,7 @@ export const getOptimisticlyUpdatedBoard = (
     itemKeys: destinationItems,
   };
 
-  const newBoard = [...board];
   newBoard.splice(sourceColumnIndex, 1, newSourceColumn);
   newBoard.splice(destinationColumnIndex, 1, newDestinationColumn);
   return newBoard;
-};
+}

@@ -21,6 +21,16 @@ export const GET_CURRENT_USER = gql`
   }
 `;
 
+export const GET_USERS = gql`
+  query GetUsers {
+    findManyUser {
+      id
+      email
+      displayName
+    }
+  }
+`;
+
 export function useGetCurrentUserQuery(userId: string | null) {
   return generatedUseGetCurrentUserQuery({
     variables: {

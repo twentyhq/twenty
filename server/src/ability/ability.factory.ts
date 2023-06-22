@@ -89,6 +89,7 @@ export class AbilityFactory {
 
     // PipelineProgress
     can(AbilityAction.Read, 'PipelineProgress', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'PipelineProgress');
     can(AbilityAction.Update, 'PipelineProgress', {
       workspaceId: workspace.id,
     });

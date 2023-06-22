@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -22,19 +21,17 @@ const StyledButton = styled.button`
   }
 `;
 
-export const NewButton = ({
-  onClick,
-}: {
-  onClick?: (...args: any[]) => void;
-}) => {
+type OwnProps = {
+  onClick: () => void;
+};
+
+export function NewButton({ onClick }: OwnProps) {
   const theme = useTheme();
-  const onInnerClick = useCallback(() => {
-    onClick && onClick({ id: 'twenty-aaffcfbd-f86b-419f-b794-02319abe8637' });
-  }, [onClick]);
+
   return (
-    <StyledButton onClick={onInnerClick}>
+    <StyledButton onClick={onClick}>
       <IconPlus size={theme.iconSizeMedium} />
       New
     </StyledButton>
   );
-};
+}

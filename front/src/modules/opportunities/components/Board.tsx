@@ -1,60 +1,90 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import styled from '@emotion/styled';
 import {
   DragDropContext,
   Draggable,
   Droppable,
+  DroppableProvided,
   OnDragEndResponder,
 } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
+import { useRecoilState } from 'recoil';
+
+import { BoardColumn } from '@/ui/components/board/BoardColumn';
+import { Company } from '~/generated/graphql';
 
 import {
-  BoardItemKey,
   Column,
   getOptimisticlyUpdatedBoard,
-  Item,
-  Items,
   StyledBoard,
 } from '../../ui/components/board/Board';
-import {
-  ItemsContainer,
-  ScrollableColumn,
-  StyledColumn,
-  StyledColumnTitle,
-} from '../../ui/components/board/BoardColumn';
-import { BoardItem } from '../../ui/components/board/BoardItem';
-import { NewButton } from '../../ui/components/board/BoardNewButton';
+import { boardColumnsState } from '../states/boardColumnsState';
+import { boardItemsState } from '../states/boardItemsState';
 
-import { BoardCard } from './BoardCard';
+import { CompanyBoardCard } from './CompanyBoardCard';
+import { NewButton } from './NewButton';
 
-type BoardProps = {
-  columns: Omit<Column, 'itemKeys'>[];
-  initialBoard: Column[];
-  items: Items;
-  onUpdate?: (itemKey: BoardItemKey, columnId: Column['id']) => Promise<void>;
-  onClickNew?: (
-    columnId: Column['id'],
-    newItem: Partial<Item> & { id: string },
-  ) => void;
+export type CompanyProgress = Pick<
+  Company,
+  'id' | 'name' | 'domainName' | 'createdAt'
+>;
+export type CompanyProgressDict = {
+  [key: string]: CompanyProgress;
 };
 
-export const Board = ({
+type BoardProps = {
+  pipelineId: string;
+  columns: Omit<Column, 'itemKeys'>[];
+  initialBoard: Column[];
+  initialItems: CompanyProgressDict;
+  onUpdate?: (itemKey: string, columnId: Column['id']) => Promise<void>;
+};
+
+const StyledPlaceholder = styled.div`
+  min-height: 1px;
+`;
+
+const BoardColumnCardsContainer = ({
+  children,
+  droppableProvided,
+}: {
+  children: React.ReactNode;
+  droppableProvided: DroppableProvided;
+}) => {
+  return (
+    <div
+      ref={droppableProvided?.innerRef}
+      {...droppableProvided?.droppableProps}
+    >
+      {children}
+      <StyledPlaceholder>{droppableProvided?.placeholder}</StyledPlaceholder>
+    </div>
+  );
+};
+
+export function Board({
   columns,
   initialBoard,
-  items,
+  initialItems,
   onUpdate,
-  onClickNew,
-}: BoardProps) => {
-  const [board, setBoard] = useState<Column[]>(initialBoard);
+  pipelineId,
+}: BoardProps) {
+  const [board, setBoard] = useRecoilState(boardColumnsState);
+  const [items, setItems] = useRecoilState(boardItemsState);
+  const [isInitialBoardLoaded, setIsInitialBoardLoaded] = useState(false);
 
-  const onClickFunctions = useMemo<
-    Record<Column['id'], (newItem: Partial<Item> & { id: string }) => void>
-  >(() => {
-    return board.reduce((acc, column) => {
-      acc[column.id] = (newItem: Partial<Item> & { id: string }) => {
-        onClickNew && onClickNew(column.id, newItem);
-      };
-      return acc;
-    }, {} as Record<Column['id'], (newItem: Partial<Item> & { id: string }) => void>);
-  }, [board, onClickNew]);
+  useEffect(() => {
+    if (Object.keys(initialItems).length === 0 || isInitialBoardLoaded) return;
+    setBoard(initialBoard);
+    setItems(initialItems);
+    setIsInitialBoardLoaded(true);
+  }, [
+    initialBoard,
+    setBoard,
+    initialItems,
+    setItems,
+    setIsInitialBoardLoaded,
+    isInitialBoardLoaded,
+  ]);
 
   const onDragEnd: OnDragEndResponder = useCallback(
     async (result) => {
@@ -72,42 +102,48 @@ export const Board = ({
         console.error(e);
       }
     },
-    [board, onUpdate],
+    [board, onUpdate, setBoard],
   );
 
-  return (
+  return board.length > 0 ? (
     <StyledBoard>
       <DragDropContext onDragEnd={onDragEnd}>
         {columns.map((column, columnIndex) => (
           <Droppable key={column.id} droppableId={column.id}>
             {(droppableProvided) => (
-              <StyledColumn>
-                <StyledColumnTitle color={column.colorCode}>
-                  • {column.title}
-                </StyledColumnTitle>
-                <ScrollableColumn>
-                  <ItemsContainer droppableProvided={droppableProvided}>
-                    {board[columnIndex].itemKeys.map((itemKey, index) => (
-                      <Draggable
-                        key={itemKey}
-                        draggableId={itemKey}
-                        index={index}
-                      >
-                        {(draggableProvided) => (
-                          <BoardItem draggableProvided={draggableProvided}>
-                            <BoardCard item={items[itemKey]} />
-                          </BoardItem>
-                        )}
-                      </Draggable>
-                    ))}
-                  </ItemsContainer>
-                  <NewButton onClick={onClickFunctions[column.id]} />
-                </ScrollableColumn>
-              </StyledColumn>
+              <BoardColumn title={column.title} colorCode={column.colorCode}>
+                <BoardColumnCardsContainer
+                  droppableProvided={droppableProvided}
+                >
+                  {board[columnIndex].itemKeys.map(
+                    (itemKey, index) =>
+                      items[itemKey] && (
+                        <Draggable
+                          key={itemKey}
+                          draggableId={itemKey}
+                          index={index}
+                        >
+                          {(draggableProvided) => (
+                            <div
+                              ref={draggableProvided?.innerRef}
+                              {...draggableProvided?.dragHandleProps}
+                              {...draggableProvided?.draggableProps}
+                            >
+                              <CompanyBoardCard company={items[itemKey]} />
+                            </div>
+                          )}
+                        </Draggable>
+                      ),
+                  )}
+                </BoardColumnCardsContainer>
+                <NewButton pipelineId={pipelineId} columnId={column.id} />
+              </BoardColumn>
             )}
           </Droppable>
         ))}
       </DragDropContext>
     </StyledBoard>
+  ) : (
+    <></>
   );
-};
+}
