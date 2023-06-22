@@ -15,6 +15,10 @@ import { DeleteManyGuard } from '../../guards/delete-many.guard';
 import { CreateOneGuard } from '../../guards/create-one.guard';
 import { PersonService } from './person.service';
 import { prepareFindManyArgs } from 'src/utils/prepare-find-many';
+import {
+  PrismaSelect,
+  PrismaSelector,
+} from 'src/decorators/prisma-select.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Person)
@@ -27,13 +31,17 @@ export class PersonResolver {
   async findManyPerson(
     @Args() args: FindManyPersonArgs,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<Person[]> {
+    @PrismaSelector({ modelName: 'Person' })
+    prismaSelect: PrismaSelect<'Person'>,
+  ): Promise<Partial<Person>[]> {
     const preparedArgs = prepareFindManyArgs<FindManyPersonArgs>(
       args,
       workspace,
     );
+
     return this.personService.findMany({
       ...preparedArgs,
+      select: prismaSelect.value,
     });
   }
 
@@ -43,14 +51,17 @@ export class PersonResolver {
   })
   async updateOnePerson(
     @Args() args: UpdateOnePersonArgs,
-  ): Promise<Person | null> {
+    @PrismaSelector({ modelName: 'Person' })
+    prismaSelect: PrismaSelect<'Person'>,
+  ): Promise<Partial<Person> | null> {
     if (!args.data.company?.connect?.id) {
       args.data.company = { disconnect: true };
     }
 
     return this.personService.update({
       ...args,
-    } satisfies UpdateOnePersonArgs as Prisma.PersonUpdateArgs);
+      select: prismaSelect.value,
+    } as Prisma.PersonUpdateArgs);
   }
 
   @UseGuards(DeleteManyGuard)
@@ -72,12 +83,15 @@ export class PersonResolver {
   async createOnePerson(
     @Args() args: CreateOnePersonArgs,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<Person> {
+    @PrismaSelector({ modelName: 'Person' })
+    prismaSelect: PrismaSelect<'Person'>,
+  ): Promise<Partial<Person>> {
     return this.personService.create({
       data: {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-    } satisfies CreateOnePersonArgs as Prisma.PersonCreateArgs);
+      select: prismaSelect.value,
+    } as Prisma.PersonCreateArgs);
   }
 }

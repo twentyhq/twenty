@@ -1,4 +1,4 @@
-import { PureAbility, AbilityBuilder, subject } from '@casl/ability';
+import { PureAbility, AbilityBuilder } from '@casl/ability';
 import { createPrismaAbility, PrismaQuery, Subjects } from '@casl/prisma';
 import { Injectable } from '@nestjs/common';
 import {

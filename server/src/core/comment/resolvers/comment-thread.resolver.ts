@@ -11,6 +11,10 @@ import { CommentThreadService } from '../services/comment-thread.service';
 import { prepareFindManyArgs } from 'src/utils/prepare-find-many';
 import { UpdateOneCommentThreadArgs } from 'src/core/@generated/comment-thread/update-one-comment-thread.args';
 import { Prisma } from '@prisma/client';
+import {
+  PrismaSelector,
+  PrismaSelect,
+} from 'src/decorators/prisma-select.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)
@@ -24,7 +28,9 @@ export class CommentThreadResolver {
   async createOneCommentThread(
     @Args() args: CreateOneCommentThreadArgs,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<CommentThread> {
+    @PrismaSelector({ modelName: 'CommentThread' })
+    prismaSelect: PrismaSelect<'CommentThread'>,
+  ): Promise<Partial<CommentThread>> {
     const newCommentData = args.data.comments?.createMany?.data
       ? args.data.comments?.createMany?.data?.map((comment) => ({
           ...comment,
@@ -38,6 +44,7 @@ export class CommentThreadResolver {
         ...{ comments: { createMany: { data: newCommentData } } },
         ...{ workspace: { connect: { id: workspace.id } } },
       },
+      select: prismaSelect.value,
     });
 
     return createdCommentThread;
@@ -48,10 +55,13 @@ export class CommentThreadResolver {
   })
   async updateOneCommentThread(
     @Args() args: UpdateOneCommentThreadArgs,
-  ): Promise<CommentThread> {
-    const updatedCommentThread = await this.commentThreadService.update(
-      args satisfies UpdateOneCommentThreadArgs as Prisma.CommentThreadUpdateArgs,
-    );
+    @PrismaSelector({ modelName: 'CommentThread' })
+    prismaSelect: PrismaSelect<'CommentThread'>,
+  ): Promise<Partial<CommentThread>> {
+    const updatedCommentThread = await this.commentThreadService.update({
+      ...args,
+      select: prismaSelect.value,
+    } as Prisma.CommentThreadUpdateArgs);
 
     return updatedCommentThread;
   }
@@ -60,13 +70,18 @@ export class CommentThreadResolver {
   async findManyCommentThreads(
     @Args() args: FindManyCommentThreadArgs,
     @AuthWorkspace() workspace: Workspace,
-  ) {
+    @PrismaSelector({ modelName: 'CommentThread' })
+    prismaSelect: PrismaSelect<'CommentThread'>,
+  ): Promise<Partial<CommentThread>[]> {
     const preparedArgs = prepareFindManyArgs<FindManyCommentThreadArgs>(
       args,
       workspace,
     );
 
-    const result = await this.commentThreadService.findMany(preparedArgs);
+    const result = await this.commentThreadService.findMany({
+      ...preparedArgs,
+      select: prismaSelect.value,
+    });
 
     return result;
   }

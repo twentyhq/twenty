@@ -22,6 +22,10 @@ import {
 } from 'src/ability/handlers/pipeline-progress.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
+import {
+  PrismaSelector,
+  PrismaSelect,
+} from 'src/decorators/prisma-select.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => PipelineProgress)
@@ -36,13 +40,16 @@ export class PipelineProgressResolver {
   async findManyPipelineProgress(
     @Args() args: FindManyPipelineProgressArgs,
     @UserAbility() ability: AppAbility,
-  ) {
+    @PrismaSelector({ modelName: 'PipelineProgress' })
+    prismaSelect: PrismaSelect<'PipelineProgress'>,
+  ): Promise<Partial<PipelineProgress>[]> {
     return this.pipelineProgressService.findMany({
       ...args,
       where: {
         ...args.where,
         AND: [accessibleBy(ability).PipelineProgress],
       },
+      select: prismaSelect.value,
     });
   }
 
@@ -53,10 +60,13 @@ export class PipelineProgressResolver {
   @CheckAbilities(UpdatePipelineProgressAbilityHandler)
   async updateOnePipelineProgress(
     @Args() args: UpdateOnePipelineProgressArgs,
-  ): Promise<PipelineProgress | null> {
+    @PrismaSelector({ modelName: 'PipelineProgress' })
+    prismaSelect: PrismaSelect<'PipelineProgress'>,
+  ): Promise<Partial<PipelineProgress> | null> {
     return this.pipelineProgressService.update({
       ...args,
-    } satisfies UpdateOnePipelineProgressArgs as Prisma.PipelineProgressUpdateArgs);
+      select: prismaSelect.value,
+    } as Prisma.PipelineProgressUpdateArgs);
   }
 
   @Mutation(() => AffectedRows, {
@@ -80,12 +90,15 @@ export class PipelineProgressResolver {
   async createOnePipelineProgress(
     @Args() args: CreateOnePipelineProgressArgs,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<PipelineProgress> {
+    @PrismaSelector({ modelName: 'PipelineProgress' })
+    prismaSelect: PrismaSelect<'PipelineProgress'>,
+  ): Promise<Partial<PipelineProgress>> {
     return this.pipelineProgressService.create({
       data: {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-    } satisfies CreateOnePipelineProgressArgs as Prisma.PipelineProgressCreateArgs);
+      select: prismaSelect.value,
+    } as Prisma.PipelineProgressCreateArgs);
   }
 }

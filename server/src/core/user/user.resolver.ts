@@ -7,6 +7,10 @@ import { User } from 'src/core/@generated/user/user.model';
 import { ExceptionFilter } from 'src/filters/exception.filter';
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import {
+  PrismaSelect,
+  PrismaSelector,
+} from 'src/decorators/prisma-select.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
@@ -20,7 +24,9 @@ export class UserResolver {
   async findManyUser(
     @Args() args: FindManyUserArgs,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<User[]> {
+    @PrismaSelector({ modelName: 'User' })
+    prismaSelect: PrismaSelect<'User'>,
+  ): Promise<Partial<User>[]> {
     return await this.userService.findMany({
       ...args,
       where: {
@@ -29,6 +35,7 @@ export class UserResolver {
           is: { workspace: { is: { id: { equals: workspace.id } } } },
         },
       },
+      select: prismaSelect.value,
     });
   }
 }

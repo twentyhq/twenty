@@ -2,40 +2,28 @@ import * as TypeGraphQL from '@nestjs/graphql';
 import { CommentThread } from 'src/core/@generated/comment-thread/comment-thread.model';
 import { Comment } from 'src/core/@generated/comment/comment.model';
 import { Company } from 'src/core/@generated/company/company.model';
-import { User } from 'src/core/@generated/user/user.model';
-import { CompanyService } from './company.service';
 import { CommentThreadService } from '../comment/services/comment-thread.service';
 import { CommentService } from '../comment/services/comment.service';
+import {
+  PrismaSelect,
+  PrismaSelector,
+} from 'src/decorators/prisma-select.decorator';
 
 @TypeGraphQL.Resolver(() => Company)
 export class CompanyRelationsResolver {
   constructor(
-    private readonly companyService: CompanyService,
     private readonly commentThreadService: CommentThreadService,
     private readonly commentService: CommentService,
   ) {}
-
-  @TypeGraphQL.ResolveField(() => User, {
-    nullable: true,
-  })
-  async accountOwner(
-    @TypeGraphQL.Parent() company: Company,
-  ): Promise<User | null> {
-    return this.companyService
-      .findUniqueOrThrow({
-        where: {
-          id: company.id,
-        },
-      })
-      .accountOwner({});
-  }
 
   @TypeGraphQL.ResolveField(() => [CommentThread], {
     nullable: false,
   })
   async commentThreads(
     @TypeGraphQL.Root() company: Company,
-  ): Promise<CommentThread[]> {
+    @PrismaSelector({ modelName: 'CommentThread' })
+    prismaSelect: PrismaSelect<'CommentThread'>,
+  ): Promise<Partial<CommentThread>[]> {
     return this.commentThreadService.findMany({
       where: {
         commentThreadTargets: {
@@ -45,13 +33,18 @@ export class CompanyRelationsResolver {
           },
         },
       },
+      select: prismaSelect.value,
     });
   }
 
   @TypeGraphQL.ResolveField(() => [Comment], {
     nullable: false,
   })
-  async comments(@TypeGraphQL.Root() company: Company): Promise<Comment[]> {
+  async comments(
+    @TypeGraphQL.Root() company: Company,
+    @PrismaSelector({ modelName: 'Comment' })
+    prismaSelect: PrismaSelect<'Comment'>,
+  ): Promise<Partial<Comment>[]> {
     return this.commentService.findMany({
       where: {
         commentThread: {
@@ -63,6 +56,7 @@ export class CompanyRelationsResolver {
           },
         },
       },
+      select: prismaSelect.value,
     });
   }
 

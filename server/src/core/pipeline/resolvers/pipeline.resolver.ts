@@ -10,6 +10,10 @@ import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import { ReadPipelineAbilityHandler } from 'src/ability/handlers/pipeline.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
+import {
+  PrismaSelector,
+  PrismaSelect,
+} from 'src/decorators/prisma-select.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Pipeline)
@@ -22,13 +26,16 @@ export class PipelineResolver {
   async findManyPipeline(
     @Args() args: FindManyPipelineArgs,
     @UserAbility() ability: AppAbility,
-  ) {
+    @PrismaSelector({ modelName: 'Pipeline' })
+    prismaSelect: PrismaSelect<'Pipeline'>,
+  ): Promise<Partial<Pipeline>[]> {
     return this.pipelineService.findMany({
       ...args,
       where: {
         ...args.where,
         AND: [accessibleBy(ability).Pipeline],
       },
+      select: prismaSelect.value,
     });
   }
 }

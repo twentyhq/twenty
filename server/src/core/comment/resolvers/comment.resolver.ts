@@ -8,6 +8,10 @@ import { Comment } from '../../../core/@generated/comment/comment.model';
 import { CreateOneCommentGuard } from '../../../guards/create-one-comment.guard';
 import { Prisma } from '@prisma/client';
 import { CommentService } from '../services/comment.service';
+import {
+  PrismaSelector,
+  PrismaSelect,
+} from 'src/decorators/prisma-select.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Comment)
@@ -21,12 +25,15 @@ export class CommentResolver {
   async createOneComment(
     @Args() args: CreateOneCommentArgs,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<Comment> {
+    @PrismaSelector({ modelName: 'Comment' })
+    prismaSelect: PrismaSelect<'Comment'>,
+  ): Promise<Partial<Comment>> {
     return this.commentService.create({
       data: {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
       },
-    } satisfies CreateOneCommentArgs as Prisma.CommentCreateArgs);
+      select: prismaSelect.value,
+    } as Prisma.CommentCreateArgs);
   }
 }
