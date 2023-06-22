@@ -2,12 +2,22 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from '../ability.action';
 import { AppAbility } from '../ability.factory';
 import { IAbilityHandler } from '../interfaces/ability-handler.interface';
-import { Injectable } from '@nestjs/common';
+import {
+  ExecutionContext,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { PersonWhereInput } from 'src/core/@generated/person/person-where.input';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { assert } from 'src/utils/assert';
+import { subject } from '@casl/ability';
+
+class PersonArgs {
+  where?: PersonWhereInput;
+}
 
 @Injectable()
 export class ManagePersonAbilityHandler implements IAbilityHandler {
-  constructor(private readonly prismaService: PrismaService) {}
-
   async handle(ability: AppAbility) {
     return ability.can(AbilityAction.Manage, 'Person');
   }
@@ -29,14 +39,32 @@ export class CreatePersonAbilityHandler implements IAbilityHandler {
 
 @Injectable()
 export class UpdatePersonAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
-    return ability.can(AbilityAction.Update, 'Person');
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs<PersonArgs>();
+    const person = await this.prismaService.person.findFirst({
+      where: args.where,
+    });
+    assert(person, '', NotFoundException);
+
+    return ability.can(AbilityAction.Update, subject('Person', person));
   }
 }
 
 @Injectable()
 export class DeletePersonAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
-    return ability.can(AbilityAction.Delete, 'Person');
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs<PersonArgs>();
+    const person = await this.prismaService.person.findFirst({
+      where: args.where,
+    });
+    assert(person, '', NotFoundException);
+
+    return ability.can(AbilityAction.Delete, subject('Person', person));
   }
 }

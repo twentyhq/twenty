@@ -5,6 +5,7 @@ import { UpdateOneGuard } from 'src/guards/update-one.guard';
 import { CanActivate } from '@nestjs/common';
 import { DeleteManyGuard } from 'src/guards/delete-many.guard';
 import { CreateOneGuard } from 'src/guards/create-one.guard';
+import { AbilityFactory } from 'src/ability/ability.factory';
 
 describe('PersonResolver', () => {
   let resolver: PersonResolver;
@@ -17,6 +18,10 @@ describe('PersonResolver', () => {
         PersonResolver,
         {
           provide: PersonService,
+          useValue: {},
+        },
+        {
+          provide: AbilityFactory,
           useValue: {},
         },
       ],

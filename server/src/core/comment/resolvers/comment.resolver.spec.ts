@@ -3,6 +3,7 @@ import { CommentResolver } from './comment.resolver';
 import { CommentService } from '../services/comment.service';
 import { CreateOneCommentGuard } from 'src/guards/create-one-comment.guard';
 import { CanActivate } from '@nestjs/common';
+import { AbilityFactory } from 'src/ability/ability.factory';
 
 describe('CommentResolver', () => {
   let resolver: CommentResolver;
@@ -15,6 +16,10 @@ describe('CommentResolver', () => {
         CommentResolver,
         {
           provide: CommentService,
+          useValue: {},
+        },
+        {
+          provide: AbilityFactory,
           useValue: {},
         },
       ],

@@ -8,13 +8,22 @@ import { CreateOneCommentThreadArgs } from '../../../core/@generated/comment-thr
 import { CreateOneCommentThreadGuard } from '../../../guards/create-one-comment-thread.guard';
 import { FindManyCommentThreadArgs } from '../../../core/@generated/comment-thread/find-many-comment-thread.args';
 import { CommentThreadService } from '../services/comment-thread.service';
-import { prepareFindManyArgs } from 'src/utils/prepare-find-many';
 import { UpdateOneCommentThreadArgs } from 'src/core/@generated/comment-thread/update-one-comment-thread.args';
 import { Prisma } from '@prisma/client';
 import {
   PrismaSelector,
   PrismaSelect,
 } from 'src/decorators/prisma-select.decorator';
+import { AbilityGuard } from 'src/guards/ability.guard';
+import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
+import {
+  CreateCommentThreadAbilityHandler,
+  ReadCommentThreadAbilityHandler,
+  UpdateCommentThreadAbilityHandler,
+} from 'src/ability/handlers/comment-thread.ability-handler';
+import { UserAbility } from 'src/decorators/user-ability.decorator';
+import { AppAbility } from 'src/ability/ability.factory';
+import { accessibleBy } from '@casl/prisma';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)
@@ -25,6 +34,8 @@ export class CommentThreadResolver {
   @Mutation(() => CommentThread, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreateCommentThreadAbilityHandler)
   async createOneCommentThread(
     @Args() args: CreateOneCommentThreadArgs,
     @AuthWorkspace() workspace: Workspace,
@@ -53,6 +64,8 @@ export class CommentThreadResolver {
   @Mutation(() => CommentThread, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(UpdateCommentThreadAbilityHandler)
   async updateOneCommentThread(
     @Args() args: UpdateOneCommentThreadArgs,
     @PrismaSelector({ modelName: 'CommentThread' })
@@ -67,19 +80,20 @@ export class CommentThreadResolver {
   }
 
   @Query(() => [CommentThread])
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(ReadCommentThreadAbilityHandler)
   async findManyCommentThreads(
     @Args() args: FindManyCommentThreadArgs,
-    @AuthWorkspace() workspace: Workspace,
+    @UserAbility() ability: AppAbility,
     @PrismaSelector({ modelName: 'CommentThread' })
     prismaSelect: PrismaSelect<'CommentThread'>,
   ): Promise<Partial<CommentThread>[]> {
-    const preparedArgs = prepareFindManyArgs<FindManyCommentThreadArgs>(
-      args,
-      workspace,
-    );
-
     const result = await this.commentThreadService.findMany({
-      ...preparedArgs,
+      ...args,
+      where: {
+        ...args.where,
+        AND: [accessibleBy(ability).CommentThread],
+      },
       select: prismaSelect.value,
     });
 

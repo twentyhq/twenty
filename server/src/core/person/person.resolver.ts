@@ -14,11 +14,21 @@ import { UpdateOneGuard } from '../../guards/update-one.guard';
 import { DeleteManyGuard } from '../../guards/delete-many.guard';
 import { CreateOneGuard } from '../../guards/create-one.guard';
 import { PersonService } from './person.service';
-import { prepareFindManyArgs } from 'src/utils/prepare-find-many';
 import {
   PrismaSelect,
   PrismaSelector,
 } from 'src/decorators/prisma-select.decorator';
+import { AbilityGuard } from 'src/guards/ability.guard';
+import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
+import {
+  CreatePersonAbilityHandler,
+  DeletePersonAbilityHandler,
+  ReadPersonAbilityHandler,
+  UpdatePersonAbilityHandler,
+} from 'src/ability/handlers/person.ability-handler';
+import { UserAbility } from 'src/decorators/user-ability.decorator';
+import { AppAbility } from 'src/ability/ability.factory';
+import { accessibleBy } from '@casl/prisma';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Person)
@@ -28,19 +38,20 @@ export class PersonResolver {
   @Query(() => [Person], {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(ReadPersonAbilityHandler)
   async findManyPerson(
     @Args() args: FindManyPersonArgs,
-    @AuthWorkspace() workspace: Workspace,
+    @UserAbility() ability: AppAbility,
     @PrismaSelector({ modelName: 'Person' })
     prismaSelect: PrismaSelect<'Person'>,
   ): Promise<Partial<Person>[]> {
-    const preparedArgs = prepareFindManyArgs<FindManyPersonArgs>(
-      args,
-      workspace,
-    );
-
     return this.personService.findMany({
-      ...preparedArgs,
+      ...args,
+      where: {
+        ...args.where,
+        AND: [accessibleBy(ability).Person],
+      },
       select: prismaSelect.value,
     });
   }
@@ -49,6 +60,8 @@ export class PersonResolver {
   @Mutation(() => Person, {
     nullable: true,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(UpdatePersonAbilityHandler)
   async updateOnePerson(
     @Args() args: UpdateOnePersonArgs,
     @PrismaSelector({ modelName: 'Person' })
@@ -68,6 +81,8 @@ export class PersonResolver {
   @Mutation(() => AffectedRows, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeletePersonAbilityHandler)
   async deleteManyPerson(
     @Args() args: DeleteManyPersonArgs,
   ): Promise<AffectedRows> {
@@ -80,6 +95,8 @@ export class PersonResolver {
   @Mutation(() => Person, {
     nullable: false,
   })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreatePersonAbilityHandler)
   async createOnePerson(
     @Args() args: CreateOnePersonArgs,
     @AuthWorkspace() workspace: Workspace,
