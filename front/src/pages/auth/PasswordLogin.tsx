@@ -31,11 +31,14 @@ const StyledButtonContainer = styled.div`
 
 export function PasswordLogin() {
   const navigate = useNavigate();
+
+  const prefillPassword =
+    process.env.NODE_ENV === 'development' ? 'applecar2025' : '';
+
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
   );
-
-  const [internalPassword, setInternalPassword] = useState('');
+  const [internalPassword, setInternalPassword] = useState(prefillPassword);
   const [formError, setFormError] = useState('');
 
   const userLogin = useCallback(async () => {

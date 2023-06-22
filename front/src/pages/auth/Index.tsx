@@ -30,7 +30,9 @@ export function Index() {
   const theme = useTheme();
   useMockData();
 
-  const [, setAuthFlowUserEmail] = useRecoilState(authFlowUserEmailState);
+  const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
+    authFlowUserEmailState,
+  );
 
   useEffect(() => {
     if (hasAccessToken()) {
@@ -71,7 +73,7 @@ export function Index() {
           </PrimaryButton>
           <HorizontalSeparator />
           <TextInput
-            value=""
+            value={authFlowUserEmail}
             placeholder="Email"
             onChange={(value) => setAuthFlowUserEmail(value)}
             fullWidth={true}
