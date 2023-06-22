@@ -61,18 +61,24 @@ export class AbilityFactory {
 
     // Company
     can(AbilityAction.Read, 'Company', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'Company');
+    can(AbilityAction.Update, 'Company', { workspaceId: workspace.id });
 
     // Person
     can(AbilityAction.Read, 'Person', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'Person');
+    can(AbilityAction.Update, 'Person', { workspaceId: workspace.id });
 
     // RefreshToken
     cannot(AbilityAction.Manage, 'RefreshToken');
 
     // CommentThread
     can(AbilityAction.Read, 'CommentThread', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'CommentThread');
 
     // Comment
     can(AbilityAction.Read, 'Comment', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'Comment');
     can(AbilityAction.Update, 'Comment', {
       workspaceId: workspace.id,
       authorId: user.id,

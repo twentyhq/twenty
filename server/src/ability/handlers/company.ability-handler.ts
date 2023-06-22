@@ -47,6 +47,7 @@ export class UpdateCompanyAbilityHandler implements IAbilityHandler {
     const company = await this.prismaService.company.findFirst({
       where: args.where,
     });
+
     assert(company, '', NotFoundException);
 
     return ability.can(AbilityAction.Update, subject('Company', company));

@@ -1517,7 +1517,6 @@ export type WorkspaceMember = {
   user: User;
   userId: Scalars['String'];
   workspace: Workspace;
-  workspaceId: Scalars['String'];
 };
 
 export type CreateCommentMutationVariables = Exact<{
@@ -1633,6 +1632,7 @@ export type UpdateOnePipelineProgressMutationVariables = Exact<{
 export type UpdateOnePipelineProgressMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string } | null };
 
 export type CreateOnePipelineProgressMutationVariables = Exact<{
+  uuid: Scalars['String'];
   entityType: PipelineProgressableType;
   entityId: Scalars['String'];
   pipelineId: Scalars['String'];
@@ -2298,9 +2298,9 @@ export type UpdateOnePipelineProgressMutationHookResult = ReturnType<typeof useU
 export type UpdateOnePipelineProgressMutationResult = Apollo.MutationResult<UpdateOnePipelineProgressMutation>;
 export type UpdateOnePipelineProgressMutationOptions = Apollo.BaseMutationOptions<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>;
 export const CreateOnePipelineProgressDocument = gql`
-    mutation CreateOnePipelineProgress($entityType: PipelineProgressableType!, $entityId: String!, $pipelineId: String!, $pipelineStageId: String!) {
+    mutation CreateOnePipelineProgress($uuid: String!, $entityType: PipelineProgressableType!, $entityId: String!, $pipelineId: String!, $pipelineStageId: String!) {
   createOnePipelineProgress(
-    data: {progressableType: $entityType, progressableId: $entityId, pipeline: {connect: {id: $pipelineId}}, pipelineStage: {connect: {id: $pipelineStageId}}}
+    data: {id: $uuid, progressableType: $entityType, progressableId: $entityId, pipeline: {connect: {id: $pipelineId}}, pipelineStage: {connect: {id: $pipelineStageId}}}
   ) {
     id
   }
@@ -2321,6 +2321,7 @@ export type CreateOnePipelineProgressMutationFn = Apollo.MutationFunction<Create
  * @example
  * const [createOnePipelineProgressMutation, { data, loading, error }] = useCreateOnePipelineProgressMutation({
  *   variables: {
+ *      uuid: // value for 'uuid'
  *      entityType: // value for 'entityType'
  *      entityId: // value for 'entityId'
  *      pipelineId: // value for 'pipelineId'
