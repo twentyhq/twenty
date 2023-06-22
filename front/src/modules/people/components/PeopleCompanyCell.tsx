@@ -17,11 +17,15 @@ export type OwnProps = {
 export function PeopleCompanyCell({ people }: OwnProps) {
   const [isCreating] = useRecoilScopedState(isCreateModeScopedState);
 
-  return isCreating ? (
-    <PeopleCompanyCreateCell people={people} />
-  ) : (
+  return (
     <EditableCellV2
-      editModeContent={<PeopleCompanyPicker people={people} />}
+      editModeContent={
+        isCreating ? (
+          <PeopleCompanyCreateCell people={people} />
+        ) : (
+          <PeopleCompanyPicker people={people} />
+        )
+      }
       nonEditModeContent={
         <CompanyChip
           name={people.company?.name ?? ''}

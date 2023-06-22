@@ -13,6 +13,7 @@ export const textInputStyle = (props: any) =>
     border: none;
     color: ${props.theme.text80};
     outline: none;
+    padding: ${props.theme.spacing(0)} ${props.theme.spacing(2)};
 
     &::placeholder,
     &::-webkit-input-placeholder {
