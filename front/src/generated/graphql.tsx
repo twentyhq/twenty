@@ -1359,16 +1359,6 @@ export type User = {
   workspaceMember?: Maybe<WorkspaceMember>;
 };
 
-
-export type UserCompaniesArgs = {
-  cursor?: InputMaybe<CompanyWhereUniqueInput>;
-  distinct?: InputMaybe<Array<CompanyScalarFieldEnum>>;
-  orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<CompanyWhereInput>;
-};
-
 export type UserCreateNestedOneWithoutCommentsInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
 };
@@ -1527,6 +1517,7 @@ export type WorkspaceMember = {
   user: User;
   userId: Scalars['String'];
   workspace: Workspace;
+  workspaceId: Scalars['String'];
 };
 
 export type CreateCommentMutationVariables = Exact<{
@@ -1706,6 +1697,7 @@ export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ _
 export type SearchUserQueryVariables = Exact<{
   where?: InputMaybe<UserWhereInput>;
   limit?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<UserOrderByWithRelationInput> | UserOrderByWithRelationInput>;
 }>;
 
 
@@ -2575,8 +2567,8 @@ export type SearchPeopleQueryHookResult = ReturnType<typeof useSearchPeopleQuery
 export type SearchPeopleLazyQueryHookResult = ReturnType<typeof useSearchPeopleLazyQuery>;
 export type SearchPeopleQueryResult = Apollo.QueryResult<SearchPeopleQuery, SearchPeopleQueryVariables>;
 export const SearchUserDocument = gql`
-    query SearchUser($where: UserWhereInput, $limit: Int) {
-  searchResults: findManyUser(where: $where, take: $limit) {
+    query SearchUser($where: UserWhereInput, $limit: Int, $orderBy: [UserOrderByWithRelationInput!]) {
+  searchResults: findManyUser(where: $where, take: $limit, orderBy: $orderBy) {
     id
     email
     displayName
@@ -2598,6 +2590,7 @@ export const SearchUserDocument = gql`
  *   variables: {
  *      where: // value for 'where'
  *      limit: // value for 'limit'
+ *      orderBy: // value for 'orderBy'
  *   },
  * });
  */
