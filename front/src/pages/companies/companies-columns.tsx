@@ -1,17 +1,12 @@
 import { useMemo } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 
+import { CompanyAccountOwnerCell } from '@/companies/components/CompanyAccountOwnerCell';
 import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEditableNameCell';
-import {
-  PersonChip,
-  PersonChipPropsType,
-} from '@/people/components/PersonChip';
-import { SearchConfigType } from '@/search/interfaces/interface';
-import { SEARCH_USER_QUERY } from '@/search/services/search';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
-import { EditableRelation } from '@/ui/components/editable-cell/types/EditableRelation';
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
+import { RecoilScope } from '@/ui/hooks/RecoilScope';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -23,7 +18,6 @@ import {
 import { getCheckBoxColumn } from '@/ui/tables/utils/getCheckBoxColumn';
 import {
   GetCompaniesQuery,
-  QueryMode,
   useUpdateCompanyMutation,
 } from '~/generated/graphql';
 
@@ -149,41 +143,9 @@ export const useCompaniesColumns = () => {
           />
         ),
         cell: (props) => (
-          <EditableRelation<any, PersonChipPropsType>
-            relation={props.row.original.accountOwner}
-            searchPlaceholder="Account Owner"
-            ChipComponent={PersonChip}
-            chipComponentPropsMapper={(
-              accountOwner: any,
-            ): PersonChipPropsType => {
-              return {
-                name: accountOwner.displayName || '',
-              };
-            }}
-            onChange={(relation: any) => {
-              updateCompany({
-                variables: {
-                  ...props.row.original,
-                  accountOwnerId: relation.id,
-                },
-              });
-            }}
-            searchConfig={
-              {
-                query: SEARCH_USER_QUERY,
-                template: (searchInput: string) => ({
-                  displayName: {
-                    contains: `%${searchInput}%`,
-                    mode: QueryMode.Insensitive,
-                  },
-                }),
-                resultMapper: (accountOwner: any) => ({
-                  render: (accountOwner: any) => accountOwner.displayName,
-                  value: accountOwner,
-                }),
-              } satisfies SearchConfigType
-            }
-          />
+          <RecoilScope>
+            <CompanyAccountOwnerCell company={props.row.original} />
+          </RecoilScope>
         ),
       }),
     ];

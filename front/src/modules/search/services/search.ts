@@ -28,8 +28,16 @@ export const SEARCH_PEOPLE_QUERY = gql`
 `;
 
 export const SEARCH_USER_QUERY = gql`
-  query SearchUser($where: UserWhereInput, $limit: Int) {
-    searchResults: findManyUser(where: $where, take: $limit) {
+  query SearchUser(
+    $where: UserWhereInput
+    $limit: Int
+    $orderBy: [UserOrderByWithRelationInput!]
+  ) {
+    searchResults: findManyUser(
+      where: $where
+      take: $limit
+      orderBy: $orderBy
+    ) {
       id
       email
       displayName
