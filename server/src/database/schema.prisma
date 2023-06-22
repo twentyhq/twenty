@@ -168,7 +168,7 @@ model WorkspaceMember {
   user        User      @relation(fields: [userId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
-  /// @TypeGraphQL.omit(input: true, output: true)
+  /// @TypeGraphQL.omit(input: true, output: false)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
   @@map("workspace_members")
