@@ -38,7 +38,6 @@ export function EditableDate({
   editModeHorizontalAlign,
 }: EditableDateProps) {
   const [inputValue, setInputValue] = useState(value);
-  const [isEditMode, setIsEditMode] = useState(false);
 
   type DivProps = React.HTMLProps<HTMLDivElement>;
 
@@ -60,9 +59,6 @@ export function EditableDate({
 
   return (
     <EditableCell
-      isEditMode={isEditMode}
-      onOutsideClick={() => setIsEditMode(false)}
-      onInsideClick={() => setIsEditMode(true)}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <StyledContainer>

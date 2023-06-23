@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { RecoilState, useRecoilState } from 'recoil';
+import { RecoilState, useRecoilValue } from 'recoil';
 
-import { RecoilScopeContext } from './RecoilScopeContext';
+import { RecoilScopeContext } from '../states/RecoilScopeContext';
 
-export function useRecoilScopedState<T>(
+export function useRecoilScopedValue<T>(
   recoilState: (param: string) => RecoilState<T>,
 ) {
   const recoilScopeId = useContext(RecoilScopeContext);
@@ -13,5 +13,5 @@ export function useRecoilScopedState<T>(
       `Using a scoped atom without a RecoilScope : ${recoilState('').key}`,
     );
 
-  return useRecoilState<T>(recoilState(recoilScopeId));
+  return useRecoilValue<T>(recoilState(recoilScopeId));
 }

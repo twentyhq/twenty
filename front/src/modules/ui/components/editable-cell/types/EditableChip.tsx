@@ -40,7 +40,6 @@ function EditableChip({
 }: EditableChipProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
-  const [isEditMode, setIsEditMode] = useState(false);
 
   const handleRightEndContentClick = (
     event: React.MouseEvent<HTMLDivElement>,
@@ -50,9 +49,6 @@ function EditableChip({
 
   return (
     <EditableCell
-      onOutsideClick={() => setIsEditMode(false)}
-      onInsideClick={() => setIsEditMode(true)}
-      isEditMode={isEditMode}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <StyledInplaceInput

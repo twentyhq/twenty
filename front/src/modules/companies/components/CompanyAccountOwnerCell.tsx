@@ -1,5 +1,5 @@
 import { PersonChip } from '@/people/components/PersonChip';
-import { EditableCellV2 } from '@/ui/components/editable-cell/EditableCellV2';
+import { EditableCell } from '@/ui/components/editable-cell/EditableCell';
 import { Company, User } from '~/generated/graphql';
 
 import { CompanyAccountOwnerPicker } from './CompanyAccountOwnerPicker';
@@ -12,7 +12,7 @@ export type OwnProps = {
 
 export function CompanyAccountOwnerCell({ company }: OwnProps) {
   return (
-    <EditableCellV2
+    <EditableCell
       editModeContent={<CompanyAccountOwnerPicker company={company} />}
       nonEditModeContent={
         company.accountOwner?.displayName ? (

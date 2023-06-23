@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactElement, useRef, useState } from 'react';
+import { ChangeEvent, ReactElement, useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { textInputStyle } from '@/ui/layout/styles/themes';
@@ -42,13 +42,9 @@ export function EditableDoubleText({
   onChange,
 }: OwnProps) {
   const firstValueInputRef = useRef<HTMLInputElement>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
 
   return (
     <EditableCell
-      onInsideClick={() => setIsEditMode(true)}
-      onOutsideClick={() => setIsEditMode(false)}
-      isEditMode={isEditMode}
       editModeContent={
         <StyledContainer>
           <StyledEditInplaceInput
