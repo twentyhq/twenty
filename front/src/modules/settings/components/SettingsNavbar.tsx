@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useMatch, useResolvedPath } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
-import { removeTokens } from '@/auth/services/AuthService';
+import { useAuth } from '@/auth/hooks/useAuth';
 import {
   IconColorSwatch,
   IconLogout,
@@ -15,11 +15,15 @@ import NavTitle from '@/ui/layout/navbar/NavTitle';
 import SubNavbarContainer from '@/ui/layout/navbar/sub-navbar/SubNavBarContainer';
 
 export function SettingsNavbar() {
-  const logout = useCallback(() => {
-    removeTokens();
-    window.location.href = '/';
-  }, []);
   const theme = useTheme();
+
+  const { logout } = useAuth();
+
+  const handleLogout = useCallback(() => {
+    logout();
+    window.location.href = '/';
+  }, [logout]);
+
   return (
     <SubNavbarContainer backButtonTitle="Settings">
       <NavItemsContainer>
@@ -63,7 +67,7 @@ export function SettingsNavbar() {
         <NavTitle label="Other" />
         <NavItem
           label="Logout"
-          onClick={logout}
+          onClick={handleLogout}
           icon={<IconLogout size={theme.iconSizeMedium} />}
           danger={true}
         />

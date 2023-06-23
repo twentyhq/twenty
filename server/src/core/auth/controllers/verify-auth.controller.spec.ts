@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PasswordAuthController } from './password-auth.controller';
+import { VerifyAuthController } from './verify-auth.controller';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
 
-describe('PasswordAuthController', () => {
-  let controller: PasswordAuthController;
+describe('VerifyAuthController', () => {
+  let controller: VerifyAuthController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [PasswordAuthController],
+      controllers: [VerifyAuthController],
       providers: [
         {
           provide: AuthService,
@@ -21,7 +21,7 @@ describe('PasswordAuthController', () => {
       ],
     }).compile();
 
-    controller = module.get<PasswordAuthController>(PasswordAuthController);
+    controller = module.get<VerifyAuthController>(VerifyAuthController);
   });
 
   it('should be defined', () => {

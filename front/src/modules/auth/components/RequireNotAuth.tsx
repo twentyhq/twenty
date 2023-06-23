@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { hasAccessToken } from '../services/AuthService';
+import { useIsLogged } from '../hooks/useIsLogged';
 
 const EmptyContainer = styled.div`
   align-items: center;
@@ -34,13 +34,15 @@ export function RequireNotAuth({
 }): JSX.Element {
   const navigate = useNavigate();
 
+  const isLogged = useIsLogged();
+
   useEffect(() => {
-    if (hasAccessToken()) {
+    if (isLogged) {
       navigate('/');
     }
-  }, [navigate]);
+  }, [isLogged, navigate]);
 
-  if (hasAccessToken())
+  if (isLogged) {
     return (
       <EmptyContainer>
         <FadeInStyle>
@@ -48,5 +50,7 @@ export function RequireNotAuth({
         </FadeInStyle>
       </EmptyContainer>
     );
+  }
+
   return children;
 }

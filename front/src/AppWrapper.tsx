@@ -1,27 +1,19 @@
 import { StrictMode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { ApolloProvider } from '@apollo/client';
-import { useRecoilState } from 'recoil';
 
-import { isMockModeState } from '@/auth/states/isMockModeState';
-
-import { AppThemeProvider } from './providers/AppThemeProvider';
-import { AuthProvider } from './providers/AuthProvider';
-import { apiClient, mockClient } from './apollo';
+import { ApolloProvider } from './providers/apollo/ApolloProvider';
+import { AppThemeProvider } from './providers/theme/AppThemeProvider';
 import { App } from './App';
 
 export function AppWrapper() {
-  const [isMockMode] = useRecoilState(isMockModeState);
   return (
-    <ApolloProvider client={isMockMode ? mockClient : apiClient}>
+    <ApolloProvider>
       <BrowserRouter>
-        <AuthProvider>
-          <AppThemeProvider>
-            <StrictMode>
-              <App />
-            </StrictMode>
-          </AppThemeProvider>
-        </AuthProvider>
+        <AppThemeProvider>
+          <StrictMode>
+            <App />
+          </StrictMode>
+        </AppThemeProvider>
       </BrowserRouter>
     </ApolloProvider>
   );

@@ -1,30 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { getTokensFromLoginToken } from '@/auth/services/AuthService';
+import { useAuth } from '@/auth/hooks/useAuth';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 
 export function Verify() {
   const [searchParams] = useSearchParams();
-  const [isLoading, setIsLoading] = useState(false);
-
   const loginToken = searchParams.get('loginToken');
+
+  const isLogged = useIsLogged();
   const navigate = useNavigate();
+
+  const { verify } = useAuth();
 
   useEffect(() => {
     async function getTokens() {
       if (!loginToken) {
         return;
       }
-      setIsLoading(true);
-      await getTokensFromLoginToken(loginToken);
-      setIsLoading(false);
+      await verify(loginToken);
       navigate('/');
     }
 
-    if (!isLoading) {
+    if (!isLogged) {
       getTokens();
     }
-  }, [isLoading, navigate, loginToken]);
+    // Verify only needs to run once at mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return <></>;
 }

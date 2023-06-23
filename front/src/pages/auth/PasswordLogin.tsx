@@ -9,7 +9,7 @@ import { Logo } from '@/auth/components/ui/Logo';
 import { Modal } from '@/auth/components/ui/Modal';
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
-import { getTokensFromLoginToken } from '@/auth/services/AuthService';
+import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
 import { PrimaryButton } from '@/ui/components/buttons/PrimaryButton';
@@ -47,48 +47,28 @@ export function PasswordLogin() {
   const [internalPassword, setInternalPassword] = useState(prefillPassword);
   const [formError, setFormError] = useState('');
 
-  const userLogin = useCallback(async () => {
-    const response = await fetch(
-      process.env.REACT_APP_AUTH_URL + '/password' || '',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: authFlowUserEmail,
-          password: internalPassword,
-        }),
-      },
-    );
+  const { login } = useAuth();
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      setFormError(errorData.message);
-      return;
+  const handleLogin = useCallback(async () => {
+    try {
+      await login(authFlowUserEmail, internalPassword);
+      setMockMode(false);
+      navigate('/');
+    } catch (err: any) {
+      setFormError(err.message);
     }
-    const { loginToken } = await response.json();
-
-    if (!loginToken) {
-      return;
-    }
-
-    await getTokensFromLoginToken(loginToken.token);
-    setMockMode(false);
-
-    navigate('/');
-  }, [authFlowUserEmail, internalPassword, navigate, setMockMode]);
+  }, [authFlowUserEmail, internalPassword, login, navigate, setMockMode]);
 
   useHotkeys(
     'enter',
     () => {
-      userLogin();
+      handleLogin();
     },
     {
       enableOnContentEditable: true,
       enableOnFormTags: true,
     },
-    [userLogin],
+    [handleLogin],
   );
 
   return (
@@ -118,7 +98,7 @@ export function PasswordLogin() {
               type="password"
             />
             <StyledButtonContainer>
-              <PrimaryButton fullWidth onClick={userLogin}>
+              <PrimaryButton fullWidth onClick={handleLogin}>
                 Continue
               </PrimaryButton>
             </StyledButtonContainer>
