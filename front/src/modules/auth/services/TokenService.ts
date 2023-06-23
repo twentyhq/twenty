@@ -1,5 +1,5 @@
+import { cookieStorage } from '@/utils/cookie-storage';
 import { AuthTokenPair } from '~/generated/graphql';
-import { cookieStorage } from '~/infrastructure/cookie-storage';
 
 export class TokenService {
   getTokenPair() {

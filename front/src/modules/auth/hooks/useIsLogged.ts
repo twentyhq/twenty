@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { cookieStorage } from '~/infrastructure/cookie-storage';
+import { cookieStorage } from '@/utils/cookie-storage';
 
 export function useIsLogged(): boolean {
   const [value, setValue] = useState<string | undefined>(

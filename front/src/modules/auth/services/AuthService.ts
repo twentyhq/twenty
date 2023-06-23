@@ -7,13 +7,13 @@ import {
 } from '@apollo/client';
 import jwt from 'jwt-decode';
 
+import { cookieStorage } from '@/utils/cookie-storage';
 import {
   RenewTokenDocument,
   RenewTokenMutation,
   RenewTokenMutationVariables,
 } from '~/generated/graphql';
-import { loggerLink } from '~/infrastructure/apollo/logger';
-import { cookieStorage } from '~/infrastructure/cookie-storage';
+import { loggerLink } from '~/providers/apollo/logger';
 
 import { tokenService } from './TokenService';
 

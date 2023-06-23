@@ -1,10 +1,16 @@
 import { useCallback } from 'react';
+import { useRecoilState } from 'recoil';
 
 import { useChallengeMutation, useVerifyMutation } from '~/generated/graphql';
 
 import { tokenService } from '../services/TokenService';
+import { currentUserState } from '../states/currentUserState';
+import { isAuthenticatingState } from '../states/isAuthenticatingState';
 
 export function useAuth() {
+  const [, setCurrentUser] = useRecoilState(currentUserState);
+  const [, setIsAuthenticating] = useRecoilState(isAuthenticatingState);
+
   const [challenge] = useChallengeMutation();
   const [verify] = useVerifyMutation();
 
@@ -32,28 +38,26 @@ export function useAuth() {
 
   const handleVerify = useCallback(
     async (loginToken: string) => {
-      try {
-        const verifyResult = await verify({
-          variables: { loginToken },
-        });
+      const verifyResult = await verify({
+        variables: { loginToken },
+      });
 
-        if (verifyResult.errors) {
-          throw verifyResult.errors;
-        }
-
-        if (!verifyResult.data?.verify) {
-          throw new Error('No verify result');
-        }
-
-        tokenService.setTokenPair(verifyResult.data?.verify.tokens);
-
-        return verifyResult.data?.verify;
-      } catch (error) {
-        tokenService.removeTokenPair();
-        throw error;
+      if (verifyResult.errors) {
+        throw verifyResult.errors;
       }
+
+      if (!verifyResult.data?.verify) {
+        throw new Error('No verify result');
+      }
+
+      tokenService.setTokenPair(verifyResult.data?.verify.tokens);
+
+      setIsAuthenticating(false);
+      setCurrentUser(verifyResult.data?.verify.user);
+
+      return verifyResult.data?.verify;
     },
-    [verify],
+    [setCurrentUser, setIsAuthenticating, verify],
   );
 
   const handleLogin = useCallback(

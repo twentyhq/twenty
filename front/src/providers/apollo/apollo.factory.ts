@@ -16,9 +16,10 @@ import { Observable } from '@apollo/client/utilities';
 import { renewToken } from '@/auth/services/AuthService';
 import { tokenService } from '@/auth/services/TokenService';
 
+import { assertNotNull } from '../../modules/utils/assert';
+import { promiseToObservable } from '../../modules/utils/promise-to-observable';
+
 import { ApolloManager } from './interfaces/apollo-manager.interface';
-import { assertNotNull } from './utils/assert';
-import { promiseToObservable } from './utils/promise-to-observable';
 import { loggerLink } from './logger';
 
 const logger = loggerLink(() => 'Twenty');
