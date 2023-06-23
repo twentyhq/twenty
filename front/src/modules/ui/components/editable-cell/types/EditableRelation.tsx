@@ -119,7 +119,7 @@ export function EditableRelation<RelationType, ChipComponentPropsType>({
 
   // TODO: Tie this to a react context
   const [filterSearchResults, setSearchInput, setFilterSearch, searchInput] =
-    useSearch<RelationType>({});
+    useSearch<RelationType>();
 
   useEffect(() => {
     if (isDefined(onChangeSearchInput)) {
