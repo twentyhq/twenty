@@ -57,6 +57,7 @@ export function DropdownMenuSelectableItem({
       onClick={onClick}
       selected={selected}
       hovered={hovered}
+      data-testid="dropdown-menu-item"
     >
       <StyledLeftContainer>{children}</StyledLeftContainer>
       <StyledRightIcon>

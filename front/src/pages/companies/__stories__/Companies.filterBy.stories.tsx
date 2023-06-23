@@ -1,6 +1,7 @@
 import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
+import assert from 'assert';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForPage } from '~/testing/renderWrappers';
@@ -62,9 +63,16 @@ export const FilterByAccountOwner: Story = {
       delay: 200,
     });
 
-    const charlesChip = canvas.getByText('Charles Test', {
-      selector: 'li > span',
-    });
+    const charlesChip = canvas
+      .getAllByTestId('dropdown-menu-item')
+      .find((item) => {
+        return item.textContent === 'Charles Test';
+      });
+
+    expect(charlesChip).toBeInTheDocument();
+
+    assert(charlesChip);
+
     await userEvent.click(charlesChip);
 
     expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
