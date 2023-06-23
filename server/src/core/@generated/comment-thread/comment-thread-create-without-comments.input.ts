@@ -6,23 +6,22 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CommentThreadCreateWithoutCommentsInput {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => CommentThreadTargetCreateNestedManyWithoutCommentThreadInput, {
-    nullable: true,
-  })
-  commentThreadTargets?: CommentThreadTargetCreateNestedManyWithoutCommentThreadInput;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @HideField()
-  workspace!: WorkspaceCreateNestedOneWithoutCommentThreadsInput;
+    @Field(() => CommentThreadTargetCreateNestedManyWithoutCommentThreadInput, {nullable:true})
+    commentThreadTargets?: CommentThreadTargetCreateNestedManyWithoutCommentThreadInput;
+
+    @HideField()
+    workspace!: WorkspaceCreateNestedOneWithoutCommentThreadsInput;
 }

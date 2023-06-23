@@ -14,37 +14,38 @@ import { CompanyMaxAggregateInput } from './company-max-aggregate.input';
 
 @ArgsType()
 export class CompanyGroupByArgs {
-  @Field(() => CompanyWhereInput, { nullable: true })
-  @Type(() => CompanyWhereInput)
-  where?: CompanyWhereInput;
 
-  @Field(() => [CompanyOrderByWithAggregationInput], { nullable: true })
-  orderBy?: Array<CompanyOrderByWithAggregationInput>;
+    @Field(() => CompanyWhereInput, {nullable:true})
+    @Type(() => CompanyWhereInput)
+    where?: CompanyWhereInput;
 
-  @Field(() => [CompanyScalarFieldEnum], { nullable: false })
-  by!: Array<keyof typeof CompanyScalarFieldEnum>;
+    @Field(() => [CompanyOrderByWithAggregationInput], {nullable:true})
+    orderBy?: Array<CompanyOrderByWithAggregationInput>;
 
-  @Field(() => CompanyScalarWhereWithAggregatesInput, { nullable: true })
-  having?: CompanyScalarWhereWithAggregatesInput;
+    @Field(() => [CompanyScalarFieldEnum], {nullable:false})
+    by!: Array<keyof typeof CompanyScalarFieldEnum>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => CompanyScalarWhereWithAggregatesInput, {nullable:true})
+    having?: CompanyScalarWhereWithAggregatesInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => CompanyCountAggregateInput, { nullable: true })
-  _count?: CompanyCountAggregateInput;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
 
-  @Field(() => CompanyAvgAggregateInput, { nullable: true })
-  _avg?: CompanyAvgAggregateInput;
+    @Field(() => CompanyCountAggregateInput, {nullable:true})
+    _count?: CompanyCountAggregateInput;
 
-  @Field(() => CompanySumAggregateInput, { nullable: true })
-  _sum?: CompanySumAggregateInput;
+    @Field(() => CompanyAvgAggregateInput, {nullable:true})
+    _avg?: CompanyAvgAggregateInput;
 
-  @Field(() => CompanyMinAggregateInput, { nullable: true })
-  _min?: CompanyMinAggregateInput;
+    @Field(() => CompanySumAggregateInput, {nullable:true})
+    _sum?: CompanySumAggregateInput;
 
-  @Field(() => CompanyMaxAggregateInput, { nullable: true })
-  _max?: CompanyMaxAggregateInput;
+    @Field(() => CompanyMinAggregateInput, {nullable:true})
+    _min?: CompanyMinAggregateInput;
+
+    @Field(() => CompanyMaxAggregateInput, {nullable:true})
+    _max?: CompanyMaxAggregateInput;
 }

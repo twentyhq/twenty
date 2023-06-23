@@ -5,26 +5,25 @@ import { CommentThreadCreateNestedOneWithoutCommentThreadTargetsInput } from '..
 
 @InputType()
 export class CommentThreadTargetCreateInput {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => CommentableType, { nullable: false })
-  commentableType!: keyof typeof CommentableType;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  commentableId!: string;
+    @Field(() => CommentableType, {nullable:false})
+    commentableType!: keyof typeof CommentableType;
 
-  @Field(() => CommentThreadCreateNestedOneWithoutCommentThreadTargetsInput, {
-    nullable: false,
-  })
-  commentThread!: CommentThreadCreateNestedOneWithoutCommentThreadTargetsInput;
+    @Field(() => String, {nullable:false})
+    commentableId!: string;
+
+    @Field(() => CommentThreadCreateNestedOneWithoutCommentThreadTargetsInput, {nullable:false})
+    commentThread!: CommentThreadCreateNestedOneWithoutCommentThreadTargetsInput;
 }

@@ -6,11 +6,12 @@ import { CompanyUpdateWithoutWorkspaceInput } from './company-update-without-wor
 
 @InputType()
 export class CompanyUpdateWithWhereUniqueWithoutWorkspaceInput {
-  @Field(() => CompanyWhereUniqueInput, { nullable: false })
-  @Type(() => CompanyWhereUniqueInput)
-  where!: CompanyWhereUniqueInput;
 
-  @Field(() => CompanyUpdateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => CompanyUpdateWithoutWorkspaceInput)
-  data!: CompanyUpdateWithoutWorkspaceInput;
+    @Field(() => CompanyWhereUniqueInput, {nullable:false})
+    @Type(() => CompanyWhereUniqueInput)
+    where!: CompanyWhereUniqueInput;
+
+    @Field(() => CompanyUpdateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => CompanyUpdateWithoutWorkspaceInput)
+    data!: CompanyUpdateWithoutWorkspaceInput;
 }

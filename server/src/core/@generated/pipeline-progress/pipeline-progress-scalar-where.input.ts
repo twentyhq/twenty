@@ -8,39 +8,40 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressScalarWhereInput {
-  @Field(() => [PipelineProgressScalarWhereInput], { nullable: true })
-  AND?: Array<PipelineProgressScalarWhereInput>;
 
-  @Field(() => [PipelineProgressScalarWhereInput], { nullable: true })
-  OR?: Array<PipelineProgressScalarWhereInput>;
+    @Field(() => [PipelineProgressScalarWhereInput], {nullable:true})
+    AND?: Array<PipelineProgressScalarWhereInput>;
 
-  @Field(() => [PipelineProgressScalarWhereInput], { nullable: true })
-  NOT?: Array<PipelineProgressScalarWhereInput>;
+    @Field(() => [PipelineProgressScalarWhereInput], {nullable:true})
+    OR?: Array<PipelineProgressScalarWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [PipelineProgressScalarWhereInput], {nullable:true})
+    NOT?: Array<PipelineProgressScalarWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  pipelineId?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  pipelineStageId?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    pipelineId?: StringFilter;
 
-  @Field(() => EnumPipelineProgressableTypeFilter, { nullable: true })
-  progressableType?: EnumPipelineProgressableTypeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    pipelineStageId?: StringFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  progressableId?: StringFilter;
+    @Field(() => EnumPipelineProgressableTypeFilter, {nullable:true})
+    progressableType?: EnumPipelineProgressableTypeFilter;
 
-  @HideField()
-  workspaceId?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    progressableId?: StringFilter;
+
+    @HideField()
+    workspaceId?: StringFilter;
 }

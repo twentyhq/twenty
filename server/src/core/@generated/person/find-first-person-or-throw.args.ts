@@ -9,22 +9,23 @@ import { PersonScalarFieldEnum } from './person-scalar-field.enum';
 
 @ArgsType()
 export class FindFirstPersonOrThrowArgs {
-  @Field(() => PersonWhereInput, { nullable: true })
-  @Type(() => PersonWhereInput)
-  where?: PersonWhereInput;
 
-  @Field(() => [PersonOrderByWithRelationInput], { nullable: true })
-  orderBy?: Array<PersonOrderByWithRelationInput>;
+    @Field(() => PersonWhereInput, {nullable:true})
+    @Type(() => PersonWhereInput)
+    where?: PersonWhereInput;
 
-  @Field(() => PersonWhereUniqueInput, { nullable: true })
-  cursor?: PersonWhereUniqueInput;
+    @Field(() => [PersonOrderByWithRelationInput], {nullable:true})
+    orderBy?: Array<PersonOrderByWithRelationInput>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => PersonWhereUniqueInput, {nullable:true})
+    cursor?: PersonWhereUniqueInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => [PersonScalarFieldEnum], { nullable: true })
-  distinct?: Array<keyof typeof PersonScalarFieldEnum>;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
+
+    @Field(() => [PersonScalarFieldEnum], {nullable:true})
+    distinct?: Array<keyof typeof PersonScalarFieldEnum>;
 }

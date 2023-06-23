@@ -7,15 +7,16 @@ import { CommentUpdateInput } from './comment-update.input';
 
 @ArgsType()
 export class UpsertOneCommentArgs {
-  @Field(() => CommentWhereUniqueInput, { nullable: false })
-  @Type(() => CommentWhereUniqueInput)
-  where!: CommentWhereUniqueInput;
 
-  @Field(() => CommentCreateInput, { nullable: false })
-  @Type(() => CommentCreateInput)
-  create!: CommentCreateInput;
+    @Field(() => CommentWhereUniqueInput, {nullable:false})
+    @Type(() => CommentWhereUniqueInput)
+    where!: CommentWhereUniqueInput;
 
-  @Field(() => CommentUpdateInput, { nullable: false })
-  @Type(() => CommentUpdateInput)
-  update!: CommentUpdateInput;
+    @Field(() => CommentCreateInput, {nullable:false})
+    @Type(() => CommentCreateInput)
+    create!: CommentCreateInput;
+
+    @Field(() => CommentUpdateInput, {nullable:false})
+    @Type(() => CommentUpdateInput)
+    update!: CommentUpdateInput;
 }

@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "start",
+			"path": "server",
+			"problemMatcher": [],
+			"label": "yarn: start - server",
+			"detail": "yarn start"
+		}
+	]
+}

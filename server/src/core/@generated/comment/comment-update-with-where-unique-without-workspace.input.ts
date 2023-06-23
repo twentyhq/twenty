@@ -6,11 +6,12 @@ import { CommentUpdateWithoutWorkspaceInput } from './comment-update-without-wor
 
 @InputType()
 export class CommentUpdateWithWhereUniqueWithoutWorkspaceInput {
-  @Field(() => CommentWhereUniqueInput, { nullable: false })
-  @Type(() => CommentWhereUniqueInput)
-  where!: CommentWhereUniqueInput;
 
-  @Field(() => CommentUpdateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => CommentUpdateWithoutWorkspaceInput)
-  data!: CommentUpdateWithoutWorkspaceInput;
+    @Field(() => CommentWhereUniqueInput, {nullable:false})
+    @Type(() => CommentWhereUniqueInput)
+    where!: CommentWhereUniqueInput;
+
+    @Field(() => CommentUpdateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => CommentUpdateWithoutWorkspaceInput)
+    data!: CommentUpdateWithoutWorkspaceInput;
 }

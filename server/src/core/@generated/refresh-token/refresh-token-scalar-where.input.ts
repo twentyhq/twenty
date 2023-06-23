@@ -8,33 +8,34 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class RefreshTokenScalarWhereInput {
-  @Field(() => [RefreshTokenScalarWhereInput], { nullable: true })
-  AND?: Array<RefreshTokenScalarWhereInput>;
 
-  @Field(() => [RefreshTokenScalarWhereInput], { nullable: true })
-  OR?: Array<RefreshTokenScalarWhereInput>;
+    @Field(() => [RefreshTokenScalarWhereInput], {nullable:true})
+    AND?: Array<RefreshTokenScalarWhereInput>;
 
-  @Field(() => [RefreshTokenScalarWhereInput], { nullable: true })
-  NOT?: Array<RefreshTokenScalarWhereInput>;
+    @Field(() => [RefreshTokenScalarWhereInput], {nullable:true})
+    OR?: Array<RefreshTokenScalarWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [RefreshTokenScalarWhereInput], {nullable:true})
+    NOT?: Array<RefreshTokenScalarWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => BoolFilter, { nullable: true })
-  isRevoked?: BoolFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  expiresAt?: DateTimeFilter;
+    @Field(() => BoolFilter, {nullable:true})
+    isRevoked?: BoolFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    expiresAt?: DateTimeFilter;
 
-  @HideField()
-  userId?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
+
+    @HideField()
+    userId?: StringFilter;
 }

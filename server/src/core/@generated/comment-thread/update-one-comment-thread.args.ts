@@ -6,11 +6,12 @@ import { CommentThreadWhereUniqueInput } from './comment-thread-where-unique.inp
 
 @ArgsType()
 export class UpdateOneCommentThreadArgs {
-  @Field(() => CommentThreadUpdateInput, { nullable: false })
-  @Type(() => CommentThreadUpdateInput)
-  data!: CommentThreadUpdateInput;
 
-  @Field(() => CommentThreadWhereUniqueInput, { nullable: false })
-  @Type(() => CommentThreadWhereUniqueInput)
-  where!: CommentThreadWhereUniqueInput;
+    @Field(() => CommentThreadUpdateInput, {nullable:false})
+    @Type(() => CommentThreadUpdateInput)
+    data!: CommentThreadUpdateInput;
+
+    @Field(() => CommentThreadWhereUniqueInput, {nullable:false})
+    @Type(() => CommentThreadWhereUniqueInput)
+    where!: CommentThreadWhereUniqueInput;
 }

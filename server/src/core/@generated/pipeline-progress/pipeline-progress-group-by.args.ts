@@ -12,35 +12,32 @@ import { PipelineProgressMaxAggregateInput } from './pipeline-progress-max-aggre
 
 @ArgsType()
 export class PipelineProgressGroupByArgs {
-  @Field(() => PipelineProgressWhereInput, { nullable: true })
-  @Type(() => PipelineProgressWhereInput)
-  where?: PipelineProgressWhereInput;
 
-  @Field(() => [PipelineProgressOrderByWithAggregationInput], {
-    nullable: true,
-  })
-  orderBy?: Array<PipelineProgressOrderByWithAggregationInput>;
+    @Field(() => PipelineProgressWhereInput, {nullable:true})
+    @Type(() => PipelineProgressWhereInput)
+    where?: PipelineProgressWhereInput;
 
-  @Field(() => [PipelineProgressScalarFieldEnum], { nullable: false })
-  by!: Array<keyof typeof PipelineProgressScalarFieldEnum>;
+    @Field(() => [PipelineProgressOrderByWithAggregationInput], {nullable:true})
+    orderBy?: Array<PipelineProgressOrderByWithAggregationInput>;
 
-  @Field(() => PipelineProgressScalarWhereWithAggregatesInput, {
-    nullable: true,
-  })
-  having?: PipelineProgressScalarWhereWithAggregatesInput;
+    @Field(() => [PipelineProgressScalarFieldEnum], {nullable:false})
+    by!: Array<keyof typeof PipelineProgressScalarFieldEnum>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => PipelineProgressScalarWhereWithAggregatesInput, {nullable:true})
+    having?: PipelineProgressScalarWhereWithAggregatesInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => PipelineProgressCountAggregateInput, { nullable: true })
-  _count?: PipelineProgressCountAggregateInput;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
 
-  @Field(() => PipelineProgressMinAggregateInput, { nullable: true })
-  _min?: PipelineProgressMinAggregateInput;
+    @Field(() => PipelineProgressCountAggregateInput, {nullable:true})
+    _count?: PipelineProgressCountAggregateInput;
 
-  @Field(() => PipelineProgressMaxAggregateInput, { nullable: true })
-  _max?: PipelineProgressMaxAggregateInput;
+    @Field(() => PipelineProgressMinAggregateInput, {nullable:true})
+    _min?: PipelineProgressMinAggregateInput;
+
+    @Field(() => PipelineProgressMaxAggregateInput, {nullable:true})
+    _max?: PipelineProgressMaxAggregateInput;
 }

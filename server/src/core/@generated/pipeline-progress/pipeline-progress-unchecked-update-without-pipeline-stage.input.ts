@@ -8,29 +8,28 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressUncheckedUpdateWithoutPipelineStageInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  pipelineId?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {
-    nullable: true,
-  })
-  progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    pipelineId?: StringFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  progressableId?: StringFieldUpdateOperationsInput;
+    @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {nullable:true})
+    progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
 
-  @HideField()
-  workspaceId?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    progressableId?: StringFieldUpdateOperationsInput;
+
+    @HideField()
+    workspaceId?: StringFieldUpdateOperationsInput;
 }

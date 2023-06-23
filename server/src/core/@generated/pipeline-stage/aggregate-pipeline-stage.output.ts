@@ -6,12 +6,13 @@ import { PipelineStageMaxAggregate } from './pipeline-stage-max-aggregate.output
 
 @ObjectType()
 export class AggregatePipelineStage {
-  @Field(() => PipelineStageCountAggregate, { nullable: true })
-  _count?: PipelineStageCountAggregate;
 
-  @Field(() => PipelineStageMinAggregate, { nullable: true })
-  _min?: PipelineStageMinAggregate;
+    @Field(() => PipelineStageCountAggregate, {nullable:true})
+    _count?: PipelineStageCountAggregate;
 
-  @Field(() => PipelineStageMaxAggregate, { nullable: true })
-  _max?: PipelineStageMaxAggregate;
+    @Field(() => PipelineStageMinAggregate, {nullable:true})
+    _min?: PipelineStageMinAggregate;
+
+    @Field(() => PipelineStageMaxAggregate, {nullable:true})
+    _max?: PipelineStageMaxAggregate;
 }

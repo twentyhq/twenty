@@ -11,39 +11,34 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineUpdateInput {
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    id?: StringFieldUpdateOperationsInput;
 
-  @Field(() => DateTimeFieldUpdateOperationsInput, { nullable: true })
-  updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    createdAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => NullableDateTimeFieldUpdateOperationsInput, { nullable: true })
-  deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
+    updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  name?: StringFieldUpdateOperationsInput;
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
-  @Field(() => StringFieldUpdateOperationsInput, { nullable: true })
-  icon?: StringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    name?: StringFieldUpdateOperationsInput;
 
-  @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {
-    nullable: true,
-  })
-  pipelineProgressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    icon?: StringFieldUpdateOperationsInput;
 
-  @Field(() => PipelineStageUpdateManyWithoutPipelineNestedInput, {
-    nullable: true,
-  })
-  pipelineStages?: PipelineStageUpdateManyWithoutPipelineNestedInput;
+    @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {nullable:true})
+    pipelineProgressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
 
-  @Field(() => PipelineProgressUpdateManyWithoutPipelineNestedInput, {
-    nullable: true,
-  })
-  pipelineProgresses?: PipelineProgressUpdateManyWithoutPipelineNestedInput;
+    @Field(() => PipelineStageUpdateManyWithoutPipelineNestedInput, {nullable:true})
+    pipelineStages?: PipelineStageUpdateManyWithoutPipelineNestedInput;
 
-  @HideField()
-  workspace?: WorkspaceUpdateOneRequiredWithoutPipelinesNestedInput;
+    @Field(() => PipelineProgressUpdateManyWithoutPipelineNestedInput, {nullable:true})
+    pipelineProgresses?: PipelineProgressUpdateManyWithoutPipelineNestedInput;
+
+    @HideField()
+    workspace?: WorkspaceUpdateOneRequiredWithoutPipelinesNestedInput;
 }

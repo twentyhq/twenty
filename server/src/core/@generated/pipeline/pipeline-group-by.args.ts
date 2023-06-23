@@ -12,31 +12,32 @@ import { PipelineMaxAggregateInput } from './pipeline-max-aggregate.input';
 
 @ArgsType()
 export class PipelineGroupByArgs {
-  @Field(() => PipelineWhereInput, { nullable: true })
-  @Type(() => PipelineWhereInput)
-  where?: PipelineWhereInput;
 
-  @Field(() => [PipelineOrderByWithAggregationInput], { nullable: true })
-  orderBy?: Array<PipelineOrderByWithAggregationInput>;
+    @Field(() => PipelineWhereInput, {nullable:true})
+    @Type(() => PipelineWhereInput)
+    where?: PipelineWhereInput;
 
-  @Field(() => [PipelineScalarFieldEnum], { nullable: false })
-  by!: Array<keyof typeof PipelineScalarFieldEnum>;
+    @Field(() => [PipelineOrderByWithAggregationInput], {nullable:true})
+    orderBy?: Array<PipelineOrderByWithAggregationInput>;
 
-  @Field(() => PipelineScalarWhereWithAggregatesInput, { nullable: true })
-  having?: PipelineScalarWhereWithAggregatesInput;
+    @Field(() => [PipelineScalarFieldEnum], {nullable:false})
+    by!: Array<keyof typeof PipelineScalarFieldEnum>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => PipelineScalarWhereWithAggregatesInput, {nullable:true})
+    having?: PipelineScalarWhereWithAggregatesInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => PipelineCountAggregateInput, { nullable: true })
-  _count?: PipelineCountAggregateInput;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
 
-  @Field(() => PipelineMinAggregateInput, { nullable: true })
-  _min?: PipelineMinAggregateInput;
+    @Field(() => PipelineCountAggregateInput, {nullable:true})
+    _count?: PipelineCountAggregateInput;
 
-  @Field(() => PipelineMaxAggregateInput, { nullable: true })
-  _max?: PipelineMaxAggregateInput;
+    @Field(() => PipelineMinAggregateInput, {nullable:true})
+    _min?: PipelineMinAggregateInput;
+
+    @Field(() => PipelineMaxAggregateInput, {nullable:true})
+    _max?: PipelineMaxAggregateInput;
 }

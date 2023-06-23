@@ -5,34 +5,31 @@ import { PipelineProgressCreateNestedManyWithoutPipelineStageInput } from '../pi
 
 @InputType()
 export class PipelineStageCreateWithoutWorkspaceInput {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  name!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  type!: string;
+    @Field(() => String, {nullable:false})
+    name!: string;
 
-  @Field(() => String, { nullable: false })
-  color!: string;
+    @Field(() => String, {nullable:false})
+    type!: string;
 
-  @Field(() => PipelineCreateNestedOneWithoutPipelineStagesInput, {
-    nullable: false,
-  })
-  pipeline!: PipelineCreateNestedOneWithoutPipelineStagesInput;
+    @Field(() => String, {nullable:false})
+    color!: string;
 
-  @Field(() => PipelineProgressCreateNestedManyWithoutPipelineStageInput, {
-    nullable: true,
-  })
-  pipelineProgresses?: PipelineProgressCreateNestedManyWithoutPipelineStageInput;
+    @Field(() => PipelineCreateNestedOneWithoutPipelineStagesInput, {nullable:false})
+    pipeline!: PipelineCreateNestedOneWithoutPipelineStagesInput;
+
+    @Field(() => PipelineProgressCreateNestedManyWithoutPipelineStageInput, {nullable:true})
+    pipelineProgresses?: PipelineProgressCreateNestedManyWithoutPipelineStageInput;
 }

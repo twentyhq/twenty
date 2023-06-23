@@ -21,10 +21,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate-client": "npx prisma generate --generator client && yarn prisma:generate-gql-select",
     "prisma:generate-gql-select": "node scripts/generate-model-select-map.js",
-    "prisma:generate-nest-graphql": "npx prisma generate --generator nestgraphql && eslint \"src/core/@generated/**\" --fix",
+    "prisma:generate-nest-graphql": "npx prisma generate --generator nestgraphql",
     "prisma:migrate": "npx prisma migrate deploy",
     "prisma:seed": "npx prisma db seed",
-    "prisma:reset": "npx prisma migrate reset && eslint \"src/core/@generated/**\" --fix"
+    "prisma:reset": "npx prisma migrate reset"
   },
   "dependencies": {
     "@apollo/server": "^4.7.3",

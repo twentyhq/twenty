@@ -11,28 +11,29 @@ import { UserMaxAggregateInput } from './user-max-aggregate.input';
 
 @ArgsType()
 export class UserAggregateArgs {
-  @Field(() => UserWhereInput, { nullable: true })
-  @Type(() => UserWhereInput)
-  where?: UserWhereInput;
 
-  @Field(() => [UserOrderByWithRelationInput], { nullable: true })
-  orderBy?: Array<UserOrderByWithRelationInput>;
+    @Field(() => UserWhereInput, {nullable:true})
+    @Type(() => UserWhereInput)
+    where?: UserWhereInput;
 
-  @Field(() => UserWhereUniqueInput, { nullable: true })
-  cursor?: UserWhereUniqueInput;
+    @Field(() => [UserOrderByWithRelationInput], {nullable:true})
+    orderBy?: Array<UserOrderByWithRelationInput>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => UserWhereUniqueInput, {nullable:true})
+    cursor?: UserWhereUniqueInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => UserCountAggregateInput, { nullable: true })
-  _count?: UserCountAggregateInput;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
 
-  @Field(() => UserMinAggregateInput, { nullable: true })
-  _min?: UserMinAggregateInput;
+    @Field(() => UserCountAggregateInput, {nullable:true})
+    _count?: UserCountAggregateInput;
 
-  @Field(() => UserMaxAggregateInput, { nullable: true })
-  _max?: UserMaxAggregateInput;
+    @Field(() => UserMinAggregateInput, {nullable:true})
+    _min?: UserMinAggregateInput;
+
+    @Field(() => UserMaxAggregateInput, {nullable:true})
+    _max?: UserMaxAggregateInput;
 }

@@ -9,36 +9,37 @@ import { UserRelationFilter } from '../user/user-relation-filter.input';
 
 @InputType()
 export class RefreshTokenWhereInput {
-  @Field(() => [RefreshTokenWhereInput], { nullable: true })
-  AND?: Array<RefreshTokenWhereInput>;
 
-  @Field(() => [RefreshTokenWhereInput], { nullable: true })
-  OR?: Array<RefreshTokenWhereInput>;
+    @Field(() => [RefreshTokenWhereInput], {nullable:true})
+    AND?: Array<RefreshTokenWhereInput>;
 
-  @Field(() => [RefreshTokenWhereInput], { nullable: true })
-  NOT?: Array<RefreshTokenWhereInput>;
+    @Field(() => [RefreshTokenWhereInput], {nullable:true})
+    OR?: Array<RefreshTokenWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [RefreshTokenWhereInput], {nullable:true})
+    NOT?: Array<RefreshTokenWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => BoolFilter, { nullable: true })
-  isRevoked?: BoolFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  expiresAt?: DateTimeFilter;
+    @Field(() => BoolFilter, {nullable:true})
+    isRevoked?: BoolFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    expiresAt?: DateTimeFilter;
 
-  @HideField()
-  userId?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @HideField()
-  user?: UserRelationFilter;
+    @HideField()
+    userId?: StringFilter;
+
+    @HideField()
+    user?: UserRelationFilter;
 }

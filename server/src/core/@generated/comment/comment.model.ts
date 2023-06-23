@@ -8,36 +8,37 @@ import { Workspace } from '../workspace/workspace.model';
 
 @ObjectType()
 export class Comment {
-  @Field(() => ID, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date;
+    @Field(() => ID, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt!: Date | null;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
-  @Field(() => String, { nullable: false })
-  body!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt!: Date | null;
 
-  @Field(() => String, { nullable: false })
-  authorId!: string;
+    @Field(() => String, {nullable:false})
+    body!: string;
 
-  @Field(() => String, { nullable: false })
-  commentThreadId!: string;
+    @Field(() => String, {nullable:false})
+    authorId!: string;
 
-  @HideField()
-  workspaceId!: string;
+    @Field(() => String, {nullable:false})
+    commentThreadId!: string;
 
-  @Field(() => User, { nullable: false })
-  author?: User;
+    @HideField()
+    workspaceId!: string;
 
-  @Field(() => CommentThread, { nullable: false })
-  commentThread?: CommentThread;
+    @Field(() => User, {nullable:false})
+    author?: User;
 
-  @HideField()
-  workspace?: Workspace;
+    @Field(() => CommentThread, {nullable:false})
+    commentThread?: CommentThread;
+
+    @HideField()
+    workspace?: Workspace;
 }

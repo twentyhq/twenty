@@ -4,12 +4,13 @@ import { CommentThreadTargetWhereInput } from './comment-thread-target-where.inp
 
 @InputType()
 export class CommentThreadTargetListRelationFilter {
-  @Field(() => CommentThreadTargetWhereInput, { nullable: true })
-  every?: CommentThreadTargetWhereInput;
 
-  @Field(() => CommentThreadTargetWhereInput, { nullable: true })
-  some?: CommentThreadTargetWhereInput;
+    @Field(() => CommentThreadTargetWhereInput, {nullable:true})
+    every?: CommentThreadTargetWhereInput;
 
-  @Field(() => CommentThreadTargetWhereInput, { nullable: true })
-  none?: CommentThreadTargetWhereInput;
+    @Field(() => CommentThreadTargetWhereInput, {nullable:true})
+    some?: CommentThreadTargetWhereInput;
+
+    @Field(() => CommentThreadTargetWhereInput, {nullable:true})
+    none?: CommentThreadTargetWhereInput;
 }

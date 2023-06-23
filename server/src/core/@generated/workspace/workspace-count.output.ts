@@ -4,27 +4,28 @@ import { Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class WorkspaceCount {
-  @Field(() => Int, { nullable: false })
-  workspaceMember?: number;
 
-  @Field(() => Int, { nullable: false })
-  companies?: number;
+    @Field(() => Int, {nullable:false})
+    workspaceMember?: number;
 
-  @Field(() => Int, { nullable: false })
-  people?: number;
+    @Field(() => Int, {nullable:false})
+    companies?: number;
 
-  @Field(() => Int, { nullable: false })
-  commentThreads?: number;
+    @Field(() => Int, {nullable:false})
+    people?: number;
 
-  @Field(() => Int, { nullable: false })
-  comments?: number;
+    @Field(() => Int, {nullable:false})
+    commentThreads?: number;
 
-  @Field(() => Int, { nullable: false })
-  pipelines?: number;
+    @Field(() => Int, {nullable:false})
+    comments?: number;
 
-  @Field(() => Int, { nullable: false })
-  pipelineStages?: number;
+    @Field(() => Int, {nullable:false})
+    pipelines?: number;
 
-  @Field(() => Int, { nullable: false })
-  pipelineProgresses?: number;
+    @Field(() => Int, {nullable:false})
+    pipelineStages?: number;
+
+    @Field(() => Int, {nullable:false})
+    pipelineProgresses?: number;
 }

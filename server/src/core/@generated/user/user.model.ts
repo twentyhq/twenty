@@ -11,60 +11,61 @@ import { UserCount } from './user-count.output';
 
 @ObjectType()
 export class User {
-  @Field(() => ID, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date;
+    @Field(() => ID, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt!: Date | null;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
-  @Field(() => Date, { nullable: true })
-  lastSeen!: Date | null;
+    @Field(() => Date, {nullable:true})
+    deletedAt!: Date | null;
 
-  @Field(() => Boolean, { nullable: false, defaultValue: false })
-  disabled!: boolean;
+    @Field(() => Date, {nullable:true})
+    lastSeen!: Date | null;
 
-  @Field(() => String, { nullable: false })
-  displayName!: string;
+    @Field(() => Boolean, {nullable:false,defaultValue:false})
+    disabled!: boolean;
 
-  @Field(() => String, { nullable: false })
-  email!: string;
+    @Field(() => String, {nullable:false})
+    displayName!: string;
 
-  @Field(() => String, { nullable: true })
-  avatarUrl!: string | null;
+    @Field(() => String, {nullable:false})
+    email!: string;
 
-  @Field(() => String, { nullable: false })
-  locale!: string;
+    @Field(() => String, {nullable:true})
+    avatarUrl!: string | null;
 
-  @Field(() => String, { nullable: true })
-  phoneNumber!: string | null;
+    @Field(() => String, {nullable:false})
+    locale!: string;
 
-  @HideField()
-  passwordHash!: string | null;
+    @Field(() => String, {nullable:true})
+    phoneNumber!: string | null;
 
-  @Field(() => Boolean, { nullable: false, defaultValue: false })
-  emailVerified!: boolean;
+    @HideField()
+    passwordHash!: string | null;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  metadata!: any | null;
+    @Field(() => Boolean, {nullable:false,defaultValue:false})
+    emailVerified!: boolean;
 
-  @Field(() => WorkspaceMember, { nullable: true })
-  workspaceMember?: WorkspaceMember | null;
+    @Field(() => GraphQLJSON, {nullable:true})
+    metadata!: any | null;
 
-  @Field(() => [Company], { nullable: true })
-  companies?: Array<Company>;
+    @Field(() => WorkspaceMember, {nullable:true})
+    workspaceMember?: WorkspaceMember | null;
 
-  @HideField()
-  refreshTokens?: Array<RefreshToken>;
+    @Field(() => [Company], {nullable:true})
+    companies?: Array<Company>;
 
-  @Field(() => [Comment], { nullable: true })
-  comments?: Array<Comment>;
+    @HideField()
+    refreshTokens?: Array<RefreshToken>;
 
-  @HideField()
-  _count?: UserCount;
+    @Field(() => [Comment], {nullable:true})
+    comments?: Array<Comment>;
+
+    @HideField()
+    _count?: UserCount;
 }

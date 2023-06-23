@@ -9,39 +9,40 @@ import { Workspace } from '../workspace/workspace.model';
 
 @ObjectType()
 export class PipelineProgress {
-  @Field(() => ID, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date;
+    @Field(() => ID, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt!: Date | null;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
-  @Field(() => String, { nullable: false })
-  pipelineId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt!: Date | null;
 
-  @Field(() => String, { nullable: false })
-  pipelineStageId!: string;
+    @Field(() => String, {nullable:false})
+    pipelineId!: string;
 
-  @Field(() => PipelineProgressableType, { nullable: false })
-  progressableType!: keyof typeof PipelineProgressableType;
+    @Field(() => String, {nullable:false})
+    pipelineStageId!: string;
 
-  @Field(() => String, { nullable: false })
-  progressableId!: string;
+    @Field(() => PipelineProgressableType, {nullable:false})
+    progressableType!: keyof typeof PipelineProgressableType;
 
-  @HideField()
-  workspaceId!: string;
+    @Field(() => String, {nullable:false})
+    progressableId!: string;
 
-  @Field(() => Pipeline, { nullable: false })
-  pipeline?: Pipeline;
+    @HideField()
+    workspaceId!: string;
 
-  @Field(() => PipelineStage, { nullable: false })
-  pipelineStage?: PipelineStage;
+    @Field(() => Pipeline, {nullable:false})
+    pipeline?: Pipeline;
 
-  @HideField()
-  workspace?: Workspace;
+    @Field(() => PipelineStage, {nullable:false})
+    pipelineStage?: PipelineStage;
+
+    @HideField()
+    workspace?: Workspace;
 }

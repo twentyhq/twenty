@@ -5,36 +5,37 @@ import { NestedDateTimeNullableFilter } from './nested-date-time-nullable-filter
 
 @InputType()
 export class NestedDateTimeNullableWithAggregatesFilter {
-  @Field(() => Date, { nullable: true })
-  equals?: Date | string;
 
-  @Field(() => [Date], { nullable: true })
-  in?: Array<Date> | Array<string>;
+    @Field(() => Date, {nullable:true})
+    equals?: Date | string;
 
-  @Field(() => [Date], { nullable: true })
-  notIn?: Array<Date> | Array<string>;
+    @Field(() => [Date], {nullable:true})
+    in?: Array<Date> | Array<string>;
 
-  @Field(() => Date, { nullable: true })
-  lt?: Date | string;
+    @Field(() => [Date], {nullable:true})
+    notIn?: Array<Date> | Array<string>;
 
-  @Field(() => Date, { nullable: true })
-  lte?: Date | string;
+    @Field(() => Date, {nullable:true})
+    lt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  gt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    lte?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  gte?: Date | string;
+    @Field(() => Date, {nullable:true})
+    gt?: Date | string;
 
-  @Field(() => NestedDateTimeNullableWithAggregatesFilter, { nullable: true })
-  not?: NestedDateTimeNullableWithAggregatesFilter;
+    @Field(() => Date, {nullable:true})
+    gte?: Date | string;
 
-  @Field(() => NestedIntNullableFilter, { nullable: true })
-  _count?: NestedIntNullableFilter;
+    @Field(() => NestedDateTimeNullableWithAggregatesFilter, {nullable:true})
+    not?: NestedDateTimeNullableWithAggregatesFilter;
 
-  @Field(() => NestedDateTimeNullableFilter, { nullable: true })
-  _min?: NestedDateTimeNullableFilter;
+    @Field(() => NestedIntNullableFilter, {nullable:true})
+    _count?: NestedIntNullableFilter;
 
-  @Field(() => NestedDateTimeNullableFilter, { nullable: true })
-  _max?: NestedDateTimeNullableFilter;
+    @Field(() => NestedDateTimeNullableFilter, {nullable:true})
+    _min?: NestedDateTimeNullableFilter;
+
+    @Field(() => NestedDateTimeNullableFilter, {nullable:true})
+    _max?: NestedDateTimeNullableFilter;
 }

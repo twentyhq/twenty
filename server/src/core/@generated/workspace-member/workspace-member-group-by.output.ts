@@ -7,30 +7,31 @@ import { WorkspaceMemberMaxAggregate } from './workspace-member-max-aggregate.ou
 
 @ObjectType()
 export class WorkspaceMemberGroupBy {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date | string;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
-  @Field(() => String, { nullable: false })
-  userId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @HideField()
-  workspaceId!: string;
+    @Field(() => String, {nullable:false})
+    userId!: string;
 
-  @Field(() => WorkspaceMemberCountAggregate, { nullable: true })
-  _count?: WorkspaceMemberCountAggregate;
+    @HideField()
+    workspaceId!: string;
 
-  @Field(() => WorkspaceMemberMinAggregate, { nullable: true })
-  _min?: WorkspaceMemberMinAggregate;
+    @Field(() => WorkspaceMemberCountAggregate, {nullable:true})
+    _count?: WorkspaceMemberCountAggregate;
 
-  @Field(() => WorkspaceMemberMaxAggregate, { nullable: true })
-  _max?: WorkspaceMemberMaxAggregate;
+    @Field(() => WorkspaceMemberMinAggregate, {nullable:true})
+    _min?: WorkspaceMemberMinAggregate;
+
+    @Field(() => WorkspaceMemberMaxAggregate, {nullable:true})
+    _max?: WorkspaceMemberMaxAggregate;
 }

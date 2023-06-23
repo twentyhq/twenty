@@ -6,11 +6,12 @@ import { CommentThreadWhereInput } from './comment-thread-where.input';
 
 @ArgsType()
 export class UpdateManyCommentThreadArgs {
-  @Field(() => CommentThreadUpdateManyMutationInput, { nullable: false })
-  @Type(() => CommentThreadUpdateManyMutationInput)
-  data!: CommentThreadUpdateManyMutationInput;
 
-  @Field(() => CommentThreadWhereInput, { nullable: true })
-  @Type(() => CommentThreadWhereInput)
-  where?: CommentThreadWhereInput;
+    @Field(() => CommentThreadUpdateManyMutationInput, {nullable:false})
+    @Type(() => CommentThreadUpdateManyMutationInput)
+    data!: CommentThreadUpdateManyMutationInput;
+
+    @Field(() => CommentThreadWhereInput, {nullable:true})
+    @Type(() => CommentThreadWhereInput)
+    where?: CommentThreadWhereInput;
 }

@@ -5,30 +5,31 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class PipelineProgressCreateManyInput {
-  @Field(() => String, { nullable: true })
-  id?: string;
 
-  @Field(() => Date, { nullable: true })
-  createdAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    id?: string;
 
-  @Field(() => Date, { nullable: true })
-  updatedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  pipelineId!: string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  pipelineStageId!: string;
+    @Field(() => String, {nullable:false})
+    pipelineId!: string;
 
-  @Field(() => PipelineProgressableType, { nullable: false })
-  progressableType!: keyof typeof PipelineProgressableType;
+    @Field(() => String, {nullable:false})
+    pipelineStageId!: string;
 
-  @Field(() => String, { nullable: false })
-  progressableId!: string;
+    @Field(() => PipelineProgressableType, {nullable:false})
+    progressableType!: keyof typeof PipelineProgressableType;
 
-  @HideField()
-  workspaceId!: string;
+    @Field(() => String, {nullable:false})
+    progressableId!: string;
+
+    @HideField()
+    workspaceId!: string;
 }

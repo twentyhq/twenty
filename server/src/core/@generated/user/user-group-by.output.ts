@@ -8,54 +8,55 @@ import { UserMaxAggregate } from './user-max-aggregate.output';
 
 @ObjectType()
 export class UserGroupBy {
-  @Field(() => String, { nullable: false })
-  id!: string;
 
-  @Field(() => Date, { nullable: false })
-  createdAt!: Date | string;
+    @Field(() => String, {nullable:false})
+    id!: string;
 
-  @Field(() => Date, { nullable: false })
-  updatedAt!: Date | string;
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | string;
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
-  @Field(() => Date, { nullable: true })
-  lastSeen?: Date | string;
+    @Field(() => Date, {nullable:true})
+    deletedAt?: Date | string;
 
-  @Field(() => Boolean, { nullable: false })
-  disabled!: boolean;
+    @Field(() => Date, {nullable:true})
+    lastSeen?: Date | string;
 
-  @Field(() => String, { nullable: false })
-  displayName!: string;
+    @Field(() => Boolean, {nullable:false})
+    disabled!: boolean;
 
-  @Field(() => String, { nullable: false })
-  email!: string;
+    @Field(() => String, {nullable:false})
+    displayName!: string;
 
-  @Field(() => String, { nullable: true })
-  avatarUrl?: string;
+    @Field(() => String, {nullable:false})
+    email!: string;
 
-  @Field(() => String, { nullable: false })
-  locale!: string;
+    @Field(() => String, {nullable:true})
+    avatarUrl?: string;
 
-  @Field(() => String, { nullable: true })
-  phoneNumber?: string;
+    @Field(() => String, {nullable:false})
+    locale!: string;
 
-  @HideField()
-  passwordHash?: string;
+    @Field(() => String, {nullable:true})
+    phoneNumber?: string;
 
-  @Field(() => Boolean, { nullable: false })
-  emailVerified!: boolean;
+    @HideField()
+    passwordHash?: string;
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  metadata?: any;
+    @Field(() => Boolean, {nullable:false})
+    emailVerified!: boolean;
 
-  @Field(() => UserCountAggregate, { nullable: true })
-  _count?: UserCountAggregate;
+    @Field(() => GraphQLJSON, {nullable:true})
+    metadata?: any;
 
-  @Field(() => UserMinAggregate, { nullable: true })
-  _min?: UserMinAggregate;
+    @Field(() => UserCountAggregate, {nullable:true})
+    _count?: UserCountAggregate;
 
-  @Field(() => UserMaxAggregate, { nullable: true })
-  _max?: UserMaxAggregate;
+    @Field(() => UserMinAggregate, {nullable:true})
+    _min?: UserMinAggregate;
+
+    @Field(() => UserMaxAggregate, {nullable:true})
+    _max?: UserMaxAggregate;
 }

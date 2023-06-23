@@ -5,27 +5,28 @@ import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class RefreshTokenCountAggregate {
-  @Field(() => Int, { nullable: false })
-  id!: number;
 
-  @Field(() => Int, { nullable: false })
-  createdAt!: number;
+    @Field(() => Int, {nullable:false})
+    id!: number;
 
-  @Field(() => Int, { nullable: false })
-  updatedAt!: number;
+    @Field(() => Int, {nullable:false})
+    createdAt!: number;
 
-  @Field(() => Int, { nullable: false })
-  isRevoked!: number;
+    @Field(() => Int, {nullable:false})
+    updatedAt!: number;
 
-  @Field(() => Int, { nullable: false })
-  expiresAt!: number;
+    @Field(() => Int, {nullable:false})
+    isRevoked!: number;
 
-  @Field(() => Int, { nullable: false })
-  deletedAt!: number;
+    @Field(() => Int, {nullable:false})
+    expiresAt!: number;
 
-  @HideField()
-  userId!: number;
+    @Field(() => Int, {nullable:false})
+    deletedAt!: number;
 
-  @Field(() => Int, { nullable: false })
-  _all!: number;
+    @HideField()
+    userId!: number;
+
+    @Field(() => Int, {nullable:false})
+    _all!: number;
 }

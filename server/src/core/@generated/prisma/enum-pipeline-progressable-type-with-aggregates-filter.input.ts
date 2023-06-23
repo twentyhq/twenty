@@ -7,26 +7,25 @@ import { NestedEnumPipelineProgressableTypeFilter } from './nested-enum-pipeline
 
 @InputType()
 export class EnumPipelineProgressableTypeWithAggregatesFilter {
-  @Field(() => PipelineProgressableType, { nullable: true })
-  equals?: keyof typeof PipelineProgressableType;
 
-  @Field(() => [PipelineProgressableType], { nullable: true })
-  in?: Array<keyof typeof PipelineProgressableType>;
+    @Field(() => PipelineProgressableType, {nullable:true})
+    equals?: keyof typeof PipelineProgressableType;
 
-  @Field(() => [PipelineProgressableType], { nullable: true })
-  notIn?: Array<keyof typeof PipelineProgressableType>;
+    @Field(() => [PipelineProgressableType], {nullable:true})
+    in?: Array<keyof typeof PipelineProgressableType>;
 
-  @Field(() => NestedEnumPipelineProgressableTypeWithAggregatesFilter, {
-    nullable: true,
-  })
-  not?: NestedEnumPipelineProgressableTypeWithAggregatesFilter;
+    @Field(() => [PipelineProgressableType], {nullable:true})
+    notIn?: Array<keyof typeof PipelineProgressableType>;
 
-  @Field(() => NestedIntFilter, { nullable: true })
-  _count?: NestedIntFilter;
+    @Field(() => NestedEnumPipelineProgressableTypeWithAggregatesFilter, {nullable:true})
+    not?: NestedEnumPipelineProgressableTypeWithAggregatesFilter;
 
-  @Field(() => NestedEnumPipelineProgressableTypeFilter, { nullable: true })
-  _min?: NestedEnumPipelineProgressableTypeFilter;
+    @Field(() => NestedIntFilter, {nullable:true})
+    _count?: NestedIntFilter;
 
-  @Field(() => NestedEnumPipelineProgressableTypeFilter, { nullable: true })
-  _max?: NestedEnumPipelineProgressableTypeFilter;
+    @Field(() => NestedEnumPipelineProgressableTypeFilter, {nullable:true})
+    _min?: NestedEnumPipelineProgressableTypeFilter;
+
+    @Field(() => NestedEnumPipelineProgressableTypeFilter, {nullable:true})
+    _max?: NestedEnumPipelineProgressableTypeFilter;
 }

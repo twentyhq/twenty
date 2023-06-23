@@ -5,7 +5,8 @@ import { Type } from 'class-transformer';
 
 @ArgsType()
 export class DeleteOneCommentThreadTargetArgs {
-  @Field(() => CommentThreadTargetWhereUniqueInput, { nullable: false })
-  @Type(() => CommentThreadTargetWhereUniqueInput)
-  where!: CommentThreadTargetWhereUniqueInput;
+
+    @Field(() => CommentThreadTargetWhereUniqueInput, {nullable:false})
+    @Type(() => CommentThreadTargetWhereUniqueInput)
+    where!: CommentThreadTargetWhereUniqueInput;
 }

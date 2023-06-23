@@ -9,24 +9,23 @@ import { CommentThreadTargetScalarFieldEnum } from './comment-thread-target-scal
 
 @ArgsType()
 export class FindFirstCommentThreadTargetArgs {
-  @Field(() => CommentThreadTargetWhereInput, { nullable: true })
-  @Type(() => CommentThreadTargetWhereInput)
-  where?: CommentThreadTargetWhereInput;
 
-  @Field(() => [CommentThreadTargetOrderByWithRelationInput], {
-    nullable: true,
-  })
-  orderBy?: Array<CommentThreadTargetOrderByWithRelationInput>;
+    @Field(() => CommentThreadTargetWhereInput, {nullable:true})
+    @Type(() => CommentThreadTargetWhereInput)
+    where?: CommentThreadTargetWhereInput;
 
-  @Field(() => CommentThreadTargetWhereUniqueInput, { nullable: true })
-  cursor?: CommentThreadTargetWhereUniqueInput;
+    @Field(() => [CommentThreadTargetOrderByWithRelationInput], {nullable:true})
+    orderBy?: Array<CommentThreadTargetOrderByWithRelationInput>;
 
-  @Field(() => Int, { nullable: true })
-  take?: number;
+    @Field(() => CommentThreadTargetWhereUniqueInput, {nullable:true})
+    cursor?: CommentThreadTargetWhereUniqueInput;
 
-  @Field(() => Int, { nullable: true })
-  skip?: number;
+    @Field(() => Int, {nullable:true})
+    take?: number;
 
-  @Field(() => [CommentThreadTargetScalarFieldEnum], { nullable: true })
-  distinct?: Array<keyof typeof CommentThreadTargetScalarFieldEnum>;
+    @Field(() => Int, {nullable:true})
+    skip?: number;
+
+    @Field(() => [CommentThreadTargetScalarFieldEnum], {nullable:true})
+    distinct?: Array<keyof typeof CommentThreadTargetScalarFieldEnum>;
 }

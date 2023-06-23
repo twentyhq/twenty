@@ -7,39 +7,34 @@ import { EnumCommentableTypeWithAggregatesFilter } from '../prisma/enum-commenta
 
 @InputType()
 export class CommentThreadTargetScalarWhereWithAggregatesInput {
-  @Field(() => [CommentThreadTargetScalarWhereWithAggregatesInput], {
-    nullable: true,
-  })
-  AND?: Array<CommentThreadTargetScalarWhereWithAggregatesInput>;
 
-  @Field(() => [CommentThreadTargetScalarWhereWithAggregatesInput], {
-    nullable: true,
-  })
-  OR?: Array<CommentThreadTargetScalarWhereWithAggregatesInput>;
+    @Field(() => [CommentThreadTargetScalarWhereWithAggregatesInput], {nullable:true})
+    AND?: Array<CommentThreadTargetScalarWhereWithAggregatesInput>;
 
-  @Field(() => [CommentThreadTargetScalarWhereWithAggregatesInput], {
-    nullable: true,
-  })
-  NOT?: Array<CommentThreadTargetScalarWhereWithAggregatesInput>;
+    @Field(() => [CommentThreadTargetScalarWhereWithAggregatesInput], {nullable:true})
+    OR?: Array<CommentThreadTargetScalarWhereWithAggregatesInput>;
 
-  @Field(() => StringWithAggregatesFilter, { nullable: true })
-  id?: StringWithAggregatesFilter;
+    @Field(() => [CommentThreadTargetScalarWhereWithAggregatesInput], {nullable:true})
+    NOT?: Array<CommentThreadTargetScalarWhereWithAggregatesInput>;
 
-  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
-  createdAt?: DateTimeWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    id?: StringWithAggregatesFilter;
 
-  @Field(() => DateTimeWithAggregatesFilter, { nullable: true })
-  updatedAt?: DateTimeWithAggregatesFilter;
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    createdAt?: DateTimeWithAggregatesFilter;
 
-  @Field(() => DateTimeNullableWithAggregatesFilter, { nullable: true })
-  deletedAt?: DateTimeNullableWithAggregatesFilter;
+    @Field(() => DateTimeWithAggregatesFilter, {nullable:true})
+    updatedAt?: DateTimeWithAggregatesFilter;
 
-  @Field(() => StringWithAggregatesFilter, { nullable: true })
-  commentThreadId?: StringWithAggregatesFilter;
+    @Field(() => DateTimeNullableWithAggregatesFilter, {nullable:true})
+    deletedAt?: DateTimeNullableWithAggregatesFilter;
 
-  @Field(() => EnumCommentableTypeWithAggregatesFilter, { nullable: true })
-  commentableType?: EnumCommentableTypeWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    commentThreadId?: StringWithAggregatesFilter;
 
-  @Field(() => StringWithAggregatesFilter, { nullable: true })
-  commentableId?: StringWithAggregatesFilter;
+    @Field(() => EnumCommentableTypeWithAggregatesFilter, {nullable:true})
+    commentableType?: EnumCommentableTypeWithAggregatesFilter;
+
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    commentableId?: StringWithAggregatesFilter;
 }

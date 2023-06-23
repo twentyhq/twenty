@@ -6,11 +6,12 @@ import { CommentWhereUniqueInput } from './comment-where-unique.input';
 
 @ArgsType()
 export class UpdateOneCommentArgs {
-  @Field(() => CommentUpdateInput, { nullable: false })
-  @Type(() => CommentUpdateInput)
-  data!: CommentUpdateInput;
 
-  @Field(() => CommentWhereUniqueInput, { nullable: false })
-  @Type(() => CommentWhereUniqueInput)
-  where!: CommentWhereUniqueInput;
+    @Field(() => CommentUpdateInput, {nullable:false})
+    @Type(() => CommentUpdateInput)
+    data!: CommentUpdateInput;
+
+    @Field(() => CommentWhereUniqueInput, {nullable:false})
+    @Type(() => CommentWhereUniqueInput)
+    where!: CommentWhereUniqueInput;
 }

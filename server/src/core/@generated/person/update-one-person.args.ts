@@ -6,11 +6,12 @@ import { PersonWhereUniqueInput } from './person-where-unique.input';
 
 @ArgsType()
 export class UpdateOnePersonArgs {
-  @Field(() => PersonUpdateInput, { nullable: false })
-  @Type(() => PersonUpdateInput)
-  data!: PersonUpdateInput;
 
-  @Field(() => PersonWhereUniqueInput, { nullable: false })
-  @Type(() => PersonWhereUniqueInput)
-  where!: PersonWhereUniqueInput;
+    @Field(() => PersonUpdateInput, {nullable:false})
+    @Type(() => PersonUpdateInput)
+    data!: PersonUpdateInput;
+
+    @Field(() => PersonWhereUniqueInput, {nullable:false})
+    @Type(() => PersonWhereUniqueInput)
+    where!: PersonWhereUniqueInput;
 }

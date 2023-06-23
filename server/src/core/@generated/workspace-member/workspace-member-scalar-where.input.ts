@@ -7,30 +7,31 @@ import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberScalarWhereInput {
-  @Field(() => [WorkspaceMemberScalarWhereInput], { nullable: true })
-  AND?: Array<WorkspaceMemberScalarWhereInput>;
 
-  @Field(() => [WorkspaceMemberScalarWhereInput], { nullable: true })
-  OR?: Array<WorkspaceMemberScalarWhereInput>;
+    @Field(() => [WorkspaceMemberScalarWhereInput], {nullable:true})
+    AND?: Array<WorkspaceMemberScalarWhereInput>;
 
-  @Field(() => [WorkspaceMemberScalarWhereInput], { nullable: true })
-  NOT?: Array<WorkspaceMemberScalarWhereInput>;
+    @Field(() => [WorkspaceMemberScalarWhereInput], {nullable:true})
+    OR?: Array<WorkspaceMemberScalarWhereInput>;
 
-  @Field(() => StringFilter, { nullable: true })
-  id?: StringFilter;
+    @Field(() => [WorkspaceMemberScalarWhereInput], {nullable:true})
+    NOT?: Array<WorkspaceMemberScalarWhereInput>;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  createdAt?: DateTimeFilter;
+    @Field(() => StringFilter, {nullable:true})
+    id?: StringFilter;
 
-  @Field(() => DateTimeFilter, { nullable: true })
-  updatedAt?: DateTimeFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
 
-  @Field(() => DateTimeNullableFilter, { nullable: true })
-  deletedAt?: DateTimeNullableFilter;
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
-  @Field(() => StringFilter, { nullable: true })
-  userId?: StringFilter;
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    deletedAt?: DateTimeNullableFilter;
 
-  @HideField()
-  workspaceId?: StringFilter;
+    @Field(() => StringFilter, {nullable:true})
+    userId?: StringFilter;
+
+    @HideField()
+    workspaceId?: StringFilter;
 }

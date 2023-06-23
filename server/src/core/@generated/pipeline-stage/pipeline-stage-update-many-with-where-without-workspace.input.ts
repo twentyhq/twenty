@@ -6,11 +6,12 @@ import { PipelineStageUpdateManyMutationInput } from './pipeline-stage-update-ma
 
 @InputType()
 export class PipelineStageUpdateManyWithWhereWithoutWorkspaceInput {
-  @Field(() => PipelineStageScalarWhereInput, { nullable: false })
-  @Type(() => PipelineStageScalarWhereInput)
-  where!: PipelineStageScalarWhereInput;
 
-  @Field(() => PipelineStageUpdateManyMutationInput, { nullable: false })
-  @Type(() => PipelineStageUpdateManyMutationInput)
-  data!: PipelineStageUpdateManyMutationInput;
+    @Field(() => PipelineStageScalarWhereInput, {nullable:false})
+    @Type(() => PipelineStageScalarWhereInput)
+    where!: PipelineStageScalarWhereInput;
+
+    @Field(() => PipelineStageUpdateManyMutationInput, {nullable:false})
+    @Type(() => PipelineStageUpdateManyMutationInput)
+    data!: PipelineStageUpdateManyMutationInput;
 }

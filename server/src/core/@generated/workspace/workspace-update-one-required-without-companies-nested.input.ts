@@ -9,25 +9,24 @@ import { WorkspaceUpdateWithoutCompaniesInput } from './workspace-update-without
 
 @InputType()
 export class WorkspaceUpdateOneRequiredWithoutCompaniesNestedInput {
-  @Field(() => WorkspaceCreateWithoutCompaniesInput, { nullable: true })
-  @Type(() => WorkspaceCreateWithoutCompaniesInput)
-  create?: WorkspaceCreateWithoutCompaniesInput;
 
-  @Field(() => WorkspaceCreateOrConnectWithoutCompaniesInput, {
-    nullable: true,
-  })
-  @Type(() => WorkspaceCreateOrConnectWithoutCompaniesInput)
-  connectOrCreate?: WorkspaceCreateOrConnectWithoutCompaniesInput;
+    @Field(() => WorkspaceCreateWithoutCompaniesInput, {nullable:true})
+    @Type(() => WorkspaceCreateWithoutCompaniesInput)
+    create?: WorkspaceCreateWithoutCompaniesInput;
 
-  @Field(() => WorkspaceUpsertWithoutCompaniesInput, { nullable: true })
-  @Type(() => WorkspaceUpsertWithoutCompaniesInput)
-  upsert?: WorkspaceUpsertWithoutCompaniesInput;
+    @Field(() => WorkspaceCreateOrConnectWithoutCompaniesInput, {nullable:true})
+    @Type(() => WorkspaceCreateOrConnectWithoutCompaniesInput)
+    connectOrCreate?: WorkspaceCreateOrConnectWithoutCompaniesInput;
 
-  @Field(() => WorkspaceWhereUniqueInput, { nullable: true })
-  @Type(() => WorkspaceWhereUniqueInput)
-  connect?: WorkspaceWhereUniqueInput;
+    @Field(() => WorkspaceUpsertWithoutCompaniesInput, {nullable:true})
+    @Type(() => WorkspaceUpsertWithoutCompaniesInput)
+    upsert?: WorkspaceUpsertWithoutCompaniesInput;
 
-  @Field(() => WorkspaceUpdateWithoutCompaniesInput, { nullable: true })
-  @Type(() => WorkspaceUpdateWithoutCompaniesInput)
-  update?: WorkspaceUpdateWithoutCompaniesInput;
+    @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
+    @Type(() => WorkspaceWhereUniqueInput)
+    connect?: WorkspaceWhereUniqueInput;
+
+    @Field(() => WorkspaceUpdateWithoutCompaniesInput, {nullable:true})
+    @Type(() => WorkspaceUpdateWithoutCompaniesInput)
+    update?: WorkspaceUpdateWithoutCompaniesInput;
 }

@@ -6,11 +6,12 @@ import { WorkspaceMemberUpdateWithoutWorkspaceInput } from './workspace-member-u
 
 @InputType()
 export class WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput {
-  @Field(() => WorkspaceMemberWhereUniqueInput, { nullable: false })
-  @Type(() => WorkspaceMemberWhereUniqueInput)
-  where!: WorkspaceMemberWhereUniqueInput;
 
-  @Field(() => WorkspaceMemberUpdateWithoutWorkspaceInput, { nullable: false })
-  @Type(() => WorkspaceMemberUpdateWithoutWorkspaceInput)
-  data!: WorkspaceMemberUpdateWithoutWorkspaceInput;
+    @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:false})
+    @Type(() => WorkspaceMemberWhereUniqueInput)
+    where!: WorkspaceMemberWhereUniqueInput;
+
+    @Field(() => WorkspaceMemberUpdateWithoutWorkspaceInput, {nullable:false})
+    @Type(() => WorkspaceMemberUpdateWithoutWorkspaceInput)
+    data!: WorkspaceMemberUpdateWithoutWorkspaceInput;
 }
