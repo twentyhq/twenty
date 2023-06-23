@@ -13,10 +13,6 @@ type OwnProps = {
   changeHandler: (updated: string) => void;
 };
 
-type StyledEditModeProps = {
-  isEditMode: boolean;
-};
-
 const StyledRawLink = styled(RawLink)`
   overflow: hidden;
 
@@ -28,7 +24,7 @@ const StyledRawLink = styled(RawLink)`
 `;
 
 // TODO: refactor
-const StyledEditInplaceInput = styled.input<StyledEditModeProps>`
+const StyledEditInplaceInput = styled.input`
   margin: 0;
   width: 100%;
   ${textInputStyle}
@@ -37,17 +33,12 @@ const StyledEditInplaceInput = styled.input<StyledEditModeProps>`
 export function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
-  const [isEditMode, setIsEditMode] = useState(false);
 
   return (
     <EditableCell
-      isEditMode={isEditMode}
-      onOutsideClick={() => setIsEditMode(false)}
-      onInsideClick={() => setIsEditMode(true)}
       editModeContent={
         <StyledEditInplaceInput
           autoFocus
-          isEditMode={isEditMode}
           placeholder={placeholder || ''}
           ref={inputRef}
           value={inputValue}

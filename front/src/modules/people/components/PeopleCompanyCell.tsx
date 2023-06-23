@@ -1,7 +1,7 @@
 import CompanyChip from '@/companies/components/CompanyChip';
-import { EditableCellV2 } from '@/ui/components/editable-cell/EditableCellV2';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { EditableCell } from '@/ui/components/editable-cell/EditableCell';
 import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
-import { useRecoilScopedState } from '@/ui/hooks/useRecoilScopedState';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import { Company, Person } from '~/generated/graphql';
 
@@ -18,7 +18,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
   const [isCreating] = useRecoilScopedState(isCreateModeScopedState);
 
   return (
-    <EditableCellV2
+    <EditableCell
       editModeContent={
         isCreating ? (
           <PeopleCompanyCreateCell people={people} />

@@ -3,7 +3,7 @@ import { debounce } from 'lodash';
 import scrollIntoView from 'scroll-into-view';
 
 import { useUpDownHotkeys } from '@/hotkeys/hooks/useUpDownHotkeys';
-import { useRecoilScopedState } from '@/ui/hooks/useRecoilScopedState';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 
 import { relationPickerSearchFilterScopedState } from '../states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '../types/EntityForSelect';

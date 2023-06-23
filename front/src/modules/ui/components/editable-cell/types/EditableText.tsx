@@ -12,12 +12,8 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-type StyledEditModeProps = {
-  isEditMode: boolean;
-};
-
 // TODO: refactor
-const StyledInplaceInput = styled.input<StyledEditModeProps>`
+const StyledInplaceInput = styled.input`
   margin: 0;
   width: 100%;
   ${textInputStyle}
@@ -38,17 +34,12 @@ export function EditableText({
 }: OwnProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(content);
-  const [isEditMode, setIsEditMode] = useState(false);
 
   return (
     <EditableCell
-      isEditMode={isEditMode}
-      onOutsideClick={() => setIsEditMode(false)}
-      onInsideClick={() => setIsEditMode(true)}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <StyledInplaceInput
-          isEditMode={isEditMode}
           placeholder={placeholder || ''}
           autoFocus
           ref={inputRef}

@@ -2,9 +2,9 @@ import { useCallback, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { Column } from '@/ui/components/board/Board';
 import { NewButton as UINewButton } from '@/ui/components/board/NewButton';
-import { RecoilScope } from '@/ui/hooks/RecoilScope';
 import {
   Company,
   PipelineProgressableType,

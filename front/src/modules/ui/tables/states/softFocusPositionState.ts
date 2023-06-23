@@ -5,7 +5,10 @@ export type TablePosition = {
   column: number;
 };
 
-export const softFocusPositionState = atom<TablePosition | null>({
+export const softFocusPositionState = atom<TablePosition>({
   key: 'softFocusPositionState',
-  default: null,
+  default: {
+    row: 0,
+    column: 1,
+  },
 });

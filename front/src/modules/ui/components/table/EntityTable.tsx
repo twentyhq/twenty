@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import {
   FilterConfigType,
@@ -16,12 +16,17 @@ import {
   SelectedSortType,
   SortType,
 } from '@/filters-and-sorts/interfaces/sorts/interface';
-import { contextMenuPositionState } from '@/ui/tables/states/contextMenuPositionState';
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { useInitializeTableDimensions } from '@/ui/tables/hooks/useInitializeTableDimensions';
+import { useMapKeyboardToSoftFocus } from '@/ui/tables/hooks/useMapKeyboardToSoftFocus';
+import { RowContext } from '@/ui/tables/states/RowContext';
+import { softFocusPositionState } from '@/ui/tables/states/softFocusPositionState';
 
 import { useResetTableRowSelection } from '../../tables/hooks/useResetTableRowSelection';
 import { currentRowSelectionState } from '../../tables/states/rowSelectionState';
 
 import { TableHeader } from './table-header/TableHeader';
+import { EntityTableRow } from './EntityTableRow';
 
 type OwnProps<TData extends { id: string }, SortField> = {
   data: Array<TData>;
@@ -100,11 +105,6 @@ const StyledTableScrollableContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledRow = styled.tr<{ selected: boolean }>`
-  background: ${(props) =>
-    props.selected ? props.theme.background.secondary : 'none'};
-`;
-
 export function EntityTable<TData extends { id: string }, SortField>({
   data,
   columns,
@@ -118,13 +118,21 @@ export function EntityTable<TData extends { id: string }, SortField>({
   const [currentRowSelection, setCurrentRowSelection] = useRecoilState(
     currentRowSelectionState,
   );
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
+
+  const [, setSoftFocusPosition] = useRecoilState(softFocusPositionState);
 
   const resetTableRowSelection = useResetTableRowSelection();
 
   React.useEffect(() => {
     resetTableRowSelection();
   }, [resetTableRowSelection]);
+
+  React.useEffect(() => {
+    setSoftFocusPosition({
+      row: 0,
+      column: 1,
+    });
+  }, [setSoftFocusPosition]);
 
   const table = useReactTable<TData>({
     data,
@@ -138,15 +146,12 @@ export function EntityTable<TData extends { id: string }, SortField>({
     getRowId: (row) => row.id,
   });
 
-  function handleContextMenu(event: React.MouseEvent, id: string) {
-    event.preventDefault();
-    setCurrentRowSelection((prev) => ({ ...prev, [id]: true }));
+  useInitializeTableDimensions({
+    numberOfColumns: columns.length,
+    numberOfRows: data.length,
+  });
 
-    setContextMenuPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
-  }
+  useMapKeyboardToSoftFocus();
 
   return (
     <StyledTableWithHeader>
@@ -186,33 +191,9 @@ export function EntityTable<TData extends { id: string }, SortField>({
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row, index) => (
-              <StyledRow
-                key={row.id}
-                data-testid={`row-id-${row.index}`}
-                selected={!!currentRowSelection[row.id]}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td
-                      key={cell.id + row.original.id}
-                      onContextMenu={(event) =>
-                        handleContextMenu(event, row.original.id)
-                      }
-                      style={{
-                        width: cell.column.getSize(),
-                        minWidth: cell.column.getSize(),
-                        maxWidth: cell.column.getSize(),
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  );
-                })}
-                <td></td>
-              </StyledRow>
+              <RecoilScope SpecificContext={RowContext} key={row.id}>
+                <EntityTableRow row={row} index={index} />
+              </RecoilScope>
             ))}
           </tbody>
         </StyledTable>
