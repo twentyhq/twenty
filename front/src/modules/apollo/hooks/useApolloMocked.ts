@@ -22,7 +22,9 @@ export default function useApolloMocked() {
           return { data: { companies: mockedCompaniesData } };
         }
         if (operation.operationName === 'Verify') {
-          return { data: { user: [mockedUsersData[0]], tokens: {} } };
+          return {
+            data: { verify: { user: [mockedUsersData[0]], tokens: {} } },
+          };
         }
         return response;
       });
