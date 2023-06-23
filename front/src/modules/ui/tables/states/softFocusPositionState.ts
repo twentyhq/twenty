@@ -2,10 +2,7 @@ import { atom } from 'recoil';
 
 import { TablePosition } from '../types/TablePosition';
 
-export const softFocusPositionState = atom<TablePosition>({
+export const softFocusPositionState = atom<TablePosition | null>({
   key: 'softFocusPositionState',
-  default: {
-    row: 0,
-    column: 1,
-  },
+  default: null,
 });
