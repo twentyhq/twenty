@@ -164,11 +164,18 @@ export const accountOwnerFilter = {
   type: 'relation',
   searchConfig: {
     query: SEARCH_USER_QUERY,
-    template: (searchString: string) => ({
-      displayName: {
-        contains: `%${searchString}%`,
-        mode: QueryMode.Insensitive,
-      },
+    template: (searchString: string, currentSelectedId?: string) => ({
+      OR: [
+        {
+          displayName: {
+            contains: `%${searchString}%`,
+            mode: QueryMode.Insensitive,
+          },
+        },
+        {
+          id: currentSelectedId ? { equals: currentSelectedId } : undefined,
+        },
+      ],
     }),
     resultMapper: (data: any) => ({
       value: data,

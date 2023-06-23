@@ -79,7 +79,13 @@ export type SearchResultsType<T> = {
   loading: boolean;
 };
 
-export const useSearch = <T>(): [
+type SearchArgs = {
+  currentSelectedId?: string | null;
+};
+
+export const useSearch = <T>(
+  searchArgs?: SearchArgs,
+): [
   SearchResultsType<T>,
   React.Dispatch<React.SetStateAction<string>>,
   React.Dispatch<React.SetStateAction<SearchConfigType | null>>,
@@ -99,9 +105,12 @@ export const useSearch = <T>(): [
     return (
       searchConfig &&
       searchConfig.template &&
-      searchConfig.template(searchInput)
+      searchConfig.template(
+        searchInput,
+        searchArgs?.currentSelectedId ?? undefined,
+      )
     );
-  }, [searchConfig, searchInput]);
+  }, [searchConfig, searchInput, searchArgs]);
 
   const searchQueryResults = useQuery(searchConfig?.query || EMPTY_QUERY, {
     variables: {

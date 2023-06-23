@@ -11,6 +11,9 @@ import { SearchResultsType, useSearch } from '@/search/services/search';
 import { humanReadableDate } from '@/utils/utils';
 
 import DatePicker from '../../form/DatePicker';
+import { DropdownMenuItemContainer } from '../../menu/DropdownMenuItemContainer';
+import { DropdownMenuSelectableItem } from '../../menu/DropdownMenuSelectableItem';
+import { DropdownMenuSeparator } from '../../menu/DropdownMenuSeparator';
 
 import DropdownButton from './DropdownButton';
 
@@ -29,6 +32,8 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
 }: OwnProps<TData>) => {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
+  const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
+
   const [isOperandSelectionUnfolded, setIsOperandSelectionUnfolded] =
     useState(false);
 
@@ -41,7 +46,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   >(undefined);
 
   const [filterSearchResults, setSearchInput, setFilterSearch] =
-    useSearch<TData>();
+    useSearch<TData>({ currentSelectedId: selectedEntityId });
 
   const resetState = useCallback(() => {
     setIsOperandSelectionUnfolded(false);
@@ -92,29 +97,50 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
       );
     }
 
-    return filterSearchResults.results.map((result, index) => {
-      return (
-        <DropdownButton.StyledDropdownItem
-          key={`fields-value-${index}`}
-          onClick={() => {
-            onFilterSelect({
-              key: selectedFilter.key,
-              label: selectedFilter.label,
-              value: result.value,
-              displayValue: result.render(result.value),
-              icon: selectedFilter.icon,
-              operand: selectedFilterOperand,
-            });
-            setIsUnfolded(false);
-            setSelectedFilter(undefined);
-          }}
-        >
-          <DropdownButton.StyledDropdownItemClipped>
-            {result.render(result.value)}
-          </DropdownButton.StyledDropdownItemClipped>
-        </DropdownButton.StyledDropdownItem>
-      );
-    });
+    function resultIsEntity(result: any): result is { id: string } {
+      return Object.keys(result ?? {}).includes('id');
+    }
+
+    return (
+      <>
+        <DropdownMenuSeparator />
+        <DropdownMenuItemContainer>
+          {filterSearchResults.results.map((result, index) => {
+            return (
+              <DropdownMenuSelectableItem
+                key={`fields-value-${index}`}
+                selected={
+                  resultIsEntity(result.value) &&
+                  result.value.id === selectedEntityId
+                }
+                onClick={() => {
+                  console.log({ result });
+
+                  if (resultIsEntity(result.value)) {
+                    setSelectedEntityId(result.value.id);
+                  }
+
+                  onFilterSelect({
+                    key: selectedFilter.key,
+                    label: selectedFilter.label,
+                    value: result.value,
+                    displayValue: result.render(result.value),
+                    icon: selectedFilter.icon,
+                    operand: selectedFilterOperand,
+                  });
+                  setIsUnfolded(false);
+                  setSelectedFilter(undefined);
+                }}
+              >
+                <DropdownButton.StyledDropdownItemClipped>
+                  {result.render(result.value)}
+                </DropdownButton.StyledDropdownItemClipped>
+              </DropdownMenuSelectableItem>
+            );
+          })}
+        </DropdownMenuItemContainer>
+      </>
+    );
   };
 
   function renderValueSelection(
@@ -131,7 +157,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
 
           <DropdownButton.StyledDropdownTopOptionAngleDown />
         </DropdownButton.StyledDropdownTopOption>
-        <DropdownButton.StyledSearchField key={'search-filter'}>
+        <DropdownButton.StyledSearchField autoFocus key={'search-filter'}>
           {['text', 'relation'].includes(selectedFilter.type) && (
             <input
               type="text"

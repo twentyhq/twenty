@@ -1,6 +1,7 @@
 import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
+import assert from 'assert';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForPage } from '~/testing/renderWrappers';
@@ -59,7 +60,16 @@ export const CompanyName: Story = {
       delay: 200,
     });
 
-    const qontoChip = canvas.getByText('Qonto', { selector: 'li > span' });
+    const qontoChip = canvas
+      .getAllByTestId('dropdown-menu-item')
+      .find((item) => {
+        return item.textContent === 'Qonto';
+      });
+
+    expect(qontoChip).toBeInTheDocument();
+
+    assert(qontoChip);
+
     await userEvent.click(qontoChip);
 
     expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
