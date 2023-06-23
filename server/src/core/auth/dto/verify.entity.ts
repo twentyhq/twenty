@@ -1,11 +1,9 @@
-import { TokenEntity } from './token.entity';
-import { User } from '@prisma/client';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { AuthTokens } from './token.entity';
+import { User } from 'src/core/@generated/user/user.model';
 
-export class VerifyEntity {
-  user: Omit<User, 'passwordHash'>;
-
-  tokens: {
-    accessToken: TokenEntity;
-    refreshToken: TokenEntity;
-  };
+@ObjectType()
+export class Verify extends AuthTokens {
+  @Field(() => User)
+  user: User;
 }

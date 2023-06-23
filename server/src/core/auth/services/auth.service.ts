@@ -9,7 +9,7 @@ import { UserService } from 'src/core/user/user.service';
 import { assert } from 'src/utils/assert';
 import { RegisterInput } from '../dto/register.input';
 import { PASSWORD_REGEX, compareHash, hashPassword } from '../auth.util';
-import { VerifyEntity } from '../dto/verify.entity';
+import { Verify } from '../dto/verify.entity';
 import { TokenService } from './token.service';
 
 export type UserPayload = {
@@ -73,17 +73,17 @@ export class AuthService {
     return user;
   }
 
-  async verify(email: string): Promise<VerifyEntity> {
-    const data = await this.userService.findUnique({
+  async verify(email: string): Promise<Verify> {
+    const user = await this.userService.findUnique({
       where: {
         email,
       },
     });
 
-    assert(data, "This user doesn't exist", NotFoundException);
+    assert(user, "This user doesn't exist", NotFoundException);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash: _, ...user } = data;
+    // passwordHash is hidden for security reasons
+    user.passwordHash = '';
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);

@@ -13,7 +13,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { assert } from 'src/utils/assert';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { TokenEntity } from '../dto/token.entity';
+import { AuthToken } from '../dto/token.entity';
 import { TokenExpiredError } from 'jsonwebtoken';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class TokenService {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async generateAccessToken(userId: string): Promise<TokenEntity> {
+  async generateAccessToken(userId: string): Promise<AuthToken> {
     const expiresIn = this.configService.get<string>('ACCESS_TOKEN_EXPIRES_IN');
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -55,7 +55,7 @@ export class TokenService {
     };
   }
 
-  async generateRefreshToken(userId: string): Promise<TokenEntity> {
+  async generateRefreshToken(userId: string): Promise<AuthToken> {
     const secret = this.configService.get('REFRESH_TOKEN_SECRET');
     const expiresIn = this.configService.get<string>(
       'REFRESH_TOKEN_EXPIRES_IN',
@@ -86,7 +86,7 @@ export class TokenService {
     };
   }
 
-  async generateLoginToken(email: string): Promise<TokenEntity> {
+  async generateLoginToken(email: string): Promise<AuthToken> {
     const secret = this.configService.get('LOGIN_TOKEN_SECRET');
     const expiresIn = this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN');
     assert(expiresIn, '', InternalServerErrorException);
@@ -163,8 +163,8 @@ export class TokenService {
   }
 
   async generateTokensFromRefreshToken(token: string): Promise<{
-    accessToken: TokenEntity;
-    refreshToken: TokenEntity;
+    accessToken: AuthToken;
+    refreshToken: AuthToken;
   }> {
     const {
       user,

@@ -1,7 +1,5 @@
 import { gql } from '@apollo/client';
 
-import { useGetCurrentUserQuery as generatedUseGetCurrentUserQuery } from '~/generated/graphql';
-
 export const GET_CURRENT_USER = gql`
   query GetCurrentUser($uuid: String) {
     users: findManyUser(where: { id: { equals: $uuid } }) {
@@ -30,11 +28,3 @@ export const GET_USERS = gql`
     }
   }
 `;
-
-export function useGetCurrentUserQuery(userId: string | null) {
-  return generatedUseGetCurrentUserQuery({
-    variables: {
-      uuid: userId,
-    },
-  });
-}

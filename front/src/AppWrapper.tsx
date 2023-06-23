@@ -5,15 +5,15 @@ import { useRecoilState } from 'recoil';
 
 import { isMockModeState } from '@/auth/states/isMockModeState';
 
+import { apolloClient, mockClient } from './infrastructure/apollo';
 import { AppThemeProvider } from './providers/AppThemeProvider';
 import { AuthProvider } from './providers/AuthProvider';
-import { apiClient, mockClient } from './apollo';
 import { App } from './App';
 
 export function AppWrapper() {
   const [isMockMode] = useRecoilState(isMockModeState);
   return (
-    <ApolloProvider client={isMockMode ? mockClient : apiClient}>
+    <ApolloProvider client={isMockMode ? mockClient : apolloClient}>
       <BrowserRouter>
         <AuthProvider>
           <AppThemeProvider>

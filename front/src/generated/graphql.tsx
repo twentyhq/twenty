@@ -22,6 +22,23 @@ export type AffectedRows = {
   count: Scalars['Int'];
 };
 
+export type AuthToken = {
+  __typename?: 'AuthToken';
+  expiresAt: Scalars['DateTime'];
+  token: Scalars['String'];
+};
+
+export type AuthTokenPair = {
+  __typename?: 'AuthTokenPair';
+  accessToken: AuthToken;
+  refreshToken: AuthToken;
+};
+
+export type AuthTokens = {
+  __typename?: 'AuthTokens';
+  tokens: AuthTokenPair;
+};
+
 export type BoolFieldUpdateOperationsInput = {
   set?: InputMaybe<Scalars['Boolean']>;
 };
@@ -681,8 +698,14 @@ export type JsonNullableFilter = {
   string_starts_with?: InputMaybe<Scalars['String']>;
 };
 
+export type LoginToken = {
+  __typename?: 'LoginToken';
+  loginToken: AuthToken;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  challenge: LoginToken;
   createOneComment: Comment;
   createOneCommentThread: CommentThread;
   createOneCompany: Company;
@@ -691,10 +714,18 @@ export type Mutation = {
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
+  renewToken: AuthTokens;
   updateOneCommentThread: CommentThread;
   updateOneCompany?: Maybe<Company>;
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
+  verify: Verify;
+};
+
+
+export type MutationChallengeArgs = {
+  email: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -738,6 +769,11 @@ export type MutationDeleteManyPipelineProgressArgs = {
 };
 
 
+export type MutationRenewTokenArgs = {
+  refreshToken: Scalars['String'];
+};
+
+
 export type MutationUpdateOneCommentThreadArgs = {
   data: CommentThreadUpdateInput;
   where: CommentThreadWhereUniqueInput;
@@ -759,6 +795,11 @@ export type MutationUpdateOnePersonArgs = {
 export type MutationUpdateOnePipelineProgressArgs = {
   data: PipelineProgressUpdateInput;
   where: PipelineProgressWhereUniqueInput;
+};
+
+
+export type MutationVerifyArgs = {
+  loginToken: Scalars['String'];
 };
 
 export type NestedBoolFilter = {
@@ -1489,6 +1530,12 @@ export type UserWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
+export type Verify = {
+  __typename?: 'Verify';
+  tokens: AuthTokenPair;
+  user: User;
+};
+
 export type Workspace = {
   __typename?: 'Workspace';
   commentThreads?: Maybe<Array<CommentThread>>;
@@ -1518,6 +1565,28 @@ export type WorkspaceMember = {
   userId: Scalars['String'];
   workspace: Workspace;
 };
+
+export type ChallengeMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type ChallengeMutation = { __typename?: 'Mutation', challenge: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', expiresAt: string, token: string } } };
+
+export type VerifyMutationVariables = Exact<{
+  loginToken: Scalars['String'];
+}>;
+
+
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+
+export type RenewTokenMutationVariables = Exact<{
+  refreshToken: Scalars['String'];
+}>;
+
+
+export type RenewTokenMutation = { __typename?: 'Mutation', renewToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', expiresAt: string, token: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CreateCommentMutationVariables = Exact<{
   commentId: Scalars['String'];
@@ -1730,6 +1799,141 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string }> };
 
 
+export const ChallengeDocument = gql`
+    mutation Challenge($email: String!, $password: String!) {
+  challenge(email: $email, password: $password) {
+    loginToken {
+      expiresAt
+      token
+    }
+  }
+}
+    `;
+export type ChallengeMutationFn = Apollo.MutationFunction<ChallengeMutation, ChallengeMutationVariables>;
+
+/**
+ * __useChallengeMutation__
+ *
+ * To run a mutation, you first call `useChallengeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChallengeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [challengeMutation, { data, loading, error }] = useChallengeMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useChallengeMutation(baseOptions?: Apollo.MutationHookOptions<ChallengeMutation, ChallengeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChallengeMutation, ChallengeMutationVariables>(ChallengeDocument, options);
+      }
+export type ChallengeMutationHookResult = ReturnType<typeof useChallengeMutation>;
+export type ChallengeMutationResult = Apollo.MutationResult<ChallengeMutation>;
+export type ChallengeMutationOptions = Apollo.BaseMutationOptions<ChallengeMutation, ChallengeMutationVariables>;
+export const VerifyDocument = gql`
+    mutation Verify($loginToken: String!) {
+  verify(loginToken: $loginToken) {
+    user {
+      id
+      email
+      displayName
+      workspaceMember {
+        id
+        workspace {
+          id
+          domainName
+          displayName
+          logo
+        }
+      }
+    }
+    tokens {
+      accessToken {
+        token
+        expiresAt
+      }
+      refreshToken {
+        token
+        expiresAt
+      }
+    }
+  }
+}
+    `;
+export type VerifyMutationFn = Apollo.MutationFunction<VerifyMutation, VerifyMutationVariables>;
+
+/**
+ * __useVerifyMutation__
+ *
+ * To run a mutation, you first call `useVerifyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyMutation, { data, loading, error }] = useVerifyMutation({
+ *   variables: {
+ *      loginToken: // value for 'loginToken'
+ *   },
+ * });
+ */
+export function useVerifyMutation(baseOptions?: Apollo.MutationHookOptions<VerifyMutation, VerifyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VerifyMutation, VerifyMutationVariables>(VerifyDocument, options);
+      }
+export type VerifyMutationHookResult = ReturnType<typeof useVerifyMutation>;
+export type VerifyMutationResult = Apollo.MutationResult<VerifyMutation>;
+export type VerifyMutationOptions = Apollo.BaseMutationOptions<VerifyMutation, VerifyMutationVariables>;
+export const RenewTokenDocument = gql`
+    mutation RenewToken($refreshToken: String!) {
+  renewToken(refreshToken: $refreshToken) {
+    tokens {
+      accessToken {
+        expiresAt
+        token
+      }
+      refreshToken {
+        token
+        expiresAt
+      }
+    }
+  }
+}
+    `;
+export type RenewTokenMutationFn = Apollo.MutationFunction<RenewTokenMutation, RenewTokenMutationVariables>;
+
+/**
+ * __useRenewTokenMutation__
+ *
+ * To run a mutation, you first call `useRenewTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRenewTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [renewTokenMutation, { data, loading, error }] = useRenewTokenMutation({
+ *   variables: {
+ *      refreshToken: // value for 'refreshToken'
+ *   },
+ * });
+ */
+export function useRenewTokenMutation(baseOptions?: Apollo.MutationHookOptions<RenewTokenMutation, RenewTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RenewTokenMutation, RenewTokenMutationVariables>(RenewTokenDocument, options);
+      }
+export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutation>;
+export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
+export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
 export const CreateCommentDocument = gql`
     mutation CreateComment($commentId: String!, $commentText: String!, $authorId: String!, $commentThreadId: String!, $createdAt: DateTime!) {
   createOneComment(

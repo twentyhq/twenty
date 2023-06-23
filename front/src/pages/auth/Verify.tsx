@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { getTokensFromLoginToken } from '@/auth/services/AuthService';
+import { useAuth } from '@/auth/hooks/useAuth';
 
 export function Verify() {
   const [searchParams] = useSearchParams();
@@ -10,13 +10,15 @@ export function Verify() {
   const loginToken = searchParams.get('loginToken');
   const navigate = useNavigate();
 
+  const { verify } = useAuth();
+
   useEffect(() => {
     async function getTokens() {
       if (!loginToken) {
         return;
       }
       setIsLoading(true);
-      await getTokensFromLoginToken(loginToken);
+      await verify(loginToken);
       setIsLoading(false);
       navigate('/');
     }
@@ -24,7 +26,7 @@ export function Verify() {
     if (!isLoading) {
       getTokens();
     }
-  }, [isLoading, navigate, loginToken]);
+  }, [isLoading, navigate, loginToken, verify]);
 
   return <></>;
 }

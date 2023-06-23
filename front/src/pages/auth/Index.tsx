@@ -10,7 +10,7 @@ import { HorizontalSeparator } from '@/auth/components/ui/HorizontalSeparator';
 import { Logo } from '@/auth/components/ui/Logo';
 import { Modal } from '@/auth/components/ui/Modal';
 import { Title } from '@/auth/components/ui/Title';
-import { hasAccessToken } from '@/auth/services/AuthService';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
 import { PrimaryButton } from '@/ui/components/buttons/PrimaryButton';
@@ -34,13 +34,15 @@ export function Index() {
     authFlowUserEmailState,
   );
 
+  const isLogged = useIsLogged();
+
   useEffect(() => {
     setMockMode(true);
 
-    if (hasAccessToken()) {
+    if (isLogged) {
       navigate('/');
     }
-  }, [navigate, setMockMode]);
+  }, [isLogged, navigate, setMockMode]);
 
   const onGoogleLoginClick = useCallback(() => {
     window.location.href = process.env.REACT_APP_AUTH_URL + '/google' || '';

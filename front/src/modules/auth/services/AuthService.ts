@@ -1,13 +1,86 @@
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+  UriFunction,
+} from '@apollo/client';
 import jwt from 'jwt-decode';
 
-export const hasAccessToken = () => {
-  const accessToken = localStorage.getItem('accessToken');
+import {
+  RenewTokenDocument,
+  RenewTokenMutation,
+  RenewTokenMutationVariables,
+} from '~/generated/graphql';
+import { loggerLink } from '~/infrastructure/apollo/logger';
+import { cookieStorage } from '~/infrastructure/cookie-storage';
 
-  return accessToken ? true : false;
+import { tokenService } from './TokenService';
+
+const logger = loggerLink(() => 'Twenty-Refresh');
+
+/**
+ * Renew token mutation with custom apollo client
+ * @param uri string | UriFunction | undefined
+ * @param refreshToken string
+ * @returns RenewTokenMutation
+ */
+const renewTokenMutation = async (
+  uri: string | UriFunction | undefined,
+  refreshToken: string,
+) => {
+  const httpLink = new HttpLink({ uri });
+
+  // Create new client to call refresh token graphql mutation
+  const client = new ApolloClient({
+    link: ApolloLink.from([logger, httpLink]),
+    cache: new InMemoryCache({}),
+  });
+
+  const { data, errors } = await client.mutate<
+    RenewTokenMutation,
+    RenewTokenMutationVariables
+  >({
+    mutation: RenewTokenDocument,
+    variables: {
+      refreshToken: refreshToken,
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  if (errors || !data) {
+    throw new Error('Something went wrong during token renewal');
+  }
+
+  return data;
+};
+
+/**
+ * Renew token and update cookie storage
+ * @param uri string | UriFunction | undefined
+ * @returns TokenPair
+ */
+export const renewToken = async (uri: string | UriFunction | undefined) => {
+  try {
+    const tokenPair = tokenService.getTokenPair();
+
+    if (!tokenPair) {
+      throw new Error('Refresh token is not defined');
+    }
+
+    const data = await renewTokenMutation(uri, tokenPair.refreshToken);
+
+    tokenService.setTokenPair(data.renewToken.tokens);
+
+    return data.renewToken;
+  } catch (error) {
+    tokenService.removeTokenPair();
+    throw error;
+  }
 };
 
 export const getUserIdFromToken: () => string | null = () => {
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = cookieStorage.getItem('accessToken');
   if (!accessToken) {
     return null;
   }
@@ -17,77 +90,4 @@ export const getUserIdFromToken: () => string | null = () => {
   } catch (error) {
     return null;
   }
-};
-
-export const hasRefreshToken = () => {
-  const refreshToken = localStorage.getItem('refreshToken');
-
-  return refreshToken ? true : false;
-};
-
-export const getTokensFromLoginToken = async (loginToken: string) => {
-  if (!loginToken) {
-    return;
-  }
-
-  const response = await fetch(
-    process.env.REACT_APP_AUTH_URL + '/verify' || '',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ loginToken }),
-    },
-  );
-
-  if (response.ok) {
-    const { tokens } = await response.json();
-    if (!tokens) {
-      return;
-    }
-
-    localStorage.setItem('accessToken', tokens.accessToken.token);
-    localStorage.setItem('refreshToken', tokens.refreshToken.token);
-  } else {
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('accessToken');
-  }
-};
-
-export const getTokensFromRefreshToken = async () => {
-  const refreshToken = localStorage.getItem('refreshToken');
-  if (!refreshToken) {
-    localStorage.removeItem('accessToken');
-    return;
-  }
-
-  const response = await fetch(
-    process.env.REACT_APP_AUTH_URL + '/token' || '',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ refreshToken }),
-    },
-  );
-
-  if (response.ok) {
-    const { tokens } = await response.json();
-
-    if (!tokens) {
-      return;
-    }
-    localStorage.setItem('accessToken', tokens.accessToken.token);
-    localStorage.setItem('refreshToken', tokens.refreshToken.token);
-  } else {
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('accessToken');
-  }
-};
-
-export const removeTokens = () => {
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('accessToken');
 };
