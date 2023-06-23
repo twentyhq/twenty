@@ -7,15 +7,14 @@ import {
 } from '@apollo/client';
 import jwt from 'jwt-decode';
 
+import { loggerLink } from '@/utils/apollo-logger';
 import { cookieStorage } from '@/utils/cookie-storage';
 import {
+  AuthTokenPair,
   RenewTokenDocument,
   RenewTokenMutation,
   RenewTokenMutationVariables,
 } from '~/generated/graphql';
-import { loggerLink } from '~/providers/apollo/logger';
-
-import { tokenService } from './TokenService';
 
 const logger = loggerLink(() => 'Twenty-Refresh');
 
@@ -60,18 +59,17 @@ const renewTokenMutation = async (
  * @param uri string | UriFunction | undefined
  * @returns TokenPair
  */
-export const renewToken = async (uri: string | UriFunction | undefined) => {
-  const tokenPair = tokenService.getTokenPair();
-
+export const renewToken = async (
+  uri: string | UriFunction | undefined,
+  tokenPair: AuthTokenPair | undefined | null,
+) => {
   if (!tokenPair) {
     throw new Error('Refresh token is not defined');
   }
 
-  const data = await renewTokenMutation(uri, tokenPair.refreshToken);
+  const data = await renewTokenMutation(uri, tokenPair.refreshToken.token);
 
-  tokenService.setTokenPair(data.renewToken.tokens);
-
-  return data.renewToken;
+  return data.renewToken.tokens;
 };
 
 export const getUserIdFromToken: () => string | null = () => {

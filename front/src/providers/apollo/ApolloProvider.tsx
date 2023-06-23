@@ -1,18 +1,20 @@
 import { ApolloProvider as ApolloProviderBase } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
+import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
+import useApolloMocked from '@/apollo/hooks/useApolloMocked';
 import { isMockModeState } from '@/auth/states/isMockModeState';
-
-import { apolloClient } from './apollo-client';
-import { mockClient } from './mock-client';
 
 export const ApolloProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
+  const apolloClient = useApolloFactory();
+  const mockedClient = useApolloMocked();
+
   const [isMockMode] = useRecoilState(isMockModeState);
 
   return (
-    <ApolloProviderBase client={isMockMode ? mockClient : apolloClient}>
+    <ApolloProviderBase client={isMockMode ? mockedClient : apolloClient}>
       {children}
     </ApolloProviderBase>
   );

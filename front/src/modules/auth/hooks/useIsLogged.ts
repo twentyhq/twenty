@@ -1,21 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
 
-import { cookieStorage } from '@/utils/cookie-storage';
+import { tokenPairState } from '../states/tokenPairState';
 
 export function useIsLogged(): boolean {
-  const [value, setValue] = useState<string | undefined>(
-    cookieStorage.getItem('accessToken'),
-  );
+  const [tokenPair] = useRecoilState(tokenPairState);
 
-  useEffect(() => {
-    const updateValue = (newValue: string | undefined) => setValue(newValue);
-
-    cookieStorage.addEventListener('accessToken', updateValue);
-
-    return () => {
-      cookieStorage.removeEventListener('accessToken', updateValue);
-    };
-  }, []);
-
-  return !!value;
+  return !!tokenPair;
 }
