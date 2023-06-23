@@ -6,6 +6,7 @@ import { useRecoilScopedState } from '@/ui/hooks/useRecoilScopedState';
 
 import { isSomeInputInEditModeState } from '../../tables/states/isSomeInputInEditModeState';
 
+import { useCloseEditableCell } from './hooks/useCloseEditableCell';
 import { isEditModeScopedState } from './states/isEditModeScopedState';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
@@ -41,6 +42,8 @@ export function EditableCellV2({
     isSomeInputInEditModeState,
   );
 
+  const closeEditableCell = useCloseEditableCell();
+
   function handleOnClick() {
     if (!isSomeInputInEditMode) {
       setIsSomeInputInEditMode(true);
@@ -49,7 +52,7 @@ export function EditableCellV2({
   }
 
   function handleOnOutsideClick() {
-    setIsEditMode(false);
+    closeEditableCell();
   }
 
   return (
