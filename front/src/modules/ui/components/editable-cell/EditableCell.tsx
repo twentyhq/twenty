@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { useHotkeys, useHotkeysContext } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
