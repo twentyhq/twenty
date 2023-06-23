@@ -61,22 +61,17 @@ const renewTokenMutation = async (
  * @returns TokenPair
  */
 export const renewToken = async (uri: string | UriFunction | undefined) => {
-  try {
-    const tokenPair = tokenService.getTokenPair();
+  const tokenPair = tokenService.getTokenPair();
 
-    if (!tokenPair) {
-      throw new Error('Refresh token is not defined');
-    }
-
-    const data = await renewTokenMutation(uri, tokenPair.refreshToken);
-
-    tokenService.setTokenPair(data.renewToken.tokens);
-
-    return data.renewToken;
-  } catch (error) {
-    tokenService.removeTokenPair();
-    throw error;
+  if (!tokenPair) {
+    throw new Error('Refresh token is not defined');
   }
+
+  const data = await renewTokenMutation(uri, tokenPair.refreshToken);
+
+  tokenService.setTokenPair(data.renewToken.tokens);
+
+  return data.renewToken;
 };
 
 export const getUserIdFromToken: () => string | null = () => {
