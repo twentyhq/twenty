@@ -63,11 +63,13 @@ export class AbilityFactory {
     can(AbilityAction.Read, 'Company', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'Company');
     can(AbilityAction.Update, 'Company', { workspaceId: workspace.id });
+    can(AbilityAction.Delete, 'Company', { workspaceId: workspace.id });
 
     // Person
     can(AbilityAction.Read, 'Person', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'Person');
     can(AbilityAction.Update, 'Person', { workspaceId: workspace.id });
+    can(AbilityAction.Delete, 'Person', { workspaceId: workspace.id });
 
     // RefreshToken
     cannot(AbilityAction.Manage, 'RefreshToken');

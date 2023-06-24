@@ -7,7 +7,7 @@ const cookieStorageEffect =
   (key: string): AtomEffect<AuthTokenPair | null> =>
   ({ setSelf, onSet }) => {
     const savedValue = cookieStorage.getItem(key);
-    if (savedValue != null) {
+    if (savedValue != null && JSON.parse(savedValue)['accessToken']) {
       setSelf(JSON.parse(savedValue));
     }
 
