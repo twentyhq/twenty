@@ -3,11 +3,12 @@ import { useRecoilState } from 'recoil';
 
 import { useChallengeMutation, useVerifyMutation } from '~/generated/graphql';
 
-import { tokenService } from '../services/TokenService';
 import { currentUserState } from '../states/currentUserState';
 import { isAuthenticatingState } from '../states/isAuthenticatingState';
+import { tokenPairState } from '../states/tokenPairState';
 
 export function useAuth() {
+  const [, setTokenPair] = useRecoilState(tokenPairState);
   const [, setCurrentUser] = useRecoilState(currentUserState);
   const [, setIsAuthenticating] = useRecoilState(isAuthenticatingState);
 
@@ -50,14 +51,14 @@ export function useAuth() {
         throw new Error('No verify result');
       }
 
-      tokenService.setTokenPair(verifyResult.data?.verify.tokens);
+      setTokenPair(verifyResult.data?.verify.tokens);
 
       setIsAuthenticating(false);
       setCurrentUser(verifyResult.data?.verify.user);
 
       return verifyResult.data?.verify;
     },
-    [setCurrentUser, setIsAuthenticating, verify],
+    [setCurrentUser, setIsAuthenticating, setTokenPair, verify],
   );
 
   const handleLogin = useCallback(
@@ -70,8 +71,8 @@ export function useAuth() {
   );
 
   const handleLogout = useCallback(() => {
-    tokenService.removeTokenPair();
-  }, []);
+    setTokenPair(null);
+  }, [setTokenPair]);
 
   return {
     challenge: handleChallenge,

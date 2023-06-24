@@ -4,6 +4,7 @@ import { ApolloProvider } from '@apollo/client';
 import { RecoilRoot } from 'recoil';
 
 import { DefaultLayout } from '@/ui/layout/DefaultLayout';
+import { UserProvider } from '~/providers/user/UserProvider';
 
 import { ComponentStorybookLayout } from './ComponentStorybookLayout';
 import { FullHeightStorybookLayout } from './FullHeightStorybookLayout';
@@ -17,11 +18,13 @@ export function getRenderWrapperForPage(
     return (
       <RecoilRoot>
         <ApolloProvider client={mockedClient}>
-          <MemoryRouter initialEntries={[currentPath]}>
-            <FullHeightStorybookLayout>
-              <DefaultLayout>{children}</DefaultLayout>
-            </FullHeightStorybookLayout>
-          </MemoryRouter>
+          <UserProvider>
+            <MemoryRouter initialEntries={[currentPath]}>
+              <FullHeightStorybookLayout>
+                <DefaultLayout>{children}</DefaultLayout>
+              </FullHeightStorybookLayout>
+            </MemoryRouter>
+          </UserProvider>
         </ApolloProvider>
       </RecoilRoot>
     );

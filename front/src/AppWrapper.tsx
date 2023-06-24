@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { ApolloProvider } from './providers/apollo/ApolloProvider';
 import { AppThemeProvider } from './providers/theme/AppThemeProvider';
+import { UserProvider } from './providers/user/UserProvider';
 import { App } from './App';
 
 export function AppWrapper() {
@@ -11,7 +12,9 @@ export function AppWrapper() {
       <BrowserRouter>
         <AppThemeProvider>
           <StrictMode>
-            <App />
+            <UserProvider>
+              <App />
+            </UserProvider>
           </StrictMode>
         </AppThemeProvider>
       </BrowserRouter>

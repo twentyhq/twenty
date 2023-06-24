@@ -14,13 +14,12 @@ import { RetryLink } from '@apollo/client/link/retry';
 import { Observable } from '@apollo/client/utilities';
 
 import { renewToken } from '@/auth/services/AuthService';
-import { tokenService } from '@/auth/services/TokenService';
+import { AuthTokenPair } from '~/generated/graphql';
 
-import { assertNotNull } from '../../modules/utils/assert';
-import { promiseToObservable } from '../../modules/utils/promise-to-observable';
-
-import { ApolloManager } from './interfaces/apollo-manager.interface';
-import { loggerLink } from './logger';
+import { loggerLink } from '../../utils/apollo-logger';
+import { assertNotNull } from '../../utils/assert';
+import { promiseToObservable } from '../../utils/promise-to-observable';
+import { ApolloManager } from '../interfaces/apolloManager.interface';
 
 const logger = loggerLink(() => 'Twenty');
 
@@ -35,17 +34,20 @@ const resolvePendingRequests = () => {
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onError?: (err: GraphQLErrors | undefined) => void;
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
+  onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
+  private tokenPair: AuthTokenPair | null = null;
 
   constructor(opts: Options<TCacheShape>) {
     const {
       uri,
       onError: onErrorCb,
       onNetworkError,
+      onTokenPairChange,
       onUnauthenticatedError,
       ...options
     } = opts;
@@ -56,13 +58,11 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       });
 
       const authLink = setContext(async (_, { headers }) => {
-        const credentials = tokenService.getTokenPair();
-
         return {
           headers: {
             ...headers,
-            authorization: credentials?.accessToken
-              ? `Bearer ${credentials?.accessToken}`
+            authorization: this.tokenPair?.accessToken.token
+              ? `Bearer ${this.tokenPair?.accessToken.token}`
               : '',
           },
         };
@@ -93,8 +93,9 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   if (!isRefreshing) {
                     isRefreshing = true;
                     forward$ = promiseToObservable(
-                      renewToken(uri)
-                        .then(() => {
+                      renewToken(uri, this.tokenPair)
+                        .then((tokens) => {
+                          onTokenPairChange?.(tokens);
                           resolvePendingRequests();
                           return true;
                         })
@@ -159,6 +160,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       ...options,
       link: buildApolloLink(),
     });
+  }
+
+  updateTokenPair(tokenPair: AuthTokenPair | null) {
+    this.tokenPair = tokenPair;
   }
 
   getClient() {
