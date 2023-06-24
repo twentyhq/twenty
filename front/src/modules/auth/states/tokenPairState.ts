@@ -7,12 +7,15 @@ const cookieStorageEffect =
   (key: string): AtomEffect<AuthTokenPair | null> =>
   ({ setSelf, onSet }) => {
     const savedValue = cookieStorage.getItem(key);
-
     if (savedValue != null) {
       setSelf(JSON.parse(savedValue));
     }
 
     onSet((newValue, _, isReset) => {
+      if (!newValue) {
+        cookieStorage.removeItem(key);
+        return;
+      }
       isReset
         ? cookieStorage.removeItem(key)
         : cookieStorage.setItem(key, JSON.stringify(newValue));

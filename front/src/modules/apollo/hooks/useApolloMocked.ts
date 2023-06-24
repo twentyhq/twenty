@@ -21,11 +21,10 @@ export default function useApolloMocked() {
         if (operation.operationName === 'GetCompanies') {
           return { data: { companies: mockedCompaniesData } };
         }
-        if (operation.operationName === 'Verify') {
-          return {
-            data: { verify: { user: [mockedUsersData[0]], tokens: {} } },
-          };
+        if (operation.operationName === 'GetCurrentUser') {
+          return { data: { users: [mockedUsersData[0]] } };
         }
+
         return response;
       });
     });

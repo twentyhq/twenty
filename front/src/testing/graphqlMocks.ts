@@ -11,7 +11,6 @@ import { GET_CURRENT_USER } from '@/users/services';
 import {
   GetCompaniesQuery,
   GetPeopleQuery,
-  GetUsersQuery,
   SearchCompanyQuery,
   SearchUserQuery,
 } from '~/generated/graphql';
@@ -73,19 +72,9 @@ export const graphqlMocks = [
     );
   }),
   graphql.query(getOperationName(GET_CURRENT_USER) ?? '', (req, res, ctx) => {
-    const customWhere = {
-      ...req.variables.where,
-      id: {
-        equals: req.variables.uuid,
-      },
-    };
-
-    const returnedMockedData = filterAndSortData<
-      GetUsersQuery['findManyUser'][0]
-    >(mockedUsersData, customWhere, req.variables.orderBy, req.variables.limit);
     return res(
       ctx.data({
-        users: returnedMockedData,
+        users: [mockedUsersData[0]],
       }),
     );
   }),

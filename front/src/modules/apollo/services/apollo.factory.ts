@@ -19,7 +19,7 @@ import { AuthTokenPair } from '~/generated/graphql';
 import { loggerLink } from '../../utils/apollo-logger';
 import { assertNotNull } from '../../utils/assert';
 import { promiseToObservable } from '../../utils/promise-to-observable';
-import { ApolloManager } from '../interfaces/apollo-manager.interface';
+import { ApolloManager } from '../interfaces/apolloManager.interface';
 
 const logger = loggerLink(() => 'Twenty');
 

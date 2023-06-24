@@ -5,10 +5,8 @@ import {
   InMemoryCache,
   UriFunction,
 } from '@apollo/client';
-import jwt from 'jwt-decode';
 
 import { loggerLink } from '@/utils/apollo-logger';
-import { cookieStorage } from '@/utils/cookie-storage';
 import {
   AuthTokenPair,
   RenewTokenDocument,
@@ -70,17 +68,4 @@ export const renewToken = async (
   const data = await renewTokenMutation(uri, tokenPair.refreshToken.token);
 
   return data.renewToken.tokens;
-};
-
-export const getUserIdFromToken: () => string | null = () => {
-  const accessToken = cookieStorage.getItem('accessToken');
-  if (!accessToken) {
-    return null;
-  }
-
-  try {
-    return jwt<{ sub: string }>(accessToken).sub;
-  } catch (error) {
-    return null;
-  }
 };
