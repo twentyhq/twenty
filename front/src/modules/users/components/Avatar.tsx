@@ -23,19 +23,12 @@ export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholder'>>`
   color: ${(props) => props.theme.text80};
   display: flex;
 
-  font-size: ${(props) => props.theme.fontSizeExtraSmall};
+  font-size: ${(props) => props.theme.fontSizeSmall};
   font-weight: ${(props) => props.theme.fontWeightMedium};
   height: ${(props) => props.size}px;
 
   justify-content: center;
   width: ${(props) => props.size}px;
-`;
-
-export const StyledPlaceholderLetter = styled.div`
-  color: ${(props) => props.theme.text80};
-
-  font-size: ${(props) => props.theme.fontSizeExtraSmall};
-  font-weight: 500;
 `;
 
 export function Avatar({
