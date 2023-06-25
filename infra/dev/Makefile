@@ -17,6 +17,9 @@ sh:
 front-start:
 	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn start"
 
+front-lint:
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn lint"
+
 front-test:
 	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn test"
 
