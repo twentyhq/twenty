@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
 
 import { IconPlus } from '@/ui/icons/index';
@@ -49,6 +50,13 @@ type OwnProps = {
 };
 
 export function TopBar({ title, icon, onAddButtonClick }: OwnProps) {
+  useHotkeys('c', () => onAddButtonClick && onAddButtonClick(), {
+    preventDefault: true,
+    enableOnContentEditable: true,
+    enableOnFormTags: true,
+    splitKey: '-',
+  });
+
   return (
     <>
       <TopBarContainer>

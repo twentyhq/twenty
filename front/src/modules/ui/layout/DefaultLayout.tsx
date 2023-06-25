@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { CommandMenu } from '@/search/components/CommandMenu';
+import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppNavbar } from '~/AppNavbar';
 
 import { NavbarContainer } from './navbar/NavbarContainer';

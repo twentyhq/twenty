@@ -3,6 +3,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { useArrowHotkey } from '@/hotkeys/hooks/useArrowHotkey';
 import { SearchConfigType } from '@/search/interfaces/interface';
 import { useSearch } from '@/search/services/search';
 import { IconPlus } from '@/ui/icons/index';
@@ -143,8 +144,13 @@ export function EditableRelation<RelationType, ChipComponentPropsType>({
   }
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  useHotkeys(
-    'down',
+
+  useArrowHotkey(
+    () => {
+      setSelectedIndex((prevSelectedIndex) =>
+        Math.max(prevSelectedIndex - 1, 0),
+      );
+    },
     () => {
       setSelectedIndex((prevSelectedIndex) =>
         Math.min(
@@ -153,27 +159,7 @@ export function EditableRelation<RelationType, ChipComponentPropsType>({
         ),
       );
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
     [setSelectedIndex, filterSearchResults.results],
-  );
-
-  useHotkeys(
-    'up',
-    () => {
-      setSelectedIndex((prevSelectedIndex) =>
-        Math.max(prevSelectedIndex - 1, 0),
-      );
-    },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
-    [setSelectedIndex],
   );
 
   useHotkeys(
