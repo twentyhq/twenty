@@ -20,7 +20,7 @@ const StyledIconButton = styled.button`
 
   &:disabled {
     background: ${(props) => props.theme.quaternaryBackground};
-    color: ${(props) => props.theme.text80};
+    color: ${(props) => props.theme.text40};
     cursor: default;
   }
 `;

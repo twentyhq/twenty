@@ -18,38 +18,16 @@ export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholder'>>`
       : 'none'};
   background-image: url(${(props) =>
     isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
-  background-image: url(${(props) =>
-    isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
-  background-position: center center;
-  background-repeat: no-repeat;
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
-  border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
-  display: flex;
-  height: ${(props) => props.size}px;
-  height: ${(props) => props.size}px;
-
-  justify-content: center;
-  width: ${(props) => props.size}px;
-
-  width: ${(props) => props.size}px;
-`;
-
-type StyledPlaceholderLetterProps = {
-  size: number;
-};
-
-export const StyledPlaceholderLetter = styled.div<StyledPlaceholderLetterProps>`
-  align-items: center;
   color: ${(props) => props.theme.text80};
-
   display: flex;
-  font-size: 12px;
 
-  font-weight: 500;
+  font-size: ${(props) => props.theme.fontSizeSmall};
+  font-weight: ${(props) => props.theme.fontWeightMedium};
   height: ${(props) => props.size}px;
-  justify-content: center;
 
+  justify-content: center;
   width: ${(props) => props.size}px;
 `;
 
@@ -63,11 +41,7 @@ export function Avatar({
 
   return (
     <StyledAvatar avatarUrl={avatarUrl} size={size} type={type}>
-      {noAvatarUrl && (
-        <StyledPlaceholderLetter size={size}>
-          {placeholder[0]?.toLocaleUpperCase()}
-        </StyledPlaceholderLetter>
-      )}
+      {noAvatarUrl && placeholder[0]?.toLocaleUpperCase()}
     </StyledAvatar>
   );
 }
