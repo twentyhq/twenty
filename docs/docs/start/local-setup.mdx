@@ -36,21 +36,15 @@ Default values should work out of the box with the docker setup.
 We provide a containerized environment with Docker and orchestrated with docker-compose.
 This install will also provision a Postgres container.
 
-The configuration is stored `infra/dev` folder. 
+The configuration is stored `infra/dev` folder.
 
 ```
-cd infra/dev
 make build
 ```
 
-### 5. Auth setup
+### 5. Migrate & seed
 
-Right now the only way to authenticate yourself is to setup Google Sign-in in `server/.env`
-We will add an easier option soon.
-
-### 6. Migrate & seed
-
-Before running the project, we need to apply database init and migrations and run the seed.
+Before running the project, we need to init the database by running migration and seeds.
 
 Always go the `infra/dev` folder to run the `make` commands.
 
@@ -59,22 +53,26 @@ Start the containers:
 make up
 ```
 
-Run database migrations:
+Run database migrations, generate prisma client and seed:
 ```
 make server-prisma-migrate
-```
-
-Generate prisma client
-```
 make server-prisma-generate-client
-```
-
-Seed the database:
-```
 make server-prisma-seed
 ```
 
-### 7. Start
+You can also ssh directly in the container and run these commands from the container:
+```
+make sh
+```
+Then
+```
+cd server
+yarn prisma:migrate
+yarn prisma:generate-client
+yarn prisma:seed
+```
+
+### 6. Start
 
 Once this is completed you can run the project with the following commands:
 
@@ -85,17 +83,13 @@ make front-start
 
 server:
 ```
-make-server start
+make server-start
 ```
 
 - front available on: http://localhost:3001
 - server available on: http://localhost:3000/healthz
 - postgres: available on http://localhost:5432 and should contain database named `twenty` 
 
-
-### 8. Development
-
-Documented [here](../dev/workflows.mdx)
 
 ## Without Docker
 
@@ -119,7 +113,7 @@ cp ./server/.env.example ./server/.env
 
 Most default value should work out of the box, but don't forget to update the database connection string.
 
-### 4. Build
+### 4. Build, Migrate & Seed
 On the frontend:
 ```
 cd front
@@ -131,14 +125,11 @@ On the server side:
 cd server
 yarn
 yarn prisma:migrate
+yarn prisma:generate-client
+yarn prisma:seed
 ```
-You can also run `yarn prisma:seed` to seed the database with mock data.
 
-### 5. Auth Setup
-Right now the only way to authenticate yourself is to setup Google Sign-in in `server/.env`
-We will add an easier option soon.
-
-### 6. Start
+### 5. Start
 On the frontend:
 ```
 cd front
