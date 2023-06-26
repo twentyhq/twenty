@@ -2,6 +2,7 @@ name: 'CI Chromatic'
 
 on:
   push:
+  pull_request_target:
 jobs:
   chromatic-deployment:
     runs-on: ubuntu-latest
