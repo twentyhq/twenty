@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
 const StyledLayout = styled.div`
-  background: ${(props) => props.theme.primaryBackground};
-  border: 1px solid ${(props) => props.theme.lightBorder};
+  background: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 5px;
 
   display: flex;

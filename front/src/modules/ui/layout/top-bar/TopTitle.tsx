@@ -10,8 +10,8 @@ const TitleAndCollapseContainer = styled.div`
 
 const TitleContainer = styled.div`
   display: flex;
-  font-size: ${(props) => props.theme.fontSizeLarge};
-  font-weight: ${(props) => props.theme.fontWeightSemibold};
+  font-size: ${({ theme }) => theme.font.size.lg};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   width: 100%;
 `;
 

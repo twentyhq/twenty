@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const HoverableMenuItem = styled.div`
   align-items: center;
-  background: ${(props) => props.theme.primaryBackground};
+  background: ${({ theme }) => theme.background.primary};
   border-radius: 4px;
   box-sizing: border-box;
   cursor: pointer;
@@ -14,6 +14,6 @@ export const HoverableMenuItem = styled.div`
   width: 100%;
 
   &:hover {
-    background: ${(props) => props.theme.lightBackgroundTransparent};
+    background: ${({ theme }) => theme.background.transparent.light};
   }
 `;

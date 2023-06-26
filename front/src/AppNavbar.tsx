@@ -31,37 +31,37 @@ export function AppNavbar() {
             <NavItem
               label="Search"
               to="/search"
-              icon={<IconSearch size={theme.iconSizeMedium} />}
+              icon={<IconSearch size={theme.icon.size.md} />}
               soon={true}
             />
             <NavItem
               label="Inbox"
               to="/inbox"
-              icon={<IconInbox size={theme.iconSizeMedium} />}
+              icon={<IconInbox size={theme.icon.size.md} />}
               soon={true}
             />
             <NavItem
               label="Settings"
               to="/settings/profile"
-              icon={<IconSettings size={theme.iconSizeMedium} />}
+              icon={<IconSettings size={theme.icon.size.md} />}
             />
             <NavTitle label="Workspace" />
             <NavItem
               label="People"
               to="/people"
-              icon={<IconUser size={theme.iconSizeMedium} />}
+              icon={<IconUser size={theme.icon.size.md} />}
               active={currentPath === '/people'}
             />
             <NavItem
               label="Companies"
               to="/companies"
-              icon={<IconBuildingSkyscraper size={theme.iconSizeMedium} />}
+              icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
               active={currentPath === '/companies'}
             />
             <NavItem
               label="Opportunities"
               to="/opportunities"
-              icon={<IconTargetArrow size={theme.iconSizeMedium} />}
+              icon={<IconTargetArrow size={theme.icon.size.md} />}
               active={currentPath === '/opportunities'}
             />
           </NavItemsContainer>

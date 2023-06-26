@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 
 const Separator = styled.div`
-  background-color: ${(props) => props.theme.mediumBorder};
+  background-color: ${({ theme }) => theme.border.color.medium};
   height: 1px;
-  margin-bottom: ${(props) => props.theme.spacing(3)};
-  margin-top: ${(props) => props.theme.spacing(3)};
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
   width: 100%;
 `;
 

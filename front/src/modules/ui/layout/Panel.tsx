@@ -2,8 +2,8 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 const StyledPanel = styled.div`
-  background: ${(props) => props.theme.primaryBackground};
-  border: 1px solid ${(props) => props.theme.primaryBorder};
+  background: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 8px;
   display: flex;
   flex-direction: row;

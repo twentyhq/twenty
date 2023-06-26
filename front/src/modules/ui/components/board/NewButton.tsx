@@ -6,18 +6,18 @@ import { IconPlus } from '@/ui/icons/index';
 const StyledButton = styled.button`
   align-items: center;
   align-self: baseline;
-  background-color: ${({ theme }) => theme.primaryBackground};
+  background-color: ${({ theme }) => theme.background.primary};
   border: none;
-  border-radius: ${({ theme }) => theme.borderRadius};
-  color: ${({ theme }) => theme.text40};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  padding: ${(props) => props.theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
 
   &:hover {
-    background-color: ${({ theme }) => theme.secondaryBackground};
+    background-color: ${({ theme }) => theme.background.secondary};
   }
 `;
 
@@ -30,7 +30,7 @@ export function NewButton({ onClick }: OwnProps) {
 
   return (
     <StyledButton onClick={onClick}>
-      <IconPlus size={theme.iconSizeMedium} />
+      <IconPlus size={theme.icon.size.md} />
       New
     </StyledButton>
   );

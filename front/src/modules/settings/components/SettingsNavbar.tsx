@@ -31,7 +31,7 @@ export function SettingsNavbar() {
         <NavItem
           label="Profile"
           to="/settings/profile"
-          icon={<IconUser size={theme.iconSizeMedium} />}
+          icon={<IconUser size={theme.icon.size.md} />}
           active={
             !!useMatch({
               path: useResolvedPath('/people').pathname,
@@ -42,7 +42,7 @@ export function SettingsNavbar() {
         <NavItem
           label="Experience"
           to="/settings/profile/experience"
-          icon={<IconColorSwatch size={theme.iconSizeMedium} />}
+          icon={<IconColorSwatch size={theme.icon.size.md} />}
           soon={true}
           active={
             !!useMatch({
@@ -55,7 +55,7 @@ export function SettingsNavbar() {
         <NavItem
           label="General"
           to="/settings/workspace"
-          icon={<IconSettings size={theme.iconSizeMedium} />}
+          icon={<IconSettings size={theme.icon.size.md} />}
           soon={true}
           active={
             !!useMatch({
@@ -68,7 +68,7 @@ export function SettingsNavbar() {
         <NavItem
           label="Logout"
           onClick={handleLogout}
-          icon={<IconLogout size={theme.iconSizeMedium} />}
+          icon={<IconLogout size={theme.icon.size.md} />}
           danger={true}
         />
       </NavItemsContainer>

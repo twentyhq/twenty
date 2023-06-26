@@ -1,8 +1,6 @@
 import { ChangeEvent, useRef } from 'react';
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '../../layout/styles/themes';
-
 type OwnProps = {
   leftValue: string;
   rightValue: string;
@@ -17,16 +15,14 @@ const StyledContainer = styled.div`
   justify-content: space-between;
 
   & > input:last-child {
-    border-left: 1px solid ${(props) => props.theme.primaryBorder};
-    padding-left: ${(props) => props.theme.spacing(2)};
+    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+    padding-left: ${({ theme }) => theme.spacing(2)};
   }
 `;
 
 const StyledEditInplaceInput = styled.input`
   height: 18px;
   width: 45%;
-
-  ${textInputStyle}
 `;
 
 export function DoubleTextInput({

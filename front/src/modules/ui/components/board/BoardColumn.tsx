@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 export const StyledColumn = styled.div`
-  background-color: ${({ theme }) => theme.primaryBackground};
+  background-color: ${({ theme }) => theme.background.primary};
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -12,10 +12,10 @@ export const StyledColumn = styled.div`
 export const StyledColumnTitle = styled.h3`
   color: ${({ color }) => color};
   font-family: 'Inter';
-  font-size: ${({ theme }) => theme.fontSizeMedium};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
-  font-weight: ${({ theme }) => theme.fontWeightMedium};
-  line-height: ${({ theme }) => theme.lineHeight};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  line-height: ${({ theme }) => theme.text.lineHeight};
   margin: 0;
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;

@@ -20,7 +20,7 @@ type OwnProps<SortField, TData extends FilterableFieldsType> = {
 
 const StyledBar = styled.div`
   align-items: center;
-  border-top: 1px solid ${(props) => props.theme.primaryBorder};
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: row;
   height: 40px;
@@ -31,21 +31,21 @@ const StyledChipcontainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${(props) => props.theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(1)};
   height: 40px;
   justify-content: space-between;
-  margin-left: ${(props) => props.theme.spacing(2)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
   overflow-x: auto;
 `;
 
 const StyledCancelButton = styled.button`
   background-color: inherit;
   border: none;
-  color: ${(props) => props.theme.text60};
+  color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
   font-weight: 500;
   margin-left: auto;
-  margin-right: ${(props) => props.theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
   padding: ${(props) => {
     const horiz = props.theme.spacing(2);
     const vert = props.theme.spacing(1);
@@ -54,8 +54,8 @@ const StyledCancelButton = styled.button`
   user-select: none;
 
   &:hover {
-    background-color: ${(props) => props.theme.tertiaryBackground};
-    border-radius: ${(props) => props.theme.spacing(1)};
+    background-color: ${({ theme }) => theme.background.tertiary};
+    border-radius: ${({ theme }) => theme.spacing(1)};
   }
 `;
 
@@ -78,9 +78,9 @@ function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
               id={sort.key}
               icon={
                 sort.order === 'desc' ? (
-                  <IconArrowNarrowDown size={theme.iconSizeMedium} />
+                  <IconArrowNarrowDown size={theme.icon.size.md} />
                 ) : (
-                  <IconArrowNarrowUp size={theme.iconSizeMedium} />
+                  <IconArrowNarrowUp size={theme.icon.size.md} />
                 )
               }
               onRemove={() => onRemoveSort(sort.key)}

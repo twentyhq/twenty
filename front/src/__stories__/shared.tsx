@@ -5,7 +5,7 @@ import { RecoilRoot, useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isAuthenticatingState } from '@/auth/states/isAuthenticatingState';
-import { darkTheme } from '@/ui/layout/styles/themes';
+import { darkTheme } from '@/ui/themes/themes';
 import { App } from '~/App';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { mockedUsersData } from '~/testing/mock-data/users';

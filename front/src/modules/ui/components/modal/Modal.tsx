@@ -10,7 +10,7 @@ export function Modal({ children }: { children: React.ReactNode }) {
       ariaHideApp={false}
       style={{
         overlay: {
-          backgroundColor: theme.modalBackgroundTransparent,
+          backgroundColor: theme.background.overlay,
           zIndex: 2,
           display: 'flex',
           justifyContent: 'center',

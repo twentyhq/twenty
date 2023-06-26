@@ -80,7 +80,7 @@ export function Companies() {
   return (
     <WithTopBarContainer
       title="Companies"
-      icon={<IconBuildingSkyscraper size={theme.iconSizeMedium} />}
+      icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
       onAddButtonClick={handleAddButtonClick}
     >
       <>

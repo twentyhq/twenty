@@ -2,12 +2,9 @@ import { ReactNode, useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { IconChevronDown } from '@/ui/icons/index';
+import { overlayBackground, textInputStyle } from '@/ui/themes/effects';
 
 import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
-import {
-  overlayBackground,
-  textInputStyle,
-} from '../../../layout/styles/themes';
 
 type OwnProps = {
   label: string;
@@ -31,17 +28,17 @@ type StyledDropdownButtonProps = {
 };
 
 const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
-  background: ${(props) => props.theme.primaryBackground};
+  background: ${({ theme }) => theme.background.primary};
   border-radius: 4px;
-  color: ${(props) => (props.isActive ? props.theme.blue : 'none')};
+  color: ${(props) => (props.isActive ? props.theme.color.blue : 'none')};
   cursor: pointer;
   display: flex;
   filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};
 
-  padding: ${(props) => props.theme.spacing(1)};
-  padding-left: ${(props) => props.theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
 
-  padding-right: ${(props) => props.theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
   user-select: none;
 
   &:hover {
@@ -54,7 +51,7 @@ const StyledDropdown = styled.ul`
   --wraper-border: 1px;
   --wraper-border-radius: 8px;
 
-  border: var(--wraper-border) solid ${(props) => props.theme.primaryBorder};
+  border: var(--wraper-border) solid ${({ theme }) => theme.border.color.light};
   border-radius: var(--wraper-border-radius);
   display: flex;
   flex-direction: column;
@@ -80,17 +77,17 @@ const StyledDropdown = styled.ul`
 const StyledDropdownItem = styled.li`
   align-items: center;
   border-radius: 2px;
-  color: ${(props) => props.theme.text60};
+  color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
   display: flex;
   margin: 2px;
-  padding: ${(props) => props.theme.spacing(2)}
-    calc(${(props) => props.theme.spacing(2)} - 2px);
+  padding: ${({ theme }) => theme.spacing(2)}
+    calc(${({ theme }) => theme.spacing(2)} - 2px);
   user-select: none;
-  width: calc(160px - ${(props) => props.theme.spacing(4)});
+  width: calc(160px - ${({ theme }) => theme.spacing(4)});
 
   &:hover {
-    background: ${(props) => props.theme.lightBackgroundTransparent};
+    background: ${({ theme }) => theme.background.transparent.light};
   }
 `;
 
@@ -102,18 +99,18 @@ const StyledDropdownItemClipped = styled.span`
 
 const StyledDropdownTopOption = styled.li`
   align-items: center;
-  border-bottom: 1px solid ${(props) => props.theme.lightBorder};
-  color: ${(props) => props.theme.text80};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   display: flex;
-  font-size: ${(props) => props.theme.fontSizeSmall};
-  font-weight: ${(props) => props.theme.fontWeightMedium};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   justify-content: space-between;
-  padding: calc(${(props) => props.theme.spacing(2)})
-    calc(${(props) => props.theme.spacing(2)});
+  padding: calc(${({ theme }) => theme.spacing(2)})
+    calc(${({ theme }) => theme.spacing(2)});
 
   &:hover {
-    background: ${(props) => props.theme.lightBackgroundTransparent};
+    background: ${({ theme }) => theme.background.transparent.light};
   }
   user-select: none;
 `;
@@ -121,19 +118,19 @@ const StyledDropdownTopOption = styled.li`
 const StyledIcon = styled.div`
   display: flex;
   justify-content: center;
-  margin-right: ${(props) => props.theme.spacing(1)};
-  min-width: ${(props) => props.theme.spacing(4)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
+  min-width: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledSearchField = styled.li`
   align-items: center;
   border-bottom: var(--wraper-border) solid
-    ${(props) => props.theme.primaryBorder};
-  color: ${(props) => props.theme.text60};
+    ${({ theme }) => theme.border.color.light};
+  color: ${({ theme }) => theme.font.color.secondary};
 
   cursor: pointer;
   display: flex;
-  font-weight: ${(props) => props.theme.fontWeightMedium};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   justify-content: space-between;
   overflow: hidden;
 
@@ -141,7 +138,7 @@ const StyledSearchField = styled.li`
   input {
     border-radius: 8px;
     box-sizing: border-box;
-    font-family: ${(props) => props.theme.fontFamily};
+    font-family: ${({ theme }) => theme.font.family};
     height: 36px;
     padding: 8px;
     width: 100%;
@@ -192,7 +189,7 @@ function DropdownButton({
 }
 
 const StyleAngleDownContainer = styled.div`
-  color: ${(props) => props.theme.text40};
+  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   height: 100%;
   justify-content: center;

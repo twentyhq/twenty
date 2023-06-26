@@ -15,23 +15,25 @@ type StyledButtonProps = {
 const StyledButton = styled.div<StyledButtonProps>`
   border-radius: 4px;
   color: ${(props) =>
-    props.type === 'warning' ? props.theme.red : props.theme.text60};
+    props.type === 'warning'
+      ? props.theme.color.red
+      : props.theme.font.color.secondary};
   cursor: pointer;
   display: flex;
   justify-content: center;
 
-  padding: ${(props) => props.theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
   transition: background 0.1s ease;
   user-select: none;
 
   &:hover {
-    background: ${(props) => props.theme.tertiaryBackground};
+    background: ${({ theme }) => theme.background.tertiary};
   }
 `;
 
 const StyledButtonLabel = styled.div`
   font-weight: 500;
-  margin-left: ${(props) => props.theme.spacing(2)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 export function EntityTableActionBarButton({

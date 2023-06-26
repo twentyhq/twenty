@@ -6,7 +6,7 @@ type OwnProps = {
 };
 
 const StyledSubTitle = styled.div`
-  color: ${({ theme }) => theme.text60};
+  color: ${({ theme }) => theme.font.color.secondary};
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 

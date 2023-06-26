@@ -65,7 +65,7 @@ export function Index() {
         <Title>Welcome to Twenty</Title>
         <StyledContentContainer>
           <PrimaryButton fullWidth={true} onClick={onGoogleLoginClick}>
-            <IconBrandGoogle size={theme.iconSizeSmall} stroke={4} />
+            <IconBrandGoogle size={theme.icon.size.sm} stroke={4} />
             Continue With Google
           </PrimaryButton>
           <HorizontalSeparator />

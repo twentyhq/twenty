@@ -2,11 +2,11 @@ import styled from '@emotion/styled';
 
 const StyledIconButton = styled.button`
   align-items: center;
-  background: ${(props) => props.theme.blue};
+  background: ${({ theme }) => theme.color.blue};
   border: none;
 
   border-radius: 50%;
-  color: ${(props) => props.theme.text0};
+  color: ${({ theme }) => theme.font.color.inverted};
 
   cursor: pointer;
   display: flex;
@@ -19,8 +19,8 @@ const StyledIconButton = styled.button`
   width: 20px;
 
   &:disabled {
-    background: ${(props) => props.theme.quaternaryBackground};
-    color: ${(props) => props.theme.text40};
+    background: ${({ theme }) => theme.background.quaternary};
+    color: ${({ theme }) => theme.font.color.tertiary};
     cursor: default;
   }
 `;

@@ -2,7 +2,7 @@ import React, { forwardRef, ReactElement, useState } from 'react';
 import ReactDatePicker, { CalendarContainerProps } from 'react-datepicker';
 import styled from '@emotion/styled';
 
-import { overlayBackground } from '../../layout/styles/themes';
+import { overlayBackground } from '@/ui/themes/effects';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -16,10 +16,10 @@ export type DatePickerProps = {
 
 const StyledContainer = styled.div`
   & .react-datepicker {
-    border-color: ${(props) => props.theme.primaryBorder};
+    border-color: ${({ theme }) => theme.border.color.light};
     background: transparent;
     font-family: 'Inter';
-    font-size: ${(props) => props.theme.fontSizeMedium};
+    font-size: ${({ theme }) => theme.font.size.md};
     border: none;
     display: block;
     font-weight: 400;
@@ -49,19 +49,19 @@ const StyledContainer = styled.div`
 
   & .react-datepicker__header__dropdown {
     display: flex;
-    margin-left: ${(props) => props.theme.spacing(1)};
-    margin-bottom: ${(props) => props.theme.spacing(1)};
+    margin-left: ${({ theme }) => theme.spacing(1)};
+    margin-bottom: ${({ theme }) => theme.spacing(1)};
   }
 
   & .react-datepicker__month-dropdown-container,
   & .react-datepicker__year-dropdown-container {
     text-align: left;
     border-radius: 4px;
-    margin-left: ${(props) => props.theme.spacing(1)};
+    margin-left: ${({ theme }) => theme.spacing(1)};
     margin-right: 0;
-    padding: ${(props) => props.theme.spacing(2)};
-    padding-right: ${(props) => props.theme.spacing(4)};
-    background-color: ${(props) => props.theme.tertiaryBackground};
+    padding: ${({ theme }) => theme.spacing(2)};
+    padding-right: ${({ theme }) => theme.spacing(4)};
+    background-color: ${({ theme }) => theme.background.tertiary};
   }
 
   & .react-datepicker__month-read-view--down-arrow,
@@ -69,14 +69,14 @@ const StyledContainer = styled.div`
     height: 5px;
     width: 5px;
     border-width: 1px 1px 0 0;
-    border-color: ${(props) => props.theme.text40};
+    border-color: ${({ theme }) => theme.border.color.light};
     top: 3px;
     right: -6px;
   }
 
   & .react-datepicker__year-read-view,
   & .react-datepicker__month-read-view {
-    padding-right: ${(props) => props.theme.spacing(2)};
+    padding-right: ${({ theme }) => theme.spacing(2)};
   }
 
   & .react-datepicker__month-dropdown-container {
@@ -89,19 +89,19 @@ const StyledContainer = styled.div`
 
   & .react-datepicker__month-dropdown,
   & .react-datepicker__year-dropdown {
-    border: ${(props) => props.theme.primaryBorder};
+    border: ${({ theme }) => theme.border.color.light};
     ${overlayBackground}
     overflow-y: scroll;
-    top: ${(props) => props.theme.spacing(2)};
+    top: ${({ theme }) => theme.spacing(2)};
   }
   & .react-datepicker__month-dropdown {
-    left: ${(props) => props.theme.spacing(2)};
+    left: ${({ theme }) => theme.spacing(2)};
     width: 160px;
     height: 260px;
   }
 
   & .react-datepicker__year-dropdown {
-    left: calc(${(props) => props.theme.spacing(9)} + 80px);
+    left: calc(${({ theme }) => theme.spacing(9)} + 80px);
     width: 100px;
     height: 260px;
   }
@@ -118,16 +118,16 @@ const StyledContainer = styled.div`
   & .react-datepicker__year-option,
   & .react-datepicker__month-option {
     text-align: left;
-    padding: ${(props) => props.theme.spacing(2)}
-      calc(${(props) => props.theme.spacing(2)} - 2px);
-    width: calc(100% - ${(props) => props.theme.spacing(4)});
+    padding: ${({ theme }) => theme.spacing(2)}
+      calc(${({ theme }) => theme.spacing(2)} - 2px);
+    width: calc(100% - ${({ theme }) => theme.spacing(4)});
     border-radius: 2px;
-    color: ${(props) => props.theme.text60};
+    color: ${({ theme }) => theme.font.color.secondary};
     cursor: pointer;
     margin: 2px;
 
     &:hover {
-      background: ${(props) => props.theme.lightBackgroundTransparent};
+      background: ${({ theme }) => theme.background.transparent.light};
     }
 
     &:first-of-type {
@@ -144,7 +144,7 @@ const StyledContainer = styled.div`
   }
 
   & .react-datepicker__day-name {
-    color: ${(props) => props.theme.text60};
+    color: ${({ theme }) => theme.font.color.secondary};
     width: 34px;
     height: 40px;
     line-height: 40px;
@@ -172,7 +172,7 @@ const StyledContainer = styled.div`
     border-radius: 4px;
     padding-top: 6px;
     &:hover {
-      background: ${(props) => props.theme.lightBackgroundTransparent};
+      background: ${({ theme }) => theme.background.transparent.light};
     }
   }
   & .react-datepicker__navigation--previous {
@@ -198,7 +198,7 @@ const StyledContainer = styled.div`
     height: 7px;
     width: 7px;
     border-width: 1px 1px 0 0;
-    border-color: ${(props) => props.theme.text40};
+    border-color: ${({ theme }) => theme.font.color.tertiary};
   }
 
   & .react-datepicker__day--keyboard-selected {
@@ -207,20 +207,20 @@ const StyledContainer = styled.div`
 
   & .react-datepicker__day,
   .react-datepicker__time-name {
-    color: ${(props) => props.theme.text80};
+    color: ${({ theme }) => theme.font.color.primary};
   }
 
   & .react-datepicker__day--selected {
-    background-color: ${(props) => props.theme.blue};
-    color: ${(props) => props.theme.text0};
+    background-color: ${({ theme }) => theme.color.blue};
+    color: ${({ theme }) => theme.font.color.inverted};
   }
 
   & .react-datepicker__day--outside-month {
-    color: ${(props) => props.theme.text40};
+    color: ${({ theme }) => theme.font.color.tertiary};
   }
 
   & .react-datepicker__day:hover {
-    color: ${(props) => props.theme.text40};
+    color: ${({ theme }) => theme.font.color.tertiary};
   }
 `;
 

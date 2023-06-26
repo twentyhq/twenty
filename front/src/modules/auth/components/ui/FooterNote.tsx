@@ -7,9 +7,9 @@ type OwnProps = {
 
 const StyledContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.text40};
+  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  font-size: ${({ theme }) => theme.fontSizeSmall}px;
+  font-size: ${({ theme }) => theme.font.size.sm}px;
   padding-left: ${({ theme }) => theme.spacing(14)};
   padding-right: ${({ theme }) => theme.spacing(14)};
   text-align: center;

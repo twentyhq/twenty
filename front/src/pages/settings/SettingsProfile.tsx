@@ -10,7 +10,7 @@ import { NoTopBarContainer } from '@/ui/layout/containers/NoTopBarContainer';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${(props) => props.theme.spacing(8)};
+  padding: ${({ theme }) => theme.spacing(8)};
   width: 490px;
 `;
 export function SettingsProfile() {

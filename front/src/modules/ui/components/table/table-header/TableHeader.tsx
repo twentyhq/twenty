@@ -31,22 +31,22 @@ const StyledContainer = styled.div`
 
 const StyledTableHeader = styled.div`
   align-items: center;
-  color: ${(props) => props.theme.text60};
+  color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: row;
   font-weight: 500;
   height: 40px;
   justify-content: space-between;
-  padding-left: ${(props) => props.theme.spacing(3)};
-  padding-right: ${(props) => props.theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIcon = styled.div`
   display: flex;
-  margin-right: ${(props) => props.theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
 
   & > svg {
-    font-size: ${(props) => props.theme.iconSizeSmall};
+    font-size: ${({ theme }) => theme.icon.size.sm};
   }
 `;
 

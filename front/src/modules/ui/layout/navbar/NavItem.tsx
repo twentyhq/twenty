@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { MOBILE_VIEWPORT } from '../styles/themes';
+import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
 
 type OwnProps = {
   label: string;
@@ -23,44 +23,45 @@ type StyledItemProps = {
 const StyledItem = styled.button<StyledItemProps>`
   align-items: center;
   background: ${(props) =>
-    props.active ? props.theme.lightBackgroundTransparent : 'inherit'};
+    props.active ? props.theme.background.transparent.light : 'inherit'};
   border: none;
   border-radius: 4px;
   color: ${(props) => {
     if (props.active) {
-      return props.theme.text80;
+      return props.theme.font.color.primary;
     }
     if (props.danger) {
-      return props.theme.red;
+      return props.theme.color.red;
     }
     if (props.soon) {
-      return props.theme.text20;
+      return props.theme.font.color.extraLight;
     }
-    return props.theme.text60;
+    return props.theme.font.color.secondary;
   }};
   cursor: ${(props) => (props.soon ? 'default' : 'pointer')};
   display: flex;
   font-family: 'Inter';
-  font-size: ${(props) => props.theme.fontSizeMedium};
-  margin-bottom: calc(${(props) => props.theme.spacing(1)} / 2);
-  padding-bottom: ${(props) => props.theme.spacing(1)};
-  padding-left: ${(props) => props.theme.spacing(1)};
-  padding-top: ${(props) => props.theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.md};
+  margin-bottom: calc(${({ theme }) => theme.spacing(1)} / 2);
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
   :hover {
-    background: ${(props) => props.theme.lightBackgroundTransparent};
-    color: ${(props) => (props.danger ? props.theme.red : props.theme.text80)};
+    background: ${({ theme }) => theme.background.transparent.light};
+    color: ${(props) =>
+      props.danger ? props.theme.color.red : props.theme.font.color.primary};
   }
   user-select: none;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    font-size: ${(props) => props.theme.fontSizeLarge};
+    font-size: ${({ theme }) => theme.font.size.lg};
   }
 `;
 
 const StyledItemLabel = styled.div`
   display: flex;
-  margin-left: ${(props) => props.theme.spacing(2)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledSoonPill = styled.div`
@@ -68,11 +69,10 @@ const StyledSoonPill = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 50px;
-  background-color: ${(props) => props.theme.lightBackgroundTransparent};
-  font-size: ${(props) => props.theme.fontSizeExtraSmall};
-  padding: ${(props) => props.theme.spacing(1)}
-    ${(props) => props.theme.spacing(2)} ${(props) => props.theme.spacing(1)}
-    ${(props) => props.theme.spacing(2)};
+  background-color: ${({ theme }) => theme.background.transparent.light};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)}
+    ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
   margin-left: auto; // this aligns the pill to the right
 `;
 

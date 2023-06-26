@@ -40,15 +40,15 @@ const StyledTable = styled.table`
 
   border-radius: 4px;
   border-spacing: 0;
-  margin-left: ${(props) => props.theme.table.horizontalCellMargin};
-  margin-right: ${(props) => props.theme.table.horizontalCellMargin};
+  margin-left: ${({ theme }) => theme.table.horizontalCellMargin};
+  margin-right: ${({ theme }) => theme.table.horizontalCellMargin};
   table-layout: fixed;
-  width: calc(100% - ${(props) => props.theme.table.horizontalCellMargin} * 2);
+  width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
 
   th {
-    border: 1px solid ${(props) => props.theme.tertiaryBackground};
+    border: 1px solid ${({ theme }) => theme.background.tertiary};
     border-collapse: collapse;
-    color: ${(props) => props.theme.text40};
+    color: ${({ theme }) => theme.font.color.tertiary};
     padding: 0;
     text-align: left;
 
@@ -66,9 +66,9 @@ const StyledTable = styled.table`
   }
 
   td {
-    border: 1px solid ${(props) => props.theme.tertiaryBackground};
+    border: 1px solid ${({ theme }) => theme.background.tertiary};
     border-collapse: collapse;
-    color: ${(props) => props.theme.text80};
+    color: ${({ theme }) => theme.font.color.primary};
     padding: 0;
 
     text-align: left;
@@ -102,7 +102,7 @@ const StyledTableScrollableContainer = styled.div`
 
 const StyledRow = styled.tr<{ selected: boolean }>`
   background: ${(props) =>
-    props.selected ? props.theme.secondaryBackground : 'none'};
+    props.selected ? props.theme.background.secondary : 'none'};
 `;
 
 export function EntityTable<TData extends { id: string }, SortField>({

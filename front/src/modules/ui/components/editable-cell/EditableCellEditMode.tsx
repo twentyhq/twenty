@@ -3,15 +3,15 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { overlayBackground } from '@/ui/themes/effects';
 import { debounce } from '@/utils/debounce';
 
 import { useListenClickOutsideArrayOfRef } from '../../hooks/useListenClickOutsideArrayOfRef';
-import { overlayBackground } from '../../layout/styles/themes';
 import { isSomeInputInEditModeState } from '../../tables/states/isSomeInputInEditModeState';
 
 export const EditableCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;
-  border: 1px solid ${(props) => props.theme.primaryBorder};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 4px;
   display: flex;
   left: ${(props) =>

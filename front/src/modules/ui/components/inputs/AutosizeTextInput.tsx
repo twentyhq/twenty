@@ -22,10 +22,10 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTextArea = styled(TextareaAutosize)`
-  background: ${(props) => props.theme.tertiaryBackground};
+  background: ${({ theme }) => theme.background.tertiary};
   border: none;
   border-radius: 5px;
-  color: ${(props) => props.theme.text80};
+  color: ${({ theme }) => theme.font.color.primary};
   font-family: inherit;
   font-size: 13px;
   font-weight: 400;
@@ -41,7 +41,7 @@ const StyledTextArea = styled(TextareaAutosize)`
   }
 
   &::placeholder {
-    color: ${(props) => props.theme.text30};
+    color: ${({ theme }) => theme.font.color.light};
     font-weight: 400;
   }
 `;

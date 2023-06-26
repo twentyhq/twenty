@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
   justify-content: center;
 
   input[type='checkbox'] {
-    accent-color: ${(props) => props.theme.blue};
+    accent-color: ${({ theme }) => theme.color.blue};
     cursor: pointer;
     height: 14px;
     margin: 2px;
@@ -24,7 +24,7 @@ const StyledContainer = styled.div`
   }
 
   input[type='checkbox']::before {
-    border: 1px solid ${(props) => props.theme.text40};
+    border: 1px solid ${({ theme }) => theme.font.color.tertiary};
     border-radius: 2px;
     content: '';
     display: block;
@@ -33,11 +33,11 @@ const StyledContainer = styled.div`
   }
 
   input[type='checkbox']:hover::before {
-    border: 1px solid ${(props) => props.theme.text80};
+    border: 1px solid ${({ theme }) => theme.font.color.primary};
   }
 
   input[type='checkbox']:checked::before {
-    border: 1px solid ${(props) => props.theme.blue};
+    border: 1px solid ${({ theme }) => theme.color.blue};
   }
 `;
 

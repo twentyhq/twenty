@@ -11,13 +11,13 @@ const StyledTitle = styled.div`
   display: flex;
   flex-direction: row;
   font-weight: 500;
-  height: ${(props) => props.theme.spacing(8)};
-  padding-left: ${(props) => props.theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(8)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIcon = styled.div`
   display: flex;
-  margin-right: ${(props) => props.theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 export function ColumnHead({ viewName, viewIcon }: OwnProps) {

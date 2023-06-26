@@ -8,12 +8,12 @@ export const EditableRelationCreateButton = styled.button`
   cursor: pointer;
   display: flex;
   font-family: 'Inter';
-  font-size: ${(props) => props.theme.fontSizeMedium};
-  gap: ${(props) => props.theme.spacing(2)};
+  font-size: ${({ theme }) => theme.font.size.md};
+  gap: ${({ theme }) => theme.spacing(2)};
   height: 31px;
-  padding-bottom: ${(props) => props.theme.spacing(1)};
-  padding-left: ${(props) => props.theme.spacing(1)};
-  padding-top: ${(props) => props.theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   width: 100%;
 `;

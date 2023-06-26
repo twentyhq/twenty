@@ -6,7 +6,7 @@ type OwnProps = {
 };
 
 const StyledContainer = styled.div`
-  font-weight: ${({ theme }) => theme.fontWeightMedium};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;

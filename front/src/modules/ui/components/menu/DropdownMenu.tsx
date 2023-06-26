@@ -4,11 +4,11 @@ export const DropdownMenu = styled.div`
   align-items: center;
   backdrop-filter: blur(20px);
 
-  background: ${(props) => props.theme.secondaryBackgroundTransparent};
-  border: 1px solid ${(props) => props.theme.lightBorder};
-  border-radius: calc(${(props) => props.theme.borderRadius} * 2);
+  background: ${({ theme }) => theme.background.transparent.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: calc(${({ theme }) => theme.border.radius.md};
 
-  box-shadow: ${(props) => props.theme.modalBoxShadow};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   display: flex;
 

@@ -27,12 +27,12 @@ const StyledContainer = styled.div`
   align-items: flex-start;
   display: flex;
   flex-direction: column;
-  gap: ${(props) => props.theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(4)};
 
   justify-content: flex-start;
 
   max-height: calc(100% - 16px);
-  padding: ${(props) => props.theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledThreadItemListContainer = styled.div`
@@ -40,7 +40,7 @@ const StyledThreadItemListContainer = styled.div`
   display: flex;
 
   flex-direction: column-reverse;
-  gap: ${(props) => props.theme.spacing(4)};
+  gap: ${({ theme }) => theme.spacing(4)};
 
   justify-content: flex-start;
   overflow: auto;

@@ -46,7 +46,7 @@ export function Opportunities() {
   return (
     <WithTopBarContainer
       title="Opportunities"
-      icon={<IconTargetArrow size={theme.iconSizeMedium} />}
+      icon={<IconTargetArrow size={theme.icon.size.md} />}
     >
       {items && pipelineId ? (
         <Board

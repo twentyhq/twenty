@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const DropdownMenuItemContainer = styled.div`
-  --padding: ${(props) => props.theme.spacing(1 / 2)};
+  --padding: ${({ theme }) => theme.spacing(1 / 2)};
 
   align-items: flex-start;
   display: flex;

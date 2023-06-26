@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 export const DropdownMenuSeparator = styled.div`
-  background-color: ${(props) => props.theme.lightBorder};
+  background-color: ${({ theme }) => theme.border.color.light};
   height: 1px;
 
   width: 100%;

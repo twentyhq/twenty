@@ -10,15 +10,15 @@ export type PersonChipPropsType = {
 
 const StyledContainer = styled.span`
   align-items: center;
-  background-color: ${(props) => props.theme.tertiaryBackground};
-  border-radius: ${(props) => props.theme.spacing(1)};
-  color: ${(props) => props.theme.text80};
+  background-color: ${({ theme }) => theme.background.tertiary};
+  border-radius: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.primary};
   display: inline-flex;
-  gap: ${(props) => props.theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(1)};
   height: 12px;
 
   overflow: hidden;
-  padding: ${(props) => props.theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
 
   :hover {
     filter: brightness(95%);

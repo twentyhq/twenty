@@ -79,7 +79,7 @@ export function People() {
   return (
     <WithTopBarContainer
       title="People"
-      icon={<IconUser size={theme.iconSizeMedium} />}
+      icon={<IconUser size={theme.icon.size.md} />}
       onAddButtonClick={handleAddButtonClick}
     >
       <>
@@ -88,7 +88,7 @@ export function People() {
             data={people}
             columns={peopleColumns}
             viewName="All People"
-            viewIcon={<IconList size={theme.iconSizeMedium} />}
+            viewIcon={<IconList size={theme.icon.size.md} />}
             availableSorts={availableSorts}
             availableFilters={availableFilters}
             onSortsUpdate={updateSorts}

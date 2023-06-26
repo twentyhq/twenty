@@ -11,16 +11,16 @@ type OwnProps = {
 };
 
 const MainContainer = styled.div<{ topMargin: number }>`
-  background: ${(props) => props.theme.noisyBackground};
+  background: ${({ theme }) => theme.background.noisy};
   display: flex;
 
   flex-direction: row;
-  gap: ${(props) => props.theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(2)};
   height: calc(100% - ${(props) => props.topMargin}px);
 
-  padding-bottom: ${(props) => props.theme.spacing(3)};
-  padding-right: ${(props) => props.theme.spacing(3)};
-  width: calc(100% - ${(props) => props.theme.spacing(3)});
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(3)};
+  width: calc(100% - ${({ theme }) => theme.spacing(3)});
 `;
 
 type LeftContainerProps = {

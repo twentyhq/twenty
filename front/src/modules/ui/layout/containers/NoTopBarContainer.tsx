@@ -8,7 +8,7 @@ type OwnProps = {
 
 const StyledContainer = styled.div`
   display: flex;
-  padding-top: ${(props) => props.theme.spacing(4)};
+  padding-top: ${({ theme }) => theme.spacing(4)};
   width: 100%;
 `;
 
