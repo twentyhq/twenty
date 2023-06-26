@@ -17,6 +17,7 @@ import {
 import { SelectedFilterType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
 import { EntityTable } from '@/ui/components/table/EntityTable';
+import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
 import { IconBuildingSkyscraper } from '@/ui/icons/index';
 import { IconList } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
@@ -85,6 +86,10 @@ export function Companies() {
     >
       <>
         <StyledCompaniesContainer>
+          <HooksEntityTable
+            numberOfColumns={companiesColumns.length}
+            numberOfRows={companies.length}
+          />
           <EntityTable
             data={companies}
             columns={companiesColumns}
