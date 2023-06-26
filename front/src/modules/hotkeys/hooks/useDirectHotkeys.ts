@@ -34,14 +34,5 @@ export function useDirectHotkeys(
     });
   };
 
-  useHotkeys(
-    keys,
-    callbackIfDirectKey,
-    {
-      preventDefault: true,
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
-    dependencies,
-  );
+  useHotkeys(keys, callbackIfDirectKey, dependencies);
 }

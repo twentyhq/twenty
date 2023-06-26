@@ -15,7 +15,7 @@ import {
   // StyledSeparator,
 } from './CommandMenuStyles';
 
-export function CommandMenu({ initiallyOpen = false }) {
+export function CommandMenu() {
   const [open, setOpen] = useRecoilState(isCommandMenuOpenedState);
 
   useDirectHotkeys(
