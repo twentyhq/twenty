@@ -34,8 +34,6 @@ export function EditableCellSoftFocusMode({
 
       if (isWritingText) {
         openEditableCell();
-      } else {
-        keyboardEvent.preventDefault();
       }
     },
     {
