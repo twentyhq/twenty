@@ -40,8 +40,6 @@ export class PipelineProgressResolver {
   async findManyPipelineProgress(
     @Args() args: FindManyPipelineProgressArgs,
     @UserAbility() ability: AppAbility,
-    @PrismaSelector({ modelName: 'PipelineProgress' })
-    prismaSelect: PrismaSelect<'PipelineProgress'>,
   ): Promise<Partial<PipelineProgress>[]> {
     return this.pipelineProgressService.findMany({
       ...args,

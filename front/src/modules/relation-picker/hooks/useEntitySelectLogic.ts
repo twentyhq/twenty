@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { debounce } from 'lodash';
 import scrollIntoView from 'scroll-into-view';
 
+import { useUpDownHotkeys } from '@/hotkeys/hooks/useUpDownHotkeys';
 import { useRecoilScopedState } from '@/ui/hooks/useRecoilScopedState';
 
 import { relationPickerSearchFilterScopedState } from '../states/relationPickerSearchFilterScopedState';
@@ -34,39 +34,7 @@ export function useEntitySelectLogic<
     setHoveredIndex(0);
   }
 
-  useHotkeys(
-    'down',
-    () => {
-      setHoveredIndex((prevSelectedIndex) =>
-        Math.min(prevSelectedIndex + 1, (entities?.length ?? 0) - 1),
-      );
-
-      const currentHoveredRef = containerRef.current?.children[
-        hoveredIndex
-      ] as HTMLElement;
-
-      if (currentHoveredRef) {
-        scrollIntoView(currentHoveredRef, {
-          align: {
-            top: 0.275,
-          },
-          isScrollable: (target) => {
-            return target === containerRef.current;
-          },
-          time: 0,
-        });
-      }
-    },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
-    [setHoveredIndex, entities],
-  );
-
-  useHotkeys(
-    'up',
+  useUpDownHotkeys(
     () => {
       setHoveredIndex((prevSelectedIndex) =>
         Math.max(prevSelectedIndex - 1, 0),
@@ -88,10 +56,26 @@ export function useEntitySelectLogic<
         });
       }
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
+    () => {
+      setHoveredIndex((prevSelectedIndex) =>
+        Math.min(prevSelectedIndex + 1, (entities?.length ?? 0) - 1),
+      );
+
+      const currentHoveredRef = containerRef.current?.children[
+        hoveredIndex
+      ] as HTMLElement;
+
+      if (currentHoveredRef) {
+        scrollIntoView(currentHoveredRef, {
+          align: {
+            top: 0.275,
+          },
+          isScrollable: (target) => {
+            return target === containerRef.current;
+          },
+          time: 0,
+        });
+      }
     },
     [setHoveredIndex, entities],
   );

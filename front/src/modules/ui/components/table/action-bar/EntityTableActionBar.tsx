@@ -20,6 +20,7 @@ const StyledContainer = styled.div<StyledContainerProps>`
   border: 1px solid ${(props) => props.theme.primaryBorder};
   border-radius: 8px;
   bottom: ${(props) => (props.position.x ? 'auto' : '38px')};
+  box-shadow: ${(props) => props.theme.modalBoxShadow};
   display: flex;
   height: 48px;
 

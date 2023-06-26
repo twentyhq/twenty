@@ -4,7 +4,7 @@ import { Command } from 'cmdk';
 export const StyledDialog = styled(Command.Dialog)`
   background: ${(props) => props.theme.primaryBackground};
   border-radius: ${(props) => props.theme.borderRadius};
-  box-shadow: ${(props) => props.theme.modalBoxShadow};
+  box-shadow: ${(props) => props.theme.heavyBoxShadow};
   font-family: ${(props) => props.theme.fontFamily};
   left: 50%;
   max-width: 640px;
@@ -21,7 +21,6 @@ export const StyledInput = styled(Command.Input)`
   border: none;
   border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
   border-radius: 0;
-  caret-color: ${(props) => props.theme.blue};
   color: ${(props) => props.theme.text100};
   font-size: ${(props) => props.theme.fontSizeLarge};
   margin: 0;
@@ -30,14 +29,15 @@ export const StyledInput = styled(Command.Input)`
   width: 100%;
 `;
 
-export const StyledItem = styled(Command.Item)`
+export const StyledMenuItem = styled(Command.Item)`
   align-items: center;
-  color: ${(props) => props.theme.text100};
+  color: ${(props) => props.theme.text80};
   cursor: pointer;
   display: flex;
   font-size: ${(props) => props.theme.fontSizeMedium};
   gap: ${(props) => props.theme.spacing(3)};
-  height: 48px;
+  height: 40px;
+  justify-content: space-between;
   padding: 0 ${(props) => props.theme.spacing(4)};
   position: relative;
   transition: all 150ms ease;
@@ -47,23 +47,24 @@ export const StyledItem = styled(Command.Item)`
     background: ${(props) => props.theme.lightBackgroundTransparent};
   }
   &[data-selected='true'] {
-    background: ${(props) => props.theme.secondaryBackground};
+    background: ${(props) => props.theme.tertiaryBackground};
+    /* Could be nice to add a caret like this for better accessibility in the future
+    But it needs to be consistend with other picker dropdown (e.g. company)
     &:after {
-      background: ${(props) => props.theme.blue};
+      background: ${(props) => props.theme.quaternaryBackground};
       content: '';
       height: 100%;
       left: 0;
       position: absolute;
       width: 3px;
       z-index: ${(props) => props.theme.lastLayerZIndex};
-    }
+    } */
   }
   &[data-disabled='true'] {
     color: ${(props) => props.theme.text30};
     cursor: not-allowed;
   }
   svg {
-    color: ${(props) => props.theme.text80};
     height: 16px;
     width: 16px;
   }
@@ -85,7 +86,12 @@ export const StyledGroup = styled(Command.Group)`
     color: ${(props) => props.theme.text30};
     display: flex;
     font-size: ${(props) => props.theme.fontSizeExtraSmall};
-    padding: ${(props) => props.theme.spacing(2)};
+    font-weight: ${(props) => props.theme.fontWeightBold};
+    padding-bottom: ${(props) => props.theme.spacing(2)};
+    padding-left: ${(props) => props.theme.spacing(4)};
+    padding-right: ${(props) => props.theme.spacing(4)};
+    padding-top: ${(props) => props.theme.spacing(2)};
+    text-transform: uppercase;
     user-select: none;
   }
 `;
@@ -101,3 +107,32 @@ export const StyledEmpty = styled(Command.Empty)`
 `;
 
 export const StyledSeparator = styled(Command.Separator)``;
+
+export const StyledIconAndLabelContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${(props) => props.theme.spacing(2)};
+`;
+export const StyledIconContainer = styled.div`
+  align-items: center;
+  background: ${(props) => props.theme.lightBackgroundTransparent};
+  border-radius: 4px;
+  color: ${(props) => props.theme.text60};
+  display: flex;
+  padding: ${(props) => props.theme.spacing(1)};
+`;
+export const StyledShortCut = styled.div`
+  background-color: ${(props) => props.theme.lightBackgroundTransparent};
+  border-radius: 4px;
+  color: ${(props) => props.theme.text30};
+  margin-left: ${(props) => props.theme.spacing(1)};
+  margin-right: ${(props) => props.theme.spacing(1)};
+  padding: ${(props) => props.theme.spacing(1)};
+`;
+
+export const StyledShortcutsContainer = styled.div`
+  align-items: center;
+  color: ${(props) => props.theme.text30};
+  display: flex;
+  font-size: ${(props) => props.theme.fontSizeSmall};
+`;
