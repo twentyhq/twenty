@@ -115,13 +115,6 @@ export function EntityTable<TData extends { id: string }, SortField>({
     currentRowSelectionState,
   );
 
-  React.useEffect(() => {
-    setSoftFocusPosition({
-      row: 0,
-      column: 1,
-    });
-  }, [setSoftFocusPosition]);
-
   const table = useReactTable<TData>({
     data,
     columns,

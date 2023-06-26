@@ -7,8 +7,6 @@ import { isEditModeScopedState } from '../states/isEditModeScopedState';
 
 export function useEditableCell() {
   const [, setIsEditMode] = useRecoilScopedState(isEditModeScopedState);
-  const { enableScope, disableScope } = useHotkeysContext();
-  const [, setSoftFocusOnCurrentCell] = useSoftFocusOnCurrentCell();
 
   const closeEditableCell = useRecoilCallback(
     ({ set }) =>
