@@ -1,6 +1,7 @@
 name: CI Server
 on:
   push:
+  pull_request_target:
 jobs:
   server-test:
     runs-on: ubuntu-latest

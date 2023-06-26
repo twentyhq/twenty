@@ -1,6 +1,7 @@
 name: CI Front
 on:
   push:
+  pull_request_target:
 jobs:
   front-test:
     runs-on: ubuntu-latest

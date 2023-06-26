@@ -1,6 +1,7 @@
 name: CI Docs
 on:
   push:
+  pull_request_target:
 jobs:
   docs-build:
     runs-on: ubuntu-latest
