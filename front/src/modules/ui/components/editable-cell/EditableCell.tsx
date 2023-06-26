@@ -1,14 +1,14 @@
 import { ReactElement } from 'react';
-import { useHotkeys, useHotkeysContext } from 'react-hotkeys-hook';
+import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-
-import { isSomeInputInEditModeState } from '../../tables/states/isSomeInputInEditModeState';
+import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
+import { isNonTextWritingKey } from '@/utils/hotkeys/isNonTextWritingKey';
 
 import { useEditableCell } from './hooks/useCloseEditableCell';
-import { useSoftFocusOnCurrentCell } from './hooks/useSoftFocusOnCurrentCell';
+import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
+import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
 import { isEditModeScopedState } from './states/isEditModeScopedState';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
@@ -37,50 +37,36 @@ export function EditableCell({
   editModeContent,
   nonEditModeContent,
 }: OwnProps) {
-  const [isEditMode, setIsEditMode] = useRecoilScopedState(
-    isEditModeScopedState,
-  );
-  const [isSomeInputInEditMode, setIsSomeInputInEditMode] = useRecoilState(
-    isSomeInputInEditModeState,
-  );
+  const [isEditMode] = useRecoilScopedState(isEditModeScopedState);
 
-  const { enableScope, disableScope } = useHotkeysContext();
+  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
+
+  const { moveDown } = useMoveSoftFocus();
 
   const { closeEditableCell, openEditableCell } = useEditableCell();
 
-  const [hasSoftFocus] = useSoftFocusOnCurrentCell();
-
   function handleOnClick() {
     openEditableCell();
+    setSoftFocusOnCurrentCell();
   }
 
   function handleOnOutsideClick() {
     closeEditableCell();
   }
 
-  useHotkeys(
-    'esc',
-    () => {
-      if (hasSoftFocus && isEditMode) {
-        closeEditableCell();
-        enableScope('entity-table');
-      }
-    },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
-    [isEditMode, closeEditableCell, hasSoftFocus, enableScope],
-  );
+  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
+  // TODO: create a component to wrap soft focus mode to avoid having to mount those useHotkeys hooks on all cells.
   useHotkeys(
     'enter',
     () => {
-      if (hasSoftFocus && !isSomeInputInEditMode) {
-        setIsSomeInputInEditMode(true);
-        setIsEditMode(true);
-        disableScope('entity-table');
+      if (hasSoftFocus) {
+        if (isEditMode) {
+          closeEditableCell();
+          moveDown();
+        } else {
+          openEditableCell();
+        }
       }
     },
     {
@@ -88,7 +74,27 @@ export function EditableCell({
       enableOnFormTags: true,
       preventDefault: true,
     },
-    [isEditMode, closeEditableCell, hasSoftFocus, disableScope],
+    [isEditMode, closeEditableCell, hasSoftFocus],
+  );
+
+  useHotkeys(
+    '*',
+    (keyboardEvent) => {
+      if (hasSoftFocus && !isEditMode) {
+        const isTextWritingKey = !isNonTextWritingKey(keyboardEvent.key);
+
+        if (!isEditMode && isTextWritingKey) {
+          openEditableCell();
+        } else {
+          keyboardEvent.preventDefault();
+        }
+      }
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+      preventDefault: false,
+    },
   );
 
   return (
@@ -97,7 +103,6 @@ export function EditableCell({
         <EditableCellEditMode
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
-          isEditMode={isEditMode}
           onOutsideClick={handleOnOutsideClick}
         >
           {editModeContent}

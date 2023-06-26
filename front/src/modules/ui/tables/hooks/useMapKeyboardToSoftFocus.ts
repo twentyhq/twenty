@@ -1,71 +1,72 @@
-import { useEffect } from 'react';
-import { useHotkeys, useHotkeysContext } from 'react-hotkeys-hook';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { useRecoilState } from 'recoil';
+
+import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
 
 import { useMoveSoftFocus } from './useMoveSoftFocus';
 
 export function useMapKeyboardToSoftFocus() {
-  const { enableScope } = useHotkeysContext();
-
-  useEffect(() => {
-    enableScope('entity-table');
-  }, [enableScope]);
-
   const { moveDown, moveLeft, moveRight, moveUp } = useMoveSoftFocus();
+
+  const [isSomeInputInEditMode] = useRecoilState(isSomeInputInEditModeState);
 
   useHotkeys(
     'up',
     () => {
-      moveUp();
+      if (!isSomeInputInEditMode) {
+        moveUp();
+      }
     },
-    [moveUp],
+    [moveUp, isSomeInputInEditMode],
     {
       preventDefault: true,
       enableOnContentEditable: true,
       enableOnFormTags: true,
-      scopes: 'entity-table',
     },
   );
 
   useHotkeys(
     'down',
     () => {
-      moveDown();
+      if (!isSomeInputInEditMode) {
+        moveDown();
+      }
     },
-    [moveDown],
+    [moveDown, isSomeInputInEditMode],
     {
       preventDefault: true,
       enableOnContentEditable: true,
       enableOnFormTags: true,
-      scopes: 'entity-table',
     },
   );
 
   useHotkeys(
     ['left', 'shift+tab'],
     () => {
-      moveLeft();
+      if (!isSomeInputInEditMode) {
+        moveLeft();
+      }
     },
-    [moveLeft],
+    [moveLeft, isSomeInputInEditMode],
     {
       preventDefault: true,
       enableOnContentEditable: true,
       enableOnFormTags: true,
-      scopes: 'entity-table',
     },
   );
 
   useHotkeys(
     ['right', 'tab'],
-    (event) => {
-      moveRight();
-      console.log({ event });
+    () => {
+      if (!isSomeInputInEditMode) {
+        moveRight();
+      }
     },
-    [moveRight],
+    [moveRight, isSomeInputInEditMode],
     {
       preventDefault: true,
       enableOnContentEditable: true,
       enableOnFormTags: true,
-      scopes: 'entity-table',
     },
   );
 }

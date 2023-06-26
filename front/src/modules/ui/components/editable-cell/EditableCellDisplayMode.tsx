@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { useSoftFocusOnCurrentCell } from './hooks/useSoftFocusOnCurrentCell';
+import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
 
 type Props = {
   softFocus: boolean;
@@ -43,7 +43,7 @@ type OwnProps = {
 };
 
 export function EditableCellDisplayMode({ children }: OwnProps) {
-  const [hasSoftFocus] = useSoftFocusOnCurrentCell();
+  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
   return (
     <EditableCellNormalModeOuterContainer softFocus={hasSoftFocus}>
