@@ -26,8 +26,6 @@ export function useSequentialHotkeys(
   useHotkeys(
     secondKey,
     () => {
-      console.log('Sequential Key pressed');
-      console.log(secondKey);
       if (pendingHotkeys.pendingKeys !== firstKeys) {
         return;
       }

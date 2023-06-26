@@ -1,9 +1,7 @@
 import React from 'react';
-import { useMatch, useResolvedPath } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
-import { IconBuildingSkyscraper, IconUser } from '@/ui/icons';
 
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
 
@@ -28,7 +26,13 @@ export function CommandMenu({ initiallyOpen = false }) {
     [setOpen],
   );
 
-  /* const createSection = (
+  /*
+  TODO: Allow performing actions on page through CommandBar 
+
+  import { useMatch, useResolvedPath } from 'react-router-dom';
+  import { IconBuildingSkyscraper, IconUser } from '@/ui/icons';
+
+  const createSection = (
     <StyledGroup heading="Create">
       <CommandMenuItem
         label="Create People"

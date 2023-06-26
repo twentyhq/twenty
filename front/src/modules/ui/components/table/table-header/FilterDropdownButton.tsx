@@ -114,8 +114,6 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
                   result.value.id === selectedEntityId
                 }
                 onClick={() => {
-                  console.log({ result });
-
                   if (resultIsEntity(result.value)) {
                     setSelectedEntityId(result.value.id);
                   }

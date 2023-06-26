@@ -38,12 +38,10 @@ export function CommandMenuItem({
   }
 
   const onItemClick = () => {
-    console.log(to);
     if (onClick) {
       onClick();
     }
     if (to) {
-      console.log(to);
       navigate(to);
     }
     setOpen(false);

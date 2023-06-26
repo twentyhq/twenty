@@ -20,8 +20,6 @@ export function useDirectHotkeys(
     keyboardEvent: KeyboardEvent,
     hotkeysEvent: Hotkey,
   ) {
-    console.log('Direct KeyCalled');
-    console.log(pendingHotkeys);
     if (pendingHotkeys.pendingKeys === '') {
       callback(keyboardEvent, hotkeysEvent);
       return;
