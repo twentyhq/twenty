@@ -2,7 +2,7 @@ import { initialize, mswDecorator } from 'msw-storybook-addon';
 import { Preview } from '@storybook/react';
 import { ThemeProvider } from '@emotion/react';
 import { withThemeFromJSXProvider } from "@storybook/addon-styling";
-import { lightTheme, darkTheme } from '../src/modules/ui/layout/styles/themes';
+import { lightTheme, darkTheme } from '../src/modules/ui/themes/themes';
 
 initialize();
 
