@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from 'msw/lib/glossary-de6278a9';
 
 import { IconX } from '@/ui/icons/index';
 
@@ -14,8 +15,8 @@ type OwnProps = {
 
 const StyledChip = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.color.blue};
-  border: 1px solid ${({ theme }) => theme.color.blue40};
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 50px;
   color: ${({ theme }) => theme.color.blue};
   display: flex;
@@ -38,6 +39,10 @@ const StyledDelete = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
   margin-top: 1px;
   user-select: none;
+  &:hover {
+    background-color: ${({ theme }) => theme.background.tertiary};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+  }
 `;
 
 const StyledLabelKey = styled.div`
@@ -58,7 +63,7 @@ function SortOrFilterChip({
       {labelKey && <StyledLabelKey>{labelKey}:&nbsp;</StyledLabelKey>}
       {labelValue}
       <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
-        <IconX size={theme.icon.size.md} />
+        <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       </StyledDelete>
     </StyledChip>
   );

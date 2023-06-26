@@ -1,3 +1,5 @@
+import hexRgb from 'hex-rgb';
+
 export const grayScale = {
   gray100: '#000000',
   gray90: '#0f0f0f',
@@ -112,3 +114,8 @@ export const color = {
   gray20: grayScale.gray15,
   gray10: grayScale.gray10,
 };
+
+export function rgba(hex: string, alpha: number) {
+  const rgb = hexRgb(hex, { format: 'array' }).slice(0, -1).join(',');
+  return `rgba(${rgb},${alpha})`;
+}

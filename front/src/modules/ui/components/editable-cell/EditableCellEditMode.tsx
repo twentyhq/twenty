@@ -11,8 +11,8 @@ import { isSomeInputInEditModeState } from '../../tables/states/isSomeInputInEdi
 
 export const EditableCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   left: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? 'auto' : '0'};
