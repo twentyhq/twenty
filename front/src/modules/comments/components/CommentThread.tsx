@@ -42,8 +42,6 @@ const StyledThreadItemListContainer = styled.div`
   gap: ${(props) => props.theme.spacing(4)};
 
   justify-content: flex-start;
-  max-height: 400px;
-  overflow: auto;
 
   width: 100%;
 `;
