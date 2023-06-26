@@ -56,7 +56,7 @@ const StyledTooltip = styled(Tooltip)`
   box-shadow: 2px 4px 16px 6px
     ${(props) => props.theme.lightBackgroundTransparent};
 
-  color: ${(props) => props.theme.text100};
+  color: ${(props) => props.theme.text80};
 
   opacity: 1;
   padding: 8px;

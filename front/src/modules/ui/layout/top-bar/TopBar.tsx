@@ -30,7 +30,7 @@ const AddButtonContainer = styled.div`
   align-items: center;
   border: 1px solid ${(props) => props.theme.primaryBorder};
   border-radius: 4px;
-  color: ${(props) => props.theme.text80};
+  color: ${(props) => props.theme.text40};
   cursor: pointer;
   display: flex;
   flex-shrink: 0;

@@ -28,7 +28,7 @@ const StyledItem = styled.button<StyledItemProps>`
   border-radius: 4px;
   color: ${(props) => {
     if (props.active) {
-      return props.theme.text100;
+      return props.theme.text80;
     }
     if (props.danger) {
       return props.theme.red;
@@ -49,7 +49,7 @@ const StyledItem = styled.button<StyledItemProps>`
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
   :hover {
     background: ${(props) => props.theme.lightBackgroundTransparent};
-    color: ${(props) => (props.danger ? props.theme.red : props.theme.text100)};
+    color: ${(props) => (props.danger ? props.theme.red : props.theme.text80)};
   }
   user-select: none;
 
