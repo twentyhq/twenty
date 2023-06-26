@@ -41,6 +41,9 @@ export function EditableCell({
 
   const { closeEditableCell, openEditableCell } = useEditableCell();
 
+  // TODO: we might have silent problematic behavior because of the setTimeout in openEditableCell, investigate
+  // Maybe we could build a switchEditableCell to handle the case where we go from one cell to another.
+  // See https://github.com/twentyhq/twenty/issues/446
   function handleOnClick() {
     openEditableCell();
     setSoftFocusOnCurrentCell();
