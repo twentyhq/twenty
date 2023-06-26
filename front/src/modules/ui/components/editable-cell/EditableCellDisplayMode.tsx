@@ -1,4 +1,3 @@
-import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
@@ -38,11 +37,9 @@ export const EditableCellNormalModeInnerContainer = styled.div`
   width: 100%;
 `;
 
-type OwnProps = {
-  children: ReactElement;
-};
-
-export function EditableCellDisplayMode({ children }: OwnProps) {
+export function EditableCellDisplayMode({
+  children,
+}: React.PropsWithChildren<unknown>) {
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
   return (

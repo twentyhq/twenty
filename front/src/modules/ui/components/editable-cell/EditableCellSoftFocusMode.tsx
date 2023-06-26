@@ -7,6 +7,7 @@ import { isNonTextWritingKey } from '@/utils/hotkeys/isNonTextWritingKey';
 
 import { useEditableCell } from './hooks/useCloseEditableCell';
 import { isEditModeScopedState } from './states/isEditModeScopedState';
+import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 
 export function EditableCellSoftFocusMode({
   children,
@@ -55,5 +56,5 @@ export function EditableCellSoftFocusMode({
     },
   );
 
-  return <>{children}</>;
+  return <EditableCellDisplayMode>{children}</EditableCellDisplayMode>;
 }
