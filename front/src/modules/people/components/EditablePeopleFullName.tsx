@@ -13,11 +13,15 @@ type OwnProps = {
   onChange: (firstname: string, lastname: string) => void;
 };
 
-const StyledDiv = styled.div`
+const NoEditModeContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
   width: 100%;
+`;
+
+const RightContainer = styled.div`
+  margin-left: ${(props) => props.theme.spacing(1)};
 `;
 
 export function EditablePeopleFullName({ person, onChange }: OwnProps) {
@@ -55,15 +59,15 @@ export function EditablePeopleFullName({ person, onChange }: OwnProps) {
       secondValuePlaceholder="Last name"
       onChange={handleDoubleTextChange}
       nonEditModeContent={
-        <>
-          <StyledDiv>
-            <PersonChip name={person.firstname + ' ' + person.lastname} />
-          </StyledDiv>
-          <CellCommentChip
-            count={person._commentCount ?? 0}
-            onClick={handleCommentClick}
-          />
-        </>
+        <NoEditModeContainer>
+          <PersonChip name={person.firstname + ' ' + person.lastname} />
+          <RightContainer>
+            <CellCommentChip
+              count={person._commentCount ?? 0}
+              onClick={handleCommentClick}
+            />
+          </RightContainer>
+        </NoEditModeContainer>
       }
     />
   );

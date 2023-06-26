@@ -24,6 +24,9 @@ const StyledInplaceInput = styled.input<StyledEditModeProps>`
 `;
 
 const StyledNoEditText = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   width: 100%;
 `;
 

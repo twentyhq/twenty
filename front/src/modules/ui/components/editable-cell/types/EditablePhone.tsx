@@ -17,6 +17,16 @@ type StyledEditModeProps = {
   isEditMode: boolean;
 };
 
+const StyledRawLink = styled(RawLink)`
+  overflow: hidden;
+
+  a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+`;
+
 // TODO: refactor
 const StyledEditInplaceInput = styled.input<StyledEditModeProps>`
   margin: 0;
@@ -48,9 +58,9 @@ export function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
         />
       }
       nonEditModeContent={
-        <div>
+        <>
           {isValidPhoneNumber(inputValue) ? (
-            <RawLink
+            <StyledRawLink
               href={parsePhoneNumber(inputValue, 'FR')?.getURI()}
               onClick={(event: MouseEvent<HTMLElement>) => {
                 event.stopPropagation();
@@ -58,11 +68,11 @@ export function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
             >
               {parsePhoneNumber(inputValue, 'FR')?.formatInternational() ||
                 inputValue}
-            </RawLink>
+            </StyledRawLink>
           ) : (
-            <RawLink href="#">{inputValue}</RawLink>
+            <StyledRawLink href="#">{inputValue}</StyledRawLink>
           )}
-        </div>
+        </>
       }
     />
   );
