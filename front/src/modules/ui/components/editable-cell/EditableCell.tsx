@@ -1,10 +1,7 @@
 import { ReactElement } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
-import { isNonTextWritingKey } from '@/utils/hotkeys/isNonTextWritingKey';
 
 import { useEditableCell } from './hooks/useCloseEditableCell';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
@@ -12,6 +9,7 @@ import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCe
 import { isEditModeScopedState } from './states/isEditModeScopedState';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
+import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
 
 export const CellBaseContainer = styled.div`
   align-items: center;
@@ -41,8 +39,6 @@ export function EditableCell({
 
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
 
-  const { moveDown } = useMoveSoftFocus();
-
   const { closeEditableCell, openEditableCell } = useEditableCell();
 
   function handleOnClick() {
@@ -56,47 +52,6 @@ export function EditableCell({
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
-  // TODO: create a component to wrap soft focus mode to avoid having to mount those useHotkeys hooks on all cells.
-  useHotkeys(
-    'enter',
-    () => {
-      if (hasSoftFocus) {
-        if (isEditMode) {
-          closeEditableCell();
-          moveDown();
-        } else {
-          openEditableCell();
-        }
-      }
-    },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
-    [isEditMode, closeEditableCell, hasSoftFocus],
-  );
-
-  useHotkeys(
-    '*',
-    (keyboardEvent) => {
-      if (hasSoftFocus && !isEditMode) {
-        const isTextWritingKey = !isNonTextWritingKey(keyboardEvent.key);
-
-        if (!isEditMode && isTextWritingKey) {
-          openEditableCell();
-        } else {
-          keyboardEvent.preventDefault();
-        }
-      }
-    },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: false,
-    },
-  );
-
   return (
     <CellBaseContainer onClick={handleOnClick}>
       {isEditMode ? (
@@ -107,6 +62,10 @@ export function EditableCell({
         >
           {editModeContent}
         </EditableCellEditMode>
+      ) : hasSoftFocus ? (
+        <EditableCellSoftFocusMode>
+          {nonEditModeContent}
+        </EditableCellSoftFocusMode>
       ) : (
         <EditableCellDisplayMode>{nonEditModeContent}</EditableCellDisplayMode>
       )}
