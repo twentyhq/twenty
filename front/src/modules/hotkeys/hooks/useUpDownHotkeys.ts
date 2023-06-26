@@ -2,7 +2,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { HotkeyCallback } from 'react-hotkeys-hook/dist/types';
 import { OptionsOrDependencyArray } from 'react-hotkeys-hook/dist/types';
 
-export function useArrowHotkey(
+export function useUpDownHotkeys(
   upArrowCallBack: HotkeyCallback,
   downArrownCallback: HotkeyCallback,
   dependencies?: OptionsOrDependencyArray,

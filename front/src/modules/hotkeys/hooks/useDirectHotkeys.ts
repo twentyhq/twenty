@@ -6,32 +6,24 @@ import {
 } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
 
-import { pendingHotkeysState } from '../states/pendingHotkeysState';
+import { pendingHotkeyState } from '../states/pendingHotkeysState';
 
 export function useDirectHotkeys(
   keys: string,
   callback: HotkeyCallback,
   dependencies?: OptionsOrDependencyArray,
 ) {
-  const [pendingHotkeys, setPendingHotkeys] =
-    useRecoilState(pendingHotkeysState);
+  const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
   const callbackIfDirectKey = function (
     keyboardEvent: KeyboardEvent,
     hotkeysEvent: Hotkey,
   ) {
-    if (pendingHotkeys.pendingKeys === '') {
+    if (!pendingHotkey) {
       callback(keyboardEvent, hotkeysEvent);
       return;
     }
-    if (pendingHotkeys.aKeyWasPressedAfterTheLastPendingKeys) {
-      callback(keyboardEvent, hotkeysEvent);
-      return;
-    }
-    setPendingHotkeys({
-      pendingKeys: pendingHotkeys.pendingKeys,
-      aKeyWasPressedAfterTheLastPendingKeys: true,
-    });
+    setPendingHotkey(null);
   };
 
   useHotkeys(keys, callbackIfDirectKey, dependencies);

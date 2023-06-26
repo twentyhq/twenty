@@ -69,7 +69,7 @@ export function CommandMenu() {
       onOpenChange={setOpen}
       label="Global Command Menu"
     >
-      <StyledInput />
+      <StyledInput placeholder="Search" />
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
         <StyledGroup heading="Go to">

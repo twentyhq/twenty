@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { debounce } from 'lodash';
 import scrollIntoView from 'scroll-into-view';
 
-import { useArrowHotkey } from '@/hotkeys/hooks/useArrowHotkey';
+import { useUpDownHotkeys } from '@/hotkeys/hooks/useUpDownHotkeys';
 import { useRecoilScopedState } from '@/ui/hooks/useRecoilScopedState';
 
 import { relationPickerSearchFilterScopedState } from '../states/relationPickerSearchFilterScopedState';
@@ -34,7 +34,7 @@ export function useEntitySelectLogic<
     setHoveredIndex(0);
   }
 
-  useArrowHotkey(
+  useUpDownHotkeys(
     () => {
       setHoveredIndex((prevSelectedIndex) =>
         Math.max(prevSelectedIndex - 1, 0),

@@ -21,7 +21,6 @@ export const StyledInput = styled(Command.Input)`
   border: none;
   border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
   border-radius: 0;
-  caret-color: ${(props) => props.theme.blue};
   color: ${(props) => props.theme.text100};
   font-size: ${(props) => props.theme.fontSizeLarge};
   margin: 0;
