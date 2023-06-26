@@ -102,13 +102,13 @@ const StyledDropdownItemClipped = styled.span`
 
 const StyledDropdownTopOption = styled.li`
   align-items: center;
-  border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
+  border-bottom: 1px solid ${(props) => props.theme.lightBorder};
   color: ${(props) => props.theme.text80};
   cursor: pointer;
   display: flex;
   font-weight: ${(props) => props.theme.fontWeightMedium};
   justify-content: space-between;
-  padding: calc(${(props) => props.theme.spacing(2)} + 2px)
+  padding: calc(${(props) => props.theme.spacing(2)})
     calc(${(props) => props.theme.spacing(2)});
 
   &:hover {
@@ -191,13 +191,17 @@ function DropdownButton({
 }
 
 const StyleAngleDownContainer = styled.div`
+  color: ${(props) => props.theme.text40};
+  display: flex;
+  height: 100%;
+  justify-content: center;
   margin-left: auto;
 `;
 
 function DropdownTopOptionAngleDown() {
   return (
     <StyleAngleDownContainer>
-      <IconChevronDown />
+      <IconChevronDown size={16} />
     </StyleAngleDownContainer>
   );
 }

@@ -8,12 +8,18 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/icons/index';
+import { commonText } from '@/ui/layout/styles/texts';
 import { Company, QueryMode } from '~/generated/graphql';
 
 export const fullnameFilter = {
   key: 'fullname',
   label: 'People',
-  icon: <IconUser size={16} />,
+  icon: (
+    <IconUser
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'text',
   operands: [
     {
@@ -37,7 +43,7 @@ export const fullnameFilter = {
       }),
     },
     {
-      label: 'Does not contain',
+      label: "Doesn't contain",
       id: 'not_like',
       whereTemplate: (searchString: string) => ({
         NOT: [
@@ -66,7 +72,12 @@ export const fullnameFilter = {
 export const emailFilter = {
   key: 'email',
   label: 'Email',
-  icon: <IconMail size={16} />,
+  icon: (
+    <IconMail
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'text',
   operands: [
     {
@@ -77,7 +88,7 @@ export const emailFilter = {
       }),
     },
     {
-      label: 'Does not contain',
+      label: "Doesn't contain",
       id: 'not_like',
       whereTemplate: (searchString: string) => ({
         NOT: [
@@ -96,7 +107,12 @@ export const emailFilter = {
 export const companyFilter = {
   key: 'company_name',
   label: 'Company',
-  icon: <IconBuildingSkyscraper size={16} />,
+  icon: (
+    <IconBuildingSkyscraper
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'relation',
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
@@ -140,7 +156,12 @@ export const companyFilter = {
 export const phoneFilter = {
   key: 'phone',
   label: 'Phone',
-  icon: <IconPhone size={16} />,
+  icon: (
+    <IconPhone
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'text',
   operands: [
     {
@@ -151,7 +172,7 @@ export const phoneFilter = {
       }),
     },
     {
-      label: 'Does not contain',
+      label: "Doesn't contain",
       id: 'not_like',
       whereTemplate: (searchString: string) => ({
         NOT: [
@@ -170,7 +191,12 @@ export const phoneFilter = {
 export const createdAtFilter = {
   key: 'createdAt',
   label: 'Created At',
-  icon: <IconCalendarEvent size={16} />,
+  icon: (
+    <IconCalendarEvent
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'date',
   operands: [
     {
@@ -197,7 +223,12 @@ export const createdAtFilter = {
 export const cityFilter = {
   key: 'city',
   label: 'City',
-  icon: <IconMap size={16} />,
+  icon: (
+    <IconMap
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'text',
   operands: [
     {
@@ -208,7 +239,7 @@ export const cityFilter = {
       }),
     },
     {
-      label: 'Does not contain',
+      label: "Doesn't contain",
       id: 'not_like',
       whereTemplate: (searchString: string) => ({
         NOT: [
