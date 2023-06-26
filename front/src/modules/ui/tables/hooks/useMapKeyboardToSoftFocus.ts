@@ -11,7 +11,7 @@ export function useMapKeyboardToSoftFocus() {
   const [isSomeInputInEditMode] = useRecoilState(isSomeInputInEditModeState);
 
   useHotkeys(
-    'up',
+    'up, shift+enter',
     () => {
       if (!isSomeInputInEditMode) {
         moveUp();

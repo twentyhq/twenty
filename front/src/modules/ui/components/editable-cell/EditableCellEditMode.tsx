@@ -44,11 +44,25 @@ export function EditableCellEditMode({
   const wrapperRef = useRef(null);
 
   const { closeEditableCell } = useEditableCell();
-  const { moveRight, moveLeft } = useMoveSoftFocus();
+  const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   useListenClickOutsideArrayOfRef([wrapperRef], () => {
     onOutsideClick?.();
   });
+
+  useHotkeys(
+    'enter',
+    () => {
+      closeEditableCell();
+      moveDown();
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+      preventDefault: true,
+    },
+    [closeEditableCell],
+  );
 
   useHotkeys(
     'esc',
