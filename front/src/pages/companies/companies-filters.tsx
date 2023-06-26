@@ -8,12 +8,18 @@ import {
   IconUser,
   IconUsers,
 } from '@/ui/icons/index';
+import { commonText } from '@/ui/layout/styles/texts';
 import { QueryMode, User } from '~/generated/graphql';
 
 export const nameFilter = {
   key: 'name',
   label: 'Name',
-  icon: <IconBuildingSkyscraper size={16} />,
+  icon: (
+    <IconBuildingSkyscraper
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'text',
   operands: [
     {
@@ -24,7 +30,7 @@ export const nameFilter = {
       }),
     },
     {
-      label: 'Does not contain',
+      label: "Doesn't contain",
       id: 'not_like',
       whereTemplate: (searchString: string) => ({
         NOT: [
@@ -43,7 +49,12 @@ export const nameFilter = {
 export const employeesFilter = {
   key: 'employees',
   label: 'Employees',
-  icon: <IconUsers size={16} />,
+  icon: (
+    <IconUsers
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'text',
   operands: [
     {
@@ -70,7 +81,12 @@ export const employeesFilter = {
 export const urlFilter = {
   key: 'domainName',
   label: 'Url',
-  icon: <IconLink size={16} />,
+  icon: (
+    <IconLink
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'text',
   operands: [
     {
@@ -84,7 +100,7 @@ export const urlFilter = {
       }),
     },
     {
-      label: 'Does not contain',
+      label: "Doesn't contain",
       id: 'not_like',
       whereTemplate: (searchString: string) => ({
         NOT: [
@@ -103,7 +119,12 @@ export const urlFilter = {
 export const addressFilter = {
   key: 'address',
   label: 'Address',
-  icon: <IconMap size={16} />,
+  icon: (
+    <IconMap
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'text',
   operands: [
     {
@@ -114,7 +135,7 @@ export const addressFilter = {
       }),
     },
     {
-      label: 'Does not contain',
+      label: "Doesn't contain",
       id: 'not_like',
       whereTemplate: (searchString: string) => ({
         NOT: [
@@ -133,7 +154,12 @@ export const addressFilter = {
 export const ccreatedAtFilter = {
   key: 'createdAt',
   label: 'Created At',
-  icon: <IconCalendarEvent size={16} />,
+  icon: (
+    <IconCalendarEvent
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'date',
   operands: [
     {
@@ -160,7 +186,12 @@ export const ccreatedAtFilter = {
 export const accountOwnerFilter = {
   key: 'accountOwner',
   label: 'Account Owner',
-  icon: <IconUser size={16} />,
+  icon: (
+    <IconUser
+      size={commonText.iconSizeMedium}
+      stroke={commonText.iconStrikeLight}
+    />
+  ),
   type: 'relation',
   searchConfig: {
     query: SEARCH_USER_QUERY,

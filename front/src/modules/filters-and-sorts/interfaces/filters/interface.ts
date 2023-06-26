@@ -49,7 +49,7 @@ type FilterOperandRelationType<WhereType extends FilterWhereType> = {
 };
 
 type FilterOperandFieldType = {
-  label: 'Contains' | 'Does not contain' | 'Greater than' | 'Less than';
+  label: 'Contains' | "Doesn't contain" | 'Greater than' | 'Less than';
   id: 'like' | 'not_like' | 'greater_than' | 'less_than';
   whereTemplate: (value: string) => any;
 };
