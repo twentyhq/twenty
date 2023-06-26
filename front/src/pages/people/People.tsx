@@ -77,6 +77,7 @@ export function People() {
   const peopleColumns = usePeopleColumns();
 
   const theme = useTheme();
+
   return (
     <WithTopBarContainer
       title="People"

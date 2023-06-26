@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN } from '../constants';
 import { numberOfTableColumnsState } from '../states/numberOfTableColumnsState';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
-import { softFocusPositionState } from '../states/softFocusPositionState';
 
 import { useResetTableRowSelection } from './useResetTableRowSelection';
+import { useSetSoftFocusPosition } from './useSetSoftFocusPosition';
 
 export type TableDimensions = {
   numberOfRows: number;
@@ -18,18 +19,9 @@ export function useInitializeEntityTable({
 }: TableDimensions) {
   const resetTableRowSelection = useResetTableRowSelection();
 
-  React.useEffect(() => {
+  useEffect(() => {
     resetTableRowSelection();
   }, [resetTableRowSelection]);
-
-  const [, setSoftFocusPosition] = useRecoilState(softFocusPositionState);
-
-  React.useEffect(() => {
-    setSoftFocusPosition({
-      row: 0,
-      column: 1,
-    });
-  }, [setSoftFocusPosition]);
 
   const [, setNumberOfTableColumns] = useRecoilState(numberOfTableColumnsState);
   const [, setNumberOfTableRows] = useRecoilState(numberOfTableRowsState);
@@ -43,4 +35,15 @@ export function useInitializeEntityTable({
     setNumberOfTableColumns,
     setNumberOfTableRows,
   ]);
+
+  const setSoftFocusPosition = useSetSoftFocusPosition();
+
+  useEffect(() => {
+    setSoftFocusPosition({
+      row: 0,
+      column: TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN,
+    });
+    // Disabled because a recoilCallback is not a dynamic dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 }
