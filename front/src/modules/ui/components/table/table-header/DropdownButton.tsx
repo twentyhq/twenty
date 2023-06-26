@@ -106,6 +106,7 @@ const StyledDropdownTopOption = styled.li`
   color: ${(props) => props.theme.text80};
   cursor: pointer;
   display: flex;
+  font-size: ${(props) => props.theme.fontSizeSmall};
   font-weight: ${(props) => props.theme.fontWeightMedium};
   justify-content: space-between;
   padding: calc(${(props) => props.theme.spacing(2)})
