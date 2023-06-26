@@ -11,7 +11,7 @@ import { pendingHotkeysState } from '../states/pendingHotkeysState';
 export function useDirectHotkeys(
   keys: string,
   callback: HotkeyCallback,
-  dependencies: OptionsOrDependencyArray,
+  dependencies?: OptionsOrDependencyArray,
 ) {
   const [pendingHotkeys, setPendingHotkeys] =
     useRecoilState(pendingHotkeysState);
@@ -20,17 +20,20 @@ export function useDirectHotkeys(
     keyboardEvent: KeyboardEvent,
     hotkeysEvent: Hotkey,
   ) {
-    if (
-      pendingHotkeys.pendingKey !== '' &&
-      !pendingHotkeys.wasAKeyPressedAfterThat
-    ) {
-      setPendingHotkeys({
-        pendingKey: pendingHotkeys.pendingKey,
-        wasAKeyPressedAfterThat: true,
-      });
+    console.log('Direct KeyCalled');
+    console.log(pendingHotkeys);
+    if (pendingHotkeys.pendingKeys === '') {
+      callback(keyboardEvent, hotkeysEvent);
       return;
     }
-    callback(keyboardEvent, hotkeysEvent);
+    if (pendingHotkeys.aKeyWasPressedAfterTheLastPendingKeys) {
+      callback(keyboardEvent, hotkeysEvent);
+      return;
+    }
+    setPendingHotkeys({
+      pendingKeys: pendingHotkeys.pendingKeys,
+      aKeyWasPressedAfterTheLastPendingKeys: true,
+    });
   };
 
   useHotkeys(

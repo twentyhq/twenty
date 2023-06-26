@@ -14,7 +14,7 @@ import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 
 export function App() {
   useGotoHotkey('p', '/people');
-  useGotoHotkey('p', '/companies');
+  useGotoHotkey('c', '/companies');
   useGotoHotkey('o', '/opportunities');
   useGotoHotkey('s', '/settings/profile');
 

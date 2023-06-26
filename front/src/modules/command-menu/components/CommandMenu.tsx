@@ -28,8 +28,36 @@ export function CommandMenu({ initiallyOpen = false }) {
     [setOpen],
   );
 
-  const createPeople = () => null;
-  const createCompany = () => null;
+  /* const createSection = (
+    <StyledGroup heading="Create">
+      <CommandMenuItem
+        label="Create People"
+        onClick={createPeople}
+        icon={<IconUser />}
+        shortcuts={
+          !!useMatch({
+            path: useResolvedPath('/people').pathname,
+            end: true,
+          })
+            ? ['C']
+            : []
+        }
+      />
+      <CommandMenuItem
+        label="Create Company"
+        onClick={createCompany}
+        icon={<IconBuildingSkyscraper />}
+        shortcuts={
+          !!useMatch({
+            path: useResolvedPath('/companies').pathname,
+            end: true,
+          })
+            ? ['C']
+            : []
+        }
+      />
+    </StyledGroup>
+  );*/
 
   return (
     <StyledDialog
@@ -40,36 +68,6 @@ export function CommandMenu({ initiallyOpen = false }) {
       <StyledInput />
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
-
-        <StyledGroup heading="Create">
-          <CommandMenuItem
-            label="Create People"
-            onClick={createPeople}
-            icon={<IconUser />}
-            shortcuts={
-              !!useMatch({
-                path: useResolvedPath('/people').pathname,
-                end: true,
-              })
-                ? ['C']
-                : []
-            }
-          />
-          <CommandMenuItem
-            label="Create Company"
-            onClick={createCompany}
-            icon={<IconBuildingSkyscraper />}
-            shortcuts={
-              !!useMatch({
-                path: useResolvedPath('/companies').pathname,
-                end: true,
-              })
-                ? ['C']
-                : []
-            }
-          />
-        </StyledGroup>
-
         <StyledGroup heading="Go to">
           <CommandMenuItem to="/people" label="People" shortcuts={['G', 'P']} />
           <CommandMenuItem

@@ -49,6 +49,8 @@ export const StyledMenuItem = styled(Command.Item)`
   }
   &[data-selected='true'] {
     background: ${(props) => props.theme.tertiaryBackground};
+    /* Could be nice to add a caret like this for better accessibility in the future
+    But it needs to be consistend with other picker dropdown (e.g. company)
     &:after {
       background: ${(props) => props.theme.quaternaryBackground};
       content: '';
@@ -57,7 +59,7 @@ export const StyledMenuItem = styled(Command.Item)`
       position: absolute;
       width: 3px;
       z-index: ${(props) => props.theme.lastLayerZIndex};
-    }
+    } */
   }
   &[data-disabled='true'] {
     color: ${(props) => props.theme.text30};
@@ -86,7 +88,10 @@ export const StyledGroup = styled(Command.Group)`
     display: flex;
     font-size: ${(props) => props.theme.fontSizeExtraSmall};
     font-weight: ${(props) => props.theme.fontWeightBold};
-    padding: ${(props) => props.theme.spacing(2)};
+    padding-bottom: ${(props) => props.theme.spacing(2)};
+    padding-left: ${(props) => props.theme.spacing(4)};
+    padding-right: ${(props) => props.theme.spacing(4)};
+    padding-top: ${(props) => props.theme.spacing(2)};
     text-transform: uppercase;
     user-select: none;
   }

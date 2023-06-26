@@ -15,8 +15,9 @@ export function useSequentialHotkeys(
     firstKeys,
     () => {
       setPendingHotkeys({
-        pendingKey: firstKeys,
-        wasAKeyPressedAfterThat: pendingHotkeys.wasAKeyPressedAfterThat,
+        pendingKeys: firstKeys,
+        aKeyWasPressedAfterTheLastPendingKeys:
+          pendingHotkeys.aKeyWasPressedAfterTheLastPendingKeys,
       });
     },
     [setPendingHotkeys, pendingHotkeys],
@@ -25,13 +26,15 @@ export function useSequentialHotkeys(
   useHotkeys(
     secondKey,
     () => {
-      if (pendingHotkeys.pendingKey !== firstKeys) {
+      console.log('Sequential Key pressed');
+      console.log(secondKey);
+      if (pendingHotkeys.pendingKeys !== firstKeys) {
         return;
       }
       callback();
       setPendingHotkeys({
-        pendingKey: '',
-        wasAKeyPressedAfterThat: true,
+        pendingKeys: '',
+        aKeyWasPressedAfterTheLastPendingKeys: false,
       });
     },
     [pendingHotkeys, setPendingHotkeys],

@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
 
+import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
 import { IconPlus } from '@/ui/icons/index';
 
 import NavCollapseButton from '../navbar/NavCollapseButton';
@@ -50,12 +50,7 @@ type OwnProps = {
 };
 
 export function TopBar({ title, icon, onAddButtonClick }: OwnProps) {
-  useHotkeys('c', () => onAddButtonClick && onAddButtonClick(), {
-    preventDefault: true,
-    enableOnContentEditable: true,
-    enableOnFormTags: true,
-    splitKey: '-',
-  });
+  useDirectHotkeys('c', () => onAddButtonClick && onAddButtonClick());
 
   return (
     <>
