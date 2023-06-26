@@ -17,12 +17,8 @@ import {
   SortType,
 } from '@/filters-and-sorts/interfaces/sorts/interface';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
-import { useInitializeTableDimensions } from '@/ui/tables/hooks/useInitializeTableDimensions';
-import { useMapKeyboardToSoftFocus } from '@/ui/tables/hooks/useMapKeyboardToSoftFocus';
 import { RowContext } from '@/ui/tables/states/RowContext';
-import { softFocusPositionState } from '@/ui/tables/states/softFocusPositionState';
 
-import { useResetTableRowSelection } from '../../tables/hooks/useResetTableRowSelection';
 import { currentRowSelectionState } from '../../tables/states/rowSelectionState';
 
 import { TableHeader } from './table-header/TableHeader';
@@ -119,21 +115,6 @@ export function EntityTable<TData extends { id: string }, SortField>({
     currentRowSelectionState,
   );
 
-  const [, setSoftFocusPosition] = useRecoilState(softFocusPositionState);
-
-  const resetTableRowSelection = useResetTableRowSelection();
-
-  React.useEffect(() => {
-    resetTableRowSelection();
-  }, [resetTableRowSelection]);
-
-  React.useEffect(() => {
-    setSoftFocusPosition({
-      row: 0,
-      column: 1,
-    });
-  }, [setSoftFocusPosition]);
-
   const table = useReactTable<TData>({
     data,
     columns,
@@ -145,13 +126,6 @@ export function EntityTable<TData extends { id: string }, SortField>({
     onRowSelectionChange: setCurrentRowSelection,
     getRowId: (row) => row.id,
   });
-
-  useInitializeTableDimensions({
-    numberOfColumns: columns.length,
-    numberOfRows: data.length,
-  });
-
-  useMapKeyboardToSoftFocus();
 
   return (
     <StyledTableWithHeader>

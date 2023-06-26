@@ -1,13 +1,15 @@
-import { useRecoilState } from 'recoil';
+import { useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { CellContext } from '@/ui/tables/states/CellContext';
 import { currentColumnNumberScopedState } from '@/ui/tables/states/currentColumnNumberScopedState';
 import { currentRowNumberScopedState } from '@/ui/tables/states/currentRowNumberScopedState';
+import { isSoftFocusOnCellFamilyState } from '@/ui/tables/states/isSoftFocusOnCellFamilyState';
 import { RowContext } from '@/ui/tables/states/RowContext';
-import { softFocusPositionState } from '@/ui/tables/states/softFocusPositionState';
+import { TablePosition } from '@/ui/tables/types/TablePosition';
 
-export function useSoftFocusOnCurrentCell() {
+export function useIsSoftFocusOnCurrentCell() {
   const [currentRowNumber] = useRecoilScopedState(
     currentRowNumberScopedState,
     RowContext,
@@ -18,20 +20,17 @@ export function useSoftFocusOnCurrentCell() {
     CellContext,
   );
 
-  const [softFocusPosition, setSoftFocusPosition] = useRecoilState(
-    softFocusPositionState,
-  );
-
-  const isSelected =
-    (currentColumnNumber === softFocusPosition?.column ?? 0) &&
-    (currentRowNumber === softFocusPosition?.row ?? 0);
-
-  function setSoftFocusOnCurrentCell() {
-    setSoftFocusPosition({
+  const currentTablePosition: TablePosition = useMemo(
+    () => ({
       column: currentColumnNumber,
       row: currentRowNumber,
-    });
-  }
+    }),
+    [currentColumnNumber, currentRowNumber],
+  );
 
-  return [isSelected, setSoftFocusOnCurrentCell] as const;
+  const isSoftFocusOnCell = useRecoilValue(
+    isSoftFocusOnCellFamilyState(currentTablePosition),
+  );
+
+  return isSoftFocusOnCell;
 }

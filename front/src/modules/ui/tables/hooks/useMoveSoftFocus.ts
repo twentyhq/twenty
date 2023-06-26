@@ -1,87 +1,156 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN } from '../constants';
-import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
 import { numberOfTableColumnsState } from '../states/numberOfTableColumnsState';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 import { softFocusPositionState } from '../states/softFocusPositionState';
 
+import { useSetSoftFocusPosition } from './useSetSoftFocusPosition';
+
+// TODO: stories
 export function useMoveSoftFocus() {
-  const [, setSoftFocusPosition] = useRecoilState(softFocusPositionState);
-  const [isSomeInputInEditMode] = useRecoilState(isSomeInputInEditModeState);
+  const setSoftFocusPosition = useSetSoftFocusPosition();
 
-  const [numberOfTableRows] = useRecoilState(numberOfTableRowsState);
-  const [numberOfTableColumns] = useRecoilState(numberOfTableColumnsState);
+  const moveUp = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const softFocusPosition = snapshot
+          .getLoadable(softFocusPositionState)
+          .valueOrThrow();
 
-  function moveUp() {
-    if (isSomeInputInEditMode) return;
+        let newRowNumber = softFocusPosition.row - 1;
 
-    setSoftFocusPosition((prev) => {
-      let newRowNumber = prev.row - 1;
+        if (newRowNumber < 0) {
+          newRowNumber = 0;
+        }
 
-      if (newRowNumber < 0) {
-        newRowNumber = 0;
-      }
+        setSoftFocusPosition({
+          ...softFocusPosition,
+          row: newRowNumber,
+        });
+      },
+    [setSoftFocusPosition],
+  );
 
-      return {
-        ...prev,
-        row: newRowNumber,
-      };
-    });
-  }
+  const moveDown = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const softFocusPosition = snapshot
+          .getLoadable(softFocusPositionState)
+          .valueOrThrow();
 
-  function moveDown() {
-    if (isSomeInputInEditMode) return;
+        const numberOfTableRows = snapshot
+          .getLoadable(numberOfTableRowsState)
+          .valueOrThrow();
 
-    setSoftFocusPosition((prev) => {
-      let newRowNumber = prev.row + 1;
+        let newRowNumber = softFocusPosition.row + 1;
 
-      if (newRowNumber >= numberOfTableRows) {
-        newRowNumber = numberOfTableRows - 1;
-      }
+        if (newRowNumber >= numberOfTableRows) {
+          newRowNumber = numberOfTableRows - 1;
+        }
 
-      return {
-        ...prev,
-        row: newRowNumber,
-      };
-    });
-  }
+        setSoftFocusPosition({
+          ...softFocusPosition,
+          row: newRowNumber,
+        });
+      },
+    [setSoftFocusPosition],
+  );
 
-  function moveRight() {
-    if (isSomeInputInEditMode) return;
+  const moveRight = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const softFocusPosition = snapshot
+          .getLoadable(softFocusPositionState)
+          .valueOrThrow();
 
-    setSoftFocusPosition((prev) => {
-      let newColumnNumber = prev.column + 1;
+        const numberOfTableColumns = snapshot
+          .getLoadable(numberOfTableColumnsState)
+          .valueOrThrow();
 
-      if (newColumnNumber >= numberOfTableColumns) {
-        newColumnNumber = numberOfTableColumns - 1;
-      }
+        const numberOfTableRows = snapshot
+          .getLoadable(numberOfTableRowsState)
+          .valueOrThrow();
 
-      return {
-        ...prev,
-        column: newColumnNumber,
-      };
-    });
-  }
+        const currentColumnNumber = softFocusPosition.column;
+        const currentRowNumber = softFocusPosition.row;
 
-  function moveLeft() {
-    if (isSomeInputInEditMode) return;
+        const isLastRowAndLastColumn =
+          currentColumnNumber === numberOfTableColumns - 1 &&
+          currentRowNumber === numberOfTableRows - 1;
 
-    setSoftFocusPosition((prev) => {
-      let newColumnNumber = prev.column - 1;
+        const isLastColumnButNotLastRow =
+          currentColumnNumber === numberOfTableColumns - 1 &&
+          currentRowNumber !== numberOfTableRows - 1;
 
-      if (
-        newColumnNumber < TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN
-      ) {
-        newColumnNumber = TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN;
-      }
+        const isNotLastColumn =
+          currentColumnNumber !== numberOfTableColumns - 1;
 
-      return {
-        ...prev,
-        column: newColumnNumber,
-      };
-    });
-  }
+        if (isLastRowAndLastColumn) {
+          return;
+        }
+
+        if (isNotLastColumn) {
+          setSoftFocusPosition({
+            row: currentRowNumber,
+            column: currentColumnNumber + 1,
+          });
+        } else if (isLastColumnButNotLastRow) {
+          setSoftFocusPosition({
+            row: currentRowNumber + 1,
+            column: TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN,
+          });
+        }
+      },
+    [setSoftFocusPosition],
+  );
+
+  const moveLeft = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const softFocusPosition = snapshot
+          .getLoadable(softFocusPositionState)
+          .valueOrThrow();
+
+        const numberOfTableColumns = snapshot
+          .getLoadable(numberOfTableColumnsState)
+          .valueOrThrow();
+
+        const currentColumnNumber = softFocusPosition.column;
+        const currentRowNumber = softFocusPosition.row;
+
+        const isFirstRowAndFirstColumn =
+          currentColumnNumber ===
+            TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN &&
+          currentRowNumber === 0;
+
+        const isFirstColumnButNotFirstRow =
+          currentColumnNumber ===
+            TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN &&
+          currentRowNumber > 0;
+
+        const isNotFirstColumn =
+          currentColumnNumber >
+          TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN;
+
+        if (isFirstRowAndFirstColumn) {
+          return;
+        }
+
+        if (isNotFirstColumn) {
+          setSoftFocusPosition({
+            row: currentRowNumber,
+            column: currentColumnNumber - 1,
+          });
+        } else if (isFirstColumnButNotFirstRow) {
+          setSoftFocusPosition({
+            row: currentRowNumber - 1,
+            column: numberOfTableColumns - 1,
+          });
+        }
+      },
+    [setSoftFocusPosition, TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN],
+  );
 
   return {
     moveDown,

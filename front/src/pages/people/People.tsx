@@ -17,6 +17,7 @@ import {
 } from '@/people/services';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
 import { EntityTable } from '@/ui/components/table/EntityTable';
+import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
 import { IconList, IconUser } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import {
@@ -84,6 +85,10 @@ export function People() {
     >
       <>
         <StyledPeopleContainer>
+          <HooksEntityTable
+            numberOfColumns={peopleColumns.length}
+            numberOfRows={people.length}
+          />
           <EntityTable
             data={people}
             columns={peopleColumns}
