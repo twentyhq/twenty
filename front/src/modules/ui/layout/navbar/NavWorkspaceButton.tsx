@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -23,7 +22,6 @@ const StyledContainer = styled.div`
 
 const LogoAndNameContainer = styled.div`
   align-items: center;
-  cursor: pointer;
   display: flex;
 `;
 
@@ -48,15 +46,9 @@ const StyledName = styled.div`
 `;
 
 function NavWorkspaceButton() {
-  const navigate = useNavigate();
-
   const currentUser = useRecoilValue(currentUserState);
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;
-
-  const onWorksapceClick = () => {
-    navigate('/');
-  };
 
   if (!currentWorkspace) {
     return null;
@@ -64,7 +56,7 @@ function NavWorkspaceButton() {
 
   return (
     <StyledContainer>
-      <LogoAndNameContainer onClick={onWorksapceClick}>
+      <LogoAndNameContainer>
         <StyledLogo logo={currentWorkspace?.logo}></StyledLogo>
         <StyledName>{currentWorkspace?.displayName}</StyledName>
       </LogoAndNameContainer>
