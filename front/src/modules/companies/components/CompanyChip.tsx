@@ -15,6 +15,7 @@ const StyledContainer = styled.span`
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: calc(20px - 2 * ${({ theme }) => theme.spacing(1)});
+  overflow: hidden;
 
   padding: ${({ theme }) => theme.spacing(1)};
 
@@ -31,6 +32,12 @@ const StyledContainer = styled.span`
   }
 `;
 
+const StyledName = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 function CompanyChip({ name, picture }: CompanyChipPropsType) {
   return (
     <StyledContainer data-testid="company-chip">
@@ -42,7 +49,7 @@ function CompanyChip({ name, picture }: CompanyChipPropsType) {
           size={14}
         />
       )}
-      {name}
+      <StyledName>{name}</StyledName>
     </StyledContainer>
   );
 }

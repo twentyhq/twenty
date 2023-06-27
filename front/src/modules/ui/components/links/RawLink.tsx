@@ -3,6 +3,7 @@ import { Link as ReactLink } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 type OwnProps = {
+  className?: string;
   href: string;
   children?: React.ReactNode;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
@@ -17,9 +18,9 @@ const StyledClickable = styled.div`
   }
 `;
 
-export function RawLink({ href, children, onClick }: OwnProps) {
+export function RawLink({ className, href, children, onClick }: OwnProps) {
   return (
-    <StyledClickable>
+    <StyledClickable className={className}>
       <ReactLink onClick={onClick} to={href}>
         {children}
       </ReactLink>

@@ -6,8 +6,8 @@ export const EditableCellNormalModeOuterContainer = styled.div`
   display: flex;
   height: 100%;
   overflow: hidden;
-  padding-left: ${({ theme }) => theme.spacing(2)};
 
+  padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 

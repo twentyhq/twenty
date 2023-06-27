@@ -70,9 +70,10 @@ const StyledSoonPill = styled.div`
   align-items: center;
   border-radius: 50px;
   background-color: ${({ theme }) => theme.background.transparent.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)}
-    ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
+  font-size: ${({ theme }) => theme.font.size.xxs};
+  height: 16px;
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
   margin-left: auto; // this aligns the pill to the right
 `;
 

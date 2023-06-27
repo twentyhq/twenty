@@ -11,7 +11,11 @@ export type EditableChipProps = {
   picture: string;
   changeHandler: (updated: string) => void;
   editModeHorizontalAlign?: 'left' | 'right';
-  ChipComponent: ComponentType<{ name: string; picture: string }>;
+  ChipComponent: ComponentType<{
+    name: string;
+    picture: string;
+    isOverlapped?: boolean;
+  }>;
   commentCount?: number;
   onCommentClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   rightEndContents?: ReactNode[];
@@ -24,9 +28,15 @@ const StyledInplaceInput = styled.input`
   ${textInputStyle}
 `;
 
-const StyledInplaceShow = styled.div`
+const NoEditModeContainer = styled.div`
+  align-items: center;
   display: flex;
+  justify-content: space-between;
   width: 100%;
+`;
+
+const RightContainer = styled.div`
+  margin-left: ${(props) => props.theme.spacing(1)};
 `;
 
 function EditableChip({
@@ -67,20 +77,20 @@ function EditableChip({
         />
       }
       nonEditModeContent={
-        <>
-          <StyledInplaceShow>
-            <ChipComponent name={inputValue} picture={picture} />
-          </StyledInplaceShow>
-          {rightEndContents &&
-            rightEndContents.length > 0 &&
-            rightEndContents.map((content, index) => (
-              <div key={index} onClick={handleRightEndContentClick}>
-                {content}
-              </div>
-            ))}
-        </>
+        <NoEditModeContainer>
+          <ChipComponent name={inputValue} picture={picture} />
+          <RightContainer>
+            {rightEndContents &&
+              rightEndContents.length > 0 &&
+              rightEndContents.map((content, index) => (
+                <div key={index} onClick={handleRightEndContentClick}>
+                  {content}
+                </div>
+              ))}
+          </RightContainer>
+        </NoEditModeContainer>
       }
-    ></EditableCell>
+    />
   );
 }
 

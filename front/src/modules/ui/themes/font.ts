@@ -2,6 +2,7 @@ import { grayScale } from './colors';
 
 const common = {
   size: {
+    xxs: '0.625rem',
     xs: '0.85rem',
     sm: '0.92rem',
     md: '1rem',

@@ -34,6 +34,12 @@ const StyledContainer = styled.span`
   white-space: nowrap;
 `;
 
+const StyledName = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 export function PersonChip({ name, picture }: PersonChipPropsType) {
   return (
     <StyledContainer data-testid="person-chip">
@@ -42,7 +48,7 @@ export function PersonChip({ name, picture }: PersonChipPropsType) {
         src={picture ? picture.toString() : PersonPlaceholder.toString()}
         alt="person"
       />
-      {name}
+      <StyledName>{name}</StyledName>
     </StyledContainer>
   );
 }

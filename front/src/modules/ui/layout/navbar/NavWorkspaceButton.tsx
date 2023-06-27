@@ -22,7 +22,6 @@ const StyledContainer = styled.div`
 
 const LogoAndNameContainer = styled.div`
   align-items: center;
-  cursor: pointer;
   display: flex;
 `;
 
