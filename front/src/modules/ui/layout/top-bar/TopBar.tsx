@@ -29,7 +29,7 @@ const TitleContainer = styled.div`
 
 const AddButtonContainer = styled.div`
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 4px;
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;

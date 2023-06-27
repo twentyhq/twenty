@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from 'msw/lib/glossary-de6278a9';
 
 import { IconX } from '@/ui/icons/index';
 

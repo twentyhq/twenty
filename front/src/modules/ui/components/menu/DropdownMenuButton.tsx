@@ -9,7 +9,7 @@ export const DropdownMenuButton = styled.div`
   align-items: center;
 
   border-radius: ${({ theme }) => theme.border.radius.md};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${({ theme }) => theme.font.color.secondary};
 
   cursor: pointer;
   display: flex;
