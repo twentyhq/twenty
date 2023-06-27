@@ -20,19 +20,20 @@ const TestCellContainer = styled.div`
   display: flex;
 
   height: fit-content;
-  justify-content: flex-start;
+  justify-content: space-between;
 
   max-width: 250px;
+
   min-width: 250px;
 
   overflow: hidden;
-
   text-wrap: nowrap;
 `;
 
 const StyledFakeCellText = styled.div`
-  display: flex;
-  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const OneComment: Story = {
@@ -60,7 +61,7 @@ export const InCellOverlappingBlur: Story = {
   render: getRenderWrapperForComponent(
     <TestCellContainer>
       <StyledFakeCellText>
-        Fake long text to demonstrate blur effect
+        Fake long text to demonstrate ellipsis
       </StyledFakeCellText>
       <CellCommentChip count={12} />
     </TestCellContainer>,
