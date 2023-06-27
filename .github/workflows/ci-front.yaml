@@ -1,6 +1,8 @@
 name: CI Front
 on:
   push:
+    branches:
+      - main
   pull_request_target:
 jobs:
   front-test:

@@ -1,6 +1,8 @@
 name: CI Docs
 on:
   push:
+    branches:
+      - main
   pull_request_target:
 jobs:
   docs-build:

@@ -2,6 +2,8 @@ name: 'CI Chromatic'
 
 on:
   push:
+    branches:
+      - main
   pull_request_target:
 jobs:
   chromatic-deployment:
