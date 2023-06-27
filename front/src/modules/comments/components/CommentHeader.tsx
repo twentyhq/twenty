@@ -12,25 +12,29 @@ import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 
 type OwnProps = {
   comment: Pick<CommentForDrawer, 'id' | 'author' | 'createdAt'>;
+  actionBar?: React.ReactNode;
 };
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
 
-  flex-direction: row;
-
-  gap: ${({ theme }) => theme.spacing(1)};
-
-  justify-content: flex-start;
+  justify-content: space-between;
 
   padding: ${({ theme }) => theme.spacing(1)};
+  width: calc(100% - ${({ theme }) => theme.spacing(1)});
+`;
+
+const StyledLeftContainer = styled.div`
+  align-items: end;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledName = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
-  font-size: 13px;
-  font-weight: 400;
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -39,12 +43,9 @@ const StyledName = styled.div`
 
 const StyledDate = styled.div`
   color: ${({ theme }) => theme.font.color.light};
-  font-size: 12px;
-  font-weight: 400;
-
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   margin-left: ${({ theme }) => theme.spacing(1)};
-
-  padding-top: 1.5px;
 `;
 
 const StyledTooltip = styled(Tooltip)`
@@ -62,7 +63,7 @@ const StyledTooltip = styled(Tooltip)`
   padding: 8px;
 `;
 
-export function CommentHeader({ comment }: OwnProps) {
+export function CommentHeader({ comment, actionBar }: OwnProps) {
   const theme = useTheme();
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(comment.createdAt);
   const exactCreatedAt = beautifyExactDate(comment.createdAt);
@@ -79,23 +80,28 @@ export function CommentHeader({ comment }: OwnProps) {
 
   return (
     <StyledContainer>
-      <Avatar
-        avatarUrl={avatarUrl}
-        size={theme.icon.size.md}
-        placeholder={capitalizedFirstUsernameLetter}
-      />
-      <StyledName>{authorName}</StyledName>
-      {showDate && (
-        <>
-          <StyledDate id={`id-${commentId}`}>{beautifiedCreatedAt}</StyledDate>
-          <StyledTooltip
-            anchorSelect={`#id-${commentId}`}
-            content={exactCreatedAt}
-            clickable
-            noArrow
-          />
-        </>
-      )}
+      <StyledLeftContainer>
+        <Avatar
+          avatarUrl={avatarUrl}
+          size={theme.icon.size.md}
+          placeholder={capitalizedFirstUsernameLetter}
+        />
+        <StyledName>{authorName}</StyledName>
+        {showDate && (
+          <>
+            <StyledDate id={`id-${commentId}`}>
+              {beautifiedCreatedAt}
+            </StyledDate>
+            <StyledTooltip
+              anchorSelect={`#id-${commentId}`}
+              content={exactCreatedAt}
+              clickable
+              noArrow
+            />
+          </>
+        )}
+      </StyledLeftContainer>
+      <div>{actionBar}</div>
     </StyledContainer>
   );
 }

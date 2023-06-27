@@ -255,7 +255,7 @@ model Comment {
   authorId         String
   author           User          @relation(fields: [authorId], references: [id])
   commentThreadId  String
-  commentThread    CommentThread @relation(fields: [commentThreadId], references: [id])
+  commentThread    CommentThread @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId      String
   /// @TypeGraphQL.omit(input: true, output: true)
@@ -275,7 +275,7 @@ model CommentThreadTarget {
   updatedAt        DateTime      @updatedAt
   deletedAt        DateTime?
   commentThreadId  String
-  commentThread    CommentThread @relation(fields: [commentThreadId], references: [id])
+  commentThread    CommentThread @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
 
   commentableType  CommentableType
   commentableId    String

@@ -7,6 +7,7 @@ import { mockedUsersData } from '~/testing/mock-data/users';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { CommentHeader } from '../CommentHeader';
+import { CommentThreadActionBar } from '../CommentThreadActionBar';
 
 const meta: Meta<typeof CommentHeader> = {
   title: 'Modules/Comments/CommentHeader',
@@ -111,6 +112,18 @@ export const WithLongUserName: Story = {
         },
         createdAt: DateTime.now().minus({ hours: 2 }).toISO() ?? '',
       }}
+    />,
+  ),
+};
+
+export const WithActionBar: Story = {
+  render: getRenderWrapperForComponent(
+    <CommentHeader
+      comment={{
+        ...mockComment,
+        createdAt: DateTime.now().minus({ days: 2 }).toISO() ?? '',
+      }}
+      actionBar={<CommentThreadActionBar commentThreadId="test-id" />}
     />,
   ),
 };

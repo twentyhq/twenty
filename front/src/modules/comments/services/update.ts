@@ -60,3 +60,11 @@ export const REMOVE_COMMENT_THREAD_TARGET = gql`
     }
   }
 `;
+
+export const DELETE_COMMENT_THREAD = gql`
+  mutation DeleteCommentThread($commentThreadId: String!) {
+    deleteManyCommentThreads(where: { id: { equals: $commentThreadId } }) {
+      count
+    }
+  }
+`;

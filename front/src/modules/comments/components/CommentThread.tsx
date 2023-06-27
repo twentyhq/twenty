@@ -15,6 +15,7 @@ import { useCreateCommentMutation } from '~/generated/graphql';
 
 import { GET_COMMENT_THREADS_BY_TARGETS } from '../services';
 
+import { CommentThreadActionBar } from './CommentThreadActionBar';
 import { CommentThreadItem } from './CommentThreadItem';
 import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
 
@@ -38,7 +39,7 @@ const StyledThreadItemListContainer = styled.div`
   align-items: flex-start;
   display: flex;
 
-  flex-direction: column-reverse;
+  flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
 
   justify-content: flex-start;
@@ -86,8 +87,18 @@ export function CommentThread({ commentThread }: OwnProps) {
   return (
     <StyledContainer>
       <StyledThreadItemListContainer>
-        {commentThread.comments?.map((comment) => (
-          <CommentThreadItem key={comment.id} comment={comment} />
+        {commentThread.comments?.map((comment, index) => (
+          <CommentThreadItem
+            key={comment.id}
+            comment={comment}
+            actionBar={
+              index === 0 ? (
+                <CommentThreadActionBar commentThreadId={commentThread.id} />
+              ) : (
+                <></>
+              )
+            }
+          />
         ))}
       </StyledThreadItemListContainer>
       <CommentThreadRelationPicker commentThread={commentThread} />

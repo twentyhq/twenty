@@ -18,12 +18,15 @@ import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
   CreateCommentThreadAbilityHandler,
+  DeleteCommentThreadAbilityHandler,
   ReadCommentThreadAbilityHandler,
   UpdateCommentThreadAbilityHandler,
 } from 'src/ability/handlers/comment-thread.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
 import { accessibleBy } from '@casl/prisma';
+import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
+import { DeleteManyCommentThreadArgs } from 'src/core/@generated/comment-thread/delete-many-comment-thread.args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)
@@ -98,5 +101,18 @@ export class CommentThreadResolver {
     });
 
     return result;
+  }
+
+  @Mutation(() => AffectedRows, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeleteCommentThreadAbilityHandler)
+  async deleteManyCommentThreads(
+    @Args() args: DeleteManyCommentThreadArgs,
+  ): Promise<AffectedRows> {
+    return this.commentThreadService.deleteMany({
+      ...args,
+    });
   }
 }
