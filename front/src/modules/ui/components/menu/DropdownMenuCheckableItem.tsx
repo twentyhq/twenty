@@ -21,15 +21,15 @@ const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
 
-  gap: ${(props) => props.theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledChildrenContainer = styled.div`
   align-items: center;
 
   display: flex;
-  font-size: ${(props) => props.theme.fontSizeSmall};
-  gap: ${(props) => props.theme.spacing(2)};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 export function DropdownMenuCheckableItem({

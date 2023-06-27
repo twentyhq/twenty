@@ -8,18 +8,13 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/icons/index';
-import { commonText } from '@/ui/layout/styles/texts';
+import { icon } from '@/ui/themes/icon';
 import { Company, QueryMode } from '~/generated/graphql';
 
 export const fullnameFilter = {
   key: 'fullname',
   label: 'People',
-  icon: (
-    <IconUser
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconUser size={icon.size.md} stroke={icon.stroke.md} />,
   type: 'text',
   operands: [
     {
@@ -72,12 +67,7 @@ export const fullnameFilter = {
 export const emailFilter = {
   key: 'email',
   label: 'Email',
-  icon: (
-    <IconMail
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconMail size={icon.size.md} stroke={icon.stroke.md} />,
   type: 'text',
   operands: [
     {
@@ -107,12 +97,7 @@ export const emailFilter = {
 export const companyFilter = {
   key: 'company_name',
   label: 'Company',
-  icon: (
-    <IconBuildingSkyscraper
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.md} />,
   type: 'relation',
   searchConfig: {
     query: SEARCH_COMPANY_QUERY,
@@ -156,12 +141,7 @@ export const companyFilter = {
 export const phoneFilter = {
   key: 'phone',
   label: 'Phone',
-  icon: (
-    <IconPhone
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconPhone size={icon.size.md} stroke={icon.stroke.md} />,
   type: 'text',
   operands: [
     {
@@ -191,12 +171,7 @@ export const phoneFilter = {
 export const createdAtFilter = {
   key: 'createdAt',
   label: 'Created At',
-  icon: (
-    <IconCalendarEvent
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconCalendarEvent size={icon.size.md} stroke={icon.stroke.md} />,
   type: 'date',
   operands: [
     {
@@ -223,12 +198,7 @@ export const createdAtFilter = {
 export const cityFilter = {
   key: 'city',
   label: 'City',
-  icon: (
-    <IconMap
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconMap size={icon.size.md} stroke={icon.stroke.md} />,
   type: 'text',
   operands: [
     {

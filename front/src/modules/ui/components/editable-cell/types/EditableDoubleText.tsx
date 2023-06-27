@@ -1,7 +1,7 @@
 import { ChangeEvent, ReactElement, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '@/ui/layout/styles/themes';
+import { textInputStyle } from '@/ui/themes/effects';
 
 import { EditableCell } from '../EditableCell';
 
@@ -20,8 +20,8 @@ const StyledContainer = styled.div`
   justify-content: space-between;
 
   & > input:last-child {
-    border-left: 1px solid ${(props) => props.theme.primaryBorder};
-    padding-left: ${(props) => props.theme.spacing(2)};
+    border-left: 1px solid ${({ theme }) => theme.border.color.medium};
+    padding-left: ${({ theme }) => theme.spacing(2)};
   }
 `;
 

@@ -20,15 +20,15 @@ const StyledContainer = styled.div`
 
   flex-direction: row;
 
-  gap: ${(props) => props.theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(1)};
 
   justify-content: flex-start;
 
-  padding: ${(props) => props.theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledName = styled.div`
-  color: ${(props) => props.theme.text80};
+  color: ${({ theme }) => theme.font.color.primary};
   font-size: 13px;
   font-weight: 400;
   max-width: 160px;
@@ -38,25 +38,25 @@ const StyledName = styled.div`
 `;
 
 const StyledDate = styled.div`
-  color: ${(props) => props.theme.text30};
+  color: ${({ theme }) => theme.font.color.light};
   font-size: 12px;
   font-weight: 400;
 
-  margin-left: ${(props) => props.theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(1)};
 
   padding-top: 1.5px;
 `;
 
 const StyledTooltip = styled(Tooltip)`
-  background-color: ${(props) => props.theme.primaryBackground};
+  background-color: ${({ theme }) => theme.background.primary};
 
   box-shadow: 0px 2px 4px 3px
-    ${(props) => props.theme.lightBackgroundTransparent};
+    ${({ theme }) => theme.background.transparent.light};
 
   box-shadow: 2px 4px 16px 6px
-    ${(props) => props.theme.lightBackgroundTransparent};
+    ${({ theme }) => theme.background.transparent.light};
 
-  color: ${(props) => props.theme.text80};
+  color: ${({ theme }) => theme.font.color.primary};
 
   opacity: 1;
   padding: 8px;
@@ -81,7 +81,7 @@ export function CommentHeader({ comment }: OwnProps) {
     <StyledContainer>
       <Avatar
         avatarUrl={avatarUrl}
-        size={theme.iconSizeMedium}
+        size={theme.icon.size.md}
         placeholder={capitalizedFirstUsernameLetter}
       />
       <StyledName>{authorName}</StyledName>

@@ -6,9 +6,9 @@ type OwnProps = {
 };
 
 const StyledSubSectionTitle = styled.h2`
-  color: ${({ theme }) => theme.text80};
-  font-size: ${({ theme }) => theme.fontSizeMedium};
-  font-weight: ${({ theme }) => theme.fontWeightBold};
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: 1.5;
 `;
 

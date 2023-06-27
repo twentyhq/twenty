@@ -10,22 +10,22 @@ type OwnProps = Omit<
 };
 
 const StyledInput = styled.input<{ fullWidth: boolean }>`
-  background-color: ${({ theme }) => theme.lighterBackgroundTransparent};
-  border: 1px solid ${({ theme }) => theme.lightBorder};
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 4px;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) =>
   theme.spacing(3)};
 
-  color: ${({ theme }) => theme.text80};
+  color: ${({ theme }) => theme.font.color.primary};
   outline: none;
   width: ${({ fullWidth, theme }) =>
     fullWidth ? `calc(100% - ${theme.spacing(6)})` : 'auto'};
 
   &::placeholder,
   &::-webkit-input-placeholder {
-    color: ${({ theme }) => theme.text30}
-    font-family: ${({ theme }) => theme.fontFamily};;
-    font-weight: ${({ theme }) => theme.fontWeightMedium};
+    color: ${({ theme }) => theme.font.color.light}
+    font-family: ${({ theme }) => theme.font.family};;
+    font-weight: ${({ theme }) => theme.font.weight.medium};
   }
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;

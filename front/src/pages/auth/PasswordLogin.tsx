@@ -31,7 +31,7 @@ const StyledButtonContainer = styled.div`
 `;
 
 const StyledErrorContainer = styled.div`
-  color: ${({ theme }) => theme.red};
+  color: ${({ theme }) => theme.color.red};
 `;
 
 export function PasswordLogin() {

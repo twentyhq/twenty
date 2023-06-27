@@ -6,8 +6,8 @@ type OwnProps = {
 };
 
 const StyledTitle = styled.div`
-  font-size: ${({ theme }) => theme.fontSizeExtraLarge};
-  font-weight: ${({ theme }) => theme.fontWeightSemibold};
+  font-size: ${({ theme }) => theme.font.size.xl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-top: ${({ theme }) => theme.spacing(10)};
 `;
 

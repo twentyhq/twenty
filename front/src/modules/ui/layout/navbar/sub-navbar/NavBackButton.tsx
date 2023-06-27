@@ -13,14 +13,14 @@ const IconAndButtonContainer = styled.button`
   align-items: center;
   background: inherit;
   border: none;
-  color: ${(props) => props.theme.text60};
+  color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  font-size: ${(props) => props.theme.fontSizeLarge};
-  font-weight: ${(props) => props.theme.fontWeightSemibold};
-  gap: ${(props) => props.theme.spacing(1)};
-  padding: ${(props) => props.theme.spacing(1)};
+  font-size: ${({ theme }) => theme.font.size.lg};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  gap: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
 

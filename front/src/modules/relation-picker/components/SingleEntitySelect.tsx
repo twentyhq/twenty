@@ -72,7 +72,7 @@ export function SingleEntitySelect<
         <>
           <DropdownMenuItemContainer>
             <DropdownMenuButton onClick={onCreate}>
-              <IconPlus size={theme.iconSizeMedium} />
+              <IconPlus size={theme.icon.size.md} />
               Create new
             </DropdownMenuButton>
           </DropdownMenuItemContainer>

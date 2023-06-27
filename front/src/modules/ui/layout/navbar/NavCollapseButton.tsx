@@ -5,16 +5,16 @@ import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
 } from '@/ui/icons';
+import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
 
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
-import { MOBILE_VIEWPORT } from '../styles/themes';
 
 const CollapseButton = styled.button<{ hideOnDesktop: boolean | undefined }>`
   align-items: center;
   background: inherit;
   border: 0;
 
-  color: ${(props) => props.theme.text30};
+  color: ${({ theme }) => theme.font.color.light};
   cursor: pointer;
 
   display: flex;

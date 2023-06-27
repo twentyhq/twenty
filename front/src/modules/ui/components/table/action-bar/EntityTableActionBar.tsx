@@ -16,17 +16,17 @@ type StyledContainerProps = {
 
 const StyledContainer = styled.div<StyledContainerProps>`
   align-items: center;
-  background: ${(props) => props.theme.secondaryBackground};
-  border: 1px solid ${(props) => props.theme.primaryBorder};
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 8px;
   bottom: ${(props) => (props.position.x ? 'auto' : '38px')};
-  box-shadow: ${(props) => props.theme.modalBoxShadow};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   height: 48px;
 
   left: ${(props) => (props.position.x ? `${props.position.x}px` : '50%')};
-  padding-left: ${(props) => props.theme.spacing(2)};
-  padding-right: ${(props) => props.theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
   position: ${(props) => (props.position.x ? 'fixed' : 'absolute')};
   top: ${(props) => (props.position.y ? `${props.position.y}px` : 'auto')};
 

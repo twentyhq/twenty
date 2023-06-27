@@ -2,10 +2,10 @@ import styled from '@emotion/styled';
 import { Command } from 'cmdk';
 
 export const StyledDialog = styled(Command.Dialog)`
-  background: ${(props) => props.theme.primaryBackground};
-  border-radius: ${(props) => props.theme.borderRadius};
-  box-shadow: ${(props) => props.theme.heavyBoxShadow};
-  font-family: ${(props) => props.theme.fontFamily};
+  background: ${({ theme }) => theme.background.primary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  font-family: ${({ theme }) => theme.font.family};
   left: 50%;
   max-width: 640px;
   overflow: hidden;
@@ -17,51 +17,51 @@ export const StyledDialog = styled(Command.Dialog)`
 `;
 
 export const StyledInput = styled(Command.Input)`
-  background: ${(props) => props.theme.primaryBackground};
+  background: ${({ theme }) => theme.background.primary};
   border: none;
-  border-bottom: 1px solid ${(props) => props.theme.primaryBorder};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 0;
-  color: ${(props) => props.theme.text100};
-  font-size: ${(props) => props.theme.fontSizeLarge};
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.lg};
   margin: 0;
   outline: none;
-  padding: ${(props) => props.theme.spacing(5)};
+  padding: ${({ theme }) => theme.spacing(5)};
   width: 100%;
 `;
 
 export const StyledMenuItem = styled(Command.Item)`
   align-items: center;
-  color: ${(props) => props.theme.text80};
+  color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   display: flex;
-  font-size: ${(props) => props.theme.fontSizeMedium};
-  gap: ${(props) => props.theme.spacing(3)};
+  font-size: ${({ theme }) => theme.font.size.md};
+  gap: ${({ theme }) => theme.spacing(3)};
   height: 40px;
   justify-content: space-between;
-  padding: 0 ${(props) => props.theme.spacing(4)};
+  padding: 0 ${({ theme }) => theme.spacing(4)};
   position: relative;
   transition: all 150ms ease;
   transition-property: none;
   user-select: none;
   &:hover {
-    background: ${(props) => props.theme.lightBackgroundTransparent};
+    background: ${({ theme }) => theme.background.transparent.light};
   }
   &[data-selected='true'] {
-    background: ${(props) => props.theme.tertiaryBackground};
+    background: ${({ theme }) => theme.background.tertiary};
     /* Could be nice to add a caret like this for better accessibility in the future
     But it needs to be consistend with other picker dropdown (e.g. company)
     &:after {
-      background: ${(props) => props.theme.quaternaryBackground};
+      background: ${({ theme }) => theme.background.quaternary};
       content: '';
       height: 100%;
       left: 0;
       position: absolute;
       width: 3px;
-      z-index: ${(props) => props.theme.lastLayerZIndex};
+      z-index: ${({ theme }) => theme.lastLayerZIndex};
     } */
   }
   &[data-disabled='true'] {
-    color: ${(props) => props.theme.text30};
+    color: ${({ theme }) => theme.font.color.light};
     cursor: not-allowed;
   }
   svg {
@@ -71,7 +71,7 @@ export const StyledMenuItem = styled(Command.Item)`
 `;
 
 export const StyledList = styled(Command.List)`
-  background: ${(props) => props.theme.secondaryBackground};
+  background: ${({ theme }) => theme.background.secondary};
   height: min(300px, var(--cmdk-list-height));
   max-height: 400px;
   overflow: auto;
@@ -83,14 +83,14 @@ export const StyledList = styled(Command.List)`
 export const StyledGroup = styled(Command.Group)`
   [cmdk-group-heading] {
     align-items: center;
-    color: ${(props) => props.theme.text30};
+    color: ${({ theme }) => theme.font.color.light};
     display: flex;
-    font-size: ${(props) => props.theme.fontSizeExtraSmall};
-    font-weight: ${(props) => props.theme.fontWeightBold};
-    padding-bottom: ${(props) => props.theme.spacing(2)};
-    padding-left: ${(props) => props.theme.spacing(4)};
-    padding-right: ${(props) => props.theme.spacing(4)};
-    padding-top: ${(props) => props.theme.spacing(2)};
+    font-size: ${({ theme }) => theme.font.size.xs};
+    font-weight: ${({ theme }) => theme.font.weight.semiBold};
+    padding-bottom: ${({ theme }) => theme.spacing(2)};
+    padding-left: ${({ theme }) => theme.spacing(4)};
+    padding-right: ${({ theme }) => theme.spacing(4)};
+    padding-top: ${({ theme }) => theme.spacing(2)};
     text-transform: uppercase;
     user-select: none;
   }
@@ -98,9 +98,9 @@ export const StyledGroup = styled(Command.Group)`
 
 export const StyledEmpty = styled(Command.Empty)`
   align-items: center;
-  color: ${(props) => props.theme.text30};
+  color: ${({ theme }) => theme.font.color.light};
   display: flex;
-  font-size: ${(props) => props.theme.fontSizeMedium};
+  font-size: ${({ theme }) => theme.font.size.md};
   height: 64px;
   justify-content: center;
   white-space: pre-wrap;
@@ -111,28 +111,28 @@ export const StyledSeparator = styled(Command.Separator)``;
 export const StyledIconAndLabelContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${(props) => props.theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 export const StyledIconContainer = styled.div`
   align-items: center;
-  background: ${(props) => props.theme.lightBackgroundTransparent};
+  background: ${({ theme }) => theme.background.transparent.light};
   border-radius: 4px;
-  color: ${(props) => props.theme.text60};
+  color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
-  padding: ${(props) => props.theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 export const StyledShortCut = styled.div`
-  background-color: ${(props) => props.theme.lightBackgroundTransparent};
+  background-color: ${({ theme }) => theme.background.transparent.light};
   border-radius: 4px;
-  color: ${(props) => props.theme.text30};
-  margin-left: ${(props) => props.theme.spacing(1)};
-  margin-right: ${(props) => props.theme.spacing(1)};
-  padding: ${(props) => props.theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.light};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const StyledShortcutsContainer = styled.div`
   align-items: center;
-  color: ${(props) => props.theme.text30};
+  color: ${({ theme }) => theme.font.color.light};
   display: flex;
-  font-size: ${(props) => props.theme.fontSizeSmall};
+  font-size: ${({ theme }) => theme.font.size.sm};
 `;

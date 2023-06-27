@@ -8,16 +8,17 @@ type OwnProps = {
 
 const StyledButton = styled.button<{ fullWidth: boolean }>`
   align-items: center;
-  background: ${({ theme }) => theme.primaryBackground};
-  border: 1px solid ${({ theme }) => theme.primaryBorder};
+  background: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 8px;
-  box-shadow: 0px 0px 4px ${({ theme }) => theme.mediumBackgroundTransparent} 0%,
-    0px 2px 4px ${({ theme }) => theme.lightBackgroundTransparent} 0%;
-  color: ${(props) => props.theme.text80};
+  box-shadow: 0px 0px 4px ${({ theme }) => theme.background.transparent.medium}
+      0%,
+    0px 2px 4px ${({ theme }) => theme.background.transparent.light} 0%;
+  color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  font-weight: ${({ theme }) => theme.fontWeightBold};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   gap: 8px;
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
@@ -25,7 +26,7 @@ const StyledButton = styled.button<{ fullWidth: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
   &:hover {
-    background: ${({ theme }) => theme.tertiaryBackground};
+    background: ${({ theme }) => theme.background.tertiary};
   }
 `;
 

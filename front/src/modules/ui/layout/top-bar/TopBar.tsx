@@ -10,13 +10,13 @@ export const TOP_BAR_MIN_HEIGHT = 40;
 
 const TopBarContainer = styled.div`
   align-items: center;
-  background: ${(props) => props.theme.noisyBackground};
-  color: ${(props) => props.theme.text80};
+  background: ${({ theme }) => theme.background.noisy};
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: row;
   font-size: 14px;
   min-height: ${TOP_BAR_MIN_HEIGHT}px;
-  padding: ${(props) => props.theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const TitleContainer = styled.div`
@@ -29,16 +29,16 @@ const TitleContainer = styled.div`
 
 const AddButtonContainer = styled.div`
   align-items: center;
-  border: 1px solid ${(props) => props.theme.primaryBorder};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 4px;
-  color: ${(props) => props.theme.text40};
+  color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   display: flex;
   flex-shrink: 0;
   height: 28px;
   justify-content: center;
   justify-self: flex-end;
-  margin-right: ${(props) => props.theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   width: 28px;
 `;

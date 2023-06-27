@@ -6,19 +6,21 @@ export const EditableCellNormalModeOuterContainer = styled.div`
   display: flex;
   height: 100%;
   overflow: hidden;
-  padding-left: ${(props) => props.theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
 
-  padding-right: ${(props) => props.theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 
   &:hover {
-    -moz-box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
+    -moz-box-shadow: inset 0 0 0 1px
+      ${({ theme }) => theme.font.color.extraLight};
 
-    -webkit-box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
-    background: ${(props) => props.theme.secondaryBackgroundTransparent};
-    border-radius: ${(props) => props.theme.borderRadius};
+    -webkit-box-shadow: inset 0 0 0 1px
+      ${({ theme }) => theme.font.color.extraLight};
+    background: ${({ theme }) => theme.background.transparent.secondary};
+    border-radius: ${({ theme }) => theme.border.radius.md};
 
-    box-shadow: inset 0 0 0 1px ${(props) => props.theme.text20};
+    box-shadow: inset 0 0 0 1px ${({ theme }) => theme.font.color.extraLight};
   }
 `;
 

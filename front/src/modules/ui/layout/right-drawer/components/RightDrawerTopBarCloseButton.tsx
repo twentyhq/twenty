@@ -8,7 +8,7 @@ import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 const StyledButton = styled.button`
   align-items: center;
   background: none;
-  border: 1px solid ${(props) => props.theme.lightBorder};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 4px;
   cursor: pointer;
   display: flex;
@@ -16,14 +16,14 @@ const StyledButton = styled.button`
   height: 24px;
   padding: 3px;
 
-  transition: ${(props) => props.theme.clickableElementBackgroundTransition};
+  transition: ${({ theme }) => theme.clickableElementBackgroundTransition};
 
   width: 24px;
   &:hover {
-    background: ${(props) => props.theme.lightBackgroundTransparent};
+    background: ${({ theme }) => theme.background.transparent.light};
   }
   svg {
-    color: ${(props) => props.theme.text40};
+    color: ${({ theme }) => theme.font.color.tertiary};
     transform: rotate(45deg);
   }
 `;

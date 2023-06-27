@@ -1,7 +1,7 @@
 import { ChangeEvent, ComponentType, ReactNode, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '@/ui/layout/styles/themes';
+import { textInputStyle } from '@/ui/themes/effects';
 
 import { EditableCell } from '../EditableCell';
 

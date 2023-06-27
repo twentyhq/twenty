@@ -2,7 +2,7 @@ import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 
-import { textInputStyle } from '@/ui/layout/styles/themes';
+import { textInputStyle } from '@/ui/themes/effects';
 
 import { RawLink } from '../../links/RawLink';
 import { EditableCell } from '../EditableCell';

@@ -12,15 +12,15 @@ const StyledContainer = styled.div`
   align-items: flex-start;
   display: flex;
   flex-direction: column;
-  gap: ${(props) => props.theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-start;
 `;
 
 const StyledCommentBody = styled.div`
-  color: ${(props) => props.theme.text60};
-  font-size: ${(props) => props.theme.fontSizeMedium};
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.md};
 
-  line-height: ${(props) => props.theme.lineHeight};
+  line-height: ${({ theme }) => theme.text.lineHeight};
   overflow-wrap: anywhere;
 
   padding-left: 24px;

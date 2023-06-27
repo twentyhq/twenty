@@ -14,17 +14,17 @@ type OwnProps = {
 export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholder'>>`
   background-color: ${(props) =>
     !isNonEmptyString(props.avatarUrl)
-      ? props.theme.tertiaryBackground
+      ? props.theme.background.tertiary
       : 'none'};
   background-image: url(${(props) =>
     isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
-  color: ${(props) => props.theme.text80};
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
 
-  font-size: ${(props) => props.theme.fontSizeSmall};
-  font-weight: ${(props) => props.theme.fontWeightMedium};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   height: ${(props) => props.size}px;
 
   justify-content: center;

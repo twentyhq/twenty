@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
+
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
-import { MOBILE_VIEWPORT } from '../styles/themes';
 
 const StyledNavbarContainer = styled.div`
   flex-direction: column;
   width: ${(props) => (useRecoilValue(isNavbarOpenedState) ? 'auto' : '0')};
-  padding: ${(props) => props.theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
   flex-shrink: 0;
   overflow: hidden;
 

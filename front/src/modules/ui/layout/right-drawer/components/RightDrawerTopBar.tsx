@@ -4,8 +4,8 @@ import { RightDrawerTopBarCloseButton } from './RightDrawerTopBarCloseButton';
 
 const StyledRightDrawerTopBar = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${(props) => props.theme.lightBorder};
-  color: ${(props) => props.theme.text60};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: row;
   font-size: 13px;
@@ -18,7 +18,7 @@ const StyledRightDrawerTopBar = styled.div`
 const StyledTopBarTitle = styled.div`
   align-items: center;
   font-weight: 500;
-  margin-right: ${(props) => props.theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 export function RightDrawerTopBar({

@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconCheck } from '@/ui/icons/index';
-import { hoverBackground } from '@/ui/layout/styles/themes';
+import { hoverBackground } from '@/ui/themes/effects';
 
 import { DropdownMenuButton } from './DropdownMenuButton';
 
@@ -19,7 +19,7 @@ const DropdownMenuSelectableItemContainer = styled(DropdownMenuButton)<Props>`
   align-items: center;
 
   background: ${(props) =>
-    props.hovered ? props.theme.lightBackgroundTransparent : 'transparent'};
+    props.hovered ? props.theme.background.transparent.light : 'transparent'};
 
   display: flex;
   justify-content: space-between;
@@ -29,7 +29,7 @@ const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
 
-  gap: ${(props) => props.theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledRightIcon = styled.div`
@@ -61,7 +61,7 @@ export function DropdownMenuSelectableItem({
     >
       <StyledLeftContainer>{children}</StyledLeftContainer>
       <StyledRightIcon>
-        {selected && <IconCheck size={theme.iconSizeMedium} />}
+        {selected && <IconCheck size={theme.icon.size.md} />}
       </StyledRightIcon>
     </DropdownMenuSelectableItemContainer>
   );

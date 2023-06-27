@@ -1,13 +1,13 @@
 import { InputHTMLAttributes } from 'react';
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '@/ui/layout/styles/themes';
+import { textInputStyle } from '@/ui/themes/effects';
 
 export const DropdownMenuSearchContainer = styled.div`
-  --vertical-padding: ${(props) => props.theme.spacing(1)};
+  --vertical-padding: ${({ theme }) => theme.spacing(1)};
 
   align-items: center;
-  border-bottom: 1px solid ${(props) => props.theme.lightBorder};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 
   display: flex;
   flex-direction: row;
@@ -18,7 +18,7 @@ export const DropdownMenuSearchContainer = styled.div`
 `;
 
 const StyledEditModeSearchInput = styled.input`
-  font-size: ${(props) => props.theme.fontSizeSmall};
+  font-size: ${({ theme }) => theme.font.size.sm};
 
   ${textInputStyle}
 

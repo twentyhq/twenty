@@ -16,7 +16,7 @@ type Story = StoryObj<typeof CellCommentChip>;
 
 const TestCellContainer = styled.div`
   align-items: center;
-  background: ${(props) => props.theme.primaryBackground};
+  background: ${({ theme }) => theme.background.primary};
   display: flex;
 
   height: fit-content;

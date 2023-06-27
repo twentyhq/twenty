@@ -12,8 +12,8 @@ type OwnProps = {
 const StyledClickable = styled.div`
   display: flex;
   a {
-    color: ${({ theme }) => theme.text40};
-    font-size: ${({ theme }) => theme.fontSizeSmall};
+    color: ${({ theme }) => theme.font.color.tertiary};
+    font-size: ${({ theme }) => theme.font.size.sm};
     text-decoration: none;
   }
 `;

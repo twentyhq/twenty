@@ -13,9 +13,9 @@ const StyledContainer = styled.div`
   display: flex;
   height: 34px;
   justify-content: space-between;
-  margin-left: ${(props) => props.theme.spacing(1)};
-  padding: ${(props) => props.theme.spacing(2)};
-  padding-top: ${(props) => props.theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   width: 100%;
 `;
@@ -39,11 +39,11 @@ const StyledLogo = styled.div<StyledLogoProps>`
 `;
 
 const StyledName = styled.div`
-  color: ${(props) => props.theme.text80};
+  color: ${({ theme }) => theme.font.color.primary};
   font-family: 'Inter';
-  font-size: ${(props) => props.theme.fontSizeMedium};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: 500;
-  margin-left: ${(props) => props.theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 function NavWorkspaceButton() {

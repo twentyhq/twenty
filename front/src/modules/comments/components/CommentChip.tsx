@@ -12,10 +12,10 @@ const StyledChip = styled.div`
   align-items: center;
   backdrop-filter: blur(6px);
 
-  background: ${(props) => props.theme.primaryBackgroundTransparent};
-  border-radius: ${(props) => props.theme.borderRadius};
+  background: ${({ theme }) => theme.background.transparent.primary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
 
-  color: ${(props) => props.theme.text30};
+  color: ${({ theme }) => theme.font.color.light};
   cursor: pointer;
   display: flex;
   flex-direction: row;
@@ -31,8 +31,8 @@ const StyledChip = styled.div`
   padding-right: 4px;
 
   &:hover {
-    background: ${(props) => props.theme.tertiaryBackground};
-    color: ${(props) => props.theme.text40};
+    background: ${({ theme }) => theme.background.tertiary};
+    color: ${({ theme }) => theme.font.color.tertiary};
   }
 
   user-select: none;
@@ -56,7 +56,7 @@ export function CommentChip({ count, onClick }: CommentChipProps) {
   return (
     <StyledChip data-testid="comment-chip" onClick={onClick}>
       <StyledCount>{formattedCount}</StyledCount>
-      <IconComment size={theme.iconSizeMedium} />
+      <IconComment size={theme.icon.size.md} />
     </StyledChip>
   );
 }

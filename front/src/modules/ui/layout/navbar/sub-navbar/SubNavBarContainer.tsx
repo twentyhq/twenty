@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding-left: 300px;
-  padding-top: ${(props) => props.theme.spacing(6)};
+  padding-top: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledNavItemsContainer = styled.div`

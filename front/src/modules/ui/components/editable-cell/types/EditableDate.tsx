@@ -15,7 +15,7 @@ export type EditableDateProps = {
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  margin: 0px ${(props) => props.theme.spacing(2)};
+  margin: 0px ${({ theme }) => theme.spacing(2)};
 `;
 
 export type StyledCalendarContainerProps = {
@@ -23,10 +23,10 @@ export type StyledCalendarContainerProps = {
 };
 
 const StyledCalendarContainer = styled.div<StyledCalendarContainerProps>`
-  background: ${(props) => props.theme.secondaryBackground};
-  border: 1px solid ${(props) => props.theme.primaryBorder};
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 8px;
-  box-shadow: ${(props) => props.theme.modalBoxShadow};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   left: -10px;
   position: absolute;
   top: 10px;

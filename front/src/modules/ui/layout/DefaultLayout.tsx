@@ -5,12 +5,13 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppNavbar } from '~/AppNavbar';
 
+import { MOBILE_VIEWPORT } from '../themes/themes';
+
 import { NavbarContainer } from './navbar/NavbarContainer';
 import { isNavbarOpenedState } from './states/isNavbarOpenedState';
-import { MOBILE_VIEWPORT } from './styles/themes';
 
 const StyledLayout = styled.div`
-  background: ${(props) => props.theme.noisyBackground};
+  background: ${({ theme }) => theme.background.noisy};
   display: flex;
   flex-direction: row;
   height: 100vh;

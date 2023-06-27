@@ -8,18 +8,13 @@ import {
   IconUser,
   IconUsers,
 } from '@/ui/icons/index';
-import { commonText } from '@/ui/layout/styles/texts';
+import { icon } from '@/ui/themes/icon';
 import { QueryMode, User } from '~/generated/graphql';
 
 export const nameFilter = {
   key: 'name',
   label: 'Name',
-  icon: (
-    <IconBuildingSkyscraper
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.sm} />,
   type: 'text',
   operands: [
     {
@@ -49,12 +44,7 @@ export const nameFilter = {
 export const employeesFilter = {
   key: 'employees',
   label: 'Employees',
-  icon: (
-    <IconUsers
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconUsers size={icon.size.md} stroke={icon.stroke.sm} />,
   type: 'text',
   operands: [
     {
@@ -81,12 +71,7 @@ export const employeesFilter = {
 export const urlFilter = {
   key: 'domainName',
   label: 'Url',
-  icon: (
-    <IconLink
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconLink size={icon.size.md} stroke={icon.stroke.sm} />,
   type: 'text',
   operands: [
     {
@@ -119,12 +104,7 @@ export const urlFilter = {
 export const addressFilter = {
   key: 'address',
   label: 'Address',
-  icon: (
-    <IconMap
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconMap size={icon.size.md} stroke={icon.stroke.sm} />,
   type: 'text',
   operands: [
     {
@@ -154,12 +134,7 @@ export const addressFilter = {
 export const ccreatedAtFilter = {
   key: 'createdAt',
   label: 'Created At',
-  icon: (
-    <IconCalendarEvent
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconCalendarEvent size={icon.size.md} stroke={icon.stroke.sm} />,
   type: 'date',
   operands: [
     {
@@ -186,12 +161,7 @@ export const ccreatedAtFilter = {
 export const accountOwnerFilter = {
   key: 'accountOwner',
   label: 'Account Owner',
-  icon: (
-    <IconUser
-      size={commonText.iconSizeMedium}
-      stroke={commonText.iconStrikeLight}
-    />
-  ),
+  icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
   type: 'relation',
   searchConfig: {
     query: SEARCH_USER_QUERY,

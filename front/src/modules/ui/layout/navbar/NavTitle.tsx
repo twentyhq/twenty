@@ -5,13 +5,13 @@ type OwnProps = {
 };
 
 const StyledTitle = styled.div`
-  color: ${(props) => props.theme.text30};
+  color: ${({ theme }) => theme.font.color.light};
   display: flex;
-  font-size: ${(props) => props.theme.fontSizeExtraSmall};
+  font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: 600;
-  padding-bottom: ${(props) => props.theme.spacing(2)};
-  padding-left: ${(props) => props.theme.spacing(1)};
-  padding-top: ${(props) => props.theme.spacing(8)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(8)};
   text-transform: uppercase;
 `;
 
