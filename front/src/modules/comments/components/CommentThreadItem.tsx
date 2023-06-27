@@ -6,6 +6,7 @@ import { CommentHeader } from './CommentHeader';
 
 type OwnProps = {
   comment: CommentForDrawer;
+  actionBar?: React.ReactNode;
 };
 
 const StyledContainer = styled.div`
@@ -14,6 +15,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-start;
+  width: 100%;
 `;
 
 const StyledCommentBody = styled.div`
@@ -28,10 +30,10 @@ const StyledCommentBody = styled.div`
   text-align: left;
 `;
 
-export function CommentThreadItem({ comment }: OwnProps) {
+export function CommentThreadItem({ comment, actionBar }: OwnProps) {
   return (
     <StyledContainer>
-      <CommentHeader comment={comment} />
+      <CommentHeader comment={comment} actionBar={actionBar} />
       <StyledCommentBody>{comment.body}</StyledCommentBody>
     </StyledContainer>
   );

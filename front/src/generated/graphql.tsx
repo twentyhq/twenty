@@ -711,6 +711,7 @@ export type Mutation = {
   createOneCompany: Company;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
+  deleteManyCommentThreads: AffectedRows;
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
@@ -751,6 +752,11 @@ export type MutationCreateOnePersonArgs = {
 
 export type MutationCreateOnePipelineProgressArgs = {
   data: PipelineProgressCreateInput;
+};
+
+
+export type MutationDeleteManyCommentThreadsArgs = {
+  where?: InputMaybe<CommentThreadWhereInput>;
 };
 
 
@@ -1645,6 +1651,13 @@ export type RemoveCommentThreadTargetOnCommentThreadMutationVariables = Exact<{
 
 export type RemoveCommentThreadTargetOnCommentThreadMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, createdAt: string, updatedAt: string, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, createdAt: string, updatedAt: string, commentableType: CommentableType, commentableId: string }> | null } };
 
+export type DeleteCommentThreadMutationVariables = Exact<{
+  commentThreadId: Scalars['String'];
+}>;
+
+
+export type DeleteCommentThreadMutation = { __typename?: 'Mutation', deleteManyCommentThreads: { __typename?: 'AffectedRows', count: number } };
+
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
   where?: InputMaybe<CompanyWhereInput>;
@@ -2240,6 +2253,39 @@ export function useRemoveCommentThreadTargetOnCommentThreadMutation(baseOptions?
 export type RemoveCommentThreadTargetOnCommentThreadMutationHookResult = ReturnType<typeof useRemoveCommentThreadTargetOnCommentThreadMutation>;
 export type RemoveCommentThreadTargetOnCommentThreadMutationResult = Apollo.MutationResult<RemoveCommentThreadTargetOnCommentThreadMutation>;
 export type RemoveCommentThreadTargetOnCommentThreadMutationOptions = Apollo.BaseMutationOptions<RemoveCommentThreadTargetOnCommentThreadMutation, RemoveCommentThreadTargetOnCommentThreadMutationVariables>;
+export const DeleteCommentThreadDocument = gql`
+    mutation DeleteCommentThread($commentThreadId: String!) {
+  deleteManyCommentThreads(where: {id: {equals: $commentThreadId}}) {
+    count
+  }
+}
+    `;
+export type DeleteCommentThreadMutationFn = Apollo.MutationFunction<DeleteCommentThreadMutation, DeleteCommentThreadMutationVariables>;
+
+/**
+ * __useDeleteCommentThreadMutation__
+ *
+ * To run a mutation, you first call `useDeleteCommentThreadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCommentThreadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCommentThreadMutation, { data, loading, error }] = useDeleteCommentThreadMutation({
+ *   variables: {
+ *      commentThreadId: // value for 'commentThreadId'
+ *   },
+ * });
+ */
+export function useDeleteCommentThreadMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCommentThreadMutation, DeleteCommentThreadMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCommentThreadMutation, DeleteCommentThreadMutationVariables>(DeleteCommentThreadDocument, options);
+      }
+export type DeleteCommentThreadMutationHookResult = ReturnType<typeof useDeleteCommentThreadMutation>;
+export type DeleteCommentThreadMutationResult = Apollo.MutationResult<DeleteCommentThreadMutation>;
+export type DeleteCommentThreadMutationOptions = Apollo.BaseMutationOptions<DeleteCommentThreadMutation, DeleteCommentThreadMutationVariables>;
 export const GetCompaniesDocument = gql`
     query GetCompanies($orderBy: [CompanyOrderByWithRelationInput!], $where: CompanyWhereInput) {
   companies: findManyCompany(orderBy: $orderBy, where: $where) {
