@@ -1,11 +1,8 @@
 import React from 'react';
-import { ApolloProvider } from '@apollo/client';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconList } from '@/ui/icons/index';
-import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
-import { mockedClient } from '~/testing/mockedClient';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { availableFilters } from '../../../../../../pages/companies/companies-filters';
