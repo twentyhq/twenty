@@ -1,6 +1,8 @@
 name: CI Server
 on:
   push:
+    branches:
+      - main
   pull_request_target:
 jobs:
   server-test:
