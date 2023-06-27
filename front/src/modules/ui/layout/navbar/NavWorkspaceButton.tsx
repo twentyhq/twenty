@@ -43,7 +43,7 @@ const StyledName = styled.div`
   font-family: 'Inter';
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: 500;
-  margin-left: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 function NavWorkspaceButton() {
