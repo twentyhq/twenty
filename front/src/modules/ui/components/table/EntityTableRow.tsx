@@ -14,7 +14,7 @@ import { EntityTableCell } from './EntityTableCell';
 
 const StyledRow = styled.tr<{ selected: boolean }>`
   background: ${(props) =>
-    props.selected ? props.theme.secondaryBackground : 'none'};
+    props.selected ? props.theme.background.secondary : 'none'};
 `;
 
 export function EntityTableRow<TData extends { id: string }>({
