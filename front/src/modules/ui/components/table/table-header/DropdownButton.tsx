@@ -1,6 +1,8 @@
 import { ReactNode, useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
+import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { IconChevronDown } from '@/ui/icons/index';
 import { overlayBackground, textInputStyle } from '@/ui/themes/effects';
 
@@ -159,11 +161,17 @@ function DropdownButton({
   setIsUnfolded,
   resetState,
 }: OwnProps) {
+  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
+    captureHotkeyTypeInFocusState,
+  );
+
   const onButtonClick = () => {
     setIsUnfolded && setIsUnfolded(!isUnfolded);
+    setCaptureHotkeyTypeInFocus(!isUnfolded);
   };
 
   const onOutsideClick = () => {
+    setCaptureHotkeyTypeInFocus(false);
     setIsUnfolded && setIsUnfolded(false);
     resetState && resetState();
   };

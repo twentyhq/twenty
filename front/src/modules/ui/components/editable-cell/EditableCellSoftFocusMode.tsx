@@ -1,6 +1,8 @@
 import React from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useRecoilState } from 'recoil';
 
+import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { isNonTextWritingKey } from '@/utils/hotkeys/isNonTextWritingKey';
 
 import { useEditableCell } from './hooks/useCloseEditableCell';
@@ -10,6 +12,9 @@ export function EditableCellSoftFocusMode({
   children,
 }: React.PropsWithChildren<unknown>) {
   const { closeEditableCell, openEditableCell } = useEditableCell();
+  const [captureHotkeyTypeInFocus] = useRecoilState(
+    captureHotkeyTypeInFocusState,
+  );
 
   useHotkeys(
     'enter',
@@ -32,9 +37,14 @@ export function EditableCellSoftFocusMode({
         !keyboardEvent.ctrlKey &&
         !keyboardEvent.metaKey;
 
-      if (isWritingText) {
-        openEditableCell();
+      if (!isWritingText) {
+        return;
       }
+
+      if (captureHotkeyTypeInFocus) {
+        return;
+      }
+      openEditableCell();
     },
     {
       enableOnContentEditable: true,
