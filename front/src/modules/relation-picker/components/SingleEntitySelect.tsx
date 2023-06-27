@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import Skeleton from 'react-loading-skeleton';
 import { useTheme } from '@emotion/react';
 import { IconPlus } from '@tabler/icons-react';
 
@@ -16,8 +15,6 @@ import { Avatar } from '@/users/components/Avatar';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { useEntitySelectLogic } from '../hooks/useEntitySelectLogic';
-
-import 'react-loading-skeleton/dist/skeleton.css';
 
 export type EntitiesForSingleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
@@ -100,9 +97,7 @@ export function SingleEntitySelect<
           </DropdownMenuSelectableItem>
         ))}
         {entitiesInDropdown?.length === 0 && (
-          <DropdownMenuItem>
-              <Skeleton count={5} />
-          </DropdownMenuItem>
+          <DropdownMenuItem>No result</DropdownMenuItem>
         )}
       </DropdownMenuItemContainer>
     </DropdownMenu>
