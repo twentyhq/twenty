@@ -2,11 +2,11 @@ import { useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { v4 } from 'uuid';
 
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
 import { DoubleTextInput } from '@/ui/components/inputs/DoubleTextInput';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
-import { useRecoilScopedState } from '@/ui/hooks/useRecoilScopedState';
 import { logError } from '@/utils/logs/logError';
 import {
   Person,

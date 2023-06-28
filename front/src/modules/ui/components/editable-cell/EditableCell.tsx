@@ -1,11 +1,15 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
-import { isSomeInputInEditModeState } from '../../tables/states/isSomeInputInEditModeState';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 
+import { useEditableCell } from './hooks/useCloseEditableCell';
+import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
+import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
+import { isEditModeScopedState } from './states/isEditModeScopedState';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
+import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
 
 export const CellBaseContainer = styled.div`
   align-items: center;
@@ -23,31 +27,33 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  isEditMode?: boolean;
-  isCreateMode?: boolean;
-  onOutsideClick?: () => void;
-  onInsideClick?: () => void;
 };
 
 export function EditableCell({
-  editModeContent,
-  nonEditModeContent,
   editModeHorizontalAlign = 'left',
   editModeVerticalPosition = 'over',
-  isEditMode = false,
-  onOutsideClick,
-  onInsideClick,
+  editModeContent,
+  nonEditModeContent,
 }: OwnProps) {
-  const [isSomeInputInEditMode, setIsSomeInputInEditMode] = useRecoilState(
-    isSomeInputInEditModeState,
-  );
+  const [isEditMode] = useRecoilScopedState(isEditModeScopedState);
 
+  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
+
+  const { closeEditableCell, openEditableCell } = useEditableCell();
+
+  // TODO: we might have silent problematic behavior because of the setTimeout in openEditableCell, investigate
+  // Maybe we could build a switchEditableCell to handle the case where we go from one cell to another.
+  // See https://github.com/twentyhq/twenty/issues/446
   function handleOnClick() {
-    if (!isSomeInputInEditMode) {
-      onInsideClick?.();
-      setIsSomeInputInEditMode(true);
-    }
+    openEditableCell();
+    setSoftFocusOnCurrentCell();
   }
+
+  function handleOnOutsideClick() {
+    closeEditableCell();
+  }
+
+  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
   return (
     <CellBaseContainer onClick={handleOnClick}>
@@ -55,11 +61,14 @@ export function EditableCell({
         <EditableCellEditMode
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
-          isEditMode={isEditMode}
-          onOutsideClick={onOutsideClick}
+          onOutsideClick={handleOnOutsideClick}
         >
           {editModeContent}
         </EditableCellEditMode>
+      ) : hasSoftFocus ? (
+        <EditableCellSoftFocusMode>
+          {nonEditModeContent}
+        </EditableCellSoftFocusMode>
       ) : (
         <EditableCellDisplayMode>{nonEditModeContent}</EditableCellDisplayMode>
       )}

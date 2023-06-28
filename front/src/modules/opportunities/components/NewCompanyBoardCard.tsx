@@ -1,7 +1,7 @@
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
-import { useRecoilScopedState } from '@/ui/hooks/useRecoilScopedState';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,

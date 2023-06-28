@@ -1,11 +1,9 @@
 import React from 'react';
-import { ApolloProvider } from '@apollo/client';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconList } from '@/ui/icons/index';
-import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
-import { mockedClient } from '~/testing/mockedClient';
+import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { availableFilters } from '../../../../../../pages/companies/companies-filters';
 import { availableSorts } from '../../../../../../pages/companies/companies-sorts';
@@ -20,32 +18,24 @@ export default meta;
 type Story = StoryObj<typeof TableHeader>;
 
 export const Empty: Story = {
-  render: () => (
-    <ApolloProvider client={mockedClient}>
-      <FullHeightStorybookLayout>
-        <TableHeader
-          viewName="ViewName"
-          viewIcon={<IconList />}
-          availableSorts={availableSorts}
-          availableFilters={availableFilters}
-        />
-      </FullHeightStorybookLayout>
-    </ApolloProvider>
+  render: getRenderWrapperForComponent(
+    <TableHeader
+      viewName="ViewName"
+      viewIcon={<IconList />}
+      availableSorts={availableSorts}
+      availableFilters={availableFilters}
+    />,
   ),
 };
 
 export const WithSortsAndFilters: Story = {
-  render: () => (
-    <ApolloProvider client={mockedClient}>
-      <FullHeightStorybookLayout>
-        <TableHeader
-          viewName="ViewName"
-          viewIcon={<IconList />}
-          availableSorts={availableSorts}
-          availableFilters={availableFilters}
-        />
-      </FullHeightStorybookLayout>
-    </ApolloProvider>
+  render: getRenderWrapperForComponent(
+    <TableHeader
+      viewName="ViewName"
+      viewIcon={<IconList />}
+      availableSorts={availableSorts}
+      availableFilters={availableFilters}
+    />,
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

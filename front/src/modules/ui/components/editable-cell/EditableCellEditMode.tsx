@@ -1,13 +1,12 @@
-import { ReactElement, useMemo, useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
+import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 import { overlayBackground } from '@/ui/themes/effects';
-import { debounce } from '@/utils/debounce';
 
-import { useListenClickOutsideArrayOfRef } from '../../hooks/useListenClickOutsideArrayOfRef';
-import { isSomeInputInEditModeState } from '../../tables/states/isSomeInputInEditModeState';
+import { useEditableCell } from './hooks/useCloseEditableCell';
 
 export const EditableCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;
@@ -32,67 +31,77 @@ type OwnProps = {
   children: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  isEditMode?: boolean;
   onOutsideClick?: () => void;
-  onInsideClick?: () => void;
 };
 
 export function EditableCellEditMode({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
-  isEditMode,
   onOutsideClick,
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
-  const [, setIsSomeInputInEditMode] = useRecoilState(
-    isSomeInputInEditModeState,
-  );
-
-  const debouncedSetIsSomeInputInEditMode = useMemo(() => {
-    return debounce(setIsSomeInputInEditMode, 20);
-  }, [setIsSomeInputInEditMode]);
+  const { closeEditableCell } = useEditableCell();
+  const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   useListenClickOutsideArrayOfRef([wrapperRef], () => {
-    if (isEditMode) {
-      debouncedSetIsSomeInputInEditMode(false);
-      onOutsideClick?.();
-    }
+    onOutsideClick?.();
   });
-
-  useHotkeys(
-    'esc',
-    () => {
-      if (isEditMode) {
-        onOutsideClick?.();
-
-        debouncedSetIsSomeInputInEditMode(false);
-      }
-    },
-    {
-      preventDefault: true,
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
-    [isEditMode, onOutsideClick, debouncedSetIsSomeInputInEditMode],
-  );
 
   useHotkeys(
     'enter',
     () => {
-      if (isEditMode) {
-        onOutsideClick?.();
-
-        debouncedSetIsSomeInputInEditMode(false);
-      }
+      closeEditableCell();
+      moveDown();
     },
     {
-      preventDefault: true,
       enableOnContentEditable: true,
       enableOnFormTags: true,
+      preventDefault: true,
     },
-    [isEditMode, onOutsideClick, debouncedSetIsSomeInputInEditMode],
+    [closeEditableCell],
+  );
+
+  useHotkeys(
+    'esc',
+    () => {
+      closeEditableCell();
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+      preventDefault: true,
+    },
+    [closeEditableCell],
+  );
+
+  useHotkeys(
+    'tab',
+    () => {
+      closeEditableCell();
+      moveRight();
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+      preventDefault: true,
+    },
+    [closeEditableCell, moveRight],
+  );
+
+  useHotkeys(
+    'shift+tab',
+    () => {
+      closeEditableCell();
+      moveLeft();
+    },
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+      preventDefault: true,
+    },
+    [closeEditableCell, moveRight],
   );
 
   return (

@@ -52,11 +52,15 @@ export const InteractWithManyRows: Story = {
 
     await sleep(25);
 
+    const secondRowEmailCellFocused = await canvas.findByText(
+      mockedPeopleData[1].email,
+    );
+
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
-    await userEvent.click(secondRowEmailCell);
+    await userEvent.click(secondRowEmailCellFocused);
 
     await sleep(25);
 

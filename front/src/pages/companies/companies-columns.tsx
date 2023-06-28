@@ -6,7 +6,6 @@ import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEdita
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
-import { RecoilScope } from '@/ui/hooks/RecoilScope';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -143,9 +142,7 @@ export const useCompaniesColumns = () => {
           />
         ),
         cell: (props) => (
-          <RecoilScope>
-            <CompanyAccountOwnerCell company={props.row.original} />
-          </RecoilScope>
+          <CompanyAccountOwnerCell company={props.row.original} />
         ),
       }),
     ];

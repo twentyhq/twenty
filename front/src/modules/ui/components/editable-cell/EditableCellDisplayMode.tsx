@@ -1,7 +1,12 @@
-import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-export const EditableCellNormalModeOuterContainer = styled.div`
+import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
+
+type Props = {
+  softFocus: boolean;
+};
+
+export const EditableCellNormalModeOuterContainer = styled.div<Props>`
   align-items: center;
   display: flex;
   height: 100%;
@@ -11,17 +16,12 @@ export const EditableCellNormalModeOuterContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 
-  &:hover {
-    -moz-box-shadow: inset 0 0 0 1px
-      ${({ theme }) => theme.font.color.extraLight};
-
-    -webkit-box-shadow: inset 0 0 0 1px
-      ${({ theme }) => theme.font.color.extraLight};
-    background: ${({ theme }) => theme.background.transparent.secondary};
-    border-radius: ${({ theme }) => theme.border.radius.md};
-
-    box-shadow: inset 0 0 0 1px ${({ theme }) => theme.font.color.extraLight};
-  }
+  ${(props) =>
+    props.softFocus
+      ? `background: ${props.theme.background.transparent.secondary};
+         border-radius: ${props.theme.border.radius.md};
+         box-shadow: inset 0 0 0 1px ${props.theme.grayScale.gray30};`
+      : ''}
 `;
 
 export const EditableCellNormalModeInnerContainer = styled.div`
@@ -32,13 +32,13 @@ export const EditableCellNormalModeInnerContainer = styled.div`
   width: 100%;
 `;
 
-type OwnProps = {
-  children: ReactElement;
-};
+export function EditableCellDisplayMode({
+  children,
+}: React.PropsWithChildren<unknown>) {
+  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
-export function EditableCellDisplayMode({ children }: OwnProps) {
   return (
-    <EditableCellNormalModeOuterContainer>
+    <EditableCellNormalModeOuterContainer softFocus={hasSoftFocus}>
       <EditableCellNormalModeInnerContainer>
         {children}
       </EditableCellNormalModeInnerContainer>
