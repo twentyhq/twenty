@@ -1,8 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
 import { TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN } from '../constants';
-import { numberOfTableColumnsState } from '../states/numberOfTableColumnsState';
-import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
+import { numberOfTableColumnsSelectorState } from '../states/numberOfTableColumnsSelectorState';
+import { numberOfTableRowsSelectorState } from '../states/numberOfTableRowsSelectorState';
 import { softFocusPositionState } from '../states/softFocusPositionState';
 
 import { useSetSoftFocusPosition } from './useSetSoftFocusPosition';
@@ -40,7 +40,7 @@ export function useMoveSoftFocus() {
           .valueOrThrow();
 
         const numberOfTableRows = snapshot
-          .getLoadable(numberOfTableRowsState)
+          .getLoadable(numberOfTableRowsSelectorState)
           .valueOrThrow();
 
         let newRowNumber = softFocusPosition.row + 1;
@@ -65,11 +65,11 @@ export function useMoveSoftFocus() {
           .valueOrThrow();
 
         const numberOfTableColumns = snapshot
-          .getLoadable(numberOfTableColumnsState)
+          .getLoadable(numberOfTableColumnsSelectorState)
           .valueOrThrow();
 
         const numberOfTableRows = snapshot
-          .getLoadable(numberOfTableRowsState)
+          .getLoadable(numberOfTableRowsSelectorState)
           .valueOrThrow();
 
         const currentColumnNumber = softFocusPosition.column;
@@ -113,7 +113,7 @@ export function useMoveSoftFocus() {
           .valueOrThrow();
 
         const numberOfTableColumns = snapshot
-          .getLoadable(numberOfTableColumnsState)
+          .getLoadable(numberOfTableColumnsSelectorState)
           .valueOrThrow();
 
         const currentColumnNumber = softFocusPosition.column;

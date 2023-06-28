@@ -5,18 +5,17 @@ import { softFocusPositionState } from '../states/softFocusPositionState';
 import { TablePosition } from '../types/TablePosition';
 
 export function useSetSoftFocusPosition() {
-  return useRecoilCallback(
-    ({ set, snapshot }) =>
-      (newPosition: TablePosition) => {
-        const currentPosition = snapshot
-          .getLoadable(softFocusPositionState)
-          .valueOrThrow();
+  return useRecoilCallback(({ set, snapshot }) => {
+    return (newPosition: TablePosition) => {
+      const currentPosition = snapshot
+        .getLoadable(softFocusPositionState)
+        .valueOrThrow();
 
-        set(isSoftFocusOnCellFamilyState(currentPosition), false);
+      set(isSoftFocusOnCellFamilyState(currentPosition), false);
 
-        set(softFocusPositionState, newPosition);
+      set(softFocusPositionState, newPosition);
 
-        set(isSoftFocusOnCellFamilyState(newPosition), true);
-      },
-  );
+      set(isSoftFocusOnCellFamilyState(newPosition), true);
+    };
+  }, []);
 }
