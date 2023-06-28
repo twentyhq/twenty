@@ -8,7 +8,7 @@ import { UseGuards } from '@nestjs/common';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { User, Workspace } from '@prisma/client';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
-import crypto from 'crypto';
+import { anonymize } from 'src/utils/anonymize';
 
 @UseGuards(OptionalJwtAuthGuard)
 @Resolver(() => Event)
@@ -22,16 +22,8 @@ export class EventResolver {
     @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
   ) {
-    if (process.env.TELEMETRY_ENABLED === 'false') {
+    if (process.env.IS_TELEMETRY_ENABLED === 'false') {
       return;
-    }
-
-    function anonymize(input) {
-      if (process.env.IS_TWENTY_CLOUD === 'true') {
-        return input;
-      }
-      // md5 shorter than sha-256 and collisions are not a security risk in this use-case
-      return crypto.createHash('md5').update(input).digest('hex');
     }
 
     const data = {
