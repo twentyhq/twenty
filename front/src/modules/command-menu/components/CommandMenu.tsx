@@ -20,7 +20,8 @@ export function CommandMenu() {
 
   useDirectHotkeys(
     'ctrl+k,meta+k',
-    () => {
+    (event) => {
+      event.preventDefault();
       setOpen((prevOpen) => !prevOpen);
     },
     [setOpen],
