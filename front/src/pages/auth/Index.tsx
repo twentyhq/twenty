@@ -1,27 +1,31 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 
 import { FooterNote } from '@/auth/components/ui/FooterNote';
 import { HorizontalSeparator } from '@/auth/components/ui/HorizontalSeparator';
 import { Logo } from '@/auth/components/ui/Logo';
-import { Modal } from '@/auth/components/ui/Modal';
 import { Title } from '@/auth/components/ui/Title';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
-import { PrimaryButton } from '@/ui/components/buttons/PrimaryButton';
-import { SecondaryButton } from '@/ui/components/buttons/SecondaryButton';
+import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
+import { AnimatedEaseIn } from '@/ui/components/motion/AnimatedEaseIn';
 import { IconBrandGoogle } from '@/ui/icons';
-import { Companies } from '~/pages/companies/Companies';
 
 const StyledContentContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(8)};
-  padding-top: ${({ theme }) => theme.spacing(8)};
   width: 200px;
+  > * + * {
+    margin-top: ${({ theme }) => theme.spacing(3)};
+  }
+`;
+
+const StyledFooterNote = styled(FooterNote)`
+  max-width: 283px;
 `;
 
 export function Index() {
@@ -33,13 +37,20 @@ export function Index() {
     authFlowUserEmailState,
   );
 
+  const [visible, setVisible] = useState(false);
+
   const onGoogleLoginClick = useCallback(() => {
     window.location.href = process.env.REACT_APP_AUTH_URL + '/google' || '';
   }, []);
 
   const onPasswordLoginClick = useCallback(() => {
+    if (!visible) {
+      setVisible(true);
+      return;
+    }
+
     navigate('/auth/password-login');
-  }, [navigate]);
+  }, [navigate, visible]);
 
   useHotkeys(
     'enter',
@@ -59,31 +70,48 @@ export function Index() {
 
   return (
     <>
-      <Companies />
-      <Modal>
+      <AnimatedEaseIn>
         <Logo />
-        <Title>Welcome to Twenty</Title>
-        <StyledContentContainer>
-          <PrimaryButton fullWidth={true} onClick={onGoogleLoginClick}>
-            <IconBrandGoogle size={theme.icon.size.sm} stroke={4} />
-            Continue With Google
-          </PrimaryButton>
-          <HorizontalSeparator />
-          <TextInput
-            value={authFlowUserEmail}
-            placeholder="Email"
-            onChange={(value) => setAuthFlowUserEmail(value)}
-            fullWidth={true}
-          />
-          <SecondaryButton fullWidth={true} onClick={onPasswordLoginClick}>
-            Continue
-          </SecondaryButton>
-        </StyledContentContainer>
-        <FooterNote>
-          By using Twenty, you agree to the Terms of Service and Data Processing
-          Agreement.
-        </FooterNote>
-      </Modal>
+      </AnimatedEaseIn>
+      <Title animate>Welcome to Twenty</Title>
+      <StyledContentContainer>
+        <MainButton
+          icon={<IconBrandGoogle size={theme.icon.size.sm} stroke={4} />}
+          title="Continue with Google"
+          onClick={onGoogleLoginClick}
+          fullWidth
+        />
+        {visible && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            transition={{
+              type: 'spring',
+              stiffness: 800,
+              damping: 35,
+            }}
+          >
+            <HorizontalSeparator />
+            <TextInput
+              value={authFlowUserEmail}
+              placeholder="Email"
+              onChange={(value) => setAuthFlowUserEmail(value)}
+              fullWidth={true}
+            />
+          </motion.div>
+        )}
+        <MainButton
+          title="Continue with Email"
+          onClick={onPasswordLoginClick}
+          disabled={!authFlowUserEmail}
+          variant="secondary"
+          fullWidth
+        />
+      </StyledContentContainer>
+      <StyledFooterNote>
+        By using Twenty, you agree to the Terms of Service and Data Processing
+        Agreement.
+      </StyledFooterNote>
     </>
   );
 }

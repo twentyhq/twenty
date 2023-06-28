@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "framer-motion": "^10.12.17"
+  }
+}
