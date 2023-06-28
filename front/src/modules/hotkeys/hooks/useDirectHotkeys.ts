@@ -15,7 +15,7 @@ export function useDirectHotkeys(
 ) {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
-  const callbackIfDirectKey = function (
+  function callbackIfDirectKey(
     keyboardEvent: KeyboardEvent,
     hotkeysEvent: Hotkey,
   ) {
@@ -24,7 +24,7 @@ export function useDirectHotkeys(
       return;
     }
     setPendingHotkey(null);
-  };
+  }
 
   useHotkeys(keys, callbackIfDirectKey, dependencies);
 }
