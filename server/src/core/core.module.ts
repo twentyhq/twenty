@@ -6,6 +6,7 @@ import { PersonModule } from './person/person.module';
 import { PipelineModule } from './pipeline/pipeline.module';
 import { AuthModule } from './auth/auth.module';
 import { WorkspaceModule } from './workspace/workspace.module';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { WorkspaceModule } from './workspace/workspace.module';
     PersonModule,
     PipelineModule,
     WorkspaceModule,
+    EventModule,
   ],
   exports: [
     AuthModule,
@@ -25,6 +27,7 @@ import { WorkspaceModule } from './workspace/workspace.module';
     PersonModule,
     PipelineModule,
     WorkspaceModule,
+    EventModule,
   ],
 })
 export class CoreModule {}

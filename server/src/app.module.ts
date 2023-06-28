@@ -10,6 +10,7 @@ import { GraphQLError } from 'graphql';
 import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
+import { EventModule } from './core/event/event.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AbilityModule } from './ability/ability.module';
     HealthModule,
     AbilityModule,
     CoreModule,
+    EventModule,
   ],
   providers: [AppService],
 })
