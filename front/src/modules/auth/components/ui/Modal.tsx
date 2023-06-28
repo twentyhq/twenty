@@ -18,7 +18,7 @@ const StyledContainer = styled.div`
 
 export const AuthModal: React.FC<Props> = ({ children, ...restProps }) => {
   return (
-    <UIModal>
+    <UIModal isOpen={true}>
       <StyledContainer {...restProps}>{children}</StyledContainer>
     </UIModal>
   );

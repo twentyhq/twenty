@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import ReactModal from 'react-modal';
-import { useTheme } from '@emotion/react';
+import React from 'react';
 import styled from '@emotion/styled';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const ModalDiv = styled(motion.div)`
   background: ${({ theme }) => theme.background.primary};
@@ -25,7 +23,6 @@ const BackDrop = styled(motion.div)`
 
 interface Props extends React.PropsWithChildren {
   isOpen?: boolean;
-  onHide?: () => void;
 }
 
 const modalVariants = {
@@ -34,13 +31,7 @@ const modalVariants = {
   exit: { opacity: 0 },
 };
 
-export const Modal: React.FC<Props> = ({
-  isOpen: initialIsOpen = true,
-  children,
-  onHide,
-}) => {
-  const [isOpen, setIsOpen] = useState(initialIsOpen);
-
+export const Modal: React.FC<Props> = ({ isOpen = false, children }) => {
   if (!isOpen) {
     return null;
   }
