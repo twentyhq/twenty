@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 
 import { Logo } from '@/auth/components/ui/Logo';
-import { Section } from '@/auth/components/ui/Section';
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -14,6 +13,7 @@ import { isMockModeState } from '@/auth/states/isMockModeState';
 import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
+import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -101,7 +101,7 @@ export function PasswordLogin() {
       <StyledAnimatedContent>
         <StyledContentContainer>
           <StyledSectionContainer>
-            <Section title="Email" />
+            <SubSectionTitle title="Email" />
             <TextInput
               value={authFlowUserEmail}
               placeholder="Email"
@@ -110,7 +110,7 @@ export function PasswordLogin() {
             />
           </StyledSectionContainer>
           <StyledSectionContainer>
-            <Section title="Password" />
+            <SubSectionTitle title="Password" />
             <TextInput
               value={internalPassword}
               placeholder="Password"

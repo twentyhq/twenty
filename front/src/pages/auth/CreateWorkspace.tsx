@@ -3,12 +3,12 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { Section } from '@/auth/components/ui/Section';
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
+import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -55,11 +55,11 @@ export function CreateWorkspace() {
       </SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
-          <Section title="Workspace logo" />
+          <SubSectionTitle title="Workspace logo" />
           <ImageInput picture={null} disabled />
         </StyledSectionContainer>
         <StyledSectionContainer>
-          <Section
+          <SubSectionTitle
             title="Workspace name"
             description="The name of your organization"
           />
