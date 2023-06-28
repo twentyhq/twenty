@@ -31,8 +31,8 @@ const AuthRoutes: React.FC = () => {
             <Route path="" element={<Index />} />
             <Route path="callback" element={<Verify />} />
             <Route path="password-login" element={<PasswordLogin />} />
-            <Route path="create-workspace" element={<CreateWorkspace />} />
-            <Route path="create-profile" element={<CreateProfile />} />
+            <Route path="create/workspace" element={<CreateWorkspace />} />
+            <Route path="create/profile" element={<CreateProfile />} />
           </Routes>
         </AnimatePresence>
       </AuthModal>

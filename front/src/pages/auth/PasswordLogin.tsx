@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
@@ -47,7 +46,6 @@ const StyledErrorContainer = styled.div`
 `;
 
 export function PasswordLogin() {
-  const navigate = useNavigate();
   const [, setMockMode] = useRecoilState(isMockModeState);
 
   const prefillPassword =
@@ -63,14 +61,14 @@ export function PasswordLogin() {
 
   const handleLogin = useCallback(async () => {
     try {
-      // await login(authFlowUserEmail, internalPassword);
-      // setMockMode(false);
+      await login(authFlowUserEmail, internalPassword);
+      setMockMode(false);
       // TODO: Navigate to the workspace selection page when it's ready
-      navigate('/auth/create-workspace');
+      // navigate('/auth/create/workspace');
     } catch (err: any) {
       setFormError(err.message);
     }
-  }, [authFlowUserEmail, internalPassword, login, navigate, setMockMode]);
+  }, [authFlowUserEmail, internalPassword, login, setMockMode]);
 
   useHotkeys(
     'enter',

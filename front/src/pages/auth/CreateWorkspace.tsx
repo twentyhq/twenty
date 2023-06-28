@@ -31,7 +31,7 @@ export function CreateWorkspace() {
   const navigate = useNavigate();
 
   const handleCreate = useCallback(async () => {
-    navigate('/auth/create-profile');
+    navigate('/auth/create/profile');
   }, [navigate]);
 
   useHotkeys(
