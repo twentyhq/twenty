@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { queuedActionsState } from '@/command-menu/states/queuedAction';
+import { queuedActionsState } from '@/command-menu/states/queuedActionsState';
 import { GET_COMPANIES } from '@/companies/services';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
@@ -48,10 +48,13 @@ export function Companies() {
   }, [insertCompany]);
 
   useEffect(() => {
-    if (queuedActions.includes('companies/create_company')) {
+    const actionIndex = queuedActions.findIndex(
+      (action) => action.action === 'companies/create_company',
+    );
+    if (actionIndex !== -1) {
       handleAddButtonClick();
       setQueuedActions(
-        queuedActions.filter((action) => action !== 'companies/create_company'),
+        queuedActions.filter((_, index) => index !== actionIndex),
       );
     }
   }, [queuedActions, handleAddButtonClick, setQueuedActions]);
