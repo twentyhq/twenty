@@ -51,10 +51,11 @@ export class UserResolver {
     nullable: false,
   })
   displayName(@Parent() parent: User): string {
-    if (!parent.firstname && !parent.lastname) {
+    // TODO: Should be removed when displayName is removed from the database
+    if (!parent.firstName && !parent.lastName) {
       return parent.displayName ?? '';
     }
 
-    return `${parent.firstname} ${parent.lastname}`;
+    return `${parent.firstName} ${parent.lastName}`;
   }
 }

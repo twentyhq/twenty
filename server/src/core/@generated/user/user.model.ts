@@ -16,10 +16,10 @@ export class User {
     id!: string;
 
     @Field(() => String, {nullable:false})
-    firstname!: string;
+    firstName!: string;
 
     @Field(() => String, {nullable:false})
-    lastname!: string;
+    lastName!: string;
 
     @HideField()
     displayName!: string | null;

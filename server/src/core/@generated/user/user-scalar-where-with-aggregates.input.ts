@@ -24,10 +24,10 @@ export class UserScalarWhereWithAggregatesInput {
     id?: StringWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
-    firstname?: StringWithAggregatesFilter;
+    firstName?: StringWithAggregatesFilter;
 
     @Field(() => StringWithAggregatesFilter, {nullable:true})
-    lastname?: StringWithAggregatesFilter;
+    lastName?: StringWithAggregatesFilter;
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     displayName?: StringNullableWithAggregatesFilter;

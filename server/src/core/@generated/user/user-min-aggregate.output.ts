@@ -13,11 +13,11 @@ export class UserMinAggregate {
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
-    firstname?: string;
+    firstName?: string;
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
-    lastname?: string;
+    lastName?: string;
 
     @HideField()
     displayName?: string;

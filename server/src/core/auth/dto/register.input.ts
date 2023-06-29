@@ -34,10 +34,10 @@ export class RegisterInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  firstname: string;
+  firstName: string;
 
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  lastname: string;
+  lastName: string;
 }

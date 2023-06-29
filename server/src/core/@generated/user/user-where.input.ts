@@ -28,10 +28,10 @@ export class UserWhereInput {
     id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    firstname?: StringFilter;
+    firstName?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    lastname?: StringFilter;
+    lastName?: StringFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     displayName?: StringNullableFilter;

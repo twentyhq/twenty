@@ -34,8 +34,8 @@ export class GoogleAuthController {
     const user = await this.userService.createUser({
       data: {
         email,
-        firstname: firstName ?? '',
-        lastname: lastName ?? '',
+        firstName: firstName ?? '',
+        lastName: lastName ?? '',
         locale: 'en',
       },
     });

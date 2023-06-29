@@ -135,9 +135,9 @@ model User {
   /// @Validator.IsOptional()
   id            String    @id @default(uuid())
   /// @Validator.IsString()
-  firstname     String
+  firstName     String
   /// @Validator.IsString()
-  lastname      String
+  lastName      String
   // @deprecated: Use `firstname` and `lastname` instead
   /// @Validator.IsString()
   /// @Validator.IsOptional()

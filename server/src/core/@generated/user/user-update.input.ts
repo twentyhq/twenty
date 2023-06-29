@@ -20,10 +20,10 @@ export class UserUpdateInput {
     id?: StringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    firstname?: StringFieldUpdateOperationsInput;
+    firstName?: StringFieldUpdateOperationsInput;
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    lastname?: StringFieldUpdateOperationsInput;
+    lastName?: StringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     displayName?: NullableStringFieldUpdateOperationsInput;
