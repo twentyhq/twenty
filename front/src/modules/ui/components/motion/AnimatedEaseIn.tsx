@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 interface Props
@@ -14,9 +13,9 @@ export function AnimatedEaseIn({
   duration = 0.8,
   ...restProps
 }: Props) {
-  const initial = useMemo(() => ({ opacity: 0 }), []);
-  const animate = useMemo(() => ({ opacity: 1 }), []);
-  const transition = useMemo(() => ({ ease: 'linear', duration }), [duration]);
+  const initial = { opacity: 0 };
+  const animate = { opacity: 1 };
+  const transition = { ease: 'linear', duration };
 
   return (
     <motion.div
