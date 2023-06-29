@@ -23,6 +23,9 @@ front-lint:
 front-test:
 	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn test"
 
+front-coverage:
+	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn coverage"
+
 front-graphql-generate:
 	@docker-compose exec twenty-dev sh -c "cd /app/front && yarn graphql:generate"
 
