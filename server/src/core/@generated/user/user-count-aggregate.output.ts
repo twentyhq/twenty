@@ -10,6 +10,12 @@ export class UserCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
+    firstName!: number;
+
+    @Field(() => Int, {nullable:false})
+    lastName!: number;
+
+    @HideField()
     displayName!: number;
 
     @Field(() => Int, {nullable:false})

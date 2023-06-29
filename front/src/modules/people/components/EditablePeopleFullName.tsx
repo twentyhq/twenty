@@ -9,8 +9,8 @@ import { CommentableType, Person } from '~/generated/graphql';
 import { PersonChip } from './PersonChip';
 
 type OwnProps = {
-  person: Pick<Person, 'id' | 'firstname' | 'lastname' | '_commentCount'>;
-  onChange: (firstname: string, lastname: string) => void;
+  person: Pick<Person, 'id' | 'firstName' | 'lastName' | '_commentCount'>;
+  onChange: (firstName: string, lastName: string) => void;
 };
 
 const NoEditModeContainer = styled.div`
@@ -25,16 +25,16 @@ const RightContainer = styled.div`
 `;
 
 export function EditablePeopleFullName({ person, onChange }: OwnProps) {
-  const [firstnameValue, setFirstnameValue] = useState(person.firstname ?? '');
-  const [lastnameValue, setLastnameValue] = useState(person.lastname ?? '');
+  const [firstNameValue, setFirstNameValue] = useState(person.firstName ?? '');
+  const [lastNameValue, setLastNameValue] = useState(person.lastName ?? '');
   const openCommentRightDrawer = useOpenCommentRightDrawer();
 
   function handleDoubleTextChange(
     firstValue: string,
     secondValue: string,
   ): void {
-    setFirstnameValue(firstValue);
-    setLastnameValue(secondValue);
+    setFirstNameValue(firstValue);
+    setLastNameValue(secondValue);
 
     onChange(firstValue, secondValue);
   }
@@ -53,14 +53,14 @@ export function EditablePeopleFullName({ person, onChange }: OwnProps) {
 
   return (
     <EditableDoubleText
-      firstValue={firstnameValue}
-      secondValue={lastnameValue}
+      firstValue={firstNameValue}
+      secondValue={lastNameValue}
       firstValuePlaceholder="First name"
       secondValuePlaceholder="Last name"
       onChange={handleDoubleTextChange}
       nonEditModeContent={
         <NoEditModeContainer>
-          <PersonChip name={person.firstname + ' ' + person.lastname} />
+          <PersonChip name={person.firstName + ' ' + person.lastName} />
           <RightContainer>
             <CellCommentChip
               count={person._commentCount ?? 0}

@@ -18,8 +18,16 @@ export class UserCreateInput {
 
     @Field(() => String, {nullable:false})
     @Validator.IsString()
+    firstName!: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    lastName!: string;
+
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
     @Validator.IsOptional()
-    displayName!: string;
+    displayName?: string;
 
     @Field(() => String, {nullable:false})
     @Validator.IsEmail()

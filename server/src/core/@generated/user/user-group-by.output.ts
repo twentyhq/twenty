@@ -17,8 +17,14 @@ export class UserGroupBy {
 
     @Field(() => String, {nullable:false})
     @Validator.IsString()
-    @Validator.IsOptional()
-    displayName!: string;
+    firstName!: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    lastName!: string;
+
+    @HideField()
+    displayName?: string;
 
     @Field(() => String, {nullable:false})
     @Validator.IsEmail()

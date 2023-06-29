@@ -13,11 +13,11 @@ export class PersonMaxAggregate {
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
-    firstname?: string;
+    firstName?: string;
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
-    lastname?: string;
+    lastName?: string;
 
     @Field(() => String, {nullable:true})
     @Validator.IsEmail()

@@ -12,10 +12,10 @@ export class Person {
     id!: string;
 
     @Field(() => String, {nullable:false})
-    firstname!: string;
+    firstName!: string;
 
     @Field(() => String, {nullable:false})
-    lastname!: string;
+    lastName!: string;
 
     @Field(() => String, {nullable:false})
     email!: string;

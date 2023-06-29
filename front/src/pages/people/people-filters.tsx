@@ -23,13 +23,13 @@ export const fullnameFilter = {
       whereTemplate: (searchString: string) => ({
         OR: [
           {
-            firstname: {
+            firstName: {
               contains: `%${searchString}%`,
               mode: QueryMode.Insensitive,
             },
           },
           {
-            lastname: {
+            lastName: {
               contains: `%${searchString}%`,
               mode: QueryMode.Insensitive,
             },
@@ -45,13 +45,13 @@ export const fullnameFilter = {
           {
             AND: [
               {
-                firstname: {
+                firstName: {
                   contains: `%${searchString}%`,
                   mode: QueryMode.Insensitive,
                 },
               },
               {
-                lastname: {
+                lastName: {
                   contains: `%${searchString}%`,
                   mode: QueryMode.Insensitive,
                 },

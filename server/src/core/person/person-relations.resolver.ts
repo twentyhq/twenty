@@ -1,4 +1,4 @@
-import * as TypeGraphQL from '@nestjs/graphql';
+import { Resolver, Root, ResolveField, Int } from '@nestjs/graphql';
 import { CommentThread } from 'src/core/@generated/comment-thread/comment-thread.model';
 import { Comment } from 'src/core/@generated/comment/comment.model';
 import { Person } from 'src/core/@generated/person/person.model';
@@ -9,18 +9,18 @@ import {
   PrismaSelector,
 } from 'src/decorators/prisma-select.decorator';
 
-@TypeGraphQL.Resolver(() => Person)
+@Resolver(() => Person)
 export class PersonRelationsResolver {
   constructor(
     private readonly commentThreadService: CommentThreadService,
     private readonly commentService: CommentService,
   ) {}
 
-  @TypeGraphQL.ResolveField(() => [CommentThread], {
+  @ResolveField(() => [CommentThread], {
     nullable: false,
   })
   async commentThreads(
-    @TypeGraphQL.Root() person: Person,
+    @Root() person: Person,
     @PrismaSelector({ modelName: 'CommentThread' })
     prismaSelect: PrismaSelect<'CommentThread'>,
   ): Promise<Partial<CommentThread>[]> {
@@ -37,11 +37,11 @@ export class PersonRelationsResolver {
     });
   }
 
-  @TypeGraphQL.ResolveField(() => [Comment], {
+  @ResolveField(() => [Comment], {
     nullable: false,
   })
   async comments(
-    @TypeGraphQL.Root() person: Person,
+    @Root() person: Person,
     @PrismaSelector({ modelName: 'Comment' })
     prismaSelect: PrismaSelect<'Comment'>,
   ): Promise<Partial<Comment>[]> {
@@ -60,10 +60,10 @@ export class PersonRelationsResolver {
     });
   }
 
-  @TypeGraphQL.ResolveField(() => TypeGraphQL.Int, {
+  @ResolveField(() => Int, {
     nullable: false,
   })
-  async _commentCount(@TypeGraphQL.Root() person: Person): Promise<number> {
+  async _commentCount(@Root() person: Person): Promise<number> {
     return this.commentService.count({
       where: {
         commentThread: {

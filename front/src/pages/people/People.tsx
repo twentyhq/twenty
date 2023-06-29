@@ -63,8 +63,8 @@ export function People() {
     await insertPersonMutation({
       variables: {
         id: uuidv4(),
-        firstname: '',
-        lastname: '',
+        firstName: '',
+        lastName: '',
         email: '',
         phone: '',
         createdAt: new Date().toISOString(),
