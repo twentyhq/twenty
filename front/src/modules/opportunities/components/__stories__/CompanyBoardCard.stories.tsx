@@ -16,7 +16,12 @@ type Story = StoryObj<typeof CompanyBoardCard>;
 export const CompanyCompanyBoardCard: Story = {
   render: () => (
     <StrictMode>
-      <CompanyBoardCard company={mockedCompaniesData[0] as Company} />
+      <CompanyBoardCard
+        company={mockedCompaniesData[0] as Company}
+        isSelected={false}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onSelect={() => {}}
+      />
     </StrictMode>
   ),
 };

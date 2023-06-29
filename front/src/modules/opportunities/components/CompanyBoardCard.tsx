@@ -60,7 +60,15 @@ type CompanyProp = Pick<
   'id' | 'name' | 'domainName' | 'employees' | 'createdAt' | 'accountOwner'
 >;
 
-export function CompanyBoardCard({ company }: { company: CompanyProp }) {
+export function CompanyBoardCard({
+  company,
+  isSelected,
+  onSelect,
+}: {
+  company: CompanyProp;
+  isSelected: boolean;
+  onSelect: (company: CompanyProp) => void;
+}) {
   const theme = useTheme();
   return (
     <StyledBoardCardWrapper>
@@ -72,7 +80,7 @@ export function CompanyBoardCard({ company }: { company: CompanyProp }) {
           />
           <span>{company.name}</span>
           <div style={{ display: 'flex', flex: 1 }} />
-          <Checkbox />
+          <Checkbox checked={isSelected} onChange={() => onSelect(company)} />
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>

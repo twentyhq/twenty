@@ -70,6 +70,7 @@ export function Board({
 }: BoardProps) {
   const [board, setBoard] = useRecoilState(boardColumnsState);
   const [items, setItems] = useRecoilState(boardItemsState);
+  const [selectedItemKeys, setSelectedItemKeys] = useState<string[]>([]);
   const [isInitialBoardLoaded, setIsInitialBoardLoaded] = useState(false);
 
   useEffect(() => {
@@ -129,7 +130,24 @@ export function Board({
                               {...draggableProvided?.dragHandleProps}
                               {...draggableProvided?.draggableProps}
                             >
-                              <CompanyBoardCard company={items[itemKey]} />
+                              <CompanyBoardCard
+                                company={items[itemKey]}
+                                isSelected={selectedItemKeys.includes(itemKey)}
+                                onSelect={() => {
+                                  if (selectedItemKeys.includes(itemKey)) {
+                                    setSelectedItemKeys(
+                                      selectedItemKeys.filter(
+                                        (key) => key !== itemKey,
+                                      ),
+                                    );
+                                  } else {
+                                    setSelectedItemKeys([
+                                      ...selectedItemKeys,
+                                      itemKey,
+                                    ]);
+                                  }
+                                }}
+                              />
                             </div>
                           )}
                         </Draggable>
