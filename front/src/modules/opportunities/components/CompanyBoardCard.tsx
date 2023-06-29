@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { Company } from '../../../generated/graphql';
 import { PersonChip } from '../../people/components/PersonChip';
+import { Checkbox } from '../../ui/components/form/Checkbox';
 import { IconCalendarEvent, IconUser, IconUsers } from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
 
@@ -12,6 +13,9 @@ const StyledBoardCard = styled.div`
   border-radius: 4px;
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
+  &:hover {
+    background-color: ${({ theme }) => theme.background.tertiary};
+  }
   cursor: pointer;
 `;
 
@@ -67,6 +71,8 @@ export function CompanyBoardCard({ company }: { company: CompanyProp }) {
             alt={`${company.name}-company-logo`}
           />
           <span>{company.name}</span>
+          <div style={{ display: 'flex', flex: 1 }} />
+          <Checkbox />
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>
