@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import * as Validator from 'class-validator';
 import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { HideField } from '@nestjs/graphql';
 import { PipelineProgressCountAggregate } from './pipeline-progress-count-aggregate.output';
@@ -10,16 +11,9 @@ import { PipelineProgressMaxAggregate } from './pipeline-progress-max-aggregate.
 export class PipelineProgressGroupBy {
 
     @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    @Validator.IsOptional()
     id!: string;
-
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date | string;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
 
     @Field(() => String, {nullable:false})
     pipelineId!: string;
@@ -35,6 +29,15 @@ export class PipelineProgressGroupBy {
 
     @HideField()
     workspaceId!: string;
+
+    @HideField()
+    deletedAt?: Date | string;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
     @Field(() => PipelineProgressCountAggregate, {nullable:true})
     _count?: PipelineProgressCountAggregate;

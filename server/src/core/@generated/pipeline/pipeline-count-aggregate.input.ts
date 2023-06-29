@@ -9,15 +9,6 @@ export class PipelineCountAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    createdAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    updatedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    deletedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
     name?: true;
 
     @Field(() => Boolean, {nullable:true})
@@ -28,6 +19,15 @@ export class PipelineCountAggregateInput {
 
     @HideField()
     workspaceId?: true;
+
+    @HideField()
+    deletedAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    createdAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    updatedAt?: true;
 
     @Field(() => Boolean, {nullable:true})
     _all?: true;

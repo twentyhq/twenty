@@ -13,17 +13,17 @@ export class CommentThread {
     @Field(() => ID, {nullable:false})
     id!: string;
 
+    @HideField()
+    workspaceId!: string;
+
+    @HideField()
+    deletedAt!: Date | null;
+
     @Field(() => Date, {nullable:false})
     createdAt!: Date;
 
     @Field(() => Date, {nullable:false})
     updatedAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
-
-    @HideField()
-    workspaceId!: string;
 
     @Field(() => [CommentThreadTarget], {nullable:true})
     commentThreadTargets?: Array<CommentThreadTarget>;

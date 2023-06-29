@@ -2,11 +2,11 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum WorkspaceMemberScalarFieldEnum {
     id = "id",
-    createdAt = "createdAt",
-    updatedAt = "updatedAt",
-    deletedAt = "deletedAt",
     userId = "userId",
-    workspaceId = "workspaceId"
+    workspaceId = "workspaceId",
+    deletedAt = "deletedAt",
+    createdAt = "createdAt",
+    updatedAt = "updatedAt"
 }
 
 

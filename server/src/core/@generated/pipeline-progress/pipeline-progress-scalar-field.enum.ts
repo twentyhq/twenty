@@ -2,14 +2,14 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum PipelineProgressScalarFieldEnum {
     id = "id",
-    createdAt = "createdAt",
-    updatedAt = "updatedAt",
-    deletedAt = "deletedAt",
     pipelineId = "pipelineId",
     pipelineStageId = "pipelineStageId",
     progressableType = "progressableType",
     progressableId = "progressableId",
-    workspaceId = "workspaceId"
+    workspaceId = "workspaceId",
+    deletedAt = "deletedAt",
+    createdAt = "createdAt",
+    updatedAt = "updatedAt"
 }
 
 

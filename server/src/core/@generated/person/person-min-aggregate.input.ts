@@ -9,15 +9,6 @@ export class PersonMinAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    createdAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    updatedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    deletedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
     firstname?: true;
 
     @Field(() => Boolean, {nullable:true})
@@ -37,4 +28,13 @@ export class PersonMinAggregateInput {
 
     @HideField()
     workspaceId?: true;
+
+    @HideField()
+    deletedAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    createdAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    updatedAt?: true;
 }

@@ -9,25 +9,13 @@ export class UserCountAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    createdAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    updatedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    deletedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    lastSeen?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    disabled?: true;
-
-    @Field(() => Boolean, {nullable:true})
     displayName?: true;
 
     @Field(() => Boolean, {nullable:true})
     email?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    emailVerified?: true;
 
     @Field(() => Boolean, {nullable:true})
     avatarUrl?: true;
@@ -38,14 +26,26 @@ export class UserCountAggregateInput {
     @Field(() => Boolean, {nullable:true})
     phoneNumber?: true;
 
+    @Field(() => Boolean, {nullable:true})
+    lastSeen?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    disabled?: true;
+
     @HideField()
     passwordHash?: true;
 
     @Field(() => Boolean, {nullable:true})
-    emailVerified?: true;
+    metadata?: true;
+
+    @HideField()
+    deletedAt?: true;
 
     @Field(() => Boolean, {nullable:true})
-    metadata?: true;
+    createdAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    updatedAt?: true;
 
     @Field(() => Boolean, {nullable:true})
     _all?: true;

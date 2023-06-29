@@ -13,15 +13,6 @@ export class PersonOrderByWithAggregationInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     firstname?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
@@ -41,6 +32,15 @@ export class PersonOrderByWithAggregationInput {
 
     @HideField()
     workspaceId?: keyof typeof SortOrder;
+
+    @HideField()
+    deletedAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
     @Field(() => PersonCountOrderByAggregateInput, {nullable:true})
     _count?: PersonCountOrderByAggregateInput;

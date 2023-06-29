@@ -1,5 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import * as Validator from 'class-validator';
+import { HideField } from '@nestjs/graphql';
 import { WorkspaceCountAggregate } from './workspace-count-aggregate.output';
 import { WorkspaceMinAggregate } from './workspace-min-aggregate.output';
 import { WorkspaceMaxAggregate } from './workspace-max-aggregate.output';
@@ -8,25 +10,31 @@ import { WorkspaceMaxAggregate } from './workspace-max-aggregate.output';
 export class WorkspaceGroupBy {
 
     @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    @Validator.IsOptional()
     id!: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    domainName!: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    displayName!: string;
+
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    logo?: string;
+
+    @HideField()
+    deletedAt?: Date | string;
 
     @Field(() => Date, {nullable:false})
     createdAt!: Date | string;
 
     @Field(() => Date, {nullable:false})
     updatedAt!: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
-
-    @Field(() => String, {nullable:false})
-    domainName!: string;
-
-    @Field(() => String, {nullable:false})
-    displayName!: string;
-
-    @Field(() => String, {nullable:true})
-    logo?: string;
 
     @Field(() => WorkspaceCountAggregate, {nullable:true})
     _count?: WorkspaceCountAggregate;

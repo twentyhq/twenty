@@ -11,15 +11,6 @@ export class Person {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
-
     @Field(() => String, {nullable:false})
     firstname!: string;
 
@@ -40,6 +31,15 @@ export class Person {
 
     @HideField()
     workspaceId!: string;
+
+    @HideField()
+    deletedAt!: Date | null;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
     @Field(() => Company, {nullable:true})
     company?: Company | null;
