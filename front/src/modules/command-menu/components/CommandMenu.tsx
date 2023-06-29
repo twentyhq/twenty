@@ -1,9 +1,13 @@
 import React from 'react';
+import { useMatch, useResolvedPath } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
+import { IconBuildingSkyscraper, IconUser } from '@/ui/icons';
 
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
+import { queuedActionsState } from '../states/queuedAction';
 
 import { CommandMenuItem } from './CommandMenuItem';
 import {
@@ -14,9 +18,10 @@ import {
   StyledList,
   // StyledSeparator,
 } from './CommandMenuStyles';
-
 export function CommandMenu() {
+  const navigate = useNavigate();
   const [open, setOpen] = useRecoilState(isCommandMenuOpenedState);
+  const [, setQueuedActions] = useRecoilState(queuedActionsState);
 
   useDirectHotkeys(
     'ctrl+k,meta+k',
@@ -27,17 +32,18 @@ export function CommandMenu() {
     [setOpen],
   );
 
-  /*
-  TODO: Allow performing actions on page through CommandBar 
-
-  import { useMatch, useResolvedPath } from 'react-router-dom';
-  import { IconBuildingSkyscraper, IconUser } from '@/ui/icons';
+  const queueActionAndNavigate = (action: string, path: string) => {
+    setQueuedActions((oldQueue) => [...oldQueue, action]);
+    navigate(path);
+  };
 
   const createSection = (
     <StyledGroup heading="Create">
       <CommandMenuItem
         label="Create People"
-        onClick={createPeople}
+        onClick={() =>
+          queueActionAndNavigate('people/create_people', '/people')
+        }
         icon={<IconUser />}
         shortcuts={
           !!useMatch({
@@ -50,7 +56,9 @@ export function CommandMenu() {
       />
       <CommandMenuItem
         label="Create Company"
-        onClick={createCompany}
+        onClick={() =>
+          queueActionAndNavigate('companies/create_company', '/companies')
+        }
         icon={<IconBuildingSkyscraper />}
         shortcuts={
           !!useMatch({
@@ -62,7 +70,7 @@ export function CommandMenu() {
         }
       />
     </StyledGroup>
-  );*/
+  );
 
   return (
     <StyledDialog
@@ -73,6 +81,7 @@ export function CommandMenu() {
       <StyledInput placeholder="Search" />
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
+        {createSection}
         <StyledGroup heading="Go to">
           <CommandMenuItem to="/people" label="People" shortcuts={['G', 'P']} />
           <CommandMenuItem

@@ -1,9 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import { queuedActionsState } from '@/command-menu/states/queuedAction';
 import {
   CompaniesSelectedSortType,
   defaultOrderBy,
@@ -45,22 +47,13 @@ export function Companies() {
   const [orderBy, setOrderBy] = useState<Companies_Order_By[]>(defaultOrderBy);
   const [where, setWhere] = useState<CompanyWhereInput>({});
 
-  const updateSorts = useCallback((sorts: Array<CompaniesSelectedSortType>) => {
-    setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
-  }, []);
-
-  const updateFilters = useCallback(
-    (filters: Array<SelectedFilterType<GetCompaniesQuery['companies'][0]>>) => {
-      setWhere(reduceFiltersToWhere(filters));
-    },
-    [],
-  );
+  const [queuedActions, setQueuedActions] = useRecoilState(queuedActionsState);
 
   const { data } = useCompaniesQuery(orderBy, where);
 
   const companies = data?.companies ?? [];
 
-  async function handleAddButtonClick() {
+  const handleAddButtonClick = useCallback(async () => {
     const newCompany: InsertCompanyMutationVariables = {
       id: uuidv4(),
       name: '',
@@ -74,7 +67,27 @@ export function Companies() {
       variables: newCompany,
       refetchQueries: [getOperationName(GET_COMPANIES) ?? ''],
     });
-  }
+  }, [insertCompany]);
+
+  useEffect(() => {
+    if (queuedActions.includes('companies/create_company')) {
+      handleAddButtonClick();
+      setQueuedActions(
+        queuedActions.filter((action) => action !== 'companies/create_company'),
+      );
+    }
+  }, [queuedActions, handleAddButtonClick, setQueuedActions]);
+
+  const updateSorts = useCallback((sorts: Array<CompaniesSelectedSortType>) => {
+    setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
+  }, []);
+
+  const updateFilters = useCallback(
+    (filters: Array<SelectedFilterType<GetCompaniesQuery['companies'][0]>>) => {
+      setWhere(reduceFiltersToWhere(filters));
+    },
+    [],
+  );
 
   const companiesColumns = useCompaniesColumns();
   const theme = useTheme();

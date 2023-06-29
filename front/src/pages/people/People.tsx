@@ -1,9 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import { queuedActionsState } from '@/command-menu/states/queuedAction';
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
@@ -42,16 +44,7 @@ export function People() {
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
   const [where, setWhere] = useState<PersonWhereInput>({});
 
-  const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
-    setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
-  }, []);
-
-  const updateFilters = useCallback(
-    (filters: Array<SelectedFilterType<GetPeopleQuery['people'][0]>>) => {
-      setWhere(reduceFiltersToWhere(filters));
-    },
-    [],
-  );
+  const [queuedActions, setQueuedActions] = useRecoilState(queuedActionsState);
 
   const [insertPersonMutation] = useInsertPersonMutation();
 
@@ -59,7 +52,7 @@ export function People() {
 
   const people = data?.people ?? [];
 
-  async function handleAddButtonClick() {
+  const handleAddButtonClick = useCallback(async () => {
     await insertPersonMutation({
       variables: {
         id: uuidv4(),
@@ -72,7 +65,27 @@ export function People() {
       },
       refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
     });
-  }
+  }, [insertPersonMutation]);
+
+  useEffect(() => {
+    if (queuedActions.includes('people/create_people')) {
+      handleAddButtonClick();
+      setQueuedActions(
+        queuedActions.filter((action) => action !== 'people/create_people'),
+      );
+    }
+  }, [queuedActions, handleAddButtonClick, setQueuedActions]);
+
+  const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
+    setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
+  }, []);
+
+  const updateFilters = useCallback(
+    (filters: Array<SelectedFilterType<GetPeopleQuery['people'][0]>>) => {
+      setWhere(reduceFiltersToWhere(filters));
+    },
+    [],
+  );
 
   const peopleColumns = usePeopleColumns();
 
