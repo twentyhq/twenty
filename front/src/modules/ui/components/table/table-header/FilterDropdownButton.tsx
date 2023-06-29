@@ -1,5 +1,6 @@
 import { ChangeEvent, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import {
   FilterableFieldsType,
@@ -7,6 +8,7 @@ import {
   FilterOperandType,
   SelectedFilterType,
 } from '@/filters-and-sorts/interfaces/filters/interface';
+import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { SearchResultsType, useSearch } from '@/search/services/search';
 import { humanReadableDate } from '@/utils/utils';
 
@@ -31,6 +33,9 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
   onFilterRemove,
 }: OwnProps<TData>) => {
   const [isUnfolded, setIsUnfolded] = useState(false);
+  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
+    captureHotkeyTypeInFocusState,
+  );
 
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
 
@@ -127,6 +132,7 @@ export const FilterDropdownButton = <TData extends FilterableFieldsType>({
                     operand: selectedFilterOperand,
                   });
                   setIsUnfolded(false);
+                  setCaptureHotkeyTypeInFocus(false);
                   setSelectedFilter(undefined);
                 }}
               >
