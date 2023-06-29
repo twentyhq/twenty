@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { queuedActionsState } from '@/command-menu/states/queuedAction';
+import { queuedActionsState } from '@/command-menu/states/queuedActionsState';
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
@@ -68,10 +68,13 @@ export function People() {
   }, [insertPersonMutation]);
 
   useEffect(() => {
-    if (queuedActions.includes('people/create_people')) {
+    const actionIndex = queuedActions.findIndex(
+      (action) => action.action === 'people/create_people',
+    );
+    if (actionIndex !== -1) {
       handleAddButtonClick();
       setQueuedActions(
-        queuedActions.filter((action) => action !== 'people/create_people'),
+        queuedActions.filter((_, index) => index !== actionIndex),
       );
     }
   }, [queuedActions, handleAddButtonClick, setQueuedActions]);

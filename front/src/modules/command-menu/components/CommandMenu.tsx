@@ -2,12 +2,14 @@ import React from 'react';
 import { useMatch, useResolvedPath } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import { v4 as uuidv4 } from 'uuid';
 
 import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
 import { IconBuildingSkyscraper, IconUser } from '@/ui/icons';
 
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
-import { queuedActionsState } from '../states/queuedAction';
+import { queuedActionsState } from '../states/queuedActionsState';
+import { QueuedActions } from '../types/QueuedActions';
 
 import { CommandMenuItem } from './CommandMenuItem';
 import {
@@ -32,8 +34,8 @@ export function CommandMenu() {
     [setOpen],
   );
 
-  const queueActionAndNavigate = (action: string, path: string) => {
-    setQueuedActions((oldQueue) => [...oldQueue, action]);
+  const queueActionAndNavigate = (action: QueuedActions, path: string) => {
+    setQueuedActions((oldQueue) => [...oldQueue, { id: uuidv4(), action }]);
     navigate(path);
   };
 
