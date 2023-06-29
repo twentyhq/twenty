@@ -10,7 +10,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { GoogleRequest } from '../strategies/google.auth.strategy';
 import { UserService } from '../../user/user.service';
-import { assertNotNull } from 'src/utils/assert';
 import { TokenService } from '../services/token.service';
 
 @Controller('auth/google')
@@ -31,12 +30,12 @@ export class GoogleAuthController {
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     const { firstName, lastName, email } = req.user;
-    const displayName = [firstName, lastName].filter(assertNotNull).join(' ');
 
     const user = await this.userService.createUser({
       data: {
         email,
-        displayName,
+        firstname: firstName ?? '',
+        lastname: lastName ?? '',
         locale: 'en',
       },
     });

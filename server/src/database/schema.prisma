@@ -135,8 +135,14 @@ model User {
   /// @Validator.IsOptional()
   id            String    @id @default(uuid())
   /// @Validator.IsString()
+  firstname     String
+  /// @Validator.IsString()
+  lastname      String
+  // @deprecated: Use `firstname` and `lastname` instead
+  /// @Validator.IsString()
   /// @Validator.IsOptional()
-  displayName   String
+  /// @TypeGraphQL.omit(input: false, output: true)
+  displayName   String?
   /// @Validator.IsEmail()
   email         String    @unique
   /// @Validator.IsBoolean()

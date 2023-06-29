@@ -10,6 +10,12 @@ export class UserMaxOrderByAggregateInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
+    firstname?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    lastname?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
     displayName?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})

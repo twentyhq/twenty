@@ -9,6 +9,12 @@ export class UserMinAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    firstname?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    lastname?: true;
+
+    @Field(() => Boolean, {nullable:true})
     displayName?: true;
 
     @Field(() => Boolean, {nullable:true})

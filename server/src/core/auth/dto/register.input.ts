@@ -1,6 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MinLength,
@@ -22,8 +23,21 @@ export class RegisterInput {
   @Matches(PASSWORD_REGEX, { message: 'password too weak' })
   password: string;
 
+  @Field(() => String, {
+    deprecationReason: 'Deprecated, please use firstname and lastname instead',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  displayName?: string;
+
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  displayName: string;
+  firstname: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  lastname: string;
 }
