@@ -12,6 +12,7 @@ import { Modal } from '@/auth/components/ui/Modal';
 import { Title } from '@/auth/components/ui/Title';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
+import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { PrimaryButton } from '@/ui/components/buttons/PrimaryButton';
 import { SecondaryButton } from '@/ui/components/buttons/SecondaryButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
@@ -25,6 +26,9 @@ const StyledContentContainer = styled.div`
 `;
 
 export function Index() {
+  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
+    captureHotkeyTypeInFocusState,
+  );
   const navigate = useNavigate();
   const theme = useTheme();
   const [, setMockMode] = useRecoilState(isMockModeState);
@@ -55,7 +59,8 @@ export function Index() {
 
   useEffect(() => {
     setMockMode(true);
-  }, [navigate, setMockMode]);
+    setCaptureHotkeyTypeInFocus(true);
+  }, [navigate, setMockMode, setCaptureHotkeyTypeInFocus]);
 
   return (
     <>

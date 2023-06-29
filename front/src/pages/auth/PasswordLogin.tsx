@@ -12,6 +12,7 @@ import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
+import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { PrimaryButton } from '@/ui/components/buttons/PrimaryButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { Companies } from '~/pages/companies/Companies';
@@ -37,6 +38,9 @@ const StyledErrorContainer = styled.div`
 export function PasswordLogin() {
   const navigate = useNavigate();
   const [, setMockMode] = useRecoilState(isMockModeState);
+  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
+    captureHotkeyTypeInFocusState,
+  );
 
   const prefillPassword =
     process.env.NODE_ENV === 'development' ? 'applecar2025' : '';
@@ -53,11 +57,19 @@ export function PasswordLogin() {
     try {
       await login(authFlowUserEmail, internalPassword);
       setMockMode(false);
+      setCaptureHotkeyTypeInFocus(false);
       navigate('/');
     } catch (err: any) {
       setFormError(err.message);
     }
-  }, [authFlowUserEmail, internalPassword, login, navigate, setMockMode]);
+  }, [
+    authFlowUserEmail,
+    internalPassword,
+    login,
+    navigate,
+    setMockMode,
+    setCaptureHotkeyTypeInFocus,
+  ]);
 
   useHotkeys(
     'enter',
