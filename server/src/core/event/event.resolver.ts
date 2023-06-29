@@ -19,8 +19,8 @@ export class EventResolver {
   createEvent(
     @Args() createEventInput: CreateEventInput,
     @Context() context: any,
-    @AuthWorkspace() workspace: Workspace,
-    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace | undefined,
+    @AuthUser() user: User | undefined,
   ) {
     if (process.env.IS_TELEMETRY_ENABLED === 'false') {
       return;
@@ -32,7 +32,7 @@ export class EventResolver {
         userUUID: user ? anonymize(user.id) : undefined,
         workspaceUUID: workspace ? anonymize(workspace.id) : undefined,
         workspaceDomain: workspace ? workspace.domainName : undefined,
-        ...JSON.parse(createEventInput.data),
+        ...createEventInput.data,
       },
     };
 

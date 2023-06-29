@@ -8,6 +8,10 @@ export function useTrackPageView() {
   const eventTracker = useEventTracker();
 
   useEffect(() => {
-    eventTracker('pageview', { location });
+    eventTracker('pageview', {
+      location: {
+        pathname: location.pathname,
+      },
+    });
   }, [location, eventTracker]);
 }

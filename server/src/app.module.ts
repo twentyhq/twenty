@@ -11,6 +11,7 @@ import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
 import { EventModule } from './core/event/event.module';
+import GraphQLJSON from 'graphql-type-json';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { EventModule } from './core/event/event.module';
       context: ({ req }) => ({ req }),
       driver: ApolloDriver,
       autoSchemaFile: true,
+      resolvers: { JSON: GraphQLJSON },
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       formatError: (error: GraphQLError) => {
         error.extensions.stacktrace = undefined;
