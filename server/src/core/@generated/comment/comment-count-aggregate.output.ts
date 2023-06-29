@@ -10,15 +10,6 @@ export class CommentCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
-    createdAt!: number;
-
-    @Field(() => Int, {nullable:false})
-    updatedAt!: number;
-
-    @Field(() => Int, {nullable:false})
-    deletedAt!: number;
-
-    @Field(() => Int, {nullable:false})
     body!: number;
 
     @Field(() => Int, {nullable:false})
@@ -29,6 +20,15 @@ export class CommentCountAggregate {
 
     @HideField()
     workspaceId!: number;
+
+    @HideField()
+    deletedAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    createdAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    updatedAt!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

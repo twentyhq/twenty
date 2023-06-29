@@ -13,15 +13,6 @@ export class PipelineProgress {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
-
     @Field(() => String, {nullable:false})
     pipelineId!: string;
 
@@ -36,6 +27,15 @@ export class PipelineProgress {
 
     @HideField()
     workspaceId!: string;
+
+    @HideField()
+    deletedAt!: Date | null;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
     @Field(() => Pipeline, {nullable:false})
     pipeline?: Pipeline;

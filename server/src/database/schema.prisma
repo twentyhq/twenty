@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "binary"
 }
 
@@ -9,125 +9,159 @@ datasource db {
 }
 
 generator nestgraphql {
-    provider = "node node_modules/prisma-nestjs-graphql"
-    output = "../../src/core/@generated"
+  provider = "node node_modules/prisma-nestjs-graphql"
+  output   = "../../src/core/@generated"
 
-    // CommentThread create: Only Allow targets createMany and comments createMany
-    decorate_createCommentThreadTargets_type = "*CommentThreadTargetCreateNestedManyWithoutCommentThreadInput"
-    decorate_createCommentThreadTargets_field = "!(createMany)"
-    decorate_createCommentThreadTargets_name = "HideField"
-    decorate_createCommentThreadTargets_from = "@nestjs/graphql"
-    decorate_createCommentThreadTargets_arguments = "[]"
+  // field validator
+  fields_Validator_input  = true
+  fields_Validator_output = true
+  fields_Validator_model  = true
+  fields_Validator_from   = "class-validator"
 
-    decorate_createCommentThreadComments_type = "*CommentCreateNestedManyWithoutCommentThreadInput"
-    decorate_createCommentThreadComments_field = "!(createMany)"
-    decorate_createCommentThreadComments_name = "HideField"
-    decorate_createCommentThreadComments_from = "@nestjs/graphql"
-    decorate_createCommentThreadComments_arguments = "[]"
+  // CommentThread create: Only Allow targets createMany and comments createMany
+  decorate_createCommentThreadTargets_type      = "*CommentThreadTargetCreateNestedManyWithoutCommentThreadInput"
+  decorate_createCommentThreadTargets_field     = "!(createMany)"
+  decorate_createCommentThreadTargets_name      = "HideField"
+  decorate_createCommentThreadTargets_from      = "@nestjs/graphql"
+  decorate_createCommentThreadTargets_arguments = "[]"
 
-    // Comment create: Only Allow author connect and commentThread connect
-    decorate_createCommentUser_type = "*UserCreateNestedOneWithoutCommentsInput"
-    decorate_createCommentUser_field = "!(connect)"
-    decorate_createCommentUser_name = "HideField"
-    decorate_createCommentUser_from = "@nestjs/graphql"
-    decorate_createCommentUser_arguments = "[]"
+  decorate_createCommentThreadComments_type      = "*CommentCreateNestedManyWithoutCommentThreadInput"
+  decorate_createCommentThreadComments_field     = "!(createMany)"
+  decorate_createCommentThreadComments_name      = "HideField"
+  decorate_createCommentThreadComments_from      = "@nestjs/graphql"
+  decorate_createCommentThreadComments_arguments = "[]"
 
-    decorate_createCommentCommentThread_type = "*CommentThreadCreateNestedOneWithoutCommentsInput"
-    decorate_createCommentCommentThread_field = "!(connect)"
-    decorate_createCommentCommentThread_name = "HideField"
-    decorate_createCommentCommentThread_from = "@nestjs/graphql"
-    decorate_createCommentCommentThread_arguments = "[]"
+  // Comment create: Only Allow author connect and commentThread connect
+  decorate_createCommentUser_type      = "*UserCreateNestedOneWithoutCommentsInput"
+  decorate_createCommentUser_field     = "!(connect)"
+  decorate_createCommentUser_name      = "HideField"
+  decorate_createCommentUser_from      = "@nestjs/graphql"
+  decorate_createCommentUser_arguments = "[]"
 
-    // Person create: Only Allow company connect
-    decorate_createPersonCompany_type = "*CompanyCreateNestedOneWithoutPeopleInput"
-    decorate_createPersonCompany_field = "!(connect)"
-    decorate_createPersonCompany_name = "HideField"
-    decorate_createPersonCompany_from = "@nestjs/graphql"
-    decorate_createPersonCompany_arguments = "[]"
+  decorate_createCommentCommentThread_type      = "*CommentThreadCreateNestedOneWithoutCommentsInput"
+  decorate_createCommentCommentThread_field     = "!(connect)"
+  decorate_createCommentCommentThread_name      = "HideField"
+  decorate_createCommentCommentThread_from      = "@nestjs/graphql"
+  decorate_createCommentCommentThread_arguments = "[]"
 
-    // Person update: Only Allow company connect
-    decorate_updatePersonCompany_type = "*CompanyUpdateOneWithoutPeopleNestedInput"
-    decorate_updatePersonCompany_field = "!(connect)"
-    decorate_updatePersonCompany_name = "HideField"
-    decorate_updatePersonCompany_from = "@nestjs/graphql"
-    decorate_updatePersonCompany_arguments = "[]"
+  // Person create: Only Allow company connect
+  decorate_createPersonCompany_type      = "*CompanyCreateNestedOneWithoutPeopleInput"
+  decorate_createPersonCompany_field     = "!(connect)"
+  decorate_createPersonCompany_name      = "HideField"
+  decorate_createPersonCompany_from      = "@nestjs/graphql"
+  decorate_createPersonCompany_arguments = "[]"
 
-    // Company create: Only Allow people and accountOwner connect
-    decorate_createCompanyUser_type = "*UserCreateNestedOneWithoutCompaniesInput"
-    decorate_createCompanyUser_field = "!(connect)"
-    decorate_createCompanyUser_name = "HideField"
-    decorate_createCompanyUser_from = "@nestjs/graphql"
-    decorate_createCompanyUser_arguments = "[]"
+  // Person update: Only Allow company connect
+  decorate_updatePersonCompany_type      = "*CompanyUpdateOneWithoutPeopleNestedInput"
+  decorate_updatePersonCompany_field     = "!(connect)"
+  decorate_updatePersonCompany_name      = "HideField"
+  decorate_updatePersonCompany_from      = "@nestjs/graphql"
+  decorate_updatePersonCompany_arguments = "[]"
 
-    decorate_createCompanyPerson_type = "*PersonCreateNestedManyWithoutCompanyInput"
-    decorate_createCompanyPerson_field = "!(connect)"
-    decorate_createCompanyPerson_name = "HideField"
-    decorate_createCompanyPerson_from = "@nestjs/graphql"
-    decorate_createCompanyPerson_arguments = "[]"
+  // Company create: Only Allow people and accountOwner connect
+  decorate_createCompanyUser_type      = "*UserCreateNestedOneWithoutCompaniesInput"
+  decorate_createCompanyUser_field     = "!(connect)"
+  decorate_createCompanyUser_name      = "HideField"
+  decorate_createCompanyUser_from      = "@nestjs/graphql"
+  decorate_createCompanyUser_arguments = "[]"
 
-    // Company update: Only Allow action on people and accountOwner
-    decorate_updateCompanyUser_type = "*UserUpdateOneWithoutCompaniesNestedInput"
-    decorate_updateCompanyUser_field = "!(connect)"
-    decorate_updateCompanyUser_name = "HideField"
-    decorate_updateCompanyUser_from = "@nestjs/graphql"
-    decorate_updateCompanyUser_arguments = "[]"
+  decorate_createCompanyPerson_type      = "*PersonCreateNestedManyWithoutCompanyInput"
+  decorate_createCompanyPerson_field     = "!(connect)"
+  decorate_createCompanyPerson_name      = "HideField"
+  decorate_createCompanyPerson_from      = "@nestjs/graphql"
+  decorate_createCompanyPerson_arguments = "[]"
 
-    decorate_updateCompanyPerson_type = "*PersonUpdateManyWithoutCompanyNestedInput"
-    decorate_updateCompanyPerson_field = "!(connect)"
-    decorate_updateCompanyPerson_name = "HideField"
-    decorate_updateCompanyPerson_from = "@nestjs/graphql"
-    decorate_updateCompanyPerson_arguments = "[]"
+  // Company update: Only Allow action on people and accountOwner
+  decorate_updateCompanyUser_type      = "*UserUpdateOneWithoutCompaniesNestedInput"
+  decorate_updateCompanyUser_field     = "!(connect)"
+  decorate_updateCompanyUser_name      = "HideField"
+  decorate_updateCompanyUser_from      = "@nestjs/graphql"
+  decorate_updateCompanyUser_arguments = "[]"
 
-    // PipelineProgress create: Only Allow pipelineStage and pipeline connect
-    decorate_createPipelineProgressPipeline_type = "*PipelineCreateNestedOneWithoutPipelineProgressesInput"
-    decorate_createPipelineProgressPipeline_field = "!(connect)"
-    decorate_createPipelineProgressPipeline_name = "HideField"
-    decorate_createPipelineProgressPipeline_from = "@nestjs/graphql"
-    decorate_createPipelineProgressPipeline_arguments = "[]"
+  decorate_updateCompanyPerson_type      = "*PersonUpdateManyWithoutCompanyNestedInput"
+  decorate_updateCompanyPerson_field     = "!(connect)"
+  decorate_updateCompanyPerson_name      = "HideField"
+  decorate_updateCompanyPerson_from      = "@nestjs/graphql"
+  decorate_updateCompanyPerson_arguments = "[]"
 
-    decorate_createPipelineProgressPipelineStage_type = "*PipelineStageCreateNestedOneWithoutPipelineProgressesInput"
-    decorate_createPipelineProgressPipelineStage_field = "!(connect)"
-    decorate_createPipelineProgressPipelineStage_name = "HideField"
-    decorate_createPipelineProgressPipelineStage_from = "@nestjs/graphql"
-    decorate_createPipelineProgressPipelineStage_arguments = "[]"
+  // PipelineProgress create: Only Allow pipelineStage and pipeline connect
+  decorate_createPipelineProgressPipeline_type      = "*PipelineCreateNestedOneWithoutPipelineProgressesInput"
+  decorate_createPipelineProgressPipeline_field     = "!(connect)"
+  decorate_createPipelineProgressPipeline_name      = "HideField"
+  decorate_createPipelineProgressPipeline_from      = "@nestjs/graphql"
+  decorate_createPipelineProgressPipeline_arguments = "[]"
 
-    // PipelineProgress update: Only Allow pipelineStage and pipeline connect
-    decorate_updatePipelineProgressPipeline_type = "*PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput"
-    decorate_updatePipelineProgressPipeline_field = "!(connect)"
-    decorate_updatePipelineProgressPipeline_name = "HideField"
-    decorate_updatePipelineProgressPipeline_from = "@nestjs/graphql"
-    decorate_updatePipelineProgressPipeline_arguments = "[]"
+  decorate_createPipelineProgressPipelineStage_type      = "*PipelineStageCreateNestedOneWithoutPipelineProgressesInput"
+  decorate_createPipelineProgressPipelineStage_field     = "!(connect)"
+  decorate_createPipelineProgressPipelineStage_name      = "HideField"
+  decorate_createPipelineProgressPipelineStage_from      = "@nestjs/graphql"
+  decorate_createPipelineProgressPipelineStage_arguments = "[]"
 
-    decorate_updatePipelineProgressPipelineStage_type = "*PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput"
-    decorate_updatePipelineProgressPipelineStage_field = "!(connect)"
-    decorate_updatePipelineProgressPipelineStage_name = "HideField"
-    decorate_updatePipelineProgressPipelineStage_from = "@nestjs/graphql"
-    decorate_updatePipelineProgressPipelineStage_arguments = "[]"
-    
-    // Disable _count on all models except Aggregation use case
-    decorate_count_type = "!(*Aggregate*|*GroupBy*|*OrderBy*)"
-    decorate_count_field = "_count"
-    decorate_count_name = "HideField"
-    decorate_count_from = "@nestjs/graphql"
-    decorate_count_arguments = "[]"
+  // PipelineProgress update: Only Allow pipelineStage and pipeline connect
+  decorate_updatePipelineProgressPipeline_type      = "*PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput"
+  decorate_updatePipelineProgressPipeline_field     = "!(connect)"
+  decorate_updatePipelineProgressPipeline_name      = "HideField"
+  decorate_updatePipelineProgressPipeline_from      = "@nestjs/graphql"
+  decorate_updatePipelineProgressPipeline_arguments = "[]"
+
+  decorate_updatePipelineProgressPipelineStage_type      = "*PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput"
+  decorate_updatePipelineProgressPipelineStage_field     = "!(connect)"
+  decorate_updatePipelineProgressPipelineStage_name      = "HideField"
+  decorate_updatePipelineProgressPipelineStage_from      = "@nestjs/graphql"
+  decorate_updatePipelineProgressPipelineStage_arguments = "[]"
+
+  // Disable _count on all models except Aggregation use case
+  decorate_count_type      = "!(*Aggregate*|*GroupBy*|*OrderBy*)"
+  decorate_count_field     = "_count"
+  decorate_count_name      = "HideField"
+  decorate_count_from      = "@nestjs/graphql"
+  decorate_count_arguments = "[]"
+
+  // create data validator
+  decorate_classValidator_type        = "@(Create|Update|Upsert)*Args"
+  decorate_classValidator_field       = "@(data|[A-Z]*)"
+  decorate_classValidator_name        = ValidateNested
+  decorate_classValidator_from        = "class-validator"
+  decorate_classValidator_arguments   = "['{each: true}']"
+  decorate_classTransformer_type      = "@(Create|Update|Upsert)*Args"
+  decorate_classTransformer_field     = "@(data|[A-Z]*)"
+  decorate_classTransformer_from      = "class-transformer"
+  decorate_classTransformer_arguments = "['() => {propertyType.0}']"
+  decorate_classTransformer_name      = Type
 }
 
 model User {
-  id              String           @id @default(uuid())
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  deletedAt       DateTime?
-  lastSeen        DateTime?
-  disabled        Boolean          @default(false)
-  displayName     String
-  email           String           @unique
-  avatarUrl       String?
-  locale          String
-  phoneNumber     String?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id            String    @id @default(uuid())
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  displayName   String
+  /// @Validator.IsEmail()
+  email         String    @unique
+  /// @Validator.IsBoolean()
+  /// @Validator.IsOptional()
+  emailVerified Boolean   @default(false)
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  avatarUrl     String?
+  /// @Validator.IsString()
+  locale        String
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  phoneNumber   String?
+  /// @Validator.IsDate()
+  /// @Validator.IsOptional()
+  lastSeen      DateTime?
+  /// @Validator.IsBoolean()
+  /// @Validator.IsOptional()
+  disabled      Boolean   @default(false)
   /// @TypeGraphQL.omit(input: true, output: true)
-  passwordHash    String?
-  emailVerified   Boolean          @default(false)
-  metadata        Json?
+  passwordHash  String?
+  /// @Validator.IsJSON()
+  /// @Validator.IsOptional()
+  metadata      Json?
+
   /// @TypeGraphQL.omit(input: true)
   workspaceMember WorkspaceMember?
   companies       Company[]
@@ -135,18 +169,28 @@ model User {
   refreshTokens   RefreshToken[]
   comments        Comment[]
 
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("users")
 }
 
 /// @TypeGraphQL.omit(input: true)
 model Workspace {
-  id                 String            @id @default(uuid())
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
-  deletedAt          DateTime?
-  domainName         String            @unique
-  displayName        String
-  logo               String?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id          String  @id @default(uuid())
+  /// @Validator.IsString()
+  domainName  String  @unique
+  /// @Validator.IsString()
+  displayName String
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  logo        String?
+
   workspaceMember    WorkspaceMember[]
   companies          Company[]
   people             Person[]
@@ -156,110 +200,163 @@ model Workspace {
   pipelineStages     PipelineStage[]
   pipelineProgresses PipelineProgress[]
 
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("workspaces")
 }
 
 model WorkspaceMember {
-  id          String    @id @default(uuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-  userId      String    @unique
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
+
   user        User      @relation(fields: [userId], references: [id])
-  /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId String
+  userId      String    @unique
   /// @TypeGraphQL.omit(input: true, output: false)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("workspace_members")
 }
 
 model Company {
-  id             String    @id @default(uuid())
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  deletedAt      DateTime?
-  name           String
-  domainName     String
-  address        String
-  employees      Int?
-  accountOwnerId String?
-  accountOwner   User?     @relation(fields: [accountOwnerId], references: [id])
-  people         Person[]
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id         String @id @default(uuid())
+  /// @Validator.IsString()
+  name       String
+  /// @Validator.IsString()
+  domainName String
+  /// @Validator.IsString()
+  address    String
+  /// @Validator.IsNumber()
+  /// @Validator.IsOptional()
+  employees  Int?
 
-  /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId    String
+  people         Person[]
+  accountOwner   User?     @relation(fields: [accountOwnerId], references: [id])
+  accountOwnerId String?
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace      Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId    String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("companies")
 }
 
 model Person {
-  id          String    @id @default(uuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-  firstname   String
-  lastname    String
-  email       String
-  phone       String
-  city        String
-  companyId   String?
-  company     Company?  @relation(fields: [companyId], references: [id])
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id        String @id @default(uuid())
+  /// @Validator.IsString()
+  firstname String
+  /// @Validator.IsString()
+  lastname  String
+  /// @Validator.IsEmail()
+  email     String
+  /// @Validator.IsPhoneNumber()
+  phone     String
+  /// @Validator.IsString()
+  city      String
 
-  /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId String
+  company     Company?  @relation(fields: [companyId], references: [id])
+  companyId   String?
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("people")
 }
 
 model RefreshToken {
-  id           String    @id @default(uuid())
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  isRevoked    Boolean   @default(false)
-  expiresAt    DateTime
-  deletedAt    DateTime?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id        String  @id @default(uuid())
+  /// @Validator.IsBoolean()
+  /// @Validator.IsOptional()
+  isRevoked Boolean @default(false)
+
   /// @TypeGraphQL.omit(input: true, output: true)
-  userId       String
+  user   User   @relation(fields: [userId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  user         User      @relation(fields: [userId], references: [id])
+  userId String
+
+  expiresAt DateTime
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("refresh_tokens")
 }
 
 model CommentThread {
-  id                    String                @id @default(uuid())
-  createdAt             DateTime              @default(now())
-  updatedAt             DateTime              @updatedAt
-  deletedAt             DateTime?
-  commentThreadTargets  CommentThreadTarget[]
-  comments              Comment[]
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
+
+  commentThreadTargets CommentThreadTarget[]
+  comments             Comment[]
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId           String
+  workspace            Workspace             @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace             Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId          String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("comment_threads")
 }
 
 model Comment {
-  id               String        @id @default(uuid())
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  deletedAt        DateTime?
-  body             String
-  authorId         String
-  author           User          @relation(fields: [authorId], references: [id])
-  commentThreadId  String
-  commentThread    CommentThread @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id   String @id @default(uuid())
+  /// @Validator.IsString()
+  body String
+
+  author          User          @relation(fields: [authorId], references: [id])
+  authorId        String
+  commentThread   CommentThread @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
+  commentThreadId String
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId      String
+  workspace       Workspace     @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace        Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId     String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("comments")
 }
@@ -270,57 +367,75 @@ enum CommentableType {
 }
 
 model CommentThreadTarget {
-  id               String        @id @default(uuid())
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  deletedAt        DateTime?
-  commentThreadId  String
-  commentThread    CommentThread @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
 
-  commentableType  CommentableType
-  commentableId    String
+  commentThread   CommentThread @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
+  commentThreadId String
+
+  commentableType CommentableType
+  commentableId   String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("comment_thread_targets")
 }
 
 model Pipeline {
-  id                    String                @id @default(uuid())
-  createdAt             DateTime              @default(now())
-  updatedAt             DateTime              @updatedAt
-  deletedAt             DateTime?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id   String @id @default(uuid())
+  /// @Validator.IsString()
+  name String
+  /// @Validator.IsString()
+  icon String
 
-  name                  String
-  icon                  String
-  pipelineStages        PipelineStage[]
-  pipelineProgresses    PipelineProgress[]
-  pipelineProgressableType      PipelineProgressableType @default(Company)
+  pipelineStages           PipelineStage[]
+  pipelineProgresses       PipelineProgress[]
+  pipelineProgressableType PipelineProgressableType @default(Company)
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId           String
+  workspace                Workspace                @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace             Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId              String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("pipelines")
 }
 
 model PipelineStage {
-  id                    String                @id @default(uuid())
-  createdAt             DateTime              @default(now())
-  updatedAt             DateTime              @updatedAt
-  deletedAt             DateTime?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id    String @id @default(uuid())
+  /// @Validator.IsString()
+  name  String
+  /// @Validator.IsString()
+  type  String
+  /// @Validator.IsString()
+  color String
 
-  name                  String
-  type                  String
-  color                 String
-
-  pipelineId            String
-  pipeline              Pipeline @relation(fields: [pipelineId], references: [id])
-  
-  pipelineProgresses    PipelineProgress[]
+  pipelineProgresses PipelineProgress[]
+  pipeline           Pipeline           @relation(fields: [pipelineId], references: [id])
+  pipelineId         String
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace          Workspace          @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId        String
 
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId           String
-  /// @TypeGraphQL.omit(input: true, output: true)
-  workspace             Workspace @relation(fields: [workspaceId], references: [id])
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("pipeline_stages")
 }
@@ -331,24 +446,26 @@ enum PipelineProgressableType {
 }
 
 model PipelineProgress {
-  id                    String                @id @default(uuid())
-  createdAt             DateTime              @default(now())
-  updatedAt             DateTime              @updatedAt
-  deletedAt             DateTime?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
 
-  pipelineId            String
-  pipeline              Pipeline @relation(fields: [pipelineId], references: [id])
-
-  pipelineStageId       String
-  pipelineStage         PipelineStage @relation(fields: [pipelineStageId], references: [id])
-
-  progressableType      PipelineProgressableType
-  progressableId        String
+  pipeline         Pipeline                 @relation(fields: [pipelineId], references: [id])
+  pipelineId       String
+  pipelineStage    PipelineStage            @relation(fields: [pipelineStageId], references: [id])
+  pipelineStageId  String
+  progressableType PipelineProgressableType
+  progressableId   String
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace        Workspace                @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId      String
 
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId           String
-  /// @TypeGraphQL.omit(input: true, output: true)
-  workspace             Workspace @relation(fields: [workspaceId], references: [id])
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("pipeline_progresses")
 }

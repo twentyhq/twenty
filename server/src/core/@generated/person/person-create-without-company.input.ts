@@ -1,37 +1,45 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { WorkspaceCreateNestedOneWithoutPeopleInput } from '../workspace/workspace-create-nested-one-without-people.input';
+import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
+import { WorkspaceCreateNestedOneWithoutPeopleInput } from '../workspace/workspace-create-nested-one-without-people.input';
 
 @InputType()
 export class PersonCreateWithoutCompanyInput {
 
     @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
     id?: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    firstname!: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    lastname!: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsEmail()
+    email!: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsPhoneNumber()
+    phone!: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    city!: string;
+
+    @HideField()
+    deletedAt?: Date | string;
 
     @Field(() => Date, {nullable:true})
     createdAt?: Date | string;
 
     @Field(() => Date, {nullable:true})
     updatedAt?: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
-
-    @Field(() => String, {nullable:false})
-    firstname!: string;
-
-    @Field(() => String, {nullable:false})
-    lastname!: string;
-
-    @Field(() => String, {nullable:false})
-    email!: string;
-
-    @Field(() => String, {nullable:false})
-    phone!: string;
-
-    @Field(() => String, {nullable:false})
-    city!: string;
 
     @HideField()
     workspace!: WorkspaceCreateNestedOneWithoutPeopleInput;

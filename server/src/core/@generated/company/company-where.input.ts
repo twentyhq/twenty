@@ -1,13 +1,13 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
-import { DateTimeFilter } from '../prisma/date-time-filter.input';
-import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { IntNullableFilter } from '../prisma/int-nullable-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { HideField } from '@nestjs/graphql';
-import { UserRelationFilter } from '../user/user-relation-filter.input';
+import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
+import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { PersonListRelationFilter } from '../person/person-list-relation-filter.input';
+import { UserRelationFilter } from '../user/user-relation-filter.input';
 import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.input';
 
 @InputType()
@@ -24,15 +24,6 @@ export class CompanyWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
-
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
-
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
-
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
@@ -52,11 +43,20 @@ export class CompanyWhereInput {
     @HideField()
     workspaceId?: StringFilter;
 
-    @Field(() => UserRelationFilter, {nullable:true})
-    accountOwner?: UserRelationFilter;
+    @HideField()
+    deletedAt?: DateTimeNullableFilter;
+
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
+
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
     @Field(() => PersonListRelationFilter, {nullable:true})
     people?: PersonListRelationFilter;
+
+    @Field(() => UserRelationFilter, {nullable:true})
+    accountOwner?: UserRelationFilter;
 
     @HideField()
     workspace?: WorkspaceRelationFilter;

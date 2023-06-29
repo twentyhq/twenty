@@ -10,15 +10,6 @@ export class CommentMaxOrderByAggregateInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     body?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
@@ -29,4 +20,13 @@ export class CommentMaxOrderByAggregateInput {
 
     @HideField()
     workspaceId?: keyof typeof SortOrder;
+
+    @HideField()
+    deletedAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 }

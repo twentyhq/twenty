@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
 import { CommentThreadCountAggregate } from './comment-thread-count-aggregate.output';
 import { CommentThreadMinAggregate } from './comment-thread-min-aggregate.output';
@@ -9,19 +10,21 @@ import { CommentThreadMaxAggregate } from './comment-thread-max-aggregate.output
 export class CommentThreadGroupBy {
 
     @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    @Validator.IsOptional()
     id!: string;
+
+    @HideField()
+    workspaceId!: string;
+
+    @HideField()
+    deletedAt?: Date | string;
 
     @Field(() => Date, {nullable:false})
     createdAt!: Date | string;
 
     @Field(() => Date, {nullable:false})
     updatedAt!: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
-
-    @HideField()
-    workspaceId!: string;
 
     @Field(() => CommentThreadCountAggregate, {nullable:true})
     _count?: CommentThreadCountAggregate;
