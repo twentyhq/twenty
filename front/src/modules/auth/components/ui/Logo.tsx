@@ -13,10 +13,10 @@ const StyledLogo = styled.div`
   width: 48px;
 `;
 
-export const Logo: React.FC<Props> = (props) => {
+export function Logo(props: Props) {
   return (
     <StyledLogo {...props}>
       <img src="/icons/android/android-launchericon-192-192.png" alt="logo" />
     </StyledLogo>
   );
-};
+}

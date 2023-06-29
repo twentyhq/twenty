@@ -16,10 +16,10 @@ const StyledContainer = styled.div`
   }
 `;
 
-export const AuthModal: React.FC<Props> = ({ children, ...restProps }) => {
+export function AuthModal({ children, ...restProps }: Props) {
   return (
     <UIModal isOpen={true}>
       <StyledContainer {...restProps}>{children}</StyledContainer>
     </UIModal>
   );
-};
+}

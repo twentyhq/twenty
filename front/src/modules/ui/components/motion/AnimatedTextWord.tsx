@@ -16,10 +16,7 @@ export interface Props
   text: string;
 }
 
-export const AnimatedTextWord: React.FC<Props> = ({
-  text = '',
-  ...restProps
-}) => {
+export function AnimatedTextWord({ text = '', ...restProps }: Props) {
   const words = useMemo(() => {
     const words = text.split(' ');
 
@@ -77,4 +74,4 @@ export const AnimatedTextWord: React.FC<Props> = ({
       ))}
     </StyledContainer>
   );
-};
+}

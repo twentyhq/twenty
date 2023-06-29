@@ -11,6 +11,6 @@ const StyledContainer = styled.div`
   text-align: center;
 `;
 
-export const FooterNote: React.FC<Props> = (props) => {
+export function FooterNote(props: Props) {
   return <StyledContainer {...props} />;
-};
+}

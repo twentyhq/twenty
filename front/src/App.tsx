@@ -20,7 +20,7 @@ import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 /**
  * AuthRoutes is used to allow transitions between auth pages with framer-motion.
  */
-const AuthRoutes: React.FC = () => {
+function AuthRoutes() {
   const location = useLocation();
 
   return (
@@ -38,7 +38,7 @@ const AuthRoutes: React.FC = () => {
       </AuthModal>
     </LayoutGroup>
   );
-};
+}
 
 export function App() {
   useGoToHotkeys('p', '/people');

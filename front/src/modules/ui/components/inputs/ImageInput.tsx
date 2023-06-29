@@ -74,13 +74,13 @@ interface Props extends Omit<React.ComponentProps<'div'>, 'children'> {
   disabled?: boolean;
 }
 
-export const ImageInput: React.FC<Props> = ({
+export function ImageInput({
   picture,
   onUpload,
   onRemove,
   disabled = false,
   ...restProps
-}) => {
+}: Props) {
   const theme = useTheme();
 
   return (
@@ -120,4 +120,4 @@ export const ImageInput: React.FC<Props> = ({
       </Content>
     </Container>
   );
-};
+}

@@ -71,15 +71,17 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
   }};
 `;
 
-export const MainButton: React.FC<Props> = ({
+export function MainButton({
   icon,
   title,
   fullWidth = false,
   variant = 'primary',
   ...props
-}) => (
-  <StyledButton fullWidth={fullWidth} variant={variant} {...props}>
-    {icon}
-    {title}
-  </StyledButton>
-);
+}: Props) {
+  return (
+    <StyledButton fullWidth={fullWidth} variant={variant} {...props}>
+      {icon}
+      {title}
+    </StyledButton>
+  );
+}

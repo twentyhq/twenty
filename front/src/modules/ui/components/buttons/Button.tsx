@@ -129,16 +129,23 @@ const StyledButton = styled.button<
   }
 `;
 
-export const Button: React.FC<Props> = ({
+export function Button({
   icon,
   title,
   fullWidth = false,
   variant = 'primary',
   size = 'medium',
   ...props
-}) => (
-  <StyledButton fullWidth={fullWidth} variant={variant} size={size} {...props}>
-    {icon}
-    {title}
-  </StyledButton>
-);
+}: Props) {
+  return (
+    <StyledButton
+      fullWidth={fullWidth}
+      variant={variant}
+      size={size}
+      {...props}
+    >
+      {icon}
+      {title}
+    </StyledButton>
+  );
+}

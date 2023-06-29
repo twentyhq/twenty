@@ -1,6 +1,6 @@
 import { Companies } from '~/pages/companies/Companies';
 
-export const AuthLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
+export function AuthLayout({ children }: React.PropsWithChildren) {
   return (
     <>
       {/** Mocked data */}
@@ -8,4 +8,4 @@ export const AuthLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       {children}
     </>
   );
-};
+}

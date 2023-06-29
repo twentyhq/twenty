@@ -9,11 +9,11 @@ interface Props
   duration?: number;
 }
 
-export const AnimatedEaseIn: React.FC<Props> = ({
+export function AnimatedEaseIn({
   children,
   duration = 0.8,
   ...restProps
-}) => {
+}: Props) {
   const initial = useMemo(() => ({ opacity: 0 }), []);
   const animate = useMemo(() => ({ opacity: 1 }), []);
   const transition = useMemo(() => ({ ease: 'linear', duration }), [duration]);
@@ -28,4 +28,4 @@ export const AnimatedEaseIn: React.FC<Props> = ({
       {children}
     </motion.div>
   );
-};
+}

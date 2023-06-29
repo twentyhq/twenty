@@ -19,10 +19,10 @@ const StyledAnimatedTextWord = styled(AnimatedTextWord)`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-export const Title: React.FC<Props> = ({ children, animate = false }) => {
+export function Title({ children, animate = false }: Props) {
   if (animate && typeof children === 'string') {
     return <StyledAnimatedTextWord text={children} />;
   }
 
   return <StyledTitle>{children}</StyledTitle>;
-};
+}

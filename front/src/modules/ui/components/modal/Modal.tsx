@@ -31,7 +31,7 @@ const modalVariants = {
   exit: { opacity: 0 },
 };
 
-export const Modal: React.FC<Props> = ({ isOpen = false, children }) => {
+export function Modal({ isOpen = false, children }: Props) {
   if (!isOpen) {
     return null;
   }
@@ -51,4 +51,4 @@ export const Modal: React.FC<Props> = ({ isOpen = false, children }) => {
       </BackDrop>
     </>
   );
-};
+}
