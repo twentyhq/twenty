@@ -99,17 +99,18 @@ const StyledButton = styled.button<
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
-  &:hover {
-    background: ${({ theme, variant, disabled }) => {
+  &:hover,
+  &:active {
+    ${({ theme, variant, disabled }) => {
       if (disabled) {
-        return 'inherit';
+        return '';
       }
 
       switch (variant) {
         case 'primary':
-          return `linear-gradient(0deg, #000 0%, #000 100%), ${theme.color.blue}`;
+          return `background: linear-gradient(0deg, ${theme.background.transparent.medium} 0%, ${theme.background.transparent.medium} 100%), ${theme.color.blue}`;
         default:
-          return `${theme.background.tertiary}`;
+          return `background: ${theme.background.tertiary}`;
       }
     }};
   }
