@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useRecoilState } from 'recoil';
+import { useOnClickOutside } from 'usehooks-ts';
 
 import {
   FilterConfigType,
@@ -17,6 +18,7 @@ import {
   SortType,
 } from '@/filters-and-sorts/interfaces/sorts/interface';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { useSetTableSoftFocusActiveStatus } from '@/ui/tables/hooks/useSetTableSoftFocusActiveStatus';
 import { RowContext } from '@/ui/tables/states/RowContext';
 
 import { currentRowSelectionState } from '../../tables/states/rowSelectionState';
@@ -115,6 +117,8 @@ export function EntityTable<TData extends { id: string }, SortField>({
     currentRowSelectionState,
   );
 
+  const ref = React.useRef(null);
+
   const table = useReactTable<TData>({
     data,
     columns,
@@ -127,8 +131,18 @@ export function EntityTable<TData extends { id: string }, SortField>({
     getRowId: (row) => row.id,
   });
 
+  const setTableSoftFocusActiveStatus = useSetTableSoftFocusActiveStatus();
+  useOnClickOutside(ref, () => {
+    setTableSoftFocusActiveStatus(false);
+  });
+
   return (
-    <StyledTableWithHeader>
+    <StyledTableWithHeader
+      ref={ref}
+      onClick={() => {
+        setTableSoftFocusActiveStatus(true);
+      }}
+    >
       <TableHeader
         viewName={viewName}
         viewIcon={viewIcon}
