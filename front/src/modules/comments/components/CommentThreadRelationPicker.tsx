@@ -109,14 +109,14 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
 
   const personsForMultiSelect = useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
-    searchOnFields: ['firstname', 'lastname'],
-    orderByField: 'lastname',
+    searchOnFields: ['firstName', 'lastName'],
+    orderByField: 'lastName',
     selectedIds: peopleIds,
     mappingFunction: (entity) =>
       ({
         id: entity.id,
         entityType: CommentableType.Person,
-        name: `${entity.firstname} ${entity.lastname}`,
+        name: `${entity.firstName} ${entity.lastName}`,
         avatarType: 'rounded',
       } as CommentableEntityForSelect),
     searchFilter,

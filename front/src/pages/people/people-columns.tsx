@@ -26,7 +26,7 @@ export const usePeopleColumns = () => {
   return useMemo(() => {
     return [
       getCheckBoxColumn(),
-      columnHelper.accessor('firstname', {
+      columnHelper.accessor('firstName', {
         header: () => (
           <ColumnHead viewName="People" viewIcon={<IconUser size={16} />} />
         ),
@@ -39,8 +39,8 @@ export const usePeopleColumns = () => {
                 await updatePerson({
                   variables: {
                     ...person,
-                    firstname: firstName,
-                    lastname: lastName,
+                    firstName,
+                    lastName,
                     companyId: person.company?.id,
                   },
                 });
