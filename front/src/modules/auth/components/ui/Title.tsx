@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 
 import { AnimatedTextWord } from '@/ui/components/motion/AnimatedTextWord';
 
-interface Props extends React.PropsWithChildren {
+type Props = React.PropsWithChildren & {
   animate?: boolean;
-}
+};
 
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};

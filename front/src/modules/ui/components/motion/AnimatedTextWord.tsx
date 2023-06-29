@@ -11,10 +11,9 @@ const Word = styled(motion.span)`
   white-space: pre;
 `;
 
-export interface Props
-  extends Omit<React.ComponentProps<typeof motion.div>, 'children'> {
+type Props = Omit<React.ComponentProps<typeof motion.div>, 'children'> & {
   text: string;
-}
+};
 
 const containerAnimation = {
   hidden: { opacity: 0 },

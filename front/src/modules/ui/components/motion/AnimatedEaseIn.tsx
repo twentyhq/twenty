@@ -1,12 +1,11 @@
 import { motion } from 'framer-motion';
 
-interface Props
-  extends Omit<
-    React.ComponentProps<typeof motion.div>,
-    'initial' | 'animated' | 'transition'
-  > {
+type Props = Omit<
+  React.ComponentProps<typeof motion.div>,
+  'initial' | 'animated' | 'transition'
+> & {
   duration?: number;
-}
+};
 
 export function AnimatedEaseIn({
   children,

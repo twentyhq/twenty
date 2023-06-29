@@ -67,12 +67,12 @@ const Text = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
 `;
 
-interface Props extends Omit<React.ComponentProps<'div'>, 'children'> {
+type Props = Omit<React.ComponentProps<'div'>, 'children'> & {
   picture: string | null | undefined;
   onUpload?: () => void;
   onRemove?: () => void;
   disabled?: boolean;
-}
+};
 
 export function ImageInput({
   picture,

@@ -24,10 +24,10 @@ const NavbarContent = styled.div`
   display: ${() => (useRecoilValue(isNavbarOpenedState) ? 'block' : 'none')};
 `;
 
-interface NavbarProps {
+type NavbarProps = {
   children: React.ReactNode;
   layout?: string;
-}
+};
 
 export function NavbarContainer({ children, layout }: NavbarProps) {
   return (

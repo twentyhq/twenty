@@ -21,9 +21,9 @@ const BackDrop = styled(motion.div)`
   z-index: 9999;
 `;
 
-interface Props extends React.PropsWithChildren {
+type Props = React.PropsWithChildren & {
   isOpen?: boolean;
-}
+};
 
 const modalVariants = {
   hidden: { opacity: 0 },

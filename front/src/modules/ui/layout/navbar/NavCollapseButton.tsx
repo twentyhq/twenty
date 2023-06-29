@@ -34,11 +34,11 @@ const CollapseButton = styled.button<{ hideOnDesktop: boolean | undefined }>`
     `}
 `;
 
-interface CollapseButtonProps {
+type CollapseButtonProps = {
   hideIfOpen?: boolean;
   hideIfClosed?: boolean;
   hideOnDesktop?: boolean;
-}
+};
 
 export default function NavCollapseButton({
   hideIfOpen,
