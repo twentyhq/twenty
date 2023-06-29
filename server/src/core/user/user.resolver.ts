@@ -51,6 +51,10 @@ export class UserResolver {
     nullable: false,
   })
   displayName(@Parent() parent: User): string {
+    if (!parent.firstname && !parent.lastname) {
+      return parent.displayName ?? '';
+    }
+
     return `${parent.firstname} ${parent.lastname}`;
   }
 }
