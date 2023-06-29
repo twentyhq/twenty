@@ -47,6 +47,6 @@ module.exports = {
     'simple-import-sort/exports': 'error',
     'twenty/sort-css-properties-alphabetically': 'error',
     'twenty/no-hardcoded-colors': 'error',
-    'func-style':['warn', 'declaration', { 'allowArrowFunctions': true }],
+    'func-style':['error', 'declaration', { 'allowArrowFunctions': true }],
   }
 };
