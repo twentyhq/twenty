@@ -1,8 +1,11 @@
+import { useCallback, useEffect } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import { queuedActionsState } from '@/command-menu/states/queuedAction';
 import { GET_PEOPLE } from '@/people/services';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
@@ -24,7 +27,9 @@ const StyledPeopleContainer = styled.div`
 export function People() {
   const [insertPersonMutation] = useInsertPersonMutation();
 
-  async function handleAddButtonClick() {
+  const [queuedActions, setQueuedActions] = useRecoilState(queuedActionsState);
+
+  const handleAddButtonClick = useCallback(async () => {
     await insertPersonMutation({
       variables: {
         id: uuidv4(),
@@ -37,7 +42,16 @@ export function People() {
       },
       refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
     });
-  }
+  }, [insertPersonMutation]);
+
+  useEffect(() => {
+    if (queuedActions.includes('people/create_people')) {
+      handleAddButtonClick();
+      setQueuedActions(
+        queuedActions.filter((action) => action !== 'people/create_people'),
+      );
+    }
+  }, [queuedActions, handleAddButtonClick, setQueuedActions]);
 
   const theme = useTheme();
 

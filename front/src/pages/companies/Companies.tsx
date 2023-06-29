@@ -1,8 +1,11 @@
+import { useCallback, useEffect } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import { queuedActionsState } from '@/command-menu/states/queuedAction';
 import { GET_COMPANIES } from '@/companies/services';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
@@ -26,7 +29,9 @@ const StyledTableContainer = styled.div`
 export function Companies() {
   const [insertCompany] = useInsertCompanyMutation();
 
-  async function handleAddButtonClick() {
+  const [queuedActions, setQueuedActions] = useRecoilState(queuedActionsState);
+
+  const handleAddButtonClick = useCallback(async () => {
     const newCompany: InsertCompanyMutationVariables = {
       id: uuidv4(),
       name: '',
@@ -40,7 +45,16 @@ export function Companies() {
       variables: newCompany,
       refetchQueries: [getOperationName(GET_COMPANIES) ?? ''],
     });
-  }
+  }, [insertCompany]);
+
+  useEffect(() => {
+    if (queuedActions.includes('companies/create_company')) {
+      handleAddButtonClick();
+      setQueuedActions(
+        queuedActions.filter((action) => action !== 'companies/create_company'),
+      );
+    }
+  }, [queuedActions, handleAddButtonClick, setQueuedActions]);
 
   const theme = useTheme();
 
