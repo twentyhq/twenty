@@ -24,7 +24,7 @@ export class RegisterInput {
   password: string;
 
   @Field(() => String, {
-    deprecationReason: 'Deprecated, please use firstname and lastname instead',
+    deprecationReason: 'Deprecated, please use firstName and lastName instead',
     nullable: true,
   })
   @IsOptional()

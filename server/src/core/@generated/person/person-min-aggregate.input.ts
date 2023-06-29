@@ -9,10 +9,10 @@ export class PersonMinAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    firstname?: true;
+    firstName?: true;
 
     @Field(() => Boolean, {nullable:true})
-    lastname?: true;
+    lastName?: true;
 
     @Field(() => Boolean, {nullable:true})
     email?: true;

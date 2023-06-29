@@ -22,10 +22,10 @@ export class PersonScalarWhereInput {
     id?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    firstname?: StringFilter;
+    firstName?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    lastname?: StringFilter;
+    lastName?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
     email?: StringFilter;

@@ -14,11 +14,11 @@ export class PersonCreateWithoutWorkspaceInput {
 
     @Field(() => String, {nullable:false})
     @Validator.IsString()
-    firstname!: string;
+    firstName!: string;
 
     @Field(() => String, {nullable:false})
     @Validator.IsString()
-    lastname!: string;
+    lastName!: string;
 
     @Field(() => String, {nullable:false})
     @Validator.IsEmail()

@@ -138,7 +138,7 @@ model User {
   firstName     String
   /// @Validator.IsString()
   lastName      String
-  // @deprecated: Use `firstname` and `lastname` instead
+  // @deprecated: Use `firstName` and `lastName` instead
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   /// @TypeGraphQL.omit(input: false, output: true)
@@ -272,9 +272,9 @@ model Person {
   /// @Validator.IsOptional()
   id        String @id @default(uuid())
   /// @Validator.IsString()
-  firstname String
+  firstName String
   /// @Validator.IsString()
-  lastname  String
+  lastName  String
   /// @Validator.IsEmail()
   email     String
   /// @Validator.IsPhoneNumber()
