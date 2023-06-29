@@ -6,7 +6,7 @@ import { PersonModule } from './person/person.module';
 import { PipelineModule } from './pipeline/pipeline.module';
 import { AuthModule } from './auth/auth.module';
 import { WorkspaceModule } from './workspace/workspace.module';
-import { EventModule } from './event/event.module';
+import { EventModule } from './analytics/event.module';
 
 @Module({
   imports: [

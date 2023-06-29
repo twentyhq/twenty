@@ -2,7 +2,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { graphql } from 'msw';
 
 import { GET_COMPANIES } from '@/companies/services';
-import { CREATE_EVENT } from '@/events/services';
+import { CREATE_EVENT } from '@/analytics/services';
 import { GET_PEOPLE, UPDATE_PERSON } from '@/people/services';
 import {
   SEARCH_COMPANY_QUERY,
