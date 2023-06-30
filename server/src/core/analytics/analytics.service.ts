@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEventInput } from './dto/create-event.input';
-import { HttpService } from '@nestjs/axios';
-import { anonymize } from 'src/utils/anonymize';
 import { User, Workspace } from '@prisma/client';
+import axios, { AxiosInstance } from 'axios';
+import { CreateAnalyticsInput } from './dto/create-analytics.input';
+import { anonymize } from 'src/utils/anonymize';
 
 @Injectable()
-export class EventService {
-  constructor(private readonly httpService: HttpService) {}
+export class AnalyticsService {
+  private readonly httpService: AxiosInstance;
 
-  create(
-    createEventInput: CreateEventInput,
+  constructor() {
+    this.httpService = axios.create({
+      baseURL: 'https://t.twenty.com/api/v1/s2s',
+    });
+  }
+
+  async create(
+    createEventInput: CreateAnalyticsInput,
     user: User | undefined,
     workspace: Workspace | undefined,
   ) {
@@ -27,11 +33,9 @@ export class EventService {
       },
     };
 
-    this.httpService
-      .post('https://t.twenty.com/api/v1/s2s/event?noToken', data)
-      .subscribe({
-        error: () => null,
-      });
+    try {
+      await this.httpService.post('/event?noToken', data);
+    } catch {}
 
     return { success: true };
   }

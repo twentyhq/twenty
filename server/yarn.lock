@@ -1055,11 +1055,6 @@
     lodash.omit "4.5.0"
     tslib "2.5.2"
 
-"@nestjs/axios@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.npmjs.org/@nestjs/axios/-/axios-3.0.0.tgz"
-  integrity sha512-ULdH03jDWkS5dy9X69XbUVbhC+0pVnrRcj7bIK/ytTZ76w7CgvTZDJqsIyisg3kNOiljRW/4NIjSf3j6YGvl+g==
-
 "@nestjs/cli@^9.0.0":
   version "9.5.0"
   resolved "https://registry.npmjs.org/@nestjs/cli/-/cli-9.5.0.tgz"

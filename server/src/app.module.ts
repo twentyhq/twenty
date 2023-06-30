@@ -10,7 +10,6 @@ import { GraphQLError } from 'graphql';
 import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
-import { EventModule } from './core/analytics/event.module';
 import GraphQLJSON from 'graphql-type-json';
 
 @Module({
@@ -34,7 +33,6 @@ import GraphQLJSON from 'graphql-type-json';
     HealthModule,
     AbilityModule,
     CoreModule,
-    EventModule,
   ],
   providers: [AppService],
 })
