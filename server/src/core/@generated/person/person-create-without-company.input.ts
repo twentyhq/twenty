@@ -21,11 +21,11 @@ export class PersonCreateWithoutCompanyInput {
     lastName!: string;
 
     @Field(() => String, {nullable:false})
-    @Validator.IsEmail()
+    @Validator.IsString()
     email!: string;
 
     @Field(() => String, {nullable:false})
-    @Validator.IsPhoneNumber()
+    @Validator.IsString()
     phone!: string;
 
     @Field(() => String, {nullable:false})

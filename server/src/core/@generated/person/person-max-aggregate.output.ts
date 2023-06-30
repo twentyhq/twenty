@@ -20,11 +20,11 @@ export class PersonMaxAggregate {
     lastName?: string;
 
     @Field(() => String, {nullable:true})
-    @Validator.IsEmail()
+    @Validator.IsString()
     email?: string;
 
     @Field(() => String, {nullable:true})
-    @Validator.IsPhoneNumber()
+    @Validator.IsString()
     phone?: string;
 
     @Field(() => String, {nullable:true})
