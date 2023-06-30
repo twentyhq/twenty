@@ -3,12 +3,12 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { Section } from '@/auth/components/ui/Section';
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
+import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -60,11 +60,11 @@ export function CreateProfile() {
       <SubTitle>How you'll be identify on the app.</SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
-          <Section title="Picture" />
+          <SubSectionTitle title="Picture" />
           <ImageInput picture={null} disabled />
         </StyledSectionContainer>
         <StyledSectionContainer>
-          <Section
+          <SubSectionTitle
             title="Name"
             description="Your name as it will be displayed on the app"
           />
