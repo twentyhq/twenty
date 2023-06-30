@@ -1,0 +1,70 @@
+import React, { useMemo } from 'react';
+import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
+
+const StyledContainer = styled(motion.div)`
+  display: flex;
+  overflow: hidden;
+`;
+
+const Word = styled(motion.span)`
+  white-space: pre;
+`;
+
+type Props = Omit<React.ComponentProps<typeof motion.div>, 'children'> & {
+  text: string;
+};
+
+const containerAnimation = {
+  hidden: { opacity: 0 },
+  visible: (i = 1) => ({
+    opacity: 1,
+    transition: { staggerChildren: 0.12, delayChildren: 0.04 * i },
+  }),
+};
+
+const childAnimation = {
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: 'spring',
+      damping: 12,
+      stiffness: 100,
+    },
+  },
+  hidden: {
+    opacity: 0,
+    x: 20,
+    transition: {
+      type: 'spring',
+      damping: 12,
+      stiffness: 100,
+    },
+  },
+};
+
+export function AnimatedTextWord({ text = '', ...restProps }: Props) {
+  const words = useMemo(() => {
+    const words = text.split(' ');
+
+    return words.map((value, index) =>
+      index === words.length - 1 ? value : value + ' ',
+    );
+  }, [text]);
+
+  return (
+    <StyledContainer
+      variants={containerAnimation}
+      initial="hidden"
+      animate="visible"
+      {...restProps}
+    >
+      {words.map((word, index) => (
+        <Word variants={childAnimation} key={index}>
+          {word}
+        </Word>
+      ))}
+    </StyledContainer>
+  );
+}

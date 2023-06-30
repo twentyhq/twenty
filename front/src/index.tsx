@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import { ThemeType } from '@/ui/themes/themes';
 
 import '@emotion/react';
 
-import { AppWrapper } from './AppWrapper';
+import { ApolloProvider } from './providers/apollo/ApolloProvider';
+import { AppThemeProvider } from './providers/theme/AppThemeProvider';
+import { UserProvider } from './providers/user/UserProvider';
+import { App } from './App';
 
 import './index.css';
 
@@ -16,7 +20,17 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <RecoilRoot>
-    <AppWrapper />
+    <ApolloProvider>
+      <BrowserRouter>
+        <AppThemeProvider>
+          <StrictMode>
+            <UserProvider>
+              <App />
+            </UserProvider>
+          </StrictMode>
+        </AppThemeProvider>
+      </BrowserRouter>
+    </ApolloProvider>
   </RecoilRoot>,
 );
 

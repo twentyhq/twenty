@@ -1,18 +1,21 @@
 import styled from '@emotion/styled';
 
+type Props = React.ComponentProps<'div'>;
+
 const StyledLogo = styled.div`
-  height: 40px;
-  width: 40px;
+  height: 48px;
 
   img {
     height: 100%;
     width: 100%;
   }
+
+  width: 48px;
 `;
 
-export function Logo(): JSX.Element {
+export function Logo(props: Props) {
   return (
-    <StyledLogo>
+    <StyledLogo {...props}>
       <img src="/icons/android/android-launchericon-192-192.png" alt="logo" />
     </StyledLogo>
   );

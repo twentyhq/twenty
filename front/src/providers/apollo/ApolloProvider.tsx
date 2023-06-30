@@ -5,9 +5,7 @@ import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 import useApolloMocked from '@/apollo/hooks/useApolloMocked';
 import { isMockModeState } from '@/auth/states/isMockModeState';
 
-export const ApolloProvider: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
+export function ApolloProvider({ children }: React.PropsWithChildren) {
   const apolloClient = useApolloFactory();
   const mockedClient = useApolloMocked();
 
@@ -18,4 +16,4 @@ export const ApolloProvider: React.FC<React.PropsWithChildren> = ({
       {children}
     </ApolloProviderBase>
   );
-};
+}

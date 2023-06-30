@@ -31,7 +31,6 @@
     "!javascript",
     "!json",
     "!typescript",
-    "!typescriptreact",
     "md",
     "mdx"
   ],

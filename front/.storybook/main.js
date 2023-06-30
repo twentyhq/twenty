@@ -52,8 +52,9 @@ module.exports = {
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     "@storybook/addon-coverage",
-    "@storybook/addon-styling"
-
+    "@storybook/addon-styling",
+    "@storybook/addon-knobs",
+    "storybook-addon-pseudo-states",
   ],
   framework: {
     name: '@storybook/react-webpack5',

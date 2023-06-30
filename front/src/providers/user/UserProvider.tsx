@@ -5,9 +5,7 @@ import { useFetchCurrentUser } from '@/auth/hooks/useFetchCurrentUser';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 
-export const UserProvider: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
+export function UserProvider({ children }: React.PropsWithChildren) {
   const [, setCurrentUser] = useRecoilState(currentUserState);
   const [tokenPair] = useRecoilState(tokenPairState);
   const user = useFetchCurrentUser(tokenPair);
@@ -19,4 +17,4 @@ export const UserProvider: React.FC<React.PropsWithChildren> = ({
   }, [setCurrentUser, user]);
 
   return <>{children}</>;
-};
+}

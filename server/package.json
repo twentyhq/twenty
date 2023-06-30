@@ -43,6 +43,7 @@
     "@nestjs/terminus": "^9.2.2",
     "@paljs/plugins": "^5.3.3",
     "@prisma/client": "^4.13.0",
+    "add": "^2.0.6",
     "apollo-server-express": "^3.12.0",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
@@ -61,7 +62,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
