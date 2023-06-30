@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 
+import { EntityBoardActionBar } from '@/opportunities/components/EntityBoardActionBar';
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 
@@ -49,13 +50,18 @@ export function Opportunities() {
       icon={<IconTargetArrow size={theme.icon.size.md} />}
     >
       {items && pipelineId ? (
-        <Board
-          pipelineId={pipelineId}
-          columns={columns || []}
-          initialBoard={initialBoard}
-          initialItems={items}
-          onUpdate={onUpdate}
-        />
+        <>
+          <Board
+            pipelineId={pipelineId}
+            columns={columns || []}
+            initialBoard={initialBoard}
+            initialItems={items}
+            onUpdate={onUpdate}
+          />
+          <EntityBoardActionBar>
+            <div>Add action buttons here</div>
+          </EntityBoardActionBar>
+        </>
       ) : (
         <></>
       )}

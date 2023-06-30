@@ -19,6 +19,7 @@ import {
 } from '../../ui/components/board/Board';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { boardItemsState } from '../states/boardItemsState';
+import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
 
 import { CompanyBoardCard } from './CompanyBoardCard';
 import { NewButton } from './NewButton';
@@ -70,7 +71,9 @@ export function Board({
 }: BoardProps) {
   const [board, setBoard] = useRecoilState(boardColumnsState);
   const [items, setItems] = useRecoilState(boardItemsState);
-  const [selectedItemKeys, setSelectedItemKeys] = useState<string[]>([]);
+  const [selectedItemKeys, setSelectedItemKeys] = useRecoilState(
+    selectedBoardItemsState,
+  );
   const [isInitialBoardLoaded, setIsInitialBoardLoaded] = useState(false);
 
   useEffect(() => {

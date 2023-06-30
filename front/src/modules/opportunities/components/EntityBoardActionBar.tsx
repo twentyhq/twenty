@@ -1,0 +1,67 @@
+import React, { useEffect } from 'react';
+import styled from '@emotion/styled';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+
+import { contextMenuPositionState } from '@/ui/tables/states/contextMenuPositionState';
+import { PositionType } from '@/ui/types/PositionType';
+
+import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
+
+type OwnProps = {
+  children: React.ReactNode | React.ReactNode[];
+};
+
+type StyledContainerProps = {
+  position: PositionType;
+};
+
+const StyledContainer = styled.div<StyledContainerProps>`
+  align-items: center;
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: 8px;
+  bottom: ${(props) => (props.position.x ? 'auto' : '38px')};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  display: flex;
+  height: 48px;
+
+  left: ${(props) => (props.position.x ? `${props.position.x}px` : '50%')};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  position: ${(props) => (props.position.x ? 'fixed' : 'absolute')};
+  top: ${(props) => (props.position.y ? `${props.position.y}px` : 'auto')};
+
+  transform: translateX(-50%);
+  z-index: 1;
+`;
+
+export function EntityBoardActionBar({ children }: OwnProps) {
+  const selectedItemKeys = useRecoilValue(selectedBoardItemsState);
+  const position = useRecoilValue(contextMenuPositionState);
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (!(event.target as HTMLElement).closest('.action-bar')) {
+        setContextMenuPosition({ x: null, y: null });
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [setContextMenuPosition]);
+
+  if (selectedItemKeys.length === 0) {
+    return null;
+  }
+
+  return (
+    <StyledContainer className="action-bar" position={position}>
+      {children}
+    </StyledContainer>
+  );
+}
