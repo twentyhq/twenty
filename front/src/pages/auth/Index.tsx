@@ -108,7 +108,7 @@ export function Index() {
         <MainButton
           title="Continue with Email"
           onClick={onPasswordLoginClick}
-          disabled={!authFlowUserEmail}
+          disabled={!authFlowUserEmail && visible}
           variant="secondary"
           fullWidth
         />
