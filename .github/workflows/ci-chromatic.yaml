@@ -16,14 +16,6 @@ jobs:
         with:
           fetch-depth: 0
           ref: "refs/pull/${{ github.event.number }}/merge"
-      - name: Check for redundant workflow run
-        run: |
-          HEAD_SHA=$(git rev-parse HEAD^)
-          if [ "$HEAD_SHA" != "${{ github.event.pull_request.head.sha }}" ]; then
-            echo "HEAD SHA and Pull Request HEAD SHA do not match, cancelling run"
-            echo "GitHub has scheduled a newer workflow run already."
-            exit 1
-          fi
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
