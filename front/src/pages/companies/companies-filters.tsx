@@ -9,7 +9,31 @@ import {
   IconUsers,
 } from '@/ui/icons/index';
 import { icon } from '@/ui/themes/icon';
-import { QueryMode, User } from '~/generated/graphql';
+import { Company, QueryMode, User } from '~/generated/graphql';
+
+type EntityFilter<T> = {
+  field: keyof T;
+  label: string;
+  icon: JSX.Element;
+  type: 'text' | 'date' | 'entity' | 'number';
+}[];
+
+export const companiesFilters: EntityFilter<Company> = [
+  {
+    field: 'name',
+    label: 'Name',
+    icon: (
+      <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.sm} />
+    ),
+    type: 'text',
+  },
+  {
+    field: 'employees',
+    label: 'Employees',
+    icon: <IconUsers size={icon.size.md} stroke={icon.stroke.sm} />,
+    type: 'number',
+  },
+];
 
 export const nameFilter = {
   key: 'name',
