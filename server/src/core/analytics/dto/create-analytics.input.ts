@@ -3,7 +3,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { IsNotEmpty, IsString, IsObject } from 'class-validator';
 
 @ArgsType()
-export class CreateEventInput {
+export class CreateAnalyticsInput {
   @Field({ description: 'Type of the event' })
   @IsNotEmpty()
   @IsString()

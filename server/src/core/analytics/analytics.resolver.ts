@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { EventService } from './event.service';
-import { Event } from './event.entity';
-import { CreateEventInput } from './dto/create-event.input';
+import { AnalyticsService } from './analytics.service';
+import { Analytics } from './analytics.entity';
+import { CreateAnalyticsInput } from './dto/create-analytics.input';
 import { OptionalJwtAuthGuard } from 'src/guards/optional-jwt.auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
@@ -9,16 +9,16 @@ import { User, Workspace } from '@prisma/client';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 
 @UseGuards(OptionalJwtAuthGuard)
-@Resolver(() => Event)
-export class EventResolver {
-  constructor(private readonly eventService: EventService) {}
+@Resolver(() => Analytics)
+export class AnalyticsResolver {
+  constructor(private readonly analyticsService: AnalyticsService) {}
 
-  @Mutation(() => Event)
+  @Mutation(() => Analytics)
   createEvent(
-    @Args() createEventInput: CreateEventInput,
+    @Args() createEventInput: CreateAnalyticsInput,
     @AuthWorkspace() workspace: Workspace | undefined,
     @AuthUser() user: User | undefined,
   ) {
-    return this.eventService.create(createEventInput, user, workspace);
+    return this.analyticsService.create(createEventInput, user, workspace);
   }
 }

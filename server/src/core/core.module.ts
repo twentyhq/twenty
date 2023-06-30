@@ -6,7 +6,7 @@ import { PersonModule } from './person/person.module';
 import { PipelineModule } from './pipeline/pipeline.module';
 import { AuthModule } from './auth/auth.module';
 import { WorkspaceModule } from './workspace/workspace.module';
-import { EventModule } from './analytics/event.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -17,7 +17,7 @@ import { EventModule } from './analytics/event.module';
     PersonModule,
     PipelineModule,
     WorkspaceModule,
-    EventModule,
+    AnalyticsModule,
   ],
   exports: [
     AuthModule,
@@ -27,7 +27,7 @@ import { EventModule } from './analytics/event.module';
     PersonModule,
     PipelineModule,
     WorkspaceModule,
-    EventModule,
+    AnalyticsModule,
   ],
 })
 export class CoreModule {}

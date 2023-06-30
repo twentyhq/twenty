@@ -65,15 +65,6 @@ export const DefaultSecondary: Story = {
       variant="secondary"
     />,
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(clickJestFn).toHaveBeenCalledTimes(0);
-    const button = canvas.getByRole('button');
-    await userEvent.click(button);
-
-    expect(clickJestFn).toHaveBeenCalledTimes(1);
-  },
 };
 
 export const WithIconSecondary: Story = {

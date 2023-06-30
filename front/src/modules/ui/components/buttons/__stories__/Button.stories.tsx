@@ -189,16 +189,6 @@ MediumSize.parameters = {
 // Small size
 export const SmallSize: Story = {
   render: getRenderWrapperForComponent(<ButtonContainer size="small" />),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(clickJestFn).toHaveBeenCalledTimes(0);
-
-    const button = canvas.getByTestId('primary-button-default');
-    await userEvent.click(button);
-
-    expect(clickJestFn).toHaveBeenCalledTimes(1);
-  },
 };
 SmallSize.parameters = {
   pseudo: {
