@@ -55,12 +55,9 @@ export class UserService {
   async createUser<T extends Prisma.UserCreateArgs>(
     args: Prisma.SelectSubset<T, Prisma.UserCreateArgs>,
   ): Promise<Prisma.UserGetPayload<T>> {
-    assert(args.data.email, 'Email is missing', BadRequestException);
-    assert(
-      args.data.displayName,
-      'DisplayName is missing',
-      BadRequestException,
-    );
+    assert(args.data.email, 'email is missing', BadRequestException);
+    assert(args.data.firstName, 'firstName is missing', BadRequestException);
+    assert(args.data.lastName, 'lastName is missing', BadRequestException);
 
     const emailDomain = args.data.email.split('@')[1];
 
