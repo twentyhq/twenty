@@ -9,11 +9,13 @@ export const DropdownMenuItem = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.secondary};
 
+  display: flex;
+  flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.sm};
 
   gap: ${({ theme }) => theme.spacing(2)};
 
-  height: calc(100% - 2 * var(--vertical-padding));
+  height: calc(32px - 2 * var(--vertical-padding));
 
   padding: var(--vertical-padding) var(--horizontal-padding);
   width: calc(100% - 2 * var(--horizontal-padding));
