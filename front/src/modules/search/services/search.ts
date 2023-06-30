@@ -20,8 +20,8 @@ export const SEARCH_PEOPLE_QUERY = gql`
       phone
       email
       city
-      firstname
-      lastname
+      firstName
+      lastName
       createdAt
     }
   }

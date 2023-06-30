@@ -10,22 +10,22 @@ export class RefreshTokenCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
-    createdAt!: number;
-
-    @Field(() => Int, {nullable:false})
-    updatedAt!: number;
-
-    @Field(() => Int, {nullable:false})
     isRevoked!: number;
+
+    @HideField()
+    userId!: number;
 
     @Field(() => Int, {nullable:false})
     expiresAt!: number;
 
-    @Field(() => Int, {nullable:false})
+    @HideField()
     deletedAt!: number;
 
-    @HideField()
-    userId!: number;
+    @Field(() => Int, {nullable:false})
+    createdAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    updatedAt!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

@@ -43,7 +43,8 @@ export class AuthService {
 
     const user = await this.userService.createUser({
       data: {
-        displayName: registerInput.displayName,
+        firstName: registerInput.firstName,
+        lastName: registerInput.lastName,
         email: registerInput.email,
         passwordHash,
         locale: 'en',

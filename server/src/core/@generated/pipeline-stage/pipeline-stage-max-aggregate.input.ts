@@ -9,15 +9,6 @@ export class PipelineStageMaxAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    createdAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    updatedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    deletedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
     name?: true;
 
     @Field(() => Boolean, {nullable:true})
@@ -31,4 +22,13 @@ export class PipelineStageMaxAggregateInput {
 
     @HideField()
     workspaceId?: true;
+
+    @HideField()
+    deletedAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    createdAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    updatedAt?: true;
 }

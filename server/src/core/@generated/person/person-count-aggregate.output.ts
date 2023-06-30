@@ -10,19 +10,10 @@ export class PersonCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
-    createdAt!: number;
+    firstName!: number;
 
     @Field(() => Int, {nullable:false})
-    updatedAt!: number;
-
-    @Field(() => Int, {nullable:false})
-    deletedAt!: number;
-
-    @Field(() => Int, {nullable:false})
-    firstname!: number;
-
-    @Field(() => Int, {nullable:false})
-    lastname!: number;
+    lastName!: number;
 
     @Field(() => Int, {nullable:false})
     email!: number;
@@ -38,6 +29,15 @@ export class PersonCountAggregate {
 
     @HideField()
     workspaceId!: number;
+
+    @HideField()
+    deletedAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    createdAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    updatedAt!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

@@ -11,6 +11,7 @@ import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
+import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 
@@ -47,6 +48,9 @@ const StyledErrorContainer = styled.div`
 
 export function PasswordLogin() {
   const [, setMockMode] = useRecoilState(isMockModeState);
+  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
+    captureHotkeyTypeInFocusState,
+  );
 
   const prefillPassword =
     process.env.NODE_ENV === 'development' ? 'applecar2025' : '';
@@ -63,12 +67,19 @@ export function PasswordLogin() {
     try {
       await login(authFlowUserEmail, internalPassword);
       setMockMode(false);
+      setCaptureHotkeyTypeInFocus(false);
       // TODO: Navigate to the workspace selection page when it's ready
       // navigate('/auth/create/workspace');
     } catch (err: any) {
       setFormError(err.message);
     }
-  }, [authFlowUserEmail, internalPassword, login, setMockMode]);
+  }, [
+    authFlowUserEmail,
+    internalPassword,
+    login,
+    setMockMode,
+    setCaptureHotkeyTypeInFocus,
+  ]);
 
   useHotkeys(
     'enter',

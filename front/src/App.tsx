@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 
+import { useTrackPageView } from '@/analytics/hooks/useTrackPageView';
 import { RequireAuth } from '@/auth/components/RequireAuth';
 import { RequireNotAuth } from '@/auth/components/RequireNotAuth';
 import { AuthModal } from '@/auth/components/ui/Modal';
@@ -45,6 +46,8 @@ export function App() {
   useGoToHotkeys('c', '/companies');
   useGoToHotkeys('o', '/opportunities');
   useGoToHotkeys('s', '/settings/profile');
+
+  useTrackPageView();
 
   return (
     <DefaultLayout>

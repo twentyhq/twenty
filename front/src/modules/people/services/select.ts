@@ -21,8 +21,8 @@ export const GET_PEOPLE = gql`
       phone
       email
       city
-      firstname
-      lastname
+      firstName
+      lastName
       createdAt
       _commentCount
       company {

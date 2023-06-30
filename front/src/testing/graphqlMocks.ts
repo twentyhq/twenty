@@ -1,6 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql } from 'msw';
 
+import { CREATE_EVENT } from '@/analytics/services';
 import { GET_COMPANIES } from '@/companies/services';
 import { GET_PEOPLE, UPDATE_PERSON } from '@/people/services';
 import {
@@ -99,6 +100,13 @@ export const graphqlMocks = [
           req.variables.id,
           req.variables,
         ),
+      }),
+    );
+  }),
+  graphql.mutation(getOperationName(CREATE_EVENT) ?? '', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        createEvent: { success: 1, __typename: 'Event' },
       }),
     );
   }),

@@ -1,21 +1,16 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import * as Validator from 'class-validator';
 import { CommentableType } from '../prisma/commentable-type.enum';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CommentThreadTargetUncheckedCreateInput {
 
     @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
     id?: string;
-
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
 
     @Field(() => String, {nullable:false})
     commentThreadId!: string;
@@ -25,4 +20,13 @@ export class CommentThreadTargetUncheckedCreateInput {
 
     @Field(() => String, {nullable:false})
     commentableId!: string;
+
+    @HideField()
+    deletedAt?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 }

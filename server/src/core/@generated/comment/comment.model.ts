@@ -12,15 +12,6 @@ export class Comment {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
-
     @Field(() => String, {nullable:false})
     body!: string;
 
@@ -32,6 +23,15 @@ export class Comment {
 
     @HideField()
     workspaceId!: string;
+
+    @HideField()
+    deletedAt!: Date | null;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
     @Field(() => User, {nullable:false})
     author?: User;

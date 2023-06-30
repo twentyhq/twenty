@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
 import { PersonCountAggregate } from './person-count-aggregate.output';
 import { PersonMinAggregate } from './person-min-aggregate.output';
@@ -9,30 +10,28 @@ import { PersonMaxAggregate } from './person-max-aggregate.output';
 export class PersonGroupBy {
 
     @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    @Validator.IsOptional()
     id!: string;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date | string;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    firstName!: string;
 
     @Field(() => String, {nullable:false})
-    firstname!: string;
+    @Validator.IsString()
+    lastName!: string;
 
     @Field(() => String, {nullable:false})
-    lastname!: string;
-
-    @Field(() => String, {nullable:false})
+    @Validator.IsEmail()
     email!: string;
 
     @Field(() => String, {nullable:false})
+    @Validator.IsPhoneNumber()
     phone!: string;
 
     @Field(() => String, {nullable:false})
+    @Validator.IsString()
     city!: string;
 
     @Field(() => String, {nullable:true})
@@ -40,6 +39,15 @@ export class PersonGroupBy {
 
     @HideField()
     workspaceId!: string;
+
+    @HideField()
+    deletedAt?: Date | string;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
     @Field(() => PersonCountAggregate, {nullable:true})
     _count?: PersonCountAggregate;

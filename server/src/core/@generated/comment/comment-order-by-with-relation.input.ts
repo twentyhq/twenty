@@ -13,15 +13,6 @@ export class CommentOrderByWithRelationInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     body?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
@@ -32,6 +23,15 @@ export class CommentOrderByWithRelationInput {
 
     @HideField()
     workspaceId?: keyof typeof SortOrder;
+
+    @HideField()
+    deletedAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
     @Field(() => UserOrderByWithRelationInput, {nullable:true})
     author?: UserOrderByWithRelationInput;

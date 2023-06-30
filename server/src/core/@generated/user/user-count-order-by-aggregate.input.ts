@@ -10,25 +10,19 @@ export class UserCountOrderByAggregateInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
+    firstName?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    lastSeen?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    disabled?: keyof typeof SortOrder;
+    lastName?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     displayName?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     email?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    emailVerified?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     avatarUrl?: keyof typeof SortOrder;
@@ -39,12 +33,24 @@ export class UserCountOrderByAggregateInput {
     @Field(() => SortOrder, {nullable:true})
     phoneNumber?: keyof typeof SortOrder;
 
+    @Field(() => SortOrder, {nullable:true})
+    lastSeen?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    disabled?: keyof typeof SortOrder;
+
     @HideField()
     passwordHash?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    emailVerified?: keyof typeof SortOrder;
+    metadata?: keyof typeof SortOrder;
+
+    @HideField()
+    deletedAt?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    metadata?: keyof typeof SortOrder;
+    createdAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 }

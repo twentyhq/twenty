@@ -42,11 +42,12 @@
     "start": "PORT=3001 craco start",
     "build": "craco build",
     "test": "craco test",
+    "coverage": "craco test --coverage .",
     "lint": "eslint src --max-warnings=0",
     "storybook": "storybook dev -p 6006 -s ../public",
     "test-storybook": "test-storybook",
     "build-storybook": "storybook build -s public",
-    "coverage": "test-storybook --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
+    "coverage-storybook": "test-storybook --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
     "graphql:generate": "dotenv cross-var graphql-codegen --config codegen.js",
     "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },

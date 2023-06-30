@@ -1,4 +1,4 @@
-import { Args, Resolver, Query } from '@nestjs/graphql';
+import { Args, Resolver, Query, ResolveField, Parent } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { FindManyUserArgs } from 'src/core/@generated/user/find-many-user.args';
 import { Workspace } from '@prisma/client';
@@ -45,5 +45,17 @@ export class UserResolver {
         : accessibleBy(ability).User,
       select: prismaSelect.value,
     });
+  }
+
+  @ResolveField(() => String, {
+    nullable: false,
+  })
+  displayName(@Parent() parent: User): string {
+    // TODO: Should be removed when displayName is removed from the database
+    if (!parent.firstName && !parent.lastName) {
+      return parent.displayName ?? '';
+    }
+
+    return `${parent.firstName} ${parent.lastName}`;
   }
 }
