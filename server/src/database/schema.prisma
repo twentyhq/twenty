@@ -275,9 +275,9 @@ model Person {
   firstName String
   /// @Validator.IsString()
   lastName  String
-  /// @Validator.IsEmail()
+  /// @Validator.IsString()
   email     String
-  /// @Validator.IsPhoneNumber()
+  /// @Validator.IsString()
   phone     String
   /// @Validator.IsString()
   city      String
