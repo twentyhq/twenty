@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
+import { AuthModal } from '@/auth/components/ui/Modal';
+import { AuthLayout } from '@/ui/layout/AuthLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
@@ -15,7 +17,14 @@ export default meta;
 export type Story = StoryObj<typeof Index>;
 
 export const Default: Story = {
-  render: getRenderWrapperForPage(<Index />, '/auth'),
+  render: getRenderWrapperForPage(
+    <AuthLayout>
+      <AuthModal>
+        <Index />
+      </AuthModal>
+    </AuthLayout>,
+    '/auth',
+  ),
   parameters: {
     msw: graphqlMocks,
   },
