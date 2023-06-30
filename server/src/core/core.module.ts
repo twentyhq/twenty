@@ -7,6 +7,7 @@ import { PipelineModule } from './pipeline/pipeline.module';
 import { AuthModule } from './auth/auth.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     PipelineModule,
     WorkspaceModule,
     AnalyticsModule,
+    FileUploadModule,
   ],
   exports: [
     AuthModule,
