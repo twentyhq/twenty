@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 
+import { BoardActionBarButtonDeleteOpportunities } from '@/opportunities/components/BoardActionBarButtonDeleteOpportunities';
 import { EntityBoardActionBar } from '@/opportunities/components/EntityBoardActionBar';
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
@@ -59,7 +60,7 @@ export function Opportunities() {
             onUpdate={onUpdate}
           />
           <EntityBoardActionBar>
-            <div>Add action buttons here</div>
+            <BoardActionBarButtonDeleteOpportunities />
           </EntityBoardActionBar>
         </>
       ) : (
