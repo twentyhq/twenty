@@ -28,11 +28,7 @@ export class EventService {
     };
 
     this.httpService
-      .post('https://t.twenty.com/api/v1/s2s/event', data, {
-        headers: {
-          'X-Auth-Token': 's2s.gs61um40nzhw7mh56uw1ft.4t4u3ku9ueu14cfg08yx91k',
-        },
-      })
+      .post('https://t.twenty.com/api/v1/s2s/event?noToken', data)
       .subscribe({
         error: () => null,
       });
