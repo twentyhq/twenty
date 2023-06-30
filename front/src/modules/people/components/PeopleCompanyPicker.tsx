@@ -64,6 +64,7 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
       entities={{
         entitiesToSelect: companies.entitiesToSelect,
         selectedEntity: companies.selectedEntities[0],
+        loading: companies.loading,
       }}
     />
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import Skeleton from 'react-loading-skeleton';
 import { RecoilRoot } from 'recoil';
 
 import { ThemeType } from '@/ui/themes/themes';
@@ -9,6 +10,7 @@ import '@emotion/react';
 import { AppWrapper } from './AppWrapper';
 
 import './index.css';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
