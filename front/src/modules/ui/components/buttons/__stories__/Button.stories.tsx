@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { boolean, select, text, withKnobs } from '@storybook/addon-knobs';
+import { text, withKnobs } from '@storybook/addon-knobs';
 import { expect, jest } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
