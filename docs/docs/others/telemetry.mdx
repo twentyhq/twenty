@@ -1,13 +1,16 @@
 ---
-sidebar_class_name: coming-soon
 sidebar_custom_props:
   icon: TbChartDots
 ---
 
-
-
 # Data collected
-...
+We record page view events using a unique identifier for each workspace/user.
+Additionally we also collect the workspace's domain.
+We do not set any cookie for telemetry.
+We do not collect any email, first name, last name, phone number, date of birth, address, username, etc.
 
 # Opting-out of telemetry
-...
+Opting out is simple. To do this, edit your .env on the server side and include the following:
+```
+IS_TELEMETRY_ENABLED=false
+```

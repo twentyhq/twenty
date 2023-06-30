@@ -10,6 +10,8 @@ import { GraphQLError } from 'graphql';
 import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
+import { EventModule } from './core/analytics/event.module';
+import GraphQLJSON from 'graphql-type-json';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { AbilityModule } from './ability/ability.module';
       context: ({ req }) => ({ req }),
       driver: ApolloDriver,
       autoSchemaFile: true,
+      resolvers: { JSON: GraphQLJSON },
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       formatError: (error: GraphQLError) => {
         error.extensions.stacktrace = undefined;
@@ -31,6 +34,7 @@ import { AbilityModule } from './ability/ability.module';
     HealthModule,
     AbilityModule,
     CoreModule,
+    EventModule,
   ],
   providers: [AppService],
 })

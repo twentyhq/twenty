@@ -641,6 +641,12 @@ export type EnumPipelineProgressableTypeFilter = {
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
 };
 
+export type Event = {
+  __typename?: 'Event';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type IntNullableFilter = {
   equals?: InputMaybe<Scalars['Int']>;
   gt?: InputMaybe<Scalars['Int']>;
@@ -676,6 +682,7 @@ export type LoginToken = {
 export type Mutation = {
   __typename?: 'Mutation';
   challenge: LoginToken;
+  createEvent: Event;
   createOneComment: Comment;
   createOneCommentThread: CommentThread;
   createOneCompany: Company;
@@ -697,6 +704,12 @@ export type Mutation = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationCreateEventArgs = {
+  data: Scalars['JSON'];
+  type: Scalars['String'];
 };
 
 
@@ -1657,6 +1670,14 @@ export type DeleteCompaniesMutationVariables = Exact<{
 
 export type DeleteCompaniesMutation = { __typename?: 'Mutation', deleteManyCompany: { __typename?: 'AffectedRows', count: number } };
 
+export type CreateEventMutationVariables = Exact<{
+  type: Scalars['String'];
+  data: Scalars['JSON'];
+}>;
+
+
+export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'Event', success: boolean } };
+
 export type GetPipelinesQueryVariables = Exact<{
   where?: InputMaybe<PipelineWhereInput>;
 }>;
@@ -2422,6 +2443,40 @@ export function useDeleteCompaniesMutation(baseOptions?: Apollo.MutationHookOpti
 export type DeleteCompaniesMutationHookResult = ReturnType<typeof useDeleteCompaniesMutation>;
 export type DeleteCompaniesMutationResult = Apollo.MutationResult<DeleteCompaniesMutation>;
 export type DeleteCompaniesMutationOptions = Apollo.BaseMutationOptions<DeleteCompaniesMutation, DeleteCompaniesMutationVariables>;
+export const CreateEventDocument = gql`
+    mutation CreateEvent($type: String!, $data: JSON!) {
+  createEvent(type: $type, data: $data) {
+    success
+  }
+}
+    `;
+export type CreateEventMutationFn = Apollo.MutationFunction<CreateEventMutation, CreateEventMutationVariables>;
+
+/**
+ * __useCreateEventMutation__
+ *
+ * To run a mutation, you first call `useCreateEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEventMutation, { data, loading, error }] = useCreateEventMutation({
+ *   variables: {
+ *      type: // value for 'type'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<CreateEventMutation, CreateEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateEventMutation, CreateEventMutationVariables>(CreateEventDocument, options);
+      }
+export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
+export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
+export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
 export const GetPipelinesDocument = gql`
     query GetPipelines($where: PipelineWhereInput) {
   findManyPipeline(where: $where) {
