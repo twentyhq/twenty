@@ -1,8 +1,9 @@
 import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
-import { fireEvent } from '@storybook/testing-library';
+import { fireEvent, userEvent, within } from '@storybook/testing-library';
 
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { sleep } from '~/testing/sleep';
 
 import { CommandMenu } from '../CommandMenu';
 
@@ -29,6 +30,26 @@ export const CmdK: Story = {
     </MemoryRouter>,
   ),
   play: async ({ canvasElement }) => {
+    fireEvent.keyDown(canvasElement, {
+      key: 'k',
+      code: 'KeyK',
+      metaKey: true,
+    });
+
+    await sleep(50);
+
+    const canvas = within(document.body);
+
+    const searchInput = await canvas.findByPlaceholderText('Search');
+
+    await userEvent.type(searchInput, '{arrowdown}');
+    await userEvent.type(searchInput, '{arrowup}');
+    await userEvent.type(searchInput, '{arrowdown}');
+    await userEvent.type(searchInput, '{arrowdown}');
+    await userEvent.type(searchInput, '{enter}');
+
+    await sleep(50);
+
     fireEvent.keyDown(canvasElement, {
       key: 'k',
       code: 'KeyK',

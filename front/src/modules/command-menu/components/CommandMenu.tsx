@@ -72,21 +72,25 @@ export function CommandMenu() {
       <StyledInput placeholder="Search" />
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
-        <StyledGroup heading="Go to">
-          <CommandMenuItem to="/people" label="People" shortcuts={['G', 'P']} />
+        <StyledGroup heading="Navigate">
+          <CommandMenuItem
+            to="/people"
+            label="Go to People"
+            shortcuts={['G', 'P']}
+          />
           <CommandMenuItem
             to="/companies"
-            label="Companies"
+            label="Go to Companies"
             shortcuts={['G', 'C']}
           />
           <CommandMenuItem
             to="/opportunities"
-            label="Opportunities"
+            label="Go to Opportunities"
             shortcuts={['G', 'O']}
           />
           <CommandMenuItem
             to="/settings/profile"
-            label="Settings"
+            label="Go to Settings"
             shortcuts={['G', 'S']}
           />
         </StyledGroup>
