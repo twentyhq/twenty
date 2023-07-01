@@ -6,12 +6,14 @@ import { IconTrash } from '@/ui/icons/index';
 import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
 
 import { GET_PIPELINES } from '../queries';
+import { boardItemsState } from '../states/boardItemsState';
 import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
 
 export function BoardActionBarButtonDeleteOpportunities() {
   const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
     selectedBoardItemsState,
   );
+  const [items, setItems] = useRecoilState(boardItemsState);
 
   const [deleteOpportunities] = useDeleteManyPipelineProgressMutation({
     refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
@@ -24,6 +26,13 @@ export function BoardActionBarButtonDeleteOpportunities() {
       },
     });
 
+    setItems(
+      Object.fromEntries(
+        Object.entries(items).filter(
+          ([key]) => !selectedBoardItems.includes(key),
+        ),
+      ),
+    );
     setSelectedBoardItems([]);
   }
 
