@@ -7,14 +7,16 @@ import { Checkbox } from '../../ui/components/form/Checkbox';
 import { IconCalendarEvent, IconUser, IconUsers } from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
 
-const StyledBoardCard = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
+const StyledBoardCard = styled.div<{ isSelected: boolean }>`
+  background: ${({ theme, isSelected }) =>
+    isSelected ? theme.color.lighterBlue : theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 4px;
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
   &:hover {
-    background-color: ${({ theme }) => theme.background.tertiary};
+    background-color: ${({ theme, isSelected }) =>
+      isSelected ? theme.color.lightBlue : theme.background.tertiary};
   }
   cursor: pointer;
 `;
@@ -72,7 +74,7 @@ export function CompanyBoardCard({
   const theme = useTheme();
   return (
     <StyledBoardCardWrapper>
-      <StyledBoardCard>
+      <StyledBoardCard isSelected={isSelected}>
         <StyledBoardCardHeader>
           <img
             src={getLogoUrlFromDomainName(company.domainName).toString()}
