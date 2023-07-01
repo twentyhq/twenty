@@ -30,7 +30,7 @@ export const UnselectedCompanyCompanyBoardCard: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(selectJestFn).toHaveBeenCalledTimes(0);
-    const checkbox = canvas.getByRole('input');
+    const checkbox = canvas.getByRole('checkbox');
     userEvent.click(checkbox);
     expect(selectJestFn).toHaveBeenCalledTimes(1);
   },
