@@ -8,7 +8,7 @@ import { IconCalendarEvent, IconUser, IconUsers } from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
-  background: ${({ theme, selected }) =>
+  background-color: ${({ theme, selected }) =>
     selected ? theme.selectedCard : theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 4px;

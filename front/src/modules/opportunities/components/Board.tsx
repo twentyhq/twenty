@@ -109,6 +109,14 @@ export function Board({
     [board, onUpdate, setBoard],
   );
 
+  const onSelect = (itemKey: string) => {
+    if (selectedItemKeys.includes(itemKey)) {
+      setSelectedItemKeys(selectedItemKeys.filter((key) => key !== itemKey));
+    } else {
+      setSelectedItemKeys([...selectedItemKeys, itemKey]);
+    }
+  };
+
   return board.length > 0 ? (
     <StyledBoard>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -136,20 +144,7 @@ export function Board({
                               <CompanyBoardCard
                                 company={items[itemKey]}
                                 selected={selectedItemKeys.includes(itemKey)}
-                                onSelect={() => {
-                                  if (selectedItemKeys.includes(itemKey)) {
-                                    setSelectedItemKeys(
-                                      selectedItemKeys.filter(
-                                        (key) => key !== itemKey,
-                                      ),
-                                    );
-                                  } else {
-                                    setSelectedItemKeys([
-                                      ...selectedItemKeys,
-                                      itemKey,
-                                    ]);
-                                  }
-                                }}
+                                onSelect={() => onSelect(itemKey)}
                               />
                             </div>
                           )}
