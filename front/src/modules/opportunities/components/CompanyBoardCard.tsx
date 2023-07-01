@@ -9,14 +9,14 @@ import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background: ${({ theme, selected }) =>
-    selected ? theme.color.lighterBlue : theme.background.secondary};
+    selected ? theme.selectedCard : theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 4px;
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
   &:hover {
     background-color: ${({ theme, selected }) =>
-      selected ? theme.color.lightBlue : theme.background.tertiary};
+      selected ? theme.selectedCardHover : theme.background.tertiary};
   }
   cursor: pointer;
 `;
