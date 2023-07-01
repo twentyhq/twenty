@@ -7,16 +7,16 @@ import { Checkbox } from '../../ui/components/form/Checkbox';
 import { IconCalendarEvent, IconUser, IconUsers } from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
 
-const StyledBoardCard = styled.div<{ isSelected: boolean }>`
-  background: ${({ theme, isSelected }) =>
-    isSelected ? theme.color.lighterBlue : theme.background.secondary};
+const StyledBoardCard = styled.div<{ selected: boolean }>`
+  background: ${({ theme, selected }) =>
+    selected ? theme.color.lighterBlue : theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 4px;
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
   &:hover {
-    background-color: ${({ theme, isSelected }) =>
-      isSelected ? theme.color.lightBlue : theme.background.tertiary};
+    background-color: ${({ theme, selected }) =>
+      selected ? theme.color.lightBlue : theme.background.tertiary};
   }
   cursor: pointer;
 `;
@@ -64,17 +64,17 @@ type CompanyProp = Pick<
 
 export function CompanyBoardCard({
   company,
-  isSelected,
+  selected,
   onSelect,
 }: {
   company: CompanyProp;
-  isSelected: boolean;
+  selected: boolean;
   onSelect: (company: CompanyProp) => void;
 }) {
   const theme = useTheme();
   return (
     <StyledBoardCardWrapper>
-      <StyledBoardCard isSelected={isSelected}>
+      <StyledBoardCard selected={selected}>
         <StyledBoardCardHeader>
           <img
             src={getLogoUrlFromDomainName(company.domainName).toString()}
@@ -82,7 +82,7 @@ export function CompanyBoardCard({
           />
           <span>{company.name}</span>
           <div style={{ display: 'flex', flex: 1 }} />
-          <Checkbox checked={isSelected} onChange={() => onSelect(company)} />
+          <Checkbox checked={selected} onChange={() => onSelect(company)} />
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>

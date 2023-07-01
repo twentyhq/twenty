@@ -135,7 +135,7 @@ export function Board({
                             >
                               <CompanyBoardCard
                                 company={items[itemKey]}
-                                isSelected={selectedItemKeys.includes(itemKey)}
+                                selected={selectedItemKeys.includes(itemKey)}
                                 onSelect={() => {
                                   if (selectedItemKeys.includes(itemKey)) {
                                     setSelectedItemKeys(
