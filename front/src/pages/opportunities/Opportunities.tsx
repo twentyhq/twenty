@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 
-import { BoardActionBarButtonDeleteOpportunities } from '@/opportunities/components/BoardActionBarButtonDeleteOpportunities';
-import { EntityBoardActionBar } from '@/opportunities/components/EntityBoardActionBar';
+import { BoardActionBarButtonDeletePipelineProcesses } from '@/pipeline-processes/components/BoardActionBarButtonDeletePipelineProcesses';
+import { EntityBoardActionBar } from '@/pipeline-processes/components/EntityBoardActionBar';
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 
@@ -12,8 +12,8 @@ import {
   useGetPipelinesQuery,
   useUpdateOnePipelineProgressMutation,
 } from '../../generated/graphql';
-import { Board } from '../../modules/opportunities/components/Board';
-import { useBoard } from '../../modules/opportunities/hooks/useBoard';
+import { Board } from '../../modules/pipeline-processes/components/Board';
+import { useBoard } from '../../modules/pipeline-processes/hooks/useBoard';
 
 export function Opportunities() {
   const theme = useTheme();
@@ -60,7 +60,7 @@ export function Opportunities() {
             onUpdate={onUpdate}
           />
           <EntityBoardActionBar>
-            <BoardActionBarButtonDeleteOpportunities />
+            <BoardActionBarButtonDeletePipelineProcesses />
           </EntityBoardActionBar>
         </>
       ) : (
