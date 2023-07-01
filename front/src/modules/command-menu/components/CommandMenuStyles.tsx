@@ -10,6 +10,7 @@ export const StyledDialog = styled(Command.Dialog)`
   max-width: 640px;
   overflow: hidden;
   padding: 0;
+  padding: ${({ theme }) => theme.spacing(1)};
   position: fixed;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -27,10 +28,14 @@ export const StyledInput = styled(Command.Input)`
   outline: none;
   padding: ${({ theme }) => theme.spacing(5)};
   width: 100%;
+  &::placeholder {
+    color: ${({ theme }) => theme.font.color.light};
+  }
 `;
 
 export const StyledMenuItem = styled(Command.Item)`
   align-items: center;
+  border-radius: 4px;
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   display: flex;
@@ -38,7 +43,7 @@ export const StyledMenuItem = styled(Command.Item)`
   gap: ${({ theme }) => theme.spacing(3)};
   height: 40px;
   justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.spacing(4)};
+  padding: 0 ${({ theme }) => theme.spacing(1)};
   position: relative;
   transition: all 150ms ease;
   transition-property: none;
@@ -88,8 +93,8 @@ export const StyledGroup = styled(Command.Group)`
     font-size: ${({ theme }) => theme.font.size.xs};
     font-weight: ${({ theme }) => theme.font.weight.semiBold};
     padding-bottom: ${({ theme }) => theme.spacing(2)};
-    padding-left: ${({ theme }) => theme.spacing(4)};
-    padding-right: ${({ theme }) => theme.spacing(4)};
+    padding-left: ${({ theme }) => theme.spacing(2)};
+    padding-right: ${({ theme }) => theme.spacing(1)};
     padding-top: ${({ theme }) => theme.spacing(2)};
     text-transform: uppercase;
     user-select: none;
