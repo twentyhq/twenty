@@ -1,10 +1,7 @@
 
 </br>
 <p align="center">
-  <a href="https://www.twenty.com#gh-dark-mode-only">
-    <img src="./docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
-  </a>
-  <a href="https://www.twenty.com#gh-light-mode-only">
+  <a href="https://www.twenty.com">
     <img src="./docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
   </a>
 </p>
@@ -18,13 +15,12 @@
 <br />
 
 <p align="center">
-  <a href="https://www.twenty.com#gh-dark-mode-only">
-    <img src="./docs/static/img/preview-dark.png" alt="Companies view" />
-  </a>
-</p>
-<p align="center">
-  <a href="https://www.twenty.com#gh-light-mode-only">
-    <img src="./docs/static/img/preview-light.png" alt="Companies view" />
+  <a href="https://www.twenty.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./docs/static/img/preview-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="./docs/static/img/preview-light.png">
+      <img src="./docs/static/img/preview-light.png" alt="Companies view" />
+    </picture>
   </a>
 </p>
 
@@ -39,9 +35,9 @@ Twenty is an Open Source CRM designed to be:
 - Contributions are, of course, most welcome! It doesn't have to be code, you could also create an issue to report a bug you've spotted, join discussions or write documentation.
 
 # Quickstart
-By the first week of July, you should be able to try a demo directly on [app.twenty.com](https://app.twenty.com), our cloud offering with a generous free tier. We'll also release click-to-deploy buttons for Render and Railway.
+Soon, you should be able to try a demo directly on [app.twenty.com](https://app.twenty.com), our cloud offering with a generous free tier. We'll also release click-to-deploy buttons for Render and Railway.
 
-In the meantime, you can check [the documentation](/start/local-setup). It shouldn't take more than a few minutes to install locally.
+In the meantime, you can check [the documentation](https://docs.twenty.com/start/local-setup). It shouldn't take more than a few minutes to install locally.
 
 # Progress
 We are currently in the development phase of Twenty's alpha version:
@@ -55,7 +51,7 @@ We are currently in the development phase of Twenty's alpha version:
 ⚙️  Pipelines  
 ⚙️  Custom Fields  
 
-**Planned** 
+**Planned**  
 📅  Activity log  
 📅  Auto-logging emails  
 📅  Search / Cmd + K  
@@ -67,3 +63,15 @@ The doc is available on [docs.twenty.com](https://docs.twenty.com)
 
 We don't have a Slack community yet but we will create one when we are ready to launch.
 In the meantime, feel free to create a Github issue or open a discussion.
+
+# Office hours
+Want to meet the team? Get direct support?
+Feel free to book a slot during our office hours
+
+<a href="https://cal.com/team/twenty?utm_source=banner&utm_campaign=oss">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://cal.com/book-with-cal-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://cal.com/book-with-cal-light.svg">
+    <img alt="Book us with Cal.com" src="https://cal.com/book-with-cal-light.svg" height="25">
+  </picture>
+</a>
