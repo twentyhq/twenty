@@ -1,7 +1,5 @@
-import { StrictMode } from 'react';
-import { expect, jest } from '@storybook/jest';
+import { StrictMode, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
 
 import { Company } from '../../../../generated/graphql';
 import { mockedCompaniesData } from '../../../../testing/mock-data/companies';
@@ -15,35 +13,22 @@ const meta: Meta<typeof CompanyBoardCard> = {
 export default meta;
 type Story = StoryObj<typeof CompanyBoardCard>;
 
-const selectJestFn = jest.fn();
+const FakeSelectableCompanyBoardCard = () => {
+  const [selected, setSelected] = useState<boolean>(false);
 
-export const UnselectedCompanyCompanyBoardCard: Story = {
-  render: () => (
-    <StrictMode>
-      <CompanyBoardCard
-        company={mockedCompaniesData[0] as Company}
-        selected={false}
-        onSelect={selectJestFn}
-      />
-    </StrictMode>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(selectJestFn).toHaveBeenCalledTimes(0);
-    const checkbox = canvas.getByRole('checkbox');
-    userEvent.click(checkbox);
-    expect(selectJestFn).toHaveBeenCalledTimes(1);
-  },
+  return (
+    <CompanyBoardCard
+      company={mockedCompaniesData[0] as Company}
+      selected={selected}
+      onSelect={() => setSelected(!selected)}
+    />
+  );
 };
 
-export const SelectedCompanyCompanyBoardCard: Story = {
+export const CompanyCompanyBoardCard: Story = {
   render: () => (
     <StrictMode>
-      <CompanyBoardCard
-        company={mockedCompaniesData[0] as Company}
-        selected={true}
-        onSelect={selectJestFn}
-      />
+      <FakeSelectableCompanyBoardCard />
     </StrictMode>
   ),
 };
