@@ -1,24 +1,21 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
-import { GET_PIPELINES } from '@/opportunities/queries';
 import { EntityTableActionBarButton } from '@/ui/components/table/action-bar/EntityTableActionBarButton';
 import { IconTrash } from '@/ui/icons/index';
-import { useResetTableRowSelection } from '@/ui/tables/hooks/useResetTableRowSelection';
+import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
 
-// import { useDeletePipelineProgressesMutation } from '~/generated/graphql';
+import { GET_PIPELINES } from '../queries';
 import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
 
 export function BoardActionBarButtonDeleteOpportunities() {
-  const selectedBoardItems = useRecoilValue(selectedBoardItemsState);
+  const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
+    selectedBoardItemsState,
+  );
 
-  const resetRowSelection = useResetTableRowSelection();
-
-  const [deleteOpportunities] = [
-    async (_: any) => {
-      console.log('deleteOpportunities');
-    },
-  ];
+  const [deleteOpportunities] = useDeleteManyPipelineProgressMutation({
+    refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
+  });
 
   async function handleDeleteClick() {
     await deleteOpportunities({
@@ -27,7 +24,7 @@ export function BoardActionBarButtonDeleteOpportunities() {
       },
     });
 
-    resetRowSelection();
+    setSelectedBoardItems([]);
   }
 
   return (
