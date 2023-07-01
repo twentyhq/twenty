@@ -34,7 +34,7 @@ const StyledItem = styled.button<StyledItemProps>`
       return props.theme.color.red;
     }
     if (props.soon) {
-      return props.theme.font.color.extraLight;
+      return props.theme.font.color.light;
     }
     return props.theme.font.color.secondary;
   }};
@@ -70,7 +70,7 @@ const StyledSoonPill = styled.div`
   align-items: center;
   border-radius: 50px;
   background-color: ${({ theme }) => theme.background.transparent.light};
-  font-size: ${({ theme }) => theme.font.size.xxs};
+  font-size: ${({ theme }) => theme.font.size.xs};
   height: 16px;
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};

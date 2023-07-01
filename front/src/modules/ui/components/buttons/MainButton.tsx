@@ -35,7 +35,7 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme, variant, disabled }) => {
     if (disabled) {
-      return theme.font.color.extraLight;
+      return theme.font.color.light;
     }
 
     switch (variant) {
