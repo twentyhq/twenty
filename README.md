@@ -1,7 +1,7 @@
 
 </br>
 <p align="center">
-  <a href="https://twenty.com">
+  <a href="https://www.twenty.com">
     <img src="./docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
   </a>
 </p>
@@ -15,7 +15,7 @@
 <br />
 
 <p align="center">
-  <a href="https://twenty.com">
+  <a href="https://www.twenty.com">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./docs/static/img/preview-dark.png">
       <source media="(prefers-color-scheme: light)" srcset="./docs/static/img/preview-light.png">
