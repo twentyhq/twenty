@@ -69,19 +69,18 @@ export function useFilteredSearchEntityQuery<
   limit?: number;
   searchFilter: string;
 }): EntitiesForMultipleEntitySelect<CustomEntityForSelect> {
-  const { loading: selectedEntitiesLoading, data: selectedEntitiesData } =
-    queryHook({
-      variables: {
-        where: {
-          id: {
-            in: selectedIds,
-          },
+  const { data: selectedEntitiesData } = queryHook({
+    variables: {
+      where: {
+        id: {
+          in: selectedIds,
         },
-        orderBy: {
-          [orderByField]: sortOrder,
-        },
-      } as QueryVariables,
-    });
+      },
+      orderBy: {
+        [orderByField]: sortOrder,
+      },
+    } as QueryVariables,
+  });
 
   const searchFilterByField = searchOnFields.map((field) => ({
     [field]: {
@@ -90,10 +89,7 @@ export function useFilteredSearchEntityQuery<
     },
   }));
 
-  const {
-    loading: filteredSelectedEntitiesLoading,
-    data: filteredSelectedEntitiesData,
-  } = queryHook({
+  const { data: filteredSelectedEntitiesData } = queryHook({
     variables: {
       where: {
         AND: [
@@ -113,27 +109,26 @@ export function useFilteredSearchEntityQuery<
     } as QueryVariables,
   });
 
-  const { loading: entitiesToSelectLoading, data: entitiesToSelectData } =
-    queryHook({
-      variables: {
-        where: {
-          AND: [
-            {
-              OR: searchFilterByField,
+  const { data: entitiesToSelectData } = queryHook({
+    variables: {
+      where: {
+        AND: [
+          {
+            OR: searchFilterByField,
+          },
+          {
+            id: {
+              notIn: selectedIds,
             },
-            {
-              id: {
-                notIn: selectedIds,
-              },
-            },
-          ],
-        },
-        limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
-        orderBy: {
-          [orderByField]: sortOrder,
-        },
-      } as QueryVariables,
-    });
+          },
+        ],
+      },
+      limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
+      orderBy: {
+        [orderByField]: sortOrder,
+      },
+    } as QueryVariables,
+  });
 
   return {
     selectedEntities: (selectedEntitiesData?.searchResults ?? []).map(
@@ -145,9 +140,5 @@ export function useFilteredSearchEntityQuery<
     entitiesToSelect: (entitiesToSelectData?.searchResults ?? []).map(
       mappingFunction,
     ),
-    loading:
-      entitiesToSelectLoading ||
-      filteredSelectedEntitiesLoading ||
-      selectedEntitiesLoading,
   };
 }

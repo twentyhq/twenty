@@ -8,11 +8,9 @@ import { DropdownMenu } from '@/ui/components/menu/DropdownMenu';
 import { DropdownMenuButton } from '@/ui/components/menu/DropdownMenuButton';
 import { DropdownMenuItem } from '@/ui/components/menu/DropdownMenuItem';
 import { DropdownMenuItemContainer } from '@/ui/components/menu/DropdownMenuItemContainer';
-import { DropdownMenuItemContainerSkeleton } from '@/ui/components/menu/DropdownMenuItemContainerSkeleton';
 import { DropdownMenuSearch } from '@/ui/components/menu/DropdownMenuSearch';
 import { DropdownMenuSelectableItem } from '@/ui/components/menu/DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '@/ui/components/menu/DropdownMenuSeparator';
-import { CompanyPickerSkeleton } from '@/ui/components/skeletons/CompanyPickerSkeleton';
 import { Avatar } from '@/users/components/Avatar';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
@@ -21,7 +19,6 @@ import { useEntitySelectLogic } from '../hooks/useEntitySelectLogic';
 export type EntitiesForSingleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
 > = {
-  loading: boolean;
   selectedEntity: CustomEntityForSelect;
   entitiesToSelect: CustomEntityForSelect[];
 };
@@ -83,29 +80,24 @@ export function SingleEntitySelect<
         </>
       )}
       <DropdownMenuItemContainer ref={containerRef}>
-        {entities.loading == true ? (
-          <DropdownMenuItemContainerSkeleton>
-            <CompanyPickerSkeleton count={10} />
-          </DropdownMenuItemContainerSkeleton>
-        ) : entitiesInDropdown.length === 0 ? (
+        {entitiesInDropdown?.map((entity, index) => (
+          <DropdownMenuSelectableItem
+            key={entity.id}
+            selected={entities.selectedEntity?.id === entity.id}
+            hovered={hoveredIndex === index}
+            onClick={() => onEntitySelected(entity)}
+          >
+            <Avatar
+              avatarUrl={entity.avatarUrl}
+              placeholder={entity.name}
+              size={16}
+              type={entity.avatarType ?? 'rounded'}
+            />
+            {entity.name}
+          </DropdownMenuSelectableItem>
+        ))}
+        {entitiesInDropdown?.length === 0 && (
           <DropdownMenuItem>No result</DropdownMenuItem>
-        ) : (
-          entitiesInDropdown?.map((entity, index) => (
-            <DropdownMenuSelectableItem
-              key={entity.id}
-              selected={entities.selectedEntity?.id === entity.id}
-              hovered={hoveredIndex === index}
-              onClick={() => onEntitySelected(entity)}
-            >
-              <Avatar
-                avatarUrl={entity.avatarUrl}
-                placeholder={entity.name}
-                size={16}
-                type={entity.avatarType ?? 'rounded'}
-              />
-              {entity.name}
-            </DropdownMenuSelectableItem>
-          ))
         )}
       </DropdownMenuItemContainer>
     </DropdownMenu>
