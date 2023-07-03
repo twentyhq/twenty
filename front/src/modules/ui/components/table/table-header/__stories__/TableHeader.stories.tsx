@@ -2,7 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconList } from '@/ui/icons/index';
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import {
+  getRenderWrapperForComponent,
+  getRenderWrapperForEntityTableComponent,
+} from '~/testing/renderWrappers';
 
 import { availableSorts } from '../../../../../../pages/companies/companies-sorts';
 import { TableHeader } from '../TableHeader';
@@ -16,7 +19,7 @@ export default meta;
 type Story = StoryObj<typeof TableHeader>;
 
 export const Empty: Story = {
-  render: getRenderWrapperForComponent(
+  render: getRenderWrapperForEntityTableComponent(
     <TableHeader
       viewName="ViewName"
       viewIcon={<IconList />}
@@ -26,7 +29,7 @@ export const Empty: Story = {
 };
 
 export const WithSortsAndFilters: Story = {
-  render: getRenderWrapperForComponent(
+  render: getRenderWrapperForEntityTableComponent(
     <TableHeader
       viewName="ViewName"
       viewIcon={<IconList />}
@@ -61,7 +64,7 @@ export const WithSortsAndFilters: Story = {
     userEvent.click(await canvas.findByText('Url'));
 
     userEvent.click(await canvas.findByText('Filter'));
-    userEvent.click(await canvas.findByText('Created At'));
+    userEvent.click(await canvas.findByText('Created at'));
     userEvent.click(await canvas.findByText('6'));
     userEvent.click(outsideClick);
   },

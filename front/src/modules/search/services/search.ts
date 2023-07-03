@@ -36,6 +36,8 @@ export const SEARCH_USER_QUERY = gql`
       id
       email
       displayName
+      firstName
+      lastName
     }
   }
 `;

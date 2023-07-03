@@ -27,6 +27,8 @@ export const GET_COMPANIES = gql`
         id
         email
         displayName
+        firstName
+        lastName
       }
     }
   }

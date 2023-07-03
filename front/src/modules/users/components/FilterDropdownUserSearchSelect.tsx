@@ -21,9 +21,9 @@ export function FilterDropdownUserSearchSelect() {
 
   const usersForSelect = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
-    searchOnFields: ['displayName'],
-    orderByField: 'displayName',
-    selectedIds: [selectedDropdownEntityId ?? ''],
+    searchOnFields: ['firstName', 'lastName'],
+    orderByField: 'lastName',
+    selectedIds: selectedDropdownEntityId ? [selectedDropdownEntityId] : [],
     mappingFunction: (entity) => ({
       id: entity.id,
       entityType: Entity.User,

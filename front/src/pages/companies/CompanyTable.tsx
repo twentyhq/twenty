@@ -33,6 +33,8 @@ export function CompanyTable() {
   );
 
   const whereFilters = useMemo(() => {
+    if (!filters.length) return undefined;
+
     return { AND: filters.map(turnFilterIntoWhereClause) };
   }, [filters]) as any;
 

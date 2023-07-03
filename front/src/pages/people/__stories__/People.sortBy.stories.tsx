@@ -4,6 +4,7 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForPage } from '~/testing/renderWrappers';
+import { sleep } from '~/testing/sleep';
 
 import { People } from '../People';
 
@@ -57,6 +58,8 @@ export const Cancel: Story = {
 
     const cancelButton = canvas.getByText('Cancel');
     await userEvent.click(cancelButton);
+
+    await sleep(1000);
 
     await expect(canvas.queryAllByTestId('remove-icon-email')).toStrictEqual(
       [],
