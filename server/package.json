@@ -53,6 +53,7 @@
     "date-fns": "^2.30.0",
     "graphql": "^16.6.0",
     "graphql-type-json": "^0.3.2",
+    "graphql-upload": "^13.0.0",
     "jest-mock-extended": "^3.0.4",
     "jsonwebtoken": "^9.0.0",
     "lodash.isobject": "^3.0.2",
@@ -65,6 +66,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "sharp": "^0.32.1",
     "type-fest": "^3.12.0",
     "uuid": "^9.0.0",
     "yarn": "^1.22.19"
@@ -76,6 +78,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/date-fns": "^2.6.0",
     "@types/express": "^4.17.13",
+    "@types/graphql-upload": "^8.0.12",
     "@types/jest": "28.1.8",
     "@types/lodash.isobject": "^3.0.7",
     "@types/lodash.kebabcase": "^4.1.7",

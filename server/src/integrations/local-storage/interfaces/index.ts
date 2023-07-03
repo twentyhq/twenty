@@ -1,1 +1,1 @@
-export * from './aws-s3-module.interface';
+export * from './local-storage.interface';

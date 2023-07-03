@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { MODULE_OPTIONS_TOKEN } from './aws-s3.module-definition';
-import { AwsS3ModuleOptions } from './interfaces';
+import { MODULE_OPTIONS_TOKEN } from './s3-storage.module-definition';
+import { S3StorageModuleOptions } from './interfaces';
 import {
   CreateBucketCommandInput,
   HeadBucketCommandInput,
@@ -10,15 +10,15 @@ import {
   PutObjectCommandOutput,
   S3,
 } from '@aws-sdk/client-s3';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class AwsS3Service {
+export class S3StorageService {
   private s3Client: S3;
   private bucketName: string;
 
   constructor(
-    @Inject(MODULE_OPTIONS_TOKEN) private readonly options: AwsS3ModuleOptions,
+    @Inject(MODULE_OPTIONS_TOKEN)
+    private readonly options: S3StorageModuleOptions,
   ) {
     const { bucketName, ...s3Options } = options;
 

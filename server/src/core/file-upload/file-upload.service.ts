@@ -1,42 +1,126 @@
 import { Injectable } from '@nestjs/common';
-import { AwsS3Service } from 'src/integrations/aws-s3/aws-s3.service';
+import sharp from 'sharp';
+import { S3StorageService } from 'src/integrations/s3-storage/s3-storage.service';
 import { FileFolder } from './interfaces/file-folder.interface';
 import { kebabCase } from 'src/utils/kebab-case';
-import { ConfigService } from '@nestjs/config';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { LocalStorageService } from 'src/integrations/local-storage/local-storage.service';
+import { getCropSize } from 'src/utils/image';
+import { settings } from 'src/constants/settings';
 
 @Injectable()
 export class FileUploadService {
   constructor(
-    private readonly awsS3Service: AwsS3Service,
-    private readonly configService: ConfigService,
+    private readonly s3Storage: S3StorageService,
+    private readonly localStorage: LocalStorageService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
-  async uploadFile(
-    file: File,
-    name: string,
-    mimeType: string | undefined,
-    bucketFolder: FileFolder,
-  ) {
-    const fileSystem = this.configService.get<string>('FILESYSTEM_DISK');
+  async uploadFile({
+    file,
+    name,
+    mimeType,
+    fileFolder,
+  }: {
+    file: Buffer | Uint8Array | string;
+    name: string;
+    mimeType: string | undefined;
+    fileFolder: FileFolder;
+  }) {
+    const storageType = this.environmentService.getStorageType();
 
-    switch (fileSystem) {
-      case 's3':
-        return this.uploadFileToS3(file, name, mimeType, bucketFolder);
+    switch (storageType) {
+      case 's3': {
+        await this.uploadFileToS3(file, name, mimeType, fileFolder);
+        return {
+          name: `/${name}`,
+        };
+      }
       case 'local':
-        break;
+      default: {
+        await this.uploadToLocal(file, name, fileFolder);
+        return {
+          name: `/${name}`,
+        };
+      }
+    }
+  }
+
+  async uploadImage({
+    file,
+    name,
+    mimeType,
+    fileFolder,
+  }: {
+    file: Buffer | Uint8Array | string;
+    name: string;
+    mimeType: string | undefined;
+    fileFolder: FileFolder;
+  }) {
+    // Get all cropSizes for this fileFolder
+    const cropSizes = settings.storage.imageCropSizes[fileFolder];
+    // Extract the values from ShortCropSize
+    const sizes = cropSizes.map((shortSize) => getCropSize(shortSize));
+    // Crop images based on sizes
+    const images = await Promise.all(
+      sizes.map((size) =>
+        sharp(file).resize({
+          [size?.type || 'width']: size?.value ?? undefined,
+        }),
+      ),
+    );
+
+    // Upload all images to corresponding folders
+    await Promise.all(
+      images.map(async (image, index) => {
+        const buffer = await image.toBuffer();
+
+        return this.uploadFile({
+          file: buffer,
+          name: `${cropSizes[index]}/${name}`,
+          mimeType,
+          fileFolder,
+        });
+      }),
+    );
+
+    return {
+      name: `/${name}`,
+    };
+  }
+
+  private async uploadToLocal(
+    file: Buffer | Uint8Array | string,
+    name: string,
+    fileFolder: FileFolder,
+  ): Promise<void> {
+    const folderName = kebabCase(fileFolder.toString());
+
+    try {
+      const result = await this.localStorage.uploadFile({
+        file,
+        name,
+        folder: folderName,
+      });
+
+      return result;
+    } catch (err) {
+      console.log('uploadFile error: ', err);
+      throw err;
     }
   }
 
   private async uploadFileToS3(
-    file: File,
+    file: Buffer | Uint8Array | string,
     name: string,
     mimeType: string | undefined,
-    bucketFolder: FileFolder,
+    fileFolder: FileFolder,
   ) {
-    const bucketFolderName = kebabCase(bucketFolder.toString());
+    // Aws only accept bucket with kebab-case name
+    const bucketFolderName = kebabCase(fileFolder.toString());
 
     try {
-      const result = await this.awsS3Service.uploadFile({
+      const result = await this.s3Storage.uploadFile({
         Key: `${bucketFolderName}/${name}`,
         Body: file,
         ContentType: mimeType,

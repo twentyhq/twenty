@@ -1,3 +1,3 @@
 export interface LocalStorageModuleOptions {
-  folder: string;
+  storagePath: string;
 }

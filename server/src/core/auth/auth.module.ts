@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 import { AuthService } from './services/auth.service';
 import { GoogleAuthController } from './controllers/google-auth.controller';
@@ -8,25 +7,24 @@ import { GoogleStrategy } from './strategies/google.auth.strategy';
 import { PrismaService } from 'src/database/prisma.service';
 import { UserModule } from '../user/user.module';
 import { VerifyAuthController } from './controllers/verify-auth.controller';
-
 import { TokenService } from './services/token.service';
 import { AuthResolver } from './auth.resolver';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 const jwtModule = JwtModule.registerAsync({
-  useFactory: async (configService: ConfigService) => {
+  useFactory: async (environmentService: EnvironmentService) => {
     return {
-      secret: configService.get<string>('ACCESS_TOKEN_SECRET'),
+      secret: environmentService.getAccessTokenSecret(),
       signOptions: {
-        expiresIn: configService.get<string>('ACCESS_TOKEN_EXPIRES_IN'),
+        expiresIn: environmentService.getAccessTokenExpiresIn(),
       },
     };
   },
-  imports: [ConfigModule.forRoot({})],
-  inject: [ConfigService],
+  inject: [EnvironmentService],
 });
 
 @Module({
-  imports: [jwtModule, ConfigModule.forRoot({}), UserModule],
+  imports: [jwtModule, UserModule],
   controllers: [GoogleAuthController, VerifyAuthController],
   providers: [
     AuthService,

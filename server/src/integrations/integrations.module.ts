@@ -1,30 +1,33 @@
 import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-import { AwsS3Module } from './aws-s3/aws-s3.module';
-import { AwsS3ModuleOptions } from './aws-s3/interfaces';
+import { S3StorageModule } from './s3-storage/s3-storage.module';
+import { S3StorageModuleOptions } from './s3-storage/interfaces';
 import { LocalStorageModule } from './local-storage/local-storage.module';
 import { LocalStorageModuleOptions } from './local-storage/interfaces';
+import { EnvironmentModule } from './environment/environment.module';
+import { EnvironmentService } from './environment/environment.service';
+import { assert } from 'src/utils/assert';
 
 /**
- * AWS S3 Module factory
+ * S3 Storage Module factory
  * @param config
  * @returns S3ModuleOptions
  */
-const awsS3ModuleFactory = async (
-  config: ConfigService,
-): Promise<AwsS3ModuleOptions> => {
-  const fileSystem = config.get<string>('FILESYSTEM_DISK');
-  const folderName = config.get<string>('UPLOAD_FOLDER_NAME')!;
-  // TODO: add region to environment variables
-  const region = 'eu-west-1';
+const S3StorageModuleFactory = async (
+  environmentService: EnvironmentService,
+): Promise<S3StorageModuleOptions> => {
+  const fileSystem = environmentService.getStorageType();
+  const bucketName = environmentService.getStorageLocation();
+  const region = environmentService.getStorageRegion();
 
   if (fileSystem === 'local') {
-    return { bucketName: folderName };
+    return { bucketName };
   }
 
+  assert(region, 'S3 region is not defined');
+
   return {
-    bucketName: folderName,
+    bucketName,
     credentials: fromNodeProviderChain({
       clientConfig: { region },
     }),
@@ -36,28 +39,29 @@ const awsS3ModuleFactory = async (
 /**
  * LocalStorage Module factory
  * @param environment
- * @returns S3ModuleOptions
+ * @returns LocalStorageModuleOptions
  */
 const localStorageModuleFactory = async (
-  config: ConfigService,
+  environmentService: EnvironmentService,
 ): Promise<LocalStorageModuleOptions> => {
-  const folderName = config.get<string>('UPLOAD_FOLDER_NAME');
+  const folderName = environmentService.getStorageLocation();
 
   return {
-    folder: process.cwd() + '/' + folderName,
+    storagePath: process.cwd() + '/' + folderName,
   };
 };
 
 @Module({
   imports: [
-    AwsS3Module.forRootAsync({
-      useFactory: awsS3ModuleFactory,
-      inject: [ConfigService],
+    S3StorageModule.forRootAsync({
+      useFactory: S3StorageModuleFactory,
+      inject: [EnvironmentService],
     }),
     LocalStorageModule.forRootAsync({
       useFactory: localStorageModuleFactory,
-      inject: [ConfigService],
+      inject: [EnvironmentService],
     }),
+    EnvironmentModule.forRoot({}),
   ],
   exports: [],
   providers: [],
