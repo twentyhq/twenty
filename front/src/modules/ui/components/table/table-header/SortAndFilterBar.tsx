@@ -62,6 +62,7 @@ const StyledCancelButton = styled.button`
 function SortAndFilterBar<SortField>({
   sorts,
   onRemoveSort,
+  onCancelClick,
 }: OwnProps<SortField>) {
   const theme = useTheme();
 
@@ -94,6 +95,7 @@ function SortAndFilterBar<SortField>({
 
   function handleCancelClick() {
     setActiveTableFilters([]);
+    onCancelClick();
   }
 
   if (!activeTableFiltersWithDefinition.length && !sorts.length) {
