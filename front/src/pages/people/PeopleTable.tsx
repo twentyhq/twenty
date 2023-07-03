@@ -3,7 +3,7 @@ import { IconList } from '@tabler/icons-react';
 
 import { defaultOrderBy } from '@/companies/services';
 import { reduceSortsToOrderBy } from '@/filters-and-sorts/helpers';
-import { selectedFiltersScopedState } from '@/filters-and-sorts/states/selectedFiltersScopedState';
+import { selectedTableFiltersScopedState } from '@/filters-and-sorts/states/selectedTableFiltersScopedState';
 import { turnFilterIntoWhereClause } from '@/filters-and-sorts/utils/turnFilterIntoWhereClause';
 import { PeopleSelectedSortType, usePeopleQuery } from '@/people/services';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
@@ -25,7 +25,7 @@ export function PeopleTable() {
   }, []);
 
   const filters = useRecoilScopedValue(
-    selectedFiltersScopedState,
+    selectedTableFiltersScopedState,
     TableContext,
   );
 

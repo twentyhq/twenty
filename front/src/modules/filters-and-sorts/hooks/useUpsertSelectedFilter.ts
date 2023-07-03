@@ -3,12 +3,12 @@ import { produce } from 'immer';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
-import { selectedFiltersScopedState } from '../states/selectedFiltersScopedState';
+import { selectedTableFiltersScopedState } from '../states/selectedTableFiltersScopedState';
 import { SelectedEntityFilter } from '../types/SelectedEntityFilter';
 
 export function useUpsertSelectedFilter() {
   const [, setSelectedFilters] = useRecoilScopedState(
-    selectedFiltersScopedState,
+    selectedTableFiltersScopedState,
     TableContext,
   );
 

@@ -2,10 +2,10 @@ import { atomFamily } from 'recoil';
 
 import { SelectedEntityFilter } from '@/filters-and-sorts/types/SelectedEntityFilter';
 
-export const selectedFiltersScopedState = atomFamily<
+export const selectedTableFiltersScopedState = atomFamily<
   SelectedEntityFilter[],
   string
 >({
-  key: 'selectedFiltersScopedState',
+  key: 'selectedTableFiltersScopedState',
   default: [],
 });

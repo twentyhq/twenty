@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { SelectedSortType } from '@/filters-and-sorts/interfaces/sorts/interface';
 import { availableTableFiltersScopedState } from '@/filters-and-sorts/states/availableTableFiltersScopedState';
-import { selectedFiltersScopedState } from '@/filters-and-sorts/states/selectedFiltersScopedState';
+import { selectedTableFiltersScopedState } from '@/filters-and-sorts/states/selectedTableFiltersScopedState';
 import { getOperandLabel } from '@/filters-and-sorts/utils/getOperandLabel';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icons/index';
@@ -65,7 +65,7 @@ function SortAndFilterBar<SortField>({
   const theme = useTheme();
 
   const [selectedFilters, setSelectedFilters] = useRecoilScopedState(
-    selectedFiltersScopedState,
+    selectedTableFiltersScopedState,
     TableContext,
   );
 

@@ -4,11 +4,11 @@ import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState'
 import { TableContext } from '@/ui/tables/states/TableContext';
 
 import { selectedFilterInDropdownScopedState } from '../states/selectedFilterInDropdownScopedState';
-import { selectedFiltersScopedState } from '../states/selectedFiltersScopedState';
+import { selectedTableFiltersScopedState } from '../states/selectedTableFiltersScopedState';
 
 export function useSelectedFilterCurrentlyEditedInDropdown() {
   const [selectedFilters] = useRecoilScopedState(
-    selectedFiltersScopedState,
+    selectedTableFiltersScopedState,
     TableContext,
   );
 

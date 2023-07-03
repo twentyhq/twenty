@@ -4,8 +4,8 @@ import { useRecoilState } from 'recoil';
 import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
-import { selectedFiltersScopedState } from '@/filters-and-sorts/states/selectedFiltersScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
+import { selectedTableFiltersScopedState } from '@/filters-and-sorts/states/selectedTableFiltersScopedState';
 import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
@@ -41,7 +41,7 @@ export function FilterDropdownButton() {
   );
 
   const [selectedFilters] = useRecoilScopedState(
-    selectedFiltersScopedState,
+    selectedTableFiltersScopedState,
     TableContext,
   );
 

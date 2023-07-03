@@ -1,11 +1,11 @@
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
-import { selectedFiltersScopedState } from '../states/selectedFiltersScopedState';
+import { selectedTableFiltersScopedState } from '../states/selectedTableFiltersScopedState';
 
 export function useRemoveSelectedFilter() {
   const [, setSelectedFilters] = useRecoilScopedState(
-    selectedFiltersScopedState,
+    selectedTableFiltersScopedState,
     TableContext,
   );
 
