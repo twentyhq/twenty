@@ -1,11 +1,9 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconList } from '@/ui/icons/index';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
-import { companiesFilters } from '../../../../../../pages/companies/companies-filters';
 import { availableSorts } from '../../../../../../pages/companies/companies-sorts';
 import { TableHeader } from '../TableHeader';
 

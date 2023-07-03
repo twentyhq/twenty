@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import scrollIntoView from 'scroll-into-view';
 
 import { useUpDownHotkeys } from '@/hotkeys/hooks/useUpDownHotkeys';

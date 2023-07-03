@@ -13,13 +13,13 @@ import { Person } from '~/generated/graphql';
 
 export const peopleFilters: TableFilterDefinitionByEntity<Person>[] = [
   {
-    field: 'firstname',
+    field: 'firstName',
     label: 'First name',
     icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'text',
   },
   {
-    field: 'lastname',
+    field: 'lastName',
     label: 'Last name',
     icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'text',

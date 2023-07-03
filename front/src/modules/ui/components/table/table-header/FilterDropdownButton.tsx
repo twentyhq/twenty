@@ -1,12 +1,10 @@
 import { useCallback, useState } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { activeTableFiltersScopedState } from '@/filters-and-sorts/states/activeTableFiltersScopedState';
 import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
-import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
@@ -22,9 +20,6 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
 export function FilterDropdownButton() {
   const [isUnfolded, setIsUnfolded] = useState(false);
-  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
-    captureHotkeyTypeInFocusState,
-  );
 
   const [
     isFilterDropdownOperandSelectUnfolded,
