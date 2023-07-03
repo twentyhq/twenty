@@ -14,7 +14,7 @@ export function FilterDropdownCompanySearchSelect() {
     TableContext,
   );
 
-  const [selectedDropdownEntityId] = useRecoilScopedState(
+  const [filterDropdownSelectedEntityId] = useRecoilScopedState(
     filterDropdownSelectedEntityIdScopedState,
     TableContext,
   );
@@ -23,7 +23,9 @@ export function FilterDropdownCompanySearchSelect() {
     queryHook: useSearchCompanyQuery,
     searchOnFields: ['name'],
     orderByField: 'name',
-    selectedIds: [selectedDropdownEntityId ?? ''],
+    selectedIds: filterDropdownSelectedEntityId
+      ? [filterDropdownSelectedEntityId]
+      : [],
     mappingFunction: (entity) => ({
       id: entity.id,
       entityType: Entity.User,
