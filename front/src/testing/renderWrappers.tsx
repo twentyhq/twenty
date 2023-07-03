@@ -7,7 +7,6 @@ import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
 import { DefaultLayout } from '@/ui/layout/DefaultLayout';
 import { TableContext } from '@/ui/tables/states/TableContext';
-import { useCompaniesColumns } from '~/pages/companies/companies-columns';
 import { companiesFilters } from '~/pages/companies/companies-filters';
 import { UserProvider } from '~/providers/user/UserProvider';
 

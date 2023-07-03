@@ -2,10 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconList } from '@/ui/icons/index';
-import {
-  getRenderWrapperForComponent,
-  getRenderWrapperForEntityTableComponent,
-} from '~/testing/renderWrappers';
+import { getRenderWrapperForEntityTableComponent } from '~/testing/renderWrappers';
 
 import { availableSorts } from '../../../../../../pages/companies/companies-sorts';
 import { TableHeader } from '../TableHeader';
