@@ -1,9 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { useRemoveActiveTableFilter } from '@/filters-and-sorts/hooks/useRemoveActiveTableFilter';
 import { SelectedSortType } from '@/filters-and-sorts/interfaces/sorts/interface';
+import { activeTableFiltersScopedState } from '@/filters-and-sorts/states/activeTableFiltersScopedState';
 import { availableTableFiltersScopedState } from '@/filters-and-sorts/states/availableTableFiltersScopedState';
-import { selectedTableFiltersScopedState } from '@/filters-and-sorts/states/selectedTableFiltersScopedState';
 import { getOperandLabel } from '@/filters-and-sorts/utils/getOperandLabel';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icons/index';
@@ -64,32 +65,38 @@ function SortAndFilterBar<SortField>({
 }: OwnProps<SortField>) {
   const theme = useTheme();
 
-  const [selectedFilters, setSelectedFilters] = useRecoilScopedState(
-    selectedTableFiltersScopedState,
+  const [activeTableFilters, setActiveTableFilters] = useRecoilScopedState(
+    activeTableFiltersScopedState,
     TableContext,
   );
 
-  const [availableFilters] = useRecoilScopedState(
+  const [availableTableFilters] = useRecoilScopedState(
     availableTableFiltersScopedState,
     TableContext,
   );
 
-  const selectedFiltersWithMetadata = selectedFilters.map((filter) => {
-    const filterMetadata = availableFilters.find((availableFilter) => {
-      return availableFilter.field === filter.field;
-    });
+  const activeTableFiltersWithDefinition = activeTableFilters.map(
+    (activeTableFilter) => {
+      const tableFilterDefinition = availableTableFilters.find(
+        (availableTableFilter) => {
+          return availableTableFilter.field === activeTableFilter.field;
+        },
+      );
 
-    return {
-      ...filter,
-      ...filterMetadata,
-    };
-  });
+      return {
+        ...activeTableFilter,
+        ...tableFilterDefinition,
+      };
+    },
+  );
+
+  const removeActiveTableFilter = useRemoveActiveTableFilter();
 
   function handleCancelClick() {
-    setSelectedFilters([]);
+    setActiveTableFilters([]);
   }
 
-  if (!selectedFiltersWithMetadata.length && !sorts.length) {
+  if (!activeTableFiltersWithDefinition.length && !sorts.length) {
     return null;
   }
 
@@ -113,7 +120,7 @@ function SortAndFilterBar<SortField>({
             />
           );
         })}
-        {selectedFiltersWithMetadata.map((filter) => {
+        {activeTableFiltersWithDefinition.map((filter) => {
           return (
             <SortOrFilterChip
               key={filter.field}
@@ -124,17 +131,13 @@ function SortAndFilterBar<SortField>({
               id={filter.field}
               icon={filter.icon}
               onRemove={() => {
-                setSelectedFilters((selectedFilters) => {
-                  return selectedFilters.filter((selectedFilter) => {
-                    return selectedFilter.field !== filter.field;
-                  });
-                });
+                removeActiveTableFilter(filter.field);
               }}
             />
           );
         })}
       </StyledChipcontainer>
-      {selectedFilters.length + sorts.length > 0 && (
+      {activeTableFilters.length + sorts.length > 0 && (
         <StyledCancelButton
           data-testid={'cancel-button'}
           onClick={handleCancelClick}

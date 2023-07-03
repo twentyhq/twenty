@@ -1,4 +1,4 @@
-export type EntityFilterOperand =
+export type TableFilterOperand =
   | 'contains'
   | 'does-not-contain'
   | 'greater-than'

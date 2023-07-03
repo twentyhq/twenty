@@ -1,9 +1,9 @@
-import { EntityFilterOperand } from '../types/EntityFilterOperand';
-import { EntityFilterType } from '../types/EntityFilterType';
+import { TableFilterOperand } from '../types/TableFilterOperand';
+import { TableFilterType } from '../types/TableFilterType';
 
 export function getOperandsForFilterType(
-  filterType: EntityFilterType | null | undefined,
-): EntityFilterOperand[] {
+  filterType: TableFilterType | null | undefined,
+): TableFilterOperand[] {
   switch (filterType) {
     case 'text':
       return ['contains', 'does-not-contain'];

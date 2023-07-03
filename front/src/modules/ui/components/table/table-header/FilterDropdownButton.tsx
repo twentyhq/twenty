@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { activeTableFiltersScopedState } from '@/filters-and-sorts/states/activeTableFiltersScopedState';
 import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
-import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
-import { selectedTableFiltersScopedState } from '@/filters-and-sorts/states/selectedTableFiltersScopedState';
+import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
 import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
@@ -26,22 +26,29 @@ export function FilterDropdownButton() {
     captureHotkeyTypeInFocusState,
   );
 
-  const [isOperandSelectionUnfolded, setIsOperandSelectionUnfolded] =
-    useRecoilScopedState(
-      isFilterDropdownOperandSelectUnfoldedScopedState,
-      TableContext,
-    );
+  const [
+    isFilterDropdownOperandSelectUnfolded,
+    setIsFilterDropdownOperandSelectUnfolded,
+  ] = useRecoilScopedState(
+    isFilterDropdownOperandSelectUnfoldedScopedState,
+    TableContext,
+  );
 
-  const [selectedFilterInDropdown, setSelectedFilterInDropdown] =
-    useRecoilScopedState(selectedFilterInDropdownScopedState, TableContext);
+  const [
+    tableFilterDefinitionUsedInDropdown,
+    setTableFilterDefinitionUsedInDropdown,
+  ] = useRecoilScopedState(
+    tableFilterDefinitionUsedInDropdownScopedState,
+    TableContext,
+  );
 
-  const [, setFilterSearchInput] = useRecoilScopedState(
+  const [, setFilterDropdownSearchInput] = useRecoilScopedState(
     filterDropdownSearchInputScopedState,
     TableContext,
   );
 
-  const [selectedFilters] = useRecoilScopedState(
-    selectedTableFiltersScopedState,
+  const [activeTableFilters] = useRecoilScopedState(
+    activeTableFiltersScopedState,
     TableContext,
   );
 
@@ -49,18 +56,18 @@ export function FilterDropdownButton() {
     useRecoilScopedState(selectedOperandInDropdownScopedState, TableContext);
 
   const resetState = useCallback(() => {
-    setIsOperandSelectionUnfolded(false);
-    setSelectedFilterInDropdown(null);
+    setIsFilterDropdownOperandSelectUnfolded(false);
+    setTableFilterDefinitionUsedInDropdown(null);
     setSelectedOperandInDropdown(null);
-    setFilterSearchInput('');
+    setFilterDropdownSearchInput('');
   }, [
-    setSelectedFilterInDropdown,
+    setTableFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
-    setFilterSearchInput,
-    setIsOperandSelectionUnfolded,
+    setFilterDropdownSearchInput,
+    setIsFilterDropdownOperandSelectUnfolded,
   ]);
 
-  const isFilterSelected = (selectedFilters?.length ?? 0) > 0;
+  const isFilterSelected = (activeTableFilters?.length ?? 0) > 0;
 
   return (
     <DropdownButton
@@ -70,29 +77,29 @@ export function FilterDropdownButton() {
       setIsUnfolded={setIsUnfolded}
       resetState={resetState}
     >
-      {!selectedFilterInDropdown ? (
+      {!tableFilterDefinitionUsedInDropdown ? (
         <FilterDropdownFilterSelect />
-      ) : isOperandSelectionUnfolded ? (
+      ) : isFilterDropdownOperandSelectUnfolded ? (
         <FilterDropdownOperandSelect />
       ) : (
         selectedOperandInDropdown && (
           <>
             <FilterDropdownOperandButton />
             <DropdownButton.StyledSearchField autoFocus key={'search-filter'}>
-              {selectedFilterInDropdown.type === 'text' && (
+              {tableFilterDefinitionUsedInDropdown.type === 'text' && (
                 <FilterDropdownTextSearchInput />
               )}
-              {selectedFilterInDropdown.type === 'number' && (
+              {tableFilterDefinitionUsedInDropdown.type === 'number' && (
                 <FilterDropdownNumberSearchInput />
               )}
-              {selectedFilterInDropdown.type === 'date' && (
+              {tableFilterDefinitionUsedInDropdown.type === 'date' && (
                 <FilterDropdownDateSearchInput />
               )}
-              {selectedFilterInDropdown.type === 'entity' && (
+              {tableFilterDefinitionUsedInDropdown.type === 'entity' && (
                 <FilterDropdownEntitySearchInput />
               )}
             </DropdownButton.StyledSearchField>
-            {selectedFilterInDropdown.type === 'entity' && (
+            {tableFilterDefinitionUsedInDropdown.type === 'entity' && (
               <FilterDropdownEntitySelect />
             )}
           </>

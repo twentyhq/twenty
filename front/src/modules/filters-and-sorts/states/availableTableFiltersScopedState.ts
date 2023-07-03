@@ -1,9 +1,9 @@
 import { atomFamily } from 'recoil';
 
-import { EntityFilter } from '../types/EntityFilter';
+import { TableFilterDefinition } from '../types/TableFilterDefinition';
 
 export const availableTableFiltersScopedState = atomFamily<
-  EntityFilter[],
+  TableFilterDefinition[],
   string
 >({
   key: 'availableTableFiltersScopedState',

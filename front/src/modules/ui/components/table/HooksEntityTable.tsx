@@ -1,4 +1,4 @@
-import { EntityFilter } from '@/filters-and-sorts/types/EntityFilter';
+import { TableFilterDefinition } from '@/filters-and-sorts/types/TableFilterDefinition';
 import { useInitializeEntityTable } from '@/ui/tables/hooks/useInitializeEntityTable';
 import { useInitializeEntityTableFilters } from '@/ui/tables/hooks/useInitializeEntityTableFilters';
 import { useMapKeyboardToSoftFocus } from '@/ui/tables/hooks/useMapKeyboardToSoftFocus';
@@ -6,11 +6,11 @@ import { useMapKeyboardToSoftFocus } from '@/ui/tables/hooks/useMapKeyboardToSof
 export function HooksEntityTable({
   numberOfColumns,
   numberOfRows,
-  availableFilters,
+  availableTableFilters,
 }: {
   numberOfColumns: number;
   numberOfRows: number;
-  availableFilters: EntityFilter[];
+  availableTableFilters: TableFilterDefinition[];
 }) {
   useMapKeyboardToSoftFocus();
 
@@ -20,7 +20,7 @@ export function HooksEntityTable({
   });
 
   useInitializeEntityTableFilters({
-    availableFilters,
+    availableTableFilters,
   });
 
   return <></>;

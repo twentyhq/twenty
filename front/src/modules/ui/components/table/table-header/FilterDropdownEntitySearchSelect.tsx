@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 
-import { useRemoveSelectedFilter } from '@/filters-and-sorts/hooks/useRemoveSelectedFilter';
-import { useSelectedFilterCurrentlyEditedInDropdown } from '@/filters-and-sorts/hooks/useSelectedFilterCurrentlyEditedInDropdown';
-import { useUpsertSelectedFilter } from '@/filters-and-sorts/hooks/useUpsertSelectedFilter';
+import { useActiveTableFilterCurrentlyEditedInDropdown } from '@/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
+import { useRemoveActiveTableFilter } from '@/filters-and-sorts/hooks/useRemoveActiveTableFilter';
+import { useUpsertActiveTableFilter } from '@/filters-and-sorts/hooks/useUpsertActiveTableFilter';
 import { filterDropdownSelectedEntityIdScopedState } from '@/filters-and-sorts/states/filterDropdownSelectedEntityIdScopedState';
-import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
+import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { EntitiesForMultipleEntitySelect } from '@/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/relation-picker/components/SingleEntitySelectBase';
@@ -17,7 +17,7 @@ export function FilterDropdownEntitySearchSelect({
 }: {
   entitiesForSelect: EntitiesForMultipleEntitySelect<EntityForSelect>;
 }) {
-  const [selectedDropdownEntityId, setSelectedDropdownEntityId] =
+  const [filterDropdownSelectedEntityId, setFilterDropdownSelectedEntityId] =
     useRecoilScopedState(
       filterDropdownSelectedEntityIdScopedState,
       TableContext,
@@ -28,43 +28,49 @@ export function FilterDropdownEntitySearchSelect({
     TableContext,
   );
 
-  const [selectedFilterInDropdown] = useRecoilScopedState(
-    selectedFilterInDropdownScopedState,
+  const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
+    tableFilterDefinitionUsedInDropdownScopedState,
     TableContext,
   );
 
-  const upsertSelectedFilter = useUpsertSelectedFilter();
-  const removeSelectedFilter = useRemoveSelectedFilter();
+  const upsertActiveTableFilter = useUpsertActiveTableFilter();
+  const removeActiveTableFilter = useRemoveActiveTableFilter();
 
-  const selectedFilterCurrentlyEditedInDropdown =
-    useSelectedFilterCurrentlyEditedInDropdown();
+  const activeFilterCurrentlyEditedInDropdown =
+    useActiveTableFilterCurrentlyEditedInDropdown();
 
-  function handleUserSelected(entity: EntityForSelect) {
-    if (!selectedFilterInDropdown || !selectedOperandInDropdown) {
+  function handleUserSelected(selectedEntity: EntityForSelect) {
+    if (!tableFilterDefinitionUsedInDropdown || !selectedOperandInDropdown) {
       return;
     }
 
-    if (entity.id === selectedDropdownEntityId) {
-      removeSelectedFilter(selectedFilterInDropdown.field);
-      setSelectedDropdownEntityId(null);
-    } else {
-      setSelectedDropdownEntityId(entity.id);
+    const clickedOnAlreadySelectedEntity =
+      selectedEntity.id === filterDropdownSelectedEntityId;
 
-      upsertSelectedFilter({
-        displayValue: entity.name,
-        field: selectedFilterInDropdown.field,
+    if (clickedOnAlreadySelectedEntity) {
+      removeActiveTableFilter(tableFilterDefinitionUsedInDropdown.field);
+      setFilterDropdownSelectedEntityId(null);
+    } else {
+      setFilterDropdownSelectedEntityId(selectedEntity.id);
+
+      upsertActiveTableFilter({
+        displayValue: selectedEntity.name,
+        field: tableFilterDefinitionUsedInDropdown.field,
         operand: selectedOperandInDropdown,
-        type: selectedFilterInDropdown.type,
-        value: entity.id,
+        type: tableFilterDefinitionUsedInDropdown.type,
+        value: selectedEntity.id,
       });
     }
   }
 
   useEffect(() => {
-    if (!selectedFilterCurrentlyEditedInDropdown) {
-      setSelectedDropdownEntityId(null);
+    if (!activeFilterCurrentlyEditedInDropdown) {
+      setFilterDropdownSelectedEntityId(null);
     }
-  }, [selectedFilterCurrentlyEditedInDropdown, setSelectedDropdownEntityId]);
+  }, [
+    activeFilterCurrentlyEditedInDropdown,
+    setFilterDropdownSelectedEntityId,
+  ]);
 
   return (
     <>

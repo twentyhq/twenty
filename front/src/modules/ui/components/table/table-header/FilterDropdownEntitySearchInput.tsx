@@ -1,14 +1,14 @@
 import { ChangeEvent } from 'react';
 
 import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
-import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
+import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
 export function FilterDropdownEntitySearchInput() {
-  const [selectedFilterInDropdown] = useRecoilScopedState(
-    selectedFilterInDropdownScopedState,
+  const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
+    tableFilterDefinitionUsedInDropdownScopedState,
     TableContext,
   );
 
@@ -17,20 +17,18 @@ export function FilterDropdownEntitySearchInput() {
     TableContext,
   );
 
-  const [filterSearchInput, setFilterSearchInput] = useRecoilScopedState(
-    filterDropdownSearchInputScopedState,
-    TableContext,
-  );
+  const [filterDropdownSearchInput, setFilterDropdownSearchInput] =
+    useRecoilScopedState(filterDropdownSearchInputScopedState, TableContext);
 
   return (
-    selectedFilterInDropdown &&
+    tableFilterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
       <input
         type="text"
-        value={filterSearchInput}
-        placeholder={selectedFilterInDropdown.label}
+        value={filterDropdownSearchInput}
+        placeholder={tableFilterDefinitionUsedInDropdown.label}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          setFilterSearchInput(event.target.value);
+          setFilterDropdownSearchInput(event.target.value);
         }}
       />
     )

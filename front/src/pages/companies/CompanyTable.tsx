@@ -7,7 +7,7 @@ import {
   useCompaniesQuery,
 } from '@/companies/services';
 import { reduceSortsToOrderBy } from '@/filters-and-sorts/helpers';
-import { selectedTableFiltersScopedState } from '@/filters-and-sorts/states/selectedTableFiltersScopedState';
+import { activeTableFiltersScopedState } from '@/filters-and-sorts/states/activeTableFiltersScopedState';
 import { turnFilterIntoWhereClause } from '@/filters-and-sorts/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
 import { EntityTable } from '@/ui/components/table/EntityTable';
@@ -28,7 +28,7 @@ export function CompanyTable() {
   }, []);
 
   const filters = useRecoilScopedValue(
-    selectedTableFiltersScopedState,
+    activeTableFiltersScopedState,
     TableContext,
   );
 
@@ -47,7 +47,7 @@ export function CompanyTable() {
       <HooksEntityTable
         numberOfColumns={companiesColumns.length}
         numberOfRows={companies.length}
-        availableFilters={companiesFilters}
+        availableTableFilters={companiesFilters}
       />
       <EntityTable
         data={companies}

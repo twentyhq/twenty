@@ -1,4 +1,4 @@
-import { EntityFilterWithField } from '@/filters-and-sorts/types/EntityFilterWithField';
+import { TableFilterDefinitionByEntity } from '@/filters-and-sorts/types/TableFilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -11,7 +11,7 @@ import { icon } from '@/ui/themes/icon';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Company } from '~/generated/graphql';
 
-export const companiesFilters: EntityFilterWithField<Company>[] = [
+export const companiesFilters: TableFilterDefinitionByEntity<Company>[] = [
   {
     field: 'name',
     label: 'Name',
@@ -49,6 +49,6 @@ export const companiesFilters: EntityFilterWithField<Company>[] = [
     label: 'Account owner',
     icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'entity',
-    searchSelectComponent: <FilterDropdownUserSearchSelect />,
+    entitySelectComponent: <FilterDropdownUserSearchSelect />,
   },
 ];

@@ -1,6 +1,6 @@
-import { SelectedEntityFilter } from '../types/SelectedEntityFilter';
+import { ActiveTableFilter } from '../types/ActiveTableFilter';
 
-export function turnFilterIntoWhereClause(filter: SelectedEntityFilter) {
+export function turnFilterIntoWhereClause(filter: ActiveTableFilter) {
   switch (filter.type) {
     case 'text':
       switch (filter.operand) {

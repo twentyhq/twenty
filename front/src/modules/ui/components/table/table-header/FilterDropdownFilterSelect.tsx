@@ -1,7 +1,7 @@
 import { availableTableFiltersScopedState } from '@/filters-and-sorts/states/availableTableFiltersScopedState';
 import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
-import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
+import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
 import { getOperandsForFilterType } from '@/filters-and-sorts/utils/getOperandsForFilterType';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
@@ -13,8 +13,8 @@ import { DropdownMenuSelectableItem } from '../../menu/DropdownMenuSelectableIte
 import DropdownButton from './DropdownButton';
 
 export function FilterDropdownFilterSelect() {
-  const [, setSelectedFilterInDropdown] = useRecoilScopedState(
-    selectedFilterInDropdownScopedState,
+  const [, setTableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
+    tableFilterDefinitionUsedInDropdownScopedState,
     TableContext,
   );
 
@@ -23,32 +23,34 @@ export function FilterDropdownFilterSelect() {
     TableContext,
   );
 
-  const [, setFilterSearchInput] = useRecoilScopedState(
+  const [, setFilterDropdownSearchInput] = useRecoilScopedState(
     filterDropdownSearchInputScopedState,
     TableContext,
   );
 
-  const availableFilters = useRecoilScopedValue(
+  const availableTableFilters = useRecoilScopedValue(
     availableTableFiltersScopedState,
     TableContext,
   );
 
   return (
     <DropdownMenuItemContainer>
-      {availableFilters.map((filter, index) => (
+      {availableTableFilters.map((availableTableFilter, index) => (
         <DropdownMenuSelectableItem
           key={`select-filter-${index}`}
           onClick={() => {
-            setSelectedFilterInDropdown(filter);
+            setTableFilterDefinitionUsedInDropdown(availableTableFilter);
             setSelectedOperandInDropdown(
-              getOperandsForFilterType(filter.type)?.[0],
+              getOperandsForFilterType(availableTableFilter.type)?.[0],
             );
 
-            setFilterSearchInput('');
+            setFilterDropdownSearchInput('');
           }}
         >
-          <DropdownButton.StyledIcon>{filter.icon}</DropdownButton.StyledIcon>
-          {filter.label}
+          <DropdownButton.StyledIcon>
+            {availableTableFilter.icon}
+          </DropdownButton.StyledIcon>
+          {availableTableFilter.label}
         </DropdownMenuSelectableItem>
       ))}
     </DropdownMenuItemContainer>

@@ -1,7 +1,7 @@
-import { EntityFilterOperand } from '../types/EntityFilterOperand';
+import { TableFilterOperand } from '../types/TableFilterOperand';
 
 export function getOperandLabel(
-  operand: EntityFilterOperand | null | undefined,
+  operand: TableFilterOperand | null | undefined,
 ) {
   switch (operand) {
     case 'contains':

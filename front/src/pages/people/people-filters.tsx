@@ -1,5 +1,5 @@
 import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
-import { EntityFilterWithField } from '@/filters-and-sorts/types/EntityFilterWithField';
+import { TableFilterDefinitionByEntity } from '@/filters-and-sorts/types/TableFilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -11,7 +11,7 @@ import {
 import { icon } from '@/ui/themes/icon';
 import { Person } from '~/generated/graphql';
 
-export const peopleFilters: EntityFilterWithField<Person>[] = [
+export const peopleFilters: TableFilterDefinitionByEntity<Person>[] = [
   {
     field: 'firstname',
     label: 'First name',
@@ -37,7 +37,7 @@ export const peopleFilters: EntityFilterWithField<Person>[] = [
       <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.sm} />
     ),
     type: 'entity',
-    searchSelectComponent: <FilterDropdownCompanySearchSelect />,
+    entitySelectComponent: <FilterDropdownCompanySearchSelect />,
   },
   {
     field: 'phone',

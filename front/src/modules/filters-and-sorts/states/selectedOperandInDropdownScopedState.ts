@@ -1,9 +1,9 @@
 import { atomFamily } from 'recoil';
 
-import { EntityFilterOperand } from '../types/EntityFilterOperand';
+import { TableFilterOperand } from '../types/TableFilterOperand';
 
 export const selectedOperandInDropdownScopedState = atomFamily<
-  EntityFilterOperand | null,
+  TableFilterOperand | null,
   string
 >({
   key: 'selectedOperandInDropdownScopedState',
