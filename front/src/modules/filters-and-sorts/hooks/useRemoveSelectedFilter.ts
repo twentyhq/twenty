@@ -9,7 +9,7 @@ export function useRemoveSelectedFilter() {
     TableContext,
   );
 
-  return function upsertSelectedFilter(filterField: string) {
+  return function removeSelectedFilter(filterField: string) {
     setSelectedFilters((selectedFilters) => {
       return selectedFilters.filter((selectedFilter) => {
         return selectedFilter.field !== filterField;

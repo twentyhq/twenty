@@ -45,7 +45,7 @@ export const companiesFilters: EntityFilterWithField<Company>[] = [
     type: 'date',
   },
   {
-    field: 'accountOwner',
+    field: 'accountOwnerId',
     label: 'Account owner',
     icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'entity',

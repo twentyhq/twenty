@@ -1,3 +1,6 @@
+import { useSelectedFilterCurrentlyEditedInDropdown } from '@/filters-and-sorts/hooks/useSelectedFilterCurrentlyEditedInDropdown';
+import { useUpsertSelectedFilter } from '@/filters-and-sorts/hooks/useUpsertSelectedFilter';
+import { FilterOperandType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
@@ -31,6 +34,25 @@ export function FilterDropdownOperandSelect() {
       TableContext,
     );
 
+  const selectedFilterCurrentlyEditedInDropdown =
+    useSelectedFilterCurrentlyEditedInDropdown();
+  const upsertSelectedFilter = useUpsertSelectedFilter();
+
+  function handleOperangeChange(newOperand: FilterOperandType) {
+    setSelectedOperandInDropdown(newOperand);
+    setIsOperandSelectionUnfolded(false);
+
+    if (selectedFilterInDropdown && selectedFilterCurrentlyEditedInDropdown) {
+      upsertSelectedFilter({
+        field: selectedFilterCurrentlyEditedInDropdown.field,
+        displayValue: selectedFilterCurrentlyEditedInDropdown.displayValue,
+        operand: newOperand,
+        type: selectedFilterCurrentlyEditedInDropdown.type,
+        value: selectedFilterCurrentlyEditedInDropdown.value,
+      });
+    }
+  }
+
   if (!isOperandSelectionUnfolded) {
     return <></>;
   }
@@ -41,8 +63,7 @@ export function FilterDropdownOperandSelect() {
         <DropdownButton.StyledDropdownItem
           key={`select-filter-operand-${index}`}
           onClick={() => {
-            setSelectedOperandInDropdown(filterOperand);
-            setIsOperandSelectionUnfolded(false);
+            handleOperangeChange(filterOperand);
           }}
         >
           {getOperandLabel(filterOperand)}

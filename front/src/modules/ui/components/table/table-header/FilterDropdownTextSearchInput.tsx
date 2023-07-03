@@ -1,7 +1,9 @@
 import { ChangeEvent } from 'react';
 
 import { useRemoveSelectedFilter } from '@/filters-and-sorts/hooks/useRemoveSelectedFilter';
+import { useSelectedFilterCurrentlyEditedInDropdown } from '@/filters-and-sorts/hooks/useSelectedFilterCurrentlyEditedInDropdown';
 import { useUpsertSelectedFilter } from '@/filters-and-sorts/hooks/useUpsertSelectedFilter';
+import { filterSearchInputScopedState } from '@/filters-and-sorts/states/filterSearchInputScopedState';
 import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -18,8 +20,16 @@ export function FilterDropdownTextSearchInput() {
     TableContext,
   );
 
+  const [filterSearchInput, setFilterSearchInput] = useRecoilScopedState(
+    filterSearchInputScopedState,
+    TableContext,
+  );
+
   const upsertSelectedFilter = useUpsertSelectedFilter();
   const removeSelectedFilter = useRemoveSelectedFilter();
+
+  const selectedFilterCurrentlyEditedInDropdown =
+    useSelectedFilterCurrentlyEditedInDropdown();
 
   return (
     selectedFilterInDropdown &&
@@ -27,7 +37,12 @@ export function FilterDropdownTextSearchInput() {
       <input
         type="text"
         placeholder={selectedFilterInDropdown.label}
+        value={
+          selectedFilterCurrentlyEditedInDropdown?.value ?? filterSearchInput
+        }
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          setFilterSearchInput(event.target.value);
+
           if (event.target.value === '') {
             removeSelectedFilter(selectedFilterInDropdown.field);
           } else {

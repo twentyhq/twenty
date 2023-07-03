@@ -17,7 +17,7 @@ export function FilterDropdownEntitySearchInput() {
     TableContext,
   );
 
-  const [, setFilterSearchInput] = useRecoilScopedState(
+  const [filterSearchInput, setFilterSearchInput] = useRecoilScopedState(
     filterSearchInputScopedState,
     TableContext,
   );
@@ -26,7 +26,8 @@ export function FilterDropdownEntitySearchInput() {
     selectedFilterInDropdown &&
     selectedOperandInDropdown && (
       <input
-        type="number"
+        type="text"
+        value={filterSearchInput}
         placeholder={selectedFilterInDropdown.label}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setFilterSearchInput(event.target.value);

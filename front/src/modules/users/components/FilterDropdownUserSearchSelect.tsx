@@ -2,26 +2,19 @@ import { filterSearchInputScopedState } from '@/filters-and-sorts/states/filterS
 import { selectedFilterDropdownEntityIdScopedState } from '@/filters-and-sorts/states/selectedFilterDropdownEntityIdScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
-import { SingleEntitySelectBase } from '@/relation-picker/components/SingleEntitySelectBase';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
-import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
+import { FilterDropdownEntitySearchSelect } from '@/ui/components/table/table-header/FilterDropdownEntitySearchSelect';
 import { TableContext } from '@/ui/tables/states/TableContext';
 import { useSearchUserQuery } from '~/generated/graphql';
 
 export function FilterDropdownUserSearchSelect() {
-  const selectedDropdownSearchId =
-    useRecoilScopedValue(
-      selectedFilterDropdownEntityIdScopedState,
-      TableContext,
-    ) ?? '';
-
   const currentSearchFilter = useRecoilScopedValue(
     filterSearchInputScopedState,
     TableContext,
   );
 
-  const [, setSelectedDropdownEntityId] = useRecoilScopedState(
+  const [selectedDropdownEntityId] = useRecoilScopedState(
     selectedFilterDropdownEntityIdScopedState,
     TableContext,
   );
@@ -30,7 +23,7 @@ export function FilterDropdownUserSearchSelect() {
     queryHook: useSearchUserQuery,
     searchOnFields: ['displayName'],
     orderByField: 'displayName',
-    selectedIds: [selectedDropdownSearchId],
+    selectedIds: [selectedDropdownEntityId ?? ''],
     mappingFunction: (entity) => ({
       id: entity.id,
       entityType: Entity.User,
@@ -40,19 +33,7 @@ export function FilterDropdownUserSearchSelect() {
     searchFilter: currentSearchFilter,
   });
 
-  function handleUserSelected(entity: EntityForSelect) {
-    setSelectedDropdownEntityId(entity.id);
-  }
-
   return (
-    <>
-      <SingleEntitySelectBase
-        entities={{
-          entitiesToSelect: usersForSelect.entitiesToSelect,
-          selectedEntity: usersForSelect.selectedEntities[0],
-        }}
-        onEntitySelected={handleUserSelected}
-      />
-    </>
+    <FilterDropdownEntitySearchSelect entitiesForSelect={usersForSelect} />
   );
 }

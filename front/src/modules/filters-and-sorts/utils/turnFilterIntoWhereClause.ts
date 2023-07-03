@@ -29,13 +29,13 @@ export function turnFilterIntoWhereClause(filter: SelectedEntityFilter) {
         case 'greater-than':
           return {
             [filter.field]: {
-              gte: filter.value,
+              gte: parseFloat(filter.value),
             },
           };
         case 'less-than':
           return {
             [filter.field]: {
-              lte: filter.value,
+              lte: parseFloat(filter.value),
             },
           };
         default:
