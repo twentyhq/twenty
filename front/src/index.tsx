@@ -13,6 +13,7 @@ import { UserProvider } from './providers/user/UserProvider';
 import { App } from './App';
 
 import './index.css';
+import { ClientConfigProvider } from './providers/clientConfig/ClientConfigProvider';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -24,9 +25,11 @@ root.render(
       <BrowserRouter>
         <AppThemeProvider>
           <StrictMode>
-            <UserProvider>
+            <ClientConfigProvider>
+              <UserProvider>
               <App />
             </UserProvider>
+            </ClientConfigProvider>
           </StrictMode>
         </AppThemeProvider>
       </BrowserRouter>
