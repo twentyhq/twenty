@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useRemoveSelectedFilter } from '@/filters-and-sorts/hooks/useRemoveSelectedFilter';
 import { useSelectedFilterCurrentlyEditedInDropdown } from '@/filters-and-sorts/hooks/useSelectedFilterCurrentlyEditedInDropdown';
 import { useUpsertSelectedFilter } from '@/filters-and-sorts/hooks/useUpsertSelectedFilter';
-import { selectedFilterDropdownEntityIdScopedState } from '@/filters-and-sorts/states/selectedFilterDropdownEntityIdScopedState';
+import { filterDropdownSelectedEntityIdScopedState } from '@/filters-and-sorts/states/filterDropdownSelectedEntityIdScopedState';
 import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -19,7 +19,7 @@ export function FilterDropdownEntitySearchSelect({
 }) {
   const [selectedDropdownEntityId, setSelectedDropdownEntityId] =
     useRecoilScopedState(
-      selectedFilterDropdownEntityIdScopedState,
+      filterDropdownSelectedEntityIdScopedState,
       TableContext,
     );
 

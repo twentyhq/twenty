@@ -2,11 +2,6 @@ import { ReactNode, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
 import {
-  FilterableFieldsType,
-  FilterConfigType,
-  SelectedFilterType,
-} from '@/filters-and-sorts/interfaces/filters/interface';
-import {
   SelectedSortType,
   SortType,
 } from '@/filters-and-sorts/interfaces/sorts/interface';
@@ -15,13 +10,11 @@ import { FilterDropdownButton } from './FilterDropdownButton';
 import SortAndFilterBar from './SortAndFilterBar';
 import { SortDropdownButton } from './SortDropdownButton';
 
-type OwnProps<SortField, TData extends FilterableFieldsType> = {
+type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: ReactNode;
   availableSorts?: Array<SortType<SortField>>;
-  availableFilters?: FilterConfigType<TData>[];
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onFiltersUpdate?: (sorts: Array<SelectedFilterType<TData>>) => void;
 };
 
 const StyledContainer = styled.div`
@@ -60,13 +53,12 @@ const StyledFilters = styled.div`
   gap: 2px;
 `;
 
-export function TableHeader<SortField, TData extends FilterableFieldsType>({
+export function TableHeader<SortField>({
   viewName,
   viewIcon,
   availableSorts,
   onSortsUpdate,
-  onFiltersUpdate,
-}: OwnProps<SortField, TData>) {
+}: OwnProps<SortField>) {
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
     [],
   );
