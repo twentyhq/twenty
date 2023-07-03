@@ -55,7 +55,7 @@ export function MultipleEntitySelect<
         autoFocus
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemContainer style={{ maxHeight: 180 }}>
+      <DropdownMenuItemContainer>
         {entitiesInDropdown?.map((entity) => (
           <DropdownMenuCheckableItem
             key={entity.id}

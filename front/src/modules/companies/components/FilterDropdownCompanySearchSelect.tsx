@@ -6,6 +6,7 @@ import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFiltere
 import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
 import { FilterDropdownEntitySearchSelect } from '@/ui/components/table/table-header/FilterDropdownEntitySearchSelect';
 import { TableContext } from '@/ui/tables/states/TableContext';
+import { getLogoUrlFromDomainName } from '@/utils/utils';
 import { useSearchCompanyQuery } from '~/generated/graphql';
 
 export function FilterDropdownCompanySearchSelect() {
@@ -26,11 +27,12 @@ export function FilterDropdownCompanySearchSelect() {
     selectedIds: filterDropdownSelectedEntityId
       ? [filterDropdownSelectedEntityId]
       : [],
-    mappingFunction: (entity) => ({
-      id: entity.id,
+    mappingFunction: (company) => ({
+      id: company.id,
       entityType: Entity.User,
-      name: `${entity.name}`,
-      avatarType: 'rounded',
+      name: `${company.name}`,
+      avatarType: 'squared',
+      avatarUrl: getLogoUrlFromDomainName(company.domainName),
     }),
     searchFilter: filterDropdownSearchInput,
   });
