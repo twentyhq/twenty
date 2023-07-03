@@ -109,7 +109,6 @@ export function useFilteredSearchEntityQuery<
         [orderByField]: sortOrder,
       },
     } as QueryVariables,
-    skip: true,
   });
 
   const { data: entitiesToSelectData } = queryHook({

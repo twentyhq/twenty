@@ -34,7 +34,7 @@ export function FilterDropdownFilterSelect() {
   );
 
   return (
-    <DropdownMenuItemContainer>
+    <DropdownMenuItemContainer style={{ maxHeight: '300px' }}>
       {availableTableFilters.map((availableTableFilter, index) => (
         <DropdownMenuSelectableItem
           key={`select-filter-${index}`}
