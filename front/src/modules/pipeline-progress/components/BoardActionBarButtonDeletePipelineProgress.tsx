@@ -9,18 +9,18 @@ import { GET_PIPELINES } from '../queries';
 import { boardItemsState } from '../states/boardItemsState';
 import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
 
-export function BoardActionBarButtonDeletePipelineProcesses() {
+export function BoardActionBarButtonDeletePipelineProgress() {
   const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
     selectedBoardItemsState,
   );
   const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
 
-  const [deletePipelineProcesses] = useDeleteManyPipelineProgressMutation({
+  const [deletePipelineProgress] = useDeleteManyPipelineProgressMutation({
     refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
   });
 
   async function handleDeleteClick() {
-    await deletePipelineProcesses({
+    await deletePipelineProgress({
       variables: {
         ids: selectedBoardItems,
       },
