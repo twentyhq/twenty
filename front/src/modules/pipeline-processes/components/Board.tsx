@@ -70,8 +70,8 @@ export function Board({
   pipelineId,
 }: BoardProps) {
   const [board, setBoard] = useRecoilState(boardColumnsState);
-  const [items, setItems] = useRecoilState(boardItemsState);
-  const [selectedItemKeys, setSelectedItemKeys] = useRecoilState(
+  const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
+  const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
     selectedBoardItemsState,
   );
   const [isInitialBoardLoaded, setIsInitialBoardLoaded] = useState(false);
@@ -79,13 +79,13 @@ export function Board({
   useEffect(() => {
     setBoard(initialBoard);
     if (Object.keys(initialItems).length === 0 || isInitialBoardLoaded) return;
-    setItems(initialItems);
+    setBoardItems(initialItems);
     setIsInitialBoardLoaded(true);
   }, [
     initialBoard,
     setBoard,
     initialItems,
-    setItems,
+    setBoardItems,
     setIsInitialBoardLoaded,
     isInitialBoardLoaded,
   ]);
@@ -109,13 +109,15 @@ export function Board({
     [board, onUpdate, setBoard],
   );
 
-  const onSelect = (itemKey: string) => {
-    if (selectedItemKeys.includes(itemKey)) {
-      setSelectedItemKeys(selectedItemKeys.filter((key) => key !== itemKey));
+  function handleSelect(itemKey: string) {
+    if (selectedBoardItems.includes(itemKey)) {
+      setSelectedBoardItems(
+        selectedBoardItems.filter((key) => key !== itemKey),
+      );
     } else {
-      setSelectedItemKeys([...selectedItemKeys, itemKey]);
+      setSelectedBoardItems([...selectedBoardItems, itemKey]);
     }
-  };
+  }
 
   return board.length > 0 ? (
     <StyledBoard>
@@ -129,7 +131,7 @@ export function Board({
                 >
                   {board[columnIndex].itemKeys.map(
                     (itemKey, index) =>
-                      items[itemKey] && (
+                      boardItems[itemKey] && (
                         <Draggable
                           key={itemKey}
                           draggableId={itemKey}
@@ -142,9 +144,9 @@ export function Board({
                               {...draggableProvided?.draggableProps}
                             >
                               <CompanyBoardCard
-                                company={items[itemKey]}
-                                selected={selectedItemKeys.includes(itemKey)}
-                                onSelect={() => onSelect(itemKey)}
+                                company={boardItems[itemKey]}
+                                selected={selectedBoardItems.includes(itemKey)}
+                                onSelect={() => handleSelect(itemKey)}
                               />
                             </div>
                           )}

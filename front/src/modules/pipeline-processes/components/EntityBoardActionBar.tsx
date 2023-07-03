@@ -10,6 +10,6 @@ type OwnProps = {
 };
 
 export function EntityBoardActionBar({ children }: OwnProps) {
-  const selectedItemKeys = useRecoilValue(selectedBoardItemsState);
-  return <ActionBar selectedIds={selectedItemKeys}>{children}</ActionBar>;
+  const selectedBoardItems = useRecoilValue(selectedBoardItemsState);
+  return <ActionBar selectedIds={selectedBoardItems}>{children}</ActionBar>;
 }

@@ -24,7 +24,7 @@ type OwnProps = {
 export function NewButton({ pipelineId, columnId }: OwnProps) {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
   const [board, setBoard] = useRecoilState(boardColumnsState);
-  const [items, setItems] = useRecoilState(boardItemsState);
+  const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
 
   const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation();
   const onEntitySelect = useCallback(
@@ -36,8 +36,8 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
         (column: Column) => column.id === columnId,
       );
       newBoard[destinationColumnIndex].itemKeys.push(newUuid);
-      setItems({
-        ...items,
+      setBoardItems({
+        ...boardItems,
         [newUuid]: {
           id: company.id,
           name: company.name,
@@ -62,8 +62,8 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
       pipelineId,
       board,
       setBoard,
-      items,
-      setItems,
+      boardItems,
+      setBoardItems,
     ],
   );
 

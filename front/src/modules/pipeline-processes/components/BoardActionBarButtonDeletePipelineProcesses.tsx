@@ -13,7 +13,7 @@ export function BoardActionBarButtonDeletePipelineProcesses() {
   const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
     selectedBoardItemsState,
   );
-  const [items, setItems] = useRecoilState(boardItemsState);
+  const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
 
   const [deletePipelineProcesses] = useDeleteManyPipelineProgressMutation({
     refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
@@ -26,9 +26,11 @@ export function BoardActionBarButtonDeletePipelineProcesses() {
       },
     });
 
-    setItems(
+    console.log('boardItems', boardItems);
+
+    setBoardItems(
       Object.fromEntries(
-        Object.entries(items).filter(
+        Object.entries(boardItems).filter(
           ([key]) => !selectedBoardItems.includes(key),
         ),
       ),
