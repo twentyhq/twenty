@@ -19,6 +19,7 @@ import {
 } from '../../ui/components/board/Board';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { boardItemsState } from '../states/boardItemsState';
+import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
 
 import { CompanyBoardCard } from './CompanyBoardCard';
 import { NewButton } from './NewButton';
@@ -69,19 +70,22 @@ export function Board({
   pipelineId,
 }: BoardProps) {
   const [board, setBoard] = useRecoilState(boardColumnsState);
-  const [items, setItems] = useRecoilState(boardItemsState);
+  const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
+  const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
+    selectedBoardItemsState,
+  );
   const [isInitialBoardLoaded, setIsInitialBoardLoaded] = useState(false);
 
   useEffect(() => {
-    if (Object.keys(initialItems).length === 0 || isInitialBoardLoaded) return;
     setBoard(initialBoard);
-    setItems(initialItems);
+    if (Object.keys(initialItems).length === 0 || isInitialBoardLoaded) return;
+    setBoardItems(initialItems);
     setIsInitialBoardLoaded(true);
   }, [
     initialBoard,
     setBoard,
     initialItems,
-    setItems,
+    setBoardItems,
     setIsInitialBoardLoaded,
     isInitialBoardLoaded,
   ]);
@@ -105,6 +109,16 @@ export function Board({
     [board, onUpdate, setBoard],
   );
 
+  function handleSelect(itemKey: string) {
+    if (selectedBoardItems.includes(itemKey)) {
+      setSelectedBoardItems(
+        selectedBoardItems.filter((key) => key !== itemKey),
+      );
+    } else {
+      setSelectedBoardItems([...selectedBoardItems, itemKey]);
+    }
+  }
+
   return board.length > 0 ? (
     <StyledBoard>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -117,7 +131,7 @@ export function Board({
                 >
                   {board[columnIndex].itemKeys.map(
                     (itemKey, index) =>
-                      items[itemKey] && (
+                      boardItems[itemKey] && (
                         <Draggable
                           key={itemKey}
                           draggableId={itemKey}
@@ -129,7 +143,11 @@ export function Board({
                               {...draggableProvided?.dragHandleProps}
                               {...draggableProvided?.draggableProps}
                             >
-                              <CompanyBoardCard company={items[itemKey]} />
+                              <CompanyBoardCard
+                                company={boardItems[itemKey]}
+                                selected={selectedBoardItems.includes(itemKey)}
+                                onSelect={() => handleSelect(itemKey)}
+                              />
                             </div>
                           )}
                         </Draggable>

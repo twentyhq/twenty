@@ -3,15 +3,21 @@ import styled from '@emotion/styled';
 
 import { Company } from '../../../generated/graphql';
 import { PersonChip } from '../../people/components/PersonChip';
+import { Checkbox } from '../../ui/components/form/Checkbox';
 import { IconCalendarEvent, IconUser, IconUsers } from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
 
-const StyledBoardCard = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
+const StyledBoardCard = styled.div<{ selected: boolean }>`
+  background-color: ${({ theme, selected }) =>
+    selected ? theme.selectedCard : theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 4px;
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
+  &:hover {
+    background-color: ${({ theme, selected }) =>
+      selected ? theme.selectedCardHover : theme.background.tertiary};
+  }
   cursor: pointer;
 `;
 
@@ -56,17 +62,27 @@ type CompanyProp = Pick<
   'id' | 'name' | 'domainName' | 'employees' | 'createdAt' | 'accountOwner'
 >;
 
-export function CompanyBoardCard({ company }: { company: CompanyProp }) {
+export function CompanyBoardCard({
+  company,
+  selected,
+  onSelect,
+}: {
+  company: CompanyProp;
+  selected: boolean;
+  onSelect: (company: CompanyProp) => void;
+}) {
   const theme = useTheme();
   return (
     <StyledBoardCardWrapper>
-      <StyledBoardCard>
+      <StyledBoardCard selected={selected}>
         <StyledBoardCardHeader>
           <img
             src={getLogoUrlFromDomainName(company.domainName).toString()}
             alt={`${company.name}-company-logo`}
           />
           <span>{company.name}</span>
+          <div style={{ display: 'flex', flex: 1 }} />
+          <Checkbox checked={selected} onChange={() => onSelect(company)} />
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>

@@ -108,6 +108,9 @@ export class AbilityFactory {
     can(AbilityAction.Update, 'PipelineProgress', {
       workspaceId: workspace.id,
     });
+    can(AbilityAction.Delete, 'PipelineProgress', {
+      workspaceId: workspace.id,
+    });
 
     return build();
   }
