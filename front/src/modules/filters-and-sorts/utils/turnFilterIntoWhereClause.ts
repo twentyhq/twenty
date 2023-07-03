@@ -24,7 +24,6 @@ export function turnFilterIntoWhereClause(filter: SelectedEntityFilter) {
           );
       }
     case 'number':
-    case 'date':
       switch (filter.operand) {
         case 'greater-than':
           return {
@@ -36,6 +35,25 @@ export function turnFilterIntoWhereClause(filter: SelectedEntityFilter) {
           return {
             [filter.field]: {
               lte: parseFloat(filter.value),
+            },
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${filter.operand} for ${filter.type} filter`,
+          );
+      }
+    case 'date':
+      switch (filter.operand) {
+        case 'greater-than':
+          return {
+            [filter.field]: {
+              gte: filter.value,
+            },
+          };
+        case 'less-than':
+          return {
+            [filter.field]: {
+              lte: filter.value,
             },
           };
         default:
