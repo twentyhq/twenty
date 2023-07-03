@@ -12,7 +12,7 @@ export function useActiveTableFilterCurrentlyEditedInDropdown() {
     TableContext,
   );
 
-  const [tableFilterCurrentlyEditedInFilterDropdown] = useRecoilScopedState(
+  const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
     tableFilterDefinitionUsedInDropdownScopedState,
     TableContext,
   );
@@ -20,8 +20,7 @@ export function useActiveTableFilterCurrentlyEditedInDropdown() {
   return useMemo(() => {
     return activeTableFilters.find(
       (activeTableFilter) =>
-        activeTableFilter.field ===
-        tableFilterCurrentlyEditedInFilterDropdown?.field,
+        activeTableFilter.field === tableFilterDefinitionUsedInDropdown?.field,
     );
-  }, [tableFilterCurrentlyEditedInFilterDropdown, activeTableFilters]);
+  }, [tableFilterDefinitionUsedInDropdown, activeTableFilters]);
 }
