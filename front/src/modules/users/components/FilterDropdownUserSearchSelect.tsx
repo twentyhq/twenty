@@ -2,7 +2,6 @@ import { filterSearchInputScopedState } from '@/filters-and-sorts/states/filterS
 import { selectedFilterDropdownEntityIdScopedState } from '@/filters-and-sorts/states/selectedFilterDropdownEntityIdScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
-import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { SingleEntitySelectBase } from '@/relation-picker/components/SingleEntitySelectBase';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
@@ -10,7 +9,7 @@ import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
 import { TableContext } from '@/ui/tables/states/TableContext';
 import { useSearchUserQuery } from '~/generated/graphql';
 
-export function UserFilterDropdownSearchSelect() {
+export function FilterDropdownUserSearchSelect() {
   const selectedDropdownSearchId =
     useRecoilScopedValue(
       selectedFilterDropdownEntityIdScopedState,

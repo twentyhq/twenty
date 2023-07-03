@@ -5,7 +5,7 @@ import { userEvent, within } from '@storybook/testing-library';
 import { IconList } from '@/ui/icons/index';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
-import { availableFilters } from '../../../../../../pages/companies/companies-filters';
+import { companiesFilters } from '../../../../../../pages/companies/companies-filters';
 import { availableSorts } from '../../../../../../pages/companies/companies-sorts';
 import { TableHeader } from '../TableHeader';
 
@@ -23,7 +23,6 @@ export const Empty: Story = {
       viewName="ViewName"
       viewIcon={<IconList />}
       availableSorts={availableSorts}
-      availableFilters={availableFilters}
     />,
   ),
 };
@@ -34,7 +33,6 @@ export const WithSortsAndFilters: Story = {
       viewName="ViewName"
       viewIcon={<IconList />}
       availableSorts={availableSorts}
-      availableFilters={availableFilters}
     />,
   ),
   play: async ({ canvasElement }) => {

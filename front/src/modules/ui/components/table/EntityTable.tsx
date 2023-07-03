@@ -107,9 +107,7 @@ export function EntityTable<TData extends { id: string }, SortField>({
   viewName,
   viewIcon,
   availableSorts,
-  availableFilters,
   onSortsUpdate,
-  onFiltersUpdate,
 }: OwnProps<TData, SortField>) {
   const [currentRowSelection, setCurrentRowSelection] = useRecoilState(
     currentRowSelectionState,
@@ -133,9 +131,7 @@ export function EntityTable<TData extends { id: string }, SortField>({
         viewName={viewName}
         viewIcon={viewIcon}
         availableSorts={availableSorts}
-        availableFilters={availableFilters}
         onSortsUpdate={onSortsUpdate}
-        onFiltersUpdate={onFiltersUpdate}
       />
       <StyledTableScrollableContainer>
         <StyledTable>

@@ -16,7 +16,7 @@ import { TableContext } from '@/ui/tables/states/TableContext';
 import { CompanyOrderByWithRelationInput } from '~/generated/graphql';
 
 import { useCompaniesColumns } from './companies-columns';
-import { availableFilters, companiesFilters } from './companies-filters';
+import { companiesFilters } from './companies-filters';
 import { availableSorts } from './companies-sorts';
 
 export function CompanyTable() {
@@ -55,7 +55,6 @@ export function CompanyTable() {
         viewName="All Companies"
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
-        availableFilters={availableFilters}
         onSortsUpdate={updateSorts}
       />
     </>
