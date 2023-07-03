@@ -25,11 +25,11 @@ root.render(
       <BrowserRouter>
         <AppThemeProvider>
           <StrictMode>
-            <ClientConfigProvider>
-              <UserProvider>
-              <App />
+            <UserProvider>
+              <ClientConfigProvider>
+                <App />
+              </ClientConfigProvider>
             </UserProvider>
-            </ClientConfigProvider>
           </StrictMode>
         </AppThemeProvider>
       </BrowserRouter>
