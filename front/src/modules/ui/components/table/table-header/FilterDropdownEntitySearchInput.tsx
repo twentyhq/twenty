@@ -1,0 +1,37 @@
+import { ChangeEvent } from 'react';
+
+import { filterSearchInputScopedState } from '@/filters-and-sorts/states/filterSearchInputScopedState';
+import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
+import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { TableContext } from '@/ui/tables/states/TableContext';
+
+export function FilterDropdownEntitySearchInput() {
+  const [selectedFilterInDropdown] = useRecoilScopedState(
+    selectedFilterInDropdownScopedState,
+    TableContext,
+  );
+
+  const [selectedOperandInDropdown] = useRecoilScopedState(
+    selectedOperandInDropdownScopedState,
+    TableContext,
+  );
+
+  const [, setFilterSearchInput] = useRecoilScopedState(
+    filterSearchInputScopedState,
+    TableContext,
+  );
+
+  return (
+    selectedFilterInDropdown &&
+    selectedOperandInDropdown && (
+      <input
+        type="number"
+        placeholder={selectedFilterInDropdown.label}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          setFilterSearchInput(event.target.value);
+        }}
+      />
+    )
+  );
+}
