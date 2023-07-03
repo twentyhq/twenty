@@ -1,4 +1,5 @@
 import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
+import { EntityFilterWithField } from '@/filters-and-sorts/types/EntityFilterWithField';
 import { SEARCH_USER_QUERY } from '@/search/services/search';
 import {
   IconBuildingSkyscraper,
@@ -9,16 +10,10 @@ import {
   IconUsers,
 } from '@/ui/icons/index';
 import { icon } from '@/ui/themes/icon';
+import { UserFilterDropdownSearchSelect } from '@/users/components/UserFilterDropdownSearchSelect';
 import { Company, QueryMode, User } from '~/generated/graphql';
 
-type EntityFilter<T> = {
-  field: keyof T;
-  label: string;
-  icon: JSX.Element;
-  type: 'text' | 'date' | 'entity' | 'number';
-}[];
-
-export const companiesFilters: EntityFilter<Company> = [
+export const companiesFilters: EntityFilterWithField<Company>[] = [
   {
     field: 'name',
     label: 'Name',
@@ -32,6 +27,31 @@ export const companiesFilters: EntityFilter<Company> = [
     label: 'Employees',
     icon: <IconUsers size={icon.size.md} stroke={icon.stroke.sm} />,
     type: 'number',
+  },
+  {
+    field: 'domainName',
+    label: 'URL',
+    icon: <IconLink size={icon.size.md} stroke={icon.stroke.sm} />,
+    type: 'text',
+  },
+  {
+    field: 'address',
+    label: 'Address',
+    icon: <IconMap size={icon.size.md} stroke={icon.stroke.sm} />,
+    type: 'text',
+  },
+  {
+    field: 'createdAt',
+    label: 'Created at',
+    icon: <IconCalendarEvent size={icon.size.md} stroke={icon.stroke.sm} />,
+    type: 'date',
+  },
+  {
+    field: 'accountOwner',
+    label: 'Account owner',
+    icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
+    type: 'entity',
+    searchSelectComponent: <UserFilterDropdownSearchSelect />,
   },
 ];
 

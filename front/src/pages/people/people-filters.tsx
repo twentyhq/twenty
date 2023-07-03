@@ -1,4 +1,5 @@
 import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
+import { EntityFilter } from '@/filters-and-sorts/types/EntityFilter';
 import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import {
   IconBuildingSkyscraper,
@@ -7,9 +8,27 @@ import {
   IconMap,
   IconPhone,
   IconUser,
+  IconUsers,
 } from '@/ui/icons/index';
 import { icon } from '@/ui/themes/icon';
 import { Company, QueryMode } from '~/generated/graphql';
+
+export const peopleFilters: EntityFilter[] = [
+  {
+    field: 'name',
+    label: 'Name',
+    icon: (
+      <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.sm} />
+    ),
+    type: 'text',
+  },
+  {
+    field: 'employees',
+    label: 'Employees',
+    icon: <IconUsers size={icon.size.md} stroke={icon.stroke.sm} />,
+    type: 'number',
+  },
+];
 
 export const fullnameFilter = {
   key: 'fullname',

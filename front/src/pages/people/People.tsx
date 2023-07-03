@@ -15,11 +15,13 @@ import {
   PeopleSelectedSortType,
   usePeopleQuery,
 } from '@/people/services';
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
 import { EntityTable } from '@/ui/components/table/EntityTable';
 import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
 import { IconList, IconUser } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
+import { TableContext } from '@/ui/tables/states/TableContext';
 import {
   GetPeopleQuery,
   PersonWhereInput,
@@ -29,7 +31,7 @@ import {
 import { TableActionBarButtonCreateCommentThreadPeople } from './table/TableActionBarButtonCreateCommentThreadPeople';
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
 import { usePeopleColumns } from './people-columns';
-import { availableFilters } from './people-filters';
+import { availableFilters, peopleFilters } from './people-filters';
 import { availableSorts } from './people-sorts';
 
 const StyledPeopleContainer = styled.div`
@@ -84,11 +86,12 @@ export function People() {
       icon={<IconUser size={theme.icon.size.md} />}
       onAddButtonClick={handleAddButtonClick}
     >
-      <>
+      <RecoilScope SpecificContext={TableContext}>
         <StyledPeopleContainer>
           <HooksEntityTable
             numberOfColumns={peopleColumns.length}
             numberOfRows={people.length}
+            availableFilters={peopleFilters}
           />
           <EntityTable
             data={people}
@@ -105,7 +108,7 @@ export function People() {
           <TableActionBarButtonCreateCommentThreadPeople />
           <TableActionBarButtonDeletePeople />
         </EntityTableActionBar>
-      </>
+      </RecoilScope>
     </WithTopBarContainer>
   );
 }

@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 
+import { filterSearchInputScopedState } from '@/filters-and-sorts/states/filterSearchInputScopedState';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { TableContext } from '@/ui/tables/states/TableContext';
 import { debounce } from '@/utils/debounce';
 
 import { SearchConfigType } from '../interfaces/interface';
@@ -94,7 +97,10 @@ export const useSearch = <T>(
   const [searchConfig, setSearchConfig] = useState<SearchConfigType | null>(
     null,
   );
-  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchInput, setSearchInput] = useRecoilScopedState(
+    filterSearchInputScopedState,
+    TableContext,
+  );
 
   const debouncedsetSearchInput = useMemo(
     () => debounce(setSearchInput, 50),
