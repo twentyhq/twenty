@@ -7,10 +7,12 @@ import { PipelineModule } from './pipeline/pipeline.module';
 import { AuthModule } from './auth/auth.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { loginProviders } from 'src/utils/login-providers';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    AuthModule,
+    AuthModule.forRoot(loginProviders(new ConfigService())),
     UserModule,
     CommentModule,
     CompanyModule,

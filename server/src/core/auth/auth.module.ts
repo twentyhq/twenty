@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, DynamicModule } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
@@ -25,17 +25,29 @@ const jwtModule = JwtModule.registerAsync({
   inject: [ConfigService],
 });
 
-@Module({
-  imports: [jwtModule, ConfigModule.forRoot({}), UserModule],
-  controllers: [GoogleAuthController, VerifyAuthController],
-  providers: [
-    AuthService,
-    TokenService,
-    JwtAuthStrategy,
-    GoogleStrategy,
-    PrismaService,
-    AuthResolver,
-  ],
-  exports: [jwtModule],
-})
-export class AuthModule {}
+@Module({})
+export class AuthModule {
+  static forRoot(loginProviders: string[]): DynamicModule {
+    const controllers: any[] = [VerifyAuthController];
+    const providers: any[] = [
+      AuthService,
+      TokenService,
+      JwtAuthStrategy,
+      PrismaService,
+      AuthResolver,
+    ];
+
+    if (loginProviders.includes('google')) {
+      controllers.push(GoogleAuthController);
+      providers.push(GoogleStrategy);
+    }
+
+    return {
+      module: AuthModule,
+      imports: [jwtModule, ConfigModule.forRoot({}), UserModule],
+      controllers: controllers,
+      providers: providers,
+      exports: [jwtModule],
+    };
+  }
+}
