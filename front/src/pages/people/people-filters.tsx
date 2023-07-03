@@ -1,7 +1,5 @@
 import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
-import { FilterConfigType } from '@/filters-and-sorts/interfaces/filters/interface';
 import { EntityFilterWithField } from '@/filters-and-sorts/types/EntityFilterWithField';
-import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -11,7 +9,7 @@ import {
   IconUser,
 } from '@/ui/icons/index';
 import { icon } from '@/ui/themes/icon';
-import { Company, Person, QueryMode } from '~/generated/graphql';
+import { Person } from '~/generated/graphql';
 
 export const peopleFilters: EntityFilterWithField<Person>[] = [
   {
