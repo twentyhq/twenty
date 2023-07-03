@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { availableFiltersScopedState } from '@/filters-and-sorts/states/availableFiltersScopedState';
+import { availableTableFiltersScopedState } from '@/filters-and-sorts/states/availableTableFiltersScopedState';
 import { EntityFilter } from '@/filters-and-sorts/types/EntityFilter';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 
@@ -12,7 +12,7 @@ export function useInitializeEntityTableFilters({
   availableFilters: EntityFilter[];
 }) {
   const [, setAvailableFilters] = useRecoilScopedState(
-    availableFiltersScopedState,
+    availableTableFiltersScopedState,
     TableContext,
   );
 

@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { SelectedSortType } from '@/filters-and-sorts/interfaces/sorts/interface';
-import { availableFiltersScopedState } from '@/filters-and-sorts/states/availableFiltersScopedState';
+import { availableTableFiltersScopedState } from '@/filters-and-sorts/states/availableTableFiltersScopedState';
 import { selectedFiltersScopedState } from '@/filters-and-sorts/states/selectedFiltersScopedState';
 import { getOperandLabel } from '@/filters-and-sorts/utils/getOperandLabel';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -70,7 +70,7 @@ function SortAndFilterBar<SortField>({
   );
 
   const [availableFilters] = useRecoilScopedState(
-    availableFiltersScopedState,
+    availableTableFiltersScopedState,
     TableContext,
   );
 

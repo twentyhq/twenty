@@ -1,5 +1,5 @@
-import { availableFiltersScopedState } from '@/filters-and-sorts/states/availableFiltersScopedState';
-import { filterSearchInputScopedState } from '@/filters-and-sorts/states/filterSearchInputScopedState';
+import { availableTableFiltersScopedState } from '@/filters-and-sorts/states/availableTableFiltersScopedState';
+import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { getOperandsForFilterType } from '@/filters-and-sorts/utils/getOperandsForFilterType';
@@ -24,12 +24,12 @@ export function FilterDropdownFilterSelect() {
   );
 
   const [, setFilterSearchInput] = useRecoilScopedState(
-    filterSearchInputScopedState,
+    filterDropdownSearchInputScopedState,
     TableContext,
   );
 
   const availableFilters = useRecoilScopedValue(
-    availableFiltersScopedState,
+    availableTableFiltersScopedState,
     TableContext,
   );
 

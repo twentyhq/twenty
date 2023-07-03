@@ -1,4 +1,4 @@
-import { filterSearchInputScopedState } from '@/filters-and-sorts/states/filterSearchInputScopedState';
+import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { selectedFilterDropdownEntityIdScopedState } from '@/filters-and-sorts/states/selectedFilterDropdownEntityIdScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
@@ -9,8 +9,8 @@ import { TableContext } from '@/ui/tables/states/TableContext';
 import { useSearchUserQuery } from '~/generated/graphql';
 
 export function FilterDropdownUserSearchSelect() {
-  const currentSearchFilter = useRecoilScopedValue(
-    filterSearchInputScopedState,
+  const filterDropdownSearchInput = useRecoilScopedValue(
+    filterDropdownSearchInputScopedState,
     TableContext,
   );
 
@@ -30,7 +30,7 @@ export function FilterDropdownUserSearchSelect() {
       name: `${entity.displayName}`,
       avatarType: 'rounded',
     }),
-    searchFilter: currentSearchFilter,
+    searchFilter: filterDropdownSearchInput,
   });
 
   return (

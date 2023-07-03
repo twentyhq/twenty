@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { filterSearchInputScopedState } from '@/filters-and-sorts/states/filterSearchInputScopedState';
+import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
 import { selectedFiltersScopedState } from '@/filters-and-sorts/states/selectedFiltersScopedState';
@@ -36,7 +36,7 @@ export function FilterDropdownButton() {
     useRecoilScopedState(selectedFilterInDropdownScopedState, TableContext);
 
   const [, setFilterSearchInput] = useRecoilScopedState(
-    filterSearchInputScopedState,
+    filterDropdownSearchInputScopedState,
     TableContext,
   );
 

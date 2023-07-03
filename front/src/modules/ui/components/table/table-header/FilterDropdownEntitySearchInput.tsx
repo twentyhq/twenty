@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 
-import { filterSearchInputScopedState } from '@/filters-and-sorts/states/filterSearchInputScopedState';
+import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { selectedFilterInDropdownScopedState } from '@/filters-and-sorts/states/selectedFilterInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -18,7 +18,7 @@ export function FilterDropdownEntitySearchInput() {
   );
 
   const [filterSearchInput, setFilterSearchInput] = useRecoilScopedState(
-    filterSearchInputScopedState,
+    filterDropdownSearchInputScopedState,
     TableContext,
   );
 
