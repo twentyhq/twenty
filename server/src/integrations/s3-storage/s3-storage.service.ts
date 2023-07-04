@@ -23,9 +23,13 @@ export class S3StorageService {
     @Inject(MODULE_OPTIONS_TOKEN)
     private readonly options: S3StorageModuleOptions,
   ) {
-    const { bucketName, ...s3Options } = options;
+    const { bucketName, region, ...s3Options } = options;
 
-    this.s3Client = new S3(s3Options);
+    if (!bucketName || !region) {
+      return;
+    }
+
+    this.s3Client = new S3({ ...s3Options, region });
     this.bucketName = bucketName;
   }
 
