@@ -1,33 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TokenService } from './token.service';
-import { PrismaService } from 'src/database/prisma.service';
-import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
-import { JwtService } from '@nestjs/jwt';
+import { FileService } from './file.service';
+import { S3StorageService } from 'src/integrations/s3-storage/s3-storage.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
-describe('TokenService', () => {
-  let service: TokenService;
+describe('FileService', () => {
+  let service: FileService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TokenService,
+        FileService,
         {
-          provide: JwtService,
+          provide: S3StorageService,
           useValue: {},
         },
         {
           provide: EnvironmentService,
           useValue: {},
         },
-        {
-          provide: PrismaService,
-          useValue: prismaMock,
-        },
       ],
     }).compile();
 
-    service = module.get<TokenService>(TokenService);
+    service = module.get<FileService>(FileService);
   });
 
   it('should be defined', () => {
