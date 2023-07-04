@@ -6,7 +6,6 @@ import { LocalStorageModule } from './local-storage/local-storage.module';
 import { LocalStorageModuleOptions } from './local-storage/interfaces';
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
-import { assert } from 'src/utils/assert';
 
 /**
  * S3 Storage Module factory
@@ -16,23 +15,16 @@ import { assert } from 'src/utils/assert';
 const S3StorageModuleFactory = async (
   environmentService: EnvironmentService,
 ): Promise<S3StorageModuleOptions> => {
-  const fileSystem = environmentService.getStorageType();
-  const bucketName = environmentService.getStorageLocation();
-  const region = environmentService.getStorageRegion();
-
-  if (fileSystem === 'local') {
-    return { bucketName };
-  }
-
-  assert(region, 'S3 region is not defined');
+  const bucketName = environmentService.getStorageS3Name();
+  const region = environmentService.getStorageS3Region();
 
   return {
-    bucketName,
+    bucketName: bucketName ?? '',
     credentials: fromNodeProviderChain({
       clientConfig: { region },
     }),
     forcePathStyle: true,
-    region,
+    region: region ?? '',
   };
 };
 
@@ -44,10 +36,10 @@ const S3StorageModuleFactory = async (
 const localStorageModuleFactory = async (
   environmentService: EnvironmentService,
 ): Promise<LocalStorageModuleOptions> => {
-  const folderName = environmentService.getStorageLocation();
+  const storagePath = environmentService.getStorageLocalPath();
 
   return {
-    storagePath: process.cwd() + '/' + folderName,
+    storagePath: process.cwd() + '/' + storagePath,
   };
 };
 

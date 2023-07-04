@@ -25,7 +25,7 @@ export class FileService {
   }
 
   private async getLocalFileStream(folderPath: string, filename: string) {
-    const storageLocation = this.environmentService.getStorageLocation();
+    const storageLocation = this.environmentService.getStorageLocalPath();
 
     const filePath = join(
       process.cwd(),

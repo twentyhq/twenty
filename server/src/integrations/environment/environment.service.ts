@@ -40,6 +40,10 @@ export class EnvironmentService {
     return this.configService.get<string>('FRONT_AUTH_CALLBACK_URL')!;
   }
 
+  getAuthGoogleEnabled(): boolean | undefined {
+    return this.configService.get<boolean>('AUTH_GOOGLE_ENABLED');
+  }
+
   getAuthGoogleClientId(): string | undefined {
     return this.configService.get<string>('AUTH_GOOGLE_CLIENT_ID');
   }
@@ -56,11 +60,15 @@ export class EnvironmentService {
     return this.configService.get<StorageType>('STORAGE_TYPE');
   }
 
-  getStorageRegion(): AwsRegion | undefined {
-    return this.configService.get<AwsRegion>('STORAGE_REGION');
+  getStorageS3Region(): AwsRegion | undefined {
+    return this.configService.get<AwsRegion>('STORAGE_S3_REGION');
   }
 
-  getStorageLocation(): string {
-    return this.configService.get<string>('STORAGE_LOCATION')!;
+  getStorageS3Name(): string | undefined {
+    return this.configService.get<AwsRegion>('STORAGE_S3_NAME');
+  }
+
+  getStorageLocalPath(): string | undefined {
+    return this.configService.get<string>('STORAGE_LOCAL_PATH')!;
   }
 }

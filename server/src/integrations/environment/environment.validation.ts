@@ -1,4 +1,4 @@
-import { plainToClass } from 'class-transformer';
+import { plainToClass, Transform } from 'class-transformer';
 import {
   IsEnum,
   IsOptional,
@@ -6,6 +6,7 @@ import {
   IsUrl,
   ValidateIf,
   validateSync,
+  IsBoolean,
 } from 'class-validator';
 import { assert } from 'src/utils/assert';
 import { IsDuration } from './decorators/is-duration.decorator';
@@ -38,16 +39,21 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   FRONT_AUTH_CALLBACK_URL: string;
 
-  @IsString()
+  @Transform(({ value }) => envValueToBoolean(value))
   @IsOptional()
+  @IsBoolean()
+  AUTH_GOOGLE_ENABLED?: boolean;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
   AUTH_GOOGLE_CLIENT_ID?: string;
 
   @IsString()
-  @IsOptional()
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
   AUTH_GOOGLE_CLIENT_SECRET?: string;
 
   @IsUrl({ require_tld: false })
-  @IsOptional()
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
   AUTH_GOOGLE_CALLBACK_URL?: string;
 
   // Storage
@@ -55,17 +61,22 @@ export class EnvironmentVariables {
   @IsOptional()
   STORAGE_TYPE?: StorageType;
 
-  @ValidateIf((_, value) => value === StorageType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageType.S3)
   @IsAWSRegion()
-  STORAGE_REGION?: AwsRegion;
+  STORAGE_S3_REGION?: AwsRegion;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageType.S3)
+  @IsString()
+  STORAGE_S3_NAME?: string;
 
   @IsString()
-  STORAGE_LOCATION: string;
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageType.Local)
+  STORAGE_LOCAL_PATH?: string;
 }
 
 export function validate(config: Record<string, unknown>) {
   const validatedConfig = plainToClass(EnvironmentVariables, config, {
-    enableImplicitConversion: true,
+    enableImplicitConversion: false,
   });
 
   const errors = validateSync(validatedConfig, {
@@ -75,3 +86,16 @@ export function validate(config: Record<string, unknown>) {
 
   return validatedConfig;
 }
+
+const envValueToBoolean = (value: any) => {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  if (['true', 'on', 'yes', '1'].includes(value.toLowerCase())) {
+    return true;
+  }
+  if (['false', 'off', 'no', '0'].includes(value.toLowerCase())) {
+    return false;
+  }
+  return undefined;
+};
