@@ -1,5 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import {
+  IconCircleCheck,
+  IconCurrencyDollar,
+  IconProgressCheck,
+  IconRecycle,
+  IconUserCircle,
+} from '@tabler/icons-react';
 
 import { Company } from '../../../generated/graphql';
 import { PersonChip } from '../../people/components/PersonChip';
@@ -86,15 +93,29 @@ export function CompanyBoardCard({
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>
-            <IconUser size={theme.icon.size.md} />
-            <PersonChip name={company.accountOwner?.displayName || ''} />
-          </span>
-          <span>
-            <IconUsers size={theme.icon.size.md} /> {company.employees}
+            <IconCurrencyDollar size={theme.icon.size.md} />
+            $1,000
           </span>
           <span>
             <IconCalendarEvent size={theme.icon.size.md} />
             {humanReadableDate(new Date(company.createdAt as string))}
+          </span>
+          <span>
+            <IconUserCircle size={theme.icon.size.md} />
+            <PersonChip name={company.accountOwner?.displayName || ''} />
+          </span>
+          <span>
+            <IconProgressCheck size={theme.icon.size.md} />
+            Likely
+          </span>
+          <span>
+            <IconRecycle size={theme.icon.size.md} />
+            One-time
+          </span>
+          <span>
+            <IconUsers size={theme.icon.size.md} /> {company.employees}
+            <PersonChip name={company.accountOwner?.displayName || ''} />
+            <PersonChip name={company.accountOwner?.displayName || ''} />
           </span>
         </StyledBoardCardBody>
       </StyledBoardCard>
