@@ -10,8 +10,8 @@ export class UpdateOneWorkspaceArgs {
 
     @Field(() => WorkspaceUpdateInput, {nullable:false})
     @Type(() => WorkspaceUpdateInput)
-    @ValidateNested({each: true})
     @Type(() => WorkspaceUpdateInput)
+    @ValidateNested({each: true})
     data!: WorkspaceUpdateInput;
 
     @Field(() => WorkspaceWhereUniqueInput, {nullable:false})

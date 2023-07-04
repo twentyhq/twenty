@@ -10,8 +10,8 @@ export class UpdateManyRefreshTokenArgs {
 
     @Field(() => RefreshTokenUpdateManyMutationInput, {nullable:false})
     @Type(() => RefreshTokenUpdateManyMutationInput)
-    @ValidateNested({each: true})
     @Type(() => RefreshTokenUpdateManyMutationInput)
+    @ValidateNested({each: true})
     data!: RefreshTokenUpdateManyMutationInput;
 
     @Field(() => RefreshTokenWhereInput, {nullable:true})

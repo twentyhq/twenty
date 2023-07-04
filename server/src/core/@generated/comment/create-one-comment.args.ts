@@ -9,7 +9,7 @@ export class CreateOneCommentArgs {
 
     @Field(() => CommentCreateInput, {nullable:false})
     @Type(() => CommentCreateInput)
-    @ValidateNested({each: true})
     @Type(() => CommentCreateInput)
+    @ValidateNested({each: true})
     data!: CommentCreateInput;
 }

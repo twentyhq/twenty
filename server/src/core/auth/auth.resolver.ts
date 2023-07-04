@@ -8,6 +8,11 @@ import { VerifyInput } from './dto/verify.input';
 import { AuthService } from './services/auth.service';
 import { LoginToken } from './dto/login-token.entity';
 import { ChallengeInput } from './dto/challenge.input';
+import {
+  PrismaSelect,
+  PrismaSelector,
+} from 'src/decorators/prisma-select.decorator';
+import { Prisma } from '@prisma/client';
 
 @Resolver()
 export class AuthResolver {
@@ -25,11 +30,21 @@ export class AuthResolver {
   }
 
   @Mutation(() => Verify)
-  async verify(@Args() verifyInput: VerifyInput): Promise<Verify> {
+  async verify(
+    @Args() verifyInput: VerifyInput,
+    @PrismaSelector({
+      modelName: 'User',
+      defaultFields: { User: { id: true } },
+    })
+    prismaSelect: PrismaSelect<'User'>,
+  ): Promise<Verify> {
     const email = await this.tokenService.verifyLoginToken(
       verifyInput.loginToken,
     );
-    const result = await this.authService.verify(email);
+    const select = prismaSelect.valueOf('user') as Prisma.UserSelect & {
+      id: true;
+    };
+    const result = await this.authService.verify(email, select);
 
     return result;
   }

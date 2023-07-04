@@ -15,9 +15,6 @@ export class UserMaxAggregateInput {
     lastName?: true;
 
     @Field(() => Boolean, {nullable:true})
-    displayName?: true;
-
-    @Field(() => Boolean, {nullable:true})
     email?: true;
 
     @Field(() => Boolean, {nullable:true})

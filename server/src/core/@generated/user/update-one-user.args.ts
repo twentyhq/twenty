@@ -10,8 +10,8 @@ export class UpdateOneUserArgs {
 
     @Field(() => UserUpdateInput, {nullable:false})
     @Type(() => UserUpdateInput)
-    @ValidateNested({each: true})
     @Type(() => UserUpdateInput)
+    @ValidateNested({each: true})
     data!: UserUpdateInput;
 
     @Field(() => UserWhereUniqueInput, {nullable:false})
