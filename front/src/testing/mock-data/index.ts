@@ -53,6 +53,13 @@ function filterData<DataT>(
 
           return filterElement.in.includes(itemValue);
         }
+        if (filterElement.notIn) {
+          const itemValue = item[key as keyof typeof item] as string;
+
+          if (filterElement.notIn.length === 0) return true;
+
+          return !filterElement.notIn.includes(itemValue);
+        }
       }
       return false;
     });
@@ -63,6 +70,14 @@ function filterData<DataT>(
         isMatch ||
         where.OR.some((orFilter) =>
           filterData<DataT>(data, orFilter).includes(item),
+        );
+    }
+
+    if (where.AND && Array.isArray(where.AND)) {
+      isMatch =
+        isMatch ||
+        where.AND.every((andFilter) =>
+          filterData<DataT>(data, andFilter).includes(item),
         );
     }
 

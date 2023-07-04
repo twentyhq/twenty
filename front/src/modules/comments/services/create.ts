@@ -23,6 +23,8 @@ export const CREATE_COMMENT = gql`
       author {
         id
         displayName
+        firstName
+        lastName
         avatarUrl
       }
       commentThreadId

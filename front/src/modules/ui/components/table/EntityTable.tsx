@@ -9,10 +9,6 @@ import {
 import { useRecoilState } from 'recoil';
 
 import {
-  FilterConfigType,
-  SelectedFilterType,
-} from '@/filters-and-sorts/interfaces/filters/interface';
-import {
   SelectedSortType,
   SortType,
 } from '@/filters-and-sorts/interfaces/sorts/interface';
@@ -30,9 +26,7 @@ type OwnProps<TData extends { id: string }, SortField> = {
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
-  availableFilters?: FilterConfigType<TData>[];
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onFiltersUpdate?: (filters: Array<SelectedFilterType<TData>>) => void;
   onRowSelectionChange?: (rowSelection: string[]) => void;
 };
 
@@ -107,9 +101,7 @@ export function EntityTable<TData extends { id: string }, SortField>({
   viewName,
   viewIcon,
   availableSorts,
-  availableFilters,
   onSortsUpdate,
-  onFiltersUpdate,
 }: OwnProps<TData, SortField>) {
   const [currentRowSelection, setCurrentRowSelection] = useRecoilState(
     currentRowSelectionState,
@@ -133,9 +125,7 @@ export function EntityTable<TData extends { id: string }, SortField>({
         viewName={viewName}
         viewIcon={viewIcon}
         availableSorts={availableSorts}
-        availableFilters={availableFilters}
         onSortsUpdate={onSortsUpdate}
-        onFiltersUpdate={onFiltersUpdate}
       />
       <StyledTableScrollableContainer>
         <StyledTable>

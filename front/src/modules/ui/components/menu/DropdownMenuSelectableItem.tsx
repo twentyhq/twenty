@@ -8,7 +8,7 @@ import { hoverBackground } from '@/ui/themes/effects';
 import { DropdownMenuButton } from './DropdownMenuButton';
 
 type Props = {
-  selected: boolean;
+  selected?: boolean;
   onClick: () => void;
   hovered?: boolean;
 };

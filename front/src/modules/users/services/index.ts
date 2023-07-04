@@ -6,6 +6,8 @@ export const GET_CURRENT_USER = gql`
       id
       email
       displayName
+      firstName
+      lastName
       workspaceMember {
         id
         workspace {
@@ -25,6 +27,8 @@ export const GET_USERS = gql`
       id
       email
       displayName
+      firstName
+      lastName
     }
   }
 `;

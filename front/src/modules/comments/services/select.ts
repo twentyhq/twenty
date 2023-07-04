@@ -22,6 +22,8 @@ export const GET_COMMENT_THREADS_BY_TARGETS = gql`
         author {
           id
           displayName
+          firstName
+          lastName
           avatarUrl
         }
       }
@@ -46,6 +48,8 @@ export const GET_COMMENT_THREAD = gql`
         author {
           id
           displayName
+          firstName
+          lastName
           avatarUrl
         }
       }

@@ -1,9 +1,4 @@
-import { useMemo, useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
-
-import { debounce } from '@/utils/debounce';
-
-import { SearchConfigType } from '../interfaces/interface';
+import { gql } from '@apollo/client';
 
 export const SEARCH_PEOPLE_QUERY = gql`
   query SearchPeople(
@@ -41,6 +36,8 @@ export const SEARCH_USER_QUERY = gql`
       id
       email
       displayName
+      firstName
+      lastName
     }
   }
 `;
@@ -70,80 +67,3 @@ export const SEARCH_COMPANY_QUERY = gql`
     }
   }
 `;
-
-export type SearchResultsType<T> = {
-  results: {
-    render: (value: T) => string;
-    value: T;
-  }[];
-  loading: boolean;
-};
-
-type SearchArgs = {
-  currentSelectedId?: string | null;
-};
-
-export const useSearch = <T>(
-  searchArgs?: SearchArgs,
-): [
-  SearchResultsType<T>,
-  React.Dispatch<React.SetStateAction<string>>,
-  React.Dispatch<React.SetStateAction<SearchConfigType | null>>,
-  string,
-] => {
-  const [searchConfig, setSearchConfig] = useState<SearchConfigType | null>(
-    null,
-  );
-  const [searchInput, setSearchInput] = useState<string>('');
-
-  const debouncedsetSearchInput = useMemo(
-    () => debounce(setSearchInput, 50),
-    [],
-  );
-
-  const where = useMemo(() => {
-    return (
-      searchConfig &&
-      searchConfig.template &&
-      searchConfig.template(
-        searchInput,
-        searchArgs?.currentSelectedId ?? undefined,
-      )
-    );
-  }, [searchConfig, searchInput, searchArgs]);
-
-  const searchQueryResults = useQuery(searchConfig?.query || EMPTY_QUERY, {
-    variables: {
-      where,
-      limit: 5,
-    },
-    skip: !searchConfig,
-  });
-
-  const searchResults = useMemo<{
-    results: { render: (value: T) => string; value: any }[];
-    loading: boolean;
-  }>(() => {
-    if (searchConfig == null) {
-      return {
-        loading: false,
-        results: [],
-      };
-    }
-    if (searchQueryResults.loading) {
-      return {
-        loading: true,
-        results: [],
-      };
-    }
-    return {
-      loading: false,
-      // TODO: add proper typing
-      results: searchQueryResults?.data?.searchResults?.map(
-        searchConfig.resultMapper,
-      ),
-    };
-  }, [searchConfig, searchQueryResults]);
-
-  return [searchResults, debouncedsetSearchInput, setSearchConfig, searchInput];
-};

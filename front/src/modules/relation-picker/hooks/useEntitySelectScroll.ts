@@ -1,14 +1,12 @@
-import { useState } from 'react';
-import { debounce } from 'lodash';
 import scrollIntoView from 'scroll-into-view';
 
 import { useUpDownHotkeys } from '@/hotkeys/hooks/useUpDownHotkeys';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 
-import { relationPickerSearchFilterScopedState } from '../states/relationPickerSearchFilterScopedState';
+import { relationPickerHoverIndexScopedState } from '../states/relationPickerHoverIndexScopedState';
 import { EntityForSelect } from '../types/EntityForSelect';
 
-export function useEntitySelectLogic<
+export function useEntitySelectScroll<
   CustomEntityForSelect extends EntityForSelect,
 >({
   containerRef,
@@ -17,22 +15,9 @@ export function useEntitySelectLogic<
   entities: CustomEntityForSelect[];
   containerRef: React.RefObject<HTMLDivElement>;
 }) {
-  const [hoveredIndex, setHoveredIndex] = useState(0);
-
-  const [searchFilter, setSearchFilter] = useRecoilScopedState(
-    relationPickerSearchFilterScopedState,
+  const [hoveredIndex, setHoveredIndex] = useRecoilScopedState(
+    relationPickerHoverIndexScopedState,
   );
-
-  const debouncedSetSearchFilter = debounce(setSearchFilter, 100, {
-    leading: true,
-  });
-
-  function handleSearchFilterChange(
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) {
-    debouncedSetSearchFilter(event.currentTarget.value);
-    setHoveredIndex(0);
-  }
 
   useUpDownHotkeys(
     () => {
@@ -82,7 +67,5 @@ export function useEntitySelectLogic<
 
   return {
     hoveredIndex,
-    searchFilter,
-    handleSearchFilterChange,
   };
 }

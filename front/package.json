@@ -21,6 +21,7 @@
     "framer-motion": "^10.12.17",
     "graphql": "^16.6.0",
     "hex-rgb": "^5.0.0",
+    "immer": "^10.0.2",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^3.1.2",
     "libphonenumber-js": "^1.10.26",
