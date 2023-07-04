@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, Inject, HttpException } from '@nestjs/common';
+import { Injectable, CanActivate, HttpException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 

@@ -1,4 +1,4 @@
-import { plainToClass, Transform, Type } from 'class-transformer';
+import { plainToClass, Transform } from 'class-transformer';
 import {
   IsEnum,
   IsOptional,

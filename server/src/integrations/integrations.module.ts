@@ -6,7 +6,6 @@ import { LocalStorageModule } from './local-storage/local-storage.module';
 import { LocalStorageModuleOptions } from './local-storage/interfaces';
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
-import { assert } from 'src/utils/assert';
 
 /**
  * S3 Storage Module factory
