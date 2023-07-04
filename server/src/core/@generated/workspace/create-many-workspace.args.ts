@@ -9,8 +9,8 @@ export class CreateManyWorkspaceArgs {
 
     @Field(() => [WorkspaceCreateManyInput], {nullable:false})
     @Type(() => WorkspaceCreateManyInput)
-    @ValidateNested({each: true})
     @Type(() => WorkspaceCreateManyInput)
+    @ValidateNested({each: true})
     data!: Array<WorkspaceCreateManyInput>;
 
     @Field(() => Boolean, {nullable:true})

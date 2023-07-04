@@ -23,11 +23,6 @@ export class UserCreateWithoutWorkspaceMemberInput {
     @Validator.IsString()
     lastName!: string;
 
-    @Field(() => String, {nullable:true})
-    @Validator.IsString()
-    @Validator.IsOptional()
-    displayName?: string;
-
     @Field(() => String, {nullable:false})
     @Validator.IsEmail()
     email!: string;
