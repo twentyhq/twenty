@@ -13,6 +13,10 @@ const CollapseButton = styled.button<{ hideOnDesktop: boolean | undefined }>`
   align-items: center;
   background: inherit;
   border: 0;
+  &:hover {
+    background: ${({ theme }) => theme.background.quaternary};
+  }
+  border-radius: ${({ theme }) => theme.border.radius.md};
 
   color: ${({ theme }) => theme.font.color.light};
   cursor: pointer;
