@@ -2851,6 +2851,13 @@
     "@types/koa-compose" "*"
     "@types/node" "*"
 
+"@types/lodash.camelcase@^4.3.7":
+  version "4.3.7"
+  resolved "https://registry.yarnpkg.com/@types/lodash.camelcase/-/lodash.camelcase-4.3.7.tgz#b0a06a216542335c0326c0d2fbad3f121b1f29a7"
+  integrity sha512-Nfi6jpo9vuEOSIJP+mpbTezKyEt75DQlbwjiDvs/JctWkbnHDoyQo5lWqdvgNiJmVUjcmkfvlrvSEgJYvurOKg==
+  dependencies:
+    "@types/lodash" "*"
+
 "@types/lodash.isobject@^3.0.7":
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/@types/lodash.isobject/-/lodash.isobject-3.0.7.tgz#8a37beea56512f0ae86f8d48ea01e2ea9b79c185"
@@ -6188,6 +6195,11 @@ locate-path@^6.0.0:
   integrity sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==
   dependencies:
     p-locate "^5.0.0"
+
+lodash.camelcase@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
+  integrity sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==
 
 lodash.defaults@^4.2.0:
   version "4.2.0"
