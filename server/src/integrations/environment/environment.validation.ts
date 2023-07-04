@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  ValidateIf,
   validateSync,
 } from 'class-validator';
 import { assert } from 'src/utils/assert';
@@ -54,8 +55,8 @@ export class EnvironmentVariables {
   @IsOptional()
   STORAGE_TYPE?: StorageType;
 
+  @ValidateIf((_, value) => value === StorageType.S3)
   @IsAWSRegion()
-  @IsOptional()
   STORAGE_REGION?: AwsRegion;
 
   @IsString()
