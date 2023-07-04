@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import sharp from 'sharp';
 import { S3StorageService } from 'src/integrations/s3-storage/s3-storage.service';
-import { FileFolder } from './interfaces/file-folder.interface';
 import { kebabCase } from 'src/utils/kebab-case';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { LocalStorageService } from 'src/integrations/local-storage/local-storage.service';
 import { getCropSize } from 'src/utils/image';
 import { settings } from 'src/constants/settings';
+import { FileFolder } from '../interfaces/file-folder.interface';
 
 @Injectable()
 export class FileUploadService {

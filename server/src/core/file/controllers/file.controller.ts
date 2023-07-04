@@ -1,11 +1,13 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
-import { createReadStream } from 'fs';
+import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { join } from 'path';
-import { checkFilePath, checkFilename } from './file-upload.utils';
+import { checkFilePath, checkFilename } from '../file.utils';
+import { FileService } from '../services/file.service';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('files')
-export class FileUploadController {
+export class FileController {
+  constructor(private readonly fileService: FileService) {}
   /**
    * Serve files from local storage
    * We recommend using an s3 bucket for production
@@ -14,13 +16,10 @@ export class FileUploadController {
   async getFile(@Param() params: string[], @Res() res: Response) {
     const folderPath = checkFilePath(params[0]);
     const filename = checkFilename(params['filename']);
-    const filePath = join(
-      process.cwd(),
-      '.local-storage/',
+    const fileStream = await this.fileService.getFileStream(
       folderPath,
       filename,
     );
-    const fileStream = createReadStream(filePath);
 
     fileStream.on('error', () => {
       res.status(404).send({ error: 'File not found' });

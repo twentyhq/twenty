@@ -3,6 +3,9 @@ import { MODULE_OPTIONS_TOKEN } from './s3-storage.module-definition';
 import { S3StorageModuleOptions } from './interfaces';
 import {
   CreateBucketCommandInput,
+  GetObjectCommand,
+  GetObjectCommandInput,
+  GetObjectCommandOutput,
   HeadBucketCommandInput,
   NotFound,
   PutObjectCommand,
@@ -43,12 +46,24 @@ export class S3StorageService {
     return this.s3Client.send(command);
   }
 
+  async getFile(
+    params: Omit<GetObjectCommandInput, 'Bucket'>,
+  ): Promise<GetObjectCommandOutput> {
+    const command = new GetObjectCommand({
+      ...params,
+      Bucket: this.bucketName,
+    });
+
+    return this.s3Client.send(command);
+  }
+
   async checkBucketExists(args: HeadBucketCommandInput) {
     try {
       await this.s3Client.headBucket(args);
 
       return true;
     } catch (error) {
+      console.log(error);
       if (error instanceof NotFound) {
         return false;
       }
