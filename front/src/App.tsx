@@ -4,6 +4,7 @@ import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useTrackPageView } from '@/analytics/hooks/useTrackPageView';
 import { RequireAuth } from '@/auth/components/RequireAuth';
 import { RequireNotAuth } from '@/auth/components/RequireNotAuth';
+import { RequireOnboarding } from '@/auth/components/RequireOnboarding';
 import { AuthModal } from '@/auth/components/ui/Modal';
 import { useGoToHotkeys } from '@/hotkeys/hooks/useGoToHotkeys';
 import { AuthLayout } from '@/ui/layout/AuthLayout';
@@ -56,20 +57,22 @@ export function App() {
           path="*"
           element={
             <RequireAuth>
-              <Routes>
-                <Route path="" element={<Navigate to="/people" replace />} />
-                <Route path="people" element={<People />} />
-                <Route path="companies" element={<Companies />} />
-                <Route path="opportunities" element={<Opportunities />} />
-                <Route
-                  path="settings/*"
-                  element={
-                    <Routes>
-                      <Route path="profile" element={<SettingsProfile />} />
-                    </Routes>
-                  }
-                />
-              </Routes>
+              <RequireOnboarding>
+                <Routes>
+                  <Route path="" element={<Navigate to="/people" replace />} />
+                  <Route path="people" element={<People />} />
+                  <Route path="companies" element={<Companies />} />
+                  <Route path="opportunities" element={<Opportunities />} />
+                  <Route
+                    path="settings/*"
+                    element={
+                      <Routes>
+                        <Route path="profile" element={<SettingsProfile />} />
+                      </Routes>
+                    }
+                  />
+                </Routes>
+              </RequireOnboarding>
             </RequireAuth>
           }
         />

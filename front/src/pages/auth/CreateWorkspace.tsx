@@ -1,14 +1,19 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
+import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
+import { GET_CURRENT_USER } from '@/users/services';
+import { useCreateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -30,9 +35,42 @@ const StyledButtonContainer = styled.div`
 export function CreateWorkspace() {
   const navigate = useNavigate();
 
+  const [currentUser] = useRecoilState(currentUserState);
+
+  const [workspaceName, setWorkspaceName] = useState('');
+
+  const [createWorkspace] = useCreateWorkspaceMutation();
+
   const handleCreate = useCallback(async () => {
-    navigate('/auth/create/profile');
-  }, [navigate]);
+    try {
+      if (!workspaceName) {
+        throw new Error('Workspace name is required');
+      }
+
+      if (currentUser?.workspaceMember) {
+        throw new Error('User already has a workspace');
+      }
+
+      const { data, errors } = await createWorkspace({
+        variables: {
+          data: {
+            displayName: workspaceName,
+            // TODO: Add domain name
+            domainName: '',
+          },
+        },
+        refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+      });
+
+      if (errors || !data?.createWorkspace) {
+        throw errors;
+      }
+
+      navigate('/auth/create/profile');
+    } catch (error) {
+      console.error(error);
+    }
+  }, [createWorkspace, currentUser?.workspaceMember, navigate, workspaceName]);
 
   useHotkeys(
     'enter',
@@ -45,6 +83,12 @@ export function CreateWorkspace() {
     },
     [handleCreate],
   );
+
+  useEffect(() => {
+    if (currentUser?.workspaceMember) {
+      navigate('/auth/create/profile');
+    }
+  }, [currentUser, navigate]);
 
   return (
     <>
@@ -63,7 +107,12 @@ export function CreateWorkspace() {
             title="Workspace name"
             description="The name of your organization"
           />
-          <TextInput value="" placeholder="Apple" fullWidth />
+          <TextInput
+            value={workspaceName}
+            placeholder="Apple"
+            onChange={setWorkspaceName}
+            fullWidth
+          />
         </StyledSectionContainer>
       </StyledContentContainer>
       <StyledButtonContainer>

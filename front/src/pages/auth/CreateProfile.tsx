@@ -1,14 +1,18 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
+import { useUpdateUserMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -38,9 +42,55 @@ const StyledComboInputContainer = styled.div`
 export function CreateProfile() {
   const navigate = useNavigate();
 
+  const [currentUser] = useRecoilState(currentUserState);
+  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
+    captureHotkeyTypeInFocusState,
+  );
+
+  const [updateUser] = useUpdateUserMutation();
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
   const handleCreate = useCallback(async () => {
-    navigate('/');
-  }, [navigate]);
+    try {
+      if (!currentUser?.id) {
+        throw new Error('User is not logged in');
+      }
+
+      const { data, errors } = await updateUser({
+        variables: {
+          where: {
+            id: currentUser?.id,
+          },
+          data: {
+            firstName: {
+              set: firstName,
+            },
+            lastName: {
+              set: lastName,
+            },
+          },
+        },
+      });
+
+      if (errors || !data?.updateUser) {
+        throw errors;
+      }
+
+      setCaptureHotkeyTypeInFocus(false);
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+    }
+  }, [
+    currentUser?.id,
+    firstName,
+    lastName,
+    navigate,
+    setCaptureHotkeyTypeInFocus,
+    updateUser,
+  ]);
 
   useHotkeys(
     'enter',
@@ -53,6 +103,16 @@ export function CreateProfile() {
     },
     [handleCreate],
   );
+
+  useEffect(() => {
+    if (currentUser?.firstName && currentUser?.lastName) {
+      navigate('/');
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
+    setCaptureHotkeyTypeInFocus(true);
+  }, [setCaptureHotkeyTypeInFocus]);
 
   return (
     <>
@@ -71,14 +131,16 @@ export function CreateProfile() {
           <StyledComboInputContainer>
             <TextInput
               label="First Name"
-              value=""
+              value={firstName}
               placeholder="Tim"
+              onChange={setFirstName}
               fullWidth
             />
             <TextInput
               label="Last Name"
-              value=""
+              value={lastName}
               placeholder="Cook"
+              onChange={setLastName}
               fullWidth
             />
           </StyledComboInputContainer>

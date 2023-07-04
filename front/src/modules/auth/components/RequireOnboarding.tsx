@@ -4,7 +4,6 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { useIsLogged } from '../hooks/useIsLogged';
 import { currentUserState } from '../states/currentUserState';
 
 const EmptyContainer = styled.div`
@@ -29,7 +28,7 @@ const FadeInStyle = styled.div`
   opacity: 0;
 `;
 
-export function RequireNotAuth({
+export function RequireOnboarding({
   children,
 }: {
   children: JSX.Element;
@@ -37,35 +36,26 @@ export function RequireNotAuth({
   const navigate = useNavigate();
 
   const [currentUser] = useRecoilState(currentUserState);
-  const isLogged = useIsLogged();
 
   useEffect(() => {
     if (
-      isLogged &&
-      currentUser?.firstName &&
-      currentUser?.lastName &&
-      currentUser.workspaceMember
+      !currentUser?.firstName ||
+      !currentUser?.lastName ||
+      !currentUser?.workspaceMember
     ) {
-      navigate('/');
+      navigate('/auth/create/workspace');
     }
-  }, [
-    currentUser?.firstName,
-    currentUser?.lastName,
-    currentUser?.workspaceMember,
-    isLogged,
-    navigate,
-  ]);
+  }, [currentUser, navigate]);
 
   if (
-    isLogged &&
-    currentUser?.firstName &&
-    currentUser?.lastName &&
-    currentUser?.workspaceMember
+    !currentUser?.firstName ||
+    !currentUser?.lastName ||
+    !currentUser?.workspaceMember
   ) {
     return (
       <EmptyContainer>
         <FadeInStyle>
-          Please hold on a moment, we're directing you to the app...
+          Please hold on a moment, we're directing you to our onboarding page...
         </FadeInStyle>
       </EmptyContainer>
     );

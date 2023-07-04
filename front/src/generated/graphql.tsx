@@ -15,6 +15,7 @@ export type Scalars = {
   Float: number;
   DateTime: string;
   JSON: any;
+  Upload: any;
 };
 
 export type AffectedRows = {
@@ -75,6 +76,19 @@ export type CommentCreateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
+export type CommentCreateManyAuthorInput = {
+  body: Scalars['String'];
+  commentThreadId: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentCreateManyAuthorInputEnvelope = {
+  data: Array<CommentCreateManyAuthorInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type CommentCreateManyCommentThreadInput = {
   authorId: Scalars['String'];
   body: Scalars['String'];
@@ -88,8 +102,41 @@ export type CommentCreateManyCommentThreadInputEnvelope = {
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type CommentCreateManyWorkspaceInput = {
+  authorId: Scalars['String'];
+  body: Scalars['String'];
+  commentThreadId: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentCreateManyWorkspaceInputEnvelope = {
+  data: Array<CommentCreateManyWorkspaceInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CommentCreateNestedManyWithoutAuthorInput = {
+  connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutAuthorInput>>;
+  create?: InputMaybe<Array<CommentCreateWithoutAuthorInput>>;
+  createMany?: InputMaybe<CommentCreateManyAuthorInputEnvelope>;
+};
+
 export type CommentCreateNestedManyWithoutCommentThreadInput = {
   createMany?: InputMaybe<CommentCreateManyCommentThreadInputEnvelope>;
+};
+
+export type CommentCreateNestedManyWithoutWorkspaceInput = {
+  connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<CommentCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<CommentCreateManyWorkspaceInputEnvelope>;
+};
+
+export type CommentCreateOrConnectWithoutAuthorInput = {
+  create: CommentCreateWithoutAuthorInput;
+  where: CommentWhereUniqueInput;
 };
 
 export type CommentCreateOrConnectWithoutCommentThreadInput = {
@@ -97,9 +144,31 @@ export type CommentCreateOrConnectWithoutCommentThreadInput = {
   where: CommentWhereUniqueInput;
 };
 
+export type CommentCreateOrConnectWithoutWorkspaceInput = {
+  create: CommentCreateWithoutWorkspaceInput;
+  where: CommentWhereUniqueInput;
+};
+
+export type CommentCreateWithoutAuthorInput = {
+  body: Scalars['String'];
+  commentThread: CommentThreadCreateNestedOneWithoutCommentsInput;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
 export type CommentCreateWithoutCommentThreadInput = {
   author: UserCreateNestedOneWithoutCommentsInput;
   body: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentCreateWithoutWorkspaceInput = {
+  author: UserCreateNestedOneWithoutCommentsInput;
+  body: Scalars['String'];
+  commentThread: CommentThreadCreateNestedOneWithoutCommentsInput;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -144,8 +213,51 @@ export type CommentThreadCreateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
+export type CommentThreadCreateManyWorkspaceInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentThreadCreateManyWorkspaceInputEnvelope = {
+  data: Array<CommentThreadCreateManyWorkspaceInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CommentThreadCreateNestedManyWithoutWorkspaceInput = {
+  connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentThreadCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<CommentThreadCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<CommentThreadCreateManyWorkspaceInputEnvelope>;
+};
+
 export type CommentThreadCreateNestedOneWithoutCommentsInput = {
   connect?: InputMaybe<CommentThreadWhereUniqueInput>;
+};
+
+export type CommentThreadCreateOrConnectWithoutCommentsInput = {
+  create: CommentThreadCreateWithoutCommentsInput;
+  where: CommentThreadWhereUniqueInput;
+};
+
+export type CommentThreadCreateOrConnectWithoutWorkspaceInput = {
+  create: CommentThreadCreateWithoutWorkspaceInput;
+  where: CommentThreadWhereUniqueInput;
+};
+
+export type CommentThreadCreateWithoutCommentsInput = {
+  commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentThreadCreateWithoutWorkspaceInput = {
+  commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
+  comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CommentThreadOrderByWithRelationInput = {
@@ -303,6 +415,26 @@ export type CommentThreadUpdateInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
+export type CommentThreadUpdateOneRequiredWithoutCommentsNestedInput = {
+  connect?: InputMaybe<CommentThreadWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<CommentThreadCreateOrConnectWithoutCommentsInput>;
+  create?: InputMaybe<CommentThreadCreateWithoutCommentsInput>;
+  update?: InputMaybe<CommentThreadUpdateWithoutCommentsInput>;
+  upsert?: InputMaybe<CommentThreadUpsertWithoutCommentsInput>;
+};
+
+export type CommentThreadUpdateWithoutCommentsInput = {
+  commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type CommentThreadUpsertWithoutCommentsInput = {
+  create: CommentThreadCreateWithoutCommentsInput;
+  update: CommentThreadUpdateWithoutCommentsInput;
+};
+
 export type CommentThreadWhereInput = {
   AND?: InputMaybe<Array<CommentThreadWhereInput>>;
   NOT?: InputMaybe<Array<CommentThreadWhereInput>>;
@@ -325,9 +457,28 @@ export type CommentUpdateManyMutationInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
+export type CommentUpdateManyWithWhereWithoutAuthorInput = {
+  data: CommentUpdateManyMutationInput;
+  where: CommentScalarWhereInput;
+};
+
 export type CommentUpdateManyWithWhereWithoutCommentThreadInput = {
   data: CommentUpdateManyMutationInput;
   where: CommentScalarWhereInput;
+};
+
+export type CommentUpdateManyWithoutAuthorNestedInput = {
+  connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutAuthorInput>>;
+  create?: InputMaybe<Array<CommentCreateWithoutAuthorInput>>;
+  createMany?: InputMaybe<CommentCreateManyAuthorInputEnvelope>;
+  delete?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<CommentScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  set?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  update?: InputMaybe<Array<CommentUpdateWithWhereUniqueWithoutAuthorInput>>;
+  updateMany?: InputMaybe<Array<CommentUpdateManyWithWhereWithoutAuthorInput>>;
+  upsert?: InputMaybe<Array<CommentUpsertWithWhereUniqueWithoutAuthorInput>>;
 };
 
 export type CommentUpdateManyWithoutCommentThreadNestedInput = {
@@ -344,9 +495,22 @@ export type CommentUpdateManyWithoutCommentThreadNestedInput = {
   upsert?: InputMaybe<Array<CommentUpsertWithWhereUniqueWithoutCommentThreadInput>>;
 };
 
+export type CommentUpdateWithWhereUniqueWithoutAuthorInput = {
+  data: CommentUpdateWithoutAuthorInput;
+  where: CommentWhereUniqueInput;
+};
+
 export type CommentUpdateWithWhereUniqueWithoutCommentThreadInput = {
   data: CommentUpdateWithoutCommentThreadInput;
   where: CommentWhereUniqueInput;
+};
+
+export type CommentUpdateWithoutAuthorInput = {
+  body?: InputMaybe<StringFieldUpdateOperationsInput>;
+  commentThread?: InputMaybe<CommentThreadUpdateOneRequiredWithoutCommentsNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
 export type CommentUpdateWithoutCommentThreadInput = {
@@ -355,6 +519,12 @@ export type CommentUpdateWithoutCommentThreadInput = {
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
+  create: CommentCreateWithoutAuthorInput;
+  update: CommentUpdateWithoutAuthorInput;
+  where: CommentWhereUniqueInput;
 };
 
 export type CommentUpsertWithWhereUniqueWithoutCommentThreadInput = {
@@ -430,11 +600,34 @@ export type CompanyCreateManyAccountOwnerInputEnvelope = {
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type CompanyCreateManyWorkspaceInput = {
+  accountOwnerId?: InputMaybe<Scalars['String']>;
+  address: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  domainName: Scalars['String'];
+  employees?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CompanyCreateManyWorkspaceInputEnvelope = {
+  data: Array<CompanyCreateManyWorkspaceInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type CompanyCreateNestedManyWithoutAccountOwnerInput = {
   connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutAccountOwnerInput>>;
   create?: InputMaybe<Array<CompanyCreateWithoutAccountOwnerInput>>;
   createMany?: InputMaybe<CompanyCreateManyAccountOwnerInputEnvelope>;
+};
+
+export type CompanyCreateNestedManyWithoutWorkspaceInput = {
+  connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<CompanyCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<CompanyCreateManyWorkspaceInputEnvelope>;
 };
 
 export type CompanyCreateNestedOneWithoutPeopleInput = {
@@ -446,7 +639,24 @@ export type CompanyCreateOrConnectWithoutAccountOwnerInput = {
   where: CompanyWhereUniqueInput;
 };
 
+export type CompanyCreateOrConnectWithoutWorkspaceInput = {
+  create: CompanyCreateWithoutWorkspaceInput;
+  where: CompanyWhereUniqueInput;
+};
+
 export type CompanyCreateWithoutAccountOwnerInput = {
+  address: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  domainName: Scalars['String'];
+  employees?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CompanyCreateWithoutWorkspaceInput = {
+  accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
   address: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
@@ -647,6 +857,10 @@ export type EnumPipelineProgressableTypeFilter = {
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
 };
 
+export enum FileFolder {
+  ProfilePicture = 'ProfilePicture'
+}
+
 export type IntNullableFilter = {
   equals?: InputMaybe<Scalars['Int']>;
   gt?: InputMaybe<Scalars['Int']>;
@@ -688,6 +902,7 @@ export type Mutation = {
   createOneCompany: Company;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
+  createWorkspace: Workspace;
   deleteManyCommentThreads: AffectedRows;
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
@@ -697,6 +912,9 @@ export type Mutation = {
   updateOneCompany?: Maybe<Company>;
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
+  updateUser: User;
+  uploadFile: Scalars['String'];
+  uploadImage: Scalars['String'];
   verify: Verify;
 };
 
@@ -735,6 +953,11 @@ export type MutationCreateOnePersonArgs = {
 
 export type MutationCreateOnePipelineProgressArgs = {
   data: PipelineProgressCreateInput;
+};
+
+
+export type MutationCreateWorkspaceArgs = {
+  data: WorkspaceCreateInput;
 };
 
 
@@ -784,6 +1007,24 @@ export type MutationUpdateOnePersonArgs = {
 export type MutationUpdateOnePipelineProgressArgs = {
   data: PipelineProgressUpdateInput;
   where: PipelineProgressWhereUniqueInput;
+};
+
+
+export type MutationUpdateUserArgs = {
+  data: UserUpdateInput;
+  where: UserWhereUniqueInput;
+};
+
+
+export type MutationUploadFileArgs = {
+  file: Scalars['Upload'];
+  fileFolder?: InputMaybe<FileFolder>;
+};
+
+
+export type MutationUploadImageArgs = {
+  file: Scalars['Upload'];
+  fileFolder?: InputMaybe<FileFolder>;
 };
 
 
@@ -916,8 +1157,49 @@ export type PersonCreateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
+export type PersonCreateManyWorkspaceInput = {
+  city: Scalars['String'];
+  companyId?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  phone: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PersonCreateManyWorkspaceInputEnvelope = {
+  data: Array<PersonCreateManyWorkspaceInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type PersonCreateNestedManyWithoutCompanyInput = {
   connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
+};
+
+export type PersonCreateNestedManyWithoutWorkspaceInput = {
+  connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PersonCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<PersonCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<PersonCreateManyWorkspaceInputEnvelope>;
+};
+
+export type PersonCreateOrConnectWithoutWorkspaceInput = {
+  create: PersonCreateWithoutWorkspaceInput;
+  where: PersonWhereUniqueInput;
+};
+
+export type PersonCreateWithoutWorkspaceInput = {
+  city: Scalars['String'];
+  company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  phone: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PersonListRelationFilter = {
@@ -1005,8 +1287,66 @@ export type Pipeline = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type PipelineCreateManyWorkspaceInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  icon: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  pipelineProgressableType?: InputMaybe<PipelineProgressableType>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineCreateManyWorkspaceInputEnvelope = {
+  data: Array<PipelineCreateManyWorkspaceInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type PipelineCreateNestedManyWithoutWorkspaceInput = {
+  connect?: InputMaybe<Array<PipelineWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<PipelineCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<PipelineCreateManyWorkspaceInputEnvelope>;
+};
+
 export type PipelineCreateNestedOneWithoutPipelineProgressesInput = {
   connect?: InputMaybe<PipelineWhereUniqueInput>;
+};
+
+export type PipelineCreateNestedOneWithoutPipelineStagesInput = {
+  connect?: InputMaybe<PipelineWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<PipelineCreateOrConnectWithoutPipelineStagesInput>;
+  create?: InputMaybe<PipelineCreateWithoutPipelineStagesInput>;
+};
+
+export type PipelineCreateOrConnectWithoutPipelineStagesInput = {
+  create: PipelineCreateWithoutPipelineStagesInput;
+  where: PipelineWhereUniqueInput;
+};
+
+export type PipelineCreateOrConnectWithoutWorkspaceInput = {
+  create: PipelineCreateWithoutWorkspaceInput;
+  where: PipelineWhereUniqueInput;
+};
+
+export type PipelineCreateWithoutPipelineStagesInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  icon: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  pipelineProgressableType?: InputMaybe<PipelineProgressableType>;
+  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineCreateWithoutWorkspaceInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  icon: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  pipelineProgressableType?: InputMaybe<PipelineProgressableType>;
+  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineInput>;
+  pipelineStages?: InputMaybe<PipelineStageCreateNestedManyWithoutPipelineInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PipelineOrderByWithRelationInput = {
@@ -1034,6 +1374,113 @@ export type PipelineProgress = {
 };
 
 export type PipelineProgressCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
+  pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
+  progressableId: Scalars['String'];
+  progressableType: PipelineProgressableType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineProgressCreateManyPipelineInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  pipelineStageId: Scalars['String'];
+  progressableId: Scalars['String'];
+  progressableType: PipelineProgressableType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineProgressCreateManyPipelineInputEnvelope = {
+  data: Array<PipelineProgressCreateManyPipelineInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type PipelineProgressCreateManyPipelineStageInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  pipelineId: Scalars['String'];
+  progressableId: Scalars['String'];
+  progressableType: PipelineProgressableType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineProgressCreateManyPipelineStageInputEnvelope = {
+  data: Array<PipelineProgressCreateManyPipelineStageInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type PipelineProgressCreateManyWorkspaceInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  pipelineId: Scalars['String'];
+  pipelineStageId: Scalars['String'];
+  progressableId: Scalars['String'];
+  progressableType: PipelineProgressableType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineProgressCreateManyWorkspaceInputEnvelope = {
+  data: Array<PipelineProgressCreateManyWorkspaceInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type PipelineProgressCreateNestedManyWithoutPipelineInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutPipelineInput>>;
+  create?: InputMaybe<Array<PipelineProgressCreateWithoutPipelineInput>>;
+  createMany?: InputMaybe<PipelineProgressCreateManyPipelineInputEnvelope>;
+};
+
+export type PipelineProgressCreateNestedManyWithoutPipelineStageInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutPipelineStageInput>>;
+  create?: InputMaybe<Array<PipelineProgressCreateWithoutPipelineStageInput>>;
+  createMany?: InputMaybe<PipelineProgressCreateManyPipelineStageInputEnvelope>;
+};
+
+export type PipelineProgressCreateNestedManyWithoutWorkspaceInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<PipelineProgressCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<PipelineProgressCreateManyWorkspaceInputEnvelope>;
+};
+
+export type PipelineProgressCreateOrConnectWithoutPipelineInput = {
+  create: PipelineProgressCreateWithoutPipelineInput;
+  where: PipelineProgressWhereUniqueInput;
+};
+
+export type PipelineProgressCreateOrConnectWithoutPipelineStageInput = {
+  create: PipelineProgressCreateWithoutPipelineStageInput;
+  where: PipelineProgressWhereUniqueInput;
+};
+
+export type PipelineProgressCreateOrConnectWithoutWorkspaceInput = {
+  create: PipelineProgressCreateWithoutWorkspaceInput;
+  where: PipelineProgressWhereUniqueInput;
+};
+
+export type PipelineProgressCreateWithoutPipelineInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
+  progressableId: Scalars['String'];
+  progressableType: PipelineProgressableType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineProgressCreateWithoutPipelineStageInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
+  progressableId: Scalars['String'];
+  progressableType: PipelineProgressableType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineProgressCreateWithoutWorkspaceInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
@@ -1140,8 +1587,82 @@ export type PipelineStage = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type PipelineStageCreateManyPipelineInput = {
+  color: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  type: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineStageCreateManyPipelineInputEnvelope = {
+  data: Array<PipelineStageCreateManyPipelineInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type PipelineStageCreateManyWorkspaceInput = {
+  color: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  pipelineId: Scalars['String'];
+  type: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineStageCreateManyWorkspaceInputEnvelope = {
+  data: Array<PipelineStageCreateManyWorkspaceInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type PipelineStageCreateNestedManyWithoutPipelineInput = {
+  connect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineStageCreateOrConnectWithoutPipelineInput>>;
+  create?: InputMaybe<Array<PipelineStageCreateWithoutPipelineInput>>;
+  createMany?: InputMaybe<PipelineStageCreateManyPipelineInputEnvelope>;
+};
+
+export type PipelineStageCreateNestedManyWithoutWorkspaceInput = {
+  connect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineStageCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<PipelineStageCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<PipelineStageCreateManyWorkspaceInputEnvelope>;
+};
+
 export type PipelineStageCreateNestedOneWithoutPipelineProgressesInput = {
   connect?: InputMaybe<PipelineStageWhereUniqueInput>;
+};
+
+export type PipelineStageCreateOrConnectWithoutPipelineInput = {
+  create: PipelineStageCreateWithoutPipelineInput;
+  where: PipelineStageWhereUniqueInput;
+};
+
+export type PipelineStageCreateOrConnectWithoutWorkspaceInput = {
+  create: PipelineStageCreateWithoutWorkspaceInput;
+  where: PipelineStageWhereUniqueInput;
+};
+
+export type PipelineStageCreateWithoutPipelineInput = {
+  color: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineStageInput>;
+  type: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineStageCreateWithoutWorkspaceInput = {
+  color: Scalars['String'];
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  pipeline: PipelineCreateNestedOneWithoutPipelineStagesInput;
+  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineStageInput>;
+  type: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PipelineStageListRelationFilter = {
@@ -1230,6 +1751,7 @@ export type PipelineWhereUniqueInput = {
 
 export type Query = {
   __typename?: 'Query';
+  currentUser: User;
   findManyCommentThreads: Array<CommentThread>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
@@ -1382,8 +1904,19 @@ export type UserCreateNestedOneWithoutCompaniesInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
 };
 
+export type UserCreateNestedOneWithoutWorkspaceMemberInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutWorkspaceMemberInput>;
+  create?: InputMaybe<UserCreateWithoutWorkspaceMemberInput>;
+};
+
 export type UserCreateOrConnectWithoutCommentsInput = {
   create: UserCreateWithoutCommentsInput;
+  where: UserWhereUniqueInput;
+};
+
+export type UserCreateOrConnectWithoutWorkspaceMemberInput = {
+  create: UserCreateWithoutWorkspaceMemberInput;
   where: UserWhereUniqueInput;
 };
 
@@ -1392,7 +1925,24 @@ export type UserCreateWithoutCommentsInput = {
   companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   disabled?: InputMaybe<Scalars['Boolean']>;
-  displayName?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerified?: InputMaybe<Scalars['Boolean']>;
+  firstName: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  lastSeen?: InputMaybe<Scalars['DateTime']>;
+  locale: Scalars['String'];
+  metadata?: InputMaybe<Scalars['JSON']>;
+  phoneNumber?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type UserCreateWithoutWorkspaceMemberInput = {
+  avatarUrl?: InputMaybe<Scalars['String']>;
+  comments?: InputMaybe<CommentCreateNestedManyWithoutAuthorInput>;
+  companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  disabled?: InputMaybe<Scalars['Boolean']>;
   email: Scalars['String'];
   emailVerified?: InputMaybe<Scalars['Boolean']>;
   firstName: Scalars['String'];
@@ -1411,7 +1961,6 @@ export type UserOrderByWithRelationInput = {
   companies?: InputMaybe<CompanyOrderByRelationAggregateInput>;
   createdAt?: InputMaybe<SortOrder>;
   disabled?: InputMaybe<SortOrder>;
-  displayName?: InputMaybe<SortOrder>;
   email?: InputMaybe<SortOrder>;
   emailVerified?: InputMaybe<SortOrder>;
   firstName?: InputMaybe<SortOrder>;
@@ -1434,7 +1983,6 @@ export enum UserScalarFieldEnum {
   CreatedAt = 'createdAt',
   DeletedAt = 'deletedAt',
   Disabled = 'disabled',
-  DisplayName = 'displayName',
   Email = 'email',
   EmailVerified = 'emailVerified',
   FirstName = 'firstName',
@@ -1447,6 +1995,24 @@ export enum UserScalarFieldEnum {
   PhoneNumber = 'phoneNumber',
   UpdatedAt = 'updatedAt'
 }
+
+export type UserUpdateInput = {
+  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
+  companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  email?: InputMaybe<StringFieldUpdateOperationsInput>;
+  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
+  metadata?: InputMaybe<Scalars['JSON']>;
+  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
 
 export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
@@ -1465,7 +2031,6 @@ export type UserUpdateWithoutCommentsInput = {
   companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   email?: InputMaybe<StringFieldUpdateOperationsInput>;
   emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
   firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -1492,7 +2057,6 @@ export type UserWhereInput = {
   companies?: InputMaybe<CompanyListRelationFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   disabled?: InputMaybe<BoolFilter>;
-  displayName?: InputMaybe<StringNullableFilter>;
   email?: InputMaybe<StringFilter>;
   emailVerified?: InputMaybe<BoolFilter>;
   firstName?: InputMaybe<StringFilter>;
@@ -1534,6 +2098,23 @@ export type Workspace = {
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
 };
 
+export type WorkspaceCreateInput = {
+  commentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutWorkspaceInput>;
+  comments?: InputMaybe<CommentCreateNestedManyWithoutWorkspaceInput>;
+  companies?: InputMaybe<CompanyCreateNestedManyWithoutWorkspaceInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  displayName: Scalars['String'];
+  domainName: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  logo?: InputMaybe<Scalars['String']>;
+  people?: InputMaybe<PersonCreateNestedManyWithoutWorkspaceInput>;
+  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutWorkspaceInput>;
+  pipelineStages?: InputMaybe<PipelineStageCreateNestedManyWithoutWorkspaceInput>;
+  pipelines?: InputMaybe<PipelineCreateNestedManyWithoutWorkspaceInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  workspaceMember?: InputMaybe<WorkspaceMemberCreateNestedManyWithoutWorkspaceInput>;
+};
+
 export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   createdAt: Scalars['DateTime'];
@@ -1542,6 +2123,42 @@ export type WorkspaceMember = {
   user: User;
   userId: Scalars['String'];
   workspace: Workspace;
+};
+
+export type WorkspaceMemberCreateManyWorkspaceInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  userId: Scalars['String'];
+};
+
+export type WorkspaceMemberCreateManyWorkspaceInputEnvelope = {
+  data: Array<WorkspaceMemberCreateManyWorkspaceInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type WorkspaceMemberCreateNestedManyWithoutWorkspaceInput = {
+  connect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<WorkspaceMemberCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<WorkspaceMemberCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<WorkspaceMemberCreateManyWorkspaceInputEnvelope>;
+};
+
+export type WorkspaceMemberCreateOrConnectWithoutWorkspaceInput = {
+  create: WorkspaceMemberCreateWithoutWorkspaceInput;
+  where: WorkspaceMemberWhereUniqueInput;
+};
+
+export type WorkspaceMemberCreateWithoutWorkspaceInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  user: UserCreateNestedOneWithoutWorkspaceMemberInput;
+};
+
+export type WorkspaceMemberWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateEventMutationVariables = Exact<{
@@ -1565,7 +2182,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -1678,39 +2295,6 @@ export type DeleteCompaniesMutationVariables = Exact<{
 
 export type DeleteCompaniesMutation = { __typename?: 'Mutation', deleteManyCompany: { __typename?: 'AffectedRows', count: number } };
 
-export type GetPipelinesQueryVariables = Exact<{
-  where?: InputMaybe<PipelineWhereInput>;
-}>;
-
-
-export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string }> | null }> | null }> };
-
-export type UpdateOnePipelineProgressMutationVariables = Exact<{
-  id?: InputMaybe<Scalars['String']>;
-  pipelineStageId?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type UpdateOnePipelineProgressMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string } | null };
-
-export type CreateOnePipelineProgressMutationVariables = Exact<{
-  uuid: Scalars['String'];
-  entityType: PipelineProgressableType;
-  entityId: Scalars['String'];
-  pipelineId: Scalars['String'];
-  pipelineStageId: Scalars['String'];
-}>;
-
-
-export type CreateOnePipelineProgressMutation = { __typename?: 'Mutation', createOnePipelineProgress: { __typename?: 'PipelineProgress', id: string } };
-
-export type DeleteManyPipelineProgressMutationVariables = Exact<{
-  ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-}>;
-
-
-export type DeleteManyPipelineProgressMutation = { __typename?: 'Mutation', deleteManyPipelineProgress: { __typename?: 'AffectedRows', count: number } };
-
 export type GetPeopleQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
   where?: InputMaybe<PersonWhereInput>;
@@ -1754,6 +2338,39 @@ export type DeletePeopleMutationVariables = Exact<{
 
 export type DeletePeopleMutation = { __typename?: 'Mutation', deleteManyPerson: { __typename?: 'AffectedRows', count: number } };
 
+export type GetPipelinesQueryVariables = Exact<{
+  where?: InputMaybe<PipelineWhereInput>;
+}>;
+
+
+export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string }> | null }> | null }> };
+
+export type UpdateOnePipelineProgressMutationVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+  pipelineStageId?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UpdateOnePipelineProgressMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string } | null };
+
+export type CreateOnePipelineProgressMutationVariables = Exact<{
+  uuid: Scalars['String'];
+  entityType: PipelineProgressableType;
+  entityId: Scalars['String'];
+  pipelineId: Scalars['String'];
+  pipelineStageId: Scalars['String'];
+}>;
+
+
+export type CreateOnePipelineProgressMutation = { __typename?: 'Mutation', createOnePipelineProgress: { __typename?: 'PipelineProgress', id: string } };
+
+export type DeleteManyPipelineProgressMutationVariables = Exact<{
+  ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+}>;
+
+
+export type DeleteManyPipelineProgressMutation = { __typename?: 'Mutation', deleteManyPipelineProgress: { __typename?: 'AffectedRows', count: number } };
+
 export type SearchPeopleQueryVariables = Exact<{
   where?: InputMaybe<PersonWhereInput>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -1786,12 +2403,10 @@ export type SearchCompanyQueryVariables = Exact<{
 
 export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> };
 
-export type GetCurrentUserQueryVariables = Exact<{
-  uuid?: InputMaybe<Scalars['String']>;
-}>;
+export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }> };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1807,6 +2422,22 @@ export type GetClientConfigQuery = {
   };
 };
 export type GetClientConfigQueryVariables = {};
+
+export type UpdateUserMutationVariables = Exact<{
+  data: UserUpdateInput;
+  where: UserWhereUniqueInput;
+}>;
+
+
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } };
+
+export type CreateWorkspaceMutationVariables = Exact<{
+  data: WorkspaceCreateInput;
+}>;
+
+
+export type CreateWorkspaceMutation = { __typename?: 'Mutation', createWorkspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } };
+
 
 export const CreateEventDocument = gql`
     mutation CreateEvent($type: String!, $data: JSON!) {
@@ -1886,6 +2517,8 @@ export const VerifyDocument = gql`
       id
       email
       displayName
+      firstName
+      lastName
       workspaceMember {
         id
         workspace {
@@ -2503,162 +3136,6 @@ export function useDeleteCompaniesMutation(baseOptions?: Apollo.MutationHookOpti
 export type DeleteCompaniesMutationHookResult = ReturnType<typeof useDeleteCompaniesMutation>;
 export type DeleteCompaniesMutationResult = Apollo.MutationResult<DeleteCompaniesMutation>;
 export type DeleteCompaniesMutationOptions = Apollo.BaseMutationOptions<DeleteCompaniesMutation, DeleteCompaniesMutationVariables>;
-export const GetPipelinesDocument = gql`
-    query GetPipelines($where: PipelineWhereInput) {
-  findManyPipeline(where: $where) {
-    id
-    name
-    pipelineProgressableType
-    pipelineStages {
-      id
-      name
-      color
-      pipelineProgresses {
-        id
-        progressableType
-        progressableId
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetPipelinesQuery__
- *
- * To run a query within a React component, call `useGetPipelinesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPipelinesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetPipelinesQuery({
- *   variables: {
- *      where: // value for 'where'
- *   },
- * });
- */
-export function useGetPipelinesQuery(baseOptions?: Apollo.QueryHookOptions<GetPipelinesQuery, GetPipelinesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPipelinesQuery, GetPipelinesQueryVariables>(GetPipelinesDocument, options);
-      }
-export function useGetPipelinesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPipelinesQuery, GetPipelinesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPipelinesQuery, GetPipelinesQueryVariables>(GetPipelinesDocument, options);
-        }
-export type GetPipelinesQueryHookResult = ReturnType<typeof useGetPipelinesQuery>;
-export type GetPipelinesLazyQueryHookResult = ReturnType<typeof useGetPipelinesLazyQuery>;
-export type GetPipelinesQueryResult = Apollo.QueryResult<GetPipelinesQuery, GetPipelinesQueryVariables>;
-export const UpdateOnePipelineProgressDocument = gql`
-    mutation UpdateOnePipelineProgress($id: String, $pipelineStageId: String) {
-  updateOnePipelineProgress(
-    where: {id: $id}
-    data: {pipelineStage: {connect: {id: $pipelineStageId}}}
-  ) {
-    id
-  }
-}
-    `;
-export type UpdateOnePipelineProgressMutationFn = Apollo.MutationFunction<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>;
-
-/**
- * __useUpdateOnePipelineProgressMutation__
- *
- * To run a mutation, you first call `useUpdateOnePipelineProgressMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateOnePipelineProgressMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateOnePipelineProgressMutation, { data, loading, error }] = useUpdateOnePipelineProgressMutation({
- *   variables: {
- *      id: // value for 'id'
- *      pipelineStageId: // value for 'pipelineStageId'
- *   },
- * });
- */
-export function useUpdateOnePipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>(UpdateOnePipelineProgressDocument, options);
-      }
-export type UpdateOnePipelineProgressMutationHookResult = ReturnType<typeof useUpdateOnePipelineProgressMutation>;
-export type UpdateOnePipelineProgressMutationResult = Apollo.MutationResult<UpdateOnePipelineProgressMutation>;
-export type UpdateOnePipelineProgressMutationOptions = Apollo.BaseMutationOptions<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>;
-export const CreateOnePipelineProgressDocument = gql`
-    mutation CreateOnePipelineProgress($uuid: String!, $entityType: PipelineProgressableType!, $entityId: String!, $pipelineId: String!, $pipelineStageId: String!) {
-  createOnePipelineProgress(
-    data: {id: $uuid, progressableType: $entityType, progressableId: $entityId, pipeline: {connect: {id: $pipelineId}}, pipelineStage: {connect: {id: $pipelineStageId}}}
-  ) {
-    id
-  }
-}
-    `;
-export type CreateOnePipelineProgressMutationFn = Apollo.MutationFunction<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>;
-
-/**
- * __useCreateOnePipelineProgressMutation__
- *
- * To run a mutation, you first call `useCreateOnePipelineProgressMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateOnePipelineProgressMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createOnePipelineProgressMutation, { data, loading, error }] = useCreateOnePipelineProgressMutation({
- *   variables: {
- *      uuid: // value for 'uuid'
- *      entityType: // value for 'entityType'
- *      entityId: // value for 'entityId'
- *      pipelineId: // value for 'pipelineId'
- *      pipelineStageId: // value for 'pipelineStageId'
- *   },
- * });
- */
-export function useCreateOnePipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>(CreateOnePipelineProgressDocument, options);
-      }
-export type CreateOnePipelineProgressMutationHookResult = ReturnType<typeof useCreateOnePipelineProgressMutation>;
-export type CreateOnePipelineProgressMutationResult = Apollo.MutationResult<CreateOnePipelineProgressMutation>;
-export type CreateOnePipelineProgressMutationOptions = Apollo.BaseMutationOptions<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>;
-export const DeleteManyPipelineProgressDocument = gql`
-    mutation DeleteManyPipelineProgress($ids: [String!]) {
-  deleteManyPipelineProgress(where: {id: {in: $ids}}) {
-    count
-  }
-}
-    `;
-export type DeleteManyPipelineProgressMutationFn = Apollo.MutationFunction<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
-
-/**
- * __useDeleteManyPipelineProgressMutation__
- *
- * To run a mutation, you first call `useDeleteManyPipelineProgressMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteManyPipelineProgressMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteManyPipelineProgressMutation, { data, loading, error }] = useDeleteManyPipelineProgressMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useDeleteManyPipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>(DeleteManyPipelineProgressDocument, options);
-      }
-export type DeleteManyPipelineProgressMutationHookResult = ReturnType<typeof useDeleteManyPipelineProgressMutation>;
-export type DeleteManyPipelineProgressMutationResult = Apollo.MutationResult<DeleteManyPipelineProgressMutation>;
-export type DeleteManyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
 export const GetPeopleDocument = gql`
     query GetPeople($orderBy: [PersonOrderByWithRelationInput!], $where: PersonWhereInput, $limit: Int) {
   people: findManyPerson(orderBy: $orderBy, where: $where, take: $limit) {
@@ -2847,6 +3324,162 @@ export function useDeletePeopleMutation(baseOptions?: Apollo.MutationHookOptions
 export type DeletePeopleMutationHookResult = ReturnType<typeof useDeletePeopleMutation>;
 export type DeletePeopleMutationResult = Apollo.MutationResult<DeletePeopleMutation>;
 export type DeletePeopleMutationOptions = Apollo.BaseMutationOptions<DeletePeopleMutation, DeletePeopleMutationVariables>;
+export const GetPipelinesDocument = gql`
+    query GetPipelines($where: PipelineWhereInput) {
+  findManyPipeline(where: $where) {
+    id
+    name
+    pipelineProgressableType
+    pipelineStages {
+      id
+      name
+      color
+      pipelineProgresses {
+        id
+        progressableType
+        progressableId
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPipelinesQuery__
+ *
+ * To run a query within a React component, call `useGetPipelinesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPipelinesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPipelinesQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetPipelinesQuery(baseOptions?: Apollo.QueryHookOptions<GetPipelinesQuery, GetPipelinesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPipelinesQuery, GetPipelinesQueryVariables>(GetPipelinesDocument, options);
+      }
+export function useGetPipelinesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPipelinesQuery, GetPipelinesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPipelinesQuery, GetPipelinesQueryVariables>(GetPipelinesDocument, options);
+        }
+export type GetPipelinesQueryHookResult = ReturnType<typeof useGetPipelinesQuery>;
+export type GetPipelinesLazyQueryHookResult = ReturnType<typeof useGetPipelinesLazyQuery>;
+export type GetPipelinesQueryResult = Apollo.QueryResult<GetPipelinesQuery, GetPipelinesQueryVariables>;
+export const UpdateOnePipelineProgressDocument = gql`
+    mutation UpdateOnePipelineProgress($id: String, $pipelineStageId: String) {
+  updateOnePipelineProgress(
+    where: {id: $id}
+    data: {pipelineStage: {connect: {id: $pipelineStageId}}}
+  ) {
+    id
+  }
+}
+    `;
+export type UpdateOnePipelineProgressMutationFn = Apollo.MutationFunction<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>;
+
+/**
+ * __useUpdateOnePipelineProgressMutation__
+ *
+ * To run a mutation, you first call `useUpdateOnePipelineProgressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOnePipelineProgressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOnePipelineProgressMutation, { data, loading, error }] = useUpdateOnePipelineProgressMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      pipelineStageId: // value for 'pipelineStageId'
+ *   },
+ * });
+ */
+export function useUpdateOnePipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>(UpdateOnePipelineProgressDocument, options);
+      }
+export type UpdateOnePipelineProgressMutationHookResult = ReturnType<typeof useUpdateOnePipelineProgressMutation>;
+export type UpdateOnePipelineProgressMutationResult = Apollo.MutationResult<UpdateOnePipelineProgressMutation>;
+export type UpdateOnePipelineProgressMutationOptions = Apollo.BaseMutationOptions<UpdateOnePipelineProgressMutation, UpdateOnePipelineProgressMutationVariables>;
+export const CreateOnePipelineProgressDocument = gql`
+    mutation CreateOnePipelineProgress($uuid: String!, $entityType: PipelineProgressableType!, $entityId: String!, $pipelineId: String!, $pipelineStageId: String!) {
+  createOnePipelineProgress(
+    data: {id: $uuid, progressableType: $entityType, progressableId: $entityId, pipeline: {connect: {id: $pipelineId}}, pipelineStage: {connect: {id: $pipelineStageId}}}
+  ) {
+    id
+  }
+}
+    `;
+export type CreateOnePipelineProgressMutationFn = Apollo.MutationFunction<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>;
+
+/**
+ * __useCreateOnePipelineProgressMutation__
+ *
+ * To run a mutation, you first call `useCreateOnePipelineProgressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOnePipelineProgressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOnePipelineProgressMutation, { data, loading, error }] = useCreateOnePipelineProgressMutation({
+ *   variables: {
+ *      uuid: // value for 'uuid'
+ *      entityType: // value for 'entityType'
+ *      entityId: // value for 'entityId'
+ *      pipelineId: // value for 'pipelineId'
+ *      pipelineStageId: // value for 'pipelineStageId'
+ *   },
+ * });
+ */
+export function useCreateOnePipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>(CreateOnePipelineProgressDocument, options);
+      }
+export type CreateOnePipelineProgressMutationHookResult = ReturnType<typeof useCreateOnePipelineProgressMutation>;
+export type CreateOnePipelineProgressMutationResult = Apollo.MutationResult<CreateOnePipelineProgressMutation>;
+export type CreateOnePipelineProgressMutationOptions = Apollo.BaseMutationOptions<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>;
+export const DeleteManyPipelineProgressDocument = gql`
+    mutation DeleteManyPipelineProgress($ids: [String!]) {
+  deleteManyPipelineProgress(where: {id: {in: $ids}}) {
+    count
+  }
+}
+    `;
+export type DeleteManyPipelineProgressMutationFn = Apollo.MutationFunction<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
+
+/**
+ * __useDeleteManyPipelineProgressMutation__
+ *
+ * To run a mutation, you first call `useDeleteManyPipelineProgressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteManyPipelineProgressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteManyPipelineProgressMutation, { data, loading, error }] = useDeleteManyPipelineProgressMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useDeleteManyPipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>(DeleteManyPipelineProgressDocument, options);
+      }
+export type DeleteManyPipelineProgressMutationHookResult = ReturnType<typeof useDeleteManyPipelineProgressMutation>;
+export type DeleteManyPipelineProgressMutationResult = Apollo.MutationResult<DeleteManyPipelineProgressMutation>;
+export type DeleteManyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
 export const SearchPeopleDocument = gql`
     query SearchPeople($where: PersonWhereInput, $limit: Int, $orderBy: [PersonOrderByWithRelationInput!]) {
   searchResults: findManyPerson(where: $where, take: $limit, orderBy: $orderBy) {
@@ -3005,13 +3638,14 @@ export type SearchCompanyQueryHookResult = ReturnType<typeof useSearchCompanyQue
 export type SearchCompanyLazyQueryHookResult = ReturnType<typeof useSearchCompanyLazyQuery>;
 export type SearchCompanyQueryResult = Apollo.QueryResult<SearchCompanyQuery, SearchCompanyQueryVariables>;
 export const GetCurrentUserDocument = gql`
-    query GetCurrentUser($uuid: String) {
-  users: findManyUser(where: {id: {equals: $uuid}}) {
+    query GetCurrentUser {
+  currentUser {
     id
     email
     displayName
     firstName
     lastName
+    avatarUrl
     workspaceMember {
       id
       workspace {
@@ -3037,7 +3671,6 @@ export const GetCurrentUserDocument = gql`
  * @example
  * const { data, loading, error } = useGetCurrentUserQuery({
  *   variables: {
- *      uuid: // value for 'uuid'
  *   },
  * });
  */
@@ -3125,3 +3758,78 @@ export function useGetClientConfigLazyQuery(
     GetClientConfigQueryVariables
   >(GET_CLIENT_CONFIG, options);
 }
+export const UpdateUserDocument = gql`
+    mutation UpdateUser($data: UserUpdateInput!, $where: UserWhereUniqueInput!) {
+  updateUser(data: $data, where: $where) {
+    id
+    email
+    displayName
+    firstName
+    lastName
+    avatarUrl
+  }
+}
+    `;
+export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;
+
+/**
+ * __useUpdateUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
+      }
+export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
+export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
+export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const CreateWorkspaceDocument = gql`
+    mutation CreateWorkspace($data: WorkspaceCreateInput!) {
+  createWorkspace(data: $data) {
+    id
+    domainName
+    displayName
+    logo
+  }
+}
+    `;
+export type CreateWorkspaceMutationFn = Apollo.MutationFunction<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
+
+/**
+ * __useCreateWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkspaceMutation, { data, loading, error }] = useCreateWorkspaceMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>(CreateWorkspaceDocument, options);
+      }
+export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
+export type CreateWorkspaceMutationResult = Apollo.MutationResult<CreateWorkspaceMutation>;
+export type CreateWorkspaceMutationOptions = Apollo.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
