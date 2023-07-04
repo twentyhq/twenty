@@ -39,7 +39,7 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   FRONT_AUTH_CALLBACK_URL: string;
 
-  @Transform(({ value }) => value.toLowerCase() === 'true')
+  @Transform(({ value }) => envValueToBoolean(value))
   @IsOptional()
   @IsBoolean()
   AUTH_GOOGLE_ENABLED?: boolean;
@@ -86,3 +86,16 @@ export function validate(config: Record<string, unknown>) {
 
   return validatedConfig;
 }
+
+const envValueToBoolean = (value: any) => {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  if (['true', 'on', 'yes', '1'].includes(value.toLowerCase())) {
+    return true;
+  }
+  if (['false', 'off', 'no', '0'].includes(value.toLowerCase())) {
+    return false;
+  }
+  return undefined;
+};
