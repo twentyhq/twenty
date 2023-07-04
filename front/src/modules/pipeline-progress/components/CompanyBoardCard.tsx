@@ -1,7 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-  IconCircleCheck,
   IconCurrencyDollar,
   IconProgressCheck,
   IconRecycle,
@@ -11,7 +10,7 @@ import {
 import { Company } from '../../../generated/graphql';
 import { PersonChip } from '../../people/components/PersonChip';
 import { Checkbox } from '../../ui/components/form/Checkbox';
-import { IconCalendarEvent, IconUser, IconUsers } from '../../ui/icons';
+import { IconCalendarEvent, IconUsers } from '../../ui/icons';
 import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`

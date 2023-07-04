@@ -9,6 +9,9 @@ export class PipelineProgressMaxAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    amount?: true;
+
+    @Field(() => Boolean, {nullable:true})
     pipelineId?: true;
 
     @Field(() => Boolean, {nullable:true})

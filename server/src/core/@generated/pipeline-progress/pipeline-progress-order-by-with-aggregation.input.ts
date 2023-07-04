@@ -3,14 +3,19 @@ import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { HideField } from '@nestjs/graphql';
 import { PipelineProgressCountOrderByAggregateInput } from './pipeline-progress-count-order-by-aggregate.input';
+import { PipelineProgressAvgOrderByAggregateInput } from './pipeline-progress-avg-order-by-aggregate.input';
 import { PipelineProgressMaxOrderByAggregateInput } from './pipeline-progress-max-order-by-aggregate.input';
 import { PipelineProgressMinOrderByAggregateInput } from './pipeline-progress-min-order-by-aggregate.input';
+import { PipelineProgressSumOrderByAggregateInput } from './pipeline-progress-sum-order-by-aggregate.input';
 
 @InputType()
 export class PipelineProgressOrderByWithAggregationInput {
 
     @Field(() => SortOrder, {nullable:true})
     id?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    amount?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     pipelineId?: keyof typeof SortOrder;
@@ -39,9 +44,15 @@ export class PipelineProgressOrderByWithAggregationInput {
     @Field(() => PipelineProgressCountOrderByAggregateInput, {nullable:true})
     _count?: PipelineProgressCountOrderByAggregateInput;
 
+    @Field(() => PipelineProgressAvgOrderByAggregateInput, {nullable:true})
+    _avg?: PipelineProgressAvgOrderByAggregateInput;
+
     @Field(() => PipelineProgressMaxOrderByAggregateInput, {nullable:true})
     _max?: PipelineProgressMaxOrderByAggregateInput;
 
     @Field(() => PipelineProgressMinOrderByAggregateInput, {nullable:true})
     _min?: PipelineProgressMinOrderByAggregateInput;
+
+    @Field(() => PipelineProgressSumOrderByAggregateInput, {nullable:true})
+    _sum?: PipelineProgressSumOrderByAggregateInput;
 }

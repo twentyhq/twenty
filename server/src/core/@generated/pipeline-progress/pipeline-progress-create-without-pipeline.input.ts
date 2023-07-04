@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import * as Validator from 'class-validator';
+import { Int } from '@nestjs/graphql';
 import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { HideField } from '@nestjs/graphql';
 import { PipelineStageCreateNestedOneWithoutPipelineProgressesInput } from '../pipeline-stage/pipeline-stage-create-nested-one-without-pipeline-progresses.input';
@@ -13,6 +14,9 @@ export class PipelineProgressCreateWithoutPipelineInput {
     @Validator.IsString()
     @Validator.IsOptional()
     id?: string;
+
+    @Field(() => Int, {nullable:true})
+    amount?: number;
 
     @Field(() => PipelineProgressableType, {nullable:false})
     progressableType!: keyof typeof PipelineProgressableType;

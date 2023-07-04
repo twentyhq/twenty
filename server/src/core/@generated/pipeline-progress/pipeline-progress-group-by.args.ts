@@ -7,6 +7,8 @@ import { PipelineProgressScalarFieldEnum } from './pipeline-progress-scalar-fiel
 import { PipelineProgressScalarWhereWithAggregatesInput } from './pipeline-progress-scalar-where-with-aggregates.input';
 import { Int } from '@nestjs/graphql';
 import { PipelineProgressCountAggregateInput } from './pipeline-progress-count-aggregate.input';
+import { PipelineProgressAvgAggregateInput } from './pipeline-progress-avg-aggregate.input';
+import { PipelineProgressSumAggregateInput } from './pipeline-progress-sum-aggregate.input';
 import { PipelineProgressMinAggregateInput } from './pipeline-progress-min-aggregate.input';
 import { PipelineProgressMaxAggregateInput } from './pipeline-progress-max-aggregate.input';
 
@@ -34,6 +36,12 @@ export class PipelineProgressGroupByArgs {
 
     @Field(() => PipelineProgressCountAggregateInput, {nullable:true})
     _count?: PipelineProgressCountAggregateInput;
+
+    @Field(() => PipelineProgressAvgAggregateInput, {nullable:true})
+    _avg?: PipelineProgressAvgAggregateInput;
+
+    @Field(() => PipelineProgressSumAggregateInput, {nullable:true})
+    _sum?: PipelineProgressSumAggregateInput;
 
     @Field(() => PipelineProgressMinAggregateInput, {nullable:true})
     _min?: PipelineProgressMinAggregateInput;

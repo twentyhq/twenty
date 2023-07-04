@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
+import { IntNullableFilter } from '../prisma/int-nullable-filter.input';
 import { EnumPipelineProgressableTypeFilter } from '../prisma/enum-pipeline-progressable-type-filter.input';
 import { HideField } from '@nestjs/graphql';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
@@ -20,6 +21,9 @@ export class PipelineProgressScalarWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
+
+    @Field(() => IntNullableFilter, {nullable:true})
+    amount?: IntNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     pipelineId?: StringFilter;
