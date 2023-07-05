@@ -7,7 +7,7 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileFolder } from '../interfaces/file-folder.interface';
 
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Resolver()
 export class FileUploadResolver {
   constructor(private readonly fileUploadService: FileUploadService) {}

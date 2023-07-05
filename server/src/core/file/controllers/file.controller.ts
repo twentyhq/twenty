@@ -1,10 +1,9 @@
-import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { checkFilePath, checkFilename } from '../file.utils';
 import { FileService } from '../services/file.service';
-import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
-@UseGuards(JwtAuthGuard)
+// TODO: Add cookie authentication
 @Controller('files')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
