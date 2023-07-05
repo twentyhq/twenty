@@ -102,14 +102,16 @@ export function CompanyBoardCard({
         <StyledBoardCardBody>
           <span>
             <IconCurrencyDollar size={theme.icon.size.md} />
-            {pipelineProgress.amount}
             <TextInput
               value={pipelineProgress.amount?.toString() || '0'}
               placeholder="Amount"
-              onChange={onUpdateCard({
-                id: pipelineProgress.id,
-                amount: parseInt(pipelineProgress.amount?.toString() || '0'),
-              })}
+              onChange={(value) =>
+                onUpdateCard({
+                  id: pipelineProgress.id,
+                  amount: parseInt(value),
+                })
+              }
+              fullWidth
             />
           </span>
           <span>
