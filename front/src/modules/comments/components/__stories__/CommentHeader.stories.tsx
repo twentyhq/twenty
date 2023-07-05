@@ -24,6 +24,8 @@ const mockComment: Pick<CommentForDrawer, 'id' | 'author' | 'createdAt'> = {
   author: {
     id: v4(),
     displayName: mockUser.displayName ?? '',
+    firstName: mockUser.firstName ?? '',
+    lastName: mockUser.lastName ?? '',
     avatarUrl: mockUser.avatarUrl,
   },
   createdAt: DateTime.now().minus({ hours: 2 }).toISO() ?? '',
@@ -37,6 +39,8 @@ const mockCommentWithLongName: Pick<
   author: {
     id: v4(),
     displayName: mockUser.displayName + ' with a very long suffix' ?? '',
+    firstName: mockUser.firstName ?? '',
+    lastName: mockUser.lastName ?? '',
     avatarUrl: mockUser.avatarUrl,
   },
   createdAt: DateTime.now().minus({ hours: 2 }).toISO() ?? '',

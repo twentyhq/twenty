@@ -44,9 +44,9 @@ export class PrismaSelect<
     mergeObject?: any,
   ) {
     if (typeof filterByOrMergeObject === 'string') {
-      return super.valueOf(field, filterByOrMergeObject, mergeObject);
+      return super.valueOf(field, filterByOrMergeObject, mergeObject).select;
     } else {
-      return super.valueOf(field, this.modelName, filterByOrMergeObject);
+      return super.valueOf(field, this.modelName, filterByOrMergeObject).select;
     }
   }
 

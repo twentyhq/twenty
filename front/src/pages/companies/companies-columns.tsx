@@ -137,7 +137,7 @@ export const useCompaniesColumns = () => {
       columnHelper.accessor('accountOwner', {
         header: () => (
           <ColumnHead
-            viewName="Account Owner"
+            viewName="Account owner"
             viewIcon={<IconUser size={16} />}
           />
         ),

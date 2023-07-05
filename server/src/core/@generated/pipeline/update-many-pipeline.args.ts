@@ -10,8 +10,8 @@ export class UpdateManyPipelineArgs {
 
     @Field(() => PipelineUpdateManyMutationInput, {nullable:false})
     @Type(() => PipelineUpdateManyMutationInput)
-    @ValidateNested({each: true})
     @Type(() => PipelineUpdateManyMutationInput)
+    @ValidateNested({each: true})
     data!: PipelineUpdateManyMutationInput;
 
     @Field(() => PipelineWhereInput, {nullable:true})

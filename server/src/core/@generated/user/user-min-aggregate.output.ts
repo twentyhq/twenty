@@ -19,9 +19,6 @@ export class UserMinAggregate {
     @Validator.IsString()
     lastName?: string;
 
-    @HideField()
-    displayName?: string;
-
     @Field(() => String, {nullable:true})
     @Validator.IsEmail()
     email?: string;

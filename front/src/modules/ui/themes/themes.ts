@@ -29,6 +29,8 @@ export const lightTheme = {
     background: backgroundLight,
     border: borderLight,
     boxShadow: boxShadowLight,
+    selectedCardHover: color.blue20,
+    selectedCard: color.blue10,
     font: fontLight,
   },
 };
@@ -40,6 +42,8 @@ export const darkTheme: ThemeType = {
     background: backgroundDark,
     border: borderDark,
     boxShadow: boxShadowDark,
+    selectedCardHover: color.blue70,
+    selectedCard: color.blue80,
     font: fontDark,
   },
 };

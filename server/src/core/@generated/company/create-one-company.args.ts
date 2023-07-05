@@ -9,7 +9,7 @@ export class CreateOneCompanyArgs {
 
     @Field(() => CompanyCreateInput, {nullable:false})
     @Type(() => CompanyCreateInput)
-    @ValidateNested({each: true})
     @Type(() => CompanyCreateInput)
+    @ValidateNested({each: true})
     data!: CompanyCreateInput;
 }

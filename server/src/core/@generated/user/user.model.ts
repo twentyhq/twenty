@@ -21,9 +21,6 @@ export class User {
     @Field(() => String, {nullable:false})
     lastName!: string;
 
-    @HideField()
-    displayName!: string | null;
-
     @Field(() => String, {nullable:false})
     email!: string;
 

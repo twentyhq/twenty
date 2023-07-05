@@ -10,8 +10,8 @@ export class UpdateOneCommentThreadArgs {
 
     @Field(() => CommentThreadUpdateInput, {nullable:false})
     @Type(() => CommentThreadUpdateInput)
-    @ValidateNested({each: true})
     @Type(() => CommentThreadUpdateInput)
+    @ValidateNested({each: true})
     data!: CommentThreadUpdateInput;
 
     @Field(() => CommentThreadWhereUniqueInput, {nullable:false})

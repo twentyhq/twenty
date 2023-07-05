@@ -1,6 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 
+import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline-progress/components/BoardActionBarButtonDeletePipelineProgress';
+import { EntityBoardActionBar } from '@/pipeline-progress/components/EntityBoardActionBar';
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 
@@ -10,8 +12,8 @@ import {
   useGetPipelinesQuery,
   useUpdateOnePipelineProgressMutation,
 } from '../../generated/graphql';
-import { Board } from '../../modules/opportunities/components/Board';
-import { useBoard } from '../../modules/opportunities/hooks/useBoard';
+import { Board } from '../../modules/pipeline-progress/components/Board';
+import { useBoard } from '../../modules/pipeline-progress/hooks/useBoard';
 
 export function Opportunities() {
   const theme = useTheme();
@@ -49,13 +51,18 @@ export function Opportunities() {
       icon={<IconTargetArrow size={theme.icon.size.md} />}
     >
       {items && pipelineId ? (
-        <Board
-          pipelineId={pipelineId}
-          columns={columns || []}
-          initialBoard={initialBoard}
-          initialItems={items}
-          onUpdate={onUpdate}
-        />
+        <>
+          <Board
+            pipelineId={pipelineId}
+            columns={columns || []}
+            initialBoard={initialBoard}
+            initialItems={items}
+            onUpdate={onUpdate}
+          />
+          <EntityBoardActionBar>
+            <BoardActionBarButtonDeletePipelineProgress />
+          </EntityBoardActionBar>
+        </>
       ) : (
         <></>
       )}
