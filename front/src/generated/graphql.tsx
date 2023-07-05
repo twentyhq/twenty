@@ -55,6 +55,12 @@ export type BoolFilter = {
   not?: InputMaybe<NestedBoolFilter>;
 };
 
+export type ClientConfig = {
+  __typename?: 'ClientConfig';
+  display_google_login: Scalars['Boolean'];
+  prefill_login_with_seed: Scalars['Boolean'];
+};
+
 export type Comment = {
   __typename?: 'Comment';
   author: User;
@@ -1751,6 +1757,7 @@ export type PipelineWhereUniqueInput = {
 
 export type Query = {
   __typename?: 'Query';
+  clientConfig: ClientConfig;
   currentUser: User;
   findManyCommentThreads: Array<CommentThread>;
   findManyCompany: Array<Company>;
@@ -2412,16 +2419,6 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string }> };
-
-export type GetClientConfigQuery = {
-  __typename?: 'Query';
-  clientConfig: {
-    __typename?: 'ClientConfig';
-    display_google_login: boolean;
-    prefill_login_with_seed: boolean;
-  };
-};
-export type GetClientConfigQueryVariables = {};
 
 export type UpdateUserMutationVariables = Exact<{
   data: UserUpdateInput;
@@ -3723,41 +3720,6 @@ export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
 export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
 export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
-
-export const GET_CLIENT_CONFIG = gql`
-  query GetClientConfig {
-    clientConfig {
-      display_google_login
-      prefill_login_with_seed
-    }
-  }
-`;
-
-export function useGetClientConfigQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetClientConfigQuery,
-    GetClientConfigQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(
-    GET_CLIENT_CONFIG,
-    options,
-  );
-}
-
-export function useGetClientConfigLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetClientConfigQuery,
-    GetClientConfigQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetClientConfigQuery,
-    GetClientConfigQueryVariables
-  >(GET_CLIENT_CONFIG, options);
-}
 export const UpdateUserDocument = gql`
     mutation UpdateUser($data: UserUpdateInput!, $where: UserWhereUniqueInput!) {
   updateUser(data: $data, where: $where) {
