@@ -3,8 +3,6 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useTheme } from '@emotion/react';
 import { IconPlus } from '@tabler/icons-react';
 
-import { CompanyPickerSkeleton } from '@/relation-picker/components/skeletons/CompanyPickerSkeleton';
-import { DropdownMenuItemContainerSkeleton } from '@/relation-picker/components/skeletons/DropdownMenuItemContainerSkeleton';
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { DropdownMenu } from '@/ui/components/menu/DropdownMenu';
 import { DropdownMenuButton } from '@/ui/components/menu/DropdownMenuButton';
@@ -17,6 +15,9 @@ import { Avatar } from '@/users/components/Avatar';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { useEntitySelectLogic } from '../hooks/useEntitySelectLogic';
+
+import { CompanyPickerSkeleton } from './skeletons/CompanyPickerSkeleton';
+import { DropdownMenuItemContainerSkeleton } from './skeletons/DropdownMenuItemContainerSkeleton';
 
 export type EntitiesForSingleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
