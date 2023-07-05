@@ -3,7 +3,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 import { AuthService } from './services/auth.service';
 import { GoogleAuthController } from './controllers/google-auth.controller';
-import { GoogleStrategy } from './strategies/google.auth.strategy';
 import { PrismaService } from 'src/database/prisma.service';
 import { UserModule } from '../user/user.module';
 import { VerifyAuthController } from './controllers/verify-auth.controller';
@@ -30,7 +29,6 @@ const jwtModule = JwtModule.registerAsync({
     AuthService,
     TokenService,
     JwtAuthStrategy,
-    GoogleStrategy,
     PrismaService,
     AuthResolver,
   ],
