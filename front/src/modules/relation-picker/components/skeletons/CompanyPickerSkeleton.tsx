@@ -22,7 +22,7 @@ export function CompanyPickerSkeleton({ count }: OwnProps) {
   const loadSkeletons = Array(count).fill(1);
   return loadSkeletons.map((_, i) => (
     <SkeletonContainer key={i}>
-      <Skeleton width={15} height={15} /> {/*skeleton avatar*/}
+      <Skeleton width={15} height={15} />
       <SkeletonEntityName>
         <Skeleton height={8} />
       </SkeletonEntityName>
