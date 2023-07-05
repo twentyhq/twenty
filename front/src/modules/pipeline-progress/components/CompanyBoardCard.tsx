@@ -65,7 +65,7 @@ const StyledBoardCardBody = styled.div`
 
 type CompanyProp = Pick<
   Company,
-  'id' | 'name' | 'domainName' | 'employees' | 'createdAt' | 'accountOwner'
+  'id' | 'name' | 'domainName' | 'employees' | 'accountOwner'
 >;
 
 export function CompanyBoardCard({
@@ -97,7 +97,7 @@ export function CompanyBoardCard({
           </span>
           <span>
             <IconCalendarEvent size={theme.icon.size.md} />
-            {humanReadableDate(new Date(company.createdAt as string))}
+            {humanReadableDate(new Date())}
           </span>
           <span>
             <IconUserCircle size={theme.icon.size.md} />

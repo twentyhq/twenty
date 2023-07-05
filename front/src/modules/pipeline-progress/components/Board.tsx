@@ -10,7 +10,7 @@ import {
 import { useRecoilState } from 'recoil';
 
 import { BoardColumn } from '@/ui/components/board/BoardColumn';
-import { Company } from '~/generated/graphql';
+import { Company, PipelineProgress } from '~/generated/graphql';
 
 import {
   Column,
@@ -24,10 +24,11 @@ import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
 import { CompanyBoardCard } from './CompanyBoardCard';
 import { NewButton } from './NewButton';
 
-export type CompanyProgress = Pick<
-  Company,
-  'id' | 'name' | 'domainName' | 'createdAt'
->;
+export type CompanyProgress = {
+  company: Pick<Company, 'id' | 'name' | 'domainName'>;
+  pipelineProgress: Pick<PipelineProgress, 'id' | 'amount'>;
+};
+
 export type CompanyProgressDict = {
   [key: string]: CompanyProgress;
 };
@@ -144,7 +145,7 @@ export function Board({
                               {...draggableProvided?.draggableProps}
                             >
                               <CompanyBoardCard
-                                company={boardItems[itemKey]}
+                                company={boardItems[itemKey].company}
                                 selected={selectedBoardItems.includes(itemKey)}
                                 onSelect={() => handleSelect(itemKey)}
                               />

@@ -39,10 +39,11 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
       setBoardItems({
         ...boardItems,
         [newUuid]: {
-          id: company.id,
-          name: company.name,
-          domainName: company.domainName,
-          createdAt: new Date().toISOString(),
+          company,
+          pipelineProgress: {
+            id: newUuid,
+            amount: 0,
+          },
         },
       });
       setBoard(newBoard);

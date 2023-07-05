@@ -14,6 +14,7 @@ export const GET_PIPELINES = gql`
           id
           progressableType
           progressableId
+          amount
         }
       }
     }
