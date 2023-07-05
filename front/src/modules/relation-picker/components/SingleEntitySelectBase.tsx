@@ -18,6 +18,7 @@ export type EntitiesForSingleEntitySelect<
 > = {
   selectedEntity: CustomEntityForSelect;
   entitiesToSelect: CustomEntityForSelect[];
+  loading: boolean;
 };
 
 export function SingleEntitySelectBase<
