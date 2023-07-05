@@ -1,18 +1,15 @@
 import { useCallback, useEffect } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 
 import { queuedActionsState } from '@/command-menu/states/queuedActionsState';
-import { GET_PEOPLE } from '@/people/services';
+import { useCreatePerson } from '@/people/hooks/useCreatePerson';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
 import { IconUser } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { TableContext } from '@/ui/tables/states/TableContext';
-import { useInsertPersonMutation } from '~/generated/graphql';
 
 import { TableActionBarButtonCreateCommentThreadPeople } from './table/TableActionBarButtonCreateCommentThreadPeople';
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
@@ -25,24 +22,13 @@ const StyledPeopleContainer = styled.div`
 `;
 
 export function People() {
-  const [insertPersonMutation] = useInsertPersonMutation();
+  const createPerson = useCreatePerson();
 
   const [queuedActions, setQueuedActions] = useRecoilState(queuedActionsState);
 
   const handleAddButtonClick = useCallback(async () => {
-    await insertPersonMutation({
-      variables: {
-        id: uuidv4(),
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        createdAt: new Date().toISOString(),
-        city: '',
-      },
-      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-    });
-  }, [insertPersonMutation]);
+    await createPerson();
+  }, [createPerson]);
 
   useEffect(() => {
     const actionIndex = queuedActions.findIndex(
