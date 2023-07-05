@@ -1,35 +1,34 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
 export class PersonMinAggregate {
 
     @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
     id?: string;
 
-    @Field(() => Date, {nullable:true})
-    createdAt?: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    updatedAt?: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    firstName?: string;
 
     @Field(() => String, {nullable:true})
-    firstname?: string;
+    @Validator.IsString()
+    lastName?: string;
 
     @Field(() => String, {nullable:true})
-    lastname?: string;
-
-    @Field(() => String, {nullable:true})
+    @Validator.IsString()
     email?: string;
 
     @Field(() => String, {nullable:true})
+    @Validator.IsString()
     phone?: string;
 
     @Field(() => String, {nullable:true})
+    @Validator.IsString()
     city?: string;
 
     @Field(() => String, {nullable:true})
@@ -37,4 +36,13 @@ export class PersonMinAggregate {
 
     @HideField()
     workspaceId?: string;
+
+    @HideField()
+    deletedAt?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
+
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 }

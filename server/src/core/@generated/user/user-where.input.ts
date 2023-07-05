@@ -1,12 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
-import { DateTimeFilter } from '../prisma/date-time-filter.input';
-import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { BoolFilter } from '../prisma/bool-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { HideField } from '@nestjs/graphql';
 import { JsonNullableFilter } from '../prisma/json-nullable-filter.input';
+import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { WorkspaceMemberRelationFilter } from '../workspace-member/workspace-member-relation-filter.input';
 import { CompanyListRelationFilter } from '../company/company-list-relation-filter.input';
 import { RefreshTokenListRelationFilter } from '../refresh-token/refresh-token-list-relation-filter.input';
@@ -27,26 +27,17 @@ export class UserWhereInput {
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
-
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
-
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
-
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    lastSeen?: DateTimeNullableFilter;
-
-    @Field(() => BoolFilter, {nullable:true})
-    disabled?: BoolFilter;
+    @Field(() => StringFilter, {nullable:true})
+    firstName?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
-    displayName?: StringFilter;
+    lastName?: StringFilter;
 
     @Field(() => StringFilter, {nullable:true})
     email?: StringFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    emailVerified?: BoolFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     avatarUrl?: StringNullableFilter;
@@ -57,14 +48,26 @@ export class UserWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     phoneNumber?: StringNullableFilter;
 
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    lastSeen?: DateTimeNullableFilter;
+
+    @Field(() => BoolFilter, {nullable:true})
+    disabled?: BoolFilter;
+
     @HideField()
     passwordHash?: StringNullableFilter;
 
-    @Field(() => BoolFilter, {nullable:true})
-    emailVerified?: BoolFilter;
-
     @Field(() => JsonNullableFilter, {nullable:true})
     metadata?: JsonNullableFilter;
+
+    @HideField()
+    deletedAt?: DateTimeNullableFilter;
+
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
+
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
     @HideField()
     workspaceMember?: WorkspaceMemberRelationFilter;

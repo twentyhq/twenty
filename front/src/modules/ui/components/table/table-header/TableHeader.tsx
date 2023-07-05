@@ -2,11 +2,6 @@ import { ReactNode, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
 import {
-  FilterableFieldsType,
-  FilterConfigType,
-  SelectedFilterType,
-} from '@/filters-and-sorts/interfaces/filters/interface';
-import {
   SelectedSortType,
   SortType,
 } from '@/filters-and-sorts/interfaces/sorts/interface';
@@ -15,13 +10,11 @@ import { FilterDropdownButton } from './FilterDropdownButton';
 import SortAndFilterBar from './SortAndFilterBar';
 import { SortDropdownButton } from './SortDropdownButton';
 
-type OwnProps<SortField, TData extends FilterableFieldsType> = {
+type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: ReactNode;
   availableSorts?: Array<SortType<SortField>>;
-  availableFilters?: FilterConfigType<TData>[];
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onFiltersUpdate?: (sorts: Array<SelectedFilterType<TData>>) => void;
 };
 
 const StyledContainer = styled.div`
@@ -60,18 +53,13 @@ const StyledFilters = styled.div`
   gap: 2px;
 `;
 
-export function TableHeader<SortField, TData extends FilterableFieldsType>({
+export function TableHeader<SortField>({
   viewName,
   viewIcon,
   availableSorts,
-  availableFilters,
   onSortsUpdate,
-  onFiltersUpdate,
-}: OwnProps<SortField, TData>) {
+}: OwnProps<SortField>) {
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
-    [],
-  );
-  const [filters, innerSetFilters] = useState<Array<SelectedFilterType<TData>>>(
     [],
   );
 
@@ -93,25 +81,6 @@ export function TableHeader<SortField, TData extends FilterableFieldsType>({
     [onSortsUpdate, sorts],
   );
 
-  const filterSelect = useCallback(
-    (filter: SelectedFilterType<TData>) => {
-      const newFilters = updateSortOrFilterByKey(filters, filter);
-
-      innerSetFilters(newFilters);
-      onFiltersUpdate && onFiltersUpdate(newFilters);
-    },
-    [onFiltersUpdate, filters],
-  );
-
-  const filterUnselect = useCallback(
-    (filterId: SelectedFilterType<TData>['key']) => {
-      const newFilters = filters.filter((filter) => filter.key !== filterId);
-      innerSetFilters(newFilters);
-      onFiltersUpdate && onFiltersUpdate(newFilters);
-    },
-    [onFiltersUpdate, filters],
-  );
-
   return (
     <StyledContainer>
       <StyledTableHeader>
@@ -120,12 +89,7 @@ export function TableHeader<SortField, TData extends FilterableFieldsType>({
           {viewName}
         </StyledViewSection>
         <StyledFilters>
-          <FilterDropdownButton
-            isFilterSelected={filters.length > 0}
-            availableFilters={availableFilters || []}
-            onFilterSelect={filterSelect}
-            onFilterRemove={filterUnselect}
-          />
+          <FilterDropdownButton />
           <SortDropdownButton<SortField>
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
@@ -133,20 +97,14 @@ export function TableHeader<SortField, TData extends FilterableFieldsType>({
           />
         </StyledFilters>
       </StyledTableHeader>
-      {sorts.length + filters.length > 0 && (
-        <SortAndFilterBar
-          sorts={sorts}
-          filters={filters}
-          onRemoveSort={sortUnselect}
-          onRemoveFilter={filterUnselect}
-          onCancelClick={() => {
-            innerSetFilters([]);
-            onFiltersUpdate && onFiltersUpdate([]);
-            innerSetSorts([]);
-            onSortsUpdate && onSortsUpdate([]);
-          }}
-        />
-      )}
+      <SortAndFilterBar
+        sorts={sorts}
+        onRemoveSort={sortUnselect}
+        onCancelClick={() => {
+          innerSetSorts([]);
+          onSortsUpdate && onSortsUpdate([]);
+        }}
+      />
     </StyledContainer>
   );
 }

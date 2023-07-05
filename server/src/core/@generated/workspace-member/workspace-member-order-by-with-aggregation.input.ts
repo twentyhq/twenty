@@ -13,19 +13,19 @@ export class WorkspaceMemberOrderByWithAggregationInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     userId?: keyof typeof SortOrder;
 
     @HideField()
     workspaceId?: keyof typeof SortOrder;
+
+    @HideField()
+    deletedAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
     @Field(() => WorkspaceMemberCountOrderByAggregateInput, {nullable:true})
     _count?: WorkspaceMemberCountOrderByAggregateInput;

@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
+import { HideField } from '@nestjs/graphql';
 import { WorkspaceMemberOrderByRelationAggregateInput } from '../workspace-member/workspace-member-order-by-relation-aggregate.input';
 import { CompanyOrderByRelationAggregateInput } from '../company/company-order-by-relation-aggregate.input';
 import { PersonOrderByRelationAggregateInput } from '../person/person-order-by-relation-aggregate.input';
@@ -17,15 +18,6 @@ export class WorkspaceOrderByWithRelationInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     domainName?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
@@ -33,6 +25,15 @@ export class WorkspaceOrderByWithRelationInput {
 
     @Field(() => SortOrder, {nullable:true})
     logo?: keyof typeof SortOrder;
+
+    @HideField()
+    deletedAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
     @Field(() => WorkspaceMemberOrderByRelationAggregateInput, {nullable:true})
     workspaceMember?: WorkspaceMemberOrderByRelationAggregateInput;

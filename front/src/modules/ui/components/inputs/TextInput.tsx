@@ -5,32 +5,48 @@ type OwnProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   'onChange'
 > & {
+  label?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
 };
 
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  text-transform: uppercase;
+`;
+
 const StyledInput = styled.input<{ fullWidth: boolean }>`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
+  background-color: ${({ theme }) => theme.background.tertiary};
+  border: none;
   border-radius: 4px;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) =>
-  theme.spacing(3)};
 
   color: ${({ theme }) => theme.font.color.primary};
+  font-family: ${({ theme }) => theme.font.family};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+
   outline: none;
+  padding: ${({ theme }) => theme.spacing(2)};
   width: ${({ fullWidth, theme }) =>
-    fullWidth ? `calc(100% - ${theme.spacing(6)})` : 'auto'};
+    fullWidth ? `calc(100% - ${theme.spacing(4)})` : 'auto'};
 
   &::placeholder,
   &::-webkit-input-placeholder {
-    color: ${({ theme }) => theme.font.color.light}
-    font-family: ${({ theme }) => theme.font.family};;
+    color: ${({ theme }) => theme.font.color.light};
+    font-family: ${({ theme }) => theme.font.family};
     font-weight: ${({ theme }) => theme.font.weight.medium};
   }
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
 export function TextInput({
+  label,
   value,
   onChange,
   fullWidth,
@@ -39,16 +55,19 @@ export function TextInput({
   const [internalValue, setInternalValue] = useState(value);
 
   return (
-    <StyledInput
-      fullWidth={fullWidth ?? false}
-      value={internalValue}
-      onChange={(event: ChangeEvent<HTMLInputElement>) => {
-        setInternalValue(event.target.value);
-        if (onChange) {
-          onChange(event.target.value);
-        }
-      }}
-      {...props}
-    />
+    <StyledContainer>
+      {label && <StyledLabel>{label}</StyledLabel>}
+      <StyledInput
+        fullWidth={fullWidth ?? false}
+        value={internalValue}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+          setInternalValue(event.target.value);
+          if (onChange) {
+            onChange(event.target.value);
+          }
+        }}
+        {...props}
+      />
+    </StyledContainer>
   );
 }

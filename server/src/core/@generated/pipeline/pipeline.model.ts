@@ -14,15 +14,6 @@ export class Pipeline {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
-
     @Field(() => String, {nullable:false})
     name!: string;
 
@@ -34,6 +25,15 @@ export class Pipeline {
 
     @HideField()
     workspaceId!: string;
+
+    @HideField()
+    deletedAt!: Date | null;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
     @Field(() => [PipelineStage], {nullable:true})
     pipelineStages?: Array<PipelineStage>;

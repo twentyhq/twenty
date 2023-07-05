@@ -5,7 +5,8 @@ export const seedUsers = async (prisma: PrismaClient) => {
     update: {},
     create: {
       id: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfc102',
-      displayName: 'Tim Apple',
+      firstName: 'Tim',
+      lastName: 'Apple',
       email: 'tim@apple.dev',
       passwordHash:
         '$2a$10$p2Pqc80JZX6bx/PkZJkC9OA/AasSHM7PMBk7mR3PCM0XSeKwDtwNa', // applecar2025
@@ -30,7 +31,8 @@ export const seedUsers = async (prisma: PrismaClient) => {
     update: {},
     create: {
       id: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408',
-      displayName: 'Jony Ive',
+      firstName: 'Jony',
+      lastName: 'Ive',
       email: 'jony.ive@apple.dev',
       locale: 'en',
       avatarUrl:
@@ -49,7 +51,8 @@ export const seedUsers = async (prisma: PrismaClient) => {
     update: {},
     create: {
       id: 'twenty-gk256b39-3ec3-4fe3-8997-b76aa0bfa408',
-      displayName: 'Phil Schiler',
+      firstName: 'Phil',
+      lastName: 'Schiler',
       email: 'phil.schiler@apple.dev',
       locale: 'en',
       avatarUrl:
@@ -68,7 +71,8 @@ export const seedUsers = async (prisma: PrismaClient) => {
     update: {},
     create: {
       id: 'twenty-dev-gk256b39-3ec3-4fe3-8997-b76aa0boa408',
-      displayName: 'Charles Bochet',
+      firstName: 'Charles',
+      lastName: 'Bochet',
       email: 'charles@twenty.dev',
       locale: 'en',
       workspaceMember: {

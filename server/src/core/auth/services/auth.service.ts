@@ -11,6 +11,7 @@ import { RegisterInput } from '../dto/register.input';
 import { PASSWORD_REGEX, compareHash, hashPassword } from '../auth.util';
 import { Verify } from '../dto/verify.entity';
 import { TokenService } from './token.service';
+import { Prisma } from '@prisma/client';
 
 export type UserPayload = {
   firstName: string;
@@ -43,7 +44,8 @@ export class AuthService {
 
     const user = await this.userService.createUser({
       data: {
-        displayName: registerInput.displayName,
+        firstName: registerInput.firstName,
+        lastName: registerInput.lastName,
         email: registerInput.email,
         passwordHash,
         locale: 'en',
@@ -73,11 +75,17 @@ export class AuthService {
     return user;
   }
 
-  async verify(email: string): Promise<Verify> {
+  async verify(
+    email: string,
+    select: Prisma.UserSelect & {
+      id: true;
+    },
+  ): Promise<Verify> {
     const user = await this.userService.findUnique({
       where: {
         email,
       },
+      select,
     });
 
     assert(user, "This user doesn't exist", NotFoundException);

@@ -12,17 +12,17 @@ export class CommentThreadOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     id?: keyof typeof SortOrder;
 
+    @HideField()
+    workspaceId?: keyof typeof SortOrder;
+
+    @HideField()
+    deletedAt?: keyof typeof SortOrder;
+
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     updatedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
-
-    @HideField()
-    workspaceId?: keyof typeof SortOrder;
 
     @Field(() => CommentThreadCountOrderByAggregateInput, {nullable:true})
     _count?: CommentThreadCountOrderByAggregateInput;

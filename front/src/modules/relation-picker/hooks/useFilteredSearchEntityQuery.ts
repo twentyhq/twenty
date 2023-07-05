@@ -24,6 +24,8 @@ type ExtractEntityTypeFromQueryResponse<T> = T extends {
 
 const DEFAULT_SEARCH_REQUEST_LIMIT = 10;
 
+// TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
+// Filtered entities to select are
 export function useFilteredSearchEntityQuery<
   EntityType extends ExtractEntityTypeFromQueryResponse<QueryResponseForExtract> & {
     id: string;

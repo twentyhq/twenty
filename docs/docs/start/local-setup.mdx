@@ -21,6 +21,15 @@ You can run `docker-compose --version` and `docker --version` to check they are 
 git clone git@github.com:twentyhq/twenty.git
 ```
 
+The repository is structured as follows:
+```
+twenty
+└───docs // contains this documentation
+└───front // contains the frontend code for the application
+└───server // contains the backend code for the application
+└───infra // contains the deployment configurations for dev and prod
+```
+
 ### 3. Setup env variables
 
 Go to the cloned folder (`cd twenty`). Then copy the env files:
@@ -84,6 +93,11 @@ make front-start
 server:
 ```
 make server-start
+```
+
+(optional) [storybook](https://storybook.js.org/): 
+```
+make front-storybook
 ```
 
 - front available on: http://localhost:3001

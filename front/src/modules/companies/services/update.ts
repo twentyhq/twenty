@@ -25,6 +25,8 @@ export const UPDATE_COMPANY = gql`
         id
         email
         displayName
+        firstName
+        lastName
       }
       address
       createdAt

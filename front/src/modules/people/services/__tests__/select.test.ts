@@ -6,19 +6,19 @@ describe('reduceSortsToOrderBy', () => {
   it('should return an array of objects with the id as key and the order as value', () => {
     const sorts = [
       {
-        key: 'firstname',
-        label: 'firstname',
+        key: 'firstName',
+        label: 'firstName',
         order: 'asc',
         _type: 'default_sort',
       },
       {
-        key: 'lastname',
-        label: 'lastname',
+        key: 'lastName',
+        label: 'lastName',
         order: 'desc',
         _type: 'default_sort',
       },
     ] satisfies PeopleSelectedSortType[];
     const result = reduceSortsToOrderBy(sorts);
-    expect(result).toEqual([{ firstname: 'asc' }, { lastname: 'desc' }]);
+    expect(result).toEqual([{ firstName: 'asc' }, { lastName: 'desc' }]);
   });
 });

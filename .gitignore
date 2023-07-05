@@ -1,3 +1,5 @@
 **/**/.env
 .DS_Store
 node_modules/
+# yarn is the recommended package manager across the project
+.package-lock.json

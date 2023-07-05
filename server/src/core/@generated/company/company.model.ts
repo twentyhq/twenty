@@ -3,8 +3,8 @@ import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
 import { HideField } from '@nestjs/graphql';
-import { User } from '../user/user.model';
 import { Person } from '../person/person.model';
+import { User } from '../user/user.model';
 import { Workspace } from '../workspace/workspace.model';
 import { CompanyCount } from './company-count.output';
 
@@ -13,15 +13,6 @@ export class Company {
 
     @Field(() => ID, {nullable:false})
     id!: string;
-
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
 
     @Field(() => String, {nullable:false})
     name!: string;
@@ -41,11 +32,20 @@ export class Company {
     @HideField()
     workspaceId!: string;
 
-    @Field(() => User, {nullable:true})
-    accountOwner?: User | null;
+    @HideField()
+    deletedAt!: Date | null;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
     @Field(() => [Person], {nullable:true})
     people?: Array<Person>;
+
+    @Field(() => User, {nullable:true})
+    accountOwner?: User | null;
 
     @HideField()
     workspace?: Workspace;

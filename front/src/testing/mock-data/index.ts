@@ -12,8 +12,8 @@ function filterData<DataT>(
   where: Record<string, any>,
 ): Array<DataT> {
   return data.filter((item) => {
-    // { firstname: {contains: '%string%' }}
-    // { firstname: {equals: 'string' }}
+    // { firstName: {contains: '%string%' }}
+    // { lastName: {equals: 'string' }}
     // { is: { company: { equals: 'string' }}}
     let isMatch: boolean = (
       Object.keys(where) as Array<keyof typeof where>
@@ -53,16 +53,31 @@ function filterData<DataT>(
 
           return filterElement.in.includes(itemValue);
         }
+        if (filterElement.notIn) {
+          const itemValue = item[key as keyof typeof item] as string;
+
+          if (filterElement.notIn.length === 0) return true;
+
+          return !filterElement.notIn.includes(itemValue);
+        }
       }
       return false;
     });
 
-    // { OR: [{ firstname: filter }, { lastname: filter }]
+    // { OR: [{ firstName: filter }, { lastName: filter }]
     if (where.OR && Array.isArray(where.OR)) {
       isMatch =
         isMatch ||
         where.OR.some((orFilter) =>
           filterData<DataT>(data, orFilter).includes(item),
+        );
+    }
+
+    if (where.AND && Array.isArray(where.AND)) {
+      isMatch =
+        isMatch ||
+        where.AND.every((andFilter) =>
+          filterData<DataT>(data, andFilter).includes(item),
         );
     }
 

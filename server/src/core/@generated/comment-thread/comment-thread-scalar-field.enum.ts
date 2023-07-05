@@ -2,10 +2,10 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum CommentThreadScalarFieldEnum {
     id = "id",
-    createdAt = "createdAt",
-    updatedAt = "updatedAt",
+    workspaceId = "workspaceId",
     deletedAt = "deletedAt",
-    workspaceId = "workspaceId"
+    createdAt = "createdAt",
+    updatedAt = "updatedAt"
 }
 
 

@@ -22,6 +22,12 @@ export type AffectedRows = {
   count: Scalars['Int'];
 };
 
+export type Analytics = {
+  __typename?: 'Analytics';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type AuthToken = {
   __typename?: 'AuthToken';
   expiresAt: Scalars['DateTime'];
@@ -56,7 +62,6 @@ export type Comment = {
   commentThread: CommentThread;
   commentThreadId: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
 };
@@ -66,7 +71,6 @@ export type CommentCreateInput = {
   body: Scalars['String'];
   commentThread: CommentThreadCreateNestedOneWithoutCommentsInput;
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -75,7 +79,6 @@ export type CommentCreateManyCommentThreadInput = {
   authorId: Scalars['String'];
   body: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -98,7 +101,6 @@ export type CommentCreateWithoutCommentThreadInput = {
   author: UserCreateNestedOneWithoutCommentsInput;
   body: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -121,7 +123,6 @@ export type CommentScalarWhereInput = {
   body?: InputMaybe<StringFilter>;
   commentThreadId?: InputMaybe<StringFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -131,7 +132,6 @@ export type CommentThread = {
   commentThreadTargets?: Maybe<Array<CommentThreadTarget>>;
   comments?: Maybe<Array<Comment>>;
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
 };
@@ -140,7 +140,6 @@ export type CommentThreadCreateInput = {
   commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
   comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -153,7 +152,6 @@ export type CommentThreadOrderByWithRelationInput = {
   commentThreadTargets?: InputMaybe<CommentThreadTargetOrderByRelationAggregateInput>;
   comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
   createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
@@ -178,7 +176,6 @@ export type CommentThreadTarget = {
   commentableId: Scalars['String'];
   commentableType: CommentableType;
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
 };
@@ -187,7 +184,6 @@ export type CommentThreadTargetCreateManyCommentThreadInput = {
   commentableId: Scalars['String'];
   commentableType: CommentableType;
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -210,7 +206,6 @@ export type CommentThreadTargetCreateWithoutCommentThreadInput = {
   commentableId: Scalars['String'];
   commentableType: CommentableType;
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -233,7 +228,6 @@ export type CommentThreadTargetScalarWhereInput = {
   commentableId?: InputMaybe<StringFilter>;
   commentableType?: InputMaybe<EnumCommentableTypeFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -242,7 +236,6 @@ export type CommentThreadTargetUpdateManyMutationInput = {
   commentableId?: InputMaybe<StringFieldUpdateOperationsInput>;
   commentableType?: InputMaybe<EnumCommentableTypeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
@@ -275,7 +268,6 @@ export type CommentThreadTargetUpdateWithoutCommentThreadInput = {
   commentableId?: InputMaybe<StringFieldUpdateOperationsInput>;
   commentableType?: InputMaybe<EnumCommentableTypeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
@@ -295,7 +287,6 @@ export type CommentThreadTargetWhereInput = {
   commentableId?: InputMaybe<StringFilter>;
   commentableType?: InputMaybe<EnumCommentableTypeFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -308,7 +299,6 @@ export type CommentThreadUpdateInput = {
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
@@ -320,7 +310,6 @@ export type CommentThreadWhereInput = {
   commentThreadTargets?: InputMaybe<CommentThreadTargetListRelationFilter>;
   comments?: InputMaybe<CommentListRelationFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -332,7 +321,6 @@ export type CommentThreadWhereUniqueInput = {
 export type CommentUpdateManyMutationInput = {
   body?: InputMaybe<StringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
@@ -365,7 +353,6 @@ export type CommentUpdateWithoutCommentThreadInput = {
   author?: InputMaybe<UserUpdateOneRequiredWithoutCommentsNestedInput>;
   body?: InputMaybe<StringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
@@ -386,7 +373,6 @@ export type CommentWhereInput = {
   commentThread?: InputMaybe<CommentThreadRelationFilter>;
   commentThreadId?: InputMaybe<StringFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -409,7 +395,6 @@ export type Company = {
   commentThreads: Array<CommentThread>;
   comments: Array<Comment>;
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: Maybe<Scalars['Int']>;
   id: Scalars['ID'];
@@ -422,7 +407,6 @@ export type CompanyCreateInput = {
   accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
   address: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
@@ -434,7 +418,6 @@ export type CompanyCreateInput = {
 export type CompanyCreateManyAccountOwnerInput = {
   address: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
@@ -466,7 +449,6 @@ export type CompanyCreateOrConnectWithoutAccountOwnerInput = {
 export type CompanyCreateWithoutAccountOwnerInput = {
   address: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
@@ -490,7 +472,6 @@ export type CompanyOrderByWithRelationInput = {
   accountOwnerId?: InputMaybe<SortOrder>;
   address?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
   domainName?: InputMaybe<SortOrder>;
   employees?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
@@ -524,7 +505,6 @@ export type CompanyScalarWhereInput = {
   accountOwnerId?: InputMaybe<StringNullableFilter>;
   address?: InputMaybe<StringFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   domainName?: InputMaybe<StringFilter>;
   employees?: InputMaybe<IntNullableFilter>;
   id?: InputMaybe<StringFilter>;
@@ -536,7 +516,6 @@ export type CompanyUpdateInput = {
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
   address?: InputMaybe<StringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
   employees?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -548,7 +527,6 @@ export type CompanyUpdateInput = {
 export type CompanyUpdateManyMutationInput = {
   address?: InputMaybe<StringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
   employees?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -587,7 +565,6 @@ export type CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput = {
 export type CompanyUpdateWithoutAccountOwnerInput = {
   address?: InputMaybe<StringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
   employees?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -610,7 +587,6 @@ export type CompanyWhereInput = {
   accountOwnerId?: InputMaybe<StringNullableFilter>;
   address?: InputMaybe<StringFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   domainName?: InputMaybe<StringFilter>;
   employees?: InputMaybe<IntNullableFilter>;
   id?: InputMaybe<StringFilter>;
@@ -706,6 +682,7 @@ export type LoginToken = {
 export type Mutation = {
   __typename?: 'Mutation';
   challenge: LoginToken;
+  createEvent: Analytics;
   createOneComment: Comment;
   createOneCommentThread: CommentThread;
   createOneCompany: Company;
@@ -727,6 +704,12 @@ export type Mutation = {
 export type MutationChallengeArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationCreateEventArgs = {
+  data: Scalars['JSON'];
+  type: Scalars['String'];
 };
 
 
@@ -913,11 +896,10 @@ export type Person = {
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   email: Scalars['String'];
-  firstname: Scalars['String'];
+  firstName: Scalars['String'];
   id: Scalars['ID'];
-  lastname: Scalars['String'];
+  lastName: Scalars['String'];
   phone: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -926,11 +908,10 @@ export type PersonCreateInput = {
   city: Scalars['String'];
   company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   email: Scalars['String'];
-  firstname: Scalars['String'];
+  firstName: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
-  lastname: Scalars['String'];
+  lastName: Scalars['String'];
   phone: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -954,11 +935,10 @@ export type PersonOrderByWithRelationInput = {
   company?: InputMaybe<CompanyOrderByWithRelationInput>;
   companyId?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
   email?: InputMaybe<SortOrder>;
-  firstname?: InputMaybe<SortOrder>;
+  firstName?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
-  lastname?: InputMaybe<SortOrder>;
+  lastName?: InputMaybe<SortOrder>;
   phone?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
@@ -969,9 +949,9 @@ export enum PersonScalarFieldEnum {
   CreatedAt = 'createdAt',
   DeletedAt = 'deletedAt',
   Email = 'email',
-  Firstname = 'firstname',
+  FirstName = 'firstName',
   Id = 'id',
-  Lastname = 'lastname',
+  LastName = 'lastName',
   Phone = 'phone',
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
@@ -981,11 +961,10 @@ export type PersonUpdateInput = {
   city?: InputMaybe<StringFieldUpdateOperationsInput>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  firstname?: InputMaybe<StringFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastname?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
   phone?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
@@ -1002,11 +981,10 @@ export type PersonWhereInput = {
   company?: InputMaybe<CompanyRelationFilter>;
   companyId?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   email?: InputMaybe<StringFilter>;
-  firstname?: InputMaybe<StringFilter>;
+  firstName?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
-  lastname?: InputMaybe<StringFilter>;
+  lastName?: InputMaybe<StringFilter>;
   phone?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -1018,7 +996,6 @@ export type PersonWhereUniqueInput = {
 export type Pipeline = {
   __typename?: 'Pipeline';
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   icon: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
@@ -1034,7 +1011,6 @@ export type PipelineCreateNestedOneWithoutPipelineProgressesInput = {
 
 export type PipelineOrderByWithRelationInput = {
   createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
   icon?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
@@ -1047,7 +1023,6 @@ export type PipelineOrderByWithRelationInput = {
 export type PipelineProgress = {
   __typename?: 'PipelineProgress';
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   pipeline: Pipeline;
   pipelineId: Scalars['String'];
@@ -1060,7 +1035,6 @@ export type PipelineProgress = {
 
 export type PipelineProgressCreateInput = {
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
   pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
@@ -1081,7 +1055,6 @@ export type PipelineProgressOrderByRelationAggregateInput = {
 
 export type PipelineProgressOrderByWithRelationInput = {
   createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   pipeline?: InputMaybe<PipelineOrderByWithRelationInput>;
   pipelineId?: InputMaybe<SortOrder>;
@@ -1106,7 +1079,6 @@ export enum PipelineProgressScalarFieldEnum {
 
 export type PipelineProgressUpdateInput = {
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
   pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
@@ -1120,7 +1092,6 @@ export type PipelineProgressWhereInput = {
   NOT?: InputMaybe<Array<PipelineProgressWhereInput>>;
   OR?: InputMaybe<Array<PipelineProgressWhereInput>>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   pipeline?: InputMaybe<PipelineRelationFilter>;
   pipelineId?: InputMaybe<StringFilter>;
@@ -1160,7 +1131,6 @@ export type PipelineStage = {
   __typename?: 'PipelineStage';
   color: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   name: Scalars['String'];
   pipeline: Pipeline;
@@ -1187,7 +1157,6 @@ export type PipelineStageOrderByRelationAggregateInput = {
 export type PipelineStageOrderByWithRelationInput = {
   color?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   pipeline?: InputMaybe<PipelineOrderByWithRelationInput>;
@@ -1224,7 +1193,6 @@ export type PipelineStageWhereInput = {
   OR?: InputMaybe<Array<PipelineStageWhereInput>>;
   color?: InputMaybe<StringFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
   pipeline?: InputMaybe<PipelineRelationFilter>;
@@ -1247,7 +1215,6 @@ export type PipelineWhereInput = {
   NOT?: InputMaybe<Array<PipelineWhereInput>>;
   OR?: InputMaybe<Array<PipelineWhereInput>>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   icon?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;
@@ -1392,12 +1359,13 @@ export type User = {
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   disabled: Scalars['Boolean'];
   displayName: Scalars['String'];
   email: Scalars['String'];
   emailVerified: Scalars['Boolean'];
+  firstName: Scalars['String'];
   id: Scalars['ID'];
+  lastName: Scalars['String'];
   lastSeen?: Maybe<Scalars['DateTime']>;
   locale: Scalars['String'];
   metadata?: Maybe<Scalars['JSON']>;
@@ -1423,12 +1391,13 @@ export type UserCreateWithoutCommentsInput = {
   avatarUrl?: InputMaybe<Scalars['String']>;
   companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
-  deletedAt?: InputMaybe<Scalars['DateTime']>;
   disabled?: InputMaybe<Scalars['Boolean']>;
-  displayName: Scalars['String'];
+  displayName?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   emailVerified?: InputMaybe<Scalars['Boolean']>;
+  firstName: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
+  lastName: Scalars['String'];
   lastSeen?: InputMaybe<Scalars['DateTime']>;
   locale: Scalars['String'];
   metadata?: InputMaybe<Scalars['JSON']>;
@@ -1441,12 +1410,13 @@ export type UserOrderByWithRelationInput = {
   comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
   companies?: InputMaybe<CompanyOrderByRelationAggregateInput>;
   createdAt?: InputMaybe<SortOrder>;
-  deletedAt?: InputMaybe<SortOrder>;
   disabled?: InputMaybe<SortOrder>;
   displayName?: InputMaybe<SortOrder>;
   email?: InputMaybe<SortOrder>;
   emailVerified?: InputMaybe<SortOrder>;
+  firstName?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  lastName?: InputMaybe<SortOrder>;
   lastSeen?: InputMaybe<SortOrder>;
   locale?: InputMaybe<SortOrder>;
   metadata?: InputMaybe<SortOrder>;
@@ -1467,7 +1437,9 @@ export enum UserScalarFieldEnum {
   DisplayName = 'displayName',
   Email = 'email',
   EmailVerified = 'emailVerified',
+  FirstName = 'firstName',
   Id = 'id',
+  LastName = 'lastName',
   LastSeen = 'lastSeen',
   Locale = 'locale',
   Metadata = 'metadata',
@@ -1492,12 +1464,13 @@ export type UserUpdateWithoutCommentsInput = {
   avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  deletedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  displayName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   email?: InputMaybe<StringFieldUpdateOperationsInput>;
   emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
   lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   metadata?: InputMaybe<Scalars['JSON']>;
@@ -1518,12 +1491,13 @@ export type UserWhereInput = {
   comments?: InputMaybe<CommentListRelationFilter>;
   companies?: InputMaybe<CompanyListRelationFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeNullableFilter>;
   disabled?: InputMaybe<BoolFilter>;
-  displayName?: InputMaybe<StringFilter>;
+  displayName?: InputMaybe<StringNullableFilter>;
   email?: InputMaybe<StringFilter>;
   emailVerified?: InputMaybe<BoolFilter>;
+  firstName?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
+  lastName?: InputMaybe<StringFilter>;
   lastSeen?: InputMaybe<DateTimeNullableFilter>;
   locale?: InputMaybe<StringFilter>;
   metadata?: InputMaybe<JsonNullableFilter>;
@@ -1548,7 +1522,6 @@ export type Workspace = {
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   displayName: Scalars['String'];
   domainName: Scalars['String'];
   id: Scalars['ID'];
@@ -1564,13 +1537,20 @@ export type Workspace = {
 export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   createdAt: Scalars['DateTime'];
-  deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
   user: User;
   userId: Scalars['String'];
   workspace: Workspace;
 };
+
+export type CreateEventMutationVariables = Exact<{
+  type: Scalars['String'];
+  data: Scalars['JSON'];
+}>;
+
+
+export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'Analytics', success: boolean } };
 
 export type ChallengeMutationVariables = Exact<{
   email: Scalars['String'];
@@ -1603,7 +1583,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, commentThreadId: string, author: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, commentThreadId: string, author: { __typename?: 'User', id: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } } };
 
 export type CreateCommentThreadWithCommentMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
@@ -1623,14 +1603,14 @@ export type GetCommentThreadsByTargetsQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
+export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
 
 export type GetCommentThreadQueryVariables = Exact<{
   commentThreadId: Scalars['String'];
 }>;
 
 
-export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', commentableId: string, commentableType: CommentableType }> | null }> };
+export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', commentableId: string, commentableType: CommentableType }> | null }> };
 
 export type AddCommentThreadTargetOnCommentThreadMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
@@ -1664,7 +1644,7 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string } | null }> };
 
 export type UpdateCompanyMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -1677,7 +1657,7 @@ export type UpdateCompanyMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null } | null };
+export type UpdateCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string } | null } | null };
 
 export type InsertCompanyMutationVariables = Exact<{
   id: Scalars['String'];
@@ -1724,6 +1704,13 @@ export type CreateOnePipelineProgressMutationVariables = Exact<{
 
 export type CreateOnePipelineProgressMutation = { __typename?: 'Mutation', createOnePipelineProgress: { __typename?: 'PipelineProgress', id: string } };
 
+export type DeleteManyPipelineProgressMutationVariables = Exact<{
+  ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+}>;
+
+
+export type DeleteManyPipelineProgressMutation = { __typename?: 'Mutation', deleteManyPipelineProgress: { __typename?: 'AffectedRows', count: number } };
+
 export type GetPeopleQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
   where?: InputMaybe<PersonWhereInput>;
@@ -1731,12 +1718,12 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: string, _commentCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstName: string, lastName: string, createdAt: string, _commentCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type UpdatePeopleMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
-  firstname?: InputMaybe<Scalars['String']>;
-  lastname?: InputMaybe<Scalars['String']>;
+  firstName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   city?: InputMaybe<Scalars['String']>;
   companyId?: InputMaybe<Scalars['String']>;
@@ -1745,12 +1732,12 @@ export type UpdatePeopleMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePeopleMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', city: string, email: string, firstname: string, id: string, lastname: string, phone: string, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
+export type UpdatePeopleMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city: string, email: string, firstName: string, lastName: string, phone: string, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
 
 export type InsertPersonMutationVariables = Exact<{
   id: Scalars['String'];
-  firstname: Scalars['String'];
-  lastname: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
   phone: Scalars['String'];
   city: Scalars['String'];
   email: Scalars['String'];
@@ -1758,7 +1745,7 @@ export type InsertPersonMutationVariables = Exact<{
 }>;
 
 
-export type InsertPersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', city: string, email: string, firstname: string, id: string, lastname: string, phone: string, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
+export type InsertPersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city: string, email: string, firstName: string, lastName: string, phone: string, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
 
 export type DeletePeopleMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -1774,7 +1761,7 @@ export type SearchPeopleQueryVariables = Exact<{
 }>;
 
 
-export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstname: string, lastname: string, createdAt: string }> };
+export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstName: string, lastName: string, createdAt: string }> };
 
 export type SearchUserQueryVariables = Exact<{
   where?: InputMaybe<UserWhereInput>;
@@ -1783,7 +1770,7 @@ export type SearchUserQueryVariables = Exact<{
 }>;
 
 
-export type SearchUserQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', id: string, email: string, displayName: string }> };
+export type SearchUserQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string }> };
 
 export type EmptyQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1804,14 +1791,57 @@ export type GetCurrentUserQueryVariables = Exact<{
 }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }> };
+export type GetCurrentUserQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }> };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string }> };
+export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string }> };
 
+export type GetClientConfigQuery = {
+  __typename?: 'Query';
+  clientConfig: {
+    __typename?: 'ClientConfig';
+    display_google_login: boolean;
+    prefill_login_with_seed: boolean;
+  };
+};
+export type GetClientConfigQueryVariables = {};
 
+export const CreateEventDocument = gql`
+    mutation CreateEvent($type: String!, $data: JSON!) {
+  createEvent(type: $type, data: $data) {
+    success
+  }
+}
+    `;
+export type CreateEventMutationFn = Apollo.MutationFunction<CreateEventMutation, CreateEventMutationVariables>;
+
+/**
+ * __useCreateEventMutation__
+ *
+ * To run a mutation, you first call `useCreateEventMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEventMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEventMutation, { data, loading, error }] = useCreateEventMutation({
+ *   variables: {
+ *      type: // value for 'type'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<CreateEventMutation, CreateEventMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateEventMutation, CreateEventMutationVariables>(CreateEventDocument, options);
+      }
+export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
+export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
+export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
 export const ChallengeDocument = gql`
     mutation Challenge($email: String!, $password: String!) {
   challenge(email: $email, password: $password) {
@@ -1958,6 +1988,8 @@ export const CreateCommentDocument = gql`
     author {
       id
       displayName
+      firstName
+      lastName
       avatarUrl
     }
     commentThreadId
@@ -2068,6 +2100,8 @@ export const GetCommentThreadsByTargetsDocument = gql`
       author {
         id
         displayName
+        firstName
+        lastName
         avatarUrl
       }
     }
@@ -2120,6 +2154,8 @@ export const GetCommentThreadDocument = gql`
       author {
         id
         displayName
+        firstName
+        lastName
         avatarUrl
       }
     }
@@ -2300,6 +2336,8 @@ export const GetCompaniesDocument = gql`
       id
       email
       displayName
+      firstName
+      lastName
     }
   }
 }
@@ -2343,6 +2381,8 @@ export const UpdateCompanyDocument = gql`
       id
       email
       displayName
+      firstName
+      lastName
     }
     address
     createdAt
@@ -2586,6 +2626,39 @@ export function useCreateOnePipelineProgressMutation(baseOptions?: Apollo.Mutati
 export type CreateOnePipelineProgressMutationHookResult = ReturnType<typeof useCreateOnePipelineProgressMutation>;
 export type CreateOnePipelineProgressMutationResult = Apollo.MutationResult<CreateOnePipelineProgressMutation>;
 export type CreateOnePipelineProgressMutationOptions = Apollo.BaseMutationOptions<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>;
+export const DeleteManyPipelineProgressDocument = gql`
+    mutation DeleteManyPipelineProgress($ids: [String!]) {
+  deleteManyPipelineProgress(where: {id: {in: $ids}}) {
+    count
+  }
+}
+    `;
+export type DeleteManyPipelineProgressMutationFn = Apollo.MutationFunction<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
+
+/**
+ * __useDeleteManyPipelineProgressMutation__
+ *
+ * To run a mutation, you first call `useDeleteManyPipelineProgressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteManyPipelineProgressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteManyPipelineProgressMutation, { data, loading, error }] = useDeleteManyPipelineProgressMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useDeleteManyPipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>(DeleteManyPipelineProgressDocument, options);
+      }
+export type DeleteManyPipelineProgressMutationHookResult = ReturnType<typeof useDeleteManyPipelineProgressMutation>;
+export type DeleteManyPipelineProgressMutationResult = Apollo.MutationResult<DeleteManyPipelineProgressMutation>;
+export type DeleteManyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
 export const GetPeopleDocument = gql`
     query GetPeople($orderBy: [PersonOrderByWithRelationInput!], $where: PersonWhereInput, $limit: Int) {
   people: findManyPerson(orderBy: $orderBy, where: $where, take: $limit) {
@@ -2593,8 +2666,8 @@ export const GetPeopleDocument = gql`
     phone
     email
     city
-    firstname
-    lastname
+    firstName
+    lastName
     createdAt
     _commentCount
     company {
@@ -2636,11 +2709,12 @@ export type GetPeopleQueryHookResult = ReturnType<typeof useGetPeopleQuery>;
 export type GetPeopleLazyQueryHookResult = ReturnType<typeof useGetPeopleLazyQuery>;
 export type GetPeopleQueryResult = Apollo.QueryResult<GetPeopleQuery, GetPeopleQueryVariables>;
 export const UpdatePeopleDocument = gql`
-    mutation UpdatePeople($id: String, $firstname: String, $lastname: String, $phone: String, $city: String, $companyId: String, $email: String, $createdAt: DateTime) {
+    mutation UpdatePeople($id: String, $firstName: String, $lastName: String, $phone: String, $city: String, $companyId: String, $email: String, $createdAt: DateTime) {
   updateOnePerson(
     where: {id: $id}
-    data: {city: {set: $city}, company: {connect: {id: $companyId}}, email: {set: $email}, firstname: {set: $firstname}, id: {set: $id}, lastname: {set: $lastname}, phone: {set: $phone}, createdAt: {set: $createdAt}}
+    data: {city: {set: $city}, company: {connect: {id: $companyId}}, email: {set: $email}, firstName: {set: $firstName}, id: {set: $id}, lastName: {set: $lastName}, phone: {set: $phone}, createdAt: {set: $createdAt}}
   ) {
+    id
     city
     company {
       domainName
@@ -2648,9 +2722,8 @@ export const UpdatePeopleDocument = gql`
       id
     }
     email
-    firstname
-    id
-    lastname
+    firstName
+    lastName
     phone
     createdAt
   }
@@ -2672,8 +2745,8 @@ export type UpdatePeopleMutationFn = Apollo.MutationFunction<UpdatePeopleMutatio
  * const [updatePeopleMutation, { data, loading, error }] = useUpdatePeopleMutation({
  *   variables: {
  *      id: // value for 'id'
- *      firstname: // value for 'firstname'
- *      lastname: // value for 'lastname'
+ *      firstName: // value for 'firstName'
+ *      lastName: // value for 'lastName'
  *      phone: // value for 'phone'
  *      city: // value for 'city'
  *      companyId: // value for 'companyId'
@@ -2690,10 +2763,11 @@ export type UpdatePeopleMutationHookResult = ReturnType<typeof useUpdatePeopleMu
 export type UpdatePeopleMutationResult = Apollo.MutationResult<UpdatePeopleMutation>;
 export type UpdatePeopleMutationOptions = Apollo.BaseMutationOptions<UpdatePeopleMutation, UpdatePeopleMutationVariables>;
 export const InsertPersonDocument = gql`
-    mutation InsertPerson($id: String!, $firstname: String!, $lastname: String!, $phone: String!, $city: String!, $email: String!, $createdAt: DateTime) {
+    mutation InsertPerson($id: String!, $firstName: String!, $lastName: String!, $phone: String!, $city: String!, $email: String!, $createdAt: DateTime) {
   createOnePerson(
-    data: {id: $id, firstname: $firstname, lastname: $lastname, phone: $phone, city: $city, email: $email, createdAt: $createdAt}
+    data: {id: $id, firstName: $firstName, lastName: $lastName, phone: $phone, city: $city, email: $email, createdAt: $createdAt}
   ) {
+    id
     city
     company {
       domainName
@@ -2701,9 +2775,8 @@ export const InsertPersonDocument = gql`
       id
     }
     email
-    firstname
-    id
-    lastname
+    firstName
+    lastName
     phone
     createdAt
   }
@@ -2725,8 +2798,8 @@ export type InsertPersonMutationFn = Apollo.MutationFunction<InsertPersonMutatio
  * const [insertPersonMutation, { data, loading, error }] = useInsertPersonMutation({
  *   variables: {
  *      id: // value for 'id'
- *      firstname: // value for 'firstname'
- *      lastname: // value for 'lastname'
+ *      firstName: // value for 'firstName'
+ *      lastName: // value for 'lastName'
  *      phone: // value for 'phone'
  *      city: // value for 'city'
  *      email: // value for 'email'
@@ -2781,8 +2854,8 @@ export const SearchPeopleDocument = gql`
     phone
     email
     city
-    firstname
-    lastname
+    firstName
+    lastName
     createdAt
   }
 }
@@ -2823,6 +2896,8 @@ export const SearchUserDocument = gql`
     id
     email
     displayName
+    firstName
+    lastName
   }
 }
     `;
@@ -2935,6 +3010,8 @@ export const GetCurrentUserDocument = gql`
     id
     email
     displayName
+    firstName
+    lastName
     workspaceMember {
       id
       workspace {
@@ -2981,6 +3058,8 @@ export const GetUsersDocument = gql`
     id
     email
     displayName
+    firstName
+    lastName
   }
 }
     `;
@@ -3011,3 +3090,38 @@ export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
 export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
 export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
+
+export const GET_CLIENT_CONFIG = gql`
+  query GetClientConfig {
+    clientConfig {
+      display_google_login
+      prefill_login_with_seed
+    }
+  }
+`;
+
+export function useGetClientConfigQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetClientConfigQuery,
+    GetClientConfigQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(
+    GET_CLIENT_CONFIG,
+    options,
+  );
+}
+
+export function useGetClientConfigLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetClientConfigQuery,
+    GetClientConfigQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetClientConfigQuery,
+    GetClientConfigQueryVariables
+  >(GET_CLIENT_CONFIG, options);
+}

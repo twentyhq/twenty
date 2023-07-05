@@ -9,15 +9,6 @@ export class PipelineProgressMinAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    createdAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    updatedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    deletedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
     pipelineId?: true;
 
     @Field(() => Boolean, {nullable:true})
@@ -31,4 +22,13 @@ export class PipelineProgressMinAggregateInput {
 
     @HideField()
     workspaceId?: true;
+
+    @HideField()
+    deletedAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    createdAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    updatedAt?: true;
 }

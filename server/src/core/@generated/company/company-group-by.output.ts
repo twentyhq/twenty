@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
+import * as Validator from 'class-validator';
 import { Int } from '@nestjs/graphql';
 import { HideField } from '@nestjs/graphql';
 import { CompanyCountAggregate } from './company-count-aggregate.output';
@@ -12,27 +13,25 @@ import { CompanyMaxAggregate } from './company-max-aggregate.output';
 export class CompanyGroupBy {
 
     @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    @Validator.IsOptional()
     id!: string;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date | string;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
-
     @Field(() => String, {nullable:false})
+    @Validator.IsString()
     name!: string;
 
     @Field(() => String, {nullable:false})
+    @Validator.IsString()
     domainName!: string;
 
     @Field(() => String, {nullable:false})
+    @Validator.IsString()
     address!: string;
 
     @Field(() => Int, {nullable:true})
+    @Validator.IsNumber()
+    @Validator.IsOptional()
     employees?: number;
 
     @Field(() => String, {nullable:true})
@@ -40,6 +39,15 @@ export class CompanyGroupBy {
 
     @HideField()
     workspaceId!: string;
+
+    @HideField()
+    deletedAt?: Date | string;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date | string;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date | string;
 
     @Field(() => CompanyCountAggregate, {nullable:true})
     _count?: CompanyCountAggregate;

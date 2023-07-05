@@ -1,16 +1,28 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-type OwnProps = {
-  children: React.ReactNode;
+import { AnimatedTextWord } from '@/ui/components/motion/AnimatedTextWord';
+
+type Props = React.PropsWithChildren & {
+  animate?: boolean;
 };
 
 const StyledTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-top: ${({ theme }) => theme.spacing(10)};
 `;
 
-export function Title({ children }: OwnProps): JSX.Element {
+const StyledAnimatedTextWord = styled(AnimatedTextWord)`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.xl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+`;
+
+export function Title({ children, animate = false }: Props) {
+  if (animate && typeof children === 'string') {
+    return <StyledAnimatedTextWord text={children} />;
+  }
+
   return <StyledTitle>{children}</StyledTitle>;
 }

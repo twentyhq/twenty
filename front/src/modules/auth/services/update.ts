@@ -18,6 +18,8 @@ export const VERIFY = gql`
         id
         email
         displayName
+        firstName
+        lastName
         workspaceMember {
           id
           workspace {

@@ -10,15 +10,6 @@ export class PipelineProgressCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
-    createdAt!: number;
-
-    @Field(() => Int, {nullable:false})
-    updatedAt!: number;
-
-    @Field(() => Int, {nullable:false})
-    deletedAt!: number;
-
-    @Field(() => Int, {nullable:false})
     pipelineId!: number;
 
     @Field(() => Int, {nullable:false})
@@ -32,6 +23,15 @@ export class PipelineProgressCountAggregate {
 
     @HideField()
     workspaceId!: number;
+
+    @HideField()
+    deletedAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    createdAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    updatedAt!: number;
 
     @Field(() => Int, {nullable:false})
     _all!: number;

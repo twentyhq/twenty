@@ -113,6 +113,7 @@ export const color = {
   gray30: grayScale.gray20,
   gray20: grayScale.gray15,
   gray10: grayScale.gray10,
+  gray0: grayScale.gray0,
 };
 
 export function rgba(hex: string, alpha: number) {

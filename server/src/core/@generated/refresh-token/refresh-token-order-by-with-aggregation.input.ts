@@ -13,22 +13,22 @@ export class RefreshTokenOrderByWithAggregationInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     isRevoked?: keyof typeof SortOrder;
+
+    @HideField()
+    userId?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     expiresAt?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
+    @HideField()
     deletedAt?: keyof typeof SortOrder;
 
-    @HideField()
-    userId?: keyof typeof SortOrder;
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 
     @Field(() => RefreshTokenCountOrderByAggregateInput, {nullable:true})
     _count?: RefreshTokenCountOrderByAggregateInput;

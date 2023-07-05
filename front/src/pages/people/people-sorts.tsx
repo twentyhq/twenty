@@ -20,10 +20,10 @@ export const availableSorts = [
     _type: 'custom_sort',
     orderByTemplates: [
       (order: Order_By) => ({
-        firstname: order,
+        firstName: order,
       }),
       (order: Order_By) => ({
-        lastname: order,
+        lastName: order,
       }),
     ],
   },

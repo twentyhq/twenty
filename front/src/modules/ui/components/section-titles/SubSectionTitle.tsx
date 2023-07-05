@@ -1,17 +1,35 @@
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-type OwnProps = {
-  children: ReactNode;
+type Props = {
+  title: string;
+  description?: string;
 };
 
-const StyledSubSectionTitle = styled.h2`
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledTitle = styled.h2`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: 1.5;
+  margin: 0;
 `;
 
-export function SubSectionTitle({ children }: OwnProps) {
-  return <StyledSubSectionTitle>{children}</StyledSubSectionTitle>;
+const StyledDescription = styled.h3`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin: 0;
+  margin-top: ${({ theme }) => theme.spacing(1)};
+`;
+
+export function SubSectionTitle({ title, description }: Props) {
+  return (
+    <StyledContainer>
+      <StyledTitle>{title}</StyledTitle>
+      {description && <StyledDescription>{description}</StyledDescription>}
+    </StyledContainer>
+  );
 }

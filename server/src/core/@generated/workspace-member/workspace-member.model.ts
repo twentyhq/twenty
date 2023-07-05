@@ -11,20 +11,20 @@ export class WorkspaceMember {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
-
     @Field(() => String, {nullable:false})
     userId!: string;
 
     @HideField()
     workspaceId!: string;
+
+    @HideField()
+    deletedAt!: Date | null;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
     @Field(() => User, {nullable:false})
     user?: User;
