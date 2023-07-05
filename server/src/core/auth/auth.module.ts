@@ -1,4 +1,3 @@
-import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 import { AuthService } from './services/auth.service';
@@ -10,6 +9,9 @@ import { VerifyAuthController } from './controllers/verify-auth.controller';
 import { TokenService } from './services/token.service';
 import { AuthResolver } from './auth.resolver';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+
+import { DynamicModule, Module } from '@nestjs/common';
+import { ConfigurableModuleClass } from './auth.module-definition';
 
 const jwtModule = JwtModule.registerAsync({
   useFactory: async (environmentService: EnvironmentService) => {
@@ -23,17 +25,22 @@ const jwtModule = JwtModule.registerAsync({
   inject: [EnvironmentService],
 });
 
-@Module({
-  imports: [jwtModule, UserModule],
-  controllers: [GoogleAuthController, VerifyAuthController],
-  providers: [
-    AuthService,
-    TokenService,
-    JwtAuthStrategy,
-    GoogleStrategy,
-    PrismaService,
-    AuthResolver,
-  ],
-  exports: [jwtModule],
-})
-export class AuthModule {}
+@Module({})
+export class AuthModule extends ConfigurableModuleClass {
+  static forRoot(): DynamicModule {
+    return {
+      module: AuthModule,
+      imports: [jwtModule, UserModule],
+      controllers: [GoogleAuthController, VerifyAuthController],
+      providers: [
+        AuthService,
+        TokenService,
+        JwtAuthStrategy,
+        GoogleStrategy,
+        PrismaService,
+        AuthResolver,
+      ],
+      exports: [jwtModule],
+    };
+  }
+}

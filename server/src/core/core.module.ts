@@ -8,10 +8,11 @@ import { AuthModule } from './auth/auth.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Module({
   imports: [
-    AuthModule,
+    AuthModule.forRoot(),
     UserModule,
     CommentModule,
     CompanyModule,
@@ -22,7 +23,7 @@ import { FileModule } from './file/file.module';
     FileModule,
   ],
   exports: [
-    AuthModule,
+    AuthModule.forRoot(),
     UserModule,
     CommentModule,
     CompanyModule,

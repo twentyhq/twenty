@@ -13,6 +13,7 @@ import { IsDuration } from './decorators/is-duration.decorator';
 import { StorageType } from './interfaces/storage.interface';
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { IsAWSRegion } from './decorators/is-aws-region.decorator';
+import { log } from 'console';
 
 export class EnvironmentVariables {
   // Database
@@ -75,13 +76,9 @@ export class EnvironmentVariables {
 }
 
 export function validate(config: Record<string, unknown>) {
-  const validatedConfig = plainToClass(EnvironmentVariables, config, {
-    enableImplicitConversion: false,
-  });
+  const validatedConfig = plainToClass(EnvironmentVariables, config);
 
-  const errors = validateSync(validatedConfig, {
-    skipMissingProperties: false,
-  });
+  const errors = validateSync(validatedConfig);
   assert(!errors.length, errors.toString());
 
   return validatedConfig;

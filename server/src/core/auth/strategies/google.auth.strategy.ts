@@ -16,17 +16,11 @@ export type GoogleRequest = Request & {
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(environmentService: EnvironmentService) {
-    const isAuthGoogleEnabled = environmentService.getAuthGoogleEnabled();
     super({
-      clientID: isAuthGoogleEnabled
-        ? environmentService.getAuthGoogleClientId()
-        : 'disabled',
-      clientSecret: isAuthGoogleEnabled
-        ? environmentService.getAuthGoogleClientSecret()
-        : 'disabled',
-      callbackURL: isAuthGoogleEnabled
-        ? environmentService.getAuthGoogleCallbackUrl()
-        : 'disabled',
+      clientID: environmentService.getAuthGoogleClientId() ?? 'disabled',
+      clientSecret:
+        environmentService.getAuthGoogleClientSecret() ?? 'disabled',
+      callbackURL: environmentService.getAuthGoogleCallbackUrl() ?? 'disabled',
       scope: ['email', 'profile'],
     });
   }
