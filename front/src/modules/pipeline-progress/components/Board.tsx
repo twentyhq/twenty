@@ -146,6 +146,9 @@ export function Board({
                             >
                               <CompanyBoardCard
                                 company={boardItems[itemKey].company}
+                                pipelineProgress={
+                                  boardItems[itemKey].pipelineProgress
+                                }
                                 selected={selectedBoardItems.includes(itemKey)}
                                 onSelect={() => handleSelect(itemKey)}
                               />

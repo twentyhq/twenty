@@ -1,8 +1,9 @@
 import { StrictMode, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Company } from '../../../../generated/graphql';
+import { Company, PipelineProgress } from '../../../../generated/graphql';
 import { mockedCompaniesData } from '../../../../testing/mock-data/companies';
+import { mockedPipelineProgressData } from '../../../../testing/mock-data/pipeline-progress';
 import { CompanyBoardCard } from '../CompanyBoardCard';
 
 const meta: Meta<typeof CompanyBoardCard> = {
@@ -19,6 +20,7 @@ const FakeSelectableCompanyBoardCard = () => {
   return (
     <CompanyBoardCard
       company={mockedCompaniesData[0] as Company}
+      pipelineProgress={mockedPipelineProgressData[0]}
       selected={selected}
       onSelect={() => setSelected(!selected)}
     />

@@ -7,7 +7,7 @@ import {
   IconUserCircle,
 } from '@tabler/icons-react';
 
-import { Company } from '../../../generated/graphql';
+import { Company, PipelineProgress } from '../../../generated/graphql';
 import { PersonChip } from '../../people/components/PersonChip';
 import { Checkbox } from '../../ui/components/form/Checkbox';
 import { IconCalendarEvent, IconUsers } from '../../ui/icons';
@@ -68,12 +68,16 @@ type CompanyProp = Pick<
   'id' | 'name' | 'domainName' | 'employees' | 'accountOwner'
 >;
 
+type PipelineProgressProp = Pick<PipelineProgress, 'id' | 'amount'>;
+
 export function CompanyBoardCard({
   company,
+  pipelineProgress,
   selected,
   onSelect,
 }: {
   company: CompanyProp;
+  pipelineProgress: PipelineProgressProp;
   selected: boolean;
   onSelect: (company: CompanyProp) => void;
 }) {
@@ -93,7 +97,7 @@ export function CompanyBoardCard({
         <StyledBoardCardBody>
           <span>
             <IconCurrencyDollar size={theme.icon.size.md} />
-            $1,000
+            {pipelineProgress.amount}
           </span>
           <span>
             <IconCalendarEvent size={theme.icon.size.md} />
