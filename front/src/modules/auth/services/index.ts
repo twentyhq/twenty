@@ -1,1 +1,2 @@
-export * from './index';
+export * from './select';
+export * from './update';
