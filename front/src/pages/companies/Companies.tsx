@@ -1,9 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
-import { queuedActionsState } from '@/command-menu/states/queuedActionsState';
 import { useCreateCompany } from '@/companies/hooks/useCreateCompany';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
@@ -21,24 +19,11 @@ const StyledTableContainer = styled.div`
 `;
 
 export function Companies() {
-  const [queuedActions, setQueuedActions] = useRecoilState(queuedActionsState);
   const createCompany = useCreateCompany();
 
   const handleAddButtonClick = useCallback(async () => {
     await createCompany();
   }, [createCompany]);
-
-  useEffect(() => {
-    const actionIndex = queuedActions.findIndex(
-      (action) => action.action === 'companies/create_company',
-    );
-    if (actionIndex !== -1) {
-      handleAddButtonClick();
-      setQueuedActions(
-        queuedActions.filter((_, index) => index !== actionIndex),
-      );
-    }
-  }, [queuedActions, handleAddButtonClick, setQueuedActions]);
 
   const theme = useTheme();
 

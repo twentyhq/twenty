@@ -1,9 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
-import { queuedActionsState } from '@/command-menu/states/queuedActionsState';
 import { useCreatePerson } from '@/people/hooks/useCreatePerson';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
@@ -24,23 +22,9 @@ const StyledPeopleContainer = styled.div`
 export function People() {
   const createPerson = useCreatePerson();
 
-  const [queuedActions, setQueuedActions] = useRecoilState(queuedActionsState);
-
   const handleAddButtonClick = useCallback(async () => {
     await createPerson();
   }, [createPerson]);
-
-  useEffect(() => {
-    const actionIndex = queuedActions.findIndex(
-      (action) => action.action === 'people/create_people',
-    );
-    if (actionIndex !== -1) {
-      handleAddButtonClick();
-      setQueuedActions(
-        queuedActions.filter((_, index) => index !== actionIndex),
-      );
-    }
-  }, [queuedActions, handleAddButtonClick, setQueuedActions]);
 
   const theme = useTheme();
 
