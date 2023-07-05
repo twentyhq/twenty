@@ -9,7 +9,9 @@ import { DropdownMenuSearch } from '@/ui/components/menu/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/components/menu/DropdownMenuSeparator';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
-import { useEntitySelectLogic } from '../hooks/useEntitySelectLogic';
+import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
+
+import { SingleEntitySelectBase } from './SingleEntitySelectBase';
 
 export type EntitiesForSingleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
@@ -55,27 +57,10 @@ export function SingleEntitySelect<
           <DropdownMenuSeparator />
         </>
       )}
-      <DropdownMenuItemContainer ref={containerRef}>
-        {entitiesInDropdown?.map((entity, index) => (
-          <DropdownMenuSelectableItem
-            key={entity.id}
-            selected={entities.selectedEntity?.id === entity.id}
-            hovered={hoveredIndex === index}
-            onClick={() => onEntitySelected(entity)}
-          >
-            <Avatar
-              avatarUrl={entity.avatarUrl}
-              placeholder={entity.name}
-              size={16}
-              type={entity.avatarType ?? 'rounded'}
-            />
-            {entity.name}
-          </DropdownMenuSelectableItem>
-        ))}
-        {entitiesInDropdown?.length === 0 && (
-          <DropdownMenuItem>No result</DropdownMenuItem>
-        )}
-      </DropdownMenuItemContainer>
+      <SingleEntitySelectBase
+        entities={entities}
+        onEntitySelected={onEntitySelected}
+      />
     </DropdownMenu>
   );
 }
