@@ -9,6 +9,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { StorageDriver } from './interfaces/storage-driver.interface';
 import { Readable } from 'stream';
+import { kebabCase } from 'src/utils/kebab-case';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;
@@ -41,7 +42,7 @@ export class S3Driver implements StorageDriver {
     mimeType: string | undefined;
   }): Promise<void> {
     const command = new PutObjectCommand({
-      Key: `${params.folder}/${params.name}`,
+      Key: `${kebabCase(params.folder)}/${params.name}`,
       Body: params.file,
       ContentType: params.mimeType,
       Bucket: this.bucketName,
