@@ -59,6 +59,7 @@ export function CompanyAccountOwnerPicker({ company }: OwnProps) {
     <SingleEntitySelect
       onEntitySelected={handleEntitySelected}
       entities={{
+        loading: companies.loading,
         entitiesToSelect: companies.entitiesToSelect,
         selectedEntity: companies.selectedEntities[0],
       }}

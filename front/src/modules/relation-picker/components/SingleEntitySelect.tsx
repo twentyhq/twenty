@@ -16,6 +16,7 @@ import { SingleEntitySelectBase } from './SingleEntitySelectBase';
 export type EntitiesForSingleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
 > = {
+  loading: boolean;
   selectedEntity: CustomEntityForSelect;
   entitiesToSelect: CustomEntityForSelect[];
 };

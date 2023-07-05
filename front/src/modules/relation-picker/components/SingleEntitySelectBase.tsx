@@ -10,6 +10,9 @@ import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 
+import { CompanyPickerSkeleton } from './skeletons/CompanyPickerSkeleton';
+import { DropdownMenuItemContainerSkeleton } from './skeletons/DropdownMenuItemContainerSkeleton';
+
 export type EntitiesForSingleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
 > = {
@@ -50,24 +53,29 @@ export function SingleEntitySelectBase<
 
   return (
     <DropdownMenuItemContainer ref={containerRef}>
-      {entitiesInDropdown?.map((entity, index) => (
-        <DropdownMenuSelectableItem
-          key={entity.id}
-          selected={entities.selectedEntity?.id === entity.id}
-          hovered={hoveredIndex === index}
-          onClick={() => onEntitySelected(entity)}
-        >
-          <Avatar
-            avatarUrl={entity.avatarUrl}
-            placeholder={entity.name}
-            size={16}
-            type={entity.avatarType ?? 'rounded'}
-          />
-          {entity.name}
-        </DropdownMenuSelectableItem>
-      ))}
-      {entitiesInDropdown?.length === 0 && (
+      {entities.loading ? (
+        <DropdownMenuItemContainerSkeleton>
+          <CompanyPickerSkeleton count={10} />
+        </DropdownMenuItemContainerSkeleton>
+      ) : entitiesInDropdown.length === 0 ? (
         <DropdownMenuItem>No result</DropdownMenuItem>
+      ) : (
+        entitiesInDropdown?.map((entity, index) => (
+          <DropdownMenuSelectableItem
+            key={entity.id}
+            selected={entities.selectedEntity?.id === entity.id}
+            hovered={hoveredIndex === index}
+            onClick={() => onEntitySelected(entity)}
+          >
+            <Avatar
+              avatarUrl={entity.avatarUrl}
+              placeholder={entity.name}
+              size={16}
+              type={entity.avatarType ?? 'rounded'}
+            />
+            {entity.name}
+          </DropdownMenuSelectableItem>
+        ))
       )}
     </DropdownMenuItemContainer>
   );

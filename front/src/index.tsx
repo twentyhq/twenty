@@ -14,6 +14,7 @@ import { UserProvider } from './providers/user/UserProvider';
 import { App } from './App';
 
 import './index.css';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
