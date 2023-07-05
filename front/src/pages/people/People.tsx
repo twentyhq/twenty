@@ -1,19 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
+import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 
-import { queuedActionsState } from '@/command-menu/states/queuedActionsState';
 import {
   reduceFiltersToWhere,
   reduceSortsToOrderBy,
 } from '@/filters-and-sorts/helpers';
 import { SelectedFilterType } from '@/filters-and-sorts/interfaces/filters/interface';
+import { useCreatePerson } from '@/people/hooks/useCreatePerson';
 import {
   defaultOrderBy,
-  GET_PEOPLE,
   PeopleSelectedSortType,
   usePeopleQuery,
 } from '@/people/services';
@@ -22,11 +18,7 @@ import { EntityTable } from '@/ui/components/table/EntityTable';
 import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
 import { IconList, IconUser } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
-import {
-  GetPeopleQuery,
-  PersonWhereInput,
-  useInsertPersonMutation,
-} from '~/generated/graphql';
+import { GetPeopleQuery, PersonWhereInput } from '~/generated/graphql';
 
 import { TableActionBarButtonCreateCommentThreadPeople } from './table/TableActionBarButtonCreateCommentThreadPeople';
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
@@ -43,41 +35,15 @@ const StyledPeopleContainer = styled.div`
 export function People() {
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
   const [where, setWhere] = useState<PersonWhereInput>({});
-
-  const [queuedActions, setQueuedActions] = useRecoilState(queuedActionsState);
-
-  const [insertPersonMutation] = useInsertPersonMutation();
+  const createPerson = useCreatePerson();
 
   const { data } = usePeopleQuery(orderBy, where);
 
   const people = data?.people ?? [];
 
   const handleAddButtonClick = useCallback(async () => {
-    await insertPersonMutation({
-      variables: {
-        id: uuidv4(),
-        firstname: '',
-        lastname: '',
-        email: '',
-        phone: '',
-        createdAt: new Date().toISOString(),
-        city: '',
-      },
-      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-    });
-  }, [insertPersonMutation]);
-
-  useEffect(() => {
-    const actionIndex = queuedActions.findIndex(
-      (action) => action.action === 'people/create_people',
-    );
-    if (actionIndex !== -1) {
-      handleAddButtonClick();
-      setQueuedActions(
-        queuedActions.filter((_, index) => index !== actionIndex),
-      );
-    }
-  }, [queuedActions, handleAddButtonClick, setQueuedActions]);
+    await createPerson();
+  }, [createPerson]);
 
   const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);

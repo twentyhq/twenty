@@ -1,15 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
+import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
-import { v4 as uuidv4 } from 'uuid';
 
-import { queuedActionsState } from '@/command-menu/states/queuedActionsState';
+import { useCreateCompany } from '@/companies/hooks/useCreateCompany';
 import {
   CompaniesSelectedSortType,
   defaultOrderBy,
-  GET_COMPANIES,
   useCompaniesQuery,
 } from '@/companies/services';
 import {
@@ -27,8 +23,6 @@ import {
   CompanyOrderByWithRelationInput as Companies_Order_By,
   CompanyWhereInput,
   GetCompaniesQuery,
-  InsertCompanyMutationVariables,
-  useInsertCompanyMutation,
 } from '~/generated/graphql';
 
 import { TableActionBarButtonCreateCommentThreadCompany } from './table/TableActionBarButtonCreateCommentThreadCompany';
@@ -43,43 +37,17 @@ const StyledCompaniesContainer = styled.div`
 `;
 
 export function Companies() {
-  const [insertCompany] = useInsertCompanyMutation();
+  const createCompany = useCreateCompany();
   const [orderBy, setOrderBy] = useState<Companies_Order_By[]>(defaultOrderBy);
   const [where, setWhere] = useState<CompanyWhereInput>({});
-
-  const [queuedActions, setQueuedActions] = useRecoilState(queuedActionsState);
 
   const { data } = useCompaniesQuery(orderBy, where);
 
   const companies = data?.companies ?? [];
 
   const handleAddButtonClick = useCallback(async () => {
-    const newCompany: InsertCompanyMutationVariables = {
-      id: uuidv4(),
-      name: '',
-      domainName: '',
-      employees: null,
-      address: '',
-      createdAt: new Date().toISOString(),
-    };
-
-    await insertCompany({
-      variables: newCompany,
-      refetchQueries: [getOperationName(GET_COMPANIES) ?? ''],
-    });
-  }, [insertCompany]);
-
-  useEffect(() => {
-    const actionIndex = queuedActions.findIndex(
-      (action) => action.action === 'companies/create_company',
-    );
-    if (actionIndex !== -1) {
-      handleAddButtonClick();
-      setQueuedActions(
-        queuedActions.filter((_, index) => index !== actionIndex),
-      );
-    }
-  }, [queuedActions, handleAddButtonClick, setQueuedActions]);
+    await createCompany();
+  }, [createCompany]);
 
   const updateSorts = useCallback((sorts: Array<CompaniesSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);

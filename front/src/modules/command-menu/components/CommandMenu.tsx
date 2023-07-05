@@ -1,10 +1,12 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useMatch, useResolvedPath } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useCreateCompany } from '@/companies/hooks/useCreateCompany';
 import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
+import { useCreatePerson } from '@/people/hooks/useCreatePerson';
 import { IconBuildingSkyscraper, IconUser } from '@/ui/icons';
 
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
@@ -20,10 +22,13 @@ import {
   StyledList,
   // StyledSeparator,
 } from './CommandMenuStyles';
+
 export function CommandMenu() {
   const navigate = useNavigate();
   const [open, setOpen] = useRecoilState(isCommandMenuOpenedState);
-  const [, setQueuedActions] = useRecoilState(queuedActionsState);
+  const [queuedActions, setQueuedActions] = useRecoilState(queuedActionsState);
+  const createPerson = useCreatePerson();
+  const createCompany = useCreateCompany();
 
   useDirectHotkeys(
     'ctrl+k,meta+k',
@@ -38,6 +43,23 @@ export function CommandMenu() {
     setQueuedActions((oldQueue) => [...oldQueue, { id: uuidv4(), action }]);
     navigate(path);
   };
+
+  useEffect(() => {
+    function processAction(actionName: string, createAction: () => void) {
+      const actionIndex = queuedActions.findIndex(
+        (action) => action.action === actionName,
+      );
+      if (actionIndex !== -1) {
+        createAction();
+        setQueuedActions((oldQueuedActions) =>
+          oldQueuedActions.filter((_, index) => index !== actionIndex),
+        );
+      }
+    }
+
+    processAction('people/create_people', createPerson);
+    processAction('companies/create_company', createCompany);
+  }, [queuedActions, createPerson, setQueuedActions, createCompany]);
 
   const createSection = (
     <StyledGroup heading="Create">
