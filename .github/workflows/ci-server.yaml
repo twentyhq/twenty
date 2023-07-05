@@ -8,6 +8,9 @@ jobs:
   server-test:
     runs-on: ubuntu-latest
     steps:
+      - run: echo "GITHUB_HEAD_REF: ${{ github.head_ref }}"
+      - run: echo "GITHUB_REF_NAME: ${{ github.ref_name }}"
+      - run: echo "GITHUB_REF: ${{ github.ref }}"
       - uses: actions/checkout@v3
         if: github.head_ref == 'main'
         with:
