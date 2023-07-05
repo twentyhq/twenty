@@ -39,7 +39,7 @@ type BoardProps = {
   initialBoard: Column[];
   initialItems: CompanyProgressDict;
   onMoveCard?: (itemKey: string, columnId: Column['id']) => Promise<void>;
-  onUpdateCard?: (
+  onUpdateCard: (
     pipelineProgress: Pick<PipelineProgress, 'id' | 'amount'>,
   ) => Promise<void>;
 };

@@ -21,6 +21,7 @@ export const OneColumnBoard: Story = {
       columns={initialBoard}
       initialBoard={initialBoard}
       initialItems={items}
+      onUpdateCard={async (_) => {}} // eslint-disable-line @typescript-eslint/no-empty-function
     />,
   ),
 };

@@ -7,7 +7,6 @@ import {
   IconUserCircle,
 } from '@tabler/icons-react';
 
-import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 
 import { Company, PipelineProgress } from '../../../generated/graphql';
@@ -84,7 +83,7 @@ export function CompanyBoardCard({
   pipelineProgress: PipelineProgressProp;
   selected: boolean;
   onSelect: (company: CompanyProp) => void;
-  onUpdateCard: any;
+  onUpdateCard: (pipelineProgress: PipelineProgressProp) => Promise<void>;
 }) {
   const theme = useTheme();
   return (

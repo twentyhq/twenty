@@ -23,7 +23,7 @@ const FakeSelectableCompanyBoardCard = () => {
       pipelineProgress={mockedPipelineProgressData[0]}
       selected={selected}
       onSelect={() => setSelected(!selected)}
-      onUpdateCard={console.log}
+      onUpdateCard={async (_) => {}} // eslint-disable-line @typescript-eslint/no-empty-function
     />
   );
 };
