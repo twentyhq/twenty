@@ -33,8 +33,8 @@ import GraphQLJSON from 'graphql-type-json';
     PrismaModule,
     HealthModule,
     AbilityModule,
-    CoreModule,
     IntegrationsModule,
+    CoreModule,
   ],
   providers: [AppService],
 })

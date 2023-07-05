@@ -13,7 +13,7 @@ import { IsDuration } from './decorators/is-duration.decorator';
 import { StorageType } from './interfaces/storage.interface';
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { IsAWSRegion } from './decorators/is-aws-region.decorator';
-import { log } from 'console';
+import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
 
 export class EnvironmentVariables {
   // Database
@@ -40,7 +40,7 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   FRONT_AUTH_CALLBACK_URL: string;
 
-  @Transform(({ value }) => envValueToBoolean(value))
+  @CastToBoolean()
   @IsOptional()
   @IsBoolean()
   AUTH_GOOGLE_ENABLED?: boolean;
@@ -83,16 +83,3 @@ export function validate(config: Record<string, unknown>) {
 
   return validatedConfig;
 }
-
-const envValueToBoolean = (value: any) => {
-  if (typeof value === 'boolean') {
-    return value;
-  }
-  if (['true', 'on', 'yes', '1'].includes(value.toLowerCase())) {
-    return true;
-  }
-  if (['false', 'off', 'no', '0'].includes(value.toLowerCase())) {
-    return false;
-  }
-  return undefined;
-};
