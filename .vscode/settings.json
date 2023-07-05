@@ -21,13 +21,16 @@
   "[json]": {
     "editor.formatOnSave": true
   },
+  "[prisma]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
   "javascript.format.enable": false,
   "typescript.format.enable": false,
   "cSpell.enableFiletypes": [
     "!javascript",
     "!json",
     "!typescript",
-    "!typescriptreact",
     "md",
     "mdx"
   ],

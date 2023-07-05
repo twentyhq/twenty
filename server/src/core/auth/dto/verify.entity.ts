@@ -5,5 +5,5 @@ import { User } from 'src/core/@generated/user/user.model';
 @ObjectType()
 export class Verify extends AuthTokens {
   @Field(() => User)
-  user: User;
+  user: Partial<User>;
 }

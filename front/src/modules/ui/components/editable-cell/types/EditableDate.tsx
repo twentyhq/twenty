@@ -49,9 +49,9 @@ export function EditableDate({
     ),
   );
 
-  interface DatePickerContainerProps {
+  type DatePickerContainerProps = {
     children: React.ReactNode;
-  }
+  };
 
   const DatePickerContainer = ({ children }: DatePickerContainerProps) => {
     return <StyledCalendarContainer>{children}</StyledCalendarContainer>;

@@ -10,12 +10,12 @@ export const StyledBoard = styled.div`
   width: 100%;
 `;
 
-export interface Column {
+export type Column = {
   id: string;
   title: string;
   colorCode?: string;
   itemKeys: string[];
-}
+};
 
 export function getOptimisticlyUpdatedBoard(
   board: Column[],

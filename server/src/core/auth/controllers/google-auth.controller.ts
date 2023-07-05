@@ -10,8 +10,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
 import { GoogleRequest } from '../strategies/google.auth.strategy';
 import { UserService } from '../../user/user.service';
-import { assertNotNull } from 'src/utils/assert';
 import { TokenService } from '../services/token.service';
+import { GoogleProviderEnabledGuard } from '../guards/google-provider-enabled.guard';
 
 @Controller('auth/google')
 export class GoogleAuthController {
@@ -21,22 +21,22 @@ export class GoogleAuthController {
   ) {}
 
   @Get()
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleProviderEnabledGuard, AuthGuard('google'))
   async googleAuth() {
     // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 
   @Get('redirect')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleProviderEnabledGuard, AuthGuard('google'))
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     const { firstName, lastName, email } = req.user;
-    const displayName = [firstName, lastName].filter(assertNotNull).join(' ');
 
     const user = await this.userService.createUser({
       data: {
         email,
-        displayName,
+        firstName: firstName ?? '',
+        lastName: lastName ?? '',
         locale: 'en',
       },
     });

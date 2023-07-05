@@ -10,6 +10,7 @@ const StyledMainSectionTitle = styled.h2`
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: 1.5;
+  margin: 0;
 `;
 
 export function MainSectionTitle({ children }: OwnProps) {

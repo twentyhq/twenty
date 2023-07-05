@@ -33,3 +33,6 @@ lerna-debug.log*
 !.vscode/inbox.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Local storage
+.local-storage

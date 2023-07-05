@@ -1,9 +1,10 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
-import { DateTimeFilter } from '../prisma/date-time-filter.input';
-import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
+import { HideField } from '@nestjs/graphql';
+import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { WorkspaceMemberListRelationFilter } from '../workspace-member/workspace-member-list-relation-filter.input';
 import { CompanyListRelationFilter } from '../company/company-list-relation-filter.input';
 import { PersonListRelationFilter } from '../person/person-list-relation-filter.input';
@@ -28,15 +29,6 @@ export class WorkspaceWhereInput {
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
 
-    @Field(() => DateTimeFilter, {nullable:true})
-    createdAt?: DateTimeFilter;
-
-    @Field(() => DateTimeFilter, {nullable:true})
-    updatedAt?: DateTimeFilter;
-
-    @Field(() => DateTimeNullableFilter, {nullable:true})
-    deletedAt?: DateTimeNullableFilter;
-
     @Field(() => StringFilter, {nullable:true})
     domainName?: StringFilter;
 
@@ -45,6 +37,15 @@ export class WorkspaceWhereInput {
 
     @Field(() => StringNullableFilter, {nullable:true})
     logo?: StringNullableFilter;
+
+    @HideField()
+    deletedAt?: DateTimeNullableFilter;
+
+    @Field(() => DateTimeFilter, {nullable:true})
+    createdAt?: DateTimeFilter;
+
+    @Field(() => DateTimeFilter, {nullable:true})
+    updatedAt?: DateTimeFilter;
 
     @Field(() => WorkspaceMemberListRelationFilter, {nullable:true})
     workspaceMember?: WorkspaceMemberListRelationFilter;

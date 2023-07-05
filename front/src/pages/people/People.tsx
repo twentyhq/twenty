@@ -1,6 +1,9 @@
+
 import { useCallback, useState } from 'react';
+
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+
 
 import {
   reduceFiltersToWhere,
@@ -13,18 +16,22 @@ import {
   PeopleSelectedSortType,
   usePeopleQuery,
 } from '@/people/services';
+
+
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
-import { EntityTable } from '@/ui/components/table/EntityTable';
-import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
-import { IconList, IconUser } from '@/ui/icons/index';
+import { IconUser } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { GetPeopleQuery, PersonWhereInput } from '~/generated/graphql';
 
+import { TableContext } from '@/ui/tables/states/TableContext';
+
+
+
 import { TableActionBarButtonCreateCommentThreadPeople } from './table/TableActionBarButtonCreateCommentThreadPeople';
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
-import { usePeopleColumns } from './people-columns';
-import { availableFilters } from './people-filters';
-import { availableSorts } from './people-sorts';
+import { PeopleTable } from './PeopleTable';
 
 const StyledPeopleContainer = styled.div`
   display: flex;
@@ -33,6 +40,7 @@ const StyledPeopleContainer = styled.div`
 `;
 
 export function People() {
+
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
   const [where, setWhere] = useState<PersonWhereInput>({});
   const createPerson = useCreatePerson();
@@ -58,6 +66,7 @@ export function People() {
 
   const peopleColumns = usePeopleColumns();
 
+
   const theme = useTheme();
 
   return (
@@ -66,28 +75,15 @@ export function People() {
       icon={<IconUser size={theme.icon.size.md} />}
       onAddButtonClick={handleAddButtonClick}
     >
-      <>
+      <RecoilScope SpecificContext={TableContext}>
         <StyledPeopleContainer>
-          <HooksEntityTable
-            numberOfColumns={peopleColumns.length}
-            numberOfRows={people.length}
-          />
-          <EntityTable
-            data={people}
-            columns={peopleColumns}
-            viewName="All People"
-            viewIcon={<IconList size={theme.icon.size.md} />}
-            availableSorts={availableSorts}
-            availableFilters={availableFilters}
-            onSortsUpdate={updateSorts}
-            onFiltersUpdate={updateFilters}
-          />
+          <PeopleTable />
         </StyledPeopleContainer>
         <EntityTableActionBar>
           <TableActionBarButtonCreateCommentThreadPeople />
           <TableActionBarButtonDeletePeople />
         </EntityTableActionBar>
-      </>
+      </RecoilScope>
     </WithTopBarContainer>
   );
 }

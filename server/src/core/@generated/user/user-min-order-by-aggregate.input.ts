@@ -10,25 +10,16 @@ export class UserMinOrderByAggregateInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    createdAt?: keyof typeof SortOrder;
+    firstName?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    updatedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    deletedAt?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    lastSeen?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    disabled?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
-    displayName?: keyof typeof SortOrder;
+    lastName?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     email?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    emailVerified?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     avatarUrl?: keyof typeof SortOrder;
@@ -39,9 +30,21 @@ export class UserMinOrderByAggregateInput {
     @Field(() => SortOrder, {nullable:true})
     phoneNumber?: keyof typeof SortOrder;
 
+    @Field(() => SortOrder, {nullable:true})
+    lastSeen?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    disabled?: keyof typeof SortOrder;
+
     @HideField()
     passwordHash?: keyof typeof SortOrder;
 
+    @HideField()
+    deletedAt?: keyof typeof SortOrder;
+
     @Field(() => SortOrder, {nullable:true})
-    emailVerified?: keyof typeof SortOrder;
+    createdAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: keyof typeof SortOrder;
 }

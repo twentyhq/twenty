@@ -1,19 +1,6 @@
 import { SortOrder as Order_By } from '~/generated/graphql';
 
-import {
-  FilterWhereType,
-  SelectedFilterType,
-} from './interfaces/filters/interface';
 import { SelectedSortType } from './interfaces/sorts/interface';
-
-export const reduceFiltersToWhere = <WhereTemplateType extends FilterWhereType>(
-  filters: Array<SelectedFilterType<WhereTemplateType>>,
-): Record<string, any> => {
-  const where = filters.reduce((acc, filter) => {
-    return { ...acc, ...filter.operand.whereTemplate(filter.value) };
-  }, {} as Record<string, any>);
-  return where;
-};
 
 const mapOrderToOrder_By = (order: string) => {
   if (order === 'asc') return Order_By.Asc;

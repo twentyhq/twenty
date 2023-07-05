@@ -1,33 +1,45 @@
 import { useCallback, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 
-import { InputLabel } from '@/auth/components/ui/InputLabel';
 import { Logo } from '@/auth/components/ui/Logo';
-import { Modal } from '@/auth/components/ui/Modal';
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
-import { PrimaryButton } from '@/ui/components/buttons/PrimaryButton';
+import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
+import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
-import { Companies } from '~/pages/companies/Companies';
+import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 
 const StyledContentContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
-  padding-top: ${({ theme }) => theme.spacing(6)};
-  width: 320px;
+  width: 100%;
+  > * + * {
+    margin-top: ${({ theme }) => theme.spacing(6)};
+  }
 `;
 
-const StyledInputContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(1)};
+const StyledAnimatedContent = styled(motion.div)`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  > * + * {
+    margin-top: ${({ theme }) => theme.spacing(8)};
+  }
+`;
+
+const StyledSectionContainer = styled.div`
+  > * + * {
+    margin-top: ${({ theme }) => theme.spacing(4)};
+  }
 `;
 
 const StyledButtonContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(7)};
+  width: 200px;
 `;
 
 const StyledErrorContainer = styled.div`
@@ -35,8 +47,10 @@ const StyledErrorContainer = styled.div`
 `;
 
 export function PasswordLogin() {
-  const navigate = useNavigate();
   const [, setMockMode] = useRecoilState(isMockModeState);
+  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
+    captureHotkeyTypeInFocusState,
+  );
 
   const prefillPassword =
     process.env.NODE_ENV === 'development' ? 'applecar2025' : '';
@@ -53,11 +67,19 @@ export function PasswordLogin() {
     try {
       await login(authFlowUserEmail, internalPassword);
       setMockMode(false);
-      navigate('/');
+      setCaptureHotkeyTypeInFocus(false);
+      // TODO: Navigate to the workspace selection page when it's ready
+      // navigate('/auth/create/workspace');
     } catch (err: any) {
       setFormError(err.message);
     }
-  }, [authFlowUserEmail, internalPassword, login, navigate, setMockMode]);
+  }, [
+    authFlowUserEmail,
+    internalPassword,
+    login,
+    setMockMode,
+    setCaptureHotkeyTypeInFocus,
+  ]);
 
   useHotkeys(
     'enter',
@@ -73,23 +95,22 @@ export function PasswordLogin() {
 
   return (
     <>
-      <Companies />
-      <Modal>
-        <Logo />
-        <Title>Welcome to Twenty</Title>
-        <SubTitle>Enter your credentials to sign in</SubTitle>
+      <Logo />
+      <Title>Welcome to Twenty</Title>
+      <SubTitle>Enter your credentials to sign in</SubTitle>
+      <StyledAnimatedContent>
         <StyledContentContainer>
-          <StyledInputContainer>
-            <InputLabel label="Email" />
+          <StyledSectionContainer>
+            <SubSectionTitle title="Email" />
             <TextInput
               value={authFlowUserEmail}
               placeholder="Email"
               onChange={(value) => setAuthFlowUserEmail(value)}
               fullWidth
             />
-          </StyledInputContainer>
-          <StyledInputContainer>
-            <InputLabel label="Password" />
+          </StyledSectionContainer>
+          <StyledSectionContainer>
+            <SubSectionTitle title="Password" />
             <TextInput
               value={internalPassword}
               placeholder="Password"
@@ -97,17 +118,18 @@ export function PasswordLogin() {
               fullWidth
               type="password"
             />
-            <StyledButtonContainer>
-              <PrimaryButton fullWidth onClick={handleLogin}>
-                Continue
-              </PrimaryButton>
-            </StyledButtonContainer>
-          </StyledInputContainer>
-          {formError && (
-            <StyledErrorContainer>{formError}</StyledErrorContainer>
-          )}
+          </StyledSectionContainer>
         </StyledContentContainer>
-      </Modal>
+        <StyledButtonContainer>
+          <MainButton
+            title="Continue"
+            onClick={handleLogin}
+            disabled={!authFlowUserEmail || !internalPassword}
+            fullWidth
+          />
+        </StyledButtonContainer>
+        {formError && <StyledErrorContainer>{formError}</StyledErrorContainer>}
+      </StyledAnimatedContent>
     </>
   );
 }

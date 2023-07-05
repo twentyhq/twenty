@@ -167,7 +167,7 @@ function DropdownButton({
 
   const onButtonClick = () => {
     setIsUnfolded && setIsUnfolded(!isUnfolded);
-    setCaptureHotkeyTypeInFocus(!isUnfolded);
+    setCaptureHotkeyTypeInFocus((isPreviousUnfolded) => !isPreviousUnfolded);
   };
 
   const onOutsideClick = () => {

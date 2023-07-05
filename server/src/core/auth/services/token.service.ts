@@ -8,24 +8,24 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../strategies/jwt.auth.strategy';
-import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/database/prisma.service';
 import { assert } from 'src/utils/assert';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { AuthToken } from '../dto/token.entity';
 import { TokenExpiredError } from 'jsonwebtoken';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Injectable()
 export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly environmentService: EnvironmentService,
     private readonly prismaService: PrismaService,
   ) {}
 
   async generateAccessToken(userId: string): Promise<AuthToken> {
-    const expiresIn = this.configService.get<string>('ACCESS_TOKEN_EXPIRES_IN');
+    const expiresIn = this.environmentService.getAccessTokenExpiresIn();
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
@@ -56,10 +56,8 @@ export class TokenService {
   }
 
   async generateRefreshToken(userId: string): Promise<AuthToken> {
-    const secret = this.configService.get('REFRESH_TOKEN_SECRET');
-    const expiresIn = this.configService.get<string>(
-      'REFRESH_TOKEN_EXPIRES_IN',
-    );
+    const secret = this.environmentService.getRefreshTokenSecret();
+    const expiresIn = this.environmentService.getRefreshTokenExpiresIn();
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
@@ -87,8 +85,8 @@ export class TokenService {
   }
 
   async generateLoginToken(email: string): Promise<AuthToken> {
-    const secret = this.configService.get('LOGIN_TOKEN_SECRET');
-    const expiresIn = this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN');
+    const secret = this.environmentService.getLoginTokenSecret();
+    const expiresIn = this.environmentService.getLoginTokenExpiresIn();
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
     const jwtPayload = {
@@ -105,7 +103,7 @@ export class TokenService {
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {
-    const loginTokenSecret = this.configService.get('LOGIN_TOKEN_SECRET');
+    const loginTokenSecret = this.environmentService.getLoginTokenSecret();
 
     const payload = await this.verifyJwt(loginToken, loginTokenSecret);
 
@@ -113,7 +111,7 @@ export class TokenService {
   }
 
   async verifyRefreshToken(refreshToken: string) {
-    const secret = this.configService.get('REFRESH_TOKEN_SECRET');
+    const secret = this.environmentService.getRefreshTokenSecret();
     const jwtPayload = await this.verifyJwt(refreshToken, secret);
 
     assert(
@@ -191,9 +189,7 @@ export class TokenService {
   }
 
   computeRedirectURI(loginToken: string): string {
-    return `${this.configService.get<string>(
-      'FRONT_AUTH_CALLBACK_URL',
-    )}?loginToken=${loginToken}`;
+    return `${this.environmentService.getFrontAuthCallbackUrl()}?loginToken=${loginToken}`;
   }
 
   async verifyJwt(token: string, secret?: string) {

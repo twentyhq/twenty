@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import merge from 'lodash.merge';
 import {
   PrismaSelect,
   ModelSelectMap,
@@ -7,6 +8,14 @@ import {
 } from 'src/utils/prisma-select';
 
 export { PrismaSelect };
+
+const globalDefaultFields: DefaultFieldsMap = {
+  User: {
+    // Needed for displayName resolve field
+    firstName: true,
+    lastName: true,
+  },
+};
 
 export const PrismaSelector = createParamDecorator(
   (
@@ -20,7 +29,7 @@ export const PrismaSelector = createParamDecorator(
     const info = gqlCtx.getInfo();
 
     return new PrismaSelect(data.modelName, info, {
-      defaultFields: data.defaultFields,
+      defaultFields: merge(globalDefaultFields, data.defaultFields),
     });
   },
 );

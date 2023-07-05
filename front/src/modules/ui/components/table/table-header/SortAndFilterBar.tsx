@@ -1,20 +1,20 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import {
-  FilterableFieldsType,
-  SelectedFilterType,
-} from '@/filters-and-sorts/interfaces/filters/interface';
+import { useRemoveActiveTableFilter } from '@/filters-and-sorts/hooks/useRemoveActiveTableFilter';
 import { SelectedSortType } from '@/filters-and-sorts/interfaces/sorts/interface';
+import { activeTableFiltersScopedState } from '@/filters-and-sorts/states/activeTableFiltersScopedState';
+import { availableTableFiltersScopedState } from '@/filters-and-sorts/states/availableTableFiltersScopedState';
+import { getOperandLabel } from '@/filters-and-sorts/utils/getOperandLabel';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icons/index';
+import { TableContext } from '@/ui/tables/states/TableContext';
 
 import SortOrFilterChip from './SortOrFilterChip';
 
-type OwnProps<SortField, TData extends FilterableFieldsType> = {
+type OwnProps<SortField> = {
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
-  filters: Array<SelectedFilterType<TData>>;
-  onRemoveFilter: (filterId: SelectedFilterType<TData>['key']) => void;
   onCancelClick: () => void;
 };
 
@@ -59,14 +59,49 @@ const StyledCancelButton = styled.button`
   }
 `;
 
-function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
+function SortAndFilterBar<SortField>({
   sorts,
   onRemoveSort,
-  filters,
-  onRemoveFilter,
   onCancelClick,
-}: OwnProps<SortField, TData>) {
+}: OwnProps<SortField>) {
   const theme = useTheme();
+
+  const [activeTableFilters, setActiveTableFilters] = useRecoilScopedState(
+    activeTableFiltersScopedState,
+    TableContext,
+  );
+
+  const [availableTableFilters] = useRecoilScopedState(
+    availableTableFiltersScopedState,
+    TableContext,
+  );
+
+  const activeTableFiltersWithDefinition = activeTableFilters.map(
+    (activeTableFilter) => {
+      const tableFilterDefinition = availableTableFilters.find(
+        (availableTableFilter) => {
+          return availableTableFilter.field === activeTableFilter.field;
+        },
+      );
+
+      return {
+        ...activeTableFilter,
+        ...tableFilterDefinition,
+      };
+    },
+  );
+
+  const removeActiveTableFilter = useRemoveActiveTableFilter();
+
+  function handleCancelClick() {
+    setActiveTableFilters([]);
+    onCancelClick();
+  }
+
+  if (!activeTableFiltersWithDefinition.length && !sorts.length) {
+    return null;
+  }
+
   return (
     <StyledBar>
       <StyledChipcontainer>
@@ -87,23 +122,27 @@ function SortAndFilterBar<SortField, TData extends FilterableFieldsType>({
             />
           );
         })}
-        {filters.map((filter) => {
+        {activeTableFiltersWithDefinition.map((filter) => {
           return (
             <SortOrFilterChip
-              key={filter.key}
+              key={filter.field}
               labelKey={filter.label}
-              labelValue={`${filter.operand.label} ${filter.displayValue}`}
-              id={filter.key}
+              labelValue={`${getOperandLabel(filter.operand)} ${
+                filter.displayValue
+              }`}
+              id={filter.field}
               icon={filter.icon}
-              onRemove={() => onRemoveFilter(filter.key)}
+              onRemove={() => {
+                removeActiveTableFilter(filter.field);
+              }}
             />
           );
         })}
       </StyledChipcontainer>
-      {filters.length + sorts.length > 0 && (
+      {activeTableFilters.length + sorts.length > 0 && (
         <StyledCancelButton
           data-testid={'cancel-button'}
-          onClick={onCancelClick}
+          onClick={handleCancelClick}
         >
           Cancel
         </StyledCancelButton>

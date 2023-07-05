@@ -41,7 +41,7 @@ export function CompanyAccountOwnerPicker({ company }: OwnProps) {
       avatarType: 'rounded',
     }),
     orderByField: 'displayName',
-    searchOnFields: ['displayName'],
+    searchOnFields: ['firstName', 'lastName'],
   });
 
   async function handleEntitySelected(selectedUser: UserForSelect) {

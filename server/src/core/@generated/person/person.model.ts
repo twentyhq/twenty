@@ -11,20 +11,11 @@ export class Person {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
+    @Field(() => String, {nullable:false})
+    firstName!: string;
 
     @Field(() => String, {nullable:false})
-    firstname!: string;
-
-    @Field(() => String, {nullable:false})
-    lastname!: string;
+    lastName!: string;
 
     @Field(() => String, {nullable:false})
     email!: string;
@@ -40,6 +31,15 @@ export class Person {
 
     @HideField()
     workspaceId!: string;
+
+    @HideField()
+    deletedAt!: Date | null;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
     @Field(() => Company, {nullable:true})
     company?: Company | null;

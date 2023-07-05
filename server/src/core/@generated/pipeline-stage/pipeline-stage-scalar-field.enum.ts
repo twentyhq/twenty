@@ -2,14 +2,14 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum PipelineStageScalarFieldEnum {
     id = "id",
-    createdAt = "createdAt",
-    updatedAt = "updatedAt",
-    deletedAt = "deletedAt",
     name = "name",
     type = "type",
     color = "color",
     pipelineId = "pipelineId",
-    workspaceId = "workspaceId"
+    workspaceId = "workspaceId",
+    deletedAt = "deletedAt",
+    createdAt = "createdAt",
+    updatedAt = "updatedAt"
 }
 
 

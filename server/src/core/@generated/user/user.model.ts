@@ -15,26 +15,17 @@ export class User {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
-
-    @Field(() => Date, {nullable:true})
-    lastSeen!: Date | null;
-
-    @Field(() => Boolean, {nullable:false,defaultValue:false})
-    disabled!: boolean;
+    @Field(() => String, {nullable:false})
+    firstName!: string;
 
     @Field(() => String, {nullable:false})
-    displayName!: string;
+    lastName!: string;
 
     @Field(() => String, {nullable:false})
     email!: string;
+
+    @Field(() => Boolean, {nullable:false,defaultValue:false})
+    emailVerified!: boolean;
 
     @Field(() => String, {nullable:true})
     avatarUrl!: string | null;
@@ -45,14 +36,26 @@ export class User {
     @Field(() => String, {nullable:true})
     phoneNumber!: string | null;
 
+    @Field(() => Date, {nullable:true})
+    lastSeen!: Date | null;
+
+    @Field(() => Boolean, {nullable:false,defaultValue:false})
+    disabled!: boolean;
+
     @HideField()
     passwordHash!: string | null;
 
-    @Field(() => Boolean, {nullable:false,defaultValue:false})
-    emailVerified!: boolean;
-
     @Field(() => GraphQLJSON, {nullable:true})
     metadata!: any | null;
+
+    @HideField()
+    deletedAt!: Date | null;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
     @Field(() => WorkspaceMember, {nullable:true})
     workspaceMember?: WorkspaceMember | null;

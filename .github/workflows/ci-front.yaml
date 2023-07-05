@@ -12,6 +12,13 @@ jobs:
       REACT_APP_AUTH_URL: http://127.0.0.1:3000/auth
     steps:
       - uses: actions/checkout@v3
+        if: github.event_name == 'push'
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/checkout@v3
+        if: github.event_name == 'pull_request_target'
+        with:
+          ref: "refs/pull/${{ github.event.number }}/merge"
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -34,7 +41,7 @@ jobs:
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
-            "yarn coverage"
+            "yarn coverage-storybook"
       - name: Front / Run jest tests
         run: |
           cd front && yarn test

@@ -9,20 +9,20 @@ export class RefreshTokenMaxAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
-    createdAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    updatedAt?: true;
-
-    @Field(() => Boolean, {nullable:true})
     isRevoked?: true;
+
+    @HideField()
+    userId?: true;
 
     @Field(() => Boolean, {nullable:true})
     expiresAt?: true;
 
-    @Field(() => Boolean, {nullable:true})
+    @HideField()
     deletedAt?: true;
 
-    @HideField()
-    userId?: true;
+    @Field(() => Boolean, {nullable:true})
+    createdAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    updatedAt?: true;
 }

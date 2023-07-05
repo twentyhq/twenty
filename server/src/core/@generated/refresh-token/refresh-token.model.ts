@@ -10,23 +10,23 @@ export class RefreshToken {
     @Field(() => ID, {nullable:false})
     id!: string;
 
+    @Field(() => Boolean, {nullable:false,defaultValue:false})
+    isRevoked!: boolean;
+
+    @HideField()
+    userId!: string;
+
+    @Field(() => Date, {nullable:false})
+    expiresAt!: Date;
+
+    @HideField()
+    deletedAt!: Date | null;
+
     @Field(() => Date, {nullable:false})
     createdAt!: Date;
 
     @Field(() => Date, {nullable:false})
     updatedAt!: Date;
-
-    @Field(() => Boolean, {nullable:false,defaultValue:false})
-    isRevoked!: boolean;
-
-    @Field(() => Date, {nullable:false})
-    expiresAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
-
-    @HideField()
-    userId!: string;
 
     @HideField()
     user?: User;

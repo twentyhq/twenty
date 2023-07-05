@@ -15,9 +15,9 @@ const StyledContainer = styled.div`
   justify-content: space-between;
   margin-left: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   user-select: none;
-  width: 100%;
 `;
 
 const LogoAndNameContainer = styled.div`

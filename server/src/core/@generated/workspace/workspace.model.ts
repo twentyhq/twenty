@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { HideField } from '@nestjs/graphql';
 import { WorkspaceMember } from '../workspace-member/workspace-member.model';
 import { Company } from '../company/company.model';
 import { Person } from '../person/person.model';
@@ -10,22 +11,12 @@ import { Pipeline } from '../pipeline/pipeline.model';
 import { PipelineStage } from '../pipeline-stage/pipeline-stage.model';
 import { PipelineProgress } from '../pipeline-progress/pipeline-progress.model';
 import { WorkspaceCount } from './workspace-count.output';
-import { HideField } from '@nestjs/graphql';
 
 @ObjectType({})
 export class Workspace {
 
     @Field(() => ID, {nullable:false})
     id!: string;
-
-    @Field(() => Date, {nullable:false})
-    createdAt!: Date;
-
-    @Field(() => Date, {nullable:false})
-    updatedAt!: Date;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt!: Date | null;
 
     @Field(() => String, {nullable:false})
     domainName!: string;
@@ -35,6 +26,15 @@ export class Workspace {
 
     @Field(() => String, {nullable:true})
     logo!: string | null;
+
+    @HideField()
+    deletedAt!: Date | null;
+
+    @Field(() => Date, {nullable:false})
+    createdAt!: Date;
+
+    @Field(() => Date, {nullable:false})
+    updatedAt!: Date;
 
     @Field(() => [WorkspaceMember], {nullable:true})
     workspaceMember?: Array<WorkspaceMember>;

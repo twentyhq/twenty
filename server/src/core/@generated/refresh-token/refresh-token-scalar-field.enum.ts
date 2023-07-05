@@ -2,12 +2,12 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum RefreshTokenScalarFieldEnum {
     id = "id",
-    createdAt = "createdAt",
-    updatedAt = "updatedAt",
     isRevoked = "isRevoked",
+    userId = "userId",
     expiresAt = "expiresAt",
     deletedAt = "deletedAt",
-    userId = "userId"
+    createdAt = "createdAt",
+    updatedAt = "updatedAt"
 }
 
 

@@ -3,8 +3,8 @@ import { Company, Person } from '~/generated/graphql';
 type MockedPerson = Pick<
   Person,
   | 'id'
-  | 'firstname'
-  | 'lastname'
+  | 'firstName'
+  | 'lastName'
   | 'email'
   | '__typename'
   | 'phone'
@@ -19,8 +19,8 @@ export const mockedPeopleData: Array<MockedPerson> = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
     __typename: 'Person',
-    firstname: 'Alexandre',
-    lastname: 'Prot',
+    firstName: 'Alexandre',
+    lastName: 'Prot',
     email: 'alexandre@qonto.com',
     company: {
       id: '5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
@@ -37,8 +37,8 @@ export const mockedPeopleData: Array<MockedPerson> = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
     __typename: 'Person',
-    firstname: 'John',
-    lastname: 'Doe',
+    firstName: 'John',
+    lastName: 'Doe',
     email: 'john@linkedin.com',
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6e',
@@ -55,8 +55,8 @@ export const mockedPeopleData: Array<MockedPerson> = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6f',
     __typename: 'Person',
-    firstname: 'Jane',
-    lastname: 'Doe',
+    firstName: 'Jane',
+    lastName: 'Doe',
     email: 'jane@sequoiacap.com',
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6g',
@@ -73,8 +73,8 @@ export const mockedPeopleData: Array<MockedPerson> = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6h',
     __typename: 'Person',
-    firstname: 'Janice',
-    lastname: 'Dane',
+    firstName: 'Janice',
+    lastName: 'Dane',
     email: 'janice@facebook.com',
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6i',

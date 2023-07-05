@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 import { WorkspaceMemberUncheckedCreateNestedOneWithoutUserInput } from '../workspace-member/workspace-member-unchecked-create-nested-one-without-user.input';
@@ -10,46 +11,67 @@ import { CommentUncheckedCreateNestedManyWithoutAuthorInput } from '../comment/c
 export class UserUncheckedCreateWithoutRefreshTokensInput {
 
     @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
     id?: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    firstName!: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    lastName!: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsEmail()
+    email!: string;
+
+    @Field(() => Boolean, {nullable:true})
+    @Validator.IsBoolean()
+    @Validator.IsOptional()
+    emailVerified?: boolean;
+
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    avatarUrl?: string;
+
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    locale!: string;
+
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    phoneNumber?: string;
+
+    @Field(() => Date, {nullable:true})
+    @Validator.IsDate()
+    @Validator.IsOptional()
+    lastSeen?: Date | string;
+
+    @Field(() => Boolean, {nullable:true})
+    @Validator.IsBoolean()
+    @Validator.IsOptional()
+    disabled?: boolean;
+
+    @HideField()
+    passwordHash?: string;
+
+    @Field(() => GraphQLJSON, {nullable:true})
+    @Validator.IsJSON()
+    @Validator.IsOptional()
+    metadata?: any;
+
+    @HideField()
+    deletedAt?: Date | string;
 
     @Field(() => Date, {nullable:true})
     createdAt?: Date | string;
 
     @Field(() => Date, {nullable:true})
     updatedAt?: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    deletedAt?: Date | string;
-
-    @Field(() => Date, {nullable:true})
-    lastSeen?: Date | string;
-
-    @Field(() => Boolean, {nullable:true})
-    disabled?: boolean;
-
-    @Field(() => String, {nullable:false})
-    displayName!: string;
-
-    @Field(() => String, {nullable:false})
-    email!: string;
-
-    @Field(() => String, {nullable:true})
-    avatarUrl?: string;
-
-    @Field(() => String, {nullable:false})
-    locale!: string;
-
-    @Field(() => String, {nullable:true})
-    phoneNumber?: string;
-
-    @HideField()
-    passwordHash?: string;
-
-    @Field(() => Boolean, {nullable:true})
-    emailVerified?: boolean;
-
-    @Field(() => GraphQLJSON, {nullable:true})
-    metadata?: any;
 
     @HideField()
     workspaceMember?: WorkspaceMemberUncheckedCreateNestedOneWithoutUserInput;

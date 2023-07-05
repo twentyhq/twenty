@@ -3,7 +3,7 @@ import { TokenService } from './token.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 describe('TokenService', () => {
   let service: TokenService;
@@ -17,7 +17,7 @@ describe('TokenService', () => {
           useValue: {},
         },
         {
-          provide: ConfigService,
+          provide: EnvironmentService,
           useValue: {},
         },
         {

@@ -3,8 +3,8 @@ import { gql } from '@apollo/client';
 export const UPDATE_PERSON = gql`
   mutation UpdatePeople(
     $id: String
-    $firstname: String
-    $lastname: String
+    $firstName: String
+    $lastName: String
     $phone: String
     $city: String
     $companyId: String
@@ -17,13 +17,14 @@ export const UPDATE_PERSON = gql`
         city: { set: $city }
         company: { connect: { id: $companyId } }
         email: { set: $email }
-        firstname: { set: $firstname }
+        firstName: { set: $firstName }
         id: { set: $id }
-        lastname: { set: $lastname }
+        lastName: { set: $lastName }
         phone: { set: $phone }
         createdAt: { set: $createdAt }
       }
     ) {
+      id
       city
       company {
         domainName
@@ -31,9 +32,8 @@ export const UPDATE_PERSON = gql`
         id
       }
       email
-      firstname
-      id
-      lastname
+      firstName
+      lastName
       phone
       createdAt
     }
@@ -43,8 +43,8 @@ export const UPDATE_PERSON = gql`
 export const INSERT_PERSON = gql`
   mutation InsertPerson(
     $id: String!
-    $firstname: String!
-    $lastname: String!
+    $firstName: String!
+    $lastName: String!
     $phone: String!
     $city: String!
     $email: String!
@@ -53,14 +53,15 @@ export const INSERT_PERSON = gql`
     createOnePerson(
       data: {
         id: $id
-        firstname: $firstname
-        lastname: $lastname
+        firstName: $firstName
+        lastName: $lastName
         phone: $phone
         city: $city
         email: $email
         createdAt: $createdAt
       }
     ) {
+      id
       city
       company {
         domainName
@@ -68,9 +69,8 @@ export const INSERT_PERSON = gql`
         id
       }
       email
-      firstname
-      id
-      lastname
+      firstName
+      lastName
       phone
       createdAt
     }

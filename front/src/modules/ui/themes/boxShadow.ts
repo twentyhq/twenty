@@ -1,6 +1,7 @@
 import { grayScale, rgba } from './colors';
 
 export const boxShadowLight = {
+  extraLight: `0px 1px 0px 0px ${rgba(grayScale.gray100, 0.04)}`,
   light: `0px 2px 4px 0px ${rgba(
     grayScale.gray100,
     0.04,
@@ -12,6 +13,7 @@ export const boxShadowLight = {
 };
 
 export const boxShadowDark = {
+  extraLight: `0px 1px 0px 0px ${rgba(grayScale.gray100, 0.04)}`,
   light: `0px 2px 4px 0px ${rgba(
     grayScale.gray100,
     0.04,
