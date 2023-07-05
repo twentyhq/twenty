@@ -21,8 +21,22 @@ export const GET_PIPELINES = gql`
   }
 `;
 
-export const UPDATE_PIPELINE_STAGE = gql`
-  mutation UpdateOnePipelineProgress($id: String, $pipelineStageId: String) {
+export const UPDATE_PIPELINE_PROGRESS = gql`
+  mutation UpdateOnePipelineProgress($id: String, $amount: Int) {
+    updateOnePipelineProgress(
+      where: { id: $id }
+      data: { amount: { set: $amount } }
+    ) {
+      id
+    }
+  }
+`;
+
+export const UPDATE_PIPELINE_PROGRESS_STAGE = gql`
+  mutation UpdateOnePipelineProgressStage(
+    $id: String
+    $pipelineStageId: String
+  ) {
     updateOnePipelineProgress(
       where: { id: $id }
       data: { pipelineStage: { connect: { id: $pipelineStageId } } }

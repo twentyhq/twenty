@@ -38,7 +38,10 @@ type BoardProps = {
   columns: Omit<Column, 'itemKeys'>[];
   initialBoard: Column[];
   initialItems: CompanyProgressDict;
-  onUpdate?: (itemKey: string, columnId: Column['id']) => Promise<void>;
+  onMoveCard?: (itemKey: string, columnId: Column['id']) => Promise<void>;
+  onUpdateCard?: (
+    pipelineProgress: Pick<PipelineProgress, 'id' | 'amount'>,
+  ) => Promise<void>;
 };
 
 const StyledPlaceholder = styled.div`
@@ -67,7 +70,8 @@ export function Board({
   columns,
   initialBoard,
   initialItems,
-  onUpdate,
+  onMoveCard,
+  onUpdateCard,
   pipelineId,
 }: BoardProps) {
   const [board, setBoard] = useRecoilState(boardColumnsState);
@@ -101,13 +105,13 @@ export function Board({
         const destinationColumnId = result.destination?.droppableId;
         draggedEntityId &&
           destinationColumnId &&
-          onUpdate &&
-          (await onUpdate(draggedEntityId, destinationColumnId));
+          onMoveCard &&
+          (await onMoveCard(draggedEntityId, destinationColumnId));
       } catch (e) {
         console.error(e);
       }
     },
-    [board, onUpdate, setBoard],
+    [board, onMoveCard, setBoard],
   );
 
   function handleSelect(itemKey: string) {
@@ -150,6 +154,7 @@ export function Board({
                                   boardItems[itemKey].pipelineProgress
                                 }
                                 selected={selectedBoardItems.includes(itemKey)}
+                                onUpdateCard={onUpdateCard}
                                 onSelect={() => handleSelect(itemKey)}
                               />
                             </div>

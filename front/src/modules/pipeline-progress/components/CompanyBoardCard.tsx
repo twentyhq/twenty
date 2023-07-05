@@ -7,6 +7,9 @@ import {
   IconUserCircle,
 } from '@tabler/icons-react';
 
+import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
+import { TextInput } from '@/ui/components/inputs/TextInput';
+
 import { Company, PipelineProgress } from '../../../generated/graphql';
 import { PersonChip } from '../../people/components/PersonChip';
 import { Checkbox } from '../../ui/components/form/Checkbox';
@@ -75,11 +78,13 @@ export function CompanyBoardCard({
   pipelineProgress,
   selected,
   onSelect,
+  onUpdateCard,
 }: {
   company: CompanyProp;
   pipelineProgress: PipelineProgressProp;
   selected: boolean;
   onSelect: (company: CompanyProp) => void;
+  onUpdateCard: any;
 }) {
   const theme = useTheme();
   return (
@@ -98,6 +103,14 @@ export function CompanyBoardCard({
           <span>
             <IconCurrencyDollar size={theme.icon.size.md} />
             {pipelineProgress.amount}
+            <TextInput
+              value={pipelineProgress.amount?.toString() || '0'}
+              placeholder="Amount"
+              onChange={onUpdateCard({
+                id: pipelineProgress.id,
+                amount: parseInt(pipelineProgress.amount?.toString() || '0'),
+              })}
+            />
           </span>
           <span>
             <IconCalendarEvent size={theme.icon.size.md} />
