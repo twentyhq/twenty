@@ -8,6 +8,7 @@ jobs:
   server-test:
     runs-on: ubuntu-latest
     steps:
+      - run: echo "GITHUB_HEAD_REF: ${{ github.head_ref }}"
       - uses: actions/checkout@v3
         if: github.event_name == 'push'
         with:
