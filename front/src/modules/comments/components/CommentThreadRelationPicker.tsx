@@ -231,6 +231,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
               entitiesToSelect,
               filteredSelectedEntities,
               selectedEntities,
+              loading: false, // TODO implement skeleton loading
             }}
             onItemCheckChange={handleCheckItemChange}
             onSearchFilterChange={handleFilterChange}

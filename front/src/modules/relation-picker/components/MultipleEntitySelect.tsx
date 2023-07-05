@@ -15,6 +15,7 @@ export type EntitiesForMultipleEntitySelect<
   selectedEntities: CustomEntityForSelect[];
   filteredSelectedEntities: CustomEntityForSelect[];
   entitiesToSelect: CustomEntityForSelect[];
+  loading: boolean;
 };
 
 export function MultipleEntitySelect<
