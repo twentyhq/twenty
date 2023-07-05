@@ -10,8 +10,8 @@ export class UpdateManyCompanyArgs {
 
     @Field(() => CompanyUpdateManyMutationInput, {nullable:false})
     @Type(() => CompanyUpdateManyMutationInput)
-    @Type(() => CompanyUpdateManyMutationInput)
     @ValidateNested({each: true})
+    @Type(() => CompanyUpdateManyMutationInput)
     data!: CompanyUpdateManyMutationInput;
 
     @Field(() => CompanyWhereInput, {nullable:true})

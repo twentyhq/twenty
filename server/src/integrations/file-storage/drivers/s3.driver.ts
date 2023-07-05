@@ -1,28 +1,26 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { MODULE_OPTIONS_TOKEN } from './s3-storage.module-definition';
-import { S3StorageModuleOptions } from './interfaces';
 import {
   CreateBucketCommandInput,
   GetObjectCommand,
-  GetObjectCommandInput,
-  GetObjectCommandOutput,
   HeadBucketCommandInput,
   NotFound,
   PutObjectCommand,
-  PutObjectCommandInput,
-  PutObjectCommandOutput,
   S3,
+  S3ClientConfig,
 } from '@aws-sdk/client-s3';
+import { StorageDriver } from './interfaces/storage-driver.interface';
+import { Readable } from 'stream';
+import { kebabCase } from 'src/utils/kebab-case';
 
-@Injectable()
-export class S3StorageService {
+export interface S3DriverOptions extends S3ClientConfig {
+  bucketName: string;
+  region: string;
+}
+
+export class S3Driver implements StorageDriver {
   private s3Client: S3;
   private bucketName: string;
 
-  constructor(
-    @Inject(MODULE_OPTIONS_TOKEN)
-    private readonly options: S3StorageModuleOptions,
-  ) {
+  constructor(options: S3DriverOptions) {
     const { bucketName, region, ...s3Options } = options;
 
     if (!bucketName || !region) {
@@ -37,28 +35,39 @@ export class S3StorageService {
     return this.s3Client;
   }
 
-  async uploadFile(
-    params: Omit<PutObjectCommandInput, 'Bucket'>,
-  ): Promise<PutObjectCommandOutput> {
+  async write(params: {
+    file: Buffer | Uint8Array | string;
+    name: string;
+    folder: string;
+    mimeType: string | undefined;
+  }): Promise<void> {
     const command = new PutObjectCommand({
-      ...params,
+      Key: `${kebabCase(params.folder)}/${params.name}`,
+      Body: params.file,
+      ContentType: params.mimeType,
       Bucket: this.bucketName,
     });
 
     await this.createBucket({ Bucket: this.bucketName });
 
-    return this.s3Client.send(command);
+    await this.s3Client.send(command);
   }
 
-  async getFile(
-    params: Omit<GetObjectCommandInput, 'Bucket'>,
-  ): Promise<GetObjectCommandOutput> {
+  async read(params: {
+    folderPath: string;
+    filename: string;
+  }): Promise<Readable> {
     const command = new GetObjectCommand({
-      ...params,
+      Key: `${params.folderPath}/${params.filename}`,
       Bucket: this.bucketName,
     });
+    const file = await this.s3Client.send(command);
 
-    return this.s3Client.send(command);
+    if (!file || !file.Body || !(file.Body instanceof Readable)) {
+      throw new Error('Unable to get file stream');
+    }
+
+    return Readable.from(file.Body);
   }
 
   async checkBucketExists(args: HeadBucketCommandInput) {

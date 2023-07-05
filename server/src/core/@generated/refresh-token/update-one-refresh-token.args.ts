@@ -10,8 +10,8 @@ export class UpdateOneRefreshTokenArgs {
 
     @Field(() => RefreshTokenUpdateInput, {nullable:false})
     @Type(() => RefreshTokenUpdateInput)
-    @Type(() => RefreshTokenUpdateInput)
     @ValidateNested({each: true})
+    @Type(() => RefreshTokenUpdateInput)
     data!: RefreshTokenUpdateInput;
 
     @Field(() => RefreshTokenWhereUniqueInput, {nullable:false})

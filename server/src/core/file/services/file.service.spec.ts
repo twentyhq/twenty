@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FileService } from './file.service';
-import { S3StorageService } from 'src/integrations/s3-storage/s3-storage.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { FileStorageService } from 'src/integrations/file-storage/file-storage.service';
 
 describe('FileService', () => {
   let service: FileService;
@@ -11,7 +11,7 @@ describe('FileService', () => {
       providers: [
         FileService,
         {
-          provide: S3StorageService,
+          provide: FileStorageService,
           useValue: {},
         },
         {
