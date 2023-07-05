@@ -1,22 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { S3StorageService } from './s3-storage.service';
-import { MODULE_OPTIONS_TOKEN } from './s3-storage.module-definition';
+import { FileStorageService } from './file-storage.service';
+import { STORAGE_DRIVER } from './file-storage.constants';
 
-describe('S3StorageService', () => {
-  let service: S3StorageService;
+describe('FileStorageService', () => {
+  let service: FileStorageService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        S3StorageService,
+        FileStorageService,
         {
-          provide: MODULE_OPTIONS_TOKEN,
+          provide: STORAGE_DRIVER,
           useValue: {},
         },
       ],
     }).compile();
 
-    service = module.get<S3StorageService>(S3StorageService);
+    service = module.get<FileStorageService>(FileStorageService);
   });
 
   it('should be defined', () => {

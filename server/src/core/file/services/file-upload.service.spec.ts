@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FileUploadService } from './file-upload.service';
-import { S3StorageService } from 'src/integrations/s3-storage/s3-storage.service';
-import { LocalStorageService } from 'src/integrations/local-storage/local-storage.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { FileStorageService } from 'src/integrations/file-storage/file-storage.service';
 
 describe('FileUploadService', () => {
   let service: FileUploadService;
@@ -12,11 +11,7 @@ describe('FileUploadService', () => {
       providers: [
         FileUploadService,
         {
-          provide: S3StorageService,
-          useValue: {},
-        },
-        {
-          provide: LocalStorageService,
+          provide: FileStorageService,
           useValue: {},
         },
         {

@@ -9,7 +9,7 @@ export class CreateOneWorkspaceArgs {
 
     @Field(() => WorkspaceCreateInput, {nullable:false})
     @Type(() => WorkspaceCreateInput)
-    @Type(() => WorkspaceCreateInput)
     @ValidateNested({each: true})
+    @Type(() => WorkspaceCreateInput)
     data!: WorkspaceCreateInput;
 }

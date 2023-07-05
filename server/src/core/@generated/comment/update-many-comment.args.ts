@@ -10,8 +10,8 @@ export class UpdateManyCommentArgs {
 
     @Field(() => CommentUpdateManyMutationInput, {nullable:false})
     @Type(() => CommentUpdateManyMutationInput)
-    @Type(() => CommentUpdateManyMutationInput)
     @ValidateNested({each: true})
+    @Type(() => CommentUpdateManyMutationInput)
     data!: CommentUpdateManyMutationInput;
 
     @Field(() => CommentWhereInput, {nullable:true})

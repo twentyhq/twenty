@@ -10,8 +10,8 @@ export class UpdateOneCommentArgs {
 
     @Field(() => CommentUpdateInput, {nullable:false})
     @Type(() => CommentUpdateInput)
-    @Type(() => CommentUpdateInput)
     @ValidateNested({each: true})
+    @Type(() => CommentUpdateInput)
     data!: CommentUpdateInput;
 
     @Field(() => CommentWhereUniqueInput, {nullable:false})

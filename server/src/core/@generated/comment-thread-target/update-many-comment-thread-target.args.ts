@@ -10,8 +10,8 @@ export class UpdateManyCommentThreadTargetArgs {
 
     @Field(() => CommentThreadTargetUpdateManyMutationInput, {nullable:false})
     @Type(() => CommentThreadTargetUpdateManyMutationInput)
-    @Type(() => CommentThreadTargetUpdateManyMutationInput)
     @ValidateNested({each: true})
+    @Type(() => CommentThreadTargetUpdateManyMutationInput)
     data!: CommentThreadTargetUpdateManyMutationInput;
 
     @Field(() => CommentThreadTargetWhereInput, {nullable:true})

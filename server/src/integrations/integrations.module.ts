@@ -1,59 +1,61 @@
 import { Module } from '@nestjs/common';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-import { S3StorageModule } from './s3-storage/s3-storage.module';
-import { S3StorageModuleOptions } from './s3-storage/interfaces';
-import { LocalStorageModule } from './local-storage/local-storage.module';
-import { LocalStorageModuleOptions } from './local-storage/interfaces';
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
+import { FileStorageModule } from './file-storage/file-storage.module';
+import { FileStorageModuleOptions } from './file-storage/interfaces';
+import { StorageType } from './environment/interfaces/storage.interface';
 
 /**
- * S3 Storage Module factory
- * @param config
- * @returns S3ModuleOptions
- */
-const S3StorageModuleFactory = async (
-  environmentService: EnvironmentService,
-): Promise<S3StorageModuleOptions> => {
-  const bucketName = environmentService.getStorageS3Name();
-  const region = environmentService.getStorageS3Region();
-
-  return {
-    bucketName: bucketName ?? '',
-    credentials: fromNodeProviderChain({
-      clientConfig: { region },
-    }),
-    forcePathStyle: true,
-    region: region ?? '',
-  };
-};
-
-/**
- * LocalStorage Module factory
+ * FileStorage Module factory
  * @param environment
- * @returns LocalStorageModuleOptions
+ * @returns FileStorageModuleOptions
  */
-const localStorageModuleFactory = async (
+const fileStorageModuleFactory = async (
   environmentService: EnvironmentService,
-): Promise<LocalStorageModuleOptions> => {
-  const storagePath = environmentService.getStorageLocalPath();
+): Promise<FileStorageModuleOptions> => {
+  const type = environmentService.getStorageType();
 
-  return {
-    storagePath: process.cwd() + '/' + storagePath,
-  };
+  switch (type) {
+    case undefined:
+    case StorageType.Local: {
+      const storagePath = environmentService.getStorageLocalPath();
+
+      return {
+        type: StorageType.Local,
+        options: {
+          storagePath: process.cwd() + '/' + storagePath,
+        },
+      };
+    }
+    case StorageType.S3: {
+      const bucketName = environmentService.getStorageS3Name();
+      const region = environmentService.getStorageS3Region();
+
+      return {
+        type: StorageType.S3,
+        options: {
+          bucketName: bucketName ?? '',
+          credentials: fromNodeProviderChain({
+            clientConfig: { region },
+          }),
+          forcePathStyle: true,
+          region: region ?? '',
+        },
+      };
+    }
+    default:
+      throw new Error(`Invalid storage type (${type}), check your .env file`);
+  }
 };
 
 @Module({
   imports: [
-    S3StorageModule.forRootAsync({
-      useFactory: S3StorageModuleFactory,
-      inject: [EnvironmentService],
-    }),
-    LocalStorageModule.forRootAsync({
-      useFactory: localStorageModuleFactory,
-      inject: [EnvironmentService],
-    }),
     EnvironmentModule.forRoot({}),
+    FileStorageModule.forRootAsync({
+      useFactory: fileStorageModuleFactory,
+      inject: [EnvironmentService],
+    }),
   ],
   exports: [],
   providers: [],
