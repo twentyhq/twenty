@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        if: github.event_name != 'pull_request_target'
+        if: github.event_name == 'push'
         with:
           ref: ${{ github.head_ref || github.ref_name }}
       - uses: actions/checkout@v3
-        if: github.head_ref == 'pull_request_target'
+        if: github.event_name == 'pull_request_target'
         with:
           ref: "refs/pull/${{ github.event.number }}/merge"
       - name: Setup Node.js
