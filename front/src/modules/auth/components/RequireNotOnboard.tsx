@@ -29,7 +29,7 @@ const FadeInStyle = styled.div`
   opacity: 0;
 `;
 
-export function RequireNotAuth({
+export function RequireNotOnboard({
   children,
 }: {
   children: JSX.Element;

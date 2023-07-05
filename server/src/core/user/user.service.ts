@@ -56,22 +56,10 @@ export class UserService {
     args: Prisma.SelectSubset<T, Prisma.UserCreateArgs>,
   ): Promise<Prisma.UserGetPayload<T>> {
     assert(args.data.email, 'email is missing', BadRequestException);
-    assert(args.data.firstName, 'firstName is missing', BadRequestException);
-    assert(args.data.lastName, 'lastName is missing', BadRequestException);
 
     const emailDomain = args.data.email.split('@')[1];
 
     assert(emailDomain, 'Email is malformed', BadRequestException);
-
-    const workspace = await this.workspaceService.findUnique({
-      where: { domainName: emailDomain },
-    });
-
-    assert(
-      workspace,
-      'User email domain does not match an existing workspace',
-      ForbiddenException,
-    );
 
     const user = await this.prismaService.user.upsert({
       where: {
@@ -79,12 +67,6 @@ export class UserService {
       },
       create: {
         ...(args.data as Prisma.UserCreateInput),
-        workspaceMember: {
-          connectOrCreate: {
-            where: { id: workspace.id },
-            create: { workspaceId: workspace.id },
-          },
-        },
         locale: 'en',
       },
       update: {},

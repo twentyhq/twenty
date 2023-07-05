@@ -2176,6 +2176,11 @@ export type CreateEventMutationVariables = Exact<{
 
 export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'Analytics', success: boolean } };
 
+export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', display_google_login: boolean, prefill_login_with_seed: boolean } };
+
 export type ChallengeMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -2470,6 +2475,41 @@ export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
 export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
 export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
+export const GetClientConfigDocument = gql`
+    query GetClientConfig {
+  clientConfig {
+    display_google_login
+    prefill_login_with_seed
+  }
+}
+    `;
+
+/**
+ * __useGetClientConfigQuery__
+ *
+ * To run a query within a React component, call `useGetClientConfigQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetClientConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetClientConfigQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetClientConfigQuery(baseOptions?: Apollo.QueryHookOptions<GetClientConfigQuery, GetClientConfigQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(GetClientConfigDocument, options);
+      }
+export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClientConfigQuery, GetClientConfigQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(GetClientConfigDocument, options);
+        }
+export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
+export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
+export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
 export const ChallengeDocument = gql`
     mutation Challenge($email: String!, $password: String!) {
   challenge(email: $email, password: $password) {

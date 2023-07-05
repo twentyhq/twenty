@@ -4,7 +4,11 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
+
+import { useIsLogged } from '../hooks/useIsLogged';
 import { currentUserState } from '../states/currentUserState';
+import { isMockModeState } from '../states/isMockModeState';
 
 const EmptyContainer = styled.div`
   align-items: center;
@@ -35,19 +39,52 @@ export function RequireOnboarding({
 }): JSX.Element {
   const navigate = useNavigate();
 
+  const [, setMockMode] = useRecoilState(isMockModeState);
+  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
+    captureHotkeyTypeInFocusState,
+  );
   const [currentUser] = useRecoilState(currentUserState);
+
+  const isLogged = useIsLogged();
+
+  useEffect(() => {
+    if (!isLogged) {
+      navigate('/auth');
+    } else if (!currentUser?.workspaceMember) {
+      navigate('/auth/create/workspace');
+    } else if (!currentUser?.firstName || !currentUser?.lastName) {
+      navigate('/auth/create/profile');
+    }
+  }, [
+    currentUser?.firstName,
+    currentUser?.lastName,
+    currentUser?.workspaceMember,
+    isLogged,
+    navigate,
+  ]);
 
   useEffect(() => {
     if (
-      !currentUser?.firstName ||
-      !currentUser?.lastName ||
-      !currentUser?.workspaceMember
+      isLogged &&
+      currentUser?.workspaceMember &&
+      currentUser?.firstName &&
+      currentUser?.lastName
     ) {
-      navigate('/auth/create/workspace');
+      setMockMode(false);
+      setCaptureHotkeyTypeInFocus(false);
     }
-  }, [currentUser, navigate]);
+  }, [
+    setMockMode,
+    setCaptureHotkeyTypeInFocus,
+    isLogged,
+    currentUser?.workspaceMember,
+    currentUser?.firstName,
+    currentUser?.lastName,
+    navigate,
+  ]);
 
   if (
+    !isLogged ||
     !currentUser?.firstName ||
     !currentUser?.lastName ||
     !currentUser?.workspaceMember
@@ -55,7 +92,7 @@ export function RequireOnboarding({
     return (
       <EmptyContainer>
         <FadeInStyle>
-          Please hold on a moment, we're directing you to our onboarding page...
+          Please hold on a moment, we're directing you to our login page...
         </FadeInStyle>
       </EmptyContainer>
     );

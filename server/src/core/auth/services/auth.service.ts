@@ -7,7 +7,6 @@ import {
 import { ChallengeInput } from '../dto/challenge.input';
 import { UserService } from 'src/core/user/user.service';
 import { assert } from 'src/utils/assert';
-import { RegisterInput } from '../dto/register.input';
 import { PASSWORD_REGEX, compareHash, hashPassword } from '../auth.util';
 import { Verify } from '../dto/verify.entity';
 import { TokenService } from './token.service';
@@ -26,43 +25,35 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async register(registerInput: RegisterInput) {
-    const existingUser = await this.userService.findUnique({
-      where: {
-        email: registerInput.email,
-      },
-    });
-
-    assert(!existingUser, 'This user already exist', NotFoundException);
-    assert(
-      PASSWORD_REGEX.test(registerInput.password),
-      'Password too weak',
-      BadRequestException,
-    );
-
-    const passwordHash = await hashPassword(registerInput.password);
-
-    const user = await this.userService.createUser({
-      data: {
-        firstName: registerInput.firstName,
-        lastName: registerInput.lastName,
-        email: registerInput.email,
-        passwordHash,
-        locale: 'en',
-      },
-    });
-
-    return user;
-  }
-
   async challenge(challengeInput: ChallengeInput) {
-    const user = await this.userService.findUnique({
+    let user = await this.userService.findUnique({
       where: {
         email: challengeInput.email,
       },
     });
 
-    assert(user, "This user doesn't exist", NotFoundException);
+    if (!user) {
+      assert(
+        PASSWORD_REGEX.test(challengeInput.password),
+        'Password too weak',
+        BadRequestException,
+      );
+
+      const passwordHash = await hashPassword(challengeInput.password);
+
+      console.log('1');
+      user = await this.userService.createUser({
+        data: {
+          firstName: '',
+          lastName: '',
+          email: challengeInput.email,
+          passwordHash,
+          locale: 'en',
+        },
+      });
+      console.log('2');
+    }
+
     assert(user.passwordHash, 'Incorrect login method', ForbiddenException);
 
     const isValid = await compareHash(
