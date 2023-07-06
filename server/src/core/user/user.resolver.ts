@@ -28,6 +28,7 @@ import { accessibleBy } from '@casl/prisma';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { assert } from 'src/utils/assert';
 import { UpdateOneUserArgs } from '../@generated/user/update-one-user.args';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
@@ -99,7 +100,7 @@ export class UserResolver {
       where: args.where,
       data: args.data,
       select: prismaSelect.value,
-    });
+    } as Prisma.UserUpdateArgs);
   }
 
   @ResolveField(() => String, {

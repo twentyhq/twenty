@@ -7,7 +7,6 @@ import {
 import { PrismaClient } from '@prisma/client';
 import { createPrismaQueryEventHandler } from 'prisma-query-log';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { Stage } from 'src/integrations/environment/interfaces/stage.interface';
 
 // TODO: Check if this is still needed
 if (!global.prisma) {
@@ -20,21 +19,20 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   private readonly logger = new Logger(PrismaService.name);
 
   constructor(private readonly environmentService: EnvironmentService) {
-    const stage = environmentService.getStage();
+    const debugMode = environmentService.getDebugMode();
     super({
       errorFormat: 'minimal',
-      log:
-        stage === Stage.Development
-          ? [
-              {
-                level: 'query',
-                emit: 'event',
-              },
-            ]
-          : undefined,
+      log: debugMode
+        ? [
+            {
+              level: 'query',
+              emit: 'event',
+            },
+          ]
+        : undefined,
     });
 
-    if (stage === Stage.Development) {
+    if (debugMode) {
       const logHandler = createPrismaQueryEventHandler({
         logger: (query: string) => {
           this.logger.log(query, 'PrismaClient');

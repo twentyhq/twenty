@@ -47,7 +47,7 @@ export class AuthService {
           passwordHash,
           locale: 'en',
         },
-      });
+      } as Prisma.UserCreateArgs);
     }
 
     assert(user, "This user doesn't exist", NotFoundException);

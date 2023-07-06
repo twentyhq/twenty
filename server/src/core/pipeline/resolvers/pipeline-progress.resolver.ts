@@ -25,6 +25,7 @@ import {
   PrismaSelector,
   PrismaSelect,
 } from 'src/decorators/prisma-select.decorator';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => PipelineProgress)
@@ -71,7 +72,7 @@ export class PipelineProgressResolver {
       where: args.where,
       data: args.data,
       select: prismaSelect.value,
-    });
+    } as Prisma.PipelineProgressUpdateArgs);
   }
 
   @Mutation(() => AffectedRows, {
@@ -104,6 +105,6 @@ export class PipelineProgressResolver {
         ...{ workspace: { connect: { id: workspace.id } } },
       },
       select: prismaSelect.value,
-    });
+    } as Prisma.PipelineProgressCreateArgs);
   }
 }

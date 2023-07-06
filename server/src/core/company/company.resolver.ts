@@ -8,7 +8,7 @@ import { UpdateOneCompanyArgs } from '../../core/@generated/company/update-one-c
 import { CreateOneCompanyArgs } from '../../core/@generated/company/create-one-company.args';
 import { AffectedRows } from '../../core/@generated/prisma/affected-rows.output';
 import { DeleteManyCompanyArgs } from '../../core/@generated/company/delete-many-company.args';
-import { Workspace } from '@prisma/client';
+import { Prisma, Workspace } from '@prisma/client';
 import { UpdateOneGuard } from '../../guards/update-one.guard';
 import { DeleteManyGuard } from '../../guards/delete-many.guard';
 import { CreateOneGuard } from '../../guards/create-one.guard';
@@ -77,7 +77,7 @@ export class CompanyResolver {
       where: args.where,
       data: args.data,
       select: prismaSelect.value,
-    });
+    } as Prisma.CompanyUpdateArgs);
   }
 
   @UseGuards(DeleteManyGuard)
@@ -112,6 +112,6 @@ export class CompanyResolver {
         ...{ workspace: { connect: { id: workspace.id } } },
       },
       select: prismaSelect.value,
-    });
+    } as Prisma.CompanyCreateArgs);
   }
 }

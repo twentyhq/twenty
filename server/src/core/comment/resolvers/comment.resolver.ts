@@ -16,6 +16,7 @@ import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import { CreateCommentAbilityHandler } from 'src/ability/handlers/comment.ability-handler';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { User } from 'src/core/@generated/user/user.model';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Comment)
@@ -41,6 +42,6 @@ export class CommentResolver {
         ...{ workspace: { connect: { id: workspace.id } } },
       },
       select: prismaSelect.value,
-    });
+    } as Prisma.CommentCreateArgs);
   }
 }

@@ -9,6 +9,7 @@ import {
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { WorkspaceUpdateInput } from 'src/core/@generated/workspace/workspace-update.input';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Workspace)
@@ -30,6 +31,6 @@ export class WorkspaceResolver {
         ...data,
       },
       select: prismaSelect.value,
-    });
+    } as Prisma.WorkspaceUpdateArgs);
   }
 }

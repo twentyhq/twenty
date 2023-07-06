@@ -28,6 +28,7 @@ import {
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
 import { accessibleBy } from '@casl/prisma';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Person)
@@ -79,7 +80,7 @@ export class PersonResolver {
       where: args.where,
       data: args.data,
       select: prismaSelect.value,
-    });
+    } as Prisma.PersonUpdateArgs);
   }
 
   @UseGuards(DeleteManyGuard)
@@ -114,6 +115,6 @@ export class PersonResolver {
         ...{ workspace: { connect: { id: workspace.id } } },
       },
       select: prismaSelect.value,
-    });
+    } as Prisma.PersonCreateArgs);
   }
 }

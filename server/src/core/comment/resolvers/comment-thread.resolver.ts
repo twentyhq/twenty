@@ -26,6 +26,7 @@ import { AppAbility } from 'src/ability/ability.factory';
 import { accessibleBy } from '@casl/prisma';
 import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
 import { DeleteManyCommentThreadArgs } from 'src/core/@generated/comment-thread/delete-many-comment-thread.args';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)
@@ -77,7 +78,7 @@ export class CommentThreadResolver {
       where: args.where,
       data: args.data,
       select: prismaSelect.value,
-    });
+    } as Prisma.CommentThreadUpdateArgs);
 
     return updatedCommentThread;
   }

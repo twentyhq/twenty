@@ -3,14 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { StorageType } from './interfaces/storage.interface';
-import { Stage } from './interfaces/stage.interface';
 
 @Injectable()
 export class EnvironmentService {
   constructor(private configService: ConfigService) {}
 
-  getStage(): string {
-    return this.configService.get<Stage>('STAGE')!;
+  getDebugMode(): boolean | undefined {
+    return this.configService.get<boolean>('DEBUG_MODE')!;
   }
 
   getPGDatabaseUrl(): string {

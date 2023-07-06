@@ -68,7 +68,7 @@ export class UserService {
       update: {},
       ...(args.select ? { select: args.select } : {}),
       ...(args.include ? { include: args.include } : {}),
-    });
+    } as Prisma.UserUpsertArgs);
 
     return user as Prisma.UserGetPayload<T>;
   }
