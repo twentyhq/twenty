@@ -50,7 +50,10 @@ export function RequireOnboarding({
   useEffect(() => {
     if (!isLogged) {
       navigate('/auth');
-    } else if (!currentUser?.workspaceMember) {
+    } else if (
+      !currentUser?.workspaceMember ||
+      !currentUser?.workspaceMember.workspace.displayName
+    ) {
       navigate('/auth/create/workspace');
     } else if (!currentUser?.firstName || !currentUser?.lastName) {
       navigate('/auth/create/profile');
@@ -73,7 +76,17 @@ export function RequireOnboarding({
     return (
       <EmptyContainer>
         <FadeInStyle>
-          Please hold on a moment, we're directing you to our login page...
+          {!isLogged && (
+            <div>
+              Please hold on a moment, we're directing you to our login page...
+            </div>
+          )}
+          {onboardingStatus === OnboardingStatus.Ongoing && (
+            <div>
+              Please hold on a moment, we're directing you to our onboarding
+              flow...
+            </div>
+          )}
         </FadeInStyle>
       </EmptyContainer>
     );

@@ -81,7 +81,7 @@ export function CreateWorkspace() {
   );
 
   useEffect(() => {
-    if (currentUser?.workspaceMember?.workspace?.displayName) {
+    if (!currentUser || currentUser?.workspaceMember?.workspace?.displayName) {
       navigate('/auth/create/profile');
     }
   }, [currentUser, navigate]);

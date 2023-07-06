@@ -108,7 +108,7 @@ export function CreateProfile() {
   );
 
   useEffect(() => {
-    if (currentUser?.firstName && currentUser?.lastName) {
+    if (!currentUser || (currentUser?.firstName && currentUser?.lastName)) {
       navigate('/');
     }
   }, [currentUser, navigate]);
@@ -120,7 +120,7 @@ export function CreateProfile() {
   return (
     <>
       <Title>Create profile</Title>
-      <SubTitle>How you'll be identify on the app.</SubTitle>
+      <SubTitle>How you'll be identified on the app.</SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
           <SubSectionTitle title="Picture" />
