@@ -1,13 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 export const seedWorkspaces = async (prisma: PrismaClient) => {
-  const workspaceTwenty = await prisma.workspace.findFirst({
-    where: {
-      domainName: 'twenty.com',
-    },
-  });
-
   await prisma.workspace.upsert({
-    where: { id: workspaceTwenty?.id },
+    where: { id: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419' },
     update: {},
     create: {
       id: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
@@ -17,14 +11,8 @@ export const seedWorkspaces = async (prisma: PrismaClient) => {
     },
   });
 
-  const workspaceDevTwenty = await prisma.workspace.findFirst({
-    where: {
-      domainName: 'dev.twenty.com',
-    },
-  });
-
   await prisma.workspace.upsert({
-    where: { id: workspaceDevTwenty?.id },
+    where: { id: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420' },
     update: {},
     create: {
       id: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
