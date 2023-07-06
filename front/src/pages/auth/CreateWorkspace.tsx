@@ -3,12 +3,10 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
