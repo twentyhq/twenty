@@ -7,7 +7,11 @@ import {
   IconUserCircle,
 } from '@tabler/icons-react';
 
-import { TextInput } from '@/ui/components/inputs/TextInput';
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { RecoilScopeContext } from '@/recoil-scope/states/RecoilScopeContext';
+import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
+import { CellContext } from '@/ui/tables/states/CellContext';
+import { RowContext } from '@/ui/tables/states/RowContext';
 
 import { Company, PipelineProgress } from '../../../generated/graphql';
 import { PersonChip } from '../../people/components/PersonChip';
@@ -87,55 +91,63 @@ export function CompanyBoardCard({
 }) {
   const theme = useTheme();
   return (
-    <StyledBoardCardWrapper>
-      <StyledBoardCard selected={selected}>
-        <StyledBoardCardHeader>
-          <img
-            src={getLogoUrlFromDomainName(company.domainName).toString()}
-            alt={`${company.name}-company-logo`}
-          />
-          <span>{company.name}</span>
-          <div style={{ display: 'flex', flex: 1 }} />
-          <Checkbox checked={selected} onChange={() => onSelect(company)} />
-        </StyledBoardCardHeader>
-        <StyledBoardCardBody>
-          <span>
-            <IconCurrencyDollar size={theme.icon.size.md} />
-            <TextInput
-              value={pipelineProgress.amount?.toString() || '0'}
-              placeholder="Amount"
-              onChange={(value) =>
-                onUpdateCard({
-                  id: pipelineProgress.id,
-                  amount: parseInt(value),
-                })
-              }
-              fullWidth
-            />
-          </span>
-          <span>
-            <IconCalendarEvent size={theme.icon.size.md} />
-            {humanReadableDate(new Date())}
-          </span>
-          <span>
-            <IconUserCircle size={theme.icon.size.md} />
-            <PersonChip name={company.accountOwner?.displayName || ''} />
-          </span>
-          <span>
-            <IconProgressCheck size={theme.icon.size.md} />
-            Likely
-          </span>
-          <span>
-            <IconRecycle size={theme.icon.size.md} />
-            One-time
-          </span>
-          <span>
-            <IconUsers size={theme.icon.size.md} /> {company.employees}
-            <PersonChip name={company.accountOwner?.displayName || ''} />
-            <PersonChip name={company.accountOwner?.displayName || ''} />
-          </span>
-        </StyledBoardCardBody>
-      </StyledBoardCard>
-    </StyledBoardCardWrapper>
+    <RecoilScope SpecificContext={RecoilScopeContext} key={pipelineProgress.id}>
+      <RecoilScope SpecificContext={RowContext} key={pipelineProgress.id}>
+        <RecoilScope SpecificContext={CellContext} key={pipelineProgress.id}>
+          <StyledBoardCardWrapper>
+            <StyledBoardCard selected={selected}>
+              <StyledBoardCardHeader>
+                <img
+                  src={getLogoUrlFromDomainName(company.domainName).toString()}
+                  alt={`${company.name}-company-logo`}
+                />
+                <span>{company.name}</span>
+                <div style={{ display: 'flex', flex: 1 }} />
+                <Checkbox
+                  checked={selected}
+                  onChange={() => onSelect(company)}
+                />
+              </StyledBoardCardHeader>
+              <StyledBoardCardBody>
+                <span>
+                  <IconCurrencyDollar size={theme.icon.size.md} />
+                  <EditableText
+                    content={pipelineProgress.amount?.toString() || '0'}
+                    placeholder="Opportunity amount"
+                    changeHandler={(value) =>
+                      onUpdateCard({
+                        id: pipelineProgress.id,
+                        amount: parseInt(value),
+                      })
+                    }
+                  />
+                </span>
+                <span>
+                  <IconCalendarEvent size={theme.icon.size.md} />
+                  {humanReadableDate(new Date())}
+                </span>
+                <span>
+                  <IconUserCircle size={theme.icon.size.md} />
+                  <PersonChip name={company.accountOwner?.displayName || ''} />
+                </span>
+                <span>
+                  <IconProgressCheck size={theme.icon.size.md} />
+                  Likely
+                </span>
+                <span>
+                  <IconRecycle size={theme.icon.size.md} />
+                  One-time
+                </span>
+                <span>
+                  <IconUsers size={theme.icon.size.md} /> {company.employees}
+                  <PersonChip name={company.accountOwner?.displayName || ''} />
+                  <PersonChip name={company.accountOwner?.displayName || ''} />
+                </span>
+              </StyledBoardCardBody>
+            </StyledBoardCard>
+          </StyledBoardCardWrapper>
+        </RecoilScope>
+      </RecoilScope>
+    </RecoilScope>
   );
 }
