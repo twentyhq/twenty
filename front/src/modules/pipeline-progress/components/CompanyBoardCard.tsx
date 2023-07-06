@@ -9,6 +9,7 @@ import {
 
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { RecoilScopeContext } from '@/recoil-scope/states/RecoilScopeContext';
+import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { CellContext } from '@/ui/tables/states/CellContext';
 import { RowContext } from '@/ui/tables/states/RowContext';
@@ -17,7 +18,7 @@ import { Company, PipelineProgress } from '../../../generated/graphql';
 import { PersonChip } from '../../people/components/PersonChip';
 import { Checkbox } from '../../ui/components/form/Checkbox';
 import { IconCalendarEvent, IconUsers } from '../../ui/icons';
-import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
+import { getLogoUrlFromDomainName } from '../../utils/utils';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -74,7 +75,28 @@ type CompanyProp = Pick<
   'id' | 'name' | 'domainName' | 'employees' | 'accountOwner'
 >;
 
-type PipelineProgressProp = Pick<PipelineProgress, 'id' | 'amount'>;
+type PipelineProgressProp = Pick<
+  PipelineProgress,
+  'id' | 'amount' | 'closeDate'
+>;
+
+function HackScope({
+  children,
+  scopeId,
+}: {
+  children: React.ReactNode;
+  scopeId: string;
+}) {
+  return (
+    <RecoilScope SpecificContext={RecoilScopeContext} key={scopeId}>
+      <RecoilScope SpecificContext={RowContext} key={scopeId}>
+        <RecoilScope SpecificContext={CellContext} key={scopeId}>
+          {children}
+        </RecoilScope>
+      </RecoilScope>
+    </RecoilScope>
+  );
+}
 
 export function CompanyBoardCard({
   company,
@@ -90,64 +112,69 @@ export function CompanyBoardCard({
   onUpdateCard: (pipelineProgress: PipelineProgressProp) => Promise<void>;
 }) {
   const theme = useTheme();
+  console.log('pipelineProgress', pipelineProgress);
   return (
-    <RecoilScope SpecificContext={RecoilScopeContext} key={pipelineProgress.id}>
-      <RecoilScope SpecificContext={RowContext} key={pipelineProgress.id}>
-        <RecoilScope SpecificContext={CellContext} key={pipelineProgress.id}>
-          <StyledBoardCardWrapper>
-            <StyledBoardCard selected={selected}>
-              <StyledBoardCardHeader>
-                <img
-                  src={getLogoUrlFromDomainName(company.domainName).toString()}
-                  alt={`${company.name}-company-logo`}
-                />
-                <span>{company.name}</span>
-                <div style={{ display: 'flex', flex: 1 }} />
-                <Checkbox
-                  checked={selected}
-                  onChange={() => onSelect(company)}
-                />
-              </StyledBoardCardHeader>
-              <StyledBoardCardBody>
-                <span>
-                  <IconCurrencyDollar size={theme.icon.size.md} />
-                  <EditableText
-                    content={pipelineProgress.amount?.toString() || '0'}
-                    placeholder="Opportunity amount"
-                    changeHandler={(value) =>
-                      onUpdateCard({
-                        id: pipelineProgress.id,
-                        amount: parseInt(value),
-                      })
-                    }
-                  />
-                </span>
-                <span>
-                  <IconCalendarEvent size={theme.icon.size.md} />
-                  {humanReadableDate(new Date())}
-                </span>
-                <span>
-                  <IconUserCircle size={theme.icon.size.md} />
-                  <PersonChip name={company.accountOwner?.displayName || ''} />
-                </span>
-                <span>
-                  <IconProgressCheck size={theme.icon.size.md} />
-                  Likely
-                </span>
-                <span>
-                  <IconRecycle size={theme.icon.size.md} />
-                  One-time
-                </span>
-                <span>
-                  <IconUsers size={theme.icon.size.md} /> {company.employees}
-                  <PersonChip name={company.accountOwner?.displayName || ''} />
-                  <PersonChip name={company.accountOwner?.displayName || ''} />
-                </span>
-              </StyledBoardCardBody>
-            </StyledBoardCard>
-          </StyledBoardCardWrapper>
-        </RecoilScope>
-      </RecoilScope>
-    </RecoilScope>
+    <StyledBoardCardWrapper>
+      <StyledBoardCard selected={selected}>
+        <StyledBoardCardHeader>
+          <img
+            src={getLogoUrlFromDomainName(company.domainName).toString()}
+            alt={`${company.name}-company-logo`}
+          />
+          <span>{company.name}</span>
+          <div style={{ display: 'flex', flex: 1 }} />
+          <Checkbox checked={selected} onChange={() => onSelect(company)} />
+        </StyledBoardCardHeader>
+        <StyledBoardCardBody>
+          <span>
+            <IconCurrencyDollar size={theme.icon.size.md} />
+            <HackScope scopeId={pipelineProgress.id + 'amount'}>
+              <EditableText
+                content={pipelineProgress.amount?.toString() || '0'}
+                placeholder="Opportunity amount"
+                changeHandler={(value) =>
+                  onUpdateCard({
+                    ...pipelineProgress,
+                    amount: parseInt(value),
+                  })
+                }
+              />
+            </HackScope>
+          </span>
+          <span>
+            <IconCalendarEvent size={theme.icon.size.md} />
+            <HackScope scopeId={pipelineProgress.id + 'closeDate'}>
+              <EditableDate
+                value={new Date(pipelineProgress.closeDate || Date.now())}
+                changeHandler={(value) => {
+                  console.log('hello');
+                  onUpdateCard({
+                    ...pipelineProgress,
+                    closeDate: value.toISOString(),
+                  });
+                }}
+              />
+            </HackScope>
+          </span>
+          <span>
+            <IconUserCircle size={theme.icon.size.md} />
+            <PersonChip name={company.accountOwner?.displayName || ''} />
+          </span>
+          <span>
+            <IconProgressCheck size={theme.icon.size.md} />
+            Likely
+          </span>
+          <span>
+            <IconRecycle size={theme.icon.size.md} />
+            One-time
+          </span>
+          <span>
+            <IconUsers size={theme.icon.size.md} /> {company.employees}
+            <PersonChip name={company.accountOwner?.displayName || ''} />
+            <PersonChip name={company.accountOwner?.displayName || ''} />
+          </span>
+        </StyledBoardCardBody>
+      </StyledBoardCard>
+    </StyledBoardCardWrapper>
   );
 }

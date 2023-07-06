@@ -38,12 +38,8 @@ export function Opportunities() {
 
   const handleUpdateCard = useCallback(
     async (pipelineProgress: Pick<PipelineProgress, 'id' | 'amount'>) => {
-      console.log('pipelineProgress', pipelineProgress);
       updatePipelineProgress({
-        variables: {
-          id: pipelineProgress.id,
-          amount: pipelineProgress.amount,
-        },
+        variables: pipelineProgress,
       });
     },
     [updatePipelineProgress],
