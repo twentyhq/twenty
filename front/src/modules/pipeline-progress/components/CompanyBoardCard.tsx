@@ -1,4 +1,3 @@
-import { createContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -9,7 +8,6 @@ import {
 } from '@tabler/icons-react';
 
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
-import { RecoilScopeContext } from '@/recoil-scope/states/RecoilScopeContext';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { CellContext } from '@/ui/tables/states/CellContext';
@@ -58,7 +56,6 @@ const StyledBoardCardHeader = styled.div`
 const StyledBoardCardBody = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
   span {
     align-items: center;
@@ -81,15 +78,9 @@ type PipelineProgressProp = Pick<
   'id' | 'amount' | 'closeDate' | 'probability' | 'recurring'
 >;
 
-function HackScope({
-  children,
-  scopeId,
-}: {
-  children: React.ReactNode;
-  scopeId: string;
-}) {
+function HackScope({ children }: { children: React.ReactNode }) {
   return (
-    <RecoilScope SpecificContext={RecoilScopeContext}>
+    <RecoilScope>
       <RecoilScope SpecificContext={RowContext}>
         <RecoilScope SpecificContext={CellContext}>{children}</RecoilScope>
       </RecoilScope>
@@ -126,7 +117,7 @@ export function CompanyBoardCard({
         <StyledBoardCardBody>
           <span>
             <IconCurrencyDollar size={theme.icon.size.md} />
-            <HackScope scopeId={pipelineProgress.id + 'amount'}>
+            <HackScope>
               <EditableText
                 content={pipelineProgress.amount?.toString() || ''}
                 placeholder="Opportunity amount"
@@ -141,11 +132,10 @@ export function CompanyBoardCard({
           </span>
           <span>
             <IconCalendarEvent size={theme.icon.size.md} />
-            <HackScope scopeId={pipelineProgress.id + 'closeDate'}>
+            <HackScope>
               <EditableDate
                 value={new Date(pipelineProgress.closeDate || Date.now())}
                 changeHandler={(value) => {
-                  console.log('hello');
                   onUpdateCard({
                     ...pipelineProgress,
                     closeDate: value.toISOString(),
@@ -160,7 +150,7 @@ export function CompanyBoardCard({
           </span>
           <span>
             <IconProgressCheck size={theme.icon.size.md} />
-            <HackScope scopeId={pipelineProgress.id + 'probability'}>
+            <HackScope>
               <EditableText
                 content={pipelineProgress.probability || ''}
                 placeholder="Likeliness to close"
@@ -175,7 +165,7 @@ export function CompanyBoardCard({
           </span>
           <span>
             <IconRecycle size={theme.icon.size.md} />
-            <HackScope scopeId={pipelineProgress.id + 'recurring'}>
+            <HackScope>
               <EditableText
                 content={pipelineProgress.recurring || ''}
                 placeholder="Recurringness"
