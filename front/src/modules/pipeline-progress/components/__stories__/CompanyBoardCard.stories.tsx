@@ -1,7 +1,7 @@
 import { StrictMode, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { Company, PipelineProgress } from '../../../../generated/graphql';
+import { Company } from '../../../../generated/graphql';
 import { mockedCompaniesData } from '../../../../testing/mock-data/companies';
 import { mockedPipelineProgressData } from '../../../../testing/mock-data/pipeline-progress';
 import { CompanyBoardCard } from '../CompanyBoardCard';
