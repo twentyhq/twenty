@@ -1,10 +1,5 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
-import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { Prisma } from '@prisma/client';
 import { assert } from 'src/utils/assert';
 
@@ -15,10 +10,7 @@ export type UserPayload = {
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly workspaceService: WorkspaceService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   // Find
   findFirst = this.prismaService.user.findFirst;
@@ -57,16 +49,20 @@ export class UserService {
   ): Promise<Prisma.UserGetPayload<T>> {
     assert(args.data.email, 'email is missing', BadRequestException);
 
-    const emailDomain = args.data.email.split('@')[1];
-
-    assert(emailDomain, 'Email is malformed', BadRequestException);
-
     const user = await this.prismaService.user.upsert({
       where: {
         email: args.data.email,
       },
       create: {
         ...(args.data as Prisma.UserCreateInput),
+        // Assign the user to a new workspace by default
+        workspaceMember: {
+          create: {
+            workspace: {
+              create: {},
+            },
+          },
+        },
         locale: 'en',
       },
       update: {},

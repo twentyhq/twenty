@@ -15,11 +15,11 @@ export class User {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => String, {nullable:false})
-    firstName!: string;
+    @Field(() => String, {nullable:true})
+    firstName!: string | null;
 
-    @Field(() => String, {nullable:false})
-    lastName!: string;
+    @Field(() => String, {nullable:true})
+    lastName!: string | null;
 
     @Field(() => String, {nullable:false})
     email!: string;

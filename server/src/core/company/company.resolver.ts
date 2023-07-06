@@ -9,7 +9,6 @@ import { CreateOneCompanyArgs } from '../../core/@generated/company/create-one-c
 import { AffectedRows } from '../../core/@generated/prisma/affected-rows.output';
 import { DeleteManyCompanyArgs } from '../../core/@generated/company/delete-many-company.args';
 import { Workspace } from '@prisma/client';
-import { Prisma } from '@prisma/client';
 import { UpdateOneGuard } from '../../guards/update-one.guard';
 import { DeleteManyGuard } from '../../guards/delete-many.guard';
 import { CreateOneGuard } from '../../guards/create-one.guard';
@@ -45,12 +44,16 @@ export class CompanyResolver {
     prismaSelect: PrismaSelect<'Company'>,
   ): Promise<Partial<Company>[]> {
     return this.companyService.findMany({
-      ...args,
       where: args.where
         ? {
             AND: [args.where, accessibleBy(ability).Company],
           }
         : accessibleBy(ability).Company,
+      orderBy: args.orderBy,
+      cursor: args.cursor,
+      take: args.take,
+      skip: args.skip,
+      distinct: args.distinct,
       select: prismaSelect.value,
     });
   }
@@ -71,9 +74,10 @@ export class CompanyResolver {
     }
 
     return this.companyService.update({
-      ...args,
+      where: args.where,
+      data: args.data,
       select: prismaSelect.value,
-    } as Prisma.CompanyUpdateArgs);
+    });
   }
 
   @UseGuards(DeleteManyGuard)
@@ -86,7 +90,7 @@ export class CompanyResolver {
     @Args() args: DeleteManyCompanyArgs,
   ): Promise<AffectedRows> {
     return this.companyService.deleteMany({
-      ...args,
+      where: args.where,
     });
   }
 
@@ -108,6 +112,6 @@ export class CompanyResolver {
         ...{ workspace: { connect: { id: workspace.id } } },
       },
       select: prismaSelect.value,
-    } as Prisma.CompanyCreateArgs);
+    });
   }
 }

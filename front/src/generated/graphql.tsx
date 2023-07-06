@@ -133,13 +133,6 @@ export type CommentCreateNestedManyWithoutCommentThreadInput = {
   createMany?: InputMaybe<CommentCreateManyCommentThreadInputEnvelope>;
 };
 
-export type CommentCreateNestedManyWithoutWorkspaceInput = {
-  connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<CommentCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<CommentCreateManyWorkspaceInputEnvelope>;
-};
-
 export type CommentCreateOrConnectWithoutAuthorInput = {
   create: CommentCreateWithoutAuthorInput;
   where: CommentWhereUniqueInput;
@@ -230,13 +223,6 @@ export type CommentThreadCreateManyWorkspaceInputEnvelope = {
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type CommentThreadCreateNestedManyWithoutWorkspaceInput = {
-  connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentThreadCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<CommentThreadCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<CommentThreadCreateManyWorkspaceInputEnvelope>;
-};
-
 export type CommentThreadCreateNestedOneWithoutCommentsInput = {
   connect?: InputMaybe<CommentThreadWhereUniqueInput>;
 };
@@ -286,6 +272,15 @@ export enum CommentThreadScalarFieldEnum {
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
 }
+
+export type CommentThreadScalarWhereInput = {
+  AND?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
+  NOT?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
+  OR?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
 
 export type CommentThreadTarget = {
   __typename?: 'CommentThreadTarget';
@@ -421,6 +416,31 @@ export type CommentThreadUpdateInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
+export type CommentThreadUpdateManyMutationInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type CommentThreadUpdateManyWithWhereWithoutWorkspaceInput = {
+  data: CommentThreadUpdateManyMutationInput;
+  where: CommentThreadScalarWhereInput;
+};
+
+export type CommentThreadUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentThreadCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<CommentThreadCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<CommentThreadCreateManyWorkspaceInputEnvelope>;
+  delete?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
+  set?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
+  update?: InputMaybe<Array<CommentThreadUpdateWithWhereUniqueWithoutWorkspaceInput>>;
+  updateMany?: InputMaybe<Array<CommentThreadUpdateManyWithWhereWithoutWorkspaceInput>>;
+  upsert?: InputMaybe<Array<CommentThreadUpsertWithWhereUniqueWithoutWorkspaceInput>>;
+};
+
 export type CommentThreadUpdateOneRequiredWithoutCommentsNestedInput = {
   connect?: InputMaybe<CommentThreadWhereUniqueInput>;
   connectOrCreate?: InputMaybe<CommentThreadCreateOrConnectWithoutCommentsInput>;
@@ -429,11 +449,30 @@ export type CommentThreadUpdateOneRequiredWithoutCommentsNestedInput = {
   upsert?: InputMaybe<CommentThreadUpsertWithoutCommentsInput>;
 };
 
+export type CommentThreadUpdateWithWhereUniqueWithoutWorkspaceInput = {
+  data: CommentThreadUpdateWithoutWorkspaceInput;
+  where: CommentThreadWhereUniqueInput;
+};
+
 export type CommentThreadUpdateWithoutCommentsInput = {
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type CommentThreadUpdateWithoutWorkspaceInput = {
+  commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
+  comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type CommentThreadUpsertWithWhereUniqueWithoutWorkspaceInput = {
+  create: CommentThreadCreateWithoutWorkspaceInput;
+  update: CommentThreadUpdateWithoutWorkspaceInput;
+  where: CommentThreadWhereUniqueInput;
 };
 
 export type CommentThreadUpsertWithoutCommentsInput = {
@@ -473,6 +512,11 @@ export type CommentUpdateManyWithWhereWithoutCommentThreadInput = {
   where: CommentScalarWhereInput;
 };
 
+export type CommentUpdateManyWithWhereWithoutWorkspaceInput = {
+  data: CommentUpdateManyMutationInput;
+  where: CommentScalarWhereInput;
+};
+
 export type CommentUpdateManyWithoutAuthorNestedInput = {
   connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutAuthorInput>>;
@@ -501,6 +545,20 @@ export type CommentUpdateManyWithoutCommentThreadNestedInput = {
   upsert?: InputMaybe<Array<CommentUpsertWithWhereUniqueWithoutCommentThreadInput>>;
 };
 
+export type CommentUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<CommentCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<CommentCreateManyWorkspaceInputEnvelope>;
+  delete?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<CommentScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  set?: InputMaybe<Array<CommentWhereUniqueInput>>;
+  update?: InputMaybe<Array<CommentUpdateWithWhereUniqueWithoutWorkspaceInput>>;
+  updateMany?: InputMaybe<Array<CommentUpdateManyWithWhereWithoutWorkspaceInput>>;
+  upsert?: InputMaybe<Array<CommentUpsertWithWhereUniqueWithoutWorkspaceInput>>;
+};
+
 export type CommentUpdateWithWhereUniqueWithoutAuthorInput = {
   data: CommentUpdateWithoutAuthorInput;
   where: CommentWhereUniqueInput;
@@ -508,6 +566,11 @@ export type CommentUpdateWithWhereUniqueWithoutAuthorInput = {
 
 export type CommentUpdateWithWhereUniqueWithoutCommentThreadInput = {
   data: CommentUpdateWithoutCommentThreadInput;
+  where: CommentWhereUniqueInput;
+};
+
+export type CommentUpdateWithWhereUniqueWithoutWorkspaceInput = {
+  data: CommentUpdateWithoutWorkspaceInput;
   where: CommentWhereUniqueInput;
 };
 
@@ -527,6 +590,15 @@ export type CommentUpdateWithoutCommentThreadInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
+export type CommentUpdateWithoutWorkspaceInput = {
+  author?: InputMaybe<UserUpdateOneRequiredWithoutCommentsNestedInput>;
+  body?: InputMaybe<StringFieldUpdateOperationsInput>;
+  commentThread?: InputMaybe<CommentThreadUpdateOneRequiredWithoutCommentsNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
 export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
   create: CommentCreateWithoutAuthorInput;
   update: CommentUpdateWithoutAuthorInput;
@@ -536,6 +608,12 @@ export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
 export type CommentUpsertWithWhereUniqueWithoutCommentThreadInput = {
   create: CommentCreateWithoutCommentThreadInput;
   update: CommentUpdateWithoutCommentThreadInput;
+  where: CommentWhereUniqueInput;
+};
+
+export type CommentUpsertWithWhereUniqueWithoutWorkspaceInput = {
+  create: CommentCreateWithoutWorkspaceInput;
+  update: CommentUpdateWithoutWorkspaceInput;
   where: CommentWhereUniqueInput;
 };
 
@@ -627,13 +705,6 @@ export type CompanyCreateNestedManyWithoutAccountOwnerInput = {
   connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutAccountOwnerInput>>;
   create?: InputMaybe<Array<CompanyCreateWithoutAccountOwnerInput>>;
   createMany?: InputMaybe<CompanyCreateManyAccountOwnerInputEnvelope>;
-};
-
-export type CompanyCreateNestedManyWithoutWorkspaceInput = {
-  connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<CompanyCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<CompanyCreateManyWorkspaceInputEnvelope>;
 };
 
 export type CompanyCreateNestedOneWithoutPeopleInput = {
@@ -755,6 +826,11 @@ export type CompanyUpdateManyWithWhereWithoutAccountOwnerInput = {
   where: CompanyScalarWhereInput;
 };
 
+export type CompanyUpdateManyWithWhereWithoutWorkspaceInput = {
+  data: CompanyUpdateManyMutationInput;
+  where: CompanyScalarWhereInput;
+};
+
 export type CompanyUpdateManyWithoutAccountOwnerNestedInput = {
   connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutAccountOwnerInput>>;
@@ -769,12 +845,31 @@ export type CompanyUpdateManyWithoutAccountOwnerNestedInput = {
   upsert?: InputMaybe<Array<CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput>>;
 };
 
+export type CompanyUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<CompanyCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<CompanyCreateManyWorkspaceInputEnvelope>;
+  delete?: InputMaybe<Array<CompanyWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<CompanyScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
+  set?: InputMaybe<Array<CompanyWhereUniqueInput>>;
+  update?: InputMaybe<Array<CompanyUpdateWithWhereUniqueWithoutWorkspaceInput>>;
+  updateMany?: InputMaybe<Array<CompanyUpdateManyWithWhereWithoutWorkspaceInput>>;
+  upsert?: InputMaybe<Array<CompanyUpsertWithWhereUniqueWithoutWorkspaceInput>>;
+};
+
 export type CompanyUpdateOneWithoutPeopleNestedInput = {
   connect?: InputMaybe<CompanyWhereUniqueInput>;
 };
 
 export type CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput = {
   data: CompanyUpdateWithoutAccountOwnerInput;
+  where: CompanyWhereUniqueInput;
+};
+
+export type CompanyUpdateWithWhereUniqueWithoutWorkspaceInput = {
+  data: CompanyUpdateWithoutWorkspaceInput;
   where: CompanyWhereUniqueInput;
 };
 
@@ -789,9 +884,27 @@ export type CompanyUpdateWithoutAccountOwnerInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
+export type CompanyUpdateWithoutWorkspaceInput = {
+  accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
+  address?: InputMaybe<StringFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  employees?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
 export type CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput = {
   create: CompanyCreateWithoutAccountOwnerInput;
   update: CompanyUpdateWithoutAccountOwnerInput;
+  where: CompanyWhereUniqueInput;
+};
+
+export type CompanyUpsertWithWhereUniqueWithoutWorkspaceInput = {
+  create: CompanyCreateWithoutWorkspaceInput;
+  update: CompanyUpdateWithoutWorkspaceInput;
   where: CompanyWhereUniqueInput;
 };
 
@@ -908,7 +1021,6 @@ export type Mutation = {
   createOneCompany: Company;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
-  createWorkspace: Workspace;
   deleteManyCommentThreads: AffectedRows;
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
@@ -919,6 +1031,7 @@ export type Mutation = {
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
   updateUser: User;
+  updateWorkspace: Workspace;
   uploadFile: Scalars['String'];
   uploadImage: Scalars['String'];
   verify: Verify;
@@ -959,11 +1072,6 @@ export type MutationCreateOnePersonArgs = {
 
 export type MutationCreateOnePipelineProgressArgs = {
   data: PipelineProgressCreateInput;
-};
-
-
-export type MutationCreateWorkspaceArgs = {
-  data: WorkspaceCreateInput;
 };
 
 
@@ -1019,6 +1127,11 @@ export type MutationUpdateOnePipelineProgressArgs = {
 export type MutationUpdateUserArgs = {
   data: UserUpdateInput;
   where: UserWhereUniqueInput;
+};
+
+
+export type MutationUpdateWorkspaceArgs = {
+  data: WorkspaceUpdateInput;
 };
 
 
@@ -1184,13 +1297,6 @@ export type PersonCreateNestedManyWithoutCompanyInput = {
   connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
 };
 
-export type PersonCreateNestedManyWithoutWorkspaceInput = {
-  connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PersonCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<PersonCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<PersonCreateManyWorkspaceInputEnvelope>;
-};
-
 export type PersonCreateOrConnectWithoutWorkspaceInput = {
   create: PersonCreateWithoutWorkspaceInput;
   where: PersonWhereUniqueInput;
@@ -1245,6 +1351,21 @@ export enum PersonScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
+export type PersonScalarWhereInput = {
+  AND?: InputMaybe<Array<PersonScalarWhereInput>>;
+  NOT?: InputMaybe<Array<PersonScalarWhereInput>>;
+  OR?: InputMaybe<Array<PersonScalarWhereInput>>;
+  city?: InputMaybe<StringFilter>;
+  companyId?: InputMaybe<StringNullableFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  email?: InputMaybe<StringFilter>;
+  firstName?: InputMaybe<StringFilter>;
+  id?: InputMaybe<StringFilter>;
+  lastName?: InputMaybe<StringFilter>;
+  phone?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
 export type PersonUpdateInput = {
   city?: InputMaybe<StringFieldUpdateOperationsInput>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
@@ -1257,8 +1378,61 @@ export type PersonUpdateInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
+export type PersonUpdateManyMutationInput = {
+  city?: InputMaybe<StringFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  email?: InputMaybe<StringFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  phone?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PersonUpdateManyWithWhereWithoutWorkspaceInput = {
+  data: PersonUpdateManyMutationInput;
+  where: PersonScalarWhereInput;
+};
+
 export type PersonUpdateManyWithoutCompanyNestedInput = {
   connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
+};
+
+export type PersonUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PersonCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<PersonCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<PersonCreateManyWorkspaceInputEnvelope>;
+  delete?: InputMaybe<Array<PersonWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<PersonScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<PersonWhereUniqueInput>>;
+  set?: InputMaybe<Array<PersonWhereUniqueInput>>;
+  update?: InputMaybe<Array<PersonUpdateWithWhereUniqueWithoutWorkspaceInput>>;
+  updateMany?: InputMaybe<Array<PersonUpdateManyWithWhereWithoutWorkspaceInput>>;
+  upsert?: InputMaybe<Array<PersonUpsertWithWhereUniqueWithoutWorkspaceInput>>;
+};
+
+export type PersonUpdateWithWhereUniqueWithoutWorkspaceInput = {
+  data: PersonUpdateWithoutWorkspaceInput;
+  where: PersonWhereUniqueInput;
+};
+
+export type PersonUpdateWithoutWorkspaceInput = {
+  city?: InputMaybe<StringFieldUpdateOperationsInput>;
+  company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  email?: InputMaybe<StringFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  phone?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PersonUpsertWithWhereUniqueWithoutWorkspaceInput = {
+  create: PersonCreateWithoutWorkspaceInput;
+  update: PersonUpdateWithoutWorkspaceInput;
+  where: PersonWhereUniqueInput;
 };
 
 export type PersonWhereInput = {
@@ -1305,13 +1479,6 @@ export type PipelineCreateManyWorkspaceInput = {
 export type PipelineCreateManyWorkspaceInputEnvelope = {
   data: Array<PipelineCreateManyWorkspaceInput>;
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type PipelineCreateNestedManyWithoutWorkspaceInput = {
-  connect?: InputMaybe<Array<PipelineWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<PipelineCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<PipelineCreateManyWorkspaceInputEnvelope>;
 };
 
 export type PipelineCreateNestedOneWithoutPipelineProgressesInput = {
@@ -1446,13 +1613,6 @@ export type PipelineProgressCreateNestedManyWithoutPipelineStageInput = {
   createMany?: InputMaybe<PipelineProgressCreateManyPipelineStageInputEnvelope>;
 };
 
-export type PipelineProgressCreateNestedManyWithoutWorkspaceInput = {
-  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<PipelineProgressCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<PipelineProgressCreateManyWorkspaceInputEnvelope>;
-};
-
 export type PipelineProgressCreateOrConnectWithoutPipelineInput = {
   create: PipelineProgressCreateWithoutPipelineInput;
   where: PipelineProgressWhereUniqueInput;
@@ -1530,6 +1690,19 @@ export enum PipelineProgressScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
+export type PipelineProgressScalarWhereInput = {
+  AND?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
+  NOT?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
+  OR?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<StringFilter>;
+  pipelineId?: InputMaybe<StringFilter>;
+  pipelineStageId?: InputMaybe<StringFilter>;
+  progressableId?: InputMaybe<StringFilter>;
+  progressableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
 export type PipelineProgressUpdateInput = {
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -1538,6 +1711,132 @@ export type PipelineProgressUpdateInput = {
   progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
   progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineProgressUpdateManyMutationInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
+  progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineProgressUpdateManyWithWhereWithoutPipelineInput = {
+  data: PipelineProgressUpdateManyMutationInput;
+  where: PipelineProgressScalarWhereInput;
+};
+
+export type PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput = {
+  data: PipelineProgressUpdateManyMutationInput;
+  where: PipelineProgressScalarWhereInput;
+};
+
+export type PipelineProgressUpdateManyWithWhereWithoutWorkspaceInput = {
+  data: PipelineProgressUpdateManyMutationInput;
+  where: PipelineProgressScalarWhereInput;
+};
+
+export type PipelineProgressUpdateManyWithoutPipelineNestedInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutPipelineInput>>;
+  create?: InputMaybe<Array<PipelineProgressCreateWithoutPipelineInput>>;
+  createMany?: InputMaybe<PipelineProgressCreateManyPipelineInputEnvelope>;
+  delete?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  set?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  update?: InputMaybe<Array<PipelineProgressUpdateWithWhereUniqueWithoutPipelineInput>>;
+  updateMany?: InputMaybe<Array<PipelineProgressUpdateManyWithWhereWithoutPipelineInput>>;
+  upsert?: InputMaybe<Array<PipelineProgressUpsertWithWhereUniqueWithoutPipelineInput>>;
+};
+
+export type PipelineProgressUpdateManyWithoutPipelineStageNestedInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutPipelineStageInput>>;
+  create?: InputMaybe<Array<PipelineProgressCreateWithoutPipelineStageInput>>;
+  createMany?: InputMaybe<PipelineProgressCreateManyPipelineStageInputEnvelope>;
+  delete?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  set?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  update?: InputMaybe<Array<PipelineProgressUpdateWithWhereUniqueWithoutPipelineStageInput>>;
+  updateMany?: InputMaybe<Array<PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput>>;
+  upsert?: InputMaybe<Array<PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput>>;
+};
+
+export type PipelineProgressUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<PipelineProgressCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<PipelineProgressCreateManyWorkspaceInputEnvelope>;
+  delete?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  set?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  update?: InputMaybe<Array<PipelineProgressUpdateWithWhereUniqueWithoutWorkspaceInput>>;
+  updateMany?: InputMaybe<Array<PipelineProgressUpdateManyWithWhereWithoutWorkspaceInput>>;
+  upsert?: InputMaybe<Array<PipelineProgressUpsertWithWhereUniqueWithoutWorkspaceInput>>;
+};
+
+export type PipelineProgressUpdateWithWhereUniqueWithoutPipelineInput = {
+  data: PipelineProgressUpdateWithoutPipelineInput;
+  where: PipelineProgressWhereUniqueInput;
+};
+
+export type PipelineProgressUpdateWithWhereUniqueWithoutPipelineStageInput = {
+  data: PipelineProgressUpdateWithoutPipelineStageInput;
+  where: PipelineProgressWhereUniqueInput;
+};
+
+export type PipelineProgressUpdateWithWhereUniqueWithoutWorkspaceInput = {
+  data: PipelineProgressUpdateWithoutWorkspaceInput;
+  where: PipelineProgressWhereUniqueInput;
+};
+
+export type PipelineProgressUpdateWithoutPipelineInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
+  progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
+  progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineProgressUpdateWithoutPipelineStageInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
+  progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
+  progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineProgressUpdateWithoutWorkspaceInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
+  pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
+  progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
+  progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineProgressUpsertWithWhereUniqueWithoutPipelineInput = {
+  create: PipelineProgressCreateWithoutPipelineInput;
+  update: PipelineProgressUpdateWithoutPipelineInput;
+  where: PipelineProgressWhereUniqueInput;
+};
+
+export type PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput = {
+  create: PipelineProgressCreateWithoutPipelineStageInput;
+  update: PipelineProgressUpdateWithoutPipelineStageInput;
+  where: PipelineProgressWhereUniqueInput;
+};
+
+export type PipelineProgressUpsertWithWhereUniqueWithoutWorkspaceInput = {
+  create: PipelineProgressCreateWithoutWorkspaceInput;
+  update: PipelineProgressUpdateWithoutWorkspaceInput;
+  where: PipelineProgressWhereUniqueInput;
 };
 
 export type PipelineProgressWhereInput = {
@@ -1579,6 +1878,18 @@ export enum PipelineScalarFieldEnum {
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
 }
+
+export type PipelineScalarWhereInput = {
+  AND?: InputMaybe<Array<PipelineScalarWhereInput>>;
+  NOT?: InputMaybe<Array<PipelineScalarWhereInput>>;
+  OR?: InputMaybe<Array<PipelineScalarWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  icon?: InputMaybe<StringFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  pipelineProgressableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
 
 export type PipelineStage = {
   __typename?: 'PipelineStage';
@@ -1627,13 +1938,6 @@ export type PipelineStageCreateNestedManyWithoutPipelineInput = {
   connectOrCreate?: InputMaybe<Array<PipelineStageCreateOrConnectWithoutPipelineInput>>;
   create?: InputMaybe<Array<PipelineStageCreateWithoutPipelineInput>>;
   createMany?: InputMaybe<PipelineStageCreateManyPipelineInputEnvelope>;
-};
-
-export type PipelineStageCreateNestedManyWithoutWorkspaceInput = {
-  connect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineStageCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<PipelineStageCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<PipelineStageCreateManyWorkspaceInputEnvelope>;
 };
 
 export type PipelineStageCreateNestedOneWithoutPipelineProgressesInput = {
@@ -1710,8 +2014,111 @@ export enum PipelineStageScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
+export type PipelineStageScalarWhereInput = {
+  AND?: InputMaybe<Array<PipelineStageScalarWhereInput>>;
+  NOT?: InputMaybe<Array<PipelineStageScalarWhereInput>>;
+  OR?: InputMaybe<Array<PipelineStageScalarWhereInput>>;
+  color?: InputMaybe<StringFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  pipelineId?: InputMaybe<StringFilter>;
+  type?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type PipelineStageUpdateManyMutationInput = {
+  color?: InputMaybe<StringFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  type?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineStageUpdateManyWithWhereWithoutPipelineInput = {
+  data: PipelineStageUpdateManyMutationInput;
+  where: PipelineStageScalarWhereInput;
+};
+
+export type PipelineStageUpdateManyWithWhereWithoutWorkspaceInput = {
+  data: PipelineStageUpdateManyMutationInput;
+  where: PipelineStageScalarWhereInput;
+};
+
+export type PipelineStageUpdateManyWithoutPipelineNestedInput = {
+  connect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineStageCreateOrConnectWithoutPipelineInput>>;
+  create?: InputMaybe<Array<PipelineStageCreateWithoutPipelineInput>>;
+  createMany?: InputMaybe<PipelineStageCreateManyPipelineInputEnvelope>;
+  delete?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<PipelineStageScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
+  set?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
+  update?: InputMaybe<Array<PipelineStageUpdateWithWhereUniqueWithoutPipelineInput>>;
+  updateMany?: InputMaybe<Array<PipelineStageUpdateManyWithWhereWithoutPipelineInput>>;
+  upsert?: InputMaybe<Array<PipelineStageUpsertWithWhereUniqueWithoutPipelineInput>>;
+};
+
+export type PipelineStageUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineStageCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<PipelineStageCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<PipelineStageCreateManyWorkspaceInputEnvelope>;
+  delete?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<PipelineStageScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
+  set?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
+  update?: InputMaybe<Array<PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput>>;
+  updateMany?: InputMaybe<Array<PipelineStageUpdateManyWithWhereWithoutWorkspaceInput>>;
+  upsert?: InputMaybe<Array<PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput>>;
+};
+
 export type PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput = {
   connect?: InputMaybe<PipelineStageWhereUniqueInput>;
+};
+
+export type PipelineStageUpdateWithWhereUniqueWithoutPipelineInput = {
+  data: PipelineStageUpdateWithoutPipelineInput;
+  where: PipelineStageWhereUniqueInput;
+};
+
+export type PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput = {
+  data: PipelineStageUpdateWithoutWorkspaceInput;
+  where: PipelineStageWhereUniqueInput;
+};
+
+export type PipelineStageUpdateWithoutPipelineInput = {
+  color?: InputMaybe<StringFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineStageNestedInput>;
+  type?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineStageUpdateWithoutWorkspaceInput = {
+  color?: InputMaybe<StringFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput>;
+  pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineStageNestedInput>;
+  type?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineStageUpsertWithWhereUniqueWithoutPipelineInput = {
+  create: PipelineStageCreateWithoutPipelineInput;
+  update: PipelineStageUpdateWithoutPipelineInput;
+  where: PipelineStageWhereUniqueInput;
+};
+
+export type PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput = {
+  create: PipelineStageCreateWithoutWorkspaceInput;
+  update: PipelineStageUpdateWithoutWorkspaceInput;
+  where: PipelineStageWhereUniqueInput;
 };
 
 export type PipelineStageWhereInput = {
@@ -1733,8 +2140,81 @@ export type PipelineStageWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
+export type PipelineUpdateManyMutationInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  icon?: InputMaybe<StringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  pipelineProgressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineUpdateManyWithWhereWithoutWorkspaceInput = {
+  data: PipelineUpdateManyMutationInput;
+  where: PipelineScalarWhereInput;
+};
+
+export type PipelineUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<PipelineWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<PipelineCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<PipelineCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<PipelineCreateManyWorkspaceInputEnvelope>;
+  delete?: InputMaybe<Array<PipelineWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<PipelineScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<PipelineWhereUniqueInput>>;
+  set?: InputMaybe<Array<PipelineWhereUniqueInput>>;
+  update?: InputMaybe<Array<PipelineUpdateWithWhereUniqueWithoutWorkspaceInput>>;
+  updateMany?: InputMaybe<Array<PipelineUpdateManyWithWhereWithoutWorkspaceInput>>;
+  upsert?: InputMaybe<Array<PipelineUpsertWithWhereUniqueWithoutWorkspaceInput>>;
+};
+
 export type PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput = {
   connect?: InputMaybe<PipelineWhereUniqueInput>;
+};
+
+export type PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput = {
+  connect?: InputMaybe<PipelineWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<PipelineCreateOrConnectWithoutPipelineStagesInput>;
+  create?: InputMaybe<PipelineCreateWithoutPipelineStagesInput>;
+  update?: InputMaybe<PipelineUpdateWithoutPipelineStagesInput>;
+  upsert?: InputMaybe<PipelineUpsertWithoutPipelineStagesInput>;
+};
+
+export type PipelineUpdateWithWhereUniqueWithoutWorkspaceInput = {
+  data: PipelineUpdateWithoutWorkspaceInput;
+  where: PipelineWhereUniqueInput;
+};
+
+export type PipelineUpdateWithoutPipelineStagesInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  icon?: InputMaybe<StringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  pipelineProgressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
+  pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineNestedInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineUpdateWithoutWorkspaceInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  icon?: InputMaybe<StringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  pipelineProgressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
+  pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineNestedInput>;
+  pipelineStages?: InputMaybe<PipelineStageUpdateManyWithoutPipelineNestedInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type PipelineUpsertWithWhereUniqueWithoutWorkspaceInput = {
+  create: PipelineCreateWithoutWorkspaceInput;
+  update: PipelineUpdateWithoutWorkspaceInput;
+  where: PipelineWhereUniqueInput;
+};
+
+export type PipelineUpsertWithoutPipelineStagesInput = {
+  create: PipelineCreateWithoutPipelineStagesInput;
+  update: PipelineUpdateWithoutPipelineStagesInput;
 };
 
 export type PipelineWhereInput = {
@@ -1892,9 +2372,9 @@ export type User = {
   displayName: Scalars['String'];
   email: Scalars['String'];
   emailVerified: Scalars['Boolean'];
-  firstName: Scalars['String'];
+  firstName?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  lastName: Scalars['String'];
+  lastName?: Maybe<Scalars['String']>;
   lastSeen?: Maybe<Scalars['DateTime']>;
   locale: Scalars['String'];
   metadata?: Maybe<Scalars['JSON']>;
@@ -1934,9 +2414,9 @@ export type UserCreateWithoutCommentsInput = {
   disabled?: InputMaybe<Scalars['Boolean']>;
   email: Scalars['String'];
   emailVerified?: InputMaybe<Scalars['Boolean']>;
-  firstName: Scalars['String'];
+  firstName?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
-  lastName: Scalars['String'];
+  lastName?: InputMaybe<Scalars['String']>;
   lastSeen?: InputMaybe<Scalars['DateTime']>;
   locale: Scalars['String'];
   metadata?: InputMaybe<Scalars['JSON']>;
@@ -1952,9 +2432,9 @@ export type UserCreateWithoutWorkspaceMemberInput = {
   disabled?: InputMaybe<Scalars['Boolean']>;
   email: Scalars['String'];
   emailVerified?: InputMaybe<Scalars['Boolean']>;
-  firstName: Scalars['String'];
+  firstName?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
-  lastName: Scalars['String'];
+  lastName?: InputMaybe<Scalars['String']>;
   lastSeen?: InputMaybe<Scalars['DateTime']>;
   locale: Scalars['String'];
   metadata?: InputMaybe<Scalars['JSON']>;
@@ -2011,9 +2491,9 @@ export type UserUpdateInput = {
   disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
   email?: InputMaybe<StringFieldUpdateOperationsInput>;
   emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   metadata?: InputMaybe<Scalars['JSON']>;
@@ -2029,6 +2509,14 @@ export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
   upsert?: InputMaybe<UserUpsertWithoutCommentsInput>;
 };
 
+export type UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutWorkspaceMemberInput>;
+  create?: InputMaybe<UserCreateWithoutWorkspaceMemberInput>;
+  update?: InputMaybe<UserUpdateWithoutWorkspaceMemberInput>;
+  upsert?: InputMaybe<UserUpsertWithoutWorkspaceMemberInput>;
+};
+
 export type UserUpdateOneWithoutCompaniesNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
 };
@@ -2040,9 +2528,27 @@ export type UserUpdateWithoutCommentsInput = {
   disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
   email?: InputMaybe<StringFieldUpdateOperationsInput>;
   emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
+  metadata?: InputMaybe<Scalars['JSON']>;
+  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type UserUpdateWithoutWorkspaceMemberInput = {
+  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
+  companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  email?: InputMaybe<StringFieldUpdateOperationsInput>;
+  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   metadata?: InputMaybe<Scalars['JSON']>;
@@ -2053,6 +2559,11 @@ export type UserUpdateWithoutCommentsInput = {
 export type UserUpsertWithoutCommentsInput = {
   create: UserCreateWithoutCommentsInput;
   update: UserUpdateWithoutCommentsInput;
+};
+
+export type UserUpsertWithoutWorkspaceMemberInput = {
+  create: UserCreateWithoutWorkspaceMemberInput;
+  update: UserUpdateWithoutWorkspaceMemberInput;
 };
 
 export type UserWhereInput = {
@@ -2066,9 +2577,9 @@ export type UserWhereInput = {
   disabled?: InputMaybe<BoolFilter>;
   email?: InputMaybe<StringFilter>;
   emailVerified?: InputMaybe<BoolFilter>;
-  firstName?: InputMaybe<StringFilter>;
+  firstName?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<StringFilter>;
-  lastName?: InputMaybe<StringFilter>;
+  lastName?: InputMaybe<StringNullableFilter>;
   lastSeen?: InputMaybe<DateTimeNullableFilter>;
   locale?: InputMaybe<StringFilter>;
   metadata?: InputMaybe<JsonNullableFilter>;
@@ -2093,8 +2604,8 @@ export type Workspace = {
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
-  displayName: Scalars['String'];
-  domainName: Scalars['String'];
+  displayName?: Maybe<Scalars['String']>;
+  domainName?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   logo?: Maybe<Scalars['String']>;
   people?: Maybe<Array<Person>>;
@@ -2103,23 +2614,6 @@ export type Workspace = {
   pipelines?: Maybe<Array<Pipeline>>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
-};
-
-export type WorkspaceCreateInput = {
-  commentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutWorkspaceInput>;
-  comments?: InputMaybe<CommentCreateNestedManyWithoutWorkspaceInput>;
-  companies?: InputMaybe<CompanyCreateNestedManyWithoutWorkspaceInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  displayName: Scalars['String'];
-  domainName: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
-  logo?: InputMaybe<Scalars['String']>;
-  people?: InputMaybe<PersonCreateNestedManyWithoutWorkspaceInput>;
-  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutWorkspaceInput>;
-  pipelineStages?: InputMaybe<PipelineStageCreateNestedManyWithoutWorkspaceInput>;
-  pipelines?: InputMaybe<PipelineCreateNestedManyWithoutWorkspaceInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  workspaceMember?: InputMaybe<WorkspaceMemberCreateNestedManyWithoutWorkspaceInput>;
 };
 
 export type WorkspaceMember = {
@@ -2144,13 +2638,6 @@ export type WorkspaceMemberCreateManyWorkspaceInputEnvelope = {
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type WorkspaceMemberCreateNestedManyWithoutWorkspaceInput = {
-  connect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<WorkspaceMemberCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<WorkspaceMemberCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<WorkspaceMemberCreateManyWorkspaceInputEnvelope>;
-};
-
 export type WorkspaceMemberCreateOrConnectWithoutWorkspaceInput = {
   create: WorkspaceMemberCreateWithoutWorkspaceInput;
   where: WorkspaceMemberWhereUniqueInput;
@@ -2163,9 +2650,79 @@ export type WorkspaceMemberCreateWithoutWorkspaceInput = {
   user: UserCreateNestedOneWithoutWorkspaceMemberInput;
 };
 
+export type WorkspaceMemberScalarWhereInput = {
+  AND?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
+  NOT?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
+  OR?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+  userId?: InputMaybe<StringFilter>;
+};
+
+export type WorkspaceMemberUpdateManyMutationInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput = {
+  data: WorkspaceMemberUpdateManyMutationInput;
+  where: WorkspaceMemberScalarWhereInput;
+};
+
+export type WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<WorkspaceMemberCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<WorkspaceMemberCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<WorkspaceMemberCreateManyWorkspaceInputEnvelope>;
+  delete?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
+  set?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
+  update?: InputMaybe<Array<WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput>>;
+  updateMany?: InputMaybe<Array<WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput>>;
+  upsert?: InputMaybe<Array<WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput>>;
+};
+
+export type WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput = {
+  data: WorkspaceMemberUpdateWithoutWorkspaceInput;
+  where: WorkspaceMemberWhereUniqueInput;
+};
+
+export type WorkspaceMemberUpdateWithoutWorkspaceInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  user?: InputMaybe<UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput>;
+};
+
+export type WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput = {
+  create: WorkspaceMemberCreateWithoutWorkspaceInput;
+  update: WorkspaceMemberUpdateWithoutWorkspaceInput;
+  where: WorkspaceMemberWhereUniqueInput;
+};
+
 export type WorkspaceMemberWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
   userId?: InputMaybe<Scalars['String']>;
+};
+
+export type WorkspaceUpdateInput = {
+  commentThreads?: InputMaybe<CommentThreadUpdateManyWithoutWorkspaceNestedInput>;
+  comments?: InputMaybe<CommentUpdateManyWithoutWorkspaceNestedInput>;
+  companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  displayName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  domainName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  logo?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  people?: InputMaybe<PersonUpdateManyWithoutWorkspaceNestedInput>;
+  pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutWorkspaceNestedInput>;
+  pipelineStages?: InputMaybe<PipelineStageUpdateManyWithoutWorkspaceNestedInput>;
+  pipelines?: InputMaybe<PipelineUpdateManyWithoutWorkspaceNestedInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
 };
 
 export type CreateEventMutationVariables = Exact<{
@@ -2194,7 +2751,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null } } | null }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -2212,7 +2769,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, commentThreadId: string, author: { __typename?: 'User', id: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, commentThreadId: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } };
 
 export type CreateCommentThreadWithCommentMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
@@ -2232,14 +2789,14 @@ export type GetCommentThreadsByTargetsQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
+export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
 
 export type GetCommentThreadQueryVariables = Exact<{
   commentThreadId: Scalars['String'];
 }>;
 
 
-export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', commentableId: string, commentableType: CommentableType }> | null }> };
+export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', commentableId: string, commentableType: CommentableType }> | null }> };
 
 export type AddCommentThreadTargetOnCommentThreadMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
@@ -2273,7 +2830,7 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null } | null }> };
 
 export type UpdateCompanyMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -2286,7 +2843,7 @@ export type UpdateCompanyMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string } | null } | null };
+export type UpdateCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null } | null } | null };
 
 export type InsertCompanyMutationVariables = Exact<{
   id: Scalars['String'];
@@ -2399,7 +2956,7 @@ export type SearchUserQueryVariables = Exact<{
 }>;
 
 
-export type SearchUserQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string }> };
+export type SearchUserQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
 
 export type EmptyQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2418,12 +2975,12 @@ export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } } | null } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null } } | null } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string }> };
+export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
 
 export type UpdateUserMutationVariables = Exact<{
   data: UserUpdateInput;
@@ -2431,14 +2988,14 @@ export type UpdateUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } };
 
-export type CreateWorkspaceMutationVariables = Exact<{
-  data: WorkspaceCreateInput;
+export type UpdateWorkspaceMutationVariables = Exact<{
+  data: WorkspaceUpdateInput;
 }>;
 
 
-export type CreateWorkspaceMutation = { __typename?: 'Mutation', createWorkspace: { __typename?: 'Workspace', id: string, domainName: string, displayName: string, logo?: string | null } };
+export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null } };
 
 
 export const CreateEventDocument = gql`
@@ -3799,9 +4356,9 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
-export const CreateWorkspaceDocument = gql`
-    mutation CreateWorkspace($data: WorkspaceCreateInput!) {
-  createWorkspace(data: $data) {
+export const UpdateWorkspaceDocument = gql`
+    mutation UpdateWorkspace($data: WorkspaceUpdateInput!) {
+  updateWorkspace(data: $data) {
     id
     domainName
     displayName
@@ -3809,29 +4366,29 @@ export const CreateWorkspaceDocument = gql`
   }
 }
     `;
-export type CreateWorkspaceMutationFn = Apollo.MutationFunction<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
+export type UpdateWorkspaceMutationFn = Apollo.MutationFunction<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;
 
 /**
- * __useCreateWorkspaceMutation__
+ * __useUpdateWorkspaceMutation__
  *
- * To run a mutation, you first call `useCreateWorkspaceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateWorkspaceMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateWorkspaceMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createWorkspaceMutation, { data, loading, error }] = useCreateWorkspaceMutation({
+ * const [updateWorkspaceMutation, { data, loading, error }] = useUpdateWorkspaceMutation({
  *   variables: {
  *      data: // value for 'data'
  *   },
  * });
  */
-export function useCreateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>) {
+export function useUpdateWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>(CreateWorkspaceDocument, options);
+        return Apollo.useMutation<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>(UpdateWorkspaceDocument, options);
       }
-export type CreateWorkspaceMutationHookResult = ReturnType<typeof useCreateWorkspaceMutation>;
-export type CreateWorkspaceMutationResult = Apollo.MutationResult<CreateWorkspaceMutation>;
-export type CreateWorkspaceMutationOptions = Apollo.BaseMutationOptions<CreateWorkspaceMutation, CreateWorkspaceMutationVariables>;
+export type UpdateWorkspaceMutationHookResult = ReturnType<typeof useUpdateWorkspaceMutation>;
+export type UpdateWorkspaceMutationResult = Apollo.MutationResult<UpdateWorkspaceMutation>;
+export type UpdateWorkspaceMutationOptions = Apollo.BaseMutationOptions<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>;

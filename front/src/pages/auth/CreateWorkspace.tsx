@@ -13,7 +13,7 @@ import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { GET_CURRENT_USER } from '@/users/services';
-import { useCreateWorkspaceMutation } from '~/generated/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -39,7 +39,7 @@ export function CreateWorkspace() {
 
   const [workspaceName, setWorkspaceName] = useState('');
 
-  const [createWorkspace] = useCreateWorkspaceMutation();
+  const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   const handleCreate = useCallback(async () => {
     try {
@@ -47,22 +47,18 @@ export function CreateWorkspace() {
         throw new Error('Workspace name is required');
       }
 
-      if (currentUser?.workspaceMember) {
-        throw new Error('User already has a workspace');
-      }
-
-      const { data, errors } = await createWorkspace({
+      const { data, errors } = await updateWorkspace({
         variables: {
           data: {
-            displayName: workspaceName,
-            // TODO: Add domain name
-            domainName: '',
+            displayName: {
+              set: workspaceName,
+            },
           },
         },
         refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
       });
 
-      if (errors || !data?.createWorkspace) {
+      if (errors || !data?.updateWorkspace) {
         throw errors;
       }
 
@@ -70,7 +66,7 @@ export function CreateWorkspace() {
     } catch (error) {
       console.error(error);
     }
-  }, [createWorkspace, currentUser?.workspaceMember, navigate, workspaceName]);
+  }, [navigate, updateWorkspace, workspaceName]);
 
   useHotkeys(
     'enter',
@@ -85,7 +81,7 @@ export function CreateWorkspace() {
   );
 
   useEffect(() => {
-    if (currentUser?.workspaceMember) {
+    if (currentUser?.workspaceMember?.workspace?.displayName) {
       navigate('/auth/create/profile');
     }
   }, [currentUser, navigate]);
@@ -116,7 +112,12 @@ export function CreateWorkspace() {
         </StyledSectionContainer>
       </StyledContentContainer>
       <StyledButtonContainer>
-        <MainButton title="Continue" onClick={handleCreate} fullWidth />
+        <MainButton
+          title="Continue"
+          onClick={handleCreate}
+          disabled={!workspaceName}
+          fullWidth
+        />
       </StyledButtonContainer>
     </>
   );

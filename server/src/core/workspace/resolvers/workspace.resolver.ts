@@ -1,33 +1,33 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
 import { Workspace } from 'src/core/@generated/workspace/workspace.model';
 import { WorkspaceService } from '../services/workspace.service';
-import { AuthUser } from 'src/decorators/auth-user.decorator';
-import { User } from 'src/core/@generated/user/user.model';
-import { CreateOneWorkspaceArgs } from 'src/core/@generated/workspace/create-one-workspace.args';
 import {
   PrismaSelect,
   PrismaSelector,
 } from 'src/decorators/prisma-select.decorator';
+import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { WorkspaceUpdateInput } from 'src/core/@generated/workspace/workspace-update.input';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Resolver(() => Workspace)
 export class WorkspaceResolver {
   constructor(private readonly workspaceService: WorkspaceService) {}
 
   @Mutation(() => Workspace)
-  async createWorkspace(
-    @Args() args: CreateOneWorkspaceArgs,
-    @AuthUser() user: User,
+  async updateWorkspace(
+    @Args('data') data: WorkspaceUpdateInput,
+    @AuthWorkspace() workspace: Workspace,
     @PrismaSelector({ modelName: 'Workspace' })
     prismaSelect: PrismaSelect<'Workspace'>,
   ) {
-    return this.workspaceService.create({
+    return this.workspaceService.update({
+      where: {
+        id: workspace.id,
+      },
       data: {
-        ...args.data,
-        workspaceMember: {
-          connect: {
-            userId: user.id,
-          },
-        },
+        ...data,
       },
       select: prismaSelect.value,
     });

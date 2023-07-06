@@ -9,7 +9,6 @@ import { CreateOneCommentThreadGuard } from '../../../guards/create-one-comment-
 import { FindManyCommentThreadArgs } from '../../../core/@generated/comment-thread/find-many-comment-thread.args';
 import { CommentThreadService } from '../services/comment-thread.service';
 import { UpdateOneCommentThreadArgs } from 'src/core/@generated/comment-thread/update-one-comment-thread.args';
-import { Prisma } from '@prisma/client';
 import {
   PrismaSelector,
   PrismaSelect,
@@ -75,9 +74,10 @@ export class CommentThreadResolver {
     prismaSelect: PrismaSelect<'CommentThread'>,
   ): Promise<Partial<CommentThread>> {
     const updatedCommentThread = await this.commentThreadService.update({
-      ...args,
+      where: args.where,
+      data: args.data,
       select: prismaSelect.value,
-    } as Prisma.CommentThreadUpdateArgs);
+    });
 
     return updatedCommentThread;
   }
@@ -92,11 +92,15 @@ export class CommentThreadResolver {
     prismaSelect: PrismaSelect<'CommentThread'>,
   ): Promise<Partial<CommentThread>[]> {
     const result = await this.commentThreadService.findMany({
-      ...args,
       where: {
         ...args.where,
         AND: [accessibleBy(ability).CommentThread],
       },
+      orderBy: args.orderBy,
+      cursor: args.cursor,
+      take: args.take,
+      skip: args.skip,
+      distinct: args.distinct,
       select: prismaSelect.value,
     });
 
@@ -112,7 +116,7 @@ export class CommentThreadResolver {
     @Args() args: DeleteManyCommentThreadArgs,
   ): Promise<AffectedRows> {
     return this.commentThreadService.deleteMany({
-      ...args,
+      where: args.where,
     });
   }
 }

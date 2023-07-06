@@ -6,7 +6,6 @@ import { AuthWorkspace } from '../../../decorators/auth-workspace.decorator';
 import { CreateOneCommentArgs } from '../../../core/@generated/comment/create-one-comment.args';
 import { Comment } from '../../../core/@generated/comment/comment.model';
 import { CreateOneCommentGuard } from '../../../guards/create-one-comment.guard';
-import { Prisma } from '@prisma/client';
 import { CommentService } from '../services/comment.service';
 import {
   PrismaSelector,
@@ -42,6 +41,6 @@ export class CommentResolver {
         ...{ workspace: { connect: { id: workspace.id } } },
       },
       select: prismaSelect.value,
-    } as Prisma.CommentCreateArgs);
+    });
   }
 }

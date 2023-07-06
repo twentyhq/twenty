@@ -13,10 +13,12 @@ export class UserMaxAggregate {
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
+    @Validator.IsOptional()
     firstName?: string;
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
+    @Validator.IsOptional()
     lastName?: string;
 
     @Field(() => String, {nullable:true})

@@ -9,8 +9,4 @@ export class WorkspaceWhereUniqueInput {
     @Validator.IsString()
     @Validator.IsOptional()
     id?: string;
-
-    @Field(() => String, {nullable:true})
-    @Validator.IsString()
-    domainName?: string;
 }

@@ -7,8 +7,10 @@ import { useRecoilState } from 'recoil';
 import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 
 import { useIsLogged } from '../hooks/useIsLogged';
+import { useOnboardingStatus } from '../hooks/useOnboardingStatus';
 import { currentUserState } from '../states/currentUserState';
 import { isMockModeState } from '../states/isMockModeState';
+import { OnboardingStatus } from '../utils/getOnboardingStatus';
 
 const EmptyContainer = styled.div`
   align-items: center;
@@ -39,12 +41,11 @@ export function RequireOnboarding({
 }): JSX.Element {
   const navigate = useNavigate();
 
-  const [, setMockMode] = useRecoilState(isMockModeState);
   const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
     captureHotkeyTypeInFocusState,
   );
   const [currentUser] = useRecoilState(currentUserState);
-
+  const onboardingStatus = useOnboardingStatus();
   const isLogged = useIsLogged();
 
   useEffect(() => {
@@ -64,31 +65,12 @@ export function RequireOnboarding({
   ]);
 
   useEffect(() => {
-    if (
-      isLogged &&
-      currentUser?.workspaceMember &&
-      currentUser?.firstName &&
-      currentUser?.lastName
-    ) {
-      setMockMode(false);
+    if (isLogged && onboardingStatus === OnboardingStatus.Completed) {
       setCaptureHotkeyTypeInFocus(false);
     }
-  }, [
-    setMockMode,
-    setCaptureHotkeyTypeInFocus,
-    isLogged,
-    currentUser?.workspaceMember,
-    currentUser?.firstName,
-    currentUser?.lastName,
-    navigate,
-  ]);
+  }, [setCaptureHotkeyTypeInFocus, navigate, onboardingStatus, isLogged]);
 
-  if (
-    !isLogged ||
-    !currentUser?.firstName ||
-    !currentUser?.lastName ||
-    !currentUser?.workspaceMember
-  ) {
+  if (!isLogged || onboardingStatus === OnboardingStatus.Ongoing) {
     return (
       <EmptyContainer>
         <FadeInStyle>

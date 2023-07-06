@@ -30,12 +30,16 @@ export class PipelineStageResolver {
     prismaSelect: PrismaSelect<'PipelineStage'>,
   ): Promise<Partial<PipelineStage>[]> {
     return this.pipelineStageService.findMany({
-      ...args,
       where: args.where
         ? {
             AND: [args.where, accessibleBy(ability).PipelineStage],
           }
         : accessibleBy(ability).PipelineStage,
+      orderBy: args.orderBy,
+      cursor: args.cursor,
+      take: args.take,
+      skip: args.skip,
+      distinct: args.distinct,
       select: prismaSelect.value,
     });
   }

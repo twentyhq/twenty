@@ -9,7 +9,6 @@ import { AffectedRows } from '../../core/@generated/prisma/affected-rows.output'
 import { DeleteManyPersonArgs } from '../../core/@generated/person/delete-many-person.args';
 import { Workspace } from '../../core/@generated/workspace/workspace.model';
 import { AuthWorkspace } from '../../decorators/auth-workspace.decorator';
-import { Prisma } from '@prisma/client';
 import { UpdateOneGuard } from '../../guards/update-one.guard';
 import { DeleteManyGuard } from '../../guards/delete-many.guard';
 import { CreateOneGuard } from '../../guards/create-one.guard';
@@ -47,12 +46,16 @@ export class PersonResolver {
     prismaSelect: PrismaSelect<'Person'>,
   ): Promise<Partial<Person>[]> {
     return this.personService.findMany({
-      ...args,
       where: args.where
         ? {
             AND: [args.where, accessibleBy(ability).Person],
           }
         : accessibleBy(ability).Person,
+      orderBy: args.orderBy,
+      cursor: args.cursor,
+      take: args.take,
+      skip: args.skip,
+      distinct: args.distinct,
       select: prismaSelect.value,
     });
   }
@@ -73,9 +76,10 @@ export class PersonResolver {
     }
 
     return this.personService.update({
-      ...args,
+      where: args.where,
+      data: args.data,
       select: prismaSelect.value,
-    } as Prisma.PersonUpdateArgs);
+    });
   }
 
   @UseGuards(DeleteManyGuard)
@@ -88,7 +92,7 @@ export class PersonResolver {
     @Args() args: DeleteManyPersonArgs,
   ): Promise<AffectedRows> {
     return this.personService.deleteMany({
-      ...args,
+      where: args.where,
     });
   }
 
@@ -110,6 +114,6 @@ export class PersonResolver {
         ...{ workspace: { connect: { id: workspace.id } } },
       },
       select: prismaSelect.value,
-    } as Prisma.PersonCreateArgs);
+    });
   }
 }

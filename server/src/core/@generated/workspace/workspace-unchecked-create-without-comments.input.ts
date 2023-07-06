@@ -18,13 +18,15 @@ export class WorkspaceUncheckedCreateWithoutCommentsInput {
     @Validator.IsOptional()
     id?: string;
 
-    @Field(() => String, {nullable:false})
+    @Field(() => String, {nullable:true})
     @Validator.IsString()
-    domainName!: string;
+    @Validator.IsOptional()
+    domainName?: string;
 
-    @Field(() => String, {nullable:false})
+    @Field(() => String, {nullable:true})
     @Validator.IsString()
-    displayName!: string;
+    @Validator.IsOptional()
+    displayName?: string;
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()

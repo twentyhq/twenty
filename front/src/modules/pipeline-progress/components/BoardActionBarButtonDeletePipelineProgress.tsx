@@ -26,8 +26,6 @@ export function BoardActionBarButtonDeletePipelineProgress() {
       },
     });
 
-    console.log('boardItems', boardItems);
-
     setBoardItems(
       Object.fromEntries(
         Object.entries(boardItems).filter(

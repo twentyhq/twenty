@@ -1,4 +1,4 @@
-import { plainToClass, Transform } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import {
   IsEnum,
   IsOptional,
@@ -14,8 +14,13 @@ import { StorageType } from './interfaces/storage.interface';
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { IsAWSRegion } from './decorators/is-aws-region.decorator';
 import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
+import { Stage } from './interfaces/stage.interface';
 
 export class EnvironmentVariables {
+  // Stage
+  @IsEnum(Stage)
+  STAGE: Stage;
+
   // Database
   @IsUrl({ protocols: ['postgres'], require_tld: false })
   PG_DATABASE_URL: string;

@@ -10,6 +10,7 @@ import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
+import { isMockModeState } from '@/auth/states/isMockModeState';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
@@ -49,11 +50,12 @@ export function PasswordLogin() {
   const navigate = useNavigate();
 
   const prefillPassword =
-    process.env.NODE_ENV === 'development' ? 'applecar2025' : '';
+    process.env.NODE_ENV === 'development' ? 'Applecar2025' : '';
 
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
   );
+  const [, setMockMode] = useRecoilState(isMockModeState);
   const [internalPassword, setInternalPassword] = useState(prefillPassword);
   const [formError, setFormError] = useState('');
 
@@ -61,14 +63,15 @@ export function PasswordLogin() {
 
   const handleLogin = useCallback(async () => {
     try {
+      setMockMode(false);
+
       await login(authFlowUserEmail, internalPassword);
 
       navigate('/auth/create/workspace');
     } catch (err: any) {
-      console.log('ERR: ', err);
       setFormError(err.message);
     }
-  }, [login, authFlowUserEmail, internalPassword, navigate]);
+  }, [login, authFlowUserEmail, internalPassword, setMockMode, navigate]);
 
   useHotkeys(
     'enter',

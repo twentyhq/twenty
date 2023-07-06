@@ -83,7 +83,6 @@ export const FilterByAccountOwner: Story = {
     const charlesChip = canvas
       .getAllByTestId('dropdown-menu-item')
       .find((item) => {
-        console.log({ item });
         return item.textContent?.includes('Charles Test');
       });
 

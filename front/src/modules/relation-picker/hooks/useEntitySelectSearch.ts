@@ -1,4 +1,4 @@
-import { debounce } from 'lodash';
+import debounce from 'lodash.debounce';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 

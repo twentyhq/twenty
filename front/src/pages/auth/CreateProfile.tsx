@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
+import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
@@ -12,6 +13,7 @@ import { MainButton } from '@/ui/components/buttons/MainButton';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
+import { GET_CURRENT_USER } from '@/users/services';
 import { useUpdateUserMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
@@ -72,6 +74,7 @@ export function CreateProfile() {
             },
           },
         },
+        refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
       });
 
       if (errors || !data?.updateUser) {
@@ -147,7 +150,12 @@ export function CreateProfile() {
         </StyledSectionContainer>
       </StyledContentContainer>
       <StyledButtonContainer>
-        <MainButton title="Continue" onClick={handleCreate} fullWidth />
+        <MainButton
+          title="Continue"
+          onClick={handleCreate}
+          disabled={!firstName || !lastName}
+          fullWidth
+        />
       </StyledButtonContainer>
     </>
   );

@@ -5,7 +5,9 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { useIsLogged } from '../hooks/useIsLogged';
+import { useOnboardingStatus } from '../hooks/useOnboardingStatus';
 import { currentUserState } from '../states/currentUserState';
+import { OnboardingStatus } from '../utils/getOnboardingStatus';
 
 const EmptyContainer = styled.div`
   align-items: center;
@@ -36,32 +38,16 @@ export function RequireNotOnboard({
 }): JSX.Element {
   const navigate = useNavigate();
 
-  const [currentUser] = useRecoilState(currentUserState);
+  const onboardingStatus = useOnboardingStatus();
   const isLogged = useIsLogged();
 
   useEffect(() => {
-    if (
-      isLogged &&
-      currentUser?.firstName &&
-      currentUser?.lastName &&
-      currentUser.workspaceMember
-    ) {
+    if (isLogged && onboardingStatus === OnboardingStatus.Completed) {
       navigate('/');
     }
-  }, [
-    currentUser?.firstName,
-    currentUser?.lastName,
-    currentUser?.workspaceMember,
-    isLogged,
-    navigate,
-  ]);
+  }, [isLogged, navigate, onboardingStatus]);
 
-  if (
-    isLogged &&
-    currentUser?.firstName &&
-    currentUser?.lastName &&
-    currentUser?.workspaceMember
-  ) {
+  if (isLogged && onboardingStatus === OnboardingStatus.Completed) {
     return (
       <EmptyContainer>
         <FadeInStyle>

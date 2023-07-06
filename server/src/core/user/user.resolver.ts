@@ -64,12 +64,16 @@ export class UserResolver {
     prismaSelect: PrismaSelect<'User'>,
   ): Promise<Partial<User>[]> {
     return await this.userService.findMany({
-      ...args,
       where: args.where
         ? {
             AND: [args.where, accessibleBy(ability).User],
           }
         : accessibleBy(ability).User,
+      orderBy: args.orderBy,
+      cursor: args.cursor,
+      take: args.take,
+      skip: args.skip,
+      distinct: args.distinct,
       select: prismaSelect.value,
     });
   }
@@ -92,7 +96,8 @@ export class UserResolver {
     assert(user, 'User not found');
 
     return this.userService.update({
-      ...args,
+      where: args.where,
+      data: args.data,
       select: prismaSelect.value,
     });
   }

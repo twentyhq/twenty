@@ -36,6 +36,7 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
+  extraLinks?: ApolloLink[];
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
@@ -49,6 +50,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       onNetworkError,
       onTokenPairChange,
       onUnauthenticatedError,
+      extraLinks,
       ...options
     } = opts;
 
@@ -148,6 +150,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         [
           errorLink,
           authLink,
+          ...(extraLinks ? extraLinks : []),
           // Only show logger in dev mode
           process.env.NODE_ENV !== 'production' ? logger : null,
           retryLink,

@@ -26,6 +26,12 @@ export class AuthService {
   ) {}
 
   async challenge(challengeInput: ChallengeInput) {
+    assert(
+      PASSWORD_REGEX.test(challengeInput.password),
+      'Password too weak',
+      BadRequestException,
+    );
+
     let user = await this.userService.findUnique({
       where: {
         email: challengeInput.email,
@@ -33,27 +39,18 @@ export class AuthService {
     });
 
     if (!user) {
-      assert(
-        PASSWORD_REGEX.test(challengeInput.password),
-        'Password too weak',
-        BadRequestException,
-      );
-
       const passwordHash = await hashPassword(challengeInput.password);
 
-      console.log('1');
       user = await this.userService.createUser({
         data: {
-          firstName: '',
-          lastName: '',
           email: challengeInput.email,
           passwordHash,
           locale: 'en',
         },
       });
-      console.log('2');
     }
 
+    assert(user, "This user doesn't exist", NotFoundException);
     assert(user.passwordHash, 'Incorrect login method', ForbiddenException);
 
     const isValid = await compareHash(

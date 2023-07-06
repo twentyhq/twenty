@@ -7,7 +7,6 @@ import { AuthWorkspace } from '../../../decorators/auth-workspace.decorator';
 import { FindManyPipelineProgressArgs } from '../../@generated/pipeline-progress/find-many-pipeline-progress.args';
 import { PipelineProgress } from '../../@generated/pipeline-progress/pipeline-progress.model';
 import { UpdateOnePipelineProgressArgs } from '../../@generated/pipeline-progress/update-one-pipeline-progress.args';
-import { Prisma } from '@prisma/client';
 import { AffectedRows } from '../../@generated/prisma/affected-rows.output';
 import { DeleteManyPipelineProgressArgs } from '../../@generated/pipeline-progress/delete-many-pipeline-progress.args';
 import { CreateOnePipelineProgressArgs } from '../../@generated/pipeline-progress/create-one-pipeline-progress.args';
@@ -40,14 +39,21 @@ export class PipelineProgressResolver {
   async findManyPipelineProgress(
     @Args() args: FindManyPipelineProgressArgs,
     @UserAbility() ability: AppAbility,
+    @PrismaSelector({ modelName: 'PipelineProgress' })
+    prismaSelect: PrismaSelect<'PipelineProgress'>,
   ): Promise<Partial<PipelineProgress>[]> {
     return this.pipelineProgressService.findMany({
-      ...args,
       where: args.where
         ? {
             AND: [args.where, accessibleBy(ability).PipelineProgress],
           }
         : accessibleBy(ability).PipelineProgress,
+      orderBy: args.orderBy,
+      cursor: args.cursor,
+      take: args.take,
+      skip: args.skip,
+      distinct: args.distinct,
+      select: prismaSelect.value,
     });
   }
 
@@ -62,9 +68,10 @@ export class PipelineProgressResolver {
     prismaSelect: PrismaSelect<'PipelineProgress'>,
   ): Promise<Partial<PipelineProgress> | null> {
     return this.pipelineProgressService.update({
-      ...args,
+      where: args.where,
+      data: args.data,
       select: prismaSelect.value,
-    } as Prisma.PipelineProgressUpdateArgs);
+    });
   }
 
   @Mutation(() => AffectedRows, {
@@ -76,7 +83,7 @@ export class PipelineProgressResolver {
     @Args() args: DeleteManyPipelineProgressArgs,
   ): Promise<AffectedRows> {
     return this.pipelineProgressService.deleteMany({
-      ...args,
+      where: args.where,
     });
   }
 
@@ -97,6 +104,6 @@ export class PipelineProgressResolver {
         ...{ workspace: { connect: { id: workspace.id } } },
       },
       select: prismaSelect.value,
-    } as Prisma.PipelineProgressCreateArgs);
+    });
   }
 }
