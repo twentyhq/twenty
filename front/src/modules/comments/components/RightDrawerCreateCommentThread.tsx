@@ -7,7 +7,7 @@ import { CommentThreadCreateMode } from './CommentThreadCreateMode';
 export function RightDrawerCreateCommentThread() {
   return (
     <RightDrawerPage>
-      <RightDrawerTopBar title="New comment" />
+      <RightDrawerTopBar title="New note" />
       <RightDrawerBody>
         <CommentThreadCreateMode />
       </RightDrawerBody>

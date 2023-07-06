@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+import { Button } from '@/ui/components/buttons/Button';
+
 import { RightDrawerTopBarCloseButton } from './RightDrawerTopBarCloseButton';
 
 const StyledRightDrawerTopBar = styled.div`
@@ -28,8 +30,9 @@ export function RightDrawerTopBar({
 }) {
   return (
     <StyledRightDrawerTopBar>
-      <StyledTopBarTitle>{title}</StyledTopBarTitle>
       <RightDrawerTopBarCloseButton />
+      <StyledTopBarTitle>{title}</StyledTopBarTitle>
+      <Button title="Save" />
     </StyledRightDrawerTopBar>
   );
 }

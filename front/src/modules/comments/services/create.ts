@@ -38,7 +38,6 @@ export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
     $commentText: String!
     $authorId: String!
     $createdAt: DateTime!
-    $commentId: String!
     $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!
   ) {
     createOneCommentThread(
@@ -46,16 +45,8 @@ export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
         id: $commentThreadId
         createdAt: $createdAt
         updatedAt: $createdAt
-        comments: {
-          createMany: {
-            data: {
-              authorId: $authorId
-              id: $commentId
-              createdAt: $createdAt
-              body: $commentText
-            }
-          }
-        }
+        authorId: $authorId
+        body: $commentText
         commentThreadTargets: {
           createMany: { data: $commentThreadTargetArray, skipDuplicates: true }
         }

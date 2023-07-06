@@ -216,6 +216,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
           entity.entityType === CommentableType.Company ? (
             <CompanyChip
               key={entity.id}
+              id={entity.id}
               name={entity.name}
               picture={entity.avatarUrl}
             />

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { IconPlus } from '@/ui/icons/index';
+import { IconChevronsRight } from '@/ui/icons/index';
 
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 
@@ -24,7 +24,6 @@ const StyledButton = styled.button`
   }
   svg {
     color: ${({ theme }) => theme.font.color.tertiary};
-    transform: rotate(45deg);
   }
 `;
 
@@ -37,7 +36,7 @@ export function RightDrawerTopBarCloseButton() {
 
   return (
     <StyledButton onClick={handleButtonClick}>
-      <IconPlus size={16} />
+      <IconChevronsRight size={16} />
     </StyledButton>
   );
 }

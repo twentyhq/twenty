@@ -12,6 +12,15 @@ export class CommentThreadCountAggregate {
     @HideField()
     workspaceId!: number;
 
+    @Field(() => Int, {nullable:false})
+    authorId!: number;
+
+    @Field(() => Int, {nullable:false})
+    body!: number;
+
+    @Field(() => Int, {nullable:false})
+    title!: number;
+
     @HideField()
     deletedAt!: number;
 

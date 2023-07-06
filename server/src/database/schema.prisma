@@ -328,6 +328,11 @@ model CommentThread {
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId          String
 
+  authorId String?
+
+  body  String?
+  title String?
+
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 

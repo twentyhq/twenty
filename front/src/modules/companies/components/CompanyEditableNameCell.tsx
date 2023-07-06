@@ -38,6 +38,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       value={company.name || ''}
       placeholder="Name"
       picture={getLogoUrlFromDomainName(company.domainName)}
+      id={company.id}
       changeHandler={(value: string) => {
         updateCompany({
           variables: {

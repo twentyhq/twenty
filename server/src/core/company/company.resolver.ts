@@ -55,6 +55,23 @@ export class CompanyResolver {
     });
   }
 
+  @Query(() => Company)
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(ReadCompanyAbilityHandler)
+  async findUniqueCompany(
+    @Args('id') id: string,
+    @UserAbility() ability: AppAbility,
+    @PrismaSelector({ modelName: 'Company' })
+    prismaSelect: PrismaSelect<'Company'>,
+  ): Promise<Partial<Company>> {
+    return this.companyService.findUniqueOrThrow({
+      where: {
+        id: id,
+      },
+      select: prismaSelect.value,
+    });
+  }
+
   @UseGuards(UpdateOneGuard)
   @Mutation(() => Company, {
     nullable: true,

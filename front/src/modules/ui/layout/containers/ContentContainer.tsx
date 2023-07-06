@@ -30,13 +30,7 @@ type LeftContainerProps = {
 const LeftContainer = styled.div<LeftContainerProps>`
   display: flex;
   position: relative;
-  width: calc(
-    100% -
-      ${(props) =>
-        props.isRightDrawerOpen
-          ? `${props.theme.rightDrawerWidth} - ${props.theme.spacing(2)}`
-          : '0px'}
-  );
+  width: 100%;
 `;
 
 export function ContentContainer({ children, topMargin }: OwnProps) {

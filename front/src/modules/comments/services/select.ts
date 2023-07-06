@@ -14,6 +14,9 @@ export const GET_COMMENT_THREADS_BY_TARGETS = gql`
       }
     ) {
       id
+      title
+      body
+      authorId
       comments {
         id
         body

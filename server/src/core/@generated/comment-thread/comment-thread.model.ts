@@ -16,6 +16,15 @@ export class CommentThread {
     @HideField()
     workspaceId!: string;
 
+    @Field(() => String, {nullable:true})
+    authorId!: string | null;
+
+    @Field(() => String, {nullable:true})
+    body!: string | null;
+
+    @Field(() => String, {nullable:true})
+    title!: string | null;
+
     @HideField()
     deletedAt!: Date | null;
 

@@ -91,7 +91,6 @@ export function CommentThreadCreateMode() {
       createCommentThreadWithComment({
         variables: {
           authorId: currentUser.id,
-          commentId: v4(),
           commentText: commentText,
           commentThreadId: v4(),
           createdAt: new Date().toISOString(),

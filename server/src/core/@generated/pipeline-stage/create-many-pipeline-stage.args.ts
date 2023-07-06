@@ -9,8 +9,8 @@ export class CreateManyPipelineStageArgs {
 
     @Field(() => [PipelineStageCreateManyInput], {nullable:false})
     @Type(() => PipelineStageCreateManyInput)
-    @ValidateNested({each: true})
     @Type(() => PipelineStageCreateManyInput)
+    @ValidateNested({each: true})
     data!: Array<PipelineStageCreateManyInput>;
 
     @Field(() => Boolean, {nullable:true})

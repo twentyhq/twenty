@@ -11,6 +11,15 @@ export class CommentThreadMinAggregateInput {
     @HideField()
     workspaceId?: true;
 
+    @Field(() => Boolean, {nullable:true})
+    authorId?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    body?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    title?: true;
+
     @HideField()
     deletedAt?: true;
 

@@ -15,6 +15,15 @@ export class CommentThreadOrderByWithRelationInput {
     @HideField()
     workspaceId?: keyof typeof SortOrder;
 
+    @Field(() => SortOrder, {nullable:true})
+    authorId?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    body?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    title?: keyof typeof SortOrder;
+
     @HideField()
     deletedAt?: keyof typeof SortOrder;
 

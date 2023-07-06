@@ -16,8 +16,10 @@ export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholder'>>`
     !isNonEmptyString(props.avatarUrl)
       ? props.theme.background.tertiary
       : 'none'};
-  background-image: url(${(props) =>
-    isNonEmptyString(props.avatarUrl) ? props.avatarUrl : 'none'});
+  ${(props) =>
+    isNonEmptyString(props.avatarUrl)
+      ? `background-image: url(${props.avatarUrl});`
+      : ''}
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   color: ${({ theme }) => theme.font.color.primary};

@@ -11,17 +11,40 @@ import { rightDrawerPageState } from '../states/rightDrawerPageState';
 
 import { RightDrawerRouter } from './RightDrawerRouter';
 
+const ClickableBackground = styled.div`
+  backdrop-filter: blur(1px);
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+`;
+
+const StyledContainer = styled.div`
+  background: white;
+  height: 100%;
+  overflow-x: hidden;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transition: width 0.5s;
+  width: ${({ theme }) => theme.rightDrawerWidth};
+  z-index: 10000;
+`;
 const StyledRightDrawer = styled.div`
   display: flex;
   flex-direction: row;
-  width: ${({ theme }) => theme.rightDrawerWidth};
+  width: 100%;
 `;
 
 export function RightDrawer() {
   const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
     captureHotkeyTypeInFocusState,
   );
-  const [isRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
+  const [isRightDrawerOpen, setIsRightDrawerOpen] = useRecoilState(
+    isRightDrawerOpenState,
+  );
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
   useEffect(() => {
     setCaptureHotkeyTypeInFocus(isRightDrawerOpen);
@@ -31,10 +54,15 @@ export function RightDrawer() {
   }
 
   return (
-    <StyledRightDrawer>
-      <Panel>
-        <RightDrawerRouter />
-      </Panel>
-    </StyledRightDrawer>
+    <>
+      <ClickableBackground onClick={() => setIsRightDrawerOpen(false)} />
+      <StyledContainer>
+        <StyledRightDrawer>
+          <Panel>
+            <RightDrawerRouter />
+          </Panel>
+        </StyledRightDrawer>
+      </StyledContainer>
+    </>
   );
 }

@@ -1,13 +1,15 @@
+import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { Avatar } from '@/users/components/Avatar';
 
 export type CompanyChipPropsType = {
+  id: string;
   name: string;
   picture?: string;
 };
 
-const StyledContainer = styled.span`
+const StyledContainer = styled(Link)`
   align-items: center;
   background-color: ${({ theme }) => theme.background.tertiary};
   border-radius: ${({ theme }) => theme.spacing(1)};
@@ -16,8 +18,9 @@ const StyledContainer = styled.span`
   gap: ${({ theme }) => theme.spacing(1)};
   height: calc(20px - 2 * ${({ theme }) => theme.spacing(1)});
   overflow: hidden;
-
   padding: ${({ theme }) => theme.spacing(1)};
+
+  text-decoration: none;
 
   user-select: none;
 
@@ -38,9 +41,9 @@ const StyledName = styled.span`
   white-space: nowrap;
 `;
 
-function CompanyChip({ name, picture }: CompanyChipPropsType) {
+function CompanyChip({ id, name, picture }: CompanyChipPropsType) {
   return (
-    <StyledContainer data-testid="company-chip">
+    <StyledContainer data-testid="company-chip" to={`/companies/${id}`}>
       {picture && (
         <Avatar
           avatarUrl={picture?.toString()}

@@ -18,6 +18,8 @@ import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { People } from '~/pages/people/People';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 
+import { CompanyShow } from './pages/companies/CompanyShow';
+
 /**
  * AuthRoutes is used to allow transitions between auth pages with framer-motion.
  */
@@ -60,6 +62,7 @@ export function App() {
                 <Route path="" element={<Navigate to="/people" replace />} />
                 <Route path="people" element={<People />} />
                 <Route path="companies" element={<Companies />} />
+                <Route path="companies/:companyId" element={<CompanyShow />} />
                 <Route path="opportunities" element={<Opportunities />} />
                 <Route
                   path="settings/*"

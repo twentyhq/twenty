@@ -18,7 +18,7 @@ const common = {
     horizontalCellMargin: '8px',
     checkboxColumnWidth: '32px',
   },
-  rightDrawerWidth: '300px',
+  rightDrawerWidth: '500px',
   clickableElementBackgroundTransition: 'background 0.1s ease',
   lastLayerZIndex: 2147483647,
 };
