@@ -7,7 +7,9 @@ import { useRecoilState } from 'recoil';
 
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
@@ -43,6 +45,7 @@ const StyledComboInputContainer = styled.div`
 
 export function CreateProfile() {
   const navigate = useNavigate();
+  const onboardingStatus = useOnboardingStatus();
 
   const [currentUser] = useRecoilState(currentUserState);
   const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
@@ -108,10 +111,10 @@ export function CreateProfile() {
   );
 
   useEffect(() => {
-    if (!currentUser || (currentUser?.firstName && currentUser?.lastName)) {
+    if (onboardingStatus !== OnboardingStatus.OngoingProfileCreation) {
       navigate('/');
     }
-  }, [currentUser, navigate]);
+  }, [onboardingStatus, navigate]);
 
   useEffect(() => {
     setCaptureHotkeyTypeInFocus(true);

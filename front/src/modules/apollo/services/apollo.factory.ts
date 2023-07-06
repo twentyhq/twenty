@@ -11,25 +11,17 @@ import { GraphQLErrors } from '@apollo/client/errors';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
-import { Observable } from '@apollo/client/utilities';
 
 import { renewToken } from '@/auth/services/AuthService';
 import { AuthTokenPair } from '~/generated/graphql';
 
 import { loggerLink } from '../../utils/apollo-logger';
 import { assertNotNull } from '../../utils/assert';
-import { promiseToObservable } from '../../utils/promise-to-observable';
 import { ApolloManager } from '../interfaces/apolloManager.interface';
 
 const logger = loggerLink(() => 'Twenty');
 
 let isRefreshing = false;
-let pendingRequests: (() => void)[] = [];
-
-const resolvePendingRequests = () => {
-  pendingRequests.map((callback) => callback());
-  pendingRequests = [];
-};
 
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onError?: (err: GraphQLErrors | undefined) => void;
@@ -88,38 +80,22 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             for (const graphQLError of graphQLErrors) {
               switch (graphQLError?.extensions?.code) {
                 case 'UNAUTHENTICATED': {
-                  // error code is set to UNAUTHENTICATED
-                  // when AuthenticationError thrown in resolver
-                  let forward$: Observable<boolean>;
-
                   if (!isRefreshing) {
                     isRefreshing = true;
-                    forward$ = promiseToObservable(
-                      renewToken(uri, this.tokenPair)
-                        .then((tokens) => {
-                          onTokenPairChange?.(tokens);
-                          resolvePendingRequests();
-                          return true;
-                        })
-                        .catch(() => {
-                          pendingRequests = [];
-                          onUnauthenticatedError?.();
-                          return false;
-                        })
-                        .finally(() => {
-                          isRefreshing = false;
-                        }),
-                    ).filter((value) => Boolean(value));
-                  } else {
-                    // Will only emit once the Promise is resolved
-                    forward$ = promiseToObservable(
-                      new Promise<boolean>((resolve) => {
-                        pendingRequests.push(() => resolve(true));
-                      }),
-                    );
+                    renewToken(uri, this.tokenPair)
+                      .then((tokens) => {
+                        onTokenPairChange?.(tokens);
+                        return true;
+                      })
+                      .catch(() => {
+                        onUnauthenticatedError?.();
+                        return false;
+                      })
+                      .finally(() => {
+                        isRefreshing = false;
+                      });
                   }
-
-                  return forward$.flatMap(() => forward(operation));
+                  return forward(operation);
                 }
                 default:
                   if (process.env.NODE_ENV === 'development') {

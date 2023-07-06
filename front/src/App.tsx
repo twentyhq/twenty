@@ -2,7 +2,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 
 import { useTrackPageView } from '@/analytics/hooks/useTrackPageView';
-import { RequireNotOnboard } from '@/auth/components/RequireNotOnboard';
+import { RequireOnboarded } from '@/auth/components/RequireOnboarded';
 import { RequireOnboarding } from '@/auth/components/RequireOnboarding';
 import { AuthModal } from '@/auth/components/ui/Modal';
 import { useGoToHotkeys } from '@/hotkeys/hooks/useGoToHotkeys';
@@ -53,9 +53,19 @@ export function App() {
     <DefaultLayout>
       <Routes>
         <Route
-          path="*"
+          path="auth/*"
           element={
             <RequireOnboarding>
+              <AuthLayout>
+                <AuthRoutes />
+              </AuthLayout>
+            </RequireOnboarding>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <RequireOnboarded>
               <Routes>
                 <Route path="" element={<Navigate to="/people" replace />} />
                 <Route path="people" element={<People />} />
@@ -70,17 +80,7 @@ export function App() {
                   }
                 />
               </Routes>
-            </RequireOnboarding>
-          }
-        />
-        <Route
-          path="auth/*"
-          element={
-            <RequireNotOnboard>
-              <AuthLayout>
-                <AuthRoutes />
-              </AuthLayout>
-            </RequireNotOnboard>
+            </RequireOnboarded>
           }
         />
       </Routes>

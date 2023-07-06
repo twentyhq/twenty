@@ -23,7 +23,7 @@ export const FilterByName: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const filterButton = canvas.getByText('Filter');
+    const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
     const nameFilterButton = canvas
@@ -60,7 +60,7 @@ export const FilterByAccountOwner: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const filterButton = canvas.getByText('Filter');
+    const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
     const accountOwnerFilterButton = (

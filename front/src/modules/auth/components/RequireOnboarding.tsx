@@ -2,13 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
-import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
-
-import { useIsLogged } from '../hooks/useIsLogged';
 import { useOnboardingStatus } from '../hooks/useOnboardingStatus';
-import { currentUserState } from '../states/currentUserState';
 import { OnboardingStatus } from '../utils/getOnboardingStatus';
 
 const EmptyContainer = styled.div`
@@ -40,53 +35,19 @@ export function RequireOnboarding({
 }): JSX.Element {
   const navigate = useNavigate();
 
-  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
-    captureHotkeyTypeInFocusState,
-  );
-  const [currentUser] = useRecoilState(currentUserState);
   const onboardingStatus = useOnboardingStatus();
-  const isLogged = useIsLogged();
 
   useEffect(() => {
-    if (!isLogged) {
-      navigate('/auth');
-    } else if (
-      !currentUser?.workspaceMember ||
-      !currentUser?.workspaceMember.workspace.displayName
-    ) {
-      navigate('/auth/create/workspace');
-    } else if (!currentUser?.firstName || !currentUser?.lastName) {
-      navigate('/auth/create/profile');
+    if (onboardingStatus === OnboardingStatus.Completed) {
+      navigate('/');
     }
-  }, [
-    currentUser?.firstName,
-    currentUser?.lastName,
-    currentUser?.workspaceMember,
-    isLogged,
-    navigate,
-  ]);
+  }, [navigate, onboardingStatus]);
 
-  useEffect(() => {
-    if (isLogged && onboardingStatus === OnboardingStatus.Completed) {
-      setCaptureHotkeyTypeInFocus(false);
-    }
-  }, [setCaptureHotkeyTypeInFocus, navigate, onboardingStatus, isLogged]);
-
-  if (!isLogged || onboardingStatus === OnboardingStatus.Ongoing) {
+  if (onboardingStatus === OnboardingStatus.Completed) {
     return (
       <EmptyContainer>
         <FadeInStyle>
-          {!isLogged && (
-            <div>
-              Please hold on a moment, we're directing you to our login page...
-            </div>
-          )}
-          {onboardingStatus === OnboardingStatus.Ongoing && (
-            <div>
-              Please hold on a moment, we're directing you to our onboarding
-              flow...
-            </div>
-          )}
+          Please hold on a moment, we're directing you to the app...
         </FadeInStyle>
       </EmptyContainer>
     );

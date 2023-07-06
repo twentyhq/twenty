@@ -7,7 +7,9 @@ import { useRecoilState } from 'recoil';
 
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
@@ -34,8 +36,7 @@ const StyledButtonContainer = styled.div`
 
 export function CreateWorkspace() {
   const navigate = useNavigate();
-
-  const [currentUser] = useRecoilState(currentUserState);
+  const onboardingStatus = useOnboardingStatus();
 
   const [workspaceName, setWorkspaceName] = useState('');
 
@@ -81,10 +82,10 @@ export function CreateWorkspace() {
   );
 
   useEffect(() => {
-    if (!currentUser || currentUser?.workspaceMember?.workspace?.displayName) {
+    if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceCreation) {
       navigate('/auth/create/profile');
     }
-  }, [currentUser, navigate]);
+  }, [onboardingStatus, navigate]);
 
   return (
     <>

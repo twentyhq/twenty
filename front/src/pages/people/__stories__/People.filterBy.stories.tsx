@@ -23,7 +23,7 @@ export const Email: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const filterButton = canvas.getByText('Filter');
+    const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
     const emailFilterButton = canvas
@@ -59,7 +59,7 @@ export const CompanyName: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const filterButton = canvas.getByText('Filter');
+    const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
     const companyFilterButton = canvas
