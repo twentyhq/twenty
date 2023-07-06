@@ -9,8 +9,8 @@ export class CreateManyPersonArgs {
 
     @Field(() => [PersonCreateManyInput], {nullable:false})
     @Type(() => PersonCreateManyInput)
-    @Type(() => PersonCreateManyInput)
     @ValidateNested({each: true})
+    @Type(() => PersonCreateManyInput)
     data!: Array<PersonCreateManyInput>;
 
     @Field(() => Boolean, {nullable:true})

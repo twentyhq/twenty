@@ -19,12 +19,6 @@ export class PipelineProgressOrderByWithRelationInput {
     @Field(() => SortOrderInput, {nullable:true})
     closeDate?: SortOrderInput;
 
-    @Field(() => SortOrderInput, {nullable:true})
-    probability?: SortOrderInput;
-
-    @Field(() => SortOrderInput, {nullable:true})
-    recurring?: SortOrderInput;
-
     @Field(() => SortOrder, {nullable:true})
     pipelineId?: keyof typeof SortOrder;
 

@@ -1,11 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  IconCurrencyDollar,
-  IconProgressCheck,
-  IconRecycle,
-  IconUserCircle,
-} from '@tabler/icons-react';
+import { IconCurrencyDollar } from '@tabler/icons-react';
 
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
@@ -14,9 +9,8 @@ import { CellContext } from '@/ui/tables/states/CellContext';
 import { RowContext } from '@/ui/tables/states/RowContext';
 
 import { Company, PipelineProgress } from '../../../generated/graphql';
-import { PersonChip } from '../../people/components/PersonChip';
 import { Checkbox } from '../../ui/components/form/Checkbox';
-import { IconCalendarEvent, IconUsers } from '../../ui/icons';
+import { IconCalendarEvent } from '../../ui/icons';
 import { getLogoUrlFromDomainName } from '../../utils/utils';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -75,7 +69,7 @@ type CompanyProp = Pick<
 
 type PipelineProgressProp = Pick<
   PipelineProgress,
-  'id' | 'amount' | 'closeDate' | 'probability' | 'recurring'
+  'id' | 'amount' | 'closeDate'
 >;
 
 function HackScope({ children }: { children: React.ReactNode }) {
@@ -143,45 +137,6 @@ export function CompanyBoardCard({
                 }}
               />
             </HackScope>
-          </span>
-          <span>
-            <IconUserCircle size={theme.icon.size.md} />
-            <PersonChip name={company.accountOwner?.displayName || ''} />
-          </span>
-          <span>
-            <IconProgressCheck size={theme.icon.size.md} />
-            <HackScope>
-              <EditableText
-                content={pipelineProgress.probability || ''}
-                placeholder="Likeliness to close"
-                changeHandler={(value) =>
-                  onUpdateCard({
-                    ...pipelineProgress,
-                    probability: value,
-                  })
-                }
-              />
-            </HackScope>
-          </span>
-          <span>
-            <IconRecycle size={theme.icon.size.md} />
-            <HackScope>
-              <EditableText
-                content={pipelineProgress.recurring || ''}
-                placeholder="Recurringness"
-                changeHandler={(value) =>
-                  onUpdateCard({
-                    ...pipelineProgress,
-                    recurring: value,
-                  })
-                }
-              />
-            </HackScope>
-          </span>
-          <span>
-            <IconUsers size={theme.icon.size.md} /> {company.employees}
-            <PersonChip name={company.accountOwner?.displayName || ''} />
-            <PersonChip name={company.accountOwner?.displayName || ''} />
           </span>
         </StyledBoardCardBody>
       </StyledBoardCard>

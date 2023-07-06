@@ -9,8 +9,8 @@ export class CreateManyRefreshTokenArgs {
 
     @Field(() => [RefreshTokenCreateManyInput], {nullable:false})
     @Type(() => RefreshTokenCreateManyInput)
-    @Type(() => RefreshTokenCreateManyInput)
     @ValidateNested({each: true})
+    @Type(() => RefreshTokenCreateManyInput)
     data!: Array<RefreshTokenCreateManyInput>;
 
     @Field(() => Boolean, {nullable:true})

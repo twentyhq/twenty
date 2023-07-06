@@ -4,8 +4,6 @@ export enum PipelineProgressScalarFieldEnum {
     id = "id",
     amount = "amount",
     closeDate = "closeDate",
-    probability = "probability",
-    recurring = "recurring",
     pipelineId = "pipelineId",
     pipelineStageId = "pipelineStageId",
     progressableType = "progressableType",

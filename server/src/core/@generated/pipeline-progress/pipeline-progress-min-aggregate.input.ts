@@ -15,12 +15,6 @@ export class PipelineProgressMinAggregateInput {
     closeDate?: true;
 
     @Field(() => Boolean, {nullable:true})
-    probability?: true;
-
-    @Field(() => Boolean, {nullable:true})
-    recurring?: true;
-
-    @Field(() => Boolean, {nullable:true})
     pipelineId?: true;
 
     @Field(() => Boolean, {nullable:true})

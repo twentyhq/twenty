@@ -3,7 +3,6 @@ import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
 import { IntNullableFilter } from '../prisma/int-nullable-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
-import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { EnumPipelineProgressableTypeFilter } from '../prisma/enum-pipeline-progressable-type-filter.input';
 import { HideField } from '@nestjs/graphql';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
@@ -31,12 +30,6 @@ export class PipelineProgressWhereInput {
 
     @Field(() => DateTimeNullableFilter, {nullable:true})
     closeDate?: DateTimeNullableFilter;
-
-    @Field(() => StringNullableFilter, {nullable:true})
-    probability?: StringNullableFilter;
-
-    @Field(() => StringNullableFilter, {nullable:true})
-    recurring?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     pipelineId?: StringFilter;

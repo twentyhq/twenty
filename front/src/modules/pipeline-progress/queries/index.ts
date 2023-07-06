@@ -16,8 +16,6 @@ export const GET_PIPELINES = gql`
           progressableId
           amount
           closeDate
-          probability
-          recurring
         }
       }
     }
@@ -29,17 +27,10 @@ export const UPDATE_PIPELINE_PROGRESS = gql`
     $id: String
     $amount: Int
     $closeDate: DateTime
-    $probability: String
-    $recurring: String
   ) {
     updateOnePipelineProgress(
       where: { id: $id }
-      data: {
-        amount: { set: $amount }
-        closeDate: { set: $closeDate }
-        probability: { set: $probability }
-        recurring: { set: $recurring }
-      }
+      data: { amount: { set: $amount }, closeDate: { set: $closeDate } }
     ) {
       id
     }

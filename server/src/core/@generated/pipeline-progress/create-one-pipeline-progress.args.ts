@@ -9,7 +9,7 @@ export class CreateOnePipelineProgressArgs {
 
     @Field(() => PipelineProgressCreateInput, {nullable:false})
     @Type(() => PipelineProgressCreateInput)
-    @Type(() => PipelineProgressCreateInput)
     @ValidateNested({each: true})
+    @Type(() => PipelineProgressCreateInput)
     data!: PipelineProgressCreateInput;
 }

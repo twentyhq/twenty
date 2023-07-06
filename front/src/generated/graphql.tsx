@@ -1548,10 +1548,8 @@ export type PipelineProgress = {
   pipelineId: Scalars['String'];
   pipelineStage: PipelineStage;
   pipelineStageId: Scalars['String'];
-  probability?: Maybe<Scalars['String']>;
   progressableId: Scalars['String'];
   progressableType: PipelineProgressableType;
-  recurring?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -1562,10 +1560,8 @@ export type PipelineProgressCreateInput = {
   id?: InputMaybe<Scalars['String']>;
   pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
   pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
-  probability?: InputMaybe<Scalars['String']>;
   progressableId: Scalars['String'];
   progressableType: PipelineProgressableType;
-  recurring?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -1694,10 +1690,8 @@ export type PipelineProgressOrderByWithRelationInput = {
   pipelineId?: InputMaybe<SortOrder>;
   pipelineStage?: InputMaybe<PipelineStageOrderByWithRelationInput>;
   pipelineStageId?: InputMaybe<SortOrder>;
-  probability?: InputMaybe<SortOrderInput>;
   progressableId?: InputMaybe<SortOrder>;
   progressableType?: InputMaybe<SortOrder>;
-  recurring?: InputMaybe<SortOrderInput>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
@@ -1709,10 +1703,8 @@ export enum PipelineProgressScalarFieldEnum {
   Id = 'id',
   PipelineId = 'pipelineId',
   PipelineStageId = 'pipelineStageId',
-  Probability = 'probability',
   ProgressableId = 'progressableId',
   ProgressableType = 'progressableType',
-  Recurring = 'recurring',
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
 }
@@ -1738,10 +1730,8 @@ export type PipelineProgressUpdateInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
   pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
-  probability?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
   progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
-  recurring?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
@@ -1887,10 +1877,8 @@ export type PipelineProgressWhereInput = {
   pipelineId?: InputMaybe<StringFilter>;
   pipelineStage?: InputMaybe<PipelineStageRelationFilter>;
   pipelineStageId?: InputMaybe<StringFilter>;
-  probability?: InputMaybe<StringNullableFilter>;
   progressableId?: InputMaybe<StringFilter>;
   progressableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
-  recurring?: InputMaybe<StringNullableFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
@@ -2957,14 +2945,12 @@ export type GetPipelinesQueryVariables = Exact<{
 }>;
 
 
-export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null, probability?: string | null, recurring?: string | null }> | null }> | null }> };
+export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null }> | null }> | null }> };
 
 export type UpdateOnePipelineProgressMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
   amount?: InputMaybe<Scalars['Int']>;
   closeDate?: InputMaybe<Scalars['DateTime']>;
-  probability?: InputMaybe<Scalars['String']>;
-  recurring?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -3990,8 +3976,6 @@ export const GetPipelinesDocument = gql`
         progressableId
         amount
         closeDate
-        probability
-        recurring
       }
     }
   }
@@ -4026,10 +4010,10 @@ export type GetPipelinesQueryHookResult = ReturnType<typeof useGetPipelinesQuery
 export type GetPipelinesLazyQueryHookResult = ReturnType<typeof useGetPipelinesLazyQuery>;
 export type GetPipelinesQueryResult = Apollo.QueryResult<GetPipelinesQuery, GetPipelinesQueryVariables>;
 export const UpdateOnePipelineProgressDocument = gql`
-    mutation UpdateOnePipelineProgress($id: String, $amount: Int, $closeDate: DateTime, $probability: String, $recurring: String) {
+    mutation UpdateOnePipelineProgress($id: String, $amount: Int, $closeDate: DateTime) {
   updateOnePipelineProgress(
     where: {id: $id}
-    data: {amount: {set: $amount}, closeDate: {set: $closeDate}, probability: {set: $probability}, recurring: {set: $recurring}}
+    data: {amount: {set: $amount}, closeDate: {set: $closeDate}}
   ) {
     id
   }
@@ -4053,8 +4037,6 @@ export type UpdateOnePipelineProgressMutationFn = Apollo.MutationFunction<Update
  *      id: // value for 'id'
  *      amount: // value for 'amount'
  *      closeDate: // value for 'closeDate'
- *      probability: // value for 'probability'
- *      recurring: // value for 'recurring'
  *   },
  * });
  */

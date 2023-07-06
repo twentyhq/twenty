@@ -10,8 +10,8 @@ export class UpdateManyPersonArgs {
 
     @Field(() => PersonUpdateManyMutationInput, {nullable:false})
     @Type(() => PersonUpdateManyMutationInput)
-    @Type(() => PersonUpdateManyMutationInput)
     @ValidateNested({each: true})
+    @Type(() => PersonUpdateManyMutationInput)
     data!: PersonUpdateManyMutationInput;
 
     @Field(() => PersonWhereInput, {nullable:true})

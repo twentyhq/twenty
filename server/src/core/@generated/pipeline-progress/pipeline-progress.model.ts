@@ -20,12 +20,6 @@ export class PipelineProgress {
     @Field(() => Date, {nullable:true})
     closeDate!: Date | null;
 
-    @Field(() => String, {nullable:true})
-    probability!: string | null;
-
-    @Field(() => String, {nullable:true})
-    recurring!: string | null;
-
     @Field(() => String, {nullable:false})
     pipelineId!: string;
 
