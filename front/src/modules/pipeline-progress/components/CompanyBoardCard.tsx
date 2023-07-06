@@ -1,3 +1,4 @@
+import { createContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -77,7 +78,7 @@ type CompanyProp = Pick<
 
 type PipelineProgressProp = Pick<
   PipelineProgress,
-  'id' | 'amount' | 'closeDate'
+  'id' | 'amount' | 'closeDate' | 'probability' | 'recurring'
 >;
 
 function HackScope({
@@ -88,11 +89,9 @@ function HackScope({
   scopeId: string;
 }) {
   return (
-    <RecoilScope SpecificContext={RecoilScopeContext} key={scopeId}>
-      <RecoilScope SpecificContext={RowContext} key={scopeId}>
-        <RecoilScope SpecificContext={CellContext} key={scopeId}>
-          {children}
-        </RecoilScope>
+    <RecoilScope SpecificContext={RecoilScopeContext}>
+      <RecoilScope SpecificContext={RowContext}>
+        <RecoilScope SpecificContext={CellContext}>{children}</RecoilScope>
       </RecoilScope>
     </RecoilScope>
   );
@@ -112,7 +111,6 @@ export function CompanyBoardCard({
   onUpdateCard: (pipelineProgress: PipelineProgressProp) => Promise<void>;
 }) {
   const theme = useTheme();
-  console.log('pipelineProgress', pipelineProgress);
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard selected={selected}>
@@ -130,7 +128,7 @@ export function CompanyBoardCard({
             <IconCurrencyDollar size={theme.icon.size.md} />
             <HackScope scopeId={pipelineProgress.id + 'amount'}>
               <EditableText
-                content={pipelineProgress.amount?.toString() || '0'}
+                content={pipelineProgress.amount?.toString() || ''}
                 placeholder="Opportunity amount"
                 changeHandler={(value) =>
                   onUpdateCard({
@@ -162,11 +160,33 @@ export function CompanyBoardCard({
           </span>
           <span>
             <IconProgressCheck size={theme.icon.size.md} />
-            Likely
+            <HackScope scopeId={pipelineProgress.id + 'probability'}>
+              <EditableText
+                content={pipelineProgress.probability || ''}
+                placeholder="Likeliness to close"
+                changeHandler={(value) =>
+                  onUpdateCard({
+                    ...pipelineProgress,
+                    probability: value,
+                  })
+                }
+              />
+            </HackScope>
           </span>
           <span>
             <IconRecycle size={theme.icon.size.md} />
-            One-time
+            <HackScope scopeId={pipelineProgress.id + 'recurring'}>
+              <EditableText
+                content={pipelineProgress.recurring || ''}
+                placeholder="Recurringness"
+                changeHandler={(value) =>
+                  onUpdateCard({
+                    ...pipelineProgress,
+                    recurring: value,
+                  })
+                }
+              />
+            </HackScope>
           </span>
           <span>
             <IconUsers size={theme.icon.size.md} /> {company.employees}
