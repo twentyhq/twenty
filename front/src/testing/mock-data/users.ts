@@ -20,7 +20,7 @@ type MockedUser = Pick<
 
 export const mockedUsersData: Array<MockedUser> = [
   {
-    id: 'mock-user',
+    id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
     __typename: 'User',
     email: 'charles@test.com',
     displayName: 'Charles Test',
