@@ -21,6 +21,15 @@ export class PipelineProgressGroupBy {
     @Field(() => Int, {nullable:true})
     amount?: number;
 
+    @Field(() => Date, {nullable:true})
+    closeDate?: Date | string;
+
+    @Field(() => String, {nullable:true})
+    probability?: string;
+
+    @Field(() => String, {nullable:true})
+    recurring?: string;
+
     @Field(() => String, {nullable:false})
     pipelineId!: string;
 

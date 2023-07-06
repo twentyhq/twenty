@@ -10,8 +10,8 @@ export class UpdateManyWorkspaceArgs {
 
     @Field(() => WorkspaceUpdateManyMutationInput, {nullable:false})
     @Type(() => WorkspaceUpdateManyMutationInput)
-    @ValidateNested({each: true})
     @Type(() => WorkspaceUpdateManyMutationInput)
+    @ValidateNested({each: true})
     data!: WorkspaceUpdateManyMutationInput;
 
     @Field(() => WorkspaceWhereInput, {nullable:true})

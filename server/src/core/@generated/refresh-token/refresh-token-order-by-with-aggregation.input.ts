@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { HideField } from '@nestjs/graphql';
+import { SortOrderInput } from '../prisma/sort-order.input';
 import { RefreshTokenCountOrderByAggregateInput } from './refresh-token-count-order-by-aggregate.input';
 import { RefreshTokenMaxOrderByAggregateInput } from './refresh-token-max-order-by-aggregate.input';
 import { RefreshTokenMinOrderByAggregateInput } from './refresh-token-min-order-by-aggregate.input';
@@ -22,7 +23,7 @@ export class RefreshTokenOrderByWithAggregationInput {
     expiresAt?: keyof typeof SortOrder;
 
     @HideField()
-    deletedAt?: keyof typeof SortOrder;
+    deletedAt?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;

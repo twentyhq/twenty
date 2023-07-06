@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { HideField } from '@nestjs/graphql';
+import { SortOrderInput } from '../prisma/sort-order.input';
 import { CommentThreadTargetOrderByRelationAggregateInput } from '../comment-thread-target/comment-thread-target-order-by-relation-aggregate.input';
 import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
 import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-by-with-relation.input';
@@ -16,7 +17,7 @@ export class CommentThreadOrderByWithRelationInput {
     workspaceId?: keyof typeof SortOrder;
 
     @HideField()
-    deletedAt?: keyof typeof SortOrder;
+    deletedAt?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;

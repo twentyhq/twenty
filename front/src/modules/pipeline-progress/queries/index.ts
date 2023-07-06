@@ -15,6 +15,9 @@ export const GET_PIPELINES = gql`
           progressableType
           progressableId
           amount
+          closeDate
+          probability
+          recurring
         }
       }
     }
@@ -22,10 +25,21 @@ export const GET_PIPELINES = gql`
 `;
 
 export const UPDATE_PIPELINE_PROGRESS = gql`
-  mutation UpdateOnePipelineProgress($id: String, $amount: Int) {
+  mutation UpdateOnePipelineProgress(
+    $id: String
+    $amount: Int
+    $closeDate: DateTime
+    $probability: String
+    $recurring: String
+  ) {
     updateOnePipelineProgress(
       where: { id: $id }
-      data: { amount: { set: $amount } }
+      data: {
+        amount: { set: $amount }
+        closeDate: { set: $closeDate }
+        probability: { set: $probability }
+        recurring: { set: $recurring }
+      }
     ) {
       id
     }

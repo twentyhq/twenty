@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { HideField } from '@nestjs/graphql';
+import { SortOrderInput } from '../prisma/sort-order.input';
 import { PipelineCountOrderByAggregateInput } from './pipeline-count-order-by-aggregate.input';
 import { PipelineMaxOrderByAggregateInput } from './pipeline-max-order-by-aggregate.input';
 import { PipelineMinOrderByAggregateInput } from './pipeline-min-order-by-aggregate.input';
@@ -25,7 +26,7 @@ export class PipelineOrderByWithAggregationInput {
     workspaceId?: keyof typeof SortOrder;
 
     @HideField()
-    deletedAt?: keyof typeof SortOrder;
+    deletedAt?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;

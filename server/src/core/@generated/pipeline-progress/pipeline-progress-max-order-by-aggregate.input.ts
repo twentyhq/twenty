@@ -13,6 +13,15 @@ export class PipelineProgressMaxOrderByAggregateInput {
     amount?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
+    closeDate?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    probability?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    recurring?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
     pipelineId?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})

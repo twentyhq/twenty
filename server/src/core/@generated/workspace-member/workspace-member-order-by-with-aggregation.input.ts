@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
 import { HideField } from '@nestjs/graphql';
+import { SortOrderInput } from '../prisma/sort-order.input';
 import { WorkspaceMemberCountOrderByAggregateInput } from './workspace-member-count-order-by-aggregate.input';
 import { WorkspaceMemberMaxOrderByAggregateInput } from './workspace-member-max-order-by-aggregate.input';
 import { WorkspaceMemberMinOrderByAggregateInput } from './workspace-member-min-order-by-aggregate.input';
@@ -19,7 +20,7 @@ export class WorkspaceMemberOrderByWithAggregationInput {
     workspaceId?: keyof typeof SortOrder;
 
     @HideField()
-    deletedAt?: keyof typeof SortOrder;
+    deletedAt?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;

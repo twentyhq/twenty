@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
+import { SortOrderInput } from '../prisma/sort-order.input';
 import { HideField } from '@nestjs/graphql';
 import { PipelineOrderByWithRelationInput } from '../pipeline/pipeline-order-by-with-relation.input';
 import { PipelineStageOrderByWithRelationInput } from '../pipeline-stage/pipeline-stage-order-by-with-relation.input';
@@ -12,8 +13,17 @@ export class PipelineProgressOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     id?: keyof typeof SortOrder;
 
-    @Field(() => SortOrder, {nullable:true})
-    amount?: keyof typeof SortOrder;
+    @Field(() => SortOrderInput, {nullable:true})
+    amount?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    closeDate?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    probability?: SortOrderInput;
+
+    @Field(() => SortOrderInput, {nullable:true})
+    recurring?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     pipelineId?: keyof typeof SortOrder;
@@ -31,7 +41,7 @@ export class PipelineProgressOrderByWithRelationInput {
     workspaceId?: keyof typeof SortOrder;
 
     @HideField()
-    deletedAt?: keyof typeof SortOrder;
+    deletedAt?: SortOrderInput;
 
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;
