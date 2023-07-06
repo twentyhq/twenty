@@ -1,6 +1,9 @@
 import { PipelineProgress, User } from '../../generated/graphql';
 
-type MockedPipelineProgress = Pick<PipelineProgress, 'id' | 'amount'> & {
+type MockedPipelineProgress = Pick<
+  PipelineProgress,
+  'id' | 'amount' | 'closeDate'
+> & {
   accountOwner: Pick<
     User,
     'id' | 'email' | 'displayName' | '__typename' | 'firstName' | 'lastName'

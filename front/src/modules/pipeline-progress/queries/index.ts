@@ -33,6 +33,8 @@ export const UPDATE_PIPELINE_PROGRESS = gql`
       data: { amount: { set: $amount }, closeDate: { set: $closeDate } }
     ) {
       id
+      amount
+      closeDate
     }
   }
 `;

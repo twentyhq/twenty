@@ -37,9 +37,15 @@ export function Opportunities() {
     useUpdateOnePipelineProgressStageMutation();
 
   const handleUpdateCard = useCallback(
-    async (pipelineProgress: Pick<PipelineProgress, 'id' | 'amount'>) => {
+    async (
+      pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
+    ) => {
       updatePipelineProgress({
-        variables: pipelineProgress,
+        variables: {
+          id: pipelineProgress.id,
+          amount: pipelineProgress.amount,
+          closeDate: pipelineProgress.closeDate || null,
+        },
       });
     },
     [updatePipelineProgress],

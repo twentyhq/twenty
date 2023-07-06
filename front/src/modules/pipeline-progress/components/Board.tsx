@@ -26,7 +26,7 @@ import { NewButton } from './NewButton';
 
 export type CompanyProgress = {
   company: Pick<Company, 'id' | 'name' | 'domainName'>;
-  pipelineProgress: Pick<PipelineProgress, 'id' | 'amount'>;
+  pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
 };
 
 export type CompanyProgressDict = {
@@ -40,7 +40,7 @@ type BoardProps = {
   initialItems: CompanyProgressDict;
   onMoveCard?: (itemKey: string, columnId: Column['id']) => Promise<void>;
   onUpdateCard: (
-    pipelineProgress: Pick<PipelineProgress, 'id' | 'amount'>,
+    pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
   ) => Promise<void>;
 };
 
