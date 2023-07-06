@@ -84,6 +84,7 @@ export function Board({
   useEffect(() => {
     if (isInitialBoardLoaded) return;
     setBoard(initialBoard);
+    if (Object.keys(initialItems).length === 0) return;
     setBoardItems(initialItems);
     setIsInitialBoardLoaded(true);
   }, [
