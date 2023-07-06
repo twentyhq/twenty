@@ -9,7 +9,6 @@ import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTyp
 import { useIsLogged } from '../hooks/useIsLogged';
 import { useOnboardingStatus } from '../hooks/useOnboardingStatus';
 import { currentUserState } from '../states/currentUserState';
-import { isMockModeState } from '../states/isMockModeState';
 import { OnboardingStatus } from '../utils/getOnboardingStatus';
 
 const EmptyContainer = styled.div`

@@ -2,11 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { useIsLogged } from '../hooks/useIsLogged';
 import { useOnboardingStatus } from '../hooks/useOnboardingStatus';
-import { currentUserState } from '../states/currentUserState';
 import { OnboardingStatus } from '../utils/getOnboardingStatus';
 
 const EmptyContainer = styled.div`
