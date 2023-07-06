@@ -5,6 +5,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ShowPageComments } from '@/comments/components/ShowPageComments';
+import { Timeline } from '@/comments/components/Timeline';
 import { useCompanyQuery } from '@/companies/services';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
@@ -83,12 +84,7 @@ export function CompanyShow() {
           </PropertyBox>
         </StyledLeftPanelContainer>
         <StyledRightPanelContainer>
-          <ShowPageComments
-            commentableEntity={{
-              id: company?.id ?? '',
-              type: CommentableType.Company,
-            }}
-          />
+          <Timeline />
         </StyledRightPanelContainer>
       </StyledCompanyContainer>
     </WithTopBarContainer>

@@ -8,6 +8,9 @@ import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer'
 import { GET_COMPANIES } from '@/companies/services';
 import { GET_PEOPLE } from '@/people/services';
 import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
+import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
+import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
+import { IconArrowUpRight } from '@/ui/icons/index';
 import { logError } from '@/utils/logs/logError';
 import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
@@ -86,6 +89,13 @@ export function CommentThread({ commentThread }: OwnProps) {
 
   return (
     <StyledContainer>
+      <PropertyBox>
+        <PropertyBoxItem
+          icon={<IconArrowUpRight />}
+          value={<CommentThreadRelationPicker commentThread={commentThread} />}
+          label="Relations"
+        />
+      </PropertyBox>
       <StyledThreadItemListContainer>
         {commentThread.comments?.map((comment, index) => (
           <CommentThreadItem
@@ -101,7 +111,7 @@ export function CommentThread({ commentThread }: OwnProps) {
           />
         ))}
       </StyledThreadItemListContainer>
-      <CommentThreadRelationPicker commentThread={commentThread} />
+
       <AutosizeTextInput onValidate={handleSendComment} />
     </StyledContainer>
   );

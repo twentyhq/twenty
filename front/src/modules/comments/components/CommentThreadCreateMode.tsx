@@ -1,4 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
+import { BlockNoteEditor } from '@blocknote/core';
+import { BlockNoteView, useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
@@ -6,9 +8,13 @@ import { v4 } from 'uuid';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { commentableEntityArrayState } from '@/comments/states/commentableEntityArrayState';
 import { createdCommentThreadIdState } from '@/comments/states/createdCommentThreadIdState';
+import CompanyChip from '@/companies/components/CompanyChip';
 import { GET_COMPANIES } from '@/companies/services';
 import { GET_PEOPLE } from '@/people/services';
 import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
+import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
+import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
+import { IconArrowUpRight } from '@/ui/icons/index';
 import { useOpenRightDrawer } from '@/ui/layout/right-drawer/hooks/useOpenRightDrawer';
 import { logError } from '@/utils/logs/logError';
 import { isDefined } from '@/utils/type-guards/isDefined';
@@ -22,6 +28,9 @@ import {
 import { GET_COMMENT_THREAD } from '../services';
 
 import { CommentThreadItem } from './CommentThreadItem';
+import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
+
+import '@blocknote/core/style.css';
 
 const StyledContainer = styled.div`
   align-items: flex-start;
@@ -45,6 +54,10 @@ const StyledThreadItemListContainer = styled.div`
   justify-content: flex-start;
   overflow: auto;
 
+  width: 100%;
+`;
+
+const BlockNoteStyledContainer = styled.div`
   width: 100%;
 `;
 
@@ -87,50 +100,36 @@ export function CommentThreadCreateMode() {
       return;
     }
 
-    if (!createdCommmentThreadId) {
-      createCommentThreadWithComment({
-        variables: {
-          authorId: currentUser.id,
-          commentText: commentText,
-          commentThreadId: v4(),
-          createdAt: new Date().toISOString(),
-          commentThreadTargetArray: commentableEntityArray.map(
-            (commentableEntity) => ({
-              commentableId: commentableEntity.id,
-              commentableType: commentableEntity.type,
-              id: v4(),
-              createdAt: new Date().toISOString(),
-            }),
-          ),
-        },
-        refetchQueries: [
-          getOperationName(GET_COMPANIES) ?? '',
-          getOperationName(GET_PEOPLE) ?? '',
-          getOperationName(GET_COMMENT_THREAD) ?? '',
-        ],
-        onCompleted(data) {
-          setCreatedCommentThreadId(data.createOneCommentThread.id);
-          openRightDrawer('comments');
-        },
-      });
-    } else {
-      createCommentMutation({
-        variables: {
-          commentId: v4(),
-          authorId: currentUser.id,
-          commentThreadId: createdCommmentThreadId,
-          commentText,
-          createdAt: new Date().toISOString(),
-        },
-        refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
-        onError: (error) => {
-          logError(
-            `In handleCreateCommentThread, createCommentMutation onError, error: ${error}`,
-          );
-        },
-      });
-    }
+    createCommentThreadWithComment({
+      variables: {
+        authorId: currentUser.id,
+        commentText: commentText,
+        commentThreadId: v4(),
+        createdAt: new Date().toISOString(),
+        commentThreadTargetArray: commentableEntityArray.map(
+          (commentableEntity) => ({
+            commentableId: commentableEntity.id,
+            commentableType: commentableEntity.type,
+            id: v4(),
+            createdAt: new Date().toISOString(),
+          }),
+        ),
+      },
+      refetchQueries: [
+        getOperationName(GET_COMPANIES) ?? '',
+        getOperationName(GET_PEOPLE) ?? '',
+        getOperationName(GET_COMMENT_THREAD) ?? '',
+      ],
+      onCompleted(data) {
+        setCreatedCommentThreadId(data.createOneCommentThread.id);
+        openRightDrawer('comments');
+      },
+    });
   }
+
+  const editor: BlockNoteEditor | null = useBlockNote({
+    theme: 'light',
+  });
 
   return (
     <StyledContainer>
@@ -141,7 +140,19 @@ export function CommentThreadCreateMode() {
           ))}
         </StyledThreadItemListContainer>
       )}
+      <PropertyBox>
+        <PropertyBoxItem
+          icon={<IconArrowUpRight />}
+          value={
+            <CommentThreadRelationPicker preselected={commentableEntityArray} />
+          }
+          label="Relations"
+        />
+      </PropertyBox>
       <AutosizeTextInput minRows={5} onValidate={handleNewComment} />
+      <BlockNoteStyledContainer>
+        <BlockNoteView editor={editor} />
+      </BlockNoteStyledContainer>
     </StyledContainer>
   );
 }

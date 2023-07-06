@@ -18,11 +18,12 @@ const ClickableBackground = styled.div`
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 9999;
+  z-index: 1;
 `;
 
 const StyledContainer = styled.div`
   background: white;
+  box-shadow: ${({ theme }) => theme.boxShadow.rightDrawer};
   height: 100%;
   overflow-x: hidden;
   position: fixed;
@@ -30,7 +31,7 @@ const StyledContainer = styled.div`
   top: 0;
   transition: width 0.5s;
   width: ${({ theme }) => theme.rightDrawerWidth};
-  z-index: 10000;
+  z-index: 2;
 `;
 const StyledRightDrawer = styled.div`
   display: flex;

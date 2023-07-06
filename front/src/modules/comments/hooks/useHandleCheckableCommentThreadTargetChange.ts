@@ -15,7 +15,7 @@ import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 export function useHandleCheckableCommentThreadTargetChange({
   commentThread,
 }: {
-  commentThread: CommentThreadForDrawer;
+  commentThread?: CommentThreadForDrawer;
 }) {
   const [addCommentThreadTargetOnCommentThread] =
     useAddCommentThreadTargetOnCommentThreadMutation({
@@ -39,6 +39,9 @@ export function useHandleCheckableCommentThreadTargetChange({
     newCheckedValue: boolean,
     entity: CommentableEntityForSelect,
   ) {
+    if (!commentThread) {
+      return;
+    }
     if (newCheckedValue) {
       addCommentThreadTargetOnCommentThread({
         variables: {

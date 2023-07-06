@@ -1,4 +1,4 @@
-import { IconComment } from '@/ui/icons/index';
+import { IconNotes } from '@/ui/icons/index';
 
 import { EntityTableActionBarButton } from './EntityTableActionBarButton';
 
@@ -9,8 +9,8 @@ type OwnProps = {
 export function TableActionBarButtonToggleComments({ onClick }: OwnProps) {
   return (
     <EntityTableActionBarButton
-      label="Comment"
-      icon={<IconComment size={16} />}
+      label="Notes"
+      icon={<IconNotes size={16} />}
       onClick={onClick}
     />
   );

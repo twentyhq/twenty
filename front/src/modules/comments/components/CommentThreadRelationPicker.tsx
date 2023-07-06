@@ -9,7 +9,6 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { IconArrowUpRight } from '@tabler/icons-react';
 
 import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
 import CompanyChip from '@/companies/components/CompanyChip';
@@ -26,10 +25,12 @@ import {
 
 import { MultipleEntitySelect } from '../../relation-picker/components/MultipleEntitySelect';
 import { useHandleCheckableCommentThreadTargetChange } from '../hooks/useHandleCheckableCommentThreadTargetChange';
+import { CommentableEntity } from '../types/CommentableEntity';
 import { CommentableEntityForSelect } from '../types/CommentableEntityForSelect';
 
 type OwnProps = {
-  commentThread: CommentThreadForDrawer;
+  commentThread?: CommentThreadForDrawer;
+  preselected?: CommentableEntity[];
 };
 
 const StyledContainer = styled.div`
@@ -91,21 +92,40 @@ const StyledMenuWrapper = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
-export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
+export function CommentThreadRelationPicker({
+  commentThread,
+  preselected,
+}: OwnProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
 
   const theme = useTheme();
 
   const peopleIds =
-    commentThread.commentThreadTargets
+    commentThread?.commentThreadTargets
       ?.filter((relation) => relation.commentableType === 'Person')
       .map((relation) => relation.commentableId) ?? [];
-
   const companyIds =
-    commentThread.commentThreadTargets
+    commentThread?.commentThreadTargets
       ?.filter((relation) => relation.commentableType === 'Company')
       .map((relation) => relation.commentableId) ?? [];
+
+  preselected?.map((commentable) => {
+    if (
+      commentable.id &&
+      commentable.type === CommentableType.Person &&
+      !peopleIds.includes(commentable.id)
+    ) {
+      peopleIds.push(commentable.id);
+    }
+    if (
+      commentable.id &&
+      commentable.type === CommentableType.Company &&
+      !companyIds.includes(commentable.id)
+    ) {
+      companyIds.push(commentable.id);
+    }
+  });
 
   const personsForMultiSelect = useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
@@ -204,10 +224,6 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
 
   return (
     <StyledContainer>
-      <StyledLabelContainer>
-        <IconArrowUpRight size={16} color={theme.font.color.tertiary} />
-        <StyledRelationLabel>Relations</StyledRelationLabel>
-      </StyledLabelContainer>
       <StyledRelationContainer
         ref={refs.setReference}
         onClick={handleRelationContainerClick}

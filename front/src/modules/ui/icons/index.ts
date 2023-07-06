@@ -31,3 +31,4 @@ export { IconBrandGoogle } from '@tabler/icons-react';
 export { IconUpload } from '@tabler/icons-react';
 export { IconFileUpload } from '@tabler/icons-react';
 export { IconChevronsRight } from '@tabler/icons-react';
+export { IconNotes } from '@tabler/icons-react';
