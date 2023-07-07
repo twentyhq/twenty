@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useFetchClientConfig } from '@/auth/hooks/useFetchClientConfig';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
 import { telemetryState } from '@/client-config/states/telemetryState';
+import { useGetClientConfigQuery } from '~/generated/graphql';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
@@ -14,21 +14,33 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   const [, setDebugMode] = useRecoilState(isDebugModeState);
   const [, setDemoMode] = useRecoilState(isDemoModeState);
   const [, setTelemetry] = useRecoilState(telemetryState);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const clientConfig = useFetchClientConfig();
+  const { data, loading } = useGetClientConfigQuery();
 
   useEffect(() => {
-    if (clientConfig) {
+    if (!loading) {
+      setIsLoading(false);
+    }
+    if (data?.clientConfig) {
       setAuthProviders({
-        google: clientConfig.authProviders.google,
-        password: clientConfig.authProviders.password,
+        google: data?.clientConfig.authProviders.google,
+        password: data?.clientConfig.authProviders.password,
         magicLink: false,
       });
-      setDebugMode(clientConfig.debugMode);
-      setDemoMode(clientConfig.demoMode);
-      setTelemetry(clientConfig.telemetry);
+      setDebugMode(data?.clientConfig.debugMode);
+      setDemoMode(data?.clientConfig.demoMode);
+      setTelemetry(data?.clientConfig.telemetry);
     }
-  }, [clientConfig, setAuthProviders, setDebugMode, setDemoMode, setTelemetry]);
+  }, [
+    data,
+    setAuthProviders,
+    setDebugMode,
+    setDemoMode,
+    setTelemetry,
+    setIsLoading,
+    loading,
+  ]);
 
-  return <>{children}</>;
+  return isLoading ? <></> : <>{children}</>;
 };
