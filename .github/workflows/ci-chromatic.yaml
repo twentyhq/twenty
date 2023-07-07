@@ -40,4 +40,5 @@ jobs:
           workingDir: ./front
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           onlyChanged: true
+          buildScriptName: storybook:build
         
