@@ -78,6 +78,7 @@ export function CreateProfile() {
           },
         },
         refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+        awaitRefetchQueries: true,
       });
 
       if (errors || !data?.updateUser) {
