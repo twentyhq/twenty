@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { GET_COMPANIES } from '@/companies/services';
 import { GET_PEOPLE } from '@/people/services';
 import {
+  GetCommentThreadQuery,
   useAddCommentThreadTargetOnCommentThreadMutation,
   useRemoveCommentThreadTargetOnCommentThreadMutation,
 } from '~/generated/graphql';
@@ -15,7 +16,7 @@ import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 export function useHandleCheckableCommentThreadTargetChange({
   commentThread,
 }: {
-  commentThread?: CommentThreadForDrawer;
+  commentThread?: GetCommentThreadQuery['findManyCommentThreads'][0];
 }) {
   const [addCommentThreadTargetOnCommentThread] =
     useAddCommentThreadTargetOnCommentThreadMutation({

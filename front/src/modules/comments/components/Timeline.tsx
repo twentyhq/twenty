@@ -2,6 +2,7 @@ import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
 import { IconNotes, IconPlus } from '@/ui/icons/index';
+import { useOpenRightDrawer } from '@/ui/layout/right-drawer/hooks/useOpenRightDrawer';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
@@ -24,7 +25,7 @@ const StyledTimelineContainer = styled.div`
   gap: 4px;
   justify-content: flex-start;
   overflow-y: auto;
-  padding: 12px 16px 64px 16px;
+  padding: 64px 16px 12px 16px;
 `;
 
 const StyledTimelineEmptyContainer = styled.div`
@@ -36,6 +37,20 @@ const StyledTimelineEmptyContainer = styled.div`
   gap: 8px;
   justify-content: center;
   padding: 12px 16px 64px 16px;
+`;
+
+const StyledEmptyTimelineTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 120%;
+`;
+
+const StyledEmptyTimelineSubTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.extraLight};
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 120%;
 `;
 
 const StyledTimelineItemContainer = styled.div`
@@ -73,7 +88,6 @@ const StyledItemTitleDate = styled.div`
   display: flex;
   gap: 8px;
   justify-content: flex-end;
-  width: 110px;
 `;
 
 const StyledVerticalLineContainer = styled.div`
@@ -94,6 +108,7 @@ const StyledVerticalLine = styled.div`
 
 const StyledCardContainer = styled.div`
   align-items: center;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -145,13 +160,13 @@ const StyledTooltip = styled(Tooltip)`
   padding: 8px;
 `;
 
-const StyledBottomActionBar = styled.div`
+const StyledTopActionBar = styled.div`
   align-items: flex-start;
   align-self: stretch;
-  bottom: 8px;
   display: flex;
   flex-direction: column;
   position: absolute;
+  top: 12px;
 `;
 
 export function Timeline({ entity }: { entity: CommentableEntity }) {
@@ -166,13 +181,16 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     },
   });
 
+  const openRightDrawer = useOpenRightDrawer();
+
   const commentThreads: CommentThreadForDrawer[] =
     queryResult?.findManyCommentThreads ?? [];
 
   if (!commentThreads.length) {
     return (
       <StyledTimelineEmptyContainer>
-        <h1>No activity yet</h1>
+        <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
+        <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
         <TableActionBarButtonCreateCommentThreadCompany />
       </StyledTimelineEmptyContainer>
     );
@@ -188,6 +206,16 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
 
         return (
           <>
+            <StyledTopActionBar>
+              <StyledTimelineItemContainer>
+                <StyledIconContainer>
+                  <IconPlus />
+                </StyledIconContainer>
+
+                <TableActionBarButtonCreateCommentThreadCompany />
+              </StyledTimelineItemContainer>
+            </StyledTopActionBar>
+
             <StyledTimelineItemContainer>
               <StyledIconContainer>
                 <IconNotes />
@@ -214,7 +242,9 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
                 <StyledVerticalLine></StyledVerticalLine>
               </StyledVerticalLineContainer>
               <StyledCardContainer>
-                <StyledCard onClick={() => null}>
+                <StyledCard
+                  onClick={() => openRightDrawer('edit-comment-thread')}
+                >
                   <StyledCardTitle>{commentThread.title}</StyledCardTitle>
                   <StyledCardContent>{commentThread.body}</StyledCardContent>
                 </StyledCard>
@@ -223,16 +253,6 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
           </>
         );
       })}
-
-      <StyledBottomActionBar>
-        <StyledTimelineItemContainer>
-          <StyledIconContainer>
-            <IconPlus />
-          </StyledIconContainer>
-
-          <TableActionBarButtonCreateCommentThreadCompany />
-        </StyledTimelineItemContainer>
-      </StyledBottomActionBar>
     </StyledTimelineContainer>
   );
 }

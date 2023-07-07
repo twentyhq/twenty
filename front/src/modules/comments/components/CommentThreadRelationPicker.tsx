@@ -19,6 +19,7 @@ import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flat
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
+  GetCommentThreadQuery,
   useSearchCompanyQuery,
   useSearchPeopleQuery,
 } from '~/generated/graphql';
@@ -29,7 +30,7 @@ import { CommentableEntity } from '../types/CommentableEntity';
 import { CommentableEntityForSelect } from '../types/CommentableEntityForSelect';
 
 type OwnProps = {
-  commentThread?: CommentThreadForDrawer;
+  commentThread?: GetCommentThreadQuery['findManyCommentThreads'][0];
   preselected?: CommentableEntity[];
 };
 

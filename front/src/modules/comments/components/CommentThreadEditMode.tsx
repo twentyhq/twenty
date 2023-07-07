@@ -1,35 +1,16 @@
-import { getOperationName } from '@apollo/client/utilities';
 import { BlockNoteEditor } from '@blocknote/core';
 import { BlockNoteView, useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { v4 } from 'uuid';
 
-import { currentUserState } from '@/auth/states/currentUserState';
-import { commentableEntityArrayState } from '@/comments/states/commentableEntityArrayState';
-import { createdCommentThreadIdState } from '@/comments/states/createdCommentThreadIdState';
-import CompanyChip from '@/companies/components/CompanyChip';
-import { GET_COMPANIES } from '@/companies/services';
-import { GET_PEOPLE } from '@/people/services';
-import { DropdownButton } from '@/ui/components/buttons/DropdownButton';
-import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
 import { IconArrowUpRight } from '@/ui/icons/index';
-import { useOpenRightDrawer } from '@/ui/layout/right-drawer/hooks/useOpenRightDrawer';
-import { logError } from '@/utils/logs/logError';
-import { isDefined } from '@/utils/type-guards/isDefined';
-import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
-import {
-  useCreateCommentMutation,
-  useCreateCommentThreadWithCommentMutation,
-  useGetCommentThreadQuery,
-} from '~/generated/graphql';
+import { useGetCommentThreadQuery } from '~/generated/graphql';
 
-import { GET_COMMENT_THREAD } from '../services';
 import { CommentableEntity } from '../types/CommentableEntity';
+import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
-import { CommentThreadItem } from './CommentThreadItem';
+import { Comments } from './Comments';
 import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
 import { CommentThreadTypeDropdown } from './CommentThreadTypeDropdown';
 
@@ -85,14 +66,29 @@ const StyledEditableTitleInput = styled.input`
   }
 `;
 
-export function CommentThreadCreateMode({
-  commentableEntityArray,
+export function CommentThreadEditMode({
+  commentThreadId,
 }: {
-  commentableEntityArray: CommentableEntity[];
+  commentThreadId: string;
 }) {
   const editor: BlockNoteEditor | null = useBlockNote({
     theme: 'light',
   });
+
+  const { data } = useGetCommentThreadQuery({
+    variables: {
+      commentThreadId: commentThreadId ?? '',
+    },
+    skip: !commentThreadId,
+  });
+
+  if (typeof data?.findManyCommentThreads[0] === 'undefined') {
+    return null;
+  }
+
+  const commentThread = data?.findManyCommentThreads[0];
+
+  // TODO : prevent editor from creating loops
 
   return (
     <StyledContainer>
@@ -103,9 +99,7 @@ export function CommentThreadCreateMode({
           <PropertyBoxItem
             icon={<IconArrowUpRight />}
             value={
-              <CommentThreadRelationPicker
-                preselected={commentableEntityArray}
-              />
+              <CommentThreadRelationPicker commentThread={commentThread} />
             }
             label="Relations"
           />
@@ -114,6 +108,7 @@ export function CommentThreadCreateMode({
       <BlockNoteStyledContainer>
         <BlockNoteView editor={editor} />
       </BlockNoteStyledContainer>
+      <Comments commentThread={commentThread} />
     </StyledContainer>
   );
 }

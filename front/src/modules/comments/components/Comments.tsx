@@ -14,7 +14,10 @@ import { IconArrowUpRight } from '@/ui/icons/index';
 import { logError } from '@/utils/logs/logError';
 import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
-import { useCreateCommentMutation } from '~/generated/graphql';
+import {
+  GetCommentThreadQuery,
+  useCreateCommentMutation,
+} from '~/generated/graphql';
 
 import { GET_COMMENT_THREADS_BY_TARGETS } from '../services';
 
@@ -23,7 +26,7 @@ import { CommentThreadItem } from './CommentThreadItem';
 import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
 
 type OwnProps = {
-  commentThread: CommentThreadForDrawer;
+  commentThread: GetCommentThreadQuery['findManyCommentThreads'][0];
 };
 
 const StyledContainer = styled.div`
@@ -36,6 +39,7 @@ const StyledContainer = styled.div`
 
   justify-content: flex-start;
   padding: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
 const StyledThreadItemListContainer = styled.div`
@@ -50,7 +54,7 @@ const StyledThreadItemListContainer = styled.div`
   width: 100%;
 `;
 
-export function CommentThread({ commentThread }: OwnProps) {
+export function Comments({ commentThread }: OwnProps) {
   const [createCommentMutation] = useCreateCommentMutation();
   const currentUser = useRecoilValue(currentUserState);
 
@@ -89,13 +93,6 @@ export function CommentThread({ commentThread }: OwnProps) {
 
   return (
     <StyledContainer>
-      <PropertyBox>
-        <PropertyBoxItem
-          icon={<IconArrowUpRight />}
-          value={<CommentThreadRelationPicker commentThread={commentThread} />}
-          label="Relations"
-        />
-      </PropertyBox>
       <StyledThreadItemListContainer>
         {commentThread.comments?.map((comment, index) => (
           <CommentThreadItem

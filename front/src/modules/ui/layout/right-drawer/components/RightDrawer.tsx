@@ -12,7 +12,7 @@ import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerRouter } from './RightDrawerRouter';
 
 const ClickableBackground = styled.div`
-  backdrop-filter: blur(1px);
+  //backdrop-filter: blur(1px);
   height: 100%;
   left: 0;
   position: fixed;
@@ -33,6 +33,7 @@ const StyledContainer = styled.div`
   width: ${({ theme }) => theme.rightDrawerWidth};
   z-index: 2;
 `;
+
 const StyledRightDrawer = styled.div`
   display: flex;
   flex-direction: row;

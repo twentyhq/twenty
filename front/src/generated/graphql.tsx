@@ -1941,7 +1941,7 @@ export type GetCommentThreadQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, author: { __typename?: 'User', id: string, firstName: string, lastName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', commentableId: string, commentableType: CommentableType }> | null }> };
+export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, author: { __typename?: 'User', id: string, firstName: string, lastName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
 
 export type AddCommentThreadTargetOnCommentThreadMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
@@ -2540,6 +2540,7 @@ export const GetCommentThreadDocument = gql`
       }
     }
     commentThreadTargets {
+      id
       commentableId
       commentableType
     }

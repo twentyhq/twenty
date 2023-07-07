@@ -1,6 +1,7 @@
 import { useRecoilState } from 'recoil';
 
 import { RightDrawerCreateCommentThread } from '@/comments/components/RightDrawerCreateCommentThread';
+import { RightDrawerEditCommentThread } from '@/comments/components/RightDrawerEditCommentThread';
 import { RightDrawerTimeline } from '@/comments/components/RightDrawerTimeline';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
@@ -17,6 +18,8 @@ export function RightDrawerRouter() {
     <RightDrawerTimeline />
   ) : rightDrawerPage === 'create-comment-thread' ? (
     <RightDrawerCreateCommentThread />
+  ) : rightDrawerPage === 'edit-comment-thread' ? (
+    <RightDrawerEditCommentThread />
   ) : (
     <></>
   );

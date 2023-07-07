@@ -6,7 +6,6 @@ const StyledCompanyPropertyBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 0px 12px;
 `;
 
 const StyledCompanyPropertyBoxContainer = styled.div`

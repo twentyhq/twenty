@@ -1,10 +1,8 @@
-import { ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ShowPageComments } from '@/comments/components/ShowPageComments';
 import { Timeline } from '@/comments/components/Timeline';
 import { useCompanyQuery } from '@/companies/services';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
@@ -48,6 +46,10 @@ const StyledRightPanelContainer = styled.div`
   overflow: hidden;
 `;
 
+const StyledPropertyBoxContainer = styled.div`
+  padding: 0px 12px;
+`;
+
 export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
 
@@ -68,21 +70,23 @@ export function CompanyShow() {
             title={company?.name ?? ''}
             date={company?.createdAt ?? ''}
           />
-          <PropertyBox>
-            <>
-              <PropertyBoxItem
-                icon={<IconLink />}
-                value={company?.domainName ?? ''}
-                link={
-                  company?.domainName ? 'https://' + company?.domainName : ''
-                }
-              />
-              <PropertyBoxItem
-                icon={<IconMap />}
-                value={company?.address ? company?.address : 'No address'}
-              />
-            </>
-          </PropertyBox>
+          <StyledPropertyBoxContainer>
+            <PropertyBox>
+              <>
+                <PropertyBoxItem
+                  icon={<IconLink />}
+                  value={company?.domainName ?? ''}
+                  link={
+                    company?.domainName ? 'https://' + company?.domainName : ''
+                  }
+                />
+                <PropertyBoxItem
+                  icon={<IconMap />}
+                  value={company?.address ? company?.address : 'No address'}
+                />
+              </>
+            </PropertyBox>
+          </StyledPropertyBoxContainer>
         </StyledLeftPanelContainer>
         <StyledRightPanelContainer>
           <Timeline

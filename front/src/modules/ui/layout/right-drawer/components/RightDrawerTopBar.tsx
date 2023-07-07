@@ -25,14 +25,19 @@ const StyledTopBarTitle = styled.div`
 
 export function RightDrawerTopBar({
   title,
+  onClick,
 }: {
   title: string | null | undefined;
+  onClick?: () => void;
 }) {
+  function handleOnClick() {
+    onClick?.();
+  }
   return (
     <StyledRightDrawerTopBar>
       <RightDrawerTopBarCloseButton />
       <StyledTopBarTitle>{title}</StyledTopBarTitle>
-      <Button title="Save" />
+      {onClick ? <Button title="Save" onClick={handleOnClick} /> : ''}
     </StyledRightDrawerTopBar>
   );
 }

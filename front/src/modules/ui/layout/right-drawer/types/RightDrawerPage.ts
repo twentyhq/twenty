@@ -1,1 +1,4 @@
-export type RightDrawerPage = 'comments' | 'create-comment-thread';
+export type RightDrawerPage =
+  | 'comments'
+  | 'create-comment-thread'
+  | 'edit-comment-thread';

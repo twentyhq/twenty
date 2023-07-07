@@ -68,6 +68,7 @@ export const GET_COMMENT_THREAD = gql`
         }
       }
       commentThreadTargets {
+        id
         commentableId
         commentableType
       }
