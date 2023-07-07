@@ -23,12 +23,3 @@ export class AuthTokens {
   @Field(() => AuthTokenPair)
   tokens: AuthTokenPair;
 }
-
-@ObjectType()
-export class ClientConfig {
-  @Field(() => Boolean)
-  display_google_login: boolean;
-
-  @Field(() => Boolean)
-  prefill_login_with_seed: boolean;
-}

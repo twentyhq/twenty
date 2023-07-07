@@ -16,11 +16,26 @@ import { IsAWSRegion } from './decorators/is-aws-region.decorator';
 import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
 
 export class EnvironmentVariables {
-  // Stage
+  // Misc
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
   DEBUG_MODE?: boolean;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  DEMO_MODE?: boolean;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  TELEMETRY_ENABLED?: boolean;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  TELEMETRY_ANONYMIZATION_ENABLED?: boolean;
 
   // Database
   @IsUrl({ protocols: ['postgres'], require_tld: false })

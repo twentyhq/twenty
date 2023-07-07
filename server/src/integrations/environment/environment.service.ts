@@ -8,8 +8,22 @@ import { StorageType } from './interfaces/storage.interface';
 export class EnvironmentService {
   constructor(private configService: ConfigService) {}
 
-  getDebugMode(): boolean | undefined {
-    return this.configService.get<boolean>('DEBUG_MODE')!;
+  isDebugMode(): boolean {
+    return this.configService.get<boolean>('DEBUG_MODE') ?? false;
+  }
+
+  isDemoMode(): boolean {
+    return this.configService.get<boolean>('DEMO_MODE') ?? false;
+  }
+
+  isTelemetryEnabled(): boolean {
+    return this.configService.get<boolean>('TELEMETRY_ENABLED') ?? true;
+  }
+
+  isTelemetryAnonymizationEnabled(): boolean | undefined {
+    return (
+      this.configService.get<boolean>('TELEMETRY_ANONYMIZATION_ENABLED') ?? true
+    );
   }
 
   getPGDatabaseUrl(): string {
@@ -44,7 +58,7 @@ export class EnvironmentService {
     return this.configService.get<string>('FRONT_AUTH_CALLBACK_URL')!;
   }
 
-  getAuthGoogleEnabled(): boolean | undefined {
+  isAuthGoogleEnabled(): boolean | undefined {
     return this.configService.get<boolean>('AUTH_GOOGLE_ENABLED');
   }
 

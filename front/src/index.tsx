@@ -8,7 +8,7 @@ import { ThemeType } from '@/ui/themes/themes';
 import '@emotion/react';
 
 import { ApolloProvider } from './providers/apollo/ApolloProvider';
-import { ClientConfigProvider } from './providers/clientConfig/ClientConfigProvider';
+import { ClientConfigProvider } from './providers/client-config/ClientConfigProvider';
 import { AppThemeProvider } from './providers/theme/AppThemeProvider';
 import { UserProvider } from './providers/user/UserProvider';
 import { App } from './App';
@@ -26,11 +26,11 @@ root.render(
       <AppThemeProvider>
         <StrictMode>
           <UserProvider>
-            <BrowserRouter>
-              <ClientConfigProvider>
+            <ClientConfigProvider>
+              <BrowserRouter>
                 <App />
-              </ClientConfigProvider>
-            </BrowserRouter>
+              </BrowserRouter>
+            </ClientConfigProvider>
           </UserProvider>
         </StrictMode>
       </AppThemeProvider>

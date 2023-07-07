@@ -8,6 +8,7 @@ import { useRecoilState } from 'recoil';
 
 import { isMockModeState } from '@/auth/states/isMockModeState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { CommentThreadTarget } from '~/generated/graphql';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { mockedUsersData } from '~/testing/mock-data/users';
@@ -16,6 +17,7 @@ import { ApolloFactory } from '../services/apollo.factory';
 
 export function useApolloFactory() {
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
+  const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
   const [isMockMode] = useRecoilState(isMockModeState);
@@ -64,10 +66,11 @@ export function useApolloFactory() {
         setTokenPair(null);
       },
       extraLinks: isMockMode ? [mockLink] : [],
+      isDebugMode,
     });
 
     return apolloRef.current.getClient();
-  }, [isMockMode, setTokenPair]);
+  }, [isMockMode, setTokenPair, isDebugMode]);
 
   useEffect(() => {
     if (apolloRef.current) {
