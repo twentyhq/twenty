@@ -1,4 +1,4 @@
-import { EditableText } from '../../inplace-input/types/EditableText';
+import { InplaceTextInput } from '../../inplace-input/types/InplaceTextInput';
 import { useIsSoftFocusOnCurrentCell } from '../hooks/useIsSoftFocusOnCurrentCell';
 import { useSetSoftFocusOnCurrentCell } from '../hooks/useSetSoftFocusOnCurrentCell';
 
@@ -18,7 +18,7 @@ export function EditableTextCell({
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
   return (
-    <EditableText
+    <InplaceTextInput
       editModeHorizontalAlign={editModeHorizontalAlign}
       content={content}
       changeHandler={changeHandler}

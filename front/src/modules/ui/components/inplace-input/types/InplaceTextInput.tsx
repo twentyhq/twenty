@@ -28,7 +28,7 @@ const StyledNoEditText = styled.div`
   width: 100%;
 `;
 
-export function EditableText({
+export function InplaceTextInput({
   content,
   placeholder,
   changeHandler,
