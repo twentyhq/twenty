@@ -1,19 +1,19 @@
-import { InplaceTextInput } from '../../inplace-input/types/InplaceTextInput';
+import { InplaceDateInput } from '../../inplace-input/types/InplaceDateInput';
 import { useIsSoftFocusOnCurrentCell } from '../hooks/useIsSoftFocusOnCurrentCell';
 import { useSetSoftFocusOnCurrentCell } from '../hooks/useSetSoftFocusOnCurrentCell';
 
 type OwnProps = {
   placeholder?: string;
-  content: string;
-  changeHandler: (updated: string) => void;
+  value: Date;
+  changeHandler: (date: Date) => void;
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function EditableTextCell(props: OwnProps) {
+export function EditableDateCell(props: OwnProps) {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
   return (
-    <InplaceTextInput
+    <InplaceDateInput
       {...props}
       setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentCell}
       hasSoftFocus={hasSoftFocus}

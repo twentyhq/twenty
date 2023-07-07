@@ -1,19 +1,18 @@
-import { InplaceTextInput } from '../../inplace-input/types/InplaceTextInput';
+import { InplacePhoneInput } from '../../inplace-input/types/InplacePhoneInput';
 import { useIsSoftFocusOnCurrentCell } from '../hooks/useIsSoftFocusOnCurrentCell';
 import { useSetSoftFocusOnCurrentCell } from '../hooks/useSetSoftFocusOnCurrentCell';
 
 type OwnProps = {
   placeholder?: string;
-  content: string;
-  changeHandler: (updated: string) => void;
-  editModeHorizontalAlign?: 'left' | 'right';
+  value: string;
+  changeHandler: (Phone: string) => void;
 };
 
-export function EditableTextCell(props: OwnProps) {
+export function EditablePhoneCell(props: OwnProps) {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
   return (
-    <InplaceTextInput
+    <InplacePhoneInput
       {...props}
       setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentCell}
       hasSoftFocus={hasSoftFocus}

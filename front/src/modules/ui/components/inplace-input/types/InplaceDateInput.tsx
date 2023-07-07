@@ -4,12 +4,14 @@ import styled from '@emotion/styled';
 import { humanReadableDate } from '@/utils/utils';
 
 import DatePicker from '../../form/DatePicker';
-import { EditableCell } from '../EditableCell';
+import { InplaceInput } from '../InplaceInput';
 
-export type EditableDateProps = {
+export type OwnProps = {
   value: Date;
   changeHandler: (date: Date) => void;
   editModeHorizontalAlign?: 'left' | 'right';
+  setSoftFocusOnCurrentInplaceInput?: () => void;
+  hasSoftFocus?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -32,11 +34,13 @@ const StyledCalendarContainer = styled.div<StyledCalendarContainerProps>`
   top: 10px;
   z-index: 1;
 `;
-export function EditableDate({
+export function InplaceDateInput({
   value,
   changeHandler,
   editModeHorizontalAlign,
-}: EditableDateProps) {
+  setSoftFocusOnCurrentInplaceInput,
+  hasSoftFocus,
+}: OwnProps) {
   const [inputValue, setInputValue] = useState(value);
 
   type DivProps = React.HTMLProps<HTMLDivElement>;
@@ -58,7 +62,7 @@ export function EditableDate({
   };
 
   return (
-    <EditableCell
+    <InplaceInput
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <StyledContainer>
@@ -73,9 +77,11 @@ export function EditableDate({
           />
         </StyledContainer>
       }
+      setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentInplaceInput}
+      hasSoftFocus={hasSoftFocus}
       nonEditModeContent={
         <div>{inputValue && humanReadableDate(inputValue)}</div>
       }
-    ></EditableCell>
+    ></InplaceInput>
   );
 }

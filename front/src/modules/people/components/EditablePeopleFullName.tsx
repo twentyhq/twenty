@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { CellCommentChip } from '@/comments/components/CellCommentChip';
 import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
-import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
+import { EditableDoubleTextCell } from '@/ui/components/editable-cell/types/EditableDoubleTextCell';
 import { CommentableType, Person } from '~/generated/graphql';
 
 import { PersonChip } from './PersonChip';
@@ -52,7 +52,7 @@ export function EditablePeopleFullName({ person, onChange }: OwnProps) {
   }
 
   return (
-    <EditableDoubleText
+    <EditableDoubleTextCell
       firstValue={firstNameValue}
       secondValue={lastNameValue}
       firstValuePlaceholder="First name"

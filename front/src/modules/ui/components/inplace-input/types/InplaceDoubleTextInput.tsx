@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { textInputStyle } from '@/ui/themes/effects';
 
-import { EditableCell } from '../EditableCell';
+import { InplaceInput } from '../InplaceInput';
 
 type OwnProps = {
   firstValue: string;
@@ -12,6 +12,8 @@ type OwnProps = {
   secondValuePlaceholder: string;
   nonEditModeContent: ReactElement;
   onChange: (firstValue: string, secondValue: string) => void;
+  setSoftFocusOnCurrentInplaceInput?: () => void;
+  hasSoftFocus?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -33,18 +35,20 @@ const StyledEditInplaceInput = styled.input`
   ${textInputStyle}
 `;
 
-export function EditableDoubleText({
+export function InplaceDoubleTextInput({
   firstValue,
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
   nonEditModeContent,
   onChange,
+  setSoftFocusOnCurrentInplaceInput,
+  hasSoftFocus,
 }: OwnProps) {
   const firstValueInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <EditableCell
+    <InplaceInput
       editModeContent={
         <StyledContainer>
           <StyledEditInplaceInput
@@ -67,6 +71,8 @@ export function EditableDoubleText({
         </StyledContainer>
       }
       nonEditModeContent={nonEditModeContent}
-    ></EditableCell>
+      setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentInplaceInput}
+      hasSoftFocus={hasSoftFocus}
+    ></InplaceInput>
   );
 }

@@ -5,12 +5,14 @@ import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 import { textInputStyle } from '@/ui/themes/effects';
 
 import { RawLink } from '../../links/RawLink';
-import { EditableCell } from '../EditableCell';
+import { InplaceInput } from '../InplaceInput';
 
 type OwnProps = {
   placeholder?: string;
   value: string;
   changeHandler: (updated: string) => void;
+  setSoftFocusOnCurrentInplaceInput?: () => void;
+  hasSoftFocus?: boolean;
 };
 
 const StyledRawLink = styled(RawLink)`
@@ -30,12 +32,18 @@ const StyledEditInplaceInput = styled.input`
   ${textInputStyle}
 `;
 
-export function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
+export function InplacePhoneInput({
+  value,
+  placeholder,
+  changeHandler,
+  setSoftFocusOnCurrentInplaceInput,
+  hasSoftFocus,
+}: OwnProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
 
   return (
-    <EditableCell
+    <InplaceInput
       editModeContent={
         <StyledEditInplaceInput
           autoFocus
@@ -65,6 +73,8 @@ export function EditablePhone({ value, placeholder, changeHandler }: OwnProps) {
           )}
         </>
       }
+      setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentInplaceInput}
+      hasSoftFocus={hasSoftFocus}
     />
   );
 }
