@@ -29,6 +29,13 @@ export type Analytics = {
   success: Scalars['Boolean'];
 };
 
+export type AuthProviders = {
+  __typename?: 'AuthProviders';
+  google: Scalars['Boolean'];
+  magicLink: Scalars['Boolean'];
+  password: Scalars['Boolean'];
+};
+
 export type AuthToken = {
   __typename?: 'AuthToken';
   expiresAt: Scalars['DateTime'];
@@ -57,8 +64,10 @@ export type BoolFilter = {
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
-  display_google_login: Scalars['Boolean'];
-  prefill_login_with_seed: Scalars['Boolean'];
+  authProviders: AuthProviders;
+  debugMode: Scalars['Boolean'];
+  demoMode: Scalars['Boolean'];
+  telemetry: Telemetry;
 };
 
 export type Comment = {
@@ -756,11 +765,11 @@ export type CompanyOrderByRelationAggregateInput = {
 
 export type CompanyOrderByWithRelationInput = {
   accountOwner?: InputMaybe<UserOrderByWithRelationInput>;
-  accountOwnerId?: InputMaybe<SortOrderInput>;
+  accountOwnerId?: InputMaybe<SortOrder>;
   address?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   domainName?: InputMaybe<SortOrder>;
-  employees?: InputMaybe<SortOrderInput>;
+  employees?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   people?: InputMaybe<PersonOrderByRelationAggregateInput>;
@@ -1247,11 +1256,6 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: InputMaybe<Scalars['String']>;
 };
 
-export enum NullsOrder {
-  First = 'first',
-  Last = 'last'
-}
-
 export type Person = {
   __typename?: 'Person';
   _commentCount: Scalars['Int'];
@@ -1332,7 +1336,7 @@ export type PersonOrderByRelationAggregateInput = {
 export type PersonOrderByWithRelationInput = {
   city?: InputMaybe<SortOrder>;
   company?: InputMaybe<CompanyOrderByWithRelationInput>;
-  companyId?: InputMaybe<SortOrderInput>;
+  companyId?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   email?: InputMaybe<SortOrder>;
   firstName?: InputMaybe<SortOrder>;
@@ -1567,6 +1571,7 @@ export type PipelineProgressCreateInput = {
 
 export type PipelineProgressCreateManyPipelineInput = {
   amount?: InputMaybe<Scalars['Int']>;
+  closeDate?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   pipelineStageId: Scalars['String'];
@@ -1582,6 +1587,7 @@ export type PipelineProgressCreateManyPipelineInputEnvelope = {
 
 export type PipelineProgressCreateManyPipelineStageInput = {
   amount?: InputMaybe<Scalars['Int']>;
+  closeDate?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   pipelineId: Scalars['String'];
@@ -1597,6 +1603,7 @@ export type PipelineProgressCreateManyPipelineStageInputEnvelope = {
 
 export type PipelineProgressCreateManyWorkspaceInput = {
   amount?: InputMaybe<Scalars['Int']>;
+  closeDate?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   pipelineId: Scalars['String'];
@@ -1642,6 +1649,7 @@ export type PipelineProgressCreateOrConnectWithoutWorkspaceInput = {
 
 export type PipelineProgressCreateWithoutPipelineInput = {
   amount?: InputMaybe<Scalars['Int']>;
+  closeDate?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
@@ -1652,6 +1660,7 @@ export type PipelineProgressCreateWithoutPipelineInput = {
 
 export type PipelineProgressCreateWithoutPipelineStageInput = {
   amount?: InputMaybe<Scalars['Int']>;
+  closeDate?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
@@ -1662,6 +1671,7 @@ export type PipelineProgressCreateWithoutPipelineStageInput = {
 
 export type PipelineProgressCreateWithoutWorkspaceInput = {
   amount?: InputMaybe<Scalars['Int']>;
+  closeDate?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
@@ -1682,8 +1692,8 @@ export type PipelineProgressOrderByRelationAggregateInput = {
 };
 
 export type PipelineProgressOrderByWithRelationInput = {
-  amount?: InputMaybe<SortOrderInput>;
-  closeDate?: InputMaybe<SortOrderInput>;
+  amount?: InputMaybe<SortOrder>;
+  closeDate?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   pipeline?: InputMaybe<PipelineOrderByWithRelationInput>;
@@ -1714,6 +1724,7 @@ export type PipelineProgressScalarWhereInput = {
   NOT?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
   OR?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
   amount?: InputMaybe<IntNullableFilter>;
+  closeDate?: InputMaybe<DateTimeNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
   pipelineId?: InputMaybe<StringFilter>;
@@ -1737,6 +1748,7 @@ export type PipelineProgressUpdateInput = {
 
 export type PipelineProgressUpdateManyMutationInput = {
   amount?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  closeDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -1818,6 +1830,7 @@ export type PipelineProgressUpdateWithWhereUniqueWithoutWorkspaceInput = {
 
 export type PipelineProgressUpdateWithoutPipelineInput = {
   amount?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  closeDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
@@ -1828,6 +1841,7 @@ export type PipelineProgressUpdateWithoutPipelineInput = {
 
 export type PipelineProgressUpdateWithoutPipelineStageInput = {
   amount?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  closeDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
@@ -1838,6 +1852,7 @@ export type PipelineProgressUpdateWithoutPipelineStageInput = {
 
 export type PipelineProgressUpdateWithoutWorkspaceInput = {
   amount?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
+  closeDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
@@ -2356,11 +2371,6 @@ export enum SortOrder {
   Desc = 'desc'
 }
 
-export type SortOrderInput = {
-  nulls?: InputMaybe<NullsOrder>;
-  sort: SortOrder;
-};
-
 export type StringFieldUpdateOperationsInput = {
   set?: InputMaybe<Scalars['String']>;
 };
@@ -2393,6 +2403,12 @@ export type StringNullableFilter = {
   not?: InputMaybe<NestedStringNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['String']>>;
   startsWith?: InputMaybe<Scalars['String']>;
+};
+
+export type Telemetry = {
+  __typename?: 'Telemetry';
+  anonymizationEnabled: Scalars['Boolean'];
+  enabled: Scalars['Boolean'];
 };
 
 export type User = {
@@ -2476,7 +2492,7 @@ export type UserCreateWithoutWorkspaceMemberInput = {
 };
 
 export type UserOrderByWithRelationInput = {
-  avatarUrl?: InputMaybe<SortOrderInput>;
+  avatarUrl?: InputMaybe<SortOrder>;
   comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
   companies?: InputMaybe<CompanyOrderByRelationAggregateInput>;
   createdAt?: InputMaybe<SortOrder>;
@@ -2486,10 +2502,10 @@ export type UserOrderByWithRelationInput = {
   firstName?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   lastName?: InputMaybe<SortOrder>;
-  lastSeen?: InputMaybe<SortOrderInput>;
+  lastSeen?: InputMaybe<SortOrder>;
   locale?: InputMaybe<SortOrder>;
-  metadata?: InputMaybe<SortOrderInput>;
-  phoneNumber?: InputMaybe<SortOrderInput>;
+  metadata?: InputMaybe<SortOrder>;
+  phoneNumber?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
@@ -2766,11 +2782,6 @@ export type CreateEventMutationVariables = Exact<{
 
 export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'Analytics', success: boolean } };
 
-export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', display_google_login: boolean, prefill_login_with_seed: boolean } };
-
 export type ChallengeMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -2792,6 +2803,11 @@ export type RenewTokenMutationVariables = Exact<{
 
 
 export type RenewTokenMutation = { __typename?: 'Mutation', renewToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', expiresAt: string, token: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+
+export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', demoMode: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean } } };
 
 export type CreateCommentMutationVariables = Exact<{
   commentId: Scalars['String'];
@@ -2954,7 +2970,7 @@ export type UpdateOnePipelineProgressMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOnePipelineProgressMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string } | null };
+export type UpdateOnePipelineProgressMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string, amount?: number | null, closeDate?: string | null } | null };
 
 export type UpdateOnePipelineProgressStageMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -3074,41 +3090,6 @@ export function useCreateEventMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateEventMutationHookResult = ReturnType<typeof useCreateEventMutation>;
 export type CreateEventMutationResult = Apollo.MutationResult<CreateEventMutation>;
 export type CreateEventMutationOptions = Apollo.BaseMutationOptions<CreateEventMutation, CreateEventMutationVariables>;
-export const GetClientConfigDocument = gql`
-    query GetClientConfig {
-  clientConfig {
-    display_google_login
-    prefill_login_with_seed
-  }
-}
-    `;
-
-/**
- * __useGetClientConfigQuery__
- *
- * To run a query within a React component, call `useGetClientConfigQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetClientConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetClientConfigQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetClientConfigQuery(baseOptions?: Apollo.QueryHookOptions<GetClientConfigQuery, GetClientConfigQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(GetClientConfigDocument, options);
-      }
-export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClientConfigQuery, GetClientConfigQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(GetClientConfigDocument, options);
-        }
-export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
-export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
-export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
 export const ChallengeDocument = gql`
     mutation Challenge($email: String!, $password: String!) {
   challenge(email: $email, password: $password) {
@@ -3246,6 +3227,49 @@ export function useRenewTokenMutation(baseOptions?: Apollo.MutationHookOptions<R
 export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutation>;
 export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
 export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
+export const GetClientConfigDocument = gql`
+    query GetClientConfig {
+  clientConfig {
+    authProviders {
+      google
+      password
+    }
+    demoMode
+    debugMode
+    telemetry {
+      enabled
+      anonymizationEnabled
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetClientConfigQuery__
+ *
+ * To run a query within a React component, call `useGetClientConfigQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetClientConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetClientConfigQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetClientConfigQuery(baseOptions?: Apollo.QueryHookOptions<GetClientConfigQuery, GetClientConfigQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(GetClientConfigDocument, options);
+      }
+export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClientConfigQuery, GetClientConfigQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetClientConfigQuery, GetClientConfigQueryVariables>(GetClientConfigDocument, options);
+        }
+export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
+export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
+export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
 export const CreateCommentDocument = gql`
     mutation CreateComment($commentId: String!, $commentText: String!, $authorId: String!, $commentThreadId: String!, $createdAt: DateTime!) {
   createOneComment(
@@ -4016,6 +4040,8 @@ export const UpdateOnePipelineProgressDocument = gql`
     data: {amount: {set: $amount}, closeDate: {set: $closeDate}}
   ) {
     id
+    amount
+    closeDate
   }
 }
     `;

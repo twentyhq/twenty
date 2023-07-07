@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
+import { ClientConfigModule } from './client-config/client-config.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     AnalyticsModule,
     FileModule,
+    ClientConfigModule,
   ],
   exports: [
     AuthModule,

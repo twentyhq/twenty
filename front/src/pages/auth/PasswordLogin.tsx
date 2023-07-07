@@ -11,6 +11,7 @@ import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
+import { isDemoModeState } from '@/client-config/states/isDemoModeState';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
@@ -48,15 +49,15 @@ const StyledErrorContainer = styled.div`
 
 export function PasswordLogin() {
   const navigate = useNavigate();
-
-  const prefillPassword =
-    process.env.NODE_ENV === 'development' ? 'Applecar2025' : '';
+  const [isDemoMode] = useRecoilState(isDemoModeState);
 
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
   );
   const [, setMockMode] = useRecoilState(isMockModeState);
-  const [internalPassword, setInternalPassword] = useState(prefillPassword);
+  const [internalPassword, setInternalPassword] = useState(
+    isDemoMode ? 'Applecar2025' : '',
+  );
   const [formError, setFormError] = useState('');
 
   const { login } = useAuth();

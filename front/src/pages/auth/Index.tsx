@@ -12,6 +12,7 @@ import { Logo } from '@/auth/components/ui/Logo';
 import { Title } from '@/auth/components/ui/Title';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
@@ -36,6 +37,8 @@ export function Index() {
   const navigate = useNavigate();
   const theme = useTheme();
   const [, setMockMode] = useRecoilState(isMockModeState);
+  const [authProviders] = useRecoilState(authProvidersState);
+  const [demoMode] = useRecoilState(authProvidersState);
 
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
@@ -71,7 +74,14 @@ export function Index() {
   useEffect(() => {
     setMockMode(true);
     setCaptureHotkeyTypeInFocus(true);
-  }, [navigate, setMockMode, setCaptureHotkeyTypeInFocus]);
+    setAuthFlowUserEmail(demoMode ? 'tim@apple.dev' : '');
+  }, [
+    navigate,
+    setMockMode,
+    setCaptureHotkeyTypeInFocus,
+    setAuthFlowUserEmail,
+    demoMode,
+  ]);
 
   return (
     <>
@@ -80,12 +90,14 @@ export function Index() {
       </AnimatedEaseIn>
       <Title animate>Welcome to Twenty</Title>
       <StyledContentContainer>
-        <MainButton
-          icon={<IconBrandGoogle size={theme.icon.size.sm} stroke={4} />}
-          title="Continue with Google"
-          onClick={onGoogleLoginClick}
-          fullWidth
-        />
+        {authProviders.google && (
+          <MainButton
+            icon={<IconBrandGoogle size={theme.icon.size.sm} stroke={4} />}
+            title="Continue with Google"
+            onClick={onGoogleLoginClick}
+            fullWidth
+          />
+        )}
         {visible && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
