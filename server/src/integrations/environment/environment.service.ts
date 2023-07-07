@@ -8,6 +8,10 @@ import { StorageType } from './interfaces/storage.interface';
 export class EnvironmentService {
   constructor(private configService: ConfigService) {}
 
+  getDebugMode(): boolean | undefined {
+    return this.configService.get<boolean>('DEBUG_MODE')!;
+  }
+
   getPGDatabaseUrl(): string {
     return this.configService.get<string>('PG_DATABASE_URL')!;
   }

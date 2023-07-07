@@ -2,8 +2,8 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 
 import { useTrackPageView } from '@/analytics/hooks/useTrackPageView';
-import { RequireAuth } from '@/auth/components/RequireAuth';
-import { RequireNotAuth } from '@/auth/components/RequireNotAuth';
+import { RequireOnboarded } from '@/auth/components/RequireOnboarded';
+import { RequireOnboarding } from '@/auth/components/RequireOnboarding';
 import { AuthModal } from '@/auth/components/ui/Modal';
 import { useGoToHotkeys } from '@/hotkeys/hooks/useGoToHotkeys';
 import { AuthLayout } from '@/ui/layout/AuthLayout';
@@ -53,9 +53,19 @@ export function App() {
     <DefaultLayout>
       <Routes>
         <Route
+          path="auth/*"
+          element={
+            <RequireOnboarding>
+              <AuthLayout>
+                <AuthRoutes />
+              </AuthLayout>
+            </RequireOnboarding>
+          }
+        />
+        <Route
           path="*"
           element={
-            <RequireAuth>
+            <RequireOnboarded>
               <Routes>
                 <Route path="" element={<Navigate to="/people" replace />} />
                 <Route path="people" element={<People />} />
@@ -70,17 +80,7 @@ export function App() {
                   }
                 />
               </Routes>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="auth/*"
-          element={
-            <RequireNotAuth>
-              <AuthLayout>
-                <AuthRoutes />
-              </AuthLayout>
-            </RequireNotAuth>
+            </RequireOnboarded>
           }
         />
       </Routes>

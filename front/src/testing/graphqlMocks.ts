@@ -75,7 +75,7 @@ export const graphqlMocks = [
   graphql.query(getOperationName(GET_CURRENT_USER) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({
-        users: [mockedUsersData[0]],
+        currentUser: mockedUsersData[0],
       }),
     );
   }),

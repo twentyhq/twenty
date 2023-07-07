@@ -1,8 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
-import { BoolFilter } from '../prisma/bool-filter.input';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { BoolFilter } from '../prisma/bool-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { HideField } from '@nestjs/graphql';
 import { JsonNullableFilter } from '../prisma/json-nullable-filter.input';
@@ -27,11 +27,11 @@ export class UserWhereInput {
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    firstName?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    firstName?: StringNullableFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    lastName?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    lastName?: StringNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     email?: StringFilter;

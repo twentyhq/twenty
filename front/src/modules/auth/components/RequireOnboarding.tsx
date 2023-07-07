@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useIsLogged } from '../hooks/useIsLogged';
+import { useOnboardingStatus } from '../hooks/useOnboardingStatus';
+import { OnboardingStatus } from '../utils/getOnboardingStatus';
 
 const EmptyContainer = styled.div`
   align-items: center;
@@ -27,22 +28,22 @@ const FadeInStyle = styled.div`
   opacity: 0;
 `;
 
-export function RequireNotAuth({
+export function RequireOnboarding({
   children,
 }: {
   children: JSX.Element;
 }): JSX.Element {
   const navigate = useNavigate();
 
-  const isLogged = useIsLogged();
+  const onboardingStatus = useOnboardingStatus();
 
   useEffect(() => {
-    if (isLogged) {
+    if (onboardingStatus === OnboardingStatus.Completed) {
       navigate('/');
     }
-  }, [isLogged, navigate]);
+  }, [navigate, onboardingStatus]);
 
-  if (isLogged) {
+  if (onboardingStatus === OnboardingStatus.Completed) {
     return (
       <EmptyContainer>
         <FadeInStyle>

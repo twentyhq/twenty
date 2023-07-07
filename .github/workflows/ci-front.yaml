@@ -36,12 +36,12 @@ jobs:
       - name: Front / Run linter
         run: cd front && yarn lint
       - name: Front / Build Storybook
-        run: cd front && yarn build-storybook --quiet
+        run: cd front && yarn storybook:build --quiet
       - name: Front / Run storybook tests
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
-            "yarn coverage-storybook"
+            "yarn storybook:coverage"
       - name: Front / Run jest tests
         run: |
           cd front && yarn test

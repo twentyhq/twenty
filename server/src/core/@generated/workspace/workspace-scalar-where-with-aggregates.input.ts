@@ -21,11 +21,11 @@ export class WorkspaceScalarWhereWithAggregatesInput {
     @Field(() => StringWithAggregatesFilter, {nullable:true})
     id?: StringWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    domainName?: StringWithAggregatesFilter;
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    domainName?: StringNullableWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    displayName?: StringWithAggregatesFilter;
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    displayName?: StringNullableWithAggregatesFilter;
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     logo?: StringNullableWithAggregatesFilter;

@@ -1,4 +1,4 @@
-import { plainToClass, Transform } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import {
   IsEnum,
   IsOptional,
@@ -16,6 +16,12 @@ import { IsAWSRegion } from './decorators/is-aws-region.decorator';
 import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
 
 export class EnvironmentVariables {
+  // Stage
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  DEBUG_MODE?: boolean;
+
   // Database
   @IsUrl({ protocols: ['postgres'], require_tld: false })
   PG_DATABASE_URL: string;

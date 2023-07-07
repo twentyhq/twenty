@@ -21,7 +21,7 @@ export const SortByName: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const sortButton = canvas.getByText('Sort');
+    const sortButton = await canvas.findByText('Sort');
     await userEvent.click(sortButton);
 
     const nameSortButton = canvas.getByText('Name', { selector: 'li' });

@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
@@ -10,7 +11,6 @@ import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
-import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
@@ -47,17 +47,15 @@ const StyledErrorContainer = styled.div`
 `;
 
 export function PasswordLogin() {
-  const [, setMockMode] = useRecoilState(isMockModeState);
-  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
-    captureHotkeyTypeInFocusState,
-  );
+  const navigate = useNavigate();
 
   const prefillPassword =
-    process.env.NODE_ENV === 'development' ? 'applecar2025' : '';
+    process.env.NODE_ENV === 'development' ? 'Applecar2025' : '';
 
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
   );
+  const [, setMockMode] = useRecoilState(isMockModeState);
   const [internalPassword, setInternalPassword] = useState(prefillPassword);
   const [formError, setFormError] = useState('');
 
@@ -65,21 +63,15 @@ export function PasswordLogin() {
 
   const handleLogin = useCallback(async () => {
     try {
-      await login(authFlowUserEmail, internalPassword);
       setMockMode(false);
-      setCaptureHotkeyTypeInFocus(false);
-      // TODO: Navigate to the workspace selection page when it's ready
-      // navigate('/auth/create/workspace');
+
+      await login(authFlowUserEmail, internalPassword);
+
+      navigate('/auth/create/workspace');
     } catch (err: any) {
       setFormError(err.message);
     }
-  }, [
-    authFlowUserEmail,
-    internalPassword,
-    login,
-    setMockMode,
-    setCaptureHotkeyTypeInFocus,
-  ]);
+  }, [login, authFlowUserEmail, internalPassword, setMockMode, navigate]);
 
   useHotkeys(
     'enter',
