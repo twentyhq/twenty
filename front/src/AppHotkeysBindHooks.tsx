@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useHotkeysContext } from 'react-hotkeys-hook';
 import { useRecoilState } from 'recoil';
 
 import { appFocusState } from '@/app-focus/states/appFocusState';
