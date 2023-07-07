@@ -4,7 +4,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
 import { PeopleCompanyCell } from '@/people/components/PeopleCompanyCell';
 import { EditableDateCell } from '@/ui/components/editable-cell/types/EditableDateCell';
-import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone';
+import { EditablePhoneCell } from '@/ui/components/editable-cell/types/EditablePhoneCell';
 import { EditableTextCell } from '@/ui/components/editable-cell/types/EditableTextCell';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
@@ -87,7 +87,7 @@ export const usePeopleColumns = () => {
           <ColumnHead viewName="Phone" viewIcon={<IconPhone size={16} />} />
         ),
         cell: (props) => (
-          <EditablePhone
+          <EditablePhoneCell
             placeholder="Phone"
             value={props.row.original.phone || ''}
             changeHandler={async (value: string) => {
