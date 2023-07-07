@@ -1,4 +1,4 @@
-import { StrictMode, useState } from 'react';
+import { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
