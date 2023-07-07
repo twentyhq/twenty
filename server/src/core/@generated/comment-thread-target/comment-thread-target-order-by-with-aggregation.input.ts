@@ -1,7 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
-import { SortOrderInput } from '../prisma/sort-order.input';
 import { HideField } from '@nestjs/graphql';
 import { CommentThreadTargetCountOrderByAggregateInput } from './comment-thread-target-count-order-by-aggregate.input';
 import { CommentThreadTargetMaxOrderByAggregateInput } from './comment-thread-target-max-order-by-aggregate.input';
@@ -23,7 +22,7 @@ export class CommentThreadTargetOrderByWithAggregationInput {
     commentableId?: keyof typeof SortOrder;
 
     @HideField()
-    deletedAt?: SortOrderInput;
+    deletedAt?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;

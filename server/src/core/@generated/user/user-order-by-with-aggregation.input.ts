@@ -1,7 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
-import { SortOrderInput } from '../prisma/sort-order.input';
 import { HideField } from '@nestjs/graphql';
 import { UserCountOrderByAggregateInput } from './user-count-order-by-aggregate.input';
 import { UserMaxOrderByAggregateInput } from './user-max-order-by-aggregate.input';
@@ -25,29 +24,29 @@ export class UserOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     emailVerified?: keyof typeof SortOrder;
 
-    @Field(() => SortOrderInput, {nullable:true})
-    avatarUrl?: SortOrderInput;
+    @Field(() => SortOrder, {nullable:true})
+    avatarUrl?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     locale?: keyof typeof SortOrder;
 
-    @Field(() => SortOrderInput, {nullable:true})
-    phoneNumber?: SortOrderInput;
+    @Field(() => SortOrder, {nullable:true})
+    phoneNumber?: keyof typeof SortOrder;
 
-    @Field(() => SortOrderInput, {nullable:true})
-    lastSeen?: SortOrderInput;
+    @Field(() => SortOrder, {nullable:true})
+    lastSeen?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     disabled?: keyof typeof SortOrder;
 
     @HideField()
-    passwordHash?: SortOrderInput;
+    passwordHash?: keyof typeof SortOrder;
 
-    @Field(() => SortOrderInput, {nullable:true})
-    metadata?: SortOrderInput;
+    @Field(() => SortOrder, {nullable:true})
+    metadata?: keyof typeof SortOrder;
 
     @HideField()
-    deletedAt?: SortOrderInput;
+    deletedAt?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;

@@ -1,7 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { SortOrder } from '../prisma/sort-order.enum';
-import { SortOrderInput } from '../prisma/sort-order.input';
 import { HideField } from '@nestjs/graphql';
 import { CompanyOrderByWithRelationInput } from '../company/company-order-by-with-relation.input';
 import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-by-with-relation.input';
@@ -27,14 +26,14 @@ export class PersonOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     city?: keyof typeof SortOrder;
 
-    @Field(() => SortOrderInput, {nullable:true})
-    companyId?: SortOrderInput;
+    @Field(() => SortOrder, {nullable:true})
+    companyId?: keyof typeof SortOrder;
 
     @HideField()
     workspaceId?: keyof typeof SortOrder;
 
     @HideField()
-    deletedAt?: SortOrderInput;
+    deletedAt?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     createdAt?: keyof typeof SortOrder;
