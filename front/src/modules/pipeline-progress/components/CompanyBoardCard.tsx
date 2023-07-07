@@ -4,7 +4,7 @@ import { IconCurrencyDollar } from '@tabler/icons-react';
 
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
-import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
+import { InplaceTextInput } from '@/ui/components/inplace-input/types/InplaceTextInput';
 import { CellContext } from '@/ui/tables/states/CellContext';
 import { RowContext } from '@/ui/tables/states/RowContext';
 
@@ -113,7 +113,7 @@ export function CompanyBoardCard({
           <span>
             <IconCurrencyDollar size={theme.icon.size.md} />
             <HackScope>
-              <EditableText
+              <InplaceTextInput
                 content={pipelineProgress.amount?.toString() || ''}
                 placeholder="Opportunity amount"
                 changeHandler={(value) =>
