@@ -27,7 +27,6 @@ const StyledTableContainer = styled.div`
 export function Companies() {
   useAppFocusOnMountOnly('table-page');
 
-  console.log('Companies');
   const [insertCompany] = useInsertCompanyMutation();
 
   async function handleAddButtonClick() {

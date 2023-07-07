@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useAppFocusOnMountOnly } from '@/app-focus/hooks/useAppFocusOnMountOnly';
 import { GET_PEOPLE } from '@/people/services';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
@@ -22,6 +23,8 @@ const StyledPeopleContainer = styled.div`
 `;
 
 export function People() {
+  useAppFocusOnMountOnly('table-page');
+
   const [insertPersonMutation] = useInsertPersonMutation();
 
   async function handleAddButtonClick() {
