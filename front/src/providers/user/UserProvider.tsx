@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 
