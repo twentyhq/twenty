@@ -3,7 +3,7 @@ import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySel
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 import { useEditableCell } from '@/ui/components/editable-cell/hooks/useCloseEditableCell';
-import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
+import { isCreateModeScopedState } from '@/ui/components/inplace-input/states/isCreateModeScopedState';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,

@@ -1,9 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { isEditModeScopedState } from '@/ui/components/inplace-input/states/isEditModeScopedState';
 import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
-
-import { isEditModeScopedState } from '../states/isEditModeScopedState';
 
 export function useEditableCell() {
   const [, setIsEditMode] = useRecoilScopedState(isEditModeScopedState);

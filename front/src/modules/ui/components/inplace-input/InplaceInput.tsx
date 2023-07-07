@@ -27,6 +27,8 @@ type OwnProps = {
   editModeVerticalPosition?: 'over' | 'below';
   setSoftFocusOnCurrentInplaceInput: () => void;
   hasSoftFocus: boolean;
+  closeInplaceInput: () => void;
+  openInplaceInput: () => void;
 };
 
 export function InplaceInput({
@@ -36,10 +38,10 @@ export function InplaceInput({
   nonEditModeContent,
   setSoftFocusOnCurrentInplaceInput,
   hasSoftFocus,
+  closeInplaceInput,
+  openInplaceInput,
 }: OwnProps) {
   const [isEditMode] = useRecoilScopedState(isEditModeScopedState);
-
-  const { closeInplaceInput, openInplaceInput } = useInplaceInput();
 
   // TODO: we might have silent problematic behavior because of the setTimeout in openInplaceInput, investigate
   // Maybe we could build a switchInplaceInput to handle the case where we go from one InplaceInput to another.
