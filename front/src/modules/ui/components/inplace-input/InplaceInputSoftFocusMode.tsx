@@ -53,5 +53,7 @@ export function InplaceInputSoftFocusMode({
     },
   );
 
-  return <InplaceInputDisplayMode>{children}</InplaceInputDisplayMode>;
+  return (
+    <InplaceInputDisplayMode hasSoftFocus>{children}</InplaceInputDisplayMode>
+  );
 }

@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
 
-import { useIsSoftFocusOnCurrentInplaceInput } from './hooks/useIsSoftFocusOnCurrentInplaceInput';
-
 type Props = {
   softFocus: boolean;
 };
@@ -34,9 +32,10 @@ export const InplaceInputNormalModeInnerContainer = styled.div`
 
 export function InplaceInputDisplayMode({
   children,
-}: React.PropsWithChildren<unknown>) {
-  const hasSoftFocus = useIsSoftFocusOnCurrentInplaceInput();
-
+  hasSoftFocus,
+}: React.PropsWithChildren & {
+  hasSoftFocus: boolean;
+}) {
   return (
     <InplaceInputNormalModeOuterContainer softFocus={hasSoftFocus}>
       <InplaceInputNormalModeInnerContainer>

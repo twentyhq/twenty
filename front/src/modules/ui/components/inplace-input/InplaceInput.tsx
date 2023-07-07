@@ -4,8 +4,6 @@ import styled from '@emotion/styled';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 
 import { useInplaceInput } from './hooks/useCloseInplaceInput';
-import { useIsSoftFocusOnCurrentInplaceInput } from './hooks/useIsSoftFocusOnCurrentInplaceInput';
-import { useSetSoftFocusOnCurrentInplaceInput } from './hooks/useSetSoftFocusOnCurrentInplaceInput';
 import { isEditModeScopedState } from './states/isEditModeScopedState';
 import { InplaceInputDisplayMode } from './InplaceInputDisplayMode';
 import { InplaceInputEditMode } from './InplaceInputEditMode';
@@ -27,6 +25,8 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
+  setSoftFocusOnCurrentInplaceInput: () => void;
+  hasSoftFocus: boolean;
 };
 
 export function InplaceInput({
@@ -34,11 +34,10 @@ export function InplaceInput({
   editModeVerticalPosition = 'over',
   editModeContent,
   nonEditModeContent,
+  setSoftFocusOnCurrentInplaceInput,
+  hasSoftFocus,
 }: OwnProps) {
   const [isEditMode] = useRecoilScopedState(isEditModeScopedState);
-
-  const setSoftFocusOnCurrentInplaceInput =
-    useSetSoftFocusOnCurrentInplaceInput();
 
   const { closeInplaceInput, openInplaceInput } = useInplaceInput();
 
@@ -53,9 +52,6 @@ export function InplaceInput({
   function handleOnOutsideClick() {
     closeInplaceInput();
   }
-
-  const hasSoftFocus = useIsSoftFocusOnCurrentInplaceInput();
-
   return (
     <InplaceInputBaseContainer onClick={handleOnClick}>
       {isEditMode ? (
@@ -71,7 +67,9 @@ export function InplaceInput({
           {nonEditModeContent}
         </InplaceInputSoftFocusMode>
       ) : (
-        <InplaceInputDisplayMode>{nonEditModeContent}</InplaceInputDisplayMode>
+        <InplaceInputDisplayMode hasSoftFocus={hasSoftFocus}>
+          {nonEditModeContent}
+        </InplaceInputDisplayMode>
       )}
     </InplaceInputBaseContainer>
   );
