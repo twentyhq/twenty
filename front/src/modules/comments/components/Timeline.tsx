@@ -2,7 +2,6 @@ import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
 import { IconNotes, IconPlus } from '@/ui/icons/index';
-import { useOpenRightDrawer } from '@/ui/layout/right-drawer/hooks/useOpenRightDrawer';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
@@ -13,6 +12,7 @@ import {
 } from '~/generated/graphql';
 import { TableActionBarButtonCreateCommentThreadCompany } from '~/pages/companies/table/TableActionBarButtonCreateCommentThreadCompany';
 
+import { useOpenCommentThreadRightDrawer } from '../hooks/useOpenCommentThreadRightDrawer';
 import { CommentableEntity } from '../types/CommentableEntity';
 import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
@@ -181,7 +181,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     },
   });
 
-  const openRightDrawer = useOpenRightDrawer();
+  const openRightDrawer = useOpenCommentThreadRightDrawer();
 
   const commentThreads: CommentThreadForDrawer[] =
     queryResult?.findManyCommentThreads ?? [];
@@ -242,9 +242,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
                 <StyledVerticalLine></StyledVerticalLine>
               </StyledVerticalLineContainer>
               <StyledCardContainer>
-                <StyledCard
-                  onClick={() => openRightDrawer('edit-comment-thread')}
-                >
+                <StyledCard onClick={() => openRightDrawer(commentThread.id)}>
                   <StyledCardTitle>{commentThread.title}</StyledCardTitle>
                   <StyledCardContent>{commentThread.body}</StyledCardContent>
                 </StyledCard>

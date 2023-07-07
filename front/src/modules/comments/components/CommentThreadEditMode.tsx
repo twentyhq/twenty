@@ -71,15 +71,16 @@ export function CommentThreadEditMode({
 }: {
   commentThreadId: string;
 }) {
-  const editor: BlockNoteEditor | null = useBlockNote({
-    theme: 'light',
-  });
-
   const { data } = useGetCommentThreadQuery({
     variables: {
       commentThreadId: commentThreadId ?? '',
     },
     skip: !commentThreadId,
+  });
+
+  const editor: BlockNoteEditor | null = useBlockNote({
+    theme: 'light',
+    // initialContent: commentThread.body,
   });
 
   if (typeof data?.findManyCommentThreads[0] === 'undefined') {
