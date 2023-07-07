@@ -72,6 +72,7 @@ type PipelineProgressProp = Pick<
   'id' | 'amount' | 'closeDate'
 >;
 
+// TODO: Remove when refactoring EditableCell into EditableField
 function HackScope({ children }: { children: React.ReactNode }) {
   return (
     <RecoilScope>
@@ -87,13 +88,13 @@ export function CompanyBoardCard({
   pipelineProgress,
   selected,
   onSelect,
-  onUpdateCard,
+  onCardUpdate,
 }: {
   company: CompanyProp;
   pipelineProgress: PipelineProgressProp;
   selected: boolean;
   onSelect: (company: CompanyProp) => void;
-  onUpdateCard: (pipelineProgress: PipelineProgressProp) => Promise<void>;
+  onCardUpdate: (pipelineProgress: PipelineProgressProp) => Promise<void>;
 }) {
   const theme = useTheme();
   return (
@@ -116,7 +117,7 @@ export function CompanyBoardCard({
                 content={pipelineProgress.amount?.toString() || ''}
                 placeholder="Opportunity amount"
                 changeHandler={(value) =>
-                  onUpdateCard({
+                  onCardUpdate({
                     ...pipelineProgress,
                     amount: parseInt(value),
                   })
@@ -130,7 +131,7 @@ export function CompanyBoardCard({
               <EditableDate
                 value={new Date(pipelineProgress.closeDate || Date.now())}
                 changeHandler={(value) => {
-                  onUpdateCard({
+                  onCardUpdate({
                     ...pipelineProgress,
                     closeDate: value.toISOString(),
                   });

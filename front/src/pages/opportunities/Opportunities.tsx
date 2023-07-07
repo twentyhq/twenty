@@ -36,7 +36,7 @@ export function Opportunities() {
   const [updatePipelineProgressStage] =
     useUpdateOnePipelineProgressStageMutation();
 
-  const handleUpdateCard = useCallback(
+  const handleCardUpdate = useCallback(
     async (
       pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
     ) => {
@@ -51,7 +51,7 @@ export function Opportunities() {
     [updatePipelineProgress],
   );
 
-  const handleMoveCard = useCallback(
+  const handleCardMove = useCallback(
     async (
       pipelineProgressId: NonNullable<PipelineProgress['id']>,
       pipelineStageId: NonNullable<PipelineStage['id']>,
@@ -78,8 +78,8 @@ export function Opportunities() {
             columns={columns || []}
             initialBoard={initialBoard}
             initialItems={items}
-            onMoveCard={handleMoveCard}
-            onUpdateCard={handleUpdateCard}
+            onCardMove={handleCardMove}
+            onCardUpdate={handleCardUpdate}
           />
           <EntityBoardActionBar>
             <BoardActionBarButtonDeletePipelineProgress />
