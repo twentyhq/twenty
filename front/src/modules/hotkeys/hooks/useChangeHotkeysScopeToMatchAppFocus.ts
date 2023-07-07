@@ -13,13 +13,9 @@ import { useHotkeysScope } from './useHotkeysScope';
 export function useChangeHotkeysScopesToMatchAppFocus() {
   const { enableScope, disableScope } = useHotkeysScope();
 
-  console.log('useChangeHotkeysScopesToMatchAppFocus');
-
   return useCallback(
     (newAppFocus: AppFocus) => {
       const hotkeysScope = APP_FOCUS_TO_HOTKEYS_SCOPES[newAppFocus];
-
-      console.log({ newAppFocus, hotkeysScope });
 
       for (const hotkeysToDisable of HOTKEYS_SCOPES_NOT_ALWAYS_ON) {
         disableScope(hotkeysToDisable);

@@ -12,8 +12,6 @@ export function useSwitchToAppFocus() {
         const appFocus = await snapshot.getPromise(appFocusState);
         const appFocusHistory = await snapshot.getPromise(appFocusHistoryState);
 
-        console.log({ appFocus, appFocusHistory, newAppFocus });
-
         if (newAppFocus === appFocus) {
           return;
         }

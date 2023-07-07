@@ -11,15 +11,12 @@ import { useDisableSoftFocus } from './useDisableSoftFocus';
 import { useMoveSoftFocus } from './useMoveSoftFocus';
 
 export function useMapKeyboardToSoftFocus() {
-  console.log('useMapKeyboardToSoftFocus');
   const { moveDown, moveLeft, moveRight, moveUp } = useMoveSoftFocus();
 
   const removeAppFocus = useRemoveAppFocus();
   const disableSoftFocus = useDisableSoftFocus();
 
   const { enabledScopes } = useHotkeysContext();
-
-  console.log({ enabledScopes });
 
   const [isSomeInputInEditMode] = useRecoilState(isSomeInputInEditModeState);
 
@@ -37,7 +34,6 @@ export function useMapKeyboardToSoftFocus() {
   useDirectHotkeys(
     Key.ArrowDown,
     () => {
-      console.log('down', { enabledScopes });
       if (!isSomeInputInEditMode) {
         moveDown();
       }
@@ -71,7 +67,6 @@ export function useMapKeyboardToSoftFocus() {
   useDirectHotkeys(
     [Key.Escape],
     () => {
-      console.log('escape');
       removeAppFocus('table-body');
       disableSoftFocus();
     },

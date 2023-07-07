@@ -70,7 +70,6 @@ export function FilterDropdownButton() {
   const isFilterSelected = (activeTableFilters?.length ?? 0) > 0;
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
-    console.log({ handleIsUnfoldedChange });
     if (newIsUnfolded) {
       setIsUnfolded(true);
       switchToAppFocus('table-filter-dropdown');

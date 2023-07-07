@@ -11,12 +11,6 @@ export function useSwitchToHotkeysScope() {
       (scope) => !ALWAYS_ON_HOTKEYS_SCOPES.includes(scope as HotkeysScope),
     );
 
-    console.log({
-      hotkeysScope,
-      enabledScopes,
-      enabledScopesExceptAlwaysOnScopes,
-    });
-
     for (const scope of enabledScopesExceptAlwaysOnScopes) {
       disableScope(scope as HotkeysScope);
     }

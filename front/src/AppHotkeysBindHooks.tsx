@@ -9,14 +9,11 @@ export function AppHotkeysBindHooks() {
   const changeHotkeysScopesToMatchAppFocus =
     useChangeHotkeysScopesToMatchAppFocus();
 
-  const { enabledScopes } = useHotkeysContext();
   const [appFocus] = useRecoilState(appFocusState);
 
   useEffect(() => {
     changeHotkeysScopesToMatchAppFocus(appFocus);
   }, [appFocus, changeHotkeysScopesToMatchAppFocus]);
-
-  console.log({ appFocus, enabledScopes });
 
   return <></>;
 }
