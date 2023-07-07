@@ -1,6 +1,8 @@
 import { StrictMode, useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
+import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+
 import { Company } from '../../../../generated/graphql';
 import { mockedCompaniesData } from '../../../../testing/mock-data/companies';
 import { mockedPipelineProgressData } from '../../../../testing/mock-data/pipeline-progress';
@@ -29,9 +31,5 @@ const FakeSelectableCompanyBoardCard = () => {
 };
 
 export const CompanyCompanyBoardCard: Story = {
-  render: () => (
-    <StrictMode>
-      <FakeSelectableCompanyBoardCard />
-    </StrictMode>
-  ),
+  render: getRenderWrapperForComponent(<FakeSelectableCompanyBoardCard />),
 };
