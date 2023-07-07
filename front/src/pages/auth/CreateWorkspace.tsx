@@ -55,6 +55,7 @@ export function CreateWorkspace() {
           },
         },
         refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+        awaitRefetchQueries: true,
       });
 
       if (errors || !data?.updateWorkspace) {

@@ -21,7 +21,6 @@ export function SettingsNavbar() {
 
   const handleLogout = useCallback(() => {
     logout();
-    window.location.href = '/';
   }, [logout]);
 
   return (

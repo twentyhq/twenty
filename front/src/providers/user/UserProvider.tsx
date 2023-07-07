@@ -1,20 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 
 export function UserProvider({ children }: React.PropsWithChildren) {
-  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
-  const isLoggedIn = useIsLogged();
+  const [, setCurrentUser] = useRecoilState(currentUserState);
   const { data, loading } = useGetCurrentUserQuery();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!loading) {
+      setIsLoading(false);
+    }
     if (data?.currentUser) {
       setCurrentUser(data?.currentUser);
     }
-  }, [setCurrentUser, data]);
+  }, [setCurrentUser, data, isLoading, loading]);
 
-  return loading || (isLoggedIn && !currentUser) ? <></> : <>{children}</>;
+  return isLoading ? <></> : <>{children}</>;
 }
