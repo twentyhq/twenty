@@ -9,19 +9,12 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function EditableDateCell({
-  editModeHorizontalAlign = 'left',
-  value,
-  changeHandler,
-  placeholder,
-}: OwnProps) {
+export function EditableDateCell(props: OwnProps) {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
   return (
     <InplaceDateInput
-      editModeHorizontalAlign={editModeHorizontalAlign}
-      value={value}
-      changeHandler={changeHandler}
+      {...props}
       setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentCell}
       hasSoftFocus={hasSoftFocus}
     />

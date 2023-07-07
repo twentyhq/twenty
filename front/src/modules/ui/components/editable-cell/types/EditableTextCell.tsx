@@ -9,20 +9,12 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function EditableTextCell({
-  editModeHorizontalAlign = 'left',
-  content,
-  changeHandler,
-  placeholder,
-}: OwnProps) {
+export function EditableTextCell(props: OwnProps) {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
   return (
     <InplaceTextInput
-      editModeHorizontalAlign={editModeHorizontalAlign}
-      content={content}
-      changeHandler={changeHandler}
-      placeholder={placeholder}
+      {...props}
       setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentCell}
       hasSoftFocus={hasSoftFocus}
     />

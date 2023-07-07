@@ -13,24 +13,12 @@ type OwnProps = {
   onChange: (firstValue: string, secondValue: string) => void;
 };
 
-export function EditableDoubleTextCell({
-  firstValue,
-  secondValue,
-  firstValuePlaceholder,
-  secondValuePlaceholder,
-  nonEditModeContent,
-  onChange,
-}: OwnProps) {
+export function EditableDoubleTextCell(props: OwnProps) {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
   return (
     <InplaceDoubleTextInput
-      firstValue={firstValue}
-      secondValue={secondValue}
-      firstValuePlaceholder={firstValuePlaceholder}
-      secondValuePlaceholder={secondValuePlaceholder}
-      nonEditModeContent={nonEditModeContent}
-      onChange={onChange}
+      {...props}
       setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentCell}
       hasSoftFocus={hasSoftFocus}
     />

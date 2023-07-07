@@ -12,20 +12,12 @@ type OwnProps = {
   editModeVerticalPosition?: 'over' | 'below';
 };
 
-export function EditableCell({
-  editModeHorizontalAlign = 'left',
-  editModeVerticalPosition = 'over',
-  editModeContent,
-  nonEditModeContent,
-}: OwnProps) {
+export function EditableCell(props: OwnProps) {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
   return (
     <InplaceInput
-      editModeHorizontalAlign={editModeHorizontalAlign}
-      editModeVerticalPosition={editModeVerticalPosition}
-      editModeContent={editModeContent}
-      nonEditModeContent={nonEditModeContent}
+      {...props}
       setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentCell}
       hasSoftFocus={!!hasSoftFocus}
     />

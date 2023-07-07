@@ -20,28 +20,12 @@ export type OwnProps = {
   rightEndContents?: ReactNode[];
 };
 
-export function EditableChipCell({
-  editModeHorizontalAlign = 'left',
-  value,
-  picture,
-  changeHandler,
-  ChipComponent,
-  rightEndContents,
-  commentCount,
-  onCommentClick,
-}: OwnProps) {
+export function EditableChipCell(props: OwnProps) {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
   return (
     <InplaceChipInput
-      editModeHorizontalAlign={editModeHorizontalAlign}
-      value={value}
-      changeHandler={changeHandler}
-      picture={picture}
-      ChipComponent={ChipComponent}
-      rightEndContents={rightEndContents}
-      commentCount={commentCount}
-      onCommentClick={onCommentClick}
+      {...props}
       setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentCell}
       hasSoftFocus={hasSoftFocus}
     />

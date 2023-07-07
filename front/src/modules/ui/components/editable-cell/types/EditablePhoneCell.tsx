@@ -8,18 +8,12 @@ type OwnProps = {
   changeHandler: (Phone: string) => void;
 };
 
-export function EditablePhoneCell({
-  value,
-  changeHandler,
-  placeholder,
-}: OwnProps) {
+export function EditablePhoneCell(props: OwnProps) {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
   return (
     <InplacePhoneInput
-      value={value}
-      changeHandler={changeHandler}
-      placeholder={placeholder}
+      {...props}
       setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentCell}
       hasSoftFocus={hasSoftFocus}
     />
