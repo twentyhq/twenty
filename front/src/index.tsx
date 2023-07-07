@@ -1,8 +1,10 @@
 import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
+import { HotkeysProvider } from 'react-hotkeys-hook';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
+import { INITIAL_HOTKEYS_SCOPES } from '@/hotkeys/constants';
 import { ThemeType } from '@/ui/themes/themes';
 
 import '@emotion/react';
@@ -28,7 +30,9 @@ root.render(
           <UserProvider>
             <BrowserRouter>
               <ClientConfigProvider>
-                <App />
+                <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}>
+                  <App />
+                </HotkeysProvider>
               </ClientConfigProvider>
             </BrowserRouter>
           </UserProvider>

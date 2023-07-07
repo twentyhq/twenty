@@ -1,6 +1,7 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { useAppFocus } from '@/app-focus/hooks/useAppFocus';
 import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
 
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
@@ -23,8 +24,19 @@ export function CommandMenu() {
     () => {
       setOpen((prevOpen) => !prevOpen);
     },
+    ['command-k'],
     [setOpen],
   );
+
+  const { removeAppFocus, switchToAppFocus } = useAppFocus();
+
+  useEffect(() => {
+    if (open) {
+      switchToAppFocus('command-menu');
+    } else {
+      removeAppFocus('command-menu');
+    }
+  }, [open, switchToAppFocus, removeAppFocus]);
 
   /*
   TODO: Allow performing actions on page through CommandBar 

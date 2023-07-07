@@ -45,13 +45,21 @@ export function SortDropdownButton<SortField>({
     setSelectedSortDirection('asc');
   }, [setCaptureHotkeyTypeInFocus]);
 
+  function handleIsUnfoldedChange(newIsUnfolded: boolean) {
+    if (newIsUnfolded) {
+      setIsUnfolded(true);
+    } else {
+      setIsUnfolded(false);
+      resetState();
+    }
+  }
+
   return (
     <DropdownButton
       label="Sort"
       isActive={isSortSelected}
       isUnfolded={isUnfolded}
-      setIsUnfolded={setIsUnfolded}
-      resetState={resetState}
+      onIsUnfoldedChange={handleIsUnfoldedChange}
     >
       {isOptionUnfolded
         ? options.map((option, index) => (

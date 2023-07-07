@@ -1,12 +1,20 @@
-import { useHotkeys } from 'react-hotkeys-hook';
+import { Options, useHotkeys } from 'react-hotkeys-hook';
+import { Keys } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
 
 import { pendingHotkeyState } from '../states/pendingHotkeysState';
+import { HotkeysScope } from '../types/HotkeysScope';
 
 export function useSequenceHotkeys(
-  firstKey: string,
-  secondKey: string,
+  firstKey: Keys,
+  secondKey: Keys,
   callback: () => void,
+  scopes: HotkeysScope[],
+  options: Options = {
+    enableOnContentEditable: true,
+    enableOnFormTags: true,
+    preventDefault: true,
+  },
 ) {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
@@ -15,6 +23,7 @@ export function useSequenceHotkeys(
     () => {
       setPendingHotkey(firstKey);
     },
+    { ...options, scopes },
     [pendingHotkey],
   );
 
@@ -27,6 +36,7 @@ export function useSequenceHotkeys(
       setPendingHotkey(null);
       callback();
     },
+    { ...options, scopes },
     [pendingHotkey, setPendingHotkey],
   );
 }

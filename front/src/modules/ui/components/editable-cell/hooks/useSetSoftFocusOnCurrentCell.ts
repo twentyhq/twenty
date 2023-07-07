@@ -6,7 +6,7 @@ import { CellContext } from '@/ui/tables/states/CellContext';
 import { currentColumnNumberScopedState } from '@/ui/tables/states/currentColumnNumberScopedState';
 import { currentRowNumberScopedState } from '@/ui/tables/states/currentRowNumberScopedState';
 import { RowContext } from '@/ui/tables/states/RowContext';
-import { TablePosition } from '@/ui/tables/types/TablePosition';
+import { CellPosition } from '@/ui/tables/types/CellPosition';
 
 export function useSetSoftFocusOnCurrentCell() {
   const setSoftFocusPosition = useSetSoftFocusPosition();
@@ -20,7 +20,7 @@ export function useSetSoftFocusOnCurrentCell() {
     CellContext,
   );
 
-  const currentTablePosition: TablePosition = useMemo(
+  const currentTablePosition: CellPosition = useMemo(
     () => ({
       column: currentColumnNumber,
       row: currentRowNumber,

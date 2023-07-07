@@ -1,8 +1,6 @@
 import { ReactNode, useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
-import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { IconChevronDown } from '@/ui/icons/index';
 import { overlayBackground, textInputStyle } from '@/ui/themes/effects';
 
@@ -13,7 +11,7 @@ type OwnProps = {
   isActive: boolean;
   children?: ReactNode;
   isUnfolded?: boolean;
-  setIsUnfolded?: React.Dispatch<React.SetStateAction<boolean>>;
+  onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
 };
 
@@ -158,22 +156,14 @@ function DropdownButton({
   isActive,
   children,
   isUnfolded = false,
-  setIsUnfolded,
-  resetState,
+  onIsUnfoldedChange,
 }: OwnProps) {
-  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
-    captureHotkeyTypeInFocusState,
-  );
-
   const onButtonClick = () => {
-    setIsUnfolded && setIsUnfolded(!isUnfolded);
-    setCaptureHotkeyTypeInFocus((isPreviousUnfolded) => !isPreviousUnfolded);
+    onIsUnfoldedChange?.(!isUnfolded);
   };
 
   const onOutsideClick = () => {
-    setCaptureHotkeyTypeInFocus(false);
-    setIsUnfolded && setIsUnfolded(false);
-    resetState && resetState();
+    onIsUnfoldedChange?.(false);
   };
 
   const dropdownRef = useRef(null);

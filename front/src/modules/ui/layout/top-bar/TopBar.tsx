@@ -50,7 +50,7 @@ type OwnProps = {
 };
 
 export function TopBar({ title, icon, onAddButtonClick }: OwnProps) {
-  useDirectHotkeys('c', () => onAddButtonClick && onAddButtonClick());
+  useDirectHotkeys('c', () => onAddButtonClick?.(), ['table-header']);
 
   return (
     <>

@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useAppFocusOnMountOnly } from '@/app-focus/hooks/useAppFocusOnMountOnly';
 import { GET_COMPANIES } from '@/companies/services';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
@@ -24,6 +25,9 @@ const StyledTableContainer = styled.div`
 `;
 
 export function Companies() {
+  useAppFocusOnMountOnly('table-page');
+
+  console.log('Companies');
   const [insertCompany] = useInsertCompanyMutation();
 
   async function handleAddButtonClick() {
@@ -45,20 +49,22 @@ export function Companies() {
   const theme = useTheme();
 
   return (
-    <WithTopBarContainer
-      title="Companies"
-      icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-      onAddButtonClick={handleAddButtonClick}
-    >
-      <RecoilScope SpecificContext={TableContext}>
-        <StyledTableContainer>
-          <CompanyTable />
-        </StyledTableContainer>
-        <EntityTableActionBar>
-          <TableActionBarButtonCreateCommentThreadCompany />
-          <TableActionBarButtonDeleteCompanies />
-        </EntityTableActionBar>
-      </RecoilScope>
-    </WithTopBarContainer>
+    <>
+      <WithTopBarContainer
+        title="Companies"
+        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+        onAddButtonClick={handleAddButtonClick}
+      >
+        <RecoilScope SpecificContext={TableContext}>
+          <StyledTableContainer>
+            <CompanyTable />
+          </StyledTableContainer>
+          <EntityTableActionBar>
+            <TableActionBarButtonCreateCommentThreadCompany />
+            <TableActionBarButtonDeleteCompanies />
+          </EntityTableActionBar>
+        </RecoilScope>
+      </WithTopBarContainer>
+    </>
   );
 }

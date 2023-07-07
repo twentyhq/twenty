@@ -1,12 +1,14 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
-import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { useSwitchToAppFocus } from '@/app-focus/hooks/useSwitchToAppFocus';
+import { appFocusState } from '@/app-focus/states/appFocusState';
 
 import { useEditableCell } from './hooks/useCloseEditableCell';
+import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
 import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
-import { isEditModeScopedState } from './states/isEditModeScopedState';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
 import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
@@ -35,33 +37,40 @@ export function EditableCell({
   editModeContent,
   nonEditModeContent,
 }: OwnProps) {
-  const [isEditMode] = useRecoilScopedState(isEditModeScopedState);
+  const { isCurrentCellInEditMode } = useCurrentCellEditMode();
 
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
+  // const switchToAppFocus = useSwitchToAppFocus();
 
-  const { closeEditableCell, openEditableCell } = useEditableCell();
+  const { openEditableCell } = useEditableCell();
+  const [appFocus] = useRecoilState(appFocusState);
+
+  const switchToAppFocus = useSwitchToAppFocus();
 
   // TODO: we might have silent problematic behavior because of the setTimeout in openEditableCell, investigate
   // Maybe we could build a switchEditableCell to handle the case where we go from one cell to another.
   // See https://github.com/twentyhq/twenty/issues/446
   function handleOnClick() {
-    openEditableCell();
-    setSoftFocusOnCurrentCell();
-  }
+    if (isCurrentCellInEditMode) {
+      return;
+    }
 
-  function handleOnOutsideClick() {
-    closeEditableCell();
+    if (appFocus !== 'table-body') {
+      switchToAppFocus('table-body');
+    } else {
+      openEditableCell();
+    }
+    setSoftFocusOnCurrentCell();
   }
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
   return (
     <CellBaseContainer onClick={handleOnClick}>
-      {isEditMode ? (
+      {isCurrentCellInEditMode ? (
         <EditableCellEditMode
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
-          onOutsideClick={handleOnOutsideClick}
         >
           {editModeContent}
         </EditableCellEditMode>

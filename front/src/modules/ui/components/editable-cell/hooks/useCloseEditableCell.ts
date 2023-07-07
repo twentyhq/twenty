@@ -1,23 +1,35 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { useRemoveAppFocus } from '@/app-focus/hooks/useRemoveAppFocus';
+import { useSwitchToAppFocus } from '@/app-focus/hooks/useSwitchToAppFocus';
+import { useClearCellInEditMode } from '@/ui/tables/hooks/useClearCellInEditMode';
 import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
 
-import { isEditModeScopedState } from '../states/isEditModeScopedState';
+import { useCurrentCellEditMode } from './useCurrentCellEditMode';
 
 export function useEditableCell() {
-  const [, setIsEditMode] = useRecoilScopedState(isEditModeScopedState);
+  const { setCurrentCellInEditMode } = useCurrentCellEditMode();
+
+  const clearCellInEditMode = useClearCellInEditMode();
+
+  const removeAppFocus = useRemoveAppFocus();
+  const switchToAppFocus = useSwitchToAppFocus();
 
   const closeEditableCell = useRecoilCallback(
     ({ set }) =>
       async () => {
-        setIsEditMode(false);
+        clearCellInEditMode();
+
+        // TODO: find a better way
+        await new Promise((resolve) => setTimeout(resolve, 20));
+
+        removeAppFocus('table-cell');
 
         await new Promise((resolve) => setTimeout(resolve, 20));
 
         set(isSomeInputInEditModeState, false);
       },
-    [setIsEditMode],
+    [clearCellInEditMode, removeAppFocus, clearCellInEditMode],
   );
 
   const openEditableCell = useRecoilCallback(
@@ -27,13 +39,15 @@ export function useEditableCell() {
           .getLoadable(isSomeInputInEditModeState)
           .valueOrThrow();
 
+        switchToAppFocus('table-cell');
+
         if (!isSomeInputInEditMode) {
           set(isSomeInputInEditModeState, true);
 
-          setIsEditMode(true);
+          setCurrentCellInEditMode();
         }
       },
-    [setIsEditMode],
+    [setCurrentCellInEditMode, switchToAppFocus],
   );
 
   return {

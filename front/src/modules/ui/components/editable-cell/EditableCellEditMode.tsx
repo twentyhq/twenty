@@ -1,7 +1,8 @@
 import { ReactElement, useRef } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
 
+import { useAppFocusOnMountOnly } from '@/app-focus/hooks/useAppFocusOnMountOnly';
+import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 import { overlayBackground } from '@/ui/themes/effects';
@@ -38,69 +39,54 @@ export function EditableCellEditMode({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
-  onOutsideClick,
 }: OwnProps) {
   const wrapperRef = useRef(null);
+
+  useAppFocusOnMountOnly('table-cell');
 
   const { closeEditableCell } = useEditableCell();
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   useListenClickOutsideArrayOfRef([wrapperRef], () => {
-    onOutsideClick?.();
+    closeEditableCell();
   });
 
-  useHotkeys(
+  useDirectHotkeys(
     'enter',
     () => {
       closeEditableCell();
       moveDown();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
+    ['table-cell'],
     [closeEditableCell],
   );
 
-  useHotkeys(
+  useDirectHotkeys(
     'esc',
     () => {
       closeEditableCell();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
+    ['table-cell'],
     [closeEditableCell],
   );
 
-  useHotkeys(
+  useDirectHotkeys(
     'tab',
     () => {
       closeEditableCell();
       moveRight();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
+    ['table-cell'],
     [closeEditableCell, moveRight],
   );
 
-  useHotkeys(
+  useDirectHotkeys(
     'shift+tab',
     () => {
       closeEditableCell();
       moveLeft();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
+    ['table-cell'],
     [closeEditableCell, moveRight],
   );
 

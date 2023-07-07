@@ -1,6 +1,6 @@
 import { useRef } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 
+import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { DropdownMenuItem } from '@/ui/components/menu/DropdownMenuItem';
 import { DropdownMenuItemContainer } from '@/ui/components/menu/DropdownMenuItemContainer';
@@ -40,15 +40,12 @@ export function SingleEntitySelectBase<
     containerRef,
   });
 
-  useHotkeys(
+  useDirectHotkeys(
     'enter',
     () => {
       onEntitySelected(entitiesInDropdown[hoveredIndex]);
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
+    [],
     [entitiesInDropdown, hoveredIndex, onEntitySelected],
   );
 
