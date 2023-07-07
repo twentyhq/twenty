@@ -27,7 +27,7 @@ export function EditableCell({
       editModeContent={editModeContent}
       nonEditModeContent={nonEditModeContent}
       setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentCell}
-      hasSoftFocus={hasSoftFocus}
+      hasSoftFocus={!!hasSoftFocus}
     />
   );
 }

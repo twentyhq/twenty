@@ -25,8 +25,8 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  setSoftFocusOnCurrentInplaceInput: () => void;
-  hasSoftFocus: boolean;
+  setSoftFocusOnCurrentInplaceInput?: () => void;
+  hasSoftFocus?: boolean;
 };
 
 export function InplaceInput({
@@ -46,7 +46,7 @@ export function InplaceInput({
   // See https://github.com/twentyhq/twenty/issues/446
   function handleOnClick() {
     openInplaceInput();
-    setSoftFocusOnCurrentInplaceInput();
+    setSoftFocusOnCurrentInplaceInput && setSoftFocusOnCurrentInplaceInput();
   }
 
   function handleOnOutsideClick() {
@@ -67,7 +67,7 @@ export function InplaceInput({
           {nonEditModeContent}
         </InplaceInputSoftFocusMode>
       ) : (
-        <InplaceInputDisplayMode hasSoftFocus={hasSoftFocus}>
+        <InplaceInputDisplayMode hasSoftFocus={!!hasSoftFocus}>
           {nonEditModeContent}
         </InplaceInputDisplayMode>
       )}

@@ -4,7 +4,7 @@ import { IconCurrencyDollar } from '@tabler/icons-react';
 
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
-import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
+import { EditableText } from '@/ui/components/inplace-input/types/EditableText';
 import { CellContext } from '@/ui/tables/states/CellContext';
 import { RowContext } from '@/ui/tables/states/RowContext';
 

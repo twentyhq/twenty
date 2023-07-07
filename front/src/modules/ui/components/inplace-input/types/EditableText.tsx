@@ -3,13 +3,15 @@ import styled from '@emotion/styled';
 
 import { textInputStyle } from '@/ui/themes/effects';
 
-import { EditableCell } from '../EditableCell';
+import { InplaceInput } from '../InplaceInput';
 
 type OwnProps = {
   placeholder?: string;
   content: string;
   changeHandler: (updated: string) => void;
   editModeHorizontalAlign?: 'left' | 'right';
+  setSoftFocusOnCurrentInplaceInput?: () => void;
+  hasSoftFocus?: boolean;
 };
 
 // TODO: refactor
@@ -31,12 +33,14 @@ export function EditableText({
   placeholder,
   changeHandler,
   editModeHorizontalAlign,
+  setSoftFocusOnCurrentInplaceInput,
+  hasSoftFocus,
 }: OwnProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(content);
 
   return (
-    <EditableCell
+    <InplaceInput
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <StyledInplaceInput
@@ -50,7 +54,9 @@ export function EditableText({
           }}
         />
       }
+      setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentInplaceInput}
+      hasSoftFocus={hasSoftFocus}
       nonEditModeContent={<StyledNoEditText>{inputValue}</StyledNoEditText>}
-    ></EditableCell>
+    ></InplaceInput>
   );
 }
