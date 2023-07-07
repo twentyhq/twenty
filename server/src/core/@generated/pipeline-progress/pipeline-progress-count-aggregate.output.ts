@@ -10,6 +10,12 @@ export class PipelineProgressCountAggregate {
     id!: number;
 
     @Field(() => Int, {nullable:false})
+    amount!: number;
+
+    @Field(() => Int, {nullable:false})
+    closeDate!: number;
+
+    @Field(() => Int, {nullable:false})
     pipelineId!: number;
 
     @Field(() => Int, {nullable:false})

@@ -9,6 +9,12 @@ export class PipelineProgressMinAggregateInput {
     id?: true;
 
     @Field(() => Boolean, {nullable:true})
+    amount?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    closeDate?: true;
+
+    @Field(() => Boolean, {nullable:true})
     pipelineId?: true;
 
     @Field(() => Boolean, {nullable:true})

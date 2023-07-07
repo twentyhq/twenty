@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import * as Validator from 'class-validator';
+import { Int } from '@nestjs/graphql';
 import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { HideField } from '@nestjs/graphql';
 
@@ -11,6 +12,12 @@ export class PipelineProgressCreateManyInput {
     @Validator.IsString()
     @Validator.IsOptional()
     id?: string;
+
+    @Field(() => Int, {nullable:true})
+    amount?: number;
+
+    @Field(() => Date, {nullable:true})
+    closeDate?: Date | string;
 
     @Field(() => String, {nullable:false})
     pipelineId!: string;
