@@ -18,10 +18,6 @@ describe('AuthResolver', () => {
           provide: TokenService,
           useValue: {},
         },
-        {
-          provide: TokenService,
-          useValue: {},
-        },
       ],
     }).compile();
 
