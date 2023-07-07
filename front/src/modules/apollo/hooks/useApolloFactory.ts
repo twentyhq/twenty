@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import {
   ApolloLink,
   InMemoryCache,
@@ -67,16 +67,11 @@ export function useApolloFactory() {
       },
       extraLinks: isMockMode ? [mockLink] : [],
       isDebugMode,
+      tokenPair,
     });
 
     return apolloRef.current.getClient();
-  }, [isMockMode, setTokenPair, isDebugMode]);
-
-  useEffect(() => {
-    if (apolloRef.current) {
-      apolloRef.current.updateTokenPair(tokenPair);
-    }
-  }, [tokenPair]);
+  }, [isMockMode, setTokenPair, isDebugMode, tokenPair]);
 
   return apolloClient;
 }
