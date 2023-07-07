@@ -5,7 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 
 export function UserProvider({ children }: React.PropsWithChildren) {
-  const [, setCurrentUser] = useRecoilState(currentUserState);
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   const { data, loading } = useGetCurrentUserQuery();
 
   useEffect(() => {
@@ -14,5 +14,5 @@ export function UserProvider({ children }: React.PropsWithChildren) {
     }
   }, [setCurrentUser, data]);
 
-  return loading ? <></> : <>{children}</>;
+  return loading || !currentUser ? <></> : <>{children}</>;
 }

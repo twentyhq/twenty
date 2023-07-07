@@ -23,17 +23,17 @@ const root = ReactDOM.createRoot(
 root.render(
   <RecoilRoot>
     <ApolloProvider>
-      <BrowserRouter>
-        <AppThemeProvider>
-          <StrictMode>
-            <UserProvider>
+      <AppThemeProvider>
+        <StrictMode>
+          <UserProvider>
+            <BrowserRouter>
               <ClientConfigProvider>
                 <App />
               </ClientConfigProvider>
-            </UserProvider>
-          </StrictMode>
-        </AppThemeProvider>
-      </BrowserRouter>
+            </BrowserRouter>
+          </UserProvider>
+        </StrictMode>
+      </AppThemeProvider>
     </ApolloProvider>
   </RecoilRoot>,
 );
