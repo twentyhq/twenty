@@ -8,6 +8,7 @@ import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { CommentThreadTargetListRelationFilter } from '../comment-thread-target/comment-thread-target-list-relation-filter.input';
 import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
 import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.input';
+import { UserRelationFilter } from '../user/user-relation-filter.input';
 
 @InputType()
 export class CommentThreadWhereInput {
@@ -27,8 +28,8 @@ export class CommentThreadWhereInput {
     @HideField()
     workspaceId?: StringFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    authorId?: StringNullableFilter;
+    @Field(() => StringFilter, {nullable:true})
+    authorId?: StringFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     body?: StringNullableFilter;
@@ -53,4 +54,7 @@ export class CommentThreadWhereInput {
 
     @HideField()
     workspace?: WorkspaceRelationFilter;
+
+    @Field(() => UserRelationFilter, {nullable:true})
+    author?: UserRelationFilter;
 }

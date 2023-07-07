@@ -5,6 +5,7 @@ import { HideField } from '@nestjs/graphql';
 import { CommentThreadTargetOrderByRelationAggregateInput } from '../comment-thread-target/comment-thread-target-order-by-relation-aggregate.input';
 import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
 import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-by-with-relation.input';
+import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
 
 @InputType()
 export class CommentThreadOrderByWithRelationInput {
@@ -41,4 +42,7 @@ export class CommentThreadOrderByWithRelationInput {
 
     @HideField()
     workspace?: WorkspaceOrderByWithRelationInput;
+
+    @Field(() => UserOrderByWithRelationInput, {nullable:true})
+    author?: UserOrderByWithRelationInput;
 }

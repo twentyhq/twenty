@@ -24,8 +24,8 @@ export class CommentThreadScalarWhereWithAggregatesInput {
     @HideField()
     workspaceId?: StringWithAggregatesFilter;
 
-    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
-    authorId?: StringNullableWithAggregatesFilter;
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    authorId?: StringWithAggregatesFilter;
 
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     body?: StringNullableWithAggregatesFilter;

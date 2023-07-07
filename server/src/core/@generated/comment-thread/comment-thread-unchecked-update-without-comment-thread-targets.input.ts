@@ -16,8 +16,8 @@ export class CommentThreadUncheckedUpdateWithoutCommentThreadTargetsInput {
     @HideField()
     workspaceId?: StringFieldUpdateOperationsInput;
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    authorId?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    authorId?: StringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     body?: NullableStringFieldUpdateOperationsInput;

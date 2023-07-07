@@ -45,6 +45,7 @@ const StyledRightPanelContainer = styled.div`
   flex: 1 0 0;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 `;
 
 export function CompanyShow() {
@@ -84,7 +85,9 @@ export function CompanyShow() {
           </PropertyBox>
         </StyledLeftPanelContainer>
         <StyledRightPanelContainer>
-          <Timeline />
+          <Timeline
+            entity={{ id: company?.id ?? '', type: CommentableType.Company }}
+          />
         </StyledRightPanelContainer>
       </StyledCompanyContainer>
     </WithTopBarContainer>

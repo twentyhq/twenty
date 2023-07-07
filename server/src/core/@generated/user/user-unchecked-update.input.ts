@@ -12,6 +12,7 @@ import { WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput } from '../work
 import { CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput } from '../company/company-unchecked-update-many-without-account-owner-nested.input';
 import { RefreshTokenUncheckedUpdateManyWithoutUserNestedInput } from '../refresh-token/refresh-token-unchecked-update-many-without-user-nested.input';
 import { CommentUncheckedUpdateManyWithoutAuthorNestedInput } from '../comment/comment-unchecked-update-many-without-author-nested.input';
+import { CommentThreadUncheckedUpdateManyWithoutAuthorNestedInput } from '../comment-thread/comment-thread-unchecked-update-many-without-author-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateInput {
@@ -74,4 +75,7 @@ export class UserUncheckedUpdateInput {
 
     @Field(() => CommentUncheckedUpdateManyWithoutAuthorNestedInput, {nullable:true})
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput;
+
+    @Field(() => CommentThreadUncheckedUpdateManyWithoutAuthorNestedInput, {nullable:true})
+    CommentThread?: CommentThreadUncheckedUpdateManyWithoutAuthorNestedInput;
 }

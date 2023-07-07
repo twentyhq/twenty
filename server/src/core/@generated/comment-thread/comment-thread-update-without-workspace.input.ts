@@ -7,15 +7,13 @@ import { HideField } from '@nestjs/graphql';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput } from '../comment-thread-target/comment-thread-target-update-many-without-comment-thread-nested.input';
 import { CommentUpdateManyWithoutCommentThreadNestedInput } from '../comment/comment-update-many-without-comment-thread-nested.input';
+import { UserUpdateOneRequiredWithoutCommentThreadNestedInput } from '../user/user-update-one-required-without-comment-thread-nested.input';
 
 @InputType()
 export class CommentThreadUpdateWithoutWorkspaceInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     id?: StringFieldUpdateOperationsInput;
-
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    authorId?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     body?: NullableStringFieldUpdateOperationsInput;
@@ -37,4 +35,7 @@ export class CommentThreadUpdateWithoutWorkspaceInput {
 
     @Field(() => CommentUpdateManyWithoutCommentThreadNestedInput, {nullable:true})
     comments?: CommentUpdateManyWithoutCommentThreadNestedInput;
+
+    @Field(() => UserUpdateOneRequiredWithoutCommentThreadNestedInput, {nullable:true})
+    author?: UserUpdateOneRequiredWithoutCommentThreadNestedInput;
 }

@@ -15,8 +15,8 @@ export class CommentThreadUncheckedCreateWithoutCommentThreadTargetsInput {
     @HideField()
     workspaceId!: string;
 
-    @Field(() => String, {nullable:true})
-    authorId?: string;
+    @Field(() => String, {nullable:false})
+    authorId!: string;
 
     @Field(() => String, {nullable:true})
     body?: string;

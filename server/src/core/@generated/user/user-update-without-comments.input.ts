@@ -11,6 +11,7 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { WorkspaceMemberUpdateOneWithoutUserNestedInput } from '../workspace-member/workspace-member-update-one-without-user-nested.input';
 import { CompanyUpdateManyWithoutAccountOwnerNestedInput } from '../company/company-update-many-without-account-owner-nested.input';
 import { RefreshTokenUpdateManyWithoutUserNestedInput } from '../refresh-token/refresh-token-update-many-without-user-nested.input';
+import { CommentThreadUpdateManyWithoutAuthorNestedInput } from '../comment-thread/comment-thread-update-many-without-author-nested.input';
 
 @InputType()
 export class UserUpdateWithoutCommentsInput {
@@ -70,4 +71,7 @@ export class UserUpdateWithoutCommentsInput {
 
     @HideField()
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput;
+
+    @Field(() => CommentThreadUpdateManyWithoutAuthorNestedInput, {nullable:true})
+    CommentThread?: CommentThreadUpdateManyWithoutAuthorNestedInput;
 }

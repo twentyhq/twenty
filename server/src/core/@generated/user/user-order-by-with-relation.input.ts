@@ -6,6 +6,7 @@ import { WorkspaceMemberOrderByWithRelationInput } from '../workspace-member/wor
 import { CompanyOrderByRelationAggregateInput } from '../company/company-order-by-relation-aggregate.input';
 import { RefreshTokenOrderByRelationAggregateInput } from '../refresh-token/refresh-token-order-by-relation-aggregate.input';
 import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
+import { CommentThreadOrderByRelationAggregateInput } from '../comment-thread/comment-thread-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -66,4 +67,7 @@ export class UserOrderByWithRelationInput {
 
     @Field(() => CommentOrderByRelationAggregateInput, {nullable:true})
     comments?: CommentOrderByRelationAggregateInput;
+
+    @Field(() => CommentThreadOrderByRelationAggregateInput, {nullable:true})
+    CommentThread?: CommentThreadOrderByRelationAggregateInput;
 }

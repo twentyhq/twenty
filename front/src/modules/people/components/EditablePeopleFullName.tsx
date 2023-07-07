@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { CellCommentChip } from '@/comments/components/CellCommentChip';
-import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
+import { useOpenTimelineRightDrawer } from '@/comments/hooks/useOpenTimelineRightDrawer';
 import { EditableDoubleText } from '@/ui/components/editable-cell/types/EditableDoubleText';
 import { CommentableType, Person } from '~/generated/graphql';
 
@@ -27,7 +27,7 @@ const RightContainer = styled.div`
 export function EditablePeopleFullName({ person, onChange }: OwnProps) {
   const [firstNameValue, setFirstNameValue] = useState(person.firstName ?? '');
   const [lastNameValue, setLastNameValue] = useState(person.lastName ?? '');
-  const openCommentRightDrawer = useOpenCommentRightDrawer();
+  const openCommentRightDrawer = useOpenTimelineRightDrawer();
 
   function handleDoubleTextChange(
     firstValue: string,

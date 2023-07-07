@@ -4,7 +4,7 @@ import { useOpenRightDrawer } from '../../ui/layout/right-drawer/hooks/useOpenRi
 import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
 import { CommentableEntity } from '../types/CommentableEntity';
 
-export function useOpenCommentRightDrawer() {
+export function useOpenTimelineRightDrawer() {
   const openRightDrawer = useOpenRightDrawer();
   const [, setCommentableEntityArray] = useRecoilState(
     commentableEntityArrayState,

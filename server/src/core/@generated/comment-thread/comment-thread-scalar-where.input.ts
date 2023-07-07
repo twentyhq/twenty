@@ -24,8 +24,8 @@ export class CommentThreadScalarWhereInput {
     @HideField()
     workspaceId?: StringFilter;
 
-    @Field(() => StringNullableFilter, {nullable:true})
-    authorId?: StringNullableFilter;
+    @Field(() => StringFilter, {nullable:true})
+    authorId?: StringFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     body?: StringNullableFilter;

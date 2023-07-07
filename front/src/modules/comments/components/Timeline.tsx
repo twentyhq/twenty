@@ -1,7 +1,19 @@
+import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
-import { IconNotes } from '@/ui/icons/index';
+import { IconNotes, IconPlus } from '@/ui/icons/index';
+import {
+  beautifyExactDate,
+  beautifyPastDateRelativeToNow,
+} from '@/utils/datetime/date-utils';
+import {
+  SortOrder,
+  useGetCommentThreadsByTargetsQuery,
+} from '~/generated/graphql';
 import { TableActionBarButtonCreateCommentThreadCompany } from '~/pages/companies/table/TableActionBarButtonCreateCommentThreadCompany';
+
+import { CommentableEntity } from '../types/CommentableEntity';
+import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
 const StyledTimelineContainer = styled.div`
   align-items: center;
@@ -10,9 +22,11 @@ const StyledTimelineContainer = styled.div`
   flex: 1 0 0;
   flex-direction: column;
   gap: 4px;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  overflow-y: auto;
   padding: 12px 16px 64px 16px;
 `;
+
 const StyledTimelineEmptyContainer = styled.div`
   align-items: center;
   align-self: stretch;
@@ -59,7 +73,7 @@ const StyledItemTitleDate = styled.div`
   display: flex;
   gap: 8px;
   justify-content: flex-end;
-  width: 80px;
+  width: 110px;
 `;
 
 const StyledVerticalLineContainer = styled.div`
@@ -116,8 +130,44 @@ const StyledCardContent = styled.div`
   text-overflow: ellipsis;
 `;
 
-export function Timeline() {
-  const commentThreads = ['1'];
+const StyledTooltip = styled(Tooltip)`
+  background-color: ${({ theme }) => theme.background.primary};
+
+  box-shadow: 0px 2px 4px 3px
+    ${({ theme }) => theme.background.transparent.light};
+
+  box-shadow: 2px 4px 16px 6px
+    ${({ theme }) => theme.background.transparent.light};
+
+  color: ${({ theme }) => theme.font.color.primary};
+
+  opacity: 1;
+  padding: 8px;
+`;
+
+const StyledBottomActionBar = styled.div`
+  align-items: flex-start;
+  align-self: stretch;
+  bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+`;
+
+export function Timeline({ entity }: { entity: CommentableEntity }) {
+  const { data: queryResult } = useGetCommentThreadsByTargetsQuery({
+    variables: {
+      commentThreadTargetIds: [entity.id],
+      orderBy: [
+        {
+          createdAt: SortOrder.Desc,
+        },
+      ],
+    },
+  });
+
+  const commentThreads: CommentThreadForDrawer[] =
+    queryResult?.findManyCommentThreads ?? [];
 
   if (!commentThreads.length) {
     return (
@@ -130,35 +180,59 @@ export function Timeline() {
 
   return (
     <StyledTimelineContainer>
-      <StyledTimelineItemContainer>
-        <StyledIconContainer>
-          <IconNotes />
-        </StyledIconContainer>
-        <StyledItemTitleContainer>
-          <span>Eddy Cue</span>sent a calendar invite to Steve and Alexandre
-        </StyledItemTitleContainer>
-        <StyledItemTitleDate>2 days ago</StyledItemTitleDate>
-      </StyledTimelineItemContainer>
-      <StyledTimelineItemContainer>
-        <StyledVerticalLineContainer>
-          <StyledVerticalLine></StyledVerticalLine>
-        </StyledVerticalLineContainer>
-        <StyledCardContainer>
-          <StyledCard>
-            <StyledCardTitle>
-              Logged call (Phil Schiller / Steve Anavi)
-            </StyledCardTitle>
-            <StyledCardContent>
-              Apple sells its products by focusing on the benefits users gain
-              from their products, rather than solely highlighting the features.
-              The same approach should be used for selling to Qonto. Understand
-              their pain points and how your product can alleviate those issues.
-              Emphasize how your CRM tool can help streamline their operations,
-              improve customer service, and ultimately, grow their business.
-            </StyledCardContent>
-          </StyledCard>
-        </StyledCardContainer>
-      </StyledTimelineItemContainer>
+      {commentThreads.map((commentThread) => {
+        const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
+          commentThread.createdAt,
+        );
+        const exactCreatedAt = beautifyExactDate(commentThread.createdAt);
+
+        return (
+          <>
+            <StyledTimelineItemContainer>
+              <StyledIconContainer>
+                <IconNotes />
+              </StyledIconContainer>
+              <StyledItemTitleContainer>
+                <span>
+                  {commentThread.author.firstName}{' '}
+                  {commentThread.author.lastName}
+                </span>
+                created a note
+              </StyledItemTitleContainer>
+              <StyledItemTitleDate id={`id-${commentThread.id}`}>
+                {beautifiedCreatedAt} ago
+              </StyledItemTitleDate>
+              <StyledTooltip
+                anchorSelect={`#id-${commentThread.id}`}
+                content={exactCreatedAt}
+                clickable
+                noArrow
+              />
+            </StyledTimelineItemContainer>
+            <StyledTimelineItemContainer>
+              <StyledVerticalLineContainer>
+                <StyledVerticalLine></StyledVerticalLine>
+              </StyledVerticalLineContainer>
+              <StyledCardContainer>
+                <StyledCard onClick={() => null}>
+                  <StyledCardTitle>{commentThread.title}</StyledCardTitle>
+                  <StyledCardContent>{commentThread.body}</StyledCardContent>
+                </StyledCard>
+              </StyledCardContainer>
+            </StyledTimelineItemContainer>
+          </>
+        );
+      })}
+
+      <StyledBottomActionBar>
+        <StyledTimelineItemContainer>
+          <StyledIconContainer>
+            <IconPlus />
+          </StyledIconContainer>
+
+          <TableActionBarButtonCreateCommentThreadCompany />
+        </StyledTimelineItemContainer>
+      </StyledBottomActionBar>
     </StyledTimelineContainer>
   );
 }

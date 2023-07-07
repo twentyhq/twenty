@@ -1,5 +1,5 @@
 import { CellCommentChip } from '@/comments/components/CellCommentChip';
-import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
+import { useOpenTimelineRightDrawer } from '@/comments/hooks/useOpenTimelineRightDrawer';
 import EditableChip from '@/ui/components/editable-cell/types/EditableChip';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
@@ -18,7 +18,7 @@ type OwnProps = {
 };
 
 export function CompanyEditableNameChipCell({ company }: OwnProps) {
-  const openCommentRightDrawer = useOpenCommentRightDrawer();
+  const openCommentRightDrawer = useOpenTimelineRightDrawer();
   const [updateCompany] = useUpdateCompanyMutation();
 
   function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {

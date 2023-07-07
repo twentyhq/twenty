@@ -8,15 +8,13 @@ import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-up
 import { CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput } from '../comment-thread-target/comment-thread-target-update-many-without-comment-thread-nested.input';
 import { CommentUpdateManyWithoutCommentThreadNestedInput } from '../comment/comment-update-many-without-comment-thread-nested.input';
 import { WorkspaceUpdateOneRequiredWithoutCommentThreadsNestedInput } from '../workspace/workspace-update-one-required-without-comment-threads-nested.input';
+import { UserUpdateOneRequiredWithoutCommentThreadNestedInput } from '../user/user-update-one-required-without-comment-thread-nested.input';
 
 @InputType()
 export class CommentThreadUpdateInput {
 
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     id?: StringFieldUpdateOperationsInput;
-
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    authorId?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     body?: NullableStringFieldUpdateOperationsInput;
@@ -41,4 +39,7 @@ export class CommentThreadUpdateInput {
 
     @HideField()
     workspace?: WorkspaceUpdateOneRequiredWithoutCommentThreadsNestedInput;
+
+    @Field(() => UserUpdateOneRequiredWithoutCommentThreadNestedInput, {nullable:true})
+    author?: UserUpdateOneRequiredWithoutCommentThreadNestedInput;
 }

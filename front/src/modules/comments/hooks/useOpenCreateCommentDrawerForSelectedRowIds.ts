@@ -19,12 +19,12 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
     createdCommentThreadIdState,
   );
 
-  const selectedPeopleIds = useRecoilValue(selectedRowIdsState);
+  const selectedEntityIds = useRecoilValue(selectedRowIdsState);
 
   return function openCreateCommentDrawerForSelectedRowIds(
     entityType: CommentableType,
   ) {
-    const commentableEntityArray: CommentableEntity[] = selectedPeopleIds.map(
+    const commentableEntityArray: CommentableEntity[] = selectedEntityIds.map(
       (id) => ({
         type: entityType,
         id,

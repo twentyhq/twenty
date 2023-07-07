@@ -45,7 +45,7 @@ export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
         id: $commentThreadId
         createdAt: $createdAt
         updatedAt: $createdAt
-        authorId: $authorId
+        author: { connect: { id: $authorId } }
         body: $commentText
         commentThreadTargets: {
           createMany: { data: $commentThreadTargetArray, skipDuplicates: true }
@@ -55,6 +55,7 @@ export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
       id
       createdAt
       updatedAt
+      authorId
       commentThreadTargets {
         id
         createdAt

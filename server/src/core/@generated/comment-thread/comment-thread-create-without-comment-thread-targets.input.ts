@@ -4,6 +4,7 @@ import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
 import { CommentCreateNestedManyWithoutCommentThreadInput } from '../comment/comment-create-nested-many-without-comment-thread.input';
 import { WorkspaceCreateNestedOneWithoutCommentThreadsInput } from '../workspace/workspace-create-nested-one-without-comment-threads.input';
+import { UserCreateNestedOneWithoutCommentThreadInput } from '../user/user-create-nested-one-without-comment-thread.input';
 
 @InputType()
 export class CommentThreadCreateWithoutCommentThreadTargetsInput {
@@ -12,9 +13,6 @@ export class CommentThreadCreateWithoutCommentThreadTargetsInput {
     @Validator.IsString()
     @Validator.IsOptional()
     id?: string;
-
-    @Field(() => String, {nullable:true})
-    authorId?: string;
 
     @Field(() => String, {nullable:true})
     body?: string;
@@ -36,4 +34,7 @@ export class CommentThreadCreateWithoutCommentThreadTargetsInput {
 
     @HideField()
     workspace!: WorkspaceCreateNestedOneWithoutCommentThreadsInput;
+
+    @Field(() => UserCreateNestedOneWithoutCommentThreadInput, {nullable:false})
+    author!: UserCreateNestedOneWithoutCommentThreadInput;
 }

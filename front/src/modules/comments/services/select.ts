@@ -14,9 +14,14 @@ export const GET_COMMENT_THREADS_BY_TARGETS = gql`
       }
     ) {
       id
+      createdAt
       title
       body
-      authorId
+      author {
+        id
+        firstName
+        lastName
+      }
       comments {
         id
         body
@@ -43,6 +48,12 @@ export const GET_COMMENT_THREAD = gql`
   query GetCommentThread($commentThreadId: String!) {
     findManyCommentThreads(where: { id: { equals: $commentThreadId } }) {
       id
+      createdAt
+      author {
+        id
+        firstName
+        lastName
+      }
       comments {
         id
         body

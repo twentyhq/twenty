@@ -6,8 +6,14 @@ import {
 
 type MockedCommentThread = Pick<
   CommentThread,
-  'id' | 'createdAt' | 'updatedAt' | '__typename'
+  'id' | 'createdAt' | 'updatedAt' | '__typename' | 'body' | 'title'
 > & {
+  author: {
+    __typename?: 'User' | undefined;
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
   commentThreadTargets: Array<
     Pick<
       CommentThreadTarget,
@@ -27,6 +33,11 @@ export const mockedCommentThreads: Array<MockedCommentThread> = [
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
+    author: {
+      id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
+      firstName: 'Charles',
+      lastName: 'Test',
+    },
     commentThreadTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb300',
@@ -63,6 +74,11 @@ export const mockedCommentThreads: Array<MockedCommentThread> = [
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    author: {
+      id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
+      firstName: 'Charles',
+      lastName: 'Test',
+    },
     commentThreadTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
