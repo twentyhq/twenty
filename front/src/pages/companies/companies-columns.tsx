@@ -3,7 +3,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import { CompanyAccountOwnerCell } from '@/companies/components/CompanyAccountOwnerCell';
 import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEditableNameCell';
-import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
+import { EditableDateCell } from '@/ui/components/editable-cell/types/EditableDateCell';
 import { EditableTextCell } from '@/ui/components/editable-cell/types/EditableTextCell';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
@@ -114,7 +114,7 @@ export const useCompaniesColumns = () => {
           />
         ),
         cell: (props) => (
-          <EditableDate
+          <EditableDateCell
             value={
               props.row.original.createdAt
                 ? new Date(props.row.original.createdAt)

@@ -3,7 +3,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
 import { PeopleCompanyCell } from '@/people/components/PeopleCompanyCell';
-import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
+import { EditableDateCell } from '@/ui/components/editable-cell/types/EditableDateCell';
 import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone';
 import { EditableTextCell } from '@/ui/components/editable-cell/types/EditableTextCell';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
@@ -112,7 +112,7 @@ export const usePeopleColumns = () => {
           />
         ),
         cell: (props) => (
-          <EditableDate
+          <EditableDateCell
             value={
               props.row.original.createdAt
                 ? new Date(props.row.original.createdAt)
