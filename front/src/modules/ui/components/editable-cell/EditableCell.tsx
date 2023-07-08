@@ -47,7 +47,7 @@ export function EditableCell({
 
   const { openEditableCell } = useEditableCell();
 
-  const isSoftFocusActive = useRecoilValue(isSoftFocusActiveState);
+  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
   const addToHotkeysScopeStack = useAddToHotkeysScopeStack();
 
@@ -59,7 +59,7 @@ export function EditableCell({
       return;
     }
 
-    if (isSoftFocusActive) {
+    if (hasSoftFocus) {
       openEditableCell();
       addToHotkeysScopeStack(
         editHotkeysScope ?? {
@@ -70,8 +70,6 @@ export function EditableCell({
 
     setSoftFocusOnCurrentCell();
   }
-
-  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
   return (
     <CellBaseContainer onClick={handleOnClick}>
