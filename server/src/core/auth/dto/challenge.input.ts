@@ -1,12 +1,5 @@
 import { ArgsType, Field } from '@nestjs/graphql';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsString,
-  Matches,
-  MinLength,
-} from 'class-validator';
-import { PASSWORD_REGEX } from '../auth.util';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 @ArgsType()
 export class ChallengeInput {
@@ -18,7 +11,5 @@ export class ChallengeInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  @MinLength(8)
-  @Matches(PASSWORD_REGEX, { message: 'password too weak' })
   password: string;
 }

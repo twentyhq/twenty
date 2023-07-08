@@ -11,6 +11,7 @@ import { PASSWORD_REGEX, compareHash, hashPassword } from '../auth.util';
 import { Verify } from '../dto/verify.entity';
 import { TokenService } from './token.service';
 import { Prisma } from '@prisma/client';
+import { UserExists } from '../dto/user-exists.entity';
 
 export type UserPayload = {
   firstName: string;
@@ -26,17 +27,15 @@ export class AuthService {
   ) {}
 
   async challenge(challengeInput: ChallengeInput) {
-    assert(
-      PASSWORD_REGEX.test(challengeInput.password),
-      'Password too weak',
-      BadRequestException,
-    );
-
     let user = await this.userService.findUnique({
       where: {
         email: challengeInput.email,
       },
     });
+
+    const isPasswordValid = PASSWORD_REGEX.test(challengeInput.password);
+
+    assert(!!user || isPasswordValid, 'Password too weak', BadRequestException);
 
     if (!user) {
       const passwordHash = await hashPassword(challengeInput.password);
@@ -91,5 +90,15 @@ export class AuthService {
         refreshToken,
       },
     };
+  }
+
+  async checkUserExists(email: string): Promise<UserExists> {
+    const user = await this.userService.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    return { exists: !!user };
   }
 }
