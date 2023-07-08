@@ -197,12 +197,14 @@ export const EditRelation: Story = {
     let secondRowCompanyCell = await canvas.findByText(
       mockedPeopleData[1].company.name,
     );
+    await sleep(25);
 
     await userEvent.click(secondRowCompanyCell);
 
     secondRowCompanyCell = await canvas.findByText(
       mockedPeopleData[1].company.name,
     );
+    await sleep(25);
 
     await userEvent.click(secondRowCompanyCell);
 
@@ -240,11 +242,13 @@ export const SelectRelationWithKeys: Story = {
     let firstRowCompanyCell = await canvas.findByText(
       mockedPeopleData[0].company.name,
     );
+    await sleep(25);
 
     await userEvent.click(firstRowCompanyCell);
     firstRowCompanyCell = await canvas.findByText(
       mockedPeopleData[0].company.name,
     );
+    await sleep(25);
     await userEvent.click(firstRowCompanyCell);
 
     const relationInput = await canvas.findByPlaceholderText('Search');

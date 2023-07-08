@@ -1,9 +1,5 @@
-import { User } from '~/generated/graphql';
-
-export function getProfilePictureAbsoluteURI(
-  currentUser: Pick<User, 'avatarUrl'>,
-) {
-  return currentUser?.avatarUrl
-    ? `${process.env.REACT_APP_FILES_URL}/${currentUser?.avatarUrl}`
+export function getImageAbsoluteURI(imageRelativePath?: string | null) {
+  return imageRelativePath
+    ? `${process.env.REACT_APP_FILES_URL}/${imageRelativePath}`
     : null;
 }

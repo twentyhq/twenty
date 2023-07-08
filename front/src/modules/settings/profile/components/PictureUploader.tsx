@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { GET_CURRENT_USER } from '@/users/queries';
-import { getProfilePictureAbsoluteURI } from '@/users/utils/getProfilePictureAbsoluteURI';
+import { getImageAbsoluteURI } from '@/users/utils/getProfilePictureAbsoluteURI';
 import {
   useRemoveProfilePictureMutation,
   useUploadProfilePictureMutation,
@@ -39,9 +39,7 @@ export function PictureUploader() {
 
   return (
     <ImageInput
-      picture={getProfilePictureAbsoluteURI({
-        avatarUrl: currentUser?.avatarUrl,
-      })}
+      picture={getImageAbsoluteURI(currentUser?.avatarUrl)}
       onUpload={onUpload}
       onRemove={onRemove}
     />
