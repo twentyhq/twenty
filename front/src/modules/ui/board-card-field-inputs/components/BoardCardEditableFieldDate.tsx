@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { BoardCardEditableField } from '@/ui/board-card-field/components/BoardCardEditableField';
 import { InplaceInputDateDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputDateDisplayMode';
 
