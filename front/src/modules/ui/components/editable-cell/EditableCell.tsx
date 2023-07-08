@@ -1,11 +1,9 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { useAddToHotkeysScopeStack } from '@/hotkeys/hooks/useAddToHotkeysScopeStack';
 import { HotkeysScopeStackItem } from '@/hotkeys/types/internal/HotkeysScopeStackItems';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
-import { isSoftFocusActiveState } from '@/ui/tables/states/isSoftFocusActiveState';
 
 import { useEditableCell } from './hooks/useCloseEditableCell';
 import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
