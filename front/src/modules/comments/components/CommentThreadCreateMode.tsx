@@ -1,5 +1,5 @@
 import { BlockNoteEditor } from '@blocknote/core';
-import { BlockNoteView, useBlockNote } from '@blocknote/react';
+import { BlockNoteView } from '@blocknote/react';
 import styled from '@emotion/styled';
 
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
@@ -54,7 +54,7 @@ const StyledEditableTitleInput = styled.input`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: center;
 
-  line-height: 120%;
+  line-height: ${({ theme }) => theme.text.lineHeight.md};
   outline: none;
   width: 318px;
 

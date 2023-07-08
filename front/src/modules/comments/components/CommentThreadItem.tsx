@@ -22,7 +22,7 @@ const StyledCommentBody = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.md};
 
-  line-height: ${({ theme }) => theme.text.lineHeight};
+  line-height: ${({ theme }) => theme.text.lineHeight.md};
   overflow-wrap: anywhere;
 
   padding-left: 24px;

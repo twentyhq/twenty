@@ -26,7 +26,7 @@ const StyledButton = styled.button<ButtonProps>`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: 8px;
   height: 24px;
-  line-height: 150%;
+  line-height: ${({ theme }) => theme.text.lineHeight.lg};
   padding: 3px 8px;
 
   svg {

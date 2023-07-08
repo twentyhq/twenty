@@ -3,7 +3,6 @@ import { useRecoilValue } from 'recoil';
 import { RightDrawerBody } from '@/ui/layout/right-drawer/components/RightDrawerBody';
 import { RightDrawerPage } from '@/ui/layout/right-drawer/components/RightDrawerPage';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
-import { CommentableType } from '~/generated/graphql';
 
 import { viewableCommentThreadIdState } from '../states/viewableCommentThreadIdState';
 

@@ -8,7 +8,9 @@ const StyledCompanyPropertyBox = styled.div`
   gap: 8px;
 `;
 
-const StyledCompanyPropertyBoxContainer = styled.div`
+const StyledCompanyPropertyBoxContainer = styled.div<{
+  extraPadding?: boolean;
+}>`
   align-items: flex-start;
   align-self: stretch;
   background: ${({ theme }) => theme.background.secondary};
@@ -18,9 +20,18 @@ const StyledCompanyPropertyBoxContainer = styled.div`
   flex-direction: column;
   gap: 2px;
   padding: 4px 12px;
+  padding: ${({ extraPadding }) => (extraPadding ? '4px 24px' : '4px 12px')};
 `;
 
-export function PropertyBox({ children }: { children: JSX.Element }) {
+interface PropertyBoxProps {
+  children: JSX.Element;
+  extraPadding?: boolean;
+}
+
+export function PropertyBox({
+  children,
+  extraPadding = false,
+}: PropertyBoxProps) {
   return (
     <StyledCompanyPropertyBox>
       <StyledCompanyPropertyBoxContainer>

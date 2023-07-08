@@ -4,13 +4,9 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
 import { GET_COMPANIES } from '@/companies/services';
 import { GET_PEOPLE } from '@/people/services';
 import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
-import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
-import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
-import { IconArrowUpRight } from '@/ui/icons/index';
 import { logError } from '@/utils/logs/logError';
 import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
@@ -23,7 +19,6 @@ import { GET_COMMENT_THREADS_BY_TARGETS } from '../services';
 
 import { CommentThreadActionBar } from './CommentThreadActionBar';
 import { CommentThreadItem } from './CommentThreadItem';
-import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
 
 type OwnProps = {
   commentThread: GetCommentThreadQuery['findManyCommentThreads'][0];

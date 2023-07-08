@@ -2,7 +2,7 @@ import {
   DropdownButton,
   DropdownOptionType,
 } from '@/ui/components/buttons/DropdownButton';
-import { IconNotes, IconPhone } from '@/ui/icons/index';
+import { IconNotes } from '@/ui/icons/index';
 
 export function CommentThreadTypeDropdown() {
   const options: DropdownOptionType[] = [

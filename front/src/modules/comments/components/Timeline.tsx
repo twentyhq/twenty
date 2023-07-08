@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 
 import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
 import { IconNotes, IconPlus } from '@/ui/icons/index';
-import { useOpenRightDrawer } from '@/ui/layout/right-drawer/hooks/useOpenRightDrawer';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
@@ -13,7 +12,6 @@ import {
   SortOrder,
   useGetCommentThreadsByTargetsQuery,
 } from '~/generated/graphql';
-import { TableActionBarButtonCreateCommentThreadCompany } from '~/pages/companies/table/TableActionBarButtonCreateCommentThreadCompany';
 
 import { useOpenCommentThreadRightDrawer } from '../hooks/useOpenCommentThreadRightDrawer';
 import { useOpenCreateCommentThreadDrawer } from '../hooks/useOpenCreateCommentThreadDrawer';
@@ -47,14 +45,14 @@ const StyledEmptyTimelineTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.xxl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: 120%;
+  line-height: ${({ theme }) => theme.text.lineHeight.md};
 `;
 
 const StyledEmptyTimelineSubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.extraLight};
   font-size: ${({ theme }) => theme.font.size.xxl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: 120%;
+  line-height: ${({ theme }) => theme.text.lineHeight.md};
 `;
 
 const StyledTimelineItemContainer = styled.div`
@@ -135,7 +133,7 @@ const StyledCard = styled.div`
 const StyledCardTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  line-height: 150%;
+  line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
 const StyledCardContent = styled.div`

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BlockNoteEditor, PartialBlock } from '@blocknote/core';
+import { BlockNoteEditor } from '@blocknote/core';
 import { BlockNoteView, useBlockNote } from '@blocknote/react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -8,9 +8,6 @@ import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
 import { IconArrowUpRight } from '@/ui/icons/index';
 import { useGetCommentThreadQuery } from '~/generated/graphql';
-
-import { CommentableEntity } from '../types/CommentableEntity';
-import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
 import { Comments } from './Comments';
 import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
@@ -59,7 +56,7 @@ const StyledEditableTitleInput = styled.input`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: center;
 
-  line-height: 120%;
+  line-height: ${({ theme }) => theme.text.lineHeight.md};
   outline: none;
   width: 318px;
 

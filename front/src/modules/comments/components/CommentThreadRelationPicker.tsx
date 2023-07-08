@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   autoUpdate,
@@ -9,7 +8,6 @@ import {
   useFloating,
 } from '@floating-ui/react';
 
-import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
 import CompanyChip from '@/companies/components/CompanyChip';
 import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
@@ -45,25 +43,6 @@ const StyledContainer = styled.div`
   justify-content: flex-start;
 
   width: 100%;
-`;
-
-const StyledLabelContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-
-  gap: ${({ theme }) => theme.spacing(2)};
-
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledRelationLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: flex;
-  flex-direction: row;
-
-  user-select: none;
 `;
 
 const StyledRelationContainer = styled.div`
@@ -108,8 +87,6 @@ export function CommentThreadRelationPicker({
     isMenuOpen,
   );
 
-  const theme = useTheme();
-
   const peopleIds =
     commentThread?.commentThreadTargets
       ?.filter((relation) => relation.commentableType === 'Person')
@@ -134,6 +111,7 @@ export function CommentThreadRelationPicker({
     ) {
       companyIds.push(commentable.id);
     }
+    return null;
   });
 
   const personsForMultiSelect = useFilteredSearchEntityQuery({

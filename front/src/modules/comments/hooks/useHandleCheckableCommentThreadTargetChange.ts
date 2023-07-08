@@ -11,7 +11,6 @@ import {
 
 import { GET_COMMENT_THREADS_BY_TARGETS } from '../services';
 import { CommentableEntityForSelect } from '../types/CommentableEntityForSelect';
-import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
 export function useHandleCheckableCommentThreadTargetChange({
   commentThread,
