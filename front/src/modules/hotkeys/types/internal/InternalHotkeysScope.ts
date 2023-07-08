@@ -7,8 +7,11 @@ export enum InternalHotkeysScope {
   CellEditMode = 'cell-edit-mode',
   RightDrawer = 'right-drawer',
   TableHeaderDropdownButton = 'table-header-dropdown-button',
-  CreateProfile = 'create-profile',
   RelationPicker = 'relation-picker',
   CellDoubleTextInput = 'cell-double-text-input',
-  Modal = 'modal',
+  Settings = 'settings',
+  CreateWokspace = 'create-workspace',
+  PasswordLogin = 'password-login',
+  AuthIndex = 'auth-index',
+  CreateProfile = 'create-profile',
 }

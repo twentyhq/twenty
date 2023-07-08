@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { mockedUsersData } from '~/testing/mock-data/users';
 
 import NavCollapseButton from './NavCollapseButton';
 
@@ -50,15 +51,16 @@ function NavWorkspaceButton() {
 
   const currentWorkspace = currentUser?.workspaceMember?.workspace;
 
-  if (!currentWorkspace) {
-    return null;
-  }
-
   return (
     <StyledContainer>
       <LogoAndNameContainer>
-        <StyledLogo logo={currentWorkspace?.logo}></StyledLogo>
-        <StyledName>{currentWorkspace?.displayName}</StyledName>
+        <StyledLogo
+          logo={
+            currentWorkspace?.logo ??
+            mockedUsersData[0].workspaceMember.workspace.logo
+          }
+        ></StyledLogo>
+        <StyledName>{currentWorkspace?.displayName ?? 'Twenty'}</StyledName>
       </LogoAndNameContainer>
       <NavCollapseButton />
     </StyledContainer>
