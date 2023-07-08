@@ -11,6 +11,5 @@ export class ChallengeInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  @MinLength(8)
   password: string;
 }
