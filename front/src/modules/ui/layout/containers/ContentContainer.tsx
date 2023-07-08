@@ -8,7 +8,6 @@ import { isRightDrawerOpenState } from '../right-drawer/states/isRightDrawerOpen
 type OwnProps = {
   children: JSX.Element;
   topMargin?: number;
-  withPanel?: boolean;
 };
 
 const MainContainer = styled.div<{ topMargin: number }>`
@@ -34,17 +33,13 @@ const LeftContainer = styled.div<LeftContainerProps>`
   width: 100%;
 `;
 
-export function ContentContainer({
-  children,
-  topMargin,
-  withPanel = true,
-}: OwnProps) {
+export function ContentContainer({ children, topMargin }: OwnProps) {
   const [isRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
 
   return (
     <MainContainer topMargin={topMargin ?? 0}>
       <LeftContainer isRightDrawerOpen={isRightDrawerOpen}>
-        {withPanel ? <Panel>{children}</Panel> : children}
+        <Panel>{children}</Panel>
       </LeftContainer>
       <RightDrawer />
     </MainContainer>

@@ -32,4 +32,3 @@ export { IconUpload } from '@tabler/icons-react';
 export { IconFileUpload } from '@tabler/icons-react';
 export { IconChevronsRight } from '@tabler/icons-react';
 export { IconNotes } from '@tabler/icons-react';
-export { IconCirclePlus } from '@tabler/icons-react';

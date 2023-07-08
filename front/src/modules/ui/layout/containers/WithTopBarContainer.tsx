@@ -10,7 +10,6 @@ type OwnProps = {
   title: string;
   icon: ReactNode;
   onAddButtonClick?: () => void;
-  withPanel?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -24,15 +23,11 @@ export function WithTopBarContainer({
   title,
   icon,
   onAddButtonClick,
-  withPanel = true,
 }: OwnProps) {
   return (
     <StyledContainer>
       <TopBar title={title} icon={icon} onAddButtonClick={onAddButtonClick} />
-      <ContentContainer
-        topMargin={TOP_BAR_MIN_HEIGHT + 16 + 16}
-        withPanel={withPanel}
-      >
+      <ContentContainer topMargin={TOP_BAR_MIN_HEIGHT + 16 + 16}>
         {children}
       </ContentContainer>
     </StyledContainer>
