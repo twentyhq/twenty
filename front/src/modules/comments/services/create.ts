@@ -35,7 +35,8 @@ export const CREATE_COMMENT = gql`
 export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
   mutation CreateCommentThreadWithComment(
     $commentThreadId: String!
-    $commentText: String!
+    $body: String
+    $title: String
     $authorId: String!
     $createdAt: DateTime!
     $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!
@@ -46,7 +47,8 @@ export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
         createdAt: $createdAt
         updatedAt: $createdAt
         author: { connect: { id: $authorId } }
-        body: $commentText
+        body: $body
+        title: $title
         commentThreadTargets: {
           createMany: { data: $commentThreadTargetArray, skipDuplicates: true }
         }

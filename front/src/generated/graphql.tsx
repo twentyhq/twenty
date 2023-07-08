@@ -3033,7 +3033,8 @@ export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment:
 
 export type CreateCommentThreadWithCommentMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
-  commentText: Scalars['String'];
+  body?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
   authorId: Scalars['String'];
   createdAt: Scalars['DateTime'];
   commentThreadTargetArray: Array<CommentThreadTargetCreateManyCommentThreadInput> | CommentThreadTargetCreateManyCommentThreadInput;
@@ -3576,9 +3577,9 @@ export type CreateCommentMutationHookResult = ReturnType<typeof useCreateComment
 export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
 export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
 export const CreateCommentThreadWithCommentDocument = gql`
-    mutation CreateCommentThreadWithComment($commentThreadId: String!, $commentText: String!, $authorId: String!, $createdAt: DateTime!, $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!) {
+    mutation CreateCommentThreadWithComment($commentThreadId: String!, $body: String, $title: String, $authorId: String!, $createdAt: DateTime!, $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!) {
   createOneCommentThread(
-    data: {id: $commentThreadId, createdAt: $createdAt, updatedAt: $createdAt, author: {connect: {id: $authorId}}, body: $commentText, commentThreadTargets: {createMany: {data: $commentThreadTargetArray, skipDuplicates: true}}}
+    data: {id: $commentThreadId, createdAt: $createdAt, updatedAt: $createdAt, author: {connect: {id: $authorId}}, body: $body, title: $title, commentThreadTargets: {createMany: {data: $commentThreadTargetArray, skipDuplicates: true}}}
   ) {
     id
     createdAt
@@ -3620,7 +3621,8 @@ export type CreateCommentThreadWithCommentMutationFn = Apollo.MutationFunction<C
  * const [createCommentThreadWithCommentMutation, { data, loading, error }] = useCreateCommentThreadWithCommentMutation({
  *   variables: {
  *      commentThreadId: // value for 'commentThreadId'
- *      commentText: // value for 'commentText'
+ *      body: // value for 'body'
+ *      title: // value for 'title'
  *      authorId: // value for 'authorId'
  *      createdAt: // value for 'createdAt'
  *      commentThreadTargetArray: // value for 'commentThreadTargetArray'

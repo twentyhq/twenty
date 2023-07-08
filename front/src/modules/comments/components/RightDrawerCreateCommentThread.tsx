@@ -18,6 +18,7 @@ import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 import { useCreateCommentThreadWithCommentMutation } from '~/generated/graphql';
 
+import { useOpenCommentThreadRightDrawer } from '../hooks/useOpenCommentThreadRightDrawer';
 import { GET_COMMENT_THREAD } from '../services';
 import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
 
@@ -28,14 +29,14 @@ export function RightDrawerCreateCommentThread() {
 
   const [commentableEntityArray] = useRecoilState(commentableEntityArrayState);
 
-  const openRightDrawer = useOpenRightDrawer();
-
   const [createCommentThreadWithComment] =
     useCreateCommentThreadWithCommentMutation();
 
   const currentUser = useRecoilValue(currentUserState);
 
   const identifier = JSON.stringify(commentableEntityArray);
+
+  const openCommentThreadRightDrawer = useOpenCommentThreadRightDrawer();
 
   function handleNewCommentThread(title: string, body: string) {
     if (!(isNonEmptyString(title) || isNonEmptyString(body))) {
@@ -52,7 +53,8 @@ export function RightDrawerCreateCommentThread() {
     createCommentThreadWithComment({
       variables: {
         authorId: currentUser.id,
-        commentText: body,
+        body: body,
+        title: title,
         commentThreadId: v4(),
         createdAt: new Date().toISOString(),
         commentThreadTargetArray: commentableEntityArray.map(
@@ -70,8 +72,7 @@ export function RightDrawerCreateCommentThread() {
         getOperationName(GET_COMMENT_THREAD) ?? '',
       ],
       onCompleted(data) {
-        // TODO : redirect to drawer comment thread with data.createOneCommentThread.id
-        openRightDrawer('comments');
+        openCommentThreadRightDrawer(data.createOneCommentThread.id);
         localStorage.setItem('editorTitle' + identifier, '');
         localStorage.setItem('editorBody' + identifier, '');
       },
