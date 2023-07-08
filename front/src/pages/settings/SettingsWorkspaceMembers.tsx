@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { MainSectionTitle } from '@/ui/components/section-titles/MainSectionTitle';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
