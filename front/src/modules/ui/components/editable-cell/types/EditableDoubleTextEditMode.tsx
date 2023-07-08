@@ -78,8 +78,6 @@ export function EditableDoubleTextEditMode({
   useScopedHotkeys(
     'tab',
     async (keyboardEvent, hotkeyEvent) => {
-      console.log({ keyboardEvent, hotkeyEvent });
-      console.log({ focusPosition });
       if (focusPosition === 'left') {
         setFocusPosition('right');
         secondValueInputRef.current?.focus();

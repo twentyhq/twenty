@@ -88,8 +88,6 @@ export function useHotkeysScope() {
           enableScope(scopeToEnable);
         }
 
-        console.log({ scopesToSet });
-
         set(internalHotkeysEnabledScopesState, scopesToSet);
       };
     },
