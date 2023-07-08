@@ -3,13 +3,21 @@ import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
-import { GET_CURRENT_USER } from '@/users/services';
-import { useUploadProfilePictureMutation } from '~/generated/graphql';
+import { GET_CURRENT_USER } from '@/users/queries';
+import { getProfilePictureAbsoluteURI } from '@/users/utils/getProfilePictureAbsoluteURI';
+import {
+  useRemoveProfilePictureMutation,
+  useUploadProfilePictureMutation,
+} from '~/generated/graphql';
 
 export function PictureUploader() {
   const [uploadPicture] = useUploadProfilePictureMutation();
+  const [removePicture] = useRemoveProfilePictureMutation();
   const [currentUser] = useRecoilState(currentUserState);
   async function onUpload(file: File) {
+    if (!file) {
+      return;
+    }
     await uploadPicture({
       variables: {
         file,
@@ -18,8 +26,24 @@ export function PictureUploader() {
     });
   }
 
-  const pictureUrl = currentUser?.avatarUrl
-    ? `${process.env.REACT_APP_FILES_URL}/${currentUser?.avatarUrl}`
-    : null;
-  return <ImageInput picture={pictureUrl} onUpload={onUpload} />;
+  async function onRemove() {
+    await removePicture({
+      variables: {
+        where: {
+          id: currentUser?.id,
+        },
+      },
+      refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+    });
+  }
+
+  return (
+    <ImageInput
+      picture={getProfilePictureAbsoluteURI({
+        avatarUrl: currentUser?.avatarUrl,
+      })}
+      onUpload={onUpload}
+      onRemove={onRemove}
+    />
+  );
 }

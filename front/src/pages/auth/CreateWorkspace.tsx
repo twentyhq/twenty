@@ -13,7 +13,7 @@ import { MainButton } from '@/ui/components/buttons/MainButton';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
-import { GET_CURRENT_USER } from '@/users/services';
+import { GET_CURRENT_USER } from '@/users/queries';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`

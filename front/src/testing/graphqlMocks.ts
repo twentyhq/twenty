@@ -2,13 +2,15 @@ import { getOperationName } from '@apollo/client/utilities';
 import { graphql } from 'msw';
 
 import { CREATE_EVENT } from '@/analytics/services';
+import { GET_CLIENT_CONFIG } from '@/client-config/queries';
 import { GET_COMPANIES } from '@/companies/services';
 import { GET_PEOPLE, UPDATE_PERSON } from '@/people/services';
+import { GET_PIPELINES } from '@/pipeline-progress/queries';
 import {
   SEARCH_COMPANY_QUERY,
   SEARCH_USER_QUERY,
 } from '@/search/services/search';
-import { GET_CURRENT_USER } from '@/users/services';
+import { GET_CURRENT_USER } from '@/users/queries';
 import {
   GetCompaniesQuery,
   GetPeopleQuery,
@@ -18,6 +20,7 @@ import {
 
 import { mockedCompaniesData } from './mock-data/companies';
 import { mockedPeopleData } from './mock-data/people';
+import { mockedPipelinesData } from './mock-data/pipelines';
 import { mockedUsersData } from './mock-data/users';
 import { filterAndSortData, updateOneFromData } from './mock-data';
 
@@ -103,10 +106,29 @@ export const graphqlMocks = [
       }),
     );
   }),
+  graphql.query(getOperationName(GET_PIPELINES) ?? '', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        findManyPipeline: mockedPipelinesData,
+      }),
+    );
+  }),
   graphql.mutation(getOperationName(CREATE_EVENT) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({
         createEvent: { success: 1, __typename: 'Event' },
+      }),
+    );
+  }),
+  graphql.query(getOperationName(GET_CLIENT_CONFIG) ?? '', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        clientConfig: {
+          demoMode: true,
+          debugMode: false,
+          authProviders: { google: true, password: true, magicLink: false },
+          telemetry: { enabled: false, anonymizationEnabled: true },
+        },
       }),
     );
   }),
