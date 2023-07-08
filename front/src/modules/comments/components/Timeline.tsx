@@ -3,7 +3,7 @@ import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
 import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
-import { IconNotes, IconPlus } from '@/ui/icons/index';
+import { IconCirclePlus, IconNotes } from '@/ui/icons/index';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
@@ -18,6 +18,15 @@ import { useOpenCreateCommentThreadDrawer } from '../hooks/useOpenCreateCommentT
 import { CommentableEntity } from '../types/CommentableEntity';
 import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
+const StyledMainContainer = styled.div`
+  align-items: flex-start;
+  align-self: stretch;
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  justify-content: center;
+`;
+
 const StyledTimelineContainer = styled.div`
   align-items: center;
   align-self: stretch;
@@ -27,7 +36,7 @@ const StyledTimelineContainer = styled.div`
   gap: 4px;
   justify-content: flex-start;
   overflow-y: auto;
-  padding: 64px 16px 12px 16px;
+  padding: 12px 16px 12px 16px;
 `;
 
 const StyledTimelineEmptyContainer = styled.div`
@@ -64,6 +73,7 @@ const StyledTimelineItemContainer = styled.div`
 
 const StyledIconContainer = styled.div`
   align-items: center;
+  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   height: 20px;
   justify-content: center;
@@ -114,7 +124,7 @@ const StyledCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 20px 0px 4px 0px;
+  padding: 4px 0px 20px 0px;
 `;
 
 const StyledCard = styled.div`
@@ -163,12 +173,18 @@ const StyledTooltip = styled(Tooltip)`
 `;
 
 const StyledTopActionBar = styled.div`
+  //backdrop-filter: blur(5px);
   align-items: flex-start;
   align-self: stretch;
+  backdrop-filter: blur(5px);
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-top-right-radius: 8px;
   display: flex;
   flex-direction: column;
-  position: absolute;
-  top: 12px;
+  left: 0px;
+  padding: 12px 16px 12px 16px;
+  position: sticky;
+  top: 0px;
 `;
 
 export function Timeline({ entity }: { entity: CommentableEntity }) {
@@ -203,11 +219,11 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
   }
 
   return (
-    <StyledTimelineContainer>
+    <StyledMainContainer>
       <StyledTopActionBar>
         <StyledTimelineItemContainer>
           <StyledIconContainer>
-            <IconPlus />
+            <IconCirclePlus />
           </StyledIconContainer>
 
           <TableActionBarButtonToggleComments
@@ -215,54 +231,60 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
           />
         </StyledTimelineItemContainer>
       </StyledTopActionBar>
+      <StyledTimelineContainer>
+        {commentThreads.map((commentThread) => {
+          const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
+            commentThread.createdAt,
+          );
+          const exactCreatedAt = beautifyExactDate(commentThread.createdAt);
 
-      {commentThreads.map((commentThread) => {
-        const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
-          commentThread.createdAt,
-        );
-        const exactCreatedAt = beautifyExactDate(commentThread.createdAt);
-
-        return (
-          <React.Fragment key={commentThread.id}>
-            <StyledTimelineItemContainer>
-              <StyledIconContainer>
-                <IconNotes />
-              </StyledIconContainer>
-              <StyledItemTitleContainer>
-                <span>
-                  {commentThread.author.firstName}{' '}
-                  {commentThread.author.lastName}
-                </span>
-                created a note
-              </StyledItemTitleContainer>
-              <StyledItemTitleDate id={`id-${commentThread.id}`}>
-                {beautifiedCreatedAt} ago
-              </StyledItemTitleDate>
-              <StyledTooltip
-                anchorSelect={`#id-${commentThread.id}`}
-                content={exactCreatedAt}
-                clickable
-                noArrow
-              />
-            </StyledTimelineItemContainer>
-            <StyledTimelineItemContainer>
-              <StyledVerticalLineContainer>
-                <StyledVerticalLine></StyledVerticalLine>
-              </StyledVerticalLineContainer>
-              <StyledCardContainer>
-                <StyledCard
-                  onClick={() => openCommentThreadRightDrawer(commentThread.id)}
-                >
-                  <StyledCardTitle>{commentThread.title}</StyledCardTitle>
-                  <StyledCardContent>
-                    {JSON.parse(commentThread.body ?? '')[0].content[0]?.text}
-                  </StyledCardContent>
-                </StyledCard>
-              </StyledCardContainer>
-            </StyledTimelineItemContainer>
-          </React.Fragment>
-        );
-      })}
-    </StyledTimelineContainer>
+          const body = JSON.parse(commentThread.body ?? '')[0].content[0]?.text;
+          return (
+            <React.Fragment key={commentThread.id}>
+              <StyledTimelineItemContainer>
+                <StyledIconContainer>
+                  <IconNotes />
+                </StyledIconContainer>
+                <StyledItemTitleContainer>
+                  <span>
+                    {commentThread.author.firstName}{' '}
+                    {commentThread.author.lastName}
+                  </span>
+                  created a note
+                </StyledItemTitleContainer>
+                <StyledItemTitleDate id={`id-${commentThread.id}`}>
+                  {beautifiedCreatedAt} ago
+                </StyledItemTitleDate>
+                <StyledTooltip
+                  anchorSelect={`#id-${commentThread.id}`}
+                  content={exactCreatedAt}
+                  clickable
+                  noArrow
+                />
+              </StyledTimelineItemContainer>
+              <StyledTimelineItemContainer>
+                <StyledVerticalLineContainer>
+                  <StyledVerticalLine></StyledVerticalLine>
+                </StyledVerticalLineContainer>
+                <StyledCardContainer>
+                  <StyledCard
+                    onClick={() =>
+                      openCommentThreadRightDrawer(commentThread.id)
+                    }
+                  >
+                    <StyledCardTitle>
+                      {commentThread.title ? commentThread.title : '(No title)'}
+                    </StyledCardTitle>
+                    <StyledCardContent>
+                      {body ? body : '(No content)'}
+                    </StyledCardContent>
+                  </StyledCard>
+                </StyledCardContainer>
+              </StyledTimelineItemContainer>
+            </React.Fragment>
+          );
+        })}
+      </StyledTimelineContainer>
+    </StyledMainContainer>
   );
 }

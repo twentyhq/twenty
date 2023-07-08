@@ -58,6 +58,7 @@ export function ShowPageLayout({
     <WithTopBarContainer
       title={company?.name ?? ''}
       icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+      withPanel={false}
     >
       <StyledCompanyContainer>
         <StyledLeftPanelContainer>{leftSide}</StyledLeftPanelContainer>
