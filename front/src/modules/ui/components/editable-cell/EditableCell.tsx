@@ -1,11 +1,9 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { useAddToHotkeysScopeStack } from '@/hotkeys/hooks/useAddToHotkeysScopeStack';
 import { HotkeysScopeStackItem } from '@/hotkeys/types/internal/HotkeysScopeStackItems';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
-import { isSoftFocusActiveState } from '@/ui/tables/states/isSoftFocusActiveState';
 
 import { useEditableCell } from './hooks/useCloseEditableCell';
 import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
@@ -47,7 +45,7 @@ export function EditableCell({
 
   const { openEditableCell } = useEditableCell();
 
-  const isSoftFocusActive = useRecoilValue(isSoftFocusActiveState);
+  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
   const addToHotkeysScopeStack = useAddToHotkeysScopeStack();
 
@@ -59,7 +57,7 @@ export function EditableCell({
       return;
     }
 
-    if (isSoftFocusActive) {
+    if (hasSoftFocus) {
       openEditableCell();
       addToHotkeysScopeStack(
         editHotkeysScope ?? {
@@ -70,8 +68,6 @@ export function EditableCell({
 
     setSoftFocusOnCurrentCell();
   }
-
-  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
   return (
     <CellBaseContainer onClick={handleOnClick}>

@@ -73,7 +73,9 @@ export const FilterByAccountOwner: Story = {
 
     await userEvent.click(accountOwnerFilterButton);
 
-    const accountOwnerNameInput = canvas.getByPlaceholderText('Account owner');
+    const accountOwnerNameInput = await canvas.findByPlaceholderText(
+      'Account owner',
+    );
     await userEvent.type(accountOwnerNameInput, 'Char', {
       delay: 200,
     });
