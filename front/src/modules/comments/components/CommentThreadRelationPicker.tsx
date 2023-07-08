@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -12,7 +11,11 @@ import {
 
 import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
 import CompanyChip from '@/companies/components/CompanyChip';
+import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { PersonChip } from '@/people/components/PersonChip';
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flatMapAndSortEntityForSelectArrayByName';
@@ -100,6 +103,11 @@ export function CommentThreadRelationPicker({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
 
+  useHotkeysScopeOnBooleanState(
+    { scope: InternalHotkeysScope.RelationPicker },
+    isMenuOpen,
+  );
+
   const theme = useTheme();
 
   const peopleIds =
@@ -177,15 +185,12 @@ export function CommentThreadRelationPicker({
     setSearchFilter('');
   }
 
-  useHotkeys(
+  useScopedHotkeys(
     ['esc', 'enter'],
     () => {
       exitEditMode();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
+    InternalHotkeysScope.RelationPicker,
     [exitEditMode],
   );
 
@@ -243,19 +248,21 @@ export function CommentThreadRelationPicker({
         )}
       </StyledRelationContainer>
       {isMenuOpen && (
-        <StyledMenuWrapper ref={refs.setFloating} style={floatingStyles}>
-          <MultipleEntitySelect
-            entities={{
-              entitiesToSelect,
-              filteredSelectedEntities,
-              selectedEntities,
-              loading: false, // TODO implement skeleton loading
-            }}
-            onItemCheckChange={handleCheckItemChange}
-            onSearchFilterChange={handleFilterChange}
-            searchFilter={searchFilter}
-          />
-        </StyledMenuWrapper>
+        <RecoilScope>
+          <StyledMenuWrapper ref={refs.setFloating} style={floatingStyles}>
+            <MultipleEntitySelect
+              entities={{
+                entitiesToSelect,
+                filteredSelectedEntities,
+                selectedEntities,
+                loading: false, // TODO implement skeleton loading
+              }}
+              onItemCheckChange={handleCheckItemChange}
+              onSearchFilterChange={handleFilterChange}
+              searchFilter={searchFilter}
+            />
+          </StyledMenuWrapper>
+        </RecoilScope>
       )}
     </StyledContainer>
   );

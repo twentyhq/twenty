@@ -12,7 +12,11 @@ import {
 
 type SelectStringKeys<T> = NonNullable<
   {
-    [K in keyof T]: T[K] extends string ? K : never;
+    [K in keyof T]: K extends '__typename'
+      ? never
+      : T[K] extends string | undefined | null
+      ? K
+      : never;
   }[keyof T]
 >;
 

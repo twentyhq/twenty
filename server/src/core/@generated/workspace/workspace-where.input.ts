@@ -29,11 +29,11 @@ export class WorkspaceWhereInput {
     @Field(() => StringFilter, {nullable:true})
     id?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    domainName?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    domainName?: StringNullableFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    displayName?: StringFilter;
+    @Field(() => StringNullableFilter, {nullable:true})
+    displayName?: StringNullableFilter;
 
     @Field(() => StringNullableFilter, {nullable:true})
     logo?: StringNullableFilter;

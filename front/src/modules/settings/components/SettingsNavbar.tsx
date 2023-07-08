@@ -8,6 +8,7 @@ import {
   IconLogout,
   IconSettings,
   IconUser,
+  IconUsers,
 } from '@/ui/icons/index';
 import NavItem from '@/ui/layout/navbar/NavItem';
 import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
@@ -21,7 +22,6 @@ export function SettingsNavbar() {
 
   const handleLogout = useCallback(() => {
     logout();
-    window.location.href = '/';
   }, [logout]);
 
   return (
@@ -52,6 +52,18 @@ export function SettingsNavbar() {
           }
         />
         <NavTitle label="Workspace" />
+        <NavItem
+          label="Members"
+          to="/settings/workspace-members"
+          icon={<IconUsers size={theme.icon.size.md} />}
+          soon={false}
+          active={
+            !!useMatch({
+              path: useResolvedPath('/settings/workspace-members').pathname,
+              end: true,
+            })
+          }
+        />
         <NavItem
           label="General"
           to="/settings/workspace"

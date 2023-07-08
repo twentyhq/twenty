@@ -1,10 +1,5 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
-import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { Prisma } from '@prisma/client';
 import { assert } from 'src/utils/assert';
 
@@ -15,10 +10,7 @@ export type UserPayload = {
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly workspaceService: WorkspaceService,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   // Find
   findFirst = this.prismaService.user.findFirst;
@@ -56,22 +48,6 @@ export class UserService {
     args: Prisma.SelectSubset<T, Prisma.UserCreateArgs>,
   ): Promise<Prisma.UserGetPayload<T>> {
     assert(args.data.email, 'email is missing', BadRequestException);
-    assert(args.data.firstName, 'firstName is missing', BadRequestException);
-    assert(args.data.lastName, 'lastName is missing', BadRequestException);
-
-    const emailDomain = args.data.email.split('@')[1];
-
-    assert(emailDomain, 'Email is malformed', BadRequestException);
-
-    const workspace = await this.workspaceService.findUnique({
-      where: { domainName: emailDomain },
-    });
-
-    assert(
-      workspace,
-      'User email domain does not match an existing workspace',
-      ForbiddenException,
-    );
 
     const user = await this.prismaService.user.upsert({
       where: {
@@ -79,10 +55,12 @@ export class UserService {
       },
       create: {
         ...(args.data as Prisma.UserCreateInput),
+        // Assign the user to a new workspace by default
         workspaceMember: {
-          connectOrCreate: {
-            where: { id: workspace.id },
-            create: { workspaceId: workspace.id },
+          create: {
+            workspace: {
+              create: {},
+            },
           },
         },
         locale: 'en',
@@ -90,7 +68,7 @@ export class UserService {
       update: {},
       ...(args.select ? { select: args.select } : {}),
       ...(args.include ? { include: args.include } : {}),
-    });
+    } as Prisma.UserUpsertArgs);
 
     return user as Prisma.UserGetPayload<T>;
   }

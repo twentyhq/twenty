@@ -1,11 +1,9 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 
-import { useTrackPageView } from '@/analytics/hooks/useTrackPageView';
-import { RequireAuth } from '@/auth/components/RequireAuth';
-import { RequireNotAuth } from '@/auth/components/RequireNotAuth';
+import { RequireOnboarded } from '@/auth/components/RequireOnboarded';
+import { RequireOnboarding } from '@/auth/components/RequireOnboarding';
 import { AuthModal } from '@/auth/components/ui/Modal';
-import { useGoToHotkeys } from '@/hotkeys/hooks/useGoToHotkeys';
 import { AuthLayout } from '@/ui/layout/AuthLayout';
 import { DefaultLayout } from '@/ui/layout/DefaultLayout';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
@@ -17,8 +15,10 @@ import { Companies } from '~/pages/companies/Companies';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { People } from '~/pages/people/People';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
+import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 
 import { CompanyShow } from './pages/companies/CompanyShow';
+import { AppInternalHooks } from './AppInternalHooks';
 
 /**
  * AuthRoutes is used to allow transitions between auth pages with framer-motion.
@@ -44,49 +44,53 @@ function AuthRoutes() {
 }
 
 export function App() {
-  useGoToHotkeys('p', '/people');
-  useGoToHotkeys('c', '/companies');
-  useGoToHotkeys('o', '/opportunities');
-  useGoToHotkeys('s', '/settings/profile');
-
-  useTrackPageView();
-
   return (
-    <DefaultLayout>
-      <Routes>
-        <Route
-          path="*"
-          element={
-            <RequireAuth>
-              <Routes>
-                <Route path="" element={<Navigate to="/people" replace />} />
-                <Route path="people" element={<People />} />
-                <Route path="companies" element={<Companies />} />
-                <Route path="companies/:companyId" element={<CompanyShow />} />
-                <Route path="opportunities" element={<Opportunities />} />
-                <Route
-                  path="settings/*"
-                  element={
-                    <Routes>
-                      <Route path="profile" element={<SettingsProfile />} />
-                    </Routes>
-                  }
-                />
-              </Routes>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="auth/*"
-          element={
-            <RequireNotAuth>
-              <AuthLayout>
-                <AuthRoutes />
-              </AuthLayout>
-            </RequireNotAuth>
-          }
-        />
-      </Routes>
-    </DefaultLayout>
+    <>
+      <AppInternalHooks />
+      <DefaultLayout>
+        <Routes>
+          <Route
+            path="auth/*"
+            element={
+              <RequireOnboarding>
+                <AuthLayout>
+                  <AuthRoutes />
+                </AuthLayout>
+              </RequireOnboarding>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <RequireOnboarded>
+                <Routes>
+                  <Route path="" element={<Navigate to="/people" replace />} />
+                  <Route path="people" element={<People />} />
+                  <Route path="companies" element={<Companies />} />
+                  <Route
+                    path="companies/:companyId"
+                    element={<CompanyShow />}
+                  />
+
+                  <Route path="opportunities" element={<Opportunities />} />
+                  <Route
+                    path="settings/*"
+                    element={
+                      <Routes>
+                        <Route path="profile" element={<SettingsProfile />} />
+                        <Route
+                          path="workspace-members"
+                          element={<SettingsWorkspaceMembers />}
+                        />
+                      </Routes>
+                    }
+                  />
+                </Routes>
+              </RequireOnboarded>
+            }
+          />
+        </Routes>
+      </DefaultLayout>
+    </>
   );
 }

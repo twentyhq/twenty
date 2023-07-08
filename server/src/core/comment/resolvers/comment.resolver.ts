@@ -6,7 +6,6 @@ import { AuthWorkspace } from '../../../decorators/auth-workspace.decorator';
 import { CreateOneCommentArgs } from '../../../core/@generated/comment/create-one-comment.args';
 import { Comment } from '../../../core/@generated/comment/comment.model';
 import { CreateOneCommentGuard } from '../../../guards/create-one-comment.guard';
-import { Prisma } from '@prisma/client';
 import { CommentService } from '../services/comment.service';
 import {
   PrismaSelector,
@@ -17,6 +16,7 @@ import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import { CreateCommentAbilityHandler } from 'src/ability/handlers/comment.ability-handler';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { User } from 'src/core/@generated/user/user.model';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Comment)

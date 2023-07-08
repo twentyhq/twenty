@@ -18,7 +18,7 @@ export type EditableChipProps = {
     picture: string;
     isOverlapped?: boolean;
   }>;
-  commentCount?: number;
+  commentThreadCount?: number;
   onCommentClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   rightEndContents?: ReactNode[];
 };

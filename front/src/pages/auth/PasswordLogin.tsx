@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
@@ -10,7 +10,9 @@ import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
-import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
+import { isDemoModeState } from '@/client-config/states/isDemoModeState';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
@@ -47,49 +49,38 @@ const StyledErrorContainer = styled.div`
 `;
 
 export function PasswordLogin() {
-  const [, setMockMode] = useRecoilState(isMockModeState);
-  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
-    captureHotkeyTypeInFocusState,
-  );
-
-  const prefillPassword =
-    process.env.NODE_ENV === 'development' ? 'applecar2025' : '';
+  const navigate = useNavigate();
+  const [isDemoMode] = useRecoilState(isDemoModeState);
 
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
   );
-  const [internalPassword, setInternalPassword] = useState(prefillPassword);
+  const [, setMockMode] = useRecoilState(isMockModeState);
+  const [internalPassword, setInternalPassword] = useState(
+    isDemoMode ? 'Applecar2025' : '',
+  );
   const [formError, setFormError] = useState('');
 
   const { login } = useAuth();
 
   const handleLogin = useCallback(async () => {
     try {
-      await login(authFlowUserEmail, internalPassword);
       setMockMode(false);
-      setCaptureHotkeyTypeInFocus(false);
-      // TODO: Navigate to the workspace selection page when it's ready
-      // navigate('/auth/create/workspace');
+
+      await login(authFlowUserEmail, internalPassword);
+
+      navigate('/auth/create/workspace');
     } catch (err: any) {
       setFormError(err.message);
     }
-  }, [
-    authFlowUserEmail,
-    internalPassword,
-    login,
-    setMockMode,
-    setCaptureHotkeyTypeInFocus,
-  ]);
+  }, [login, authFlowUserEmail, internalPassword, setMockMode, navigate]);
 
-  useHotkeys(
+  useScopedHotkeys(
     'enter',
     () => {
       handleLogin();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
+    InternalHotkeysScope.Modal,
     [handleLogin],
   );
 

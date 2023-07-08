@@ -1,5 +1,5 @@
-import { Args, Mutation, Resolver, Query} from '@nestjs/graphql';
-import { AuthTokens, ClientConfig} from './dto/token.entity';
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
 import { RefreshTokenInput } from './dto/refresh-token.input';
 import { BadRequestException } from '@nestjs/common';
@@ -60,18 +60,5 @@ export class AuthResolver {
     );
 
     return { tokens: tokens };
-  }
-
-  @Query(() => ClientConfig)
-  async clientConfig(): Promise<ClientConfig> {
-    const displayGoogleLogin = process.env.AUTH_GOOGLE_CLIENT_ID !== undefined;
-    const prefillLoginWithSeed = process.env.NODE_ENV === 'development';
-
-    const clientConfig: ClientConfig = {
-      display_google_login: displayGoogleLogin,
-      prefill_login_with_seed: prefillLoginWithSeed,
-    };
-
-    return Promise.resolve(clientConfig);
   }
 }

@@ -18,11 +18,11 @@ export class Workspace {
     @Field(() => ID, {nullable:false})
     id!: string;
 
-    @Field(() => String, {nullable:false})
-    domainName!: string;
+    @Field(() => String, {nullable:true})
+    domainName!: string | null;
 
-    @Field(() => String, {nullable:false})
-    displayName!: string;
+    @Field(() => String, {nullable:true})
+    displayName!: string | null;
 
     @Field(() => String, {nullable:true})
     logo!: string | null;

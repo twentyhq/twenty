@@ -11,6 +11,7 @@ import {
   PipelineStage,
   useGetPipelinesQuery,
   useUpdateOnePipelineProgressMutation,
+  useUpdateOnePipelineProgressStageMutation,
 } from '../../generated/graphql';
 import { Board } from '../../modules/pipeline-progress/components/Board';
 import { useBoard } from '../../modules/pipeline-progress/hooks/useBoard';
@@ -32,17 +33,37 @@ export function Opportunities() {
     [initialBoard],
   );
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
+  const [updatePipelineProgressStage] =
+    useUpdateOnePipelineProgressStageMutation();
 
-  const onUpdate = useCallback(
+  const handleCardUpdate = useCallback(
+    async (
+      pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
+    ) => {
+      updatePipelineProgress({
+        variables: {
+          id: pipelineProgress.id,
+          amount: pipelineProgress.amount,
+          closeDate: pipelineProgress.closeDate || null,
+        },
+      });
+    },
+    [updatePipelineProgress],
+  );
+
+  const handleCardMove = useCallback(
     async (
       pipelineProgressId: NonNullable<PipelineProgress['id']>,
       pipelineStageId: NonNullable<PipelineStage['id']>,
     ) => {
-      updatePipelineProgress({
-        variables: { id: pipelineProgressId, pipelineStageId },
+      updatePipelineProgressStage({
+        variables: {
+          id: pipelineProgressId,
+          pipelineStageId,
+        },
       });
     },
-    [updatePipelineProgress],
+    [updatePipelineProgressStage],
   );
 
   return (
@@ -57,7 +78,8 @@ export function Opportunities() {
             columns={columns || []}
             initialBoard={initialBoard}
             initialItems={items}
-            onUpdate={onUpdate}
+            onCardMove={handleCardMove}
+            onCardUpdate={handleCardUpdate}
           />
           <EntityBoardActionBar>
             <BoardActionBarButtonDeletePipelineProgress />

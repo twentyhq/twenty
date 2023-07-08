@@ -11,6 +11,7 @@ jobs:
     env:
       REACT_APP_API_URL: http://127.0.0.1:3000/graphql
       REACT_APP_AUTH_URL: http://127.0.0.1:3000/auth
+      REACT_APP_FILES_URL: http://127.0.0.1:3000/files
     steps:
       - uses: actions/checkout@v3
         if: github.event_name == 'push'
@@ -32,6 +33,7 @@ jobs:
           touch .env
           echo "REACT_APP_API_URL: $REACT_APP_API_URL" >> .env
           echo "REACT_APP_AUTH_URL: $REACT_APP_AUTH_URL" >> .env
+          echo "REACT_APP_FILES_URL: $REACT_APP_FILES_URL" >> .env
       - name: Front / Install Dependencies
         run: cd front && yarn
       - name: Publish to Chromatic
@@ -40,4 +42,5 @@ jobs:
           workingDir: ./front
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           onlyChanged: true
+          buildScriptName: storybook:build
         

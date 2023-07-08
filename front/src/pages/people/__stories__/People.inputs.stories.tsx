@@ -30,13 +30,9 @@ export const InteractWithManyRows: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const firstRowEmailCell = await canvas.findByText(
-      mockedPeopleData[0].email,
-    );
+    let firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
 
-    const secondRowEmailCell = await canvas.findByText(
-      mockedPeopleData[1].email,
-    );
+    let secondRowEmailCell = await canvas.findByText(mockedPeopleData[1].email);
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
@@ -44,10 +40,18 @@ export const InteractWithManyRows: Story = {
 
     await userEvent.click(firstRowEmailCell);
 
+    await sleep(100);
+    firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
+    await userEvent.click(firstRowEmailCell);
+    await sleep(100);
+    firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
+    await userEvent.click(firstRowEmailCell);
+
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
 
+    secondRowEmailCell = await canvas.findByText(mockedPeopleData[1].email);
     await userEvent.click(secondRowEmailCell);
 
     await sleep(25);
@@ -190,11 +194,17 @@ export const EditRelation: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const firstRowCompanyCell = await canvas.findByText(
+    let secondRowCompanyCell = await canvas.findByText(
       mockedPeopleData[1].company.name,
     );
 
-    await userEvent.click(firstRowCompanyCell);
+    await userEvent.click(secondRowCompanyCell);
+
+    secondRowCompanyCell = await canvas.findByText(
+      mockedPeopleData[1].company.name,
+    );
+
+    await userEvent.click(secondRowCompanyCell);
 
     const relationInput = await canvas.findByPlaceholderText('Search');
 
@@ -227,11 +237,15 @@ export const SelectRelationWithKeys: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const thirdRowCompanyCell = await canvas.findByText(
+    let firstRowCompanyCell = await canvas.findByText(
       mockedPeopleData[0].company.name,
     );
 
-    await userEvent.click(thirdRowCompanyCell);
+    await userEvent.click(firstRowCompanyCell);
+    firstRowCompanyCell = await canvas.findByText(
+      mockedPeopleData[0].company.name,
+    );
+    await userEvent.click(firstRowCompanyCell);
 
     const relationInput = await canvas.findByPlaceholderText('Search');
 

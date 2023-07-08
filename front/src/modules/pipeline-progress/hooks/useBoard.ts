@@ -1,11 +1,21 @@
 import {
   Company,
+  PipelineProgress,
   useGetCompaniesQuery,
   useGetPipelinesQuery,
 } from '../../../generated/graphql';
 import { Column } from '../../ui/components/board/Board';
 
-type Item = Pick<Company, 'id' | 'name' | 'createdAt' | 'domainName'>;
+type ItemCompany = Pick<Company, 'id' | 'name' | 'domainName'>;
+type ItemPipelineProgress = Pick<
+  PipelineProgress,
+  'id' | 'amount' | 'progressableId'
+>;
+
+type Item = {
+  company: ItemCompany;
+  pipelineProgress: ItemPipelineProgress;
+};
 type Items = { [key: string]: Item };
 
 export function useBoard(pipelineId: string) {
@@ -27,12 +37,9 @@ export function useBoard(pipelineId: string) {
   const pipelineProgresses = pipelineStages?.reduce(
     (acc, pipelineStage) => [
       ...acc,
-      ...(pipelineStage.pipelineProgresses?.map((item) => ({
-        progressableId: item?.progressableId,
-        pipelineProgressId: item?.id,
-      })) || []),
+      ...(pipelineStage.pipelineProgresses || []),
     ],
-    [] as { progressableId: string; pipelineProgressId: string }[],
+    [] as ItemPipelineProgress[],
   );
 
   const entitiesQueryResult = useGetCompaniesQuery({
@@ -43,20 +50,25 @@ export function useBoard(pipelineId: string) {
     },
   });
 
-  const indexByIdReducer = (acc: Items, entity: Item) => ({
+  const indexCompanyByIdReducer = (
+    acc: { [key: string]: ItemCompany },
+    entity: ItemCompany,
+  ) => ({
     ...acc,
     [entity.id]: entity,
   });
 
   const companiesDict = entitiesQueryResult.data?.companies.reduce(
-    indexByIdReducer,
-    {} as Items,
+    indexCompanyByIdReducer,
+    {} as { [key: string]: ItemCompany },
   );
 
   const items = pipelineProgresses?.reduce((acc, pipelineProgress) => {
     if (companiesDict?.[pipelineProgress.progressableId]) {
-      acc[pipelineProgress.pipelineProgressId] =
-        companiesDict[pipelineProgress.progressableId];
+      acc[pipelineProgress.id] = {
+        pipelineProgress,
+        company: companiesDict[pipelineProgress.progressableId],
+      };
     }
     return acc;
   }, {} as Items);

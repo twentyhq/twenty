@@ -22,7 +22,7 @@ export const Email: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const sortButton = canvas.getByText('Sort');
+    const sortButton = await canvas.findByText('Sort');
     await userEvent.click(sortButton);
 
     const emailSortButton = canvas.getByText('Email', { selector: 'li' });
@@ -48,7 +48,7 @@ export const Cancel: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const sortButton = canvas.getByText('Sort');
+    const sortButton = await canvas.findByText('Sort');
     await userEvent.click(sortButton);
 
     const emailSortButton = canvas.getByText('Email', { selector: 'li' });

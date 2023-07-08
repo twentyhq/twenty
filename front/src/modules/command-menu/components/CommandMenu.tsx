@@ -1,7 +1,8 @@
-import React from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
+import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
 
@@ -18,12 +19,18 @@ import {
 export function CommandMenu() {
   const [open, setOpen] = useRecoilState(isCommandMenuOpenedState);
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
       setOpen((prevOpen) => !prevOpen);
     },
+    InternalHotkeysScope.CommandMenu,
     [setOpen],
+  );
+
+  useHotkeysScopeOnBooleanState(
+    { scope: InternalHotkeysScope.CommandMenu },
+    open,
   );
 
   /*

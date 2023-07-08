@@ -1,11 +1,17 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconCurrencyDollar } from '@tabler/icons-react';
 
-import { Company } from '../../../generated/graphql';
-import { PersonChip } from '../../people/components/PersonChip';
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
+import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
+import { CellContext } from '@/ui/tables/states/CellContext';
+import { RowContext } from '@/ui/tables/states/RowContext';
+
+import { Company, PipelineProgress } from '../../../generated/graphql';
 import { Checkbox } from '../../ui/components/form/Checkbox';
-import { IconCalendarEvent, IconUser, IconUsers } from '../../ui/icons';
-import { getLogoUrlFromDomainName, humanReadableDate } from '../../utils/utils';
+import { IconCalendarEvent } from '../../ui/icons';
+import { getLogoUrlFromDomainName } from '../../utils/utils';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -44,7 +50,6 @@ const StyledBoardCardHeader = styled.div`
 const StyledBoardCardBody = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
   span {
     align-items: center;
@@ -59,17 +64,37 @@ const StyledBoardCardBody = styled.div`
 
 type CompanyProp = Pick<
   Company,
-  'id' | 'name' | 'domainName' | 'employees' | 'createdAt' | 'accountOwner'
+  'id' | 'name' | 'domainName' | 'employees' | 'accountOwner'
 >;
+
+type PipelineProgressProp = Pick<
+  PipelineProgress,
+  'id' | 'amount' | 'closeDate'
+>;
+
+// TODO: Remove when refactoring EditableCell into EditableField
+function HackScope({ children }: { children: React.ReactNode }) {
+  return (
+    <RecoilScope>
+      <RecoilScope SpecificContext={RowContext}>
+        <RecoilScope SpecificContext={CellContext}>{children}</RecoilScope>
+      </RecoilScope>
+    </RecoilScope>
+  );
+}
 
 export function CompanyBoardCard({
   company,
+  pipelineProgress,
   selected,
   onSelect,
+  onCardUpdate,
 }: {
   company: CompanyProp;
+  pipelineProgress: PipelineProgressProp;
   selected: boolean;
   onSelect: (company: CompanyProp) => void;
+  onCardUpdate: (pipelineProgress: PipelineProgressProp) => Promise<void>;
 }) {
   const theme = useTheme();
   return (
@@ -86,15 +111,33 @@ export function CompanyBoardCard({
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>
-            <IconUser size={theme.icon.size.md} />
-            <PersonChip name={company.accountOwner?.displayName || ''} />
-          </span>
-          <span>
-            <IconUsers size={theme.icon.size.md} /> {company.employees}
+            <IconCurrencyDollar size={theme.icon.size.md} />
+            <HackScope>
+              <EditableText
+                content={pipelineProgress.amount?.toString() || ''}
+                placeholder="Opportunity amount"
+                changeHandler={(value) =>
+                  onCardUpdate({
+                    ...pipelineProgress,
+                    amount: parseInt(value),
+                  })
+                }
+              />
+            </HackScope>
           </span>
           <span>
             <IconCalendarEvent size={theme.icon.size.md} />
-            {humanReadableDate(new Date(company.createdAt as string))}
+            <HackScope>
+              <EditableDate
+                value={new Date(pipelineProgress.closeDate || Date.now())}
+                changeHandler={(value) => {
+                  onCardUpdate({
+                    ...pipelineProgress,
+                    closeDate: value.toISOString(),
+                  });
+                }}
+              />
+            </HackScope>
           </span>
         </StyledBoardCardBody>
       </StyledBoardCard>

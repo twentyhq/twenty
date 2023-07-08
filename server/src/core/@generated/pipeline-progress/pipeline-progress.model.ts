@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
 import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { HideField } from '@nestjs/graphql';
 import { Pipeline } from '../pipeline/pipeline.model';
@@ -12,6 +13,12 @@ export class PipelineProgress {
 
     @Field(() => ID, {nullable:false})
     id!: string;
+
+    @Field(() => Int, {nullable:true})
+    amount!: number | null;
+
+    @Field(() => Date, {nullable:true})
+    closeDate!: Date | null;
 
     @Field(() => String, {nullable:false})
     pipelineId!: string;

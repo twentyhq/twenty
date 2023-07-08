@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -12,7 +11,9 @@ import { Logo } from '@/auth/components/ui/Logo';
 import { Title } from '@/auth/components/ui/Title';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
-import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { AnimatedEaseIn } from '@/ui/components/motion/AnimatedEaseIn';
@@ -30,12 +31,11 @@ const StyledFooterNote = styled(FooterNote)`
 `;
 
 export function Index() {
-  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
-    captureHotkeyTypeInFocusState,
-  );
   const navigate = useNavigate();
   const theme = useTheme();
   const [, setMockMode] = useRecoilState(isMockModeState);
+  const [authProviders] = useRecoilState(authProvidersState);
+  const [demoMode] = useRecoilState(authProvidersState);
 
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
@@ -56,22 +56,19 @@ export function Index() {
     navigate('/auth/password-login');
   }, [navigate, visible]);
 
-  useHotkeys(
+  useScopedHotkeys(
     'enter',
     () => {
       onPasswordLoginClick();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
+    InternalHotkeysScope.Modal,
     [onPasswordLoginClick],
   );
 
   useEffect(() => {
     setMockMode(true);
-    setCaptureHotkeyTypeInFocus(true);
-  }, [navigate, setMockMode, setCaptureHotkeyTypeInFocus]);
+    setAuthFlowUserEmail(demoMode ? 'tim@apple.dev' : '');
+  }, [navigate, setMockMode, setAuthFlowUserEmail, demoMode]);
 
   return (
     <>
@@ -80,12 +77,14 @@ export function Index() {
       </AnimatedEaseIn>
       <Title animate>Welcome to Twenty</Title>
       <StyledContentContainer>
-        <MainButton
-          icon={<IconBrandGoogle size={theme.icon.size.sm} stroke={4} />}
-          title="Continue with Google"
-          onClick={onGoogleLoginClick}
-          fullWidth
-        />
+        {authProviders.google && (
+          <MainButton
+            icon={<IconBrandGoogle size={theme.icon.size.sm} stroke={4} />}
+            title="Continue with Google"
+            onClick={onGoogleLoginClick}
+            fullWidth
+          />
+        )}
         {visible && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}

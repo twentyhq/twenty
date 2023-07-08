@@ -23,7 +23,7 @@ export const FilterByName: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const filterButton = canvas.getByText('Filter');
+    const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
     const nameFilterButton = canvas
@@ -60,7 +60,7 @@ export const FilterByAccountOwner: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const filterButton = canvas.getByText('Filter');
+    const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
     const accountOwnerFilterButton = (
@@ -73,7 +73,9 @@ export const FilterByAccountOwner: Story = {
 
     await userEvent.click(accountOwnerFilterButton);
 
-    const accountOwnerNameInput = canvas.getByPlaceholderText('Account owner');
+    const accountOwnerNameInput = await canvas.findByPlaceholderText(
+      'Account owner',
+    );
     await userEvent.type(accountOwnerNameInput, 'Char', {
       delay: 200,
     });
@@ -83,7 +85,6 @@ export const FilterByAccountOwner: Story = {
     const charlesChip = canvas
       .getAllByTestId('dropdown-menu-item')
       .find((item) => {
-        console.log({ item });
         return item.textContent?.includes('Charles Test');
       });
 

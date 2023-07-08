@@ -10,7 +10,7 @@ import {
 import { useRecoilState } from 'recoil';
 
 import { BoardColumn } from '@/ui/components/board/BoardColumn';
-import { Company } from '~/generated/graphql';
+import { Company, PipelineProgress } from '~/generated/graphql';
 
 import {
   Column,
@@ -24,10 +24,11 @@ import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
 import { CompanyBoardCard } from './CompanyBoardCard';
 import { NewButton } from './NewButton';
 
-export type CompanyProgress = Pick<
-  Company,
-  'id' | 'name' | 'domainName' | 'createdAt'
->;
+export type CompanyProgress = {
+  company: Pick<Company, 'id' | 'name' | 'domainName'>;
+  pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
+};
+
 export type CompanyProgressDict = {
   [key: string]: CompanyProgress;
 };
@@ -37,7 +38,10 @@ type BoardProps = {
   columns: Omit<Column, 'itemKeys'>[];
   initialBoard: Column[];
   initialItems: CompanyProgressDict;
-  onUpdate?: (itemKey: string, columnId: Column['id']) => Promise<void>;
+  onCardMove?: (itemKey: string, columnId: Column['id']) => Promise<void>;
+  onCardUpdate: (
+    pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
+  ) => Promise<void>;
 };
 
 const StyledPlaceholder = styled.div`
@@ -66,7 +70,8 @@ export function Board({
   columns,
   initialBoard,
   initialItems,
-  onUpdate,
+  onCardMove,
+  onCardUpdate,
   pipelineId,
 }: BoardProps) {
   const [board, setBoard] = useRecoilState(boardColumnsState);
@@ -79,6 +84,7 @@ export function Board({
   useEffect(() => {
     if (isInitialBoardLoaded) return;
     setBoard(initialBoard);
+    if (Object.keys(initialItems).length === 0) return;
     setBoardItems(initialItems);
     setIsInitialBoardLoaded(true);
   }, [
@@ -100,13 +106,13 @@ export function Board({
         const destinationColumnId = result.destination?.droppableId;
         draggedEntityId &&
           destinationColumnId &&
-          onUpdate &&
-          (await onUpdate(draggedEntityId, destinationColumnId));
+          onCardMove &&
+          (await onCardMove(draggedEntityId, destinationColumnId));
       } catch (e) {
         console.error(e);
       }
     },
-    [board, onUpdate, setBoard],
+    [board, onCardMove, setBoard],
   );
 
   function handleSelect(itemKey: string) {
@@ -144,8 +150,12 @@ export function Board({
                               {...draggableProvided?.draggableProps}
                             >
                               <CompanyBoardCard
-                                company={boardItems[itemKey]}
+                                company={boardItems[itemKey].company}
+                                pipelineProgress={
+                                  boardItems[itemKey].pipelineProgress
+                                }
                                 selected={selectedBoardItems.includes(itemKey)}
+                                onCardUpdate={onCardUpdate}
                                 onSelect={() => handleSelect(itemKey)}
                               />
                             </div>

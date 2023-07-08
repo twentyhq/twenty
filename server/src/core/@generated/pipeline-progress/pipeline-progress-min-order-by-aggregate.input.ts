@@ -10,6 +10,12 @@ export class PipelineProgressMinOrderByAggregateInput {
     id?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
+    amount?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    closeDate?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
     pipelineId?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})

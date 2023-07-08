@@ -2554,6 +2554,11 @@
     "@smithy/types" "^1.1.0"
     tslib "^2.5.0"
 
+"@sqltools/formatter@^1.2.3":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@sqltools/formatter/-/formatter-1.2.5.tgz#3abc203c79b8c3e90fd6c156a0c62d5403520e12"
+  integrity sha512-Uy0+khmZqUrUGm5dmMqVlnvufZRSK0FbYzVgp0UMstm+F5+W2/jnEEQyc9vo1ZR/E5ZI/B1WjjoTqBqwJL6Krw==
+
 "@ts-morph/common@~0.17.0":
   version "0.17.0"
   resolved "https://registry.npmjs.org/@ts-morph/common/-/common-0.17.0.tgz"
@@ -7036,6 +7041,13 @@ prisma-nestjs-graphql@^18.0.2:
     pluralize "^8.0.0"
     pupa "2.X"
     ts-morph ">=11 <=16"
+
+prisma-query-log@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/prisma-query-log/-/prisma-query-log-3.2.0.tgz#6e620a7196456075b1eaddb7cb10b86cb7be2ab4"
+  integrity sha512-Em7u3eedHZR6JJSzEMDEwoyS9zy2MsdQLrKxkfTbLdJF2LwfMetRVDBtkGQdcxM4ntT3wFWGBi/zNR5Q107Jgw==
+  dependencies:
+    "@sqltools/formatter" "^1.2.3"
 
 prisma@^4.13.0:
   version "4.15.0"

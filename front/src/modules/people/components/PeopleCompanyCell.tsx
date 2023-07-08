@@ -1,4 +1,5 @@
 import CompanyChip from '@/companies/components/CompanyChip';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { EditableCell } from '@/ui/components/editable-cell/EditableCell';
 import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
@@ -19,6 +20,9 @@ export function PeopleCompanyCell({ people }: OwnProps) {
 
   return (
     <EditableCell
+      editHotkeysScope={
+        !isCreating ? { scope: InternalHotkeysScope.RelationPicker } : undefined
+      }
       editModeContent={
         isCreating ? (
           <PeopleCompanyCreateCell people={people} />

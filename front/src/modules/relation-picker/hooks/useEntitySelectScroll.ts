@@ -1,6 +1,8 @@
 import scrollIntoView from 'scroll-into-view';
+import { Key } from 'ts-key-enum';
 
-import { useUpDownHotkeys } from '@/hotkeys/hooks/useUpDownHotkeys';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 
 import { relationPickerHoverIndexScopedState } from '../states/relationPickerHoverIndexScopedState';
@@ -19,7 +21,8 @@ export function useEntitySelectScroll<
     relationPickerHoverIndexScopedState,
   );
 
-  useUpDownHotkeys(
+  useScopedHotkeys(
+    Key.ArrowUp,
     () => {
       setHoveredIndex((prevSelectedIndex) =>
         Math.max(prevSelectedIndex - 1, 0),
@@ -41,6 +44,12 @@ export function useEntitySelectScroll<
         });
       }
     },
+    InternalHotkeysScope.RelationPicker,
+    [setHoveredIndex, entities],
+  );
+
+  useScopedHotkeys(
+    Key.ArrowDown,
     () => {
       setHoveredIndex((prevSelectedIndex) =>
         Math.min(prevSelectedIndex + 1, (entities?.length ?? 0) - 1),
@@ -62,6 +71,7 @@ export function useEntitySelectScroll<
         });
       }
     },
+    InternalHotkeysScope.RelationPicker,
     [setHoveredIndex, entities],
   );
 

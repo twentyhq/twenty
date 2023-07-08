@@ -10,6 +10,7 @@ jobs:
     env:
       REACT_APP_API_URL: http://127.0.0.1:3000/graphql
       REACT_APP_AUTH_URL: http://127.0.0.1:3000/auth
+      REACT_APP_FILES_URL: http://127.0.0.1:3000/files
     steps:
       - uses: actions/checkout@v3
         if: github.event_name == 'push'
@@ -29,6 +30,7 @@ jobs:
           touch .env
           echo "REACT_APP_API_URL: $REACT_APP_API_URL" >> .env
           echo "REACT_APP_AUTH_URL: $REACT_APP_AUTH_URL" >> .env
+          echo "REACT_APP_FILES_URL: $REACT_APP_FILES_URL" >> .env
       - name: Front / Install Dependencies
         run: cd front && yarn
       - name: Front / Install Playwright
@@ -36,12 +38,12 @@ jobs:
       - name: Front / Run linter
         run: cd front && yarn lint
       - name: Front / Build Storybook
-        run: cd front && yarn build-storybook --quiet
+        run: cd front && yarn storybook:build --quiet
       - name: Front / Run storybook tests
         run: |
           cd front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --silent --port 6006" \
-            "yarn coverage-storybook"
+            "yarn storybook:coverage"
       - name: Front / Run jest tests
         run: |
           cd front && yarn test

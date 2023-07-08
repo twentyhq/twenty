@@ -4,19 +4,23 @@ import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { CompanyProgressDict } from '../Board';
 
 export const items: CompanyProgressDict = {
-  'item-1': mockedCompaniesData[0],
-  'item-2': mockedCompaniesData[1],
-  'item-3': mockedCompaniesData[2],
-  'item-4': mockedCompaniesData[3],
+  'item-1': {
+    company: mockedCompaniesData[0],
+    pipelineProgress: { id: '0', amount: 1 },
+  },
+  'item-2': {
+    company: mockedCompaniesData[1],
+    pipelineProgress: { id: '1', amount: 1 },
+  },
+  'item-3': {
+    company: mockedCompaniesData[2],
+    pipelineProgress: { id: '2', amount: 1 },
+  },
+  'item-4': {
+    company: mockedCompaniesData[3],
+    pipelineProgress: { id: '3', amount: 1 },
+  },
 };
-
-for (let i = 7; i <= 20; i++) {
-  const key = `item-${i}`;
-  items[key] = {
-    ...mockedCompaniesData[i % mockedCompaniesData.length],
-    id: key,
-  };
-}
 
 export const initialBoard = [
   {

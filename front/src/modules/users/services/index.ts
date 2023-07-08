@@ -1,13 +1,15 @@
 import { gql } from '@apollo/client';
+export * from './update';
 
 export const GET_CURRENT_USER = gql`
-  query GetCurrentUser($uuid: String) {
-    users: findManyUser(where: { id: { equals: $uuid } }) {
+  query GetCurrentUser {
+    currentUser {
       id
       email
       displayName
       firstName
       lastName
+      avatarUrl
       workspaceMember {
         id
         workspace {

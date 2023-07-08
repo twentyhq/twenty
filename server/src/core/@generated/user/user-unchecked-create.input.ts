@@ -17,13 +17,15 @@ export class UserUncheckedCreateInput {
     @Validator.IsOptional()
     id?: string;
 
-    @Field(() => String, {nullable:false})
+    @Field(() => String, {nullable:true})
     @Validator.IsString()
-    firstName!: string;
+    @Validator.IsOptional()
+    firstName?: string;
 
-    @Field(() => String, {nullable:false})
+    @Field(() => String, {nullable:true})
     @Validator.IsString()
-    lastName!: string;
+    @Validator.IsOptional()
+    lastName?: string;
 
     @Field(() => String, {nullable:false})
     @Validator.IsEmail()

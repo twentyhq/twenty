@@ -1,11 +1,9 @@
 import { useCallback, useState } from 'react';
-import { useRecoilState } from 'recoil';
 
 import {
   SelectedSortType,
   SortType,
 } from '@/filters-and-sorts/interfaces/sorts/interface';
-import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 
 import DropdownButton from './DropdownButton';
 
@@ -23,9 +21,6 @@ export function SortDropdownButton<SortField>({
   onSortSelect,
 }: OwnProps<SortField>) {
   const [isUnfolded, setIsUnfolded] = useState(false);
-  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
-    captureHotkeyTypeInFocusState,
-  );
 
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
 
@@ -41,17 +36,24 @@ export function SortDropdownButton<SortField>({
 
   const resetState = useCallback(() => {
     setIsOptionUnfolded(false);
-    setCaptureHotkeyTypeInFocus(false);
     setSelectedSortDirection('asc');
-  }, [setCaptureHotkeyTypeInFocus]);
+  }, []);
+
+  function handleIsUnfoldedChange(newIsUnfolded: boolean) {
+    if (newIsUnfolded) {
+      setIsUnfolded(true);
+    } else {
+      setIsUnfolded(false);
+      resetState();
+    }
+  }
 
   return (
     <DropdownButton
       label="Sort"
       isActive={isSortSelected}
       isUnfolded={isUnfolded}
-      setIsUnfolded={setIsUnfolded}
-      resetState={resetState}
+      onIsUnfoldedChange={handleIsUnfoldedChange}
     >
       {isOptionUnfolded
         ? options.map((option, index) => (
@@ -59,7 +61,6 @@ export function SortDropdownButton<SortField>({
               key={index}
               onClick={() => {
                 setSelectedSortDirection(option);
-                setCaptureHotkeyTypeInFocus(false);
                 setIsOptionUnfolded(false);
               }}
             >
@@ -80,7 +81,6 @@ export function SortDropdownButton<SortField>({
                 key={index + 1}
                 onClick={() => {
                   setIsUnfolded(false);
-                  setCaptureHotkeyTypeInFocus(false);
                   onSortItemSelect(sort);
                 }}
               >

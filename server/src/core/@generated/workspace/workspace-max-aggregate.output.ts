@@ -13,10 +13,12 @@ export class WorkspaceMaxAggregate {
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
+    @Validator.IsOptional()
     domainName?: string;
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
+    @Validator.IsOptional()
     displayName?: string;
 
     @Field(() => String, {nullable:true})

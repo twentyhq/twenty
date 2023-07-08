@@ -135,9 +135,11 @@ model User {
   /// @Validator.IsOptional()
   id            String    @id @default(uuid())
   /// @Validator.IsString()
-  firstName     String
+  /// @Validator.IsOptional()
+  firstName     String?
   /// @Validator.IsString()
-  lastName      String
+  /// @Validator.IsOptional()
+  lastName      String?
   /// @Validator.IsEmail()
   email         String    @unique
   /// @Validator.IsBoolean()
@@ -186,9 +188,11 @@ model Workspace {
   /// @Validator.IsOptional()
   id          String  @id @default(uuid())
   /// @Validator.IsString()
-  domainName  String  @unique
+  /// @Validator.IsOptional()
+  domainName  String?
   /// @Validator.IsString()
-  displayName String
+  /// @Validator.IsOptional()
+  displayName String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   logo        String?
@@ -456,7 +460,9 @@ enum PipelineProgressableType {
 model PipelineProgress {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  id String @id @default(uuid())
+  id        String    @id @default(uuid())
+  amount    Int?
+  closeDate DateTime?
 
   pipeline         Pipeline                 @relation(fields: [pipelineId], references: [id])
   pipelineId       String

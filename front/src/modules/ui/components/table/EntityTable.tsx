@@ -13,6 +13,8 @@ import {
   SortType,
 } from '@/filters-and-sorts/interfaces/sorts/interface';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useLeaveTableFocus } from '@/ui/tables/hooks/useLeaveTableFocus';
 import { RowContext } from '@/ui/tables/states/RowContext';
 
 import { currentRowSelectionState } from '../../tables/states/rowSelectionState';
@@ -103,6 +105,8 @@ export function EntityTable<TData extends { id: string }, SortField>({
   availableSorts,
   onSortsUpdate,
 }: OwnProps<TData, SortField>) {
+  const tableBodyRef = React.useRef<HTMLDivElement>(null);
+
   const [currentRowSelection, setCurrentRowSelection] = useRecoilState(
     currentRowSelectionState,
   );
@@ -119,6 +123,12 @@ export function EntityTable<TData extends { id: string }, SortField>({
     getRowId: (row) => row.id,
   });
 
+  const leaveTableFocus = useLeaveTableFocus();
+
+  useListenClickOutsideArrayOfRef([tableBodyRef], () => {
+    leaveTableFocus();
+  });
+
   return (
     <StyledTableWithHeader>
       <TableHeader
@@ -127,7 +137,7 @@ export function EntityTable<TData extends { id: string }, SortField>({
         availableSorts={availableSorts}
         onSortsUpdate={onSortsUpdate}
       />
-      <StyledTableScrollableContainer>
+      <StyledTableScrollableContainer ref={tableBodyRef}>
         <StyledTable>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (

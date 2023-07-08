@@ -1,4 +1,4 @@
-import { debounce } from 'lodash';
+import debounce from 'lodash.debounce';
 
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { DropdownMenu } from '@/ui/components/menu/DropdownMenu';
