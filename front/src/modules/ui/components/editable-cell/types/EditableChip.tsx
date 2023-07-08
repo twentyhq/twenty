@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 
 import { textInputStyle } from '@/ui/themes/effects';
 
-import { InplaceInput } from '../InplaceInput';
+import { EditableCell } from '../EditableCell';
 
-export type OwnProps = {
+export type EditableChipProps = {
   placeholder?: string;
   value: string;
   picture: string;
@@ -19,8 +19,6 @@ export type OwnProps = {
   commentCount?: number;
   onCommentClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   rightEndContents?: ReactNode[];
-  setSoftFocusOnCurrentInplaceInput?: () => void;
-  hasSoftFocus?: boolean;
 };
 
 // TODO: refactor
@@ -41,7 +39,7 @@ const RightContainer = styled.div`
   margin-left: ${(props) => props.theme.spacing(1)};
 `;
 
-export function InplaceChipInput({
+function EditableChip({
   value,
   placeholder,
   changeHandler,
@@ -49,9 +47,7 @@ export function InplaceChipInput({
   editModeHorizontalAlign,
   ChipComponent,
   rightEndContents,
-  setSoftFocusOnCurrentInplaceInput,
-  hasSoftFocus,
-}: OwnProps) {
+}: EditableChipProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
 
@@ -62,7 +58,7 @@ export function InplaceChipInput({
   };
 
   return (
-    <InplaceInput
+    <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <StyledInplaceInput
@@ -90,8 +86,8 @@ export function InplaceChipInput({
           </RightContainer>
         </NoEditModeContainer>
       }
-      setSoftFocusOnCurrentInplaceInput={setSoftFocusOnCurrentInplaceInput}
-      hasSoftFocus={hasSoftFocus}
     />
   );
 }
+
+export default EditableChip;
