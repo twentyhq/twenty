@@ -4,7 +4,7 @@ import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMou
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
-import { PictureUploader } from '@/settings/profile/components/PictureUploader';
+import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { MainSectionTitle } from '@/ui/components/section-titles/MainSectionTitle';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { NoTopBarContainer } from '@/ui/layout/containers/NoTopBarContainer';
@@ -37,7 +37,7 @@ export function SettingsProfile() {
         <MainSectionTitle>Profile</MainSectionTitle>
         <StyledSectionContainer>
           <SubSectionTitle title="Picture" />
-          <PictureUploader />
+          <ProfilePictureUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
           <SubSectionTitle

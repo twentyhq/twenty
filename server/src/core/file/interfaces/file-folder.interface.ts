@@ -1,7 +1,8 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum FileFolder {
-  ProfilePicture = 'profilePicture',
+  ProfilePicture = 'profile-picture',
+  WorkspaceLogo = 'workspace-logo',
 }
 
 registerEnumType(FileFolder, {

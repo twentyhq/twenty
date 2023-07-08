@@ -12,8 +12,8 @@ import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { MainButton } from '@/ui/components/buttons/MainButton';
-import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { GET_CURRENT_USER } from '@/users/queries';
@@ -103,7 +103,7 @@ export function CreateWorkspace() {
       <StyledContentContainer>
         <StyledSectionContainer>
           <SubSectionTitle title="Workspace logo" />
-          <ImageInput picture={null} disabled />
+          <WorkspaceLogoUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
           <SubSectionTitle

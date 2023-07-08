@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WorkspaceResolver } from './workspace.resolver';
 import { WorkspaceService } from '../services/workspace.service';
+import { FileUploadService } from 'src/core/file/services/file-upload.service';
+import { AbilityFactory } from 'src/ability/ability.factory';
 
-describe('WorkspaceMemberResolver', () => {
+describe('WorkspaceResolver', () => {
   let resolver: WorkspaceResolver;
 
   beforeEach(async () => {
@@ -10,6 +12,8 @@ describe('WorkspaceMemberResolver', () => {
       providers: [
         WorkspaceResolver,
         { provide: WorkspaceService, useValue: {} },
+        { provide: AbilityFactory, useValue: {} },
+        { provide: FileUploadService, useValue: {} },
       ],
     }).compile();
 
