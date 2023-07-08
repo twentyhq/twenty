@@ -1,4 +1,4 @@
-import { Column } from '@/ui/components/board/Board';
+import { Column } from '@/ui/board/components/Board';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 
 import { CompanyProgressDict } from '../Board';

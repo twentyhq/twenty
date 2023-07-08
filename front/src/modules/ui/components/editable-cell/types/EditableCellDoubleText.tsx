@@ -4,7 +4,7 @@ import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysSc
 
 import { EditableCell } from '../EditableCell';
 
-import { EditableDoubleTextEditMode } from './EditableDoubleTextEditMode';
+import { EditableCellDoubleTextEditMode } from './EditableCellDoubleTextEditMode';
 
 type OwnProps = {
   firstValue: string;
@@ -15,7 +15,7 @@ type OwnProps = {
   onChange: (firstValue: string, secondValue: string) => void;
 };
 
-export function EditableDoubleText({
+export function EditableCellDoubleText({
   firstValue,
   secondValue,
   firstValuePlaceholder,
@@ -27,7 +27,7 @@ export function EditableDoubleText({
     <EditableCell
       editHotkeysScope={{ scope: InternalHotkeysScope.CellDoubleTextInput }}
       editModeContent={
-        <EditableDoubleTextEditMode
+        <EditableCellDoubleTextEditMode
           firstValue={firstValue}
           secondValue={secondValue}
           firstValuePlaceholder={firstValuePlaceholder}

@@ -12,7 +12,7 @@ import { isSoftFocusActiveState } from '@/ui/tables/states/isSoftFocusActiveStat
 import { RowContext } from '@/ui/tables/states/RowContext';
 import { CellPosition } from '@/ui/tables/types/CellPosition';
 
-export function useSoftFocusOnCurrentCell() {
+export function useSetSoftFocusOnCurrentCell() {
   const setSoftFocusPosition = useSetSoftFocusPosition();
   const [currentRowNumber] = useRecoilScopedState(
     currentRowNumberScopedState,

@@ -9,14 +9,14 @@ import {
 } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilState } from 'recoil';
 
-import { BoardColumn } from '@/ui/components/board/BoardColumn';
+import { BoardColumn } from '@/ui/board/components/BoardColumn';
 import { Company, PipelineProgress } from '~/generated/graphql';
 
 import {
   Column,
   getOptimisticlyUpdatedBoard,
   StyledBoard,
-} from '../../ui/components/board/Board';
+} from '../../ui/board/components/Board';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { boardItemsState } from '../states/boardItemsState';
 import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
@@ -80,6 +80,10 @@ export function Board({
     selectedBoardItemsState,
   );
   const [isInitialBoardLoaded, setIsInitialBoardLoaded] = useState(false);
+
+  useEffect(() => {
+    setBoardItems(initialItems);
+  }, [initialItems, setBoardItems]);
 
   useEffect(() => {
     if (isInitialBoardLoaded) return;

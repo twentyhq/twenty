@@ -1,14 +1,14 @@
 import { DropResult } from '@hello-pangea/dnd';
 
-import { BoardItemKey, getOptimisticlyUpdatedBoard } from '../Board';
+import { getOptimisticlyUpdatedBoard } from '../Board';
 
 describe('getOptimisticlyUpdatedBoard', () => {
   it('should return a new board with the updated cell', () => {
-    const initialColumn1: BoardItemKey[] = ['item-1', 'item-2', 'item-3'];
-    const initialColumn2: BoardItemKey[] = ['item-4', 'item-5'];
+    const initialColumn1: string[] = ['item-1', 'item-2', 'item-3'];
+    const initialColumn2: string[] = ['item-4', 'item-5'];
 
-    const finalColumn1: BoardItemKey[] = ['item-2', 'item-3'];
-    const finalColumn2: BoardItemKey[] = ['item-4', 'item-1', 'item-5'];
+    const finalColumn1: string[] = ['item-2', 'item-3'];
+    const finalColumn2: string[] = ['item-4', 'item-1', 'item-5'];
 
     const dropResult = {
       source: {

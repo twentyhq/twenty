@@ -1,14 +1,13 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { useAddToHotkeysScopeStack } from '@/hotkeys/hooks/useAddToHotkeysScopeStack';
 import { HotkeysScopeStackItem } from '@/hotkeys/types/internal/HotkeysScopeStackItems';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
 import { useEditableCell } from './hooks/useCloseEditableCell';
 import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
-import { useSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
+import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
 import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
@@ -41,13 +40,11 @@ export function EditableCell({
 }: OwnProps) {
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
 
-  const setSoftFocusOnCurrentCell = useSoftFocusOnCurrentCell();
+  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
 
   const { openEditableCell } = useEditableCell();
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
-
-  const addToHotkeysScopeStack = useAddToHotkeysScopeStack();
 
   // TODO: we might have silent problematic behavior because of the setTimeout in openEditableCell, investigate
   // Maybe we could build a switchEditableCell to handle the case where we go from one cell to another.
@@ -58,8 +55,7 @@ export function EditableCell({
     }
 
     if (hasSoftFocus) {
-      openEditableCell();
-      addToHotkeysScopeStack(
+      openEditableCell(
         editHotkeysScope ?? {
           scope: InternalHotkeysScope.CellEditMode,
         },
