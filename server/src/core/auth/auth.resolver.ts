@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
 import { RefreshTokenInput } from './dto/refresh-token.input';
