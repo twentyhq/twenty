@@ -16,21 +16,13 @@ export function BoardCardEditableFieldDate({
   onChange,
   editModeHorizontalAlign,
 }: OwnProps) {
-  const [internalValue, setInternalValue] = useState(value);
-
   return (
     <BoardCardEditableField
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <BoardCardEditableFieldDateEditMode
-          value={internalValue}
-          onChange={(newDate: Date) => {
-            setInternalValue(newDate);
-            onChange(newDate);
-          }}
-        />
+        <BoardCardEditableFieldDateEditMode value={value} onChange={onChange} />
       }
-      nonEditModeContent={<InplaceInputDateDisplayMode value={internalValue} />}
+      nonEditModeContent={<InplaceInputDateDisplayMode value={value} />}
     ></BoardCardEditableField>
   );
 }
