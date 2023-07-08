@@ -1,17 +1,10 @@
 import { useMemo, useRef } from 'react';
-import {
-  ApolloLink,
-  InMemoryCache,
-  NormalizedCacheObject,
-} from '@apollo/client';
+import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
-import { isMockModeState } from '@/auth/states/isMockModeState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { CommentThreadTarget } from '~/generated/graphql';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
-import { mockedUsersData } from '~/testing/mock-data/users';
 
 import { ApolloFactory } from '../services/apollo.factory';
 
@@ -20,22 +13,8 @@ export function useApolloFactory() {
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
-  const [isMockMode] = useRecoilState(isMockModeState);
 
   const apolloClient = useMemo(() => {
-    const mockLink = new ApolloLink((operation, forward) => {
-      return forward(operation).map((response) => {
-        if (operation.operationName === 'GetCompanies') {
-          return { data: { companies: mockedCompaniesData } };
-        }
-        if (operation.operationName === 'GetCurrentUser') {
-          return { data: { currentUser: mockedUsersData[0] } };
-        }
-
-        return response;
-      });
-    });
-
     apolloRef.current = new ApolloFactory({
       uri: `${process.env.REACT_APP_API_URL}`,
       cache: new InMemoryCache({
@@ -65,13 +44,13 @@ export function useApolloFactory() {
       onUnauthenticatedError() {
         setTokenPair(null);
       },
-      extraLinks: isMockMode ? [mockLink] : [],
+      extraLinks: [],
       isDebugMode,
       tokenPair,
     });
 
     return apolloRef.current.getClient();
-  }, [isMockMode, setTokenPair, isDebugMode, tokenPair]);
+  }, [setTokenPair, isDebugMode, tokenPair]);
 
   return apolloClient;
 }
