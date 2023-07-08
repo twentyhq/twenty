@@ -23,6 +23,7 @@ const Picture = styled.button<{ withPicture: boolean }>`
   height: 66px;
   justify-content: center;
   overflow: hidden;
+  padding: 0;
   transition: background 0.1s ease;
 
   width: 66px;
@@ -132,7 +133,7 @@ export function ImageInput({
             onClick={onRemove}
             variant="secondary"
             title="Remove"
-            disabled
+            disabled={!picture || disabled}
             fullWidth
           />
         </ButtonContainer>

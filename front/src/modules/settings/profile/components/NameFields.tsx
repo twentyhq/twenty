@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { TextInput } from '@/ui/components/inputs/TextInput';
-import { GET_CURRENT_USER } from '@/users/services';
+import { GET_CURRENT_USER } from '@/users/queries';
 import { useUpdateUserMutation } from '~/generated/graphql';
 
 const StyledComboInputContainer = styled.div`
