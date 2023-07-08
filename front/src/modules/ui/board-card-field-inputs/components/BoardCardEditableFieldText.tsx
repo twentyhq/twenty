@@ -1,8 +1,8 @@
 import { ChangeEvent, useState } from 'react';
 
 import { BoardCardEditableField } from '@/ui/board-card-field/components/BoardCardEditableField';
-import { InplaceInputTextDisplayMode } from '@/ui/inplace-inputs/text/components/InplaceInputTextDisplayMode';
-import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/text/components/InplaceInputTextEditMode';
+import { InplaceInputTextDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputTextDisplayMode';
+import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
 
 type OwnProps = {
   placeholder?: string;

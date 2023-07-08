@@ -253,6 +253,9 @@ function DatePicker({
         open={true}
         selected={startDate}
         showMonthDropdown
+        onClickOutside={() => {
+          onChangeHandler(startDate);
+        }}
         showYearDropdown
         onChange={(date: Date) => {
           setStartDate(date);

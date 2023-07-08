@@ -2,11 +2,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCurrencyDollar } from '@tabler/icons-react';
 
-import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
-import { BoardCardEditableFieldText } from '@/ui/board-card-field-inputs/components/BoardCardFieldTextInput';
-import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
-import { CellContext } from '@/ui/tables/states/CellContext';
-import { RowContext } from '@/ui/tables/states/RowContext';
+import { BoardCardEditableFieldDate } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldDate';
+import { BoardCardEditableFieldText } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldText';
 
 import { Company, PipelineProgress } from '../../../generated/graphql';
 import { Checkbox } from '../../ui/components/form/Checkbox';
@@ -72,17 +69,6 @@ type PipelineProgressProp = Pick<
   'id' | 'amount' | 'closeDate'
 >;
 
-// TODO: Remove when refactoring EditableCell into EditableField
-function HackScope({ children }: { children: React.ReactNode }) {
-  return (
-    <RecoilScope>
-      <RecoilScope SpecificContext={RowContext}>
-        <RecoilScope SpecificContext={CellContext}>{children}</RecoilScope>
-      </RecoilScope>
-    </RecoilScope>
-  );
-}
-
 export function CompanyBoardCard({
   company,
   pipelineProgress,
@@ -125,17 +111,15 @@ export function CompanyBoardCard({
           </span>
           <span>
             <IconCalendarEvent size={theme.icon.size.md} />
-            <HackScope>
-              <EditableDate
-                value={new Date(pipelineProgress.closeDate || Date.now())}
-                changeHandler={(value) => {
-                  onCardUpdate({
-                    ...pipelineProgress,
-                    closeDate: value.toISOString(),
-                  });
-                }}
-              />
-            </HackScope>
+            <BoardCardEditableFieldDate
+              value={new Date(pipelineProgress.closeDate || Date.now())}
+              onChange={(value) => {
+                onCardUpdate({
+                  ...pipelineProgress,
+                  closeDate: value.toISOString(),
+                });
+              }}
+            />
           </span>
         </StyledBoardCardBody>
       </StyledBoardCard>

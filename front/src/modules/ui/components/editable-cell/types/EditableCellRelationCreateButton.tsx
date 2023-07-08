@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const EditableRelationCreateButton = styled.button`
+export const EditableCellRelationCreateButton = styled.button`
   align-items: center;
   background: none;
   border: none;

@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 
-import { InplaceInputTextDisplayMode } from '@/ui/inplace-inputs/text/components/InplaceInputTextDisplayMode';
-import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/text/components/InplaceInputTextEditMode';
+import { InplaceInputTextDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputTextDisplayMode';
+import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
 
 import { EditableCell } from '../EditableCell';
 
@@ -12,7 +12,7 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
 
-export function EditableTextCell({
+export function EditableCellText({
   value,
   placeholder,
   onChange,

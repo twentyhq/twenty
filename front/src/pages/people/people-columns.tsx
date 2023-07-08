@@ -3,9 +3,9 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
 import { PeopleCompanyCell } from '@/people/components/PeopleCompanyCell';
-import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
-import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone';
-import { EditableTextCell } from '@/ui/components/editable-cell/types/EditableTextCell';
+import { EditableCellDate } from '@/ui/components/editable-cell/types/EditableCellDate';
+import { EditableCellPhone } from '@/ui/components/editable-cell/types/EditableCellPhone';
+import { EditableCellText } from '@/ui/components/editable-cell/types/EditableCellText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
   IconBuildingSkyscraper,
@@ -55,7 +55,7 @@ export const usePeopleColumns = () => {
           <ColumnHead viewName="Email" viewIcon={<IconMail size={16} />} />
         ),
         cell: (props) => (
-          <EditableTextCell
+          <EditableCellText
             placeholder="Email"
             value={props.row.original.email || ''}
             onChange={async (value: string) => {
@@ -87,7 +87,7 @@ export const usePeopleColumns = () => {
           <ColumnHead viewName="Phone" viewIcon={<IconPhone size={16} />} />
         ),
         cell: (props) => (
-          <EditablePhone
+          <EditableCellPhone
             placeholder="Phone"
             value={props.row.original.phone || ''}
             changeHandler={async (value: string) => {
@@ -112,13 +112,13 @@ export const usePeopleColumns = () => {
           />
         ),
         cell: (props) => (
-          <EditableDate
+          <EditableCellDate
             value={
               props.row.original.createdAt
                 ? new Date(props.row.original.createdAt)
                 : new Date()
             }
-            changeHandler={async (value: Date) => {
+            onChange={async (value: Date) => {
               const person = { ...props.row.original };
               await updatePerson({
                 variables: {
@@ -137,7 +137,7 @@ export const usePeopleColumns = () => {
           <ColumnHead viewName="City" viewIcon={<IconMap size={16} />} />
         ),
         cell: (props) => (
-          <EditableTextCell
+          <EditableCellText
             editModeHorizontalAlign="right"
             placeholder="City"
             value={props.row.original.city || ''}

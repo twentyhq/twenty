@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { useAddToHotkeysScopeStack } from '@/hotkeys/hooks/useAddToHotkeysScopeStack';
 import { HotkeysScopeStackItem } from '@/hotkeys/types/internal/HotkeysScopeStackItems';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
@@ -47,8 +46,6 @@ export function EditableCell({
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
-  const addToHotkeysScopeStack = useAddToHotkeysScopeStack();
-
   // TODO: we might have silent problematic behavior because of the setTimeout in openEditableCell, investigate
   // Maybe we could build a switchEditableCell to handle the case where we go from one cell to another.
   // See https://github.com/twentyhq/twenty/issues/446
@@ -58,8 +55,7 @@ export function EditableCell({
     }
 
     if (hasSoftFocus) {
-      openEditableCell();
-      addToHotkeysScopeStack(
+      openEditableCell(
         editHotkeysScope ?? {
           scope: InternalHotkeysScope.CellEditMode,
         },

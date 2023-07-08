@@ -29,6 +29,7 @@ export const EditableCellNormalModeInnerContainer = styled.div`
   display: flex;
   height: 100%;
   overflow: hidden;
+
   width: 100%;
 `;
 
@@ -40,7 +41,7 @@ export function EditableCellDisplayMode({
   return (
     <EditableCellNormalModeOuterContainer softFocus={hasSoftFocus}>
       <EditableCellNormalModeInnerContainer>
-        {children}
+        <>{children}</>
       </EditableCellNormalModeInnerContainer>
     </EditableCellNormalModeOuterContainer>
   );
