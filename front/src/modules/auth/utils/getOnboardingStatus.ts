@@ -11,13 +11,13 @@ export function getOnboardingStatus(
   isLoggedIn: boolean,
   currentUser: CurrentUser | null,
 ) {
-  if (!isLoggedIn) {
+  if (!isLoggedIn || !currentUser) {
     return OnboardingStatus.OngoingUserCreation;
   }
-  if (currentUser && !currentUser.workspaceMember?.workspace.displayName) {
+  if (!currentUser.workspaceMember?.workspace.displayName) {
     return OnboardingStatus.OngoingWorkspaceCreation;
   }
-  if (currentUser && (!currentUser.firstName || !currentUser.lastName)) {
+  if (!currentUser.firstName || !currentUser.lastName) {
     return OnboardingStatus.OngoingProfileCreation;
   }
 
