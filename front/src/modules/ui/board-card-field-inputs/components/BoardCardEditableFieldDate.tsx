@@ -1,10 +1,7 @@
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 
 import { BoardCardEditableField } from '@/ui/board-card-field/components/BoardCardEditableField';
 import { InplaceInputDateDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputDateDisplayMode';
-import { InplaceInputDateEditMode } from '@/ui/inplace-inputs/components/InplaceInputDateEditMode';
-import { InplaceInputTextDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputTextDisplayMode';
-import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
 
 import { BoardCardEditableFieldDateEditMode } from './BoardCardEditableFieldDateEditMode';
 

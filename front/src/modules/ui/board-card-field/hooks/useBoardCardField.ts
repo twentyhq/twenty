@@ -1,5 +1,3 @@
-import { useRecoilCallback } from 'recoil';
-
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 
 import { BoardCardFieldContext } from '../states/BoardCardFieldContext';

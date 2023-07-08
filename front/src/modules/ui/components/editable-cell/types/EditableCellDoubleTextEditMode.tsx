@@ -6,7 +6,6 @@ import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
-import { textInputStyle } from '@/ui/themes/effects';
 
 import { useEditableCell } from '../hooks/useCloseEditableCell';
 

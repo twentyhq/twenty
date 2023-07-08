@@ -1,12 +1,8 @@
-import { ChangeEvent, MouseEvent, useRef, useState } from 'react';
-import styled from '@emotion/styled';
-import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
+import { ChangeEvent, useRef, useState } from 'react';
 
 import { InplaceInputPhoneDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputPhoneDisplayMode';
 import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
-import { textInputStyle } from '@/ui/themes/effects';
 
-import { RawLink } from '../../links/RawLink';
 import { EditableCell } from '../EditableCell';
 
 type OwnProps = {
