@@ -2,6 +2,7 @@ import React from 'react';
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
+import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
 import { IconNotes, IconPlus } from '@/ui/icons/index';
 import { useOpenRightDrawer } from '@/ui/layout/right-drawer/hooks/useOpenRightDrawer';
 import {
@@ -15,6 +16,7 @@ import {
 import { TableActionBarButtonCreateCommentThreadCompany } from '~/pages/companies/table/TableActionBarButtonCreateCommentThreadCompany';
 
 import { useOpenCommentThreadRightDrawer } from '../hooks/useOpenCommentThreadRightDrawer';
+import { useOpenCreateCommentThreadDrawer } from '../hooks/useOpenCreateCommentThreadDrawer';
 import { CommentableEntity } from '../types/CommentableEntity';
 import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
@@ -185,6 +187,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
 
   const openCommentThreadRightDrawer = useOpenCommentThreadRightDrawer();
 
+  const openCreateCommandThread = useOpenCreateCommentThreadDrawer();
+
   const commentThreads: CommentThreadForDrawer[] =
     queryResult?.findManyCommentThreads ?? [];
 
@@ -193,7 +197,9 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
       <StyledTimelineEmptyContainer>
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
         <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
-        <TableActionBarButtonCreateCommentThreadCompany />
+        <TableActionBarButtonToggleComments
+          onClick={() => openCreateCommandThread(entity)}
+        />
       </StyledTimelineEmptyContainer>
     );
   }
@@ -206,7 +212,9 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
             <IconPlus />
           </StyledIconContainer>
 
-          <TableActionBarButtonCreateCommentThreadCompany />
+          <TableActionBarButtonToggleComments
+            onClick={() => openCreateCommandThread(entity)}
+          />
         </StyledTimelineItemContainer>
       </StyledTopActionBar>
 
@@ -216,7 +224,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
         );
         const exactCreatedAt = beautifyExactDate(commentThread.createdAt);
 
-        console.log(JSON.parse(commentThread.body ?? '')[0].content[0].text);
+        console.log(JSON.parse(commentThread.body ?? '')[0].content[0]?.text);
 
         return (
           <React.Fragment key={commentThread.id}>
@@ -251,7 +259,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
                 >
                   <StyledCardTitle>{commentThread.title}</StyledCardTitle>
                   <StyledCardContent>
-                    {JSON.parse(commentThread.body ?? '')[0].content[0].text}
+                    {JSON.parse(commentThread.body ?? '')[0].content[0]?.text}
                   </StyledCardContent>
                 </StyledCard>
               </StyledCardContainer>
