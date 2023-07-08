@@ -11,6 +11,7 @@ import { PASSWORD_REGEX, compareHash, hashPassword } from '../auth.util';
 import { Verify } from '../dto/verify.entity';
 import { TokenService } from './token.service';
 import { Prisma } from '@prisma/client';
+import { UserExists } from '../dto/user-exists.entity';
 
 export type UserPayload = {
   firstName: string;
@@ -91,5 +92,15 @@ export class AuthService {
         refreshToken,
       },
     };
+  }
+
+  async checkUserExists(email: string): Promise<UserExists> {
+    const user = await this.userService.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    return { exists: !!user };
   }
 }

@@ -13,6 +13,8 @@ import {
   PrismaSelector,
 } from 'src/decorators/prisma-select.decorator';
 import { Prisma } from '@prisma/client';
+import { UserExists } from './dto/user-exists.entity';
+import { CheckUserExistsInput } from './dto/user-exists.input';
 
 @Resolver()
 export class AuthResolver {
@@ -20,6 +22,16 @@ export class AuthResolver {
     private authService: AuthService,
     private tokenService: TokenService,
   ) {}
+
+  @Query(() => UserExists)
+  async checkUserExists(
+    @Args() checkUserExistsInput: CheckUserExistsInput,
+  ): Promise<UserExists> {
+    const { exists } = await this.authService.checkUserExists(
+      checkUserExistsInput.email,
+    );
+    return { exists };
+  }
 
   @Mutation(() => LoginToken)
   async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
