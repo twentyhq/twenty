@@ -3016,6 +3016,10 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', demoMode: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean } } };
 
+export type CommentThreadTitleFragment = { __typename?: 'CommentThread', id: string, title?: string | null };
+
+export type CommentThreadBodyFragment = { __typename?: 'CommentThread', id: string, body?: string | null };
+
 export type CreateCommentMutationVariables = Exact<{
   commentId: Scalars['String'];
   commentText: Scalars['String'];
@@ -3085,7 +3089,7 @@ export type UpdateCommentThreadTitleMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCommentThreadTitleMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string } };
+export type UpdateCommentThreadTitleMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, title?: string | null } };
 
 export type UpdateCommentThreadBodyMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
@@ -3093,7 +3097,7 @@ export type UpdateCommentThreadBodyMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCommentThreadBodyMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string } };
+export type UpdateCommentThreadBodyMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, body?: string | null } };
 
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
@@ -3296,7 +3300,18 @@ export type UpdateWorkspaceMutationVariables = Exact<{
 
 export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null } };
 
-
+export const CommentThreadTitleFragmentDoc = gql`
+    fragment CommentThreadTitle on CommentThread {
+  id
+  title
+}
+    `;
+export const CommentThreadBodyFragmentDoc = gql`
+    fragment CommentThreadBody on CommentThread {
+  id
+  body
+}
+    `;
 export const CreateEventDocument = gql`
     mutation CreateEvent($type: String!, $data: JSON!) {
   createEvent(type: $type, data: $data) {
@@ -3880,6 +3895,7 @@ export const UpdateCommentThreadTitleDocument = gql`
     data: {title: {set: $commentThreadTitle}}
   ) {
     id
+    title
   }
 }
     `;
@@ -3917,6 +3933,7 @@ export const UpdateCommentThreadBodyDocument = gql`
     data: {body: {set: $commentThreadBody}}
   ) {
     id
+    body
   }
 }
     `;

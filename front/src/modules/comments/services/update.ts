@@ -79,6 +79,7 @@ export const UPDATE_COMMENT_THREAD_TITLE = gql`
       data: { title: { set: $commentThreadTitle } }
     ) {
       id
+      title
     }
   }
 `;
@@ -93,6 +94,7 @@ export const UPDATE_COMMENT_THREAD_BODY = gql`
       data: { body: { set: $commentThreadBody } }
     ) {
       id
+      body
     }
   }
 `;
