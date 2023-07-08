@@ -10,7 +10,7 @@ import { ThemeType } from '@/ui/themes/themes';
 import '@emotion/react';
 
 import { ApolloProvider } from './providers/apollo/ApolloProvider';
-import { ClientConfigProvider } from './providers/clientConfig/ClientConfigProvider';
+import { ClientConfigProvider } from './providers/client-config/ClientConfigProvider';
 import { AppThemeProvider } from './providers/theme/AppThemeProvider';
 import { UserProvider } from './providers/user/UserProvider';
 import { App } from './App';
@@ -28,13 +28,13 @@ root.render(
       <AppThemeProvider>
         <StrictMode>
           <UserProvider>
-            <BrowserRouter>
-              <ClientConfigProvider>
-                <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}>
+            <ClientConfigProvider>
+              <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}>
+                <BrowserRouter>
                   <App />
-                </HotkeysProvider>
-              </ClientConfigProvider>
-            </BrowserRouter>
+                </BrowserRouter>
+              </HotkeysProvider>
+            </ClientConfigProvider>
           </UserProvider>
         </StrictMode>
       </AppThemeProvider>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import {
   ApolloLink,
   InMemoryCache,
@@ -8,6 +8,7 @@ import { useRecoilState } from 'recoil';
 
 import { isMockModeState } from '@/auth/states/isMockModeState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { CommentThreadTarget } from '~/generated/graphql';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { mockedUsersData } from '~/testing/mock-data/users';
@@ -16,6 +17,7 @@ import { ApolloFactory } from '../services/apollo.factory';
 
 export function useApolloFactory() {
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
+  const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
   const [isMockMode] = useRecoilState(isMockModeState);
@@ -64,16 +66,12 @@ export function useApolloFactory() {
         setTokenPair(null);
       },
       extraLinks: isMockMode ? [mockLink] : [],
+      isDebugMode,
+      tokenPair,
     });
 
     return apolloRef.current.getClient();
-  }, [isMockMode, setTokenPair]);
-
-  useEffect(() => {
-    if (apolloRef.current) {
-      apolloRef.current.updateTokenPair(tokenPair);
-    }
-  }, [tokenPair]);
+  }, [isMockMode, setTokenPair, isDebugMode, tokenPair]);
 
   return apolloClient;
 }

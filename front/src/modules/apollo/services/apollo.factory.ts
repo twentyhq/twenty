@@ -3,7 +3,6 @@ import {
   ApolloClient,
   ApolloClientOptions,
   ApolloLink,
-  createHttpLink,
   ServerError,
   ServerParseError,
 } from '@apollo/client';
@@ -11,6 +10,7 @@ import { GraphQLErrors } from '@apollo/client/errors';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
+import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
 import { AuthTokenPair } from '~/generated/graphql';
@@ -29,6 +29,8 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
   extraLinks?: ApolloLink[];
+  isDebugMode?: boolean;
+  tokenPair: AuthTokenPair | null;
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
@@ -43,11 +45,15 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       onTokenPairChange,
       onUnauthenticatedError,
       extraLinks,
+      isDebugMode,
+      tokenPair,
       ...options
     } = opts;
 
+    this.tokenPair = tokenPair;
+
     const buildApolloLink = (): ApolloLink => {
-      const httpLink = createHttpLink({
+      const httpLink = createUploadLink({
         uri,
       });
 
@@ -98,7 +104,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
                   return forward(operation);
                 }
                 default:
-                  if (process.env.NODE_ENV === 'development') {
+                  if (isDebugMode) {
                     console.warn(
                       `[GraphQL error]: Message: ${
                         graphQLError.message
@@ -114,7 +120,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           }
 
           if (networkError) {
-            if (process.env.NODE_ENV === 'development') {
+            if (isDebugMode) {
               console.warn(`[Network error]: ${networkError}`);
             }
             onNetworkError?.(networkError);
@@ -127,8 +133,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           errorLink,
           authLink,
           ...(extraLinks ? extraLinks : []),
-          // Only show logger in dev mode
-          process.env.NODE_ENV !== 'production' ? logger : null,
+          isDebugMode ? logger : null,
           retryLink,
           httpLink,
         ].filter(assertNotNull),

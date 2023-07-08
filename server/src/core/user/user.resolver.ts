@@ -29,11 +29,18 @@ import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { assert } from 'src/utils/assert';
 import { UpdateOneUserArgs } from '../@generated/user/update-one-user.args';
 import { Prisma } from '@prisma/client';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { FileUploadService } from '../file/services/file-upload.service';
+import { FileFolder } from '../file/interfaces/file-folder.interface';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly fileUploadService: FileUploadService,
+  ) {}
 
   @Query(() => User)
   async currentUser(
@@ -108,5 +115,32 @@ export class UserResolver {
   })
   displayName(@Parent() parent: User): string {
     return `${parent.firstName ?? ''} ${parent.lastName ?? ''}`;
+  }
+
+  @Mutation(() => String)
+  async uploadProfilePicture(
+    @AuthUser() { id }: User,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename, mimetype }: FileUpload,
+  ): Promise<string> {
+    const stream = createReadStream();
+    const buffer = await streamToBuffer(stream);
+    const fileFolder = FileFolder.ProfilePicture;
+
+    const { paths } = await this.fileUploadService.uploadImage({
+      file: buffer,
+      filename,
+      mimeType: mimetype,
+      fileFolder,
+    });
+
+    await this.userService.update({
+      where: { id },
+      data: {
+        avatarUrl: paths[0],
+      },
+    });
+
+    return paths[0];
   }
 }

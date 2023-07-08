@@ -28,7 +28,6 @@ const Picture = styled.button<{ withPicture: boolean }>`
   width: 66px;
 
   img {
-    height: 100%;
     object-fit: cover;
     width: 100%;
   }
@@ -67,9 +66,13 @@ const Text = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
 `;
 
+const StyledHiddenFileInput = styled.input`
+  display: none;
+`;
+
 type Props = Omit<React.ComponentProps<'div'>, 'children'> & {
   picture: string | null | undefined;
-  onUpload?: () => void;
+  onUpload?: (file: File) => void;
   onRemove?: () => void;
   disabled?: boolean;
 };
@@ -82,10 +85,18 @@ export function ImageInput({
   ...restProps
 }: Props) {
   const theme = useTheme();
+  const hiddenFileInput = React.useRef<HTMLInputElement>(null);
+  const onUploadButtonClick = () => {
+    hiddenFileInput.current?.click();
+  };
 
   return (
     <Container {...restProps}>
-      <Picture withPicture={!!picture} disabled={disabled} onClick={onUpload}>
+      <Picture
+        withPicture={!!picture}
+        disabled={disabled}
+        onClick={onUploadButtonClick}
+      >
         {picture ? (
           <img
             src={picture || '/images/default-profile-picture.png'}
@@ -97,9 +108,20 @@ export function ImageInput({
       </Picture>
       <Content>
         <ButtonContainer>
+          <StyledHiddenFileInput
+            type="file"
+            ref={hiddenFileInput}
+            onChange={(event) => {
+              if (onUpload) {
+                if (event.target.files) {
+                  onUpload(event.target.files[0]);
+                }
+              }
+            }}
+          />
           <Button
             icon={<IconUpload size={theme.icon.size.sm} />}
-            onClick={onUpload}
+            onClick={onUploadButtonClick}
             variant="secondary"
             title="Upload"
             disabled={disabled}
@@ -110,7 +132,7 @@ export function ImageInput({
             onClick={onRemove}
             variant="secondary"
             title="Remove"
-            disabled={!picture || disabled}
+            disabled
             fullWidth
           />
         </ButtonContainer>

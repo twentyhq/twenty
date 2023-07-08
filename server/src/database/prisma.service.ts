@@ -19,7 +19,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   private readonly logger = new Logger(PrismaService.name);
 
   constructor(private readonly environmentService: EnvironmentService) {
-    const debugMode = environmentService.getDebugMode();
+    const debugMode = environmentService.isDebugMode();
     super({
       errorFormat: 'minimal',
       log: debugMode
