@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 
 import { BoardCardEditableField } from '@/ui/board-card-field/components/BoardCardEditableField';
 import { InplaceInputTextDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputTextDisplayMode';
@@ -17,8 +17,6 @@ export function BoardCardEditableFieldText({
   onChange,
   editModeHorizontalAlign,
 }: OwnProps) {
-  const [internalValue, setInternalValue] = useState(value);
-
   return (
     <BoardCardEditableField
       editModeHorizontalAlign={editModeHorizontalAlign}
@@ -26,9 +24,8 @@ export function BoardCardEditableFieldText({
         <InplaceInputTextEditMode
           placeholder={placeholder || ''}
           autoFocus
-          value={internalValue}
+          value={value}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            setInternalValue(event.target.value);
             onChange(event.target.value);
           }}
         />
