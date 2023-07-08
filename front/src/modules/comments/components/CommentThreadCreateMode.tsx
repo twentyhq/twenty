@@ -20,8 +20,6 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 
   justify-content: flex-start;
-
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const BlockNoteStyledContainer = styled.div`
