@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
+import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { Panel } from '../../Panel';
@@ -18,14 +18,14 @@ const StyledRightDrawer = styled.div`
 `;
 
 export function RightDrawer() {
-  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
-    captureHotkeyTypeInFocusState,
-  );
   const [isRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
-  useEffect(() => {
-    setCaptureHotkeyTypeInFocus(isRightDrawerOpen);
-  }, [isRightDrawerOpen, setCaptureHotkeyTypeInFocus]);
+
+  useHotkeysScopeOnBooleanState(
+    { scope: InternalHotkeysScope.RightDrawer },
+    isRightDrawerOpen,
+  );
+
   if (!isRightDrawerOpen || !isDefined(rightDrawerPage)) {
     return <></>;
   }

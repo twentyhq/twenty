@@ -1,6 +1,7 @@
 import { useRef } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { DropdownMenuItem } from '@/ui/components/menu/DropdownMenuItem';
 import { DropdownMenuItemContainer } from '@/ui/components/menu/DropdownMenuItemContainer';
@@ -40,15 +41,13 @@ export function SingleEntitySelectBase<
     containerRef,
   });
 
-  useHotkeys(
+  // TODO: move to better place for scopping
+  useScopedHotkeys(
     'enter',
     () => {
       onEntitySelected(entitiesInDropdown[hoveredIndex]);
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
+    InternalHotkeysScope.RelationPicker,
     [entitiesInDropdown, hoveredIndex, onEntitySelected],
   );
 

@@ -1,3 +1,7 @@
+import { Key } from 'ts-key-enum';
+
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
@@ -56,6 +60,13 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
   function handleCreate() {
     setIsCreating(true);
   }
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => closeEditableCell(),
+    InternalHotkeysScope.RelationPicker,
+    [closeEditableCell],
+  );
 
   return (
     <SingleEntitySelect

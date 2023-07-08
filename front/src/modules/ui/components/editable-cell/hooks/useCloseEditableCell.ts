@@ -1,24 +1,24 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { useRemoveHighestHotkeysScopeStackItem } from '@/hotkeys/hooks/useRemoveHighestHotkeysScopeStackItem';
+import { useCloseCurrentCellInEditMode } from '@/ui/tables/hooks/useClearCellInEditMode';
+import { isSoftFocusActiveState } from '@/ui/tables/states/isSoftFocusActiveState';
 import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
 
-import { isEditModeScopedState } from '../states/isEditModeScopedState';
+import { useCurrentCellEditMode } from './useCurrentCellEditMode';
 
 export function useEditableCell() {
-  const [, setIsEditMode] = useRecoilScopedState(isEditModeScopedState);
+  const { setCurrentCellInEditMode } = useCurrentCellEditMode();
 
-  const closeEditableCell = useRecoilCallback(
-    ({ set }) =>
-      async () => {
-        setIsEditMode(false);
+  const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
 
-        await new Promise((resolve) => setTimeout(resolve, 20));
+  const removeHighestHotkeysScopedStackItem =
+    useRemoveHighestHotkeysScopeStackItem();
 
-        set(isSomeInputInEditModeState, false);
-      },
-    [setIsEditMode],
-  );
+  function closeEditableCell() {
+    closeCurrentCellInEditMode();
+    removeHighestHotkeysScopedStackItem();
+  }
 
   const openEditableCell = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -29,11 +29,12 @@ export function useEditableCell() {
 
         if (!isSomeInputInEditMode) {
           set(isSomeInputInEditModeState, true);
+          set(isSoftFocusActiveState, false);
 
-          setIsEditMode(true);
+          setCurrentCellInEditMode();
         }
       },
-    [setIsEditMode],
+    [setCurrentCellInEditMode],
   );
 
   return {

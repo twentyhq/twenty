@@ -2,16 +2,24 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import {
   Hotkey,
   HotkeyCallback,
+  Keys,
+  Options,
   OptionsOrDependencyArray,
 } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
 
-import { pendingHotkeyState } from '../states/pendingHotkeysState';
+import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
-export function useDirectHotkeys(
-  keys: string,
+export function useScopedHotkeys(
+  keys: Keys,
   callback: HotkeyCallback,
+  scope: string,
   dependencies?: OptionsOrDependencyArray,
+  options: Options = {
+    enableOnContentEditable: true,
+    enableOnFormTags: true,
+    preventDefault: true,
+  },
 ) {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
@@ -26,5 +34,10 @@ export function useDirectHotkeys(
     setPendingHotkey(null);
   }
 
-  useHotkeys(keys, callbackIfDirectKey, dependencies);
+  return useHotkeys(
+    keys,
+    callbackIfDirectKey,
+    { ...options, scopes: [scope] },
+    dependencies,
+  );
 }

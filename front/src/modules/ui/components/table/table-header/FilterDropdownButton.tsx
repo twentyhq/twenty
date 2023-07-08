@@ -5,6 +5,8 @@ import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
+import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
@@ -20,6 +22,11 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
 export function FilterDropdownButton() {
   const [isUnfolded, setIsUnfolded] = useState(false);
+
+  useHotkeysScopeOnBooleanState(
+    { scope: InternalHotkeysScope.TableHeaderDropdownButton },
+    isUnfolded,
+  );
 
   const [
     isFilterDropdownOperandSelectUnfolded,
@@ -64,13 +71,21 @@ export function FilterDropdownButton() {
 
   const isFilterSelected = (activeTableFilters?.length ?? 0) > 0;
 
+  function handleIsUnfoldedChange(newIsUnfolded: boolean) {
+    if (newIsUnfolded) {
+      setIsUnfolded(true);
+    } else {
+      setIsUnfolded(false);
+      resetState();
+    }
+  }
+
   return (
     <DropdownButton
       label="Filter"
       isActive={isFilterSelected}
       isUnfolded={isUnfolded}
-      setIsUnfolded={setIsUnfolded}
-      resetState={resetState}
+      onIsUnfoldedChange={handleIsUnfoldedChange}
     >
       {!tableFilterDefinitionUsedInDropdown ? (
         <FilterDropdownFilterSelect />

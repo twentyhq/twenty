@@ -1,7 +1,8 @@
 import { ReactElement, useRef } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import styled from '@emotion/styled';
 
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 import { overlayBackground } from '@/ui/themes/effects';
@@ -38,7 +39,6 @@ export function EditableCellEditMode({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
-  onOutsideClick,
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
@@ -46,61 +46,45 @@ export function EditableCellEditMode({
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   useListenClickOutsideArrayOfRef([wrapperRef], () => {
-    onOutsideClick?.();
+    closeEditableCell();
   });
 
-  useHotkeys(
+  useScopedHotkeys(
     'enter',
     () => {
       closeEditableCell();
       moveDown();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
+    InternalHotkeysScope.CellEditMode,
     [closeEditableCell],
   );
 
-  useHotkeys(
+  useScopedHotkeys(
     'esc',
     () => {
       closeEditableCell();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
+    InternalHotkeysScope.CellEditMode,
     [closeEditableCell],
   );
 
-  useHotkeys(
+  useScopedHotkeys(
     'tab',
     () => {
       closeEditableCell();
       moveRight();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
+    InternalHotkeysScope.CellEditMode,
     [closeEditableCell, moveRight],
   );
 
-  useHotkeys(
+  useScopedHotkeys(
     'shift+tab',
     () => {
       closeEditableCell();
       moveLeft();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-      preventDefault: true,
-    },
+    InternalHotkeysScope.CellEditMode,
     [closeEditableCell, moveRight],
   );
 

@@ -1,12 +1,16 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
-import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { useAddToHotkeysScopeStack } from '@/hotkeys/hooks/useAddToHotkeysScopeStack';
+import { HotkeysScopeStackItem } from '@/hotkeys/types/internal/HotkeysScopeStackItems';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { isSoftFocusActiveState } from '@/ui/tables/states/isSoftFocusActiveState';
 
 import { useEditableCell } from './hooks/useCloseEditableCell';
+import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
-import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
-import { isEditModeScopedState } from './states/isEditModeScopedState';
+import { useSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
 import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
@@ -27,6 +31,7 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
+  editHotkeysScope?: HotkeysScopeStackItem;
 };
 
 export function EditableCell({
@@ -34,39 +39,51 @@ export function EditableCell({
   editModeVerticalPosition = 'over',
   editModeContent,
   nonEditModeContent,
+  editHotkeysScope,
 }: OwnProps) {
-  const [isEditMode] = useRecoilScopedState(isEditModeScopedState);
+  const { isCurrentCellInEditMode } = useCurrentCellEditMode();
 
-  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
+  const setSoftFocusOnCurrentCell = useSoftFocusOnCurrentCell();
 
-  const { closeEditableCell, openEditableCell } = useEditableCell();
+  const { openEditableCell } = useEditableCell();
+
+  const isSoftFocusActive = useRecoilValue(isSoftFocusActiveState);
+
+  const addToHotkeysScopeStack = useAddToHotkeysScopeStack();
 
   // TODO: we might have silent problematic behavior because of the setTimeout in openEditableCell, investigate
   // Maybe we could build a switchEditableCell to handle the case where we go from one cell to another.
   // See https://github.com/twentyhq/twenty/issues/446
   function handleOnClick() {
-    openEditableCell();
-    setSoftFocusOnCurrentCell();
-  }
+    if (isCurrentCellInEditMode) {
+      return;
+    }
 
-  function handleOnOutsideClick() {
-    closeEditableCell();
+    if (isSoftFocusActive) {
+      openEditableCell();
+      addToHotkeysScopeStack(
+        editHotkeysScope ?? {
+          scope: InternalHotkeysScope.CellEditMode,
+        },
+      );
+    }
+
+    setSoftFocusOnCurrentCell();
   }
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
   return (
     <CellBaseContainer onClick={handleOnClick}>
-      {isEditMode ? (
+      {isCurrentCellInEditMode ? (
         <EditableCellEditMode
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
-          onOutsideClick={handleOnOutsideClick}
         >
           {editModeContent}
         </EditableCellEditMode>
       ) : hasSoftFocus ? (
-        <EditableCellSoftFocusMode>
+        <EditableCellSoftFocusMode editHotkeysScope={editHotkeysScope}>
           {nonEditModeContent}
         </EditableCellSoftFocusMode>
       ) : (

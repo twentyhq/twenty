@@ -1,8 +1,8 @@
 import { atomFamily } from 'recoil';
 
-import { TablePosition } from '../types/TablePosition';
+import { CellPosition } from '../types/CellPosition';
 
-export const isSoftFocusOnCellFamilyState = atomFamily<boolean, TablePosition>({
+export const isSoftFocusOnCellFamilyState = atomFamily<boolean, CellPosition>({
   key: 'isSoftFocusOnCellFamilyState',
   default: false,
 });
