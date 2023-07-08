@@ -19,7 +19,10 @@ import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 import { useCreateCommentThreadWithCommentMutation } from '~/generated/graphql';
 
 import { useOpenCommentThreadRightDrawer } from '../hooks/useOpenCommentThreadRightDrawer';
-import { GET_COMMENT_THREAD } from '../services';
+import {
+  GET_COMMENT_THREAD,
+  GET_COMMENT_THREADS_BY_TARGETS,
+} from '../services';
 import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
 
 import { CommentThreadCreateMode } from './CommentThreadCreateMode';
@@ -70,11 +73,12 @@ export function RightDrawerCreateCommentThread() {
         getOperationName(GET_COMPANIES) ?? '',
         getOperationName(GET_PEOPLE) ?? '',
         getOperationName(GET_COMMENT_THREAD) ?? '',
+        getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
       ],
       onCompleted(data) {
         openCommentThreadRightDrawer(data.createOneCommentThread.id);
-        localStorage.setItem('editorTitle' + identifier, '');
-        localStorage.setItem('editorBody' + identifier, '');
+        localStorage.removeItem('editorTitle' + identifier);
+        localStorage.removeItem('editorBody' + identifier);
       },
     });
   }

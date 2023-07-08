@@ -37,7 +37,7 @@ export function RightDrawerTopBar({
     <StyledRightDrawerTopBar>
       <RightDrawerTopBarCloseButton />
       <StyledTopBarTitle>{title}</StyledTopBarTitle>
-      {onClick ? <Button title="Save" onClick={handleOnClick} /> : ''}
+      {onClick ? <Button title="Save" onClick={handleOnClick} /> : <div></div>}
     </StyledRightDrawerTopBar>
   );
 }

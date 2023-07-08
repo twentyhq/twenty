@@ -13,7 +13,7 @@ export function RightDrawerTimeline() {
 
   return (
     <RightDrawerPage>
-      <RightDrawerTopBar title="Comments" />
+      <RightDrawerTopBar title="Timeline" />
       <RightDrawerBody>
         {commentableEntityArray.map((commentableEntity) => (
           <Timeline
