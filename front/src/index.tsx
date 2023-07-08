@@ -13,6 +13,7 @@ import { ApolloProvider } from './providers/apollo/ApolloProvider';
 import { ClientConfigProvider } from './providers/client-config/ClientConfigProvider';
 import { AppThemeProvider } from './providers/theme/AppThemeProvider';
 import { UserProvider } from './providers/user/UserProvider';
+import { WorkspaceProvider } from './providers/workspace/WorkspaceProvider';
 import { App } from './App';
 
 import './index.css';
