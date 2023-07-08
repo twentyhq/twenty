@@ -5,7 +5,7 @@ import { MainSectionTitle } from '@/ui/components/section-titles/MainSectionTitl
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { NoTopBarContainer } from '@/ui/layout/containers/NoTopBarContainer';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
-import { currentWorkspaceState } from '@/workspace/states/currentWorkspaceState';
+import { useGetCurrentWorkspaceQuery } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -18,7 +18,8 @@ const StyledContainer = styled.div`
 `;
 
 export function SettingsWorkspaceMembers() {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const { data } = useGetCurrentWorkspaceQuery();
+
   return (
     <NoTopBarContainer>
       <StyledContainer>
@@ -27,8 +28,11 @@ export function SettingsWorkspaceMembers() {
           title="Members"
           description="Manage the members of your space here"
         />
-        {currentWorkspace?.workspaceMember?.map((member) => (
-          <WorkspaceMemberCard key={member.user.id} workspaceMember={member} />
+        {data?.currentWorkspace?.workspaceMember?.map((member) => (
+          <WorkspaceMemberCard
+            key={member.user.id}
+            workspaceMember={{ user: member.user }}
+          />
         ))}
       </StyledContainer>
     </NoTopBarContainer>
