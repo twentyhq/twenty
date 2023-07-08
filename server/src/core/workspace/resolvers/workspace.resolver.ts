@@ -17,10 +17,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
-import {
-  ReadWorkspaceAbilityHandler,
-  UpdateWorkspaceAbilityHandler,
-} from 'src/ability/handlers/workspace.ability-handler';
+import { UpdateWorkspaceAbilityHandler } from 'src/ability/handlers/workspace.ability-handler';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Workspace)
