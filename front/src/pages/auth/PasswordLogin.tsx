@@ -16,6 +16,7 @@ import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysSc
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
+import { useCheckUserExistsQuery } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -84,11 +85,20 @@ export function PasswordLogin() {
     [handleLogin],
   );
 
+  const { loading, data } = useCheckUserExistsQuery({
+    variables: {
+      email: authFlowUserEmail,
+    },
+  });
+
   return (
     <>
       <Logo />
       <Title>Welcome to Twenty</Title>
-      <SubTitle>Enter your credentials to sign in</SubTitle>
+      <SubTitle>
+        Enter your credentials to sign{' '}
+        {data?.checkUserExists.exists ? 'in' : 'up'}
+      </SubTitle>
       <StyledAnimatedContent>
         <StyledContentContainer>
           <StyledSectionContainer>
@@ -115,7 +125,7 @@ export function PasswordLogin() {
           <MainButton
             title="Continue"
             onClick={handleLogin}
-            disabled={!authFlowUserEmail || !internalPassword}
+            disabled={!authFlowUserEmail || !internalPassword || loading}
             fullWidth
           />
         </StyledButtonContainer>

@@ -27,17 +27,15 @@ export class AuthService {
   ) {}
 
   async challenge(challengeInput: ChallengeInput) {
-    assert(
-      PASSWORD_REGEX.test(challengeInput.password),
-      'Password too weak',
-      BadRequestException,
-    );
-
     let user = await this.userService.findUnique({
       where: {
         email: challengeInput.email,
       },
     });
+
+    const isPasswordValid = PASSWORD_REGEX.test(challengeInput.password);
+
+    assert(!!user || isPasswordValid, 'Password too weak', BadRequestException);
 
     if (!user) {
       const passwordHash = await hashPassword(challengeInput.password);
