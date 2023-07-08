@@ -45,19 +45,25 @@ export class CommentThreadResolver {
     @PrismaSelector({ modelName: 'CommentThread' })
     prismaSelect: PrismaSelect<'CommentThread'>,
   ): Promise<Partial<CommentThread>> {
-    const newCommentData = args.data.comments?.createMany?.data
+    /*const newCommentData = args.data.comments?.createMany?.data
       ? args.data.comments?.createMany?.data?.map((comment) => ({
           ...comment,
           ...{ workspaceId: workspace.id },
         }))
       : [];
+      
+      TODO: check/discuss (strange bug)
+      
+      */
+
+    const createData = {
+      ...args.data,
+      // comments: { createMany: { data: newCommentData } },
+      workspace: { connect: { id: workspace.id } },
+    };
 
     const createdCommentThread = await this.commentThreadService.create({
-      data: {
-        ...args.data,
-        ...{ comments: { createMany: { data: newCommentData } } },
-        ...{ workspace: { connect: { id: workspace.id } } },
-      },
+      data: createData,
       select: prismaSelect.value,
     });
 

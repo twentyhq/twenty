@@ -630,7 +630,7 @@ export enum CommentableType {
 
 export type Company = {
   __typename?: 'Company';
-  _commentCount: Scalars['Int'];
+  _commentThreadCount: Scalars['Int'];
   accountOwner?: Maybe<User>;
   accountOwnerId?: Maybe<Scalars['String']>;
   address: Scalars['String'];
@@ -1149,7 +1149,7 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type Person = {
   __typename?: 'Person';
-  _commentCount: Scalars['Int'];
+  _commentThreadCount: Scalars['Int'];
   city: Scalars['String'];
   commentThreads: Array<CommentThread>;
   comments: Array<Comment>;
@@ -1941,7 +1941,7 @@ export type GetCommentThreadQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, author: { __typename?: 'User', id: string, firstName: string, lastName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
+export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, body?: string | null, title?: string | null, author: { __typename?: 'User', id: string, firstName: string, lastName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName: string, lastName: string, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
 
 export type AddCommentThreadTargetOnCommentThreadMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
@@ -1975,14 +1975,14 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentThreadCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName: string, lastName: string } | null }> };
 
 export type GetCompanyQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null } };
+export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentThreadCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string } | null } };
 
 export type UpdateCompanyMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -2023,7 +2023,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstName: string, lastName: string, createdAt: string, _commentCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstName: string, lastName: string, createdAt: string, _commentThreadCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type UpdatePeopleMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -2521,6 +2521,8 @@ export const GetCommentThreadDocument = gql`
   findManyCommentThreads(where: {id: {equals: $commentThreadId}}) {
     id
     createdAt
+    body
+    title
     author {
       id
       firstName
@@ -2712,7 +2714,7 @@ export const GetCompaniesDocument = gql`
     createdAt
     address
     employees
-    _commentCount
+    _commentThreadCount
     accountOwner {
       id
       email
@@ -2761,7 +2763,7 @@ export const GetCompanyDocument = gql`
     createdAt
     address
     employees
-    _commentCount
+    _commentThreadCount
     accountOwner {
       id
       email
@@ -2940,7 +2942,7 @@ export const GetPeopleDocument = gql`
     firstName
     lastName
     createdAt
-    _commentCount
+    _commentThreadCount
     company {
       id
       name

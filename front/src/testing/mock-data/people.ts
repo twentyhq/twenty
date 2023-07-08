@@ -9,7 +9,7 @@ type MockedPerson = Pick<
   | '__typename'
   | 'phone'
   | 'city'
-  | '_commentCount'
+  | '_commentThreadCount'
   | 'createdAt'
 > & {
   company: Pick<Company, 'id' | 'name' | 'domainName' | '__typename'>;
@@ -29,7 +29,7 @@ export const mockedPeopleData: Array<MockedPerson> = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    _commentCount: 1,
+    _commentThreadCount: 1,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
@@ -47,7 +47,7 @@ export const mockedPeopleData: Array<MockedPerson> = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    _commentCount: 1,
+    _commentThreadCount: 1,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
@@ -65,7 +65,7 @@ export const mockedPeopleData: Array<MockedPerson> = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    _commentCount: 1,
+    _commentThreadCount: 1,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
@@ -83,7 +83,7 @@ export const mockedPeopleData: Array<MockedPerson> = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    _commentCount: 2,
+    _commentThreadCount: 2,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',

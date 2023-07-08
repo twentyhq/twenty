@@ -1,5 +1,7 @@
-import { BlockNoteEditor } from '@blocknote/core';
+import React, { useState } from 'react';
+import { BlockNoteEditor, PartialBlock } from '@blocknote/core';
 import { BlockNoteView, useBlockNote } from '@blocknote/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
@@ -78,10 +80,28 @@ export function CommentThreadEditMode({
     skip: !commentThreadId,
   });
 
+  const [editorReady, setEditorReady] = useState(false);
+
+  console.log();
+
   const editor: BlockNoteEditor | null = useBlockNote({
-    theme: 'light',
-    // initialContent: commentThread.body,
+    theme: useTheme().name === 'light' ? 'light' : 'dark',
+    initialContent: undefined,
+    onEditorContentChange: (editor) => {
+      // Todo: save operation here
+      console.log('save');
+    },
+    onEditorReady: (editor) => {
+      setEditorReady(true);
+    },
   });
+
+  React.useEffect(() => {
+    if (editorReady && data?.findManyCommentThreads[0]?.body) {
+      const newContent = JSON.parse(data.findManyCommentThreads[0].body);
+      editor?.replaceBlocks(editor.topLevelBlocks, newContent);
+    }
+  }, [data, editor, editorReady]);
 
   if (typeof data?.findManyCommentThreads[0] === 'undefined') {
     return null;
@@ -95,7 +115,10 @@ export function CommentThreadEditMode({
     <StyledContainer>
       <StyledTopContainer>
         <CommentThreadTypeDropdown />
-        <StyledEditableTitleInput placeholder="Note title (optional)" />
+        <StyledEditableTitleInput
+          placeholder="Note title (optional)"
+          defaultValue={commentThread.title ?? ''}
+        />
         <PropertyBox>
           <PropertyBoxItem
             icon={<IconArrowUpRight />}

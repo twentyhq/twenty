@@ -9,7 +9,7 @@ type MockedCompany = Pick<
   | 'createdAt'
   | 'address'
   | 'employees'
-  | '_commentCount'
+  | '_commentThreadCount'
 > & {
   accountOwner: Pick<
     User,
@@ -25,7 +25,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:08:54.724515+00:00',
     address: '17 rue de clignancourt',
     employees: 12,
-    _commentCount: 1,
+    _commentThreadCount: 1,
     accountOwner: {
       email: 'charles@test.com',
       displayName: 'Charles Test',
@@ -43,7 +43,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     address: '',
     employees: 1,
-    _commentCount: 1,
+    _commentThreadCount: 1,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -54,7 +54,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:10:32.530184+00:00',
     address: '',
     employees: 1,
-    _commentCount: 1,
+    _commentThreadCount: 1,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -65,7 +65,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-03-21T06:30:25.39474+00:00',
     address: '',
     employees: 10,
-    _commentCount: 0,
+    _commentThreadCount: 0,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -76,7 +76,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:13:29.712485+00:00',
     address: '10 rue de la Paix',
     employees: 1,
-    _commentCount: 2,
+    _commentThreadCount: 2,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -87,7 +87,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:09:25.656555+00:00',
     address: '',
     employees: 1,
-    _commentCount: 13,
+    _commentThreadCount: 13,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -98,7 +98,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:09:25.656555+00:00',
     address: '',
     employees: 1,
-    _commentCount: 1,
+    _commentThreadCount: 1,
     accountOwner: null,
     __typename: 'Company',
   },

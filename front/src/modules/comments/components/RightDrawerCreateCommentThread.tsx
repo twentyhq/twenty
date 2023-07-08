@@ -1,4 +1,8 @@
+import { useEffect, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
+import { BlockNoteEditor } from '@blocknote/core';
+import { useBlockNote } from '@blocknote/react';
+import { useTheme } from '@emotion/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -20,6 +24,8 @@ import { commentableEntityArrayState } from '../states/commentableEntityArraySta
 import { CommentThreadCreateMode } from './CommentThreadCreateMode';
 
 export function RightDrawerCreateCommentThread() {
+  const [title, setTitle] = useState('');
+
   const [commentableEntityArray] = useRecoilState(commentableEntityArrayState);
 
   const openRightDrawer = useOpenRightDrawer();
@@ -29,8 +35,10 @@ export function RightDrawerCreateCommentThread() {
 
   const currentUser = useRecoilValue(currentUserState);
 
-  function handleNewCommentThread(commentText: string) {
-    if (!isNonEmptyString(commentText)) {
+  const identifier = JSON.stringify(commentableEntityArray);
+
+  function handleNewCommentThread(title: string, body: string) {
+    if (!(isNonEmptyString(title) || isNonEmptyString(body))) {
       return;
     }
 
@@ -44,7 +52,7 @@ export function RightDrawerCreateCommentThread() {
     createCommentThreadWithComment({
       variables: {
         authorId: currentUser.id,
-        commentText: commentText,
+        commentText: body,
         commentThreadId: v4(),
         createdAt: new Date().toISOString(),
         commentThreadTargetArray: commentableEntityArray.map(
@@ -64,19 +72,52 @@ export function RightDrawerCreateCommentThread() {
       onCompleted(data) {
         // TODO : redirect to drawer comment thread with data.createOneCommentThread.id
         openRightDrawer('comments');
+        localStorage.setItem('editorTitle' + identifier, '');
+        localStorage.setItem('editorBody' + identifier, '');
       },
     });
+  }
+
+  const initialBody: string | null = localStorage.getItem(
+    'editorBody' + identifier,
+  );
+
+  const editor: BlockNoteEditor | null = useBlockNote({
+    theme: useTheme().name === 'light' ? 'light' : 'dark',
+    initialContent: initialBody ? JSON.parse(initialBody) : undefined,
+    onEditorContentChange: (editor) => {
+      localStorage.setItem(
+        'editorBody' + identifier,
+        JSON.stringify(editor.topLevelBlocks),
+      );
+    },
+  });
+
+  useEffect(() => {
+    const initialTitle: string =
+      localStorage.getItem('editorTitle' + identifier) ?? '';
+    setTitle(initialTitle);
+  }, [identifier]);
+
+  function onTitleUpdate(newTitle: string) {
+    setTitle(newTitle);
+    localStorage.setItem('editorTitle' + identifier, newTitle);
   }
 
   return (
     <RightDrawerPage>
       <RightDrawerTopBar
         title="New note"
-        onClick={() => handleNewCommentThread('text')}
+        onClick={() =>
+          handleNewCommentThread(title, JSON.stringify(editor?.topLevelBlocks))
+        }
       />
       <RightDrawerBody>
         <CommentThreadCreateMode
           commentableEntityArray={commentableEntityArray}
+          editor={editor}
+          title={title}
+          handleTitleChange={onTitleUpdate}
         />
       </RightDrawerBody>
     </RightDrawerPage>

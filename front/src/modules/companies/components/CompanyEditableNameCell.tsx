@@ -13,7 +13,7 @@ import CompanyChip from './CompanyChip';
 type OwnProps = {
   company: Pick<
     GetCompaniesQuery['companies'][0],
-    'id' | 'name' | 'domainName' | '_commentCount' | 'accountOwner'
+    'id' | 'name' | 'domainName' | '_commentThreadCount' | 'accountOwner'
   >;
 };
 
@@ -51,7 +51,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       ChipComponent={CompanyChip}
       rightEndContents={[
         <CellCommentChip
-          count={company._commentCount ?? 0}
+          count={company._commentThreadCount ?? 0}
           onClick={handleCommentClick}
         />,
       ]}

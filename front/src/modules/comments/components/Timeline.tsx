@@ -2,6 +2,7 @@ import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
 import { IconNotes, IconPlus } from '@/ui/icons/index';
+import { useOpenRightDrawer } from '@/ui/layout/right-drawer/hooks/useOpenRightDrawer';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
@@ -181,7 +182,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     },
   });
 
-  const openRightDrawer = useOpenCommentThreadRightDrawer();
+  const openCommentThreadRightDrawer = useOpenCommentThreadRightDrawer();
 
   const commentThreads: CommentThreadForDrawer[] =
     queryResult?.findManyCommentThreads ?? [];
@@ -203,6 +204,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
           commentThread.createdAt,
         );
         const exactCreatedAt = beautifyExactDate(commentThread.createdAt);
+
+        console.log(JSON.parse(commentThread.body ?? '')[0].content[0].text);
 
         return (
           <>
@@ -242,9 +245,13 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
                 <StyledVerticalLine></StyledVerticalLine>
               </StyledVerticalLineContainer>
               <StyledCardContainer>
-                <StyledCard onClick={() => openRightDrawer(commentThread.id)}>
+                <StyledCard
+                  onClick={() => openCommentThreadRightDrawer(commentThread.id)}
+                >
                   <StyledCardTitle>{commentThread.title}</StyledCardTitle>
-                  <StyledCardContent>{commentThread.body}</StyledCardContent>
+                  <StyledCardContent>
+                    {JSON.parse(commentThread.body ?? '')[0].content[0].text}
+                  </StyledCardContent>
                 </StyledCard>
               </StyledCardContainer>
             </StyledTimelineItemContainer>

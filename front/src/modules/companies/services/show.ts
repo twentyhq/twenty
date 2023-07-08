@@ -11,7 +11,7 @@ export const GET_COMPANY = gql`
       createdAt
       address
       employees
-      _commentCount
+      _commentThreadCount
       accountOwner {
         id
         email

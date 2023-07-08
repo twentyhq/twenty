@@ -9,7 +9,7 @@ import { CommentableType, Person } from '~/generated/graphql';
 import { PersonChip } from './PersonChip';
 
 type OwnProps = {
-  person: Pick<Person, 'id' | 'firstName' | 'lastName' | '_commentCount'>;
+  person: Pick<Person, 'id' | 'firstName' | 'lastName' | '_commentThreadCount'>;
   onChange: (firstName: string, lastName: string) => void;
 };
 
@@ -63,7 +63,7 @@ export function EditablePeopleFullName({ person, onChange }: OwnProps) {
           <PersonChip name={person.firstName + ' ' + person.lastName} />
           <RightContainer>
             <CellCommentChip
-              count={person._commentCount ?? 0}
+              count={person._commentThreadCount ?? 0}
               onClick={handleCommentClick}
             />
           </RightContainer>

@@ -49,6 +49,8 @@ export const GET_COMMENT_THREAD = gql`
     findManyCommentThreads(where: { id: { equals: $commentThreadId } }) {
       id
       createdAt
+      body
+      title
       author {
         id
         firstName

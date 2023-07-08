@@ -65,18 +65,26 @@ const StyledEditableTitleInput = styled.input`
 
 export function CommentThreadCreateMode({
   commentableEntityArray,
+  editor,
+  title,
+  handleTitleChange,
 }: {
   commentableEntityArray: CommentableEntity[];
+  editor: BlockNoteEditor | null;
+  title: string;
+  handleTitleChange: (newTitle: string) => void;
 }) {
-  const editor: BlockNoteEditor | null = useBlockNote({
-    theme: 'light',
-  });
-
   return (
     <StyledContainer>
       <StyledTopContainer>
         <CommentThreadTypeDropdown />
-        <StyledEditableTitleInput placeholder="Note title (optional)" />
+        <StyledEditableTitleInput
+          placeholder="Note title (optional)"
+          value={title}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            handleTitleChange(event.target.value)
+          }
+        />
         <PropertyBox>
           <PropertyBoxItem
             icon={<IconArrowUpRight />}
