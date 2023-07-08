@@ -12,7 +12,6 @@ import { Logo } from '@/auth/components/ui/Logo';
 import { Title } from '@/auth/components/ui/Title';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
-import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { AnimatedEaseIn } from '@/ui/components/motion/AnimatedEaseIn';
@@ -30,9 +29,9 @@ const StyledFooterNote = styled(FooterNote)`
 `;
 
 export function Index() {
-  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
-    captureHotkeyTypeInFocusState,
-  );
+  // const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
+  //   captureHotkeyTypeInFocusState,
+  // );
   const navigate = useNavigate();
   const theme = useTheme();
   const [, setMockMode] = useRecoilState(isMockModeState);
@@ -70,8 +69,8 @@ export function Index() {
 
   useEffect(() => {
     setMockMode(true);
-    setCaptureHotkeyTypeInFocus(true);
-  }, [navigate, setMockMode, setCaptureHotkeyTypeInFocus]);
+    // setCaptureHotkeyTypeInFocus(true);
+  }, [navigate, setMockMode]);
 
   return (
     <>

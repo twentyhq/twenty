@@ -1,9 +1,9 @@
-import { useHotkeysContext } from 'react-hotkeys-hook';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useRemoveAppFocus } from '@/app-focus/hooks/useRemoveAppFocus';
-import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
+import { useRemoveFromHotkeysScopeStack } from '@/hotkeys/hooks/useRemoveFromHotkeysScopeStack';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
 import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
 
@@ -13,64 +13,62 @@ import { useMoveSoftFocus } from './useMoveSoftFocus';
 export function useMapKeyboardToSoftFocus() {
   const { moveDown, moveLeft, moveRight, moveUp } = useMoveSoftFocus();
 
-  const removeAppFocus = useRemoveAppFocus();
+  const removeFromHotkeysScopedStack = useRemoveFromHotkeysScopeStack();
   const disableSoftFocus = useDisableSoftFocus();
-
-  const { enabledScopes } = useHotkeysContext();
 
   const [isSomeInputInEditMode] = useRecoilState(isSomeInputInEditModeState);
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
     () => {
       if (!isSomeInputInEditMode) {
         moveUp();
       }
     },
-    ['table-body'],
+    InternalHotkeysScope.TableSoftFocus,
     [moveUp, isSomeInputInEditMode],
   );
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     Key.ArrowDown,
     () => {
       if (!isSomeInputInEditMode) {
         moveDown();
       }
     },
-    ['table-body'],
-    [moveDown, isSomeInputInEditMode, enabledScopes],
+    InternalHotkeysScope.TableSoftFocus,
+    [moveDown, isSomeInputInEditMode],
   );
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     [Key.ArrowLeft, `${Key.Shift}+${Key.Tab}`],
     () => {
       if (!isSomeInputInEditMode) {
         moveLeft();
       }
     },
-    ['table-body'],
+    InternalHotkeysScope.TableSoftFocus,
     [moveLeft, isSomeInputInEditMode],
   );
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     [Key.ArrowRight, Key.Tab],
     () => {
       if (!isSomeInputInEditMode) {
         moveRight();
       }
     },
-    ['table-body'],
+    InternalHotkeysScope.TableSoftFocus,
     [moveRight, isSomeInputInEditMode],
   );
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     [Key.Escape],
     () => {
-      removeAppFocus('table-body');
+      removeFromHotkeysScopedStack(InternalHotkeysScope.TableSoftFocus);
       disableSoftFocus();
     },
-    ['table-body'],
-    [removeAppFocus, disableSoftFocus],
+    InternalHotkeysScope.TableSoftFocus,
+    [removeFromHotkeysScopedStack, disableSoftFocus],
   );
 }

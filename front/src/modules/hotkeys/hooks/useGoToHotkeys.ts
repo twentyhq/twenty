@@ -1,7 +1,9 @@
 import { Keys } from 'react-hotkeys-hook/dist/types';
 import { useNavigate } from 'react-router-dom';
 
-import { useSequenceHotkeys } from './useSequenceHotkeys';
+import { InternalHotkeysScope } from '../types/internal/InternalHotkeysScope';
+
+import { useSequenceHotkeys } from './useSequenceScopedHotkeys';
 
 export function useGoToHotkeys(key: Keys, location: string) {
   const navigate = useNavigate();
@@ -12,6 +14,6 @@ export function useGoToHotkeys(key: Keys, location: string) {
     () => {
       navigate(location);
     },
-    ['goto'],
+    InternalHotkeysScope.Goto,
   );
 }

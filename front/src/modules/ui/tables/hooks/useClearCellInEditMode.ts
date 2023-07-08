@@ -2,15 +2,20 @@ import { useRecoilCallback } from 'recoil';
 
 import { currentCellInEditModePositionState } from '../states/currentCellInEditModePositionState';
 import { isCellInEditModeFamilyState } from '../states/isCellInEditModeFamilyState';
+import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
 
-export function useClearCellInEditMode() {
+export function useCloseCurrentCellInEditMode() {
   return useRecoilCallback(({ set, snapshot }) => {
-    return () => {
-      const currentCellInEditModePosition = snapshot
-        .getLoadable(currentCellInEditModePositionState)
-        .valueOrThrow();
+    return async () => {
+      const currentCellInEditModePosition = await snapshot.getPromise(
+        currentCellInEditModePositionState,
+      );
 
       set(isCellInEditModeFamilyState(currentCellInEditModePosition), false);
+
+      await new Promise((resolve) => setTimeout(resolve, 20));
+
+      set(isSomeInputInEditModeState, false);
     };
   }, []);
 }

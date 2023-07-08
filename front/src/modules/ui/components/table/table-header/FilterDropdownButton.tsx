@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
 
-import { useRemoveAppFocus } from '@/app-focus/hooks/useRemoveAppFocus';
-import { useSwitchToAppFocus } from '@/app-focus/hooks/useSwitchToAppFocus';
 import { activeTableFiltersScopedState } from '@/filters-and-sorts/states/activeTableFiltersScopedState';
 import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
+import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
@@ -23,8 +23,10 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 export function FilterDropdownButton() {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
-  const switchToAppFocus = useSwitchToAppFocus();
-  const removeAppFocus = useRemoveAppFocus();
+  useHotkeysScopeOnBooleanState(
+    { scope: InternalHotkeysScope.TableHeaderDropdownButton },
+    isUnfolded,
+  );
 
   const [
     isFilterDropdownOperandSelectUnfolded,
@@ -72,11 +74,9 @@ export function FilterDropdownButton() {
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
       setIsUnfolded(true);
-      switchToAppFocus('table-filter-dropdown');
     } else {
       setIsUnfolded(false);
       resetState();
-      removeAppFocus('table-filter-dropdown');
     }
   }
 

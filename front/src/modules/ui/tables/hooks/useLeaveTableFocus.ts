@@ -1,22 +1,24 @@
-import { useAppFocus } from '@/app-focus/hooks/useAppFocus';
+import { useCurrentHotkeysScope } from '@/hotkeys/hooks/useCurrentHotkeysScope';
+import { useResetHotkeysScopeStack } from '@/hotkeys/hooks/useResetHotkeysScopeStack';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
-import { useClearCellInEditMode } from './useClearCellInEditMode';
+import { useCloseCurrentCellInEditMode } from './useClearCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 
 export function useLeaveTableFocus() {
-  const { removeAppFocus, appFocus } = useAppFocus();
+  const resetHotkeysScopeStack = useResetHotkeysScopeStack();
+  const currentHotkeysScope = useCurrentHotkeysScope();
+
   const disableSoftFocus = useDisableSoftFocus();
-  const clearCellInEditMode = useClearCellInEditMode();
+  const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
 
   return async function leaveTableFocus() {
-    if (appFocus === 'table-cell') {
-      clearCellInEditMode();
-
-      removeAppFocus('table-cell');
-    } else if (appFocus === 'table-body') {
-      removeAppFocus('table-body');
-
-      disableSoftFocus();
+    if (currentHotkeysScope?.scope === InternalHotkeysScope.Table) {
+      return;
     }
+
+    closeCurrentCellInEditMode();
+    disableSoftFocus();
+    resetHotkeysScopeStack(InternalHotkeysScope.Table);
   };
 }

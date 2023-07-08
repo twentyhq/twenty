@@ -1,9 +1,16 @@
-import { ChangeEvent, ReactElement, useRef } from 'react';
+import { ChangeEvent, ReactElement, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 import { textInputStyle } from '@/ui/themes/effects';
 
 import { EditableCell } from '../EditableCell';
+import { useEditableCell } from '../hooks/useCloseEditableCell';
+
+import { EditableDoubleTextEditMode } from './EditableDoubleTextEditMode';
 
 type OwnProps = {
   firstValue: string;
@@ -14,57 +21,25 @@ type OwnProps = {
   onChange: (firstValue: string, secondValue: string) => void;
 };
 
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-
-  & > input:last-child {
-    border-left: 1px solid ${({ theme }) => theme.border.color.medium};
-    padding-left: ${({ theme }) => theme.spacing(2)};
-  }
-`;
-
-const StyledEditInplaceInput = styled.input`
-  height: 18px;
-  margin: 0;
-  width: 45%;
-
-  ${textInputStyle}
-`;
-
 export function EditableDoubleText({
   firstValue,
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
-  nonEditModeContent,
   onChange,
+  nonEditModeContent,
 }: OwnProps) {
-  const firstValueInputRef = useRef<HTMLInputElement>(null);
-
   return (
     <EditableCell
+      editHotkeysScope={{ scope: InternalHotkeysScope.CellDoubleTextInput }}
       editModeContent={
-        <StyledContainer>
-          <StyledEditInplaceInput
-            autoFocus
-            placeholder={firstValuePlaceholder}
-            ref={firstValueInputRef}
-            value={firstValue}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              onChange(event.target.value, secondValue);
-            }}
-          />
-          <StyledEditInplaceInput
-            placeholder={secondValuePlaceholder}
-            ref={firstValueInputRef}
-            value={secondValue}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              onChange(firstValue, event.target.value);
-            }}
-          />
-        </StyledContainer>
+        <EditableDoubleTextEditMode
+          firstValue={firstValue}
+          secondValue={secondValue}
+          firstValuePlaceholder={firstValuePlaceholder}
+          secondValuePlaceholder={secondValuePlaceholder}
+          onChange={onChange}
+        />
       }
       nonEditModeContent={nonEditModeContent}
     ></EditableCell>

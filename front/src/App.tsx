@@ -16,9 +16,7 @@ import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { People } from '~/pages/people/People';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 
-import { AppAnalyticsHooks } from './AppAnalyticsHooks';
-import { AppHotkeysBindHooks } from './AppHotkeysBindHooks';
-import { AppHotkeysHooks } from './AppHotkeysHooks';
+import { AppInternalHooks } from './AppInternalHooks';
 
 /**
  * AuthRoutes is used to allow transitions between auth pages with framer-motion.
@@ -46,9 +44,7 @@ function AuthRoutes() {
 export function App() {
   return (
     <>
-      <AppAnalyticsHooks />
-      <AppHotkeysHooks />
-      <AppHotkeysBindHooks />
+      <AppInternalHooks />
       <DefaultLayout>
         <Routes>
           <Route

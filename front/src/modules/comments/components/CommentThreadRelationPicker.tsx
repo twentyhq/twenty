@@ -10,10 +10,11 @@ import {
 } from '@floating-ui/react';
 import { IconArrowUpRight } from '@tabler/icons-react';
 
-import { useAppFocusOnBooleanState } from '@/app-focus/hooks/useAppFocusOnBooleanState';
 import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
 import CompanyChip from '@/companies/components/CompanyChip';
-import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
+import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { PersonChip } from '@/people/components/PersonChip';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
@@ -97,7 +98,10 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
 
-  useAppFocusOnBooleanState('comment-thread-relation-picker', isMenuOpen);
+  useHotkeysScopeOnBooleanState(
+    { scope: InternalHotkeysScope.RelationPicker },
+    isMenuOpen,
+  );
 
   const theme = useTheme();
 
@@ -160,12 +164,12 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     setSearchFilter('');
   }
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     ['esc', 'enter'],
     () => {
       exitEditMode();
     },
-    ['comment-thread-relation-picker'],
+    InternalHotkeysScope.RelationPicker,
     [exitEditMode],
   );
 

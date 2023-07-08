@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useSetCellInEditMode } from '@/ui/tables/hooks/useSetCellInEditMode';
+import { useMoveEditModeToCellPosition } from '@/ui/tables/hooks/useMoveEditModeToCellPosition';
 import { isCellInEditModeFamilyState } from '@/ui/tables/states/isCellInEditModeFamilyState';
 
 import { useCurrentCellPosition } from './useCurrentCellPosition';
 
 export function useCurrentCellEditMode() {
-  const setCellInEditMode = useSetCellInEditMode();
+  const moveEditModeToCellPosition = useMoveEditModeToCellPosition();
 
   const currentCellPosition = useCurrentCellPosition();
 
@@ -16,8 +16,8 @@ export function useCurrentCellEditMode() {
   );
 
   const setCurrentCellInEditMode = useCallback(() => {
-    setCellInEditMode(currentCellPosition);
-  }, [currentCellPosition, setCellInEditMode]);
+    moveEditModeToCellPosition(currentCellPosition);
+  }, [currentCellPosition, moveEditModeToCellPosition]);
 
   return { isCurrentCellInEditMode, setCurrentCellInEditMode };
 }

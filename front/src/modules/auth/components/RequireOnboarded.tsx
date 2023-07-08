@@ -4,8 +4,6 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
-
 import { useOnboardingStatus } from '../hooks/useOnboardingStatus';
 import { OnboardingStatus } from '../utils/getOnboardingStatus';
 
@@ -38,9 +36,6 @@ export function RequireOnboarded({
 }): JSX.Element {
   const navigate = useNavigate();
 
-  const [, setCaptureHotkeyTypeInFocus] = useRecoilState(
-    captureHotkeyTypeInFocusState,
-  );
   const onboardingStatus = useOnboardingStatus();
 
   useEffect(() => {
@@ -53,11 +48,11 @@ export function RequireOnboarded({
     }
   }, [onboardingStatus, navigate]);
 
-  useEffect(() => {
-    if (onboardingStatus === OnboardingStatus.Completed) {
-      setCaptureHotkeyTypeInFocus(false);
-    }
-  }, [setCaptureHotkeyTypeInFocus, onboardingStatus]);
+  // useEffect(() => {
+  //   if (onboardingStatus === OnboardingStatus.Completed) {
+  //     setCaptureHotkeyTypeInFocus(false);
+  //   }
+  // }, [setCaptureHotkeyTypeInFocus, onboardingStatus]);
 
   if (onboardingStatus !== OnboardingStatus.Completed) {
     return (

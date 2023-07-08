@@ -1,8 +1,8 @@
 import { ReactElement, useRef } from 'react';
 import styled from '@emotion/styled';
 
-import { useAppFocusOnMountOnly } from '@/app-focus/hooks/useAppFocusOnMountOnly';
-import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 import { overlayBackground } from '@/ui/themes/effects';
@@ -42,8 +42,6 @@ export function EditableCellEditMode({
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
-  useAppFocusOnMountOnly('table-cell');
-
   const { closeEditableCell } = useEditableCell();
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
@@ -51,42 +49,42 @@ export function EditableCellEditMode({
     closeEditableCell();
   });
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     'enter',
     () => {
       closeEditableCell();
       moveDown();
     },
-    ['table-cell'],
+    InternalHotkeysScope.CellEditMode,
     [closeEditableCell],
   );
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     'esc',
     () => {
       closeEditableCell();
     },
-    ['table-cell'],
+    InternalHotkeysScope.CellEditMode,
     [closeEditableCell],
   );
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     'tab',
     () => {
       closeEditableCell();
       moveRight();
     },
-    ['table-cell'],
+    InternalHotkeysScope.CellEditMode,
     [closeEditableCell, moveRight],
   );
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     'shift+tab',
     () => {
       closeEditableCell();
       moveLeft();
     },
-    ['table-cell'],
+    InternalHotkeysScope.CellEditMode,
     [closeEditableCell, moveRight],
   );
 

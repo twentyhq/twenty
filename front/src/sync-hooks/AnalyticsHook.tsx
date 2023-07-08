@@ -1,6 +1,6 @@
 import { useTrackPageView } from '@/analytics/hooks/useTrackPageView';
 
-export function AppAnalyticsHooks() {
+export function AnalyticsHook() {
   useTrackPageView();
 
   return <></>;

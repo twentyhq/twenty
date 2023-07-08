@@ -8,13 +8,12 @@ import {
 } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
 
-import { pendingHotkeyState } from '../states/pendingHotkeysState';
-import { HotkeysScope } from '../types/HotkeysScope';
+import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
-export function useDirectHotkeys(
+export function useScopedHotkeys(
   keys: Keys,
   callback: HotkeyCallback,
-  scopes: HotkeysScope[],
+  scope: string,
   dependencies?: OptionsOrDependencyArray,
   options: Options = {
     enableOnContentEditable: true,
@@ -35,5 +34,10 @@ export function useDirectHotkeys(
     setPendingHotkey(null);
   }
 
-  useHotkeys(keys, callbackIfDirectKey, { ...options, scopes }, dependencies);
+  return useHotkeys(
+    keys,
+    callbackIfDirectKey,
+    { ...options, scopes: [scope] },
+    dependencies,
+  );
 }

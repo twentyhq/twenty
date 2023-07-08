@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
+import { useAddToHotkeysScopeStack } from '@/hotkeys/hooks/useAddToHotkeysScopeStack';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { HotkeysScopeStackItem } from '@/hotkeys/types/internal/HotkeysScopeStackItems';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { isNonTextWritingKey } from '@/utils/hotkeys/isNonTextWritingKey';
 
 import { useEditableCell } from './hooks/useCloseEditableCell';
@@ -8,19 +11,26 @@ import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 
 export function EditableCellSoftFocusMode({
   children,
-}: React.PropsWithChildren<unknown>) {
+  editHotkeysScope,
+}: React.PropsWithChildren<{ editHotkeysScope?: HotkeysScopeStackItem }>) {
   const { closeEditableCell, openEditableCell } = useEditableCell();
+  const addToHotkeysScopeStack = useAddToHotkeysScopeStack();
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     'enter',
     () => {
       openEditableCell();
+      addToHotkeysScopeStack(
+        editHotkeysScope ?? {
+          scope: InternalHotkeysScope.CellEditMode,
+        },
+      );
     },
-    ['table-body'],
+    InternalHotkeysScope.TableSoftFocus,
     [closeEditableCell],
   );
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     '*',
     (keyboardEvent) => {
       const isWritingText =
@@ -33,9 +43,14 @@ export function EditableCellSoftFocusMode({
       }
 
       openEditableCell();
+      addToHotkeysScopeStack(
+        editHotkeysScope ?? {
+          scope: InternalHotkeysScope.CellEditMode,
+        },
+      );
     },
-    ['table-body'],
-    [openEditableCell],
+    InternalHotkeysScope.TableSoftFocus,
+    [openEditableCell, addToHotkeysScopeStack, editHotkeysScope],
     {
       preventDefault: false,
     },

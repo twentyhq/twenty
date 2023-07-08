@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useAppFocus } from '@/app-focus/hooks/useAppFocus';
-import { useDirectHotkeys } from '@/hotkeys/hooks/useDirectHotkeys';
+import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
 
@@ -19,24 +20,19 @@ import {
 export function CommandMenu() {
   const [open, setOpen] = useRecoilState(isCommandMenuOpenedState);
 
-  useDirectHotkeys(
+  useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
       setOpen((prevOpen) => !prevOpen);
     },
-    ['command-k'],
+    InternalHotkeysScope.CommandMenu,
     [setOpen],
   );
 
-  const { removeAppFocus, switchToAppFocus } = useAppFocus();
-
-  useEffect(() => {
-    if (open) {
-      switchToAppFocus('command-menu');
-    } else {
-      removeAppFocus('command-menu');
-    }
-  }, [open, switchToAppFocus, removeAppFocus]);
+  useHotkeysScopeOnBooleanState(
+    { scope: InternalHotkeysScope.CommandMenu },
+    open,
+  );
 
   /*
   TODO: Allow performing actions on page through CommandBar 
