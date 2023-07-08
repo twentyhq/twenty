@@ -28,7 +28,7 @@ const StyledTextArea = styled(TextareaAutosize)`
   color: ${({ theme }) => theme.font.color.primary};
   font-family: inherit;
   font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   line-height: 16px;
   overflow: auto;
   padding: 8px;
@@ -42,7 +42,7 @@ const StyledTextArea = styled(TextareaAutosize)`
 
   &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
+    font-weight: ${({ theme }) => theme.font.weight.regular};
   }
 `;
 

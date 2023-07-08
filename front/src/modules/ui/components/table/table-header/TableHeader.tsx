@@ -49,7 +49,7 @@ const StyledViewSection = styled.div`
 
 const StyledFilters = styled.div`
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   gap: 2px;
 `;
 
