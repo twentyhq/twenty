@@ -57,7 +57,7 @@ export class CommentThreadResolver {
     const createdCommentThread = await this.commentThreadService.create({
       data: {
         ...args.data,
-        // ...{ comments: { createMany: { data: newCommentData } } },
+        //...{ comments: { createMany: { data: newCommentData } } },
         ...{ workspace: { connect: { id: workspace.id } } },
       },
       select: prismaSelect.value,

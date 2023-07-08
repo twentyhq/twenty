@@ -7,7 +7,11 @@ import styled from '@emotion/styled';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
 import { IconArrowUpRight } from '@/ui/icons/index';
-import { useGetCommentThreadQuery } from '~/generated/graphql';
+import {
+  useGetCommentThreadQuery,
+  useUpdateCommentThreadBodyMutation,
+  useUpdateCommentThreadTitleMutation,
+} from '~/generated/graphql';
 
 import { Comments } from './Comments';
 import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
@@ -78,15 +82,23 @@ export function CommentThreadEditMode({
   });
 
   const [editorReady, setEditorReady] = useState(false);
+  const [title, setTitle] = useState('');
 
-  console.log();
+  const [updateCommentThreadTitleMutation] =
+    useUpdateCommentThreadTitleMutation();
+  const [updateCommentThreadBodyMutation] =
+    useUpdateCommentThreadBodyMutation();
 
   const editor: BlockNoteEditor | null = useBlockNote({
     theme: useTheme().name === 'light' ? 'light' : 'dark',
     initialContent: undefined,
     onEditorContentChange: (editor) => {
-      // TODO: save operation here
-      console.log('save');
+      updateCommentThreadBodyMutation({
+        variables: {
+          commentThreadId: commentThreadId,
+          commentThreadBody: JSON.stringify(editor.topLevelBlocks) ?? '',
+        },
+      });
     },
     onEditorReady: (editor) => {
       setEditorReady(true);
@@ -98,7 +110,20 @@ export function CommentThreadEditMode({
       const newContent = JSON.parse(data.findManyCommentThreads[0].body);
       editor?.replaceBlocks(editor.topLevelBlocks, newContent);
     }
+    if (data?.findManyCommentThreads[0]?.title) {
+      setTitle(data.findManyCommentThreads[0].title);
+    }
   }, [data, editor, editorReady]);
+
+  function onTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setTitle(e.target.value);
+    updateCommentThreadTitleMutation({
+      variables: {
+        commentThreadId: commentThreadId,
+        commentThreadTitle: e.target.value ?? '',
+      },
+    });
+  }
 
   if (typeof data?.findManyCommentThreads[0] === 'undefined') {
     return null;
@@ -106,7 +131,7 @@ export function CommentThreadEditMode({
 
   const commentThread = data?.findManyCommentThreads[0];
 
-  // TODO : prevent editor from creating loops
+  // TODO : check editor performance (loops/ double save)
 
   return (
     <StyledContainer>
@@ -114,7 +139,8 @@ export function CommentThreadEditMode({
         <CommentThreadTypeDropdown />
         <StyledEditableTitleInput
           placeholder="Note title (optional)"
-          defaultValue={commentThread.title ?? ''}
+          onChange={onTitleChange}
+          value={title}
         />
         <PropertyBox>
           <PropertyBoxItem

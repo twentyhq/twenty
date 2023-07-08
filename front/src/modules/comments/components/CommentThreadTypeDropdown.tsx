@@ -11,7 +11,7 @@ export function CommentThreadTypeDropdown() {
   ];
 
   const handleSelect = (selectedOption: DropdownOptionType) => {
-    console.log(`You selected: ${selectedOption.label}`);
+    // console.log(`You selected: ${selectedOption.label}`);
   };
 
   return <DropdownButton options={options} onSelection={handleSelect} />;

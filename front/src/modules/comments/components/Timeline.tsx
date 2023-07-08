@@ -222,8 +222,6 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
         );
         const exactCreatedAt = beautifyExactDate(commentThread.createdAt);
 
-        console.log(JSON.parse(commentThread.body ?? '')[0].content[0]?.text);
-
         return (
           <React.Fragment key={commentThread.id}>
             <StyledTimelineItemContainer>
