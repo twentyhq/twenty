@@ -55,6 +55,7 @@ export class AbilityFactory {
 
     // Workspace
     can(AbilityAction.Read, 'Workspace', { id: workspace.id });
+    can(AbilityAction.Update, 'Workspace', { id: workspace.id });
 
     // Workspace Member
     can(AbilityAction.Read, 'WorkspaceMember', { userId: user.id });

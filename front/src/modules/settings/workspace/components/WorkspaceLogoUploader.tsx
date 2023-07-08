@@ -6,19 +6,19 @@ import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { GET_CURRENT_USER } from '@/users/queries';
 import { getImageAbsoluteURI } from '@/users/utils/getProfilePictureAbsoluteURI';
 import {
-  useRemoveProfilePictureMutation,
-  useUploadProfilePictureMutation,
+  useRemoveWorkspaceLogoMutation,
+  useUploadWorkspaceLogoMutation,
 } from '~/generated/graphql';
 
-export function PictureUploader() {
-  const [uploadPicture] = useUploadProfilePictureMutation();
-  const [removePicture] = useRemoveProfilePictureMutation();
+export function WorkspaceLogoUploader() {
+  const [uploadLogo] = useUploadWorkspaceLogoMutation();
+  const [removeLogo] = useRemoveWorkspaceLogoMutation();
   const [currentUser] = useRecoilState(currentUserState);
   async function onUpload(file: File) {
     if (!file) {
       return;
     }
-    await uploadPicture({
+    await uploadLogo({
       variables: {
         file,
       },
@@ -27,19 +27,16 @@ export function PictureUploader() {
   }
 
   async function onRemove() {
-    await removePicture({
-      variables: {
-        where: {
-          id: currentUser?.id,
-        },
-      },
+    await removeLogo({
       refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
     });
   }
 
   return (
     <ImageInput
-      picture={getImageAbsoluteURI(currentUser?.avatarUrl)}
+      picture={getImageAbsoluteURI(
+        currentUser?.workspaceMember?.workspace.logo,
+      )}
       onUpload={onUpload}
       onRemove={onRemove}
     />

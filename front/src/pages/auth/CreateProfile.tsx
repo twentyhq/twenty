@@ -15,7 +15,7 @@ import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMou
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { NameFields } from '@/settings/profile/components/NameFields';
-import { PictureUploader } from '@/settings/profile/components/PictureUploader';
+import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { GET_CURRENT_USER } from '@/users/queries';
@@ -111,7 +111,7 @@ export function CreateProfile() {
       <StyledContentContainer>
         <StyledSectionContainer>
           <SubSectionTitle title="Picture" />
-          <PictureUploader />
+          <ProfilePictureUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
           <SubSectionTitle
