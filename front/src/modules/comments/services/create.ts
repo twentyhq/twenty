@@ -33,7 +33,7 @@ export const CREATE_COMMENT = gql`
 `;
 
 export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
-  mutation CreateCommentThreadWithComment(
+  mutation CreateCommentThread(
     $commentThreadId: String!
     $body: String
     $title: String

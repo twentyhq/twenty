@@ -16,7 +16,7 @@ import { useOpenRightDrawer } from '@/ui/layout/right-drawer/hooks/useOpenRightD
 import { logError } from '@/utils/logs/logError';
 import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
-import { useCreateCommentThreadWithCommentMutation } from '~/generated/graphql';
+import { useCreateCommentThreadMutation } from '~/generated/graphql';
 
 import { useOpenCommentThreadRightDrawer } from '../hooks/useOpenCommentThreadRightDrawer';
 import {
@@ -32,8 +32,7 @@ export function RightDrawerCreateCommentThread() {
 
   const [commentableEntityArray] = useRecoilState(commentableEntityArrayState);
 
-  const [createCommentThreadWithComment] =
-    useCreateCommentThreadWithCommentMutation();
+  const [CreateCommentThread] = useCreateCommentThreadMutation();
 
   const currentUser = useRecoilValue(currentUserState);
 
@@ -53,7 +52,7 @@ export function RightDrawerCreateCommentThread() {
       return;
     }
 
-    createCommentThreadWithComment({
+    CreateCommentThread({
       variables: {
         authorId: currentUser.id,
         body: body,
