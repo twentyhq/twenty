@@ -24,11 +24,7 @@ export function Opportunities() {
   const pipelines = useGetPipelinesQuery();
   const pipelineId = pipelines.data?.findManyPipeline[0].id;
 
-  console.log({ pipelines });
-
   const { initialBoard, items } = useBoard(pipelineId || '');
-
-  console.log({ items });
 
   const columns = useMemo(
     () =>
@@ -47,7 +43,6 @@ export function Opportunities() {
     async (
       pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
     ) => {
-      console.log({ pipelineProgress });
       await updatePipelineProgress({
         variables: {
           id: pipelineProgress.id,
