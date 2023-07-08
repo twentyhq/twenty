@@ -43,15 +43,15 @@ const StyledTimelineEmptyContainer = styled.div`
 
 const StyledEmptyTimelineTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
-  font-size: 24px;
-  font-weight: 600;
+  font-size: ${({ theme }) => theme.font.size.xxl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: 120%;
 `;
 
 const StyledEmptyTimelineSubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: 24px;
-  font-weight: 600;
+  font-size: ${({ theme }) => theme.font.size.xxl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: 120%;
 `;
 
@@ -132,7 +132,7 @@ const StyledCard = styled.div`
 
 const StyledCardTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
-  font-weight: 500;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: 150%;
 `;
 

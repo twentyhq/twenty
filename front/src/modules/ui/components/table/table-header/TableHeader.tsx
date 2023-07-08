@@ -27,7 +27,7 @@ const StyledTableHeader = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: row;
-  font-weight: 500;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   height: 40px;
   justify-content: space-between;
   padding-left: ${({ theme }) => theme.spacing(3)};
@@ -49,7 +49,7 @@ const StyledViewSection = styled.div`
 
 const StyledFilters = styled.div`
   display: flex;
-  font-weight: 400;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: 2px;
 `;
 

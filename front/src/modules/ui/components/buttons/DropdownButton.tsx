@@ -22,8 +22,8 @@ const StyledButton = styled.button<ButtonProps>`
   border-radius: 4px;
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: 8px;
   height: 24px;
   line-height: 150%;

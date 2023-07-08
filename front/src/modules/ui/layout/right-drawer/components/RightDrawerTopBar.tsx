@@ -10,7 +10,7 @@ const StyledRightDrawerTopBar = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: row;
-  font-size: 13px;
+  font-size: ${({ theme }) => theme.font.size.md};
   justify-content: space-between;
   min-height: 40px;
   padding-left: 8px;
@@ -19,7 +19,7 @@ const StyledRightDrawerTopBar = styled.div`
 
 const StyledTopBarTitle = styled.div`
   align-items: center;
-  font-weight: 500;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 

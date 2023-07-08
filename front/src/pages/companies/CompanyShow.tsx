@@ -141,9 +141,9 @@ const StyledDate = styled.div`
 
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
-  font-size: 20px;
+  font-size: ${({ theme }) => theme.font.size.xl};
   font-style: normal;
-  font-weight: 600;
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: 120%;
 `;
 

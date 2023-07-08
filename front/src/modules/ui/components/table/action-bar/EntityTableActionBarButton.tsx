@@ -32,7 +32,7 @@ const StyledButton = styled.div<StyledButtonProps>`
 `;
 
 const StyledButtonLabel = styled.div`
-  font-weight: 500;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 

@@ -45,7 +45,7 @@ const StyledDelete = styled.div`
 `;
 
 const StyledLabelKey = styled.div`
-  font-weight: 500;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 function SortOrFilterChip({

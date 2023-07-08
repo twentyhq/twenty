@@ -41,7 +41,7 @@ const StyledName = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-family: 'Inter';
   font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: 500;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 

@@ -41,9 +41,8 @@ const StyledChip = styled.div`
 const StyledCount = styled.div`
   align-items: center;
   display: flex;
-  font-size: 12px;
-
-  font-weight: 500;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   justify-content: center;
 `;
 
