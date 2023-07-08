@@ -39,13 +39,13 @@ export const InteractWithManyRows: Story = {
     );
 
     expect(
-      canvas.queryByTestId('inplace-input-edit-mode-container'),
+      canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
     await userEvent.click(firstRowEmailCell);
 
     expect(
-      canvas.queryByTestId('inplace-input-edit-mode-container'),
+      canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
 
     await userEvent.click(secondRowEmailCell);
@@ -57,7 +57,7 @@ export const InteractWithManyRows: Story = {
     );
 
     expect(
-      canvas.queryByTestId('inplace-input-edit-mode-container'),
+      canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
     await userEvent.click(secondRowEmailCellFocused);
@@ -65,7 +65,7 @@ export const InteractWithManyRows: Story = {
     await sleep(25);
 
     expect(
-      canvas.queryByTestId('inplace-input-edit-mode-container'),
+      canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
   },
   parameters: {

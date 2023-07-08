@@ -1,7 +1,7 @@
 import CompanyChip from '@/companies/components/CompanyChip';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { EditableCell } from '@/ui/components/editable-cell/EditableCell';
-import { isCreateModeScopedState } from '@/ui/components/inplace-input/states/isCreateModeScopedState';
+import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import { Company, Person } from '~/generated/graphql';
 

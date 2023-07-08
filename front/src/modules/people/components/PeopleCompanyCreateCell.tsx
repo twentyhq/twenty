@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
-import { isCreateModeScopedState } from '@/ui/components/inplace-input/states/isCreateModeScopedState';
+import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
 import { DoubleTextInput } from '@/ui/components/inputs/DoubleTextInput';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { logError } from '@/utils/logs/logError';

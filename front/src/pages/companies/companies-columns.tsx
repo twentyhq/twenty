@@ -4,7 +4,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { CompanyAccountOwnerCell } from '@/companies/components/CompanyAccountOwnerCell';
 import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEditableNameCell';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
-import { EditableTextCell } from '@/ui/components/editable-cell/types/EditableTextCell';
+import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
   IconBuildingSkyscraper,
@@ -44,7 +44,7 @@ export const useCompaniesColumns = () => {
           <ColumnHead viewName="URL" viewIcon={<IconLink size={16} />} />
         ),
         cell: (props) => (
-          <EditableTextCell
+          <EditableText
             content={props.row.original.domainName || ''}
             placeholder="Domain name"
             changeHandler={(value) => {
@@ -66,7 +66,7 @@ export const useCompaniesColumns = () => {
           <ColumnHead viewName="Employees" viewIcon={<IconUsers size={16} />} />
         ),
         cell: (props) => (
-          <EditableTextCell
+          <EditableText
             content={props.row.original.employees?.toString() || ''}
             placeholder="Employees"
             changeHandler={(value) => {
@@ -89,7 +89,7 @@ export const useCompaniesColumns = () => {
           <ColumnHead viewName="Address" viewIcon={<IconMap size={16} />} />
         ),
         cell: (props) => (
-          <EditableTextCell
+          <EditableText
             content={props.row.original.address || ''}
             placeholder="Address"
             changeHandler={(value) => {

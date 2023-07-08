@@ -4,7 +4,7 @@ import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFiltere
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
-import { useInplaceInput } from '@/ui/components/inplace-input/hooks/useCloseInplaceInput';
+import { useEditableCell } from '@/ui/components/editable-cell/hooks/useCloseEditableCell';
 import {
   Company,
   User,
@@ -28,7 +28,7 @@ export function CompanyAccountOwnerPicker({ company }: OwnProps) {
   );
   const [updateCompany] = useUpdateCompanyMutation();
 
-  const { closeInplaceInput } = useInplaceInput();
+  const { closeEditableCell } = useEditableCell();
 
   const companies = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
@@ -52,7 +52,7 @@ export function CompanyAccountOwnerPicker({ company }: OwnProps) {
       },
     });
 
-    closeInplaceInput();
+    closeEditableCell();
   }
 
   return (

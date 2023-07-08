@@ -2,8 +2,8 @@ import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState'
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
-import { useInplaceInput } from '@/ui/components/inplace-input/hooks/useCloseInplaceInput';
-import { isCreateModeScopedState } from '@/ui/components/inplace-input/states/isCreateModeScopedState';
+import { useEditableCell } from '@/ui/components/editable-cell/hooks/useCloseEditableCell';
+import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
@@ -25,7 +25,7 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
   );
   const [updatePeople] = useUpdatePeopleMutation();
 
-  const { closeInplaceInput } = useInplaceInput();
+  const { closeEditableCell } = useEditableCell();
 
   const companies = useFilteredSearchEntityQuery({
     queryHook: useSearchCompanyQuery,
@@ -50,7 +50,7 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
       },
     });
 
-    closeInplaceInput();
+    closeEditableCell();
   }
 
   function handleCreate() {

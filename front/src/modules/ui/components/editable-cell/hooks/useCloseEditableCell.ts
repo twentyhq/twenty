@@ -1,15 +1,14 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-// TODO: Remove dependancy to table
 import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
 
 import { isEditModeScopedState } from '../states/isEditModeScopedState';
 
-export function useInplaceInput() {
+export function useEditableCell() {
   const [, setIsEditMode] = useRecoilScopedState(isEditModeScopedState);
 
-  const closeInplaceInput = useRecoilCallback(
+  const closeEditableCell = useRecoilCallback(
     ({ set }) =>
       async () => {
         setIsEditMode(false);
@@ -21,7 +20,7 @@ export function useInplaceInput() {
     [setIsEditMode],
   );
 
-  const openInplaceInput = useRecoilCallback(
+  const openEditableCell = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
         const isSomeInputInEditMode = snapshot
@@ -38,7 +37,7 @@ export function useInplaceInput() {
   );
 
   return {
-    closeInplaceInput,
-    openInplaceInput,
+    closeEditableCell,
+    openEditableCell,
   };
 }
