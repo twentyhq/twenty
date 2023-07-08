@@ -3,7 +3,6 @@ import {
   ApolloClient,
   ApolloClientOptions,
   ApolloLink,
-  createHttpLink,
   ServerError,
   ServerParseError,
 } from '@apollo/client';
@@ -11,6 +10,7 @@ import { GraphQLErrors } from '@apollo/client/errors';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
+import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
 import { AuthTokenPair } from '~/generated/graphql';
@@ -53,7 +53,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
     this.tokenPair = tokenPair;
 
     const buildApolloLink = (): ApolloLink => {
-      const httpLink = createHttpLink({
+      const httpLink = createUploadLink({
         uri,
       });
 

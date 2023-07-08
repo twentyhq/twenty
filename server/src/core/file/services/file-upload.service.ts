@@ -4,45 +4,73 @@ import { getCropSize } from 'src/utils/image';
 import { settings } from 'src/constants/settings';
 import { FileFolder } from '../interfaces/file-folder.interface';
 import { FileStorageService } from 'src/integrations/file-storage/file-storage.service';
+import { v4 as uuidV4 } from 'uuid';
 
 @Injectable()
 export class FileUploadService {
   constructor(private readonly fileStorage: FileStorageService) {}
 
-  async uploadFile({
+  private async _uploadFile({
     file,
-    name,
+    filename,
     mimeType,
     fileFolder,
   }: {
     file: Buffer | Uint8Array | string;
-    name: string;
+    filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
   }) {
     await this.fileStorage.write({
       file,
-      name,
+      name: filename,
       mimeType,
       folder: fileFolder,
     });
+  }
+
+  async uploadFile({
+    file,
+    filename,
+    mimeType,
+    fileFolder,
+  }: {
+    file: Buffer | Uint8Array | string;
+    filename: string;
+    mimeType: string | undefined;
+    fileFolder: FileFolder;
+  }) {
+    const ext = filename.split('.')?.[1];
+    const id = uuidV4();
+    const name = `${id}${ext ? `.${ext}` : ''}`;
+
+    await this._uploadFile({
+      file,
+      filename,
+      mimeType,
+      fileFolder,
+    });
 
     return {
-      name: `/${name}`,
+      path: `${fileFolder}/${name}`,
     };
   }
 
   async uploadImage({
     file,
-    name,
+    filename,
     mimeType,
     fileFolder,
   }: {
     file: Buffer | Uint8Array | string;
-    name: string;
+    filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
   }) {
+    const ext = filename.split('.')?.[1];
+    const id = uuidV4();
+    const name = `${id}${ext ? `.${ext}` : ''}`;
+
     // Get all cropSizes for this fileFolder
     const cropSizes = settings.storage.imageCropSizes[fileFolder];
     // Extract the values from ShortCropSize
@@ -56,14 +84,18 @@ export class FileUploadService {
       ),
     );
 
+    const paths: Array<string> = [];
+
     // Upload all images to corresponding folders
     await Promise.all(
       images.map(async (image, index) => {
         const buffer = await image.toBuffer();
 
+        paths.push(`profile-picture/${cropSizes[index]}/${name}`);
+
         return this.uploadFile({
           file: buffer,
-          name: `${cropSizes[index]}/${name}`,
+          filename: `${cropSizes[index]}/${name}`,
           mimeType,
           fileFolder,
         });
@@ -71,7 +103,7 @@ export class FileUploadService {
     );
 
     return {
-      name: `/${name}`,
+      paths,
     };
   }
 }
