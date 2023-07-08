@@ -8,7 +8,7 @@ import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysSc
 import { useEditableCell } from './hooks/useCloseEditableCell';
 import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
-import { useSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
+import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
 import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
@@ -41,7 +41,7 @@ export function EditableCell({
 }: OwnProps) {
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
 
-  const setSoftFocusOnCurrentCell = useSoftFocusOnCurrentCell();
+  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
 
   const { openEditableCell } = useEditableCell();
 

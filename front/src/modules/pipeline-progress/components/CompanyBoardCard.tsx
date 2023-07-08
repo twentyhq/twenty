@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { IconCurrencyDollar } from '@tabler/icons-react';
 
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { BoardCardEditableFieldText } from '@/ui/board-card-field-inputs/components/BoardCardFieldTextInput';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
-import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
 import { CellContext } from '@/ui/tables/states/CellContext';
 import { RowContext } from '@/ui/tables/states/RowContext';
 
@@ -112,18 +112,16 @@ export function CompanyBoardCard({
         <StyledBoardCardBody>
           <span>
             <IconCurrencyDollar size={theme.icon.size.md} />
-            <HackScope>
-              <EditableText
-                content={pipelineProgress.amount?.toString() || ''}
-                placeholder="Opportunity amount"
-                changeHandler={(value) =>
-                  onCardUpdate({
-                    ...pipelineProgress,
-                    amount: parseInt(value),
-                  })
-                }
-              />
-            </HackScope>
+            <BoardCardEditableFieldText
+              value={pipelineProgress.amount?.toString() || ''}
+              placeholder="Opportunity amount"
+              onChange={(value) =>
+                onCardUpdate({
+                  ...pipelineProgress,
+                  amount: parseInt(value),
+                })
+              }
+            />
           </span>
           <span>
             <IconCalendarEvent size={theme.icon.size.md} />

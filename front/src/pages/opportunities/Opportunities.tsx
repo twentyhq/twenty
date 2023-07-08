@@ -1,8 +1,10 @@
 import { useCallback, useMemo } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 
 import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline-progress/components/BoardActionBarButtonDeletePipelineProgress';
 import { EntityBoardActionBar } from '@/pipeline-progress/components/EntityBoardActionBar';
+import { GET_PIPELINES } from '@/pipeline-progress/queries';
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 
@@ -22,7 +24,12 @@ export function Opportunities() {
   const pipelines = useGetPipelinesQuery();
   const pipelineId = pipelines.data?.findManyPipeline[0].id;
 
+  console.log({ pipelines });
+
   const { initialBoard, items } = useBoard(pipelineId || '');
+
+  console.log({ items });
+
   const columns = useMemo(
     () =>
       initialBoard?.map(({ id, colorCode, title }) => ({
@@ -40,12 +47,14 @@ export function Opportunities() {
     async (
       pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
     ) => {
-      updatePipelineProgress({
+      console.log({ pipelineProgress });
+      await updatePipelineProgress({
         variables: {
           id: pipelineProgress.id,
           amount: pipelineProgress.amount,
           closeDate: pipelineProgress.closeDate || null,
         },
+        refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
       });
     },
     [updatePipelineProgress],

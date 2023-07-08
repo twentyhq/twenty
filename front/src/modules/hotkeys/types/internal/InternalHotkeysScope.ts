@@ -5,6 +5,7 @@ export enum InternalHotkeysScope {
   Table = 'table',
   TableSoftFocus = 'table-soft-focus',
   CellEditMode = 'cell-edit-mode',
+  BoardCardFieldEditMode = 'board-card-field-edit-mode',
   RightDrawer = 'right-drawer',
   TableHeaderDropdownButton = 'table-header-dropdown-button',
   CreateProfile = 'create-profile',

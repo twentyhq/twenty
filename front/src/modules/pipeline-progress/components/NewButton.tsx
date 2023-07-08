@@ -3,8 +3,8 @@ import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
-import { Column } from '@/ui/components/board/Board';
-import { NewButton as UINewButton } from '@/ui/components/board/NewButton';
+import { Column } from '@/ui/board/components/Board';
+import { NewButton as UINewButton } from '@/ui/board/components/NewButton';
 import {
   Company,
   PipelineProgressableType,

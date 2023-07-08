@@ -5,7 +5,7 @@ import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullNa
 import { PeopleCompanyCell } from '@/people/components/PeopleCompanyCell';
 import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
 import { EditablePhone } from '@/ui/components/editable-cell/types/EditablePhone';
-import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
+import { EditableTextCell } from '@/ui/components/editable-cell/types/EditableTextCell';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
   IconBuildingSkyscraper,
@@ -55,10 +55,10 @@ export const usePeopleColumns = () => {
           <ColumnHead viewName="Email" viewIcon={<IconMail size={16} />} />
         ),
         cell: (props) => (
-          <EditableText
+          <EditableTextCell
             placeholder="Email"
-            content={props.row.original.email || ''}
-            changeHandler={async (value: string) => {
+            value={props.row.original.email || ''}
+            onChange={async (value: string) => {
               const person = props.row.original;
               await updatePerson({
                 variables: {
@@ -137,11 +137,11 @@ export const usePeopleColumns = () => {
           <ColumnHead viewName="City" viewIcon={<IconMap size={16} />} />
         ),
         cell: (props) => (
-          <EditableText
+          <EditableTextCell
             editModeHorizontalAlign="right"
             placeholder="City"
-            content={props.row.original.city || ''}
-            changeHandler={async (value: string) => {
+            value={props.row.original.city || ''}
+            onChange={async (value: string) => {
               const person = { ...props.row.original };
               await updatePerson({
                 variables: {
