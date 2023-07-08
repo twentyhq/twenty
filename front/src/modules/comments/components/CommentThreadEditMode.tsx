@@ -88,7 +88,7 @@ export function CommentThreadEditMode({
     theme: useTheme().name === 'light' ? 'light' : 'dark',
     initialContent: undefined,
     onEditorContentChange: (editor) => {
-      // Todo: save operation here
+      // TODO: save operation here
       console.log('save');
     },
     onEditorReady: (editor) => {

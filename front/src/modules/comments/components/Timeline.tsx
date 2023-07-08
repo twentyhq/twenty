@@ -1,3 +1,4 @@
+import React from 'react';
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
@@ -199,6 +200,16 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
 
   return (
     <StyledTimelineContainer>
+      <StyledTopActionBar>
+        <StyledTimelineItemContainer>
+          <StyledIconContainer>
+            <IconPlus />
+          </StyledIconContainer>
+
+          <TableActionBarButtonCreateCommentThreadCompany />
+        </StyledTimelineItemContainer>
+      </StyledTopActionBar>
+
       {commentThreads.map((commentThread) => {
         const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
           commentThread.createdAt,
@@ -208,17 +219,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
         console.log(JSON.parse(commentThread.body ?? '')[0].content[0].text);
 
         return (
-          <>
-            <StyledTopActionBar>
-              <StyledTimelineItemContainer>
-                <StyledIconContainer>
-                  <IconPlus />
-                </StyledIconContainer>
-
-                <TableActionBarButtonCreateCommentThreadCompany />
-              </StyledTimelineItemContainer>
-            </StyledTopActionBar>
-
+          <React.Fragment key={commentThread.id}>
             <StyledTimelineItemContainer>
               <StyledIconContainer>
                 <IconNotes />
@@ -255,7 +256,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
                 </StyledCard>
               </StyledCardContainer>
             </StyledTimelineItemContainer>
-          </>
+          </React.Fragment>
         );
       })}
     </StyledTimelineContainer>
