@@ -1,6 +1,5 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
-import { v4 as uuidV4 } from 'uuid';
 import { FileUploadService } from '../services/file-upload.service';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
@@ -21,18 +20,15 @@ export class FileUploadResolver {
   ): Promise<string> {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
-    const ext = filename.split('.')?.[1];
-    const id = uuidV4();
-    const name = `${id}${ext ? `.${ext}` : ''}`;
 
-    const path = await this.fileUploadService.uploadFile({
+    const { path } = await this.fileUploadService.uploadFile({
       file: buffer,
-      name,
+      filename,
       mimeType: mimetype,
       fileFolder,
     });
 
-    return path.name;
+    return path;
   }
 
   @Mutation(() => String)
@@ -44,17 +40,14 @@ export class FileUploadResolver {
   ): Promise<string> {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
-    const ext = filename.split('.')?.[1];
-    const id = uuidV4();
-    const name = `${id}${ext ? `.${ext}` : ''}`;
 
-    const path = await this.fileUploadService.uploadImage({
+    const { paths } = await this.fileUploadService.uploadImage({
       file: buffer,
-      name,
+      filename,
       mimeType: mimetype,
       fileFolder,
     });
 
-    return path.name;
+    return paths[0];
   }
 }

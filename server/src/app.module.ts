@@ -29,6 +29,7 @@ import GraphQLJSON from 'graphql-type-json';
         error.extensions.stacktrace = undefined;
         return error;
       },
+      csrfPrevention: false,
     }),
     PrismaModule,
     HealthModule,
