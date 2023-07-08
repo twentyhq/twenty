@@ -3,7 +3,6 @@ import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { getImageAbsoluteURI } from '@/users/utils/getProfilePictureAbsoluteURI';
-import { mockedUsersData } from '~/testing/mock-data/users';
 
 import NavCollapseButton from './NavCollapseButton';
 
