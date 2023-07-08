@@ -5,13 +5,13 @@ import { useRecoilState } from 'recoil';
 import { captureHotkeyTypeInFocusState } from '@/hotkeys/states/captureHotkeyTypeInFocusState';
 import { isNonTextWritingKey } from '@/utils/hotkeys/isNonTextWritingKey';
 
-import { useInplaceInput } from './hooks/useCloseInplaceInput';
-import { InplaceInputDisplayMode } from './InplaceInputDisplayMode';
+import { useEditableCell } from './hooks/useCloseEditableCell';
+import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 
-export function InplaceInputSoftFocusMode({
+export function EditableCellSoftFocusMode({
   children,
 }: React.PropsWithChildren<unknown>) {
-  const { closeInplaceInput, openInplaceInput } = useInplaceInput();
+  const { closeEditableCell, openEditableCell } = useEditableCell();
   const [captureHotkeyTypeInFocus] = useRecoilState(
     captureHotkeyTypeInFocusState,
   );
@@ -19,14 +19,14 @@ export function InplaceInputSoftFocusMode({
   useHotkeys(
     'enter',
     () => {
-      openInplaceInput();
+      openEditableCell();
     },
     {
       enableOnContentEditable: true,
       enableOnFormTags: true,
       preventDefault: true,
     },
-    [closeInplaceInput],
+    [closeEditableCell],
   );
 
   useHotkeys(
@@ -44,7 +44,7 @@ export function InplaceInputSoftFocusMode({
       if (captureHotkeyTypeInFocus) {
         return;
       }
-      openInplaceInput();
+      openEditableCell();
     },
     {
       enableOnContentEditable: true,
@@ -53,7 +53,5 @@ export function InplaceInputSoftFocusMode({
     },
   );
 
-  return (
-    <InplaceInputDisplayMode hasSoftFocus>{children}</InplaceInputDisplayMode>
-  );
+  return <EditableCellDisplayMode>{children}</EditableCellDisplayMode>;
 }

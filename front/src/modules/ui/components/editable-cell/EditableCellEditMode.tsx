@@ -6,9 +6,9 @@ import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsid
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 import { overlayBackground } from '@/ui/themes/effects';
 
-import { useInplaceInput } from './hooks/useCloseInplaceInput';
+import { useEditableCell } from './hooks/useCloseEditableCell';
 
-export const InplaceInputEditModeContainer = styled.div<OwnProps>`
+export const EditableCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -34,7 +34,7 @@ type OwnProps = {
   onOutsideClick?: () => void;
 };
 
-export function InplaceInputEditMode({
+export function EditableCellEditMode({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
@@ -42,7 +42,7 @@ export function InplaceInputEditMode({
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
-  const { closeInplaceInput } = useInplaceInput();
+  const { closeEditableCell } = useEditableCell();
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   useListenClickOutsideArrayOfRef([wrapperRef], () => {
@@ -52,7 +52,7 @@ export function InplaceInputEditMode({
   useHotkeys(
     'enter',
     () => {
-      closeInplaceInput();
+      closeEditableCell();
       moveDown();
     },
     {
@@ -60,26 +60,26 @@ export function InplaceInputEditMode({
       enableOnFormTags: true,
       preventDefault: true,
     },
-    [closeInplaceInput],
+    [closeEditableCell],
   );
 
   useHotkeys(
     'esc',
     () => {
-      closeInplaceInput();
+      closeEditableCell();
     },
     {
       enableOnContentEditable: true,
       enableOnFormTags: true,
       preventDefault: true,
     },
-    [closeInplaceInput],
+    [closeEditableCell],
   );
 
   useHotkeys(
     'tab',
     () => {
-      closeInplaceInput();
+      closeEditableCell();
       moveRight();
     },
     {
@@ -87,13 +87,13 @@ export function InplaceInputEditMode({
       enableOnFormTags: true,
       preventDefault: true,
     },
-    [closeInplaceInput, moveRight],
+    [closeEditableCell, moveRight],
   );
 
   useHotkeys(
     'shift+tab',
     () => {
-      closeInplaceInput();
+      closeEditableCell();
       moveLeft();
     },
     {
@@ -101,17 +101,17 @@ export function InplaceInputEditMode({
       enableOnFormTags: true,
       preventDefault: true,
     },
-    [closeInplaceInput, moveRight],
+    [closeEditableCell, moveRight],
   );
 
   return (
-    <InplaceInputEditModeContainer
-      data-testid="inplace-input-edit-mode-container"
+    <EditableCellEditModeContainer
+      data-testid="editable-cell-edit-mode-container"
       ref={wrapperRef}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeVerticalPosition={editModeVerticalPosition}
     >
       {children}
-    </InplaceInputEditModeContainer>
+    </EditableCellEditModeContainer>
   );
 }

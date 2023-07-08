@@ -1,10 +1,12 @@
 import styled from '@emotion/styled';
 
+import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
+
 type Props = {
   softFocus: boolean;
 };
 
-export const InplaceInputNormalModeOuterContainer = styled.div<Props>`
+export const EditableCellNormalModeOuterContainer = styled.div<Props>`
   align-items: center;
   display: flex;
   height: 100%;
@@ -22,7 +24,7 @@ export const InplaceInputNormalModeOuterContainer = styled.div<Props>`
       : ''}
 `;
 
-export const InplaceInputNormalModeInnerContainer = styled.div`
+export const EditableCellNormalModeInnerContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
@@ -30,17 +32,16 @@ export const InplaceInputNormalModeInnerContainer = styled.div`
   width: 100%;
 `;
 
-export function InplaceInputDisplayMode({
+export function EditableCellDisplayMode({
   children,
-  hasSoftFocus,
-}: React.PropsWithChildren & {
-  hasSoftFocus: boolean;
-}) {
+}: React.PropsWithChildren<unknown>) {
+  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
+
   return (
-    <InplaceInputNormalModeOuterContainer softFocus={hasSoftFocus}>
-      <InplaceInputNormalModeInnerContainer>
+    <EditableCellNormalModeOuterContainer softFocus={hasSoftFocus}>
+      <EditableCellNormalModeInnerContainer>
         {children}
-      </InplaceInputNormalModeInnerContainer>
-    </InplaceInputNormalModeOuterContainer>
+      </EditableCellNormalModeInnerContainer>
+    </EditableCellNormalModeOuterContainer>
   );
 }
