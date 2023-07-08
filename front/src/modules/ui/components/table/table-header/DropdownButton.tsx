@@ -2,7 +2,6 @@ import { ReactNode, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { IconChevronDown } from '@/ui/icons/index';

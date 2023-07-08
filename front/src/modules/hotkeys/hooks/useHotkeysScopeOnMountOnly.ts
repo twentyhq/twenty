@@ -8,6 +8,7 @@ import { useAddToHotkeysScopeStack } from './useAddToHotkeysScopeStack';
 
 export function useHotkeysScopeOnMountOnly(
   hotkeysScopeStackItem: HotkeysScopeStackItem,
+  enabled = true,
 ) {
   const addToHotkeysScopeStack = useAddToHotkeysScopeStack();
 
@@ -19,10 +20,11 @@ export function useHotkeysScopeOnMountOnly(
   );
 
   useEffect(() => {
-    if (!hotkeysScopeAlreadyInStack) {
+    if (!hotkeysScopeAlreadyInStack && enabled) {
       addToHotkeysScopeStack(hotkeysScopeStackItem);
     }
   }, [
+    enabled,
     addToHotkeysScopeStack,
     hotkeysScopeStackItem,
     hotkeysScopeAlreadyInStack,

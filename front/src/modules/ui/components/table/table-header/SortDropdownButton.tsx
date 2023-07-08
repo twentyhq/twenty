@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { useRecoilState } from 'recoil';
 
 import {
   SelectedSortType,

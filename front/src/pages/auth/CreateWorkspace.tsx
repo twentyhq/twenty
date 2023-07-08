@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
@@ -8,6 +7,8 @@ import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
@@ -68,15 +69,12 @@ export function CreateWorkspace() {
     }
   }, [navigate, updateWorkspace, workspaceName]);
 
-  useHotkeys(
+  useScopedHotkeys(
     'enter',
     () => {
       handleCreate();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
+    InternalHotkeysScope.Modal,
     [handleCreate],
   );
 

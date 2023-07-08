@@ -10,4 +10,5 @@ export enum InternalHotkeysScope {
   CreateProfile = 'create-profile',
   RelationPicker = 'relation-picker',
   CellDoubleTextInput = 'cell-double-text-input',
+  Modal = 'modal',
 }

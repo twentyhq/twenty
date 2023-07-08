@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -12,6 +11,8 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
@@ -74,15 +75,12 @@ export function PasswordLogin() {
     }
   }, [login, authFlowUserEmail, internalPassword, setMockMode, navigate]);
 
-  useHotkeys(
+  useScopedHotkeys(
     'enter',
     () => {
       handleLogin();
     },
-    {
-      enableOnContentEditable: true,
-      enableOnFormTags: true,
-    },
+    InternalHotkeysScope.Modal,
     [handleLogin],
   );
 

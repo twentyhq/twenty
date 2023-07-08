@@ -1,4 +1,4 @@
-import React, { StrictMode } from 'react';
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HotkeysProvider } from 'react-hotkeys-hook';
 import { BrowserRouter } from 'react-router-dom';

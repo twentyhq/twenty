@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactElement, useRef, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
@@ -7,7 +7,6 @@ import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysSc
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 import { textInputStyle } from '@/ui/themes/effects';
 
-import { EditableCell } from '../EditableCell';
 import { useEditableCell } from '../hooks/useCloseEditableCell';
 
 type OwnProps = {

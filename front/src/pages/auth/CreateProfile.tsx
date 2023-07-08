@@ -83,7 +83,6 @@ export function CreateProfile() {
         throw errors;
       }
 
-      // setCaptureHotkeyTypeInFocus(false);
       navigate('/');
     } catch (error) {
       console.error(error);
@@ -95,7 +94,7 @@ export function CreateProfile() {
     () => {
       handleCreate();
     },
-    InternalHotkeysScope.CreateProfile,
+    InternalHotkeysScope.Modal,
     [handleCreate],
   );
 

@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { hotkeysScopeStackState } from '../states/internal/hotkeysScopeStackState';
-import { InternalHotkeysScope } from '../types/internal/InternalHotkeysScope';
 
 export function useCurrentHotkeysScope() {
   const hotkeysScopeStack = useRecoilValue(hotkeysScopeStackState);
