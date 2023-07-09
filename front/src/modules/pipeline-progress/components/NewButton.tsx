@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { Column } from '@/ui/board/components/Board';
 import { NewButton as UINewButton } from '@/ui/board/components/NewButton';
@@ -71,6 +73,12 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
   const onNewClick = useCallback(() => {
     setIsCreatingCard(true);
   }, [setIsCreatingCard]);
+
+  useHotkeysScopeOnBooleanState(
+    { scope: InternalHotkeysScope.RelationPicker },
+    isCreatingCard,
+  );
+
   return (
     <>
       {isCreatingCard && (
