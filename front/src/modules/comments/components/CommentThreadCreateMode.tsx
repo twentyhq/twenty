@@ -2,6 +2,7 @@ import { BlockNoteEditor } from '@blocknote/core';
 import { BlockNoteView } from '@blocknote/react';
 import styled from '@emotion/styled';
 
+import { BlockEditor } from '@/ui/components/editor/BlockEditor';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
 import { IconArrowUpRight } from '@/ui/icons/index';
@@ -34,7 +35,7 @@ const StyledTopContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 24px;
+  padding: 24px 24px 24px 48px;
 `;
 
 const StyledEditableTitleInput = styled.input`
@@ -96,7 +97,7 @@ export function CommentThreadCreateMode({
         </PropertyBox>
       </StyledTopContainer>
       <BlockNoteStyledContainer>
-        <BlockNoteView editor={editor} />
+        <BlockEditor editor={editor} />
       </BlockNoteStyledContainer>
     </StyledContainer>
   );

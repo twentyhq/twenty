@@ -88,6 +88,7 @@ export function RightDrawerCreateCommentThread() {
   const editor: BlockNoteEditor | null = useBlockNote({
     theme: useTheme().name === 'light' ? 'light' : 'dark',
     initialContent: initialBody ? JSON.parse(initialBody) : undefined,
+    editorDOMAttributes: { class: 'editor-class' },
     onEditorContentChange: (editor) => {
       localStorage.setItem(
         'editorBody' + identifier,
