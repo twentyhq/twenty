@@ -1,12 +1,10 @@
-import { useRef, useState } from 'react';
-import { useHotkeys } from 'react-hotkeys-hook';
+import { useState } from 'react';
 import { v4 } from 'uuid';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
-import { DoubleTextInput } from '@/ui/components/inputs/DoubleTextInput';
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { EditableCellDoubleTextEditMode } from '@/ui/components/editable-cell/types/EditableCellDoubleTextEditMode';
 import { logError } from '@/utils/logs/logError';
 import {
   Person,
@@ -30,8 +28,6 @@ export function PeopleCompanyCreateCell({ people }: OwnProps) {
   const [companyDomainName, setCompanyDomainName] = useState('');
   const [insertCompany] = useInsertCompanyMutation();
   const [updatePeople] = useUpdatePeopleMutation();
-
-  const containerRef = useRef(null);
 
   function handleDoubleTextChange(leftValue: string, rightValue: string): void {
     setCompanyDomainName(leftValue);
@@ -65,34 +61,18 @@ export function PeopleCompanyCreateCell({ people }: OwnProps) {
       // TODO: handle error better
       logError(error);
     }
-
     setIsCreating(false);
   }
 
-  useHotkeys(
-    'enter, escape',
-    () => {
-      handleCompanyCreate(companyName, companyDomainName);
-    },
-    {
-      enableOnFormTags: true,
-      enableOnContentEditable: true,
-      preventDefault: true,
-    },
-    [companyName, companyDomainName, handleCompanyCreate],
-  );
-
-  useListenClickOutsideArrayOfRef([containerRef], () => {
-    handleCompanyCreate(companyName, companyDomainName);
-  });
-
   return (
-    <DoubleTextInput
-      leftValue={companyDomainName}
-      rightValue={companyName}
-      leftValuePlaceholder="URL"
-      rightValuePlaceholder="Name"
+    <EditableCellDoubleTextEditMode
+      firstValue={companyDomainName}
+      secondValue={companyName}
+      firstValuePlaceholder="URL"
+      secondValuePlaceholder="Name"
       onChange={handleDoubleTextChange}
+      onSubmit={() => handleCompanyCreate(companyName, companyDomainName)}
+      onExit={() => setIsCreating(false)}
     />
   );
 }

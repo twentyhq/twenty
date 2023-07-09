@@ -91,12 +91,6 @@ const StyledTableWithHeader = styled.div`
   width: 100%;
 `;
 
-const StyledTableScrollableContainer = styled.div`
-  flex: 1;
-  height: 100%;
-  overflow: auto;
-`;
-
 export function EntityTable<TData extends { id: string }, SortField>({
   data,
   columns,
@@ -137,7 +131,7 @@ export function EntityTable<TData extends { id: string }, SortField>({
         availableSorts={availableSorts}
         onSortsUpdate={onSortsUpdate}
       />
-      <StyledTableScrollableContainer ref={tableBodyRef}>
+      <div ref={tableBodyRef}>
         <StyledTable>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -171,7 +165,7 @@ export function EntityTable<TData extends { id: string }, SortField>({
             ))}
           </tbody>
         </StyledTable>
-      </StyledTableScrollableContainer>
+      </div>
     </StyledTableWithHeader>
   );
 }

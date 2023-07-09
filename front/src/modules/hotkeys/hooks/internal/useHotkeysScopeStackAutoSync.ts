@@ -12,7 +12,6 @@ export function useHotkeysScopeStackAutoSync() {
 
   const hotkeysScopeStack = useRecoilValue(hotkeysScopeStackState);
   const customHotkeysScopes = useRecoilValue(customHotkeysScopesState);
-
   useEffect(() => {
     if (hotkeysScopeStack.length === 0) {
       return;

@@ -1,5 +1,6 @@
 import { Key } from 'ts-key-enum';
 
+import { useAddToHotkeysScopeStack } from '@/hotkeys/hooks/useAddToHotkeysScopeStack';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -31,6 +32,8 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
 
   const { closeEditableCell } = useEditableCell();
 
+  const addToScopeStack = useAddToHotkeysScopeStack();
+
   const companies = useFilteredSearchEntityQuery({
     queryHook: useSearchCompanyQuery,
     selectedIds: [people.company?.id ?? ''],
@@ -59,6 +62,7 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
 
   function handleCreate() {
     setIsCreating(true);
+    addToScopeStack({ scope: InternalHotkeysScope.CellDoubleTextInput });
   }
 
   useScopedHotkeys(

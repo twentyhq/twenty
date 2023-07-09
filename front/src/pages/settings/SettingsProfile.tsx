@@ -13,6 +13,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(8)};
+  padding-bottom: ${({ theme }) => theme.spacing(10)};
   width: 350px;
   > * + * {
     margin-top: ${({ theme }) => theme.spacing(8)};
@@ -33,27 +34,29 @@ export function SettingsProfile() {
 
   return (
     <NoTopBarContainer>
-      <StyledContainer>
-        <MainSectionTitle>Profile</MainSectionTitle>
-        <StyledSectionContainer>
-          <SubSectionTitle title="Picture" />
-          <ProfilePictureUploader />
-        </StyledSectionContainer>
-        <StyledSectionContainer>
-          <SubSectionTitle
-            title="Name"
-            description="Your name as it will be displayed"
-          />
-          <NameFields />
-        </StyledSectionContainer>
-        <StyledSectionContainer>
-          <SubSectionTitle
-            title="Email"
-            description="The email associated to your account"
-          />
-          <EmailField />
-        </StyledSectionContainer>
-      </StyledContainer>
+      <div>
+        <StyledContainer>
+          <MainSectionTitle>Profile</MainSectionTitle>
+          <StyledSectionContainer>
+            <SubSectionTitle title="Picture" />
+            <ProfilePictureUploader />
+          </StyledSectionContainer>
+          <StyledSectionContainer>
+            <SubSectionTitle
+              title="Name"
+              description="Your name as it will be displayed"
+            />
+            <NameFields />
+          </StyledSectionContainer>
+          <StyledSectionContainer>
+            <SubSectionTitle
+              title="Email"
+              description="The email associated to your account"
+            />
+            <EmailField />
+          </StyledSectionContainer>
+        </StyledContainer>
+      </div>
     </NoTopBarContainer>
   );
 }
