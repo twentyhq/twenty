@@ -10,17 +10,17 @@ export function useHotkeysScopeOnBooleanState(
   booleanState: boolean,
 ) {
   const addToHotkeysScopeStack = useAddToHotkeysScopeStack();
-  const removeFromHoteysScopeStack = useRemoveFromHotkeysScopeStack();
+  const removeFromHotkeysScopeStack = useRemoveFromHotkeysScopeStack();
 
   useEffect(() => {
     if (booleanState) {
       addToHotkeysScopeStack(hotkeysScopeStackItem);
     } else {
-      removeFromHoteysScopeStack(hotkeysScopeStackItem.scope);
+      removeFromHotkeysScopeStack(hotkeysScopeStackItem.scope);
     }
   }, [
     hotkeysScopeStackItem,
-    removeFromHoteysScopeStack,
+    removeFromHotkeysScopeStack,
     addToHotkeysScopeStack,
     booleanState,
   ]);

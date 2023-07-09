@@ -12,7 +12,6 @@ import { IconArrowUpRight } from '@tabler/icons-react';
 
 import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
 import CompanyChip from '@/companies/components/CompanyChip';
-import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { PersonChip } from '@/people/components/PersonChip';
@@ -97,11 +96,6 @@ const StyledMenuWrapper = styled.div`
 export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
-
-  useHotkeysScopeOnBooleanState(
-    { scope: InternalHotkeysScope.RelationPicker },
-    isMenuOpen,
-  );
 
   const theme = useTheme();
 
