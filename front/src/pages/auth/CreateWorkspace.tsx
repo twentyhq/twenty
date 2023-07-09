@@ -2,18 +2,21 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { isMockModeState } from '@/auth/states/isMockModeState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { MainButton } from '@/ui/components/buttons/MainButton';
-import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
-import { GET_CURRENT_USER } from '@/users/services';
+import { GET_CURRENT_USER } from '@/users/queries';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
@@ -34,6 +37,11 @@ const StyledButtonContainer = styled.div`
 `;
 
 export function CreateWorkspace() {
+  useHotkeysScopeOnMountOnly({
+    scope: InternalHotkeysScope.CreateWokspace,
+    customScopes: { 'command-menu': false, goto: false },
+  });
+  const [, setMockMode] = useRecoilState(isMockModeState);
   const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();
 
@@ -74,15 +82,16 @@ export function CreateWorkspace() {
     () => {
       handleCreate();
     },
-    InternalHotkeysScope.Modal,
+    InternalHotkeysScope.CreateWokspace,
     [handleCreate],
   );
 
   useEffect(() => {
+    setMockMode(true);
     if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceCreation) {
       navigate('/auth/create/profile');
     }
-  }, [onboardingStatus, navigate]);
+  }, [onboardingStatus, navigate, setMockMode]);
 
   return (
     <>
@@ -94,7 +103,7 @@ export function CreateWorkspace() {
       <StyledContentContainer>
         <StyledSectionContainer>
           <SubSectionTitle title="Workspace logo" />
-          <ImageInput picture={null} disabled />
+          <WorkspaceLogoUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
           <SubSectionTitle

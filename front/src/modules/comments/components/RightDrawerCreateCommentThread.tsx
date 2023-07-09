@@ -8,6 +8,8 @@ import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { GET_COMPANIES } from '@/companies/services';
+import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { GET_PEOPLE } from '@/people/services';
 import { RightDrawerBody } from '@/ui/layout/right-drawer/components/RightDrawerBody';
 import { RightDrawerPage } from '@/ui/layout/right-drawer/components/RightDrawerPage';
@@ -107,6 +109,11 @@ export function RightDrawerCreateCommentThread() {
     setTitle(newTitle);
     localStorage.setItem('editorTitle' + identifier, newTitle);
   }
+
+  useHotkeysScopeOnMountOnly({
+    scope: InternalHotkeysScope.RightDrawer,
+    customScopes: { goto: false, 'command-menu': true },
+  });
 
   return (
     <RightDrawerPage>

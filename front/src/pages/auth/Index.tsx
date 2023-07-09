@@ -12,6 +12,8 @@ import { Title } from '@/auth/components/ui/Title';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { isDemoModeState } from '@/client-config/states/isDemoModeState';
+import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { MainButton } from '@/ui/components/buttons/MainButton';
@@ -31,11 +33,15 @@ const StyledFooterNote = styled(FooterNote)`
 `;
 
 export function Index() {
+  useHotkeysScopeOnMountOnly({
+    scope: InternalHotkeysScope.AuthIndex,
+    customScopes: { 'command-menu': false, goto: false },
+  });
   const navigate = useNavigate();
   const theme = useTheme();
   const [, setMockMode] = useRecoilState(isMockModeState);
   const [authProviders] = useRecoilState(authProvidersState);
-  const [demoMode] = useRecoilState(authProvidersState);
+  const [demoMode] = useRecoilState(isDemoModeState);
 
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
@@ -61,7 +67,7 @@ export function Index() {
     () => {
       onPasswordLoginClick();
     },
-    InternalHotkeysScope.Modal,
+    InternalHotkeysScope.AuthIndex,
     [onPasswordLoginClick],
   );
 

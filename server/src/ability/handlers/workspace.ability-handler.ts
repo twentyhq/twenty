@@ -4,6 +4,7 @@ import { AppAbility } from '../ability.factory';
 import { IAbilityHandler } from '../interfaces/ability-handler.interface';
 import {
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { subject } from '@casl/ability';
 import { WorkspaceWhereInput } from 'src/core/@generated/workspace/workspace-where.input';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { assert } from 'src/utils/assert';
+import { getRequest } from 'src/utils/extract-request';
 
 class WorksapceArgs {
   where?: WorkspaceWhereInput;
@@ -42,10 +44,11 @@ export class UpdateWorkspaceAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async handle(ability: AppAbility, context: ExecutionContext) {
-    const gqlContext = GqlExecutionContext.create(context);
-    const args = gqlContext.getArgs<WorksapceArgs>();
-    const workspace = await this.prismaService.workspace.findFirst({
-      where: args.where,
+    const request = getRequest(context);
+    assert(request.user.workspace.id, '', ForbiddenException);
+
+    const workspace = await this.prismaService.workspace.findUnique({
+      where: { id: request.user.workspace.id },
     });
     assert(workspace, '', NotFoundException);
 

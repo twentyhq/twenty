@@ -4,7 +4,6 @@ import { KebabCase } from 'type-fest';
 import { BadRequestException } from '@nestjs/common';
 import { basename } from 'path';
 import { settings } from 'src/constants/settings';
-import { camelCase } from 'src/utils/camel-case';
 
 type AllowedFolders = KebabCase<keyof typeof FileFolder>;
 
@@ -20,10 +19,7 @@ export function checkFilePath(filePath: string): string {
     throw new BadRequestException(`Folder ${folder} is not allowed`);
   }
 
-  if (
-    size &&
-    !settings.storage.imageCropSizes[camelCase(folder)]?.includes(size)
-  ) {
+  if (size && !settings.storage.imageCropSizes[folder]?.includes(size)) {
     throw new BadRequestException(`Size ${size} is not allowed`);
   }
 

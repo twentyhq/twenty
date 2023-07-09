@@ -12,6 +12,7 @@ type OwnProps = {
 };
 
 export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholder'>>`
+  align-items: center;
   background-color: ${(props) =>
     !isNonEmptyString(props.avatarUrl)
       ? props.theme.background.tertiary
@@ -24,12 +25,12 @@ export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholder'>>`
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
-  flex-shrink: 0;
 
+  flex-shrink: 0;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  height: ${(props) => props.size}px;
 
+  height: ${(props) => props.size}px;
   justify-content: center;
   width: ${(props) => props.size}px;
 `;

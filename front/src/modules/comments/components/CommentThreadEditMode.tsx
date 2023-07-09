@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { gql } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
@@ -9,8 +8,6 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { GET_COMPANIES } from '@/companies/services';
-import { GET_PEOPLE } from '@/people/services';
 import { BlockEditor } from '@/ui/components/editor/BlockEditor';
 import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';

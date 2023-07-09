@@ -91,7 +91,7 @@ export class FileUploadService {
       images.map(async (image, index) => {
         const buffer = await image.toBuffer();
 
-        paths.push(`profile-picture/${cropSizes[index]}/${name}`);
+        paths.push(`${fileFolder}/${cropSizes[index]}/${name}`);
 
         return this.uploadFile({
           file: buffer,

@@ -4,7 +4,7 @@ import {
   useGetCompaniesQuery,
   useGetPipelinesQuery,
 } from '../../../generated/graphql';
-import { Column } from '../../ui/components/board/Board';
+import { Column } from '../../ui/board/components/Board';
 
 type ItemCompany = Pick<Company, 'id' | 'name' | 'domainName'>;
 type ItemPipelineProgress = Pick<

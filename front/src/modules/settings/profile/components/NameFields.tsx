@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { TextInput } from '@/ui/components/inputs/TextInput';
-import { GET_CURRENT_USER } from '@/users/services';
+import { GET_CURRENT_USER } from '@/users/queries';
 import { useUpdateUserMutation } from '~/generated/graphql';
 
 const StyledComboInputContainer = styled.div`
@@ -17,7 +17,17 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
-export function NameFields() {
+type OwnProps = {
+  autoSave?: boolean;
+  onFirstNameUpdate?: (firstName: string) => void;
+  onLastNameUpdate?: (lastName: string) => void;
+};
+
+export function NameFields({
+  autoSave = true,
+  onFirstNameUpdate,
+  onLastNameUpdate,
+}: OwnProps) {
   const currentUser = useRecoilValue(currentUserState);
 
   const [firstName, setFirstName] = useState(currentUser?.firstName ?? '');
@@ -27,26 +37,34 @@ export function NameFields() {
 
   // TODO: Enhance this with react-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = debounce(async () => {
+    if (onFirstNameUpdate) {
+      onFirstNameUpdate(firstName);
+    }
+    if (onLastNameUpdate) {
+      onLastNameUpdate(lastName);
+    }
     try {
-      const { data, errors } = await updateUser({
-        variables: {
-          where: {
-            id: currentUser?.id,
-          },
-          data: {
-            firstName: {
-              set: firstName,
+      if (autoSave) {
+        const { data, errors } = await updateUser({
+          variables: {
+            where: {
+              id: currentUser?.id,
             },
-            lastName: {
-              set: lastName,
+            data: {
+              firstName: {
+                set: firstName,
+              },
+              lastName: {
+                set: lastName,
+              },
             },
           },
-        },
-        refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
-      });
+          refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+        });
 
-      if (errors || !data?.updateUser) {
-        throw errors;
+        if (errors || !data?.updateUser) {
+          throw errors;
+        }
       }
     } catch (error) {
       console.error(error);
@@ -64,7 +82,7 @@ export function NameFields() {
     return () => {
       debouncedUpdate.cancel();
     };
-  }, [firstName, lastName, currentUser, debouncedUpdate]);
+  }, [firstName, lastName, currentUser, debouncedUpdate, autoSave]);
 
   return (
     <StyledComboInputContainer>

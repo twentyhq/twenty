@@ -60,9 +60,10 @@ export function useEntitySelectScroll<
       ] as HTMLElement;
 
       if (currentHoveredRef) {
+        console.log({ currentHoveredRef, containerRef });
         scrollIntoView(currentHoveredRef, {
           align: {
-            top: 0.275,
+            top: 0.15,
           },
           isScrollable: (target) => {
             return target === containerRef.current;

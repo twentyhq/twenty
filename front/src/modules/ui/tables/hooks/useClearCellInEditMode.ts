@@ -13,6 +13,7 @@ export function useCloseCurrentCellInEditMode() {
 
       set(isCellInEditModeFamilyState(currentCellInEditModePosition), false);
 
+      // TODO: find a way to remove this
       await new Promise((resolve) => setTimeout(resolve, 20));
 
       set(isSomeInputInEditModeState, false);

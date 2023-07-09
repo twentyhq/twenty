@@ -77,7 +77,7 @@ export const CompanyName: Story = {
       delay: 200,
     });
 
-    await sleep(1000);
+    await sleep(500);
 
     const qontoChip = canvas
       .getAllByTestId('dropdown-menu-item')

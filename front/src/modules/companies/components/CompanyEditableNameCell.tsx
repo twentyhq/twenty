@@ -1,6 +1,6 @@
 import { CellCommentChip } from '@/comments/components/CellCommentChip';
 import { useOpenTimelineRightDrawer } from '@/comments/hooks/useOpenTimelineRightDrawer';
-import EditableChip from '@/ui/components/editable-cell/types/EditableChip';
+import { EditableCellChip } from '@/ui/components/editable-cell/types/EditableChip';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
@@ -34,7 +34,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
   }
 
   return (
-    <EditableChip
+    <EditableCellChip
       value={company.name || ''}
       placeholder="Name"
       picture={getLogoUrlFromDomainName(company.domainName)}

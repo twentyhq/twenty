@@ -4,8 +4,8 @@ import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
-import { textInputStyle } from '@/ui/themes/effects';
 
 import { useEditableCell } from '../hooks/useCloseEditableCell';
 
@@ -15,6 +15,8 @@ type OwnProps = {
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
   onChange: (firstValue: string, secondValue: string) => void;
+  onSubmit?: (firstValue: string, secondValue: string) => void;
+  onExit?: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -28,20 +30,14 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledEditInplaceInput = styled.input`
-  height: 18px;
-  margin: 0;
-  width: 45%;
-
-  ${textInputStyle}
-`;
-
-export function EditableDoubleTextEditMode({
+export function EditableCellDoubleTextEditMode({
   firstValue,
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
   onChange,
+  onSubmit,
+  onExit,
 }: OwnProps) {
   const [focusPosition, setFocusPosition] = useState<'left' | 'right'>('left');
 
@@ -61,6 +57,9 @@ export function EditableDoubleTextEditMode({
     () => {
       closeCell();
       moveDown();
+      if (onSubmit) {
+        onSubmit(firstValue, secondValue);
+      }
     },
     InternalHotkeysScope.CellDoubleTextInput,
     [closeCell],
@@ -69,6 +68,9 @@ export function EditableDoubleTextEditMode({
   useScopedHotkeys(
     Key.Escape,
     () => {
+      if (onExit) {
+        onExit();
+      }
       closeCell();
     },
     InternalHotkeysScope.CellDoubleTextInput,
@@ -77,11 +79,14 @@ export function EditableDoubleTextEditMode({
 
   useScopedHotkeys(
     'tab',
-    async (keyboardEvent, hotkeyEvent) => {
+    () => {
       if (focusPosition === 'left') {
         setFocusPosition('right');
         secondValueInputRef.current?.focus();
       } else {
+        if (onExit) {
+          onExit();
+        }
         closeCell();
         moveRight();
       }
@@ -107,7 +112,7 @@ export function EditableDoubleTextEditMode({
 
   return (
     <StyledContainer>
-      <StyledEditInplaceInput
+      <InplaceInputTextEditMode
         autoFocus
         placeholder={firstValuePlaceholder}
         ref={firstValueInputRef}
@@ -116,7 +121,7 @@ export function EditableDoubleTextEditMode({
           onChange(event.target.value, secondValue);
         }}
       />
-      <StyledEditInplaceInput
+      <InplaceInputTextEditMode
         placeholder={secondValuePlaceholder}
         ref={secondValueInputRef}
         value={secondValue}

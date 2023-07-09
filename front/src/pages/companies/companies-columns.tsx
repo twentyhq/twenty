@@ -3,8 +3,8 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import { CompanyAccountOwnerCell } from '@/companies/components/CompanyAccountOwnerCell';
 import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEditableNameCell';
-import { EditableDate } from '@/ui/components/editable-cell/types/EditableDate';
-import { EditableText } from '@/ui/components/editable-cell/types/EditableText';
+import { EditableCellDate } from '@/ui/components/editable-cell/types/EditableCellDate';
+import { EditableCellText } from '@/ui/components/editable-cell/types/EditableCellText';
 import { ColumnHead } from '@/ui/components/table/ColumnHead';
 import {
   IconBuildingSkyscraper,
@@ -44,10 +44,10 @@ export const useCompaniesColumns = () => {
           <ColumnHead viewName="URL" viewIcon={<IconLink size={16} />} />
         ),
         cell: (props) => (
-          <EditableText
-            content={props.row.original.domainName || ''}
+          <EditableCellText
+            value={props.row.original.domainName || ''}
             placeholder="Domain name"
-            changeHandler={(value) => {
+            onChange={(value) => {
               const company = { ...props.row.original };
               company.domainName = value;
               updateCompany({
@@ -66,10 +66,10 @@ export const useCompaniesColumns = () => {
           <ColumnHead viewName="Employees" viewIcon={<IconUsers size={16} />} />
         ),
         cell: (props) => (
-          <EditableText
-            content={props.row.original.employees?.toString() || ''}
+          <EditableCellText
+            value={props.row.original.employees?.toString() || ''}
             placeholder="Employees"
-            changeHandler={(value) => {
+            onChange={(value) => {
               const company = { ...props.row.original };
 
               updateCompany({
@@ -89,10 +89,10 @@ export const useCompaniesColumns = () => {
           <ColumnHead viewName="Address" viewIcon={<IconMap size={16} />} />
         ),
         cell: (props) => (
-          <EditableText
-            content={props.row.original.address || ''}
+          <EditableCellText
+            value={props.row.original.address || ''}
             placeholder="Address"
-            changeHandler={(value) => {
+            onChange={(value) => {
               const company = { ...props.row.original };
               company.address = value;
               updateCompany({
@@ -114,13 +114,13 @@ export const useCompaniesColumns = () => {
           />
         ),
         cell: (props) => (
-          <EditableDate
+          <EditableCellDate
             value={
               props.row.original.createdAt
                 ? new Date(props.row.original.createdAt)
                 : new Date()
             }
-            changeHandler={(value: Date) => {
+            onChange={(value: Date) => {
               const company = { ...props.row.original };
               company.createdAt = value.toISOString();
               updateCompany({

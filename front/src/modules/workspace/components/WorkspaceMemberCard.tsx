@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { Avatar } from '@/users/components/Avatar';
+import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import { User } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -47,7 +48,9 @@ export function WorkspaceMemberCard({ workspaceMember }: OwnProps) {
     <StyledContainer>
       <AvatarContainer>
         <Avatar
-          avatarUrl={workspaceMember.user.avatarUrl}
+          avatarUrl={getImageAbsoluteURIOrBase64(
+            workspaceMember.user.avatarUrl,
+          )}
           placeholder={workspaceMember.user.firstName || ''}
           type="squared"
           size={40}

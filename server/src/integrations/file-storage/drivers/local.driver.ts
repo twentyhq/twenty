@@ -3,7 +3,6 @@ import { createReadStream, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { StorageDriver } from './interfaces/storage-driver.interface';
 import { Readable } from 'stream';
-import { kebabCase } from 'src/utils/kebab-case';
 
 export interface LocalDriverOptions {
   storagePath: string;
@@ -32,7 +31,7 @@ export class LocalDriver implements StorageDriver {
   }): Promise<void> {
     const filePath = join(
       `${this.options.storagePath}/`,
-      kebabCase(params.folder),
+      params.folder,
       params.name,
     );
     const folderPath = dirname(filePath);

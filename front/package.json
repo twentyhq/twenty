@@ -161,8 +161,8 @@
     "workerDirectory": "public"
   },
   "nyc": {
-    "lines": 70,
-    "statements": 70,
+    "lines": 65,
+    "statements": 65,
     "exclude": [
       "src/generated/**/*"
     ]

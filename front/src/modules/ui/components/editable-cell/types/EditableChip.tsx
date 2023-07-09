@@ -41,7 +41,8 @@ const RightContainer = styled.div`
   margin-left: ${(props) => props.theme.spacing(1)};
 `;
 
-function EditableChip({
+// TODO: move right end content in EditableCell
+export function EditableCellChip({
   id,
   value,
   placeholder,
@@ -92,5 +93,3 @@ function EditableChip({
     />
   );
 }
-
-export default EditableChip;

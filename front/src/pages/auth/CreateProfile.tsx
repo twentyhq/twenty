@@ -9,14 +9,16 @@ import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { isMockModeState } from '@/auth/states/isMockModeState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { NameFields } from '@/settings/profile/components/NameFields';
+import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { MainButton } from '@/ui/components/buttons/MainButton';
-import { ImageInput } from '@/ui/components/inputs/ImageInput';
-import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
-import { GET_CURRENT_USER } from '@/users/services';
+import { GET_CURRENT_USER } from '@/users/queries';
 import { useUpdateUserMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
@@ -36,16 +38,13 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
-const StyledComboInputContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  > * + * {
-    margin-left: ${({ theme }) => theme.spacing(4)};
-  }
-`;
-
 export function CreateProfile() {
+  useHotkeysScopeOnMountOnly({
+    scope: InternalHotkeysScope.CreateProfile,
+    customScopes: { 'command-menu': false, goto: false },
+  });
   const navigate = useNavigate();
+  const [, setMockMode] = useRecoilState(isMockModeState);
   const onboardingStatus = useOnboardingStatus();
 
   const [currentUser] = useRecoilState(currentUserState);
@@ -94,15 +93,16 @@ export function CreateProfile() {
     () => {
       handleCreate();
     },
-    InternalHotkeysScope.Modal,
+    InternalHotkeysScope.CreateProfile,
     [handleCreate],
   );
 
   useEffect(() => {
+    setMockMode(true);
     if (onboardingStatus !== OnboardingStatus.OngoingProfileCreation) {
       navigate('/');
     }
-  }, [onboardingStatus, navigate]);
+  }, [onboardingStatus, navigate, setMockMode]);
 
   return (
     <>
@@ -111,29 +111,18 @@ export function CreateProfile() {
       <StyledContentContainer>
         <StyledSectionContainer>
           <SubSectionTitle title="Picture" />
-          <ImageInput picture={null} disabled />
+          <ProfilePictureUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
           <SubSectionTitle
             title="Name"
             description="Your name as it will be displayed on the app"
           />
-          <StyledComboInputContainer>
-            <TextInput
-              label="First Name"
-              value={firstName}
-              placeholder="Tim"
-              onChange={setFirstName}
-              fullWidth
-            />
-            <TextInput
-              label="Last Name"
-              value={lastName}
-              placeholder="Cook"
-              onChange={setLastName}
-              fullWidth
-            />
-          </StyledComboInputContainer>
+          <NameFields
+            autoSave={false}
+            onFirstNameUpdate={setFirstName}
+            onLastNameUpdate={setLastName}
+          />
         </StyledSectionContainer>
       </StyledContentContainer>
       <StyledButtonContainer>
