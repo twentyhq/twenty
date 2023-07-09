@@ -1,3 +1,5 @@
+import { QueryMode } from '~/generated/graphql';
+
 import { ActiveTableFilter } from '../types/ActiveTableFilter';
 
 export function turnFilterIntoWhereClause(filter: ActiveTableFilter) {
@@ -8,6 +10,7 @@ export function turnFilterIntoWhereClause(filter: ActiveTableFilter) {
           return {
             [filter.field]: {
               contains: filter.value,
+              mode: QueryMode.Insensitive,
             },
           };
         case 'does-not-contain':
@@ -15,6 +18,7 @@ export function turnFilterIntoWhereClause(filter: ActiveTableFilter) {
             [filter.field]: {
               not: {
                 contains: filter.value,
+                mode: QueryMode.Insensitive,
               },
             },
           };

@@ -22,7 +22,7 @@ export function Opportunities() {
   const theme = useTheme();
 
   const pipelines = useGetPipelinesQuery();
-  const pipelineId = pipelines.data?.findManyPipeline[0].id;
+  const pipelineId = pipelines.data?.findManyPipeline[0]?.id;
 
   const { initialBoard, items } = useBoard(pipelineId || '');
 
