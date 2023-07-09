@@ -40,7 +40,7 @@ export function CompanyAccountOwnerPicker({ company }: OwnProps) {
       name: user.displayName,
       avatarType: 'rounded',
     }),
-    orderByField: 'displayName',
+    orderByField: 'firstName',
     searchOnFields: ['firstName', 'lastName'],
   });
 
