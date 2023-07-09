@@ -83,19 +83,24 @@ const StyledEditableTitleInput = styled.input`
   }
 `;
 
-/* const StyledCommentContainer = styled.div`
-  padding: 24px 24px 24px 48px;
-`;*/
+const StyledTopActionsContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+`;
 
 const StyledThreadItemListContainer = styled.div`
   align-items: flex-start;
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
 
+  box-sizing: border-box;
   display: flex;
+
   flex-direction: column;
 
   gap: ${({ theme }) => theme.spacing(4)};
-
   justify-content: flex-start;
   padding: 16px 24px 16px 48px;
   width: 100%;
@@ -129,41 +134,10 @@ export function CommentThreadEditMode({
   const [title, setTitle] = useState('');
 
   const [updateCommentThreadTitleMutation] =
-    useUpdateCommentThreadTitleMutation({
-      update(cache, { data }) {
-        // If successful, write the updated data back to the cache
-        if (data) {
-          cache.writeFragment({
-            id: cache.identify(data.updateOneCommentThread),
-            fragment: gql`
-              fragment CommentThreadTitle on CommentThread {
-                id
-                title
-              }
-            `,
-            data: data.updateOneCommentThread,
-          });
-        }
-      },
-    });
+    useUpdateCommentThreadTitleMutation();
 
-  const [updateCommentThreadBodyMutation] = useUpdateCommentThreadBodyMutation({
-    update(cache, { data }) {
-      // If successful, write the updated data back to the cache
-      if (data) {
-        cache.writeFragment({
-          id: cache.identify(data.updateOneCommentThread),
-          fragment: gql`
-            fragment CommentThreadBody on CommentThread {
-              id
-              body
-            }
-          `,
-          data: data.updateOneCommentThread,
-        });
-      }
-    },
-  });
+  const [updateCommentThreadBodyMutation] =
+    useUpdateCommentThreadBodyMutation();
 
   const editor: BlockNoteEditor | null = useBlockNote({
     theme: useTheme().name === 'light' ? 'light' : 'dark',
@@ -175,6 +149,9 @@ export function CommentThreadEditMode({
           commentThreadId: commentThreadId,
           commentThreadBody: JSON.stringify(editor.topLevelBlocks) ?? '',
         },
+        refetchQueries: [
+          getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
+        ],
       });
     },
     onEditorReady: (editor) => {
@@ -200,6 +177,7 @@ export function CommentThreadEditMode({
         commentThreadId: commentThreadId,
         commentThreadTitle: e.target.value ?? '',
       },
+      refetchQueries: [getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? ''],
     });
   }
 
@@ -230,11 +208,7 @@ export function CommentThreadEditMode({
         commentText: commentText,
         createdAt: new Date().toISOString(),
       },
-      refetchQueries: [
-        getOperationName(GET_COMPANIES) ?? '',
-        getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
-      ],
+      refetchQueries: [getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? ''],
       onError: (error) => {
         logError(
           `In handleSendComment, createCommentMutation onError, error: ${error}`,
@@ -252,7 +226,10 @@ export function CommentThreadEditMode({
   return (
     <StyledContainer>
       <StyledTopContainer>
-        <CommentThreadTypeDropdown />
+        <StyledTopActionsContainer>
+          <CommentThreadTypeDropdown />
+          <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
+        </StyledTopActionsContainer>
         <StyledEditableTitleInput
           placeholder="Note title (optional)"
           onChange={onTitleChange}
@@ -277,15 +254,7 @@ export function CommentThreadEditMode({
           <CommentThreadItem
             key={comment.id}
             comment={comment}
-            actionBar={
-              index === 0 ? (
-                <CommentThreadActionBar
-                  commentThreadId={commentThread?.id ?? ''}
-                />
-              ) : (
-                <></>
-              )
-            }
+            //actionBar={}
           />
         ))}
       </StyledThreadItemListContainer>
