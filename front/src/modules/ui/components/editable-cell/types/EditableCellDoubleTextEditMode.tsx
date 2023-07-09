@@ -15,6 +15,8 @@ type OwnProps = {
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
   onChange: (firstValue: string, secondValue: string) => void;
+  onSubmit?: (firstValue: string, secondValue: string) => void;
+  onExit?: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -34,6 +36,8 @@ export function EditableCellDoubleTextEditMode({
   firstValuePlaceholder,
   secondValuePlaceholder,
   onChange,
+  onSubmit,
+  onExit,
 }: OwnProps) {
   const [focusPosition, setFocusPosition] = useState<'left' | 'right'>('left');
 
@@ -53,6 +57,9 @@ export function EditableCellDoubleTextEditMode({
     () => {
       closeCell();
       moveDown();
+      if (onSubmit) {
+        onSubmit(firstValue, secondValue);
+      }
     },
     InternalHotkeysScope.CellDoubleTextInput,
     [closeCell],
@@ -61,6 +68,9 @@ export function EditableCellDoubleTextEditMode({
   useScopedHotkeys(
     Key.Escape,
     () => {
+      if (onExit) {
+        onExit();
+      }
       closeCell();
     },
     InternalHotkeysScope.CellDoubleTextInput,
@@ -74,6 +84,9 @@ export function EditableCellDoubleTextEditMode({
         setFocusPosition('right');
         secondValueInputRef.current?.focus();
       } else {
+        if (onExit) {
+          onExit();
+        }
         closeCell();
         moveRight();
       }

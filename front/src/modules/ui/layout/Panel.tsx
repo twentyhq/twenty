@@ -7,6 +7,8 @@ const StyledPanel = styled.div`
   border-radius: 8px;
   display: flex;
   flex-direction: row;
+  height: 100%;
+  overflow: auto;
   width: 100%;
 `;
 
