@@ -47,8 +47,6 @@ export class S3Driver implements StorageDriver {
       Bucket: this.bucketName,
     });
 
-    await this.createBucket({ Bucket: this.bucketName });
-
     await this.s3Client.send(command);
   }
 
