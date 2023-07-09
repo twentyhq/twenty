@@ -10,6 +10,10 @@ interface BlockEditorProps {
 
 export function BlockEditor({ editor }: BlockEditorProps) {
   const customStyles = (theme: any) => css`
+    & .editor-create-mode,
+    .editor-edit-mode {
+      background: ${theme.background.primary};
+    }
     & .editor-create-mode [class^='_inlineContent']:before {
       color: ${theme.font.color.tertiary};
       font-style: normal !important;
