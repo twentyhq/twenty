@@ -41,6 +41,7 @@ const StyledContainerLink = styled(Link)`
 const StyledContainerNoLink = styled.div`
   ${baseStyle}
 `;
+
 const StyledName = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
