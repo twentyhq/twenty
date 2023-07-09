@@ -1397,6 +1397,7 @@ export type Person = {
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
+  displayName: Scalars['String'];
   email: Scalars['String'];
   firstName: Scalars['String'];
   id: Scalars['ID'];
@@ -2423,6 +2424,7 @@ export type Query = {
   findManyPipelineStage: Array<PipelineStage>;
   findManyUser: Array<User>;
   findUniqueCompany: Company;
+  findUniquePerson: Person;
 };
 
 
@@ -2497,6 +2499,11 @@ export type QueryFindManyUserArgs = {
 
 
 export type QueryFindUniqueCompanyArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryFindUniquePersonArgs = {
   id: Scalars['String'];
 };
 
@@ -3016,10 +3023,6 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', demoMode: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean } } };
 
-export type CommentThreadTitleFragment = { __typename?: 'CommentThread', id: string, title?: string | null };
-
-export type CommentThreadBodyFragment = { __typename?: 'CommentThread', id: string, body?: string | null };
-
 export type CreateCommentMutationVariables = Exact<{
   commentId: Scalars['String'];
   commentText: Scalars['String'];
@@ -3155,6 +3158,13 @@ export type GetPeopleQueryVariables = Exact<{
 
 
 export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstName: string, lastName: string, createdAt: string, _commentThreadCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+
+export type GetPersonQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName: string, lastName: string, displayName: string, createdAt: string } };
 
 export type UpdatePeopleMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -3301,18 +3311,7 @@ export type UpdateWorkspaceMutationVariables = Exact<{
 
 export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null } };
 
-export const CommentThreadTitleFragmentDoc = gql`
-    fragment CommentThreadTitle on CommentThread {
-  id
-  title
-}
-    `;
-export const CommentThreadBodyFragmentDoc = gql`
-    fragment CommentThreadBody on CommentThread {
-  id
-  body
-}
-    `;
+
 export const CreateEventDocument = gql`
     mutation CreateEvent($type: String!, $data: JSON!) {
   createEvent(type: $type, data: $data) {
@@ -4242,6 +4241,45 @@ export function useGetPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type GetPeopleQueryHookResult = ReturnType<typeof useGetPeopleQuery>;
 export type GetPeopleLazyQueryHookResult = ReturnType<typeof useGetPeopleLazyQuery>;
 export type GetPeopleQueryResult = Apollo.QueryResult<GetPeopleQuery, GetPeopleQueryVariables>;
+export const GetPersonDocument = gql`
+    query GetPerson($id: String!) {
+  findUniquePerson(id: $id) {
+    id
+    firstName
+    lastName
+    displayName
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetPersonQuery__
+ *
+ * To run a query within a React component, call `useGetPersonQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPersonQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPersonQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPersonQuery(baseOptions: Apollo.QueryHookOptions<GetPersonQuery, GetPersonQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPersonQuery, GetPersonQueryVariables>(GetPersonDocument, options);
+      }
+export function useGetPersonLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPersonQuery, GetPersonQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPersonQuery, GetPersonQueryVariables>(GetPersonDocument, options);
+        }
+export type GetPersonQueryHookResult = ReturnType<typeof useGetPersonQuery>;
+export type GetPersonLazyQueryHookResult = ReturnType<typeof useGetPersonLazyQuery>;
+export type GetPersonQueryResult = Apollo.QueryResult<GetPersonQuery, GetPersonQueryVariables>;
 export const UpdatePeopleDocument = gql`
     mutation UpdatePeople($id: String, $firstName: String, $lastName: String, $phone: String, $city: String, $companyId: String, $email: String, $createdAt: DateTime) {
   updateOnePerson(

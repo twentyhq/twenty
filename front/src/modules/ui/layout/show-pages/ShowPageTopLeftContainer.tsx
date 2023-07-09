@@ -1,6 +1,8 @@
 import { Tooltip } from 'react-tooltip';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { Avatar } from '@/users/components/Avatar';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
@@ -22,12 +24,6 @@ const StyledShowTopLeftImageInsideContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-
-  img {
-    border-radius: 4px;
-    height: 40px;
-    width: 40px;
-  }
 
   div {
     align-items: center;
@@ -69,17 +65,22 @@ export function ShowPageTopLeftContainer({
   title,
   date,
 }: {
-  logoOrAvatar: string;
+  logoOrAvatar?: string;
   title: string;
   date: string;
 }) {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(date);
   const exactCreatedAt = beautifyExactDate(date);
+  const theme = useTheme();
 
   return (
     <StyledShowTopLeftImageContainer>
       <StyledShowTopLeftImageInsideContainer>
-        <img src={logoOrAvatar} alt="Logo or Avatar" />
+        <Avatar
+          avatarUrl={logoOrAvatar}
+          size={theme.icon.size.xl}
+          placeholder={title}
+        />
         <div>
           <StyledTitle>{title}</StyledTitle>
           <StyledDate id={`id-${title}`}>

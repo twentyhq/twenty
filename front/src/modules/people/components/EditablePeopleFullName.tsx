@@ -60,7 +60,10 @@ export function EditablePeopleFullName({ person, onChange }: OwnProps) {
       onChange={handleDoubleTextChange}
       nonEditModeContent={
         <NoEditModeContainer>
-          <PersonChip name={person.firstName + ' ' + person.lastName} />
+          <PersonChip
+            name={person.firstName + ' ' + person.lastName}
+            id={person.id}
+          />
           <RightContainer>
             <CellCommentChip
               count={person._commentThreadCount ?? 0}

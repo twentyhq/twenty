@@ -1,4 +1,11 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  Mutation,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Person } from '../../core/@generated/person/person.model';
@@ -59,6 +66,30 @@ export class PersonResolver {
       distinct: args.distinct,
       select: prismaSelect.value,
     });
+  }
+
+  @Query(() => Person)
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(ReadPersonAbilityHandler)
+  async findUniquePerson(
+    @Args('id') id: string,
+    @UserAbility() ability: AppAbility,
+    @PrismaSelector({ modelName: 'Person' })
+    prismaSelect: PrismaSelect<'Person'>,
+  ): Promise<Partial<Person>> {
+    return this.personService.findUniqueOrThrow({
+      where: {
+        id: id,
+      },
+      select: prismaSelect.value,
+    });
+  }
+
+  @ResolveField(() => String, {
+    nullable: false,
+  })
+  displayName(@Parent() parent: Person): string {
+    return `${parent.firstName ?? ''} ${parent.lastName ?? ''}`;
   }
 
   @UseGuards(UpdateOneGuard)

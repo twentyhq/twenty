@@ -221,7 +221,7 @@ export function CommentThreadRelationPicker({
               picture={entity.avatarUrl}
             />
           ) : (
-            <PersonChip key={entity.id} name={entity.name} />
+            <PersonChip key={entity.id} name={entity.name} id={entity.id} />
           ),
         )}
       </StyledRelationContainer>
