@@ -80,6 +80,11 @@ export function FilterDropdownButton() {
     }
   }
 
+  useHotkeysScopeOnBooleanState(
+    { scope: InternalHotkeysScope.RelationPicker },
+    tableFilterDefinitionUsedInDropdown?.type === 'entity',
+  );
+
   return (
     <DropdownButton
       label="Filter"
