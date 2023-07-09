@@ -1,5 +1,4 @@
 import { BlockNoteEditor } from '@blocknote/core';
-import { BlockNoteView } from '@blocknote/react';
 import styled from '@emotion/styled';
 
 import { BlockEditor } from '@/ui/components/editor/BlockEditor';

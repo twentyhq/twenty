@@ -21,7 +21,6 @@ import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 import {
   useCreateCommentMutation,
-  useCreateCommentThreadMutation,
   useGetCommentThreadQuery,
   useUpdateCommentThreadBodyMutation,
   useUpdateCommentThreadTitleMutation,
@@ -29,7 +28,6 @@ import {
 
 import { GET_COMMENT_THREADS_BY_TARGETS } from '../services';
 
-import { Comments } from './Comments';
 import { CommentThreadActionBar } from './CommentThreadActionBar';
 import { CommentThreadItem } from './CommentThreadItem';
 import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
