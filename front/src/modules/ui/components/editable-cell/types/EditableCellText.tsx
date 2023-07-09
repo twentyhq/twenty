@@ -1,7 +1,8 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 
 import { InplaceInputTextDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputTextDisplayMode';
 import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
+import { debounce } from '@/utils/debounce';
 
 import { EditableCell } from '../EditableCell';
 
@@ -18,6 +19,12 @@ export function EditableCellText({
   onChange,
   editModeHorizontalAlign,
 }: OwnProps) {
+  const [internalValue, setInternalValue] = useState(value);
+
+  const debouncedOnChange = useMemo(() => {
+    return debounce(onChange, 200);
+  }, [onChange]);
+
   return (
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
@@ -25,14 +32,17 @@ export function EditableCellText({
         <InplaceInputTextEditMode
           placeholder={placeholder || ''}
           autoFocus
-          value={value}
+          value={internalValue}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            onChange(event.target.value);
+            setInternalValue(event.target.value);
+            debouncedOnChange(event.target.value);
           }}
         />
       }
       nonEditModeContent={
-        <InplaceInputTextDisplayMode>{value}</InplaceInputTextDisplayMode>
+        <InplaceInputTextDisplayMode>
+          {internalValue}
+        </InplaceInputTextDisplayMode>
       }
     ></EditableCell>
   );
