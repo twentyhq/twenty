@@ -73,9 +73,6 @@ export function ShowPageTopLeftContainer({
   title: string;
   date: string;
 }) {
-  if (!date) {
-    return null;
-  }
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(date);
   const exactCreatedAt = beautifyExactDate(date);
 

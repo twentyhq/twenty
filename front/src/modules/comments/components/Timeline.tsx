@@ -47,7 +47,6 @@ const StyledTimelineEmptyContainer = styled.div`
   flex-direction: column;
   gap: 8px;
   justify-content: center;
-  padding: 12px 16px 64px 16px;
 `;
 
 const StyledEmptyTimelineTitle = styled.div`

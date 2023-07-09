@@ -27,14 +27,14 @@ export function CompanyShow() {
         <>
           <ShowPageTopLeftContainer
             logoOrAvatar={getLogoUrlFromDomainName(company?.domainName ?? '')}
-            title={company?.name ?? ''}
+            title={company?.name ?? 'No name'}
             date={company?.createdAt ?? ''}
           />
           <PropertyBox extraPadding={true}>
             <>
               <PropertyBoxItem
                 icon={<IconLink />}
-                value={company?.domainName ?? ''}
+                value={company?.domainName ?? 'No URL'}
                 link={
                   company?.domainName ? 'https://' + company?.domainName : ''
                 }
