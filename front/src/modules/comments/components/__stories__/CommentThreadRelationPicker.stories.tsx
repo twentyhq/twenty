@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -24,8 +25,10 @@ type Story = StoryObj<typeof CommentThreadRelationPicker>;
 
 export const Default: Story = {
   render: getRenderWrapperForComponent(
-    <StyledContainer>
-      <CommentThreadRelationPicker commentThread={mockedCommentThreads[0]} />
-    </StyledContainer>,
+    <MemoryRouter>
+      <StyledContainer>
+        <CommentThreadRelationPicker commentThread={mockedCommentThreads[0]} />
+      </StyledContainer>
+    </MemoryRouter>,
   ),
 };

@@ -33,6 +33,8 @@ export const mockedCommentThreads: Array<MockedCommentThread> = [
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
+    title: 'My very first note',
+    body: 'I will be writing great things here',
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',
@@ -74,6 +76,8 @@ export const mockedCommentThreads: Array<MockedCommentThread> = [
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    title: 'Another note',
+    body: 'I will  be more inspired tomorrow',
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',
