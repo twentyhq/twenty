@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { getImageAbsoluteURI } from '@/users/utils/getProfilePictureAbsoluteURI';
+import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 
 import NavCollapseButton from './NavCollapseButton';
 
@@ -59,7 +59,7 @@ function NavWorkspaceButton() {
         <StyledLogo
           logo={
             currentWorkspace?.logo
-              ? getImageAbsoluteURI(currentWorkspace.logo)
+              ? getImageAbsoluteURIOrBase64(currentWorkspace.logo)
               : DEFAULT_LOGO
           }
         ></StyledLogo>

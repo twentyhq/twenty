@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { ImageInput } from '@/ui/components/inputs/ImageInput';
 import { GET_CURRENT_USER } from '@/users/queries';
-import { getImageAbsoluteURI } from '@/users/utils/getProfilePictureAbsoluteURI';
+import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import {
   useRemoveWorkspaceLogoMutation,
   useUploadWorkspaceLogoMutation,
@@ -34,7 +34,7 @@ export function WorkspaceLogoUploader() {
 
   return (
     <ImageInput
-      picture={getImageAbsoluteURI(
+      picture={getImageAbsoluteURIOrBase64(
         currentUser?.workspaceMember?.workspace.logo,
       )}
       onUpload={onUpload}
