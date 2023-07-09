@@ -121,7 +121,7 @@ export function AutosizeTextInput({
     <>
       <StyledContainer>
         <StyledTextArea
-          placeholder={placeholder || 'Write something...'}
+          placeholder={placeholder || 'Write a comment'}
           maxRows={MAX_ROWS}
           minRows={computedMinRows}
           onChange={handleInputChange}
