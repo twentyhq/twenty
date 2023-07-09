@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { Panel } from '../../Panel';
@@ -20,11 +18,6 @@ const StyledRightDrawer = styled.div`
 export function RightDrawer() {
   const [isRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
-
-  useHotkeysScopeOnBooleanState(
-    { scope: InternalHotkeysScope.RightDrawer },
-    isRightDrawerOpen,
-  );
 
   if (!isRightDrawerOpen || !isDefined(rightDrawerPage)) {
     return <></>;
