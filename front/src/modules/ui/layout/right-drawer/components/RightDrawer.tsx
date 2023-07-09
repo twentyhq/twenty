@@ -61,9 +61,7 @@ export function RightDrawer() {
       <ClickableBackground onClick={() => setIsRightDrawerOpen(false)} />
       <StyledContainer>
         <StyledRightDrawer>
-          <Panel>
-            <RightDrawerRouter />
-          </Panel>
+          <RightDrawerRouter />
         </StyledRightDrawer>
       </StyledContainer>
     </>
