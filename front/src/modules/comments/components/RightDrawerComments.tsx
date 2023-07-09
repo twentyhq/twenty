@@ -1,6 +1,8 @@
 import { useRecoilState } from 'recoil';
 
 import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
+import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { RightDrawerBody } from '@/ui/layout/right-drawer/components/RightDrawerBody';
 import { RightDrawerPage } from '@/ui/layout/right-drawer/components/RightDrawerPage';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
@@ -15,6 +17,10 @@ import { CommentThread } from './CommentThread';
 
 export function RightDrawerComments() {
   const [commentableEntityArray] = useRecoilState(commentableEntityArrayState);
+  useHotkeysScopeOnMountOnly({
+    scope: InternalHotkeysScope.RightDrawer,
+    customScopes: { goto: false, 'command-menu': true },
+  });
 
   const { data: queryResult } = useGetCommentThreadsByTargetsQuery({
     variables: {
