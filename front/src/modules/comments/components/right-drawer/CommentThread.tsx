@@ -102,7 +102,6 @@ export function CommentThread({
   const commentThread = data?.findManyCommentThreads[0];
 
   const [title, setTitle] = useState<string | null | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(true);
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 
@@ -134,12 +133,9 @@ export function CommentThread({
 
   useEffect(() => {
     if (commentThread) {
-      setIsLoading(false);
-    }
-    if (isLoading) {
       setTitle(commentThread?.title ?? '');
     }
-  }, [commentThread, isLoading]);
+  }, [commentThread]);
 
   if (!commentThread) {
     return <></>;
