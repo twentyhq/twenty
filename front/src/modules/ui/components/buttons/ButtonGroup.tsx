@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { ButtonPosition } from './Button';
+import { ButtonPosition, ButtonVariant } from './Button';
 
 const StyledButtonGroupContainer = styled.div`
   border-radius: 8px;
@@ -10,9 +10,10 @@ const StyledButtonGroupContainer = styled.div`
 
 type ButtonGroupProps = {
   children: React.ReactElement[];
+  variant?: ButtonVariant;
 };
 
-export function ButtonGroup({ children }: ButtonGroupProps) {
+export function ButtonGroup({ children, variant }: ButtonGroupProps) {
   return (
     <StyledButtonGroupContainer>
       {React.Children.map(children, (child, index) => {
@@ -26,7 +27,10 @@ export function ButtonGroup({ children }: ButtonGroupProps) {
           position = 'middle';
         }
 
-        console.log(React.cloneElement(child, { position }));
+        if (variant) {
+          return React.cloneElement(child, { position, variant });
+        }
+
         return React.cloneElement(child, { position });
       })}
     </StyledButtonGroupContainer>

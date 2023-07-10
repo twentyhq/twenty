@@ -17,6 +17,8 @@ import {
   useGetCommentThreadsByTargetsQuery,
 } from '~/generated/graphql';
 
+import { CommentThreadCreateButton } from '../comment-thread/CommentThreadCreateButton';
+
 const StyledMainContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
@@ -223,8 +225,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
             <IconCirclePlus />
           </StyledIconContainer>
 
-          <TableActionBarButtonToggleComments
-            onClick={() => openCreateCommandThread(entity)}
+          <CommentThreadCreateButton
+            onNoteClick={() => openCreateCommandThread(entity)}
           />
         </StyledTimelineItemContainer>
       </StyledTopActionBar>
