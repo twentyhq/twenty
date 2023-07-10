@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { Avatar } from '@/users/components/Avatar';
 
 export type CompanyChipPropsType = {
-  id?: string;
+  id: string;
   name: string;
   picture?: string;
 };
@@ -58,6 +58,7 @@ function CompanyChip({ id, name, picture }: CompanyChipPropsType) {
       {picture && (
         <Avatar
           avatarUrl={picture?.toString()}
+          colorId={id}
           placeholder={name}
           type="squared"
           size={14}

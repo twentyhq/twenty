@@ -9,20 +9,19 @@ type OwnProps = {
   avatarUrl: string | null | undefined;
   size: number;
   placeholder: string;
+  colorId?: string;
   type?: AvatarType;
 };
 
-export const StyledAvatar = styled.div<OwnProps>`
+export const StyledAvatar = styled.div<OwnProps & { colorId: string }>`
   align-items: center;
-  background-color: ${({ avatarUrl, placeholder }) =>
-    !isNonEmptyString(avatarUrl)
-      ? stringToHslColor(placeholder, 75, 85)
-      : 'none'};
+  background-color: ${({ avatarUrl, colorId }) =>
+    !isNonEmptyString(avatarUrl) ? stringToHslColor(colorId, 75, 85) : 'none'};
   ${({ avatarUrl }) =>
     isNonEmptyString(avatarUrl) ? `background-image: url(${avatarUrl});` : ''}
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
-  color: ${({ theme, placeholder }) => stringToHslColor(placeholder, 75, 25)};
+  color: ${({ colorId }) => stringToHslColor(colorId, 75, 25)};
   display: flex;
 
   flex-shrink: 0;
@@ -38,6 +37,7 @@ export function Avatar({
   avatarUrl,
   size,
   placeholder,
+  colorId = placeholder,
   type = 'squared',
 }: OwnProps) {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
@@ -48,6 +48,7 @@ export function Avatar({
       placeholder={placeholder}
       size={size}
       type={type}
+      colorId={colorId}
     >
       {noAvatarUrl && placeholder[0]?.toLocaleUpperCase()}
     </StyledAvatar>

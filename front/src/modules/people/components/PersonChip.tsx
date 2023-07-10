@@ -5,10 +5,8 @@ import styled from '@emotion/styled';
 
 import { Avatar } from '@/users/components/Avatar';
 
-import PersonPlaceholder from './person-placeholder.png';
-
 export type PersonChipPropsType = {
-  id?: string;
+  id: string;
   name: string;
   picture?: string;
 };
@@ -54,7 +52,13 @@ export function PersonChip({ id, name, picture }: PersonChipPropsType) {
   const ContainerComponent = id ? StyledContainerLink : StyledContainerNoLink;
   return (
     <ContainerComponent data-testid="person-chip" to={`/person/${id}`}>
-      <Avatar avatarUrl={picture} placeholder={name} size={14} type="rounded" />
+      <Avatar
+        avatarUrl={picture}
+        colorId={id}
+        placeholder={name}
+        size={14}
+        type="rounded"
+      />
       <StyledName>{name}</StyledName>
     </ContainerComponent>
   );

@@ -28,6 +28,7 @@ export function PersonShow() {
       <>
         <ShowPageLeftContainer>
           <ShowPageSummaryCard
+            id={person?.id ?? ''}
             title={person?.displayName ?? 'No name'}
             date={person?.createdAt ?? ''}
           />

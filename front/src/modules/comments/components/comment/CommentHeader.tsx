@@ -74,17 +74,14 @@ export function CommentHeader({ comment, actionBar }: OwnProps) {
   const avatarUrl = author.avatarUrl;
   const commentId = comment.id;
 
-  const capitalizedFirstUsernameLetter = isNonEmptyString(authorName)
-    ? authorName.toLocaleUpperCase()[0]
-    : '';
-
   return (
     <StyledContainer>
       <StyledLeftContainer>
         <Avatar
           avatarUrl={avatarUrl}
           size={theme.icon.size.md}
-          placeholder={capitalizedFirstUsernameLetter}
+          colorId={author.id}
+          placeholder={author.displayName}
         />
         <StyledName>{authorName}</StyledName>
         {showDate && (

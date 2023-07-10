@@ -33,6 +33,7 @@ export const SmallName: Story = {
   render: getRenderWrapperForComponent(
     <TestCellContainer>
       <CompanyChip
+        id="airbnb"
         name="Airbnb"
         picture="https://api.faviconkit.com/airbnb.com/144"
       />
@@ -44,6 +45,7 @@ export const BigName: Story = {
   render: getRenderWrapperForComponent(
     <TestCellContainer>
       <CompanyChip
+        id="google"
         name="Google with a real big name to overflow the cell"
         picture="https://api.faviconkit.com/google.com/144"
       />
