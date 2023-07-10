@@ -6,7 +6,6 @@ import { useOpenCommentThreadRightDrawer } from '@/comments/hooks/useOpenComment
 import { useOpenCreateCommentThreadDrawer } from '@/comments/hooks/useOpenCreateCommentThreadDrawer';
 import { CommentableEntity } from '@/comments/types/CommentableEntity';
 import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
-import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
 import { IconCirclePlus, IconNotes } from '@/ui/icons/index';
 import {
   beautifyExactDate,
