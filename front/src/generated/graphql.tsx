@@ -1112,7 +1112,8 @@ export type EnumPipelineProgressableTypeFilter = {
 };
 
 export enum FileFolder {
-  ProfilePicture = 'ProfilePicture'
+  ProfilePicture = 'ProfilePicture',
+  WorkspaceLogo = 'WorkspaceLogo'
 }
 
 export type IntNullableFilter = {
@@ -1160,6 +1161,7 @@ export type Mutation = {
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
+  deleteWorkspaceMember: WorkspaceMember;
   renewToken: AuthTokens;
   updateOneCommentThread: CommentThread;
   updateOneCompany?: Maybe<Company>;
@@ -1229,6 +1231,11 @@ export type MutationDeleteManyPersonArgs = {
 
 export type MutationDeleteManyPipelineProgressArgs = {
   where?: InputMaybe<PipelineProgressWhereInput>;
+};
+
+
+export type MutationDeleteWorkspaceMemberArgs = {
+  where: WorkspaceMemberWhereUniqueInput;
 };
 
 
@@ -2430,6 +2437,7 @@ export type Query = {
   findManyPipelineProgress: Array<PipelineProgress>;
   findManyPipelineStage: Array<PipelineStage>;
   findManyUser: Array<User>;
+  findManyWorkspaceMember: Array<WorkspaceMember>;
   findUniqueCompany: Company;
   findUniquePerson: Person;
 };
@@ -2507,6 +2515,16 @@ export type QueryFindManyUserArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   take?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<UserWhereInput>;
+};
+
+
+export type QueryFindManyWorkspaceMemberArgs = {
+  cursor?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
+  distinct?: InputMaybe<Array<WorkspaceMemberScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<WorkspaceMemberOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<WorkspaceMemberWhereInput>;
 };
 
 
@@ -2930,6 +2948,23 @@ export type WorkspaceMemberCreateWithoutWorkspaceInput = {
   user: UserCreateNestedOneWithoutWorkspaceMemberInput;
 };
 
+export type WorkspaceMemberOrderByWithRelationInput = {
+  createdAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+  user?: InputMaybe<UserOrderByWithRelationInput>;
+  userId?: InputMaybe<SortOrder>;
+};
+
+export enum WorkspaceMemberScalarFieldEnum {
+  CreatedAt = 'createdAt',
+  DeletedAt = 'deletedAt',
+  Id = 'id',
+  UpdatedAt = 'updatedAt',
+  UserId = 'userId',
+  WorkspaceId = 'workspaceId'
+}
+
 export type WorkspaceMemberScalarWhereInput = {
   AND?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
   NOT?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
@@ -2981,6 +3016,17 @@ export type WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput = {
   create: WorkspaceMemberCreateWithoutWorkspaceInput;
   update: WorkspaceMemberUpdateWithoutWorkspaceInput;
   where: WorkspaceMemberWhereUniqueInput;
+};
+
+export type WorkspaceMemberWhereInput = {
+  AND?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
+  NOT?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
+  OR?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+  user?: InputMaybe<UserRelationFilter>;
+  userId?: InputMaybe<StringFilter>;
 };
 
 export type WorkspaceMemberWhereUniqueInput = {
@@ -3330,10 +3376,10 @@ export type RemoveProfilePictureMutationVariables = Exact<{
 
 export type RemoveProfilePictureMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string } };
 
-export type GetCurrentWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetWorkspaceMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentWorkspaceQuery = { __typename?: 'Query', currentWorkspace: { __typename?: 'Workspace', id: string, workspaceMember?: Array<{ __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, email: string, avatarUrl?: string | null, firstName?: string | null, lastName?: string | null } }> | null } };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, email: string, avatarUrl?: string | null, firstName?: string | null, lastName?: string | null } }> };
 
 export type UpdateWorkspaceMutationVariables = Exact<{
   data: WorkspaceUpdateInput;
@@ -3353,6 +3399,13 @@ export type RemoveWorkspaceLogoMutationVariables = Exact<{ [key: string]: never;
 
 
 export type RemoveWorkspaceLogoMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string } };
+
+export type RemoveWorkspaceMemberMutationVariables = Exact<{
+  where: WorkspaceMemberWhereUniqueInput;
+}>;
+
+
+export type RemoveWorkspaceMemberMutation = { __typename?: 'Mutation', deleteWorkspaceMember: { __typename?: 'WorkspaceMember', id: string } };
 
 
 export const CreateEventDocument = gql`
@@ -5041,50 +5094,47 @@ export function useRemoveProfilePictureMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveProfilePictureMutationHookResult = ReturnType<typeof useRemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationResult = Apollo.MutationResult<RemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationOptions = Apollo.BaseMutationOptions<RemoveProfilePictureMutation, RemoveProfilePictureMutationVariables>;
-export const GetCurrentWorkspaceDocument = gql`
-    query GetCurrentWorkspace {
-  currentWorkspace {
+export const GetWorkspaceMembersDocument = gql`
+    query GetWorkspaceMembers {
+  workspaceMembers: findManyWorkspaceMember {
     id
-    workspaceMember {
+    user {
       id
-      user {
-        id
-        email
-        avatarUrl
-        firstName
-        lastName
-      }
+      email
+      avatarUrl
+      firstName
+      lastName
     }
   }
 }
     `;
 
 /**
- * __useGetCurrentWorkspaceQuery__
+ * __useGetWorkspaceMembersQuery__
  *
- * To run a query within a React component, call `useGetCurrentWorkspaceQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCurrentWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetWorkspaceMembersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceMembersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetCurrentWorkspaceQuery({
+ * const { data, loading, error } = useGetWorkspaceMembersQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetCurrentWorkspaceQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>) {
+export function useGetWorkspaceMembersQuery(baseOptions?: Apollo.QueryHookOptions<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>(GetCurrentWorkspaceDocument, options);
+        return Apollo.useQuery<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>(GetWorkspaceMembersDocument, options);
       }
-export function useGetCurrentWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>) {
+export function useGetWorkspaceMembersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>(GetCurrentWorkspaceDocument, options);
+          return Apollo.useLazyQuery<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>(GetWorkspaceMembersDocument, options);
         }
-export type GetCurrentWorkspaceQueryHookResult = ReturnType<typeof useGetCurrentWorkspaceQuery>;
-export type GetCurrentWorkspaceLazyQueryHookResult = ReturnType<typeof useGetCurrentWorkspaceLazyQuery>;
-export type GetCurrentWorkspaceQueryResult = Apollo.QueryResult<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>;
+export type GetWorkspaceMembersQueryHookResult = ReturnType<typeof useGetWorkspaceMembersQuery>;
+export type GetWorkspaceMembersLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersLazyQuery>;
+export type GetWorkspaceMembersQueryResult = Apollo.QueryResult<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>;
 export const UpdateWorkspaceDocument = gql`
     mutation UpdateWorkspace($data: WorkspaceUpdateInput!) {
   updateWorkspace(data: $data) {
@@ -5184,3 +5234,36 @@ export function useRemoveWorkspaceLogoMutation(baseOptions?: Apollo.MutationHook
 export type RemoveWorkspaceLogoMutationHookResult = ReturnType<typeof useRemoveWorkspaceLogoMutation>;
 export type RemoveWorkspaceLogoMutationResult = Apollo.MutationResult<RemoveWorkspaceLogoMutation>;
 export type RemoveWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<RemoveWorkspaceLogoMutation, RemoveWorkspaceLogoMutationVariables>;
+export const RemoveWorkspaceMemberDocument = gql`
+    mutation RemoveWorkspaceMember($where: WorkspaceMemberWhereUniqueInput!) {
+  deleteWorkspaceMember(where: $where) {
+    id
+  }
+}
+    `;
+export type RemoveWorkspaceMemberMutationFn = Apollo.MutationFunction<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>;
+
+/**
+ * __useRemoveWorkspaceMemberMutation__
+ *
+ * To run a mutation, you first call `useRemoveWorkspaceMemberMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveWorkspaceMemberMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeWorkspaceMemberMutation, { data, loading, error }] = useRemoveWorkspaceMemberMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useRemoveWorkspaceMemberMutation(baseOptions?: Apollo.MutationHookOptions<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>(RemoveWorkspaceMemberDocument, options);
+      }
+export type RemoveWorkspaceMemberMutationHookResult = ReturnType<typeof useRemoveWorkspaceMemberMutation>;
+export type RemoveWorkspaceMemberMutationResult = Apollo.MutationResult<RemoveWorkspaceMemberMutation>;
+export type RemoveWorkspaceMemberMutationOptions = Apollo.BaseMutationOptions<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>;

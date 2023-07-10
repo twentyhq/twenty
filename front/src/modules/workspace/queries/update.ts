@@ -24,3 +24,11 @@ export const REMOVE_WORKSPACE_LOGO = gql`
     }
   }
 `;
+
+export const REMOVE_WORKSPACE_MEMBER = gql`
+  mutation RemoveWorkspaceMember($where: WorkspaceMemberWhereUniqueInput!) {
+    deleteWorkspaceMember(where: $where) {
+      id
+    }
+  }
+`;
