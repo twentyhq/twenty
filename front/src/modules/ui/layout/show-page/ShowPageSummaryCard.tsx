@@ -9,6 +9,13 @@ import {
   beautifyPastDateRelativeToNow,
 } from '@/utils/datetime/date-utils';
 
+type OwnProps = {
+  id?: string;
+  logoOrAvatar?: string;
+  title: string;
+  date: string;
+};
+
 const StyledShowPageSummaryCard = styled.div`
   align-items: center;
   display: flex;
@@ -46,14 +53,11 @@ const StyledTooltip = styled(Tooltip)`
 `;
 
 export function ShowPageSummaryCard({
+  id,
   logoOrAvatar,
   title,
   date,
-}: {
-  logoOrAvatar?: string;
-  title: string;
-  date: string;
-}) {
+}: OwnProps) {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDate(date) : '';
@@ -65,6 +69,7 @@ export function ShowPageSummaryCard({
       <Avatar
         avatarUrl={logoOrAvatar}
         size={theme.icon.size.xl}
+        colorId={id}
         placeholder={title}
       />
       <StyledInfoContainer>

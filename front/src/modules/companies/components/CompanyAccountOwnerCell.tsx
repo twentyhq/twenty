@@ -16,7 +16,10 @@ export function CompanyAccountOwnerCell({ company }: OwnProps) {
       editModeContent={<CompanyAccountOwnerPicker company={company} />}
       nonEditModeContent={
         company.accountOwner?.displayName ? (
-          <PersonChip name={company.accountOwner?.displayName ?? ''} />
+          <PersonChip
+            id={company.accountOwner.id}
+            name={company.accountOwner?.displayName ?? ''}
+          />
         ) : (
           <></>
         )

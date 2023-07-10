@@ -1,4 +1,4 @@
-import CompanyChip from '@/companies/components/CompanyChip';
+import { CompanyChip } from '@/companies/components/CompanyChip';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { EditableCell } from '@/ui/components/editable-cell/EditableCell';

@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { Avatar } from '@/users/components/Avatar';
 
 export type CompanyChipPropsType = {
-  id?: string;
+  id: string;
   name: string;
   picture?: string;
 };
@@ -50,7 +50,7 @@ const StyledContainerNoLink = styled.div`
   ${baseStyle}
 `;
 
-function CompanyChip({ id, name, picture }: CompanyChipPropsType) {
+export function CompanyChip({ id, name, picture }: CompanyChipPropsType) {
   const ContainerComponent = id ? StyledContainerLink : StyledContainerNoLink;
 
   return (
@@ -58,6 +58,7 @@ function CompanyChip({ id, name, picture }: CompanyChipPropsType) {
       {picture && (
         <Avatar
           avatarUrl={picture?.toString()}
+          colorId={id}
           placeholder={name}
           type="squared"
           size={14}
@@ -67,5 +68,3 @@ function CompanyChip({ id, name, picture }: CompanyChipPropsType) {
     </ContainerComponent>
   );
 }
-
-export default CompanyChip;
