@@ -64,8 +64,6 @@ const meta: Meta<typeof Button> = {
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-const clickJestFn = jest.fn();
-
 const variants: ButtonProps['variant'][] = [
   'primary',
   'secondary',
@@ -74,6 +72,8 @@ const variants: ButtonProps['variant'][] = [
   'tertiaryLight',
   'danger',
 ];
+
+const clickJestFn = jest.fn();
 
 const states = {
   'with-icon': {
@@ -198,9 +198,9 @@ const generateStory = (
       button = canvas.getByTestId(`primary-button-default`);
     }
 
-    expect(clickJestFn).toHaveBeenCalledTimes(0);
+    const numberOfClicks = clickJestFn.mock.calls.length;
     await userEvent.click(button);
-    expect(clickJestFn).toHaveBeenCalledTimes(1);
+    expect(clickJestFn).toHaveBeenCalledTimes(numberOfClicks + 1);
   },
   parameters: {
     pseudo: Object.keys(states).reduce(
