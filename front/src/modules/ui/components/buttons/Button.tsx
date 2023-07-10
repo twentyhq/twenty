@@ -45,11 +45,11 @@ const StyledButton = styled.button<
         return 'transparent';
     }
   }};
-  border: ${({ theme, variant }) => {
+  border-color: ${({ theme, variant }) => {
     switch (variant) {
       case 'primary':
       case 'secondary':
-        return `1px solid ${theme.background.transparent.medium}`;
+        return `${theme.background.transparent.medium}`;
       case 'tertiary':
       default:
         return 'none';
@@ -65,6 +65,17 @@ const StyledButton = styled.button<
         return '0px';
       default:
         return '4px';
+    }
+  }};
+  border-style: solid;
+  border-width: ${({ theme, variant, position }) => {
+    switch (variant) {
+      case 'primary':
+      case 'secondary':
+        return position === 'middle' ? `1px 0 1px 0` : `1px`;
+      case 'tertiary':
+      default:
+        return '0';
     }
   }};
   box-shadow: ${({ theme, variant }) => {
