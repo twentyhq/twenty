@@ -8,7 +8,6 @@ import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
 } from '@/utils/datetime/date-utils';
-import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 
 type OwnProps = {
   comment: Pick<CommentForDrawer, 'id' | 'author' | 'createdAt'>;
