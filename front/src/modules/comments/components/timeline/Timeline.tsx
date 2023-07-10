@@ -6,7 +6,6 @@ import { useOpenCommentThreadRightDrawer } from '@/comments/hooks/useOpenComment
 import { useOpenCreateCommentThreadDrawer } from '@/comments/hooks/useOpenCreateCommentThreadDrawer';
 import { CommentableEntity } from '@/comments/types/CommentableEntity';
 import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
-import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
 import { IconCirclePlus, IconNotes } from '@/ui/icons/index';
 import {
   beautifyExactDate,
@@ -16,6 +15,8 @@ import {
   SortOrder,
   useGetCommentThreadsByTargetsQuery,
 } from '~/generated/graphql';
+
+import { CommentThreadCreateButton } from '../comment-thread/CommentThreadCreateButton';
 
 const StyledMainContainer = styled.div`
   align-items: flex-start;
@@ -208,8 +209,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
       <StyledTimelineEmptyContainer>
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
         <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
-        <TableActionBarButtonToggleComments
-          onClick={() => openCreateCommandThread(entity)}
+        <CommentThreadCreateButton
+          onNoteClick={() => openCreateCommandThread(entity)}
         />
       </StyledTimelineEmptyContainer>
     );
@@ -223,8 +224,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
             <IconCirclePlus />
           </StyledIconContainer>
 
-          <TableActionBarButtonToggleComments
-            onClick={() => openCreateCommandThread(entity)}
+          <CommentThreadCreateButton
+            onNoteClick={() => openCreateCommandThread(entity)}
           />
         </StyledTimelineItemContainer>
       </StyledTopActionBar>

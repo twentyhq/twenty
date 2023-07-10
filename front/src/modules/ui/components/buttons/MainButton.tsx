@@ -8,6 +8,7 @@ type Props = {
   title: string;
   fullWidth?: boolean;
   variant?: Variant;
+  soon?: boolean;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`

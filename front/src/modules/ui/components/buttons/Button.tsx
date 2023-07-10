@@ -3,7 +3,9 @@ import styled from '@emotion/styled';
 
 import { rgba } from '@/ui/themes/colors';
 
-type Variant =
+import { SoonPill } from '../accessories/SoonPill';
+
+export type ButtonVariant =
   | 'primary'
   | 'secondary'
   | 'tertiary'
@@ -11,18 +13,22 @@ type Variant =
   | 'tertiaryLight'
   | 'danger';
 
-type Size = 'medium' | 'small';
+export type ButtonSize = 'medium' | 'small';
 
-type Props = {
+export type ButtonPosition = 'left' | 'middle' | 'right' | undefined;
+
+export type ButtonProps = {
   icon?: React.ReactNode;
   title?: string;
   fullWidth?: boolean;
-  variant?: Variant;
-  size?: Size;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  position?: ButtonPosition;
+  soon?: boolean;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
-  Pick<Props, 'fullWidth' | 'variant' | 'size' | 'title'>
+  Pick<ButtonProps, 'fullWidth' | 'variant' | 'size' | 'position' | 'title'>
 >`
   align-items: center;
   background: ${({ theme, variant, disabled }) => {
@@ -49,7 +55,18 @@ const StyledButton = styled.button<
         return 'none';
     }
   }};
-  border-radius: 4px;
+  border-radius: ${({ position }) => {
+    switch (position) {
+      case 'left':
+        return '4px 0px 0px 4px';
+      case 'right':
+        return '0px 4px 4px 0px';
+      case 'middle':
+        return '0px';
+      default:
+        return '4px';
+    }
+  }};
   box-shadow: ${({ theme, variant }) => {
     switch (variant) {
       case 'primary':
@@ -59,6 +76,7 @@ const StyledButton = styled.button<
         return 'none';
     }
   }};
+
   color: ${({ theme, variant, disabled }) => {
     if (disabled) {
       if (variant === 'primary') {
@@ -105,6 +123,8 @@ const StyledButton = styled.button<
 
   transition: background 0.1s ease;
 
+  white-space: nowrap;
+
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
   &:hover,
@@ -144,18 +164,24 @@ export function Button({
   fullWidth = false,
   variant = 'primary',
   size = 'medium',
+  position,
+  soon = false,
+  disabled = false,
   ...props
-}: Props) {
+}: ButtonProps) {
   return (
     <StyledButton
       fullWidth={fullWidth}
       variant={variant}
       size={size}
+      position={position}
+      disabled={soon || disabled}
       title={title}
       {...props}
     >
       {icon}
       {title}
+      {soon && <SoonPill />}
     </StyledButton>
   );
 }
