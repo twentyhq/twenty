@@ -3,11 +3,14 @@ import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/comments/components/Timeline';
 import { useCompanyQuery } from '@/companies/services';
+import { RawLink } from '@/ui/components/links/RawLink';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
 import { IconBuildingSkyscraper, IconLink, IconMap } from '@/ui/icons/index';
-import { ShowPageLayout } from '@/ui/layout/show-pages/ShowPageLayout';
-import { ShowPageTopLeftContainer } from '@/ui/layout/show-pages/ShowPageTopLeftContainer';
+import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
+import { ShowPageLeftContainer } from '@/ui/layout/show-page/containers/ShowPageLeftContainer';
+import { ShowPageRightContainer } from '@/ui/layout/show-page/containers/ShowPageRightContainer';
+import { ShowPageSummaryCard } from '@/ui/layout/show-page/ShowPageSummaryCard';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import { CommentableType } from '~/generated/graphql';
 
@@ -20,12 +23,13 @@ export function CompanyShow() {
   const theme = useTheme();
 
   return (
-    <ShowPageLayout
+    <WithTopBarContainer
       title={company?.name ?? ''}
       icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-      leftSide={
-        <>
-          <ShowPageTopLeftContainer
+    >
+      <>
+        <ShowPageLeftContainer>
+          <ShowPageSummaryCard
             logoOrAvatar={getLogoUrlFromDomainName(company?.domainName ?? '')}
             title={company?.name ?? 'No name'}
             date={company?.createdAt ?? ''}
@@ -34,9 +38,16 @@ export function CompanyShow() {
             <>
               <PropertyBoxItem
                 icon={<IconLink />}
-                value={company?.domainName ?? 'No URL'}
-                link={
-                  company?.domainName ? 'https://' + company?.domainName : ''
+                value={
+                  <RawLink
+                    href={
+                      company?.domainName
+                        ? 'https://' + company?.domainName
+                        : ''
+                    }
+                  >
+                    {company?.domainName}
+                  </RawLink>
                 }
               />
               <PropertyBoxItem
@@ -45,13 +56,13 @@ export function CompanyShow() {
               />
             </>
           </PropertyBox>
-        </>
-      }
-      rightSide={
-        <Timeline
-          entity={{ id: company?.id ?? '', type: CommentableType.Company }}
-        />
-      }
-    />
+        </ShowPageLeftContainer>
+        <ShowPageRightContainer>
+          <Timeline
+            entity={{ id: company?.id ?? '', type: CommentableType.Company }}
+          />
+        </ShowPageRightContainer>
+      </>
+    </WithTopBarContainer>
   );
 }

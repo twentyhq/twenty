@@ -9,7 +9,7 @@ export class CreateOneWorkspaceMemberArgs {
 
     @Field(() => WorkspaceMemberCreateInput, {nullable:false})
     @Type(() => WorkspaceMemberCreateInput)
-    @Type(() => WorkspaceMemberCreateInput)
     @ValidateNested({each: true})
+    @Type(() => WorkspaceMemberCreateInput)
     data!: WorkspaceMemberCreateInput;
 }

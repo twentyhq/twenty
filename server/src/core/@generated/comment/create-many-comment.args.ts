@@ -9,8 +9,8 @@ export class CreateManyCommentArgs {
 
     @Field(() => [CommentCreateManyInput], {nullable:false})
     @Type(() => CommentCreateManyInput)
-    @Type(() => CommentCreateManyInput)
     @ValidateNested({each: true})
+    @Type(() => CommentCreateManyInput)
     data!: Array<CommentCreateManyInput>;
 
     @Field(() => Boolean, {nullable:true})

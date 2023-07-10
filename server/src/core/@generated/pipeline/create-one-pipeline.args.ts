@@ -9,7 +9,7 @@ export class CreateOnePipelineArgs {
 
     @Field(() => PipelineCreateInput, {nullable:false})
     @Type(() => PipelineCreateInput)
-    @Type(() => PipelineCreateInput)
     @ValidateNested({each: true})
+    @Type(() => PipelineCreateInput)
     data!: PipelineCreateInput;
 }

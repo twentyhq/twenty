@@ -119,7 +119,7 @@ export function RightDrawerCreateCommentThread() {
     <RightDrawerPage>
       <RightDrawerTopBar
         title="New note"
-        onClick={() =>
+        onSave={() =>
           handleNewCommentThread(title, JSON.stringify(editor?.topLevelBlocks))
         }
       />

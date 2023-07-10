@@ -9,7 +9,7 @@ export class CreateOneUserArgs {
 
     @Field(() => UserCreateInput, {nullable:false})
     @Type(() => UserCreateInput)
-    @Type(() => UserCreateInput)
     @ValidateNested({each: true})
+    @Type(() => UserCreateInput)
     data!: UserCreateInput;
 }

@@ -1,6 +1,7 @@
 import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { v4 as uuidV4 } from 'uuid';
 
 import { Avatar } from '@/users/components/Avatar';
 import {
@@ -8,59 +9,43 @@ import {
   beautifyPastDateRelativeToNow,
 } from '@/utils/datetime/date-utils';
 
-const StyledShowTopLeftImageContainer = styled.div`
+const StyledShowPageSummaryCard = styled.div`
   align-items: center;
-  align-self: stretch;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)}
     ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledShowTopLeftImageInsideContainer = styled.div`
+const StyledInfoContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-
-  div {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
 `;
 
 const StyledDate = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
+  cursor: pointer;
 `;
 
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.xl};
-  font-style: normal;
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
 `;
 
 const StyledTooltip = styled(Tooltip)`
   background-color: ${({ theme }) => theme.background.primary};
-
-  box-shadow: 0px 2px 4px 3px
-    ${({ theme }) => theme.background.transparent.light};
-
-  box-shadow: 2px 4px 16px 6px
-    ${({ theme }) => theme.background.transparent.light};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
 
   color: ${({ theme }) => theme.font.color.primary};
 
-  opacity: 1;
-  padding: 8px;
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-export function ShowPageTopLeftContainer({
+export function ShowPageSummaryCard({
   logoOrAvatar,
   title,
   date,
@@ -72,28 +57,28 @@ export function ShowPageTopLeftContainer({
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(date);
   const exactCreatedAt = beautifyExactDate(date);
   const theme = useTheme();
+  const dateElementId = `date-id-${uuidV4()}`;
 
   return (
-    <StyledShowTopLeftImageContainer>
-      <StyledShowTopLeftImageInsideContainer>
-        <Avatar
-          avatarUrl={logoOrAvatar}
-          size={theme.icon.size.xl}
-          placeholder={title}
+    <StyledShowPageSummaryCard>
+      <Avatar
+        avatarUrl={logoOrAvatar}
+        size={theme.icon.size.xl}
+        placeholder={title}
+      />
+      <StyledInfoContainer>
+        <StyledTitle>{title}</StyledTitle>
+        <StyledDate id={dateElementId}>
+          Added {beautifiedCreatedAt} ago
+        </StyledDate>
+        <StyledTooltip
+          anchorSelect={`#${dateElementId}`}
+          content={exactCreatedAt}
+          clickable
+          noArrow
+          place="right"
         />
-        <div>
-          <StyledTitle>{title}</StyledTitle>
-          <StyledDate id={`id-${title}`}>
-            Added {beautifiedCreatedAt} ago
-          </StyledDate>
-          <StyledTooltip
-            anchorSelect={`#id-${title}`}
-            content={exactCreatedAt}
-            clickable
-            noArrow
-          />
-        </div>
-      </StyledShowTopLeftImageInsideContainer>
-    </StyledShowTopLeftImageContainer>
+      </StyledInfoContainer>
+    </StyledShowPageSummaryCard>
   );
 }

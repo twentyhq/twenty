@@ -6,8 +6,10 @@ import { usePersonQuery } from '@/people/services';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
 import { IconLink, IconUser } from '@/ui/icons/index';
-import { ShowPageLayout } from '@/ui/layout/show-pages/ShowPageLayout';
-import { ShowPageTopLeftContainer } from '@/ui/layout/show-pages/ShowPageTopLeftContainer';
+import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
+import { ShowPageLeftContainer } from '@/ui/layout/show-page/containers/ShowPageLeftContainer';
+import { ShowPageRightContainer } from '@/ui/layout/show-page/containers/ShowPageRightContainer';
+import { ShowPageSummaryCard } from '@/ui/layout/show-page/ShowPageSummaryCard';
 import { CommentableType } from '~/generated/graphql';
 
 export function PersonShow() {
@@ -19,12 +21,13 @@ export function PersonShow() {
   const theme = useTheme();
 
   return (
-    <ShowPageLayout
+    <WithTopBarContainer
       title={person?.firstName ?? ''}
       icon={<IconUser size={theme.icon.size.md} />}
-      leftSide={
-        <>
-          <ShowPageTopLeftContainer
+    >
+      <>
+        <ShowPageLeftContainer>
+          <ShowPageSummaryCard
             title={person?.displayName ?? 'No name'}
             date={person?.createdAt ?? ''}
           />
@@ -36,13 +39,13 @@ export function PersonShow() {
               />
             </>
           </PropertyBox>
-        </>
-      }
-      rightSide={
-        <Timeline
-          entity={{ id: person?.id ?? '', type: CommentableType.Person }}
-        />
-      }
-    />
+        </ShowPageLeftContainer>
+        <ShowPageRightContainer>
+          <Timeline
+            entity={{ id: person?.id ?? '', type: CommentableType.Person }}
+          />
+        </ShowPageRightContainer>
+      </>
+    </WithTopBarContainer>
   );
 }

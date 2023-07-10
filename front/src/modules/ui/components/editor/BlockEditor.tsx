@@ -1,21 +1,19 @@
-/** @jsxImportSource @emotion/react */
-import React from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { BlockNoteView } from '@blocknote/react';
-import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 
 interface BlockEditorProps {
   editor: BlockNoteEditor | null;
 }
 
 export function BlockEditor({ editor }: BlockEditorProps) {
-  const customStyles = (theme: any) => css`
+  const StyledEditor = styled.div`
     & .editor-create-mode,
     .editor-edit-mode {
-      background: ${theme.background.primary};
+      background: ${({ theme }) => theme.background.primary};
     }
     & .editor-create-mode [class^='_inlineContent']:before {
-      color: ${theme.font.color.tertiary};
+      color: ${({ theme }) => theme.font.color.tertiary};
       font-style: normal !important;
     }
     & .editor-edit-mode [class^='_inlineContent']:before {
@@ -24,8 +22,8 @@ export function BlockEditor({ editor }: BlockEditorProps) {
   `;
 
   return (
-    <div css={customStyles}>
+    <StyledEditor>
       <BlockNoteView editor={editor} />
-    </div>
+    </StyledEditor>
   );
 }

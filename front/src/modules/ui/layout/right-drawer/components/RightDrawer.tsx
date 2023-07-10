@@ -1,6 +1,8 @@
+import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { useOutsideAlerter } from '@/ui/hooks/useOutsideAlerter';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -8,19 +10,9 @@ import { rightDrawerPageState } from '../states/rightDrawerPageState';
 
 import { RightDrawerRouter } from './RightDrawerRouter';
 
-const ClickableBackground = styled.div`
-  //backdrop-filter: blur(1px);
-  height: 100%;
-  left: 0;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1;
-`;
-
 const StyledContainer = styled.div`
-  background: white;
-  box-shadow: ${({ theme }) => theme.boxShadow.rightDrawer};
+  background: ${({ theme }) => theme.background.primary};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   height: 100%;
   overflow-x: hidden;
   position: fixed;
@@ -44,15 +36,16 @@ export function RightDrawer() {
 
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
 
+  const rightDrawerRef = useRef(null);
+  useOutsideAlerter(rightDrawerRef, () => setIsRightDrawerOpen(false));
   if (!isRightDrawerOpen || !isDefined(rightDrawerPage)) {
     return <></>;
   }
 
   return (
     <>
-      <ClickableBackground onClick={() => setIsRightDrawerOpen(false)} />
       <StyledContainer>
-        <StyledRightDrawer>
+        <StyledRightDrawer ref={rightDrawerRef}>
           <RightDrawerRouter />
         </StyledRightDrawer>
       </StyledContainer>

@@ -23,21 +23,20 @@ const StyledTopBarTitle = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-export function RightDrawerTopBar({
-  title,
-  onClick,
-}: {
+type OwnProps = {
   title: string | null | undefined;
-  onClick?: () => void;
-}) {
+  onSave?: () => void;
+};
+
+export function RightDrawerTopBar({ title, onSave }: OwnProps) {
   function handleOnClick() {
-    onClick?.();
+    onSave?.();
   }
   return (
     <StyledRightDrawerTopBar>
       <RightDrawerTopBarCloseButton />
       <StyledTopBarTitle>{title}</StyledTopBarTitle>
-      {onClick ? <Button title="Save" onClick={handleOnClick} /> : <div></div>}
+      {onSave && <Button title="Save" onClick={handleOnClick} />}
     </StyledRightDrawerTopBar>
   );
 }

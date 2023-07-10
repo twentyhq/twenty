@@ -10,8 +10,8 @@ export class UpdateOnePipelineProgressArgs {
 
     @Field(() => PipelineProgressUpdateInput, {nullable:false})
     @Type(() => PipelineProgressUpdateInput)
-    @Type(() => PipelineProgressUpdateInput)
     @ValidateNested({each: true})
+    @Type(() => PipelineProgressUpdateInput)
     data!: PipelineProgressUpdateInput;
 
     @Field(() => PipelineProgressWhereUniqueInput, {nullable:false})

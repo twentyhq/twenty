@@ -6,6 +6,7 @@ import { RightDrawerTimeline } from '@/comments/components/RightDrawerTimeline';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
+import { RightDrawerPages } from '../types/RightDrawerPages';
 
 export function RightDrawerRouter() {
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
@@ -14,13 +15,14 @@ export function RightDrawerRouter() {
     return <></>;
   }
 
-  return rightDrawerPage === 'comments' ? (
-    <RightDrawerTimeline />
-  ) : rightDrawerPage === 'create-comment-thread' ? (
-    <RightDrawerCreateCommentThread />
-  ) : rightDrawerPage === 'edit-comment-thread' ? (
-    <RightDrawerEditCommentThread />
-  ) : (
-    <></>
-  );
+  switch (rightDrawerPage) {
+    case RightDrawerPages.Timeline:
+      return <RightDrawerTimeline />;
+    case RightDrawerPages.CreateCommentThread:
+      return <RightDrawerCreateCommentThread />;
+    case RightDrawerPages.EditCommentThread:
+      return <RightDrawerEditCommentThread />;
+    default:
+      return <></>;
+  }
 }

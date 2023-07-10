@@ -1,5 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { selectedRowIdsState } from '@/ui/tables/states/selectedRowIdsState';
 import { CommentableType } from '~/generated/graphql';
 
@@ -27,6 +28,6 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
     );
 
     setCommentableEntityArray(commentableEntityArray);
-    openRightDrawer('create-comment-thread');
+    openRightDrawer(RightDrawerPages.CreateCommentThread);
   };
 }
