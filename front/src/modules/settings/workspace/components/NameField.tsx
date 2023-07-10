@@ -40,7 +40,6 @@ export function NameField({ autoSave = true, onNameUpdate }: OwnProps) {
         return;
       }
       try {
-        console.log('UPDATE !');
         const { data, errors } = await updateWorkspace({
           variables: {
             data: {
@@ -67,8 +66,6 @@ export function NameField({ autoSave = true, onNameUpdate }: OwnProps) {
     debouncedUpdate(displayName);
     return debouncedUpdate.cancel;
   }, [debouncedUpdate, displayName]);
-
-  console.log('displayName', displayName);
 
   return (
     <StyledComboInputContainer>
