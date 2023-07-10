@@ -65,16 +65,16 @@ const StyledItemLabel = styled.div`
 `;
 
 const StyledSoonPill = styled.div`
-  display: flex;
-  justify-content: center;
   align-items: center;
-  border-radius: 50px;
   background-color: ${({ theme }) => theme.background.transparent.light};
+  border-radius: 50px;
+  display: flex;
   font-size: ${({ theme }) => theme.font.size.xs};
   height: 16px;
+  justify-content: center;
+  margin-left: auto;
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
-  margin-left: auto; // this aligns the pill to the right
 `;
 
 function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {

@@ -13,9 +13,9 @@ export type ButtonVariant =
 
 export type ButtonSize = 'medium' | 'small';
 
-export type ButtonPosition = 'left' | 'middle' | 'right' | 'solo';
+export type ButtonPosition = 'left' | 'middle' | 'right' | undefined;
 
-type Props = {
+export type ButtonProps = {
   icon?: React.ReactNode;
   title: string;
   fullWidth?: boolean;
@@ -26,7 +26,7 @@ type Props = {
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
-  Pick<Props, 'fullWidth' | 'variant' | 'size' | 'position'>
+  Pick<ButtonProps, 'fullWidth' | 'variant' | 'size' | 'position'>
 >`
   align-items: center;
   background: ${({ theme, variant, disabled }) => {
@@ -153,16 +153,15 @@ const SoonPill = styled.span`
   border-radius: 50px;
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
-  font-family: Inter;
-  font-size: 11px;
+  font-size: ${({ theme }) => theme.font.size.xs};
   font-style: normal;
-  font-weight: 500;
-  gap: 8px;
-  height: 16px;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(4)};
   justify-content: flex-end;
-  line-height: 150%;
+  line-height: ${({ theme }) => theme.text.lineHeight.lg};
   margin-left: auto;
-  padding: 4px 8px;
+  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
 `;
 
 export function Button({
@@ -171,11 +170,11 @@ export function Button({
   fullWidth = false,
   variant = 'primary',
   size = 'medium',
-  position = 'solo',
+  position,
   soon = false,
   disabled = false,
   ...props
-}: Props) {
+}: ButtonProps) {
   return (
     <StyledButton
       fullWidth={fullWidth}
