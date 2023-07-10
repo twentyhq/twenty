@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 
 type OwnProps = Omit<
@@ -52,16 +52,13 @@ export function TextInput({
   fullWidth,
   ...props
 }: OwnProps): JSX.Element {
-  const [internalValue, setInternalValue] = useState(value);
-
   return (
     <StyledContainer>
       {label && <StyledLabel>{label}</StyledLabel>}
       <StyledInput
         fullWidth={fullWidth ?? false}
-        value={internalValue}
+        value={value}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          setInternalValue(event.target.value);
           if (onChange) {
             onChange(event.target.value);
           }

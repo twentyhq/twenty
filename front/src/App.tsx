@@ -19,6 +19,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 
 import { CompanyShow } from './pages/companies/CompanyShow';
 import { PersonShow } from './pages/people/PersonShow';
+import { SettingsWorksapce } from './pages/settings/SettingsWorkspace';
 import { AppInternalHooks } from './AppInternalHooks';
 
 /**
@@ -83,6 +84,10 @@ export function App() {
                         <Route
                           path="workspace-members"
                           element={<SettingsWorkspaceMembers />}
+                        />
+                        <Route
+                          path="workspace"
+                          element={<SettingsWorksapce />}
                         />
                       </Routes>
                     }
