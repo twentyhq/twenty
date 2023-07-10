@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { rgba } from '@/ui/themes/colors';
 
-type Variant =
+export type ButtonVariant =
   | 'primary'
   | 'secondary'
   | 'tertiary'
@@ -11,18 +11,21 @@ type Variant =
   | 'tertiaryLight'
   | 'danger';
 
-type Size = 'medium' | 'small';
+export type ButtonSize = 'medium' | 'small';
+
+export type ButtonPosition = 'left' | 'middle' | 'right' | 'solo';
 
 type Props = {
   icon?: React.ReactNode;
   title: string;
   fullWidth?: boolean;
-  variant?: Variant;
-  size?: Size;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  position?: ButtonPosition;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
-  Pick<Props, 'fullWidth' | 'variant' | 'size'>
+  Pick<Props, 'fullWidth' | 'variant' | 'size' | 'position'>
 >`
   align-items: center;
   background: ${({ theme, variant, disabled }) => {
@@ -47,7 +50,19 @@ const StyledButton = styled.button<
         return 'none';
     }
   }};
-  border-radius: 4px;
+  border-radius: ${({ position }) => {
+    switch (position) {
+      case 'left':
+        return '4px 0px 0px 4px';
+      case 'right':
+        return '0px 4px 4px 0px';
+      case 'middle':
+        return '0px';
+      default:
+        return '4px';
+    }
+  }};
+
   box-shadow: ${({ theme, variant }) => {
     switch (variant) {
       case 'primary':
@@ -136,6 +151,7 @@ export function Button({
   fullWidth = false,
   variant = 'primary',
   size = 'medium',
+  position = 'solo',
   ...props
 }: Props) {
   return (
@@ -143,6 +159,7 @@ export function Button({
       fullWidth={fullWidth}
       variant={variant}
       size={size}
+      position={position}
       {...props}
     >
       {icon}

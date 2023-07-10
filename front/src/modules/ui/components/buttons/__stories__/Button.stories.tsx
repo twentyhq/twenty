@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from '@emotion/styled';
 import { text, withKnobs } from '@storybook/addon-knobs';
 import { expect, jest } from '@storybook/jest';
@@ -8,6 +9,7 @@ import { IconSearch } from '@/ui/icons';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { Button } from '../Button';
+import { ButtonGroup } from '../ButtonGroup';
 
 type ButtonProps = React.ComponentProps<typeof Button>;
 
@@ -73,148 +75,148 @@ const variants: ButtonProps['variant'][] = [
   'danger',
 ];
 
-const ButtonLine = (props: ButtonProps) => (
+const states = {
+  'with-icon': {
+    description: 'With icon',
+    extraProps: (variant: string) => ({
+      'data-testid': `${variant}-button-with-icon`,
+      icon: <IconSearch size={14} />,
+    }),
+  },
+  default: {
+    description: 'Default',
+    extraProps: (variant: string) => ({
+      'data-testid': `${variant}-button-default`,
+      onClick: clickJestFn,
+    }),
+  },
+  hover: {
+    description: 'Hover',
+    extraProps: (variant: string) => ({
+      id: `${variant}-button-hover`,
+      'data-testid': `${variant}-button-hover`,
+    }),
+  },
+  pressed: {
+    description: 'Pressed',
+    extraProps: (variant: string) => ({
+      id: `${variant}-button-pressed`,
+      'data-testid': `${variant}-button-pressed`,
+    }),
+  },
+  disabled: {
+    description: 'Disabled',
+    extraProps: (variant: string) => ({
+      'data-testid': `${variant}-button-disabled`,
+      disabled: true,
+    }),
+  },
+  focus: {
+    description: 'Focus',
+    extraProps: (variant: string) => ({
+      id: `${variant}-button-focus`,
+      'data-testid': `${variant}-button-focus`,
+    }),
+  },
+};
+
+const ButtonLine: React.FC<ButtonProps> = ({ variant, ...props }) => (
   <>
-    <StyledButtonContainer>
-      <StyledDescription>With icon</StyledDescription>
-      <Button
-        data-testid={`${props.variant}-button-with-icon`}
-        {...props}
-        icon={<IconSearch size={14} />}
-      />
-    </StyledButtonContainer>
-    <StyledButtonContainer>
-      <StyledDescription>Default</StyledDescription>
-      <Button
-        data-testid={`${props.variant}-button-default`}
-        onClick={clickJestFn}
-        {...props}
-      />
-    </StyledButtonContainer>
-    <StyledButtonContainer>
-      <StyledDescription>Hover</StyledDescription>
-      <Button
-        id={`${props.variant}-button-hover`}
-        data-testid={`${props.variant}-button-hover`}
-        {...props}
-      />
-    </StyledButtonContainer>
-    <StyledButtonContainer>
-      <StyledDescription>Pressed</StyledDescription>
-      <Button
-        id={`${props.variant}-button-pressed`}
-        data-testid={`${props.variant}-button-pressed`}
-        {...props}
-      />
-    </StyledButtonContainer>
-    <StyledButtonContainer>
-      <StyledDescription>Disabled</StyledDescription>
-      <Button
-        data-testid={`${props.variant}-button-disabled`}
-        {...props}
-        disabled
-      />
-    </StyledButtonContainer>
-    <StyledButtonContainer>
-      <StyledDescription>Focus</StyledDescription>
-      <Button
-        id={`${props.variant}-button-focus`}
-        data-testid={`${props.variant}-button-focus`}
-        {...props}
-      />
-    </StyledButtonContainer>
+    {Object.entries(states).map(([state, { description, extraProps }]) => (
+      <StyledButtonContainer key={`${variant}-container-${state}`}>
+        <StyledDescription>{description}</StyledDescription>
+        <Button {...props} {...extraProps(variant ?? '')} variant={variant} />
+      </StyledButtonContainer>
+    ))}
   </>
 );
 
-const ButtonContainer = (props: Partial<ButtonProps>) => {
-  const title = text('Text', 'A button title');
+const ButtonGroupLine: React.FC<ButtonProps> = ({ variant, ...props }) => (
+  <>
+    {Object.entries(states).map(([state, { description, extraProps }]) => (
+      <StyledButtonContainer key={`${variant}-group-container-${state}`}>
+        <StyledDescription>{description}</StyledDescription>
+        <ButtonGroup>
+          <Button
+            {...props}
+            {...extraProps(`${variant}-left`)}
+            variant={variant}
+            title="Left"
+          />
+          <Button
+            {...props}
+            {...extraProps(`${variant}-center`)}
+            variant={variant}
+            title="Center"
+          />
+          <Button
+            {...props}
+            {...extraProps(`${variant}-right`)}
+            variant={variant}
+            title="Right"
+          />
+        </ButtonGroup>
+      </StyledButtonContainer>
+    ))}
+  </>
+);
 
-  return (
+const generateStory = (
+  size: ButtonProps['size'],
+  type: 'button' | 'group',
+  LineComponent: React.ComponentType<ButtonProps>,
+): Story => ({
+  render: getRenderWrapperForComponent(
     <StyledContainer>
       {variants.map((variant) => (
         <div key={variant}>
           <StyledTitle>{variant}</StyledTitle>
           <StyledLine>
-            <ButtonLine {...props} title={title} variant={variant} />
+            <LineComponent
+              size={size}
+              variant={variant}
+              title={text('Text', 'A button title')}
+            />
           </StyledLine>
         </div>
       ))}
-    </StyledContainer>
-  );
-};
-
-// Medium size
-export const MediumSize: Story = {
-  render: getRenderWrapperForComponent(<ButtonContainer />),
+    </StyledContainer>,
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    let button;
+    if (type === 'group') {
+      button = canvas.getByTestId(`primary-left-button-default`);
+    } else {
+      button = canvas.getByTestId(`primary-button-default`);
+    }
 
     expect(clickJestFn).toHaveBeenCalledTimes(0);
-
-    const button = canvas.getByTestId('primary-button-default');
     await userEvent.click(button);
-
     expect(clickJestFn).toHaveBeenCalledTimes(1);
   },
-};
-MediumSize.parameters = {
-  pseudo: {
-    hover: [
-      '#primary-button-hover',
-      '#secondary-button-hover',
-      '#tertiary-button-hover',
-      '#tertiaryBold-button-hover',
-      '#tertiaryLight-button-hover',
-      '#danger-button-hover',
-    ],
-    active: [
-      '#primary-button-pressed',
-      '#secondary-button-pressed',
-      '#tertiary-button-pressed',
-      '#tertiaryBold-button-pressed',
-      '#tertiaryLight-button-pressed',
-      '#danger-button-pressed',
-    ],
-    focus: [
-      '#primary-button-focus',
-      '#secondary-button-focus',
-      '#tertiary-button-focus',
-      '#tertiaryBold-button-focus',
-      '#tertiaryLight-button-focus',
-      '#danger-button-focus',
-    ],
+  parameters: {
+    pseudo: Object.keys(states).reduce(
+      (acc, state) => ({
+        ...acc,
+        [state]: variants.map(
+          (variant) =>
+            variant &&
+            ['#left', '#center', '#right'].map(
+              (pos) => `${pos}-${variant}-${type}-${state}`,
+            ),
+        ),
+      }),
+      {},
+    ),
   },
-};
+});
 
-// Small size
-export const SmallSize: Story = {
-  render: getRenderWrapperForComponent(<ButtonContainer size="small" />),
-};
-SmallSize.parameters = {
-  pseudo: {
-    hover: [
-      '#primary-button-hover',
-      '#secondary-button-hover',
-      '#tertiary-button-hover',
-      '#tertiaryBold-button-hover',
-      '#tertiaryLight-button-hover',
-      '#danger-button-hover',
-    ],
-    active: [
-      '#primary-button-pressed',
-      '#secondary-button-pressed',
-      '#tertiary-button-pressed',
-      '#tertiaryBold-button-pressed',
-      '#tertiaryLight-button-pressed',
-      '#danger-button-pressed',
-    ],
-    focus: [
-      '#primary-button-focus',
-      '#secondary-button-focus',
-      '#tertiary-button-focus',
-      '#tertiaryBold-button-focus',
-      '#tertiaryLight-button-focus',
-      '#danger-button-focus',
-    ],
-  },
-};
+export const MediumSize = generateStory('medium', 'button', ButtonLine);
+export const SmallSize = generateStory('small', 'button', ButtonLine);
+export const MediumSizeGroup = generateStory(
+  'medium',
+  'group',
+  ButtonGroupLine,
+);
+export const SmallSizeGroup = generateStory('small', 'group', ButtonGroupLine);
