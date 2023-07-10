@@ -8,7 +8,7 @@ import {
   useUpdateCompanyMutation,
 } from '~/generated/graphql';
 
-import CompanyChip from './CompanyChip';
+import { CompanyChip } from './CompanyChip';
 
 type OwnProps = {
   company: Pick<

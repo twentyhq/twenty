@@ -50,7 +50,7 @@ const StyledContainerNoLink = styled.div`
   ${baseStyle}
 `;
 
-function CompanyChip({ id, name, picture }: CompanyChipPropsType) {
+export function CompanyChip({ id, name, picture }: CompanyChipPropsType) {
   const ContainerComponent = id ? StyledContainerLink : StyledContainerNoLink;
 
   return (
@@ -68,5 +68,3 @@ function CompanyChip({ id, name, picture }: CompanyChipPropsType) {
     </ContainerComponent>
   );
 }
-
-export default CompanyChip;
