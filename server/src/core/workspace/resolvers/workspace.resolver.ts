@@ -50,8 +50,8 @@ export class WorkspaceResolver {
   @Query(() => Workspace)
   async currentWorkspace(
     @AuthWorkspace() workspace: Workspace,
-    @PrismaSelector({ modelName: 'User' })
-    prismaSelect: PrismaSelect<'User'>,
+    @PrismaSelector({ modelName: 'Workspace' })
+    prismaSelect: PrismaSelect<'Workspace'>,
   ) {
     const selectedWorkspace = await this.workspaceService.findUnique({
       where: {

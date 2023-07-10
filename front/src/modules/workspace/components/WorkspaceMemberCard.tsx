@@ -12,21 +12,15 @@ const StyledContainer = styled.div`
   flex-direction: row;
   margin-bottom: ${({ theme }) => theme.spacing(0)};
   margin-top: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
-const AvatarContainer = styled.div`
-  margin: ${({ theme }) => theme.spacing(3)};
-`;
-
-const TextContainer = styled.div`
+const Content = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   justify-content: center;
-`;
-
-const NameAndEmailContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+  margin-left: ${({ theme }) => theme.spacing(3)};
 `;
 
 const NameText = styled.span`
@@ -41,29 +35,26 @@ type OwnProps = {
   workspaceMember: {
     user: Pick<User, 'firstName' | 'lastName' | 'avatarUrl' | 'email'>;
   };
+  accessory?: React.ReactNode;
 };
 
-export function WorkspaceMemberCard({ workspaceMember }: OwnProps) {
+export function WorkspaceMemberCard({ workspaceMember, accessory }: OwnProps) {
   return (
     <StyledContainer>
-      <AvatarContainer>
-        <Avatar
-          avatarUrl={getImageAbsoluteURIOrBase64(
-            workspaceMember.user.avatarUrl,
-          )}
-          placeholder={workspaceMember.user.firstName || ''}
-          type="squared"
-          size={40}
-        />
-      </AvatarContainer>
-      <TextContainer>
-        <NameAndEmailContainer>
-          <NameText>
-            {workspaceMember.user.firstName} {workspaceMember.user.lastName}{' '}
-          </NameText>
-          <EmailText>{workspaceMember.user.email}</EmailText>
-        </NameAndEmailContainer>
-      </TextContainer>
+      <Avatar
+        avatarUrl={getImageAbsoluteURIOrBase64(workspaceMember.user.avatarUrl)}
+        placeholder={workspaceMember.user.firstName || ''}
+        type="squared"
+        size={40}
+      />
+      <Content>
+        <NameText>
+          {workspaceMember.user.firstName} {workspaceMember.user.lastName}{' '}
+        </NameText>
+        <EmailText>{workspaceMember.user.email}</EmailText>
+      </Content>
+
+      {accessory}
     </StyledContainer>
   );
 }

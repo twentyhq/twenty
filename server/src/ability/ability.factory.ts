@@ -58,7 +58,9 @@ export class AbilityFactory {
     can(AbilityAction.Update, 'Workspace', { id: workspace.id });
 
     // Workspace Member
-    can(AbilityAction.Read, 'WorkspaceMember', { userId: user.id });
+    can(AbilityAction.Read, 'WorkspaceMember', { workspaceId: workspace.id });
+    can(AbilityAction.Delete, 'WorkspaceMember', { workspaceId: workspace.id });
+    cannot(AbilityAction.Delete, 'WorkspaceMember', { userId: user.id });
 
     // Company
     can(AbilityAction.Read, 'Company', { workspaceId: workspace.id });

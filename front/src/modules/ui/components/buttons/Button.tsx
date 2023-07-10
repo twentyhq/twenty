@@ -15,14 +15,14 @@ type Size = 'medium' | 'small';
 
 type Props = {
   icon?: React.ReactNode;
-  title: string;
+  title?: string;
   fullWidth?: boolean;
   variant?: Variant;
   size?: Size;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
-  Pick<Props, 'fullWidth' | 'variant' | 'size'>
+  Pick<Props, 'fullWidth' | 'variant' | 'size' | 'title'>
 >`
   align-items: center;
   background: ${({ theme, variant, disabled }) => {
@@ -33,8 +33,10 @@ const StyledButton = styled.button<
         } else {
           return theme.color.blue;
         }
-      default:
+      case 'secondary':
         return theme.background.primary;
+      default:
+        return 'transparent';
     }
   }};
   border: ${({ theme, variant }) => {
@@ -93,7 +95,13 @@ const StyledButton = styled.button<
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: flex-start;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme, title }) => {
+    if (!title) {
+      return `${theme.spacing(1)}`;
+    }
+
+    return `${theme.spacing(2)} ${theme.spacing(3)}`;
+  }};
 
   transition: background 0.1s ease;
 
@@ -143,6 +151,7 @@ export function Button({
       fullWidth={fullWidth}
       variant={variant}
       size={size}
+      title={title}
       {...props}
     >
       {icon}

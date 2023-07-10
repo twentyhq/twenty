@@ -1,18 +1,15 @@
 import { gql } from '@apollo/client';
 
-export const GET_CURRENT_WORKSPACE = gql`
-  query GetCurrentWorkspace {
-    currentWorkspace {
+export const GET_WORKSPACE_MEMBERS = gql`
+  query GetWorkspaceMembers {
+    workspaceMembers: findManyWorkspaceMember {
       id
-      workspaceMember {
+      user {
         id
-        user {
-          id
-          email
-          avatarUrl
-          firstName
-          lastName
-        }
+        email
+        avatarUrl
+        firstName
+        lastName
       }
     }
   }
