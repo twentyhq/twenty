@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
@@ -38,6 +38,8 @@ export function useApolloFactory() {
           fetchPolicy: 'cache-first',
         },
       },
+      // We don't want to re-create the client on token change or it will cause infinite loop
+      initialTokenPair: tokenPair,
       onTokenPairChange(tokenPair) {
         setTokenPair(tokenPair);
       },
@@ -46,11 +48,17 @@ export function useApolloFactory() {
       },
       extraLinks: [],
       isDebugMode,
-      tokenPair,
     });
 
     return apolloRef.current.getClient();
-  }, [setTokenPair, isDebugMode, tokenPair]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setTokenPair, isDebugMode]);
+
+  useEffect(() => {
+    if (apolloRef.current) {
+      apolloRef.current.updateTokenPair(tokenPair);
+    }
+  }, [tokenPair]);
 
   return apolloClient;
 }
