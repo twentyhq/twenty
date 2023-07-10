@@ -10,7 +10,7 @@ import {
 } from '@/utils/datetime/date-utils';
 
 type OwnProps = {
-  id: string;
+  id?: string;
   logoOrAvatar?: string;
   title: string;
   date: string;

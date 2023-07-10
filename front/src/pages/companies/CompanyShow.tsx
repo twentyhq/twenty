@@ -37,7 +37,7 @@ export function CompanyShow() {
       <>
         <ShowPageLeftContainer>
           <ShowPageSummaryCard
-            id={company?.id ?? ''}
+            id={company?.id}
             logoOrAvatar={getLogoUrlFromDomainName(company?.domainName ?? '')}
             title={company?.name ?? 'No name'}
             date={company?.createdAt ?? ''}
