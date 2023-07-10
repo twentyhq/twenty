@@ -32,7 +32,7 @@ export const Default: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const notesButton = await canvas.findByText('Notes');
+    const notesButton = await canvas.findByText('Note');
     await notesButton.click();
   },
   parameters: {

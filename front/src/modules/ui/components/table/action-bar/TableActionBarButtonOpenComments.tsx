@@ -9,7 +9,7 @@ type OwnProps = {
 export function TableActionBarButtonToggleComments({ onClick }: OwnProps) {
   return (
     <EntityTableActionBarButton
-      label="Notes"
+      label="Note"
       icon={<IconNotes size={16} />}
       onClick={onClick}
     />
