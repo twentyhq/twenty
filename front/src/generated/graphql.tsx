@@ -3376,6 +3376,11 @@ export type RemoveProfilePictureMutationVariables = Exact<{
 
 export type RemoveProfilePictureMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string } };
 
+export type GetCurrentWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCurrentWorkspaceQuery = { __typename?: 'Query', currentWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, domainName?: string | null, logo?: string | null } };
+
 export type GetWorkspaceMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -5094,6 +5099,43 @@ export function useRemoveProfilePictureMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveProfilePictureMutationHookResult = ReturnType<typeof useRemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationResult = Apollo.MutationResult<RemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationOptions = Apollo.BaseMutationOptions<RemoveProfilePictureMutation, RemoveProfilePictureMutationVariables>;
+export const GetCurrentWorkspaceDocument = gql`
+    query GetCurrentWorkspace {
+  currentWorkspace {
+    id
+    displayName
+    domainName
+    logo
+  }
+}
+    `;
+
+/**
+ * __useGetCurrentWorkspaceQuery__
+ *
+ * To run a query within a React component, call `useGetCurrentWorkspaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrentWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCurrentWorkspaceQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCurrentWorkspaceQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>(GetCurrentWorkspaceDocument, options);
+      }
+export function useGetCurrentWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>(GetCurrentWorkspaceDocument, options);
+        }
+export type GetCurrentWorkspaceQueryHookResult = ReturnType<typeof useGetCurrentWorkspaceQuery>;
+export type GetCurrentWorkspaceLazyQueryHookResult = ReturnType<typeof useGetCurrentWorkspaceLazyQuery>;
+export type GetCurrentWorkspaceQueryResult = Apollo.QueryResult<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>;
 export const GetWorkspaceMembersDocument = gql`
     query GetWorkspaceMembers {
   workspaceMembers: findManyWorkspaceMember {

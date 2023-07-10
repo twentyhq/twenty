@@ -56,7 +56,6 @@ export function SettingsNavbar() {
           label="Members"
           to="/settings/workspace-members"
           icon={<IconUsers size={theme.icon.size.md} />}
-          soon={false}
           active={
             !!useMatch({
               path: useResolvedPath('/settings/workspace-members').pathname,
@@ -68,7 +67,6 @@ export function SettingsNavbar() {
           label="General"
           to="/settings/workspace"
           icon={<IconSettings size={theme.icon.size.md} />}
-          soon={true}
           active={
             !!useMatch({
               path: useResolvedPath('/settings/workspace').pathname,
