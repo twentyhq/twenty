@@ -1,8 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
+import * as Yup from 'yup';
 
 import { Logo } from '@/auth/components/ui/Logo';
 import { SubTitle } from '@/auth/components/ui/SubTitle';
@@ -15,7 +19,7 @@ import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysSc
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
-import { useCheckUserExistsQuery } from '~/generated/graphql';
+import { CheckUserExistsDocument } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -48,30 +52,57 @@ const StyledErrorContainer = styled.div`
   color: ${({ theme }) => theme.color.red};
 `;
 
+const validationSchema = Yup.object()
+  .shape({
+    exist: Yup.boolean().required(),
+    email: Yup.string().email().required(),
+    password: Yup.string()
+      .matches(
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
+        'Password must contain at least 8 characters, one uppercase and one number',
+      )
+      .required(),
+  })
+  .required();
+
+type Form = Yup.InferType<typeof validationSchema>;
+
 export function PasswordLogin() {
   const navigate = useNavigate();
 
   const [isDemoMode] = useRecoilState(isDemoModeState);
-  const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
-    authFlowUserEmailState,
-  );
-  const [internalPassword, setInternalPassword] = useState(
-    isDemoMode ? 'Applecar2025' : '',
-  );
-  const [formError, setFormError] = useState('');
+  const [authFlowUserEmail] = useRecoilState(authFlowUserEmailState);
+  const [, setMockMode] = useRecoilState(isMockModeState);
+
+  const client = useApolloClient();
 
   const { login, signUp, signUpToWorkspace } = useAuth();
-  const { loading, data } = useCheckUserExistsQuery({
-    variables: {
+
+  // Form
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid, isSubmitting, errors },
+    setValue,
+    setError,
+    getValues,
+    watch,
+  } = useForm<Form>({
+    // mode: 'onChange',
+    defaultValues: {
+      exist: false,
       email: authFlowUserEmail,
+      password: isDemoMode ? 'Applecar2025' : '',
     },
+    resolver: yupResolver(validationSchema),
   });
 
-  const workspaceInviteHash = useParams().workspaceInviteHash;
+  const onSubmit: SubmitHandler<Form> = async (data) => {
+    setMockMode(false);
 
-  const handleSubmit = useCallback(async () => {
     try {
-      if (data?.checkUserExists.exists) {
+      setMockMode(false);
+      if (data.exist) {
         await login(authFlowUserEmail, internalPassword);
       } else {
         if (workspaceInviteHash) {
@@ -86,16 +117,9 @@ export function PasswordLogin() {
       }
       navigate('/auth/create/workspace');
     } catch (err: any) {
-      setFormError(err.message);
+      setError('root', { message: err?.message });
     }
-  }, [
-    login,
-    signUp,
-    signUpToWorkspace,
-    authFlowUserEmail,
-    internalPassword,
-    navigate,
-    data?.checkUserExists.exists,
+  };
 
     workspaceInviteHash,
   ]);
@@ -103,51 +127,110 @@ export function PasswordLogin() {
   useScopedHotkeys(
     'enter',
     () => {
-      handleSubmit();
+      onSubmit(getValues());
     },
     InternalHotkeysScope.PasswordLogin,
-    [handleSubmit],
+    [onSubmit],
   );
+
+  // useEffect(() => {
+  //   const subscription = watch(async ({ email }) => {
+  //     if (!email) return;
+
+  //     try {
+  //       // Check if it's a valid email to avoid useless requests
+  //       validationSchema.pick(['email']).validateSync({ email });
+
+  //       const { data } = await client.query({
+  //         query: CheckUserExistsDocument,
+  //         variables: {
+  //           email,
+  //         },
+  //       });
+
+  //       console.log('data', data);
+
+  //       const newExist = !!data?.checkUserExists.exists;
+  //       const { exist } = getValues();
+
+  //       if (exist !== newExist) {
+  //         setValue('exist', newExist);
+  //       }
+  //     } catch {}
+  //   });
+
+  //   return () => subscription.unsubscribe();
+  // }, [getValues, setValue, watch, client]);
+
+  console.log('RENDER !');
 
   return (
     <>
       <Logo />
       <Title>Welcome to Twenty</Title>
-      <SubTitle>
-        Enter your credentials to sign{' '}
-        {data?.checkUserExists.exists ? 'in' : 'up'}
-      </SubTitle>
+
+      <Controller
+        name="exist"
+        control={control}
+        render={({ field: { value } }) => (
+          <SubTitle>
+            Enter your credentials to sign {value ? 'in' : 'up'}
+          </SubTitle>
+        )}
+      />
       <StyledAnimatedContent>
-        <StyledContentContainer>
-          <StyledSectionContainer>
-            <SubSectionTitle title="Email" />
-            <TextInput
-              value={authFlowUserEmail}
-              placeholder="Email"
-              onChange={(value) => setAuthFlowUserEmail(value)}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <StyledContentContainer>
+            <StyledSectionContainer>
+              <SubSectionTitle title="Email" />
+              <Controller
+                name="email"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    value={value}
+                    placeholder="Email"
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    fullWidth
+                  />
+                )}
+              />
+            </StyledSectionContainer>
+            <StyledSectionContainer>
+              <SubSectionTitle title="Password" />
+              <Controller
+                name="password"
+                control={control}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <TextInput
+                    value={value}
+                    placeholder="Password"
+                    onBlur={onBlur}
+                    onChange={onChange}
+                    fullWidth
+                    type="password"
+                  />
+                )}
+              />
+            </StyledSectionContainer>
+          </StyledContentContainer>
+          <StyledButtonContainer>
+            <MainButton
+              title="Continue"
+              type="submit"
+              disabled={!isValid || isSubmitting}
               fullWidth
             />
-          </StyledSectionContainer>
-          <StyledSectionContainer>
-            <SubSectionTitle title="Password" />
-            <TextInput
-              value={internalPassword}
-              placeholder="Password"
-              onChange={(value) => setInternalPassword(value)}
-              fullWidth
-              type="password"
-            />
-          </StyledSectionContainer>
-        </StyledContentContainer>
-        <StyledButtonContainer>
-          <MainButton
-            title="Continue"
-            onClick={handleSubmit}
-            disabled={!authFlowUserEmail || !internalPassword || loading}
-            fullWidth
-          />
-        </StyledButtonContainer>
-        {formError && <StyledErrorContainer>{formError}</StyledErrorContainer>}
+          </StyledButtonContainer>
+          {errors && (
+            <StyledErrorContainer>
+              {errors?.email?.message ??
+                errors?.root?.message ??
+                errors?.password?.message}
+            </StyledErrorContainer>
+          )}
+        </form>
       </StyledAnimatedContent>
     </>
   );

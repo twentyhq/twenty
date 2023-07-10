@@ -11,6 +11,7 @@
     "@emotion/styled": "^11.10.5",
     "@floating-ui/react": "^0.24.3",
     "@hello-pangea/dnd": "^16.2.0",
+    "@hookform/resolvers": "^3.1.1",
     "@tabler/icons-react": "^2.20.0",
     "@tanstack/react-table": "^8.8.5",
     "@types/node": "^16.18.4",
@@ -33,6 +34,7 @@
     "react": "^18.2.0",
     "react-datepicker": "^4.11.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.45.1",
     "react-hotkeys-hook": "^4.4.0",
     "react-loading-skeleton": "^3.3.1",
     "react-modal": "^3.16.1",
@@ -44,7 +46,8 @@
     "ts-key-enum": "^2.0.12",
     "url": "^0.11.1",
     "uuid": "^9.0.0",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.2.0"
   },
   "scripts": {
     "start": "PORT=3001 craco start",
