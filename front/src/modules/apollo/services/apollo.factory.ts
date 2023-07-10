@@ -28,9 +28,9 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
+  initialTokenPair: AuthTokenPair | null;
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
-  tokenPair: AuthTokenPair | null;
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
@@ -44,13 +44,13 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       onNetworkError,
       onTokenPairChange,
       onUnauthenticatedError,
+      initialTokenPair,
       extraLinks,
       isDebugMode,
-      tokenPair,
       ...options
     } = opts;
 
-    this.tokenPair = tokenPair;
+    this.tokenPair = initialTokenPair;
 
     const buildApolloLink = (): ApolloLink => {
       const httpLink = createUploadLink({

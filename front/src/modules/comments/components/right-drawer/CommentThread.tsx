@@ -89,9 +89,8 @@ export function CommentThread({
   });
   const commentThread = data?.findManyCommentThreads[0];
 
-  const [title, setTitle] = useState<string | null | undefined>(
-    commentThread?.title,
-  );
+  const [title, setTitle] = useState<string | null | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [updateCommentThreadTitleMutation] =
     useUpdateCommentThreadTitleMutation();
@@ -120,10 +119,13 @@ export function CommentThread({
   }
 
   useEffect(() => {
-    if (commentThread?.title) {
-      setTitle(commentThread.title);
+    if (commentThread) {
+      setIsLoading(false);
     }
-  }, [commentThread?.title]);
+    if (isLoading) {
+      setTitle(commentThread?.title ?? '');
+    }
+  }, [commentThread, isLoading]);
 
   if (!commentThread) {
     return <></>;

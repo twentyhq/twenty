@@ -19,7 +19,7 @@ export type ButtonPosition = 'left' | 'middle' | 'right' | undefined;
 
 export type ButtonProps = {
   icon?: React.ReactNode;
-  title: string;
+  title?: string;
   fullWidth?: boolean;
   variant?: ButtonVariant;
   size?: ButtonSize;
@@ -28,7 +28,7 @@ export type ButtonProps = {
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
-  Pick<ButtonProps, 'fullWidth' | 'variant' | 'size' | 'position'>
+  Pick<ButtonProps, 'fullWidth' | 'variant' | 'size' | 'position' | 'title'>
 >`
   align-items: center;
   background: ${({ theme, variant, disabled }) => {
@@ -39,8 +39,10 @@ const StyledButton = styled.button<
         } else {
           return theme.color.blue;
         }
-      default:
+      case 'secondary':
         return theme.background.primary;
+      default:
+        return 'transparent';
     }
   }};
   border: ${({ theme, variant }) => {
@@ -111,7 +113,14 @@ const StyledButton = styled.button<
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: flex-start;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme, title }) => {
+    if (!title) {
+      return `${theme.spacing(1)}`;
+    }
+
+    return `${theme.spacing(2)} ${theme.spacing(3)}`;
+  }};
+
   transition: background 0.1s ease;
 
   white-space: nowrap;
@@ -167,6 +176,7 @@ export function Button({
       size={size}
       position={position}
       disabled={soon || disabled}
+      title={title}
       {...props}
     >
       {icon}
