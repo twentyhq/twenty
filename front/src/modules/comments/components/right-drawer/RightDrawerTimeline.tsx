@@ -23,6 +23,7 @@ export function RightDrawerTimeline() {
       <RightDrawerBody>
         {commentableEntityArray.map((commentableEntity) => (
           <Timeline
+            key={commentableEntity.id}
             entity={{
               id: commentableEntity?.id ?? '',
               type: commentableEntity.type,

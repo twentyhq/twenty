@@ -1,134 +1,30 @@
-import { useEffect, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
-import { BlockNoteEditor } from '@blocknote/core';
-import { useBlockNote } from '@blocknote/react';
-import { useTheme } from '@emotion/react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { v4 } from 'uuid';
+import { useRecoilValue } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
-import { useOpenCommentThreadRightDrawer } from '@/comments/hooks/useOpenCommentThreadRightDrawer';
-import {
-  GET_COMMENT_THREAD,
-  GET_COMMENT_THREADS_BY_TARGETS,
-} from '@/comments/services';
-import { commentableEntityArrayState } from '@/comments/states/commentableEntityArrayState';
-import { GET_COMPANIES } from '@/companies/services';
-import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
-import { GET_PEOPLE } from '@/people/services';
+import { viewableCommentThreadIdState } from '@/comments/states/viewableCommentThreadIdState';
 import { RightDrawerBody } from '@/ui/layout/right-drawer/components/RightDrawerBody';
 import { RightDrawerPage } from '@/ui/layout/right-drawer/components/RightDrawerPage';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
-import { logError } from '@/utils/logs/logError';
-import { isDefined } from '@/utils/type-guards/isDefined';
-import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
-import { useCreateCommentThreadMutation } from '~/generated/graphql';
 
-import { CommentThreadCreateMode } from './CommentThreadCreateMode';
+import { CommentThread } from '../CommentThread';
 
 export function RightDrawerCreateCommentThread() {
-  const [title, setTitle] = useState('');
-
-  const [commentableEntityArray] = useRecoilState(commentableEntityArrayState);
-
-  const [CreateCommentThread] = useCreateCommentThreadMutation();
-
-  const currentUser = useRecoilValue(currentUserState);
-
-  const identifier = JSON.stringify(commentableEntityArray);
-
-  const openCommentThreadRightDrawer = useOpenCommentThreadRightDrawer();
-
-  function handleNewCommentThread(title: string, body: string) {
-    if (!(isNonEmptyString(title) || isNonEmptyString(body))) {
-      return;
-    }
-
-    if (!isDefined(currentUser)) {
-      logError(
-        'In handleCreateCommentThread, currentUser is not defined, this should not happen.',
-      );
-      return;
-    }
-
-    CreateCommentThread({
-      variables: {
-        authorId: currentUser.id,
-        body: body,
-        title: title,
-        commentThreadId: v4(),
-        createdAt: new Date().toISOString(),
-        commentThreadTargetArray: commentableEntityArray.map(
-          (commentableEntity) => ({
-            commentableId: commentableEntity.id,
-            commentableType: commentableEntity.type,
-            id: v4(),
-            createdAt: new Date().toISOString(),
-          }),
-        ),
-      },
-      refetchQueries: [
-        getOperationName(GET_COMPANIES) ?? '',
-        getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_COMMENT_THREAD) ?? '',
-        getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
-      ],
-      onCompleted(data) {
-        openCommentThreadRightDrawer(data.createOneCommentThread.id);
-        localStorage.removeItem('editorTitle' + identifier);
-        localStorage.removeItem('editorBody' + identifier);
-      },
-    });
-  }
-
-  const initialBody: string | null = localStorage.getItem(
-    'editorBody' + identifier,
-  );
-
-  const editor: BlockNoteEditor | null = useBlockNote({
-    theme: useTheme().name === 'light' ? 'light' : 'dark',
-    initialContent: initialBody ? JSON.parse(initialBody) : undefined,
-    editorDOMAttributes: { class: 'editor-create-mode' },
-    onEditorContentChange: (editor) => {
-      localStorage.setItem(
-        'editorBody' + identifier,
-        JSON.stringify(editor.topLevelBlocks),
-      );
-    },
-  });
-
-  useEffect(() => {
-    const initialTitle: string =
-      localStorage.getItem('editorTitle' + identifier) ?? '';
-    setTitle(initialTitle);
-  }, [identifier]);
-
-  function onTitleUpdate(newTitle: string) {
-    setTitle(newTitle);
-    localStorage.setItem('editorTitle' + identifier, newTitle);
-  }
-
-  useHotkeysScopeOnMountOnly({
-    scope: InternalHotkeysScope.RightDrawer,
-    customScopes: { goto: false, 'command-menu': true },
-  });
+  const commentThreadId = useRecoilValue(viewableCommentThreadIdState);
 
   return (
     <RightDrawerPage>
       <RightDrawerTopBar
         title="New note"
-        onSave={() =>
-          handleNewCommentThread(title, JSON.stringify(editor?.topLevelBlocks))
-        }
+        onSave={() => {
+          return;
+        }}
       />
       <RightDrawerBody>
-        <CommentThreadCreateMode
-          commentableEntityArray={commentableEntityArray}
-          editor={editor}
-          title={title}
-          handleTitleChange={onTitleUpdate}
-        />
+        {commentThreadId && (
+          <CommentThread
+            commentThreadId={commentThreadId}
+            showComment={false}
+          />
+        )}
       </RightDrawerBody>
     </RightDrawerPage>
   );

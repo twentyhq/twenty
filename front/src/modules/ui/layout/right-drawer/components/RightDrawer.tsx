@@ -2,7 +2,10 @@ import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { useOutsideAlerter } from '@/ui/hooks/useOutsideAlerter';
+import {
+  OutsideClickAlerterMode,
+  useOutsideAlerter,
+} from '@/ui/hooks/useOutsideAlerter';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -37,7 +40,11 @@ export function RightDrawer() {
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
 
   const rightDrawerRef = useRef(null);
-  useOutsideAlerter(rightDrawerRef, () => setIsRightDrawerOpen(false));
+  useOutsideAlerter({
+    ref: rightDrawerRef,
+    callback: () => setIsRightDrawerOpen(false),
+    mode: OutsideClickAlerterMode.absolute,
+  });
   if (!isRightDrawerOpen || !isDefined(rightDrawerPage)) {
     return <></>;
   }

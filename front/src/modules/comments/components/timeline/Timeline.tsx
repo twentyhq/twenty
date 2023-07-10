@@ -234,7 +234,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
             commentThread.createdAt,
           );
           const exactCreatedAt = beautifyExactDate(commentThread.createdAt);
-          const body = JSON.parse(commentThread.body ?? '')[0].content[0]?.text;
+          const body = JSON.parse(commentThread.body ?? '{}')[0]?.content[0]
+            ?.text;
 
           return (
             <React.Fragment key={commentThread.id}>

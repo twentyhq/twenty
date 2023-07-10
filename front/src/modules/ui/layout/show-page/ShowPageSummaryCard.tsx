@@ -54,8 +54,9 @@ export function ShowPageSummaryCard({
   title: string;
   date: string;
 }) {
-  const beautifiedCreatedAt = beautifyPastDateRelativeToNow(date);
-  const exactCreatedAt = beautifyExactDate(date);
+  const beautifiedCreatedAt =
+    date !== '' ? beautifyPastDateRelativeToNow(date) : '';
+  const exactCreatedAt = date !== '' ? beautifyExactDate(date) : '';
   const theme = useTheme();
   const dateElementId = `date-id-${uuidV4()}`;
 

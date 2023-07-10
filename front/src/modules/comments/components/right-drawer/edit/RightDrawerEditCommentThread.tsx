@@ -5,15 +5,15 @@ import { RightDrawerBody } from '@/ui/layout/right-drawer/components/RightDrawer
 import { RightDrawerPage } from '@/ui/layout/right-drawer/components/RightDrawerPage';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
 
-import { CommentThreadEditMode } from './CommentThreadEditMode';
+import { CommentThread } from '../CommentThread';
 
 export function RightDrawerEditCommentThread() {
-  const commentThreadId = useRecoilValue(viewableCommentThreadIdState) ?? '';
+  const commentThreadId = useRecoilValue(viewableCommentThreadIdState);
   return (
     <RightDrawerPage>
       <RightDrawerTopBar title="" />
       <RightDrawerBody>
-        <CommentThreadEditMode commentThreadId={commentThreadId} />
+        {commentThreadId && <CommentThread commentThreadId={commentThreadId} />}
       </RightDrawerBody>
     </RightDrawerPage>
   );

@@ -9,10 +9,8 @@ import {
 } from '@floating-ui/react';
 
 import { useHandleCheckableCommentThreadTargetChange } from '@/comments/hooks/useHandleCheckableCommentThreadTargetChange';
-import { CommentableEntity } from '@/comments/types/CommentableEntity';
 import { CommentableEntityForSelect } from '@/comments/types/CommentableEntityForSelect';
 import CompanyChip from '@/companies/components/CompanyChip';
-import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { PersonChip } from '@/people/components/PersonChip';
@@ -31,7 +29,6 @@ import {
 
 type OwnProps = {
   commentThread?: GetCommentThreadQuery['findManyCommentThreads'][0];
-  preselected?: CommentableEntity[];
 };
 
 const StyledContainer = styled.div`
@@ -74,17 +71,9 @@ const StyledMenuWrapper = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
-export function CommentThreadRelationPicker({
-  commentThread,
-  preselected,
-}: OwnProps) {
+export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
-
-  useHotkeysScopeOnBooleanState(
-    { scope: InternalHotkeysScope.RelationPicker },
-    isMenuOpen,
-  );
 
   const peopleIds =
     commentThread?.commentThreadTargets
@@ -94,24 +83,6 @@ export function CommentThreadRelationPicker({
     commentThread?.commentThreadTargets
       ?.filter((relation) => relation.commentableType === 'Company')
       .map((relation) => relation.commentableId) ?? [];
-
-  preselected?.map((commentable) => {
-    if (
-      commentable.id &&
-      commentable.type === CommentableType.Person &&
-      !peopleIds.includes(commentable.id)
-    ) {
-      peopleIds.push(commentable.id);
-    }
-    if (
-      commentable.id &&
-      commentable.type === CommentableType.Company &&
-      !companyIds.includes(commentable.id)
-    ) {
-      companyIds.push(commentable.id);
-    }
-    return null;
-  });
 
   const personsForMultiSelect = useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
