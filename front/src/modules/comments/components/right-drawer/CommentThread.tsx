@@ -59,7 +59,7 @@ const StyledEditableTitleInput = styled.input`
   line-height: ${({ theme }) => theme.text.lineHeight.md};
   outline: none;
   width: calc(100% - ${({ theme }) => theme.spacing(2)});
-  :placeholder {
+  ::placeholder {
     color: ${({ theme }) => theme.font.color.light};
   }
 `;

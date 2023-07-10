@@ -86,7 +86,7 @@ const StyledItemTitleContainer = styled.div`
   display: flex;
   flex: 1 0 0;
   flex-wrap: wrap;
-  gap: 4px 8px;
+  gap: 4px;
   height: 20px;
   span {
     color: ${({ theme }) => theme.font.color.secondary};

@@ -6,7 +6,7 @@ import { IconNotes } from '@/ui/icons/index';
 
 export function CommentThreadTypeDropdown() {
   const options: DropdownOptionType[] = [
-    { label: 'Notes', icon: <IconNotes /> },
+    { label: 'Note', icon: <IconNotes /> },
     // { label: 'Call', icon: <IconPhone /> },
   ];
 
