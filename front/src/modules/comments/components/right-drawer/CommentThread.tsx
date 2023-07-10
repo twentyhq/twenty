@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
@@ -87,6 +87,11 @@ export function CommentThread({
     },
     skip: !commentThreadId,
   });
+  const commentThread = data?.findManyCommentThreads[0];
+
+  const [title, setTitle] = useState<string | null | undefined>(
+    commentThread?.title,
+  );
 
   const [updateCommentThreadTitleMutation] =
     useUpdateCommentThreadTitleMutation();
@@ -109,11 +114,16 @@ export function CommentThread({
   function updateTitleFromBody(body: string) {
     const title = JSON.parse(body)[0]?.content[0]?.text;
     if (!commentThread?.title || commentThread?.title === '') {
+      setTitle(title);
       debounceUpdateTitle(title);
     }
   }
 
-  const commentThread = data?.findManyCommentThreads[0];
+  useEffect(() => {
+    if (commentThread?.title) {
+      setTitle(commentThread.title);
+    }
+  }, [commentThread?.title]);
 
   if (!commentThread) {
     return <></>;
@@ -128,8 +138,11 @@ export function CommentThread({
         </StyledTopActionsContainer>
         <StyledEditableTitleInput
           placeholder="Note title (optional)"
-          onChange={(event) => debounceUpdateTitle(event.target.value)}
-          value={commentThread?.title ?? ''}
+          onChange={(event) => {
+            setTitle(event.target.value);
+            debounceUpdateTitle(event.target.value);
+          }}
+          value={title ?? ''}
         />
         <PropertyBox>
           <PropertyBoxItem
