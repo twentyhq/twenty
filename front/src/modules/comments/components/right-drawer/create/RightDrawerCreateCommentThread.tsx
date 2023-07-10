@@ -30,6 +30,7 @@ export function RightDrawerCreateCommentThread() {
           <CommentThread
             commentThreadId={commentThreadId}
             showComment={false}
+            autoFillTitle={true}
           />
         )}
       </RightDrawerBody>

@@ -85,11 +85,13 @@ const StyledTopActionsContainer = styled.div`
 type OwnProps = {
   commentThreadId: string;
   showComment?: boolean;
+  autoFillTitle?: boolean;
 };
 
 export function CommentThread({
   commentThreadId,
   showComment = true,
+  autoFillTitle = false,
 }: OwnProps) {
   const { data } = useGetCommentThreadQuery({
     variables: {
@@ -101,6 +103,8 @@ export function CommentThread({
 
   const [title, setTitle] = useState<string | null | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
+    useState<boolean>(false);
 
   const [updateCommentThreadTitleMutation] =
     useUpdateCommentThreadTitleMutation();
@@ -121,10 +125,10 @@ export function CommentThread({
   }, [commentThreadId, updateCommentThreadTitleMutation]);
 
   function updateTitleFromBody(body: string) {
-    const title = JSON.parse(body)[0]?.content[0]?.text;
-    if (!commentThread?.title || commentThread?.title === '') {
-      setTitle(title);
-      debounceUpdateTitle(title);
+    const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
+    if (!hasUserManuallySetTitle && autoFillTitle) {
+      setTitle(parsedTitle);
+      debounceUpdateTitle(parsedTitle);
     }
   }
 
@@ -152,6 +156,7 @@ export function CommentThread({
           <StyledEditableTitleInput
             placeholder="Note title (optional)"
             onChange={(event) => {
+              setHasUserManuallySetTitle(true);
               setTitle(event.target.value);
               debounceUpdateTitle(event.target.value);
             }}
