@@ -63,7 +63,6 @@ const StyledButton = styled.button<
         return '4px';
     }
   }};
-
   box-shadow: ${({ theme, variant }) => {
     switch (variant) {
       case 'primary':
@@ -73,6 +72,7 @@ const StyledButton = styled.button<
         return 'none';
     }
   }};
+
   color: ${({ theme, variant, disabled }) => {
     if (disabled) {
       if (variant === 'primary') {
@@ -110,8 +110,9 @@ const StyledButton = styled.button<
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: flex-start;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
-
   transition: background 0.1s ease;
+
+  white-space: nowrap;
 
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 
