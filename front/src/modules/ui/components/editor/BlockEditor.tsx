@@ -9,11 +9,10 @@ interface BlockEditorProps {
 const StyledEditor = styled.div`
   min-height: 200px;
   width: 100%;
-  & .editor-create-mode,
-  .editor-edit-mode {
+  & .editor {
     background: ${({ theme }) => theme.background.primary};
   }
-  & .editor-create-mode [class^='_inlineContent']:before {
+  & .editor [class^='_inlineContent']:before {
     color: ${({ theme }) => theme.font.color.tertiary};
     font-style: normal !important;
   }
