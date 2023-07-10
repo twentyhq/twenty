@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { expect } from '@storybook/jest';
 import { jest } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
@@ -17,9 +18,22 @@ type Story = StoryObj<typeof TextInput>;
 
 const changeJestFn = jest.fn();
 
+function FakeTextInput({ onChange }: any) {
+  const [value, setValue] = useState<string>('A good value ');
+  return (
+    <TextInput
+      value={value}
+      onChange={(text) => {
+        setValue(text);
+        onChange(text);
+      }}
+    />
+  );
+}
+
 export const Default: Story = {
   render: getRenderWrapperForComponent(
-    <TextInput value="A good value " onChange={changeJestFn} />,
+    <FakeTextInput onChange={changeJestFn} />,
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
