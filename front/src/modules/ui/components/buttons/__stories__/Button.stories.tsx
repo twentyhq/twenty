@@ -111,6 +111,13 @@ const states = {
       disabled: true,
     }),
   },
+  soon: {
+    description: 'Soon',
+    extraProps: (variant: string) => ({
+      'data-testid': `${variant}-button-soon`,
+      soon: true,
+    }),
+  },
   focus: {
     description: 'Focus',
     extraProps: (variant: string) => ({

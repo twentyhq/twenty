@@ -22,6 +22,7 @@ type Props = {
   variant?: ButtonVariant;
   size?: ButtonSize;
   position?: ButtonPosition;
+  soon?: boolean;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
@@ -145,6 +146,24 @@ const StyledButton = styled.button<
   }
 `;
 
+const SoonPill = styled.span`
+  align-items: center;
+  background: ${({ theme }) => theme.background.transparent.light};
+  border-radius: 50px;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  font-family: Inter;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  gap: 8px;
+  height: 16px;
+  justify-content: flex-end;
+  line-height: 150%;
+  margin-left: auto;
+  padding: 4px 8px;
+`;
+
 export function Button({
   icon,
   title,
@@ -152,6 +171,8 @@ export function Button({
   variant = 'primary',
   size = 'medium',
   position = 'solo',
+  soon = false,
+  disabled = false,
   ...props
 }: Props) {
   return (
@@ -160,10 +181,12 @@ export function Button({
       variant={variant}
       size={size}
       position={position}
+      disabled={soon || disabled}
       {...props}
     >
       {icon}
       {title}
+      {soon && <SoonPill>Soon</SoonPill>}
     </StyledButton>
   );
 }
