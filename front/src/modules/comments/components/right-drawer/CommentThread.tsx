@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
-import { GET_COMMENT_THREADS_BY_TARGETS } from '@/comments/services';
+import { GET_COMMENT_THREAD } from '@/comments/services';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
 import { IconArrowUpRight } from '@/ui/icons/index';
@@ -112,9 +112,7 @@ export function CommentThread({
           commentThreadId: commentThreadId,
           commentThreadTitle: title ?? '',
         },
-        refetchQueries: [
-          getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
-        ],
+        refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
       });
     }
     return debounce(updateTitle, 200);
