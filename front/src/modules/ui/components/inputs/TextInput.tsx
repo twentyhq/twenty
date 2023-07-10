@@ -26,7 +26,7 @@ const StyledLabel = styled.span`
 const StyledInput = styled.input<{ fullWidth: boolean }>`
   background-color: ${({ theme }) => theme.background.tertiary};
   border: none;
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 
   color: ${({ theme }) => theme.font.color.primary};
   font-family: ${({ theme }) => theme.font.family};

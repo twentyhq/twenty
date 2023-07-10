@@ -131,7 +131,7 @@ const StyledCard = styled.div`
   align-self: stretch;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   flex-direction: column;
   gap: 12px;

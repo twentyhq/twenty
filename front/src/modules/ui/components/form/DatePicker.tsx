@@ -56,7 +56,7 @@ const StyledContainer = styled.div`
   & .react-datepicker__month-dropdown-container,
   & .react-datepicker__year-dropdown-container {
     text-align: left;
-    border-radius: 4px;
+    border-radius: ${({ theme }) => theme.border.radius.sm};
     margin-left: ${({ theme }) => theme.spacing(1)};
     margin-right: 0;
     padding: ${({ theme }) => theme.spacing(2)};
@@ -121,7 +121,7 @@ const StyledContainer = styled.div`
     padding: ${({ theme }) => theme.spacing(2)}
       calc(${({ theme }) => theme.spacing(2)} - 2px);
     width: calc(100% - ${({ theme }) => theme.spacing(4)});
-    border-radius: 2px;
+    border-radius: ${({ theme }) => theme.border.radius.xs};
     color: ${({ theme }) => theme.font.color.secondary};
     cursor: pointer;
     margin: 2px;
@@ -169,7 +169,7 @@ const StyledContainer = styled.div`
   & .react-datepicker__navigation--previous,
   & .react-datepicker__navigation--next {
     height: 34px;
-    border-radius: 4px;
+    border-radius: ${({ theme }) => theme.border.radius.sm};
     padding-top: 6px;
     &:hover {
       background: ${({ theme }) => theme.background.transparent.light};

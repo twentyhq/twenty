@@ -26,7 +26,7 @@ const baseStyle = ({ theme }: { theme: Theme }) => `
     filter: brightness(95%);
   }
   img {
-    border-radius: 100%;
+    border-radius: ${theme.border.radius.rounded};
     height: 14px;
     object-fit: cover;
     width: 14px;

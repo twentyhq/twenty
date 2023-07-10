@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { ButtonPosition, ButtonProps } from './Button';
 
 const StyledButtonGroupContainer = styled.div`
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
 `;
 
