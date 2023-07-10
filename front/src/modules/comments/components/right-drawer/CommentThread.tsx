@@ -22,11 +22,21 @@ import { CommentThreadActionBar } from './CommentThreadActionBar';
 import '@blocknote/core/style.css';
 
 const StyledContainer = styled.div`
-  align-items: flex-start;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  height: 100%;
+  justify-content: space-between;
+  overflow-y: auto;
+`;
 
+const StyledUpperPartContainer = styled.div`
+  align-items: flex-start;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  gap: ${({ theme }) => theme.spacing(4)};
   justify-content: flex-start;
 `;
 
@@ -133,39 +143,42 @@ export function CommentThread({
 
   return (
     <StyledContainer>
-      <StyledTopContainer>
-        <StyledTopActionsContainer>
-          <CommentThreadTypeDropdown />
-          <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
-        </StyledTopActionsContainer>
-        <StyledEditableTitleInput
-          placeholder="Note title (optional)"
-          onChange={(event) => {
-            setTitle(event.target.value);
-            debounceUpdateTitle(event.target.value);
-          }}
-          value={title ?? ''}
-        />
-        <PropertyBox>
-          <PropertyBoxItem
-            icon={<IconArrowUpRight />}
-            value={
-              <CommentThreadRelationPicker
-                commentThread={{
-                  id: commentThread.id,
-                  commentThreadTargets:
-                    commentThread.commentThreadTargets ?? [],
-                }}
-              />
-            }
-            label="Relations"
+      <StyledUpperPartContainer>
+        <StyledTopContainer>
+          <StyledTopActionsContainer>
+            <CommentThreadTypeDropdown />
+            <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
+          </StyledTopActionsContainer>
+          <StyledEditableTitleInput
+            placeholder="Note title (optional)"
+            onChange={(event) => {
+              setTitle(event.target.value);
+              debounceUpdateTitle(event.target.value);
+            }}
+            value={title ?? ''}
           />
-        </PropertyBox>
-      </StyledTopContainer>
-      <CommentThreadBodyEditor
-        commentThread={commentThread}
-        onChange={updateTitleFromBody}
-      />
+          <PropertyBox>
+            <PropertyBoxItem
+              icon={<IconArrowUpRight />}
+              value={
+                <CommentThreadRelationPicker
+                  commentThread={{
+                    id: commentThread.id,
+                    commentThreadTargets:
+                      commentThread.commentThreadTargets ?? [],
+                  }}
+                />
+              }
+              label="Relations"
+            />
+          </PropertyBox>
+        </StyledTopContainer>
+        <CommentThreadBodyEditor
+          commentThread={commentThread}
+          onChange={updateTitleFromBody}
+        />
+      </StyledUpperPartContainer>
+
       {showComment && (
         <CommentThreadComments
           commentThread={{
