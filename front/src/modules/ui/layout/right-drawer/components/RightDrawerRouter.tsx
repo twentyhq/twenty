@@ -1,8 +1,8 @@
 import { useRecoilState } from 'recoil';
 
-import { RightDrawerCreateCommentThread } from '@/comments/components/RightDrawerCreateCommentThread';
-import { RightDrawerEditCommentThread } from '@/comments/components/RightDrawerEditCommentThread';
-import { RightDrawerTimeline } from '@/comments/components/RightDrawerTimeline';
+import { RightDrawerCreateCommentThread } from '@/comments/components/right-drawer/create/RightDrawerCreateCommentThread';
+import { RightDrawerEditCommentThread } from '@/comments/components/right-drawer/edit/RightDrawerEditCommentThread';
+import { RightDrawerTimeline } from '@/comments/components/right-drawer/RightDrawerTimeline';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { rightDrawerPageState } from '../states/rightDrawerPageState';

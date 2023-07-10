@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { GET_COMMENT_THREADS_BY_TARGETS } from '@/comments/services';
 import { BlockEditor } from '@/ui/components/editor/BlockEditor';
 import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
@@ -23,12 +24,10 @@ import {
   useUpdateCommentThreadTitleMutation,
 } from '~/generated/graphql';
 
-import { GET_COMMENT_THREADS_BY_TARGETS } from '../services';
-
-import { CommentThreadActionBar } from './CommentThreadActionBar';
-import { CommentThreadItem } from './CommentThreadItem';
-import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
-import { CommentThreadTypeDropdown } from './CommentThreadTypeDropdown';
+import { CommentThreadItem } from '../../comment/CommentThreadItem';
+import { CommentThreadRelationPicker } from '../../comment-thread/CommentThreadRelationPicker';
+import { CommentThreadTypeDropdown } from '../../comment-thread/CommentThreadTypeDropdown';
+import { CommentThreadActionBar } from '../CommentThreadActionBar';
 
 import '@blocknote/core/style.css';
 

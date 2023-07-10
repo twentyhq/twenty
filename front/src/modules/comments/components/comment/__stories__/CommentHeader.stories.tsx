@@ -6,8 +6,8 @@ import { CommentForDrawer } from '@/comments/types/CommentForDrawer';
 import { mockedUsersData } from '~/testing/mock-data/users';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
+import { CommentThreadActionBar } from '../../right-drawer/CommentThreadActionBar';
 import { CommentHeader } from '../CommentHeader';
-import { CommentThreadActionBar } from '../CommentThreadActionBar';
 
 const meta: Meta<typeof CommentHeader> = {
   title: 'Modules/Comments/CommentHeader',

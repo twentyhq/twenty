@@ -1,15 +1,14 @@
 import { BlockNoteEditor } from '@blocknote/core';
 import styled from '@emotion/styled';
 
+import { CommentableEntity } from '@/comments/types/CommentableEntity';
 import { BlockEditor } from '@/ui/components/editor/BlockEditor';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
 import { IconArrowUpRight } from '@/ui/icons/index';
 
-import { CommentableEntity } from '../types/CommentableEntity';
-
-import { CommentThreadRelationPicker } from './CommentThreadRelationPicker';
-import { CommentThreadTypeDropdown } from './CommentThreadTypeDropdown';
+import { CommentThreadRelationPicker } from '../../comment-thread/CommentThreadRelationPicker';
+import { CommentThreadTypeDropdown } from '../../comment-thread/CommentThreadTypeDropdown';
 
 import '@blocknote/core/style.css';
 

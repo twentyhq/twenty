@@ -1,4 +1,4 @@
-import { CellCommentChip } from '@/comments/components/CellCommentChip';
+import { CellCommentChip } from '@/comments/components/table/CellCommentChip';
 import { useOpenTimelineRightDrawer } from '@/comments/hooks/useOpenTimelineRightDrawer';
 import { EditableCellChip } from '@/ui/components/editable-cell/types/EditableChip';
 import { getLogoUrlFromDomainName } from '@/utils/utils';

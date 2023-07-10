@@ -3,13 +3,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { GET_COMMENT_THREADS_BY_TARGETS } from '@/comments/services';
 import { GET_COMPANIES } from '@/companies/services';
 import { GET_PEOPLE } from '@/people/services';
 import { IconTrash } from '@/ui/icons';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 import { useDeleteCommentThreadMutation } from '~/generated/graphql';
-
-import { GET_COMMENT_THREADS_BY_TARGETS } from '../services';
 
 const StyledContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};

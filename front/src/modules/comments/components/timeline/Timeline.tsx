@@ -2,6 +2,10 @@ import React from 'react';
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
+import { useOpenCommentThreadRightDrawer } from '@/comments/hooks/useOpenCommentThreadRightDrawer';
+import { useOpenCreateCommentThreadDrawer } from '@/comments/hooks/useOpenCreateCommentThreadDrawer';
+import { CommentableEntity } from '@/comments/types/CommentableEntity';
+import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
 import { TableActionBarButtonToggleComments } from '@/ui/components/table/action-bar/TableActionBarButtonOpenComments';
 import { IconCirclePlus, IconNotes } from '@/ui/icons/index';
 import {
@@ -12,11 +16,6 @@ import {
   SortOrder,
   useGetCommentThreadsByTargetsQuery,
 } from '~/generated/graphql';
-
-import { useOpenCommentThreadRightDrawer } from '../hooks/useOpenCommentThreadRightDrawer';
-import { useOpenCreateCommentThreadDrawer } from '../hooks/useOpenCreateCommentThreadDrawer';
-import { CommentableEntity } from '../types/CommentableEntity';
-import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
 const StyledMainContainer = styled.div`
   align-items: flex-start;

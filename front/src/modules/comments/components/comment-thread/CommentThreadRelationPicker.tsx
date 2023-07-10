@@ -8,12 +8,16 @@ import {
   useFloating,
 } from '@floating-ui/react';
 
+import { useHandleCheckableCommentThreadTargetChange } from '@/comments/hooks/useHandleCheckableCommentThreadTargetChange';
+import { CommentableEntity } from '@/comments/types/CommentableEntity';
+import { CommentableEntityForSelect } from '@/comments/types/CommentableEntityForSelect';
 import CompanyChip from '@/companies/components/CompanyChip';
 import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { PersonChip } from '@/people/components/PersonChip';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { MultipleEntitySelect } from '@/relation-picker/components/MultipleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flatMapAndSortEntityForSelectArrayByName';
@@ -24,11 +28,6 @@ import {
   useSearchCompanyQuery,
   useSearchPeopleQuery,
 } from '~/generated/graphql';
-
-import { MultipleEntitySelect } from '../../relation-picker/components/MultipleEntitySelect';
-import { useHandleCheckableCommentThreadTargetChange } from '../hooks/useHandleCheckableCommentThreadTargetChange';
-import { CommentableEntity } from '../types/CommentableEntity';
-import { CommentableEntityForSelect } from '../types/CommentableEntityForSelect';
 
 type OwnProps = {
   commentThread?: GetCommentThreadQuery['findManyCommentThreads'][0];

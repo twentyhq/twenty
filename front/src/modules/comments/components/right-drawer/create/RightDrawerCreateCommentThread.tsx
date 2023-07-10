@@ -7,6 +7,12 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useOpenCommentThreadRightDrawer } from '@/comments/hooks/useOpenCommentThreadRightDrawer';
+import {
+  GET_COMMENT_THREAD,
+  GET_COMMENT_THREADS_BY_TARGETS,
+} from '@/comments/services';
+import { commentableEntityArrayState } from '@/comments/states/commentableEntityArrayState';
 import { GET_COMPANIES } from '@/companies/services';
 import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
@@ -18,13 +24,6 @@ import { logError } from '@/utils/logs/logError';
 import { isDefined } from '@/utils/type-guards/isDefined';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 import { useCreateCommentThreadMutation } from '~/generated/graphql';
-
-import { useOpenCommentThreadRightDrawer } from '../hooks/useOpenCommentThreadRightDrawer';
-import {
-  GET_COMMENT_THREAD,
-  GET_COMMENT_THREADS_BY_TARGETS,
-} from '../services';
-import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
 
 import { CommentThreadCreateMode } from './CommentThreadCreateMode';
 

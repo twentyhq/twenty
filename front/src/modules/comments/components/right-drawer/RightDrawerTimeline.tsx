@@ -1,14 +1,13 @@
 import { useRecoilState } from 'recoil';
 
+import { commentableEntityArrayState } from '@/comments/states/commentableEntityArrayState';
 import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { RightDrawerBody } from '@/ui/layout/right-drawer/components/RightDrawerBody';
 import { RightDrawerPage } from '@/ui/layout/right-drawer/components/RightDrawerPage';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
 
-import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
-
-import { Timeline } from './Timeline';
+import { Timeline } from '../timeline/Timeline';
 
 export function RightDrawerTimeline() {
   const [commentableEntityArray] = useRecoilState(commentableEntityArrayState);

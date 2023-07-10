@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
-import { Timeline } from '@/comments/components/Timeline';
+import { Timeline } from '@/comments/components/timeline/Timeline';
 import { useCompanyQuery } from '@/companies/services';
 import { RawLink } from '@/ui/components/links/RawLink';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
