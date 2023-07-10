@@ -1,8 +1,8 @@
 import { atom } from 'recoil';
 
-import { RightDrawerPage } from '../types/RightDrawerPage';
+import { RightDrawerPages } from '../types/RightDrawerPages';
 
-export const rightDrawerPageState = atom<RightDrawerPage | null>({
+export const rightDrawerPageState = atom<RightDrawerPages | null>({
   key: 'ui/layout/right-drawer-page',
   default: null,
 });

@@ -5,6 +5,7 @@ import { HideField } from '@nestjs/graphql';
 import { CommentThreadTarget } from '../comment-thread-target/comment-thread-target.model';
 import { Comment } from '../comment/comment.model';
 import { Workspace } from '../workspace/workspace.model';
+import { User } from '../user/user.model';
 import { CommentThreadCount } from '../comment/comment-thread-count.output';
 
 @ObjectType()
@@ -15,6 +16,15 @@ export class CommentThread {
 
     @HideField()
     workspaceId!: string;
+
+    @Field(() => String, {nullable:false})
+    authorId!: string;
+
+    @Field(() => String, {nullable:true})
+    body!: string | null;
+
+    @Field(() => String, {nullable:true})
+    title!: string | null;
 
     @HideField()
     deletedAt!: Date | null;
@@ -33,6 +43,9 @@ export class CommentThread {
 
     @HideField()
     workspace?: Workspace;
+
+    @Field(() => User, {nullable:false})
+    author?: User;
 
     @HideField()
     _count?: CommentThreadCount;

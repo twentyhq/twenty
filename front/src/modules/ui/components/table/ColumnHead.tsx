@@ -10,7 +10,7 @@ const StyledTitle = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  font-weight: 500;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   height: ${({ theme }) => theme.spacing(8)};
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;

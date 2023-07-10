@@ -30,6 +30,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
       }
       nonEditModeContent={
         <CompanyChip
+          id={people.company?.id ?? ''}
           name={people.company?.name ?? ''}
           picture={getLogoUrlFromDomainName(people.company?.domainName)}
         />

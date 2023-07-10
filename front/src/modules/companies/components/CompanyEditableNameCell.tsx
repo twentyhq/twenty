@@ -1,5 +1,5 @@
-import { CellCommentChip } from '@/comments/components/CellCommentChip';
-import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
+import { CellCommentChip } from '@/comments/components/table/CellCommentChip';
+import { useOpenTimelineRightDrawer } from '@/comments/hooks/useOpenTimelineRightDrawer';
 import { EditableCellChip } from '@/ui/components/editable-cell/types/EditableChip';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
@@ -13,12 +13,12 @@ import CompanyChip from './CompanyChip';
 type OwnProps = {
   company: Pick<
     GetCompaniesQuery['companies'][0],
-    'id' | 'name' | 'domainName' | '_commentCount' | 'accountOwner'
+    'id' | 'name' | 'domainName' | '_commentThreadCount' | 'accountOwner'
   >;
 };
 
 export function CompanyEditableNameChipCell({ company }: OwnProps) {
-  const openCommentRightDrawer = useOpenCommentRightDrawer();
+  const openCommentRightDrawer = useOpenTimelineRightDrawer();
   const [updateCompany] = useUpdateCompanyMutation();
 
   function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {
@@ -38,6 +38,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       value={company.name || ''}
       placeholder="Name"
       picture={getLogoUrlFromDomainName(company.domainName)}
+      id={company.id}
       changeHandler={(value: string) => {
         updateCompany({
           variables: {
@@ -50,7 +51,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       ChipComponent={CompanyChip}
       rightEndContents={[
         <CellCommentChip
-          count={company._commentCount ?? 0}
+          count={company._commentThreadCount ?? 0}
           onClick={handleCommentClick}
         />,
       ]}

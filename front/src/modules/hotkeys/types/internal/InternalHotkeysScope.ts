@@ -16,4 +16,5 @@ export enum InternalHotkeysScope {
   PasswordLogin = 'password-login',
   AuthIndex = 'auth-index',
   CreateProfile = 'create-profile',
+  ShowPage = 'show-page',
 }

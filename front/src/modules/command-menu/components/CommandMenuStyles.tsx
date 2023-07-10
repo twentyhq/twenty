@@ -15,6 +15,7 @@ export const StyledDialog = styled(Command.Dialog)`
   top: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
+  z-index: 1000;
 `;
 
 export const StyledInput = styled(Command.Input)`

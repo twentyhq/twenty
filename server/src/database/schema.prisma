@@ -175,8 +175,9 @@ model User {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  CommentThread CommentThread[]
 
   @@map("users")
 }
@@ -331,6 +332,12 @@ model CommentThread {
   workspace            Workspace             @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId          String
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+
+  body  String?
+  title String?
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?

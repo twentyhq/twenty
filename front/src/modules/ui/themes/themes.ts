@@ -18,7 +18,7 @@ const common = {
     horizontalCellMargin: '8px',
     checkboxColumnWidth: '32px',
   },
-  rightDrawerWidth: '300px',
+  rightDrawerWidth: '500px',
   clickableElementBackgroundTransition: 'background 0.1s ease',
   lastLayerZIndex: 2147483647,
 };
@@ -32,6 +32,7 @@ export const lightTheme = {
     selectedCardHover: color.blue20,
     selectedCard: color.blue10,
     font: fontLight,
+    name: 'light',
   },
 };
 export type ThemeType = typeof lightTheme;
@@ -45,6 +46,7 @@ export const darkTheme: ThemeType = {
     selectedCardHover: color.blue70,
     selectedCard: color.blue80,
     font: fontDark,
+    name: 'dark',
   },
 };
 

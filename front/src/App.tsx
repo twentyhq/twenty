@@ -17,6 +17,8 @@ import { People } from '~/pages/people/People';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 
+import { CompanyShow } from './pages/companies/CompanyShow';
+import { PersonShow } from './pages/people/PersonShow';
 import { AppInternalHooks } from './AppInternalHooks';
 
 /**
@@ -65,7 +67,13 @@ export function App() {
                 <Routes>
                   <Route path="" element={<Navigate to="/people" replace />} />
                   <Route path="people" element={<People />} />
+                  <Route path="person/:personId" element={<PersonShow />} />
                   <Route path="companies" element={<Companies />} />
+                  <Route
+                    path="companies/:companyId"
+                    element={<CompanyShow />}
+                  />
+
                   <Route path="opportunities" element={<Opportunities />} />
                   <Route
                     path="settings/*"

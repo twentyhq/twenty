@@ -33,8 +33,8 @@ export const SmallName: Story = {
   render: getRenderWrapperForComponent(
     <TestCellContainer>
       <CompanyChip
-        name="Instragram"
-        picture="https://api.faviconkit.com/instagram.com/144"
+        name="Airbnb"
+        picture="https://api.faviconkit.com/airbnb.com/144"
       />
     </TestCellContainer>,
   ),

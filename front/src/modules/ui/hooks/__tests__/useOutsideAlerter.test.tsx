@@ -7,7 +7,7 @@ const onOutsideClick = jest.fn();
 
 function TestComponent() {
   const buttonRef = useRef(null);
-  useOutsideAlerter(buttonRef, onOutsideClick);
+  useOutsideAlerter({ ref: buttonRef, callback: onOutsideClick });
 
   return (
     <div>

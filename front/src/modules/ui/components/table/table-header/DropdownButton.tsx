@@ -179,7 +179,7 @@ function DropdownButton({
   };
 
   const dropdownRef = useRef(null);
-  useOutsideAlerter(dropdownRef, onOutsideClick);
+  useOutsideAlerter({ ref: dropdownRef, callback: onOutsideClick });
 
   return (
     <StyledDropdownButtonContainer>

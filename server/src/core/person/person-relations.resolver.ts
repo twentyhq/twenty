@@ -63,15 +63,13 @@ export class PersonRelationsResolver {
   @ResolveField(() => Int, {
     nullable: false,
   })
-  async _commentCount(@Root() person: Person): Promise<number> {
-    return this.commentService.count({
+  async _commentThreadCount(@Root() person: Person): Promise<number> {
+    return this.commentThreadService.count({
       where: {
-        commentThread: {
-          commentThreadTargets: {
-            some: {
-              commentableId: person.id,
-              commentableType: 'Person',
-            },
+        commentThreadTargets: {
+          some: {
+            commentableId: person.id,
+            commentableType: 'Person',
           },
         },
       },

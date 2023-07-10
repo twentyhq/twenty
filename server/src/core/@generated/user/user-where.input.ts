@@ -11,6 +11,7 @@ import { WorkspaceMemberRelationFilter } from '../workspace-member/workspace-mem
 import { CompanyListRelationFilter } from '../company/company-list-relation-filter.input';
 import { RefreshTokenListRelationFilter } from '../refresh-token/refresh-token-list-relation-filter.input';
 import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
+import { CommentThreadListRelationFilter } from '../comment-thread/comment-thread-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -80,4 +81,7 @@ export class UserWhereInput {
 
     @Field(() => CommentListRelationFilter, {nullable:true})
     comments?: CommentListRelationFilter;
+
+    @Field(() => CommentThreadListRelationFilter, {nullable:true})
+    CommentThread?: CommentThreadListRelationFilter;
 }

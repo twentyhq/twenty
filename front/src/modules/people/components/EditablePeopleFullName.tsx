@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 
-import { CellCommentChip } from '@/comments/components/CellCommentChip';
-import { useOpenCommentRightDrawer } from '@/comments/hooks/useOpenCommentRightDrawer';
+import { CellCommentChip } from '@/comments/components/table/CellCommentChip';
+import { useOpenTimelineRightDrawer } from '@/comments/hooks/useOpenTimelineRightDrawer';
 import { EditableCellDoubleText } from '@/ui/components/editable-cell/types/EditableCellDoubleText';
 import { CommentableType, Person } from '~/generated/graphql';
 
 import { PersonChip } from './PersonChip';
 
 type OwnProps = {
-  person: Pick<Person, 'id' | 'firstName' | 'lastName' | '_commentCount'>;
+  person: Pick<Person, 'id' | 'firstName' | 'lastName' | '_commentThreadCount'>;
   onChange: (firstName: string, lastName: string) => void;
 };
 
@@ -27,7 +27,7 @@ const RightContainer = styled.div`
 export function EditablePeopleFullName({ person, onChange }: OwnProps) {
   const [firstNameValue, setFirstNameValue] = useState(person.firstName ?? '');
   const [lastNameValue, setLastNameValue] = useState(person.lastName ?? '');
-  const openCommentRightDrawer = useOpenCommentRightDrawer();
+  const openCommentRightDrawer = useOpenTimelineRightDrawer();
 
   function handleDoubleTextChange(
     firstValue: string,
@@ -60,10 +60,13 @@ export function EditablePeopleFullName({ person, onChange }: OwnProps) {
       onChange={handleDoubleTextChange}
       nonEditModeContent={
         <NoEditModeContainer>
-          <PersonChip name={person.firstName + ' ' + person.lastName} />
+          <PersonChip
+            name={person.firstName + ' ' + person.lastName}
+            id={person.id}
+          />
           <RightContainer>
             <CellCommentChip
-              count={person._commentCount ?? 0}
+              count={person._commentThreadCount ?? 0}
               onClick={handleCommentClick}
             />
           </RightContainer>

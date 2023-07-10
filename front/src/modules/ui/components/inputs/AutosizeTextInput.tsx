@@ -27,8 +27,8 @@ const StyledTextArea = styled(TextareaAutosize)`
   border-radius: 5px;
   color: ${({ theme }) => theme.font.color.primary};
   font-family: inherit;
-  font-size: 13px;
-  font-weight: 400;
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   line-height: 16px;
   overflow: auto;
   padding: 8px;
@@ -42,7 +42,7 @@ const StyledTextArea = styled(TextareaAutosize)`
 
   &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
-    font-weight: 400;
+    font-weight: ${({ theme }) => theme.font.weight.regular};
   }
 `;
 
@@ -121,7 +121,7 @@ export function AutosizeTextInput({
     <>
       <StyledContainer>
         <StyledTextArea
-          placeholder={placeholder || 'Write something...'}
+          placeholder={placeholder || 'Write a comment'}
           maxRows={MAX_ROWS}
           minRows={computedMinRows}
           onChange={handleInputChange}

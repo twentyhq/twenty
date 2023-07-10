@@ -43,7 +43,7 @@ const StyledCancelButton = styled.button`
   border: none;
   color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
-  font-weight: 500;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: auto;
   margin-right: ${({ theme }) => theme.spacing(2)};
   padding: ${(props) => {

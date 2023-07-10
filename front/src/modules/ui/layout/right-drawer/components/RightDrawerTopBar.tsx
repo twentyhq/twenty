@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+import { Button } from '@/ui/components/buttons/Button';
+
 import { RightDrawerTopBarCloseButton } from './RightDrawerTopBarCloseButton';
 
 const StyledRightDrawerTopBar = styled.div`
@@ -8,7 +10,7 @@ const StyledRightDrawerTopBar = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: row;
-  font-size: 13px;
+  font-size: ${({ theme }) => theme.font.size.md};
   justify-content: space-between;
   min-height: 40px;
   padding-left: 8px;
@@ -17,19 +19,24 @@ const StyledRightDrawerTopBar = styled.div`
 
 const StyledTopBarTitle = styled.div`
   align-items: center;
-  font-weight: 500;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-export function RightDrawerTopBar({
-  title,
-}: {
+type OwnProps = {
   title: string | null | undefined;
-}) {
+  onSave?: () => void;
+};
+
+export function RightDrawerTopBar({ title, onSave }: OwnProps) {
+  function handleOnClick() {
+    onSave?.();
+  }
   return (
     <StyledRightDrawerTopBar>
-      <StyledTopBarTitle>{title}</StyledTopBarTitle>
       <RightDrawerTopBarCloseButton />
+      <StyledTopBarTitle>{title}</StyledTopBarTitle>
+      {onSave && <Button title="Save" onClick={handleOnClick} />}
     </StyledRightDrawerTopBar>
   );
 }

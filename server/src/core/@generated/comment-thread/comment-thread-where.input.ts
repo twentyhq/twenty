@@ -2,11 +2,13 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
 import { HideField } from '@nestjs/graphql';
+import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { CommentThreadTargetListRelationFilter } from '../comment-thread-target/comment-thread-target-list-relation-filter.input';
 import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
 import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.input';
+import { UserRelationFilter } from '../user/user-relation-filter.input';
 
 @InputType()
 export class CommentThreadWhereInput {
@@ -26,6 +28,15 @@ export class CommentThreadWhereInput {
     @HideField()
     workspaceId?: StringFilter;
 
+    @Field(() => StringFilter, {nullable:true})
+    authorId?: StringFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    body?: StringNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    title?: StringNullableFilter;
+
     @HideField()
     deletedAt?: DateTimeNullableFilter;
 
@@ -43,4 +54,7 @@ export class CommentThreadWhereInput {
 
     @HideField()
     workspace?: WorkspaceRelationFilter;
+
+    @Field(() => UserRelationFilter, {nullable:true})
+    author?: UserRelationFilter;
 }

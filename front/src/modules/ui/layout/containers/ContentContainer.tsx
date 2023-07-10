@@ -10,7 +10,7 @@ type OwnProps = {
   topMargin?: number;
 };
 
-const MainContainer = styled.div<{ topMargin: number }>`
+const StyledMainContainer = styled.div<{ topMargin: number }>`
   background: ${({ theme }) => theme.background.noisy};
   display: flex;
 
@@ -27,27 +27,21 @@ type LeftContainerProps = {
   isRightDrawerOpen?: boolean;
 };
 
-const LeftContainer = styled.div<LeftContainerProps>`
+const StyledLeftContainer = styled.div<LeftContainerProps>`
   display: flex;
   position: relative;
-  width: calc(
-    100% -
-      ${(props) =>
-        props.isRightDrawerOpen
-          ? `${props.theme.rightDrawerWidth} - ${props.theme.spacing(2)}`
-          : '0px'}
-  );
+  width: 100%;
 `;
 
 export function ContentContainer({ children, topMargin }: OwnProps) {
   const [isRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
 
   return (
-    <MainContainer topMargin={topMargin ?? 0}>
-      <LeftContainer isRightDrawerOpen={isRightDrawerOpen}>
+    <StyledMainContainer topMargin={topMargin ?? 0}>
+      <StyledLeftContainer isRightDrawerOpen={isRightDrawerOpen}>
         <Panel>{children}</Panel>
-      </LeftContainer>
+      </StyledLeftContainer>
       <RightDrawer />
-    </MainContainer>
+    </StyledMainContainer>
   );
 }

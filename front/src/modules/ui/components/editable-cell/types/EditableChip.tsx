@@ -6,17 +6,19 @@ import { textInputStyle } from '@/ui/themes/effects';
 import { EditableCell } from '../EditableCell';
 
 export type EditableChipProps = {
+  id: string;
   placeholder?: string;
   value: string;
   picture: string;
   changeHandler: (updated: string) => void;
   editModeHorizontalAlign?: 'left' | 'right';
   ChipComponent: ComponentType<{
+    id: string;
     name: string;
     picture: string;
     isOverlapped?: boolean;
   }>;
-  commentCount?: number;
+  commentThreadCount?: number;
   onCommentClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   rightEndContents?: ReactNode[];
 };
@@ -41,6 +43,7 @@ const RightContainer = styled.div`
 
 // TODO: move right end content in EditableCell
 export function EditableCellChip({
+  id,
   value,
   placeholder,
   changeHandler,
@@ -75,7 +78,7 @@ export function EditableCellChip({
       }
       nonEditModeContent={
         <NoEditModeContainer>
-          <ChipComponent name={inputValue} picture={picture} />
+          <ChipComponent id={id} name={inputValue} picture={picture} />
           <RightContainer>
             {rightEndContents &&
               rightEndContents.length > 0 &&

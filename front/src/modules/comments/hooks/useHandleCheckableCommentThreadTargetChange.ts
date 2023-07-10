@@ -4,18 +4,23 @@ import { v4 } from 'uuid';
 import { GET_COMPANIES } from '@/companies/services';
 import { GET_PEOPLE } from '@/people/services';
 import {
+  CommentThread,
+  CommentThreadTarget,
   useAddCommentThreadTargetOnCommentThreadMutation,
   useRemoveCommentThreadTargetOnCommentThreadMutation,
 } from '~/generated/graphql';
 
 import { GET_COMMENT_THREADS_BY_TARGETS } from '../services';
 import { CommentableEntityForSelect } from '../types/CommentableEntityForSelect';
-import { CommentThreadForDrawer } from '../types/CommentThreadForDrawer';
 
 export function useHandleCheckableCommentThreadTargetChange({
   commentThread,
 }: {
-  commentThread: CommentThreadForDrawer;
+  commentThread?: Pick<CommentThread, 'id'> & {
+    commentThreadTargets: Array<
+      Pick<CommentThreadTarget, 'id' | 'commentableId'>
+    >;
+  };
 }) {
   const [addCommentThreadTargetOnCommentThread] =
     useAddCommentThreadTargetOnCommentThreadMutation({
@@ -39,6 +44,9 @@ export function useHandleCheckableCommentThreadTargetChange({
     newCheckedValue: boolean,
     entity: CommentableEntityForSelect,
   ) {
+    if (!commentThread) {
+      return;
+    }
     if (newCheckedValue) {
       addCommentThreadTargetOnCommentThread({
         variables: {
