@@ -210,8 +210,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
       <StyledTimelineEmptyContainer>
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
         <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
-        <TableActionBarButtonToggleComments
-          onClick={() => openCreateCommandThread(entity)}
+        <CommentThreadCreateButton
+          onNoteClick={() => openCreateCommandThread(entity)}
         />
       </StyledTimelineEmptyContainer>
     );
