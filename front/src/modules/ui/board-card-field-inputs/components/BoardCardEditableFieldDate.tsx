@@ -1,5 +1,8 @@
+import { useMemo, useState } from 'react';
+
 import { BoardCardEditableField } from '@/ui/board-card-field/components/BoardCardEditableField';
 import { InplaceInputDateDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputDateDisplayMode';
+import { debounce } from '@/utils/debounce';
 
 import { BoardCardEditableFieldDateEditMode } from './BoardCardEditableFieldDateEditMode';
 
@@ -14,11 +17,21 @@ export function BoardCardEditableFieldDate({
   onChange,
   editModeHorizontalAlign,
 }: OwnProps) {
+  const [internalValue, setInternalValue] = useState(value);
+  const debouncedOnChange = useMemo(() => {
+    return debounce(onChange, 200);
+  }, [onChange]);
   return (
     <BoardCardEditableField
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <BoardCardEditableFieldDateEditMode value={value} onChange={onChange} />
+        <BoardCardEditableFieldDateEditMode
+          value={internalValue}
+          onChange={(date: Date) => {
+            setInternalValue(date);
+            debouncedOnChange(date);
+          }}
+        />
       }
       nonEditModeContent={<InplaceInputDateDisplayMode value={value} />}
     ></BoardCardEditableField>
