@@ -42,8 +42,6 @@ export function CommentThreadBodyEditor({ commentThread, onChange }: OwnProps) {
     return debounce(onInternalChange, 200);
   }, [commentThread, updateCommentThreadBodyMutation, onChange]);
 
-  console.log(commentThread.body);
-
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent: commentThread.body
       ? JSON.parse(commentThread.body)

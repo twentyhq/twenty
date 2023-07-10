@@ -4,7 +4,8 @@ import { v4 } from 'uuid';
 import { GET_COMPANIES } from '@/companies/services';
 import { GET_PEOPLE } from '@/people/services';
 import {
-  GetCommentThreadQuery,
+  CommentThread,
+  CommentThreadTarget,
   useAddCommentThreadTargetOnCommentThreadMutation,
   useRemoveCommentThreadTargetOnCommentThreadMutation,
 } from '~/generated/graphql';
@@ -15,7 +16,11 @@ import { CommentableEntityForSelect } from '../types/CommentableEntityForSelect'
 export function useHandleCheckableCommentThreadTargetChange({
   commentThread,
 }: {
-  commentThread?: GetCommentThreadQuery['findManyCommentThreads'][0];
+  commentThread?: Pick<CommentThread, 'id'> & {
+    commentThreadTargets: Array<
+      Pick<CommentThreadTarget, 'id' | 'commentableId'>
+    >;
+  };
 }) {
   const [addCommentThreadTargetOnCommentThread] =
     useAddCommentThreadTargetOnCommentThreadMutation({

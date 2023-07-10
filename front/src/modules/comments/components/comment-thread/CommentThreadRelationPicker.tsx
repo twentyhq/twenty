@@ -22,13 +22,18 @@ import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flat
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
-  GetCommentThreadQuery,
+  CommentThread,
+  CommentThreadTarget,
   useSearchCompanyQuery,
   useSearchPeopleQuery,
 } from '~/generated/graphql';
 
 type OwnProps = {
-  commentThread?: GetCommentThreadQuery['findManyCommentThreads'][0];
+  commentThread?: Pick<CommentThread, 'id'> & {
+    commentThreadTargets: Array<
+      Pick<CommentThreadTarget, 'id' | 'commentableId' | 'commentableType'>
+    >;
+  };
 };
 
 const StyledContainer = styled.div`

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
@@ -135,7 +135,13 @@ export function CommentThread({
           <PropertyBoxItem
             icon={<IconArrowUpRight />}
             value={
-              <CommentThreadRelationPicker commentThread={commentThread} />
+              <CommentThreadRelationPicker
+                commentThread={{
+                  id: commentThread.id,
+                  commentThreadTargets:
+                    commentThread.commentThreadTargets ?? [],
+                }}
+              />
             }
             label="Relations"
           />
