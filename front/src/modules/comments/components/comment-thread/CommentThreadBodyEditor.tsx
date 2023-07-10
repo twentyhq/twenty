@@ -18,15 +18,31 @@ const BlockNoteStyledContainer = styled.div`
 
 type OwnProps = {
   commentThread: Pick<CommentThread, 'id' | 'body'>;
+  onChange?: (commentThreadBody: string) => void;
 };
 
-export function CommentThreadEditor({ commentThread }: OwnProps) {
+export function CommentThreadBodyEditor({ commentThread, onChange }: OwnProps) {
   const [updateCommentThreadBodyMutation] =
     useUpdateCommentThreadBodyMutation();
 
-  const debounceUpdateCommentThreadBodyMutation = useMemo(() => {
-    return debounce(updateCommentThreadBodyMutation, 200);
-  }, [updateCommentThreadBodyMutation]);
+  const debounceOnChange = useMemo(() => {
+    function onInternalChange(commentThreadBody: string) {
+      onChange?.(commentThreadBody);
+      updateCommentThreadBodyMutation({
+        variables: {
+          commentThreadId: commentThread.id,
+          commentThreadBody: commentThreadBody,
+        },
+        refetchQueries: [
+          getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
+        ],
+      });
+    }
+
+    return debounce(onInternalChange, 200);
+  }, [commentThread, updateCommentThreadBodyMutation, onChange]);
+
+  console.log(commentThread.body);
 
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent: commentThread.body
@@ -34,15 +50,7 @@ export function CommentThreadEditor({ commentThread }: OwnProps) {
       : undefined,
     editorDOMAttributes: { class: 'editor-edit-mode' },
     onEditorContentChange: (editor) => {
-      debounceUpdateCommentThreadBodyMutation({
-        variables: {
-          commentThreadId: commentThread.id,
-          commentThreadBody: JSON.stringify(editor.topLevelBlocks) ?? '',
-        },
-        refetchQueries: [
-          getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
-        ],
-      });
+      debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
     },
   });
 

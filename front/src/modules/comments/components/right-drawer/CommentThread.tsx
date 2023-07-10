@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
@@ -6,13 +6,14 @@ import { GET_COMMENT_THREADS_BY_TARGETS } from '@/comments/services';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
 import { IconArrowUpRight } from '@/ui/icons/index';
+import { debounce } from '@/utils/debounce';
 import {
   useGetCommentThreadQuery,
   useUpdateCommentThreadTitleMutation,
 } from '~/generated/graphql';
 
+import { CommentThreadBodyEditor } from '../comment-thread/CommentThreadBodyEditor';
 import { CommentThreadComments } from '../comment-thread/CommentThreadComments';
-import { CommentThreadEditor } from '../comment-thread/CommentThreadEditor';
 import { CommentThreadRelationPicker } from '../comment-thread/CommentThreadRelationPicker';
 import { CommentThreadTypeDropdown } from '../comment-thread/CommentThreadTypeDropdown';
 
@@ -57,8 +58,7 @@ const StyledEditableTitleInput = styled.input`
 
   line-height: ${({ theme }) => theme.text.lineHeight.md};
   outline: none;
-  width: 318px;
-
+  width: calc(100% - ${({ theme }) => theme.spacing(2)});
   :placeholder {
     color: ${({ theme }) => theme.font.color.light};
   }
@@ -88,20 +88,29 @@ export function CommentThread({
     skip: !commentThreadId,
   });
 
-  const [title, setTitle] = useState('');
-
   const [updateCommentThreadTitleMutation] =
     useUpdateCommentThreadTitleMutation();
 
-  function onTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setTitle(e.target.value);
-    updateCommentThreadTitleMutation({
-      variables: {
-        commentThreadId: commentThreadId,
-        commentThreadTitle: e.target.value ?? '',
-      },
-      refetchQueries: [getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? ''],
-    });
+  const debounceUpdateTitle = useMemo(() => {
+    function updateTitle(title: string) {
+      updateCommentThreadTitleMutation({
+        variables: {
+          commentThreadId: commentThreadId,
+          commentThreadTitle: title ?? '',
+        },
+        refetchQueries: [
+          getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
+        ],
+      });
+    }
+    return debounce(updateTitle, 200);
+  }, [commentThreadId, updateCommentThreadTitleMutation]);
+
+  function updateTitleFromBody(body: string) {
+    const title = JSON.parse(body)[0]?.content[0]?.text;
+    if (!commentThread?.title || commentThread?.title === '') {
+      debounceUpdateTitle(title);
+    }
   }
 
   const commentThread = data?.findManyCommentThreads[0];
@@ -119,8 +128,8 @@ export function CommentThread({
         </StyledTopActionsContainer>
         <StyledEditableTitleInput
           placeholder="Note title (optional)"
-          onChange={onTitleChange}
-          value={title}
+          onChange={(event) => debounceUpdateTitle(event.target.value)}
+          value={commentThread?.title ?? ''}
         />
         <PropertyBox>
           <PropertyBoxItem
@@ -132,7 +141,10 @@ export function CommentThread({
           />
         </PropertyBox>
       </StyledTopContainer>
-      <CommentThreadEditor commentThread={commentThread} />
+      <CommentThreadBodyEditor
+        commentThread={commentThread}
+        onChange={updateTitleFromBody}
+      />
       {showComment && (
         <CommentThreadComments
           commentThread={{

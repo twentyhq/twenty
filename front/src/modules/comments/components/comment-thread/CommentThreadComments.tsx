@@ -24,13 +24,14 @@ const StyledThreadItemListContainer = styled.div`
 
   box-sizing: border-box;
   display: flex;
-
   flex-direction: column;
 
   gap: ${({ theme }) => theme.spacing(4)};
+
   justify-content: flex-start;
   padding: ${({ theme }) => theme.spacing(8)};
   padding-left: ${({ theme }) => theme.spacing(12)};
+  width: 100%;
 `;
 
 const StyledCommentActionBar = styled.div`
@@ -67,11 +68,13 @@ export function CommentThreadComments({ commentThread }: OwnProps) {
 
   return (
     <>
-      <StyledThreadItemListContainer>
-        {commentThread?.comments?.map((comment, index) => (
-          <CommentThreadItem key={comment.id} comment={comment} />
-        ))}
-      </StyledThreadItemListContainer>
+      {commentThread?.comments.length > 0 && (
+        <StyledThreadItemListContainer>
+          {commentThread?.comments?.map((comment, index) => (
+            <CommentThreadItem key={comment.id} comment={comment} />
+          ))}
+        </StyledThreadItemListContainer>
+      )}
 
       <StyledCommentActionBar>
         {currentUser && <AutosizeTextInput onValidate={handleSendComment} />}

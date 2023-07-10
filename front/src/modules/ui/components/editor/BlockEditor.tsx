@@ -7,7 +7,8 @@ interface BlockEditorProps {
 }
 
 const StyledEditor = styled.div`
-  display: flex;
+  min-height: 200px;
+  width: 100%;
   & .editor-create-mode,
   .editor-edit-mode {
     background: ${({ theme }) => theme.background.primary};
@@ -15,9 +16,6 @@ const StyledEditor = styled.div`
   & .editor-create-mode [class^='_inlineContent']:before {
     color: ${({ theme }) => theme.font.color.tertiary};
     font-style: normal !important;
-  }
-  & .editor-edit-mode [class^='_inlineContent']:before {
-    content: '';
   }
 `;
 
