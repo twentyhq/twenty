@@ -6,13 +6,14 @@ import { RightDrawerTopBarCloseButton } from './RightDrawerTopBarCloseButton';
 
 const StyledRightDrawerTopBar = styled.div`
   align-items: center;
+  background: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
+  height: 56px;
   justify-content: space-between;
-  min-height: 40px;
   padding-left: 8px;
   padding-right: 8px;
 `;
@@ -24,7 +25,7 @@ const StyledTopBarTitle = styled.div`
 `;
 
 type OwnProps = {
-  title: string | null | undefined;
+  title?: string | null | undefined;
   onSave?: () => void;
 };
 
@@ -36,7 +37,7 @@ export function RightDrawerTopBar({ title, onSave }: OwnProps) {
     <StyledRightDrawerTopBar>
       <RightDrawerTopBarCloseButton />
       <StyledTopBarTitle>{title}</StyledTopBarTitle>
-      {onSave && <Button title="Save" onClick={handleOnClick} />}
+      {onSave ? <Button title="Save" onClick={handleOnClick} /> : <div></div>}
     </StyledRightDrawerTopBar>
   );
 }

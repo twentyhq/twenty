@@ -25,7 +25,7 @@ const StyledContainer = styled.div`
 
   input[type='checkbox']::before {
     border: 1px solid ${({ theme }) => theme.font.color.tertiary};
-    border-radius: 2px;
+    border-radius: ${({ theme }) => theme.border.radius.xs};
     content: '';
     display: block;
     height: 12px;

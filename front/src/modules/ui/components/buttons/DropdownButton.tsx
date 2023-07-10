@@ -19,7 +19,7 @@ const StyledButton = styled.button<ButtonProps>`
   align-items: center;
   background: ${({ theme }) => theme.background.tertiary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};

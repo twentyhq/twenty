@@ -46,7 +46,7 @@ export function CommentThreadBodyEditor({ commentThread, onChange }: OwnProps) {
     initialContent: commentThread.body
       ? JSON.parse(commentThread.body)
       : undefined,
-    editorDOMAttributes: { class: 'editor-edit-mode' },
+    editorDOMAttributes: { class: 'editor' },
     onEditorContentChange: (editor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
     },

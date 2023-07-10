@@ -4,7 +4,7 @@ export const EditableCellRelationCreateButton = styled.button`
   align-items: center;
   background: none;
   border: none;
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
   display: flex;
   font-family: 'Inter';

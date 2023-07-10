@@ -32,7 +32,7 @@ type StyledDropdownButtonProps = {
 
 const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   background: ${({ theme }) => theme.background.primary};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${(props) => (props.isActive ? props.theme.color.blue : 'none')};
   cursor: pointer;
   display: flex;
@@ -52,7 +52,7 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
 const StyledDropdown = styled.ul`
   --outer-border-radius: calc(var(--wraper-border-radius) - 2px);
   --wraper-border: 1px;
-  --wraper-border-radius: 8px;
+  --wraper-border-radius: ${({ theme }) => theme.border.radius.md};
 
   border: var(--wraper-border) solid ${({ theme }) => theme.border.color.light};
   border-radius: var(--wraper-border-radius);
@@ -79,7 +79,7 @@ const StyledDropdown = styled.ul`
 
 const StyledDropdownItem = styled.li`
   align-items: center;
-  border-radius: 2px;
+  border-radius: ${({ theme }) => theme.border.radius.xs};
   color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
   display: flex;
@@ -139,7 +139,7 @@ const StyledSearchField = styled.li`
 
   user-select: none;
   input {
-    border-radius: 8px;
+    border-radius: ${({ theme }) => theme.border.radius.md};
     box-sizing: border-box;
     font-family: ${({ theme }) => theme.font.family};
     height: 36px;

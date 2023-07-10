@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 const StyledPanel = styled.div`
   background: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: row;
   height: 100%;

@@ -20,7 +20,7 @@ const StyledShowPageSummaryCard = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(6)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)}
     ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(3)};
@@ -30,6 +30,7 @@ const StyledInfoContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledDate = styled.div`

@@ -41,6 +41,13 @@ const StyledCommentActionBar = styled.div`
   width: calc(${({ theme }) => theme.rightDrawerWidth} - 48px - 24px);
 `;
 
+const StyledThreadCommentTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  text-transform: uppercase;
+`;
+
 export function CommentThreadComments({ commentThread }: OwnProps) {
   const [createCommentMutation] = useCreateCommentMutation();
   const currentUser = useRecoilValue(currentUserState);
@@ -69,11 +76,14 @@ export function CommentThreadComments({ commentThread }: OwnProps) {
   return (
     <>
       {commentThread?.comments.length > 0 && (
-        <StyledThreadItemListContainer>
-          {commentThread?.comments?.map((comment, index) => (
-            <CommentThreadItem key={comment.id} comment={comment} />
-          ))}
-        </StyledThreadItemListContainer>
+        <>
+          <StyledThreadItemListContainer>
+            <StyledThreadCommentTitle>Comments</StyledThreadCommentTitle>
+            {commentThread?.comments?.map((comment, index) => (
+              <CommentThreadItem key={comment.id} comment={comment} />
+            ))}
+          </StyledThreadItemListContainer>
+        </>
       )}
 
       <StyledCommentActionBar>

@@ -32,7 +32,7 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
     }
   }};
   border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme, variant, disabled }) => {
     if (disabled) {

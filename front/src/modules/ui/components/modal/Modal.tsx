@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const ModalDiv = styled(motion.div)`
   background: ${({ theme }) => theme.background.primary};
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.border.radius.md};
   z-index: 10000; // should be higher than Backdrop's z-index
 `;
 

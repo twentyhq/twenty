@@ -31,7 +31,7 @@ const TitleContainer = styled.div`
 const AddButtonContainer = styled.div`
   align-items: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   display: flex;
