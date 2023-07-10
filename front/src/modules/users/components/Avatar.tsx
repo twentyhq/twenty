@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { stringToHslColor } from '@/utils/string-to-hsl';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 
 export type AvatarType = 'squared' | 'rounded';
@@ -11,23 +12,21 @@ type OwnProps = {
   type?: AvatarType;
 };
 
-export const StyledAvatar = styled.div<Omit<OwnProps, 'placeholder'>>`
+export const StyledAvatar = styled.div<OwnProps>`
   align-items: center;
-  background-color: ${(props) =>
-    !isNonEmptyString(props.avatarUrl)
-      ? props.theme.background.tertiary
+  background-color: ${({ avatarUrl, placeholder }) =>
+    !isNonEmptyString(avatarUrl)
+      ? stringToHslColor(placeholder, 75, 85)
       : 'none'};
-  ${(props) =>
-    isNonEmptyString(props.avatarUrl)
-      ? `background-image: url(${props.avatarUrl});`
-      : ''}
+  ${({ avatarUrl }) =>
+    isNonEmptyString(avatarUrl) ? `background-image: url(${avatarUrl});` : ''}
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${({ theme, placeholder }) => stringToHslColor(placeholder, 75, 25)};
   display: flex;
 
   flex-shrink: 0;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 
   height: ${(props) => props.size}px;
@@ -44,7 +43,12 @@ export function Avatar({
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
 
   return (
-    <StyledAvatar avatarUrl={avatarUrl} size={size} type={type}>
+    <StyledAvatar
+      avatarUrl={avatarUrl}
+      placeholder={placeholder}
+      size={size}
+      type={type}
+    >
       {noAvatarUrl && placeholder[0]?.toLocaleUpperCase()}
     </StyledAvatar>
   );
