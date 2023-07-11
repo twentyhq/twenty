@@ -14,8 +14,6 @@ export function useHotkeysScopeAutoSync() {
   useEffect(() => {
     const scopesToSet: string[] = [];
 
-    console.log(JSON.stringify({ currentHotkeysScope }));
-
     if (currentHotkeysScope.customScopes?.commandMenu) {
       scopesToSet.push(InternalHotkeysScope.CommandMenu);
     }
@@ -25,10 +23,6 @@ export function useHotkeysScopeAutoSync() {
     }
 
     scopesToSet.push(currentHotkeysScope.scope);
-
-    console.log(
-      JSON.stringify({ scopesToSet, currentScope: currentHotkeysScope.scope }),
-    );
 
     setHotkeysScopes(scopesToSet);
   }, [setHotkeysScopes, currentHotkeysScope]);
