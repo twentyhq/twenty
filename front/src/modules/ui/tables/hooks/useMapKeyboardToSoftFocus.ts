@@ -1,7 +1,6 @@
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-// import { useRemoveFromHotkeysScopeStack } from '@/hotkeys/hooks/useRemoveFromHotkeysScopeStack';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';

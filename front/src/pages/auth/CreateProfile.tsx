@@ -11,7 +11,6 @@ import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
-// import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { NameFields } from '@/settings/profile/components/NameFields';

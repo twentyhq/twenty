@@ -13,7 +13,6 @@ import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
-// import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { MainButton } from '@/ui/components/buttons/MainButton';
