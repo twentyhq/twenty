@@ -12,6 +12,9 @@ import { Verify } from '../dto/verify.entity';
 import { TokenService } from './token.service';
 import { Prisma } from '@prisma/client';
 import { UserExists } from '../dto/user-exists.entity';
+import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
+import { WorkspaceInviteHashValid } from '../dto/workspace-invite-hash-valid.entity';
+import { SignUpInput } from '../dto/sign-up.input';
 
 export type UserPayload = {
   firstName: string;
@@ -24,30 +27,15 @@ export class AuthService {
   constructor(
     private readonly tokenService: TokenService,
     private readonly userService: UserService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   async challenge(challengeInput: ChallengeInput) {
-    let user = await this.userService.findUnique({
+    const user = await this.userService.findUnique({
       where: {
         email: challengeInput.email,
       },
     });
-
-    const isPasswordValid = PASSWORD_REGEX.test(challengeInput.password);
-
-    assert(!!user || isPasswordValid, 'Password too weak', BadRequestException);
-
-    if (!user) {
-      const passwordHash = await hashPassword(challengeInput.password);
-
-      user = await this.userService.createUser({
-        data: {
-          email: challengeInput.email,
-          passwordHash,
-          locale: 'en',
-        },
-      } as Prisma.UserCreateArgs);
-    }
 
     assert(user, "This user doesn't exist", NotFoundException);
     assert(user.passwordHash, 'Incorrect login method', ForbiddenException);
@@ -60,6 +48,53 @@ export class AuthService {
     assert(isValid, 'Wrong password', ForbiddenException);
 
     return user;
+  }
+
+  async signUp(signUpInput: SignUpInput) {
+    const existingUser = await this.userService.findUnique({
+      where: {
+        email: signUpInput.email,
+      },
+    });
+    assert(!existingUser, 'This user already exists', ForbiddenException);
+
+    const isPasswordValid = PASSWORD_REGEX.test(signUpInput.password);
+    assert(isPasswordValid, 'Password too weak', BadRequestException);
+
+    const passwordHash = await hashPassword(signUpInput.password);
+
+    if (signUpInput.workspaceInviteHash) {
+      const workspace = await this.workspaceService.findFirst({
+        where: {
+          inviteHash: signUpInput.workspaceInviteHash,
+        },
+      });
+
+      assert(
+        workspace,
+        'This workspace inviteHash is invalid',
+        ForbiddenException,
+      );
+
+      return await this.userService.createUser(
+        {
+          data: {
+            email: signUpInput.email,
+            passwordHash,
+            locale: 'en',
+          },
+        } as Prisma.UserCreateArgs,
+        workspace.id,
+      );
+    }
+
+    return await this.userService.createUser({
+      data: {
+        email: signUpInput.email,
+        passwordHash,
+        locale: 'en',
+      },
+    } as Prisma.UserCreateArgs);
   }
 
   async verify(
@@ -100,5 +135,17 @@ export class AuthService {
     });
 
     return { exists: !!user };
+  }
+
+  async checkWorkspaceInviteHashIsValid(
+    inviteHash: string,
+  ): Promise<WorkspaceInviteHashValid> {
+    const workspace = await this.workspaceService.findFirst({
+      where: {
+        inviteHash,
+      },
+    });
+
+    return { isValid: !!workspace };
   }
 }

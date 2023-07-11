@@ -9,6 +9,7 @@ import { VerifyAuthController } from './controllers/verify-auth.controller';
 import { TokenService } from './services/token.service';
 import { AuthResolver } from './auth.resolver';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { WorkspaceModule } from '../workspace/workspace.module';
 
 const jwtModule = JwtModule.registerAsync({
   useFactory: async (environmentService: EnvironmentService) => {
@@ -23,7 +24,7 @@ const jwtModule = JwtModule.registerAsync({
 });
 
 @Module({
-  imports: [jwtModule, UserModule],
+  imports: [jwtModule, UserModule, WorkspaceModule],
   controllers: [GoogleAuthController, VerifyAuthController],
   providers: [
     AuthService,

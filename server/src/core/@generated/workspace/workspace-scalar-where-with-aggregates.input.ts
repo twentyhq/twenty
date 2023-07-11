@@ -30,6 +30,9 @@ export class WorkspaceScalarWhereWithAggregatesInput {
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     logo?: StringNullableWithAggregatesFilter;
 
+    @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
+    inviteHash?: StringNullableWithAggregatesFilter;
+
     @HideField()
     deletedAt?: DateTimeNullableWithAggregatesFilter;
 

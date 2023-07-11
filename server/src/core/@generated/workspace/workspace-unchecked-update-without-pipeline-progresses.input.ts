@@ -28,6 +28,9 @@ export class WorkspaceUncheckedUpdateWithoutPipelineProgressesInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     logo?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    inviteHash?: NullableStringFieldUpdateOperationsInput;
+
     @HideField()
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 

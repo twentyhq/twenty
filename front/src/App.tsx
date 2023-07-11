@@ -39,6 +39,7 @@ function AuthRoutes() {
             <Route path={AuthPath.Index} element={<Index />} />
             <Route path={AuthPath.Callback} element={<Verify />} />
             <Route path={AuthPath.PasswordLogin} element={<PasswordLogin />} />
+            <Route path={AuthPath.InviteLink} element={<PasswordLogin />} />
             <Route
               path={AuthPath.CreateWorkspace}
               element={<CreateWorkspace />}

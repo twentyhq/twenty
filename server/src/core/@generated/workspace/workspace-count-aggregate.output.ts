@@ -18,6 +18,9 @@ export class WorkspaceCountAggregate {
     @Field(() => Int, {nullable:false})
     logo!: number;
 
+    @Field(() => Int, {nullable:false})
+    inviteHash!: number;
+
     @HideField()
     deletedAt!: number;
 

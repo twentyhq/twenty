@@ -5,6 +5,7 @@ export enum WorkspaceScalarFieldEnum {
     domainName = "domainName",
     displayName = "displayName",
     logo = "logo",
+    inviteHash = "inviteHash",
     deletedAt = "deletedAt",
     createdAt = "createdAt",
     updatedAt = "updatedAt"

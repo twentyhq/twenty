@@ -1163,6 +1163,7 @@ export type Mutation = {
   deleteManyPipelineProgress: AffectedRows;
   deleteWorkspaceMember: WorkspaceMember;
   renewToken: AuthTokens;
+  signUp: LoginToken;
   updateOneCommentThread: CommentThread;
   updateOneCompany?: Maybe<Company>;
   updateOnePerson?: Maybe<Person>;
@@ -1241,6 +1242,13 @@ export type MutationDeleteWorkspaceMemberArgs = {
 
 export type MutationRenewTokenArgs = {
   refreshToken: Scalars['String'];
+};
+
+
+export type MutationSignUpArgs = {
+  email: Scalars['String'];
+  password: Scalars['String'];
+  workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -2439,6 +2447,7 @@ export type PipelineWhereUniqueInput = {
 export type Query = {
   __typename?: 'Query';
   checkUserExists: UserExists;
+  checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
@@ -2457,6 +2466,11 @@ export type Query = {
 
 export type QueryCheckUserExistsArgs = {
   email: Scalars['String'];
+};
+
+
+export type QueryCheckWorkspaceInviteHashIsValidArgs = {
+  inviteHash: Scalars['String'];
 };
 
 
@@ -2917,6 +2931,7 @@ export type Workspace = {
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
   people?: Maybe<Array<Person>>;
   pipelineProgresses?: Maybe<Array<PipelineProgress>>;
@@ -2924,6 +2939,11 @@ export type Workspace = {
   pipelines?: Maybe<Array<Pipeline>>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
+};
+
+export type WorkspaceInviteHashValid = {
+  __typename?: 'WorkspaceInviteHashValid';
+  isValid: Scalars['Boolean'];
 };
 
 export type WorkspaceMember = {
@@ -3054,6 +3074,7 @@ export type WorkspaceUpdateInput = {
   displayName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   domainName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  inviteHash?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   logo?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   people?: InputMaybe<PersonUpdateManyWithoutWorkspaceNestedInput>;
   pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutWorkspaceNestedInput>;
@@ -3085,6 +3106,23 @@ export type ChallengeMutationVariables = Exact<{
 
 
 export type ChallengeMutation = { __typename?: 'Mutation', challenge: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', expiresAt: string, token: string } } };
+
+export type SignUpMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', expiresAt: string, token: string } } };
+
+export type SignUpToWorkspaceMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+  workspaceInviteHash: Scalars['String'];
+}>;
+
+
+export type SignUpToWorkspaceMutation = { __typename?: 'Mutation', signUp: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', expiresAt: string, token: string } } };
 
 export type VerifyMutationVariables = Exact<{
   loginToken: Scalars['String'];
@@ -3526,6 +3564,85 @@ export function useChallengeMutation(baseOptions?: Apollo.MutationHookOptions<Ch
 export type ChallengeMutationHookResult = ReturnType<typeof useChallengeMutation>;
 export type ChallengeMutationResult = Apollo.MutationResult<ChallengeMutation>;
 export type ChallengeMutationOptions = Apollo.BaseMutationOptions<ChallengeMutation, ChallengeMutationVariables>;
+export const SignUpDocument = gql`
+    mutation SignUp($email: String!, $password: String!) {
+  signUp(email: $email, password: $password) {
+    loginToken {
+      expiresAt
+      token
+    }
+  }
+}
+    `;
+export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMutationVariables>;
+
+/**
+ * __useSignUpMutation__
+ *
+ * To run a mutation, you first call `useSignUpMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSignUpMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [signUpMutation, { data, loading, error }] = useSignUpMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *   },
+ * });
+ */
+export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignUpMutation, SignUpMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SignUpMutation, SignUpMutationVariables>(SignUpDocument, options);
+      }
+export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
+export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
+export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+export const SignUpToWorkspaceDocument = gql`
+    mutation SignUpToWorkspace($email: String!, $password: String!, $workspaceInviteHash: String!) {
+  signUp(
+    email: $email
+    password: $password
+    workspaceInviteHash: $workspaceInviteHash
+  ) {
+    loginToken {
+      expiresAt
+      token
+    }
+  }
+}
+    `;
+export type SignUpToWorkspaceMutationFn = Apollo.MutationFunction<SignUpToWorkspaceMutation, SignUpToWorkspaceMutationVariables>;
+
+/**
+ * __useSignUpToWorkspaceMutation__
+ *
+ * To run a mutation, you first call `useSignUpToWorkspaceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSignUpToWorkspaceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [signUpToWorkspaceMutation, { data, loading, error }] = useSignUpToWorkspaceMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      password: // value for 'password'
+ *      workspaceInviteHash: // value for 'workspaceInviteHash'
+ *   },
+ * });
+ */
+export function useSignUpToWorkspaceMutation(baseOptions?: Apollo.MutationHookOptions<SignUpToWorkspaceMutation, SignUpToWorkspaceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SignUpToWorkspaceMutation, SignUpToWorkspaceMutationVariables>(SignUpToWorkspaceDocument, options);
+      }
+export type SignUpToWorkspaceMutationHookResult = ReturnType<typeof useSignUpToWorkspaceMutation>;
+export type SignUpToWorkspaceMutationResult = Apollo.MutationResult<SignUpToWorkspaceMutation>;
+export type SignUpToWorkspaceMutationOptions = Apollo.BaseMutationOptions<SignUpToWorkspaceMutation, SignUpToWorkspaceMutationVariables>;
 export const VerifyDocument = gql`
     mutation Verify($loginToken: String!) {
   verify(loginToken: $loginToken) {

@@ -11,6 +11,36 @@ export const CHALLENGE = gql`
   }
 `;
 
+export const SIGN_UP = gql`
+  mutation SignUp($email: String!, $password: String!) {
+    signUp(email: $email, password: $password) {
+      loginToken {
+        expiresAt
+        token
+      }
+    }
+  }
+`;
+
+export const SIGN_UP_TO_WORKSPACE = gql`
+  mutation SignUpToWorkspace(
+    $email: String!
+    $password: String!
+    $workspaceInviteHash: String!
+  ) {
+    signUp(
+      email: $email
+      password: $password
+      workspaceInviteHash: $workspaceInviteHash
+    ) {
+      loginToken {
+        expiresAt
+        token
+      }
+    }
+  }
+`;
+
 export const VERIFY = gql`
   mutation Verify($loginToken: String!) {
     verify(loginToken: $loginToken) {

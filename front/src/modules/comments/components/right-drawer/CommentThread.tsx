@@ -130,10 +130,10 @@ export function CommentThread({
   }
 
   useEffect(() => {
-    if (commentThread) {
+    if (commentThread && !title) {
       setTitle(commentThread?.title ?? '');
     }
-  }, [commentThread]);
+  }, [commentThread, title]);
 
   if (!commentThread) {
     return <></>;

@@ -196,6 +196,9 @@ model Workspace {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   logo        String?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  inviteHash  String?
 
   workspaceMember    WorkspaceMember[]
   companies          Company[]
