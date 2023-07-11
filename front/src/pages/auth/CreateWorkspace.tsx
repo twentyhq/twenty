@@ -37,10 +37,6 @@ const StyledButtonContainer = styled.div`
 `;
 
 export function CreateWorkspace() {
-  // useHotkeysScopeOnMountOnly({
-  //   scope: InternalHotkeysScope.CreateWokspace,
-  //   customScopes: { 'command-menu': false, goto: false },
-  // });
   const [, setMockMode] = useRecoilState(isMockModeState);
   const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();

@@ -51,10 +51,6 @@ const StyledErrorContainer = styled.div`
 `;
 
 export function PasswordLogin() {
-  // useHotkeysScopeOnMountOnly({
-  //   scope: InternalHotkeysScope.PasswordLogin,
-  //   customScopes: { 'command-menu': false, goto: false },
-  // });
   const navigate = useNavigate();
   const [isDemoMode] = useRecoilState(isDemoModeState);
 

@@ -39,10 +39,6 @@ const StyledButtonContainer = styled.div`
 `;
 
 export function CreateProfile() {
-  // useHotkeysScopeOnMountOnly({
-  //   scope: InternalHotkeysScope.CreateProfile,
-  //   customScopes: { 'command-menu': false, goto: false },
-  // });
   const navigate = useNavigate();
   const [, setMockMode] = useRecoilState(isMockModeState);
   const onboardingStatus = useOnboardingStatus();
