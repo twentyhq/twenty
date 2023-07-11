@@ -18,6 +18,9 @@ export class WorkspaceCountOrderByAggregateInput {
     @Field(() => SortOrder, {nullable:true})
     logo?: keyof typeof SortOrder;
 
+    @Field(() => SortOrder, {nullable:true})
+    inviteHash?: keyof typeof SortOrder;
+
     @HideField()
     deletedAt?: keyof typeof SortOrder;
 

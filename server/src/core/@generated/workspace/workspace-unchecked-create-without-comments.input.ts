@@ -33,6 +33,11 @@ export class WorkspaceUncheckedCreateWithoutCommentsInput {
     @Validator.IsOptional()
     logo?: string;
 
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    inviteHash?: string;
+
     @HideField()
     deletedAt?: Date | string;
 

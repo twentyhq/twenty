@@ -17,6 +17,9 @@ export class WorkspaceCountAggregateInput {
     @Field(() => Boolean, {nullable:true})
     logo?: true;
 
+    @Field(() => Boolean, {nullable:true})
+    inviteHash?: true;
+
     @HideField()
     deletedAt?: true;
 

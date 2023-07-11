@@ -10,8 +10,9 @@ import { assert } from 'src/utils/assert';
 import { PASSWORD_REGEX, compareHash, hashPassword } from '../auth.util';
 import { Verify } from '../dto/verify.entity';
 import { TokenService } from './token.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, Workspace } from '@prisma/client';
 import { UserExists } from '../dto/user-exists.entity';
+import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 
 export type UserPayload = {
   firstName: string;
@@ -24,6 +25,7 @@ export class AuthService {
   constructor(
     private readonly tokenService: TokenService,
     private readonly userService: UserService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   async challenge(challengeInput: ChallengeInput) {
@@ -100,5 +102,17 @@ export class AuthService {
     });
 
     return { exists: !!user };
+  }
+
+  async getWorkspaceByInviteHash(
+    inviteHash: string,
+  ): Promise<Workspace | null> {
+    const workspace = await this.workspaceService.findFirst({
+      where: {
+        inviteHash,
+      },
+    });
+
+    return workspace;
   }
 }

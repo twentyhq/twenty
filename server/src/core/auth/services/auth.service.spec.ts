@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 import { UserService } from 'src/core/user/user.service';
+import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -16,6 +17,10 @@ describe('AuthService', () => {
         },
         {
           provide: UserService,
+          useValue: {},
+        },
+        {
+          provide: WorkspaceService,
           useValue: {},
         },
       ],

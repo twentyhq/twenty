@@ -27,6 +27,9 @@ export class Workspace {
     @Field(() => String, {nullable:true})
     logo!: string | null;
 
+    @Field(() => String, {nullable:true})
+    inviteHash!: string | null;
+
     @HideField()
     deletedAt!: Date | null;
 

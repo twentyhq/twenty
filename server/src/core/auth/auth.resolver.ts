@@ -15,6 +15,8 @@ import {
 import { Prisma } from '@prisma/client';
 import { UserExists } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
+import { WorkspaceByInviteHashInput } from './dto/workspace-by-invite-hash.input';
+import { WorkspaceByInviteHash } from './dto/workspace-by-invite-hash.entity.ts';
 
 @Resolver()
 export class AuthResolver {
@@ -31,6 +33,16 @@ export class AuthResolver {
       checkUserExistsInput.email,
     );
     return { exists };
+  }
+
+  @Query(() => WorkspaceByInviteHash)
+  async getWorkspaceIdByHash(
+    @Args() getWorkspaceIdByHashInput: WorkspaceByInviteHashInput,
+  ): Promise<WorkspaceByInviteHash> {
+    const workspace = await this.authService.getWorkspaceByInviteHash(
+      getWorkspaceIdByHashInput.inviteHash,
+    );
+    return { workspaceId: workspace?.id };
   }
 
   @Mutation(() => LoginToken)

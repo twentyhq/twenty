@@ -38,6 +38,9 @@ export class WorkspaceWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     logo?: StringNullableFilter;
 
+    @Field(() => StringNullableFilter, {nullable:true})
+    inviteHash?: StringNullableFilter;
+
     @HideField()
     deletedAt?: DateTimeNullableFilter;
 

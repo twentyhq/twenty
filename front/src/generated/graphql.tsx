@@ -2917,6 +2917,7 @@ export type Workspace = {
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
   people?: Maybe<Array<Person>>;
   pipelineProgresses?: Maybe<Array<PipelineProgress>>;
@@ -3054,6 +3055,7 @@ export type WorkspaceUpdateInput = {
   displayName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   domainName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  inviteHash?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   logo?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   people?: InputMaybe<PersonUpdateManyWithoutWorkspaceNestedInput>;
   pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutWorkspaceNestedInput>;

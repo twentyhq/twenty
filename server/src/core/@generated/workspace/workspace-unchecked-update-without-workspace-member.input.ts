@@ -28,6 +28,9 @@ export class WorkspaceUncheckedUpdateWithoutWorkspaceMemberInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     logo?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    inviteHash?: NullableStringFieldUpdateOperationsInput;
+
     @HideField()
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 
