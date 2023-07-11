@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 
-import { useRemoveActiveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveActiveFilter';
-import { useUpsertActiveFilter } from '@/lib/filters-and-sorts/hooks/useUpsertActiveFilter';
+import { useRemoveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveFilter';
+import { useUpsertFilter } from '@/lib/filters-and-sorts/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -18,8 +18,8 @@ export function FilterDropdownNumberSearchInput() {
     TableContext,
   );
 
-  const upsertActiveTableFilter = useUpsertActiveFilter(TableContext);
-  const removeActiveTableFilter = useRemoveActiveFilter(TableContext);
+  const upsertActiveTableFilter = useUpsertFilter(TableContext);
+  const removeActiveTableFilter = useRemoveFilter(TableContext);
 
   return (
     tableFilterDefinitionUsedInDropdown &&

@@ -1,7 +1,7 @@
 import { FilterOperand } from './FilterOperand';
 import { FilterType } from './FilterType';
 
-export type ActiveFilter = {
+export type Filter = {
   field: string;
   type: FilterType;
   value: string;

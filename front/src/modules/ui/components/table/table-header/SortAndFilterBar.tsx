@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useRemoveActiveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveActiveFilter';
+import { useRemoveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveFilter';
 import { SelectedSortType } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
-import { activeFiltersScopedState } from '@/lib/filters-and-sorts/states/activeFiltersScopedState';
+import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScopedState';
 import { availableFiltersScopedState } from '@/lib/filters-and-sorts/states/availableFiltersScopedState';
 import { getOperandLabel } from '@/lib/filters-and-sorts/utils/getOperandLabel';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -66,8 +66,8 @@ function SortAndFilterBar<SortField>({
 }: OwnProps<SortField>) {
   const theme = useTheme();
 
-  const [activeFilters, setActiveFilters] = useRecoilScopedState(
-    activeFiltersScopedState,
+  const [filters, setFilters] = useRecoilScopedState(
+    filtersScopedState,
     TableContext,
   );
 
@@ -76,25 +76,25 @@ function SortAndFilterBar<SortField>({
     TableContext,
   );
 
-  const activeFiltersWithDefinition = activeFilters.map((activeFilter) => {
+  const filtersWithDefinition = filters.map((filter) => {
     const tableFilterDefinition = availableFilters.find((availableFilter) => {
-      return availableFilter.field === activeFilter.field;
+      return availableFilter.field === filter.field;
     });
 
     return {
-      ...activeFilter,
+      ...filter,
       ...tableFilterDefinition,
     };
   });
 
-  const removeActiveFilter = useRemoveActiveFilter(TableContext);
+  const removeFilter = useRemoveFilter(TableContext);
 
   function handleCancelClick() {
-    setActiveFilters([]);
+    setFilters([]);
     onCancelClick();
   }
 
-  if (!activeFiltersWithDefinition.length && !sorts.length) {
+  if (!filtersWithDefinition.length && !sorts.length) {
     return null;
   }
 
@@ -118,7 +118,7 @@ function SortAndFilterBar<SortField>({
             />
           );
         })}
-        {activeFiltersWithDefinition.map((filter) => {
+        {filtersWithDefinition.map((filter) => {
           return (
             <SortOrFilterChip
               key={filter.field}
@@ -129,13 +129,13 @@ function SortAndFilterBar<SortField>({
               id={filter.field}
               icon={filter.icon}
               onRemove={() => {
-                removeActiveFilter(filter.field);
+                removeFilter(filter.field);
               }}
             />
           );
         })}
       </StyledChipcontainer>
-      {activeFilters.length + sorts.length > 0 && (
+      {filters.length + sorts.length > 0 && (
         <StyledCancelButton
           data-testid={'cancel-button'}
           onClick={handleCancelClick}

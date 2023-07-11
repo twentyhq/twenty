@@ -4,9 +4,9 @@ import { Key } from 'ts-key-enum';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
-import { activeFiltersScopedState } from '@/lib/filters-and-sorts/states/activeFiltersScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
+import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/lib/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -47,7 +47,7 @@ export function FilterDropdownButton() {
   );
 
   const [activeTableFilters] = useRecoilScopedState(
-    activeFiltersScopedState,
+    filtersScopedState,
     TableContext,
   );
 

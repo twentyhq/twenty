@@ -1,5 +1,5 @@
-import { useActiveFilterCurrentlyEditedInDropdown } from '@/lib/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
-import { useUpsertActiveFilter } from '@/lib/filters-and-sorts/hooks/useUpsertActiveFilter';
+import { useFilterCurrentlyEdited } from '@/lib/filters-and-sorts/hooks/useFilterCurrentlyEdited';
+import { useUpsertFilter } from '@/lib/filters-and-sorts/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/lib/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
@@ -34,10 +34,10 @@ export function FilterDropdownOperandSelect() {
       TableContext,
     );
 
-  const activeTableFilterCurrentlyEditedInDropdown =
-    useActiveFilterCurrentlyEditedInDropdown(TableContext);
+  const activeTableFilterCurrentlyEdited =
+    useFilterCurrentlyEdited(TableContext);
 
-  const upsertActiveTableFilter = useUpsertActiveFilter(TableContext);
+  const upsertActiveTableFilter = useUpsertFilter(TableContext);
 
   function handleOperangeChange(newOperand: FilterOperand) {
     setSelectedOperandInDropdown(newOperand);
@@ -45,14 +45,14 @@ export function FilterDropdownOperandSelect() {
 
     if (
       tableFilterDefinitionUsedInDropdown &&
-      activeTableFilterCurrentlyEditedInDropdown
+      activeTableFilterCurrentlyEdited
     ) {
       upsertActiveTableFilter({
-        field: activeTableFilterCurrentlyEditedInDropdown.field,
-        displayValue: activeTableFilterCurrentlyEditedInDropdown.displayValue,
+        field: activeTableFilterCurrentlyEdited.field,
+        displayValue: activeTableFilterCurrentlyEdited.displayValue,
         operand: newOperand,
-        type: activeTableFilterCurrentlyEditedInDropdown.type,
-        value: activeTableFilterCurrentlyEditedInDropdown.value,
+        type: activeTableFilterCurrentlyEdited.type,
+        value: activeTableFilterCurrentlyEdited.value,
       });
     }
   }

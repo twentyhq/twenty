@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import { useActiveFilterCurrentlyEditedInDropdown } from '@/lib/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
-import { useRemoveActiveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveActiveFilter';
-import { useUpsertActiveFilter } from '@/lib/filters-and-sorts/hooks/useUpsertActiveFilter';
+import { useFilterCurrentlyEdited } from '@/lib/filters-and-sorts/hooks/useFilterCurrentlyEdited';
+import { useRemoveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveFilter';
+import { useUpsertFilter } from '@/lib/filters-and-sorts/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSelectedEntityIdScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
@@ -33,11 +33,11 @@ export function FilterDropdownEntitySearchSelect({
     TableContext,
   );
 
-  const upsertActiveTableFilter = useUpsertActiveFilter(TableContext);
-  const removeActiveTableFilter = useRemoveActiveFilter(TableContext);
+  const upsertActiveTableFilter = useUpsertFilter(TableContext);
+  const removeActiveTableFilter = useRemoveFilter(TableContext);
 
-  const activeFilterCurrentlyEditedInDropdown =
-    useActiveFilterCurrentlyEditedInDropdown(TableContext);
+  const filterCurrentlyEdited =
+    useFilterCurrentlyEdited(TableContext);
 
   function handleUserSelected(selectedEntity: EntityForSelect) {
     if (!tableFilterDefinitionUsedInDropdown || !selectedOperandInDropdown) {
@@ -64,11 +64,11 @@ export function FilterDropdownEntitySearchSelect({
   }
 
   useEffect(() => {
-    if (!activeFilterCurrentlyEditedInDropdown) {
+    if (!filterCurrentlyEdited) {
       setFilterDropdownSelectedEntityId(null);
     }
   }, [
-    activeFilterCurrentlyEditedInDropdown,
+    filterCurrentlyEdited,
     setFilterDropdownSelectedEntityId,
   ]);
 
