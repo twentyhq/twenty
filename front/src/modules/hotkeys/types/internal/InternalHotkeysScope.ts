@@ -11,6 +11,7 @@ export enum InternalHotkeysScope {
   TableHeaderDropdownButton = 'table-header-dropdown-button',
   RelationPicker = 'relation-picker',
   CellDoubleTextInput = 'cell-double-text-input',
+  TextInput = 'text-input',
   Settings = 'settings',
   CreateWokspace = 'create-workspace',
   PasswordLogin = 'password-login',

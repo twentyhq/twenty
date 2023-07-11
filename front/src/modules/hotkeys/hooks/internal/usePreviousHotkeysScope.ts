@@ -33,9 +33,7 @@ export function usePreviousHotkeysScope() {
   }
 
   return {
-    previousHotkeysScope,
     setHotkeysScopeAndMemorizePreviousScope,
-    currentHotkeysScope,
     goBackToPreviousHotkeysScope,
   };
 }

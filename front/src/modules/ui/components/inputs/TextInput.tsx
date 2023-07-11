@@ -1,5 +1,10 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
+
+import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
 type OwnProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -52,20 +57,37 @@ export function TextInput({
   fullWidth,
   ...props
 }: OwnProps): JSX.Element {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [internalValue, setInternalValue] = useState(value);
+
+  const {
+    goBackToPreviousHotkeysScope,
+    setHotkeysScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeysScope();
 
   function handleFocus() {
     console.log('onFocus');
+    setHotkeysScopeAndMemorizePreviousScope(InternalHotkeysScope.TextInput);
   }
 
   function handleBlur() {
     console.log('onBlur');
+    goBackToPreviousHotkeysScope();
   }
+
+  useScopedHotkeys(
+    [Key.Enter, Key.Escape],
+    () => {
+      inputRef.current?.blur();
+    },
+    InternalHotkeysScope.TextInput,
+  );
 
   return (
     <StyledContainer>
       {label && <StyledLabel>{label}</StyledLabel>}
       <StyledInput
+        ref={inputRef}
         tabIndex={props.tabIndex ?? 0}
         onFocus={handleFocus}
         onBlur={handleBlur}
