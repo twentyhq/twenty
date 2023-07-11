@@ -42,7 +42,7 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
 
   const handleEntitySelect = useCallback(
     async (company: Pick<Company, 'id' | 'name' | 'domainName'>) => {
-      if (!company || !company.name || !company.domainName) return;
+      if (!company) return;
 
       setIsCreatingCard(false);
       goBackToPreviousHotkeysScope();
