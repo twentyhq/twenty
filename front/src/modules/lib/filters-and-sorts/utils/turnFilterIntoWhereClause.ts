@@ -1,8 +1,8 @@
 import { QueryMode } from '~/generated/graphql';
 
-import { ActiveTableFilter } from '../types/ActiveTableFilter';
+import { ActiveFilter } from '../types/ActiveFilter';
 
-export function turnFilterIntoWhereClause(filter: ActiveTableFilter) {
+export function turnFilterIntoWhereClause(filter: ActiveFilter) {
   switch (filter.type) {
     case 'text':
       switch (filter.operand) {

@@ -1,11 +1,11 @@
-import { useActiveTableFilterCurrentlyEditedInDropdown } from '@/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
-import { useUpsertActiveTableFilter } from '@/filters-and-sorts/hooks/useUpsertActiveTableFilter';
-import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
-import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
-import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
-import { TableFilterOperand } from '@/filters-and-sorts/types/TableFilterOperand';
-import { getOperandLabel } from '@/filters-and-sorts/utils/getOperandLabel';
-import { getOperandsForFilterType } from '@/filters-and-sorts/utils/getOperandsForFilterType';
+import { useActiveTableFilterCurrentlyEditedInDropdown } from '@/lib/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
+import { useUpsertActiveFilter } from '@/lib/filters-and-sorts/hooks/useUpsertActiveFilter';
+import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
+import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/lib/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
+import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
+import { FilterOperand } from '@/lib/filters-and-sorts/types/FilterOperand';
+import { getOperandLabel } from '@/lib/filters-and-sorts/utils/getOperandLabel';
+import { getOperandsForFilterType } from '@/lib/filters-and-sorts/utils/getOperandsForFilterType';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
@@ -15,7 +15,7 @@ import DropdownButton from './DropdownButton';
 
 export function FilterDropdownOperandSelect() {
   const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
-    tableFilterDefinitionUsedInDropdownScopedState,
+    filterDefinitionUsedInDropdownScopedState,
     TableContext,
   );
 
@@ -37,9 +37,9 @@ export function FilterDropdownOperandSelect() {
   const activeTableFilterCurrentlyEditedInDropdown =
     useActiveTableFilterCurrentlyEditedInDropdown();
 
-  const upsertActiveTableFilter = useUpsertActiveTableFilter();
+  const upsertActiveTableFilter = useUpsertActiveFilter();
 
-  function handleOperangeChange(newOperand: TableFilterOperand) {
+  function handleOperangeChange(newOperand: FilterOperand) {
     setSelectedOperandInDropdown(newOperand);
     setIsOperandSelectionUnfolded(false);
 

@@ -1,9 +1,9 @@
-import { TableFilterOperand } from '../types/TableFilterOperand';
-import { TableFilterType } from '../types/TableFilterType';
+import { FilterOperand } from '../types/FilterOperand';
+import { FilterType } from '../types/FilterType';
 
 export function getOperandsForFilterType(
-  filterType: TableFilterType | null | undefined,
-): TableFilterOperand[] {
+  filterType: FilterType | null | undefined,
+): FilterOperand[] {
   switch (filterType) {
     case 'text':
       return ['contains', 'does-not-contain'];

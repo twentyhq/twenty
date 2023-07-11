@@ -1,14 +1,14 @@
 import { useCallback, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { activeTableFiltersScopedState } from '@/filters-and-sorts/states/activeTableFiltersScopedState';
-import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
-import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
-import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
-import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { activeFiltersScopedState } from '@/lib/filters-and-sorts/states/activeFiltersScopedState';
+import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
+import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/lib/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
+import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
@@ -37,7 +37,7 @@ export function FilterDropdownButton() {
     tableFilterDefinitionUsedInDropdown,
     setTableFilterDefinitionUsedInDropdown,
   ] = useRecoilScopedState(
-    tableFilterDefinitionUsedInDropdownScopedState,
+    filterDefinitionUsedInDropdownScopedState,
     TableContext,
   );
 
@@ -47,7 +47,7 @@ export function FilterDropdownButton() {
   );
 
   const [activeTableFilters] = useRecoilScopedState(
-    activeTableFiltersScopedState,
+    activeFiltersScopedState,
     TableContext,
   );
 
