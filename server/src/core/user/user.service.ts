@@ -46,6 +46,7 @@ export class UserService {
   // Customs
   async createUser<T extends Prisma.UserCreateArgs>(
     args: Prisma.SelectSubset<T, Prisma.UserCreateArgs>,
+    workspaceId?: string,
   ): Promise<Prisma.UserGetPayload<T>> {
     assert(args.data.email, 'email is missing', BadRequestException);
 
@@ -55,14 +56,23 @@ export class UserService {
       },
       create: {
         ...(args.data as Prisma.UserCreateInput),
-        // Assign the user to a new workspace by default
-        workspaceMember: {
-          create: {
-            workspace: {
-              create: {},
+
+        workspaceMember: workspaceId
+          ? {
+              create: {
+                workspace: {
+                  connect: { id: workspaceId },
+                },
+              },
+            }
+          : // Assign the user to a new workspace by default
+            {
+              create: {
+                workspace: {
+                  create: {},
+                },
+              },
             },
-          },
-        },
         locale: 'en',
       },
       update: {},

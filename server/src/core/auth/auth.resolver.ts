@@ -15,8 +15,9 @@ import {
 import { Prisma } from '@prisma/client';
 import { UserExists } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
-import { WorkspaceByInviteHashInput } from './dto/workspace-by-invite-hash.input';
-import { WorkspaceByInviteHash } from './dto/workspace-by-invite-hash.entity.ts';
+import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
+import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
+import { SignUpInput } from './dto/sign-up.input';
 
 @Resolver()
 export class AuthResolver {
@@ -35,19 +36,26 @@ export class AuthResolver {
     return { exists };
   }
 
-  @Query(() => WorkspaceByInviteHash)
-  async getWorkspaceIdByHash(
-    @Args() getWorkspaceIdByHashInput: WorkspaceByInviteHashInput,
-  ): Promise<WorkspaceByInviteHash> {
-    const workspace = await this.authService.getWorkspaceByInviteHash(
-      getWorkspaceIdByHashInput.inviteHash,
+  @Query(() => WorkspaceInviteHashValid)
+  async checkWorkspaceInviteHashIsValid(
+    @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
+  ): Promise<WorkspaceInviteHashValid> {
+    return await this.authService.checkWorkspaceInviteHashIsValid(
+      workspaceInviteHashValidInput.inviteHash,
     );
-    return { workspaceId: workspace?.id };
   }
 
   @Mutation(() => LoginToken)
   async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
     const user = await this.authService.challenge(challengeInput);
+    const loginToken = await this.tokenService.generateLoginToken(user.email);
+
+    return { loginToken };
+  }
+
+  @Mutation(() => LoginToken)
+  async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
+    const user = await this.authService.signUp(signUpInput);
     const loginToken = await this.tokenService.generateLoginToken(user.email);
 
     return { loginToken };
