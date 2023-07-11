@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 
 import { useRemoveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveFilter';
 import { SelectedSortType } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
-import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScopedState';
 import { availableFiltersScopedState } from '@/lib/filters-and-sorts/states/availableFiltersScopedState';
+import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScopedState';
 import { getOperandLabel } from '@/lib/filters-and-sorts/utils/getOperandLabel';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icons/index';

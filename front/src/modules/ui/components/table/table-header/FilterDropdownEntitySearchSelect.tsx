@@ -36,8 +36,7 @@ export function FilterDropdownEntitySearchSelect({
   const upsertActiveTableFilter = useUpsertFilter(TableContext);
   const removeActiveTableFilter = useRemoveFilter(TableContext);
 
-  const filterCurrentlyEdited =
-    useFilterCurrentlyEdited(TableContext);
+  const filterCurrentlyEdited = useFilterCurrentlyEdited(TableContext);
 
   function handleUserSelected(selectedEntity: EntityForSelect) {
     if (!tableFilterDefinitionUsedInDropdown || !selectedOperandInDropdown) {
@@ -67,10 +66,7 @@ export function FilterDropdownEntitySearchSelect({
     if (!filterCurrentlyEdited) {
       setFilterDropdownSelectedEntityId(null);
     }
-  }, [
-    filterCurrentlyEdited,
-    setFilterDropdownSelectedEntityId,
-  ]);
+  }, [filterCurrentlyEdited, setFilterDropdownSelectedEntityId]);
 
   return (
     <>
