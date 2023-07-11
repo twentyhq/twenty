@@ -1,15 +1,14 @@
-import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Button } from '@/ui/components/buttons/Button';
-import { TextInput } from '@/ui/components/inputs/TextInput';
 import { MainSectionTitle } from '@/ui/components/section-titles/MainSectionTitle';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
-import { IconLink, IconTrash } from '@/ui/icons';
+import { IconTrash } from '@/ui/icons';
 import { NoTopBarContainer } from '@/ui/layout/containers/NoTopBarContainer';
+import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import {
   useGetWorkspaceMembersQuery,
@@ -33,23 +32,10 @@ const ButtonContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(3)};
 `;
 
-const CopyLinkContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-`;
-
-const LinkContainer = styled.div`
-  flex: 1;
-  margin-right: ${({ theme }) => theme.spacing(2)};
-`;
-
 export function SettingsWorkspaceMembers() {
   const [currentUser] = useRecoilState(currentUserState);
   const workspace = currentUser?.workspaceMember?.workspace;
-  const [isCopied, setIsCopied] = useState(false);
   const theme = useTheme();
-  const inviteLink = `${window.location.origin}/invite/${workspace?.inviteHash}`;
 
   const { data } = useGetWorkspaceMembersQuery();
 
@@ -98,21 +84,9 @@ export function SettingsWorkspaceMembers() {
               title="Invite"
               description="Send an invitation to use Twenty"
             />
-            <CopyLinkContainer>
-              <LinkContainer>
-                <TextInput value={inviteLink} disabled fullWidth />
-              </LinkContainer>
-              <Button
-                icon={<IconLink size={theme.icon.size.md} />}
-                variant="primary"
-                title={isCopied ? 'Copied' : 'Copy link'}
-                disabled={isCopied}
-                onClick={() => {
-                  setIsCopied(true);
-                  navigator.clipboard.writeText(inviteLink);
-                }}
-              />
-            </CopyLinkContainer>
+            <WorkspaceInviteLink
+              inviteLink={`${window.location.origin}/auth/invite/${workspace?.inviteHash}`}
+            />
           </>
         )}
         <SubSectionTitle
