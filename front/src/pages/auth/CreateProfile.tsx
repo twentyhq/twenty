@@ -9,7 +9,6 @@ import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { isMockModeState } from '@/auth/states/isMockModeState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
@@ -39,7 +38,6 @@ const StyledButtonContainer = styled.div`
 
 export function CreateProfile() {
   const navigate = useNavigate();
-  const [, setMockMode] = useRecoilState(isMockModeState);
   const onboardingStatus = useOnboardingStatus();
 
   const [currentUser] = useRecoilState(currentUserState);
@@ -93,11 +91,10 @@ export function CreateProfile() {
   );
 
   useEffect(() => {
-    setMockMode(true);
     if (onboardingStatus !== OnboardingStatus.OngoingProfileCreation) {
       navigate('/');
     }
-  }, [onboardingStatus, navigate, setMockMode]);
+  }, [onboardingStatus, navigate]);
 
   return (
     <>

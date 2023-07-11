@@ -10,7 +10,6 @@ import { HorizontalSeparator } from '@/auth/components/ui/HorizontalSeparator';
 import { Logo } from '@/auth/components/ui/Logo';
 import { Title } from '@/auth/components/ui/Title';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
-import { isMockModeState } from '@/auth/states/isMockModeState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
@@ -34,7 +33,6 @@ const StyledFooterNote = styled(FooterNote)`
 export function Index() {
   const navigate = useNavigate();
   const theme = useTheme();
-  const [, setMockMode] = useRecoilState(isMockModeState);
   const [authProviders] = useRecoilState(authProvidersState);
   const [demoMode] = useRecoilState(isDemoModeState);
 
@@ -67,9 +65,8 @@ export function Index() {
   );
 
   useEffect(() => {
-    setMockMode(true);
     setAuthFlowUserEmail(demoMode ? 'tim@apple.dev' : '');
-  }, [navigate, setMockMode, setAuthFlowUserEmail, demoMode]);
+  }, [navigate, setAuthFlowUserEmail, demoMode]);
 
   return (
     <>

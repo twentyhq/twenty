@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
+import { useUpdateEffect } from '@/utils/hooks/useUpdateEffect';
 import { CommentThreadTarget } from '~/generated/graphql';
 
 import { ApolloFactory } from '../services/apollo.factory';
@@ -54,7 +55,7 @@ export function useApolloFactory() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setTokenPair, isDebugMode]);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (apolloRef.current) {
       apolloRef.current.updateTokenPair(tokenPair);
     }

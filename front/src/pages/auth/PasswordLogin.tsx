@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -9,7 +9,6 @@ import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
-import { isMockModeState } from '@/auth/states/isMockModeState';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
@@ -51,12 +50,11 @@ const StyledErrorContainer = styled.div`
 
 export function PasswordLogin() {
   const navigate = useNavigate();
-  const [isDemoMode] = useRecoilState(isDemoModeState);
 
+  const [isDemoMode] = useRecoilState(isDemoModeState);
   const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
     authFlowUserEmailState,
   );
-  const [, setMockMode] = useRecoilState(isMockModeState);
   const [internalPassword, setInternalPassword] = useState(
     isDemoMode ? 'Applecar2025' : '',
   );
@@ -69,15 +67,10 @@ export function PasswordLogin() {
     },
   });
 
-  useEffect(() => {
-    setMockMode(true);
-  }, [setMockMode]);
-
   const workspaceInviteHash = useParams().workspaceInviteHash;
 
   const handleSubmit = useCallback(async () => {
     try {
-      setMockMode(false);
       if (data?.checkUserExists.exists) {
         await login(authFlowUserEmail, internalPassword);
       } else {
@@ -101,7 +94,6 @@ export function PasswordLogin() {
     signUpToWorkspace,
     authFlowUserEmail,
     internalPassword,
-    setMockMode,
     navigate,
     data?.checkUserExists.exists,
 
