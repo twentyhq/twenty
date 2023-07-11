@@ -18,6 +18,9 @@ export class PipelineStageMinAggregateInput {
     color?: true;
 
     @Field(() => Boolean, {nullable:true})
+    index?: true;
+
+    @Field(() => Boolean, {nullable:true})
     pipelineId?: true;
 
     @HideField()

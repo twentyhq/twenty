@@ -19,12 +19,7 @@ export function RightDrawerCreateCommentThread() {
 
   return (
     <RightDrawerPage>
-      <RightDrawerTopBar
-        title="New note"
-        onSave={() => {
-          return;
-        }}
-      />
+      <RightDrawerTopBar title="New note" />
       <RightDrawerBody>
         {commentThreadId && (
           <CommentThread

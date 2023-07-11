@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import * as Validator from 'class-validator';
+import { Int } from '@nestjs/graphql';
 import { HideField } from '@nestjs/graphql';
 
 @ObjectType()
@@ -22,6 +23,11 @@ export class PipelineStageMaxAggregate {
     @Field(() => String, {nullable:true})
     @Validator.IsString()
     color?: string;
+
+    @Field(() => Int, {nullable:true})
+    @Validator.IsNumber()
+    @Validator.IsOptional()
+    index?: number;
 
     @Field(() => String, {nullable:true})
     pipelineId?: string;

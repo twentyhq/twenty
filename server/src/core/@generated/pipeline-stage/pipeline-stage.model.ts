@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { ObjectType } from '@nestjs/graphql';
 import { ID } from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
 import { HideField } from '@nestjs/graphql';
 import { PipelineProgress } from '../pipeline-progress/pipeline-progress.model';
 import { Pipeline } from '../pipeline/pipeline.model';
@@ -21,6 +22,9 @@ export class PipelineStage {
 
     @Field(() => String, {nullable:false})
     color!: string;
+
+    @Field(() => Int, {nullable:true})
+    index!: number | null;
 
     @Field(() => String, {nullable:false})
     pipelineId!: string;

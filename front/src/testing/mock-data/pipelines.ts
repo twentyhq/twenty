@@ -10,7 +10,7 @@ type MockedPipeline = Pick<
   'id' | 'name' | 'pipelineProgressableType' | '__typename'
 > & {
   pipelineStages: Array<
-    Pick<PipelineStage, 'id' | 'name' | 'color' | '__typename'> & {
+    Pick<PipelineStage, 'id' | 'name' | 'color' | 'index' | '__typename'> & {
       pipelineProgresses: Array<
         Pick<
           PipelineProgress,
@@ -36,6 +36,7 @@ export const mockedPipelinesData: Array<MockedPipeline> = [
         id: 'fe256b39-3ec3-4fe3-8998-b76aa0bfb600',
         name: 'New',
         color: '#B76796',
+        index: 0,
         pipelineProgresses: [
           {
             id: 'fe256b39-3ec3-4fe7-8998-b76aa0bfb600',
@@ -60,6 +61,7 @@ export const mockedPipelinesData: Array<MockedPipeline> = [
         id: 'fe256b39-3ec3-4fe4-8998-b76aa0bfb600',
         name: 'Screening',
         color: '#CB912F',
+        index: 1,
         pipelineProgresses: [],
         __typename: 'PipelineStage',
       },
@@ -67,6 +69,7 @@ export const mockedPipelinesData: Array<MockedPipeline> = [
         id: 'fe256b39-3ec3-4fe5-8998-b76aa0bfb600',
         name: 'Meeting',
         color: '#9065B0',
+        index: 2,
         pipelineProgresses: [],
         __typename: 'PipelineStage',
       },
@@ -74,6 +77,7 @@ export const mockedPipelinesData: Array<MockedPipeline> = [
         id: 'fe256b39-3ec3-4fe6-8998-b76aa0bfb600',
         name: 'Proposal',
         color: '#337EA9',
+        index: 3,
         pipelineProgresses: [],
         __typename: 'PipelineStage',
       },
@@ -81,6 +85,7 @@ export const mockedPipelinesData: Array<MockedPipeline> = [
         id: 'fe256b39-3ec3-4fe7-8998-b76aa0bfb600',
         name: 'Customer',
         color: '#079039',
+        index: 4,
         pipelineProgresses: [],
         __typename: 'PipelineStage',
       },

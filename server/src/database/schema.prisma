@@ -434,6 +434,9 @@ model PipelineStage {
   type  String
   /// @Validator.IsString()
   color String
+  /// @Validator.IsNumber()
+  /// @Validator.IsOptional()
+  index Int?
 
   pipelineProgresses PipelineProgress[]
   pipeline           Pipeline           @relation(fields: [pipelineId], references: [id])

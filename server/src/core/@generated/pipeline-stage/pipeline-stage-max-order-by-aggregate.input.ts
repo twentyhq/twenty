@@ -19,6 +19,9 @@ export class PipelineStageMaxOrderByAggregateInput {
     color?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
+    index?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
     pipelineId?: keyof typeof SortOrder;
 
     @HideField()
