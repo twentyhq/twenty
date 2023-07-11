@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
+import { t } from 'msw/lib/glossary-de6278a9';
 
 import { GET_COMMENT_THREAD } from '@/comments/services';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
@@ -130,10 +131,10 @@ export function CommentThread({
   }
 
   useEffect(() => {
-    if (commentThread) {
+    if (commentThread && !title) {
       setTitle(commentThread?.title ?? '');
     }
-  }, [commentThread]);
+  }, [commentThread, title]);
 
   if (!commentThread) {
     return <></>;

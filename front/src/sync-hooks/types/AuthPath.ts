@@ -4,4 +4,5 @@ export enum AuthPath {
   PasswordLogin = 'password-login',
   CreateWorkspace = 'create/workspace',
   CreateProfile = 'create/profile',
+  InviteLink = 'invite/:workspaceInviteHash',
 }

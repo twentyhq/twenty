@@ -1,7 +1,12 @@
 import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useChallengeMutation, useVerifyMutation } from '~/generated/graphql';
+import {
+  useChallengeMutation,
+  useSignUpMutation,
+  useSignUpToWorkspaceMutation,
+  useVerifyMutation,
+} from '~/generated/graphql';
 
 import { currentUserState } from '../states/currentUserState';
 import { isAuthenticatingState } from '../states/isAuthenticatingState';
@@ -13,6 +18,8 @@ export function useAuth() {
   const [, setIsAuthenticating] = useRecoilState(isAuthenticatingState);
 
   const [challenge] = useChallengeMutation();
+  const [signUp] = useSignUpMutation();
+  const [SignUpToWorkspace] = useSignUpToWorkspaceMutation();
   const [verify] = useVerifyMutation();
 
   const handleChallenge = useCallback(
@@ -74,10 +81,57 @@ export function useAuth() {
     setTokenPair(null);
   }, [setTokenPair]);
 
+  const handleSignUp = useCallback(
+    async (email: string, password: string) => {
+      const signUpResult = await signUp({
+        variables: {
+          email,
+          password,
+        },
+      });
+
+      if (signUpResult.errors) {
+        throw signUpResult.errors;
+      }
+
+      if (!signUpResult.data?.signUp) {
+        throw new Error('No login token');
+      }
+
+      await handleVerify(signUpResult.data?.signUp.loginToken.token);
+    },
+    [signUp, handleVerify],
+  );
+
+  const handleSignUpToWorkspace = useCallback(
+    async (email: string, password: string, workspaceInviteHash: string) => {
+      const signUpResult = await SignUpToWorkspace({
+        variables: {
+          email,
+          password,
+          workspaceInviteHash,
+        },
+      });
+
+      if (signUpResult.errors) {
+        throw signUpResult.errors;
+      }
+
+      if (!signUpResult.data?.signUp) {
+        throw new Error('No login token');
+      }
+
+      await handleVerify(signUpResult.data?.signUp.loginToken.token);
+    },
+    [SignUpToWorkspace, handleVerify],
+  );
+
   return {
     challenge: handleChallenge,
     verify: handleVerify,
     login: handleLogin,
+    signUp: handleSignUp,
+    signUpToWorkspace: handleSignUpToWorkspace,
     logout: handleLogout,
   };
 }

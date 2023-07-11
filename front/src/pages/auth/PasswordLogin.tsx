@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
@@ -62,34 +62,60 @@ export function PasswordLogin() {
   );
   const [formError, setFormError] = useState('');
 
-  const { login } = useAuth();
-
-  const handleLogin = useCallback(async () => {
-    try {
-      setMockMode(false);
-
-      await login(authFlowUserEmail, internalPassword);
-
-      navigate('/auth/create/workspace');
-    } catch (err: any) {
-      setFormError(err.message);
-    }
-  }, [login, authFlowUserEmail, internalPassword, setMockMode, navigate]);
-
-  useScopedHotkeys(
-    'enter',
-    () => {
-      handleLogin();
-    },
-    InternalHotkeysScope.PasswordLogin,
-    [handleLogin],
-  );
-
+  const { login, signUp, signUpToWorkspace } = useAuth();
   const { loading, data } = useCheckUserExistsQuery({
     variables: {
       email: authFlowUserEmail,
     },
   });
+
+  useEffect(() => {
+    setMockMode(true);
+  }, [setMockMode]);
+
+  const workspaceInviteHash = useParams().workspaceInviteHash;
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      setMockMode(false);
+      if (data?.checkUserExists.exists) {
+        await login(authFlowUserEmail, internalPassword);
+      } else {
+        if (workspaceInviteHash) {
+          await signUpToWorkspace(
+            authFlowUserEmail,
+            internalPassword,
+            workspaceInviteHash,
+          );
+        } else {
+          await signUp(authFlowUserEmail, internalPassword);
+        }
+      }
+      navigate('/auth/create/workspace');
+    } catch (err: any) {
+      setFormError(err.message);
+    }
+  }, [
+    login,
+    signUp,
+    signUpToWorkspace,
+    authFlowUserEmail,
+    internalPassword,
+    setMockMode,
+    navigate,
+    data?.checkUserExists.exists,
+
+    workspaceInviteHash,
+  ]);
+
+  useScopedHotkeys(
+    'enter',
+    () => {
+      handleSubmit();
+    },
+    InternalHotkeysScope.PasswordLogin,
+    [handleSubmit],
+  );
 
   return (
     <>
@@ -124,7 +150,7 @@ export function PasswordLogin() {
         <StyledButtonContainer>
           <MainButton
             title="Continue"
-            onClick={handleLogin}
+            onClick={handleSubmit}
             disabled={!authFlowUserEmail || !internalPassword || loading}
             fullWidth
           />
