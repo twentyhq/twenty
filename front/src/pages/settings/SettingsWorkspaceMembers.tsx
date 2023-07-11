@@ -1,11 +1,14 @@
+import { useState } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Button } from '@/ui/components/buttons/Button';
+import { TextInput } from '@/ui/components/inputs/TextInput';
 import { MainSectionTitle } from '@/ui/components/section-titles/MainSectionTitle';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
-import { IconTrash } from '@/ui/icons';
+import { IconLink, IconTrash } from '@/ui/icons';
 import { NoTopBarContainer } from '@/ui/layout/containers/NoTopBarContainer';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import {
@@ -30,8 +33,21 @@ const ButtonContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(3)};
 `;
 
+const CopyLinkContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+`;
+
+const LinkContainer = styled.div`
+  flex: 1;
+  margin-right: ${({ theme }) => theme.spacing(2)};
+`;
+
 export function SettingsWorkspaceMembers() {
   const [currentUser] = useRecoilState(currentUserState);
+  const [isCopied, setIsCopied] = useState(false);
+  const theme = useTheme();
 
   const { data } = useGetWorkspaceMembersQuery();
 
@@ -75,6 +91,25 @@ export function SettingsWorkspaceMembers() {
       <StyledContainer>
         <MainSectionTitle>Members</MainSectionTitle>
         <SubSectionTitle
+          title="Invite"
+          description="Send an invitation to use Twenty"
+        />
+        <CopyLinkContainer>
+          <LinkContainer>
+            <TextInput value={'workspaceHash'} disabled fullWidth />
+          </LinkContainer>
+          <Button
+            icon={<IconLink size={theme.icon.size.md} />}
+            variant="primary"
+            title={isCopied ? 'Copied' : 'Copy link'}
+            disabled={isCopied}
+            onClick={() => {
+              setIsCopied(true);
+              navigator.clipboard.writeText('workspaceHash');
+            }}
+          />
+        </CopyLinkContainer>
+        <SubSectionTitle
           title="Members"
           description="Manage the members of your space here"
         />
@@ -89,7 +124,7 @@ export function SettingsWorkspaceMembers() {
                     onClick={() => handleRemoveWorkspaceMember(member.user.id)}
                     variant="tertiary"
                     size="small"
-                    icon={<IconTrash size={16} />}
+                    icon={<IconTrash size={theme.icon.size.md} />}
                   />
                 </ButtonContainer>
               )
