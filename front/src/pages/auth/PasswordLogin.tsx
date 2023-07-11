@@ -80,7 +80,7 @@ export function PasswordLogin() {
 
   const client = useApolloClient();
 
-  const { login, signUp, signUpToWorkspace } = useAuth();
+  const { login, signUp } = useAuth();
 
   // Form
   const {
@@ -111,30 +111,14 @@ export function PasswordLogin() {
         if (data.exist) {
           await login(data.email, data.password);
         } else {
-          if (workspaceInviteHash) {
-            await signUpToWorkspace(
-              data.email,
-              data.password,
-              workspaceInviteHash,
-            );
-          } else {
-            await signUp(data.email, data.password);
-          }
+          await signUp(data.email, data.password, workspaceInviteHash);
         }
         navigate('/auth/create/workspace');
       } catch (err: any) {
         setError('root', { message: err?.message });
       }
     },
-    [
-      login,
-      navigate,
-      setError,
-      setMockMode,
-      signUp,
-      signUpToWorkspace,
-      workspaceInviteHash,
-    ],
+    [login, navigate, setError, setMockMode, signUp, workspaceInviteHash],
   );
   useScopedHotkeys(
     'enter',
