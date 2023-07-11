@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
 import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 

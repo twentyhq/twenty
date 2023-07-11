@@ -1,16 +1,12 @@
 import { useCallback, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
 import { v4 as uuidv4 } from 'uuid';
 
 import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { Column } from '@/ui/board/components/Board';
 import { NewButton as UINewButton } from '@/ui/board/components/NewButton';
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import {
   Company,
   PipelineProgressableType,
