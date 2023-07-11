@@ -65,12 +65,10 @@ export function TextInput({
   } = usePreviousHotkeysScope();
 
   function handleFocus() {
-    console.log('onFocus');
     setHotkeysScopeAndMemorizePreviousScope(InternalHotkeysScope.TextInput);
   }
 
   function handleBlur() {
-    console.log('onBlur');
     goBackToPreviousHotkeysScope();
   }
 
