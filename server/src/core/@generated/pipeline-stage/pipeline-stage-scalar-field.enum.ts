@@ -5,6 +5,7 @@ export enum PipelineStageScalarFieldEnum {
     name = "name",
     type = "type",
     color = "color",
+    index = "index",
     pipelineId = "pipelineId",
     workspaceId = "workspaceId",
     deletedAt = "deletedAt",

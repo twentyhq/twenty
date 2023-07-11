@@ -6,6 +6,8 @@ import { PipelineStageOrderByWithRelationInput } from './pipeline-stage-order-by
 import { PipelineStageWhereUniqueInput } from './pipeline-stage-where-unique.input';
 import { Int } from '@nestjs/graphql';
 import { PipelineStageCountAggregateInput } from './pipeline-stage-count-aggregate.input';
+import { PipelineStageAvgAggregateInput } from './pipeline-stage-avg-aggregate.input';
+import { PipelineStageSumAggregateInput } from './pipeline-stage-sum-aggregate.input';
 import { PipelineStageMinAggregateInput } from './pipeline-stage-min-aggregate.input';
 import { PipelineStageMaxAggregateInput } from './pipeline-stage-max-aggregate.input';
 
@@ -30,6 +32,12 @@ export class PipelineStageAggregateArgs {
 
     @Field(() => PipelineStageCountAggregateInput, {nullable:true})
     _count?: PipelineStageCountAggregateInput;
+
+    @Field(() => PipelineStageAvgAggregateInput, {nullable:true})
+    _avg?: PipelineStageAvgAggregateInput;
+
+    @Field(() => PipelineStageSumAggregateInput, {nullable:true})
+    _sum?: PipelineStageSumAggregateInput;
 
     @Field(() => PipelineStageMinAggregateInput, {nullable:true})
     _min?: PipelineStageMinAggregateInput;

@@ -2085,6 +2085,7 @@ export type PipelineStage = {
   color: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
+  index?: Maybe<Scalars['Int']>;
   name: Scalars['String'];
   pipeline: Pipeline;
   pipelineId: Scalars['String'];
@@ -2097,6 +2098,7 @@ export type PipelineStageCreateManyPipelineInput = {
   color: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  index?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
   type: Scalars['String'];
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -2111,6 +2113,7 @@ export type PipelineStageCreateManyWorkspaceInput = {
   color: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  index?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
   pipelineId: Scalars['String'];
   type: Scalars['String'];
@@ -2147,6 +2150,7 @@ export type PipelineStageCreateWithoutPipelineInput = {
   color: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  index?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
   pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineStageInput>;
   type: Scalars['String'];
@@ -2157,6 +2161,7 @@ export type PipelineStageCreateWithoutWorkspaceInput = {
   color: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  index?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
   pipeline: PipelineCreateNestedOneWithoutPipelineStagesInput;
   pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineStageInput>;
@@ -2178,6 +2183,7 @@ export type PipelineStageOrderByWithRelationInput = {
   color?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  index?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   pipeline?: InputMaybe<PipelineOrderByWithRelationInput>;
   pipelineId?: InputMaybe<SortOrder>;
@@ -2196,6 +2202,7 @@ export enum PipelineStageScalarFieldEnum {
   CreatedAt = 'createdAt',
   DeletedAt = 'deletedAt',
   Id = 'id',
+  Index = 'index',
   Name = 'name',
   PipelineId = 'pipelineId',
   Type = 'type',
@@ -2210,6 +2217,7 @@ export type PipelineStageScalarWhereInput = {
   color?: InputMaybe<StringFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
+  index?: InputMaybe<IntNullableFilter>;
   name?: InputMaybe<StringFilter>;
   pipelineId?: InputMaybe<StringFilter>;
   type?: InputMaybe<StringFilter>;
@@ -2220,6 +2228,7 @@ export type PipelineStageUpdateManyMutationInput = {
   color?: InputMaybe<StringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  index?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   name?: InputMaybe<StringFieldUpdateOperationsInput>;
   type?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -2281,6 +2290,7 @@ export type PipelineStageUpdateWithoutPipelineInput = {
   color?: InputMaybe<StringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  index?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   name?: InputMaybe<StringFieldUpdateOperationsInput>;
   pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineStageNestedInput>;
   type?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -2291,6 +2301,7 @@ export type PipelineStageUpdateWithoutWorkspaceInput = {
   color?: InputMaybe<StringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  index?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   name?: InputMaybe<StringFieldUpdateOperationsInput>;
   pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput>;
   pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineStageNestedInput>;
@@ -2317,6 +2328,7 @@ export type PipelineStageWhereInput = {
   color?: InputMaybe<StringFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
+  index?: InputMaybe<IntNullableFilter>;
   name?: InputMaybe<StringFilter>;
   pipeline?: InputMaybe<PipelineRelationFilter>;
   pipelineId?: InputMaybe<StringFilter>;
@@ -3275,7 +3287,7 @@ export type GetPipelinesQueryVariables = Exact<{
 }>;
 
 
-export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null }> | null }> | null }> };
+export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, index?: number | null, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null }> | null }> | null }> };
 
 export type UpdateOnePipelineProgressMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -3375,11 +3387,6 @@ export type RemoveProfilePictureMutationVariables = Exact<{
 
 
 export type RemoveProfilePictureMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string } };
-
-export type GetCurrentWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetCurrentWorkspaceQuery = { __typename?: 'Query', currentWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, domainName?: string | null, logo?: string | null } };
 
 export type GetWorkspaceMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4565,6 +4572,7 @@ export const GetPipelinesDocument = gql`
       id
       name
       color
+      index
       pipelineProgresses {
         id
         progressableType
@@ -5099,43 +5107,6 @@ export function useRemoveProfilePictureMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveProfilePictureMutationHookResult = ReturnType<typeof useRemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationResult = Apollo.MutationResult<RemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationOptions = Apollo.BaseMutationOptions<RemoveProfilePictureMutation, RemoveProfilePictureMutationVariables>;
-export const GetCurrentWorkspaceDocument = gql`
-    query GetCurrentWorkspace {
-  currentWorkspace {
-    id
-    displayName
-    domainName
-    logo
-  }
-}
-    `;
-
-/**
- * __useGetCurrentWorkspaceQuery__
- *
- * To run a query within a React component, call `useGetCurrentWorkspaceQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCurrentWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCurrentWorkspaceQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetCurrentWorkspaceQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>(GetCurrentWorkspaceDocument, options);
-      }
-export function useGetCurrentWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>(GetCurrentWorkspaceDocument, options);
-        }
-export type GetCurrentWorkspaceQueryHookResult = ReturnType<typeof useGetCurrentWorkspaceQuery>;
-export type GetCurrentWorkspaceLazyQueryHookResult = ReturnType<typeof useGetCurrentWorkspaceLazyQuery>;
-export type GetCurrentWorkspaceQueryResult = Apollo.QueryResult<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>;
 export const GetWorkspaceMembersDocument = gql`
     query GetWorkspaceMembers {
   workspaceMembers: findManyWorkspaceMember {
