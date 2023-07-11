@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { GET_COMMENT_THREADS_BY_TARGETS } from '@/comments/services';
+import { GET_COMMENT_THREAD } from '@/comments/services';
 import { CommentForDrawer } from '@/comments/types/CommentForDrawer';
 import { AutosizeTextInput } from '@/ui/components/inputs/AutosizeTextInput';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
@@ -69,7 +69,7 @@ export function CommentThreadComments({ commentThread }: OwnProps) {
         commentText: commentText,
         createdAt: new Date().toISOString(),
       },
-      refetchQueries: [getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? ''],
+      refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
     });
   }
 
