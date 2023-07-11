@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { DateTime } from 'luxon';
-import { v4 } from 'uuid';
 
 import { CommentForDrawer } from '@/comments/types/CommentForDrawer';
 import { mockedUsersData } from '~/testing/mock-data/users';
@@ -20,9 +19,9 @@ type Story = StoryObj<typeof CommentHeader>;
 const mockUser = mockedUsersData[0];
 
 const mockComment: Pick<CommentForDrawer, 'id' | 'author' | 'createdAt'> = {
-  id: v4(),
+  id: 'fake_comment_1_uuid',
   author: {
-    id: v4(),
+    id: 'fake_comment_1_author_uuid',
     displayName: mockUser.displayName ?? '',
     firstName: mockUser.firstName ?? '',
     lastName: mockUser.lastName ?? '',
@@ -35,9 +34,9 @@ const mockCommentWithLongName: Pick<
   CommentForDrawer,
   'id' | 'author' | 'createdAt'
 > = {
-  id: v4(),
+  id: 'fake_comment_2_uuid',
   author: {
-    id: v4(),
+    id: 'fake_comment_2_author_uuid',
     displayName: mockUser.displayName + ' with a very long suffix' ?? '',
     firstName: mockUser.firstName ?? '',
     lastName: mockUser.lastName ?? '',
