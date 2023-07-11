@@ -4,8 +4,6 @@ import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 
 import { GET_COMPANIES } from '@/companies/services';
-import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
 import { IconBuildingSkyscraper } from '@/ui/icons/index';
@@ -26,11 +24,6 @@ const StyledTableContainer = styled.div`
 `;
 
 export function Companies() {
-  useHotkeysScopeOnMountOnly({
-    scope: InternalHotkeysScope.Table,
-    customScopes: { 'command-menu': true, goto: true },
-  });
-
   const [insertCompany] = useInsertCompanyMutation();
 
   async function handleAddButtonClick() {

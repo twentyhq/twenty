@@ -3,8 +3,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 
-import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { GET_PEOPLE } from '@/people/services';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
@@ -24,11 +22,6 @@ const StyledPeopleContainer = styled.div`
 `;
 
 export function People() {
-  useHotkeysScopeOnMountOnly({
-    scope: InternalHotkeysScope.Table,
-    customScopes: { 'command-menu': true, goto: true },
-  });
-
   const [insertPersonMutation] = useInsertPersonMutation();
 
   async function handleAddButtonClick() {

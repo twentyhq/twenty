@@ -1,7 +1,7 @@
-import { useHotkeysScopeStackAutoSync } from '@/hotkeys/hooks/internal/useHotkeysScopeStackAutoSync';
+import { useHotkeysScopeAutoSync } from '@/hotkeys/hooks/internal/useHotkeysScopeStackAutoSync';
 
 export function HotkeysScopeStackAutoSyncHook() {
-  useHotkeysScopeStackAutoSync();
+  useHotkeysScopeAutoSync();
 
   return <></>;
 }

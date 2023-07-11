@@ -6,9 +6,9 @@ import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysSc
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { overlayBackground } from '@/ui/themes/effects';
 
-import { useBoardCardField } from '../hooks/useBoardCardField';
-
-export const BoardCardFieldEditModeContainer = styled.div<OwnProps>`
+export const BoardCardFieldEditModeContainer = styled.div<
+  Omit<OwnProps, 'onExit'>
+>`
   align-items: center;
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -31,38 +31,37 @@ type OwnProps = {
   children: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  onOutsideClick?: () => void;
+  onExit: () => void;
 };
 
 export function BoardCardEditableFieldEditMode({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
+  onExit,
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
-  const { closeBoardCardField } = useBoardCardField();
-
   useListenClickOutsideArrayOfRef([wrapperRef], () => {
-    closeBoardCardField();
+    onExit();
   });
 
   useScopedHotkeys(
     'enter',
     () => {
-      closeBoardCardField();
+      onExit();
     },
     InternalHotkeysScope.BoardCardFieldEditMode,
-    [closeBoardCardField],
+    [onExit],
   );
 
   useScopedHotkeys(
     'esc',
     () => {
-      closeBoardCardField();
+      onExit();
     },
     InternalHotkeysScope.BoardCardFieldEditMode,
-    [closeBoardCardField],
+    [onExit],
   );
 
   return (

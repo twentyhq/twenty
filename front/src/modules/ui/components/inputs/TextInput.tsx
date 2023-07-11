@@ -54,10 +54,21 @@ export function TextInput({
 }: OwnProps): JSX.Element {
   const [internalValue, setInternalValue] = useState(value);
 
+  function handleFocus() {
+    console.log('onFocus');
+  }
+
+  function handleBlur() {
+    console.log('onBlur');
+  }
+
   return (
     <StyledContainer>
       {label && <StyledLabel>{label}</StyledLabel>}
       <StyledInput
+        tabIndex={props.tabIndex ?? 0}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         fullWidth={fullWidth ?? false}
         value={internalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {

@@ -9,7 +9,7 @@ import { Title } from '@/auth/components/ui/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { isMockModeState } from '@/auth/states/isMockModeState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
-import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
+// import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
@@ -37,10 +37,10 @@ const StyledButtonContainer = styled.div`
 `;
 
 export function CreateWorkspace() {
-  useHotkeysScopeOnMountOnly({
-    scope: InternalHotkeysScope.CreateWokspace,
-    customScopes: { 'command-menu': false, goto: false },
-  });
+  // useHotkeysScopeOnMountOnly({
+  //   scope: InternalHotkeysScope.CreateWokspace,
+  //   customScopes: { 'command-menu': false, goto: false },
+  // });
   const [, setMockMode] = useRecoilState(isMockModeState);
   const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();

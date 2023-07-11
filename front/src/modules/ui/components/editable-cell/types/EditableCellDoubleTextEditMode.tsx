@@ -7,7 +7,7 @@ import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysSc
 import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 
-import { useEditableCell } from '../hooks/useCloseEditableCell';
+import { useEditableCell } from '../hooks/useEditableCell';
 
 type OwnProps = {
   firstValue: string;

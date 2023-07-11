@@ -1,3 +1,7 @@
+import { Key } from 'ts-key-enum';
+
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
@@ -13,9 +17,10 @@ type OwnProps = {
   onEntitySelect: (
     company: Pick<Company, 'id' | 'name' | 'domainName'>,
   ) => void;
+  onCancel: () => void;
 };
 
-export function NewCompanyBoardCard({ onEntitySelect }: OwnProps) {
+export function NewCompanyBoardCard({ onEntitySelect, onCancel }: OwnProps) {
   const [searchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
@@ -39,6 +44,7 @@ export function NewCompanyBoardCard({ onEntitySelect }: OwnProps) {
   return (
     <SingleEntitySelect
       onEntitySelected={(value) => onEntitySelect(value)}
+      onCancel={onCancel}
       entities={{
         entitiesToSelect: companies.entitiesToSelect,
         selectedEntity: companies.selectedEntities[0],

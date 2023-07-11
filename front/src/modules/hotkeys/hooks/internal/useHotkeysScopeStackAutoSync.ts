@@ -1,27 +1,22 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { customHotkeysScopesState } from '@/hotkeys/states/internal/customHotkeysScopesState';
-import { hotkeysScopeStackState } from '@/hotkeys/states/internal/hotkeysScopeStackState';
+import { currentHotkeysScopeState } from '@/hotkeys/states/internal/currentHotkeysScopeState';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
 import { useHotkeysScope } from './useHotkeysScope';
 
-export function useHotkeysScopeStackAutoSync() {
+export function useHotkeysScopeAutoSync() {
   const { setHotkeysScopes } = useHotkeysScope();
 
-  const hotkeysScopeStack = useRecoilValue(hotkeysScopeStackState);
-  const customHotkeysScopes = useRecoilValue(customHotkeysScopesState);
-  useEffect(() => {
-    if (hotkeysScopeStack.length === 0) {
-      return;
-    }
+  const currentHotkeysScope = useRecoilValue(currentHotkeysScopeState);
 
+  useEffect(() => {
     const scopesToSet: string[] = [];
 
-    const currentHotkeysScope = hotkeysScopeStack[hotkeysScopeStack.length - 1];
+    console.log(JSON.stringify({ currentHotkeysScope }));
 
-    if (currentHotkeysScope.customScopes?.['command-menu']) {
+    if (currentHotkeysScope.customScopes?.commandMenu) {
       scopesToSet.push(InternalHotkeysScope.CommandMenu);
     }
 
@@ -31,6 +26,10 @@ export function useHotkeysScopeStackAutoSync() {
 
     scopesToSet.push(currentHotkeysScope.scope);
 
+    console.log(
+      JSON.stringify({ scopesToSet, currentScope: currentHotkeysScope.scope }),
+    );
+
     setHotkeysScopes(scopesToSet);
-  }, [setHotkeysScopes, customHotkeysScopes, hotkeysScopeStack]);
+  }, [setHotkeysScopes, currentHotkeysScope]);
 }

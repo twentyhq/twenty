@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import { IconPlus } from '@tabler/icons-react';
 
@@ -7,6 +8,7 @@ import { DropdownMenuButton } from '@/ui/components/menu/DropdownMenuButton';
 import { DropdownMenuItemContainer } from '@/ui/components/menu/DropdownMenuItemContainer';
 import { DropdownMenuSearch } from '@/ui/components/menu/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/components/menu/DropdownMenuSeparator';
+import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
@@ -27,19 +29,27 @@ export function SingleEntitySelect<
   entities,
   onEntitySelected,
   onCreate,
+  onCancel,
 }: {
+  onCancel?: () => void;
   onCreate?: () => void;
   entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
   onEntitySelected: (entity: CustomEntityForSelect) => void;
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const theme = useTheme();
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
 
   const showCreateButton = isDefined(onCreate) && searchFilter !== '';
 
+  useListenClickOutsideArrayOfRef([containerRef], () => {
+    onCancel?.();
+  });
+
   return (
-    <DropdownMenu>
+    <DropdownMenu ref={containerRef}>
       <DropdownMenuSearch
         value={searchFilter}
         onChange={handleSearchFilterChange}
@@ -60,6 +70,7 @@ export function SingleEntitySelect<
       <SingleEntitySelectBase
         entities={entities}
         onEntitySelected={onEntitySelected}
+        onCancel={onCancel}
       />
     </DropdownMenu>
   );

@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
 
-import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
@@ -27,11 +25,6 @@ const StyledSectionContainer = styled.div`
 `;
 
 export function SettingsProfile() {
-  useHotkeysScopeOnMountOnly({
-    scope: InternalHotkeysScope.Settings,
-    customScopes: { 'command-menu': true, goto: false },
-  });
-
   return (
     <NoTopBarContainer>
       <div>

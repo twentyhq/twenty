@@ -1,11 +1,13 @@
 import { useCallback, useState } from 'react';
+import { Key } from 'ts-key-enum';
 
 import { activeTableFiltersScopedState } from '@/filters-and-sorts/states/activeTableFiltersScopedState';
 import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
-import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
@@ -22,11 +24,6 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
 export function FilterDropdownButton() {
   const [isUnfolded, setIsUnfolded] = useState(false);
-
-  useHotkeysScopeOnBooleanState(
-    { scope: InternalHotkeysScope.TableHeaderDropdownButton },
-    isUnfolded,
-  );
 
   const [
     isFilterDropdownOperandSelectUnfolded,
@@ -71,18 +68,27 @@ export function FilterDropdownButton() {
 
   const isFilterSelected = (activeTableFilters?.length ?? 0) > 0;
 
+  const setHotkeysScope = useSetHotkeysScope();
+
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
       setIsUnfolded(true);
     } else {
+      if (tableFilterDefinitionUsedInDropdown?.type === 'entity') {
+        setHotkeysScope(InternalHotkeysScope.Table);
+      }
       setIsUnfolded(false);
       resetState();
     }
   }
 
-  useHotkeysScopeOnBooleanState(
-    { scope: InternalHotkeysScope.RelationPicker },
-    tableFilterDefinitionUsedInDropdown?.type === 'entity',
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      handleIsUnfoldedChange(false);
+    },
+    InternalHotkeysScope.RelationPicker,
+    [handleIsUnfoldedChange],
   );
 
   return (

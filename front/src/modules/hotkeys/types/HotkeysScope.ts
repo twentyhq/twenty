@@ -1,3 +1,3 @@
-export enum HotkeysScope {
+export enum AppHotkeysScope {
   CompanyPage = 'company-page',
 }

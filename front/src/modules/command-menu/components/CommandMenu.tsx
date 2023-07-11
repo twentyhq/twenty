@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
@@ -13,7 +13,6 @@ import {
   StyledGroup,
   StyledInput,
   StyledList,
-  // StyledSeparator,
 } from './CommandMenuStyles';
 
 export function CommandMenu() {
@@ -22,16 +21,26 @@ export function CommandMenu() {
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
-      setOpen((prevOpen) => !prevOpen);
+      handleOpenChange(!open);
     },
     InternalHotkeysScope.CommandMenu,
-    [setOpen],
+    [setOpen, open, handleOpenChange],
   );
 
-  useHotkeysScopeOnBooleanState(
-    { scope: InternalHotkeysScope.CommandMenu },
-    open,
-  );
+  const {
+    setHotkeysScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeysScope,
+  } = usePreviousHotkeysScope();
+
+  function handleOpenChange(newOpenState: boolean) {
+    if (newOpenState) {
+      setOpen(true);
+      setHotkeysScopeAndMemorizePreviousScope(InternalHotkeysScope.CommandMenu);
+    } else {
+      setOpen(false);
+      goBackToPreviousHotkeysScope();
+    }
+  }
 
   /*
   TODO: Allow performing actions on page through CommandBar 
@@ -73,7 +82,7 @@ export function CommandMenu() {
   return (
     <StyledDialog
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={handleOpenChange}
       label="Global Command Menu"
     >
       <StyledInput placeholder="Search" />
