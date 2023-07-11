@@ -19,7 +19,7 @@ export function FilterDropdownDateSearchInput() {
     TableContext,
   );
 
-  const upsertActiveTableFilter = useUpsertActiveFilter();
+  const upsertActiveTableFilter = useUpsertActiveFilter(TableContext);
 
   function handleChange(date: Date) {
     if (!tableFilterDefinitionUsedInDropdown || !selectedOperandInDropdown)

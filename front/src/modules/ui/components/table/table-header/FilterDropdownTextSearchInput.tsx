@@ -23,11 +23,11 @@ export function FilterDropdownTextSearchInput() {
   const [filterDropdownSearchInput, setFilterDropdownSearchInput] =
     useRecoilScopedState(filterDropdownSearchInputScopedState, TableContext);
 
-  const upsertActiveTableFilter = useUpsertActiveFilter();
-  const removeActiveTableFilter = useRemoveActiveFilter();
+  const upsertActiveTableFilter = useUpsertActiveFilter(TableContext);
+  const removeActiveTableFilter = useRemoveActiveFilter(TableContext);
 
   const activeFilterCurrentlyEditedInDropdown =
-    useActiveTableFilterCurrentlyEditedInDropdown();
+    useActiveTableFilterCurrentlyEditedInDropdown(TableContext);
 
   return (
     tableFilterDefinitionUsedInDropdown &&

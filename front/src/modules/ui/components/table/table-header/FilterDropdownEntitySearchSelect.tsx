@@ -33,11 +33,11 @@ export function FilterDropdownEntitySearchSelect({
     TableContext,
   );
 
-  const upsertActiveTableFilter = useUpsertActiveFilter();
-  const removeActiveTableFilter = useRemoveActiveFilter();
+  const upsertActiveTableFilter = useUpsertActiveFilter(TableContext);
+  const removeActiveTableFilter = useRemoveActiveFilter(TableContext);
 
   const activeFilterCurrentlyEditedInDropdown =
-    useActiveTableFilterCurrentlyEditedInDropdown();
+    useActiveTableFilterCurrentlyEditedInDropdown(TableContext);
 
   function handleUserSelected(selectedEntity: EntityForSelect) {
     if (!tableFilterDefinitionUsedInDropdown || !selectedOperandInDropdown) {

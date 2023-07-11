@@ -1,12 +1,13 @@
+import { Context } from 'react';
+
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { TableContext } from '@/ui/tables/states/TableContext';
 
 import { activeFiltersScopedState } from '../states/activeFiltersScopedState';
 
-export function useRemoveActiveFilter() {
+export function useRemoveActiveFilter(context: Context<string | null>) {
   const [, setActiveFilters] = useRecoilScopedState(
     activeFiltersScopedState,
-    TableContext,
+    context,
   );
 
   return function removeActiveFilter(filterField: string) {

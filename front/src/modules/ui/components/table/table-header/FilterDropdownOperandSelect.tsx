@@ -35,9 +35,9 @@ export function FilterDropdownOperandSelect() {
     );
 
   const activeTableFilterCurrentlyEditedInDropdown =
-    useActiveTableFilterCurrentlyEditedInDropdown();
+    useActiveTableFilterCurrentlyEditedInDropdown(TableContext);
 
-  const upsertActiveTableFilter = useUpsertActiveFilter();
+  const upsertActiveTableFilter = useUpsertActiveFilter(TableContext);
 
   function handleOperangeChange(newOperand: FilterOperand) {
     setSelectedOperandInDropdown(newOperand);

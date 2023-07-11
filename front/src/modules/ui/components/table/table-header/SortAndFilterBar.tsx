@@ -87,7 +87,7 @@ function SortAndFilterBar<SortField>({
     };
   });
 
-  const removeActiveFilter = useRemoveActiveFilter();
+  const removeActiveFilter = useRemoveActiveFilter(TableContext);
 
   function handleCancelClick() {
     setActiveFilters([]);

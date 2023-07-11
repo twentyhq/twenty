@@ -1,20 +1,21 @@
-import { useMemo } from 'react';
+import { Context, useMemo } from 'react';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { TableContext } from '@/ui/tables/states/TableContext';
 
 import { activeFiltersScopedState } from '../states/activeFiltersScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 
-export function useActiveTableFilterCurrentlyEditedInDropdown() {
+export function useActiveTableFilterCurrentlyEditedInDropdown(
+  context: Context<string | null>,
+) {
   const [activeFilters] = useRecoilScopedState(
     activeFiltersScopedState,
-    TableContext,
+    context,
   );
 
   const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    TableContext,
+    context,
   );
 
   return useMemo(() => {

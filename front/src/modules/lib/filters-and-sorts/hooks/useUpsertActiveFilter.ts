@@ -1,15 +1,15 @@
+import { Context } from 'react';
 import { produce } from 'immer';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { TableContext } from '@/ui/tables/states/TableContext';
 
 import { activeFiltersScopedState } from '../states/activeFiltersScopedState';
 import { ActiveFilter } from '../types/ActiveFilter';
 
-export function useUpsertActiveFilter() {
+export function useUpsertActiveFilter(context: Context<string | null>) {
   const [, setActiveFilters] = useRecoilScopedState(
     activeFiltersScopedState,
-    TableContext,
+    context,
   );
 
   return function upsertActiveFilter(activeFilterToUpsert: ActiveFilter) {

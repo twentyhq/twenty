@@ -18,8 +18,8 @@ export function FilterDropdownNumberSearchInput() {
     TableContext,
   );
 
-  const upsertActiveTableFilter = useUpsertActiveFilter();
-  const removeActiveTableFilter = useRemoveActiveFilter();
+  const upsertActiveTableFilter = useUpsertActiveFilter(TableContext);
+  const removeActiveTableFilter = useRemoveActiveFilter(TableContext);
 
   return (
     tableFilterDefinitionUsedInDropdown &&
