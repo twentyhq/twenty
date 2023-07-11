@@ -1,8 +1,8 @@
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useRemoveFromHotkeysScopeStack } from '@/hotkeys/hooks/useRemoveFromHotkeysScopeStack';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
 import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
@@ -13,8 +13,8 @@ import { useMoveSoftFocus } from './useMoveSoftFocus';
 export function useMapKeyboardToSoftFocus() {
   const { moveDown, moveLeft, moveRight, moveUp } = useMoveSoftFocus();
 
-  const removeFromHotkeysScopedStack = useRemoveFromHotkeysScopeStack();
   const disableSoftFocus = useDisableSoftFocus();
+  const setHotkeysScope = useSetHotkeysScope();
 
   const [isSomeInputInEditMode] = useRecoilState(isSomeInputInEditModeState);
 
@@ -65,10 +65,10 @@ export function useMapKeyboardToSoftFocus() {
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      removeFromHotkeysScopedStack(InternalHotkeysScope.TableSoftFocus);
+      setHotkeysScope(InternalHotkeysScope.Table, { goto: true });
       disableSoftFocus();
     },
     InternalHotkeysScope.TableSoftFocus,
-    [removeFromHotkeysScopedStack, disableSoftFocus],
+    [disableSoftFocus],
   );
 }

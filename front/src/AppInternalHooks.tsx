@@ -1,13 +1,15 @@
 import { AnalyticsHook } from './sync-hooks/AnalyticsHook';
 import { GotoHotkeysHooks } from './sync-hooks/GotoHotkeysHooks';
-import { HotkeysScopeStackAutoSyncHook } from './sync-hooks/HotkeysScopeStackAutoSyncHook';
+import { HotkeysScopeAutoSyncHook } from './sync-hooks/HotkeysScopeAutoSyncHook';
+import { HotkeysScopeBrowserRouterSync } from './sync-hooks/HotkeysScopeBrowserRouterSync';
 
 export function AppInternalHooks() {
   return (
     <>
       <AnalyticsHook />
       <GotoHotkeysHooks />
-      <HotkeysScopeStackAutoSyncHook />
+      <HotkeysScopeAutoSyncHook />
+      <HotkeysScopeBrowserRouterSync />
     </>
   );
 }

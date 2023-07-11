@@ -3,6 +3,8 @@ import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states
 import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
 import { getOperandsForFilterType } from '@/filters-and-sorts/utils/getOperandsForFilterType';
+import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
 import { TableContext } from '@/ui/tables/states/TableContext';
@@ -33,6 +35,8 @@ export function FilterDropdownFilterSelect() {
     TableContext,
   );
 
+  const setHotkeysScope = useSetHotkeysScope();
+
   return (
     <DropdownMenuItemContainer style={{ maxHeight: '300px' }}>
       {availableTableFilters.map((availableTableFilter, index) => (
@@ -40,6 +44,11 @@ export function FilterDropdownFilterSelect() {
           key={`select-filter-${index}`}
           onClick={() => {
             setTableFilterDefinitionUsedInDropdown(availableTableFilter);
+
+            if (availableTableFilter.type === 'entity') {
+              setHotkeysScope(InternalHotkeysScope.RelationPicker);
+            }
+
             setSelectedOperandInDropdown(
               getOperandsForFilterType(availableTableFilter.type)?.[0],
             );

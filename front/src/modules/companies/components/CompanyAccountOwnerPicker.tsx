@@ -4,7 +4,7 @@ import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFiltere
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
-import { useEditableCell } from '@/ui/components/editable-cell/hooks/useCloseEditableCell';
+import { useEditableCell } from '@/ui/components/editable-cell/hooks/useEditableCell';
 import {
   Company,
   User,

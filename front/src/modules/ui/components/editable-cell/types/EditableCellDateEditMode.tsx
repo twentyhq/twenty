@@ -1,6 +1,6 @@
 import { InplaceInputDateEditMode } from '@/ui/inplace-inputs/components/InplaceInputDateEditMode';
 
-import { useEditableCell } from '../hooks/useCloseEditableCell';
+import { useEditableCell } from '../hooks/useEditableCell';
 
 export type EditableDateProps = {
   value: Date;

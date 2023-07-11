@@ -1,8 +1,8 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { useAddToHotkeysScopeStack } from '@/hotkeys/hooks/useAddToHotkeysScopeStack';
-import { HotkeysScopeStackItem } from '@/hotkeys/types/internal/HotkeysScopeStackItems';
+import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
+import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
 import { useBoardCardField } from '../hooks/useBoardCardField';
@@ -26,7 +26,7 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  editHotkeysScope?: HotkeysScopeStackItem;
+  editHotkeysScope?: HotkeysScope;
 };
 
 export function BoardCardEditableFieldInternal({
@@ -39,17 +39,26 @@ export function BoardCardEditableFieldInternal({
   const { openBoardCardField, isBoardCardFieldInEditMode } =
     useBoardCardField();
 
-  const addToHotkeysScopeStack = useAddToHotkeysScopeStack();
+  const { closeBoardCardField } = useBoardCardField();
+
+  const {
+    goBackToPreviousHotkeysScope,
+    setHotkeysScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeysScope();
 
   function handleOnClick() {
     if (!isBoardCardFieldInEditMode) {
       openBoardCardField();
-      addToHotkeysScopeStack(
-        editHotkeysScope ?? {
-          scope: InternalHotkeysScope.BoardCardFieldEditMode,
-        },
+      setHotkeysScopeAndMemorizePreviousScope(
+        editHotkeysScope?.scope ?? InternalHotkeysScope.BoardCardFieldEditMode,
+        editHotkeysScope?.customScopes ?? {},
       );
     }
+  }
+
+  function handleEditModeExit() {
+    goBackToPreviousHotkeysScope();
+    closeBoardCardField();
   }
 
   return (
@@ -58,6 +67,7 @@ export function BoardCardEditableFieldInternal({
         <BoardCardEditableFieldEditMode
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
+          onExit={handleEditModeExit}
         >
           {editModeContent}
         </BoardCardEditableFieldEditMode>

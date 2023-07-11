@@ -1,0 +1,15 @@
+export enum PageHotkeysScope {
+  Settings = 'settings',
+  CreateWokspace = 'create-workspace',
+  PasswordLogin = 'password-login',
+  AuthIndex = 'auth-index',
+  CreateProfile = 'create-profile',
+  ShowPage = 'show-page',
+  PersonShowPage = 'person-show-page',
+  CompanyShowPage = 'company-show-page',
+  CompaniesPage = 'companies-page',
+  PeoplePage = 'people-page',
+  OpportunitiesPage = 'opportunities-page',
+  ProfilePage = 'profile-page',
+  WorkspaceMemberPage = 'workspace-member-page',
+}

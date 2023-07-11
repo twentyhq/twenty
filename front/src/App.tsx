@@ -20,6 +20,9 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { CompanyShow } from './pages/companies/CompanyShow';
 import { PersonShow } from './pages/people/PersonShow';
 import { SettingsWorksapce } from './pages/settings/SettingsWorkspace';
+import { AppPath } from './sync-hooks/types/AppPath';
+import { AuthPath } from './sync-hooks/types/AuthPath';
+import { SettingsPath } from './sync-hooks/types/SettingsPath';
 import { AppInternalHooks } from './AppInternalHooks';
 
 /**
@@ -33,11 +36,14 @@ function AuthRoutes() {
       <AuthModal>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
-            <Route path="" element={<Index />} />
-            <Route path="callback" element={<Verify />} />
-            <Route path="password-login" element={<PasswordLogin />} />
-            <Route path="create/workspace" element={<CreateWorkspace />} />
-            <Route path="create/profile" element={<CreateProfile />} />
+            <Route path={AuthPath.Index} element={<Index />} />
+            <Route path={AuthPath.Callback} element={<Verify />} />
+            <Route path={AuthPath.PasswordLogin} element={<PasswordLogin />} />
+            <Route
+              path={AuthPath.CreateWorkspace}
+              element={<CreateWorkspace />}
+            />
+            <Route path={AuthPath.CreateProfile} element={<CreateProfile />} />
           </Routes>
         </AnimatePresence>
       </AuthModal>
@@ -52,7 +58,7 @@ export function App() {
       <DefaultLayout>
         <Routes>
           <Route
-            path="auth/*"
+            path={AppPath.AuthCatchAll}
             element={
               <RequireOnboarding>
                 <AuthLayout>
@@ -66,27 +72,39 @@ export function App() {
             element={
               <RequireOnboarded>
                 <Routes>
-                  <Route path="" element={<Navigate to="/people" replace />} />
-                  <Route path="people" element={<People />} />
-                  <Route path="person/:personId" element={<PersonShow />} />
-                  <Route path="companies" element={<Companies />} />
                   <Route
-                    path="companies/:companyId"
+                    path=""
+                    element={<Navigate to={AppPath.PeoplePage} replace />}
+                  />
+                  <Route path={AppPath.PeoplePage} element={<People />} />
+                  <Route
+                    path={AppPath.PersonShowPage}
+                    element={<PersonShow />}
+                  />
+                  <Route path={AppPath.CompaniesPage} element={<Companies />} />
+                  <Route
+                    path={AppPath.CompanyShowPage}
                     element={<CompanyShow />}
                   />
 
-                  <Route path="opportunities" element={<Opportunities />} />
                   <Route
-                    path="settings/*"
+                    path={AppPath.OpportunitiesPage}
+                    element={<Opportunities />}
+                  />
+                  <Route
+                    path={AppPath.SettingsCatchAll}
                     element={
                       <Routes>
-                        <Route path="profile" element={<SettingsProfile />} />
                         <Route
-                          path="workspace-members"
+                          path={SettingsPath.ProfilePage}
+                          element={<SettingsProfile />}
+                        />
+                        <Route
+                          path={SettingsPath.WorkspaceMembersPage}
                           element={<SettingsWorkspaceMembers />}
                         />
                         <Route
-                          path="workspace"
+                          path={SettingsPath.Workspace}
                           element={<SettingsWorksapce />}
                         />
                       </Routes>

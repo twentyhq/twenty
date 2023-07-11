@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
@@ -27,28 +28,39 @@ export function SingleEntitySelectBase<
 >({
   entities,
   onEntitySelected,
+  onCancel,
 }: {
   entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
   onEntitySelected: (entity: CustomEntityForSelect) => void;
+  onCancel?: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const entitiesInDropdown = isDefined(entities.selectedEntity)
     ? [entities.selectedEntity, ...(entities.entitiesToSelect ?? [])]
     : entities.entitiesToSelect ?? [];
 
-  const { hoveredIndex } = useEntitySelectScroll({
+  const { hoveredIndex, resetScroll } = useEntitySelectScroll({
     entities: entitiesInDropdown,
     containerRef,
   });
 
-  // TODO: move to better place for scopping
   useScopedHotkeys(
-    'enter',
+    Key.Enter,
     () => {
       onEntitySelected(entitiesInDropdown[hoveredIndex]);
+      resetScroll();
     },
     InternalHotkeysScope.RelationPicker,
     [entitiesInDropdown, hoveredIndex, onEntitySelected],
+  );
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onCancel?.();
+    },
+    InternalHotkeysScope.RelationPicker,
+    [onCancel],
   );
 
   return (

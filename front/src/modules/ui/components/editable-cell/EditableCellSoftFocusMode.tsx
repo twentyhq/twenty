@@ -1,17 +1,17 @@
 import React from 'react';
 
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { HotkeysScopeStackItem } from '@/hotkeys/types/internal/HotkeysScopeStackItems';
+import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { isNonTextWritingKey } from '@/utils/hotkeys/isNonTextWritingKey';
 
-import { useEditableCell } from './hooks/useCloseEditableCell';
+import { useEditableCell } from './hooks/useEditableCell';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 
 export function EditableCellSoftFocusMode({
   children,
   editHotkeysScope,
-}: React.PropsWithChildren<{ editHotkeysScope?: HotkeysScopeStackItem }>) {
+}: React.PropsWithChildren<{ editHotkeysScope?: HotkeysScope }>) {
   const { closeEditableCell, openEditableCell } = useEditableCell();
 
   useScopedHotkeys(

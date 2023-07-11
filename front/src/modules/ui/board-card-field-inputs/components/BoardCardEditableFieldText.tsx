@@ -19,9 +19,11 @@ export function BoardCardEditableFieldText({
   editModeHorizontalAlign,
 }: OwnProps) {
   const [internalValue, setInternalValue] = useState(value);
+
   const debouncedOnChange = useMemo(() => {
     return debounce(onChange, 200);
   }, [onChange]);
+
   return (
     <BoardCardEditableField
       editModeHorizontalAlign={editModeHorizontalAlign}

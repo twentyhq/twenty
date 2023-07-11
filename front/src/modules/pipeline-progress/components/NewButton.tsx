@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { useHotkeysScopeOnBooleanState } from '@/hotkeys/hooks/useHotkeysScopeOnBooleanState';
+import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { Column } from '@/ui/board/components/Board';
@@ -26,16 +26,27 @@ type OwnProps = {
 };
 
 export function NewButton({ pipelineId, columnId }: OwnProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isCreatingCard, setIsCreatingCard] = useState(false);
   const [board, setBoard] = useRecoilState(boardColumnsState);
   const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
 
+  const {
+    goBackToPreviousHotkeysScope,
+    setHotkeysScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeysScope();
+
   const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation({
     refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
   });
-  const onEntitySelect = useCallback(
+
+  const handleEntitySelect = useCallback(
     async (company: Pick<Company, 'id' | 'name' | 'domainName'>) => {
+      if (!company || !company.name || !company.domainName) return;
+
       setIsCreatingCard(false);
+      goBackToPreviousHotkeysScope();
+
       const newUuid = uuidv4();
       const newBoard = JSON.parse(JSON.stringify(board));
       const destinationColumnIndex = newBoard.findIndex(
@@ -71,26 +82,35 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
       setBoard,
       boardItems,
       setBoardItems,
+      goBackToPreviousHotkeysScope,
     ],
   );
 
-  const onNewClick = useCallback(() => {
+  const handleNewClick = useCallback(() => {
     setIsCreatingCard(true);
-  }, [setIsCreatingCard]);
+    setHotkeysScopeAndMemorizePreviousScope(
+      InternalHotkeysScope.RelationPicker,
+    );
+  }, [setIsCreatingCard, setHotkeysScopeAndMemorizePreviousScope]);
 
-  useHotkeysScopeOnBooleanState(
-    { scope: InternalHotkeysScope.RelationPicker },
-    isCreatingCard,
-  );
+  function handleCancel() {
+    goBackToPreviousHotkeysScope();
+    setIsCreatingCard(false);
+  }
 
   return (
     <>
       {isCreatingCard && (
         <RecoilScope>
-          <NewCompanyBoardCard onEntitySelect={onEntitySelect} />
+          <div ref={containerRef}>
+            <NewCompanyBoardCard
+              onEntitySelect={handleEntitySelect}
+              onCancel={handleCancel}
+            />
+          </div>
         </RecoilScope>
       )}
-      <UINewButton onClick={onNewClick} />
+      <UINewButton onClick={handleNewClick} />
     </>
   );
 }

@@ -3,8 +3,6 @@ import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/comments/components/timeline/Timeline';
 import { useCompanyQuery } from '@/companies/services';
-import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { RawLink } from '@/ui/components/links/RawLink';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
@@ -18,11 +16,6 @@ import { CommentableType } from '~/generated/graphql';
 
 export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
-
-  useHotkeysScopeOnMountOnly({
-    scope: InternalHotkeysScope.ShowPage,
-    customScopes: { 'command-menu': true, goto: true },
-  });
 
   const { data } = useCompanyQuery(companyId);
   const company = data?.findUniqueCompany;

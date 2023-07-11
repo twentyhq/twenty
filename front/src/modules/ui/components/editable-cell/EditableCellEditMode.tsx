@@ -7,7 +7,7 @@ import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsid
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 import { overlayBackground } from '@/ui/themes/effects';
 
-import { useEditableCell } from './hooks/useCloseEditableCell';
+import { useEditableCell } from './hooks/useEditableCell';
 
 export const EditableCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;

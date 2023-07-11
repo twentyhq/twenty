@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { HotkeysScopeStackItem } from '@/hotkeys/types/internal/HotkeysScopeStackItems';
+import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
-import { useEditableCell } from './hooks/useCloseEditableCell';
 import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
+import { useEditableCell } from './hooks/useEditableCell';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
 import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
@@ -28,7 +28,7 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  editHotkeysScope?: HotkeysScopeStackItem;
+  editHotkeysScope?: HotkeysScope;
 };
 
 export function EditableCell({
@@ -60,9 +60,9 @@ export function EditableCell({
           scope: InternalHotkeysScope.CellEditMode,
         },
       );
+    } else {
+      setSoftFocusOnCurrentCell();
     }
-
-    setSoftFocusOnCurrentCell();
   }
 
   return (

@@ -21,6 +21,22 @@ export function useEntitySelectScroll<
     relationPickerHoverIndexScopedState,
   );
 
+  function resetScroll() {
+    setHoveredIndex(0);
+
+    const currentHoveredRef = containerRef.current?.children[0] as HTMLElement;
+
+    scrollIntoView(currentHoveredRef, {
+      align: {
+        top: 0,
+      },
+      isScrollable: (target) => {
+        return target === containerRef.current;
+      },
+      time: 0,
+    });
+  }
+
   useScopedHotkeys(
     Key.ArrowUp,
     () => {
@@ -60,7 +76,6 @@ export function useEntitySelectScroll<
       ] as HTMLElement;
 
       if (currentHoveredRef) {
-        console.log({ currentHoveredRef, containerRef });
         scrollIntoView(currentHoveredRef, {
           align: {
             top: 0.15,
@@ -78,5 +93,6 @@ export function useEntitySelectScroll<
 
   return {
     hoveredIndex,
+    resetScroll,
   };
 }

@@ -11,7 +11,6 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { isMockModeState } from '@/auth/states/isMockModeState';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
-import { useHotkeysScopeOnMountOnly } from '@/hotkeys/hooks/useHotkeysScopeOnMountOnly';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { MainButton } from '@/ui/components/buttons/MainButton';
@@ -51,10 +50,6 @@ const StyledErrorContainer = styled.div`
 `;
 
 export function PasswordLogin() {
-  useHotkeysScopeOnMountOnly({
-    scope: InternalHotkeysScope.PasswordLogin,
-    customScopes: { 'command-menu': false, goto: false },
-  });
   const navigate = useNavigate();
   const [isDemoMode] = useRecoilState(isDemoModeState);
 
