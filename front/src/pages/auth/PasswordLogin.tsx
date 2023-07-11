@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
@@ -13,6 +13,8 @@ import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
+import { isMockModeState } from '@/auth/states/isMockModeState';
+import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
@@ -58,7 +60,7 @@ const validationSchema = Yup.object()
     email: Yup.string().email().required(),
     password: Yup.string()
       .matches(
-        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
+        PASSWORD_REGEX,
         'Password must contain at least 8 characters, one uppercase and one number',
       )
       .required(),
@@ -73,6 +75,8 @@ export function PasswordLogin() {
   const [isDemoMode] = useRecoilState(isDemoModeState);
   const [authFlowUserEmail] = useRecoilState(authFlowUserEmailState);
   const [, setMockMode] = useRecoilState(isMockModeState);
+
+  const workspaceInviteHash = useParams().workspaceInviteHash;
 
   const client = useApolloClient();
 
@@ -97,33 +101,41 @@ export function PasswordLogin() {
     resolver: yupResolver(validationSchema),
   });
 
-  const onSubmit: SubmitHandler<Form> = async (data) => {
-    setMockMode(false);
-
-    try {
+  const onSubmit: SubmitHandler<Form> = useCallback(
+    async (data) => {
       setMockMode(false);
-      if (data.exist) {
-        await login(authFlowUserEmail, internalPassword);
-      } else {
-        if (workspaceInviteHash) {
-          await signUpToWorkspace(
-            authFlowUserEmail,
-            internalPassword,
-            workspaceInviteHash,
-          );
-        } else {
-          await signUp(authFlowUserEmail, internalPassword);
+      try {
+        if (!data.email || !data.password) {
+          throw new Error('Email and password are required');
         }
+        if (data.exist) {
+          await login(data.email, data.password);
+        } else {
+          if (workspaceInviteHash) {
+            await signUpToWorkspace(
+              data.email,
+              data.password,
+              workspaceInviteHash,
+            );
+          } else {
+            await signUp(data.email, data.password);
+          }
+        }
+        navigate('/auth/create/workspace');
+      } catch (err: any) {
+        setError('root', { message: err?.message });
       }
-      navigate('/auth/create/workspace');
-    } catch (err: any) {
-      setError('root', { message: err?.message });
-    }
-  };
-
-    workspaceInviteHash,
-  ]);
-
+    },
+    [
+      login,
+      navigate,
+      setError,
+      setMockMode,
+      signUp,
+      signUpToWorkspace,
+      workspaceInviteHash,
+    ],
+  );
   useScopedHotkeys(
     'enter',
     () => {
@@ -161,6 +173,10 @@ export function PasswordLogin() {
 
     return () => subscription.unsubscribe();
   }, [getValues, setValue, watch, client]);
+
+  useEffect(() => {
+    setMockMode(true);
+  }, [setMockMode]);
 
   return (
     <>
