@@ -12,6 +12,7 @@ export function HooksEntityTable({
   numberOfRows: number;
   availableTableFilters: TableFilterDefinition[];
 }) {
+  console.log('HooksEntityTable');
   useMapKeyboardToSoftFocus();
 
   useInitializeEntityTable({

@@ -99,6 +99,7 @@ export function EntityTable<TData extends { id: string }, SortField>({
   availableSorts,
   onSortsUpdate,
 }: OwnProps<TData, SortField>) {
+  console.log('EntityTable');
   const tableBodyRef = React.useRef<HTMLDivElement>(null);
 
   const [currentRowSelection, setCurrentRowSelection] = useRecoilState(

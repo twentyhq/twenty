@@ -59,6 +59,7 @@ export function TableHeader<SortField>({
   availableSorts,
   onSortsUpdate,
 }: OwnProps<SortField>) {
+  console.log('TableHeader');
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
     [],
   );

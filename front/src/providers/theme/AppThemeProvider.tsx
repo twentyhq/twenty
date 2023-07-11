@@ -10,5 +10,7 @@ type OwnProps = {
 export function AppThemeProvider({ children }: OwnProps) {
   const selectedTheme = browserPrefersDarkMode() ? darkTheme : lightTheme;
 
+  console.log('AppThemeProvider', selectedTheme);
+
   return <ThemeProvider theme={selectedTheme}>{children}</ThemeProvider>;
 }

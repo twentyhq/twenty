@@ -161,14 +161,14 @@ function DropdownButton({
   isUnfolded = false,
   onIsUnfoldedChange,
 }: OwnProps) {
-  useScopedHotkeys(
-    [Key.Enter, Key.Escape],
-    () => {
-      onIsUnfoldedChange?.(false);
-    },
-    InternalHotkeysScope.TableHeaderDropdownButton,
-    [onIsUnfoldedChange],
-  );
+  // useScopedHotkeys(
+  //   [Key.Enter, Key.Escape],
+  //   () => {
+  //     onIsUnfoldedChange?.(false);
+  //   },
+  //   InternalHotkeysScope.TableHeaderDropdownButton,
+  //   [onIsUnfoldedChange],
+  // );
 
   const onButtonClick = () => {
     onIsUnfoldedChange?.(!isUnfolded);

@@ -1,9 +1,12 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
-import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
+import { isSoftFocusActiveState } from '@/ui/tables/states/isSoftFocusActiveState';
+
+import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
 
 type Props = {
-  softFocus: boolean;
+  softFocus?: boolean;
 };
 
 export const EditableCellNormalModeOuterContainer = styled.div<Props>`
@@ -35,10 +38,15 @@ export const EditableCellNormalModeInnerContainer = styled.div`
 export function EditableCellDisplayMode({
   children,
 }: React.PropsWithChildren<unknown>) {
-  const hasSoftFocus = useIsSoftFocusOnCurrentCell();
+  console.log('EditableCellDisplayMode');
+  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
+
+  function handleOnClick() {
+    setSoftFocusOnCurrentCell();
+  }
 
   return (
-    <EditableCellNormalModeOuterContainer softFocus={hasSoftFocus}>
+    <EditableCellNormalModeOuterContainer onClick={handleOnClick}>
       <EditableCellNormalModeInnerContainer>
         {children}
       </EditableCellNormalModeInnerContainer>

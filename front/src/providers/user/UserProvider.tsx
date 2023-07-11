@@ -15,6 +15,8 @@ export function UserProvider({ children }: React.PropsWithChildren) {
     skip: !isLogged,
   });
 
+  console.log('UserProvider', JSON.stringify({ data, loading, isLogged }));
+
   useEffect(() => {
     if (!loading) {
       setIsLoading(false);
