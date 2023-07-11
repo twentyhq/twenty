@@ -14,6 +14,7 @@ export function useSequenceHotkeys(
     enableOnFormTags: true,
     preventDefault: true,
   },
+  deps: any[] = [],
 ) {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
@@ -23,7 +24,7 @@ export function useSequenceHotkeys(
       setPendingHotkey(firstKey);
     },
     { ...options, scopes: [scope] },
-    [pendingHotkey],
+    [setPendingHotkey],
   );
 
   useHotkeys(
@@ -36,6 +37,6 @@ export function useSequenceHotkeys(
       callback();
     },
     { ...options, scopes: [scope] },
-    [pendingHotkey, setPendingHotkey],
+    [pendingHotkey, setPendingHotkey, ...deps],
   );
 }

@@ -6,6 +6,16 @@ import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants';
 import { currentHotkeysScopeState } from '../states/internal/currentHotkeysScopeState';
 import { CustomHotkeysScopes } from '../types/internal/CustomHotkeysScope';
 
+function isCustomScopesEqual(
+  customScopesA: CustomHotkeysScopes | undefined,
+  customScopesB: CustomHotkeysScopes | undefined,
+) {
+  return (
+    customScopesA?.commandMenu === customScopesB?.commandMenu &&
+    customScopesA?.goto === customScopesB?.goto
+  );
+}
+
 export function useSetHotkeysScope() {
   return useRecoilCallback(
     ({ snapshot, set }) =>
@@ -13,16 +23,6 @@ export function useSetHotkeysScope() {
         const currentHotkeysScope = await snapshot.getPromise(
           currentHotkeysScopeState,
         );
-
-        function isCustomScopesEqual(
-          customScopesA: CustomHotkeysScopes | undefined,
-          customScopesB: CustomHotkeysScopes | undefined,
-        ) {
-          return (
-            customScopesA?.commandMenu === customScopesB?.commandMenu &&
-            customScopesA?.goto === customScopesB?.goto
-          );
-        }
 
         if (currentHotkeysScope.scope === hotkeysScopeToSet) {
           if (!isDefined(customScopes)) {
@@ -45,6 +45,8 @@ export function useSetHotkeysScope() {
             }
           }
         }
+
+        console.log('setting', hotkeysScopeToSet, customScopes);
 
         set(currentHotkeysScopeState, {
           scope: hotkeysScopeToSet,
