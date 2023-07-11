@@ -124,7 +124,7 @@ export function TextInput({
 
   return (
     <StyledContainer>
-      {label && <StyledLabel>{label + required ? '*' : ''}</StyledLabel>}
+      {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
       <StyledInputContainer>
         <StyledInput
           ref={inputRef}
