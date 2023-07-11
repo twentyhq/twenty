@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { motion } from 'framer-motion';
+import debounce from 'lodash.debounce';
 import { useRecoilState } from 'recoil';
 import * as Yup from 'yup';
 
@@ -28,7 +28,7 @@ const StyledContentContainer = styled.div`
   }
 `;
 
-const StyledAnimatedContent = styled(motion.div)`
+const StyledForm = styled.form`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -82,13 +82,13 @@ export function PasswordLogin() {
   const {
     control,
     handleSubmit,
-    formState: { isValid, isSubmitting, errors },
+    formState: { isValid, isSubmitting },
     setValue,
     setError,
     getValues,
     watch,
   } = useForm<Form>({
-    // mode: 'onChange',
+    mode: 'onChange',
     defaultValues: {
       exist: false,
       email: authFlowUserEmail,
@@ -133,36 +133,34 @@ export function PasswordLogin() {
     [onSubmit],
   );
 
-  // useEffect(() => {
-  //   const subscription = watch(async ({ email }) => {
-  //     if (!email) return;
+  useEffect(() => {
+    const debouncedWatch = debounce(async ({ email }) => {
+      if (!email) return;
 
-  //     try {
-  //       // Check if it's a valid email to avoid useless requests
-  //       validationSchema.pick(['email']).validateSync({ email });
+      try {
+        // Check if it's a valid email to avoid useless requests
+        validationSchema.pick(['email']).validateSync({ email });
 
-  //       const { data } = await client.query({
-  //         query: CheckUserExistsDocument,
-  //         variables: {
-  //           email,
-  //         },
-  //       });
+        const { data } = await client.query({
+          query: CheckUserExistsDocument,
+          variables: {
+            email,
+          },
+        });
 
-  //       console.log('data', data);
+        const newExist = !!data?.checkUserExists.exists;
+        const { exist } = getValues();
 
-  //       const newExist = !!data?.checkUserExists.exists;
-  //       const { exist } = getValues();
+        if (exist !== newExist) {
+          setValue('exist', newExist);
+        }
+      } catch {}
+    }, 500);
 
-  //       if (exist !== newExist) {
-  //         setValue('exist', newExist);
-  //       }
-  //     } catch {}
-  //   });
+    const subscription = watch(debouncedWatch);
 
-  //   return () => subscription.unsubscribe();
-  // }, [getValues, setValue, watch, client]);
-
-  console.log('RENDER !');
+    return () => subscription.unsubscribe();
+  }, [getValues, setValue, watch, client]);
 
   return (
     <>
@@ -178,60 +176,67 @@ export function PasswordLogin() {
           </SubTitle>
         )}
       />
-      <StyledAnimatedContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <StyledContentContainer>
-            <StyledSectionContainer>
-              <SubSectionTitle title="Email" />
-              <Controller
-                name="email"
-                control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    value={value}
-                    placeholder="Email"
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    fullWidth
-                  />
-                )}
-              />
-            </StyledSectionContainer>
-            <StyledSectionContainer>
-              <SubSectionTitle title="Password" />
-              <Controller
-                name="password"
-                control={control}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    value={value}
-                    placeholder="Password"
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    fullWidth
-                    type="password"
-                  />
-                )}
-              />
-            </StyledSectionContainer>
-          </StyledContentContainer>
-          <StyledButtonContainer>
-            <MainButton
-              title="Continue"
-              type="submit"
-              disabled={!isValid || isSubmitting}
-              fullWidth
+      <StyledForm onSubmit={handleSubmit(onSubmit)}>
+        <StyledContentContainer>
+          <StyledSectionContainer>
+            <SubSectionTitle title="Email" />
+            <Controller
+              name="email"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  value={value}
+                  placeholder="Email"
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={error?.message}
+                  fullWidth
+                />
+              )}
             />
-          </StyledButtonContainer>
-          {errors && (
-            <StyledErrorContainer>
-              {errors?.email?.message ??
-                errors?.root?.message ??
-                errors?.password?.message}
-            </StyledErrorContainer>
+          </StyledSectionContainer>
+          <StyledSectionContainer>
+            <SubSectionTitle title="Password" />
+            <Controller
+              name="password"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  value={value}
+                  type="password"
+                  placeholder="Password"
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+          </StyledSectionContainer>
+        </StyledContentContainer>
+        <StyledButtonContainer>
+          <MainButton
+            title="Continue"
+            type="submit"
+            disabled={!isValid || isSubmitting}
+            fullWidth
+          />
+        </StyledButtonContainer>
+        {/* Will be replaced by error snack bar */}
+        <Controller
+          name="exist"
+          control={control}
+          render={({ formState: { errors } }) => (
+            <StyledErrorContainer>{errors?.root?.message}</StyledErrorContainer>
           )}
-        </form>
-      </StyledAnimatedContent>
+        />
+      </StyledForm>
     </>
   );
 }

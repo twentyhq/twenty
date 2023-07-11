@@ -1,10 +1,15 @@
-import { ChangeEvent, useRef } from 'react';
+import { ChangeEvent, FocusEventHandler, useMemo, useRef } from 'react';
+import { Tooltip } from 'react-tooltip';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { Key } from 'ts-key-enum';
+import { v4 } from 'uuid';
 
 import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { rgba } from '@/ui/themes/colors';
 
 type OwnProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -13,6 +18,7 @@ type OwnProps = Omit<
   label?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
+  error?: string;
 };
 
 const StyledContainer = styled.div`
@@ -28,7 +34,11 @@ const StyledLabel = styled.span`
   text-transform: uppercase;
 `;
 
-const StyledInput = styled.input<{ fullWidth: boolean }>`
+const StyledInputContainer = styled.div`
+  position: relative;
+`;
+
+const StyledInput = styled.input<Pick<OwnProps, 'fullWidth'>>`
   background-color: ${({ theme }) => theme.background.tertiary};
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -50,13 +60,43 @@ const StyledInput = styled.input<{ fullWidth: boolean }>`
   }
 `;
 
+const StyledErrorContainer = styled.div`
+  position: absolute;
+  right: ${({ theme }) => theme.spacing(1)};
+  top: 50%;
+  transform: translateY(-50%);
+`;
+
+const StyledTooltip = styled(Tooltip)`
+  background-color: ${({ theme }) => rgba(theme.color.red, 0.9)};
+
+  box-shadow: 0px 2px 4px 3px
+    ${({ theme }) => theme.background.transparent.light};
+
+  box-shadow: 2px 4px 16px 6px
+    ${({ theme }) => theme.background.transparent.light};
+
+  color: ${({ theme }) => theme.color.gray0};
+
+  opacity: 1;
+  padding: 8px;
+`;
+
 export function TextInput({
   label,
   value,
   onChange,
+  onFocus,
+  onBlur,
   fullWidth,
+  error,
+  required,
   ...props
 }: OwnProps): JSX.Element {
+  const id = useMemo(() => v4(), []);
+
+  const theme = useTheme();
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -64,13 +104,15 @@ export function TextInput({
     setHotkeysScopeAndMemorizePreviousScope,
   } = usePreviousHotkeysScope();
 
-  function handleFocus() {
+  const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
+    onFocus?.(e);
     setHotkeysScopeAndMemorizePreviousScope(InternalHotkeysScope.TextInput);
-  }
+  };
 
-  function handleBlur() {
+  const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
+    onBlur?.(e);
     goBackToPreviousHotkeysScope();
-  }
+  };
 
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
@@ -82,21 +124,34 @@ export function TextInput({
 
   return (
     <StyledContainer>
-      {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledInput
-        ref={inputRef}
-        tabIndex={props.tabIndex ?? 0}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        fullWidth={fullWidth ?? false}
-        value={value}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          if (onChange) {
-            onChange(event.target.value);
-          }
-        }}
-        {...props}
-      />
+      {label && <StyledLabel>{label + required ? '*' : ''}</StyledLabel>}
+      <StyledInputContainer>
+        <StyledInput
+          ref={inputRef}
+          tabIndex={props.tabIndex ?? 0}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          fullWidth={fullWidth ?? false}
+          value={value}
+          required={required}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            if (onChange) {
+              onChange(event.target.value);
+            }
+          }}
+          {...props}
+        />
+        {error && (
+          <StyledErrorContainer>
+            <IconAlertCircle
+              id={`id-${id}`}
+              size={16}
+              color={theme.color.red}
+            />
+            <StyledTooltip anchorSelect={`#id-${id}`} content={error} noArrow />
+          </StyledErrorContainer>
+        )}
+      </StyledInputContainer>
     </StyledContainer>
   );
 }
