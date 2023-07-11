@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
-import { GET_COMMENT_THREADS_BY_TARGETS } from '@/comments/services';
+import { GET_COMMENT_THREAD } from '@/comments/services';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
 import { IconArrowUpRight } from '@/ui/icons/index';
@@ -22,11 +22,21 @@ import { CommentThreadActionBar } from './CommentThreadActionBar';
 import '@blocknote/core/style.css';
 
 const StyledContainer = styled.div`
-  align-items: flex-start;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  height: 100%;
+  justify-content: space-between;
+  overflow-y: auto;
+`;
 
+const StyledUpperPartContainer = styled.div`
+  align-items: flex-start;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  gap: ${({ theme }) => theme.spacing(4)};
   justify-content: flex-start;
 `;
 
@@ -59,7 +69,7 @@ const StyledEditableTitleInput = styled.input`
   line-height: ${({ theme }) => theme.text.lineHeight.md};
   outline: none;
   width: calc(100% - ${({ theme }) => theme.spacing(2)});
-  :placeholder {
+  &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
   }
 `;
@@ -75,11 +85,13 @@ const StyledTopActionsContainer = styled.div`
 type OwnProps = {
   commentThreadId: string;
   showComment?: boolean;
+  autoFillTitle?: boolean;
 };
 
 export function CommentThread({
   commentThreadId,
   showComment = true,
+  autoFillTitle = false,
 }: OwnProps) {
   const { data } = useGetCommentThreadQuery({
     variables: {
@@ -90,7 +102,8 @@ export function CommentThread({
   const commentThread = data?.findManyCommentThreads[0];
 
   const [title, setTitle] = useState<string | null | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(true);
+  const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
+    useState<boolean>(false);
 
   const [updateCommentThreadTitleMutation] =
     useUpdateCommentThreadTitleMutation();
@@ -102,30 +115,25 @@ export function CommentThread({
           commentThreadId: commentThreadId,
           commentThreadTitle: title ?? '',
         },
-        refetchQueries: [
-          getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
-        ],
+        refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
       });
     }
     return debounce(updateTitle, 200);
   }, [commentThreadId, updateCommentThreadTitleMutation]);
 
   function updateTitleFromBody(body: string) {
-    const title = JSON.parse(body)[0]?.content[0]?.text;
-    if (!commentThread?.title || commentThread?.title === '') {
-      setTitle(title);
-      debounceUpdateTitle(title);
+    const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
+    if (!hasUserManuallySetTitle && autoFillTitle) {
+      setTitle(parsedTitle);
+      debounceUpdateTitle(parsedTitle);
     }
   }
 
   useEffect(() => {
     if (commentThread) {
-      setIsLoading(false);
-    }
-    if (isLoading) {
       setTitle(commentThread?.title ?? '');
     }
-  }, [commentThread, isLoading]);
+  }, [commentThread]);
 
   if (!commentThread) {
     return <></>;
@@ -133,39 +141,43 @@ export function CommentThread({
 
   return (
     <StyledContainer>
-      <StyledTopContainer>
-        <StyledTopActionsContainer>
-          <CommentThreadTypeDropdown />
-          <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
-        </StyledTopActionsContainer>
-        <StyledEditableTitleInput
-          placeholder="Note title (optional)"
-          onChange={(event) => {
-            setTitle(event.target.value);
-            debounceUpdateTitle(event.target.value);
-          }}
-          value={title ?? ''}
-        />
-        <PropertyBox>
-          <PropertyBoxItem
-            icon={<IconArrowUpRight />}
-            value={
-              <CommentThreadRelationPicker
-                commentThread={{
-                  id: commentThread.id,
-                  commentThreadTargets:
-                    commentThread.commentThreadTargets ?? [],
-                }}
-              />
-            }
-            label="Relations"
+      <StyledUpperPartContainer>
+        <StyledTopContainer>
+          <StyledTopActionsContainer>
+            <CommentThreadTypeDropdown />
+            <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
+          </StyledTopActionsContainer>
+          <StyledEditableTitleInput
+            placeholder="Note title (optional)"
+            onChange={(event) => {
+              setHasUserManuallySetTitle(true);
+              setTitle(event.target.value);
+              debounceUpdateTitle(event.target.value);
+            }}
+            value={title ?? ''}
           />
-        </PropertyBox>
-      </StyledTopContainer>
-      <CommentThreadBodyEditor
-        commentThread={commentThread}
-        onChange={updateTitleFromBody}
-      />
+          <PropertyBox>
+            <PropertyBoxItem
+              icon={<IconArrowUpRight />}
+              value={
+                <CommentThreadRelationPicker
+                  commentThread={{
+                    id: commentThread.id,
+                    commentThreadTargets:
+                      commentThread.commentThreadTargets ?? [],
+                  }}
+                />
+              }
+              label="Relations"
+            />
+          </PropertyBox>
+        </StyledTopContainer>
+        <CommentThreadBodyEditor
+          commentThread={commentThread}
+          onChange={updateTitleFromBody}
+        />
+      </StyledUpperPartContainer>
+
       {showComment && (
         <CommentThreadComments
           commentThread={{

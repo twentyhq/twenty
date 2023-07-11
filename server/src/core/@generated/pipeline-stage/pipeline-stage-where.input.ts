@@ -1,6 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
+import { IntNullableFilter } from '../prisma/int-nullable-filter.input';
 import { HideField } from '@nestjs/graphql';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
@@ -31,6 +32,9 @@ export class PipelineStageWhereInput {
 
     @Field(() => StringFilter, {nullable:true})
     color?: StringFilter;
+
+    @Field(() => IntNullableFilter, {nullable:true})
+    index?: IntNullableFilter;
 
     @Field(() => StringFilter, {nullable:true})
     pipelineId?: StringFilter;

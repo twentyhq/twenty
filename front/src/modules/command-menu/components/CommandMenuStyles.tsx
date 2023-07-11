@@ -36,7 +36,7 @@ export const StyledInput = styled(Command.Input)`
 
 export const StyledMenuItem = styled(Command.Item)`
   align-items: center;
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   display: flex;
@@ -122,14 +122,14 @@ export const StyledIconAndLabelContainer = styled.div`
 export const StyledIconContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 export const StyledShortCut = styled.div`
   background-color: ${({ theme }) => theme.background.transparent.light};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.light};
   margin-left: ${({ theme }) => theme.spacing(1)};
   margin-right: ${({ theme }) => theme.spacing(1)};

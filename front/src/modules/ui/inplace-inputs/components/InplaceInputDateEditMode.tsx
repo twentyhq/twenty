@@ -17,7 +17,7 @@ export type StyledCalendarContainerProps = {
 const StyledCalendarContainer = styled.div<StyledCalendarContainerProps>`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   left: -10px;
   position: absolute;

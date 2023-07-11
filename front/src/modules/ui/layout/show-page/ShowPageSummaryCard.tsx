@@ -9,11 +9,18 @@ import {
   beautifyPastDateRelativeToNow,
 } from '@/utils/datetime/date-utils';
 
+type OwnProps = {
+  id?: string;
+  logoOrAvatar?: string;
+  title: string;
+  date: string;
+};
+
 const StyledShowPageSummaryCard = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(6)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)}
     ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(3)};
@@ -23,6 +30,7 @@ const StyledInfoContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledDate = styled.div`
@@ -46,14 +54,11 @@ const StyledTooltip = styled(Tooltip)`
 `;
 
 export function ShowPageSummaryCard({
+  id,
   logoOrAvatar,
   title,
   date,
-}: {
-  logoOrAvatar?: string;
-  title: string;
-  date: string;
-}) {
+}: OwnProps) {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDate(date) : '';
@@ -65,6 +70,7 @@ export function ShowPageSummaryCard({
       <Avatar
         avatarUrl={logoOrAvatar}
         size={theme.icon.size.xl}
+        colorId={id}
         placeholder={title}
       />
       <StyledInfoContainer>

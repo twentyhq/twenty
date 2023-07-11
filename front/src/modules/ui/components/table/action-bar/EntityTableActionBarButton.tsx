@@ -13,7 +13,7 @@ type StyledButtonProps = {
 };
 
 const StyledButton = styled.div<StyledButtonProps>`
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${(props) =>
     props.type === 'warning'
       ? props.theme.color.red

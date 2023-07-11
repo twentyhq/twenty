@@ -25,7 +25,7 @@ const StyledItem = styled.button<StyledItemProps>`
   background: ${(props) =>
     props.active ? props.theme.background.transparent.light : 'inherit'};
   border: none;
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${(props) => {
     if (props.active) {
       return props.theme.font.color.primary;

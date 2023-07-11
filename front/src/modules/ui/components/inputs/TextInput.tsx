@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
@@ -31,7 +31,7 @@ const StyledLabel = styled.span`
 const StyledInput = styled.input<{ fullWidth: boolean }>`
   background-color: ${({ theme }) => theme.background.tertiary};
   border: none;
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 
   color: ${({ theme }) => theme.font.color.primary};
   font-family: ${({ theme }) => theme.font.family};
@@ -58,7 +58,6 @@ export function TextInput({
   ...props
 }: OwnProps): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [internalValue, setInternalValue] = useState(value);
 
   const {
     goBackToPreviousHotkeysScope,
@@ -92,9 +91,8 @@ export function TextInput({
         onFocus={handleFocus}
         onBlur={handleBlur}
         fullWidth={fullWidth ?? false}
-        value={internalValue}
+        value={value}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          setInternalValue(event.target.value);
           if (onChange) {
             onChange(event.target.value);
           }

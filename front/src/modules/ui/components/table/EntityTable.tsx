@@ -35,7 +35,7 @@ type OwnProps<TData extends { id: string }, SortField> = {
 const StyledTable = styled.table`
   border-collapse: collapse;
 
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   border-spacing: 0;
   margin-left: ${({ theme }) => theme.table.horizontalCellMargin};
   margin-right: ${({ theme }) => theme.table.horizontalCellMargin};

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
@@ -25,9 +25,17 @@ export function CommentThreadBodyEditor({ commentThread, onChange }: OwnProps) {
   const [updateCommentThreadBodyMutation] =
     useUpdateCommentThreadBodyMutation();
 
+  const [body, setBody] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (body) {
+      onChange?.(body);
+    }
+  }, [body, onChange]);
+
   const debounceOnChange = useMemo(() => {
     function onInternalChange(commentThreadBody: string) {
-      onChange?.(commentThreadBody);
+      setBody(commentThreadBody);
       updateCommentThreadBodyMutation({
         variables: {
           commentThreadId: commentThread.id,
@@ -40,13 +48,13 @@ export function CommentThreadBodyEditor({ commentThread, onChange }: OwnProps) {
     }
 
     return debounce(onInternalChange, 200);
-  }, [commentThread, updateCommentThreadBodyMutation, onChange]);
+  }, [commentThread, updateCommentThreadBodyMutation, setBody]);
 
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent: commentThread.body
       ? JSON.parse(commentThread.body)
       : undefined,
-    editorDOMAttributes: { class: 'editor-edit-mode' },
+    editorDOMAttributes: { class: 'editor' },
     onEditorContentChange: (editor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
     },

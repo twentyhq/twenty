@@ -1,9 +1,10 @@
+import { BrowserRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
-import CompanyChip from '../CompanyChip';
+import { CompanyChip } from '../CompanyChip';
 
 const meta: Meta<typeof CompanyChip> = {
   title: 'Modules/Companies/CompanyChip',
@@ -32,10 +33,13 @@ const TestCellContainer = styled.div`
 export const SmallName: Story = {
   render: getRenderWrapperForComponent(
     <TestCellContainer>
-      <CompanyChip
-        name="Airbnb"
-        picture="https://api.faviconkit.com/airbnb.com/144"
-      />
+      <BrowserRouter>
+        <CompanyChip
+          id="airbnb"
+          name="Airbnb"
+          picture="https://api.faviconkit.com/airbnb.com/144"
+        />
+      </BrowserRouter>
     </TestCellContainer>,
   ),
 };
@@ -43,10 +47,13 @@ export const SmallName: Story = {
 export const BigName: Story = {
   render: getRenderWrapperForComponent(
     <TestCellContainer>
-      <CompanyChip
-        name="Google with a real big name to overflow the cell"
-        picture="https://api.faviconkit.com/google.com/144"
-      />
+      <BrowserRouter>
+        <CompanyChip
+          id="google"
+          name="Google with a real big name to overflow the cell"
+          picture="https://api.faviconkit.com/google.com/144"
+        />
+      </BrowserRouter>
     </TestCellContainer>,
   ),
 };

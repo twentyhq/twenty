@@ -81,6 +81,7 @@ export function SingleEntitySelectBase<
           >
             <Avatar
               avatarUrl={entity.avatarUrl}
+              colorId={entity.id}
               placeholder={entity.name}
               size={16}
               type={entity.avatarType ?? 'rounded'}

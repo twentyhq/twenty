@@ -86,7 +86,7 @@ const StyledItemTitleContainer = styled.div`
   display: flex;
   flex: 1 0 0;
   flex-wrap: wrap;
-  gap: 4px 8px;
+  gap: 4px;
   height: 20px;
   span {
     color: ${({ theme }) => theme.font.color.secondary};
@@ -131,7 +131,7 @@ const StyledCard = styled.div`
   align-self: stretch;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   flex-direction: column;
   gap: 12px;

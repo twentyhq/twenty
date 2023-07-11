@@ -23,9 +23,15 @@ export function useBoard(pipelineId: string) {
     variables: { where: { id: { equals: pipelineId } } },
   });
   const pipelineStages = pipelines.data?.findManyPipeline[0]?.pipelineStages;
+  const orderedPipelineStages = pipelineStages
+    ? [...pipelineStages].sort((a, b) => {
+        if (!a.index || !b.index) return 0;
+        return a.index - b.index;
+      })
+    : [];
 
   const initialBoard: Column[] =
-    pipelineStages?.map((pipelineStage) => ({
+    orderedPipelineStages?.map((pipelineStage) => ({
       id: pipelineStage.id,
       title: pipelineStage.name,
       colorCode: pipelineStage.color,
@@ -34,7 +40,7 @@ export function useBoard(pipelineId: string) {
         [],
     })) || [];
 
-  const pipelineProgresses = pipelineStages?.reduce(
+  const pipelineProgresses = orderedPipelineStages?.reduce(
     (acc, pipelineStage) => [
       ...acc,
       ...(pipelineStage.pipelineProgresses || []),

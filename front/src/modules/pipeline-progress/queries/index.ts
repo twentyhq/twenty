@@ -10,6 +10,7 @@ export const GET_PIPELINES = gql`
         id
         name
         color
+        index
         pipelineProgresses {
           id
           progressableType

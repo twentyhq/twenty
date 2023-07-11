@@ -19,6 +19,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 
 import { CompanyShow } from './pages/companies/CompanyShow';
 import { PersonShow } from './pages/people/PersonShow';
+import { SettingsWorksapce } from './pages/settings/SettingsWorkspace';
 import { AppPath } from './sync-hooks/types/AppPath';
 import { AuthPath } from './sync-hooks/types/AuthPath';
 import { SettingsPath } from './sync-hooks/types/SettingsPath';
@@ -101,6 +102,10 @@ export function App() {
                         <Route
                           path={SettingsPath.WorkspaceMembersPage}
                           element={<SettingsWorkspaceMembers />}
+                        />
+                        <Route
+                          path={SettingsPath.Workspace}
+                          element={<SettingsWorksapce />}
                         />
                       </Routes>
                     }

@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { Theme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import PersonPlaceholder from './person-placeholder.png';
+import { Avatar } from '@/users/components/Avatar';
 
 export type PersonChipPropsType = {
-  id?: string;
+  id: string;
   name: string;
   picture?: string;
 };
@@ -26,7 +26,7 @@ const baseStyle = ({ theme }: { theme: Theme }) => `
     filter: brightness(95%);
   }
   img {
-    border-radius: 100%;
+    border-radius: ${theme.border.radius.rounded};
     height: 14px;
     object-fit: cover;
     width: 14px;
@@ -52,10 +52,12 @@ export function PersonChip({ id, name, picture }: PersonChipPropsType) {
   const ContainerComponent = id ? StyledContainerLink : StyledContainerNoLink;
   return (
     <ContainerComponent data-testid="person-chip" to={`/person/${id}`}>
-      <img
-        data-testid="person-chip-image"
-        src={picture ? picture.toString() : PersonPlaceholder.toString()}
-        alt="person"
+      <Avatar
+        avatarUrl={picture}
+        colorId={id}
+        placeholder={name}
+        size={14}
+        type="rounded"
       />
       <StyledName>{name}</StyledName>
     </ContainerComponent>

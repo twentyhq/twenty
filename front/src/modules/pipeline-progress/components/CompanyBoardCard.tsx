@@ -14,7 +14,7 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
     selected ? theme.selectedCard : theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
   &:hover {

@@ -9,7 +9,7 @@ const StyledButton = styled.button`
   align-items: center;
   background: none;
   border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
   display: flex;
   flex-direction: row;
