@@ -4,10 +4,10 @@ import { useRecoilValue } from 'recoil';
 import { currentHotkeysScopeState } from '@/hotkeys/states/internal/currentHotkeysScopeState';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
-import { useHotkeysScope } from './useHotkeysScope';
+import { useHotkeysScopes } from './useHotkeysScopes';
 
 export function useHotkeysScopeAutoSync() {
-  const { setHotkeysScopes } = useHotkeysScope();
+  const { setHotkeysScopes } = useHotkeysScopes();
 
   const currentHotkeysScope = useRecoilValue(currentHotkeysScopeState);
 
