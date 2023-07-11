@@ -1,4 +1,4 @@
-import { useActiveTableFilterCurrentlyEditedInDropdown } from '@/lib/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
+import { useActiveFilterCurrentlyEditedInDropdown } from '@/lib/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
 import { useUpsertActiveFilter } from '@/lib/filters-and-sorts/hooks/useUpsertActiveFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/lib/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
@@ -35,7 +35,7 @@ export function FilterDropdownOperandSelect() {
     );
 
   const activeTableFilterCurrentlyEditedInDropdown =
-    useActiveTableFilterCurrentlyEditedInDropdown(TableContext);
+    useActiveFilterCurrentlyEditedInDropdown(TableContext);
 
   const upsertActiveTableFilter = useUpsertActiveFilter(TableContext);
 

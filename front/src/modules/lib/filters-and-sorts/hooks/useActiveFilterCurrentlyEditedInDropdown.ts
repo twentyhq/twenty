@@ -5,7 +5,7 @@ import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState'
 import { activeFiltersScopedState } from '../states/activeFiltersScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '../states/filterDefinitionUsedInDropdownScopedState';
 
-export function useActiveTableFilterCurrentlyEditedInDropdown(
+export function useActiveFilterCurrentlyEditedInDropdown(
   context: Context<string | null>,
 ) {
   const [activeFilters] = useRecoilScopedState(

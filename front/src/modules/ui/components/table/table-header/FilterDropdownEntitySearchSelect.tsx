@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useActiveTableFilterCurrentlyEditedInDropdown } from '@/lib/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
+import { useActiveFilterCurrentlyEditedInDropdown } from '@/lib/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
 import { useRemoveActiveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveActiveFilter';
 import { useUpsertActiveFilter } from '@/lib/filters-and-sorts/hooks/useUpsertActiveFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
@@ -37,7 +37,7 @@ export function FilterDropdownEntitySearchSelect({
   const removeActiveTableFilter = useRemoveActiveFilter(TableContext);
 
   const activeFilterCurrentlyEditedInDropdown =
-    useActiveTableFilterCurrentlyEditedInDropdown(TableContext);
+    useActiveFilterCurrentlyEditedInDropdown(TableContext);
 
   function handleUserSelected(selectedEntity: EntityForSelect) {
     if (!tableFilterDefinitionUsedInDropdown || !selectedOperandInDropdown) {
