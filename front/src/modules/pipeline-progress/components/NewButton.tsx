@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,6 +14,7 @@ import {
   useCreateOnePipelineProgressMutation,
 } from '~/generated/graphql';
 
+import { GET_PIPELINES } from '../queries';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { boardItemsState } from '../states/boardItemsState';
 
@@ -29,12 +31,14 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
   const [board, setBoard] = useRecoilState(boardColumnsState);
   const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
 
-  const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation();
-
   const {
     goBackToPreviousHotkeysScope,
     setHotkeysScopeAndMemorizePreviousScope,
   } = usePreviousHotkeysScope();
+
+  const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation({
+    refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
+  });
 
   const handleEntitySelect = useCallback(
     async (company: Pick<Company, 'id' | 'name' | 'domainName'>) => {

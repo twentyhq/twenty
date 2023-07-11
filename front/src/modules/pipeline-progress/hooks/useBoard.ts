@@ -21,6 +21,7 @@ type Items = { [key: string]: Item };
 export function useBoard(pipelineId: string) {
   const pipelines = useGetPipelinesQuery({
     variables: { where: { id: { equals: pipelineId } } },
+    skip: pipelineId === '',
   });
   const pipelineStages = pipelines.data?.findManyPipeline[0]?.pipelineStages;
   const orderedPipelineStages = pipelineStages

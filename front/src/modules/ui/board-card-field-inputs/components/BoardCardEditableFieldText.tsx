@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 
 import { BoardCardEditableField } from '@/ui/board-card-field/components/BoardCardEditableField';
 import { InplaceInputTextDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputTextDisplayMode';
@@ -20,7 +20,9 @@ export function BoardCardEditableFieldText({
 }: OwnProps) {
   const [internalValue, setInternalValue] = useState(value);
 
-  const debouncedOnChange = debounce(onChange, 500);
+  const debouncedOnChange = useMemo(() => {
+    return debounce(onChange, 200);
+  }, [onChange]);
 
   return (
     <BoardCardEditableField

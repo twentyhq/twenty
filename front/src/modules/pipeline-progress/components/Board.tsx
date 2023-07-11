@@ -83,7 +83,7 @@ export function Board({
 
   useEffect(() => {
     setBoardItems(initialItems);
-  }, [initialItems, setBoardItems]);
+  }, [initialItems, setBoardItems, boardItems]);
 
   useEffect(() => {
     if (isInitialBoardLoaded) return;
