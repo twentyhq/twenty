@@ -13,6 +13,7 @@ import {
   useCreateOnePipelineProgressMutation,
 } from '~/generated/graphql';
 
+import { GET_PIPELINES } from '../queries';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { boardItemsState } from '../states/boardItemsState';
 
@@ -28,7 +29,9 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
   const [board, setBoard] = useRecoilState(boardColumnsState);
   const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
 
-  const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation();
+  const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation({
+    refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
+  });
   const onEntitySelect = useCallback(
     async (company: Pick<Company, 'id' | 'name' | 'domainName'>) => {
       setIsCreatingCard(false);
