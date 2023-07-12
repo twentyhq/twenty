@@ -69,6 +69,7 @@ export function FilterDropdownButton({
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
+      setHotkeysScope(hotkeysScope);
       setIsUnfolded(true);
     } else {
       if (filterDefinitionUsedInDropdown?.type === 'entity') {

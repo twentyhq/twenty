@@ -92,13 +92,13 @@ export function TableHeader<SortField>({
         <StyledFilters>
           <FilterDropdownButton
             context={TableContext}
-            hotkeysScope={InternalHotkeysScope.Table}
+            hotkeysScope={InternalHotkeysScope.TableHeaderDropdownButton}
           />
           <SortDropdownButton<SortField>
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
-            hotkeysScope={InternalHotkeysScope.Table}
+            hotkeysScope={InternalHotkeysScope.TableHeaderDropdownButton}
           />
         </StyledFilters>
       </StyledTableHeader>
