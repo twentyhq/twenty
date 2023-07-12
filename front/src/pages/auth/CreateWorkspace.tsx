@@ -42,7 +42,7 @@ const StyledErrorContainer = styled.div`
 
 const validationSchema = Yup.object()
   .shape({
-    name: Yup.string().required(),
+    name: Yup.string().required('Name can not be empty'),
   })
   .required();
 

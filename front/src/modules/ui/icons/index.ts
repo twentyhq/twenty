@@ -36,3 +36,5 @@ export { IconCirclePlus } from '@tabler/icons-react';
 export { IconCheckbox } from '@tabler/icons-react';
 export { IconTimelineEvent } from '@tabler/icons-react';
 export { IconAlertCircle } from '@tabler/icons-react';
+export { IconEye } from '@tabler/icons-react';
+export { IconEyeOff } from '@tabler/icons-react';

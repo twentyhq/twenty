@@ -1,29 +1,31 @@
-import { ChangeEvent, FocusEventHandler, useMemo, useRef } from 'react';
-import { Tooltip } from 'react-tooltip';
+import {
+  ChangeEvent,
+  FocusEventHandler,
+  InputHTMLAttributes,
+  useRef,
+  useState,
+} from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { Key } from 'ts-key-enum';
-import { v4 } from 'uuid';
 
 import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
-import { rgba } from '@/ui/themes/colors';
+import { IconEye, IconEyeOff } from '@/ui/icons/index';
 
-type OwnProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  'onChange'
-> & {
+type OwnProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
   label?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
   error?: string;
 };
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<Pick<OwnProps, 'fullWidth'>>`
   display: flex;
   flex-direction: column;
+  width: ${({ fullWidth, theme }) => (fullWidth ? `100%` : 'auto')};
 `;
 
 const StyledLabel = styled.span`
@@ -35,22 +37,27 @@ const StyledLabel = styled.span`
 `;
 
 const StyledInputContainer = styled.div`
-  position: relative;
+  display: flex;
+  flex-direction: row;
+
+  width: 100%;
 `;
 
 const StyledInput = styled.input<Pick<OwnProps, 'fullWidth'>>`
   background-color: ${({ theme }) => theme.background.tertiary};
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-
+  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  flex-grow: 1;
   font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
 
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)};
-  width: ${({ fullWidth, theme }) =>
-    fullWidth ? `calc(100% - ${theme.spacing(4)})` : 'auto'};
+
+  width: 100%;
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -60,27 +67,31 @@ const StyledInput = styled.input<Pick<OwnProps, 'fullWidth'>>`
   }
 `;
 
-const StyledErrorContainer = styled.div`
-  position: absolute;
-  right: ${({ theme }) => theme.spacing(1)};
-  top: 50%;
-  transform: translateY(-50%);
+const StyledErrorHelper = styled.div`
+  color: ${({ theme }) => theme.color.red};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledTooltip = styled(Tooltip)`
-  background-color: ${({ theme }) => rgba(theme.color.red, 0.9)};
-
-  box-shadow: 0px 2px 4px 3px
-    ${({ theme }) => theme.background.transparent.light};
-
-  box-shadow: 2px 4px 16px 6px
-    ${({ theme }) => theme.background.transparent.light};
-
-  color: ${({ theme }) => theme.color.gray0};
-
-  opacity: 1;
-  padding: 8px;
+const StyledTrailingIconContainer = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.tertiary};
+  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
+  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  justify-content: center;
+  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
+
+const StyledTrailingIcon = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+`;
+
+const INPUT_TYPE_PASSWORD = 'password';
 
 export function TextInput({
   label,
@@ -91,10 +102,9 @@ export function TextInput({
   fullWidth,
   error,
   required,
+  type,
   ...props
 }: OwnProps): JSX.Element {
-  const id = useMemo(() => v4(), []);
-
   const theme = useTheme();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -122,8 +132,14 @@ export function TextInput({
     InternalHotkeysScope.TextInput,
   );
 
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const handleTogglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
-    <StyledContainer>
+    <StyledContainer fullWidth={fullWidth ?? false}>
       {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
       <StyledInputContainer>
         <StyledInput
@@ -131,9 +147,9 @@ export function TextInput({
           tabIndex={props.tabIndex ?? 0}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          fullWidth={fullWidth ?? false}
           value={value}
           required={required}
+          type={passwordVisible ? 'text' : type}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             if (onChange) {
               onChange(event.target.value);
@@ -141,17 +157,27 @@ export function TextInput({
           }}
           {...props}
         />
-        {error && (
-          <StyledErrorContainer>
-            <IconAlertCircle
-              id={`id-${id}`}
-              size={16}
-              color={theme.color.red}
-            />
-            <StyledTooltip anchorSelect={`#id-${id}`} content={error} noArrow />
-          </StyledErrorContainer>
-        )}
+        <StyledTrailingIconContainer>
+          {error && (
+            <StyledTrailingIcon>
+              <IconAlertCircle size={16} color={theme.color.red} />
+            </StyledTrailingIcon>
+          )}
+          {!error && type === INPUT_TYPE_PASSWORD && (
+            <StyledTrailingIcon
+              onClick={handleTogglePasswordVisibility}
+              data-testid="reveal-password-button"
+            >
+              {passwordVisible ? (
+                <IconEyeOff size={theme.icon.size.md} />
+              ) : (
+                <IconEye size={theme.icon.size.md} />
+              )}
+            </StyledTrailingIcon>
+          )}
+        </StyledTrailingIconContainer>
       </StyledInputContainer>
+      {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
     </StyledContainer>
   );
 }

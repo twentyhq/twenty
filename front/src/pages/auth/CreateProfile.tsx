@@ -53,8 +53,8 @@ const StyledErrorContainer = styled.div`
 
 const validationSchema = Yup.object()
   .shape({
-    firstName: Yup.string().required(),
-    lastName: Yup.string().required(),
+    firstName: Yup.string().required('First name can not be empty'),
+    lastName: Yup.string().required('Last name can not be empty'),
   })
   .required();
 

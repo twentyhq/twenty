@@ -1,10 +1,8 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { yupResolver } from '@hookform/resolvers/yup';
-import debounce from 'lodash.debounce';
 import { useRecoilState } from 'recoil';
 import * as Yup from 'yup';
 
@@ -20,7 +18,7 @@ import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysSc
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
-import { CheckUserExistsDocument } from '~/generated/graphql';
+import { useCheckUserExistsQuery } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -56,7 +54,7 @@ const StyledErrorContainer = styled.div`
 const validationSchema = Yup.object()
   .shape({
     exist: Yup.boolean().required(),
-    email: Yup.string().email().required(),
+    email: Yup.string().email('Email must be a valid email').required(),
     password: Yup.string()
       .matches(
         PASSWORD_REGEX,
@@ -73,10 +71,15 @@ export function PasswordLogin() {
 
   const [isDemoMode] = useRecoilState(isDemoModeState);
   const [authFlowUserEmail] = useRecoilState(authFlowUserEmailState);
+  const [showErrors, setShowErrors] = useState(false);
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
 
-  const client = useApolloClient();
+  const { data: checkUserExistsData } = useCheckUserExistsQuery({
+    variables: {
+      email: authFlowUserEmail,
+    },
+  });
 
   const { login, signUp } = useAuth();
 
@@ -84,11 +87,10 @@ export function PasswordLogin() {
   const {
     control,
     handleSubmit,
-    formState: { isValid, isSubmitting },
-    setValue,
+    formState: { isSubmitting },
     setError,
-    getValues,
     watch,
+    getValues,
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
@@ -105,7 +107,7 @@ export function PasswordLogin() {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
         }
-        if (data.exist) {
+        if (checkUserExistsData?.checkUserExists.exists) {
           await login(data.email, data.password);
         } else {
           await signUp(data.email, data.password, workspaceInviteHash);
@@ -115,7 +117,14 @@ export function PasswordLogin() {
         setError('root', { message: err?.message });
       }
     },
-    [login, navigate, setError, signUp, workspaceInviteHash],
+    [
+      login,
+      navigate,
+      setError,
+      signUp,
+      workspaceInviteHash,
+      checkUserExistsData,
+    ],
   );
   useScopedHotkeys(
     'enter',
@@ -126,50 +135,20 @@ export function PasswordLogin() {
     [onSubmit],
   );
 
-  useEffect(() => {
-    const debouncedWatch = debounce(async ({ email }) => {
-      if (!email) return;
-
-      try {
-        // Check if it's a valid email to avoid useless requests
-        validationSchema.pick(['email']).validateSync({ email });
-
-        const { data } = await client.query({
-          query: CheckUserExistsDocument,
-          variables: {
-            email,
-          },
-        });
-
-        const newExist = !!data?.checkUserExists.exists;
-        const { exist } = getValues();
-
-        if (exist !== newExist) {
-          setValue('exist', newExist);
-        }
-      } catch {}
-    }, 500);
-
-    const subscription = watch(debouncedWatch);
-
-    return () => subscription.unsubscribe();
-  }, [getValues, setValue, watch, client]);
-
   return (
     <>
       <Logo />
       <Title>Welcome to Twenty</Title>
-
-      <Controller
-        name="exist"
-        control={control}
-        render={({ field: { value } }) => (
-          <SubTitle>
-            Enter your credentials to sign {value ? 'in' : 'up'}
-          </SubTitle>
-        )}
-      />
-      <StyledForm onSubmit={handleSubmit(onSubmit)}>
+      <SubTitle>
+        Enter your credentials to sign{' '}
+        {checkUserExistsData?.checkUserExists.exists ? 'in' : 'up'}
+      </SubTitle>
+      <StyledForm
+        onSubmit={(event) => {
+          setShowErrors(true);
+          return handleSubmit(onSubmit)(event);
+        }}
+      >
         <StyledContentContainer>
           <StyledSectionContainer>
             <SubSectionTitle title="Email" />
@@ -185,7 +164,7 @@ export function PasswordLogin() {
                   placeholder="Email"
                   onBlur={onBlur}
                   onChange={onChange}
-                  error={error?.message}
+                  error={showErrors ? error?.message : undefined}
                   fullWidth
                 />
               )}
@@ -206,7 +185,7 @@ export function PasswordLogin() {
                   placeholder="Password"
                   onBlur={onBlur}
                   onChange={onChange}
-                  error={error?.message}
+                  error={showErrors ? error?.message : undefined}
                   fullWidth
                 />
               )}
@@ -217,7 +196,7 @@ export function PasswordLogin() {
           <MainButton
             title="Continue"
             type="submit"
-            disabled={!isValid || isSubmitting}
+            disabled={!watch('email') || !watch('password') || isSubmitting}
             fullWidth
           />
         </StyledButtonContainer>
