@@ -9,9 +9,15 @@ export const StyledColumn = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+`;
+
 export const StyledColumnTitle = styled.h3`
   color: ${({ color }) => color};
-  font-family: 'Inter';
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -20,16 +26,24 @@ export const StyledColumnTitle = styled.h3`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
+export const StyledAmount = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+`;
+
 type OwnProps = {
   colorCode?: string;
   title: string;
+  amount: number;
   children: React.ReactNode;
 };
 
-export function BoardColumn({ colorCode, title, children }: OwnProps) {
+export function BoardColumn({ colorCode, title, amount, children }: OwnProps) {
   return (
     <StyledColumn>
-      <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
+      <StyledHeader>
+        <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
+        {!!amount && <StyledAmount>${amount}</StyledAmount>}
+      </StyledHeader>
       {children}
     </StyledColumn>
   );

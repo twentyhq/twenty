@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import {
   DragDropContext,
@@ -98,6 +98,28 @@ export function Board({
     isInitialBoardLoaded,
   ]);
 
+  const calculateColumnTotals = (
+    columns: Column[],
+    items: {
+      [key: string]: CompanyProgress;
+    },
+  ): { [key: string]: number } => {
+    return columns.reduce<{ [key: string]: number }>((acc, column) => {
+      acc[column.id] = column.itemKeys.reduce(
+        (total: number, itemKey: string) => {
+          return total + (items[itemKey]?.pipelineProgress?.amount || 0);
+        },
+        0,
+      );
+      return acc;
+    }, {});
+  };
+
+  const columnTotals = useMemo(
+    () => calculateColumnTotals(board, boardItems),
+    [board, boardItems],
+  );
+
   const onDragEnd: OnDragEndResponder = useCallback(
     async (result) => {
       const newBoard = getOptimisticlyUpdatedBoard(board, result);
@@ -133,7 +155,11 @@ export function Board({
         {columns.map((column, columnIndex) => (
           <Droppable key={column.id} droppableId={column.id}>
             {(droppableProvided) => (
-              <BoardColumn title={column.title} colorCode={column.colorCode}>
+              <BoardColumn
+                title={`${column.title}  `}
+                amount={columnTotals[column.id]}
+                colorCode={column.colorCode}
+              >
                 <BoardColumnCardsContainer
                   droppableProvided={droppableProvided}
                 >
