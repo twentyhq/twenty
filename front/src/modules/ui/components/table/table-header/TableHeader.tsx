@@ -1,14 +1,15 @@
 import { ReactNode, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { FilterDropdownButton } from '@/lib/filters-and-sorts/components/FilterDropdownButton';
+import SortAndFilterBar from '@/lib/filters-and-sorts/components/SortAndFilterBar';
+import { SortDropdownButton } from '@/lib/filters-and-sorts/components/SortDropdownButton';
 import {
   SelectedSortType,
   SortType,
-} from '@/filters-and-sorts/interfaces/sorts/interface';
-
-import { FilterDropdownButton } from './FilterDropdownButton';
-import SortAndFilterBar from './SortAndFilterBar';
-import { SortDropdownButton } from './SortDropdownButton';
+} from '@/lib/filters-and-sorts/interfaces/sorts/interface';
+import { TableContext } from '@/ui/tables/states/TableContext';
 
 type OwnProps<SortField> = {
   viewName: string;
@@ -89,15 +90,20 @@ export function TableHeader<SortField>({
           {viewName}
         </StyledViewSection>
         <StyledFilters>
-          <FilterDropdownButton />
+          <FilterDropdownButton
+            context={TableContext}
+            hotkeysScope={InternalHotkeysScope.TableHeaderDropdownButton}
+          />
           <SortDropdownButton<SortField>
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
+            hotkeysScope={InternalHotkeysScope.TableHeaderDropdownButton}
           />
         </StyledFilters>
       </StyledTableHeader>
       <SortAndFilterBar
+        context={TableContext}
         sorts={sorts}
         onRemoveSort={sortUnselect}
         onCancelClick={() => {

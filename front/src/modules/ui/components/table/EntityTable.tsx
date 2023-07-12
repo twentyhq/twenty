@@ -11,7 +11,7 @@ import { useRecoilState } from 'recoil';
 import {
   SelectedSortType,
   SortType,
-} from '@/filters-and-sorts/interfaces/sorts/interface';
+} from '@/lib/filters-and-sorts/interfaces/sorts/interface';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { useLeaveTableFocus } from '@/ui/tables/hooks/useLeaveTableFocus';

@@ -12,6 +12,7 @@ const StyledEditor = styled.div`
   & .editor {
     background: ${({ theme }) => theme.background.primary};
     font-size: 13px;
+    color: ${({ theme }) => theme.font.color.primary};
   }
   & .editor [class^='_inlineContent']:before {
     color: ${({ theme }) => theme.font.color.tertiary};
