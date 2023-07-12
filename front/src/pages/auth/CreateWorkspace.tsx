@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useRecoilState } from 'recoil';
 import * as Yup from 'yup';
 
 import { SubTitle } from '@/auth/components/ui/SubTitle';

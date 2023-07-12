@@ -13,7 +13,6 @@ import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
-import { isMockModeState } from '@/auth/states/isMockModeState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
@@ -74,7 +73,6 @@ export function PasswordLogin() {
 
   const [isDemoMode] = useRecoilState(isDemoModeState);
   const [authFlowUserEmail] = useRecoilState(authFlowUserEmailState);
-  const [, setMockMode] = useRecoilState(isMockModeState);
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
 
@@ -103,7 +101,6 @@ export function PasswordLogin() {
 
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
-      setMockMode(false);
       try {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
@@ -118,7 +115,7 @@ export function PasswordLogin() {
         setError('root', { message: err?.message });
       }
     },
-    [login, navigate, setError, setMockMode, signUp, workspaceInviteHash],
+    [login, navigate, setError, signUp, workspaceInviteHash],
   );
   useScopedHotkeys(
     'enter',
@@ -157,10 +154,6 @@ export function PasswordLogin() {
 
     return () => subscription.unsubscribe();
   }, [getValues, setValue, watch, client]);
-
-  useEffect(() => {
-    setMockMode(true);
-  }, [setMockMode]);
 
   return (
     <>
