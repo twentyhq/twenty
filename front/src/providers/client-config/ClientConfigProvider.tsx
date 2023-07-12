@@ -18,11 +18,6 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
 
   const { data, loading } = useGetClientConfigQuery();
 
-  console.log(
-    'ClientConfigProvider',
-    JSON.stringify({ data, isLoading, loading }),
-  );
-
   useEffect(() => {
     if (!loading) {
       setIsLoading(false);
