@@ -1,6 +1,7 @@
 import { ReactNode, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { FilterDropdownButton } from '@/lib/filters-and-sorts/components/FilterDropdownButton';
 import SortAndFilterBar from '@/lib/filters-and-sorts/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/lib/filters-and-sorts/components/SortDropdownButton';
@@ -89,11 +90,15 @@ export function TableHeader<SortField>({
           {viewName}
         </StyledViewSection>
         <StyledFilters>
-          <FilterDropdownButton context={TableContext} />
+          <FilterDropdownButton
+            context={TableContext}
+            hotkeysScope={InternalHotkeysScope.Table}
+          />
           <SortDropdownButton<SortField>
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
+            hotkeysScope={InternalHotkeysScope.Table}
           />
         </StyledFilters>
       </StyledTableHeader>

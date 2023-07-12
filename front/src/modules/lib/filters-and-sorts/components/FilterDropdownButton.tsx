@@ -2,6 +2,7 @@ import { Context, useCallback, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
@@ -22,8 +23,10 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
 export function FilterDropdownButton({
   context,
+  hotkeysScope,
 }: {
   context: Context<string | null>;
+  hotkeysScope: InternalHotkeysScope;
 }) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -62,15 +65,15 @@ export function FilterDropdownButton({
 
   const isFilterSelected = (filters?.length ?? 0) > 0;
 
-  // const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeysScope = useSetHotkeysScope();
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
       setIsUnfolded(true);
     } else {
-      // if (filterDefinitionUsedInDropdown?.type === 'entity') {
-      //   setHotkeysScope(InternalHotkeysScope.Table);
-      // }
+      if (filterDefinitionUsedInDropdown?.type === 'entity') {
+        setHotkeysScope(hotkeysScope);
+      }
       setIsUnfolded(false);
       resetState();
     }
@@ -91,6 +94,7 @@ export function FilterDropdownButton({
       isActive={isFilterSelected}
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={handleIsUnfoldedChange}
+      hotkeysScope={hotkeysScope}
     >
       {!filterDefinitionUsedInDropdown ? (
         <FilterDropdownFilterSelect context={context} />

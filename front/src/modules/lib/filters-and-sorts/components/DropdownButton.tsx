@@ -1,6 +1,9 @@
 import { ReactNode, useRef } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useOutsideAlerter } from '@/ui/hooks/useOutsideAlerter';
 import { IconChevronDown } from '@/ui/icons/index';
 import { overlayBackground, textInputStyle } from '@/ui/themes/effects';
@@ -12,6 +15,7 @@ type OwnProps = {
   isUnfolded?: boolean;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
+  hotkeysScope: InternalHotkeysScope;
 };
 
 const StyledDropdownButtonContainer = styled.div`
@@ -156,15 +160,16 @@ function DropdownButton({
   children,
   isUnfolded = false,
   onIsUnfoldedChange,
+  hotkeysScope,
 }: OwnProps) {
-  // useScopedHotkeys(
-  //   [Key.Enter, Key.Escape],
-  //   () => {
-  //     onIsUnfoldedChange?.(false);
-  //   },
-  //   InternalHotkeysScope.TableHeaderDropdownButton,
-  //   [onIsUnfoldedChange],
-  // );
+  useScopedHotkeys(
+    [Key.Enter, Key.Escape],
+    () => {
+      onIsUnfoldedChange?.(false);
+    },
+    hotkeysScope,
+    [onIsUnfoldedChange],
+  );
 
   const onButtonClick = () => {
     onIsUnfoldedChange?.(!isUnfolded);
