@@ -31,7 +31,6 @@ export function useLeaveTableFocus() {
           .getLoadable(currentHotkeysScopeState)
           .valueOrThrow();
 
-        // TODO: replace with scope ancestor ?
         if (!isSoftFocusActive && !isSomeInputInEditMode) {
           return;
         }
