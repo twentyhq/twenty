@@ -16,8 +16,6 @@ import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDe
 import { PeopleTable } from './PeopleTable';
 
 export function People() {
-  console.log('People');
-
   const [insertPersonMutation] = useInsertPersonMutation();
 
   async function handleAddButtonClick() {

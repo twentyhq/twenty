@@ -1,4 +1,4 @@
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { currentHotkeysScopeState } from '@/hotkeys/states/internal/currentHotkeysScopeState';

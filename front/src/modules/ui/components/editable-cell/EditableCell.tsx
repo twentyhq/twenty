@@ -2,12 +2,9 @@ import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
 import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
 import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
-import { useEditableCell } from './hooks/useEditableCell';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
-import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
 import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
@@ -38,7 +35,6 @@ export function EditableCell({
   nonEditModeContent,
   editHotkeysScope,
 }: OwnProps) {
-  console.log('EditableCell');
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();

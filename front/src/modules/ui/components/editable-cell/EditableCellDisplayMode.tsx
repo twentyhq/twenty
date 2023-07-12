@@ -1,7 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-
-import { isSoftFocusActiveState } from '@/ui/tables/states/isSoftFocusActiveState';
 
 import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
 
@@ -38,7 +35,6 @@ export const EditableCellNormalModeInnerContainer = styled.div`
 export function EditableCellDisplayMode({
   children,
 }: React.PropsWithChildren<unknown>) {
-  console.log('EditableCellDisplayMode');
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
 
   function handleOnClick() {

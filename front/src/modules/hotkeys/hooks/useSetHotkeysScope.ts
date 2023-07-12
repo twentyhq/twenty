@@ -46,8 +46,6 @@ export function useSetHotkeysScope() {
           }
         }
 
-        console.log('setting', hotkeysScopeToSet, customScopes);
-
         set(currentHotkeysScopeState, {
           scope: hotkeysScopeToSet,
           customScopes: {

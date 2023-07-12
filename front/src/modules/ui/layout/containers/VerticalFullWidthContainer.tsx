@@ -11,6 +11,5 @@ export function VerticalFullWidthContainer({
 }: {
   children: JSX.Element[];
 }) {
-  console.log('VerticalFullWidthContainer');
   return <StyledContainer>{children}</StyledContainer>;
 }

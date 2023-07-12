@@ -82,14 +82,14 @@ export function FilterDropdownButton() {
     }
   }
 
-  // useScopedHotkeys(
-  //   [Key.Escape],
-  //   () => {
-  //     handleIsUnfoldedChange(false);
-  //   },
-  //   InternalHotkeysScope.RelationPicker,
-  //   [handleIsUnfoldedChange],
-  // );
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      handleIsUnfoldedChange(false);
+    },
+    InternalHotkeysScope.RelationPicker,
+    [handleIsUnfoldedChange],
+  );
 
   return (
     <DropdownButton

@@ -32,8 +32,6 @@ const StyledLeftContainer = styled.div<LeftContainerProps>`
 `;
 
 export function RightDrawerContainer({ children, topMargin }: OwnProps) {
-  console.log('RightDrawerContentContainer');
-
   return (
     <StyledMainContainer topMargin={topMargin ?? 0}>
       <StyledLeftContainer>

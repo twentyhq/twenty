@@ -17,7 +17,6 @@ import { peopleFilters } from './people-filters';
 import { availableSorts } from './people-sorts';
 
 export function PeopleTable() {
-  console.log('PeopleTable');
   const [orderBy, setOrderBy] =
     useState<PersonOrderByWithRelationInput[]>(defaultOrderBy);
 
