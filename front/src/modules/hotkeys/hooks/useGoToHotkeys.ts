@@ -15,5 +15,11 @@ export function useGoToHotkeys(key: Keys, location: string) {
       navigate(location);
     },
     InternalHotkeysScope.Goto,
+    {
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+      preventDefault: true,
+    },
+    [navigate],
   );
 }

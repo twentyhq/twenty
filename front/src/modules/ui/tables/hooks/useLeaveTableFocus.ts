@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { currentHotkeysScopeState } from '@/hotkeys/states/internal/currentHotkeysScopeState';
@@ -11,29 +11,39 @@ import { useCloseCurrentCellInEditMode } from './useClearCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 
 export function useLeaveTableFocus() {
-  const currentHotkeysScope = useRecoilValue(currentHotkeysScopeState);
-
   const disableSoftFocus = useDisableSoftFocus();
   const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
 
   const setHotkeysScope = useSetHotkeysScope();
 
-  const isSoftFocusActive = useRecoilValue(isSoftFocusActiveState);
-  const isSomeInputInEditMode = useRecoilValue(isSomeInputInEditModeState);
+  return useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const isSoftFocusActive = snapshot
+          .getLoadable(isSoftFocusActiveState)
+          .valueOrThrow();
 
-  return async function leaveTableFocus() {
-    // TODO: replace with scope ancestor ?
-    if (!isSoftFocusActive && !isSomeInputInEditMode) {
-      return;
-    }
+        const isSomeInputInEditMode = snapshot
+          .getLoadable(isSomeInputInEditModeState)
+          .valueOrThrow();
 
-    if (currentHotkeysScope?.scope === InternalHotkeysScope.Table) {
-      return;
-    }
+        const currentHotkeysScope = snapshot
+          .getLoadable(currentHotkeysScopeState)
+          .valueOrThrow();
 
-    closeCurrentCellInEditMode();
-    disableSoftFocus();
+        if (!isSoftFocusActive && !isSomeInputInEditMode) {
+          return;
+        }
 
-    setHotkeysScope(InternalHotkeysScope.Table, { goto: true });
-  };
+        if (currentHotkeysScope?.scope === InternalHotkeysScope.Table) {
+          return;
+        }
+
+        closeCurrentCellInEditMode();
+        disableSoftFocus();
+
+        setHotkeysScope(InternalHotkeysScope.Table, { goto: true });
+      },
+    [setHotkeysScope, closeCurrentCellInEditMode, disableSoftFocus],
+  );
 }

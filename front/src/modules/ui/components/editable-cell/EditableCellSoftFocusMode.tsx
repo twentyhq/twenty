@@ -6,25 +6,32 @@ import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysSc
 import { isNonTextWritingKey } from '@/utils/hotkeys/isNonTextWritingKey';
 
 import { useEditableCell } from './hooks/useEditableCell';
-import { EditableCellDisplayMode } from './EditableCellDisplayMode';
+import {
+  EditableCellNormalModeInnerContainer,
+  EditableCellNormalModeOuterContainer,
+} from './EditableCellDisplayMode';
 
 export function EditableCellSoftFocusMode({
   children,
   editHotkeysScope,
 }: React.PropsWithChildren<{ editHotkeysScope?: HotkeysScope }>) {
-  const { closeEditableCell, openEditableCell } = useEditableCell();
+  const { openEditableCell } = useEditableCell();
+
+  function openEditMode() {
+    openEditableCell(
+      editHotkeysScope ?? {
+        scope: InternalHotkeysScope.CellEditMode,
+      },
+    );
+  }
 
   useScopedHotkeys(
     'enter',
     () => {
-      openEditableCell(
-        editHotkeysScope ?? {
-          scope: InternalHotkeysScope.CellEditMode,
-        },
-      );
+      openEditMode();
     },
     InternalHotkeysScope.TableSoftFocus,
-    [closeEditableCell, editHotkeysScope],
+    [openEditMode],
   );
 
   useScopedHotkeys(
@@ -39,18 +46,27 @@ export function EditableCellSoftFocusMode({
         return;
       }
 
-      openEditableCell(
-        editHotkeysScope ?? {
-          scope: InternalHotkeysScope.CellEditMode,
-        },
-      );
+      openEditMode();
     },
     InternalHotkeysScope.TableSoftFocus,
-    [openEditableCell, editHotkeysScope],
+    [openEditMode],
     {
       preventDefault: false,
     },
   );
 
-  return <EditableCellDisplayMode>{children}</EditableCellDisplayMode>;
+  function handleClick() {
+    openEditMode();
+  }
+
+  return (
+    <EditableCellNormalModeOuterContainer
+      onClick={handleClick}
+      softFocus={true}
+    >
+      <EditableCellNormalModeInnerContainer>
+        {children}
+      </EditableCellNormalModeInnerContainer>
+    </EditableCellNormalModeOuterContainer>
+  );
 }

@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
-import { ContentContainer } from './ContentContainer';
+import { RightDrawerContainer } from './RightDrawerContainer';
 
 type OwnProps = {
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
 };
 
 const StyledContainer = styled.div`
@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
 export function NoTopBarContainer({ children }: OwnProps) {
   return (
     <StyledContainer>
-      <ContentContainer topMargin={16}>{children}</ContentContainer>
+      <RightDrawerContainer topMargin={16}>{children}</RightDrawerContainer>
     </StyledContainer>
   );
 }

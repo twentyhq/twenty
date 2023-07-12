@@ -2,12 +2,9 @@ import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
 import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
 import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
-import { useEditableCell } from './hooks/useEditableCell';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
-import { useSetSoftFocusOnCurrentCell } from './hooks/useSetSoftFocusOnCurrentCell';
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
 import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
@@ -40,33 +37,10 @@ export function EditableCell({
 }: OwnProps) {
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
 
-  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
-
-  const { openEditableCell } = useEditableCell();
-
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
-  // TODO: we might have silent problematic behavior because of the setTimeout in openEditableCell, investigate
-  // Maybe we could build a switchEditableCell to handle the case where we go from one cell to another.
-  // See https://github.com/twentyhq/twenty/issues/446
-  function handleOnClick() {
-    if (isCurrentCellInEditMode) {
-      return;
-    }
-
-    if (hasSoftFocus) {
-      openEditableCell(
-        editHotkeysScope ?? {
-          scope: InternalHotkeysScope.CellEditMode,
-        },
-      );
-    } else {
-      setSoftFocusOnCurrentCell();
-    }
-  }
-
   return (
-    <CellBaseContainer onClick={handleOnClick}>
+    <CellBaseContainer>
       {isCurrentCellInEditMode ? (
         <EditableCellEditMode
           editModeHorizontalAlign={editModeHorizontalAlign}

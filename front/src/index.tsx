@@ -27,15 +27,15 @@ root.render(
     <ApolloProvider>
       <AppThemeProvider>
         <StrictMode>
-          <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}>
-            <BrowserRouter>
-              <UserProvider>
-                <ClientConfigProvider>
+          <BrowserRouter>
+            <UserProvider>
+              <ClientConfigProvider>
+                <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}>
                   <App />
-                </ClientConfigProvider>
-              </UserProvider>
-            </BrowserRouter>
-          </HotkeysProvider>
+                </HotkeysProvider>
+              </ClientConfigProvider>
+            </UserProvider>
+          </BrowserRouter>
         </StrictMode>
       </AppThemeProvider>
     </ApolloProvider>

@@ -1,8 +1,6 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { IconPlus } from '@/ui/icons/index';
 
 import NavCollapseButton from '../navbar/NavCollapseButton';
@@ -51,8 +49,6 @@ type OwnProps = {
 };
 
 export function TopBar({ title, icon, onAddButtonClick }: OwnProps) {
-  useScopedHotkeys('c', () => onAddButtonClick?.(), InternalHotkeysScope.Table);
-
   return (
     <>
       <TopBarContainer>
