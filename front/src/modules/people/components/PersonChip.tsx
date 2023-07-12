@@ -50,6 +50,7 @@ const StyledName = styled.span`
 
 export function PersonChip({ id, name, picture }: PersonChipPropsType) {
   const ContainerComponent = id ? StyledContainerLink : StyledContainerNoLink;
+
   return (
     <ContainerComponent data-testid="person-chip" to={`/person/${id}`}>
       <Avatar

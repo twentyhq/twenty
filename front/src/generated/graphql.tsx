@@ -3279,12 +3279,61 @@ export type GetPeopleQueryVariables = Exact<{
 
 export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone: string, email: string, city: string, firstName: string, lastName: string, createdAt: string, _commentThreadCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
+export type GetPersonPhoneByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetPersonPhoneByIdQuery = { __typename?: 'Query', person: { __typename?: 'Person', id: string, phone: string } };
+
+export type GetPersonEmailByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetPersonEmailByIdQuery = { __typename?: 'Query', person: { __typename?: 'Person', id: string, email: string } };
+
+export type GetPersonNamesAndCommentCountByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetPersonNamesAndCommentCountByIdQuery = { __typename?: 'Query', person: { __typename?: 'Person', id: string, firstName: string, lastName: string, _commentThreadCount: number } };
+
+export type GetPersonCompanyByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetPersonCompanyByIdQuery = { __typename?: 'Query', person: { __typename?: 'Person', id: string, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+
+export type GetPersonCommentCountByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetPersonCommentCountByIdQuery = { __typename?: 'Query', person: { __typename?: 'Person', id: string, _commentThreadCount: number } };
+
+export type GetPersonCreatedAtByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetPersonCreatedAtByIdQuery = { __typename?: 'Query', person: { __typename?: 'Person', id: string, createdAt: string } };
+
+export type GetPersonCityByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type GetPersonCityByIdQuery = { __typename?: 'Query', person: { __typename?: 'Person', id: string, city: string } };
+
 export type GetPersonQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName: string, lastName: string, displayName: string, createdAt: string } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName: string, lastName: string, displayName: string, email: string, createdAt: string, _commentThreadCount: number, company?: { __typename?: 'Company', id: string } | null } };
 
 export type UpdatePeopleMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -4501,6 +4550,264 @@ export function useGetPeopleLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<
 export type GetPeopleQueryHookResult = ReturnType<typeof useGetPeopleQuery>;
 export type GetPeopleLazyQueryHookResult = ReturnType<typeof useGetPeopleLazyQuery>;
 export type GetPeopleQueryResult = Apollo.QueryResult<GetPeopleQuery, GetPeopleQueryVariables>;
+export const GetPersonPhoneByIdDocument = gql`
+    query GetPersonPhoneById($id: String!) {
+  person: findUniquePerson(id: $id) {
+    id
+    phone
+  }
+}
+    `;
+
+/**
+ * __useGetPersonPhoneByIdQuery__
+ *
+ * To run a query within a React component, call `useGetPersonPhoneByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPersonPhoneByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPersonPhoneByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPersonPhoneByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPersonPhoneByIdQuery, GetPersonPhoneByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPersonPhoneByIdQuery, GetPersonPhoneByIdQueryVariables>(GetPersonPhoneByIdDocument, options);
+      }
+export function useGetPersonPhoneByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPersonPhoneByIdQuery, GetPersonPhoneByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPersonPhoneByIdQuery, GetPersonPhoneByIdQueryVariables>(GetPersonPhoneByIdDocument, options);
+        }
+export type GetPersonPhoneByIdQueryHookResult = ReturnType<typeof useGetPersonPhoneByIdQuery>;
+export type GetPersonPhoneByIdLazyQueryHookResult = ReturnType<typeof useGetPersonPhoneByIdLazyQuery>;
+export type GetPersonPhoneByIdQueryResult = Apollo.QueryResult<GetPersonPhoneByIdQuery, GetPersonPhoneByIdQueryVariables>;
+export const GetPersonEmailByIdDocument = gql`
+    query GetPersonEmailById($id: String!) {
+  person: findUniquePerson(id: $id) {
+    id
+    email
+  }
+}
+    `;
+
+/**
+ * __useGetPersonEmailByIdQuery__
+ *
+ * To run a query within a React component, call `useGetPersonEmailByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPersonEmailByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPersonEmailByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPersonEmailByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPersonEmailByIdQuery, GetPersonEmailByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPersonEmailByIdQuery, GetPersonEmailByIdQueryVariables>(GetPersonEmailByIdDocument, options);
+      }
+export function useGetPersonEmailByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPersonEmailByIdQuery, GetPersonEmailByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPersonEmailByIdQuery, GetPersonEmailByIdQueryVariables>(GetPersonEmailByIdDocument, options);
+        }
+export type GetPersonEmailByIdQueryHookResult = ReturnType<typeof useGetPersonEmailByIdQuery>;
+export type GetPersonEmailByIdLazyQueryHookResult = ReturnType<typeof useGetPersonEmailByIdLazyQuery>;
+export type GetPersonEmailByIdQueryResult = Apollo.QueryResult<GetPersonEmailByIdQuery, GetPersonEmailByIdQueryVariables>;
+export const GetPersonNamesAndCommentCountByIdDocument = gql`
+    query GetPersonNamesAndCommentCountById($id: String!) {
+  person: findUniquePerson(id: $id) {
+    id
+    firstName
+    lastName
+    _commentThreadCount
+  }
+}
+    `;
+
+/**
+ * __useGetPersonNamesAndCommentCountByIdQuery__
+ *
+ * To run a query within a React component, call `useGetPersonNamesAndCommentCountByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPersonNamesAndCommentCountByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPersonNamesAndCommentCountByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPersonNamesAndCommentCountByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPersonNamesAndCommentCountByIdQuery, GetPersonNamesAndCommentCountByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPersonNamesAndCommentCountByIdQuery, GetPersonNamesAndCommentCountByIdQueryVariables>(GetPersonNamesAndCommentCountByIdDocument, options);
+      }
+export function useGetPersonNamesAndCommentCountByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPersonNamesAndCommentCountByIdQuery, GetPersonNamesAndCommentCountByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPersonNamesAndCommentCountByIdQuery, GetPersonNamesAndCommentCountByIdQueryVariables>(GetPersonNamesAndCommentCountByIdDocument, options);
+        }
+export type GetPersonNamesAndCommentCountByIdQueryHookResult = ReturnType<typeof useGetPersonNamesAndCommentCountByIdQuery>;
+export type GetPersonNamesAndCommentCountByIdLazyQueryHookResult = ReturnType<typeof useGetPersonNamesAndCommentCountByIdLazyQuery>;
+export type GetPersonNamesAndCommentCountByIdQueryResult = Apollo.QueryResult<GetPersonNamesAndCommentCountByIdQuery, GetPersonNamesAndCommentCountByIdQueryVariables>;
+export const GetPersonCompanyByIdDocument = gql`
+    query GetPersonCompanyById($id: String!) {
+  person: findUniquePerson(id: $id) {
+    id
+    company {
+      id
+      name
+      domainName
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPersonCompanyByIdQuery__
+ *
+ * To run a query within a React component, call `useGetPersonCompanyByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPersonCompanyByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPersonCompanyByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPersonCompanyByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPersonCompanyByIdQuery, GetPersonCompanyByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPersonCompanyByIdQuery, GetPersonCompanyByIdQueryVariables>(GetPersonCompanyByIdDocument, options);
+      }
+export function useGetPersonCompanyByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPersonCompanyByIdQuery, GetPersonCompanyByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPersonCompanyByIdQuery, GetPersonCompanyByIdQueryVariables>(GetPersonCompanyByIdDocument, options);
+        }
+export type GetPersonCompanyByIdQueryHookResult = ReturnType<typeof useGetPersonCompanyByIdQuery>;
+export type GetPersonCompanyByIdLazyQueryHookResult = ReturnType<typeof useGetPersonCompanyByIdLazyQuery>;
+export type GetPersonCompanyByIdQueryResult = Apollo.QueryResult<GetPersonCompanyByIdQuery, GetPersonCompanyByIdQueryVariables>;
+export const GetPersonCommentCountByIdDocument = gql`
+    query GetPersonCommentCountById($id: String!) {
+  person: findUniquePerson(id: $id) {
+    id
+    _commentThreadCount
+  }
+}
+    `;
+
+/**
+ * __useGetPersonCommentCountByIdQuery__
+ *
+ * To run a query within a React component, call `useGetPersonCommentCountByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPersonCommentCountByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPersonCommentCountByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPersonCommentCountByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPersonCommentCountByIdQuery, GetPersonCommentCountByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPersonCommentCountByIdQuery, GetPersonCommentCountByIdQueryVariables>(GetPersonCommentCountByIdDocument, options);
+      }
+export function useGetPersonCommentCountByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPersonCommentCountByIdQuery, GetPersonCommentCountByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPersonCommentCountByIdQuery, GetPersonCommentCountByIdQueryVariables>(GetPersonCommentCountByIdDocument, options);
+        }
+export type GetPersonCommentCountByIdQueryHookResult = ReturnType<typeof useGetPersonCommentCountByIdQuery>;
+export type GetPersonCommentCountByIdLazyQueryHookResult = ReturnType<typeof useGetPersonCommentCountByIdLazyQuery>;
+export type GetPersonCommentCountByIdQueryResult = Apollo.QueryResult<GetPersonCommentCountByIdQuery, GetPersonCommentCountByIdQueryVariables>;
+export const GetPersonCreatedAtByIdDocument = gql`
+    query GetPersonCreatedAtById($id: String!) {
+  person: findUniquePerson(id: $id) {
+    id
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetPersonCreatedAtByIdQuery__
+ *
+ * To run a query within a React component, call `useGetPersonCreatedAtByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPersonCreatedAtByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPersonCreatedAtByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPersonCreatedAtByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPersonCreatedAtByIdQuery, GetPersonCreatedAtByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPersonCreatedAtByIdQuery, GetPersonCreatedAtByIdQueryVariables>(GetPersonCreatedAtByIdDocument, options);
+      }
+export function useGetPersonCreatedAtByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPersonCreatedAtByIdQuery, GetPersonCreatedAtByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPersonCreatedAtByIdQuery, GetPersonCreatedAtByIdQueryVariables>(GetPersonCreatedAtByIdDocument, options);
+        }
+export type GetPersonCreatedAtByIdQueryHookResult = ReturnType<typeof useGetPersonCreatedAtByIdQuery>;
+export type GetPersonCreatedAtByIdLazyQueryHookResult = ReturnType<typeof useGetPersonCreatedAtByIdLazyQuery>;
+export type GetPersonCreatedAtByIdQueryResult = Apollo.QueryResult<GetPersonCreatedAtByIdQuery, GetPersonCreatedAtByIdQueryVariables>;
+export const GetPersonCityByIdDocument = gql`
+    query GetPersonCityById($id: String!) {
+  person: findUniquePerson(id: $id) {
+    id
+    city
+  }
+}
+    `;
+
+/**
+ * __useGetPersonCityByIdQuery__
+ *
+ * To run a query within a React component, call `useGetPersonCityByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPersonCityByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPersonCityByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPersonCityByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPersonCityByIdQuery, GetPersonCityByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPersonCityByIdQuery, GetPersonCityByIdQueryVariables>(GetPersonCityByIdDocument, options);
+      }
+export function useGetPersonCityByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPersonCityByIdQuery, GetPersonCityByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPersonCityByIdQuery, GetPersonCityByIdQueryVariables>(GetPersonCityByIdDocument, options);
+        }
+export type GetPersonCityByIdQueryHookResult = ReturnType<typeof useGetPersonCityByIdQuery>;
+export type GetPersonCityByIdLazyQueryHookResult = ReturnType<typeof useGetPersonCityByIdLazyQuery>;
+export type GetPersonCityByIdQueryResult = Apollo.QueryResult<GetPersonCityByIdQuery, GetPersonCityByIdQueryVariables>;
 export const GetPersonDocument = gql`
     query GetPerson($id: String!) {
   findUniquePerson(id: $id) {
@@ -4508,7 +4815,12 @@ export const GetPersonDocument = gql`
     firstName
     lastName
     displayName
+    email
     createdAt
+    _commentThreadCount
+    company {
+      id
+    }
   }
 }
     `;

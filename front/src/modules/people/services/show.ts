@@ -9,7 +9,12 @@ export const GET_PERSON = gql`
       firstName
       lastName
       displayName
+      email
       createdAt
+      _commentThreadCount
+      company {
+        id
+      }
     }
   }
 `;

@@ -9,6 +9,10 @@ import { Company, Person } from '~/generated/graphql';
 import { PeopleCompanyCreateCell } from './PeopleCompanyCreateCell';
 import { PeopleCompanyPicker } from './PeopleCompanyPicker';
 
+export type PeopleWithCompany = Pick<Person, 'id'> & {
+  company?: Pick<Company, 'id' | 'name' | 'domainName'> | null;
+};
+
 export type OwnProps = {
   people: Pick<Person, 'id'> & {
     company?: Pick<Company, 'id' | 'name' | 'domainName'> | null;

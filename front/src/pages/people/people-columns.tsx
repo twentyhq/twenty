@@ -90,7 +90,7 @@ export const usePeopleColumns = () => {
           <EditableCellPhone
             placeholder="Phone"
             value={props.row.original.phone || ''}
-            changeHandler={async (value: string) => {
+            onChange={async (value: string) => {
               const person = { ...props.row.original };
               await updatePerson({
                 variables: {
@@ -123,7 +123,7 @@ export const usePeopleColumns = () => {
               await updatePerson({
                 variables: {
                   ...person,
-                  createdAt: value.toISOString(),
+                  // createdAt: value.toISOString(),
                   companyId: person.company?.id,
                 },
               });

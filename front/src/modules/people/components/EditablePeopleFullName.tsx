@@ -9,7 +9,12 @@ import { CommentableType, Person } from '~/generated/graphql';
 import { PersonChip } from './PersonChip';
 
 type OwnProps = {
-  person: Pick<Person, 'id' | 'firstName' | 'lastName' | '_commentThreadCount'>;
+  person:
+    | Partial<
+        Pick<Person, 'id' | 'firstName' | 'lastName' | '_commentThreadCount'>
+      >
+    | null
+    | undefined;
   onChange: (firstName: string, lastName: string) => void;
 };
 
@@ -25,17 +30,12 @@ const RightContainer = styled.div`
 `;
 
 export function EditablePeopleFullName({ person, onChange }: OwnProps) {
-  const [firstNameValue, setFirstNameValue] = useState(person.firstName ?? '');
-  const [lastNameValue, setLastNameValue] = useState(person.lastName ?? '');
   const openCommentRightDrawer = useOpenTimelineRightDrawer();
 
   function handleDoubleTextChange(
     firstValue: string,
     secondValue: string,
   ): void {
-    setFirstNameValue(firstValue);
-    setLastNameValue(secondValue);
-
     onChange(firstValue, secondValue);
   }
 
@@ -43,30 +43,34 @@ export function EditablePeopleFullName({ person, onChange }: OwnProps) {
     event.preventDefault();
     event.stopPropagation();
 
+    if (!person) {
+      return;
+    }
+
     openCommentRightDrawer([
       {
         type: CommentableType.Person,
-        id: person.id,
+        id: person.id ?? '',
       },
     ]);
   }
 
   return (
     <EditableCellDoubleText
-      firstValue={firstNameValue}
-      secondValue={lastNameValue}
+      firstValue={person?.firstName ?? ''}
+      secondValue={person?.lastName ?? ''}
       firstValuePlaceholder="First name"
       secondValuePlaceholder="Last name"
       onChange={handleDoubleTextChange}
       nonEditModeContent={
         <NoEditModeContainer>
           <PersonChip
-            name={person.firstName + ' ' + person.lastName}
-            id={person.id}
+            name={person?.firstName + ' ' + person?.lastName}
+            id={person?.id ?? ''}
           />
           <RightContainer>
             <CellCommentChip
-              count={person._commentThreadCount ?? 0}
+              count={person?._commentThreadCount ?? 0}
               onClick={handleCommentClick}
             />
           </RightContainer>
