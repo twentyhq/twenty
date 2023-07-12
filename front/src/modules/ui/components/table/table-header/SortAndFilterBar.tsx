@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import SortOrFilterChip from '@/lib/filters-and-sorts/components/SortOrFilterChip';
 import { useRemoveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveFilter';
 import { SelectedSortType } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
 import { availableFiltersScopedState } from '@/lib/filters-and-sorts/states/availableFiltersScopedState';
@@ -9,8 +10,6 @@ import { getOperandLabel } from '@/lib/filters-and-sorts/utils/getOperandLabel';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icons/index';
 import { TableContext } from '@/ui/tables/states/TableContext';
-
-import SortOrFilterChip from './SortOrFilterChip';
 
 type OwnProps<SortField> = {
   sorts: Array<SelectedSortType<SortField>>;

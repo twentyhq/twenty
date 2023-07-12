@@ -1,14 +1,15 @@
 import { ReactNode, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { FilterDropdownButton } from '@/lib/filters-and-sorts/components/FilterDropdownButton';
+import { SortDropdownButton } from '@/lib/filters-and-sorts/components/SortDropdownButton';
 import {
   SelectedSortType,
   SortType,
 } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
+import { TableContext } from '@/ui/tables/states/TableContext';
 
-import { FilterDropdownButton } from './FilterDropdownButton';
 import SortAndFilterBar from './SortAndFilterBar';
-import { SortDropdownButton } from './SortDropdownButton';
 
 type OwnProps<SortField> = {
   viewName: string;
@@ -89,7 +90,7 @@ export function TableHeader<SortField>({
           {viewName}
         </StyledViewSection>
         <StyledFilters>
-          <FilterDropdownButton />
+          <FilterDropdownButton context={TableContext} />
           <SortDropdownButton<SortField>
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}

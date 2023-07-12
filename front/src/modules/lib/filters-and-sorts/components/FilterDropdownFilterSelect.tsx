@@ -1,3 +1,5 @@
+import { Context } from 'react';
+
 import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { availableFiltersScopedState } from '@/lib/filters-and-sorts/states/availableFiltersScopedState';
@@ -7,59 +9,61 @@ import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/st
 import { getOperandsForFilterType } from '@/lib/filters-and-sorts/utils/getOperandsForFilterType';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
-import { TableContext } from '@/ui/tables/states/TableContext';
-
-import { DropdownMenuItemContainer } from '../../menu/DropdownMenuItemContainer';
-import { DropdownMenuSelectableItem } from '../../menu/DropdownMenuSelectableItem';
+import { DropdownMenuItemContainer } from '@/ui/components/menu/DropdownMenuItemContainer';
+import { DropdownMenuSelectableItem } from '@/ui/components/menu/DropdownMenuSelectableItem';
 
 import DropdownButton from './DropdownButton';
 
-export function FilterDropdownFilterSelect() {
-  const [, setTableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
+export function FilterDropdownFilterSelect({
+  context,
+}: {
+  context: Context<string | null>;
+}) {
+  const [, setFilterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    TableContext,
+    context,
   );
 
   const [, setSelectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    TableContext,
+    context,
   );
 
   const [, setFilterDropdownSearchInput] = useRecoilScopedState(
     filterDropdownSearchInputScopedState,
-    TableContext,
+    context,
   );
 
-  const availableTableFilters = useRecoilScopedValue(
+  const availableFilters = useRecoilScopedValue(
     availableFiltersScopedState,
-    TableContext,
+    context,
   );
 
   const setHotkeysScope = useSetHotkeysScope();
 
   return (
     <DropdownMenuItemContainer style={{ maxHeight: '300px' }}>
-      {availableTableFilters.map((availableTableFilter, index) => (
+      {availableFilters.map((availableFilter, index) => (
         <DropdownMenuSelectableItem
           key={`select-filter-${index}`}
           onClick={() => {
-            setTableFilterDefinitionUsedInDropdown(availableTableFilter);
+            setFilterDefinitionUsedInDropdown(availableFilter);
 
-            if (availableTableFilter.type === 'entity') {
+            if (availableFilter.type === 'entity') {
               setHotkeysScope(InternalHotkeysScope.RelationPicker);
             }
 
             setSelectedOperandInDropdown(
-              getOperandsForFilterType(availableTableFilter.type)?.[0],
+              getOperandsForFilterType(availableFilter.type)?.[0],
             );
 
             setFilterDropdownSearchInput('');
           }}
         >
           <DropdownButton.StyledIcon>
-            {availableTableFilter.icon}
+            {availableFilter.icon}
           </DropdownButton.StyledIcon>
-          {availableTableFilter.label}
+          {availableFilter.label}
         </DropdownMenuSelectableItem>
       ))}
     </DropdownMenuItemContainer>

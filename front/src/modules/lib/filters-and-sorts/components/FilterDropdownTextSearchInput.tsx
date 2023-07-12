@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, Context } from 'react';
 
 import { useFilterCurrentlyEdited } from '@/lib/filters-and-sorts/hooks/useFilterCurrentlyEdited';
 import { useRemoveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveFilter';
@@ -7,43 +7,46 @@ import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sor
 import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { TableContext } from '@/ui/tables/states/TableContext';
 
-export function FilterDropdownTextSearchInput() {
-  const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
+export function FilterDropdownTextSearchInput({
+  context,
+}: {
+  context: Context<string | null>;
+}) {
+  const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    TableContext,
+    context,
   );
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    TableContext,
+    context,
   );
 
   const [filterDropdownSearchInput, setFilterDropdownSearchInput] =
-    useRecoilScopedState(filterDropdownSearchInputScopedState, TableContext);
+    useRecoilScopedState(filterDropdownSearchInputScopedState, context);
 
-  const upsertActiveTableFilter = useUpsertFilter(TableContext);
-  const removeActiveTableFilter = useRemoveFilter(TableContext);
+  const upsertFilter = useUpsertFilter(context);
+  const removeFilter = useRemoveFilter(context);
 
-  const filterCurrentlyEdited = useFilterCurrentlyEdited(TableContext);
+  const filterCurrentlyEdited = useFilterCurrentlyEdited(context);
 
   return (
-    tableFilterDefinitionUsedInDropdown &&
+    filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
       <input
         type="text"
-        placeholder={tableFilterDefinitionUsedInDropdown.label}
+        placeholder={filterDefinitionUsedInDropdown.label}
         value={filterCurrentlyEdited?.value ?? filterDropdownSearchInput}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setFilterDropdownSearchInput(event.target.value);
 
           if (event.target.value === '') {
-            removeActiveTableFilter(tableFilterDefinitionUsedInDropdown.field);
+            removeFilter(filterDefinitionUsedInDropdown.field);
           } else {
-            upsertActiveTableFilter({
-              field: tableFilterDefinitionUsedInDropdown.field,
-              type: tableFilterDefinitionUsedInDropdown.type,
+            upsertFilter({
+              field: filterDefinitionUsedInDropdown.field,
+              type: filterDefinitionUsedInDropdown.type,
               value: event.target.value,
               operand: selectedOperandInDropdown,
               displayValue: event.target.value,

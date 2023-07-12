@@ -1,13 +1,9 @@
 import { ReactNode, useRef } from 'react';
 import styled from '@emotion/styled';
-import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useOutsideAlerter } from '@/ui/hooks/useOutsideAlerter';
 import { IconChevronDown } from '@/ui/icons/index';
 import { overlayBackground, textInputStyle } from '@/ui/themes/effects';
-
-import { useOutsideAlerter } from '../../../hooks/useOutsideAlerter';
 
 type OwnProps = {
   label: string;
@@ -161,14 +157,14 @@ function DropdownButton({
   isUnfolded = false,
   onIsUnfoldedChange,
 }: OwnProps) {
-  useScopedHotkeys(
-    [Key.Enter, Key.Escape],
-    () => {
-      onIsUnfoldedChange?.(false);
-    },
-    InternalHotkeysScope.TableHeaderDropdownButton,
-    [onIsUnfoldedChange],
-  );
+  // useScopedHotkeys(
+  //   [Key.Enter, Key.Escape],
+  //   () => {
+  //     onIsUnfoldedChange?.(false);
+  //   },
+  //   InternalHotkeysScope.TableHeaderDropdownButton,
+  //   [onIsUnfoldedChange],
+  // );
 
   const onButtonClick = () => {
     onIsUnfoldedChange?.(!isUnfolded);
