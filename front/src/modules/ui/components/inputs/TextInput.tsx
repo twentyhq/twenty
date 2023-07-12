@@ -1,10 +1,12 @@
-import { ChangeEvent, useRef } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
 import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { IconEye, IconEyeOff } from '@/ui/icons/index';
 
 type OwnProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -50,11 +52,26 @@ const StyledInput = styled.input<{ fullWidth: boolean }>`
   }
 `;
 
+const StyledIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  position: relative;
+`;
+
+const StyledIcon = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  cursor: pointer;
+  position: absolute;
+  right: ${({ theme }) => theme.spacing(2)};
+`;
+
 export function TextInput({
   label,
   value,
   onChange,
   fullWidth,
+  type,
   ...props
 }: OwnProps): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,23 +97,46 @@ export function TextInput({
     InternalHotkeysScope.TextInput,
   );
 
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const handleTogglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const theme = useTheme();
+
   return (
     <StyledContainer>
       {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledInput
-        ref={inputRef}
-        tabIndex={props.tabIndex ?? 0}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        fullWidth={fullWidth ?? false}
-        value={value}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          if (onChange) {
-            onChange(event.target.value);
-          }
-        }}
-        {...props}
-      />
+      <StyledIconContainer>
+        <StyledInput
+          ref={inputRef}
+          tabIndex={props.tabIndex ?? 0}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          fullWidth={fullWidth ?? false}
+          value={value}
+          type={passwordVisible ? 'text' : type}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            if (onChange) {
+              onChange(event.target.value);
+            }
+          }}
+          {...props}
+        />
+        {type === 'password' && ( // only show the icon for password inputs
+          <StyledIcon
+            onClick={handleTogglePasswordVisibility}
+            data-testid="reveal-password-button"
+          >
+            {passwordVisible ? (
+              <IconEyeOff size={theme.icon.size.md} />
+            ) : (
+              <IconEye size={theme.icon.size.md} />
+            )}
+          </StyledIcon>
+        )}
+      </StyledIconContainer>
     </StyledContainer>
   );
 }
