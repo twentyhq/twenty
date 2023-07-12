@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import {
   SelectedSortType,
   SortType,
-} from '@/filters-and-sorts/interfaces/sorts/interface';
+} from '@/lib/filters-and-sorts/interfaces/sorts/interface';
 
 import { FilterDropdownButton } from './FilterDropdownButton';
 import SortAndFilterBar from './SortAndFilterBar';

@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 
-import { useActiveTableFilterCurrentlyEditedInDropdown } from '@/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
-import { useRemoveActiveTableFilter } from '@/filters-and-sorts/hooks/useRemoveActiveTableFilter';
-import { useUpsertActiveTableFilter } from '@/filters-and-sorts/hooks/useUpsertActiveTableFilter';
-import { filterDropdownSelectedEntityIdScopedState } from '@/filters-and-sorts/states/filterDropdownSelectedEntityIdScopedState';
-import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
-import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
+import { useFilterCurrentlyEdited } from '@/lib/filters-and-sorts/hooks/useFilterCurrentlyEdited';
+import { useRemoveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveFilter';
+import { useUpsertFilter } from '@/lib/filters-and-sorts/hooks/useUpsertFilter';
+import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSelectedEntityIdScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSelectedEntityIdScopedState';
+import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { EntitiesForMultipleEntitySelect } from '@/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/relation-picker/components/SingleEntitySelectBase';
@@ -29,15 +29,14 @@ export function FilterDropdownEntitySearchSelect({
   );
 
   const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
-    tableFilterDefinitionUsedInDropdownScopedState,
+    filterDefinitionUsedInDropdownScopedState,
     TableContext,
   );
 
-  const upsertActiveTableFilter = useUpsertActiveTableFilter();
-  const removeActiveTableFilter = useRemoveActiveTableFilter();
+  const upsertActiveTableFilter = useUpsertFilter(TableContext);
+  const removeActiveTableFilter = useRemoveFilter(TableContext);
 
-  const activeFilterCurrentlyEditedInDropdown =
-    useActiveTableFilterCurrentlyEditedInDropdown();
+  const filterCurrentlyEdited = useFilterCurrentlyEdited(TableContext);
 
   function handleUserSelected(selectedEntity: EntityForSelect) {
     if (!tableFilterDefinitionUsedInDropdown || !selectedOperandInDropdown) {
@@ -64,13 +63,10 @@ export function FilterDropdownEntitySearchSelect({
   }
 
   useEffect(() => {
-    if (!activeFilterCurrentlyEditedInDropdown) {
+    if (!filterCurrentlyEdited) {
       setFilterDropdownSelectedEntityId(null);
     }
-  }, [
-    activeFilterCurrentlyEditedInDropdown,
-    setFilterDropdownSelectedEntityId,
-  ]);
+  }, [filterCurrentlyEdited, setFilterDropdownSelectedEntityId]);
 
   return (
     <>

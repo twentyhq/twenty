@@ -2,9 +2,9 @@ import { useCallback, useMemo, useState } from 'react';
 import { IconList } from '@tabler/icons-react';
 
 import { defaultOrderBy } from '@/companies/services';
-import { reduceSortsToOrderBy } from '@/filters-and-sorts/helpers';
-import { activeTableFiltersScopedState } from '@/filters-and-sorts/states/activeTableFiltersScopedState';
-import { turnFilterIntoWhereClause } from '@/filters-and-sorts/utils/turnFilterIntoWhereClause';
+import { reduceSortsToOrderBy } from '@/lib/filters-and-sorts/helpers';
+import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScopedState';
+import { turnFilterIntoWhereClause } from '@/lib/filters-and-sorts/utils/turnFilterIntoWhereClause';
 import { PeopleSelectedSortType, usePeopleQuery } from '@/people/services';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
 import { EntityTable } from '@/ui/components/table/EntityTable';
@@ -24,10 +24,7 @@ export function PeopleTable() {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
-  const filters = useRecoilScopedValue(
-    activeTableFiltersScopedState,
-    TableContext,
-  );
+  const filters = useRecoilScopedValue(filtersScopedState, TableContext);
 
   const whereFilters = useMemo(() => {
     return { AND: filters.map(turnFilterIntoWhereClause) };

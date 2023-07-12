@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { useUpsertActiveTableFilter } from '@/filters-and-sorts/hooks/useUpsertActiveTableFilter';
-import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
-import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
+import { useUpsertFilter } from '@/lib/filters-and-sorts/hooks/useUpsertFilter';
+import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
+import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
@@ -10,7 +10,7 @@ import DatePicker from '../../form/DatePicker';
 
 export function FilterDropdownDateSearchInput() {
   const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
-    tableFilterDefinitionUsedInDropdownScopedState,
+    filterDefinitionUsedInDropdownScopedState,
     TableContext,
   );
 
@@ -19,7 +19,7 @@ export function FilterDropdownDateSearchInput() {
     TableContext,
   );
 
-  const upsertActiveTableFilter = useUpsertActiveTableFilter();
+  const upsertActiveTableFilter = useUpsertFilter(TableContext);
 
   function handleChange(date: Date) {
     if (!tableFilterDefinitionUsedInDropdown || !selectedOperandInDropdown)

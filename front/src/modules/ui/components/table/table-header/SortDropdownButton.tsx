@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 import {
   SelectedSortType,
   SortType,
-} from '@/filters-and-sorts/interfaces/sorts/interface';
+} from '@/lib/filters-and-sorts/interfaces/sorts/interface';
 
 import DropdownButton from './DropdownButton';
 

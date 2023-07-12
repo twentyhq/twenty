@@ -1,6 +1,6 @@
-import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
-import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
-import { getOperandLabel } from '@/filters-and-sorts/utils/getOperandLabel';
+import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/lib/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
+import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
+import { getOperandLabel } from '@/lib/filters-and-sorts/utils/getOperandLabel';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 

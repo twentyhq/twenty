@@ -1,8 +1,6 @@
-import { TableFilterOperand } from '../types/TableFilterOperand';
+import { FilterOperand } from '../types/FilterOperand';
 
-export function getOperandLabel(
-  operand: TableFilterOperand | null | undefined,
-) {
+export function getOperandLabel(operand: FilterOperand | null | undefined) {
   switch (operand) {
     case 'contains':
       return 'Contains';

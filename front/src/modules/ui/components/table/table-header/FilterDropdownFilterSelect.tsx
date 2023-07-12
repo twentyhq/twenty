@@ -1,10 +1,10 @@
-import { availableTableFiltersScopedState } from '@/filters-and-sorts/states/availableTableFiltersScopedState';
-import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
-import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
-import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
-import { getOperandsForFilterType } from '@/filters-and-sorts/utils/getOperandsForFilterType';
 import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { availableFiltersScopedState } from '@/lib/filters-and-sorts/states/availableFiltersScopedState';
+import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
+import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
+import { getOperandsForFilterType } from '@/lib/filters-and-sorts/utils/getOperandsForFilterType';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
 import { TableContext } from '@/ui/tables/states/TableContext';
@@ -16,7 +16,7 @@ import DropdownButton from './DropdownButton';
 
 export function FilterDropdownFilterSelect() {
   const [, setTableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
-    tableFilterDefinitionUsedInDropdownScopedState,
+    filterDefinitionUsedInDropdownScopedState,
     TableContext,
   );
 
@@ -31,7 +31,7 @@ export function FilterDropdownFilterSelect() {
   );
 
   const availableTableFilters = useRecoilScopedValue(
-    availableTableFiltersScopedState,
+    availableFiltersScopedState,
     TableContext,
   );
 

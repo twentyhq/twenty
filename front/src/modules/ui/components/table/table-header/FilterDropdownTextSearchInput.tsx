@@ -1,17 +1,17 @@
 import { ChangeEvent } from 'react';
 
-import { useActiveTableFilterCurrentlyEditedInDropdown } from '@/filters-and-sorts/hooks/useActiveFilterCurrentlyEditedInDropdown';
-import { useRemoveActiveTableFilter } from '@/filters-and-sorts/hooks/useRemoveActiveTableFilter';
-import { useUpsertActiveTableFilter } from '@/filters-and-sorts/hooks/useUpsertActiveTableFilter';
-import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
-import { selectedOperandInDropdownScopedState } from '@/filters-and-sorts/states/selectedOperandInDropdownScopedState';
-import { tableFilterDefinitionUsedInDropdownScopedState } from '@/filters-and-sorts/states/tableFilterDefinitionUsedInDropdownScopedState';
+import { useFilterCurrentlyEdited } from '@/lib/filters-and-sorts/hooks/useFilterCurrentlyEdited';
+import { useRemoveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveFilter';
+import { useUpsertFilter } from '@/lib/filters-and-sorts/hooks/useUpsertFilter';
+import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
+import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
+import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
 export function FilterDropdownTextSearchInput() {
   const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
-    tableFilterDefinitionUsedInDropdownScopedState,
+    filterDefinitionUsedInDropdownScopedState,
     TableContext,
   );
 
@@ -23,11 +23,10 @@ export function FilterDropdownTextSearchInput() {
   const [filterDropdownSearchInput, setFilterDropdownSearchInput] =
     useRecoilScopedState(filterDropdownSearchInputScopedState, TableContext);
 
-  const upsertActiveTableFilter = useUpsertActiveTableFilter();
-  const removeActiveTableFilter = useRemoveActiveTableFilter();
+  const upsertActiveTableFilter = useUpsertFilter(TableContext);
+  const removeActiveTableFilter = useRemoveFilter(TableContext);
 
-  const activeFilterCurrentlyEditedInDropdown =
-    useActiveTableFilterCurrentlyEditedInDropdown();
+  const filterCurrentlyEdited = useFilterCurrentlyEdited(TableContext);
 
   return (
     tableFilterDefinitionUsedInDropdown &&
@@ -35,10 +34,7 @@ export function FilterDropdownTextSearchInput() {
       <input
         type="text"
         placeholder={tableFilterDefinitionUsedInDropdown.label}
-        value={
-          activeFilterCurrentlyEditedInDropdown?.value ??
-          filterDropdownSearchInput
-        }
+        value={filterCurrentlyEdited?.value ?? filterDropdownSearchInput}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           setFilterDropdownSearchInput(event.target.value);
 

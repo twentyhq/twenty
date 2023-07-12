@@ -1,5 +1,5 @@
-import { filterDropdownSearchInputScopedState } from '@/filters-and-sorts/states/filterDropdownSearchInputScopedState';
-import { filterDropdownSelectedEntityIdScopedState } from '@/filters-and-sorts/states/filterDropdownSelectedEntityIdScopedState';
+import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
+import { filterDropdownSelectedEntityIdScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSelectedEntityIdScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
