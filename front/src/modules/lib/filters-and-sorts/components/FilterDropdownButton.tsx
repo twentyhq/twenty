@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { Context, useCallback, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
@@ -10,7 +10,6 @@ import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScoped
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/lib/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { TableContext } from '@/ui/tables/states/TableContext';
 
 import DropdownButton from './DropdownButton';
 import { FilterDropdownDateSearchInput } from './FilterDropdownDateSearchInput';
@@ -22,7 +21,13 @@ import { FilterDropdownOperandButton } from './FilterDropdownOperandButton';
 import { FilterDropdownOperandSelect } from './FilterDropdownOperandSelect';
 import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
-export function FilterDropdownButton() {
+export function FilterDropdownButton({
+  context,
+  hotkeysScope,
+}: {
+  context: Context<string | null>;
+  hotkeysScope: InternalHotkeysScope;
+}) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [
@@ -30,52 +35,45 @@ export function FilterDropdownButton() {
     setIsFilterDropdownOperandSelectUnfolded,
   ] = useRecoilScopedState(
     isFilterDropdownOperandSelectUnfoldedScopedState,
-    TableContext,
+    context,
   );
 
-  const [
-    tableFilterDefinitionUsedInDropdown,
-    setTableFilterDefinitionUsedInDropdown,
-  ] = useRecoilScopedState(
-    filterDefinitionUsedInDropdownScopedState,
-    TableContext,
-  );
+  const [filterDefinitionUsedInDropdown, setFilterDefinitionUsedInDropdown] =
+    useRecoilScopedState(filterDefinitionUsedInDropdownScopedState, context);
 
   const [, setFilterDropdownSearchInput] = useRecoilScopedState(
     filterDropdownSearchInputScopedState,
-    TableContext,
+    context,
   );
 
-  const [activeTableFilters] = useRecoilScopedState(
-    filtersScopedState,
-    TableContext,
-  );
+  const [filters] = useRecoilScopedState(filtersScopedState, context);
 
   const [selectedOperandInDropdown, setSelectedOperandInDropdown] =
-    useRecoilScopedState(selectedOperandInDropdownScopedState, TableContext);
+    useRecoilScopedState(selectedOperandInDropdownScopedState, context);
 
   const resetState = useCallback(() => {
     setIsFilterDropdownOperandSelectUnfolded(false);
-    setTableFilterDefinitionUsedInDropdown(null);
+    setFilterDefinitionUsedInDropdown(null);
     setSelectedOperandInDropdown(null);
     setFilterDropdownSearchInput('');
   }, [
-    setTableFilterDefinitionUsedInDropdown,
+    setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setFilterDropdownSearchInput,
     setIsFilterDropdownOperandSelectUnfolded,
   ]);
 
-  const isFilterSelected = (activeTableFilters?.length ?? 0) > 0;
+  const isFilterSelected = (filters?.length ?? 0) > 0;
 
   const setHotkeysScope = useSetHotkeysScope();
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
+      setHotkeysScope(hotkeysScope);
       setIsUnfolded(true);
     } else {
-      if (tableFilterDefinitionUsedInDropdown?.type === 'entity') {
-        setHotkeysScope(InternalHotkeysScope.Table);
+      if (filterDefinitionUsedInDropdown?.type === 'entity') {
+        setHotkeysScope(hotkeysScope);
       }
       setIsUnfolded(false);
       resetState();
@@ -97,31 +95,32 @@ export function FilterDropdownButton() {
       isActive={isFilterSelected}
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={handleIsUnfoldedChange}
+      hotkeysScope={hotkeysScope}
     >
-      {!tableFilterDefinitionUsedInDropdown ? (
-        <FilterDropdownFilterSelect />
+      {!filterDefinitionUsedInDropdown ? (
+        <FilterDropdownFilterSelect context={context} />
       ) : isFilterDropdownOperandSelectUnfolded ? (
-        <FilterDropdownOperandSelect />
+        <FilterDropdownOperandSelect context={context} />
       ) : (
         selectedOperandInDropdown && (
           <>
-            <FilterDropdownOperandButton />
+            <FilterDropdownOperandButton context={context} />
             <DropdownButton.StyledSearchField autoFocus key={'search-filter'}>
-              {tableFilterDefinitionUsedInDropdown.type === 'text' && (
-                <FilterDropdownTextSearchInput />
+              {filterDefinitionUsedInDropdown.type === 'text' && (
+                <FilterDropdownTextSearchInput context={context} />
               )}
-              {tableFilterDefinitionUsedInDropdown.type === 'number' && (
-                <FilterDropdownNumberSearchInput />
+              {filterDefinitionUsedInDropdown.type === 'number' && (
+                <FilterDropdownNumberSearchInput context={context} />
               )}
-              {tableFilterDefinitionUsedInDropdown.type === 'date' && (
-                <FilterDropdownDateSearchInput />
+              {filterDefinitionUsedInDropdown.type === 'date' && (
+                <FilterDropdownDateSearchInput context={context} />
               )}
-              {tableFilterDefinitionUsedInDropdown.type === 'entity' && (
-                <FilterDropdownEntitySearchInput />
+              {filterDefinitionUsedInDropdown.type === 'entity' && (
+                <FilterDropdownEntitySearchInput context={context} />
               )}
             </DropdownButton.StyledSearchField>
-            {tableFilterDefinitionUsedInDropdown.type === 'entity' && (
-              <FilterDropdownEntitySelect />
+            {filterDefinitionUsedInDropdown.type === 'entity' && (
+              <FilterDropdownEntitySelect context={context} />
             )}
           </>
         )

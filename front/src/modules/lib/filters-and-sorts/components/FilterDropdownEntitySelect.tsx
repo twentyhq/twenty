@@ -1,17 +1,21 @@
+import { Context } from 'react';
+
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { TableContext } from '@/ui/tables/states/TableContext';
+import { DropdownMenuSeparator } from '@/ui/components/menu/DropdownMenuSeparator';
 
-import { DropdownMenuSeparator } from '../../menu/DropdownMenuSeparator';
-
-export function FilterDropdownEntitySelect() {
-  const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
+export function FilterDropdownEntitySelect({
+  context,
+}: {
+  context: Context<string | null>;
+}) {
+  const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    TableContext,
+    context,
   );
 
-  if (tableFilterDefinitionUsedInDropdown?.type !== 'entity') {
+  if (filterDefinitionUsedInDropdown?.type !== 'entity') {
     return null;
   }
 
@@ -19,7 +23,7 @@ export function FilterDropdownEntitySelect() {
     <>
       <DropdownMenuSeparator />
       <RecoilScope>
-        {tableFilterDefinitionUsedInDropdown.entitySelectComponent}
+        {filterDefinitionUsedInDropdown.entitySelectComponent}
       </RecoilScope>
     </>
   );

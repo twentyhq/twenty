@@ -1,39 +1,42 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, Context } from 'react';
 
 import { useRemoveFilter } from '@/lib/filters-and-sorts/hooks/useRemoveFilter';
 import { useUpsertFilter } from '@/lib/filters-and-sorts/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { TableContext } from '@/ui/tables/states/TableContext';
 
-export function FilterDropdownNumberSearchInput() {
-  const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
+export function FilterDropdownNumberSearchInput({
+  context,
+}: {
+  context: Context<string | null>;
+}) {
+  const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    TableContext,
+    context,
   );
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    TableContext,
+    context,
   );
 
-  const upsertActiveTableFilter = useUpsertFilter(TableContext);
-  const removeActiveTableFilter = useRemoveFilter(TableContext);
+  const upsertFilter = useUpsertFilter(context);
+  const removeFilter = useRemoveFilter(context);
 
   return (
-    tableFilterDefinitionUsedInDropdown &&
+    filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
       <input
         type="number"
-        placeholder={tableFilterDefinitionUsedInDropdown.label}
+        placeholder={filterDefinitionUsedInDropdown.label}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           if (event.target.value === '') {
-            removeActiveTableFilter(tableFilterDefinitionUsedInDropdown.field);
+            removeFilter(filterDefinitionUsedInDropdown.field);
           } else {
-            upsertActiveTableFilter({
-              field: tableFilterDefinitionUsedInDropdown.field,
-              type: tableFilterDefinitionUsedInDropdown.type,
+            upsertFilter({
+              field: filterDefinitionUsedInDropdown.field,
+              type: filterDefinitionUsedInDropdown.type,
               value: event.target.value,
               operand: selectedOperandInDropdown,
               displayValue: event.target.value,

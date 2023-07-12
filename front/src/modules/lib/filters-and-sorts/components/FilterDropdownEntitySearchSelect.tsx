@@ -10,36 +10,34 @@ import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState'
 import { EntitiesForMultipleEntitySelect } from '@/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/relation-picker/components/SingleEntitySelectBase';
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
-import { TableContext } from '@/ui/tables/states/TableContext';
 
 export function FilterDropdownEntitySearchSelect({
   entitiesForSelect,
+  context,
 }: {
   entitiesForSelect: EntitiesForMultipleEntitySelect<EntityForSelect>;
+  context: React.Context<string | null>;
 }) {
   const [filterDropdownSelectedEntityId, setFilterDropdownSelectedEntityId] =
-    useRecoilScopedState(
-      filterDropdownSelectedEntityIdScopedState,
-      TableContext,
-    );
+    useRecoilScopedState(filterDropdownSelectedEntityIdScopedState, context);
 
   const [selectedOperandInDropdown] = useRecoilScopedState(
     selectedOperandInDropdownScopedState,
-    TableContext,
+    context,
   );
 
-  const [tableFilterDefinitionUsedInDropdown] = useRecoilScopedState(
+  const [filterDefinitionUsedInDropdown] = useRecoilScopedState(
     filterDefinitionUsedInDropdownScopedState,
-    TableContext,
+    context,
   );
 
-  const upsertActiveTableFilter = useUpsertFilter(TableContext);
-  const removeActiveTableFilter = useRemoveFilter(TableContext);
+  const upsertFilter = useUpsertFilter(context);
+  const removeFilter = useRemoveFilter(context);
 
-  const filterCurrentlyEdited = useFilterCurrentlyEdited(TableContext);
+  const filterCurrentlyEdited = useFilterCurrentlyEdited(context);
 
   function handleUserSelected(selectedEntity: EntityForSelect) {
-    if (!tableFilterDefinitionUsedInDropdown || !selectedOperandInDropdown) {
+    if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) {
       return;
     }
 
@@ -47,16 +45,16 @@ export function FilterDropdownEntitySearchSelect({
       selectedEntity.id === filterDropdownSelectedEntityId;
 
     if (clickedOnAlreadySelectedEntity) {
-      removeActiveTableFilter(tableFilterDefinitionUsedInDropdown.field);
+      removeFilter(filterDefinitionUsedInDropdown.field);
       setFilterDropdownSelectedEntityId(null);
     } else {
       setFilterDropdownSelectedEntityId(selectedEntity.id);
 
-      upsertActiveTableFilter({
+      upsertFilter({
         displayValue: selectedEntity.name,
-        field: tableFilterDefinitionUsedInDropdown.field,
+        field: filterDefinitionUsedInDropdown.field,
         operand: selectedOperandInDropdown,
-        type: tableFilterDefinitionUsedInDropdown.type,
+        type: filterDefinitionUsedInDropdown.type,
         value: selectedEntity.id,
       });
     }
