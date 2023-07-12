@@ -4,7 +4,6 @@ import { useRecoilState } from 'recoil';
 import {
   useChallengeMutation,
   useSignUpMutation,
-  useSignUpToWorkspaceMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
 
@@ -19,7 +18,6 @@ export function useAuth() {
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
-  const [SignUpToWorkspace] = useSignUpToWorkspaceMutation();
   const [verify] = useVerifyMutation();
 
   const handleChallenge = useCallback(
@@ -82,30 +80,8 @@ export function useAuth() {
   }, [setTokenPair]);
 
   const handleSignUp = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string, workspaceInviteHash?: string) => {
       const signUpResult = await signUp({
-        variables: {
-          email,
-          password,
-        },
-      });
-
-      if (signUpResult.errors) {
-        throw signUpResult.errors;
-      }
-
-      if (!signUpResult.data?.signUp) {
-        throw new Error('No login token');
-      }
-
-      await handleVerify(signUpResult.data?.signUp.loginToken.token);
-    },
-    [signUp, handleVerify],
-  );
-
-  const handleSignUpToWorkspace = useCallback(
-    async (email: string, password: string, workspaceInviteHash: string) => {
-      const signUpResult = await SignUpToWorkspace({
         variables: {
           email,
           password,
@@ -123,7 +99,7 @@ export function useAuth() {
 
       await handleVerify(signUpResult.data?.signUp.loginToken.token);
     },
-    [SignUpToWorkspace, handleVerify],
+    [signUp, handleVerify],
   );
 
   return {
@@ -131,7 +107,6 @@ export function useAuth() {
     verify: handleVerify,
     login: handleLogin,
     signUp: handleSignUp,
-    signUpToWorkspace: handleSignUpToWorkspace,
     logout: handleLogout,
   };
 }

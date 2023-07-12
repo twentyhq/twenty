@@ -12,21 +12,10 @@ export const CHALLENGE = gql`
 `;
 
 export const SIGN_UP = gql`
-  mutation SignUp($email: String!, $password: String!) {
-    signUp(email: $email, password: $password) {
-      loginToken {
-        expiresAt
-        token
-      }
-    }
-  }
-`;
-
-export const SIGN_UP_TO_WORKSPACE = gql`
-  mutation SignUpToWorkspace(
+  mutation SignUp(
     $email: String!
     $password: String!
-    $workspaceInviteHash: String!
+    $workspaceInviteHash: String
   ) {
     signUp(
       email: $email
