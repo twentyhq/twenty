@@ -1,3 +1,4 @@
+import { Context } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -9,9 +10,9 @@ import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScoped
 import { getOperandLabel } from '@/lib/filters-and-sorts/utils/getOperandLabel';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icons/index';
-import { TableContext } from '@/ui/tables/states/TableContext';
 
 type OwnProps<SortField> = {
+  context: Context<string | null>;
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
   onCancelClick: () => void;
@@ -59,6 +60,7 @@ const StyledCancelButton = styled.button`
 `;
 
 function SortAndFilterBar<SortField>({
+  context,
   sorts,
   onRemoveSort,
   onCancelClick,
@@ -67,26 +69,26 @@ function SortAndFilterBar<SortField>({
 
   const [filters, setFilters] = useRecoilScopedState(
     filtersScopedState,
-    TableContext,
+    context,
   );
 
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
-    TableContext,
+    context,
   );
 
   const filtersWithDefinition = filters.map((filter) => {
-    const tableFilterDefinition = availableFilters.find((availableFilter) => {
+    const filterDefinition = availableFilters.find((availableFilter) => {
       return availableFilter.field === filter.field;
     });
 
     return {
       ...filter,
-      ...tableFilterDefinition,
+      ...filterDefinition,
     };
   });
 
-  const removeFilter = useRemoveFilter(TableContext);
+  const removeFilter = useRemoveFilter(context);
 
   function handleCancelClick() {
     setFilters([]);
