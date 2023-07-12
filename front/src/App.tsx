@@ -4,6 +4,7 @@ import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { RequireOnboarded } from '@/auth/components/RequireOnboarded';
 import { RequireOnboarding } from '@/auth/components/RequireOnboarding';
 import { AuthModal } from '@/auth/components/ui/Modal';
+import { Snackbar } from '@/ui/components/snack-bar/SnackBar';
 import { AuthLayout } from '@/ui/layout/AuthLayout';
 import { DefaultLayout } from '@/ui/layout/DefaultLayout';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
@@ -117,6 +118,7 @@ export function App() {
           />
         </Routes>
       </DefaultLayout>
+      <Snackbar isOpen={true} title="Test" variant="success" duration={5} />
     </>
   );
 }
