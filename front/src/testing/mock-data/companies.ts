@@ -13,7 +13,13 @@ type MockedCompany = Pick<
 > & {
   accountOwner: Pick<
     User,
-    'id' | 'email' | 'displayName' | '__typename' | 'firstName' | 'lastName'
+    | 'id'
+    | 'email'
+    | 'displayName'
+    | '__typename'
+    | 'firstName'
+    | 'lastName'
+    | 'avatarUrl'
   > | null;
 };
 

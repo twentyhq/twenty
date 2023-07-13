@@ -5,6 +5,7 @@ import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
 import { useEditableCell } from '@/ui/components/editable-cell/hooks/useEditableCell';
+import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import {
   Company,
   User,
@@ -14,7 +15,7 @@ import {
 
 export type OwnProps = {
   company: Pick<Company, 'id'> & {
-    accountOwner?: Pick<User, 'id' | 'displayName'> | null;
+    accountOwner?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
   };
 };
 
@@ -39,6 +40,7 @@ export function CompanyAccountOwnerPicker({ company }: OwnProps) {
       id: user.id,
       name: user.displayName,
       avatarType: 'rounded',
+      avatarUrl: getImageAbsoluteURIOrBase64(user.avatarUrl) ?? undefined,
     }),
     orderByField: 'firstName',
     searchOnFields: ['firstName', 'lastName'],
