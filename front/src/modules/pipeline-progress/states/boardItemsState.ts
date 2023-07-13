@@ -1,8 +1,8 @@
 import { atom } from 'recoil';
 
-import { CompanyProgressDict } from '../components/Board';
+import { EntityProgressDict } from '../components/EntityProgressBoard';
 
-export const boardItemsState = atom<CompanyProgressDict>({
+export const boardItemsState = atom<EntityProgressDict>({
   key: 'boardItemsState',
   default: {},
 });

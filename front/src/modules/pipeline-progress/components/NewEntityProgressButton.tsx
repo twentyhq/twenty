@@ -9,7 +9,6 @@ import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { Column } from '@/ui/board/components/Board';
 import { NewButton as UINewButton } from '@/ui/board/components/NewButton';
 import {
-  Company,
   PipelineProgressableType,
   useCreateOnePipelineProgressMutation,
 } from '~/generated/graphql';
@@ -18,14 +17,22 @@ import { GET_PIPELINES } from '../queries';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { boardItemsState } from '../states/boardItemsState';
 
-import { NewCompanyBoardCard } from './NewCompanyBoardCard';
-
 type OwnProps = {
   pipelineId: string;
   columnId: string;
+  NewEntityBoardCardComponent: React.FC<{
+    onEntitySelect: (entity: any) => void;
+    onCancel: () => void;
+  }>;
+  entityType: PipelineProgressableType;
 };
 
-export function NewButton({ pipelineId, columnId }: OwnProps) {
+export function NewEntityProgressButton({
+  pipelineId,
+  columnId,
+  NewEntityBoardCardComponent,
+  entityType,
+}: OwnProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isCreatingCard, setIsCreatingCard] = useState(false);
   const [board, setBoard] = useRecoilState(boardColumnsState);
@@ -41,8 +48,8 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
   });
 
   const handleEntitySelect = useCallback(
-    async (company: Pick<Company, 'id' | 'name' | 'domainName'>) => {
-      if (!company) return;
+    async (entity: any) => {
+      if (!entity) return;
 
       setIsCreatingCard(false);
       goBackToPreviousHotkeysScope();
@@ -56,7 +63,7 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
       setBoardItems({
         ...boardItems,
         [newUuid]: {
-          company,
+          entity,
           pipelineProgress: {
             id: newUuid,
             amount: 0,
@@ -69,8 +76,8 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
           uuid: newUuid,
           pipelineStageId: columnId,
           pipelineId,
-          entityId: company.id,
-          entityType: PipelineProgressableType.Company,
+          entityId: entity.id,
+          entityType,
         },
       });
     },
@@ -83,6 +90,7 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
       boardItems,
       setBoardItems,
       goBackToPreviousHotkeysScope,
+      entityType,
     ],
   );
 
@@ -103,7 +111,7 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
       {isCreatingCard && (
         <RecoilScope>
           <div ref={containerRef}>
-            <NewCompanyBoardCard
+            <NewEntityBoardCardComponent
               onEntitySelect={handleEntitySelect}
               onCancel={handleCancel}
             />

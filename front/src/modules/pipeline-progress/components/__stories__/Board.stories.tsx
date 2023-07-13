@@ -2,26 +2,28 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
-import { Board } from '../Board';
+import { CompanyProgressBoard } from '../CompanyProgressBoard';
 
 import { initialBoard, items } from './mock-data';
 
-const meta: Meta<typeof Board> = {
+const meta: Meta<typeof CompanyProgressBoard> = {
   title: 'UI/Board/Board',
-  component: Board,
+  component: CompanyProgressBoard,
 };
 
 export default meta;
-type Story = StoryObj<typeof Board>;
+type Story = StoryObj<typeof CompanyProgressBoard>;
 
 export const OneColumnBoard: Story = {
   render: getRenderWrapperForComponent(
-    <Board
+    <CompanyProgressBoard
       pipelineId={'xxx-test'}
       columns={initialBoard}
       initialBoard={initialBoard}
       initialItems={items}
       onCardUpdate={async (_) => {}} // eslint-disable-line @typescript-eslint/no-empty-function
+      EntityCardComponent={() => <></>}
+      NewEntityButtonComponent={() => <></>}
     />,
   ),
 };

@@ -13,7 +13,7 @@ type ItemPipelineProgress = Pick<
 >;
 
 type Item = {
-  company: ItemCompany;
+  entity: ItemCompany;
   pipelineProgress: ItemPipelineProgress;
 };
 type Items = { [key: string]: Item };
@@ -74,7 +74,7 @@ export function useBoard(pipelineId: string) {
     if (companiesDict?.[pipelineProgress.progressableId]) {
       acc[pipelineProgress.id] = {
         pipelineProgress,
-        company: companiesDict[pipelineProgress.progressableId],
+        entity: companiesDict[pipelineProgress.progressableId],
       };
     }
     return acc;

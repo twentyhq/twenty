@@ -21,7 +21,7 @@ const FakeSelectableCompanyBoardCard = () => {
 
   return (
     <CompanyBoardCard
-      company={mockedCompaniesData[0] as Company}
+      entity={mockedCompaniesData[0] as Company}
       pipelineProgress={mockedPipelineProgressData[0]}
       selected={selected}
       onSelect={() => setSelected(!selected)}
