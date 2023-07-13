@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 
 import { RequireOnboarded } from '@/auth/components/RequireOnboarded';
 import { RequireOnboarding } from '@/auth/components/RequireOnboarding';
 import { AuthModal } from '@/auth/components/ui/Modal';
-import { useSnackBar } from '@/snack-bar/hooks/useSnackBar';
 import { AuthLayout } from '@/ui/layout/AuthLayout';
 import { DefaultLayout } from '@/ui/layout/DefaultLayout';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
@@ -55,38 +53,6 @@ function AuthRoutes() {
 }
 
 export function App() {
-  const { enqueueSnackBar } = useSnackBar();
-
-  useEffect(() => {
-    setTimeout(() => {
-      console.log('enqueueSnackBar 1');
-      enqueueSnackBar('Test 1', {
-        duration: 2000,
-      });
-    }, 1000);
-
-    setTimeout(() => {
-      console.log('enqueueSnackBar 2');
-      enqueueSnackBar('Test 2', {
-        duration: 5000,
-      });
-    }, 2000);
-
-    setTimeout(() => {
-      console.log('enqueueSnackBar 3');
-      enqueueSnackBar('Test 3', {
-        duration: 3000,
-      });
-    }, 3000);
-
-    setTimeout(() => {
-      console.log('enqueueSnackBar 4');
-      enqueueSnackBar('Test 4', {
-        duration: 10000,
-      });
-    }, 4000);
-  }, [enqueueSnackBar]);
-
   return (
     <>
       <AppInternalHooks />

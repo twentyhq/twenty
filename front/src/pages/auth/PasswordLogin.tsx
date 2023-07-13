@@ -15,6 +15,7 @@ import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useSnackBar } from '@/snack-bar/hooks/useSnackBar';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
@@ -47,10 +48,6 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
-const StyledErrorContainer = styled.div`
-  color: ${({ theme }) => theme.color.red};
-`;
-
 const validationSchema = Yup.object()
   .shape({
     exist: Yup.boolean().required(),
@@ -68,6 +65,8 @@ type Form = Yup.InferType<typeof validationSchema>;
 
 export function PasswordLogin() {
   const navigate = useNavigate();
+
+  const { enqueueSnackBar } = useSnackBar();
 
   const [isDemoMode] = useRecoilState(isDemoModeState);
   const [authFlowUserEmail] = useRecoilState(authFlowUserEmailState);
@@ -88,7 +87,6 @@ export function PasswordLogin() {
     control,
     handleSubmit,
     formState: { isSubmitting },
-    setError,
     watch,
     getValues,
   } = useForm<Form>({
@@ -114,16 +112,19 @@ export function PasswordLogin() {
         }
         navigate('/auth/create/workspace');
       } catch (err: any) {
-        setError('root', { message: err?.message });
+        console.log('err', err);
+        enqueueSnackBar(err?.message, {
+          variant: 'error',
+        });
       }
     },
     [
-      login,
+      checkUserExistsData?.checkUserExists.exists,
       navigate,
-      setError,
+      login,
       signUp,
       workspaceInviteHash,
-      checkUserExistsData,
+      enqueueSnackBar,
     ],
   );
   useScopedHotkeys(
@@ -200,14 +201,6 @@ export function PasswordLogin() {
             fullWidth
           />
         </StyledButtonContainer>
-        {/* Will be replaced by error snack bar */}
-        <Controller
-          name="exist"
-          control={control}
-          render={({ formState: { errors } }) => (
-            <StyledErrorContainer>{errors?.root?.message}</StyledErrorContainer>
-          )}
-        />
       </StyledForm>
     </>
   );

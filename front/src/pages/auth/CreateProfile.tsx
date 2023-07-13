@@ -16,6 +16,7 @@ import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
+import { useSnackBar } from '@/snack-bar/hooks/useSnackBar';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
@@ -47,10 +48,6 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
-const StyledErrorContainer = styled.div`
-  color: ${({ theme }) => theme.color.red};
-`;
-
 const validationSchema = Yup.object()
   .shape({
     firstName: Yup.string().required('First name can not be empty'),
@@ -64,6 +61,8 @@ export function CreateProfile() {
   const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();
 
+  const { enqueueSnackBar } = useSnackBar();
+
   const [currentUser] = useRecoilState(currentUserState);
 
   const [updateUser] = useUpdateUserMutation();
@@ -73,7 +72,6 @@ export function CreateProfile() {
     control,
     handleSubmit,
     formState: { isValid, isSubmitting },
-    setError,
     getValues,
   } = useForm<Form>({
     mode: 'onChange',
@@ -118,10 +116,12 @@ export function CreateProfile() {
 
         navigate('/');
       } catch (error: any) {
-        setError('root', { message: error?.message });
+        enqueueSnackBar(error?.message, {
+          variant: 'error',
+        });
       }
     },
-    [currentUser?.id, navigate, setError, updateUser],
+    [currentUser?.id, enqueueSnackBar, navigate, updateUser],
   );
 
   useScopedHotkeys(
@@ -202,14 +202,6 @@ export function CreateProfile() {
           fullWidth
         />
       </StyledButtonContainer>
-      {/* Will be replaced by error snack bar */}
-      <Controller
-        name="firstName"
-        control={control}
-        render={({ formState: { errors } }) => (
-          <StyledErrorContainer>{errors?.root?.message}</StyledErrorContainer>
-        )}
-      />
     </>
   );
 }
