@@ -12,6 +12,7 @@ import { useRecoilState } from 'recoil';
 
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
 import {
+  Pipeline,
   PipelineProgress,
   PipelineStage,
   useUpdateOnePipelineProgressMutation,
@@ -38,7 +39,7 @@ export type EntityProgressDict = {
 };
 
 type BoardProps = {
-  pipelineId: string;
+  pipeline: Pipeline;
   initialBoard: Column[];
   initialItems: EntityProgressDict;
   EntityCardComponent: React.FC<{
@@ -81,7 +82,7 @@ const BoardColumnCardsContainer = ({
 export function EntityProgressBoard({
   initialBoard,
   initialItems,
-  pipelineId,
+  pipeline,
   EntityCardComponent,
   NewEntityButtonComponent,
 }: BoardProps) {
@@ -248,7 +249,7 @@ export function EntityProgressBoard({
                   )}
                 </BoardColumnCardsContainer>
                 <NewEntityButtonComponent
-                  pipelineId={pipelineId}
+                  pipelineId={pipeline?.id || ''}
                   columnId={column.id}
                 />
               </BoardColumn>

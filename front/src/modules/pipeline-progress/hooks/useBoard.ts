@@ -1,6 +1,7 @@
 import {
+  Pipeline,
   PipelineProgress,
-  useGetPipelinesQuery,
+  useGetPipelineProgressQuery,
 } from '../../../generated/graphql';
 import { Column } from '../../ui/board/components/Board';
 
@@ -16,12 +17,12 @@ type Item = {
 };
 type Items = { [key: string]: Item };
 
-export function useBoard(pipelineId: string, useGetEntitiesQuery: any) {
-  const pipelines = useGetPipelinesQuery({
-    variables: { where: { id: { equals: pipelineId } } },
-    skip: pipelineId === '',
-  });
-  const pipelineStages = pipelines.data?.findManyPipeline[0]?.pipelineStages;
+export function useBoard(
+  useGetEntitiesQuery: any,
+  pipeline: Pipeline | undefined,
+) {
+  const pipelineStages = pipeline?.pipelineStages;
+
   const orderedPipelineStages = pipelineStages
     ? [...pipelineStages].sort((a, b) => {
         if (!a.index || !b.index) return 0;
@@ -39,18 +40,25 @@ export function useBoard(pipelineId: string, useGetEntitiesQuery: any) {
         [],
     })) || [];
 
-  const pipelineProgresses = orderedPipelineStages?.reduce(
-    (acc, pipelineStage) => [
-      ...acc,
-      ...(pipelineStage.pipelineProgresses || []),
-    ],
-    [] as ItemPipelineProgress[],
-  );
+  const pipelineProgressIds = initialBoard.map((item) => item.itemKeys).flat();
+
+  const pipelineProgressesQuery = useGetPipelineProgressQuery({
+    variables: {
+      where: {
+        id: { in: pipelineProgressIds },
+      },
+    },
+  });
+
+  const pipelineProgresses =
+    pipelineProgressesQuery.data?.findManyPipelineProgress || [];
 
   const entitiesQueryResult = useGetEntitiesQuery({
     variables: {
       where: {
-        id: { in: pipelineProgresses?.map((item) => item.progressableId) },
+        id: {
+          in: pipelineProgresses.map((item) => item.progressableId),
+        },
       },
     },
   });
@@ -80,8 +88,8 @@ export function useBoard(pipelineId: string, useGetEntitiesQuery: any) {
 
   return {
     initialBoard,
-    items,
-    loading: pipelines.loading || entitiesQueryResult.loading,
-    error: pipelines.error || entitiesQueryResult.error,
+    items: items,
+    loading: entitiesQueryResult.loading || pipelineProgressesQuery.loading,
+    error: entitiesQueryResult.error || pipelineProgressesQuery.error,
   };
 }
