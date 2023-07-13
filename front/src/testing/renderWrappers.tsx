@@ -2,6 +2,7 @@ import React from 'react';
 import { HotkeysProvider } from 'react-hotkeys-hook';
 import { MemoryRouter } from 'react-router-dom';
 
+import { CompanyEntityTableData } from '@/companies/table/components/CompanyEntityTableData';
 import { INITIAL_HOTKEYS_SCOPES } from '@/hotkeys/constants';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
@@ -11,7 +12,6 @@ import { companiesFilters } from '~/pages/companies/companies-filters';
 import { ClientConfigProvider } from '~/providers/client-config/ClientConfigProvider';
 import { UserProvider } from '~/providers/user/UserProvider';
 
-import { mockedCompaniesData } from './mock-data/companies';
 import { ComponentStorybookLayout } from './ComponentStorybookLayout';
 import { FullHeightStorybookLayout } from './FullHeightStorybookLayout';
 
@@ -48,6 +48,9 @@ export function getRenderWrapperForEntityTableComponent(
   return function Render() {
     return (
       <RecoilScope SpecificContext={TableContext}>
+        {/*
+        TODO: add company mocked loader
+        <CompanyEntityTableData */}
         <HooksEntityTable
           availableFilters={companiesFilters}
           numberOfColumns={5}
