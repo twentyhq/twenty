@@ -1,6 +1,13 @@
-import { useEffect } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion, useAnimation } from 'framer-motion';
+import { AnimationControls, motion, useAnimation } from 'framer-motion';
 
 const Bar = styled.div<Pick<ProgressBarProps, 'barHeight'>>`
   height: ${({ barHeight }) => barHeight}px;
@@ -8,51 +15,87 @@ const Bar = styled.div<Pick<ProgressBarProps, 'barHeight'>>`
   width: 100%;
 `;
 
-const BarFilling = styled(motion.div)<Pick<ProgressBarProps, 'fillColor'>>`
-  background-color: ${({ theme, fillColor }) =>
-    fillColor ?? theme.color.gray80};
+const BarFilling = styled(motion.div)`
   height: 100%;
   width: 100%;
 `;
 
-type ProgressBarProps = {
+export type ProgressBarProps = {
   duration?: number;
   delay?: number;
   easing?: string;
   barHeight?: number;
-  fillColor?: string;
+  barColor?: string;
+  autoStart?: boolean;
 };
 
-export function ProgressBar({
-  duration = 3,
-  delay = 0.5,
-  easing = 'easeInOut',
-  barHeight = 24,
-  fillColor,
-}: ProgressBarProps) {
-  const controls = useAnimation();
+export type ProgressBarControls = AnimationControls & {
+  start: () => Promise<any>;
+  pause: () => Promise<any>;
+};
 
-  useEffect(() => {
-    // TODO: Add a forward ref to control this from other components
-    controls.start({
-      scaleX: 0,
-      transition: {
-        duration: duration,
-        delay: delay,
-        ease: easing,
+export const ProgressBar = forwardRef<ProgressBarControls, ProgressBarProps>(
+  (
+    {
+      duration = 3,
+      delay = 0,
+      easing = 'easeInOut',
+      barHeight = 24,
+      barColor,
+      autoStart = true,
+    },
+    ref,
+  ) => {
+    const theme = useTheme();
+
+    const controls = useAnimation();
+    const startTimestamp = useRef<number>(0);
+    const remainingTime = useRef<number>(duration);
+
+    const start = useCallback(async () => {
+      startTimestamp.current = Date.now();
+      return controls.start({
+        scaleX: 0,
+        transition: {
+          duration: remainingTime.current / 1000, // convert ms to s for framer-motion
+          delay: delay / 1000, // likewise
+          ease: easing,
+        },
+      });
+    }, [controls, delay, easing]);
+
+    useImperativeHandle(ref, () => ({
+      ...controls,
+      start: async () => {
+        return start();
       },
-    });
-  }, [controls, delay, duration, easing]);
+      pause: async () => {
+        const elapsed = Date.now() - startTimestamp.current;
 
-  return (
-    <Bar barHeight={barHeight}>
-      <BarFilling
-        style={{ originX: 0 }}
-        initial={{ scaleX: 1 }}
-        animate={controls}
-        exit={{ scaleX: 0 }}
-        fillColor={fillColor}
-      />
-    </Bar>
-  );
-}
+        remainingTime.current = remainingTime.current - elapsed;
+        return controls.stop();
+      },
+    }));
+
+    useEffect(() => {
+      if (autoStart) {
+        start();
+      }
+    }, [controls, delay, duration, easing, autoStart, start]);
+
+    return (
+      <Bar barHeight={barHeight}>
+        <BarFilling
+          style={{
+            originX: 0,
+            // Seems like custom props are not well handled by react when used with framer-motion and emotion styled
+            backgroundColor: barColor ?? theme.color.gray80,
+          }}
+          initial={{ scaleX: 1 }}
+          animate={controls}
+          exit={{ scaleX: 0 }}
+        />
+      </Bar>
+    );
+  },
+);
