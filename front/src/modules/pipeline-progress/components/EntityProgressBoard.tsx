@@ -24,7 +24,6 @@ import {
   getOptimisticlyUpdatedBoard,
   StyledBoard,
 } from '../../ui/board/components/Board';
-import { useBoard } from '../hooks/useBoard';
 import { GET_PIPELINES } from '../queries';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
