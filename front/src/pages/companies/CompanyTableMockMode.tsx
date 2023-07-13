@@ -1,6 +1,7 @@
 import { IconList } from '@tabler/icons-react';
 
 import { companyColumns } from '@/companies/table/components/companyColumns';
+import { CompanyEntityTableDataMocked } from '@/companies/table/components/CompanyEntityTableDataMocked';
 import { EntityTable } from '@/ui/components/table/EntityTable';
 import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
 
@@ -10,6 +11,7 @@ import { availableSorts } from './companies-sorts';
 export function CompanyTableMockMode() {
   return (
     <>
+      <CompanyEntityTableDataMocked />
       <HooksEntityTable
         numberOfColumns={companyColumns.length}
         availableFilters={companiesFilters}

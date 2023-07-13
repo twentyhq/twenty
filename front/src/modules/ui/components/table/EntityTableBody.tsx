@@ -17,17 +17,13 @@ export function EntityTableBody({ columns }: { columns: Array<TableColumn> }) {
 
   return (
     <tbody>
-      {!isFetchingEntityTableData ? (
-        rowIds.map((rowId, index) => (
-          <RecoilScope SpecificContext={RowContext} key={rowId}>
-            <EntityTableRow columns={columns} rowId={rowId} index={index} />
-          </RecoilScope>
-        ))
-      ) : (
-        <tr>
-          <td>loading...</td>
-        </tr>
-      )}
+      {!isFetchingEntityTableData
+        ? rowIds.map((rowId, index) => (
+            <RecoilScope SpecificContext={RowContext} key={rowId}>
+              <EntityTableRow columns={columns} rowId={rowId} index={index} />
+            </RecoilScope>
+          ))
+        : null}
     </tbody>
   );
 }
