@@ -5,18 +5,19 @@ import {
 } from '../../../generated/graphql';
 import { Column } from '../../ui/board/components/Board';
 
+type ItemEntity = any;
 type ItemPipelineProgress = Pick<
   PipelineProgress,
   'id' | 'amount' | 'progressableId'
 >;
 
-type Item<T> = {
-  entity: T;
+type Item = {
+  entity: ItemEntity;
   pipelineProgress: ItemPipelineProgress;
 };
-type Items<T> = { [key: string]: Item<T> };
+type Items = { [key: string]: Item };
 
-export function useBoard<T extends { id: string }>(
+export function useBoard(
   useGetEntitiesQuery: any,
   pipeline: Pipeline | undefined,
 ) {
@@ -62,14 +63,17 @@ export function useBoard<T extends { id: string }>(
     },
   });
 
-  const indexEntityByIdReducer = (acc: { [key: string]: T }, entity: T) => ({
+  const indexEntityByIdReducer = (
+    acc: { [key: string]: ItemEntity },
+    entity: ItemEntity,
+  ) => ({
     ...acc,
     [entity.id]: entity,
   });
 
   const entitiesDict = entitiesQueryResult.data?.companies.reduce(
     indexEntityByIdReducer,
-    {} as { [key: string]: T },
+    {} as { [key: string]: ItemEntity },
   );
 
   const items = pipelineProgresses?.reduce((acc, pipelineProgress) => {
@@ -80,7 +84,7 @@ export function useBoard<T extends { id: string }>(
       };
     }
     return acc;
-  }, {} as Items<T>);
+  }, {} as Items);
 
   return {
     initialBoard,

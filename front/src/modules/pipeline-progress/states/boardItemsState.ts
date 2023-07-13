@@ -1,6 +1,8 @@
 import { atom } from 'recoil';
 
-export const boardItemsState = atom<any>({
+import { EntityProgressDict } from '../components/EntityProgressBoard';
+
+export const boardItemsState = atom<EntityProgressDict>({
   key: 'boardItemsState',
   default: {},
 });

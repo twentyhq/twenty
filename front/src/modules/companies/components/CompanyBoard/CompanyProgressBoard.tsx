@@ -24,13 +24,10 @@ type BoardProps = {
 };
 
 export function CompanyProgressBoard({ pipeline }: BoardProps) {
-  const { initialBoard, items } = useBoard<Company>(
-    useGetCompaniesQuery,
-    pipeline,
-  );
+  const { initialBoard, items } = useBoard(useGetCompaniesQuery, pipeline);
 
   return (
-    <EntityProgressBoard<Company>
+    <EntityProgressBoard
       initialBoard={initialBoard}
       initialItems={items}
       pipeline={pipeline}
