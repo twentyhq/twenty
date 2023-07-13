@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
+import { IconCheck } from '@/ui/icons/index';
+
 type OwnProps = {
   name?: string;
   id?: string;
@@ -11,8 +13,10 @@ type OwnProps = {
 
 const StyledContainer = styled.div`
   align-items: center;
+
   display: flex;
   justify-content: center;
+  position: relative;
 
   input[type='checkbox'] {
     accent-color: ${({ theme }) => theme.color.blue};
@@ -24,6 +28,7 @@ const StyledContainer = styled.div`
   }
 
   input[type='checkbox']::before {
+    background-color: ${({ theme }) => theme.background.primary};
     border: 1px solid ${({ theme }) => theme.font.color.tertiary};
     border-radius: ${({ theme }) => theme.border.radius.xs};
     content: '';
@@ -38,6 +43,17 @@ const StyledContainer = styled.div`
 
   input[type='checkbox']:checked::before {
     border: 1px solid ${({ theme }) => theme.color.blue};
+  }
+
+  svg {
+    background: ${({ theme }) => theme.color.blue};
+    color: white;
+    height: 12px;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
   }
 `;
 
@@ -74,6 +90,7 @@ export function Checkbox({
         checked={checked}
         onChange={handleInputChange}
       />
+      {checked && <IconCheck />}
     </StyledContainer>
   );
 }

@@ -61,6 +61,46 @@ export const useCompaniesColumns = () => {
         ),
         size: 100,
       }),
+      columnHelper.accessor('accountOwner', {
+        header: () => (
+          <ColumnHead
+            viewName="Account owner"
+            viewIcon={<IconUser size={16} />}
+          />
+        ),
+        cell: (props) => (
+          <CompanyAccountOwnerCell company={props.row.original} />
+        ),
+      }),
+
+      columnHelper.accessor('createdAt', {
+        header: () => (
+          <ColumnHead
+            viewName="Creation"
+            viewIcon={<IconCalendarEvent size={16} />}
+          />
+        ),
+        cell: (props) => (
+          <EditableCellDate
+            value={
+              props.row.original.createdAt
+                ? new Date(props.row.original.createdAt)
+                : new Date()
+            }
+            onChange={(value: Date) => {
+              const company = { ...props.row.original };
+              company.createdAt = value.toISOString();
+              updateCompany({
+                variables: {
+                  ...company,
+                  accountOwnerId: company.accountOwner?.id,
+                },
+              });
+            }}
+          />
+        ),
+        size: 150,
+      }),
       columnHelper.accessor('employees', {
         header: () => (
           <ColumnHead viewName="Employees" viewIcon={<IconUsers size={16} />} />
@@ -105,45 +145,6 @@ export const useCompaniesColumns = () => {
           />
         ),
         size: 170,
-      }),
-      columnHelper.accessor('createdAt', {
-        header: () => (
-          <ColumnHead
-            viewName="Creation"
-            viewIcon={<IconCalendarEvent size={16} />}
-          />
-        ),
-        cell: (props) => (
-          <EditableCellDate
-            value={
-              props.row.original.createdAt
-                ? new Date(props.row.original.createdAt)
-                : new Date()
-            }
-            onChange={(value: Date) => {
-              const company = { ...props.row.original };
-              company.createdAt = value.toISOString();
-              updateCompany({
-                variables: {
-                  ...company,
-                  accountOwnerId: company.accountOwner?.id,
-                },
-              });
-            }}
-          />
-        ),
-        size: 150,
-      }),
-      columnHelper.accessor('accountOwner', {
-        header: () => (
-          <ColumnHead
-            viewName="Account owner"
-            viewIcon={<IconUser size={16} />}
-          />
-        ),
-        cell: (props) => (
-          <CompanyAccountOwnerCell company={props.row.original} />
-        ),
       }),
     ];
   }, [updateCompany]);
