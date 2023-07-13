@@ -30,16 +30,8 @@ export function EditableCellDoubleText({
   const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
   const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
 
-  useEffect(() => {
-    setFirstInternalValue(firstValue);
-  }, [firstValue]);
-
-  useEffect(() => {
-    setSecondInternalValue(secondValue);
-  }, [secondValue]);
-
   const debouncedOnChange = useMemo(() => {
-    return debounce(onChange, 500);
+    return debounce(onChange, 200);
   }, [onChange]);
 
   function handleOnChange(firstValue: string, secondValue: string): void {

@@ -1,6 +1,5 @@
 import { useRecoilCallback } from 'recoil';
 
-import { TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN } from '../constants';
 import { numberOfTableColumnsSelectorState } from '../states/numberOfTableColumnsSelectorState';
 import { numberOfTableRowsSelectorState } from '../states/numberOfTableRowsSelectorState';
 import { softFocusPositionState } from '../states/softFocusPositionState';
@@ -98,7 +97,7 @@ export function useMoveSoftFocus() {
         } else if (isLastColumnButNotLastRow) {
           setSoftFocusPosition({
             row: currentRowNumber + 1,
-            column: TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN,
+            column: 0,
           });
         }
       },
@@ -120,18 +119,12 @@ export function useMoveSoftFocus() {
         const currentRowNumber = softFocusPosition.row;
 
         const isFirstRowAndFirstColumn =
-          currentColumnNumber ===
-            TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN &&
-          currentRowNumber === 0;
+          currentColumnNumber === 0 && currentRowNumber === 0;
 
         const isFirstColumnButNotFirstRow =
-          currentColumnNumber ===
-            TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN &&
-          currentRowNumber > 0;
+          currentColumnNumber === 0 && currentRowNumber > 0;
 
-        const isNotFirstColumn =
-          currentColumnNumber >
-          TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN;
+        const isNotFirstColumn = currentColumnNumber > 0;
 
         if (isFirstRowAndFirstColumn) {
           return;
@@ -149,7 +142,7 @@ export function useMoveSoftFocus() {
           });
         }
       },
-    [setSoftFocusPosition, TABLE_MIN_COLUMN_NUMBER_BECAUSE_OF_CHECKBOX_COLUMN],
+    [setSoftFocusPosition],
   );
 
   return {

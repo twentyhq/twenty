@@ -1,5 +1,6 @@
 import { TableColumn } from '@/people/table/components/peopleColumns';
 
+import { ColumnHead } from './ColumnHead';
 import { SelectAllCheckbox } from './SelectAllCheckboxV2';
 
 export function EntityTableHeader({
@@ -28,7 +29,7 @@ export function EntityTableHeader({
               maxWidth: column.size,
             }}
           >
-            {column.title}
+            <ColumnHead viewName={column.title} viewIcon={column.icon} />
           </th>
         ))}
         <th></th>

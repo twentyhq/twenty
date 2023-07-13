@@ -58,7 +58,9 @@ export function EntityTableRow({
       data-testid={`row-id-${rowId}`}
       selected={!!currentRowSelection[rowId]}
     >
-      <CheckboxCell />
+      <td>
+        <CheckboxCell />
+      </td>
       {columns.map((column, columnIndex) => {
         return (
           <RecoilScope SpecificContext={CellContext} key={column.id.toString()}>
