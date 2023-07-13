@@ -88,7 +88,6 @@ export function EntityTable<SortField>({
   availableSorts,
   onSortsUpdate,
 }: OwnProps<SortField>) {
-  console.log('EntityTable');
   const tableBodyRef = React.useRef<HTMLDivElement>(null);
 
   const leaveTableFocus = useLeaveTableFocus();

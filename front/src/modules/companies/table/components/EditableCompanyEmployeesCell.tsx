@@ -6,7 +6,6 @@ import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
 import { useUpdateCompanyMutation } from '~/generated/graphql';
 
 export function EditableCompanyEmployeesCell() {
-  console.log('EditableCompanyEmployeesCell');
   const currentRowEntityId = useCurrentRowEntityId();
 
   const [updateCompany] = useUpdateCompanyMutation();

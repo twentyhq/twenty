@@ -15,7 +15,6 @@ export function useCurrentRowSelected() {
   const setCurrentRowSelected = useRecoilCallback(
     ({ set, snapshot }) =>
       (newSelectedState: boolean) => {
-        console.log({ currentRowId, newSelectedState });
         if (!currentRowId) return;
 
         const isRowSelected = snapshot

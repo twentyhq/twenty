@@ -25,8 +25,6 @@ export const SelectAllCheckbox = () => {
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
 
-  console.log({ checked, indeterminate });
-
   return (
     <StyledContainer
       onClick={handleContainerClick}

@@ -24,8 +24,6 @@ export function useSelectAllRows() {
           .getLoadable(tableRowIdsState)
           .valueOrThrow();
 
-        console.log({ allRowsSelectedStatus, numberOfRows, tableRowIds });
-
         if (allRowsSelectedStatus === 'none') {
           set(numberOfSelectedRowState, numberOfRows);
 

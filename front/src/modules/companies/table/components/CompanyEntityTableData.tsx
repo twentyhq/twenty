@@ -17,7 +17,6 @@ export function CompanyEntityTableData({
   orderBy?: PersonOrderByWithRelationInput[];
   whereFilters?: any;
 }) {
-  console.log('PeopleEntityTableData');
   const [, setTableRowIds] = useRecoilState(tableRowIdsState);
 
   const [, setIsFetchingEntityTableData] = useRecoilState(

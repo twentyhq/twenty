@@ -7,7 +7,6 @@ import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
 import { useUpdateCompanyMutation } from '~/generated/graphql';
 
 export function EditableCompanyCreatedAtCell() {
-  console.log('EditableCompanyCreatedAtCell');
   const currentRowEntityId = useCurrentRowEntityId();
 
   const createdAt = useRecoilValue(

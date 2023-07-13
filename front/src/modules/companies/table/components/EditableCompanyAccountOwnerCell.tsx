@@ -5,7 +5,6 @@ import { companyAccountOwnerFamilyState } from '@/companies/states/companyAccoun
 import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
 
 export function EditableCompanyAccountOwnerCell() {
-  console.log('EditableCompanyAccountOwnerCell');
   const currentRowEntityId = useCurrentRowEntityId();
 
   const accountOwner = useRecoilValue(

@@ -9,7 +9,6 @@ import { tableRowIdsState } from '@/ui/tables/states/tableRowIdsState';
 import { EntityTableRow } from './EntityTableRowV2';
 
 export function EntityTableBody({ columns }: { columns: Array<TableColumn> }) {
-  console.log('EntityTableBody');
   const rowIds = useRecoilValue(tableRowIdsState);
 
   const isFetchingEntityTableData = useRecoilValue(

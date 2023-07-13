@@ -5,7 +5,6 @@ import { peopleCompanyFamilyState } from '@/people/states/peopleCompanyFamilySta
 import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
 
 export function EditablePeopleCompanyCell() {
-  console.log('EditablePeopleCompanyCell');
   const currentRowEntityId = useCurrentRowEntityId();
 
   const company = useRecoilValue(

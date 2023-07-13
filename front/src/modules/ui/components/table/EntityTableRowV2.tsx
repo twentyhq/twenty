@@ -29,7 +29,6 @@ export function EntityTableRow({
   rowId: string;
   index: number;
 }) {
-  console.log('EntityTableRow');
   const [currentRowSelection] = useRecoilState(currentRowSelectionState);
   const [currentRowEntityId, setCurrentRowEntityId] = useRecoilScopedState(
     currentRowEntityIdScopedState,
@@ -42,7 +41,6 @@ export function EntityTableRow({
   );
 
   useEffect(() => {
-    console.log({ currentRowEntityId, rowId });
     if (currentRowEntityId !== rowId) {
       setCurrentRowEntityId(rowId);
     }

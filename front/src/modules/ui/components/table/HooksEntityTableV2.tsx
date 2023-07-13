@@ -10,7 +10,6 @@ export function HooksEntityTable({
   numberOfColumns: number;
   availableTableFilters: TableFilterDefinition[];
 }) {
-  console.log('HooksEntityTable');
   useMapKeyboardToSoftFocus();
 
   useInitializeEntityTable({

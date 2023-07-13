@@ -20,7 +20,6 @@ import { companiesFilters } from './companies-filters';
 import { availableSorts } from './companies-sorts';
 
 export function CompanyTable() {
-  console.log('CompanyTable');
   const [orderBy, setOrderBy] =
     useState<CompanyOrderByWithRelationInput[]>(defaultOrderBy);
 

@@ -27,7 +27,6 @@ export function useInitializeEntityTable({
   const [, setTableDimensions] = useRecoilState(entityTableDimensionsState);
 
   useEffect(() => {
-    console.log({ numberOfColumns, tableRowIds });
     setTableDimensions({
       numberOfColumns,
       numberOfRows: tableRowIds?.length,
