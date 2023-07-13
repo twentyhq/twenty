@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { useSnackBar } from '@/snack-bar/hooks/useSnackBar';
 import { Button } from '@/ui/components/buttons/Button';
 import { TextInput } from '@/ui/components/inputs/TextInput';
-import { IconCheck, IconLink } from '@/ui/icons';
+import { IconCopy, IconLink } from '@/ui/icons';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -23,24 +23,24 @@ type OwnProps = {
 
 export function WorkspaceInviteLink({ inviteLink }: OwnProps) {
   const theme = useTheme();
-  const [isCopied, setIsCopied] = useState(false);
+
+  const { enqueueSnackBar } = useSnackBar();
+
   return (
     <StyledContainer>
       <StyledLinkContainer>
         <TextInput value={inviteLink} disabled fullWidth />
       </StyledLinkContainer>
       <Button
-        icon={
-          isCopied ? (
-            <IconCheck size={theme.icon.size.md} />
-          ) : (
-            <IconLink size={theme.icon.size.md} />
-          )
-        }
+        icon={<IconLink size={theme.icon.size.md} />}
         variant="primary"
-        title={isCopied ? 'Copied' : 'Copy link'}
+        title="Copy link"
         onClick={() => {
-          setIsCopied(true);
+          enqueueSnackBar('Link copied to clipboard', {
+            variant: 'success',
+            icon: <IconCopy size={theme.icon.size.md} />,
+            duration: 2000,
+          });
           navigator.clipboard.writeText(inviteLink);
         }}
       />
