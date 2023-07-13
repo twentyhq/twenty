@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconList } from '@/ui/icons/index';
+import { availableSorts } from '~/pages/companies/companies-sorts';
 import { getRenderWrapperForEntityTableComponent } from '~/testing/renderWrappers';
 
-import { availableSorts } from '../../../../../../pages/companies/companies-sorts';
 import { TableHeader } from '../TableHeader';
 
 const meta: Meta<typeof TableHeader> = {
