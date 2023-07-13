@@ -1,36 +1,38 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { EnumPipelineProgressableTypeFieldUpdateOperationsInput } from '../prisma/enum-pipeline-progressable-type-field-update-operations.input';
-import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import * as Validator from 'class-validator';
+import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { HideField } from '@nestjs/graphql';
-import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { PipelineStageUpdateManyWithoutPipelineNestedInput } from '../pipeline-stage/pipeline-stage-update-many-without-pipeline-nested.input';
 import { PipelineProgressUpdateManyWithoutPipelineNestedInput } from '../pipeline-progress/pipeline-progress-update-many-without-pipeline-nested.input';
 
 @InputType()
 export class PipelineUpdateWithoutWorkspaceInput {
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    id?: string;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    name?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    name?: string;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    icon?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    icon?: string;
 
-    @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {nullable:true})
-    pipelineProgressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+    @Field(() => PipelineProgressableType, {nullable:true})
+    pipelineProgressableType?: keyof typeof PipelineProgressableType;
 
     @HideField()
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    deletedAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
     @Field(() => PipelineStageUpdateManyWithoutPipelineNestedInput, {nullable:true})
     pipelineStages?: PipelineStageUpdateManyWithoutPipelineNestedInput;

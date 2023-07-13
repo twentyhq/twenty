@@ -1,11 +1,9 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { NullableIntFieldUpdateOperationsInput } from '../prisma/nullable-int-field-update-operations.input';
-import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { EnumPipelineProgressableTypeFieldUpdateOperationsInput } from '../prisma/enum-pipeline-progressable-type-field-update-operations.input';
+import * as Validator from 'class-validator';
+import { Int } from '@nestjs/graphql';
+import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { HideField } from '@nestjs/graphql';
-import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput } from '../pipeline/pipeline-update-one-required-without-pipeline-progresses-nested.input';
 import { PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput } from '../pipeline-stage/pipeline-stage-update-one-required-without-pipeline-progresses-nested.input';
 import { WorkspaceUpdateOneRequiredWithoutPipelineProgressesNestedInput } from '../workspace/workspace-update-one-required-without-pipeline-progresses-nested.input';
@@ -13,29 +11,31 @@ import { WorkspaceUpdateOneRequiredWithoutPipelineProgressesNestedInput } from '
 @InputType()
 export class PipelineProgressUpdateInput {
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    id?: string;
 
-    @Field(() => NullableIntFieldUpdateOperationsInput, {nullable:true})
-    amount?: NullableIntFieldUpdateOperationsInput;
+    @Field(() => Int, {nullable:true})
+    amount?: number;
 
-    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
-    closeDate?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    closeDate?: Date | string;
 
-    @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {nullable:true})
-    progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+    @Field(() => PipelineProgressableType, {nullable:true})
+    progressableType?: keyof typeof PipelineProgressableType;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    progressableId?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    progressableId?: string;
 
     @HideField()
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    deletedAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
     @Field(() => PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput, {nullable:true})
     pipeline?: PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput;

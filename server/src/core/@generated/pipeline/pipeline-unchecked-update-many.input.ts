@@ -1,35 +1,37 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { EnumPipelineProgressableTypeFieldUpdateOperationsInput } from '../prisma/enum-pipeline-progressable-type-field-update-operations.input';
+import * as Validator from 'class-validator';
+import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.enum';
 import { HideField } from '@nestjs/graphql';
-import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
-import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 
 @InputType()
 export class PipelineUncheckedUpdateManyInput {
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    id?: string;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    name?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    name?: string;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    icon?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    icon?: string;
 
-    @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {nullable:true})
-    pipelineProgressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
+    @Field(() => PipelineProgressableType, {nullable:true})
+    pipelineProgressableType?: keyof typeof PipelineProgressableType;
 
     @HideField()
-    workspaceId?: StringFieldUpdateOperationsInput;
+    workspaceId?: string;
 
     @HideField()
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    deletedAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 }

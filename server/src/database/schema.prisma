@@ -12,6 +12,8 @@ generator nestgraphql {
   provider = "node node_modules/prisma-nestjs-graphql"
   output   = "../../src/core/@generated"
 
+  noAtomicOperations = true
+
   // field validator
   fields_Validator_input  = true
   fields_Validator_output = true

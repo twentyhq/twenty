@@ -1,10 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
-import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
-import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput } from '../comment-thread-target/comment-thread-target-update-many-without-comment-thread-nested.input';
 import { CommentUpdateManyWithoutCommentThreadNestedInput } from '../comment/comment-update-many-without-comment-thread-nested.input';
 import { WorkspaceUpdateOneRequiredWithoutCommentThreadsNestedInput } from '../workspace/workspace-update-one-required-without-comment-threads-nested.input';
@@ -12,23 +9,25 @@ import { WorkspaceUpdateOneRequiredWithoutCommentThreadsNestedInput } from '../w
 @InputType()
 export class CommentThreadUpdateWithoutAuthorInput {
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    id?: string;
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    body?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    body?: string;
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    title?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    title?: string;
 
     @HideField()
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    deletedAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
     @Field(() => CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput, {nullable:true})
     commentThreadTargets?: CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput;

@@ -1,13 +1,8 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
-import { BoolFieldUpdateOperationsInput } from '../prisma/bool-field-update-operations.input';
-import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
-import * as Validator from 'class-validator';
-import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput } from '../workspace-member/workspace-member-unchecked-update-one-without-user-nested.input';
 import { CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput } from '../company/company-unchecked-update-many-without-account-owner-nested.input';
 import { CommentUncheckedUpdateManyWithoutAuthorNestedInput } from '../comment/comment-unchecked-update-many-without-author-nested.input';
@@ -16,38 +11,56 @@ import { CommentThreadUncheckedUpdateManyWithoutAuthorNestedInput } from '../com
 @InputType()
 export class UserUncheckedUpdateWithoutRefreshTokensInput {
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    id?: string;
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    firstName?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    firstName?: string;
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    lastName?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    lastName?: string;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    email?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsEmail()
+    email?: string;
 
-    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
-    emailVerified?: BoolFieldUpdateOperationsInput;
+    @Field(() => Boolean, {nullable:true})
+    @Validator.IsBoolean()
+    @Validator.IsOptional()
+    emailVerified?: boolean;
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    avatarUrl?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    avatarUrl?: string;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    locale?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    locale?: string;
 
-    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
-    phoneNumber?: NullableStringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    phoneNumber?: string;
 
-    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
-    lastSeen?: NullableDateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    @Validator.IsDate()
+    @Validator.IsOptional()
+    lastSeen?: Date | string;
 
-    @Field(() => BoolFieldUpdateOperationsInput, {nullable:true})
-    disabled?: BoolFieldUpdateOperationsInput;
+    @Field(() => Boolean, {nullable:true})
+    @Validator.IsBoolean()
+    @Validator.IsOptional()
+    disabled?: boolean;
 
     @HideField()
-    passwordHash?: NullableStringFieldUpdateOperationsInput;
+    passwordHash?: string;
 
     @Field(() => GraphQLJSON, {nullable:true})
     @Validator.IsJSON()
@@ -55,13 +68,13 @@ export class UserUncheckedUpdateWithoutRefreshTokensInput {
     metadata?: any;
 
     @HideField()
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    deletedAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 
     @HideField()
     workspaceMember?: WorkspaceMemberUncheckedUpdateOneWithoutUserNestedInput;

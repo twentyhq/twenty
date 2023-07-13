@@ -1,29 +1,29 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
-import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { EnumCommentableTypeFieldUpdateOperationsInput } from '../prisma/enum-commentable-type-field-update-operations.input';
-import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import * as Validator from 'class-validator';
+import { CommentableType } from '../prisma/commentable-type.enum';
 import { HideField } from '@nestjs/graphql';
-import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 
 @InputType()
 export class CommentThreadTargetUncheckedUpdateWithoutCommentThreadInput {
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    id?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
+    @Validator.IsOptional()
+    id?: string;
 
-    @Field(() => EnumCommentableTypeFieldUpdateOperationsInput, {nullable:true})
-    commentableType?: EnumCommentableTypeFieldUpdateOperationsInput;
+    @Field(() => CommentableType, {nullable:true})
+    commentableType?: keyof typeof CommentableType;
 
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    commentableId?: StringFieldUpdateOperationsInput;
+    @Field(() => String, {nullable:true})
+    commentableId?: string;
 
     @HideField()
-    deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
+    deletedAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    createdAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    createdAt?: Date | string;
 
-    @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
-    updatedAt?: DateTimeFieldUpdateOperationsInput;
+    @Field(() => Date, {nullable:true})
+    updatedAt?: Date | string;
 }
