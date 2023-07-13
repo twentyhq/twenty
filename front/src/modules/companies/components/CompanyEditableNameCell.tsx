@@ -13,7 +13,7 @@ import { CompanyChip } from './CompanyChip';
 type OwnProps = {
   company: Pick<
     GetCompaniesQuery['companies'][0],
-    'id' | 'name' | 'domainName' | '_commentThreadCount' | 'accountOwner'
+    'id' | 'name' | 'domainName' | '_commentThreadCount'
   >;
 };
 
@@ -42,9 +42,8 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       changeHandler={(value: string) => {
         updateCompany({
           variables: {
-            ...company,
+            id: company.id,
             name: value,
-            accountOwnerId: company.accountOwner?.id,
           },
         });
       }}

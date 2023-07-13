@@ -1,4 +1,3 @@
-import { CheckboxCell } from '@/ui/components/table/CheckboxCellV2';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,

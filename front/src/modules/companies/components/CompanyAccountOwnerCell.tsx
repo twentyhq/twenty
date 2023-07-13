@@ -4,10 +4,12 @@ import { Company, User } from '~/generated/graphql';
 
 import { CompanyAccountOwnerPicker } from './CompanyAccountOwnerPicker';
 
+export type CompanyAccountOnwer = Pick<Company, 'id'> & {
+  accountOwner?: Pick<User, 'id' | 'displayName'> | null;
+};
+
 export type OwnProps = {
-  company: Pick<Company, 'id'> & {
-    accountOwner?: Pick<User, 'id' | 'displayName'> | null;
-  };
+  company: CompanyAccountOnwer;
 };
 
 export function CompanyAccountOwnerCell({ company }: OwnProps) {
