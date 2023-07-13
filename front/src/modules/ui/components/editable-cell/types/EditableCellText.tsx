@@ -24,6 +24,10 @@ export function EditableCellText({
 }: OwnProps) {
   const [internalValue, setInternalValue] = useState(value);
 
+  useEffect(() => {
+    setInternalValue(value);
+  }, [value]);
+
   const debouncedOnChange = useMemo(() => {
     return debounce(onChange, 200);
   }, [onChange]);

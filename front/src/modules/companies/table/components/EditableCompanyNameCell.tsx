@@ -12,9 +12,13 @@ export function EditableCompanyNameCell() {
   console.log('EditableCompanyNameCell');
   const currentRowEntityId = useCurrentRowEntityId();
 
+  console.log({ currentRowEntityId });
+
   const [updateCompany] = useUpdateCompanyMutation();
 
   const name = useRecoilValue(companyNameFamilyState(currentRowEntityId ?? ''));
+
+  console.log({ name });
   const domainName = useRecoilValue(
     companyDomainNameFamilyState(currentRowEntityId ?? ''),
   );

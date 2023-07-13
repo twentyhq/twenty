@@ -35,7 +35,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
 
   return (
     <EditableCellChip
-      value={company.name || ''}
+      value={company.name ?? ''}
       placeholder="Name"
       picture={getLogoUrlFromDomainName(company.domainName)}
       id={company.id}

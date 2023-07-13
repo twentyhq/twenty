@@ -19,8 +19,6 @@ export function useSetCompanyEntityTable() {
             .valueOrThrow();
 
           if (currentName !== company.name) {
-            console.log({ company, currentName });
-
             set(companyNameFamilyState(company.id), company.name);
           }
 
