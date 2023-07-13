@@ -20,7 +20,7 @@ export const EditableCellNormalModeOuterContainer = styled.div<Props>`
     props.softFocus
       ? `background: ${props.theme.background.transparent.secondary};
          border-radius: ${props.theme.border.radius.md};
-         box-shadow: inset 0 0 0 1px ${props.theme.grayScale.gray30};`
+         box-shadow: inset 0 0 0 1px ${props.theme.font.color.extraLight};`
       : ''}
 `;
 
