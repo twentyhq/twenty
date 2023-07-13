@@ -34,7 +34,7 @@ export function SettingsNavbar() {
           icon={<IconUser size={theme.icon.size.md} />}
           active={
             !!useMatch({
-              path: useResolvedPath('/people').pathname,
+              path: useResolvedPath('/settings/profile').pathname,
               end: true,
             })
           }

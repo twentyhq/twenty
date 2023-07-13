@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { SelectedSortType } from '@/filters-and-sorts/interfaces/sorts/interface';
+import { SelectedSortType } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
 import {
   PersonOrderByWithRelationInput as People_Order_By,
   PersonWhereInput as People_Bool_Exp,

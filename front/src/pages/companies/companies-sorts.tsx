@@ -1,4 +1,4 @@
-import { SortType } from '@/filters-and-sorts/interfaces/sorts/interface';
+import { SortType } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,

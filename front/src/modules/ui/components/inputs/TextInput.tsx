@@ -1,23 +1,31 @@
-import { ChangeEvent, useRef } from 'react';
+import {
+  ChangeEvent,
+  FocusEventHandler,
+  InputHTMLAttributes,
+  useRef,
+  useState,
+} from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { Key } from 'ts-key-enum';
 
 import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { IconEye, IconEyeOff } from '@/ui/icons/index';
 
-type OwnProps = Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  'onChange'
-> & {
+type OwnProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
   label?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
+  error?: string;
 };
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<Pick<OwnProps, 'fullWidth'>>`
   display: flex;
   flex-direction: column;
+  width: ${({ fullWidth, theme }) => (fullWidth ? `100%` : 'auto')};
 `;
 
 const StyledLabel = styled.span`
@@ -28,19 +36,28 @@ const StyledLabel = styled.span`
   text-transform: uppercase;
 `;
 
-const StyledInput = styled.input<{ fullWidth: boolean }>`
+const StyledInputContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  width: 100%;
+`;
+
+const StyledInput = styled.input<Pick<OwnProps, 'fullWidth'>>`
   background-color: ${({ theme }) => theme.background.tertiary};
   border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-
+  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  flex-grow: 1;
   font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
 
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)};
-  width: ${({ fullWidth, theme }) =>
-    fullWidth ? `calc(100% - ${theme.spacing(4)})` : 'auto'};
+
+  width: 100%;
 
   &::placeholder,
   &::-webkit-input-placeholder {
@@ -50,13 +67,46 @@ const StyledInput = styled.input<{ fullWidth: boolean }>`
   }
 `;
 
+const StyledErrorHelper = styled.div`
+  color: ${({ theme }) => theme.color.red};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledTrailingIconContainer = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.tertiary};
+  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
+  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  justify-content: center;
+  padding-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledTrailingIcon = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+`;
+
+const INPUT_TYPE_PASSWORD = 'password';
+
 export function TextInput({
   label,
   value,
   onChange,
+  onFocus,
+  onBlur,
   fullWidth,
+  error,
+  required,
+  type,
   ...props
 }: OwnProps): JSX.Element {
+  const theme = useTheme();
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -64,13 +114,15 @@ export function TextInput({
     setHotkeysScopeAndMemorizePreviousScope,
   } = usePreviousHotkeysScope();
 
-  function handleFocus() {
+  const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
+    onFocus?.(e);
     setHotkeysScopeAndMemorizePreviousScope(InternalHotkeysScope.TextInput);
-  }
+  };
 
-  function handleBlur() {
+  const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
+    onBlur?.(e);
     goBackToPreviousHotkeysScope();
-  }
+  };
 
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
@@ -80,23 +132,52 @@ export function TextInput({
     InternalHotkeysScope.TextInput,
   );
 
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const handleTogglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
-    <StyledContainer>
-      {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledInput
-        ref={inputRef}
-        tabIndex={props.tabIndex ?? 0}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        fullWidth={fullWidth ?? false}
-        value={value}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          if (onChange) {
-            onChange(event.target.value);
-          }
-        }}
-        {...props}
-      />
+    <StyledContainer fullWidth={fullWidth ?? false}>
+      {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
+      <StyledInputContainer>
+        <StyledInput
+          ref={inputRef}
+          tabIndex={props.tabIndex ?? 0}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          value={value}
+          required={required}
+          type={passwordVisible ? 'text' : type}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            if (onChange) {
+              onChange(event.target.value);
+            }
+          }}
+          {...props}
+        />
+        <StyledTrailingIconContainer>
+          {error && (
+            <StyledTrailingIcon>
+              <IconAlertCircle size={16} color={theme.color.red} />
+            </StyledTrailingIcon>
+          )}
+          {!error && type === INPUT_TYPE_PASSWORD && (
+            <StyledTrailingIcon
+              onClick={handleTogglePasswordVisibility}
+              data-testid="reveal-password-button"
+            >
+              {passwordVisible ? (
+                <IconEyeOff size={theme.icon.size.md} />
+              ) : (
+                <IconEye size={theme.icon.size.md} />
+              )}
+            </StyledTrailingIcon>
+          )}
+        </StyledTrailingIconContainer>
+      </StyledInputContainer>
+      {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
     </StyledContainer>
   );
 }

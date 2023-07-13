@@ -1,14 +1,17 @@
 import { useCallback, useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useRecoilState } from 'recoil';
+import * as Yup from 'yup';
 
 import { Logo } from '@/auth/components/ui/Logo';
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
+import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
@@ -24,7 +27,7 @@ const StyledContentContainer = styled.div`
   }
 `;
 
-const StyledAnimatedContent = styled(motion.div)`
+const StyledForm = styled.form`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -48,65 +51,88 @@ const StyledErrorContainer = styled.div`
   color: ${({ theme }) => theme.color.red};
 `;
 
+const validationSchema = Yup.object()
+  .shape({
+    exist: Yup.boolean().required(),
+    email: Yup.string().email('Email must be a valid email').required(),
+    password: Yup.string()
+      .matches(
+        PASSWORD_REGEX,
+        'Password must contain at least 8 characters, one uppercase and one number',
+      )
+      .required(),
+  })
+  .required();
+
+type Form = Yup.InferType<typeof validationSchema>;
+
 export function PasswordLogin() {
   const navigate = useNavigate();
 
   const [isDemoMode] = useRecoilState(isDemoModeState);
-  const [authFlowUserEmail, setAuthFlowUserEmail] = useRecoilState(
-    authFlowUserEmailState,
-  );
-  const [internalPassword, setInternalPassword] = useState(
-    isDemoMode ? 'Applecar2025' : '',
-  );
-  const [formError, setFormError] = useState('');
+  const [authFlowUserEmail] = useRecoilState(authFlowUserEmailState);
+  const [showErrors, setShowErrors] = useState(false);
 
-  const { login, signUp, signUpToWorkspace } = useAuth();
-  const { loading, data } = useCheckUserExistsQuery({
+  const workspaceInviteHash = useParams().workspaceInviteHash;
+
+  const { data: checkUserExistsData } = useCheckUserExistsQuery({
     variables: {
       email: authFlowUserEmail,
     },
   });
 
-  const workspaceInviteHash = useParams().workspaceInviteHash;
+  const { login, signUp } = useAuth();
 
-  const handleSubmit = useCallback(async () => {
-    try {
-      if (data?.checkUserExists.exists) {
-        await login(authFlowUserEmail, internalPassword);
-      } else {
-        if (workspaceInviteHash) {
-          await signUpToWorkspace(
-            authFlowUserEmail,
-            internalPassword,
-            workspaceInviteHash,
-          );
-        } else {
-          await signUp(authFlowUserEmail, internalPassword);
+  // Form
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+    setError,
+    watch,
+    getValues,
+  } = useForm<Form>({
+    mode: 'onChange',
+    defaultValues: {
+      exist: false,
+      email: authFlowUserEmail,
+      password: isDemoMode ? 'Applecar2025' : '',
+    },
+    resolver: yupResolver(validationSchema),
+  });
+
+  const onSubmit: SubmitHandler<Form> = useCallback(
+    async (data) => {
+      try {
+        if (!data.email || !data.password) {
+          throw new Error('Email and password are required');
         }
+        if (checkUserExistsData?.checkUserExists.exists) {
+          await login(data.email, data.password);
+        } else {
+          await signUp(data.email, data.password, workspaceInviteHash);
+        }
+        navigate('/auth/create/workspace');
+      } catch (err: any) {
+        setError('root', { message: err?.message });
       }
-      navigate('/auth/create/workspace');
-    } catch (err: any) {
-      setFormError(err.message);
-    }
-  }, [
-    login,
-    signUp,
-    signUpToWorkspace,
-    authFlowUserEmail,
-    internalPassword,
-    navigate,
-    data?.checkUserExists.exists,
-
-    workspaceInviteHash,
-  ]);
-
+    },
+    [
+      login,
+      navigate,
+      setError,
+      signUp,
+      workspaceInviteHash,
+      checkUserExistsData,
+    ],
+  );
   useScopedHotkeys(
     'enter',
     () => {
-      handleSubmit();
+      onSubmit(getValues());
     },
     InternalHotkeysScope.PasswordLogin,
-    [handleSubmit],
+    [onSubmit],
   );
 
   return (
@@ -115,40 +141,74 @@ export function PasswordLogin() {
       <Title>Welcome to Twenty</Title>
       <SubTitle>
         Enter your credentials to sign{' '}
-        {data?.checkUserExists.exists ? 'in' : 'up'}
+        {checkUserExistsData?.checkUserExists.exists ? 'in' : 'up'}
       </SubTitle>
-      <StyledAnimatedContent>
+      <StyledForm
+        onSubmit={(event) => {
+          setShowErrors(true);
+          return handleSubmit(onSubmit)(event);
+        }}
+      >
         <StyledContentContainer>
           <StyledSectionContainer>
             <SubSectionTitle title="Email" />
-            <TextInput
-              value={authFlowUserEmail}
-              placeholder="Email"
-              onChange={(value) => setAuthFlowUserEmail(value)}
-              fullWidth
+            <Controller
+              name="email"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  value={value}
+                  placeholder="Email"
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={showErrors ? error?.message : undefined}
+                  fullWidth
+                />
+              )}
             />
           </StyledSectionContainer>
           <StyledSectionContainer>
             <SubSectionTitle title="Password" />
-            <TextInput
-              value={internalPassword}
-              placeholder="Password"
-              onChange={(value) => setInternalPassword(value)}
-              fullWidth
-              type="password"
+            <Controller
+              name="password"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInput
+                  value={value}
+                  type="password"
+                  placeholder="Password"
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={showErrors ? error?.message : undefined}
+                  fullWidth
+                />
+              )}
             />
           </StyledSectionContainer>
         </StyledContentContainer>
         <StyledButtonContainer>
           <MainButton
             title="Continue"
-            onClick={handleSubmit}
-            disabled={!authFlowUserEmail || !internalPassword || loading}
+            type="submit"
+            disabled={!watch('email') || !watch('password') || isSubmitting}
             fullWidth
           />
         </StyledButtonContainer>
-        {formError && <StyledErrorContainer>{formError}</StyledErrorContainer>}
-      </StyledAnimatedContent>
+        {/* Will be replaced by error snack bar */}
+        <Controller
+          name="exist"
+          control={control}
+          render={({ formState: { errors } }) => (
+            <StyledErrorContainer>{errors?.root?.message}</StyledErrorContainer>
+          )}
+        />
+      </StyledForm>
     </>
   );
 }

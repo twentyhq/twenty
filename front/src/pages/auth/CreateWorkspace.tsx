@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 
 import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
@@ -33,49 +36,73 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
+const StyledErrorContainer = styled.div`
+  color: ${({ theme }) => theme.color.red};
+`;
+
+const validationSchema = Yup.object()
+  .shape({
+    name: Yup.string().required('Name can not be empty'),
+  })
+  .required();
+
+type Form = Yup.InferType<typeof validationSchema>;
+
 export function CreateWorkspace() {
   const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();
 
-  const [workspaceName, setWorkspaceName] = useState('');
-
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
-  const handleCreate = useCallback(async () => {
-    try {
-      if (!workspaceName) {
-        throw new Error('Workspace name is required');
-      }
+  // Form
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid, isSubmitting },
+    setError,
+    getValues,
+  } = useForm<Form>({
+    mode: 'onChange',
+    defaultValues: {
+      name: '',
+    },
+    resolver: yupResolver(validationSchema),
+  });
 
-      const { data, errors } = await updateWorkspace({
-        variables: {
-          data: {
-            displayName: {
-              set: workspaceName,
+  const onSubmit: SubmitHandler<Form> = useCallback(
+    async (data) => {
+      try {
+        const result = await updateWorkspace({
+          variables: {
+            data: {
+              displayName: {
+                set: data.name,
+              },
             },
           },
-        },
-        refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
-        awaitRefetchQueries: true,
-      });
+          refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+          awaitRefetchQueries: true,
+        });
 
-      if (errors || !data?.updateWorkspace) {
-        throw errors;
+        if (result.errors || !result.data?.updateWorkspace) {
+          throw result.errors ?? new Error('Unknown error');
+        }
+
+        navigate('/auth/create/profile');
+      } catch (error: any) {
+        setError('root', { message: error?.message });
       }
-
-      navigate('/auth/create/profile');
-    } catch (error) {
-      console.error(error);
-    }
-  }, [navigate, updateWorkspace, workspaceName]);
+    },
+    [navigate, setError, updateWorkspace],
+  );
 
   useScopedHotkeys(
     'enter',
     () => {
-      handleCreate();
+      onSubmit(getValues());
     },
     InternalHotkeysScope.CreateWokspace,
-    [handleCreate],
+    [onSubmit],
   );
 
   useEffect(() => {
@@ -94,6 +121,7 @@ export function CreateWorkspace() {
       <StyledContentContainer>
         <StyledSectionContainer>
           <SubSectionTitle title="Workspace logo" />
+          {/* Picture is actually uploaded on the fly */}
           <WorkspaceLogoUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
@@ -101,22 +129,41 @@ export function CreateWorkspace() {
             title="Workspace name"
             description="The name of your organization"
           />
-          <TextInput
-            value={workspaceName}
-            placeholder="Apple"
-            onChange={setWorkspaceName}
-            fullWidth
+          <Controller
+            name="name"
+            control={control}
+            render={({
+              field: { onChange, onBlur, value },
+              fieldState: { error },
+            }) => (
+              <TextInput
+                value={value}
+                placeholder="Apple"
+                onBlur={onBlur}
+                onChange={onChange}
+                error={error?.message}
+                fullWidth
+              />
+            )}
           />
         </StyledSectionContainer>
       </StyledContentContainer>
       <StyledButtonContainer>
         <MainButton
           title="Continue"
-          onClick={handleCreate}
-          disabled={!workspaceName}
+          onClick={handleSubmit(onSubmit)}
+          disabled={!isValid || isSubmitting}
           fullWidth
         />
       </StyledButtonContainer>
+      {/* Will be replaced by error snack bar */}
+      <Controller
+        name="name"
+        control={control}
+        render={({ formState: { errors } }) => (
+          <StyledErrorContainer>{errors?.root?.message}</StyledErrorContainer>
+        )}
+      />
     </>
   );
 }

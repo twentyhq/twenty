@@ -63,3 +63,24 @@ export const FullWidth: Story = {
     />,
   ),
 };
+
+export const PasswordInput: Story = {
+  render: getRenderWrapperForComponent(
+    <TextInput
+      onChange={changeJestFn}
+      type="password"
+      placeholder="Password"
+    />,
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const input = canvas.getByPlaceholderText('Password');
+    await userEvent.type(input, 'pa$$w0rd');
+
+    const revealButton = canvas.getByTestId('reveal-password-button');
+    await userEvent.click(revealButton);
+
+    expect(input).toHaveAttribute('type', 'text');
+  },
+};

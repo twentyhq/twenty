@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
@@ -7,6 +8,7 @@ import { MainSectionTitle } from '@/ui/components/section-titles/MainSectionTitl
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { IconTrash } from '@/ui/icons';
 import { NoTopBarContainer } from '@/ui/layout/containers/NoTopBarContainer';
+import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import {
   useGetWorkspaceMembersQuery,
@@ -32,6 +34,8 @@ const ButtonContainer = styled.div`
 
 export function SettingsWorkspaceMembers() {
   const [currentUser] = useRecoilState(currentUserState);
+  const workspace = currentUser?.workspaceMember?.workspace;
+  const theme = useTheme();
 
   const { data } = useGetWorkspaceMembersQuery();
 
@@ -74,6 +78,17 @@ export function SettingsWorkspaceMembers() {
     <NoTopBarContainer>
       <StyledContainer>
         <MainSectionTitle>Members</MainSectionTitle>
+        {workspace?.inviteHash && (
+          <>
+            <SubSectionTitle
+              title="Invite"
+              description="Send an invitation to use Twenty"
+            />
+            <WorkspaceInviteLink
+              inviteLink={`${window.location.origin}/auth/invite/${workspace?.inviteHash}`}
+            />
+          </>
+        )}
         <SubSectionTitle
           title="Members"
           description="Manage the members of your space here"
@@ -89,7 +104,7 @@ export function SettingsWorkspaceMembers() {
                     onClick={() => handleRemoveWorkspaceMember(member.user.id)}
                     variant="tertiary"
                     size="small"
-                    icon={<IconTrash size={16} />}
+                    icon={<IconTrash size={theme.icon.size.md} />}
                   />
                 </ButtonContainer>
               )
