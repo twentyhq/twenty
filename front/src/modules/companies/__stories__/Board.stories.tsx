@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { CompanyProgressBoard } from '../components/CompanyProgressBoard';
@@ -18,4 +19,7 @@ export const OneColumnBoard: Story = {
   render: getRenderWrapperForComponent(
     <CompanyProgressBoard pipeline={pipeline} />,
   ),
+  parameters: {
+    msw: graphqlMocks,
+  },
 };

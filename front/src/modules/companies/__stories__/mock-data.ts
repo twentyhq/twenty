@@ -1,5 +1,4 @@
 import { Pipeline } from '~/generated/graphql';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
 
 export const pipeline = {
   id: 'pipeline-1',
@@ -11,27 +10,33 @@ export const pipeline = {
       index: 0,
       color: '#B76796',
       pipelineProgresses: [
-        {
-          id: '0',
-          amount: 1,
-          progressableId: mockedCompaniesData[0].id,
-        },
-        {
-          id: '1',
-          amount: 1,
-          progressableId: mockedCompaniesData[1].id,
-        },
-        {
-          id: '2',
-          amount: 1,
-          progressableId: mockedCompaniesData[2].id,
-        },
-        {
-          id: '3',
-          amount: 1,
-          progressableId: mockedCompaniesData[3].id,
-        },
+        { id: 'fe256b39-3ec3-4fe7-8998-b76aa0bfb600' },
+        { id: '4a886c90-f4f2-4984-8222-882ebbb905d6' },
       ],
+    },
+    {
+      id: 'pipeline-stage-2',
+      name: 'Screening',
+      index: 1,
+      color: '#CB912F',
+    },
+    {
+      id: 'pipeline-stage-3',
+      name: 'Meeting',
+      index: 2,
+      color: '#9065B0',
+    },
+    {
+      id: 'pipeline-stage-4',
+      name: 'Proposal',
+      index: 3,
+      color: '#337EA9',
+    },
+    {
+      id: 'pipeline-stage-5',
+      name: 'Customer',
+      index: 4,
+      color: '#079039',
     },
   ],
 } as Pipeline;
