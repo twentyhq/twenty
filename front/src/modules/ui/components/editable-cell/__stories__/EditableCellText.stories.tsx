@@ -4,7 +4,8 @@ import { userEvent, within } from '@storybook/testing-library';
 import {
   CellPositionDecorator,
   ComponentDecorator,
-} from '../../../../../testing/decorators';
+} from '~/testing/decorators';
+
 import { EditableCellText } from '../types/EditableCellText';
 
 const meta: Meta<typeof EditableCellText> = {
