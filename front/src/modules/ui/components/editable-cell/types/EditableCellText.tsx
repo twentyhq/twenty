@@ -28,10 +28,6 @@ export function EditableCellText({
     setInternalValue(value);
   }, [value]);
 
-  const debouncedOnChange = useMemo(() => {
-    return debounce(onChange, 200);
-  }, [onChange]);
-
   return (
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
@@ -42,7 +38,7 @@ export function EditableCellText({
           value={internalValue}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             setInternalValue(event.target.value);
-            debouncedOnChange(event.target.value);
+            onChange(event.target.value);
           }}
         />
       }
