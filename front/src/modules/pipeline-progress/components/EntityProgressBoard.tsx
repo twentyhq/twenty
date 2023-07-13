@@ -10,7 +10,7 @@ import {
 import { useRecoilState } from 'recoil';
 
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
-import { Company, PipelineProgress } from '~/generated/graphql';
+import { PipelineProgress } from '~/generated/graphql';
 
 import {
   Column,
@@ -21,27 +21,37 @@ import { boardColumnsState } from '../states/boardColumnsState';
 import { boardItemsState } from '../states/boardItemsState';
 import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
 
-import { CompanyBoardCard } from './CompanyBoardCard';
-import { NewButton } from './NewButton';
-
-export type CompanyProgress = {
-  company: Pick<Company, 'id' | 'name' | 'domainName'>;
+export type EntityProgress = {
+  entity: any;
   pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
 };
 
-export type CompanyProgressDict = {
-  [key: string]: CompanyProgress;
+export type EntityProgressDict = {
+  [key: string]: EntityProgress;
 };
 
 type BoardProps = {
   pipelineId: string;
   columns: Omit<Column, 'itemKeys'>[];
   initialBoard: Column[];
-  initialItems: CompanyProgressDict;
+  initialItems: EntityProgressDict;
   onCardMove?: (itemKey: string, columnId: Column['id']) => Promise<void>;
   onCardUpdate: (
     pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
   ) => Promise<void>;
+  EntityCardComponent: React.FC<{
+    entity: any;
+    pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
+    selected: boolean;
+    onSelect: (entityProgress: EntityProgress) => void;
+    onCardUpdate: (
+      pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
+    ) => Promise<void>;
+  }>;
+  NewEntityButtonComponent: React.FC<{
+    pipelineId: string;
+    columnId: string;
+  }>;
 };
 
 const StyledPlaceholder = styled.div`
@@ -66,13 +76,15 @@ const BoardColumnCardsContainer = ({
   );
 };
 
-export function Board({
+export function EntityProgressBoard({
   columns,
   initialBoard,
   initialItems,
   onCardMove,
   onCardUpdate,
   pipelineId,
+  EntityCardComponent,
+  NewEntityButtonComponent,
 }: BoardProps) {
   const [board, setBoard] = useRecoilState(boardColumnsState);
   const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
@@ -101,7 +113,7 @@ export function Board({
   const calculateColumnTotals = (
     columns: Column[],
     items: {
-      [key: string]: CompanyProgress;
+      [key: string]: EntityProgress;
     },
   ): { [key: string]: number } => {
     return columns.reduce<{ [key: string]: number }>((acc, column) => {
@@ -177,8 +189,8 @@ export function Board({
                               {...draggableProvided?.dragHandleProps}
                               {...draggableProvided?.draggableProps}
                             >
-                              <CompanyBoardCard
-                                company={boardItems[itemKey].company}
+                              <EntityCardComponent
+                                entity={boardItems[itemKey].entity}
                                 pipelineProgress={
                                   boardItems[itemKey].pipelineProgress
                                 }
@@ -192,7 +204,10 @@ export function Board({
                       ),
                   )}
                 </BoardColumnCardsContainer>
-                <NewButton pipelineId={pipelineId} columnId={column.id} />
+                <NewEntityButtonComponent
+                  pipelineId={pipelineId}
+                  columnId={column.id}
+                />
               </BoardColumn>
             )}
           </Droppable>
