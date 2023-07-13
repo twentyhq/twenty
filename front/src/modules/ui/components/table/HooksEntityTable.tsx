@@ -5,22 +5,19 @@ import { useMapKeyboardToSoftFocus } from '@/ui/tables/hooks/useMapKeyboardToSof
 
 export function HooksEntityTable({
   numberOfColumns,
-  numberOfRows,
-  availableTableFilters,
+  availableFilters,
 }: {
   numberOfColumns: number;
-  numberOfRows: number;
-  availableTableFilters: FilterDefinition[];
+  availableFilters: FilterDefinition[];
 }) {
   useMapKeyboardToSoftFocus();
 
   useInitializeEntityTable({
     numberOfColumns,
-    numberOfRows,
   });
 
   useInitializeEntityTableFilters({
-    availableTableFilters,
+    availableFilters,
   });
 
   return <></>;

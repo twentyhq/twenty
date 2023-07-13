@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import { TableDimensions } from '../hooks/useInitializeEntityTableV2';
+import { TableDimensions } from '../hooks/useInitializeEntityTable';
 
 export const entityTableDimensionsState = atom<TableDimensions>({
   key: 'entityTableDimensionsState',

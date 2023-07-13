@@ -3,9 +3,7 @@ import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
   IconLink,
-  IconMail,
   IconMap,
-  IconPhone,
   IconUser,
   IconUsers,
 } from '@/ui/icons/index';

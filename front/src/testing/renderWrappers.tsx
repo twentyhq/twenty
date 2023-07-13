@@ -13,7 +13,6 @@ import { companiesFilters } from '~/pages/companies/companies-filters';
 import { ClientConfigProvider } from '~/providers/client-config/ClientConfigProvider';
 import { UserProvider } from '~/providers/user/UserProvider';
 
-import { mockedCompaniesData } from './mock-data/companies';
 import { ComponentStorybookLayout } from './ComponentStorybookLayout';
 import { FullHeightStorybookLayout } from './FullHeightStorybookLayout';
 import { mockedClient } from './mockedClient';
@@ -64,9 +63,8 @@ export function getRenderWrapperForEntityTableComponent(
         <ApolloProvider client={mockedClient}>
           <RecoilScope SpecificContext={TableContext}>
             <HooksEntityTable
-              availableTableFilters={companiesFilters}
+              availableFilters={companiesFilters}
               numberOfColumns={5}
-              numberOfRows={mockedCompaniesData.length}
             />
             <ComponentStorybookLayout>{children}</ComponentStorybookLayout>
           </RecoilScope>

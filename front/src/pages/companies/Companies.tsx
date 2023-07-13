@@ -16,7 +16,7 @@ import {
 
 import { TableActionBarButtonCreateCommentThreadCompany } from './table/TableActionBarButtonCreateCommentThreadCompany';
 import { TableActionBarButtonDeleteCompanies } from './table/TableActionBarButtonDeleteCompanies';
-import { CompanyTable } from './CompanyTableV2';
+import { CompanyTable } from './CompanyTable';
 
 const StyledTableContainer = styled.div`
   display: flex;

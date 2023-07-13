@@ -1,6 +1,4 @@
 import { useEffect } from 'react';
-import { flexRender } from '@tanstack/react-table';
-import { Cell, Row } from '@tanstack/table-core';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -9,14 +7,16 @@ import { contextMenuPositionState } from '@/ui/tables/states/contextMenuPosition
 import { currentColumnNumberScopedState } from '@/ui/tables/states/currentColumnNumberScopedState';
 import { currentRowSelectionState } from '@/ui/tables/states/rowSelectionState';
 
-export function EntityTableCell<TData extends { id: string }>({
-  row,
-  cell,
+export function EntityTableCell({
+  rowId,
   cellIndex,
+  children,
+  size,
 }: {
-  row: Row<TData>;
-  cell: Cell<TData, unknown>;
+  size: number;
+  rowId: string;
   cellIndex: number;
+  children: React.ReactNode;
 }) {
   const [, setCurrentRowSelection] = useRecoilState(currentRowSelectionState);
 
@@ -43,14 +43,14 @@ export function EntityTableCell<TData extends { id: string }>({
 
   return (
     <td
-      onContextMenu={(event) => handleContextMenu(event, row.original.id)}
+      onContextMenu={(event) => handleContextMenu(event, rowId)}
       style={{
-        width: cell.column.getSize(),
-        minWidth: cell.column.getSize(),
-        maxWidth: cell.column.getSize(),
+        width: size,
+        minWidth: size,
+        maxWidth: size,
       }}
     >
-      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+      {children}
     </td>
   );
 }

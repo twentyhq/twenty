@@ -3,7 +3,6 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { InplaceInputPhoneDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputPhoneDisplayMode';
 import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
 
-import { CellSkeleton } from '../CellSkeleton';
 import { EditableCell } from '../EditableCell';
 
 type OwnProps = {

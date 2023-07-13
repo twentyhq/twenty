@@ -1,36 +1,17 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import { useRecoilState } from 'recoil';
 
 import {
   SelectedSortType,
   SortType,
 } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
-import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { TableColumn } from '@/people/table/components/peopleColumns';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { useLeaveTableFocus } from '@/ui/tables/hooks/useLeaveTableFocus';
-import { RowContext } from '@/ui/tables/states/RowContext';
-
-import { currentRowSelectionState } from '../../tables/states/rowSelectionState';
 
 import { TableHeader } from './table-header/TableHeader';
-import { EntityTableRow } from './EntityTableRow';
-
-type OwnProps<TData extends { id: string }, SortField> = {
-  data: Array<TData>;
-  columns: Array<ColumnDef<TData, any>>;
-  viewName: string;
-  viewIcon?: React.ReactNode;
-  availableSorts?: Array<SortType<SortField>>;
-  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
-  onRowSelectionChange?: (rowSelection: string[]) => void;
-};
+import { EntityTableBody } from './EntityTableBody';
+import { EntityTableHeader } from './EntityTableHeader';
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -91,31 +72,23 @@ const StyledTableWithHeader = styled.div`
   width: 100%;
 `;
 
-export function EntityTable<TData extends { id: string }, SortField>({
-  data,
+type OwnProps<SortField> = {
+  columns: Array<TableColumn>;
+  viewName: string;
+  viewIcon?: React.ReactNode;
+  availableSorts?: Array<SortType<SortField>>;
+  onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  onRowSelectionChange?: (rowSelection: string[]) => void;
+};
+
+export function EntityTable<SortField>({
   columns,
   viewName,
   viewIcon,
   availableSorts,
   onSortsUpdate,
-}: OwnProps<TData, SortField>) {
+}: OwnProps<SortField>) {
   const tableBodyRef = React.useRef<HTMLDivElement>(null);
-
-  const [currentRowSelection, setCurrentRowSelection] = useRecoilState(
-    currentRowSelectionState,
-  );
-
-  const table = useReactTable<TData>({
-    data,
-    columns,
-    state: {
-      rowSelection: currentRowSelection,
-    },
-    getCoreRowModel: getCoreRowModel(),
-    enableRowSelection: true,
-    onRowSelectionChange: setCurrentRowSelection,
-    getRowId: (row) => row.id,
-  });
 
   const leaveTableFocus = useLeaveTableFocus();
 
@@ -133,37 +106,8 @@ export function EntityTable<TData extends { id: string }, SortField>({
       />
       <div ref={tableBodyRef}>
         <StyledTable>
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    style={{
-                      width: header.column.getSize(),
-                      minWidth: header.column.getSize(),
-                      maxWidth: header.column.getSize(),
-                    }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </th>
-                ))}
-                <th></th>
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row, index) => (
-              <RecoilScope SpecificContext={RowContext} key={row.id}>
-                <EntityTableRow row={row} index={index} />
-              </RecoilScope>
-            ))}
-          </tbody>
+          <EntityTableHeader columns={columns} />
+          <EntityTableBody columns={columns} />
         </StyledTable>
       </div>
     </StyledTableWithHeader>

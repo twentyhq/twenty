@@ -1,20 +1,24 @@
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { entityTableDimensionsState } from '../states/entityTableDimensionsState';
+import { tableRowIdsState } from '../states/tableRowIdsState';
 
 import { useResetTableRowSelection } from './useResetTableRowSelection';
 
-type TableDimensions = {
-  numberOfRows: number;
+export type TableDimensions = {
   numberOfColumns: number;
+  numberOfRows: number;
 };
 
 export function useInitializeEntityTable({
-  numberOfRows,
   numberOfColumns,
-}: TableDimensions) {
+}: {
+  numberOfColumns: number;
+}) {
   const resetTableRowSelection = useResetTableRowSelection();
+
+  const tableRowIds = useRecoilValue(tableRowIdsState);
 
   useEffect(() => {
     resetTableRowSelection();
@@ -25,7 +29,7 @@ export function useInitializeEntityTable({
   useEffect(() => {
     setTableDimensions({
       numberOfColumns,
-      numberOfRows,
+      numberOfRows: tableRowIds?.length,
     });
-  }, [numberOfRows, numberOfColumns, setTableDimensions]);
+  }, [tableRowIds, numberOfColumns, setTableDimensions]);
 }

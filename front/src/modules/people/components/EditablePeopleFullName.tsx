@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { CellCommentChip } from '@/comments/components/table/CellCommentChip';

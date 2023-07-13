@@ -6,7 +6,7 @@ import { isFetchingEntityTableDataState } from '@/ui/tables/states/isFetchingEnt
 import { RowContext } from '@/ui/tables/states/RowContext';
 import { tableRowIdsState } from '@/ui/tables/states/tableRowIdsState';
 
-import { EntityTableRow } from './EntityTableRowV2';
+import { EntityTableRow } from './EntityTableRow';
 
 export function EntityTableBody({ columns }: { columns: Array<TableColumn> }) {
   const rowIds = useRecoilValue(tableRowIdsState);

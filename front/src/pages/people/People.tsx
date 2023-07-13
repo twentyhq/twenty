@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { GET_PEOPLE } from '@/people/services';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
-import { IconBuildingSkyscraper, IconUser } from '@/ui/icons/index';
+import { IconBuildingSkyscraper } from '@/ui/icons/index';
 import { FlexExpandingContainer } from '@/ui/layout/containers/FlexExpandingContainer';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { TableContext } from '@/ui/tables/states/TableContext';
@@ -13,7 +13,7 @@ import { useInsertPersonMutation } from '~/generated/graphql';
 
 import { TableActionBarButtonCreateCommentThreadPeople } from './table/TableActionBarButtonCreateCommentThreadPeople';
 import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
-import { PeopleTable } from './PeopleTableV2';
+import { PeopleTable } from './PeopleTable';
 
 export function People() {
   const [insertPersonMutation] = useInsertPersonMutation();
@@ -38,8 +38,8 @@ export function People() {
   return (
     <RecoilScope SpecificContext={TableContext}>
       <WithTopBarContainer
-        title="People"
-        icon={<IconUser size={theme.icon.size.md} />}
+        title="Companies"
+        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
         onAddButtonClick={handleAddButtonClick}
       >
         <FlexExpandingContainer>

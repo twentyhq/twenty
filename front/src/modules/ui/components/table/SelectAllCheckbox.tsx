@@ -1,18 +1,36 @@
-import { CheckboxCell } from './CheckboxCell';
+import React from 'react';
+import styled from '@emotion/styled';
 
-export const SelectAllCheckbox = ({
-  indeterminate,
-  onChange,
-}: {
-  indeterminate?: boolean;
-  onChange?: (newCheckedValue: boolean) => void;
-} & React.HTMLProps<HTMLInputElement>) => {
+import { useSelectAllRows } from '@/ui/tables/hooks/useSelectAllRows';
+
+import { Checkbox } from '../form/Checkbox';
+
+const StyledContainer = styled.div`
+  align-items: center;
+
+  cursor: pointer;
+  display: flex;
+  height: 32px;
+
+  justify-content: center;
+`;
+
+export const SelectAllCheckbox = () => {
+  const { selectAllRows, allRowsSelectedStatus } = useSelectAllRows();
+
+  function handleContainerClick() {
+    selectAllRows();
+  }
+
+  const checked = allRowsSelectedStatus === 'all';
+  const indeterminate = allRowsSelectedStatus === 'some';
+
   return (
-    <CheckboxCell
-      name="select-all-checkbox"
-      id="select-all-checkbox"
-      indeterminate={indeterminate}
-      onChange={onChange}
-    />
+    <StyledContainer
+      onClick={handleContainerClick}
+      data-testid="input-checkbox-cell-container"
+    >
+      <Checkbox checked={checked} indeterminate={indeterminate} />
+    </StyledContainer>
   );
 };

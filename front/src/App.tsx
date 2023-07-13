@@ -13,7 +13,7 @@ import { PasswordLogin } from '~/pages/auth/PasswordLogin';
 import { Verify } from '~/pages/auth/Verify';
 import { Companies } from '~/pages/companies/Companies';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
-import { People } from '~/pages/people/PeopleV2';
+import { People } from '~/pages/people/People';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 

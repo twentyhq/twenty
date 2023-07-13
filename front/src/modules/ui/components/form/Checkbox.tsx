@@ -2,9 +2,7 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 
 type OwnProps = {
-  name?: string;
-  id?: string;
-  checked?: boolean;
+  checked: boolean;
   indeterminate?: boolean;
   onChange?: (newCheckedValue: boolean) => void;
 };
@@ -41,13 +39,7 @@ const StyledContainer = styled.div`
   }
 `;
 
-export function Checkbox({
-  name,
-  id,
-  checked,
-  onChange,
-  indeterminate,
-}: OwnProps) {
+export function Checkbox({ checked, onChange, indeterminate }: OwnProps) {
   const ref = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -57,10 +49,8 @@ export function Checkbox({
     }
   }, [ref, indeterminate, checked]);
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    if (onChange) {
-      onChange(event.target.checked);
-    }
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    onChange?.(event.target.checked);
   }
 
   return (
@@ -69,10 +59,8 @@ export function Checkbox({
         ref={ref}
         type="checkbox"
         data-testid="input-checkbox"
-        id={id}
-        name={name}
         checked={checked}
-        onChange={handleInputChange}
+        onChange={handleChange}
       />
     </StyledContainer>
   );
