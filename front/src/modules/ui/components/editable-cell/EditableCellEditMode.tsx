@@ -42,52 +42,6 @@ export function EditableCellEditMode({
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
-  const { closeEditableCell } = useEditableCell();
-  const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
-
-  useListenClickOutsideArrayOfRef([wrapperRef], () => {
-    closeEditableCell();
-  });
-
-  useScopedHotkeys(
-    'enter',
-    () => {
-      closeEditableCell();
-      moveDown();
-    },
-    InternalHotkeysScope.CellEditMode,
-    [closeEditableCell],
-  );
-
-  useScopedHotkeys(
-    'esc',
-    () => {
-      closeEditableCell();
-    },
-    InternalHotkeysScope.CellEditMode,
-    [closeEditableCell],
-  );
-
-  useScopedHotkeys(
-    'tab',
-    () => {
-      closeEditableCell();
-      moveRight();
-    },
-    InternalHotkeysScope.CellEditMode,
-    [closeEditableCell, moveRight],
-  );
-
-  useScopedHotkeys(
-    'shift+tab',
-    () => {
-      closeEditableCell();
-      moveLeft();
-    },
-    InternalHotkeysScope.CellEditMode,
-    [closeEditableCell, moveRight],
-  );
-
   return (
     <EditableCellEditModeContainer
       data-testid="editable-cell-edit-mode-container"

@@ -31,6 +31,10 @@ export function useLeaveTableFocus() {
           .getLoadable(currentHotkeysScopeState)
           .valueOrThrow();
 
+        if (isSomeInputInEditMode) {
+          return;
+        }
+
         if (!isSoftFocusActive && !isSomeInputInEditMode) {
           return;
         }
