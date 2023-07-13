@@ -18,13 +18,15 @@ export function TableActionBarButtonDeletePeople() {
   });
 
   async function handleDeleteClick() {
-    await deletePeople({
-      variables: {
-        ids: selectedRowIds,
-      },
-    });
+    const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
+
+    await deletePeople({
+      variables: {
+        ids: rowIdsToDelete,
+      },
+    });
   }
 
   return (

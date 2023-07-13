@@ -23,8 +23,6 @@ export function TableActionBarButtonDeleteCompanies() {
 
     resetRowSelection();
 
-    console.log({ isRowSelectedFamilyState: isRowSelectedFamilyState });
-
     await deleteCompanies({
       variables: {
         ids: rowIdsToDelete,
