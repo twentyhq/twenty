@@ -1,7 +1,6 @@
-import { ReactElement, useMemo, useState } from 'react';
+import { ReactElement, useState } from 'react';
 
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
-import { debounce } from '@/utils/debounce';
 
 import { CellSkeleton } from '../CellSkeleton';
 import { EditableCell } from '../EditableCell';
