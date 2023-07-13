@@ -18,7 +18,7 @@ export function useInitializeEntityTable({
 }) {
   const resetTableRowSelection = useResetTableRowSelection();
 
-  const [tableRowIds] = useRecoilValue(tableRowIdsState);
+  const tableRowIds = useRecoilValue(tableRowIdsState);
 
   useEffect(() => {
     resetTableRowSelection();
@@ -27,6 +27,7 @@ export function useInitializeEntityTable({
   const [, setTableDimensions] = useRecoilState(entityTableDimensionsState);
 
   useEffect(() => {
+    console.log({ numberOfColumns, tableRowIds });
     setTableDimensions({
       numberOfColumns,
       numberOfRows: tableRowIds?.length,

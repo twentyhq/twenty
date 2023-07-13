@@ -1,3 +1,4 @@
+import { CheckboxCell } from '@/ui/components/table/CheckboxCellV2';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -23,13 +24,6 @@ export type TableColumn = {
 };
 
 export const peopleColumns: TableColumn[] = [
-  {
-    id: 'checkbox',
-    title: 'People',
-    icon: <IconUser size={16} />,
-    size: 30,
-    cellComponent: <EditablePeopleFullNameCell />,
-  },
   {
     id: 'fullName',
     title: 'People',

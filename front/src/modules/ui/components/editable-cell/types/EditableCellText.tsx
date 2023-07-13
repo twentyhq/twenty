@@ -29,7 +29,7 @@ export function EditableCellText({
   }, [value]);
 
   const debouncedOnChange = useMemo(() => {
-    return debounce(onChange, 200);
+    return debounce(onChange, 500);
   }, [onChange]);
 
   return (

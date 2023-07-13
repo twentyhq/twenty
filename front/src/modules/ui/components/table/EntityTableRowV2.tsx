@@ -12,6 +12,7 @@ import { currentRowNumberScopedState } from '@/ui/tables/states/currentRowNumber
 import { RowContext } from '@/ui/tables/states/RowContext';
 import { currentRowSelectionState } from '@/ui/tables/states/rowSelectionState';
 
+import { CheckboxCell } from './CheckboxCellV2';
 import { EntityTableCell } from './EntityTableCellV2';
 
 const StyledRow = styled.tr<{ selected: boolean }>`
@@ -57,6 +58,7 @@ export function EntityTableRow({
       data-testid={`row-id-${rowId}`}
       selected={!!currentRowSelection[rowId]}
     >
+      <CheckboxCell />
       {columns.map((column, columnIndex) => {
         return (
           <RecoilScope SpecificContext={CellContext} key={column.id.toString()}>
