@@ -16,30 +16,19 @@ export type CompanyProgressDict = {
 
 type BoardProps = {
   pipelineId: string;
-  columns: Omit<Column, 'itemKeys'>[];
   initialBoard: Column[];
   initialItems: CompanyProgressDict;
-  onCardMove?: (itemKey: string, columnId: Column['id']) => Promise<void>;
-  onCardUpdate: (
-    pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
-  ) => Promise<void>;
 };
 
 export function CompanyProgressBoard({
-  columns,
   initialBoard,
   initialItems,
-  onCardMove,
-  onCardUpdate,
   pipelineId,
 }: BoardProps) {
   return (
     <EntityProgressBoard
-      columns={columns}
       initialBoard={initialBoard}
       initialItems={initialItems}
-      onCardMove={onCardMove}
-      onCardUpdate={onCardUpdate}
       pipelineId={pipelineId}
       EntityCardComponent={CompanyBoardCard}
       NewEntityButtonComponent={NewCompanyProgressButton}

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import {
   DragDropContext,
@@ -10,13 +11,19 @@ import {
 import { useRecoilState } from 'recoil';
 
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
-import { PipelineProgress } from '~/generated/graphql';
+import {
+  PipelineProgress,
+  PipelineStage,
+  useUpdateOnePipelineProgressMutation,
+  useUpdateOnePipelineProgressStageMutation,
+} from '~/generated/graphql';
 
 import {
   Column,
   getOptimisticlyUpdatedBoard,
   StyledBoard,
 } from '../../ui/board/components/Board';
+import { GET_PIPELINES } from '../queries';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { boardItemsState } from '../states/boardItemsState';
 import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
@@ -32,13 +39,8 @@ export type EntityProgressDict = {
 
 type BoardProps = {
   pipelineId: string;
-  columns: Omit<Column, 'itemKeys'>[];
   initialBoard: Column[];
   initialItems: EntityProgressDict;
-  onCardMove?: (itemKey: string, columnId: Column['id']) => Promise<void>;
-  onCardUpdate: (
-    pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
-  ) => Promise<void>;
   EntityCardComponent: React.FC<{
     entity: any;
     pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
@@ -77,11 +79,8 @@ const BoardColumnCardsContainer = ({
 };
 
 export function EntityProgressBoard({
-  columns,
   initialBoard,
   initialItems,
-  onCardMove,
-  onCardUpdate,
   pipelineId,
   EntityCardComponent,
   NewEntityButtonComponent,
@@ -92,6 +91,50 @@ export function EntityProgressBoard({
     selectedBoardItemsState,
   );
   const [isInitialBoardLoaded, setIsInitialBoardLoaded] = useState(false);
+
+  const columns = useMemo(
+    () =>
+      initialBoard?.map(({ id, colorCode, title }) => ({
+        id,
+        colorCode,
+        title,
+      })),
+    [initialBoard],
+  );
+  const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
+  const [updatePipelineProgressStage] =
+    useUpdateOnePipelineProgressStageMutation();
+
+  const handleCardUpdate = useCallback(
+    async (
+      pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
+    ) => {
+      await updatePipelineProgress({
+        variables: {
+          id: pipelineProgress.id,
+          amount: pipelineProgress.amount,
+          closeDate: pipelineProgress.closeDate || null,
+        },
+        refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
+      });
+    },
+    [updatePipelineProgress],
+  );
+
+  const handleCardMove = useCallback(
+    async (
+      pipelineProgressId: NonNullable<PipelineProgress['id']>,
+      pipelineStageId: NonNullable<PipelineStage['id']>,
+    ) => {
+      updatePipelineProgressStage({
+        variables: {
+          id: pipelineProgressId,
+          pipelineStageId,
+        },
+      });
+    },
+    [updatePipelineProgressStage],
+  );
 
   useEffect(() => {
     if (!isInitialBoardLoaded) {
@@ -142,13 +185,13 @@ export function EntityProgressBoard({
         const destinationColumnId = result.destination?.droppableId;
         draggedEntityId &&
           destinationColumnId &&
-          onCardMove &&
-          (await onCardMove(draggedEntityId, destinationColumnId));
+          handleCardMove &&
+          (await handleCardMove(draggedEntityId, destinationColumnId));
       } catch (e) {
         console.error(e);
       }
     },
-    [board, onCardMove, setBoard],
+    [board, handleCardMove, setBoard],
   );
 
   function handleSelect(itemKey: string) {
@@ -195,7 +238,7 @@ export function EntityProgressBoard({
                                   boardItems[itemKey].pipelineProgress
                                 }
                                 selected={selectedBoardItems.includes(itemKey)}
-                                onCardUpdate={onCardUpdate}
+                                onCardUpdate={handleCardUpdate}
                                 onSelect={() => handleSelect(itemKey)}
                               />
                             </div>

@@ -3,7 +3,7 @@ import { IconCalendarEvent } from '@/ui/icons/index';
 import { icon } from '@/ui/themes/icon';
 import { PipelineProgress } from '~/generated/graphql';
 
-export const pipelineProgressFilters: FilterDefinitionByEntity<PipelineProgress>[] =
+export const companyProgressFilters: FilterDefinitionByEntity<PipelineProgress>[] =
   [
     {
       field: 'closeDate',

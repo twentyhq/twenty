@@ -18,10 +18,8 @@ export const OneColumnBoard: Story = {
   render: getRenderWrapperForComponent(
     <CompanyProgressBoard
       pipelineId={'xxx-test'}
-      columns={initialBoard}
       initialBoard={initialBoard}
       initialItems={items}
-      onCardUpdate={async (_) => {}} // eslint-disable-line @typescript-eslint/no-empty-function
     />,
   ),
 };
