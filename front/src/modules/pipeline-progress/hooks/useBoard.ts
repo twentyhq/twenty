@@ -1,24 +1,22 @@
 import {
-  Company,
   PipelineProgress,
-  useGetCompaniesQuery,
   useGetPipelinesQuery,
 } from '../../../generated/graphql';
 import { Column } from '../../ui/board/components/Board';
 
-type ItemCompany = Pick<Company, 'id' | 'name' | 'domainName'>;
+type ItemEntity = any;
 type ItemPipelineProgress = Pick<
   PipelineProgress,
   'id' | 'amount' | 'progressableId'
 >;
 
 type Item = {
-  entity: ItemCompany;
+  entity: ItemEntity;
   pipelineProgress: ItemPipelineProgress;
 };
 type Items = { [key: string]: Item };
 
-export function useBoard(pipelineId: string) {
+export function useBoard(pipelineId: string, useGetEntitiesQuery: any) {
   const pipelines = useGetPipelinesQuery({
     variables: { where: { id: { equals: pipelineId } } },
     skip: pipelineId === '',
@@ -49,7 +47,7 @@ export function useBoard(pipelineId: string) {
     [] as ItemPipelineProgress[],
   );
 
-  const entitiesQueryResult = useGetCompaniesQuery({
+  const entitiesQueryResult = useGetEntitiesQuery({
     variables: {
       where: {
         id: { in: pipelineProgresses?.map((item) => item.progressableId) },
@@ -57,24 +55,24 @@ export function useBoard(pipelineId: string) {
     },
   });
 
-  const indexCompanyByIdReducer = (
-    acc: { [key: string]: ItemCompany },
-    entity: ItemCompany,
+  const indexEntityByIdReducer = (
+    acc: { [key: string]: ItemEntity },
+    entity: ItemEntity,
   ) => ({
     ...acc,
     [entity.id]: entity,
   });
 
-  const companiesDict = entitiesQueryResult.data?.companies.reduce(
-    indexCompanyByIdReducer,
-    {} as { [key: string]: ItemCompany },
+  const entitiesDict = entitiesQueryResult.data?.companies.reduce(
+    indexEntityByIdReducer,
+    {} as { [key: string]: ItemEntity },
   );
 
   const items = pipelineProgresses?.reduce((acc, pipelineProgress) => {
-    if (companiesDict?.[pipelineProgress.progressableId]) {
+    if (entitiesDict?.[pipelineProgress.progressableId]) {
       acc[pipelineProgress.id] = {
         pipelineProgress,
-        entity: companiesDict[pipelineProgress.progressableId],
+        entity: entitiesDict[pipelineProgress.progressableId],
       };
     }
     return acc;

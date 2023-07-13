@@ -13,6 +13,7 @@ import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer'
 import {
   PipelineProgress,
   PipelineStage,
+  useGetCompaniesQuery,
   useGetPipelinesQuery,
   useUpdateOnePipelineProgressMutation,
   useUpdateOnePipelineProgressStageMutation,
@@ -26,7 +27,10 @@ export function Opportunities() {
   const pipelines = useGetPipelinesQuery();
   const pipelineId = pipelines.data?.findManyPipeline[0]?.id;
 
-  const { initialBoard, items } = useBoard(pipelineId || '');
+  const { initialBoard, items } = useBoard(
+    pipelineId || '',
+    useGetCompaniesQuery,
+  );
 
   const columns = useMemo(
     () =>
