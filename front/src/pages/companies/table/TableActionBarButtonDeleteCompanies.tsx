@@ -5,7 +5,6 @@ import { GET_COMPANIES } from '@/companies/services';
 import { EntityTableActionBarButton } from '@/ui/components/table/action-bar/EntityTableActionBarButton';
 import { IconTrash } from '@/ui/icons/index';
 import { useResetTableRowSelection } from '@/ui/tables/hooks/useResetTableRowSelection';
-import { isRowSelectedFamilyState } from '@/ui/tables/states/isRowSelectedFamilyState';
 import { selectedRowIdsSelector } from '@/ui/tables/states/selectedRowIdsSelector';
 import { useDeleteCompaniesMutation } from '~/generated/graphql';
 
