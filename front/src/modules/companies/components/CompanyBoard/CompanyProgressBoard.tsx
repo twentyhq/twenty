@@ -1,8 +1,10 @@
+import {
+  EntityProgress,
+  EntityProgressBoard,
+} from '@/pipeline-progress/components/EntityProgressBoard';
+import { Column } from '@/ui/board/components/Board';
 import { Company, PipelineProgress } from '~/generated/graphql';
 
-import { Column } from '../../ui/board/components/Board';
-
-import { EntityProgress, EntityProgressBoard } from './EntityProgressBoard';
 import { NewCompanyProgressButton } from './NewCompanyProgressButton';
 
 export type CompanyProgress = {

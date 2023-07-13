@@ -4,11 +4,10 @@ import { IconCurrencyDollar } from '@tabler/icons-react';
 
 import { BoardCardEditableFieldDate } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldDate';
 import { BoardCardEditableFieldText } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldText';
-
-import { Company, PipelineProgress } from '../../../generated/graphql';
-import { Checkbox } from '../../ui/components/form/Checkbox';
-import { IconCalendarEvent } from '../../ui/icons';
-import { getLogoUrlFromDomainName } from '../../utils/utils';
+import { Checkbox } from '@/ui/components/form/Checkbox';
+import { IconCalendarEvent } from '@/ui/icons';
+import { getLogoUrlFromDomainName } from '@/utils/utils';
+import { PipelineProgress } from '~/generated/graphql';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -58,11 +57,6 @@ const StyledBoardCardBody = styled.div`
     }
   }
 `;
-
-type CompanyProp = Pick<
-  Company,
-  'id' | 'name' | 'domainName' | 'employees' | 'accountOwner'
->;
 
 type PipelineProgressProp = Pick<
   PipelineProgress,
