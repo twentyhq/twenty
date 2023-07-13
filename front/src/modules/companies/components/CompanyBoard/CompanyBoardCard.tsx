@@ -7,7 +7,7 @@ import { BoardCardEditableFieldText } from '@/ui/board-card-field-inputs/compone
 import { Checkbox } from '@/ui/components/form/Checkbox';
 import { IconCalendarEvent } from '@/ui/icons';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
-import { PipelineProgress } from '~/generated/graphql';
+import { Company, PipelineProgress } from '~/generated/graphql';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -70,7 +70,7 @@ export function CompanyBoardCard({
   onSelect,
   onCardUpdate,
 }: {
-  entity: any;
+  entity: Company;
   pipelineProgress: PipelineProgressProp;
   selected: boolean;
   onSelect: (entity: any) => void;
