@@ -5,11 +5,12 @@ import { GET_COMPANIES } from '@/companies/services';
 import { EntityTableActionBarButton } from '@/ui/components/table/action-bar/EntityTableActionBarButton';
 import { IconTrash } from '@/ui/icons/index';
 import { useResetTableRowSelection } from '@/ui/tables/hooks/useResetTableRowSelection';
-import { selectedRowIdsState } from '@/ui/tables/states/selectedRowIdsState';
+import { isRowSelectedFamilyState } from '@/ui/tables/states/isRowSelectedFamilyState';
+import { selectedRowIdsSelector } from '@/ui/tables/states/selectedRowIdsSelector';
 import { useDeleteCompaniesMutation } from '~/generated/graphql';
 
 export function TableActionBarButtonDeleteCompanies() {
-  const selectedRowIds = useRecoilValue(selectedRowIdsState);
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   const resetRowSelection = useResetTableRowSelection();
 
@@ -18,13 +19,17 @@ export function TableActionBarButtonDeleteCompanies() {
   });
 
   async function handleDeleteClick() {
-    await deleteCompanies({
-      variables: {
-        ids: selectedRowIds,
-      },
-    });
+    const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
+
+    console.log({ isRowSelectedFamilyState: isRowSelectedFamilyState });
+
+    await deleteCompanies({
+      variables: {
+        ids: rowIdsToDelete,
+      },
+    });
   }
 
   return (

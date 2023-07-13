@@ -1,17 +1,20 @@
-import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
-import { currentRowSelectionState } from '../states/rowSelectionState';
+import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
+import { tableRowIdsState } from '../states/tableRowIdsState';
 
 export function useResetTableRowSelection() {
-  const setCurrentRowSelectionState = useSetRecoilState(
-    currentRowSelectionState,
-  );
+  return useRecoilCallback(
+    ({ snapshot, set }) =>
+      () => {
+        const tableRowIds = snapshot
+          .getLoadable(tableRowIdsState)
+          .valueOrThrow();
 
-  return useCallback(
-    function resetCurrentRowSelection() {
-      setCurrentRowSelectionState({});
-    },
-    [setCurrentRowSelectionState],
+        for (const rowId of tableRowIds) {
+          set(isRowSelectedFamilyState(rowId), false);
+        }
+      },
+    [],
   );
 }

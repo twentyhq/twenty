@@ -1,7 +1,6 @@
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
-import { numberOfSelectedRowState } from '../states/numberOfSelectedRowState';
 
 import { useCurrentRowEntityId } from './useCurrentEntityId';
 
@@ -21,15 +20,9 @@ export function useCurrentRowSelected() {
           .getLoadable(isRowSelectedFamilyState(currentRowId))
           .valueOrThrow();
 
-        const numberOfSelectedRow = snapshot
-          .getLoadable(numberOfSelectedRowState)
-          .valueOrThrow();
-
         if (newSelectedState && !isRowSelected) {
-          set(numberOfSelectedRowState, numberOfSelectedRow + 1);
           set(isRowSelectedFamilyState(currentRowId), true);
         } else if (!newSelectedState && isRowSelected) {
-          set(numberOfSelectedRowState, numberOfSelectedRow - 1);
           set(isRowSelectedFamilyState(currentRowId), false);
         }
       },

@@ -2,8 +2,6 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { allRowsSelectedStatusSelector } from '../states/allRowsSelectedStatusSelector';
 import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
-import { numberOfSelectedRowState } from '../states/numberOfSelectedRowState';
-import { numberOfTableRowsSelectorState } from '../states/numberOfTableRowsSelectorState';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
 export function useSelectAllRows() {
@@ -16,23 +14,15 @@ export function useSelectAllRows() {
           .getLoadable(allRowsSelectedStatusSelector)
           .valueOrThrow();
 
-        const numberOfRows = snapshot
-          .getLoadable(numberOfTableRowsSelectorState)
-          .valueOrThrow();
-
         const tableRowIds = snapshot
           .getLoadable(tableRowIdsState)
           .valueOrThrow();
 
         if (allRowsSelectedStatus === 'none') {
-          set(numberOfSelectedRowState, numberOfRows);
-
           for (const rowId of tableRowIds) {
             set(isRowSelectedFamilyState(rowId), true);
           }
         } else {
-          set(numberOfSelectedRowState, 0);
-
           for (const rowId of tableRowIds) {
             set(isRowSelectedFamilyState(rowId), false);
           }
