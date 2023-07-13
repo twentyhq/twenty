@@ -1,5 +1,5 @@
 import DarkNoise from './assets/dark-noise.png';
-import LightNoise from './assets/light-noise.jpg';
+import LightNoise from './assets/light-noise.png';
 import { grayScale, rgba } from './colors';
 
 export const backgroundLight = {
