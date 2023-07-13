@@ -61,6 +61,7 @@ const StyledEmptyTimelineSubTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.xxl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTimelineItemContainer = styled.div`
