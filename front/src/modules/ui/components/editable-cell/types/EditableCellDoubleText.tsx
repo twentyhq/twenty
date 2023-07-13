@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
@@ -28,6 +28,11 @@ export function EditableCellDoubleText({
 }: OwnProps) {
   const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
   const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
+
+  useEffect(() => {
+    setFirstInternalValue(firstValue);
+    setSecondInternalValue(secondValue);
+  }, [firstValue, secondValue]);
 
   function handleOnChange(firstValue: string, secondValue: string): void {
     setFirstInternalValue(firstValue);
