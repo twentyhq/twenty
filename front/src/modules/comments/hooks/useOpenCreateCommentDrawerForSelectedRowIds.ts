@@ -8,7 +8,7 @@ import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { GET_PEOPLE } from '@/people/services';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { selectedRowIdsState } from '@/ui/tables/states/selectedRowIdsState';
+import { selectedRowIdsSelector } from '@/ui/tables/states/selectedRowIdsSelector';
 import {
   CommentableType,
   useCreateCommentThreadMutation,
@@ -36,7 +36,7 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
     commentableEntityArrayState,
   );
 
-  const selectedEntityIds = useRecoilValue(selectedRowIdsState);
+  const selectedEntityIds = useRecoilValue(selectedRowIdsSelector);
 
   return function openCreateCommentDrawerForSelectedRowIds(
     entityType: CommentableType,

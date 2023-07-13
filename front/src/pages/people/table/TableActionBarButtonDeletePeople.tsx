@@ -5,11 +5,11 @@ import { GET_PEOPLE } from '@/people/services';
 import { EntityTableActionBarButton } from '@/ui/components/table/action-bar/EntityTableActionBarButton';
 import { IconTrash } from '@/ui/icons/index';
 import { useResetTableRowSelection } from '@/ui/tables/hooks/useResetTableRowSelection';
-import { selectedRowIdsState } from '@/ui/tables/states/selectedRowIdsState';
+import { selectedRowIdsSelector } from '@/ui/tables/states/selectedRowIdsSelector';
 import { useDeletePeopleMutation } from '~/generated/graphql';
 
 export function TableActionBarButtonDeletePeople() {
-  const selectedRowIds = useRecoilValue(selectedRowIdsState);
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   const resetRowSelection = useResetTableRowSelection();
 
@@ -18,13 +18,15 @@ export function TableActionBarButtonDeletePeople() {
   });
 
   async function handleDeleteClick() {
-    await deletePeople({
-      variables: {
-        ids: selectedRowIds,
-      },
-    });
+    const rowIdsToDelete = selectedRowIds;
 
     resetRowSelection();
+
+    await deletePeople({
+      variables: {
+        ids: rowIdsToDelete,
+      },
+    });
   }
 
   return (

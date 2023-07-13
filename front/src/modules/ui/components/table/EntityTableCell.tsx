@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { useCurrentRowSelected } from '@/ui/tables/hooks/useCurrentRowSelected';
 import { CellContext } from '@/ui/tables/states/CellContext';
 import { contextMenuPositionState } from '@/ui/tables/states/contextMenuPositionState';
 import { currentColumnNumberScopedState } from '@/ui/tables/states/currentColumnNumberScopedState';
-import { currentRowSelectionState } from '@/ui/tables/states/rowSelectionState';
 
 export function EntityTableCell({
   rowId,
@@ -18,8 +18,6 @@ export function EntityTableCell({
   cellIndex: number;
   children: React.ReactNode;
 }) {
-  const [, setCurrentRowSelection] = useRecoilState(currentRowSelectionState);
-
   const [, setCurrentColumnNumber] = useRecoilScopedState(
     currentColumnNumberScopedState,
     CellContext,
@@ -31,9 +29,12 @@ export function EntityTableCell({
 
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
 
-  function handleContextMenu(event: React.MouseEvent, id: string) {
+  const { setCurrentRowSelected } = useCurrentRowSelected();
+
+  function handleContextMenu(event: React.MouseEvent) {
     event.preventDefault();
-    setCurrentRowSelection((prev) => ({ ...prev, [id]: true }));
+
+    setCurrentRowSelected(true);
 
     setContextMenuPosition({
       x: event.clientX,
@@ -43,7 +44,7 @@ export function EntityTableCell({
 
   return (
     <td
-      onContextMenu={(event) => handleContextMenu(event, rowId)}
+      onContextMenu={(event) => handleContextMenu(event)}
       style={{
         width: size,
         minWidth: size,

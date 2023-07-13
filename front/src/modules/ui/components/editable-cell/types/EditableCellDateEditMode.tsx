@@ -1,3 +1,7 @@
+import { Key } from 'ts-key-enum';
+
+import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
+import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { InplaceInputDateEditMode } from '@/ui/inplace-inputs/components/InplaceInputDateEditMode';
 
 import { useEditableCell } from '../hooks/useEditableCell';
@@ -17,6 +21,15 @@ export function EditableCellDateEditMode({
     onChange(newDate);
     closeEditableCell();
   }
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      closeEditableCell();
+    },
+    InternalHotkeysScope.CellDateEditMode,
+    [closeEditableCell],
+  );
 
   return <InplaceInputDateEditMode onChange={handleDateChange} value={value} />;
 }

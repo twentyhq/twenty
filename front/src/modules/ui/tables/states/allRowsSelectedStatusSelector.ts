@@ -2,15 +2,17 @@ import { selector } from 'recoil';
 
 import { AllRowsSelectedStatus } from '../types/AllRowSelectedStatus';
 
-import { numberOfSelectedRowState } from './numberOfSelectedRowState';
 import { numberOfTableRowsSelectorState } from './numberOfTableRowsSelectorState';
+import { selectedRowIdsSelector } from './selectedRowIdsSelector';
 
 export const allRowsSelectedStatusSelector = selector<AllRowsSelectedStatus>({
   key: 'allRowsSelectedStatusSelector',
   get: ({ get }) => {
     const numberOfRows = get(numberOfTableRowsSelectorState);
 
-    const numberOfSelectedRows = get(numberOfSelectedRowState);
+    const selectedRowIds = get(selectedRowIdsSelector);
+
+    const numberOfSelectedRows = selectedRowIds.length;
 
     const allRowsSelectedStatus =
       numberOfSelectedRows === 0

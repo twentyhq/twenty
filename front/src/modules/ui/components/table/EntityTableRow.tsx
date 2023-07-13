@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { TableColumn } from '@/people/table/components/peopleColumns';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
@@ -8,8 +8,8 @@ import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState'
 import { CellContext } from '@/ui/tables/states/CellContext';
 import { currentRowEntityIdScopedState } from '@/ui/tables/states/currentRowEntityIdScopedState';
 import { currentRowNumberScopedState } from '@/ui/tables/states/currentRowNumberScopedState';
+import { isRowSelectedFamilyState } from '@/ui/tables/states/isRowSelectedFamilyState';
 import { RowContext } from '@/ui/tables/states/RowContext';
-import { currentRowSelectionState } from '@/ui/tables/states/rowSelectionState';
 
 import { CheckboxCell } from './CheckboxCell';
 import { EntityTableCell } from './EntityTableCell';
@@ -28,11 +28,12 @@ export function EntityTableRow({
   rowId: string;
   index: number;
 }) {
-  const [currentRowSelection] = useRecoilState(currentRowSelectionState);
   const [currentRowEntityId, setCurrentRowEntityId] = useRecoilScopedState(
     currentRowEntityIdScopedState,
     RowContext,
   );
+
+  const isCurrentRowSelected = useRecoilValue(isRowSelectedFamilyState(rowId));
 
   const [, setCurrentRowNumber] = useRecoilScopedState(
     currentRowNumberScopedState,
@@ -53,7 +54,7 @@ export function EntityTableRow({
     <StyledRow
       key={rowId}
       data-testid={`row-id-${rowId}`}
-      selected={!!currentRowSelection[rowId]}
+      selected={isCurrentRowSelected}
     >
       <td>
         <CheckboxCell />
