@@ -2,6 +2,7 @@ import { EntityProgressBoard } from '@/pipeline-progress/components/EntityProgre
 import { useBoard } from '@/pipeline-progress/hooks/useBoard';
 import {
   Company,
+  Pipeline,
   PipelineProgress,
   useGetCompaniesQuery,
 } from '~/generated/graphql';
@@ -19,20 +20,17 @@ export type CompanyProgressDict = {
 };
 
 type BoardProps = {
-  pipelineId: string;
+  pipeline: Pipeline;
 };
 
-export function CompanyProgressBoard({ pipelineId }: BoardProps) {
-  const { initialBoard, items } = useBoard(
-    pipelineId || '',
-    useGetCompaniesQuery,
-  );
+export function CompanyProgressBoard({ pipeline }: BoardProps) {
+  const { initialBoard, items } = useBoard(useGetCompaniesQuery, pipeline);
 
   return (
     <EntityProgressBoard
       initialBoard={initialBoard}
       initialItems={items}
-      pipelineId={pipelineId}
+      pipeline={pipeline}
       EntityCardComponent={CompanyBoardCard}
       NewEntityButtonComponent={NewCompanyProgressButton}
     />

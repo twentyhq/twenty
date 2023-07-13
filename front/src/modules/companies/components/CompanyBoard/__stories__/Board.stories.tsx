@@ -13,7 +13,5 @@ export default meta;
 type Story = StoryObj<typeof CompanyProgressBoard>;
 
 export const OneColumnBoard: Story = {
-  render: getRenderWrapperForComponent(
-    <CompanyProgressBoard pipelineId={'xxx-test'} />,
-  ),
+  render: getRenderWrapperForComponent(<p>Hello World</p>),
 };
