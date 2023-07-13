@@ -33,16 +33,14 @@ export const StyledAmount = styled.div`
 type OwnProps = {
   colorCode?: string;
   title: string;
-  amount: number;
   children: React.ReactNode;
 };
 
-export function BoardColumn({ colorCode, title, amount, children }: OwnProps) {
+export function BoardColumn({ colorCode, title, children }: OwnProps) {
   return (
     <StyledColumn>
       <StyledHeader>
         <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
-        {!!amount && <StyledAmount>${amount}</StyledAmount>}
       </StyledHeader>
       {children}
     </StyledColumn>

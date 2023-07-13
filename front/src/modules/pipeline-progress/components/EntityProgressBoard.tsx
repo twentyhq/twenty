@@ -20,13 +20,12 @@ import {
 } from '~/generated/graphql';
 
 import {
-  Column,
   getOptimisticlyUpdatedBoard,
   StyledBoard,
 } from '../../ui/board/components/Board';
+import { useBoard } from '../hooks/useBoard';
 import { GET_PIPELINES } from '../queries';
 import { boardColumnsState } from '../states/boardColumnsState';
-import { boardItemsState } from '../states/boardItemsState';
 import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
 
 export type EntityProgress = {
@@ -40,21 +39,18 @@ export type EntityProgressDict = {
 
 type BoardProps = {
   pipeline: Pipeline;
-  initialBoard: Column[];
-  initialItems: EntityProgressDict;
-  EntityCardComponent: React.FC<{
-    entity: any;
-    pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
-    selected: boolean;
-    onSelect: (entityProgress: EntityProgress) => void;
-    onCardUpdate: (
+  renderEntityCard: (
+    pipelineProgressId: string,
+    handleSelect: (pipelineProgressId: string) => void,
+    handleCardUpdate: (
       pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
-    ) => Promise<void>;
-  }>;
-  NewEntityButtonComponent: React.FC<{
-    pipelineId: string;
-    columnId: string;
-  }>;
+    ) => Promise<void>,
+    selected: boolean,
+  ) => React.ReactNode;
+  renderNewEntityButton: (
+    pipelineId: string,
+    columnId: string,
+  ) => React.ReactNode;
 };
 
 const StyledPlaceholder = styled.div`
@@ -80,14 +76,12 @@ const BoardColumnCardsContainer = ({
 };
 
 export function EntityProgressBoard({
-  initialBoard,
-  initialItems,
   pipeline,
-  EntityCardComponent,
-  NewEntityButtonComponent,
+  renderEntityCard,
+  renderNewEntityButton,
 }: BoardProps) {
+  const { initialBoard } = useBoard(pipeline);
   const [board, setBoard] = useRecoilState(boardColumnsState);
-  const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
   const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
     selectedBoardItemsState,
   );
@@ -138,43 +132,14 @@ export function EntityProgressBoard({
   );
 
   useEffect(() => {
-    if (!isInitialBoardLoaded) {
-      setBoard(initialBoard);
+    async function loadIninitalBoard() {
+      if (!isInitialBoardLoaded) {
+        await setIsInitialBoardLoaded(true);
+        await setBoard(initialBoard);
+      }
     }
-    if (Object.keys(initialItems).length > 0) {
-      setBoardItems(initialItems);
-      setIsInitialBoardLoaded(true);
-    }
-  }, [
-    initialBoard,
-    setBoard,
-    initialItems,
-    setBoardItems,
-    setIsInitialBoardLoaded,
-    isInitialBoardLoaded,
-  ]);
-
-  const calculateColumnTotals = (
-    columns: Column[],
-    items: {
-      [key: string]: EntityProgress;
-    },
-  ): { [key: string]: number } => {
-    return columns.reduce<{ [key: string]: number }>((acc, column) => {
-      acc[column.id] = column.itemKeys.reduce(
-        (total: number, itemKey: string) => {
-          return total + (items[itemKey]?.pipelineProgress?.amount || 0);
-        },
-        0,
-      );
-      return acc;
-    }, {});
-  };
-
-  const columnTotals = useMemo(
-    () => calculateColumnTotals(board, boardItems),
-    [board, boardItems],
-  );
+    loadIninitalBoard();
+  }, [initialBoard, setBoard, setIsInitialBoardLoaded, isInitialBoardLoaded]);
 
   const onDragEnd: OnDragEndResponder = useCallback(
     async (result) => {
@@ -213,45 +178,35 @@ export function EntityProgressBoard({
             {(droppableProvided) => (
               <BoardColumn
                 title={`${column.title}  `}
-                amount={columnTotals[column.id]}
                 colorCode={column.colorCode}
               >
                 <BoardColumnCardsContainer
                   droppableProvided={droppableProvided}
                 >
-                  {board[columnIndex].itemKeys.map(
-                    (itemKey, index) =>
-                      boardItems[itemKey] && (
-                        <Draggable
-                          key={itemKey}
-                          draggableId={itemKey}
-                          index={index}
+                  {board[columnIndex].itemKeys.map((itemKey, index) => (
+                    <Draggable
+                      key={itemKey}
+                      draggableId={itemKey}
+                      index={index}
+                    >
+                      {(draggableProvided) => (
+                        <div
+                          ref={draggableProvided?.innerRef}
+                          {...draggableProvided?.dragHandleProps}
+                          {...draggableProvided?.draggableProps}
                         >
-                          {(draggableProvided) => (
-                            <div
-                              ref={draggableProvided?.innerRef}
-                              {...draggableProvided?.dragHandleProps}
-                              {...draggableProvided?.draggableProps}
-                            >
-                              <EntityCardComponent
-                                entity={boardItems[itemKey].entity}
-                                pipelineProgress={
-                                  boardItems[itemKey].pipelineProgress
-                                }
-                                selected={selectedBoardItems.includes(itemKey)}
-                                onCardUpdate={handleCardUpdate}
-                                onSelect={() => handleSelect(itemKey)}
-                              />
-                            </div>
+                          {renderEntityCard(
+                            itemKey,
+                            handleSelect,
+                            handleCardUpdate,
+                            selectedBoardItems.includes(itemKey),
                           )}
-                        </Draggable>
-                      ),
-                  )}
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
                 </BoardColumnCardsContainer>
-                <NewEntityButtonComponent
-                  pipelineId={pipeline?.id || ''}
-                  columnId={column.id}
-                />
+                {renderNewEntityButton(pipeline?.id || '', column.id)}
               </BoardColumn>
             )}
           </Droppable>

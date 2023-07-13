@@ -64,30 +64,33 @@ type PipelineProgressProp = Pick<
 >;
 
 export function CompanyBoardCard({
-  entity,
+  company,
   pipelineProgress,
   selected,
   onSelect,
   onCardUpdate,
 }: {
-  entity: Company;
-  pipelineProgress: PipelineProgressProp;
+  company?: Pick<Company, 'id' | 'name' | 'domainName'>;
+  pipelineProgress?: PipelineProgressProp;
   selected: boolean;
   onSelect: (entity: any) => void;
   onCardUpdate: (pipelineProgress: PipelineProgressProp) => Promise<void>;
 }) {
   const theme = useTheme();
+  if (!company || !pipelineProgress) {
+    return null;
+  }
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard selected={selected}>
         <StyledBoardCardHeader>
           <img
-            src={getLogoUrlFromDomainName(entity.domainName).toString()}
-            alt={`${entity.name}-company-logo`}
+            src={getLogoUrlFromDomainName(company.domainName).toString()}
+            alt={`${company.name}-company-logo`}
           />
-          <span>{entity.name}</span>
+          <span>{company.name}</span>
           <div style={{ display: 'flex', flex: 1 }} />
-          <Checkbox checked={selected} onChange={() => onSelect(entity)} />
+          <Checkbox checked={selected} onChange={() => onSelect(company)} />
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>

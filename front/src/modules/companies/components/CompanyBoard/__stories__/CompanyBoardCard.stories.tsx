@@ -20,13 +20,14 @@ const FakeSelectableCompanyBoardCard = () => {
   const [selected, setSelected] = useState<boolean>(false);
 
   return (
-    <CompanyBoardCard
-      entity={mockedCompaniesData[0] as Company}
-      pipelineProgress={mockedPipelineProgressData[0]}
-      selected={selected}
-      onSelect={() => setSelected(!selected)}
-      onCardUpdate={async (_) => {}} // eslint-disable-line @typescript-eslint/no-empty-function
-    />
+    <p>Hello</p>
+    // <CompanyBoardCard
+    //   entity={mockedCompaniesData[0] as Company}
+    //   pipelineProgress={mockedPipelineProgressData[0]}
+    //   selected={selected}
+    //   onSelect={() => setSelected(!selected)}
+    //   onCardUpdate={async (_) => {}} // eslint-disable-line @typescript-eslint/no-empty-function
+    // />
   );
 };
 
