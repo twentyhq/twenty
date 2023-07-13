@@ -4,8 +4,6 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { CompanyProgressBoard } from '../CompanyProgressBoard';
 
-import { initialBoard, items } from './mock-data';
-
 const meta: Meta<typeof CompanyProgressBoard> = {
   title: 'UI/Board/Board',
   component: CompanyProgressBoard,
@@ -16,10 +14,6 @@ type Story = StoryObj<typeof CompanyProgressBoard>;
 
 export const OneColumnBoard: Story = {
   render: getRenderWrapperForComponent(
-    <CompanyProgressBoard
-      pipelineId={'xxx-test'}
-      initialBoard={initialBoard}
-      initialItems={items}
-    />,
+    <CompanyProgressBoard pipelineId={'xxx-test'} />,
   ),
 };
