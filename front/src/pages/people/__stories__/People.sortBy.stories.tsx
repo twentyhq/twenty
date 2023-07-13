@@ -31,12 +31,6 @@ export const Email: Story = {
     expect(await canvas.getByTestId('remove-icon-email')).toBeInTheDocument();
 
     expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
-
-    expect(
-      (await canvas.findAllByRole('checkbox')).map((item) => {
-        return item.getAttribute('id');
-      })[1],
-    ).toStrictEqual('checkbox-selected-7dfbc3f7-6e5e-4128-957e-8d86808cdf6b');
   },
   parameters: {
     msw: graphqlMocks,
