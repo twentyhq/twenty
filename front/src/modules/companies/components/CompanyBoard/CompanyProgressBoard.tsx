@@ -1,10 +1,8 @@
-import {
-  EntityProgress,
-  EntityProgressBoard,
-} from '@/pipeline-progress/components/EntityProgressBoard';
+import { EntityProgressBoard } from '@/pipeline-progress/components/EntityProgressBoard';
 import { Column } from '@/ui/board/components/Board';
 import { Company, PipelineProgress } from '~/generated/graphql';
 
+import { CompanyBoardCard } from './CompanyBoardCard';
 import { NewCompanyProgressButton } from './NewCompanyProgressButton';
 
 export type CompanyProgress = {
@@ -25,19 +23,6 @@ type BoardProps = {
   onCardUpdate: (
     pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
   ) => Promise<void>;
-  EntityCardComponent: React.FC<{
-    entity: any;
-    pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
-    selected: boolean;
-    onSelect: (entityProgress: EntityProgress) => void;
-    onCardUpdate: (
-      pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
-    ) => Promise<void>;
-  }>;
-  NewEntityButtonComponent: React.FC<{
-    pipelineId: string;
-    columnId: string;
-  }>;
 };
 
 export function CompanyProgressBoard({
@@ -47,8 +32,6 @@ export function CompanyProgressBoard({
   onCardMove,
   onCardUpdate,
   pipelineId,
-  EntityCardComponent,
-  NewEntityButtonComponent,
 }: BoardProps) {
   return (
     <EntityProgressBoard
@@ -58,7 +41,7 @@ export function CompanyProgressBoard({
       onCardMove={onCardMove}
       onCardUpdate={onCardUpdate}
       pipelineId={pipelineId}
-      EntityCardComponent={EntityCardComponent}
+      EntityCardComponent={CompanyBoardCard}
       NewEntityButtonComponent={NewCompanyProgressButton}
     />
   );

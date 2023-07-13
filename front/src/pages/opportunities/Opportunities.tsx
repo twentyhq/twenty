@@ -9,6 +9,7 @@ import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline-progress/
 import { EntityBoardActionBar } from '@/pipeline-progress/components/EntityBoardActionBar';
 import { useBoard } from '@/pipeline-progress/hooks/useBoard';
 import { GET_PIPELINES } from '@/pipeline-progress/queries';
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 
@@ -90,8 +91,6 @@ export function Opportunities() {
             initialItems={items}
             onCardMove={handleCardMove}
             onCardUpdate={handleCardUpdate}
-            EntityCardComponent={CompanyBoardCard}
-            NewEntityButtonComponent={NewCompanyProgressButton}
           />
           <EntityBoardActionBar>
             <BoardActionBarButtonDeletePipelineProgress />

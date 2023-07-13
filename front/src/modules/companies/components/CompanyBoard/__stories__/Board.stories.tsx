@@ -22,8 +22,6 @@ export const OneColumnBoard: Story = {
       initialBoard={initialBoard}
       initialItems={items}
       onCardUpdate={async (_) => {}} // eslint-disable-line @typescript-eslint/no-empty-function
-      EntityCardComponent={() => <></>}
-      NewEntityButtonComponent={() => <></>}
     />,
   ),
 };
