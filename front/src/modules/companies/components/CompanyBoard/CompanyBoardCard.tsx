@@ -73,21 +73,22 @@ export function CompanyBoardCard({
   entity: Company;
   pipelineProgress: PipelineProgressProp;
   selected: boolean;
-  onSelect: (entity: any) => void;
+  onSelect: (entity: Company) => void;
   onCardUpdate: (pipelineProgress: PipelineProgressProp) => Promise<void>;
 }) {
   const theme = useTheme();
+  const company = entity;
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard selected={selected}>
         <StyledBoardCardHeader>
           <img
-            src={getLogoUrlFromDomainName(entity.domainName).toString()}
-            alt={`${entity.name}-company-logo`}
+            src={getLogoUrlFromDomainName(company.domainName).toString()}
+            alt={`${company.name}-company-logo`}
           />
-          <span>{entity.name}</span>
+          <span>{company.name}</span>
           <div style={{ display: 'flex', flex: 1 }} />
-          <Checkbox checked={selected} onChange={() => onSelect(entity)} />
+          <Checkbox checked={selected} onChange={() => onSelect(company)} />
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>
