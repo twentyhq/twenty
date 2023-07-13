@@ -29,24 +29,24 @@ import { boardColumnsState } from '../states/boardColumnsState';
 import { boardItemsState } from '../states/boardItemsState';
 import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
 
-export type EntityProgress = {
-  entity: any;
+export type EntityProgress<T> = {
+  entity: T;
   pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
 };
 
-export type EntityProgressDict = {
-  [key: string]: EntityProgress;
+export type EntityProgressDict<T> = {
+  [key: string]: EntityProgress<T>;
 };
 
-type BoardProps = {
+type BoardProps<T> = {
   pipeline: Pipeline;
   initialBoard: Column[];
-  initialItems: EntityProgressDict;
+  initialItems: EntityProgressDict<T>;
   EntityCardComponent: React.FC<{
-    entity: any;
+    entity: T;
     pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
     selected: boolean;
-    onSelect: (entityProgress: EntityProgress) => void;
+    onSelect: () => void;
     onCardUpdate: (
       pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
     ) => Promise<void>;
@@ -79,13 +79,13 @@ const BoardColumnCardsContainer = ({
   );
 };
 
-export function EntityProgressBoard({
+export function EntityProgressBoard<T>({
   initialBoard,
   initialItems,
   pipeline,
   EntityCardComponent,
   NewEntityButtonComponent,
-}: BoardProps) {
+}: BoardProps<T>) {
   const [board, setBoard] = useRecoilState(boardColumnsState);
   const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
   const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
@@ -154,26 +154,29 @@ export function EntityProgressBoard({
     isInitialBoardLoaded,
   ]);
 
-  const calculateColumnTotals = (
-    columns: Column[],
-    items: {
-      [key: string]: EntityProgress;
+  const calculateColumnTotals = useCallback(
+    (
+      columns: Column[],
+      items: {
+        [key: string]: EntityProgress<T>;
+      },
+    ): { [key: string]: number } => {
+      return columns.reduce<{ [key: string]: number }>((acc, column) => {
+        acc[column.id] = column.itemKeys.reduce(
+          (total: number, itemKey: string) => {
+            return total + (items[itemKey]?.pipelineProgress?.amount || 0);
+          },
+          0,
+        );
+        return acc;
+      }, {});
     },
-  ): { [key: string]: number } => {
-    return columns.reduce<{ [key: string]: number }>((acc, column) => {
-      acc[column.id] = column.itemKeys.reduce(
-        (total: number, itemKey: string) => {
-          return total + (items[itemKey]?.pipelineProgress?.amount || 0);
-        },
-        0,
-      );
-      return acc;
-    }, {});
-  };
+    [],
+  );
 
   const columnTotals = useMemo(
     () => calculateColumnTotals(board, boardItems),
-    [board, boardItems],
+    [board, boardItems, calculateColumnTotals],
   );
 
   const onDragEnd: OnDragEndResponder = useCallback(
