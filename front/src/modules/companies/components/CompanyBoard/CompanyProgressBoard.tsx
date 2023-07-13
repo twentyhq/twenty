@@ -1,4 +1,5 @@
 import { EntityProgressBoard } from '@/pipeline-progress/components/EntityProgressBoard';
+import { useBoard } from '@/pipeline-progress/hooks/useBoard';
 import { Company, Pipeline, PipelineProgress } from '~/generated/graphql';
 
 import { CompanyBoardCard } from './CompanyBoardCard';
@@ -19,6 +20,7 @@ type BoardProps = {
 };
 
 export function CompanyProgressBoard({ pipeline }: BoardProps) {
+  const { initialBoard } = useBoard(pipeline);
   const { companyBoardIndex, loading } = useCompanyBoardIndex(pipeline);
 
   function renderCompanyCard(
@@ -52,6 +54,7 @@ export function CompanyProgressBoard({ pipeline }: BoardProps) {
 
   return loading ? null : (
     <EntityProgressBoard
+      initialBoard={initialBoard}
       pipeline={pipeline}
       renderEntityCard={renderCompanyCard}
       renderNewEntityButton={renderNewCompanyButton}

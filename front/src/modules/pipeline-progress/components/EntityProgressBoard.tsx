@@ -20,6 +20,7 @@ import {
 } from '~/generated/graphql';
 
 import {
+  Column,
   getOptimisticlyUpdatedBoard,
   StyledBoard,
 } from '../../ui/board/components/Board';
@@ -51,6 +52,7 @@ type BoardProps = {
     pipelineId: string,
     columnId: string,
   ) => React.ReactNode;
+  initialBoard: Column[];
 };
 
 const StyledPlaceholder = styled.div`
@@ -79,8 +81,8 @@ export function EntityProgressBoard({
   pipeline,
   renderEntityCard,
   renderNewEntityButton,
+  initialBoard,
 }: BoardProps) {
-  const { initialBoard } = useBoard(pipeline);
   const [board, setBoard] = useRecoilState(boardColumnsState);
   const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
     selectedBoardItemsState,
@@ -132,13 +134,10 @@ export function EntityProgressBoard({
   );
 
   useEffect(() => {
-    async function loadIninitalBoard() {
-      if (!isInitialBoardLoaded) {
-        await setIsInitialBoardLoaded(true);
-        await setBoard(initialBoard);
-      }
+    if (!isInitialBoardLoaded) {
+      setIsInitialBoardLoaded(true);
+      setBoard(initialBoard);
     }
-    loadIninitalBoard();
   }, [initialBoard, setBoard, setIsInitialBoardLoaded, isInitialBoardLoaded]);
 
   const onDragEnd: OnDragEndResponder = useCallback(
