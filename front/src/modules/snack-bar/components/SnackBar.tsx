@@ -133,13 +133,15 @@ export function SnackBar({
 
     switch (variant) {
       case 'error':
-        return <IconAlertTriangle aria-label="Error" size={16} />;
+        return (
+          <IconAlertTriangle aria-label="Error" size={theme.icon.size.md} />
+        );
       case 'success':
       case 'info':
       default:
         return null;
     }
-  }, [iconComponent, variant]);
+  }, [iconComponent, theme.icon.size.md, variant]);
 
   const onMouseEnter = () => {
     progressBarRef.current?.pause();
@@ -172,7 +174,7 @@ export function SnackBar({
       {children ? children : message}
       {allowDismiss && (
         <CloseButton variant={variant} onClick={closeSnackbar}>
-          <IconX aria-label="Close" size={16} />
+          <IconX aria-label="Close" size={theme.icon.size.md} />
         </CloseButton>
       )}
     </StyledMotionContainer>
