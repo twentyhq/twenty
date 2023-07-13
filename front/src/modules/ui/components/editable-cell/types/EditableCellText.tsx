@@ -1,9 +1,9 @@
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 import { InplaceInputTextDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputTextDisplayMode';
 import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
-import { debounce } from '@/utils/debounce';
 
+import { CellSkeleton } from '../CellSkeleton';
 import { EditableCell } from '../EditableCell';
 
 type OwnProps = {
@@ -11,6 +11,7 @@ type OwnProps = {
   value: string;
   onChange: (newValue: string) => void;
   editModeHorizontalAlign?: 'left' | 'right';
+  loading?: boolean;
 };
 
 export function EditableCellText({
@@ -18,12 +19,13 @@ export function EditableCellText({
   placeholder,
   onChange,
   editModeHorizontalAlign,
+  loading,
 }: OwnProps) {
   const [internalValue, setInternalValue] = useState(value);
 
-  const debouncedOnChange = useMemo(() => {
-    return debounce(onChange, 200);
-  }, [onChange]);
+  useEffect(() => {
+    setInternalValue(value);
+  }, [value]);
 
   return (
     <EditableCell
@@ -35,14 +37,18 @@ export function EditableCellText({
           value={internalValue}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             setInternalValue(event.target.value);
-            debouncedOnChange(event.target.value);
+            onChange(event.target.value);
           }}
         />
       }
       nonEditModeContent={
-        <InplaceInputTextDisplayMode>
-          {internalValue}
-        </InplaceInputTextDisplayMode>
+        loading ? (
+          <CellSkeleton />
+        ) : (
+          <InplaceInputTextDisplayMode>
+            {internalValue}
+          </InplaceInputTextDisplayMode>
+        )
       }
     ></EditableCell>
   );

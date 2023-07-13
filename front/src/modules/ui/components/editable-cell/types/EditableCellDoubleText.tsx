@@ -1,7 +1,8 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 
+import { CellSkeleton } from '../CellSkeleton';
 import { EditableCell } from '../EditableCell';
 
 import { EditableCellDoubleTextEditMode } from './EditableCellDoubleTextEditMode';
@@ -13,6 +14,7 @@ type OwnProps = {
   secondValuePlaceholder: string;
   nonEditModeContent: ReactElement;
   onChange: (firstValue: string, secondValue: string) => void;
+  loading?: boolean;
 };
 
 export function EditableCellDoubleText({
@@ -22,20 +24,30 @@ export function EditableCellDoubleText({
   secondValuePlaceholder,
   onChange,
   nonEditModeContent,
+  loading,
 }: OwnProps) {
+  const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
+  const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
+
+  function handleOnChange(firstValue: string, secondValue: string): void {
+    setFirstInternalValue(firstValue);
+    setSecondInternalValue(secondValue);
+    onChange(firstValue, secondValue);
+  }
+
   return (
     <EditableCell
       editHotkeysScope={{ scope: InternalHotkeysScope.CellDoubleTextInput }}
       editModeContent={
         <EditableCellDoubleTextEditMode
-          firstValue={firstValue}
-          secondValue={secondValue}
+          firstValue={firstInternalValue}
+          secondValue={secondInternalValue}
           firstValuePlaceholder={firstValuePlaceholder}
           secondValuePlaceholder={secondValuePlaceholder}
-          onChange={onChange}
+          onChange={handleOnChange}
         />
       }
-      nonEditModeContent={nonEditModeContent}
+      nonEditModeContent={loading ? <CellSkeleton /> : nonEditModeContent}
     ></EditableCell>
   );
 }

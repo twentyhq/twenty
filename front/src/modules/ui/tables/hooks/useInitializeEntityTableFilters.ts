@@ -7,16 +7,16 @@ import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState'
 import { TableContext } from '../states/TableContext';
 
 export function useInitializeEntityTableFilters({
-  availableTableFilters,
+  availableFilters,
 }: {
-  availableTableFilters: FilterDefinition[];
+  availableFilters: FilterDefinition[];
 }) {
-  const [, setAvailableTableFilters] = useRecoilScopedState(
+  const [, setAvailableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
     TableContext,
   );
 
   useEffect(() => {
-    setAvailableTableFilters(availableTableFilters);
-  }, [setAvailableTableFilters, availableTableFilters]);
+    setAvailableFilters(availableFilters);
+  }, [setAvailableFilters, availableFilters]);
 }

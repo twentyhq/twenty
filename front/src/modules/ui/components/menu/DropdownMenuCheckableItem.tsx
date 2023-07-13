@@ -35,7 +35,6 @@ const StyledChildrenContainer = styled.div`
 export function DropdownMenuCheckableItem({
   checked,
   onChange,
-  id,
   children,
 }: React.PropsWithChildren<Props>) {
   function handleClick() {
@@ -45,7 +44,7 @@ export function DropdownMenuCheckableItem({
   return (
     <DropdownMenuCheckableItemContainer onClick={handleClick}>
       <StyledLeftContainer>
-        <Checkbox id={id} name={id} checked={checked} />
+        <Checkbox checked={checked} />
         <StyledChildrenContainer>{children}</StyledChildrenContainer>
       </StyledLeftContainer>
     </DropdownMenuCheckableItemContainer>

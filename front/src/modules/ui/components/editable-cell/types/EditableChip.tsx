@@ -1,4 +1,11 @@
-import { ChangeEvent, ComponentType, ReactNode, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  ComponentType,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styled from '@emotion/styled';
 
 import { textInputStyle } from '@/ui/themes/effects';
@@ -54,6 +61,10 @@ export function EditableCellChip({
 }: EditableChipProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const handleRightEndContentClick = (
     event: React.MouseEvent<HTMLDivElement>,

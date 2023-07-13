@@ -32,18 +32,12 @@ export const InteractWithManyRows: Story = {
 
     let firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
 
-    let secondRowEmailCell = await canvas.findByText(mockedPeopleData[1].email);
-
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
     await userEvent.click(firstRowEmailCell);
 
-    await sleep(100);
-    firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
-    await userEvent.click(firstRowEmailCell);
-    await sleep(100);
     firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
     await userEvent.click(firstRowEmailCell);
 
@@ -51,7 +45,9 @@ export const InteractWithManyRows: Story = {
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
 
-    secondRowEmailCell = await canvas.findByText(mockedPeopleData[1].email);
+    const secondRowEmailCell = await canvas.findByText(
+      mockedPeopleData[1].email,
+    );
     await userEvent.click(secondRowEmailCell);
 
     await sleep(25);

@@ -16,8 +16,8 @@ export const reduceSortsToOrderBy = <OrderByTemplate>(
   sorts: Array<SelectedSortType<OrderByTemplate>>,
 ): OrderByTemplate[] => {
   const mappedSorts = sorts.map((sort) => {
-    if (sort._type === 'custom_sort') {
-      return sort.orderByTemplates.map((orderByTemplate) =>
+    if (sort.orderByTemplates) {
+      return sort.orderByTemplates?.map((orderByTemplate) =>
         orderByTemplate(mapOrderToOrder_By(sort.order)),
       );
     }

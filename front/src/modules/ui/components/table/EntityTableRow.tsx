@@ -1,15 +1,17 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
-import { Row } from '@tanstack/table-core';
 import { useRecoilState } from 'recoil';
 
+import { TableColumn } from '@/people/table/components/peopleColumns';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { CellContext } from '@/ui/tables/states/CellContext';
+import { currentRowEntityIdScopedState } from '@/ui/tables/states/currentRowEntityIdScopedState';
 import { currentRowNumberScopedState } from '@/ui/tables/states/currentRowNumberScopedState';
 import { RowContext } from '@/ui/tables/states/RowContext';
 import { currentRowSelectionState } from '@/ui/tables/states/rowSelectionState';
 
+import { CheckboxCell } from './CheckboxCell';
 import { EntityTableCell } from './EntityTableCell';
 
 const StyledRow = styled.tr<{ selected: boolean }>`
@@ -17,14 +19,20 @@ const StyledRow = styled.tr<{ selected: boolean }>`
     props.selected ? props.theme.background.secondary : 'none'};
 `;
 
-export function EntityTableRow<TData extends { id: string }>({
-  row,
+export function EntityTableRow({
+  columns,
+  rowId,
   index,
 }: {
-  row: Row<TData>;
+  columns: TableColumn[];
+  rowId: string;
   index: number;
 }) {
   const [currentRowSelection] = useRecoilState(currentRowSelectionState);
+  const [currentRowEntityId, setCurrentRowEntityId] = useRecoilScopedState(
+    currentRowEntityIdScopedState,
+    RowContext,
+  );
 
   const [, setCurrentRowNumber] = useRecoilScopedState(
     currentRowNumberScopedState,
@@ -32,27 +40,35 @@ export function EntityTableRow<TData extends { id: string }>({
   );
 
   useEffect(() => {
+    if (currentRowEntityId !== rowId) {
+      setCurrentRowEntityId(rowId);
+    }
+  }, [rowId, setCurrentRowEntityId, currentRowEntityId]);
+
+  useEffect(() => {
     setCurrentRowNumber(index);
   }, [index, setCurrentRowNumber]);
 
   return (
     <StyledRow
-      key={row.id}
-      data-testid={`row-id-${row.index}`}
-      selected={!!currentRowSelection[row.id]}
+      key={rowId}
+      data-testid={`row-id-${rowId}`}
+      selected={!!currentRowSelection[rowId]}
     >
-      {row.getVisibleCells().map((cell, cellIndex) => {
+      <td>
+        <CheckboxCell />
+      </td>
+      {columns.map((column, columnIndex) => {
         return (
-          <RecoilScope
-            SpecificContext={CellContext}
-            key={cell.id + row.original.id}
-          >
+          <RecoilScope SpecificContext={CellContext} key={column.id.toString()}>
             <RecoilScope>
-              <EntityTableCell<TData>
-                row={row}
-                cell={cell}
-                cellIndex={cellIndex}
-              />
+              <EntityTableCell
+                rowId={rowId}
+                size={column.size}
+                cellIndex={columnIndex}
+              >
+                {column.cellComponent}
+              </EntityTableCell>
             </RecoilScope>
           </RecoilScope>
         );

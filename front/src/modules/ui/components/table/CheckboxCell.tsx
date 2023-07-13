@@ -2,17 +2,10 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
+import { useCurrentRowSelected } from '@/ui/tables/hooks/useCurrentRowSelected';
 import { contextMenuPositionState } from '@/ui/tables/states/contextMenuPositionState';
 
 import { Checkbox } from '../form/Checkbox';
-
-type OwnProps = {
-  name: string;
-  id: string;
-  checked?: boolean;
-  indeterminate?: boolean;
-  onChange?: (newCheckedValue: boolean) => void;
-};
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -24,31 +17,19 @@ const StyledContainer = styled.div`
   justify-content: center;
 `;
 
-export function CheckboxCell({
-  name,
-  id,
-  checked,
-  onChange,
-  indeterminate,
-}: OwnProps) {
-  const [internalChecked, setInternalChecked] = React.useState(checked);
+export function CheckboxCell() {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
 
+  const { currentRowSelected, setCurrentRowSelected } = useCurrentRowSelected();
+
   function handleContainerClick() {
-    handleCheckboxChange(!internalChecked);
+    handleCheckboxChange(!currentRowSelected);
   }
 
-  React.useEffect(() => {
-    setInternalChecked(checked);
-  }, [checked]);
-
   function handleCheckboxChange(newCheckedValue: boolean) {
-    setInternalChecked(newCheckedValue);
-    setContextMenuPosition({ x: null, y: null });
+    setCurrentRowSelected(newCheckedValue);
 
-    if (onChange) {
-      onChange(newCheckedValue);
-    }
+    setContextMenuPosition({ x: null, y: null });
   }
 
   return (
@@ -56,13 +37,7 @@ export function CheckboxCell({
       onClick={handleContainerClick}
       data-testid="input-checkbox-cell-container"
     >
-      <Checkbox
-        id={id}
-        name={name}
-        checked={internalChecked}
-        onChange={handleCheckboxChange}
-        indeterminate={indeterminate}
-      />
+      <Checkbox checked={currentRowSelected} />
     </StyledContainer>
   );
 }
