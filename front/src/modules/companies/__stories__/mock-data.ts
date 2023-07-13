@@ -1,24 +1,23 @@
+import { CompanyProgressDict } from '@/companies/types/CompanyProgress';
 import { Column } from '@/ui/board/components/Board';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
-
-import { CompanyProgressDict } from '../CompanyProgressBoard';
 
 export const items: CompanyProgressDict = {
   'item-1': {
     company: mockedCompaniesData[0],
-    pipelineProgress: { id: '0', amount: 1 },
+    pipelineProgress: { id: '0', amount: 1, progressableId: '0' },
   },
   'item-2': {
     company: mockedCompaniesData[1],
-    pipelineProgress: { id: '1', amount: 1 },
+    pipelineProgress: { id: '1', amount: 1, progressableId: '0' },
   },
   'item-3': {
     company: mockedCompaniesData[2],
-    pipelineProgress: { id: '2', amount: 1 },
+    pipelineProgress: { id: '2', amount: 1, progressableId: '0' },
   },
   'item-4': {
+    pipelineProgress: { id: '3', amount: 1, progressableId: '0' },
     company: mockedCompaniesData[3],
-    pipelineProgress: { id: '3', amount: 1 },
   },
 };
 

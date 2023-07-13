@@ -1,19 +1,11 @@
+import { useCompanyBoardIndex } from '@/companies/hooks/useCompanyBoardIndex';
+import { PipelineProgressForBoard } from '@/companies/types/CompanyProgress';
 import { EntityProgressBoard } from '@/pipeline-progress/components/EntityProgressBoard';
 import { useBoard } from '@/pipeline-progress/hooks/useBoard';
-import { Company, Pipeline, PipelineProgress } from '~/generated/graphql';
+import { Pipeline } from '~/generated/graphql';
 
 import { CompanyBoardCard } from './CompanyBoardCard';
 import { NewCompanyProgressButton } from './NewCompanyProgressButton';
-import { useCompanyBoardIndex } from './useCompanyBoardIndex';
-
-export type CompanyProgress = {
-  company?: Pick<Company, 'id' | 'name' | 'domainName'>;
-  pipelineProgress?: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
-};
-
-export type CompanyProgressDict = {
-  [key: string]: CompanyProgress;
-};
 
 type BoardProps = {
   pipeline: Pipeline;
@@ -27,7 +19,7 @@ export function CompanyProgressBoard({ pipeline }: BoardProps) {
     pipelineProgressId: string,
     handleSelect: (pipelineProgressId: string) => void,
     handleCardUpdate: (
-      pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
+      pipelineProgress: PipelineProgressForBoard,
     ) => Promise<void>,
     selected: boolean,
   ) {

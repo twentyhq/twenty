@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
-import { CompanyProgressBoard } from '../CompanyProgressBoard';
+import { CompanyProgressBoard } from '../components/CompanyProgressBoard';
 
 const meta: Meta<typeof CompanyProgressBoard> = {
   title: 'UI/Board/Board',

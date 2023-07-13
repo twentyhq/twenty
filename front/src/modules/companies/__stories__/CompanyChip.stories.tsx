@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
-import { CompanyChip } from '../CompanyChip';
+import { CompanyChip } from '../components/CompanyChip';
 
 const meta: Meta<typeof CompanyChip> = {
   title: 'Modules/Companies/CompanyChip',

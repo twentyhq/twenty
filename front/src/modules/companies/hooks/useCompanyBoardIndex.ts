@@ -1,15 +1,18 @@
-import { Pipeline, PipelineProgress } from '~/generated/graphql';
+import { Pipeline } from '~/generated/graphql';
 import {
-  Company,
   PipelineStage,
   useGetCompaniesQuery,
   useGetPipelineProgressQuery,
 } from '~/generated/graphql';
 
-import { CompanyProgress } from './CompanyProgressBoard';
+import {
+  CompanyForBoard,
+  CompanyProgress,
+  PipelineProgressForBoard,
+} from '../types/CompanyProgress';
 
-export function useCompanyBoardIndex(pipeline: Pipeline | undefined) {
-  const pipelineProgressIds = pipeline?.pipelineStages
+export function useCompanyBoardIndex(pipeline: Pipeline) {
+  const pipelineProgressIds = pipeline.pipelineStages
     ?.map((pipelineStage: PipelineStage) =>
       (
         pipelineStage.pipelineProgresses?.map((item) => item.id as string) || []
@@ -39,27 +42,26 @@ export function useCompanyBoardIndex(pipeline: Pipeline | undefined) {
   });
 
   const indexCompanyByIdReducer = (
-    acc: { [key: string]: Pick<Company, 'id' | 'name' | 'domainName'> },
-    company: Pick<Company, 'id' | 'name' | 'domainName'>,
+    acc: { [key: string]: CompanyForBoard },
+    company: CompanyForBoard,
   ) => ({
     ...acc,
     [company.id]: company,
   });
-  const companiesDict = entitiesQueryResult.data?.companies.reduce(
-    indexCompanyByIdReducer,
-    {} as { [key: string]: Company },
-  );
+
+  const companiesDict =
+    entitiesQueryResult.data?.companies.reduce(
+      indexCompanyByIdReducer,
+      {} as { [key: string]: CompanyForBoard },
+    ) || {};
 
   const indexPipelineProgressByIdReducer = (
     acc: {
       [key: string]: CompanyProgress;
     },
-    pipelineProgress: Pick<
-      PipelineProgress,
-      'id' | 'amount' | 'closeDate' | 'progressableId'
-    >,
+    pipelineProgress: PipelineProgressForBoard,
   ) => {
-    const company = companiesDict?.[pipelineProgress.progressableId];
+    const company = companiesDict[pipelineProgress.progressableId];
     return {
       ...acc,
       [pipelineProgress.id]: {

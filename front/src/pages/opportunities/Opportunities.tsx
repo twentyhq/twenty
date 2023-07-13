@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 
-import { CompanyBoardContext } from '@/companies/components/CompanyBoard/CompanyBoardContext';
-import { CompanyProgressBoard } from '@/companies/components/CompanyBoard/CompanyProgressBoard';
+import { CompanyProgressBoard } from '@/companies/components/CompanyProgressBoard';
+import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline-progress/components/BoardActionBarButtonDeletePipelineProgress';
 import { EntityBoardActionBar } from '@/pipeline-progress/components/EntityBoardActionBar';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';

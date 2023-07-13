@@ -2,7 +2,7 @@ import { PipelineProgress, User } from '../../generated/graphql';
 
 type MockedPipelineProgress = Pick<
   PipelineProgress,
-  'id' | 'amount' | 'closeDate'
+  'id' | 'amount' | 'closeDate' | 'progressableId'
 > & {
   accountOwner: Pick<
     User,
@@ -22,5 +22,6 @@ export const mockedPipelineProgressData: Array<MockedPipelineProgress> = [
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       __typename: 'User',
     },
+    progressableId: '0',
   },
 ];
