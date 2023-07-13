@@ -1,7 +1,7 @@
+import { NewEntityProgressButton } from '@/pipeline-progress/components/NewEntityProgressButton';
 import { PipelineProgressableType } from '~/generated/graphql';
 
 import { NewCompanyBoardCard } from './NewCompanyBoardCard';
-import { NewEntityProgressButton } from './NewEntityProgressButton';
 
 type OwnProps = {
   pipelineId: string;

@@ -2,10 +2,12 @@ import { useCallback, useMemo } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 
+import { CompanyBoardCard } from '@/companies/components/CompanyBoard/CompanyBoardCard';
+import { CompanyProgressBoard } from '@/companies/components/CompanyBoard/CompanyProgressBoard';
+import { NewCompanyProgressButton } from '@/companies/components/CompanyBoard/NewCompanyProgressButton';
 import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline-progress/components/BoardActionBarButtonDeletePipelineProgress';
-import { CompanyBoardCard } from '@/pipeline-progress/components/CompanyBoardCard';
 import { EntityBoardActionBar } from '@/pipeline-progress/components/EntityBoardActionBar';
-import { NewCompanyProgressButton } from '@/pipeline-progress/components/NewCompanyProgressButton';
+import { useBoard } from '@/pipeline-progress/hooks/useBoard';
 import { GET_PIPELINES } from '@/pipeline-progress/queries';
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
@@ -18,8 +20,6 @@ import {
   useUpdateOnePipelineProgressMutation,
   useUpdateOnePipelineProgressStageMutation,
 } from '../../generated/graphql';
-import { CompanyProgressBoard } from '../../modules/pipeline-progress/components/CompanyProgressBoard';
-import { useBoard } from '../../modules/pipeline-progress/hooks/useBoard';
 
 export function Opportunities() {
   const theme = useTheme();
