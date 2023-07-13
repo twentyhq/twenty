@@ -2,7 +2,6 @@ import React from 'react';
 import { HotkeysProvider } from 'react-hotkeys-hook';
 import { MemoryRouter } from 'react-router-dom';
 
-import { CompanyEntityTableData } from '@/companies/table/components/CompanyEntityTableData';
 import { INITIAL_HOTKEYS_SCOPES } from '@/hotkeys/constants';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
