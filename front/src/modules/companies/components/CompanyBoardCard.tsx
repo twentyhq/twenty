@@ -9,7 +9,6 @@ import { GET_PIPELINES } from '@/pipeline-progress/queries';
 import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
 import { isBoardCardSelectedFamilyState } from '@/pipeline-progress/states/isBoardCardSelectedFamilyState';
 import { pipelineProgressIdScopedState } from '@/pipeline-progress/states/pipelineProgressIdScopedState';
-import { selectedBoardItemsState } from '@/pipeline-progress/states/selectedBoardItemsState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { BoardCardEditableFieldDate } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldDate';
 import { BoardCardEditableFieldText } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldText';

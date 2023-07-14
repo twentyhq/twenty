@@ -51,9 +51,6 @@ export function EntityProgressBoard({
   boardOptions: BoardOptions;
 }) {
   const [board, setBoard] = useRecoilState(boardState);
-
-  console.log('board', board);
-
   const [updatePipelineProgressStage] =
     useUpdateOnePipelineProgressStageMutation();
 

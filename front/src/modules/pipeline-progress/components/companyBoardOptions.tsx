@@ -1,9 +1,9 @@
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
-import { NewCompanyBoardCard } from '@/companies/components/NewCompanyBoardCard';
+import { NewCompanyProgressButton } from '@/companies/components/NewCompanyProgressButton';
 
 import { BoardOptions } from '../types/BoardOptions';
 
 export const companyBoardOptions: BoardOptions = {
-  newCardComponent: <NewCompanyBoardCard />,
+  newCardComponent: <NewCompanyProgressButton />,
   cardComponent: <CompanyBoardCard />,
 };
