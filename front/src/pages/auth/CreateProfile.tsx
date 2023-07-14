@@ -21,7 +21,7 @@ import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { GET_CURRENT_USER } from '@/users/queries';
 import { useUpdateUserMutation } from '~/generated/graphql';
-import { PageHotkeysScope } from '~/sync-hooks/types/PageHotkeysScope';
+import { PageHotkeyScope } from '~/sync-hooks/types/PageHotkeyScope';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -129,7 +129,7 @@ export function CreateProfile() {
     () => {
       onSubmit(getValues());
     },
-    PageHotkeysScope.CreateProfile,
+    PageHotkeyScope.CreateProfile,
     [onSubmit],
   );
 

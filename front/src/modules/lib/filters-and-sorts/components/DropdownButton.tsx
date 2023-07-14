@@ -16,7 +16,7 @@ type OwnProps = {
   isUnfolded?: boolean;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
-  hotkeysScope: FiltersHotkeyScope;
+  HotkeyScope: FiltersHotkeyScope;
 };
 
 const StyledDropdownButtonContainer = styled.div`
@@ -161,14 +161,14 @@ function DropdownButton({
   children,
   isUnfolded = false,
   onIsUnfoldedChange,
-  hotkeysScope,
+  HotkeyScope,
 }: OwnProps) {
   useScopedHotkeys(
     [Key.Enter, Key.Escape],
     () => {
       onIsUnfoldedChange?.(false);
     },
-    hotkeysScope,
+    HotkeyScope,
     [onIsUnfoldedChange],
   );
 

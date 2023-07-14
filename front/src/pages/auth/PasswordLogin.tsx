@@ -19,7 +19,7 @@ import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { useCheckUserExistsQuery } from '~/generated/graphql';
-import { PageHotkeysScope } from '~/sync-hooks/types/PageHotkeysScope';
+import { PageHotkeyScope } from '~/sync-hooks/types/PageHotkeyScope';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -132,7 +132,7 @@ export function PasswordLogin() {
     () => {
       onSubmit(getValues());
     },
-    PageHotkeysScope.PasswordLogin,
+    PageHotkeyScope.PasswordLogin,
     [onSubmit],
   );
 

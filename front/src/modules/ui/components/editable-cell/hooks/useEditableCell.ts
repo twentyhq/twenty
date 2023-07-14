@@ -11,18 +11,18 @@ import { useCurrentCellEditMode } from './useCurrentCellEditMode';
 export function useEditableCell() {
   const { setCurrentCellInEditMode } = useCurrentCellEditMode();
 
-  const setHotkeysScope = useSetHotkeyScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
 
   function closeEditableCell() {
     closeCurrentCellInEditMode();
-    setHotkeysScope(TableHotkeyScope.TableSoftFocus);
+    setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   }
 
   const openEditableCell = useRecoilCallback(
     ({ snapshot, set }) =>
-      (hotkeysScope: HotkeyScope) => {
+      (HotkeyScope: HotkeyScope) => {
         const isSomeInputInEditMode = snapshot
           .getLoadable(isSomeInputInEditModeState)
           .valueOrThrow();
@@ -32,10 +32,10 @@ export function useEditableCell() {
 
           setCurrentCellInEditMode();
 
-          setHotkeysScope(hotkeysScope.scope);
+          setHotkeyScope(HotkeyScope.scope);
         }
       },
-    [setCurrentCellInEditMode, setHotkeysScope],
+    [setCurrentCellInEditMode, setHotkeyScope],
   );
 
   return {

@@ -11,7 +11,7 @@ import {
 import { useHandleCheckableCommentThreadTargetChange } from '@/comments/hooks/useHandleCheckableCommentThreadTargetChange';
 import { CommentableEntityForSelect } from '@/comments/types/CommentableEntityForSelect';
 import { CompanyChip } from '@/companies/components/CompanyChip';
-import { usePreviousHotkeysScope } from '@/lib/hotkeys/hooks/usePreviousHotkeysScope';
+import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { PersonChip } from '@/people/components/PersonChip';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
@@ -122,16 +122,16 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   });
 
   const {
-    setHotkeysScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeysScope,
-  } = usePreviousHotkeysScope();
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
 
   function handleRelationContainerClick() {
     if (isMenuOpen) {
       exitEditMode();
     } else {
       setIsMenuOpen(true);
-      setHotkeysScopeAndMemorizePreviousScope(
+      setHotkeyScopeAndMemorizePreviousScope(
         RelationPickerHotkeyScope.RelationPicker,
       );
     }
@@ -147,7 +147,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   });
 
   function exitEditMode() {
-    goBackToPreviousHotkeysScope();
+    goBackToPreviousHotkeyScope();
     setIsMenuOpen(false);
     setSearchFilter('');
   }

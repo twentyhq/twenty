@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { usePreviousHotkeysScope } from '@/lib/hotkeys/hooks/usePreviousHotkeysScope';
+import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { HotkeyScope } from '@/lib/hotkeys/types/HotkeyScope';
 
 import { useBoardCardField } from '../hooks/useBoardCardField';
@@ -26,7 +26,7 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  editHotkeysScope?: HotkeyScope;
+  editHotkeyScope?: HotkeyScope;
 };
 
 export function BoardCardEditableFieldInternal({
@@ -34,7 +34,7 @@ export function BoardCardEditableFieldInternal({
   editModeVerticalPosition = 'over',
   editModeContent,
   nonEditModeContent,
-  editHotkeysScope,
+  editHotkeyScope,
 }: OwnProps) {
   const { openBoardCardField, isBoardCardFieldInEditMode } =
     useBoardCardField();
@@ -42,23 +42,23 @@ export function BoardCardEditableFieldInternal({
   const { closeBoardCardField } = useBoardCardField();
 
   const {
-    goBackToPreviousHotkeysScope,
-    setHotkeysScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeysScope();
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
 
   function handleOnClick() {
     if (!isBoardCardFieldInEditMode) {
       openBoardCardField();
-      setHotkeysScopeAndMemorizePreviousScope(
-        editHotkeysScope?.scope ??
+      setHotkeyScopeAndMemorizePreviousScope(
+        editHotkeyScope?.scope ??
           BoardCardFieldHotkeyScope.BoardCardFieldEditMode,
-        editHotkeysScope?.customScopes ?? {},
+        editHotkeyScope?.customScopes ?? {},
       );
     }
   }
 
   function handleEditModeExit() {
-    goBackToPreviousHotkeysScope();
+    goBackToPreviousHotkeyScope();
     closeBoardCardField();
   }
 

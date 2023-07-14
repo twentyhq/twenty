@@ -33,7 +33,7 @@ export function useSetSoftFocusOnCurrentCell() {
     [currentColumnNumber, currentRowNumber],
   );
 
-  const setHotkeysScope = useSetHotkeyScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   return useRecoilCallback(
     ({ set }) =>
@@ -42,8 +42,8 @@ export function useSetSoftFocusOnCurrentCell() {
 
         set(isSoftFocusActiveState, true);
 
-        setHotkeysScope(TableHotkeyScope.TableSoftFocus);
+        setHotkeyScope(TableHotkeyScope.TableSoftFocus);
       },
-    [setHotkeysScope, currentTablePosition, setSoftFocusPosition],
+    [setHotkeyScope, currentTablePosition, setSoftFocusPosition],
   );
 }

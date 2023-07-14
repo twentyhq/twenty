@@ -46,7 +46,7 @@ export function EditableCellDoubleText({
 
   return (
     <EditableCell
-      editHotkeysScope={{ scope: TableHotkeyScope.CellDoubleTextInput }}
+      editHotkeyScope={{ scope: TableHotkeyScope.CellDoubleTextInput }}
       editModeContent={
         <EditableCellDoubleTextEditMode
           firstValue={firstInternalValue}

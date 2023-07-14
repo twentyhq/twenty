@@ -17,7 +17,7 @@ import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { AnimatedEaseIn } from '@/ui/components/motion/AnimatedEaseIn';
 import { IconBrandGoogle } from '@/ui/icons';
-import { PageHotkeysScope } from '~/sync-hooks/types/PageHotkeysScope';
+import { PageHotkeyScope } from '~/sync-hooks/types/PageHotkeyScope';
 
 const StyledContentContainer = styled.div`
   width: 200px;
@@ -60,7 +60,7 @@ export function Index() {
     () => {
       onPasswordLoginClick();
     },
-    PageHotkeysScope.AuthIndex,
+    PageHotkeyScope.AuthIndex,
     [onPasswordLoginClick],
   );
 

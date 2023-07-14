@@ -14,7 +14,7 @@ export function useMapKeyboardToSoftFocus() {
   const { moveDown, moveLeft, moveRight, moveUp } = useMoveSoftFocus();
 
   const disableSoftFocus = useDisableSoftFocus();
-  const setHotkeysScope = useSetHotkeyScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   const [isSomeInputInEditMode] = useRecoilState(isSomeInputInEditModeState);
 
@@ -65,7 +65,7 @@ export function useMapKeyboardToSoftFocus() {
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      setHotkeysScope(TableHotkeyScope.Table, { goto: true });
+      setHotkeyScope(TableHotkeyScope.Table, { goto: true });
       disableSoftFocus();
     },
     TableHotkeyScope.TableSoftFocus,

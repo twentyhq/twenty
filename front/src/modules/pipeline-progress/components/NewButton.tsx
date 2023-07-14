@@ -3,7 +3,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { usePreviousHotkeysScope } from '@/lib/hotkeys/hooks/usePreviousHotkeysScope';
+import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { Column } from '@/ui/board/components/Board';
@@ -32,9 +32,9 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
   const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
 
   const {
-    goBackToPreviousHotkeysScope,
-    setHotkeysScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeysScope();
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
 
   const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation({
     refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
@@ -45,7 +45,7 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
       if (!company) return;
 
       setIsCreatingCard(false);
-      goBackToPreviousHotkeysScope();
+      goBackToPreviousHotkeyScope();
 
       const newUuid = uuidv4();
       const newBoard = JSON.parse(JSON.stringify(board));
@@ -82,19 +82,19 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
       setBoard,
       boardItems,
       setBoardItems,
-      goBackToPreviousHotkeysScope,
+      goBackToPreviousHotkeyScope,
     ],
   );
 
   const handleNewClick = useCallback(() => {
     setIsCreatingCard(true);
-    setHotkeysScopeAndMemorizePreviousScope(
+    setHotkeyScopeAndMemorizePreviousScope(
       RelationPickerHotkeyScope.RelationPicker,
     );
-  }, [setIsCreatingCard, setHotkeysScopeAndMemorizePreviousScope]);
+  }, [setIsCreatingCard, setHotkeyScopeAndMemorizePreviousScope]);
 
   function handleCancel() {
-    goBackToPreviousHotkeysScope();
+    goBackToPreviousHotkeyScope();
     setIsCreatingCard(false);
   }
 

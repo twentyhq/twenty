@@ -30,7 +30,7 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
   const [, setViewableCommentThreadId] = useRecoilState(
     viewableCommentThreadIdState,
   );
-  const setHotkeysScope = useSetHotkeyScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   const [, setCommentableEntityArray] = useRecoilState(
     commentableEntityArrayState,
@@ -67,7 +67,7 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
         getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
       ],
       onCompleted(data) {
-        setHotkeysScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+        setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableCommentThreadId(data.createOneCommentThread.id);
         setCommentableEntityArray(commentableEntityArray);
         openRightDrawer(RightDrawerPages.CreateCommentThread);

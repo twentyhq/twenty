@@ -25,10 +25,10 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
 export function FilterDropdownButton({
   context,
-  hotkeysScope,
+  HotkeyScope,
 }: {
   context: Context<string | null>;
-  hotkeysScope: FiltersHotkeyScope;
+  HotkeyScope: FiltersHotkeyScope;
 }) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -67,15 +67,15 @@ export function FilterDropdownButton({
 
   const isFilterSelected = (filters?.length ?? 0) > 0;
 
-  const setHotkeysScope = useSetHotkeyScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
-      setHotkeysScope(hotkeysScope);
+      setHotkeyScope(HotkeyScope);
       setIsUnfolded(true);
     } else {
       if (filterDefinitionUsedInDropdown?.type === 'entity') {
-        setHotkeysScope(hotkeysScope);
+        setHotkeyScope(HotkeyScope);
       }
       setIsUnfolded(false);
       resetState();
@@ -97,7 +97,7 @@ export function FilterDropdownButton({
       isActive={isFilterSelected}
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={handleIsUnfoldedChange}
-      hotkeysScope={hotkeysScope}
+      HotkeyScope={HotkeyScope}
     >
       {!filterDefinitionUsedInDropdown ? (
         <FilterDropdownFilterSelect context={context} />

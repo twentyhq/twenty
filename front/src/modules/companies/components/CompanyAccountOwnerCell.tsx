@@ -16,7 +16,7 @@ export type OwnProps = {
 export function CompanyAccountOwnerCell({ company }: OwnProps) {
   return (
     <EditableCell
-      editHotkeysScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
+      editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={<CompanyAccountOwnerPicker company={company} />}
       nonEditModeContent={
         company.accountOwner?.displayName ? (

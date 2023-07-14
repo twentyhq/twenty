@@ -23,7 +23,7 @@ export function EditableCellDate({
         <EditableCellDateEditMode onChange={onChange} value={value} />
       }
       nonEditModeContent={<InplaceInputDateDisplayMode value={value} />}
-      editHotkeysScope={{ scope: TableHotkeyScope.CellDateEditMode }}
+      editHotkeyScope={{ scope: TableHotkeyScope.CellDateEditMode }}
     ></EditableCell>
   );
 }

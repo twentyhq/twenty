@@ -13,7 +13,7 @@ type OwnProps<SortField> = {
   isSortSelected: boolean;
   onSortSelect: (sort: SelectedSortType<SortField>) => void;
   availableSorts: SortType<SortField>[];
-  hotkeysScope: FiltersHotkeyScope;
+  HotkeyScope: FiltersHotkeyScope;
 };
 
 const options: Array<SelectedSortType<any>['order']> = ['asc', 'desc'];
@@ -22,7 +22,7 @@ export function SortDropdownButton<SortField>({
   isSortSelected,
   availableSorts,
   onSortSelect,
-  hotkeysScope,
+  HotkeyScope,
 }: OwnProps<SortField>) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -58,7 +58,7 @@ export function SortDropdownButton<SortField>({
       isActive={isSortSelected}
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={handleIsUnfoldedChange}
-      hotkeysScope={hotkeysScope}
+      HotkeyScope={HotkeyScope}
     >
       {isOptionUnfolded
         ? options.map((option, index) => (

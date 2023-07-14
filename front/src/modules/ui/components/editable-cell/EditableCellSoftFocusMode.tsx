@@ -13,13 +13,13 @@ import {
 
 export function EditableCellSoftFocusMode({
   children,
-  editHotkeysScope,
-}: React.PropsWithChildren<{ editHotkeysScope?: HotkeyScope }>) {
+  editHotkeyScope,
+}: React.PropsWithChildren<{ editHotkeyScope?: HotkeyScope }>) {
   const { openEditableCell } = useEditableCell();
 
   function openEditMode() {
     openEditableCell(
-      editHotkeysScope ?? {
+      editHotkeyScope ?? {
         scope: TableHotkeyScope.CellEditMode,
       },
     );

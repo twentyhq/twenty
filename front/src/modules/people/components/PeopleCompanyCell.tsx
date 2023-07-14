@@ -24,7 +24,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
 
   return (
     <EditableCell
-      editHotkeysScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
+      editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={
         isCreating ? (
           <PeopleCompanyCreateCell people={people} />

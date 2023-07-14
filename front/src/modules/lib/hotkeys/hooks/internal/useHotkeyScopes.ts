@@ -3,10 +3,10 @@ import { useRecoilCallback } from 'recoil';
 
 import { internalHotkeysEnabledScopesState } from '../../states/internal/internalHotkeysEnabledScopesState';
 
-export function useHotkeysScopes() {
+export function useHotkeyScopes() {
   const { disableScope, enableScope } = useHotkeysContext();
 
-  const disableAllHotkeysScopes = useRecoilCallback(
+  const disableAllHotkeyScopes = useRecoilCallback(
     ({ set, snapshot }) => {
       return async () => {
         const enabledScopes = await snapshot.getPromise(
@@ -23,7 +23,7 @@ export function useHotkeysScopes() {
     [disableScope],
   );
 
-  const enableHotkeysScope = useRecoilCallback(
+  const enableHotkeyScope = useRecoilCallback(
     ({ set, snapshot }) => {
       return async (scopeToEnable: string) => {
         const enabledScopes = await snapshot.getPromise(
@@ -42,7 +42,7 @@ export function useHotkeysScopes() {
     [enableScope],
   );
 
-  const disableHotkeysScope = useRecoilCallback(
+  const disableHotkeyScope = useRecoilCallback(
     ({ set, snapshot }) => {
       return async (scopeToDisable: string) => {
         const enabledScopes = await snapshot.getPromise(
@@ -65,7 +65,7 @@ export function useHotkeysScopes() {
     [disableScope],
   );
 
-  const setHotkeysScopes = useRecoilCallback(
+  const setHotkeyScopes = useRecoilCallback(
     ({ set, snapshot }) => {
       return async (scopesToSet: string[]) => {
         const enabledScopes = await snapshot.getPromise(
@@ -95,9 +95,9 @@ export function useHotkeysScopes() {
   );
 
   return {
-    disableAllHotkeysScopes,
-    enableHotkeysScope,
-    disableHotkeysScope,
-    setHotkeysScopes,
+    disableAllHotkeyScopes,
+    enableHotkeyScope,
+    disableHotkeyScope,
+    setHotkeyScopes,
   };
 }

@@ -12,7 +12,7 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  editHotkeysScope?: HotkeyScope;
+  editHotkeyScope?: HotkeyScope;
 };
 
 export function BoardCardEditableField(props: OwnProps) {

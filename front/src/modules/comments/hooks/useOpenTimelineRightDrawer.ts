@@ -14,12 +14,12 @@ export function useOpenTimelineRightDrawer() {
   const [, setCommentableEntityArray] = useRecoilState(
     commentableEntityArrayState,
   );
-  const setHotkeysScope = useSetHotkeyScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   return function openTimelineRightDrawer(
     commentableEntityArray: CommentableEntity[],
   ) {
-    setHotkeysScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setCommentableEntityArray(commentableEntityArray);
     openRightDrawer(RightDrawerPages.Timeline);
   };

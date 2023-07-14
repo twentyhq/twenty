@@ -39,7 +39,7 @@ export function FilterDropdownFilterSelect({
     context,
   );
 
-  const setHotkeysScope = useSetHotkeyScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   return (
     <DropdownMenuItemContainer style={{ maxHeight: '300px' }}>
@@ -50,7 +50,7 @@ export function FilterDropdownFilterSelect({
             setFilterDefinitionUsedInDropdown(availableFilter);
 
             if (availableFilter.type === 'entity') {
-              setHotkeysScope(RelationPickerHotkeyScope.RelationPicker);
+              setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
             }
 
             setSelectedOperandInDropdown(

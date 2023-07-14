@@ -12,10 +12,10 @@ export function useOpenCommentThreadRightDrawer() {
   const [, setViewableCommentThreadId] = useRecoilState(
     viewableCommentThreadIdState,
   );
-  const setHotkeysScope = useSetHotkeyScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   return function openCommentThreadRightDrawer(commentThreadId: string) {
-    setHotkeysScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableCommentThreadId(commentThreadId);
     openRightDrawer(RightDrawerPages.EditCommentThread);
   };
