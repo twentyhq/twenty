@@ -4,9 +4,9 @@ import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { GET_COMPANIES } from '@/companies/services';
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
 import { GET_PEOPLE } from '@/people/services';
+import { HotkeyScope } from '@/ui/layout/right-drawer/types/HotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { selectedRowIdsSelector } from '@/ui/tables/states/selectedRowIdsSelector';
 import {
@@ -67,7 +67,7 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
         getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
       ],
       onCompleted(data) {
-        setHotkeysScope(InternalHotkeysScope.RightDrawer, { goto: false });
+        setHotkeysScope(HotkeyScope.RightDrawer, { goto: false });
         setViewableCommentThreadId(data.createOneCommentThread.id);
         setCommentableEntityArray(commentableEntityArray);
         openRightDrawer(RightDrawerPages.CreateCommentThread);

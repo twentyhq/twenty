@@ -1,11 +1,11 @@
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
 
 import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
+import { HotkeyScope } from '../types/HotkeyScope';
 
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 import { useMoveSoftFocus } from './useMoveSoftFocus';
@@ -25,7 +25,7 @@ export function useMapKeyboardToSoftFocus() {
         moveUp();
       }
     },
-    InternalHotkeysScope.TableSoftFocus,
+    HotkeyScope.TableSoftFocus,
     [moveUp, isSomeInputInEditMode],
   );
 
@@ -36,7 +36,7 @@ export function useMapKeyboardToSoftFocus() {
         moveDown();
       }
     },
-    InternalHotkeysScope.TableSoftFocus,
+    HotkeyScope.TableSoftFocus,
     [moveDown, isSomeInputInEditMode],
   );
 
@@ -47,7 +47,7 @@ export function useMapKeyboardToSoftFocus() {
         moveLeft();
       }
     },
-    InternalHotkeysScope.TableSoftFocus,
+    HotkeyScope.TableSoftFocus,
     [moveLeft, isSomeInputInEditMode],
   );
 
@@ -58,17 +58,17 @@ export function useMapKeyboardToSoftFocus() {
         moveRight();
       }
     },
-    InternalHotkeysScope.TableSoftFocus,
+    HotkeyScope.TableSoftFocus,
     [moveRight, isSomeInputInEditMode],
   );
 
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      setHotkeysScope(InternalHotkeysScope.Table, { goto: true });
+      setHotkeysScope(HotkeyScope.Table, { goto: true });
       disableSoftFocus();
     },
-    InternalHotkeysScope.TableSoftFocus,
+    HotkeyScope.TableSoftFocus,
     [disableSoftFocus],
   );
 }

@@ -12,12 +12,12 @@ import { Title } from '@/auth/components/ui/Title';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { AnimatedEaseIn } from '@/ui/components/motion/AnimatedEaseIn';
 import { IconBrandGoogle } from '@/ui/icons';
+import { PageHotkeysScope } from '~/sync-hooks/types/PageHotkeysScope';
 
 const StyledContentContainer = styled.div`
   width: 200px;
@@ -60,7 +60,7 @@ export function Index() {
     () => {
       onPasswordLoginClick();
     },
-    InternalHotkeysScope.AuthIndex,
+    PageHotkeysScope.AuthIndex,
     [onPasswordLoginClick],
   );
 

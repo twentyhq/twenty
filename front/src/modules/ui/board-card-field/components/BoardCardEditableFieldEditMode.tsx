@@ -1,10 +1,11 @@
 import { ReactElement, useRef } from 'react';
 import styled from '@emotion/styled';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { overlayBackground } from '@/ui/themes/effects';
+
+import { HotkeyScope } from '../types/HotkeyScope';
 
 export const BoardCardFieldEditModeContainer = styled.div<
   Omit<OwnProps, 'onExit'>
@@ -51,7 +52,7 @@ export function BoardCardEditableFieldEditMode({
     () => {
       onExit();
     },
-    InternalHotkeysScope.BoardCardFieldEditMode,
+    HotkeyScope.BoardCardFieldEditMode,
     [onExit],
   );
 
@@ -60,7 +61,7 @@ export function BoardCardEditableFieldEditMode({
     () => {
       onExit();
     },
-    InternalHotkeysScope.BoardCardFieldEditMode,
+    HotkeyScope.BoardCardFieldEditMode,
     [onExit],
   );
 

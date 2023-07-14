@@ -1,12 +1,12 @@
 import scrollIntoView from 'scroll-into-view';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 
 import { relationPickerHoverIndexScopedState } from '../states/relationPickerHoverIndexScopedState';
 import { EntityForSelect } from '../types/EntityForSelect';
+import { HotkeyScope } from '../types/HotkeyScope';
 
 export function useEntitySelectScroll<
   CustomEntityForSelect extends EntityForSelect,
@@ -60,7 +60,7 @@ export function useEntitySelectScroll<
         });
       }
     },
-    InternalHotkeysScope.RelationPicker,
+    HotkeyScope.RelationPicker,
     [setHoveredIndex, entities],
   );
 
@@ -87,7 +87,7 @@ export function useEntitySelectScroll<
         });
       }
     },
-    InternalHotkeysScope.RelationPicker,
+    HotkeyScope.RelationPicker,
     [setHoveredIndex, entities],
   );
 

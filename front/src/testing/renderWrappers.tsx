@@ -2,7 +2,7 @@ import React from 'react';
 import { HotkeysProvider } from 'react-hotkeys-hook';
 import { MemoryRouter } from 'react-router-dom';
 
-import { INITIAL_HOTKEYS_SCOPES } from '@/hotkeys/constants';
+import { INITIAL_HOTKEYS_SCOPES } from '@/lib/hotkeys/constants';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
 import { DefaultLayout } from '@/ui/layout/DefaultLayout';

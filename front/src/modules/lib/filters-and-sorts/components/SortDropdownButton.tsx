@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
 
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import {
   SelectedSortType,
   SortType,
 } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
+
+import { HotkeyScope } from '../types/HotkeyScope';
 
 import DropdownButton from './DropdownButton';
 
@@ -12,7 +13,7 @@ type OwnProps<SortField> = {
   isSortSelected: boolean;
   onSortSelect: (sort: SelectedSortType<SortField>) => void;
   availableSorts: SortType<SortField>[];
-  hotkeysScope: InternalHotkeysScope;
+  hotkeysScope: HotkeyScope;
 };
 
 const options: Array<SelectedSortType<any>['order']> = ['asc', 'desc'];

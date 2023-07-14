@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useSetSoftFocusPosition } from '@/ui/tables/hooks/useSetSoftFocusPosition';
 import { CellContext } from '@/ui/tables/states/CellContext';
@@ -11,6 +10,7 @@ import { currentRowNumberScopedState } from '@/ui/tables/states/currentRowNumber
 import { isSoftFocusActiveState } from '@/ui/tables/states/isSoftFocusActiveState';
 import { RowContext } from '@/ui/tables/states/RowContext';
 import { CellPosition } from '@/ui/tables/types/CellPosition';
+import { HotkeyScope } from '@/ui/tables/types/HotkeyScope';
 
 export function useSetSoftFocusOnCurrentCell() {
   const setSoftFocusPosition = useSetSoftFocusPosition();
@@ -42,7 +42,7 @@ export function useSetSoftFocusOnCurrentCell() {
 
         set(isSoftFocusActiveState, true);
 
-        setHotkeysScope(InternalHotkeysScope.TableSoftFocus);
+        setHotkeysScope(HotkeyScope.TableSoftFocus);
       },
     [setHotkeysScope, currentTablePosition, setSoftFocusPosition],
   );

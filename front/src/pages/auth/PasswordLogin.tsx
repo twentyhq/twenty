@@ -13,13 +13,13 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { useSnackBar } from '@/snack-bar/hooks/useSnackBar';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { useCheckUserExistsQuery } from '~/generated/graphql';
+import { PageHotkeysScope } from '~/sync-hooks/types/PageHotkeysScope';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -132,7 +132,7 @@ export function PasswordLogin() {
     () => {
       onSubmit(getValues());
     },
-    InternalHotkeysScope.PasswordLogin,
+    PageHotkeysScope.PasswordLogin,
     [onSubmit],
   );
 

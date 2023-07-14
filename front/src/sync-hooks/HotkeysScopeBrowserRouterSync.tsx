@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
-import { PageHotkeysScope } from '@/hotkeys/types/internal/PageHotkeysScope';
+import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
+import { HotkeyScope as TableHotkeyScope } from '@/ui/tables/types/HotkeyScope';
 
 import { useIsMatchingLocation } from './hooks/useIsMatchingLocation';
 import { AppBasePath } from './types/AppBasePath';
 import { AppPath } from './types/AppPath';
 import { AuthPath } from './types/AuthPath';
+import { PageHotkeysScope } from './types/PageHotkeysScope';
 import { SettingsPath } from './types/SettingsPath';
 
 export function HotkeysScopeBrowserRouterSync() {
@@ -18,11 +18,11 @@ export function HotkeysScopeBrowserRouterSync() {
   useEffect(() => {
     switch (true) {
       case isMatchingLocation(AppBasePath.Root, AppPath.CompaniesPage): {
-        setHotkeysScope(InternalHotkeysScope.Table, { goto: true });
+        setHotkeysScope(TableHotkeyScope.Table, { goto: true });
         break;
       }
       case isMatchingLocation(AppBasePath.Root, AppPath.PeoplePage): {
-        setHotkeysScope(InternalHotkeysScope.Table, { goto: true });
+        setHotkeysScope(TableHotkeyScope.Table, { goto: true });
         break;
       }
       case isMatchingLocation(AppBasePath.Root, AppPath.CompanyShowPage): {
@@ -38,19 +38,19 @@ export function HotkeysScopeBrowserRouterSync() {
         break;
       }
       case isMatchingLocation(AppBasePath.Auth, AuthPath.Index): {
-        setHotkeysScope(InternalHotkeysScope.AuthIndex);
+        setHotkeysScope(PageHotkeysScope.AuthIndex);
         break;
       }
       case isMatchingLocation(AppBasePath.Auth, AuthPath.CreateProfile): {
-        setHotkeysScope(InternalHotkeysScope.CreateProfile);
+        setHotkeysScope(PageHotkeysScope.CreateProfile);
         break;
       }
       case isMatchingLocation(AppBasePath.Auth, AuthPath.CreateWorkspace): {
-        setHotkeysScope(InternalHotkeysScope.CreateWokspace);
+        setHotkeysScope(PageHotkeysScope.CreateWokspace);
         break;
       }
       case isMatchingLocation(AppBasePath.Auth, AuthPath.PasswordLogin): {
-        setHotkeysScope(InternalHotkeysScope.PasswordLogin);
+        setHotkeysScope(PageHotkeysScope.PasswordLogin);
         break;
       }
       case isMatchingLocation(AppBasePath.Settings, SettingsPath.ProfilePage): {

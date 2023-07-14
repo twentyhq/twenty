@@ -1,10 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
+import { HotkeysScope } from '@/lib/hotkeys/types/HotkeysScope';
 import { useCloseCurrentCellInEditMode } from '@/ui/tables/hooks/useClearCellInEditMode';
 import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
+import { HotkeyScope } from '@/ui/tables/types/HotkeyScope';
 
 import { useCurrentCellEditMode } from './useCurrentCellEditMode';
 
@@ -17,7 +17,7 @@ export function useEditableCell() {
 
   function closeEditableCell() {
     closeCurrentCellInEditMode();
-    setHotkeysScope(InternalHotkeysScope.TableSoftFocus);
+    setHotkeysScope(HotkeyScope.TableSoftFocus);
   }
 
   const openEditableCell = useRecoilCallback(

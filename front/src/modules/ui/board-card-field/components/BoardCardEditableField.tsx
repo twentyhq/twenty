@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 
-import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
+import { HotkeysScope } from '@/lib/hotkeys/types/HotkeysScope';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 
 import { BoardCardFieldContext } from '../states/BoardCardFieldContext';

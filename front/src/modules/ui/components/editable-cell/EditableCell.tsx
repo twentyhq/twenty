@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
+import { HotkeysScope } from '@/lib/hotkeys/types/HotkeysScope';
 
 import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';

@@ -1,10 +1,10 @@
 import { useRecoilState } from 'recoil';
 
-import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { usePreviousHotkeysScope } from '@/lib/hotkeys/hooks/usePreviousHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
+import { HotkeyScope } from '../types/HotkeyScope';
 
 import { CommandMenuItem } from './CommandMenuItem';
 import {
@@ -23,7 +23,7 @@ export function CommandMenu() {
     () => {
       handleOpenChange(!open);
     },
-    InternalHotkeysScope.CommandMenu,
+    HotkeyScope.CommandMenu,
     [setOpen, open, handleOpenChange],
   );
 
@@ -35,7 +35,7 @@ export function CommandMenu() {
   function handleOpenChange(newOpenState: boolean) {
     if (newOpenState) {
       setOpen(true);
-      setHotkeysScopeAndMemorizePreviousScope(InternalHotkeysScope.CommandMenu);
+      setHotkeysScopeAndMemorizePreviousScope(HotkeyScope.CommandMenu);
     } else {
       setOpen(false);
       goBackToPreviousHotkeysScope();

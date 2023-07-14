@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useState } from 'react';
 
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { HotkeyScope } from '@/ui/tables/types/HotkeyScope';
 
 import { CellSkeleton } from '../CellSkeleton';
 import { EditableCell } from '../EditableCell';
@@ -46,7 +46,7 @@ export function EditableCellDoubleText({
 
   return (
     <EditableCell
-      editHotkeysScope={{ scope: InternalHotkeysScope.CellDoubleTextInput }}
+      editHotkeysScope={{ scope: HotkeyScope.CellDoubleTextInput }}
       editModeContent={
         <EditableCellDoubleTextEditMode
           firstValue={firstInternalValue}

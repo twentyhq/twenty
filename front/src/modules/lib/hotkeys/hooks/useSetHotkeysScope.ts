@@ -4,7 +4,7 @@ import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants';
 import { currentHotkeysScopeState } from '../states/internal/currentHotkeysScopeState';
-import { CustomHotkeysScopes } from '../types/internal/CustomHotkeysScope';
+import { CustomHotkeysScopes } from '../types/CustomHotkeysScope';
 
 function isCustomScopesEqual(
   customScopesA: CustomHotkeysScopes | undefined,

@@ -1,5 +1,5 @@
-import { CustomHotkeysScopes } from '../types/internal/CustomHotkeysScope';
-import { HotkeysScope } from '../types/internal/HotkeysScope';
+import { CustomHotkeysScopes } from '../types/CustomHotkeysScope';
+import { HotkeysScope } from '../types/HotkeysScope';
 import { InternalHotkeysScope } from '../types/internal/InternalHotkeysScope';
 
 export const INITIAL_HOTKEYS_SCOPES: string[] = [InternalHotkeysScope.App];

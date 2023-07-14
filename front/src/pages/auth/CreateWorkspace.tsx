@@ -10,8 +10,7 @@ import { SubTitle } from '@/auth/components/ui/SubTitle';
 import { Title } from '@/auth/components/ui/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useSnackBar } from '@/snack-bar/hooks/useSnackBar';
 import { MainButton } from '@/ui/components/buttons/MainButton';
@@ -19,6 +18,7 @@ import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { GET_CURRENT_USER } from '@/users/queries';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { PageHotkeysScope } from '~/sync-hooks/types/PageHotkeysScope';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -101,7 +101,7 @@ export function CreateWorkspace() {
     () => {
       onSubmit(getValues());
     },
-    InternalHotkeysScope.CreateWokspace,
+    PageHotkeysScope.CreateWokspace,
     [onSubmit],
   );
 

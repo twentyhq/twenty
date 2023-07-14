@@ -1,11 +1,11 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { currentHotkeysScopeState } from '@/hotkeys/states/internal/currentHotkeysScopeState';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
+import { currentHotkeysScopeState } from '@/lib/hotkeys/states/internal/currentHotkeysScopeState';
 
 import { isSoftFocusActiveState } from '../states/isSoftFocusActiveState';
 import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
+import { HotkeyScope } from '../types/HotkeyScope';
 
 import { useCloseCurrentCellInEditMode } from './useClearCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
@@ -39,14 +39,14 @@ export function useLeaveTableFocus() {
           return;
         }
 
-        if (currentHotkeysScope?.scope === InternalHotkeysScope.Table) {
+        if (currentHotkeysScope?.scope === HotkeyScope.Table) {
           return;
         }
 
         closeCurrentCellInEditMode();
         disableSoftFocus();
 
-        setHotkeysScope(InternalHotkeysScope.Table, { goto: true });
+        setHotkeysScope(HotkeyScope.Table, { goto: true });
       },
     [setHotkeysScope, closeCurrentCellInEditMode, disableSoftFocus],
   );

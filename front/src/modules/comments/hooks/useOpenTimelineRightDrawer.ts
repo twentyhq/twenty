@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
+import { HotkeyScope } from '@/ui/layout/right-drawer/types/HotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 
 import { useOpenRightDrawer } from '../../ui/layout/right-drawer/hooks/useOpenRightDrawer';
@@ -19,7 +19,7 @@ export function useOpenTimelineRightDrawer() {
   return function openTimelineRightDrawer(
     commentableEntityArray: CommentableEntity[],
   ) {
-    setHotkeysScope(InternalHotkeysScope.RightDrawer, { goto: false });
+    setHotkeysScope(HotkeyScope.RightDrawer, { goto: false });
     setCommentableEntityArray(commentableEntityArray);
     openRightDrawer(RightDrawerPages.Timeline);
   };

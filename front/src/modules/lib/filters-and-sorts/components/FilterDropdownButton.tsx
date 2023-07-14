@@ -1,15 +1,17 @@
 import { Context, useCallback, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/lib/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { HotkeyScope as RelationPickerHotkeyScope } from '@/relation-picker/types/HotkeyScope';
+
+import { HotkeyScope } from '../types/HotkeyScope';
 
 import DropdownButton from './DropdownButton';
 import { FilterDropdownDateSearchInput } from './FilterDropdownDateSearchInput';
@@ -26,7 +28,7 @@ export function FilterDropdownButton({
   hotkeysScope,
 }: {
   context: Context<string | null>;
-  hotkeysScope: InternalHotkeysScope;
+  hotkeysScope: HotkeyScope;
 }) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -85,7 +87,7 @@ export function FilterDropdownButton({
     () => {
       handleIsUnfoldedChange(false);
     },
-    InternalHotkeysScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [handleIsUnfoldedChange],
   );
 

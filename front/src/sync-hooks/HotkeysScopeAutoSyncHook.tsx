@@ -1,4 +1,4 @@
-import { useHotkeysScopeAutoSync } from '@/hotkeys/hooks/internal/useHotkeysScopeAutoSync';
+import { useHotkeysScopeAutoSync } from '@/lib/hotkeys/hooks/internal/useHotkeysScopeAutoSync';
 
 export function HotkeysScopeAutoSyncHook() {
   useHotkeysScopeAutoSync();

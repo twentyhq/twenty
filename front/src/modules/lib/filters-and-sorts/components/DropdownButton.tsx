@@ -2,11 +2,12 @@ import { ReactNode, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { useOutsideAlerter } from '@/ui/hooks/useOutsideAlerter';
 import { IconChevronDown } from '@/ui/icons/index';
 import { overlayBackground, textInputStyle } from '@/ui/themes/effects';
+
+import { HotkeyScope } from '../types/HotkeyScope';
 
 type OwnProps = {
   label: string;
@@ -15,7 +16,7 @@ type OwnProps = {
   isUnfolded?: boolean;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
-  hotkeysScope: InternalHotkeysScope;
+  hotkeysScope: HotkeyScope;
 };
 
 const StyledDropdownButtonContainer = styled.div`
