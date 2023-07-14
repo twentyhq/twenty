@@ -25,12 +25,14 @@ describe('getOptimisticlyUpdatedBoard', () => {
       {
         id: 'column-1',
         title: 'My Column',
-        itemKeys: initialColumn1,
+        pipelineStageId: 'column-1',
+        pipelineProgressIds: initialColumn1,
       },
       {
         id: 'column-2',
         title: 'My Column',
-        itemKeys: initialColumn2,
+        pipelineStageId: 'column-2',
+        pipelineProgressIds: initialColumn2,
       },
     ];
 
@@ -40,12 +42,14 @@ describe('getOptimisticlyUpdatedBoard', () => {
       {
         id: 'column-1',
         title: 'My Column',
-        itemKeys: finalColumn1,
+        pipelineStageId: 'column-1',
+        pipelineProgressIds: finalColumn1,
       },
       {
         id: 'column-2',
         title: 'My Column',
-        itemKeys: finalColumn2,
+        pipelineStageId: 'column-2',
+        pipelineProgressIds: finalColumn2,
       },
     ];
 
