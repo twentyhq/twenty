@@ -5,11 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
-import { NewEntityProgressButton } from '@/pipeline-progress/components/NewEntityProgressButton';
 import { GET_PIPELINES } from '@/pipeline-progress/queries';
 import { BoardColumnContext } from '@/pipeline-progress/states/BoardColumnContext';
-import { boardColumnsState } from '@/pipeline-progress/states/boardColumnsState';
-import { boardItemsState } from '@/pipeline-progress/states/boardItemsState';
 import { pipelineStageIdScopedState } from '@/pipeline-progress/states/pipelineStageIdScopedState';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -21,7 +18,6 @@ import { NewButton } from '@/ui/board/components/NewButton';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
-  Company,
   PipelineProgressableType,
   useCreateOnePipelineProgressMutation,
   useSearchCompanyQuery,
@@ -34,7 +30,7 @@ export function NewCompanyProgressButton() {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
   const [board, setBoard] = useRecoilState(boardState);
   const [pipeline] = useRecoilState(currentPipelineState);
-  const [pipelineStageId, setPipelineStageId] = useRecoilScopedState(
+  const [pipelineStageId] = useRecoilScopedState(
     pipelineStageIdScopedState,
     BoardColumnContext,
   );

@@ -1,39 +1,22 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
-import styled from '@emotion/styled';
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DroppableProvided,
-  OnDragEndResponder,
-} from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
+import { useCallback } from 'react';
+import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilState } from 'recoil';
 
-import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
-import { BoardColumn } from '@/ui/board/components/BoardColumn';
 import {
-  Pipeline,
   PipelineProgress,
   PipelineStage,
-  useUpdateOnePipelineProgressMutation,
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
 import { boardState } from '~/pages/opportunities/boardState';
 
 import {
-  BoardPipelineStageColumn,
   getOptimisticlyUpdatedBoard,
   StyledBoard,
 } from '../../ui/board/components/Board';
-import { GET_PIPELINES } from '../queries';
 import { BoardColumnContext } from '../states/BoardColumnContext';
-import { boardColumnsState } from '../states/boardColumnsState';
-import { selectedBoardCardsState } from '../states/selectedBoardCardsState';
 import { BoardOptions } from '../types/BoardOptions';
 
-import { EntityBoardCard } from './EntityBoardCard';
 import { EntityBoardColumn } from './EntityBoardColumn';
 
 export type EntityProgress = {

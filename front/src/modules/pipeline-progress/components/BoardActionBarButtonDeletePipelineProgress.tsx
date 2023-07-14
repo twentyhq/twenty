@@ -7,7 +7,6 @@ import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
 import { boardState } from '~/pages/opportunities/boardState';
 
 import { GET_PIPELINES } from '../queries';
-import { boardItemsState } from '../states/boardItemsState';
 import { selectedBoardCardsState } from '../states/selectedBoardCardsState';
 
 export function BoardActionBarButtonDeletePipelineProgress() {

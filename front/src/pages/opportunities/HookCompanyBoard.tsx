@@ -15,9 +15,9 @@ export function HookCompanyBoard() {
   const [currentPipeline, setCurrentPipeline] =
     useRecoilState(currentPipelineState);
 
-  const [board, setBoard] = useRecoilState(boardState);
+  const [, setBoard] = useRecoilState(boardState);
 
-  const [isBoardLoaded, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
+  const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
   useGetPipelinesQuery({
     onCompleted: async (data) => {

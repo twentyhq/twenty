@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
-import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
+import { Droppable, DroppableProvided } from '@hello-pangea/dnd';
 
 import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
@@ -9,8 +9,6 @@ import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
 
 import { BoardColumnContext } from '../states/BoardColumnContext';
-import { NewBoardCardContext } from '../states/NewBoardCardContext';
-import { pipelineProgressIdScopedState } from '../states/pipelineProgressIdScopedState';
 import { pipelineStageIdScopedState } from '../states/pipelineStageIdScopedState';
 import { BoardOptions } from '../types/BoardOptions';
 

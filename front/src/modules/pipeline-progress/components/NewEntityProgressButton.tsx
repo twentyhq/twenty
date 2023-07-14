@@ -7,7 +7,6 @@ import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeySco
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
-import { NewButton as UINewButton } from '@/ui/board/components/NewButton';
 import {
   PipelineProgressableType,
   useCreateOnePipelineProgressMutation,
@@ -34,14 +33,18 @@ export function NewEntityProgressButton({
   entityType,
 }: OwnProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isCreatingCard, setIsCreatingCard] = useState(false);
+  const [, setIsCreatingCard] = useState(false);
   const [board, setBoard] = useRecoilState(boardColumnsState);
   const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
 
+<<<<<<< HEAD
   const {
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
+=======
+  const { goBackToPreviousHotkeysScope } = usePreviousHotkeysScope();
+>>>>>>> c304198f (Linter)
 
   const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation({
     refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
@@ -95,6 +98,7 @@ export function NewEntityProgressButton({
     ],
   );
 
+<<<<<<< HEAD
   const handleNewClick = useCallback(() => {
     setIsCreatingCard(true);
     setHotkeyScopeAndMemorizePreviousScope(
@@ -102,6 +106,8 @@ export function NewEntityProgressButton({
     );
   }, [setIsCreatingCard, setHotkeyScopeAndMemorizePreviousScope]);
 
+=======
+>>>>>>> c304198f (Linter)
   function handleCancel() {
     goBackToPreviousHotkeyScope();
     setIsCreatingCard(false);

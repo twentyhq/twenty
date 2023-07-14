@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -20,11 +20,6 @@ import {
   useUpdateOnePipelineProgressMutation,
 } from '~/generated/graphql';
 import { companyBoardIndexState } from '~/pages/opportunities/companyBoardIndexState';
-
-import {
-  CompanyForBoard,
-  PipelineProgressForBoard,
-} from '../types/CompanyProgress';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
