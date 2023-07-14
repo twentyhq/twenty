@@ -81,7 +81,7 @@ const StyledIconContainer = styled.div`
 `;
 
 const StyledItemTitleContainer = styled.div`
-  align-content: flex-start;
+  align-content: center;
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;

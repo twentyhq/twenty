@@ -37,6 +37,7 @@ const StyledTableHeader = styled.div`
 
 const StyledIcon = styled.div`
   display: flex;
+  margin-left: ${({ theme }) => theme.spacing(1)};
   margin-right: ${({ theme }) => theme.spacing(2)};
 
   & > svg {
