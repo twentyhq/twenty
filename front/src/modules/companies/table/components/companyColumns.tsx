@@ -31,6 +31,20 @@ export const companyColumns: TableColumn[] = [
     cellComponent: <EditableCompanyDomainNameCell />,
   },
   {
+    id: 'accountOwner',
+    title: 'Account owner',
+    icon: <IconUser size={16} />,
+    size: 150,
+    cellComponent: <EditableCompanyAccountOwnerCell />,
+  },
+  {
+    id: 'createdAt',
+    title: 'Creation',
+    icon: <IconCalendarEvent size={16} />,
+    size: 150,
+    cellComponent: <EditableCompanyCreatedAtCell />,
+  },
+  {
     id: 'employees',
     title: 'Employees',
     icon: <IconUsers size={16} />,
@@ -43,19 +57,5 @@ export const companyColumns: TableColumn[] = [
     icon: <IconMap size={16} />,
     size: 170,
     cellComponent: <EditableCompanyAddressCell />,
-  },
-  {
-    id: 'createdAt',
-    title: 'Creation',
-    icon: <IconCalendarEvent size={16} />,
-    size: 150,
-    cellComponent: <EditableCompanyCreatedAtCell />,
-  },
-  {
-    id: 'accountOwner',
-    title: 'Account owner',
-    icon: <IconUser size={16} />,
-    size: 150,
-    cellComponent: <EditableCompanyAccountOwnerCell />,
   },
 ];
