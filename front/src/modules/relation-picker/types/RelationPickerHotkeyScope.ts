@@ -1,3 +1,3 @@
-export enum HotkeyScope {
+export enum RelationPickerHotkeyScope {
   RelationPicker = 'relation-picker',
 }

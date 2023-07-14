@@ -4,9 +4,9 @@ import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { GET_COMPANIES } from '@/companies/services';
-import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { GET_PEOPLE } from '@/people/services';
-import { HotkeyScope } from '@/ui/layout/right-drawer/types/HotkeyScope';
+import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { selectedRowIdsSelector } from '@/ui/tables/states/selectedRowIdsSelector';
 import {
@@ -30,7 +30,7 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
   const [, setViewableCommentThreadId] = useRecoilState(
     viewableCommentThreadIdState,
   );
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeysScope = useSetHotkeyScope();
 
   const [, setCommentableEntityArray] = useRecoilState(
     commentableEntityArrayState,
@@ -67,7 +67,7 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
         getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
       ],
       onCompleted(data) {
-        setHotkeysScope(HotkeyScope.RightDrawer, { goto: false });
+        setHotkeysScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableCommentThreadId(data.createOneCommentThread.id);
         setCommentableEntityArray(commentableEntityArray);
         openRightDrawer(RightDrawerPages.CreateCommentThread);

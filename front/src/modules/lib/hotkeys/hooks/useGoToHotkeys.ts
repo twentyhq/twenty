@@ -1,7 +1,7 @@
 import { Keys } from 'react-hotkeys-hook/dist/types';
 import { useNavigate } from 'react-router-dom';
 
-import { InternalHotkeysScope } from '../types/internal/InternalHotkeysScope';
+import { AppHotkeyScope } from '../types/AppHotkeyScope';
 
 import { useSequenceHotkeys } from './useSequenceScopedHotkeys';
 
@@ -14,7 +14,7 @@ export function useGoToHotkeys(key: Keys, location: string) {
     () => {
       navigate(location);
     },
-    InternalHotkeysScope.Goto,
+    AppHotkeyScope.Goto,
     {
       enableOnContentEditable: true,
       enableOnFormTags: true,

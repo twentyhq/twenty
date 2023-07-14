@@ -5,10 +5,10 @@ import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sor
 import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { getOperandsForFilterType } from '@/lib/filters-and-sorts/utils/getOperandsForFilterType';
-import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
-import { HotkeyScope } from '@/relation-picker/types/HotkeyScope';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenuItemContainer } from '@/ui/components/menu/DropdownMenuItemContainer';
 import { DropdownMenuSelectableItem } from '@/ui/components/menu/DropdownMenuSelectableItem';
 
@@ -39,7 +39,7 @@ export function FilterDropdownFilterSelect({
     context,
   );
 
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeysScope = useSetHotkeyScope();
 
   return (
     <DropdownMenuItemContainer style={{ maxHeight: '300px' }}>
@@ -50,7 +50,7 @@ export function FilterDropdownFilterSelect({
             setFilterDefinitionUsedInDropdown(availableFilter);
 
             if (availableFilter.type === 'entity') {
-              setHotkeysScope(HotkeyScope.RelationPicker);
+              setHotkeysScope(RelationPickerHotkeyScope.RelationPicker);
             }
 
             setSelectedOperandInDropdown(

@@ -2,16 +2,16 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { currentHotkeysScopeState } from '../states/internal/currentHotkeysScopeState';
-import { CustomHotkeysScopes } from '../types/CustomHotkeysScope';
-import { HotkeysScope } from '../types/HotkeysScope';
+import { CustomHotkeyScopes } from '../types/CustomHotkeyScope';
+import { HotkeyScope } from '../types/HotkeyScope';
 
-import { useSetHotkeysScope } from './useSetHotkeysScope';
+import { useSetHotkeyScope } from './useSetHotkeyScope';
 
 export function usePreviousHotkeysScope() {
   const [previousHotkeysScope, setPreviousHotkeysScope] =
-    useState<HotkeysScope | null>();
+    useState<HotkeyScope | null>();
 
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeysScope = useSetHotkeyScope();
 
   const currentHotkeysScope = useRecoilValue(currentHotkeysScopeState);
 
@@ -26,7 +26,7 @@ export function usePreviousHotkeysScope() {
 
   function setHotkeysScopeAndMemorizePreviousScope(
     scope: string,
-    customScopes?: CustomHotkeysScopes,
+    customScopes?: CustomHotkeyScopes,
   ) {
     setPreviousHotkeysScope(currentHotkeysScope);
     setHotkeysScope(scope, customScopes);

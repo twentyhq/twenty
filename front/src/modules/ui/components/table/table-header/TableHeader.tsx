@@ -8,7 +8,7 @@ import {
   SelectedSortType,
   SortType,
 } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
-import { HotkeyScope } from '@/lib/filters-and-sorts/types/HotkeyScope';
+import { FiltersHotkeyScope } from '@/lib/filters-and-sorts/types/FiltersHotkeyScope';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
 type OwnProps<SortField> = {
@@ -93,13 +93,13 @@ export function TableHeader<SortField>({
         <StyledFilters>
           <FilterDropdownButton
             context={TableContext}
-            hotkeysScope={HotkeyScope.FilterDropdownButton}
+            hotkeysScope={FiltersHotkeyScope.FilterDropdownButton}
           />
           <SortDropdownButton<SortField>
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
-            hotkeysScope={HotkeyScope.FilterDropdownButton}
+            hotkeysScope={FiltersHotkeyScope.FilterDropdownButton}
           />
         </StyledFilters>
       </StyledTableHeader>

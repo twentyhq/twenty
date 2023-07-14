@@ -1,7 +1,7 @@
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
-import { HotkeyScope } from '@/ui/tables/types/HotkeyScope';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 
 import { useCurrentCellEditMode } from './useCurrentCellEditMode';
 import { useEditableCell } from './useEditableCell';
@@ -28,7 +28,7 @@ export function useRegisterCloseCellHandlers(
       closeEditableCell();
       moveDown();
     },
-    HotkeyScope.CellEditMode,
+    TableHotkeyScope.CellEditMode,
     [closeEditableCell, onSubmit, moveDown],
   );
 
@@ -38,7 +38,7 @@ export function useRegisterCloseCellHandlers(
       closeEditableCell();
       onCancel?.();
     },
-    HotkeyScope.CellEditMode,
+    TableHotkeyScope.CellEditMode,
     [closeEditableCell, onCancel],
   );
 
@@ -49,7 +49,7 @@ export function useRegisterCloseCellHandlers(
       closeEditableCell();
       moveRight();
     },
-    HotkeyScope.CellEditMode,
+    TableHotkeyScope.CellEditMode,
     [closeEditableCell, onSubmit, moveRight],
   );
 
@@ -60,7 +60,7 @@ export function useRegisterCloseCellHandlers(
       closeEditableCell();
       moveLeft();
     },
-    HotkeyScope.CellEditMode,
+    TableHotkeyScope.CellEditMode,
     [closeEditableCell, onSubmit, moveRight],
   );
 }

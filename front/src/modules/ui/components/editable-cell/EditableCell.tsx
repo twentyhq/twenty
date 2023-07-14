@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { HotkeysScope } from '@/lib/hotkeys/types/HotkeysScope';
+import { HotkeyScope } from '@/lib/hotkeys/types/HotkeyScope';
 
 import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
@@ -25,7 +25,7 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  editHotkeysScope?: HotkeysScope;
+  editHotkeysScope?: HotkeyScope;
   onSubmit?: () => void;
   onCancel?: () => void;
 };

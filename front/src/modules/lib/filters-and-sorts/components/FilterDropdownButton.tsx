@@ -7,11 +7,11 @@ import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScoped
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/lib/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
-import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { HotkeyScope as RelationPickerHotkeyScope } from '@/relation-picker/types/HotkeyScope';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 
-import { HotkeyScope } from '../types/HotkeyScope';
+import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
 import DropdownButton from './DropdownButton';
 import { FilterDropdownDateSearchInput } from './FilterDropdownDateSearchInput';
@@ -28,7 +28,7 @@ export function FilterDropdownButton({
   hotkeysScope,
 }: {
   context: Context<string | null>;
-  hotkeysScope: HotkeyScope;
+  hotkeysScope: FiltersHotkeyScope;
 }) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -67,7 +67,7 @@ export function FilterDropdownButton({
 
   const isFilterSelected = (filters?.length ?? 0) > 0;
 
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeysScope = useSetHotkeyScope();
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {

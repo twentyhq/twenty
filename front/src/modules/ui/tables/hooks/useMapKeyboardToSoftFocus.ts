@@ -2,10 +2,10 @@ import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
-import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 
 import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
-import { HotkeyScope } from '../types/HotkeyScope';
+import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 import { useMoveSoftFocus } from './useMoveSoftFocus';
@@ -14,7 +14,7 @@ export function useMapKeyboardToSoftFocus() {
   const { moveDown, moveLeft, moveRight, moveUp } = useMoveSoftFocus();
 
   const disableSoftFocus = useDisableSoftFocus();
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeysScope = useSetHotkeyScope();
 
   const [isSomeInputInEditMode] = useRecoilState(isSomeInputInEditModeState);
 
@@ -25,7 +25,7 @@ export function useMapKeyboardToSoftFocus() {
         moveUp();
       }
     },
-    HotkeyScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [moveUp, isSomeInputInEditMode],
   );
 
@@ -36,7 +36,7 @@ export function useMapKeyboardToSoftFocus() {
         moveDown();
       }
     },
-    HotkeyScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [moveDown, isSomeInputInEditMode],
   );
 
@@ -47,7 +47,7 @@ export function useMapKeyboardToSoftFocus() {
         moveLeft();
       }
     },
-    HotkeyScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [moveLeft, isSomeInputInEditMode],
   );
 
@@ -58,17 +58,17 @@ export function useMapKeyboardToSoftFocus() {
         moveRight();
       }
     },
-    HotkeyScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [moveRight, isSomeInputInEditMode],
   );
 
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      setHotkeysScope(HotkeyScope.Table, { goto: true });
+      setHotkeysScope(TableHotkeyScope.Table, { goto: true });
       disableSoftFocus();
     },
-    HotkeyScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [disableSoftFocus],
   );
 }

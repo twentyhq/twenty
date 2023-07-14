@@ -10,7 +10,7 @@ import { Avatar } from '@/users/components/Avatar';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
-import { HotkeyScope } from '../types/HotkeyScope';
+import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
 import { CompanyPickerSkeleton } from './skeletons/CompanyPickerSkeleton';
 import { DropdownMenuItemContainerSkeleton } from './skeletons/DropdownMenuItemContainerSkeleton';
@@ -50,7 +50,7 @@ export function SingleEntitySelectBase<
       onEntitySelected(entitiesInDropdown[hoveredIndex]);
       resetScroll();
     },
-    HotkeyScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [entitiesInDropdown, hoveredIndex, onEntitySelected],
   );
 
@@ -59,7 +59,7 @@ export function SingleEntitySelectBase<
     () => {
       onCancel?.();
     },
-    HotkeyScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [onCancel],
   );
 

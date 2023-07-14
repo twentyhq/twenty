@@ -6,7 +6,7 @@ import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState'
 
 import { relationPickerHoverIndexScopedState } from '../states/relationPickerHoverIndexScopedState';
 import { EntityForSelect } from '../types/EntityForSelect';
-import { HotkeyScope } from '../types/HotkeyScope';
+import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
 export function useEntitySelectScroll<
   CustomEntityForSelect extends EntityForSelect,
@@ -60,7 +60,7 @@ export function useEntitySelectScroll<
         });
       }
     },
-    HotkeyScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [setHoveredIndex, entities],
   );
 
@@ -87,7 +87,7 @@ export function useEntitySelectScroll<
         });
       }
     },
-    HotkeyScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [setHoveredIndex, entities],
   );
 

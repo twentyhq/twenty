@@ -2,10 +2,10 @@ import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
 import { usePreviousHotkeysScope } from '@/lib/hotkeys/hooks/usePreviousHotkeysScope';
-import { HotkeysScope } from '@/lib/hotkeys/types/HotkeysScope';
+import { HotkeyScope } from '@/lib/hotkeys/types/HotkeyScope';
 
 import { useBoardCardField } from '../hooks/useBoardCardField';
-import { HotkeyScope } from '../types/HotkeyScope';
+import { BoardCardFieldHotkeyScope } from '../types/BoardCardFieldHotkeyScope';
 
 import { BoardCardEditableFieldDisplayMode } from './BoardCardEditableFieldDisplayMode';
 import { BoardCardEditableFieldEditMode } from './BoardCardEditableFieldEditMode';
@@ -26,7 +26,7 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  editHotkeysScope?: HotkeysScope;
+  editHotkeysScope?: HotkeyScope;
 };
 
 export function BoardCardEditableFieldInternal({
@@ -50,7 +50,8 @@ export function BoardCardEditableFieldInternal({
     if (!isBoardCardFieldInEditMode) {
       openBoardCardField();
       setHotkeysScopeAndMemorizePreviousScope(
-        editHotkeysScope?.scope ?? HotkeyScope.BoardCardFieldEditMode,
+        editHotkeysScope?.scope ??
+          BoardCardFieldHotkeyScope.BoardCardFieldEditMode,
         editHotkeysScope?.customScopes ?? {},
       );
     }

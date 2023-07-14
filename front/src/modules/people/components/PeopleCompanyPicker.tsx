@@ -1,15 +1,15 @@
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
-import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
-import { HotkeyScope as RelationPickerHotkeyScope } from '@/relation-picker/types/HotkeyScope';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { useEditableCell } from '@/ui/components/editable-cell/hooks/useEditableCell';
 import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
-import { HotkeyScope as TableHotkeyScope } from '@/ui/tables/types/HotkeyScope';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
@@ -33,7 +33,7 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
 
   const { closeEditableCell } = useEditableCell();
 
-  const addToScopeStack = useSetHotkeysScope();
+  const addToScopeStack = useSetHotkeyScope();
 
   const companies = useFilteredSearchEntityQuery({
     queryHook: useSearchCompanyQuery,

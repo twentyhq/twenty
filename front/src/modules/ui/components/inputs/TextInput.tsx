@@ -14,7 +14,7 @@ import { usePreviousHotkeysScope } from '@/lib/hotkeys/hooks/usePreviousHotkeysS
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { IconEye, IconEyeOff } from '@/ui/icons/index';
 
-import { HotkeyScope } from './types/HotkeyScope';
+import { InputHotkeyScope } from './types/InputHotkeyScope';
 
 type OwnProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
   label?: string;
@@ -117,7 +117,7 @@ export function TextInput({
 
   const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
     onFocus?.(e);
-    setHotkeysScopeAndMemorizePreviousScope(HotkeyScope.TextInput);
+    setHotkeysScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
   };
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
@@ -130,7 +130,7 @@ export function TextInput({
     () => {
       inputRef.current?.blur();
     },
-    HotkeyScope.TextInput,
+    InputHotkeyScope.TextInput,
   );
 
   const [passwordVisible, setPasswordVisible] = useState(false);

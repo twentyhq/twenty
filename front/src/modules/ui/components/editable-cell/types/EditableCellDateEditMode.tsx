@@ -2,7 +2,7 @@ import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { InplaceInputDateEditMode } from '@/ui/inplace-inputs/components/InplaceInputDateEditMode';
-import { HotkeyScope } from '@/ui/tables/types/HotkeyScope';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 
 import { useEditableCell } from '../hooks/useEditableCell';
 
@@ -27,7 +27,7 @@ export function EditableCellDateEditMode({
     () => {
       closeEditableCell();
     },
-    HotkeyScope.CellDateEditMode,
+    TableHotkeyScope.CellDateEditMode,
     [closeEditableCell],
   );
 

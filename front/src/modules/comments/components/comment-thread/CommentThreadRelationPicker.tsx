@@ -17,7 +17,7 @@ import { PersonChip } from '@/people/components/PersonChip';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { MultipleEntitySelect } from '@/relation-picker/components/MultipleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
-import { HotkeyScope } from '@/relation-picker/types/HotkeyScope';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flatMapAndSortEntityForSelectArrayByName';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
@@ -131,7 +131,9 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
       exitEditMode();
     } else {
       setIsMenuOpen(true);
-      setHotkeysScopeAndMemorizePreviousScope(HotkeyScope.RelationPicker);
+      setHotkeysScopeAndMemorizePreviousScope(
+        RelationPickerHotkeyScope.RelationPicker,
+      );
     }
   }
 
@@ -155,7 +157,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     () => {
       exitEditMode();
     },
-    HotkeyScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [exitEditMode],
   );
 

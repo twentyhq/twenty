@@ -5,7 +5,7 @@ import { Key } from 'ts-key-enum';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
-import { HotkeyScope } from '@/ui/tables/types/HotkeyScope';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 
 import { useEditableCell } from '../hooks/useEditableCell';
 
@@ -59,7 +59,7 @@ export function EditableCellDoubleTextEditMode({
       moveDown();
       onSubmit?.();
     },
-    HotkeyScope.CellDoubleTextInput,
+    TableHotkeyScope.CellDoubleTextInput,
     [closeCell],
   );
 
@@ -69,7 +69,7 @@ export function EditableCellDoubleTextEditMode({
       onCancel?.();
       closeCell();
     },
-    HotkeyScope.CellDoubleTextInput,
+    TableHotkeyScope.CellDoubleTextInput,
     [closeCell],
   );
 
@@ -85,7 +85,7 @@ export function EditableCellDoubleTextEditMode({
         moveRight();
       }
     },
-    HotkeyScope.CellDoubleTextInput,
+    TableHotkeyScope.CellDoubleTextInput,
     [closeCell, moveRight, focusPosition],
   );
 
@@ -101,7 +101,7 @@ export function EditableCellDoubleTextEditMode({
         moveLeft();
       }
     },
-    HotkeyScope.CellDoubleTextInput,
+    TableHotkeyScope.CellDoubleTextInput,
     [closeCell, moveRight, focusPosition],
   );
 

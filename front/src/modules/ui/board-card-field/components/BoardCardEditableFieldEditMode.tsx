@@ -5,7 +5,7 @@ import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { overlayBackground } from '@/ui/themes/effects';
 
-import { HotkeyScope } from '../types/HotkeyScope';
+import { BoardCardFieldHotkeyScope } from '../types/BoardCardFieldHotkeyScope';
 
 export const BoardCardFieldEditModeContainer = styled.div<
   Omit<OwnProps, 'onExit'>
@@ -52,7 +52,7 @@ export function BoardCardEditableFieldEditMode({
     () => {
       onExit();
     },
-    HotkeyScope.BoardCardFieldEditMode,
+    BoardCardFieldHotkeyScope.BoardCardFieldEditMode,
     [onExit],
   );
 
@@ -61,7 +61,7 @@ export function BoardCardEditableFieldEditMode({
     () => {
       onExit();
     },
-    HotkeyScope.BoardCardFieldEditMode,
+    BoardCardFieldHotkeyScope.BoardCardFieldEditMode,
     [onExit],
   );
 

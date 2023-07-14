@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
-import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
-import { HotkeyScope } from '@/ui/layout/right-drawer/types/HotkeyScope';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
+import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 
 import { useOpenRightDrawer } from '../../ui/layout/right-drawer/hooks/useOpenRightDrawer';
@@ -12,10 +12,10 @@ export function useOpenCommentThreadRightDrawer() {
   const [, setViewableCommentThreadId] = useRecoilState(
     viewableCommentThreadIdState,
   );
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeysScope = useSetHotkeyScope();
 
   return function openCommentThreadRightDrawer(commentThreadId: string) {
-    setHotkeysScope(HotkeyScope.RightDrawer, { goto: false });
+    setHotkeysScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableCommentThreadId(commentThreadId);
     openRightDrawer(RightDrawerPages.EditCommentThread);
   };

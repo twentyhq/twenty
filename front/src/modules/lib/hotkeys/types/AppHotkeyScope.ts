@@ -1,4 +1,4 @@
-export enum InternalHotkeysScope {
+export enum AppHotkeyScope {
   App = 'app',
   Goto = 'goto',
   CommandMenu = 'command-menu',

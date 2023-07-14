@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
-import { HotkeyScope as TableHotkeyScope } from '@/ui/tables/types/HotkeyScope';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 
 import { useIsMatchingLocation } from './hooks/useIsMatchingLocation';
 import { AppBasePath } from './types/AppBasePath';
@@ -13,7 +13,7 @@ import { SettingsPath } from './types/SettingsPath';
 export function HotkeysScopeBrowserRouterSync() {
   const isMatchingLocation = useIsMatchingLocation();
 
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeysScope = useSetHotkeyScope();
 
   useEffect(() => {
     switch (true) {

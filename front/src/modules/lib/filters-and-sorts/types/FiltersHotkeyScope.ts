@@ -1,3 +1,3 @@
-export enum HotkeyScope {
+export enum FiltersHotkeyScope {
   FilterDropdownButton = 'filter-dropdown-button',
 }

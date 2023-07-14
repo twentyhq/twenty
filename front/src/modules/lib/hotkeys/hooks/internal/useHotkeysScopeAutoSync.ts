@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentHotkeysScopeState } from '@/lib/hotkeys/states/internal/currentHotkeysScopeState';
 
-import { InternalHotkeysScope } from '../../types/internal/InternalHotkeysScope';
+import { AppHotkeyScope } from '../../types/AppHotkeyScope';
 
 import { useHotkeysScopes } from './useHotkeysScopes';
 
@@ -16,11 +16,11 @@ export function useHotkeysScopeAutoSync() {
     const scopesToSet: string[] = [];
 
     if (currentHotkeysScope.customScopes?.commandMenu) {
-      scopesToSet.push(InternalHotkeysScope.CommandMenu);
+      scopesToSet.push(AppHotkeyScope.CommandMenu);
     }
 
     if (currentHotkeysScope?.customScopes?.goto) {
-      scopesToSet.push(InternalHotkeysScope.Goto);
+      scopesToSet.push(AppHotkeyScope.Goto);
     }
 
     scopesToSet.push(currentHotkeysScope.scope);

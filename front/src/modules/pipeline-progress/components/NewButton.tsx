@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { usePreviousHotkeysScope } from '@/lib/hotkeys/hooks/usePreviousHotkeysScope';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
-import { HotkeyScope } from '@/relation-picker/types/HotkeyScope';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { Column } from '@/ui/board/components/Board';
 import { NewButton as UINewButton } from '@/ui/board/components/NewButton';
 import {
@@ -88,7 +88,9 @@ export function NewButton({ pipelineId, columnId }: OwnProps) {
 
   const handleNewClick = useCallback(() => {
     setIsCreatingCard(true);
-    setHotkeysScopeAndMemorizePreviousScope(HotkeyScope.RelationPicker);
+    setHotkeysScopeAndMemorizePreviousScope(
+      RelationPickerHotkeyScope.RelationPicker,
+    );
   }, [setIsCreatingCard, setHotkeysScopeAndMemorizePreviousScope]);
 
   function handleCancel() {

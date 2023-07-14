@@ -7,7 +7,7 @@ import { useOutsideAlerter } from '@/ui/hooks/useOutsideAlerter';
 import { IconChevronDown } from '@/ui/icons/index';
 import { overlayBackground, textInputStyle } from '@/ui/themes/effects';
 
-import { HotkeyScope } from '../types/HotkeyScope';
+import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
 type OwnProps = {
   label: string;
@@ -16,7 +16,7 @@ type OwnProps = {
   isUnfolded?: boolean;
   onIsUnfoldedChange?: (newIsUnfolded: boolean) => void;
   resetState?: () => void;
-  hotkeysScope: HotkeyScope;
+  hotkeysScope: FiltersHotkeyScope;
 };
 
 const StyledDropdownButtonContainer = styled.div`

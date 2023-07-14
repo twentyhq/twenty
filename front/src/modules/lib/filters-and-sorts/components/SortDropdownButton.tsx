@@ -5,7 +5,7 @@ import {
   SortType,
 } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
 
-import { HotkeyScope } from '../types/HotkeyScope';
+import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
 import DropdownButton from './DropdownButton';
 
@@ -13,7 +13,7 @@ type OwnProps<SortField> = {
   isSortSelected: boolean;
   onSortSelect: (sort: SelectedSortType<SortField>) => void;
   availableSorts: SortType<SortField>[];
-  hotkeysScope: HotkeyScope;
+  hotkeysScope: FiltersHotkeyScope;
 };
 
 const options: Array<SelectedSortType<any>['order']> = ['asc', 'desc'];

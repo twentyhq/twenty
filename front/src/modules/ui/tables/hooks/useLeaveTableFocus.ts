@@ -1,11 +1,11 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useSetHotkeysScope } from '@/lib/hotkeys/hooks/useSetHotkeysScope';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { currentHotkeysScopeState } from '@/lib/hotkeys/states/internal/currentHotkeysScopeState';
 
 import { isSoftFocusActiveState } from '../states/isSoftFocusActiveState';
 import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
-import { HotkeyScope } from '../types/HotkeyScope';
+import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { useCloseCurrentCellInEditMode } from './useClearCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
@@ -14,7 +14,7 @@ export function useLeaveTableFocus() {
   const disableSoftFocus = useDisableSoftFocus();
   const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
 
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeysScope = useSetHotkeyScope();
 
   return useRecoilCallback(
     ({ snapshot }) =>
@@ -39,14 +39,14 @@ export function useLeaveTableFocus() {
           return;
         }
 
-        if (currentHotkeysScope?.scope === HotkeyScope.Table) {
+        if (currentHotkeysScope?.scope === TableHotkeyScope.Table) {
           return;
         }
 
         closeCurrentCellInEditMode();
         disableSoftFocus();
 
-        setHotkeysScope(HotkeyScope.Table, { goto: true });
+        setHotkeysScope(TableHotkeyScope.Table, { goto: true });
       },
     [setHotkeysScope, closeCurrentCellInEditMode, disableSoftFocus],
   );

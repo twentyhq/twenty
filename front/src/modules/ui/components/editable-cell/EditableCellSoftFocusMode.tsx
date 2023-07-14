@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
-import { HotkeysScope } from '@/lib/hotkeys/types/HotkeysScope';
-import { HotkeyScope } from '@/ui/tables/types/HotkeyScope';
+import { HotkeyScope } from '@/lib/hotkeys/types/HotkeyScope';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 import { isNonTextWritingKey } from '@/utils/hotkeys/isNonTextWritingKey';
 
 import { useEditableCell } from './hooks/useEditableCell';
@@ -14,13 +14,13 @@ import {
 export function EditableCellSoftFocusMode({
   children,
   editHotkeysScope,
-}: React.PropsWithChildren<{ editHotkeysScope?: HotkeysScope }>) {
+}: React.PropsWithChildren<{ editHotkeysScope?: HotkeyScope }>) {
   const { openEditableCell } = useEditableCell();
 
   function openEditMode() {
     openEditableCell(
       editHotkeysScope ?? {
-        scope: HotkeyScope.CellEditMode,
+        scope: TableHotkeyScope.CellEditMode,
       },
     );
   }
@@ -30,7 +30,7 @@ export function EditableCellSoftFocusMode({
     () => {
       openEditMode();
     },
-    HotkeyScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [openEditMode],
   );
 
@@ -48,7 +48,7 @@ export function EditableCellSoftFocusMode({
 
       openEditMode();
     },
-    HotkeyScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [openEditMode],
     {
       preventDefault: false,

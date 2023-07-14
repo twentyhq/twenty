@@ -1,4 +1,4 @@
-export type CustomHotkeysScopes = {
+export type CustomHotkeyScopes = {
   goto?: boolean;
   commandMenu?: boolean;
 };

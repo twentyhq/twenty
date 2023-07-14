@@ -1,5 +1,5 @@
 import { InplaceInputDateDisplayMode } from '@/ui/inplace-inputs/components/InplaceInputDateDisplayMode';
-import { HotkeyScope } from '@/ui/tables/types/HotkeyScope';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 
 import { EditableCell } from '../EditableCell';
 
@@ -23,7 +23,7 @@ export function EditableCellDate({
         <EditableCellDateEditMode onChange={onChange} value={value} />
       }
       nonEditModeContent={<InplaceInputDateDisplayMode value={value} />}
-      editHotkeysScope={{ scope: HotkeyScope.CellDateEditMode }}
+      editHotkeysScope={{ scope: TableHotkeyScope.CellDateEditMode }}
     ></EditableCell>
   );
 }

@@ -4,11 +4,11 @@ import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants';
 import { currentHotkeysScopeState } from '../states/internal/currentHotkeysScopeState';
-import { CustomHotkeysScopes } from '../types/CustomHotkeysScope';
+import { CustomHotkeyScopes } from '../types/CustomHotkeyScope';
 
 function isCustomScopesEqual(
-  customScopesA: CustomHotkeysScopes | undefined,
-  customScopesB: CustomHotkeysScopes | undefined,
+  customScopesA: CustomHotkeyScopes | undefined,
+  customScopesB: CustomHotkeyScopes | undefined,
 ) {
   return (
     customScopesA?.commandMenu === customScopesB?.commandMenu &&
@@ -16,10 +16,10 @@ function isCustomScopesEqual(
   );
 }
 
-export function useSetHotkeysScope() {
+export function useSetHotkeyScope() {
   return useRecoilCallback(
     ({ snapshot, set }) =>
-      async (hotkeysScopeToSet: string, customScopes?: CustomHotkeysScopes) => {
+      async (hotkeysScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
         const currentHotkeysScope = await snapshot.getPromise(
           currentHotkeysScopeState,
         );
