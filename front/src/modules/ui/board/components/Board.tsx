@@ -36,8 +36,8 @@ export function getOptimisticlyUpdatedBoard(
   );
   const destinationColumn = newBoard[destinationColumnIndex];
   if (!destinationColumn || !sourceColumn) return;
-  const sourceItems = sourceColumn.itemKeys;
-  const destinationItems = destinationColumn.itemKeys;
+  const sourceItems = sourceColumn.pipelineProgressIds;
+  const destinationItems = destinationColumn.pipelineProgressIds;
 
   const [removed] = sourceItems.splice(source.index, 1);
   destinationItems.splice(destination.index, 0, removed);
