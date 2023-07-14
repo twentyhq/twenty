@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
-import { Column } from '@/ui/board/components/Board';
+import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { NewButton as UINewButton } from '@/ui/board/components/NewButton';
 import {
   PipelineProgressableType,
@@ -57,7 +57,8 @@ export function NewEntityProgressButton({
       const newUuid = uuidv4();
       const newBoard = JSON.parse(JSON.stringify(board));
       const destinationColumnIndex = newBoard.findIndex(
-        (column: Column) => column.id === columnId,
+        (column: BoardPipelineStageColumn) =>
+          column.pipelineStageId === columnId,
       );
       newBoard[destinationColumnIndex].itemKeys.push(newUuid);
       setBoardItems({

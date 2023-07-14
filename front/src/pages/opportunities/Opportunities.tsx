@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline-progress/components/BoardActionBarButtonDeletePipelineProgress';
+import { companyBoardOptions } from '@/pipeline-progress/components/companyBoardOptions';
 import { EntityBoardActionBar } from '@/pipeline-progress/components/EntityBoardActionBar';
 import { EntityProgressBoard } from '@/pipeline-progress/components/EntityProgressBoard';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
@@ -20,7 +21,7 @@ export function Opportunities() {
     >
       <HookCompanyBoard />
       <RecoilScope SpecificContext={CompanyBoardContext}>
-        <EntityProgressBoard />
+        <EntityProgressBoard boardOptions={companyBoardOptions} />
         <EntityBoardActionBar>
           <BoardActionBarButtonDeletePipelineProgress />
         </EntityBoardActionBar>

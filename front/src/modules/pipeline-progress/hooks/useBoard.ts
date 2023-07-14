@@ -1,5 +1,5 @@
 import { Pipeline } from '../../../generated/graphql';
-import { Column } from '../../ui/board/components/Board';
+import { BoardPipelineStageColumn } from '../../ui/board/components/Board';
 
 export function useBoard(pipeline: Pipeline | undefined) {
   const pipelineStages = pipeline?.pipelineStages;
@@ -11,12 +11,12 @@ export function useBoard(pipeline: Pipeline | undefined) {
       })
     : [];
 
-  const initialBoard: Column[] =
+  const initialBoard: BoardPipelineStageColumn[] =
     orderedPipelineStages?.map((pipelineStage) => ({
-      id: pipelineStage.id,
+      pipelineStageId: pipelineStage.id,
       title: pipelineStage.name,
       colorCode: pipelineStage.color,
-      itemKeys:
+      pipelineProgressIds:
         pipelineStage.pipelineProgresses?.map((item) => item.id as string) ||
         [],
     })) || [];
