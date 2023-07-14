@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 
-import { INITIAL_HOTKEYS_SCOPE } from '@/lib/hotkeys/constants';
-import { HotkeysScope } from '@/lib/hotkeys/types/HotkeysScope';
+import { INITIAL_HOTKEYS_SCOPE } from '../../constants';
+import { HotkeysScope } from '../../types/HotkeysScope';
 
 export const currentHotkeysScopeState = atom<HotkeysScope>({
   key: 'currentHotkeysScopeState',

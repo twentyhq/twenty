@@ -1,7 +1,7 @@
 import { useHotkeysContext } from 'react-hotkeys-hook';
 import { useRecoilCallback } from 'recoil';
 
-import { internalHotkeysEnabledScopesState } from '@/lib/hotkeys/states/internal/internalHotkeysEnabledScopesState';
+import { internalHotkeysEnabledScopesState } from '../../states/internal/internalHotkeysEnabledScopesState';
 
 export function useHotkeysScopes() {
   const { disableScope, enableScope } = useHotkeysContext();
