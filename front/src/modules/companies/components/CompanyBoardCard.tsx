@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -127,7 +127,9 @@ export function CompanyBoardCard() {
           />
           <span>{company.name}</span>
           <div style={{ display: 'flex', flex: 1 }} />
-          <Checkbox checked={selected} onChange={handleCheckboxChange} />
+          <div onClick={handleCheckboxChange}>
+            <Checkbox checked={selected} />
+          </div>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>
