@@ -1,6 +1,24 @@
+import { ReactNode, useEffect } from 'react';
 import { ApolloProvider } from '@apollo/client';
+import {
+  DragDropContext,
+  Draggable,
+  DraggableProvided,
+  DraggableRubric,
+  DraggableStateSnapshot,
+  DropResult,
+  ResponderProvided,
+} from '@hello-pangea/dnd';
 import { Decorator } from '@storybook/react';
+import { set } from 'date-fns';
 import { RecoilRoot } from 'recoil';
+
+import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
+import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
+import { BoardColumnContext } from '@/pipeline-progress/states/BoardColumnContext';
+import { pipelineProgressIdScopedState } from '@/pipeline-progress/states/pipelineProgressIdScopedState';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { HookCompanyBoard } from '~/pages/opportunities/HookCompanyBoard';
 
 import { RecoilScope } from '../modules/recoil-scope/components/RecoilScope';
 import { CellContext } from '../modules/ui/tables/states/CellContext';
@@ -30,3 +48,39 @@ export const CellPositionDecorator: Decorator = (Story) => (
     </RecoilScope>
   </RecoilScope>
 );
+
+export const BoardDecorator: Decorator = (Story) => (
+  <>
+    <HookCompanyBoard />
+    <RecoilScope SpecificContext={CompanyBoardContext}>
+      <Story />
+    </RecoilScope>
+  </>
+);
+
+function HookLoadFakeBoardContextState() {
+  const [, setPipelineProgressId] = useRecoilScopedState(
+    pipelineProgressIdScopedState,
+    BoardCardContext,
+  );
+  useEffect(() => {
+    setPipelineProgressId('fe256b39-3ec3-4fe7-8998-b76aa0bfb600');
+  }, [setPipelineProgressId]);
+  return <></>;
+}
+
+export const BoardCardDecorator: Decorator = (Story) => {
+  return (
+    <>
+      <HookCompanyBoard />
+      <RecoilScope SpecificContext={CompanyBoardContext}>
+        <RecoilScope SpecificContext={BoardColumnContext}>
+          <RecoilScope SpecificContext={BoardCardContext}>
+            <HookLoadFakeBoardContextState />
+            <Story />
+          </RecoilScope>
+        </RecoilScope>
+      </RecoilScope>
+    </>
+  );
+};
