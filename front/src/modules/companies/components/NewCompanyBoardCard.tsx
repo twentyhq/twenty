@@ -1,23 +1,11 @@
-import { useCallback, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilState } from 'recoil';
+import { useCallback } from 'react';
 
-import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
-import { GET_PIPELINES } from '@/pipeline-progress/queries';
-import { boardColumnsState } from '@/pipeline-progress/states/boardColumnsState';
-import { boardItemsState } from '@/pipeline-progress/states/boardItemsState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
-import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
-import {
-  CommentableType,
-  Company,
-  useCreateOnePipelineProgressMutation,
-  useSearchCompanyQuery,
-} from '~/generated/graphql';
+import { CommentableType, useSearchCompanyQuery } from '~/generated/graphql';
 
 export function NewCompanyBoardCard() {
   const [searchFilter] = useRecoilScopedState(
@@ -38,19 +26,6 @@ export function NewCompanyBoardCard() {
     }),
     orderByField: 'name',
     searchOnFields: ['name'],
-  });
-
-  const [isCreatingCard, setIsCreatingCard] = useState(false);
-  const [board, setBoard] = useRecoilState(boardColumnsState);
-  const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
-
-  const {
-    goBackToPreviousHotkeysScope,
-    setHotkeysScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeysScope();
-
-  const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation({
-    refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
   });
 
   const handleEntitySelect = useCallback(async (companyId: string) => {
