@@ -11,8 +11,8 @@ import {
   PipelineProgressForBoard,
 } from '../types/CompanyProgress';
 
-export function useCompanyBoardIndex(pipeline: Pipeline) {
-  const pipelineProgressIds = pipeline.pipelineStages
+export function useCompanyBoardIndex(pipeline?: Pipeline) {
+  const pipelineProgressIds = pipeline?.pipelineStages
     ?.map((pipelineStage: PipelineStage) =>
       (
         pipelineStage.pipelineProgresses?.map((item) => item.id as string) || []

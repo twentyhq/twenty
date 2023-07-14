@@ -37,23 +37,6 @@ export type EntityProgressDict = {
   [key: string]: EntityProgress;
 };
 
-type BoardProps = {
-  pipeline: Pipeline;
-  renderEntityCard: (
-    pipelineProgressId: string,
-    handleSelect: (pipelineProgressId: string) => void,
-    handleCardUpdate: (
-      pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
-    ) => Promise<void>,
-    selected: boolean,
-  ) => React.ReactNode;
-  renderNewEntityButton: (
-    pipelineId: string,
-    columnId: string,
-  ) => React.ReactNode;
-  initialBoard: Column[];
-};
-
 const StyledPlaceholder = styled.div`
   min-height: 1px;
 `;
@@ -76,18 +59,8 @@ const BoardColumnCardsContainer = ({
   );
 };
 
-export function EntityProgressBoard({
-  pipeline,
-  renderEntityCard,
-  renderNewEntityButton,
-  initialBoard,
-}: BoardProps) {
-  const [board, setBoard] = useRecoilState(boardColumnsState);
-  const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
-    selectedBoardItemsState,
-  );
+export function EntityProgressBoard() {
   const [isInitialBoardLoaded, setIsInitialBoardLoaded] = useState(false);
-
   const columns = useMemo(
     () =>
       initialBoard?.map(({ id, colorCode, title }) => ({
