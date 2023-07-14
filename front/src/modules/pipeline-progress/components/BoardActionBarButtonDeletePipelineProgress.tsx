@@ -7,11 +7,11 @@ import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
 
 import { GET_PIPELINES } from '../queries';
 import { boardItemsState } from '../states/boardItemsState';
-import { selectedBoardItemsState } from '../states/selectedBoardItemsState';
+import { selectedBoardCardsState } from '../states/selectedBoardCardsState';
 
 export function BoardActionBarButtonDeletePipelineProgress() {
   const [selectedBoardItems, setSelectedBoardItems] = useRecoilState(
-    selectedBoardItemsState,
+    selectedBoardCardsState,
   );
   const [boardItems, setBoardItems] = useRecoilState(boardItemsState);
 

@@ -30,7 +30,7 @@ import {
 import { GET_PIPELINES } from '../queries';
 import { BoardColumnContext } from '../states/BoardColumnContext';
 import { boardColumnsState } from '../states/boardColumnsState';
-import { isBoardCardSelectedFamilyState } from '../states/isBoardCardSelectedFamilyState';
+import { selectedBoardCardsState } from '../states/selectedBoardCardsState';
 import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardCard } from './EntityBoardCard';

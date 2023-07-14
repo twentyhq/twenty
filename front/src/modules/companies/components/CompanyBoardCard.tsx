@@ -7,8 +7,8 @@ import { useRecoilState } from 'recoil';
 
 import { GET_PIPELINES } from '@/pipeline-progress/queries';
 import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
-import { isBoardCardSelectedFamilyState } from '@/pipeline-progress/states/isBoardCardSelectedFamilyState';
 import { pipelineProgressIdScopedState } from '@/pipeline-progress/states/pipelineProgressIdScopedState';
+import { selectedBoardCardsState } from '@/pipeline-progress/states/selectedBoardCardsState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { BoardCardEditableFieldDate } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldDate';
 import { BoardCardEditableFieldText } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldText';
@@ -88,9 +88,20 @@ export function CompanyBoardCard() {
     companyBoardIndexState(pipelineProgressId || ''),
   );
   const { pipelineProgress, company } = companyProgress || {};
-  const [selected, setSelected] = useRecoilState(
-    isBoardCardSelectedFamilyState(pipelineProgressId || ''),
+  const [selectedBoardCards, setSelectedBoardCards] = useRecoilState(
+    selectedBoardCardsState,
   );
+
+  const selected = selectedBoardCards.includes(pipelineProgressId || '');
+  function setSelected(isSelected: boolean) {
+    if (isSelected) {
+      setSelectedBoardCards([...selectedBoardCards, pipelineProgressId || '']);
+    } else {
+      setSelectedBoardCards(
+        selectedBoardCards.filter((id) => id !== pipelineProgressId),
+      );
+    }
+  }
 
   const handleCardUpdate = useCallback(
     async (
