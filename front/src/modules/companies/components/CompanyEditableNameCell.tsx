@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { CellCommentChip } from '@/comments/components/table/CellCommentChip';
 import { useOpenTimelineRightDrawer } from '@/comments/hooks/useOpenTimelineRightDrawer';
 import { EditableCellChip } from '@/ui/components/editable-cell/types/EditableChip';
@@ -21,6 +23,8 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
   const openCommentRightDrawer = useOpenTimelineRightDrawer();
   const [updateCompany] = useUpdateCompanyMutation();
 
+  const [internalValue, setInternalValue] = useState(company.name ?? '');
+
   function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {
     event.preventDefault();
     event.stopPropagation();
@@ -33,20 +37,17 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
     ]);
   }
 
+  useEffect(() => {
+    setInternalValue(company.name ?? '');
+  }, [company.name]);
+
   return (
     <EditableCellChip
-      value={company.name ?? ''}
+      value={internalValue}
       placeholder="Name"
       picture={getLogoUrlFromDomainName(company.domainName)}
       id={company.id}
-      changeHandler={(value: string) => {
-        updateCompany({
-          variables: {
-            id: company.id,
-            name: value,
-          },
-        });
-      }}
+      changeHandler={setInternalValue}
       ChipComponent={CompanyChip}
       rightEndContents={[
         <CellCommentChip
@@ -54,6 +55,15 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
           onClick={handleCommentClick}
         />,
       ]}
+      onSubmit={() =>
+        updateCompany({
+          variables: {
+            id: company.id,
+            name: internalValue,
+          },
+        })
+      }
+      onCancel={() => setInternalValue(company.name ?? '')}
     />
   );
 }

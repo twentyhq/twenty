@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { companyEmployeesFamilyState } from '@/companies/states/companyEmployeesFamilyState';
@@ -14,20 +15,26 @@ export function EditableCompanyEmployeesCell() {
     companyEmployeesFamilyState(currentRowEntityId ?? ''),
   );
 
+  const [internalValue, setInternalValue] = useState(employees ?? '');
+
+  useEffect(() => {
+    setInternalValue(employees ?? '');
+  }, [employees]);
+
   return (
     // TODO: Create an EditableCellNumber component
     <EditableCellText
-      value={employees ?? ''}
-      onChange={async (newEmployees: string) => {
-        if (!currentRowEntityId) return;
-
-        await updateCompany({
+      value={internalValue}
+      onChange={setInternalValue}
+      onSubmit={() =>
+        updateCompany({
           variables: {
             id: currentRowEntityId,
-            employees: parseInt(newEmployees),
+            employees: parseInt(internalValue),
           },
-        });
-      }}
+        })
+      }
+      onCancel={() => setInternalValue(employees ?? '')}
     />
   );
 }

@@ -26,6 +26,8 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
   editHotkeysScope?: HotkeysScope;
+  onSubmit?: () => void;
+  onCancel?: () => void;
 };
 
 export function EditableCell({
@@ -34,6 +36,8 @@ export function EditableCell({
   editModeContent,
   nonEditModeContent,
   editHotkeysScope,
+  onSubmit,
+  onCancel,
 }: OwnProps) {
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
 
@@ -45,6 +49,8 @@ export function EditableCell({
         <EditableCellEditMode
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
+          onSubmit={onSubmit}
+          onCancel={onCancel}
         >
           {editModeContent}
         </EditableCellEditMode>

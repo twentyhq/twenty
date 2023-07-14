@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { peoplePhoneFamilyState } from '@/people/states/peoplePhoneFamilyState';
@@ -13,19 +14,26 @@ export function EditablePeoplePhoneCell() {
   const phone = useRecoilValue(
     peoplePhoneFamilyState(currentRowEntityId ?? ''),
   );
+
+  const [internalValue, setInternalValue] = useState(phone ?? '');
+
+  useEffect(() => {
+    setInternalValue(phone ?? '');
+  }, [phone]);
+
   return (
     <EditableCellPhone
-      value={phone ?? ''}
-      onChange={async (newPhone: string) => {
-        if (!currentRowEntityId) return;
-
-        await updatePerson({
+      value={internalValue}
+      onChange={setInternalValue}
+      onSubmit={() =>
+        updatePerson({
           variables: {
             id: currentRowEntityId,
-            phone: newPhone,
+            phone: internalValue,
           },
-        });
-      }}
+        })
+      }
+      onCancel={() => setInternalValue(phone ?? '')}
     />
   );
 }

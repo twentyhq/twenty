@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { peopleEmailFamilyState } from '@/people/states/peopleEmailFamilyState';
@@ -14,19 +15,25 @@ export function EditablePeopleEmailCell() {
     peopleEmailFamilyState(currentRowEntityId ?? ''),
   );
 
+  const [internalValue, setInternalValue] = useState(email ?? '');
+
+  useEffect(() => {
+    setInternalValue(email ?? '');
+  }, [email]);
+
   return (
     <EditableCellText
-      value={email ?? ''}
-      onChange={async (newEmail: string) => {
-        if (!currentRowEntityId) return;
-
-        await updatePerson({
+      value={internalValue}
+      onChange={setInternalValue}
+      onSubmit={() =>
+        updatePerson({
           variables: {
             id: currentRowEntityId,
-            email: newEmail,
+            email: internalValue,
           },
-        });
-      }}
+        })
+      }
+      onCancel={() => setInternalValue(email ?? '')}
     />
   );
 }

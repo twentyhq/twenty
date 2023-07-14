@@ -4,7 +4,6 @@ import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
 import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { useCloseCurrentCellInEditMode } from '@/ui/tables/hooks/useClearCellInEditMode';
-import { isSoftFocusActiveState } from '@/ui/tables/states/isSoftFocusActiveState';
 import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
 
 import { useCurrentCellEditMode } from './useCurrentCellEditMode';
@@ -30,7 +29,6 @@ export function useEditableCell() {
 
         if (!isSomeInputInEditMode) {
           set(isSomeInputInEditModeState, true);
-          set(isSoftFocusActiveState, false);
 
           setCurrentCellInEditMode();
 

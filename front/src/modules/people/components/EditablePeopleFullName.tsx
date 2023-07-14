@@ -15,6 +15,8 @@ type OwnProps = {
     | null
     | undefined;
   onChange: (firstName: string, lastName: string) => void;
+  onSubmit?: () => void;
+  onCancel?: () => void;
 };
 
 const NoEditModeContainer = styled.div`
@@ -28,7 +30,12 @@ const RightContainer = styled.div`
   margin-left: ${(props) => props.theme.spacing(1)};
 `;
 
-export function EditablePeopleFullName({ person, onChange }: OwnProps) {
+export function EditablePeopleFullName({
+  person,
+  onChange,
+  onSubmit,
+  onCancel,
+}: OwnProps) {
   const openCommentRightDrawer = useOpenTimelineRightDrawer();
 
   function handleDoubleTextChange(
@@ -61,6 +68,8 @@ export function EditablePeopleFullName({ person, onChange }: OwnProps) {
       firstValuePlaceholder="First name"
       secondValuePlaceholder="Last name"
       onChange={handleDoubleTextChange}
+      onSubmit={onSubmit}
+      onCancel={onCancel}
       nonEditModeContent={
         <NoEditModeContainer>
           <PersonChip
