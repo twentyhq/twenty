@@ -109,17 +109,14 @@ export function NewEntityProgressButton({
 
   return (
     <>
-      {isCreatingCard && (
-        <RecoilScope>
-          <div ref={containerRef}>
-            <NewEntityBoardCardComponent
-              onEntitySelect={handleEntitySelect}
-              onCancel={handleCancel}
-            />
-          </div>
-        </RecoilScope>
-      )}
-      <UINewButton onClick={handleNewClick} />
+      <RecoilScope>
+        <div ref={containerRef}>
+          <NewEntityBoardCardComponent
+            onEntitySelect={handleEntitySelect}
+            onCancel={handleCancel}
+          />
+        </div>
+      </RecoilScope>
     </>
   );
 }
