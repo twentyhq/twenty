@@ -1,10 +1,8 @@
-import { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
-import { Company } from '~/generated/graphql';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
-import { mockedPipelineProgressData } from '~/testing/mock-data/pipeline-progress';
+import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 const meta: Meta<typeof CompanyBoardCard> = {
@@ -16,9 +14,11 @@ export default meta;
 type Story = StoryObj<typeof CompanyBoardCard>;
 
 const FakeSelectableCompanyBoardCard = () => {
-  const [selected, setSelected] = useState<boolean>(false);
-
-  return <CompanyBoardCard />;
+  return (
+    <RecoilScope SpecificContext={BoardCardContext}>
+      <CompanyBoardCard />;
+    </RecoilScope>
+  );
 };
 
 export const CompanyCompanyBoardCard: Story = {
