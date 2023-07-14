@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react';
 
+import { companyBoardOptions } from '@/companies/components/companyBoardOptions';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline-progress/components/BoardActionBarButtonDeletePipelineProgress';
-import { companyBoardOptions } from '@/pipeline-progress/components/companyBoardOptions';
+import { EntityBoard } from '@/pipeline-progress/components/EntityBoard';
 import { EntityBoardActionBar } from '@/pipeline-progress/components/EntityBoardActionBar';
-import { EntityProgressBoard } from '@/pipeline-progress/components/EntityProgressBoard';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { IconTargetArrow } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
@@ -21,7 +21,7 @@ export function Opportunities() {
     >
       <HookCompanyBoard />
       <RecoilScope SpecificContext={CompanyBoardContext}>
-        <EntityProgressBoard boardOptions={companyBoardOptions} />
+        <EntityBoard boardOptions={companyBoardOptions} />
         <EntityBoardActionBar>
           <BoardActionBarButtonDeletePipelineProgress />
         </EntityBoardActionBar>

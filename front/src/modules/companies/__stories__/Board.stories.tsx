@@ -1,24 +1,24 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { companyBoardOptions } from '@/pipeline-progress/components/companyBoardOptions';
-import { EntityProgressBoard } from '@/pipeline-progress/components/EntityProgressBoard';
+import { companyBoardOptions } from '@/companies/components/companyBoardOptions';
+import { EntityBoard } from '@/pipeline-progress/components/EntityBoard';
 import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { pipeline } from './mock-data';
 
-const meta: Meta<typeof EntityProgressBoard> = {
+const meta: Meta<typeof EntityBoard> = {
   title: 'UI/Board/Board',
-  component: EntityProgressBoard,
+  component: EntityBoard,
 };
 
 export default meta;
-type Story = StoryObj<typeof EntityProgressBoard>;
+type Story = StoryObj<typeof EntityBoard>;
 
 export const OneColumnBoard: Story = {
   render: getRenderWrapperForComponent(
-    <EntityProgressBoard boardOptions={companyBoardOptions} />,
+    <EntityBoard boardOptions={companyBoardOptions} />,
   ),
   parameters: {
     msw: graphqlMocks,

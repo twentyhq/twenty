@@ -28,11 +28,7 @@ export type EntityProgressDict = {
   [key: string]: EntityProgress;
 };
 
-export function EntityProgressBoard({
-  boardOptions,
-}: {
-  boardOptions: BoardOptions;
-}) {
+export function EntityBoard({ boardOptions }: { boardOptions: BoardOptions }) {
   const [board, setBoard] = useRecoilState(boardState);
   const [updatePipelineProgressStage] =
     useUpdateOnePipelineProgressStageMutation();
