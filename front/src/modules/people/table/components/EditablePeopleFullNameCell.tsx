@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
@@ -14,24 +15,38 @@ export function EditablePeopleFullNameCell() {
     peopleNameCellFamilyState(currentRowEntityId ?? ''),
   );
 
+  const [internalFirstName, setInternalFirstName] = useState(firstName ?? '');
+  const [internalLastName, setInternalLastName] = useState(lastName ?? '');
+
+  useEffect(() => {
+    setInternalFirstName(firstName ?? '');
+    setInternalLastName(lastName ?? '');
+  }, [firstName, lastName]);
+
   return (
     <EditablePeopleFullName
       person={{
         id: currentRowEntityId ?? undefined,
         _commentThreadCount: commentCount ?? undefined,
-        firstName: firstName ?? undefined,
-        lastName: lastName ?? undefined,
+        firstName: internalFirstName,
+        lastName: internalLastName,
       }}
-      onChange={async (firstName: string, lastName: string) => {
-        if (!currentRowEntityId) return;
-
-        await updatePerson({
+      onChange={(firstName, lastName) => {
+        setInternalFirstName(firstName);
+        setInternalLastName(lastName);
+      }}
+      onSubmit={() =>
+        updatePerson({
           variables: {
             id: currentRowEntityId,
-            firstName,
-            lastName,
+            firstName: internalFirstName,
+            lastName: internalLastName,
           },
-        });
+        })
+      }
+      onCancel={() => {
+        setInternalFirstName(firstName ?? '');
+        setInternalLastName(lastName ?? '');
       }}
     />
   );

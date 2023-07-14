@@ -6,15 +6,16 @@ import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 import { useCurrentCellEditMode } from './useCurrentCellEditMode';
 import { useEditableCell } from './useEditableCell';
 
-export function useRegisterLeaveCellHandlers(
+export function useRegisterCloseCellHandlers(
   wrapperRef: React.RefObject<HTMLDivElement>,
-  onLeave?: () => void,
+  onSubmit?: () => void,
+  onCancel?: () => void,
 ) {
   const { closeEditableCell } = useEditableCell();
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
   useListenClickOutsideArrayOfRef([wrapperRef], () => {
     if (isCurrentCellInEditMode) {
-      onLeave?.();
+      onSubmit?.();
       closeEditableCell();
     }
   });
@@ -23,42 +24,43 @@ export function useRegisterLeaveCellHandlers(
   useScopedHotkeys(
     'enter',
     () => {
-      onLeave?.();
+      onSubmit?.();
       closeEditableCell();
       moveDown();
     },
     InternalHotkeysScope.CellEditMode,
-    [closeEditableCell, onLeave, moveDown],
+    [closeEditableCell, onSubmit, moveDown],
   );
 
   useScopedHotkeys(
     'esc',
     () => {
       closeEditableCell();
+      onCancel?.();
     },
     InternalHotkeysScope.CellEditMode,
-    [closeEditableCell],
+    [closeEditableCell, onCancel],
   );
 
   useScopedHotkeys(
     'tab',
     () => {
-      onLeave?.();
+      onSubmit?.();
       closeEditableCell();
       moveRight();
     },
     InternalHotkeysScope.CellEditMode,
-    [closeEditableCell, onLeave, moveRight],
+    [closeEditableCell, onSubmit, moveRight],
   );
 
   useScopedHotkeys(
     'shift+tab',
     () => {
-      onLeave?.();
+      onSubmit?.();
       closeEditableCell();
       moveLeft();
     },
     InternalHotkeysScope.CellEditMode,
-    [closeEditableCell, onLeave, moveRight],
+    [closeEditableCell, onSubmit, moveRight],
   );
 }

@@ -12,6 +12,8 @@ type OwnProps = {
   onChange: (newValue: string) => void;
   editModeHorizontalAlign?: 'left' | 'right';
   loading?: boolean;
+  onSubmit?: () => void;
+  onCancel?: () => void;
 };
 
 export function EditableCellText({
@@ -20,6 +22,8 @@ export function EditableCellText({
   onChange,
   editModeHorizontalAlign,
   loading,
+  onCancel,
+  onSubmit,
 }: OwnProps) {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -41,6 +45,8 @@ export function EditableCellText({
           }}
         />
       }
+      onSubmit={onSubmit}
+      onCancel={onCancel}
       nonEditModeContent={
         loading ? (
           <CellSkeleton />

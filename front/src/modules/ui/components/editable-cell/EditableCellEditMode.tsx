@@ -1,13 +1,9 @@
 import { ReactElement, useRef } from 'react';
 import styled from '@emotion/styled';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
-import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
 import { overlayBackground } from '@/ui/themes/effects';
 
-import { useEditableCell } from './hooks/useEditableCell';
+import { useRegisterCloseCellHandlers } from './hooks/useRegisterCloseCellHandlers';
 
 export const EditableCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;
@@ -33,14 +29,20 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
   onOutsideClick?: () => void;
+  onCancel?: () => void;
+  onSubmit?: () => void;
 };
 
 export function EditableCellEditMode({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
+  onCancel,
+  onSubmit,
 }: OwnProps) {
   const wrapperRef = useRef(null);
+
+  useRegisterCloseCellHandlers(wrapperRef, onSubmit, onCancel);
 
   return (
     <EditableCellEditModeContainer

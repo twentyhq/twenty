@@ -28,6 +28,8 @@ export type EditableChipProps = {
   commentThreadCount?: number;
   onCommentClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   rightEndContents?: ReactNode[];
+  onSubmit?: () => void;
+  onCancel?: () => void;
 };
 
 // TODO: refactor
@@ -58,6 +60,8 @@ export function EditableCellChip({
   editModeHorizontalAlign,
   ChipComponent,
   rightEndContents,
+  onSubmit,
+  onCancel,
 }: EditableChipProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
@@ -87,6 +91,8 @@ export function EditableCellChip({
           }}
         />
       }
+      onSubmit={onSubmit}
+      onCancel={onCancel}
       nonEditModeContent={
         <NoEditModeContainer>
           <ChipComponent id={id} name={inputValue} picture={picture} />

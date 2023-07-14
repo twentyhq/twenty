@@ -9,9 +9,17 @@ type OwnProps = {
   placeholder?: string;
   value: string;
   onChange: (updated: string) => void;
+  onSubmit?: () => void;
+  onCancel?: () => void;
 };
 
-export function EditableCellPhone({ value, placeholder, onChange }: OwnProps) {
+export function EditableCellPhone({
+  value,
+  placeholder,
+  onChange,
+  onSubmit,
+  onCancel,
+}: OwnProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
 
@@ -34,6 +42,8 @@ export function EditableCellPhone({ value, placeholder, onChange }: OwnProps) {
         />
       }
       nonEditModeContent={<InplaceInputPhoneDisplayMode value={inputValue} />}
+      onSubmit={onSubmit}
+      onCancel={onCancel}
     />
   );
 }

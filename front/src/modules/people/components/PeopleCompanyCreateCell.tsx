@@ -72,7 +72,7 @@ export function PeopleCompanyCreateCell({ people }: OwnProps) {
       secondValuePlaceholder="Name"
       onChange={handleDoubleTextChange}
       onSubmit={() => handleCompanyCreate(companyName, companyDomainName)}
-      onExit={() => setIsCreating(false)}
+      onCancel={() => setIsCreating(false)}
     />
   );
 }

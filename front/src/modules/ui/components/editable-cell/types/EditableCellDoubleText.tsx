@@ -14,6 +14,8 @@ type OwnProps = {
   secondValuePlaceholder: string;
   nonEditModeContent: ReactElement;
   onChange: (firstValue: string, secondValue: string) => void;
+  onSubmit?: () => void;
+  onCancel?: () => void;
   loading?: boolean;
 };
 
@@ -23,6 +25,8 @@ export function EditableCellDoubleText({
   firstValuePlaceholder,
   secondValuePlaceholder,
   onChange,
+  onSubmit,
+  onCancel,
   nonEditModeContent,
   loading,
 }: OwnProps) {
@@ -50,6 +54,8 @@ export function EditableCellDoubleText({
           firstValuePlaceholder={firstValuePlaceholder}
           secondValuePlaceholder={secondValuePlaceholder}
           onChange={handleOnChange}
+          onSubmit={onSubmit}
+          onCancel={onCancel}
         />
       }
       nonEditModeContent={loading ? <CellSkeleton /> : nonEditModeContent}
