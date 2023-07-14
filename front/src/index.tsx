@@ -11,6 +11,7 @@ import '@emotion/react';
 
 import { ApolloProvider } from './providers/apollo/ApolloProvider';
 import { ClientConfigProvider } from './providers/client-config/ClientConfigProvider';
+import { SnackBarProvider } from './providers/snack-bar/SnackBarProvider';
 import { AppThemeProvider } from './providers/theme/AppThemeProvider';
 import { UserProvider } from './providers/user/UserProvider';
 import { App } from './App';
@@ -29,11 +30,15 @@ root.render(
         <StrictMode>
           <BrowserRouter>
             <UserProvider>
-              <ClientConfigProvider>
-                <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}>
-                  <App />
-                </HotkeysProvider>
-              </ClientConfigProvider>
+              <SnackBarProvider>
+                <ClientConfigProvider>
+                  <HotkeysProvider
+                    initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}
+                  >
+                    <App />
+                  </HotkeysProvider>
+                </ClientConfigProvider>
+              </SnackBarProvider>
             </UserProvider>
           </BrowserRouter>
         </StrictMode>

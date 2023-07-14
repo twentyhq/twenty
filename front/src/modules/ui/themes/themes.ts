@@ -13,6 +13,20 @@ const common = {
   icon: icon,
   text: text,
   blur: blur,
+  snackBar: {
+    success: {
+      background: '#16A26B',
+      color: '#D0F8E9',
+    },
+    error: {
+      background: '#B43232',
+      color: '#FED8D8',
+    },
+    info: {
+      background: color.gray80,
+      color: color.gray0,
+    },
+  },
   spacing: (multiplicator: number) => `${multiplicator * 4}px`,
   table: {
     horizontalCellMargin: '8px',

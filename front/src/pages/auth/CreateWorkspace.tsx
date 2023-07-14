@@ -13,6 +13,7 @@ import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
 import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
+import { useSnackBar } from '@/snack-bar/hooks/useSnackBar';
 import { MainButton } from '@/ui/components/buttons/MainButton';
 import { TextInput } from '@/ui/components/inputs/TextInput';
 import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
@@ -36,10 +37,6 @@ const StyledButtonContainer = styled.div`
   width: 200px;
 `;
 
-const StyledErrorContainer = styled.div`
-  color: ${({ theme }) => theme.color.red};
-`;
-
 const validationSchema = Yup.object()
   .shape({
     name: Yup.string().required('Name can not be empty'),
@@ -52,6 +49,8 @@ export function CreateWorkspace() {
   const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();
 
+  const { enqueueSnackBar } = useSnackBar();
+
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
   // Form
@@ -59,7 +58,6 @@ export function CreateWorkspace() {
     control,
     handleSubmit,
     formState: { isValid, isSubmitting },
-    setError,
     getValues,
   } = useForm<Form>({
     mode: 'onChange',
@@ -90,10 +88,12 @@ export function CreateWorkspace() {
 
         navigate('/auth/create/profile');
       } catch (error: any) {
-        setError('root', { message: error?.message });
+        enqueueSnackBar(error?.message, {
+          variant: 'error',
+        });
       }
     },
-    [navigate, setError, updateWorkspace],
+    [enqueueSnackBar, navigate, updateWorkspace],
   );
 
   useScopedHotkeys(
@@ -156,14 +156,6 @@ export function CreateWorkspace() {
           fullWidth
         />
       </StyledButtonContainer>
-      {/* Will be replaced by error snack bar */}
-      <Controller
-        name="name"
-        control={control}
-        render={({ formState: { errors } }) => (
-          <StyledErrorContainer>{errors?.root?.message}</StyledErrorContainer>
-        )}
-      />
     </>
   );
 }

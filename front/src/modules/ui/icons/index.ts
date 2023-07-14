@@ -38,3 +38,5 @@ export { IconTimelineEvent } from '@tabler/icons-react';
 export { IconAlertCircle } from '@tabler/icons-react';
 export { IconEye } from '@tabler/icons-react';
 export { IconEyeOff } from '@tabler/icons-react';
+export { IconAlertTriangle } from '@tabler/icons-react';
+export { IconCopy } from '@tabler/icons-react';
