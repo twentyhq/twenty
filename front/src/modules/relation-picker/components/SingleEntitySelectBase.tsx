@@ -1,8 +1,7 @@
 import { useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { DropdownMenuItem } from '@/ui/components/menu/DropdownMenuItem';
 import { DropdownMenuItemContainer } from '@/ui/components/menu/DropdownMenuItemContainer';
@@ -11,6 +10,7 @@ import { Avatar } from '@/users/components/Avatar';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
+import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
 import { CompanyPickerSkeleton } from './skeletons/CompanyPickerSkeleton';
 import { DropdownMenuItemContainerSkeleton } from './skeletons/DropdownMenuItemContainerSkeleton';
@@ -50,7 +50,7 @@ export function SingleEntitySelectBase<
       onEntitySelected(entitiesInDropdown[hoveredIndex]);
       resetScroll();
     },
-    InternalHotkeysScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [entitiesInDropdown, hoveredIndex, onEntitySelected],
   );
 
@@ -59,7 +59,7 @@ export function SingleEntitySelectBase<
     () => {
       onCancel?.();
     },
-    InternalHotkeysScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [onCancel],
   );
 

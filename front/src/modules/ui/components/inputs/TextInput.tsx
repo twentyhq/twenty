@@ -10,10 +10,11 @@ import styled from '@emotion/styled';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { Key } from 'ts-key-enum';
 
-import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { IconEye, IconEyeOff } from '@/ui/icons/index';
+
+import { InputHotkeyScope } from './types/InputHotkeyScope';
 
 type OwnProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
   label?: string;
@@ -110,18 +111,18 @@ export function TextInput({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
-    goBackToPreviousHotkeysScope,
-    setHotkeysScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeysScope();
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
 
   const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
     onFocus?.(e);
-    setHotkeysScopeAndMemorizePreviousScope(InternalHotkeysScope.TextInput);
+    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
   };
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
     onBlur?.(e);
-    goBackToPreviousHotkeysScope();
+    goBackToPreviousHotkeyScope();
   };
 
   useScopedHotkeys(
@@ -129,7 +130,7 @@ export function TextInput({
     () => {
       inputRef.current?.blur();
     },
-    InternalHotkeysScope.TextInput,
+    InputHotkeyScope.TextInput,
   );
 
   const [passwordVisible, setPasswordVisible] = useState(false);

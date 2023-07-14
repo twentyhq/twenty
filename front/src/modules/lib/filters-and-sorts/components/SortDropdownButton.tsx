@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
 
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import {
   SelectedSortType,
   SortType,
 } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
+
+import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
 import DropdownButton from './DropdownButton';
 
@@ -12,7 +13,7 @@ type OwnProps<SortField> = {
   isSortSelected: boolean;
   onSortSelect: (sort: SelectedSortType<SortField>) => void;
   availableSorts: SortType<SortField>[];
-  hotkeysScope: InternalHotkeysScope;
+  HotkeyScope: FiltersHotkeyScope;
 };
 
 const options: Array<SelectedSortType<any>['order']> = ['asc', 'desc'];
@@ -21,7 +22,7 @@ export function SortDropdownButton<SortField>({
   isSortSelected,
   availableSorts,
   onSortSelect,
-  hotkeysScope,
+  HotkeyScope,
 }: OwnProps<SortField>) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -57,7 +58,7 @@ export function SortDropdownButton<SortField>({
       isActive={isSortSelected}
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={handleIsUnfoldedChange}
-      hotkeysScope={hotkeysScope}
+      HotkeyScope={HotkeyScope}
     >
       {isOptionUnfolded
         ? options.map((option, index) => (

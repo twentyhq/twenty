@@ -2,10 +2,10 @@ import { ChangeEvent, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { InplaceInputTextEditMode } from '@/ui/inplace-inputs/components/InplaceInputTextEditMode';
 import { useMoveSoftFocus } from '@/ui/tables/hooks/useMoveSoftFocus';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 
 import { useEditableCell } from '../hooks/useEditableCell';
 
@@ -59,7 +59,7 @@ export function EditableCellDoubleTextEditMode({
       moveDown();
       onSubmit?.();
     },
-    InternalHotkeysScope.CellDoubleTextInput,
+    TableHotkeyScope.CellDoubleTextInput,
     [closeCell],
   );
 
@@ -69,7 +69,7 @@ export function EditableCellDoubleTextEditMode({
       onCancel?.();
       closeCell();
     },
-    InternalHotkeysScope.CellDoubleTextInput,
+    TableHotkeyScope.CellDoubleTextInput,
     [closeCell],
   );
 
@@ -85,7 +85,7 @@ export function EditableCellDoubleTextEditMode({
         moveRight();
       }
     },
-    InternalHotkeysScope.CellDoubleTextInput,
+    TableHotkeyScope.CellDoubleTextInput,
     [closeCell, moveRight, focusPosition],
   );
 
@@ -101,7 +101,7 @@ export function EditableCellDoubleTextEditMode({
         moveLeft();
       }
     },
-    InternalHotkeysScope.CellDoubleTextInput,
+    TableHotkeyScope.CellDoubleTextInput,
     [closeCell, moveRight, focusPosition],
   );
 

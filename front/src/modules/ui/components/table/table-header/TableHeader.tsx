@@ -1,7 +1,6 @@
 import { ReactNode, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { FilterDropdownButton } from '@/lib/filters-and-sorts/components/FilterDropdownButton';
 import SortAndFilterBar from '@/lib/filters-and-sorts/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/lib/filters-and-sorts/components/SortDropdownButton';
@@ -9,6 +8,7 @@ import {
   SelectedSortType,
   SortType,
 } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
+import { FiltersHotkeyScope } from '@/lib/filters-and-sorts/types/FiltersHotkeyScope';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
 type OwnProps<SortField> = {
@@ -93,13 +93,13 @@ export function TableHeader<SortField>({
         <StyledFilters>
           <FilterDropdownButton
             context={TableContext}
-            hotkeysScope={InternalHotkeysScope.TableHeaderDropdownButton}
+            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
           <SortDropdownButton<SortField>
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
-            hotkeysScope={InternalHotkeysScope.TableHeaderDropdownButton}
+            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
         </StyledFilters>
       </StyledTableHeader>

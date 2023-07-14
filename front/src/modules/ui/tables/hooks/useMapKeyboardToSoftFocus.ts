@@ -1,11 +1,11 @@
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 
 import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
+import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 import { useMoveSoftFocus } from './useMoveSoftFocus';
@@ -14,7 +14,7 @@ export function useMapKeyboardToSoftFocus() {
   const { moveDown, moveLeft, moveRight, moveUp } = useMoveSoftFocus();
 
   const disableSoftFocus = useDisableSoftFocus();
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   const [isSomeInputInEditMode] = useRecoilState(isSomeInputInEditModeState);
 
@@ -25,7 +25,7 @@ export function useMapKeyboardToSoftFocus() {
         moveUp();
       }
     },
-    InternalHotkeysScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [moveUp, isSomeInputInEditMode],
   );
 
@@ -36,7 +36,7 @@ export function useMapKeyboardToSoftFocus() {
         moveDown();
       }
     },
-    InternalHotkeysScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [moveDown, isSomeInputInEditMode],
   );
 
@@ -47,7 +47,7 @@ export function useMapKeyboardToSoftFocus() {
         moveLeft();
       }
     },
-    InternalHotkeysScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [moveLeft, isSomeInputInEditMode],
   );
 
@@ -58,17 +58,17 @@ export function useMapKeyboardToSoftFocus() {
         moveRight();
       }
     },
-    InternalHotkeysScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [moveRight, isSomeInputInEditMode],
   );
 
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      setHotkeysScope(InternalHotkeysScope.Table, { goto: true });
+      setHotkeyScope(TableHotkeyScope.Table, { goto: true });
       disableSoftFocus();
     },
-    InternalHotkeysScope.TableSoftFocus,
+    TableHotkeyScope.TableSoftFocus,
     [disableSoftFocus],
   );
 }

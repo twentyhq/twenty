@@ -1,14 +1,14 @@
 import { Context } from 'react';
 
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { availableFiltersScopedState } from '@/lib/filters-and-sorts/states/availableFiltersScopedState';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
 import { getOperandsForFilterType } from '@/lib/filters-and-sorts/utils/getOperandsForFilterType';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenuItemContainer } from '@/ui/components/menu/DropdownMenuItemContainer';
 import { DropdownMenuSelectableItem } from '@/ui/components/menu/DropdownMenuSelectableItem';
 
@@ -39,7 +39,7 @@ export function FilterDropdownFilterSelect({
     context,
   );
 
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   return (
     <DropdownMenuItemContainer style={{ maxHeight: '300px' }}>
@@ -50,7 +50,7 @@ export function FilterDropdownFilterSelect({
             setFilterDefinitionUsedInDropdown(availableFilter);
 
             if (availableFilter.type === 'entity') {
-              setHotkeysScope(InternalHotkeysScope.RelationPicker);
+              setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
             }
 
             setSelectedOperandInDropdown(

@@ -4,7 +4,7 @@ import { HotkeysProvider } from 'react-hotkeys-hook';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
-import { INITIAL_HOTKEYS_SCOPES } from '@/hotkeys/constants';
+import { INITIAL_HOTKEYS_SCOPES } from '@/lib/hotkeys/constants';
 import { ThemeType } from '@/ui/themes/themes';
 
 import '@emotion/react';

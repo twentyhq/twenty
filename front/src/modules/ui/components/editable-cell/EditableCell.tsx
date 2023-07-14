@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
+import { HotkeyScope } from '@/lib/hotkeys/types/HotkeyScope';
 
 import { useCurrentCellEditMode } from './hooks/useCurrentCellEditMode';
 import { useIsSoftFocusOnCurrentCell } from './hooks/useIsSoftFocusOnCurrentCell';
@@ -25,7 +25,7 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  editHotkeysScope?: HotkeysScope;
+  editHotkeyScope?: HotkeyScope;
   onSubmit?: () => void;
   onCancel?: () => void;
 };
@@ -35,7 +35,7 @@ export function EditableCell({
   editModeVerticalPosition = 'over',
   editModeContent,
   nonEditModeContent,
-  editHotkeysScope,
+  editHotkeyScope,
   onSubmit,
   onCancel,
 }: OwnProps) {
@@ -55,7 +55,7 @@ export function EditableCell({
           {editModeContent}
         </EditableCellEditMode>
       ) : hasSoftFocus ? (
-        <EditableCellSoftFocusMode editHotkeysScope={editHotkeysScope}>
+        <EditableCellSoftFocusMode editHotkeyScope={editHotkeyScope}>
           {nonEditModeContent}
         </EditableCellSoftFocusMode>
       ) : (

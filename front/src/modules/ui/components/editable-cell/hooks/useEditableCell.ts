@@ -1,28 +1,28 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
+import { HotkeyScope } from '@/lib/hotkeys/types/HotkeyScope';
 import { useCloseCurrentCellInEditMode } from '@/ui/tables/hooks/useClearCellInEditMode';
 import { isSomeInputInEditModeState } from '@/ui/tables/states/isSomeInputInEditModeState';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 
 import { useCurrentCellEditMode } from './useCurrentCellEditMode';
 
 export function useEditableCell() {
   const { setCurrentCellInEditMode } = useCurrentCellEditMode();
 
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
 
   function closeEditableCell() {
     closeCurrentCellInEditMode();
-    setHotkeysScope(InternalHotkeysScope.TableSoftFocus);
+    setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   }
 
   const openEditableCell = useRecoilCallback(
     ({ snapshot, set }) =>
-      (hotkeysScope: HotkeysScope) => {
+      (HotkeyScope: HotkeyScope) => {
         const isSomeInputInEditMode = snapshot
           .getLoadable(isSomeInputInEditModeState)
           .valueOrThrow();
@@ -32,10 +32,10 @@ export function useEditableCell() {
 
           setCurrentCellInEditMode();
 
-          setHotkeysScope(hotkeysScope.scope);
+          setHotkeyScope(HotkeyScope.scope);
         }
       },
-    [setCurrentCellInEditMode, setHotkeysScope],
+    [setCurrentCellInEditMode, setHotkeyScope],
   );
 
   return {

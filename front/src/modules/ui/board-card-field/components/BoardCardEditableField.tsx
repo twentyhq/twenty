@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 
-import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
+import { HotkeyScope } from '@/lib/hotkeys/types/HotkeyScope';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 
 import { BoardCardFieldContext } from '../states/BoardCardFieldContext';
@@ -12,7 +12,7 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  editHotkeysScope?: HotkeysScope;
+  editHotkeyScope?: HotkeyScope;
 };
 
 export function BoardCardEditableField(props: OwnProps) {

@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
-import { HotkeysScope } from '@/hotkeys/types/internal/HotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
+import { HotkeyScope } from '@/lib/hotkeys/types/HotkeyScope';
 
 import { useBoardCardField } from '../hooks/useBoardCardField';
+import { BoardCardFieldHotkeyScope } from '../types/BoardCardFieldHotkeyScope';
 
 import { BoardCardEditableFieldDisplayMode } from './BoardCardEditableFieldDisplayMode';
 import { BoardCardEditableFieldEditMode } from './BoardCardEditableFieldEditMode';
@@ -26,7 +26,7 @@ type OwnProps = {
   nonEditModeContent: ReactElement;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  editHotkeysScope?: HotkeysScope;
+  editHotkeyScope?: HotkeyScope;
 };
 
 export function BoardCardEditableFieldInternal({
@@ -34,7 +34,7 @@ export function BoardCardEditableFieldInternal({
   editModeVerticalPosition = 'over',
   editModeContent,
   nonEditModeContent,
-  editHotkeysScope,
+  editHotkeyScope,
 }: OwnProps) {
   const { openBoardCardField, isBoardCardFieldInEditMode } =
     useBoardCardField();
@@ -42,22 +42,23 @@ export function BoardCardEditableFieldInternal({
   const { closeBoardCardField } = useBoardCardField();
 
   const {
-    goBackToPreviousHotkeysScope,
-    setHotkeysScopeAndMemorizePreviousScope,
-  } = usePreviousHotkeysScope();
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
 
   function handleOnClick() {
     if (!isBoardCardFieldInEditMode) {
       openBoardCardField();
-      setHotkeysScopeAndMemorizePreviousScope(
-        editHotkeysScope?.scope ?? InternalHotkeysScope.BoardCardFieldEditMode,
-        editHotkeysScope?.customScopes ?? {},
+      setHotkeyScopeAndMemorizePreviousScope(
+        editHotkeyScope?.scope ??
+          BoardCardFieldHotkeyScope.BoardCardFieldEditMode,
+        editHotkeyScope?.customScopes ?? {},
       );
     }
   }
 
   function handleEditModeExit() {
-    goBackToPreviousHotkeysScope();
+    goBackToPreviousHotkeyScope();
     closeBoardCardField();
   }
 

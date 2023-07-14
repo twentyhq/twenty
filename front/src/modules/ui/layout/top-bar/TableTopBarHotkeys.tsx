@@ -1,17 +1,14 @@
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 
 type OwnProps = {
   onAddButtonClick?: () => void;
 };
 
 export function TopBarHotkeys({ onAddButtonClick }: OwnProps) {
-  useScopedHotkeys(
-    'c',
-    () => onAddButtonClick?.(),
-    InternalHotkeysScope.Table,
-    [onAddButtonClick],
-  );
+  useScopedHotkeys('c', () => onAddButtonClick?.(), TableHotkeyScope.Table, [
+    onAddButtonClick,
+  ]);
 
   return <></>;
 }

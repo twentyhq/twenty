@@ -1,4 +1,4 @@
-export enum PageHotkeysScope {
+export enum PageHotkeyScope {
   Settings = 'settings',
   CreateWokspace = 'create-workspace',
   PasswordLogin = 'password-login',

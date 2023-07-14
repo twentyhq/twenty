@@ -1,5 +1,5 @@
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { PersonChip } from '@/people/components/PersonChip';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { EditableCell } from '@/ui/components/editable-cell/EditableCell';
 import { Company, User } from '~/generated/graphql';
 
@@ -16,7 +16,7 @@ export type OwnProps = {
 export function CompanyAccountOwnerCell({ company }: OwnProps) {
   return (
     <EditableCell
-      editHotkeysScope={{ scope: InternalHotkeysScope.RelationPicker }}
+      editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={<CompanyAccountOwnerPicker company={company} />}
       nonEditModeContent={
         company.accountOwner?.displayName ? (

@@ -1,14 +1,15 @@
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { useEditableCell } from '@/ui/components/editable-cell/hooks/useEditableCell';
 import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
@@ -32,7 +33,7 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
 
   const { closeEditableCell } = useEditableCell();
 
-  const addToScopeStack = useSetHotkeysScope();
+  const addToScopeStack = useSetHotkeyScope();
 
   const companies = useFilteredSearchEntityQuery({
     queryHook: useSearchCompanyQuery,
@@ -62,13 +63,13 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
 
   function handleCreate() {
     setIsCreating(true);
-    addToScopeStack(InternalHotkeysScope.CellDoubleTextInput);
+    addToScopeStack(TableHotkeyScope.CellDoubleTextInput);
   }
 
   useScopedHotkeys(
     Key.Escape,
     () => closeEditableCell(),
-    InternalHotkeysScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [closeEditableCell],
   );
 

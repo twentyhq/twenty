@@ -11,13 +11,13 @@ import {
 import { useHandleCheckableCommentThreadTargetChange } from '@/comments/hooks/useHandleCheckableCommentThreadTargetChange';
 import { CommentableEntityForSelect } from '@/comments/types/CommentableEntityForSelect';
 import { CompanyChip } from '@/companies/components/CompanyChip';
-import { usePreviousHotkeysScope } from '@/hotkeys/hooks/internal/usePreviousHotkeysScope';
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
+import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { PersonChip } from '@/people/components/PersonChip';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { MultipleEntitySelect } from '@/relation-picker/components/MultipleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flatMapAndSortEntityForSelectArrayByName';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
@@ -122,17 +122,17 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   });
 
   const {
-    setHotkeysScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeysScope,
-  } = usePreviousHotkeysScope();
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
 
   function handleRelationContainerClick() {
     if (isMenuOpen) {
       exitEditMode();
     } else {
       setIsMenuOpen(true);
-      setHotkeysScopeAndMemorizePreviousScope(
-        InternalHotkeysScope.RelationPicker,
+      setHotkeyScopeAndMemorizePreviousScope(
+        RelationPickerHotkeyScope.RelationPicker,
       );
     }
   }
@@ -147,7 +147,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   });
 
   function exitEditMode() {
-    goBackToPreviousHotkeysScope();
+    goBackToPreviousHotkeyScope();
     setIsMenuOpen(false);
     setSearchFilter('');
   }
@@ -157,7 +157,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     () => {
       exitEditMode();
     },
-    InternalHotkeysScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [exitEditMode],
   );
 

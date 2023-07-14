@@ -3,12 +3,12 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from '@/utils/type-guards/isDefined';
 
 import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants';
-import { currentHotkeysScopeState } from '../states/internal/currentHotkeysScopeState';
-import { CustomHotkeysScopes } from '../types/internal/CustomHotkeysScope';
+import { currentHotkeyScopeState } from '../states/internal/currentHotkeyScopeState';
+import { CustomHotkeyScopes } from '../types/CustomHotkeyScope';
 
 function isCustomScopesEqual(
-  customScopesA: CustomHotkeysScopes | undefined,
-  customScopesB: CustomHotkeysScopes | undefined,
+  customScopesA: CustomHotkeyScopes | undefined,
+  customScopesB: CustomHotkeyScopes | undefined,
 ) {
   return (
     customScopesA?.commandMenu === customScopesB?.commandMenu &&
@@ -16,19 +16,19 @@ function isCustomScopesEqual(
   );
 }
 
-export function useSetHotkeysScope() {
+export function useSetHotkeyScope() {
   return useRecoilCallback(
     ({ snapshot, set }) =>
-      async (hotkeysScopeToSet: string, customScopes?: CustomHotkeysScopes) => {
-        const currentHotkeysScope = await snapshot.getPromise(
-          currentHotkeysScopeState,
+      async (HotkeyScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
+        const currentHotkeyScope = await snapshot.getPromise(
+          currentHotkeyScopeState,
         );
 
-        if (currentHotkeysScope.scope === hotkeysScopeToSet) {
+        if (currentHotkeyScope.scope === HotkeyScopeToSet) {
           if (!isDefined(customScopes)) {
             if (
               isCustomScopesEqual(
-                currentHotkeysScope?.customScopes,
+                currentHotkeyScope?.customScopes,
                 DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES,
               )
             ) {
@@ -37,7 +37,7 @@ export function useSetHotkeysScope() {
           } else {
             if (
               isCustomScopesEqual(
-                currentHotkeysScope?.customScopes,
+                currentHotkeyScope?.customScopes,
                 customScopes,
               )
             ) {
@@ -46,8 +46,8 @@ export function useSetHotkeysScope() {
           }
         }
 
-        set(currentHotkeysScopeState, {
-          scope: hotkeysScopeToSet,
+        set(currentHotkeyScopeState, {
+          scope: HotkeyScopeToSet,
           customScopes: {
             commandMenu: customScopes?.commandMenu ?? true,
             goto: customScopes?.goto ?? false,

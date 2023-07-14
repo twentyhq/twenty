@@ -1,15 +1,17 @@
 import { Context, useCallback, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/hotkeys/hooks/useScopedHotkeys';
-import { useSetHotkeysScope } from '@/hotkeys/hooks/useSetHotkeysScope';
-import { InternalHotkeysScope } from '@/hotkeys/types/internal/InternalHotkeysScope';
 import { filterDefinitionUsedInDropdownScopedState } from '@/lib/filters-and-sorts/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
 import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/lib/filters-and-sorts/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/lib/filters-and-sorts/states/selectedOperandInDropdownScopedState';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
+
+import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
 import DropdownButton from './DropdownButton';
 import { FilterDropdownDateSearchInput } from './FilterDropdownDateSearchInput';
@@ -23,10 +25,10 @@ import { FilterDropdownTextSearchInput } from './FilterDropdownTextSearchInput';
 
 export function FilterDropdownButton({
   context,
-  hotkeysScope,
+  HotkeyScope,
 }: {
   context: Context<string | null>;
-  hotkeysScope: InternalHotkeysScope;
+  HotkeyScope: FiltersHotkeyScope;
 }) {
   const [isUnfolded, setIsUnfolded] = useState(false);
 
@@ -65,15 +67,15 @@ export function FilterDropdownButton({
 
   const isFilterSelected = (filters?.length ?? 0) > 0;
 
-  const setHotkeysScope = useSetHotkeysScope();
+  const setHotkeyScope = useSetHotkeyScope();
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
-      setHotkeysScope(hotkeysScope);
+      setHotkeyScope(HotkeyScope);
       setIsUnfolded(true);
     } else {
       if (filterDefinitionUsedInDropdown?.type === 'entity') {
-        setHotkeysScope(hotkeysScope);
+        setHotkeyScope(HotkeyScope);
       }
       setIsUnfolded(false);
       resetState();
@@ -85,7 +87,7 @@ export function FilterDropdownButton({
     () => {
       handleIsUnfoldedChange(false);
     },
-    InternalHotkeysScope.RelationPicker,
+    RelationPickerHotkeyScope.RelationPicker,
     [handleIsUnfoldedChange],
   );
 
@@ -95,7 +97,7 @@ export function FilterDropdownButton({
       isActive={isFilterSelected}
       isUnfolded={isUnfolded}
       onIsUnfoldedChange={handleIsUnfoldedChange}
-      hotkeysScope={hotkeysScope}
+      HotkeyScope={HotkeyScope}
     >
       {!filterDefinitionUsedInDropdown ? (
         <FilterDropdownFilterSelect context={context} />
