@@ -11,9 +11,8 @@ import {
   IconUsers,
 } from '@/ui/icons/index';
 import NavItem from '@/ui/layout/navbar/NavItem';
-import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
 import NavTitle from '@/ui/layout/navbar/NavTitle';
-import SubNavbarContainer from '@/ui/layout/navbar/sub-navbar/SubNavBarContainer';
+import SubNavbar from '@/ui/layout/navbar/sub-navbar/SubNavbar';
 
 export function SettingsNavbar() {
   const theme = useTheme();
@@ -25,8 +24,8 @@ export function SettingsNavbar() {
   }, [logout]);
 
   return (
-    <SubNavbarContainer backButtonTitle="Settings">
-      <NavItemsContainer>
+    <SubNavbar backButtonTitle="Settings">
+      <>
         <NavTitle label="User" />
         <NavItem
           label="Profile"
@@ -81,7 +80,7 @@ export function SettingsNavbar() {
           icon={<IconLogout size={theme.icon.size.md} />}
           danger={true}
         />
-      </NavItemsContainer>
-    </SubNavbarContainer>
+      </>
+    </SubNavbar>
   );
 }

@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
+import { IconButton } from '@/ui/components/buttons/IconButton';
 import { IconPlus } from '@/ui/icons/index';
 
 import NavCollapseButton from '../navbar/NavCollapseButton';
@@ -16,6 +17,7 @@ const TopBarContainer = styled.div`
   font-size: 14px;
   min-height: ${TOP_BAR_MIN_HEIGHT}px;
   padding: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(3)};
 `;
 
 const TitleContainer = styled.div`
@@ -24,22 +26,6 @@ const TitleContainer = styled.div`
   font-size: 14px;
   margin-left: 4px;
   width: 100%;
-`;
-
-const AddButtonContainer = styled.div`
-  align-items: center;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  flex-shrink: 0;
-  height: 28px;
-  justify-content: center;
-  justify-self: flex-end;
-  margin-right: ${({ theme }) => theme.spacing(1)};
-  user-select: none;
-  width: 28px;
 `;
 
 type OwnProps = {
@@ -56,12 +42,13 @@ export function TopBar({ title, icon, onAddButtonClick }: OwnProps) {
         {icon}
         <TitleContainer data-testid="top-bar-title">{title}</TitleContainer>
         {onAddButtonClick && (
-          <AddButtonContainer
+          <IconButton
+            icon={<IconPlus size={16} />}
+            size="large"
             data-testid="add-button"
             onClick={onAddButtonClick}
-          >
-            <IconPlus size={16} />
-          </AddButtonContainer>
+            variant="border"
+          />
         )}
       </TopBarContainer>
     </>

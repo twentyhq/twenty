@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+import NavItemsContainer from '../NavItemsContainer';
+
 import NavBackButton from './NavBackButton';
 
 type OwnProps = {
@@ -10,23 +12,15 @@ type OwnProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding-left: 300px;
   padding-top: ${({ theme }) => theme.spacing(6)};
+  width: 220px;
 `;
 
-const StyledNavItemsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-export default function SubNavbarContainer({
-  children,
-  backButtonTitle,
-}: OwnProps) {
+export default function SubNavbar({ children, backButtonTitle }: OwnProps) {
   return (
     <StyledContainer>
       <NavBackButton title={backButtonTitle} />
-      <StyledNavItemsContainer>{children}</StyledNavItemsContainer>
+      <NavItemsContainer>{children}</NavItemsContainer>
     </StyledContainer>
   );
 }

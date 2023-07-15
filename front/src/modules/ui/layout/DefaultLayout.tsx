@@ -7,7 +7,7 @@ import { AppNavbar } from '~/AppNavbar';
 
 import { MOBILE_VIEWPORT } from '../themes/themes';
 
-import { NavbarContainer } from './navbar/NavbarContainer';
+import { NavbarAnimatedContainer } from './navbar/NavbarAnimatedContainer';
 import { isNavbarOpenedState } from './states/isNavbarOpenedState';
 
 const StyledLayout = styled.div`
@@ -47,9 +47,9 @@ export function DefaultLayout({ children }: OwnProps) {
       {userIsAuthenticated ? (
         <>
           <CommandMenu />
-          <NavbarContainer>
+          <NavbarAnimatedContainer>
             <AppNavbar />
-          </NavbarContainer>
+          </NavbarAnimatedContainer>
           <MainContainer>{children}</MainContainer>
         </>
       ) : (

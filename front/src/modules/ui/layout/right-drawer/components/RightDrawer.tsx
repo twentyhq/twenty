@@ -1,5 +1,7 @@
 import { useRef } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 
 import {
@@ -13,16 +15,15 @@ import { rightDrawerPageState } from '../states/rightDrawerPageState';
 
 import { RightDrawerRouter } from './RightDrawerRouter';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled(motion.div)`
   background: ${({ theme }) => theme.background.primary};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   height: 100%;
   overflow-x: hidden;
   position: fixed;
+
   right: 0;
   top: 0;
-  transition: width 0.5s;
-  width: ${({ theme }) => theme.rightDrawerWidth};
   z-index: 2;
 `;
 
@@ -45,17 +46,23 @@ export function RightDrawer() {
     callback: () => setIsRightDrawerOpen(false),
     mode: OutsideClickAlerterMode.absolute,
   });
-  if (!isRightDrawerOpen || !isDefined(rightDrawerPage)) {
+  const theme = useTheme();
+  if (!isDefined(rightDrawerPage)) {
     return <></>;
   }
 
   return (
-    <>
-      <StyledContainer>
-        <StyledRightDrawer ref={rightDrawerRef}>
-          <RightDrawerRouter />
-        </StyledRightDrawer>
-      </StyledContainer>
-    </>
+    <StyledContainer
+      animate={{
+        width: isRightDrawerOpen ? theme.rightDrawerWidth : '0',
+      }}
+      transition={{
+        duration: theme.animation.duration.visible,
+      }}
+    >
+      <StyledRightDrawer ref={rightDrawerRef}>
+        <RightDrawerRouter />
+      </StyledRightDrawer>
+    </StyledContainer>
   );
 }
