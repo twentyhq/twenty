@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
+
+import { debounce } from '@/utils/debounce';
+
+import { EditColumnTitleInput } from './EditColumnTitleInput';
 
 export const StyledColumn = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
@@ -33,14 +37,43 @@ export const StyledAmount = styled.div`
 type OwnProps = {
   colorCode?: string;
   title: string;
+  pipelineStageId?: string;
+  onEditTitle: (title: string) => void;
   children: React.ReactNode;
 };
 
-export function BoardColumn({ colorCode, title, children }: OwnProps) {
+export function BoardColumn({
+  colorCode,
+  title,
+  onEditTitle,
+  children,
+}: OwnProps) {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [internalValue, setInternalValue] = React.useState(title);
+
+  function switchEditMode() {
+    setIsEditing(!isEditing);
+  }
+
+  const debouncedOnUpdate = debounce(onEditTitle, 200);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setInternalValue(event.target.value);
+    debouncedOnUpdate(event.target.value);
+  };
+
   return (
     <StyledColumn>
-      <StyledHeader>
-        <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
+      <StyledHeader onClick={switchEditMode}>
+        {isEditing ? (
+          <EditColumnTitleInput
+            color={colorCode}
+            switchEditMode={switchEditMode}
+            value={internalValue}
+            onChange={handleChange}
+          />
+        ) : (
+          <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
+        )}
       </StyledHeader>
       {children}
     </StyledColumn>

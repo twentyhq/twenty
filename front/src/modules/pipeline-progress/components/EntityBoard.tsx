@@ -65,14 +65,23 @@ export function EntityBoard({ boardOptions }: { boardOptions: BoardOptions }) {
   return (board?.length ?? 0) > 0 ? (
     <StyledBoard>
       <DragDropContext onDragEnd={onDragEnd}>
-        {board?.map((column) => (
-          <RecoilScope
-            SpecificContext={BoardColumnContext}
-            key={column.pipelineStageId}
-          >
-            <EntityBoardColumn boardOptions={boardOptions} column={column} />
-          </RecoilScope>
-        ))}
+        {board &&
+          [...board]
+            .sort((a, b) => {
+              if (!a.index || !b.index) return 0;
+              return a.index - b.index;
+            })
+            .map((column) => (
+              <RecoilScope
+                SpecificContext={BoardColumnContext}
+                key={column.pipelineStageId}
+              >
+                <EntityBoardColumn
+                  boardOptions={boardOptions}
+                  column={column}
+                />
+              </RecoilScope>
+            ))}
       </DragDropContext>
     </StyledBoard>
   ) : (

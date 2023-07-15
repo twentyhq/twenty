@@ -7,6 +7,7 @@ import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
+import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
 import { BoardColumnContext } from '../states/BoardColumnContext';
 import { pipelineStageIdScopedState } from '../states/pipelineStageIdScopedState';
@@ -58,10 +59,25 @@ export function EntityBoardColumn({
     }
   }, [column, setPipelineStageId, pipelineStageId]);
 
+  const [updatePipelineStage] = useUpdatePipelineStageMutation();
+  function handleEditColumnTitle(value: string) {
+    updatePipelineStage({
+      variables: {
+        id: pipelineStageId,
+        name: value,
+      },
+    });
+  }
+
   return (
     <Droppable droppableId={column.pipelineStageId}>
       {(droppableProvided) => (
-        <BoardColumn title={`${column.title}  `} colorCode={column.colorCode}>
+        <BoardColumn
+          onEditTitle={handleEditColumnTitle}
+          title={column.title}
+          colorCode={column.colorCode}
+          pipelineStageId={column.pipelineStageId}
+        >
           <BoardColumnCardsContainer droppableProvided={droppableProvided}>
             {column.pipelineProgressIds.map((pipelineProgressId, index) => (
               <RecoilScope

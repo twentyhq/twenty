@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { IconCurrencyDollar } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
+import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 import { GET_PIPELINES } from '@/pipeline-progress/queries';
 import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
 import { pipelineProgressIdScopedState } from '@/pipeline-progress/states/pipelineProgressIdScopedState';
@@ -19,7 +20,6 @@ import {
   PipelineProgress,
   useUpdateOnePipelineProgressMutation,
 } from '~/generated/graphql';
-import { companyProgressesFamilyState } from '~/pages/opportunities/companyProgressesFamilyState';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
