@@ -1,11 +1,10 @@
 import React from 'react';
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
 
 import { IconArrowUpRight } from '@/ui/icons';
 
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
+import { useCommandMenu } from '../hooks/useCommandMenu';
 
 import {
   StyledIconAndLabelContainer,
@@ -30,15 +29,15 @@ export function CommandMenuItem({
   icon,
   shortcuts,
 }: OwnProps) {
-  const setIsCommandMenuOpened = useSetRecoilState(isCommandMenuOpenedState);
   const navigate = useNavigate();
+  const { closeCommandMenu } = useCommandMenu();
 
   if (to && !icon) {
     icon = <IconArrowUpRight />;
   }
 
   const onItemClick = () => {
-    setIsCommandMenuOpened(false);
+    closeCommandMenu();
 
     if (onClick) {
       onClick();
