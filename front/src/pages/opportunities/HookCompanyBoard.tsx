@@ -15,11 +15,11 @@ import {
   useGetPipelinesQuery,
 } from '~/generated/graphql';
 
-import { boardState } from './boardState';
+import { boardState } from '../../modules/pipeline-progress/states/boardState';
+
 import { companyBoardIndexState } from './companyBoardIndexState';
 import { currentPipelineState } from './currentPipelineState';
 import { isBoardLoadedState } from './isBoardLoadedState';
-
 export function HookCompanyBoard() {
   const [currentPipeline, setCurrentPipeline] =
     useRecoilState(currentPipelineState);

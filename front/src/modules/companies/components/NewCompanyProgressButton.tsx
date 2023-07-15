@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { GET_PIPELINES } from '@/pipeline-progress/queries';
 import { BoardColumnContext } from '@/pipeline-progress/states/BoardColumnContext';
+import { boardState } from '@/pipeline-progress/states/boardState';
 import { pipelineStageIdScopedState } from '@/pipeline-progress/states/pipelineStageIdScopedState';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -22,7 +23,6 @@ import {
   useCreateOnePipelineProgressMutation,
   useSearchCompanyQuery,
 } from '~/generated/graphql';
-import { boardState } from '~/pages/opportunities/boardState';
 import { currentPipelineState } from '~/pages/opportunities/currentPipelineState';
 
 export function NewCompanyProgressButton() {

@@ -2,13 +2,13 @@ import { useCallback } from 'react';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilState } from 'recoil';
 
+import { boardState } from '@/pipeline-progress/states/boardState';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import {
   PipelineProgress,
   PipelineStage,
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
-import { boardState } from '~/pages/opportunities/boardState';
 
 import {
   getOptimisticlyUpdatedBoard,

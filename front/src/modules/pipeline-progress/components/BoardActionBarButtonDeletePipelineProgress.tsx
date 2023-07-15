@@ -1,10 +1,10 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 
+import { boardState } from '@/pipeline-progress/states/boardState';
 import { EntityTableActionBarButton } from '@/ui/components/table/action-bar/EntityTableActionBarButton';
 import { IconTrash } from '@/ui/icons/index';
 import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
-import { boardState } from '~/pages/opportunities/boardState';
 
 import { GET_PIPELINES } from '../queries';
 import { selectedBoardCardsState } from '../states/selectedBoardCardsState';
