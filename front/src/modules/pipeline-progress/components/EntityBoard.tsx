@@ -19,15 +19,6 @@ import { BoardOptions } from '../types/BoardOptions';
 
 import { EntityBoardColumn } from './EntityBoardColumn';
 
-export type EntityProgress = {
-  entity: any;
-  pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>;
-};
-
-export type EntityProgressDict = {
-  [key: string]: EntityProgress;
-};
-
 export function EntityBoard({ boardOptions }: { boardOptions: BoardOptions }) {
   const [board, setBoard] = useRecoilState(boardState);
   const [updatePipelineProgressStage] =
