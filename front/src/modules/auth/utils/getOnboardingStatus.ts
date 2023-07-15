@@ -11,9 +11,15 @@ export function getOnboardingStatus(
   isLoggedIn: boolean,
   currentUser: CurrentUser | null,
 ) {
-  if (!isLoggedIn || !currentUser) {
+  if (!isLoggedIn) {
     return OnboardingStatus.OngoingUserCreation;
   }
+
+  // if the user has not been fetched yet, we can't know the onboarding status
+  if (!currentUser) {
+    return undefined;
+  }
+
   if (!currentUser.workspaceMember?.workspace.displayName) {
     return OnboardingStatus.OngoingWorkspaceCreation;
   }

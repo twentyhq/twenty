@@ -18,7 +18,10 @@ export function useSelectAllRows() {
           .getLoadable(tableRowIdsState)
           .valueOrThrow();
 
-        if (allRowsSelectedStatus === 'none') {
+        if (
+          allRowsSelectedStatus === 'none' ||
+          allRowsSelectedStatus === 'some'
+        ) {
           for (const rowId of tableRowIds) {
             set(isRowSelectedFamilyState(rowId), true);
           }

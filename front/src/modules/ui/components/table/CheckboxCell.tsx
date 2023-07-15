@@ -21,8 +21,8 @@ export function CheckboxCell() {
 
   const { currentRowSelected, setCurrentRowSelected } = useCurrentRowSelected();
 
-  function handleContainerClick() {
-    handleCheckboxChange(!currentRowSelected);
+  function onChange(checked: boolean) {
+    handleCheckboxChange(checked);
   }
 
   function handleCheckboxChange(newCheckedValue: boolean) {
@@ -33,7 +33,7 @@ export function CheckboxCell() {
 
   return (
     <StyledContainer>
-      <Checkbox checked={currentRowSelected} onChange={handleContainerClick} />
+      <Checkbox checked={currentRowSelected} onChange={onChange} />
     </StyledContainer>
   );
 }

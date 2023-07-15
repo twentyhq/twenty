@@ -15,6 +15,7 @@ export { IconColorSwatch } from '@tabler/icons-react';
 export { IconX } from '@tabler/icons-react';
 export { IconChevronLeft } from '@tabler/icons-react';
 export { IconPlus } from '@tabler/icons-react';
+export { IconMinus } from '@tabler/icons-react';
 export { IconLink } from '@tabler/icons-react';
 export { IconUsers } from '@tabler/icons-react';
 export { IconCalendarEvent } from '@tabler/icons-react';

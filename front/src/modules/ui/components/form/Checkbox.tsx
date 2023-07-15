@@ -1,79 +1,98 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
-import { IconCheck } from '@/ui/icons/index';
+import { IconCheck, IconMinus } from '@/ui/icons';
 
 type OwnProps = {
   checked: boolean;
   indeterminate?: boolean;
-  onChange: () => void;
+  onChange: (value: boolean) => void;
 };
 
-const StyledContainer = styled.div`
+const StyledInputContainer = styled.div`
   align-items: center;
-
   display: flex;
-  justify-content: center;
-  position: relative;
+`;
 
-  input[type='checkbox'] {
-    accent-color: ${({ theme }) => theme.color.blue};
+const StyledInput = styled.input<{ indeterminate?: boolean }>`
+  cursor: pointer;
+  margin: 0;
+  opacity: 0;
+  position: absolute;
+  z-index: 10;
+
+  & + label {
     cursor: pointer;
     height: 14px;
-    margin: 2px;
-    user-select: none;
+    padding: 0;
+    position: relative;
     width: 14px;
   }
 
-  input[type='checkbox']::before {
-    background-color: ${({ theme }) => theme.background.primary};
-    border: 1px solid ${({ theme }) => theme.font.color.tertiary};
-    border-radius: ${({ theme }) => theme.border.radius.xs};
+  & + label:before {
+    background: ${({ theme }) => theme.background.primary};
+    border: 1px solid ${({ theme }) => theme.border.color.strong};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
     content: '';
-    display: block;
+    cursor: pointer;
+    display: inline-block;
     height: 12px;
     width: 12px;
   }
 
-  input[type='checkbox']:hover::before {
-    border: 1px solid ${({ theme }) => theme.font.color.primary};
-  }
-
-  input[type='checkbox']:checked::before {
-    border: 1px solid ${({ theme }) => theme.color.blue};
-  }
-
-  svg {
+  &:checked + label:before {
     background: ${({ theme }) => theme.color.blue};
-    color: white;
+    border-color: ${({ theme }) => theme.color.blue};
+  }
+
+  & + label:before {
+    background: ${({ theme, indeterminate }) =>
+      indeterminate ? theme.color.blue : theme.background.primary};
+    border-color: ${({ theme, indeterminate }) =>
+      indeterminate ? theme.color.blue : theme.border.color.inverted};
+  }
+
+  & + label > svg {
     height: 12px;
-    left: 50%;
+    left: 1px;
     position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    stroke: ${({ theme }) => theme.grayScale.gray0};
+    top: 1px;
     width: 12px;
   }
 `;
 
 export function Checkbox({ checked, onChange, indeterminate }: OwnProps) {
-  const ref = React.useRef<HTMLInputElement>(null);
+  const [isInternalChecked, setIsInternalChecked] = React.useState(false);
 
   React.useEffect(() => {
-    if (ref.current === null) return;
-    if (typeof indeterminate === 'boolean') {
-      ref.current.indeterminate = !checked && indeterminate;
-    }
-  }, [ref, indeterminate, checked]);
+    setIsInternalChecked(checked);
+  }, [checked]);
+
+  function handleChange(value: boolean) {
+    onChange(value);
+    setIsInternalChecked(!isInternalChecked);
+  }
 
   return (
-    <StyledContainer onClick={onChange}>
-      <input
-        ref={ref}
+    <StyledInputContainer>
+      <StyledInput
         type="checkbox"
+        name="styled-checkbox"
         data-testid="input-checkbox"
-        checked={checked}
+        checked={isInternalChecked}
+        indeterminate={indeterminate}
+        onChange={(event) => handleChange(event.target.checked)}
       />
-      {checked && <IconCheck />}
-    </StyledContainer>
+      <label htmlFor="checkbox">
+        {indeterminate ? (
+          <IconMinus />
+        ) : isInternalChecked ? (
+          <IconCheck />
+        ) : (
+          <></>
+        )}
+      </label>
+    </StyledInputContainer>
   );
 }

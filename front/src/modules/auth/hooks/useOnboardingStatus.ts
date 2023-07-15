@@ -8,9 +8,10 @@ import {
   OnboardingStatus,
 } from '../utils/getOnboardingStatus';
 
-export function useOnboardingStatus(): OnboardingStatus {
+export function useOnboardingStatus(): OnboardingStatus | undefined {
   const [currentUser] = useRecoilState(currentUserState);
   const isLoggedIn = useIsLogged();
+
   const onboardingStatus = useMemo(
     () => getOnboardingStatus(isLoggedIn, currentUser),
     [currentUser, isLoggedIn],
