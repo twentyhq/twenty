@@ -49,6 +49,7 @@ export function useCompaniesQuery(
 export function useFilteredSearchCompanyQuery(
   searchFilter: string,
   companyIds: string[] = [],
+  limit?: number,
 ) {
   return useFilteredSearchEntityQuery({
     queryHook: useSearchCompanyQuery,
@@ -64,6 +65,7 @@ export function useFilteredSearchCompanyQuery(
         avatarType: 'squared',
       } as CommentableEntityForSelect),
     searchFilter,
+    limit,
   });
 }
 

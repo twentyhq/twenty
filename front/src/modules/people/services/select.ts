@@ -65,7 +65,7 @@ export function useFilteredSearchPeopleQuery(
         avatarType: 'rounded',
       } as CommentableEntityForSelect),
     searchFilter,
-    limit: limit,
+    limit,
   });
 }
 

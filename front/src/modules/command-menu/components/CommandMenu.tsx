@@ -49,7 +49,7 @@ export function CommandMenu() {
   }
 
   const people = useFilteredSearchPeopleQuery(search, [], 3);
-  // const companies = useFilteredSearchCompanyQuery(search);
+  const companies = useFilteredSearchCompanyQuery(search, [], 3);
 
   /*
   TODO: Allow performing actions on page through CommandBar 
@@ -95,11 +95,16 @@ export function CommandMenu() {
       open={open}
       onOpenChange={handleOpenChange}
       label="Global Command Menu"
+      shouldFilter={false}
     >
-      <StyledInput placeholder="Search" />
+      <StyledInput
+        placeholder="Search"
+        value={search}
+        onValueChange={setSearch}
+      />
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
-        {people.entitiesToSelect.length && (
+        {!!people.entitiesToSelect.length && (
           <StyledGroup heading="People">
             {people.entitiesToSelect.map((person) => (
               <CommandMenuItem
@@ -112,6 +117,25 @@ export function CommandMenu() {
                     size={theme.icon.size.sm}
                     colorId={person.id}
                     placeholder={person.name}
+                  />
+                }
+              />
+            ))}
+          </StyledGroup>
+        )}
+        {!!companies.entitiesToSelect.length && (
+          <StyledGroup heading="Companies">
+            {companies.entitiesToSelect.map((company) => (
+              <CommandMenuItem
+                to={`companies/${company.id}`}
+                label={company.name}
+                key={company.id}
+                icon={
+                  <Avatar
+                    avatarUrl={company.avatarUrl}
+                    size={theme.icon.size.sm}
+                    colorId={company.id}
+                    placeholder={company.name}
                   />
                 }
               />
