@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import { useRecoilState } from 'recoil';
 
