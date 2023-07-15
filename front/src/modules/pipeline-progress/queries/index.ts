@@ -21,7 +21,7 @@ export const GET_PIPELINES = gql`
 
 export const GET_PIPELINE_PROGRESS = gql`
   query GetPipelineProgress($where: PipelineProgressWhereInput) {
-    findManyPipelineProgress(where: $where) {
+    findManyPipelineProgress(where: $where, orderBy: { createdAt: asc }) {
       id
       progressableType
       progressableId
