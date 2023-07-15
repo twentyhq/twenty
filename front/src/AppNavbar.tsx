@@ -10,24 +10,23 @@ import {
   IconTargetArrow,
   IconUser,
 } from '@/ui/icons/index';
-import NavItemsContainer from '@/ui/layout/navbar/NavItemsContainer';
+import { useIsSubNavbarDisplayed } from '@/ui/layout/hooks/useIsSubNavbarDisplayed';
+import MainNavbar from '@/ui/layout/navbar/MainNavbar';
 
 import NavItem from './modules/ui/layout/navbar/NavItem';
 import NavTitle from './modules/ui/layout/navbar/NavTitle';
-import NavWorkspaceButton from './modules/ui/layout/navbar/NavWorkspaceButton';
 
 export function AppNavbar() {
   const theme = useTheme();
   const currentPath = useLocation().pathname;
 
-  const shouldDiplaySubNavBar = currentPath.match(/\/settings\//g) !== null;
+  const isSubNavbarDisplayed = useIsSubNavbarDisplayed();
 
   return (
     <>
-      {!shouldDiplaySubNavBar ? (
-        <>
-          <NavWorkspaceButton />
-          <NavItemsContainer>
+      {!isSubNavbarDisplayed ? (
+        <MainNavbar>
+          <>
             <NavItem
               label="Search"
               to="/search"
@@ -64,8 +63,8 @@ export function AppNavbar() {
               icon={<IconTargetArrow size={theme.icon.size.md} />}
               active={currentPath === '/opportunities'}
             />
-          </NavItemsContainer>
-        </>
+          </>
+        </MainNavbar>
       ) : (
         <SettingsNavbar />
       )}

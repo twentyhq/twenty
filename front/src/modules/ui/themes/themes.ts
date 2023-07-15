@@ -1,3 +1,4 @@
+import { animation } from './animation';
 import { backgroundDark, backgroundLight } from './background';
 import { blur } from './blur';
 import { borderDark, borderLight } from './border';
@@ -13,6 +14,7 @@ const common = {
   icon: icon,
   text: text,
   blur: blur,
+  animation: animation,
   snackBar: {
     success: {
       background: '#16A26B',

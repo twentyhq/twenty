@@ -8,7 +8,6 @@ const StyledNavItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 40px;
-  min-width: 220px;
 `;
 
 function NavItemsContainer({ children }: OwnProps) {

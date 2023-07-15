@@ -6,7 +6,7 @@ import { useOpenCommentThreadRightDrawer } from '@/comments/hooks/useOpenComment
 import { useOpenCreateCommentThreadDrawer } from '@/comments/hooks/useOpenCreateCommentThreadDrawer';
 import { CommentableEntity } from '@/comments/types/CommentableEntity';
 import { CommentThreadForDrawer } from '@/comments/types/CommentThreadForDrawer';
-import { IconCirclePlus, IconNotes } from '@/ui/icons/index';
+import { IconNotes } from '@/ui/icons/index';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
@@ -221,10 +221,6 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     <StyledMainContainer>
       <StyledTopActionBar>
         <StyledTimelineItemContainer>
-          <StyledIconContainer>
-            <IconCirclePlus />
-          </StyledIconContainer>
-
           <CommentThreadCreateButton
             onNoteClick={() => openCreateCommandThread(entity)}
           />

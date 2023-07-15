@@ -4,7 +4,7 @@ import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
-import { IconButton } from '@/ui/components/buttons/IconButton';
+import { RoundedIconButton } from '@/ui/components/buttons/RoundedIconButton';
 import { IconArrowRight } from '@/ui/icons/index';
 
 const MAX_ROWS = 5;
@@ -47,7 +47,7 @@ const StyledTextArea = styled(TextareaAutosize)`
 `;
 
 // TODO: this messes with the layout, fix it
-const StyledBottomRightIconButton = styled.div`
+const StyledBottomRightRoundedIconButton = styled.div`
   height: 0;
   position: relative;
   right: 26px;
@@ -129,13 +129,13 @@ export function AutosizeTextInput({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />
-        <StyledBottomRightIconButton>
-          <IconButton
+        <StyledBottomRightRoundedIconButton>
+          <RoundedIconButton
             onClick={handleOnClickSendButton}
             icon={<IconArrowRight size={15} />}
             disabled={isSendButtonDisabled}
           />
-        </StyledBottomRightIconButton>
+        </StyledBottomRightRoundedIconButton>
       </StyledContainer>
     </>
   );

@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { IconChevronLeft } from '@/ui/icons/index';
 
+import { isNavbarSwitchingSizeState } from '../../states/isNavbarSwitchingSizeState';
 import NavCollapseButton from '../NavCollapseButton';
 
 type OwnProps = {
@@ -32,12 +34,18 @@ const StyledContainer = styled.div`
 
 export default function NavBackButton({ title }: OwnProps) {
   const navigate = useNavigate();
+  const [, setIsNavbarSwitchingSize] = useRecoilState(
+    isNavbarSwitchingSizeState,
+  );
 
   return (
     <>
       <StyledContainer>
         <IconAndButtonContainer
-          onClick={() => navigate('/', { replace: true })}
+          onClick={() => {
+            setIsNavbarSwitchingSize(true);
+            navigate('/', { replace: true });
+          }}
         >
           <IconChevronLeft />
           <span>{title}</span>
