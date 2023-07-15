@@ -17,18 +17,17 @@ const StyledContainer = styled.div`
 export const SelectAllCheckbox = () => {
   const { selectAllRows, allRowsSelectedStatus } = useSelectAllRows();
 
-  function handleContainerClick() {
-    selectAllRows();
-  }
-
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
+  function onChange(value: boolean) {
+    selectAllRows();
+  }
 
   return (
     <StyledContainer>
       <Checkbox
         checked={checked}
-        onChange={handleContainerClick}
+        onChange={onChange}
         indeterminate={indeterminate}
       />
     </StyledContainer>

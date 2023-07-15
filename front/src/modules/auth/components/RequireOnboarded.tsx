@@ -47,7 +47,7 @@ export function RequireOnboarded({
     }
   }, [onboardingStatus, navigate]);
 
-  if (onboardingStatus !== OnboardingStatus.Completed) {
+  if (onboardingStatus && onboardingStatus !== OnboardingStatus.Completed) {
     return (
       <EmptyContainer>
         <FadeInStyle>

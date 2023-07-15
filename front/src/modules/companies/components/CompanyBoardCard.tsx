@@ -114,8 +114,8 @@ export function CompanyBoardCard() {
     [updatePipelineProgress],
   );
 
-  const handleCheckboxChange = () => {
-    setSelected(!selected);
+  const handleCheckboxChange = (checked: boolean) => {
+    setSelected(checked);
   };
 
   if (!company || !pipelineProgress) {

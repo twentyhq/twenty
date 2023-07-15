@@ -59,11 +59,10 @@ export function useAuth() {
       setTokenPair(verifyResult.data?.verify.tokens);
 
       setIsAuthenticating(false);
-      setCurrentUser(verifyResult.data?.verify.user);
 
       return verifyResult.data?.verify;
     },
-    [setCurrentUser, setIsAuthenticating, setTokenPair, verify],
+    [setIsAuthenticating, setTokenPair, verify],
   );
 
   const handleLogin = useCallback(
@@ -77,7 +76,8 @@ export function useAuth() {
 
   const handleLogout = useCallback(() => {
     setTokenPair(null);
-  }, [setTokenPair]);
+    setCurrentUser(null);
+  }, [setTokenPair, setCurrentUser]);
 
   const handleSignUp = useCallback(
     async (email: string, password: string, workspaceInviteHash?: string) => {
