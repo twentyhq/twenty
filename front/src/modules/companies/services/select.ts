@@ -46,16 +46,20 @@ export function useCompaniesQuery(
   return useGetCompaniesQuery({ variables: { orderBy, where } });
 }
 
-export function useFilteredSearchCompanyQuery(
-  searchFilter: string,
-  companyIds: string[] = [],
-  limit?: number,
-) {
+export function useFilteredSearchCompanyQuery({
+  searchFilter,
+  selectedIds = [],
+  limit,
+}: {
+  searchFilter: string;
+  selectedIds?: string[];
+  limit?: number;
+}) {
   return useFilteredSearchEntityQuery({
     queryHook: useSearchCompanyQuery,
     searchOnFields: ['name'],
     orderByField: 'name',
-    selectedIds: companyIds,
+    selectedIds: selectedIds,
     mappingFunction: (company) =>
       ({
         id: company.id,

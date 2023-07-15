@@ -18,10 +18,12 @@ export function FilterDropdownCompanySearchSelect() {
     TableContext,
   );
 
-  const usersForSelect = useFilteredSearchCompanyQuery(
-    filterDropdownSearchInput,
-    filterDropdownSelectedEntityId ? [filterDropdownSelectedEntityId] : [],
-  );
+  const usersForSelect = useFilteredSearchCompanyQuery({
+    searchFilter: filterDropdownSearchInput,
+    selectedIds: filterDropdownSelectedEntityId
+      ? [filterDropdownSelectedEntityId]
+      : [],
+  });
 
   return (
     <FilterDropdownEntitySearchSelect

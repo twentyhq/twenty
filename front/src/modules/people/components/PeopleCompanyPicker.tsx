@@ -28,10 +28,10 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
 
   const addToScopeStack = useSetHotkeyScope();
 
-  const companies = useFilteredSearchCompanyQuery(
+  const companies = useFilteredSearchCompanyQuery({
     searchFilter,
-    people.company?.id ? [people.company.id] : [],
-  );
+    selectedIds: people.company?.id ? [people.company.id] : [],
+  });
 
   async function handleEntitySelected(entity: any) {
     await updatePeople({

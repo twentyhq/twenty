@@ -87,15 +87,15 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
       ?.filter((relation) => relation.commentableType === 'Company')
       .map((relation) => relation.commentableId) ?? [];
 
-  const personsForMultiSelect = useFilteredSearchPeopleQuery(
+  const personsForMultiSelect = useFilteredSearchPeopleQuery({
     searchFilter,
-    peopleIds,
-  );
+    selectedIds: peopleIds,
+  });
 
-  const companiesForMultiSelect = useFilteredSearchCompanyQuery(
+  const companiesForMultiSelect = useFilteredSearchCompanyQuery({
     searchFilter,
-    companyIds,
-  );
+    selectedIds: companyIds,
+  });
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,

@@ -47,16 +47,20 @@ export function usePeopleQuery(
   });
 }
 
-export function useFilteredSearchPeopleQuery(
-  searchFilter: string,
-  peopleIds: string[] = [],
-  limit?: number,
-) {
+export function useFilteredSearchPeopleQuery({
+  searchFilter,
+  selectedIds = [],
+  limit,
+}: {
+  searchFilter: string;
+  selectedIds?: string[];
+  limit?: number;
+}) {
   return useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
     searchOnFields: ['firstName', 'lastName'],
     orderByField: 'lastName',
-    selectedIds: peopleIds,
+    selectedIds: selectedIds,
     mappingFunction: (entity) =>
       ({
         id: entity.id,

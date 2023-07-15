@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { IconArrowUpRight } from '@/ui/icons';
 
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
+import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 import {
   StyledIconAndLabelContainer,
@@ -30,7 +30,7 @@ export function CommandMenuItem({
   icon,
   shortcuts,
 }: OwnProps) {
-  const setOpen = useSetRecoilState(isCommandMenuOpenedState);
+  const setIsCommandMenuOpened = useSetRecoilState(isCommandMenuOpenedState);
   const navigate = useNavigate();
 
   if (to && !icon) {
@@ -38,7 +38,7 @@ export function CommandMenuItem({
   }
 
   const onItemClick = () => {
-    setOpen(false);
+    setIsCommandMenuOpened(false);
 
     if (onClick) {
       onClick();

@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { useTheme } from '@emotion/react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useFilteredSearchCompanyQuery } from '@/companies/services';
-import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/lib/hotkeys/types/AppHotkeyScope';
 import { useFilteredSearchPeopleQuery } from '@/people/services';
 import { Avatar } from '@/users/components/Avatar';
 
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
+import { useCommandMenu } from '../hooks/useCommandMenu';
+import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 import { CommandMenuItem } from './CommandMenuItem';
 import {
@@ -21,35 +21,29 @@ import {
 } from './CommandMenuStyles';
 
 export function CommandMenu() {
-  const [open, setOpen] = useRecoilState(isCommandMenuOpenedState);
+  const { openCommandMenu, closeCommandMenu } = useCommandMenu();
+  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
-      handleOpenChange(!open);
+      openCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
-    [setOpen, open, handleOpenChange],
+    [openCommandMenu],
   );
 
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
-
-  function handleOpenChange(newOpenState: boolean) {
-    if (newOpenState) {
-      setOpen(true);
-      setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenu);
-    } else {
-      setOpen(false);
-      goBackToPreviousHotkeyScope();
-    }
-  }
-
-  const people = useFilteredSearchPeopleQuery(search, [], 3);
-  const companies = useFilteredSearchCompanyQuery(search, [], 3);
+  const people = useFilteredSearchPeopleQuery({
+    searchFilter: search,
+    selectedIds: [],
+    limit: 3,
+  });
+  const companies = useFilteredSearchCompanyQuery({
+    searchFilter: search,
+    selectedIds: [],
+    limit: 3,
+  });
 
   /*
   TODO: Allow performing actions on page through CommandBar 
@@ -92,8 +86,12 @@ export function CommandMenu() {
 
   return (
     <StyledDialog
-      open={open}
-      onOpenChange={handleOpenChange}
+      open={isCommandMenuOpened}
+      onOpenChange={(opened) => {
+        if (!opened) {
+          closeCommandMenu();
+        }
+      }}
       label="Global Command Menu"
       shouldFilter={false}
     >

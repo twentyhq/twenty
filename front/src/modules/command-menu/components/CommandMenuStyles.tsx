@@ -12,8 +12,8 @@ export const StyledDialog = styled(Command.Dialog)`
   padding: 0;
   padding: ${({ theme }) => theme.spacing(1)};
   position: fixed;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  top: 30%;
+  transform: translateX(-50%);
   width: 100%;
   z-index: 1000;
 `;

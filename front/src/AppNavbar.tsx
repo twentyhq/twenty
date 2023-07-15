@@ -1,8 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
-import { useSetRecoilState } from 'recoil';
 
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpened';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
 import {
   IconBuildingSkyscraper,
@@ -21,8 +20,7 @@ import NavTitle from './modules/ui/layout/navbar/NavTitle';
 export function AppNavbar() {
   const theme = useTheme();
   const currentPath = useLocation().pathname;
-
-  const setCommandBarOpen = useSetRecoilState(isCommandMenuOpenedState);
+  const { openCommandMenu } = useCommandMenu();
 
   const isSubNavbarDisplayed = useIsSubNavbarDisplayed();
 
@@ -34,7 +32,9 @@ export function AppNavbar() {
             <NavItem
               label="Search"
               icon={<IconSearch size={theme.icon.size.md} />}
-              onClick={() => setCommandBarOpen(true)}
+              onClick={() => {
+                openCommandMenu();
+              }}
             />
             <NavItem
               label="Inbox"

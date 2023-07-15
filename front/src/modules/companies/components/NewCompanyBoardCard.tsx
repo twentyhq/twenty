@@ -11,7 +11,7 @@ export function NewCompanyBoardCard() {
     relationPickerSearchFilterScopedState,
   );
 
-  const companies = useFilteredSearchCompanyQuery(searchFilter);
+  const companies = useFilteredSearchCompanyQuery({ searchFilter });
 
   const handleEntitySelect = useCallback(async (companyId: string) => {
     return;
