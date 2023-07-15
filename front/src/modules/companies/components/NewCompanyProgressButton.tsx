@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -25,10 +25,6 @@ import {
   useSearchCompanyQuery,
 } from '~/generated/graphql';
 import { currentPipelineState } from '~/pages/opportunities/currentPipelineState';
-
-const StyledContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(40)};
-`;
 
 export function NewCompanyProgressButton() {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
