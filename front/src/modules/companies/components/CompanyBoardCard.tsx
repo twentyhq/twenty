@@ -6,7 +6,7 @@ import { IconCurrencyDollar } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
-import { GET_PIPELINES } from '@/pipeline-progress/queries';
+import { GET_PIPELINES } from '@/pipeline-progress/services';
 import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
 import { pipelineProgressIdScopedState } from '@/pipeline-progress/states/pipelineProgressIdScopedState';
 import { selectedBoardCardsState } from '@/pipeline-progress/states/selectedBoardCardsState';

@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
 import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
-import { GET_PIPELINES } from '@/pipeline-progress/queries';
+import { GET_PIPELINES } from '@/pipeline-progress/services';
 import { BoardColumnContext } from '@/pipeline-progress/states/BoardColumnContext';
 import { boardState } from '@/pipeline-progress/states/boardState';
 import { currentPipelineState } from '@/pipeline-progress/states/currentPipelineState';

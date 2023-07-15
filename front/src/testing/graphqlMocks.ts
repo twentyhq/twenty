@@ -8,7 +8,7 @@ import { GET_PEOPLE, UPDATE_PERSON } from '@/people/services';
 import {
   GET_PIPELINE_PROGRESS,
   GET_PIPELINES,
-} from '@/pipeline-progress/queries';
+} from '@/pipeline-progress/services';
 import {
   SEARCH_COMPANY_QUERY,
   SEARCH_USER_QUERY,
