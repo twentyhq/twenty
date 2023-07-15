@@ -1,10 +1,19 @@
 import { useEffect } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
-import { useCompanyBoardIndex } from '@/companies/hooks/useCompanyBoardIndex';
-import { CompanyProgress } from '@/companies/types/CompanyProgress';
+import {
+  CompanyForBoard,
+  CompanyProgress,
+  PipelineProgressForBoard,
+} from '@/companies/types/CompanyProgress';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
-import { Pipeline, useGetPipelinesQuery } from '~/generated/graphql';
+import {
+  Pipeline,
+  PipelineStage,
+  useGetCompaniesQuery,
+  useGetPipelineProgressQuery,
+  useGetPipelinesQuery,
+} from '~/generated/graphql';
 
 import { boardState } from './boardState';
 import { companyBoardIndexState } from './companyBoardIndexState';
@@ -45,18 +54,81 @@ export function HookCompanyBoard() {
     },
   });
 
-  const { companyBoardIndex, loading } = useCompanyBoardIndex(currentPipeline);
+  const pipelineProgressIds = currentPipeline?.pipelineStages
+    ?.map((pipelineStage: PipelineStage) =>
+      (
+        pipelineStage.pipelineProgresses?.map((item) => item.id as string) || []
+      ).flat(),
+    )
+    .flat();
+
+  const pipelineProgressesQuery = useGetPipelineProgressQuery({
+    variables: {
+      where: {
+        id: { in: pipelineProgressIds },
+      },
+    },
+  });
+
+  const pipelineProgresses =
+    pipelineProgressesQuery.data?.findManyPipelineProgress || [];
+
+  const entitiesQueryResult = useGetCompaniesQuery({
+    variables: {
+      where: {
+        id: {
+          in: pipelineProgresses.map((item) => item.progressableId),
+        },
+      },
+    },
+  });
+
+  const indexCompanyByIdReducer = (
+    acc: { [key: string]: CompanyForBoard },
+    company: CompanyForBoard,
+  ) => ({
+    ...acc,
+    [company.id]: company,
+  });
+
+  const companiesDict =
+    entitiesQueryResult.data?.companies.reduce(
+      indexCompanyByIdReducer,
+      {} as { [key: string]: CompanyForBoard },
+    ) || {};
+
+  const indexPipelineProgressByIdReducer = (
+    acc: {
+      [key: string]: CompanyProgress;
+    },
+    pipelineProgress: PipelineProgressForBoard,
+  ) => {
+    const company = companiesDict[pipelineProgress.progressableId];
+    return {
+      ...acc,
+      [pipelineProgress.id]: {
+        pipelineProgress,
+        company,
+      },
+    };
+  };
+  const companyBoardIndex = pipelineProgresses.reduce(
+    indexPipelineProgressByIdReducer,
+    {} as { [key: string]: CompanyProgress },
+  );
 
   const synchronizeCompanyProgresses = useRecoilCallback(
     ({ set }) =>
       (companyBoardIndex: { [key: string]: CompanyProgress }) => {
-        // TODO: do the indexing here and not in the hook
         Object.entries(companyBoardIndex).forEach(([id, companyProgress]) => {
           set(companyBoardIndexState(id), companyProgress);
         });
       },
     [],
   );
+
+  const loading =
+    entitiesQueryResult.loading || pipelineProgressesQuery.loading;
 
   useEffect(() => {
     !loading && synchronizeCompanyProgresses(companyBoardIndex);
