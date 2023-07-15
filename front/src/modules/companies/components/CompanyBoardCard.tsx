@@ -87,7 +87,9 @@ export function CompanyBoardCard() {
     selectedBoardCardsState,
   );
 
-  const selected = selectedBoardCards.includes(pipelineProgressId || '');
+  if (!pipelineProgressId) return;
+
+  const selected = selectedBoardCards.includes(pipelineProgressId);
   function setSelected(isSelected: boolean) {
     if (isSelected) {
       setSelectedBoardCards([...selectedBoardCards, pipelineProgressId || '']);
