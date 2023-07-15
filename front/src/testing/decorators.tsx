@@ -3,6 +3,7 @@ import { ApolloProvider } from '@apollo/client';
 import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
+import { pipeline } from '@/companies/__stories__/mock-data';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
 import { BoardColumnContext } from '@/pipeline-progress/states/BoardColumnContext';
@@ -53,9 +54,11 @@ function HookLoadFakeBoardContextState() {
     pipelineProgressIdScopedState,
     BoardCardContext,
   );
+  const pipelineProgress =
+    pipeline?.pipelineStages?.[0]?.pipelineProgresses?.[0];
   useEffect(() => {
-    setPipelineProgressId('fe256b39-3ec3-4fe7-8998-b76aa0bfb600');
-  }, [setPipelineProgressId]);
+    setPipelineProgressId(pipelineProgress?.id || '');
+  }, [pipelineProgress?.id, setPipelineProgressId]);
   return <></>;
 }
 
