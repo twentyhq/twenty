@@ -5,7 +5,6 @@ const StyledPropertyBoxItem = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  height: 32px;
 `;
 
 const StyledIconContainer = styled.div`

@@ -39,30 +39,29 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: flex-start;
+  justify-content: center;
 
   width: 100%;
 `;
 
 const StyledRelationContainer = styled.div`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --vertical-padding: ${({ theme }) => theme.spacing(1.5)};
+  --vertical-padding: ${({ theme }) => theme.spacing(1)};
+
+  align-items: center;
 
   border: 1px solid transparent;
-
   cursor: pointer;
 
   display: flex;
-  flex-wrap: wrap;
-
-  gap: ${({ theme }) => theme.spacing(2)};
 
   &:hover {
     background-color: ${({ theme }) => theme.background.secondary};
     border: 1px solid ${({ theme }) => theme.border.color.light};
   }
+  flex-wrap: wrap;
 
-  min-height: calc(32px - 2 * var(--vertical-padding));
+  gap: ${({ theme }) => theme.spacing(2)};
 
   overflow: hidden;
 
