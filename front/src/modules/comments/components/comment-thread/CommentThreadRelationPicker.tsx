@@ -11,21 +11,20 @@ import {
 import { useHandleCheckableCommentThreadTargetChange } from '@/comments/hooks/useHandleCheckableCommentThreadTargetChange';
 import { CommentableEntityForSelect } from '@/comments/types/CommentableEntityForSelect';
 import { CompanyChip } from '@/companies/components/CompanyChip';
+import { useFilteredSearchCompanyQuery } from '@/companies/services';
 import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { PersonChip } from '@/people/components/PersonChip';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { MultipleEntitySelect } from '@/relation-picker/components/MultipleEntitySelect';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
+import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flatMapAndSortEntityForSelectArrayByName';
-import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
   CommentThread,
   CommentThreadTarget,
-  useSearchCompanyQuery,
   useSearchPeopleQuery,
 } from '~/generated/graphql';
 
@@ -105,21 +104,10 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     searchFilter,
   });
 
-  const companiesForMultiSelect = useFilteredSearchEntityQuery({
-    queryHook: useSearchCompanyQuery,
-    searchOnFields: ['name'],
-    orderByField: 'name',
-    selectedIds: companyIds,
-    mappingFunction: (company) =>
-      ({
-        id: company.id,
-        entityType: CommentableType.Company,
-        name: company.name,
-        avatarUrl: getLogoUrlFromDomainName(company.domainName),
-        avatarType: 'squared',
-      } as CommentableEntityForSelect),
+  const companiesForMultiSelect = useFilteredSearchCompanyQuery(
     searchFilter,
-  });
+    companyIds,
+  );
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,

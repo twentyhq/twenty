@@ -1,9 +1,9 @@
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
+import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useEditableCell } from '@/ui/components/editable-cell/hooks/useEditableCell';
 import {
   Company,
