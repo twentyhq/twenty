@@ -18,6 +18,10 @@ const StyledPlaceholder = styled.div`
   min-height: 1px;
 `;
 
+const StyledNewCardButtonContainer = styled.div`
+  padding-bottom: ${({ theme }) => theme.spacing(40)};
+`;
+
 const BoardColumnCardsContainer = ({
   children,
   droppableProvided,
@@ -72,7 +76,9 @@ export function EntityBoardColumn({
               </RecoilScope>
             ))}
           </BoardColumnCardsContainer>
-          <RecoilScope>{boardOptions.newCardComponent}</RecoilScope>
+          <StyledNewCardButtonContainer>
+            <RecoilScope>{boardOptions.newCardComponent}</RecoilScope>
+          </StyledNewCardButtonContainer>
         </BoardColumn>
       )}
     </Droppable>

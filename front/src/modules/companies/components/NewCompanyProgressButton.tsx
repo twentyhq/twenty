@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,7 +26,6 @@ import {
 import { currentPipelineState } from '~/pages/opportunities/currentPipelineState';
 
 export function NewCompanyProgressButton() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [isCreatingCard, setIsCreatingCard] = useState(false);
   const [board, setBoard] = useRecoilState(boardState);
   const [pipeline] = useRecoilState(currentPipelineState);
@@ -112,24 +111,22 @@ export function NewCompanyProgressButton() {
 
   return (
     <>
-      {isCreatingCard && (
+      {isCreatingCard ? (
         <RecoilScope>
-          <div ref={containerRef}>
-            <div ref={containerRef}>
-              <SingleEntitySelect
-                onEntitySelected={(value) => handleEntitySelect(value)}
-                onCancel={handleCancel}
-                entities={{
-                  entitiesToSelect: companies.entitiesToSelect,
-                  selectedEntity: companies.selectedEntities[0],
-                  loading: companies.loading,
-                }}
-              />
-            </div>
-          </div>
+          <SingleEntitySelect
+            onEntitySelected={(value) => handleEntitySelect(value)}
+            onCancel={handleCancel}
+            entities={{
+              entitiesToSelect: companies.entitiesToSelect,
+              selectedEntity: companies.selectedEntities[0],
+              loading: companies.loading,
+            }}
+            disableBackgroundBlur={true}
+          />
         </RecoilScope>
+      ) : (
+        <NewButton onClick={handleNewClick} />
       )}
-      <NewButton onClick={handleNewClick} />
     </>
   );
 }

@@ -13,7 +13,6 @@ const StyledButton = styled.button`
   cursor: pointer;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  justify-content: center;
   padding: ${({ theme }) => theme.spacing(1)};
 
   &:hover {

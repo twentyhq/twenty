@@ -5001,7 +5001,7 @@ export type GetPipelinesLazyQueryHookResult = ReturnType<typeof useGetPipelinesL
 export type GetPipelinesQueryResult = Apollo.QueryResult<GetPipelinesQuery, GetPipelinesQueryVariables>;
 export const GetPipelineProgressDocument = gql`
     query GetPipelineProgress($where: PipelineProgressWhereInput) {
-  findManyPipelineProgress(where: $where) {
+  findManyPipelineProgress(where: $where, orderBy: {createdAt: asc}) {
     id
     progressableType
     progressableId

@@ -5,7 +5,6 @@ export const StyledBoard = styled.div`
   border-radius: ${({ theme }) => theme.spacing(2)};
   display: flex;
   flex-direction: row;
-  height: calc(100%);
   overflow-x: auto;
   width: 100%;
 `;

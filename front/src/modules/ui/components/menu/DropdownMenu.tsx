@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
 
-export const DropdownMenu = styled.div`
+export const DropdownMenu = styled.div<{ disableBlur?: boolean }>`
   align-items: center;
-  backdrop-filter: blur(20px);
+  backdrop-filter: ${({ disableBlur }) =>
+    disableBlur ? 'none' : 'blur(20px)'};
 
   background: ${({ theme }) => theme.background.transparent.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
@@ -13,8 +14,6 @@ export const DropdownMenu = styled.div`
   display: flex;
 
   flex-direction: column;
-
-  height: fit-content;
 
   width: 200px;
 `;
