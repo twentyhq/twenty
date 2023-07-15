@@ -1,14 +1,25 @@
+import { useCallback } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCurrencyDollar } from '@tabler/icons-react';
+import { useRecoilState } from 'recoil';
 
+import { GET_PIPELINES } from '@/pipeline-progress/queries';
+import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
+import { pipelineProgressIdScopedState } from '@/pipeline-progress/states/pipelineProgressIdScopedState';
+import { selectedBoardCardsState } from '@/pipeline-progress/states/selectedBoardCardsState';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { BoardCardEditableFieldDate } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldDate';
 import { BoardCardEditableFieldText } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldText';
-
-import { Company, PipelineProgress } from '../../../generated/graphql';
-import { Checkbox } from '../../ui/components/form/Checkbox';
-import { IconCalendarEvent } from '../../ui/icons';
-import { getLogoUrlFromDomainName } from '../../utils/utils';
+import { Checkbox } from '@/ui/components/form/Checkbox';
+import { IconCalendarEvent } from '@/ui/icons';
+import { getLogoUrlFromDomainName } from '@/utils/utils';
+import {
+  PipelineProgress,
+  useUpdateOnePipelineProgressMutation,
+} from '~/generated/graphql';
+import { companyProgressesFamilyState } from '~/pages/opportunities/companyProgressesFamilyState';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -59,30 +70,58 @@ const StyledBoardCardBody = styled.div`
   }
 `;
 
-type CompanyProp = Pick<
-  Company,
-  'id' | 'name' | 'domainName' | 'employees' | 'accountOwner'
->;
-
-type PipelineProgressProp = Pick<
-  PipelineProgress,
-  'id' | 'amount' | 'closeDate'
->;
-
-export function CompanyBoardCard({
-  company,
-  pipelineProgress,
-  selected,
-  onSelect,
-  onCardUpdate,
-}: {
-  company: CompanyProp;
-  pipelineProgress: PipelineProgressProp;
-  selected: boolean;
-  onSelect: (company: CompanyProp) => void;
-  onCardUpdate: (pipelineProgress: PipelineProgressProp) => Promise<void>;
-}) {
+export function CompanyBoardCard() {
   const theme = useTheme();
+
+  const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
+
+  const [pipelineProgressId] = useRecoilScopedState(
+    pipelineProgressIdScopedState,
+    BoardCardContext,
+  );
+  const [companyProgress] = useRecoilState(
+    companyProgressesFamilyState(pipelineProgressId || ''),
+  );
+  const { pipelineProgress, company } = companyProgress || {};
+  const [selectedBoardCards, setSelectedBoardCards] = useRecoilState(
+    selectedBoardCardsState,
+  );
+
+  const selected = selectedBoardCards.includes(pipelineProgressId || '');
+  function setSelected(isSelected: boolean) {
+    if (isSelected) {
+      setSelectedBoardCards([...selectedBoardCards, pipelineProgressId || '']);
+    } else {
+      setSelectedBoardCards(
+        selectedBoardCards.filter((id) => id !== pipelineProgressId),
+      );
+    }
+  }
+
+  const handleCardUpdate = useCallback(
+    async (
+      pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
+    ) => {
+      await updatePipelineProgress({
+        variables: {
+          id: pipelineProgress.id,
+          amount: pipelineProgress.amount,
+          closeDate: pipelineProgress.closeDate || null,
+        },
+        refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
+      });
+    },
+    [updatePipelineProgress],
+  );
+
+  const handleCheckboxChange = () => {
+    setSelected(!selected);
+  };
+
+  if (!company || !pipelineProgress) {
+    return null;
+  }
+
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard selected={selected}>
@@ -93,7 +132,9 @@ export function CompanyBoardCard({
           />
           <span>{company.name}</span>
           <div style={{ display: 'flex', flex: 1 }} />
-          <Checkbox checked={selected} onChange={() => onSelect(company)} />
+          <div onClick={handleCheckboxChange}>
+            <Checkbox checked={selected} />
+          </div>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>
@@ -102,7 +143,7 @@ export function CompanyBoardCard({
               value={pipelineProgress.amount?.toString() || ''}
               placeholder="Opportunity amount"
               onChange={(value) =>
-                onCardUpdate({
+                handleCardUpdate({
                   ...pipelineProgress,
                   amount: parseInt(value),
                 })
@@ -114,7 +155,7 @@ export function CompanyBoardCard({
             <BoardCardEditableFieldDate
               value={new Date(pipelineProgress.closeDate || Date.now())}
               onChange={(value) => {
-                onCardUpdate({
+                handleCardUpdate({
                   ...pipelineProgress,
                   closeDate: value.toISOString(),
                 });

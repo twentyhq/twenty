@@ -1,22 +1,13 @@
+import { useCallback } from 'react';
+
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 import { getLogoUrlFromDomainName } from '@/utils/utils';
-import {
-  CommentableType,
-  Company,
-  useSearchCompanyQuery,
-} from '~/generated/graphql';
+import { CommentableType, useSearchCompanyQuery } from '~/generated/graphql';
 
-type OwnProps = {
-  onEntitySelect: (
-    company: Pick<Company, 'id' | 'name' | 'domainName'>,
-  ) => void;
-  onCancel: () => void;
-};
-
-export function NewCompanyBoardCard({ onEntitySelect, onCancel }: OwnProps) {
+export function NewCompanyBoardCard() {
   const [searchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
@@ -37,10 +28,18 @@ export function NewCompanyBoardCard({ onEntitySelect, onCancel }: OwnProps) {
     searchOnFields: ['name'],
   });
 
+  const handleEntitySelect = useCallback(async (companyId: string) => {
+    return;
+  }, []);
+
+  function handleCancel() {
+    return;
+  }
+
   return (
     <SingleEntitySelect
-      onEntitySelected={(value) => onEntitySelect(value)}
-      onCancel={onCancel}
+      onEntitySelected={(value) => handleEntitySelect(value.id)}
+      onCancel={handleCancel}
       entities={{
         entitiesToSelect: companies.entitiesToSelect,
         selectedEntity: companies.selectedEntities[0],

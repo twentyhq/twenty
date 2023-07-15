@@ -10,43 +10,46 @@ export const StyledBoard = styled.div`
   width: 100%;
 `;
 
-export type Column = {
-  id: string;
+export type BoardPipelineStageColumn = {
+  pipelineStageId: string;
   title: string;
   colorCode?: string;
-  itemKeys: string[];
+  pipelineProgressIds: string[];
 };
 
 export function getOptimisticlyUpdatedBoard(
-  board: Column[],
+  board: BoardPipelineStageColumn[],
   result: DropResult,
 ) {
+  // TODO: review any types
   const newBoard = JSON.parse(JSON.stringify(board));
   const { destination, source } = result;
   if (!destination) return;
   const sourceColumnIndex = newBoard.findIndex(
-    (column: Column) => column.id === source.droppableId,
+    (column: BoardPipelineStageColumn) =>
+      column.pipelineStageId === source.droppableId,
   );
   const sourceColumn = newBoard[sourceColumnIndex];
   const destinationColumnIndex = newBoard.findIndex(
-    (column: Column) => column.id === destination.droppableId,
+    (column: BoardPipelineStageColumn) =>
+      column.pipelineStageId === destination.droppableId,
   );
   const destinationColumn = newBoard[destinationColumnIndex];
   if (!destinationColumn || !sourceColumn) return;
-  const sourceItems = sourceColumn.itemKeys;
-  const destinationItems = destinationColumn.itemKeys;
+  const sourceItems = sourceColumn.pipelineProgressIds;
+  const destinationItems = destinationColumn.pipelineProgressIds;
 
   const [removed] = sourceItems.splice(source.index, 1);
   destinationItems.splice(destination.index, 0, removed);
 
-  const newSourceColumn = {
+  const newSourceColumn: BoardPipelineStageColumn = {
     ...sourceColumn,
-    itemKeys: sourceItems,
+    pipelineProgressIds: sourceItems,
   };
 
   const newDestinationColumn = {
     ...destinationColumn,
-    itemKeys: destinationItems,
+    pipelineProgressIds: destinationItems,
   };
 
   newBoard.splice(sourceColumnIndex, 1, newSourceColumn);

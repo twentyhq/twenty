@@ -3366,7 +3366,14 @@ export type GetPipelinesQueryVariables = Exact<{
 }>;
 
 
-export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, index?: number | null, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null }> | null }> | null }> };
+export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<{ __typename?: 'Pipeline', id: string, name: string, pipelineProgressableType: PipelineProgressableType, pipelineStages?: Array<{ __typename?: 'PipelineStage', id: string, name: string, color: string, index?: number | null, pipelineProgresses?: Array<{ __typename?: 'PipelineProgress', id: string }> | null }> | null }> };
+
+export type GetPipelineProgressQueryVariables = Exact<{
+  where?: InputMaybe<PipelineProgressWhereInput>;
+}>;
+
+
+export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null }> };
 
 export type UpdateOnePipelineProgressMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -4959,10 +4966,6 @@ export const GetPipelinesDocument = gql`
       index
       pipelineProgresses {
         id
-        progressableType
-        progressableId
-        amount
-        closeDate
       }
     }
   }
@@ -4996,6 +4999,45 @@ export function useGetPipelinesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetPipelinesQueryHookResult = ReturnType<typeof useGetPipelinesQuery>;
 export type GetPipelinesLazyQueryHookResult = ReturnType<typeof useGetPipelinesLazyQuery>;
 export type GetPipelinesQueryResult = Apollo.QueryResult<GetPipelinesQuery, GetPipelinesQueryVariables>;
+export const GetPipelineProgressDocument = gql`
+    query GetPipelineProgress($where: PipelineProgressWhereInput) {
+  findManyPipelineProgress(where: $where) {
+    id
+    progressableType
+    progressableId
+    amount
+    closeDate
+  }
+}
+    `;
+
+/**
+ * __useGetPipelineProgressQuery__
+ *
+ * To run a query within a React component, call `useGetPipelineProgressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPipelineProgressQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPipelineProgressQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetPipelineProgressQuery(baseOptions?: Apollo.QueryHookOptions<GetPipelineProgressQuery, GetPipelineProgressQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPipelineProgressQuery, GetPipelineProgressQueryVariables>(GetPipelineProgressDocument, options);
+      }
+export function useGetPipelineProgressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPipelineProgressQuery, GetPipelineProgressQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPipelineProgressQuery, GetPipelineProgressQueryVariables>(GetPipelineProgressDocument, options);
+        }
+export type GetPipelineProgressQueryHookResult = ReturnType<typeof useGetPipelineProgressQuery>;
+export type GetPipelineProgressLazyQueryHookResult = ReturnType<typeof useGetPipelineProgressLazyQuery>;
+export type GetPipelineProgressQueryResult = Apollo.QueryResult<GetPipelineProgressQuery, GetPipelineProgressQueryVariables>;
 export const UpdateOnePipelineProgressDocument = gql`
     mutation UpdateOnePipelineProgress($id: String, $amount: Int, $closeDate: DateTime) {
   updateOnePipelineProgress(

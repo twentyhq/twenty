@@ -13,12 +13,20 @@ export const GET_PIPELINES = gql`
         index
         pipelineProgresses {
           id
-          progressableType
-          progressableId
-          amount
-          closeDate
         }
       }
+    }
+  }
+`;
+
+export const GET_PIPELINE_PROGRESS = gql`
+  query GetPipelineProgress($where: PipelineProgressWhereInput) {
+    findManyPipelineProgress(where: $where) {
+      id
+      progressableType
+      progressableId
+      amount
+      closeDate
     }
   }
 `;

@@ -5,7 +5,10 @@ import { CREATE_EVENT } from '@/analytics/services';
 import { GET_CLIENT_CONFIG } from '@/client-config/queries';
 import { GET_COMPANIES } from '@/companies/services';
 import { GET_PEOPLE, UPDATE_PERSON } from '@/people/services';
-import { GET_PIPELINES } from '@/pipeline-progress/queries';
+import {
+  GET_PIPELINE_PROGRESS,
+  GET_PIPELINES,
+} from '@/pipeline-progress/queries';
 import {
   SEARCH_COMPANY_QUERY,
   SEARCH_USER_QUERY,
@@ -20,6 +23,7 @@ import {
 
 import { mockedCompaniesData } from './mock-data/companies';
 import { mockedPeopleData } from './mock-data/people';
+import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { mockedPipelinesData } from './mock-data/pipelines';
 import { mockedUsersData } from './mock-data/users';
 import { filterAndSortData, updateOneFromData } from './mock-data';
@@ -113,6 +117,16 @@ export const graphqlMocks = [
       }),
     );
   }),
+  graphql.query(
+    getOperationName(GET_PIPELINE_PROGRESS) ?? '',
+    (req, res, ctx) => {
+      return res(
+        ctx.data({
+          findManyPipelineProgress: mockedPipelineProgressData,
+        }),
+      );
+    },
+  ),
   graphql.mutation(getOperationName(CREATE_EVENT) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({
