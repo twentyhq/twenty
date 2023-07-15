@@ -81,7 +81,7 @@ export const CheckCheckboxes: Story = {
     await canvas.findByText(mockedPeopleData[0].email);
 
     const inputCheckboxContainers = await canvas.findAllByTestId(
-      'input-checkbox-cell-container',
+      'input-checkbox',
     );
 
     const inputCheckboxes = await canvas.findAllByTestId('input-checkbox');
