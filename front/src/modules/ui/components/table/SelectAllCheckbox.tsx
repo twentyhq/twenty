@@ -29,7 +29,6 @@ export const SelectAllCheckbox = () => {
       <Checkbox
         checked={checked}
         onChange={handleContainerClick}
-        data-testid="input-checkbox-cell-container"
         indeterminate={indeterminate}
       />
     </StyledContainer>

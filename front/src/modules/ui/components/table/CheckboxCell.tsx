@@ -33,11 +33,7 @@ export function CheckboxCell() {
 
   return (
     <StyledContainer>
-      <Checkbox
-        checked={currentRowSelected}
-        onChange={handleContainerClick}
-        data-testid="input-checkbox-cell-container"
-      />
+      <Checkbox checked={currentRowSelected} onChange={handleContainerClick} />
     </StyledContainer>
   );
 }

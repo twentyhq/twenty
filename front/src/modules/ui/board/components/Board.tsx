@@ -21,7 +21,6 @@ export function getOptimisticlyUpdatedBoard(
   board: BoardPipelineStageColumn[],
   result: DropResult,
 ) {
-  // TODO: review any types
   const newBoard = JSON.parse(JSON.stringify(board));
   const { destination, source } = result;
   if (!destination) return;
