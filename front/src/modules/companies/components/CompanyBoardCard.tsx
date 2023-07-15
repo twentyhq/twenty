@@ -132,9 +132,7 @@ export function CompanyBoardCard() {
           />
           <span>{company.name}</span>
           <div style={{ display: 'flex', flex: 1 }} />
-          <div onClick={handleCheckboxChange}>
-            <Checkbox checked={selected} />
-          </div>
+          <Checkbox checked={selected} onChange={handleCheckboxChange} />
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <span>

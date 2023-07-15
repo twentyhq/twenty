@@ -10,7 +10,6 @@ import { Checkbox } from '../form/Checkbox';
 const StyledContainer = styled.div`
   align-items: center;
 
-  cursor: pointer;
   display: flex;
   height: 32px;
 
@@ -33,11 +32,12 @@ export function CheckboxCell() {
   }
 
   return (
-    <StyledContainer
-      onClick={handleContainerClick}
-      data-testid="input-checkbox-cell-container"
-    >
-      <Checkbox checked={currentRowSelected} />
+    <StyledContainer>
+      <Checkbox
+        checked={currentRowSelected}
+        onChange={handleContainerClick}
+        data-testid="input-checkbox-cell-container"
+      />
     </StyledContainer>
   );
 }

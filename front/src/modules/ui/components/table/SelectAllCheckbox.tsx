@@ -8,7 +8,6 @@ import { Checkbox } from '../form/Checkbox';
 const StyledContainer = styled.div`
   align-items: center;
 
-  cursor: pointer;
   display: flex;
   height: 32px;
 
@@ -26,11 +25,13 @@ export const SelectAllCheckbox = () => {
   const indeterminate = allRowsSelectedStatus === 'some';
 
   return (
-    <StyledContainer
-      onClick={handleContainerClick}
-      data-testid="input-checkbox-cell-container"
-    >
-      <Checkbox checked={checked} indeterminate={indeterminate} />
+    <StyledContainer>
+      <Checkbox
+        checked={checked}
+        onChange={handleContainerClick}
+        data-testid="input-checkbox-cell-container"
+        indeterminate={indeterminate}
+      />
     </StyledContainer>
   );
 };

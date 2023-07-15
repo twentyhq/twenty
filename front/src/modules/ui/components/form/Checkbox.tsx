@@ -6,7 +6,7 @@ import { IconCheck } from '@/ui/icons/index';
 type OwnProps = {
   checked: boolean;
   indeterminate?: boolean;
-  onChange?: (newCheckedValue: boolean) => void;
+  onChange: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -65,18 +65,13 @@ export function Checkbox({ checked, onChange, indeterminate }: OwnProps) {
     }
   }, [ref, indeterminate, checked]);
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    onChange?.(event.target.checked);
-  }
-
   return (
-    <StyledContainer>
+    <StyledContainer onClick={onChange}>
       <input
         ref={ref}
         type="checkbox"
         data-testid="input-checkbox"
         checked={checked}
-        onChange={handleChange}
       />
       {checked && <IconCheck />}
     </StyledContainer>
