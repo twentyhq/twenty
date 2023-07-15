@@ -1,11 +1,15 @@
 import { gql } from '@apollo/client';
 
+import { CommentableEntityForSelect } from '@/comments/types/CommentableEntityForSelect';
 import { SelectedSortType } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
+import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import {
+  CommentableType,
   PersonOrderByWithRelationInput as People_Order_By,
   PersonWhereInput as People_Bool_Exp,
   SortOrder,
   useGetPeopleQuery,
+  useSearchPeopleQuery,
 } from '~/generated/graphql';
 
 export type PeopleSelectedSortType = SelectedSortType<People_Order_By>;
@@ -40,6 +44,26 @@ export function usePeopleQuery(
 ) {
   return useGetPeopleQuery({
     variables: { orderBy, where },
+  });
+}
+
+export function useFilteredSearchPeopleQuery(
+  searchFilter: string,
+  peopleIds: string[] = [],
+) {
+  return useFilteredSearchEntityQuery({
+    queryHook: useSearchPeopleQuery,
+    searchOnFields: ['firstName', 'lastName'],
+    orderByField: 'lastName',
+    selectedIds: peopleIds,
+    mappingFunction: (entity) =>
+      ({
+        id: entity.id,
+        entityType: CommentableType.Person,
+        name: `${entity.firstName} ${entity.lastName}`,
+        avatarType: 'rounded',
+      } as CommentableEntityForSelect),
+    searchFilter,
   });
 }
 

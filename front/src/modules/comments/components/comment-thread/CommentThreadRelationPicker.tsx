@@ -9,23 +9,21 @@ import {
 } from '@floating-ui/react';
 
 import { useHandleCheckableCommentThreadTargetChange } from '@/comments/hooks/useHandleCheckableCommentThreadTargetChange';
-import { CommentableEntityForSelect } from '@/comments/types/CommentableEntityForSelect';
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { useFilteredSearchCompanyQuery } from '@/companies/services';
 import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { PersonChip } from '@/people/components/PersonChip';
+import { useFilteredSearchPeopleQuery } from '@/people/services';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { MultipleEntitySelect } from '@/relation-picker/components/MultipleEntitySelect';
 import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flatMapAndSortEntityForSelectArrayByName';
 import {
   CommentableType,
   CommentThread,
   CommentThreadTarget,
-  useSearchPeopleQuery,
 } from '~/generated/graphql';
 
 type OwnProps = {
@@ -89,20 +87,10 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
       ?.filter((relation) => relation.commentableType === 'Company')
       .map((relation) => relation.commentableId) ?? [];
 
-  const personsForMultiSelect = useFilteredSearchEntityQuery({
-    queryHook: useSearchPeopleQuery,
-    searchOnFields: ['firstName', 'lastName'],
-    orderByField: 'lastName',
-    selectedIds: peopleIds,
-    mappingFunction: (entity) =>
-      ({
-        id: entity.id,
-        entityType: CommentableType.Person,
-        name: `${entity.firstName} ${entity.lastName}`,
-        avatarType: 'rounded',
-      } as CommentableEntityForSelect),
+  const personsForMultiSelect = useFilteredSearchPeopleQuery(
     searchFilter,
-  });
+    peopleIds,
+  );
 
   const companiesForMultiSelect = useFilteredSearchCompanyQuery(
     searchFilter,
