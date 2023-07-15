@@ -19,7 +19,7 @@ import {
   PipelineProgress,
   useUpdateOnePipelineProgressMutation,
 } from '~/generated/graphql';
-import { companyBoardIndexState } from '~/pages/opportunities/companyBoardIndexState';
+import { companyProgressesFamilyState } from '~/pages/opportunities/companyProgressesFamilyState';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -80,7 +80,7 @@ export function CompanyBoardCard() {
     BoardCardContext,
   );
   const [companyProgress] = useRecoilState(
-    companyBoardIndexState(pipelineProgressId || ''),
+    companyProgressesFamilyState(pipelineProgressId || ''),
   );
   const { pipelineProgress, company } = companyProgress || {};
   const [selectedBoardCards, setSelectedBoardCards] = useRecoilState(

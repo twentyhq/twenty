@@ -17,7 +17,7 @@ import {
 
 import { boardState } from '../../modules/pipeline-progress/states/boardState';
 
-import { companyBoardIndexState } from './companyBoardIndexState';
+import { companyProgressesFamilyState } from './companyProgressesFamilyState';
 import { currentPipelineState } from './currentPipelineState';
 import { isBoardLoadedState } from './isBoardLoadedState';
 export function HookCompanyBoard() {
@@ -121,7 +121,7 @@ export function HookCompanyBoard() {
     ({ set }) =>
       (companyBoardIndex: { [key: string]: CompanyProgress }) => {
         Object.entries(companyBoardIndex).forEach(([id, companyProgress]) => {
-          set(companyBoardIndexState(id), companyProgress);
+          set(companyProgressesFamilyState(id), companyProgress);
         });
       },
     [],
