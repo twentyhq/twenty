@@ -1,8 +1,13 @@
+import { useEffect, useState } from 'react';
+import { useTheme } from '@emotion/react';
 import { useRecoilState } from 'recoil';
 
+import { useFilteredSearchCompanyQuery } from '@/companies/services';
 import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/lib/hotkeys/types/AppHotkeyScope';
+import { useFilteredSearchPeopleQuery } from '@/people/services';
+import { Avatar } from '@/users/components/Avatar';
 
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
 
@@ -17,6 +22,7 @@ import {
 
 export function CommandMenu() {
   const [open, setOpen] = useRecoilState(isCommandMenuOpenedState);
+  const [search, setSearch] = useState('');
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
@@ -41,6 +47,9 @@ export function CommandMenu() {
       goBackToPreviousHotkeyScope();
     }
   }
+
+  const people = useFilteredSearchPeopleQuery(search, [], 3);
+  // const companies = useFilteredSearchCompanyQuery(search);
 
   /*
   TODO: Allow performing actions on page through CommandBar 
@@ -79,6 +88,8 @@ export function CommandMenu() {
     </StyledGroup>
   );*/
 
+  const theme = useTheme();
+
   return (
     <StyledDialog
       open={open}
@@ -88,6 +99,25 @@ export function CommandMenu() {
       <StyledInput placeholder="Search" />
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
+        {people.entitiesToSelect.length && (
+          <StyledGroup heading="People">
+            {people.entitiesToSelect.map((person) => (
+              <CommandMenuItem
+                to={`person/${person.id}`}
+                label={person.name}
+                key={person.id}
+                icon={
+                  <Avatar
+                    avatarUrl={person.avatarUrl}
+                    size={theme.icon.size.sm}
+                    colorId={person.id}
+                    placeholder={person.name}
+                  />
+                }
+              />
+            ))}
+          </StyledGroup>
+        )}
         <StyledGroup heading="Navigate">
           <CommandMenuItem
             to="/people"

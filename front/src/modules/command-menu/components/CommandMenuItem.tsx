@@ -33,7 +33,7 @@ export function CommandMenuItem({
   const setOpen = useSetRecoilState(isCommandMenuOpenedState);
   const navigate = useNavigate();
 
-  if (to) {
+  if (to && !icon) {
     icon = <IconArrowUpRight />;
   }
 

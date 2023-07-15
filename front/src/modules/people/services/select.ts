@@ -50,6 +50,7 @@ export function usePeopleQuery(
 export function useFilteredSearchPeopleQuery(
   searchFilter: string,
   peopleIds: string[] = [],
+  limit?: number,
 ) {
   return useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
@@ -64,6 +65,7 @@ export function useFilteredSearchPeopleQuery(
         avatarType: 'rounded',
       } as CommentableEntityForSelect),
     searchFilter,
+    limit: limit,
   });
 }
 
