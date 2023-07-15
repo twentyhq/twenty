@@ -9,24 +9,21 @@ import {
 } from '@floating-ui/react';
 
 import { useHandleCheckableCommentThreadTargetChange } from '@/comments/hooks/useHandleCheckableCommentThreadTargetChange';
-import { CommentableEntityForSelect } from '@/comments/types/CommentableEntityForSelect';
 import { CompanyChip } from '@/companies/components/CompanyChip';
+import { useFilteredSearchCompanyQuery } from '@/companies/services';
 import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { PersonChip } from '@/people/components/PersonChip';
+import { useFilteredSearchPeopleQuery } from '@/people/services';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { MultipleEntitySelect } from '@/relation-picker/components/MultipleEntitySelect';
-import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/ui/utils/flatMapAndSortEntityForSelectArrayByName';
-import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
   CommentThread,
   CommentThreadTarget,
-  useSearchCompanyQuery,
-  useSearchPeopleQuery,
 } from '~/generated/graphql';
 
 type OwnProps = {
@@ -90,35 +87,14 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
       ?.filter((relation) => relation.commentableType === 'Company')
       .map((relation) => relation.commentableId) ?? [];
 
-  const personsForMultiSelect = useFilteredSearchEntityQuery({
-    queryHook: useSearchPeopleQuery,
-    searchOnFields: ['firstName', 'lastName'],
-    orderByField: 'lastName',
-    selectedIds: peopleIds,
-    mappingFunction: (entity) =>
-      ({
-        id: entity.id,
-        entityType: CommentableType.Person,
-        name: `${entity.firstName} ${entity.lastName}`,
-        avatarType: 'rounded',
-      } as CommentableEntityForSelect),
+  const personsForMultiSelect = useFilteredSearchPeopleQuery({
     searchFilter,
+    selectedIds: peopleIds,
   });
 
-  const companiesForMultiSelect = useFilteredSearchEntityQuery({
-    queryHook: useSearchCompanyQuery,
-    searchOnFields: ['name'],
-    orderByField: 'name',
-    selectedIds: companyIds,
-    mappingFunction: (company) =>
-      ({
-        id: company.id,
-        entityType: CommentableType.Company,
-        name: company.name,
-        avatarUrl: getLogoUrlFromDomainName(company.domainName),
-        avatarType: 'squared',
-      } as CommentableEntityForSelect),
+  const companiesForMultiSelect = useFilteredSearchCompanyQuery({
     searchFilter,
+    selectedIds: companyIds,
   });
 
   const {

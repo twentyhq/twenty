@@ -11,19 +11,17 @@ import { pipelineStageIdScopedState } from '@/pipeline-progress/states/pipelineS
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
-import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { NewButton } from '@/ui/board/components/NewButton';
-import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
-  CommentableType,
   PipelineProgressableType,
   useCreateOnePipelineProgressMutation,
-  useSearchCompanyQuery,
 } from '~/generated/graphql';
 import { currentPipelineState } from '~/pages/opportunities/currentPipelineState';
+
+import { useFilteredSearchCompanyQuery } from '../services';
 
 export function NewCompanyProgressButton() {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
@@ -93,21 +91,7 @@ export function NewCompanyProgressButton() {
   const [searchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const companies = useFilteredSearchEntityQuery({
-    queryHook: useSearchCompanyQuery,
-    selectedIds: [],
-    searchFilter: searchFilter,
-    mappingFunction: (company) => ({
-      entityType: CommentableType.Company,
-      id: company.id,
-      name: company.name,
-      domainName: company.domainName,
-      avatarType: 'squared',
-      avatarUrl: getLogoUrlFromDomainName(company.domainName),
-    }),
-    orderByField: 'name',
-    searchOnFields: ['name'],
-  });
+  const companies = useFilteredSearchCompanyQuery({ searchFilter });
 
   return (
     <>

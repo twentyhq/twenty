@@ -3,11 +3,9 @@ import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/st
 import { filterDropdownSelectedEntityIdScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSelectedEntityIdScopedState';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
-import { useFilteredSearchEntityQuery } from '@/relation-picker/hooks/useFilteredSearchEntityQuery';
-import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
 import { TableContext } from '@/ui/tables/states/TableContext';
-import { getLogoUrlFromDomainName } from '@/utils/utils';
-import { useSearchCompanyQuery } from '~/generated/graphql';
+
+import { useFilteredSearchCompanyQuery } from '../services';
 
 export function FilterDropdownCompanySearchSelect() {
   const filterDropdownSearchInput = useRecoilScopedValue(
@@ -20,21 +18,11 @@ export function FilterDropdownCompanySearchSelect() {
     TableContext,
   );
 
-  const usersForSelect = useFilteredSearchEntityQuery({
-    queryHook: useSearchCompanyQuery,
-    searchOnFields: ['name'],
-    orderByField: 'name',
+  const usersForSelect = useFilteredSearchCompanyQuery({
+    searchFilter: filterDropdownSearchInput,
     selectedIds: filterDropdownSelectedEntityId
       ? [filterDropdownSelectedEntityId]
       : [],
-    mappingFunction: (company) => ({
-      id: company.id,
-      entityType: Entity.User,
-      name: `${company.name}`,
-      avatarType: 'squared',
-      avatarUrl: getLogoUrlFromDomainName(company.domainName),
-    }),
-    searchFilter: filterDropdownSearchInput,
   });
 
   return (

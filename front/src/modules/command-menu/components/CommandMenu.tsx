@@ -1,10 +1,15 @@
-import { useRecoilState } from 'recoil';
+import { useState } from 'react';
+import { useTheme } from '@emotion/react';
+import { useRecoilValue } from 'recoil';
 
-import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
+import { useFilteredSearchCompanyQuery } from '@/companies/services';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/lib/hotkeys/types/AppHotkeyScope';
+import { useFilteredSearchPeopleQuery } from '@/people/services';
+import { Avatar } from '@/users/components/Avatar';
 
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpened';
+import { useCommandMenu } from '../hooks/useCommandMenu';
+import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 
 import { CommandMenuItem } from './CommandMenuItem';
 import {
@@ -16,31 +21,29 @@ import {
 } from './CommandMenuStyles';
 
 export function CommandMenu() {
-  const [open, setOpen] = useRecoilState(isCommandMenuOpenedState);
+  const { openCommandMenu, closeCommandMenu } = useCommandMenu();
+  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+  const [search, setSearch] = useState('');
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
-      handleOpenChange(!open);
+      openCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
-    [setOpen, open, handleOpenChange],
+    [openCommandMenu],
   );
 
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
-
-  function handleOpenChange(newOpenState: boolean) {
-    if (newOpenState) {
-      setOpen(true);
-      setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenu);
-    } else {
-      setOpen(false);
-      goBackToPreviousHotkeyScope();
-    }
-  }
+  const people = useFilteredSearchPeopleQuery({
+    searchFilter: search,
+    selectedIds: [],
+    limit: 3,
+  });
+  const companies = useFilteredSearchCompanyQuery({
+    searchFilter: search,
+    selectedIds: [],
+    limit: 3,
+  });
 
   /*
   TODO: Allow performing actions on page through CommandBar 
@@ -79,15 +82,64 @@ export function CommandMenu() {
     </StyledGroup>
   );*/
 
+  const theme = useTheme();
+
   return (
     <StyledDialog
-      open={open}
-      onOpenChange={handleOpenChange}
+      open={isCommandMenuOpened}
+      onOpenChange={(opened) => {
+        if (!opened) {
+          closeCommandMenu();
+        }
+      }}
       label="Global Command Menu"
+      shouldFilter={false}
     >
-      <StyledInput placeholder="Search" />
+      <StyledInput
+        placeholder="Search"
+        value={search}
+        onValueChange={setSearch}
+      />
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
+        {!!people.entitiesToSelect.length && (
+          <StyledGroup heading="People">
+            {people.entitiesToSelect.map((person) => (
+              <CommandMenuItem
+                to={`person/${person.id}`}
+                label={person.name}
+                key={person.id}
+                icon={
+                  <Avatar
+                    avatarUrl={person.avatarUrl}
+                    size={theme.icon.size.sm}
+                    colorId={person.id}
+                    placeholder={person.name}
+                  />
+                }
+              />
+            ))}
+          </StyledGroup>
+        )}
+        {!!companies.entitiesToSelect.length && (
+          <StyledGroup heading="Companies">
+            {companies.entitiesToSelect.map((company) => (
+              <CommandMenuItem
+                to={`companies/${company.id}`}
+                label={company.name}
+                key={company.id}
+                icon={
+                  <Avatar
+                    avatarUrl={company.avatarUrl}
+                    size={theme.icon.size.sm}
+                    colorId={company.id}
+                    placeholder={company.name}
+                  />
+                }
+              />
+            ))}
+          </StyledGroup>
+        )}
         <StyledGroup heading="Navigate">
           <CommandMenuItem
             to="/people"
