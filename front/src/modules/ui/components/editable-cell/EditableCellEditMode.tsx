@@ -12,7 +12,9 @@ export const EditableCellEditModeContainer = styled.div<OwnProps>`
   display: flex;
   left: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? 'auto' : '0'};
-  margin-left: -2px;
+  margin-left: -1px;
+  margin-top: -1px;
+
   min-height: 100%;
   min-width: calc(100% + 20px);
   position: absolute;

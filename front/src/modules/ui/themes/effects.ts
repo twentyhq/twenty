@@ -9,11 +9,15 @@ export const overlayBackground = (props: { theme: ThemeType }) =>
     box-shadow: ${props.theme.boxShadow.strong};
   `;
 
-export const textInputStyle = (props: any) =>
+export const textInputStyle = (props: { theme: ThemeType }) =>
   css`
     background-color: transparent;
     border: none;
     color: ${props.theme.font.color.primary};
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+
+    font-weight: 400;
     outline: none;
     padding: ${props.theme.spacing(0)} ${props.theme.spacing(2)};
 

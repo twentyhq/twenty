@@ -14,7 +14,7 @@ const StyledClickable = styled.div`
   a {
     color: ${({ theme }) => theme.font.color.tertiary};
     font-size: ${({ theme }) => theme.font.size.sm};
-    text-decoration: none;
+    text-decoration: underline;
   }
 `;
 

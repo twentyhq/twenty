@@ -14,7 +14,6 @@ const StyledClickable = styled.div`
 
   a {
     color: inherit;
-    text-decoration: none;
   }
 `;
 
