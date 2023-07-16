@@ -1,48 +1,56 @@
+import React from 'react';
 import styled from '@emotion/styled';
 
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
+import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 
 import { ColumnHotkeyScope } from './ColumnHotkeyScope';
 
 const StyledEditTitleInput = styled.input`
   background-color: transparent;
   border: none;
-  &::placeholder,
-  &::-webkit-input-placeholder {
+  color: ${({ color }) => color};
+  font-family: ${({ theme }) => theme.font.family};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+
+  &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
     font-family: ${({ theme }) => theme.font.family};
     font-weight: ${({ theme }) => theme.font.weight.medium};
   }
-  color: ${({ color }) => color};
-  &:focus {
-    color: ${({ color }) => color};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
-    line-height: ${({ theme }) => theme.text.lineHeight};
-  }
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+
   margin: 0;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
   outline: none;
+  padding: 0;
 `;
 
 export function EditColumnTitleInput({
   color,
   value,
   onChange,
-  toggleEditMode,
+  onFocusLeave,
 }: {
   color?: string;
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  toggleEditMode: () => void;
+  onFocusLeave: () => void;
 }) {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  useListenClickOutsideArrayOfRef([inputRef], () => {
+    onFocusLeave();
+  });
   const setHotkeyScope = useSetHotkeyScope();
   setHotkeyScope(ColumnHotkeyScope.EditColumnName, { goto: false });
 
-  useScopedHotkeys('enter', toggleEditMode, ColumnHotkeyScope.EditColumnName);
-  useScopedHotkeys('esc', toggleEditMode, ColumnHotkeyScope.EditColumnName);
+  useScopedHotkeys('enter', onFocusLeave, ColumnHotkeyScope.EditColumnName);
+  useScopedHotkeys('esc', onFocusLeave, ColumnHotkeyScope.EditColumnName);
   return (
     <StyledEditTitleInput
+      ref={inputRef}
       placeholder={'Enter column name'}
       color={color}
       autoFocus

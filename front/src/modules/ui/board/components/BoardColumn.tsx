@@ -14,6 +14,7 @@ export const StyledColumn = styled.div`
 `;
 
 const StyledHeader = styled.div`
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -21,13 +22,17 @@ const StyledHeader = styled.div`
 `;
 
 export const StyledColumnTitle = styled.h3`
+  align-items: center;
   color: ${({ color }) => color};
+  display: flex;
+  flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  line-height: ${({ theme }) => theme.text.lineHeight};
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: 24px;
   margin: 0;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledAmount = styled.div`
@@ -53,10 +58,6 @@ export function BoardColumn({
   const [isEditing, setIsEditing] = React.useState(false);
   const [internalValue, setInternalValue] = React.useState(title);
 
-  function toggleEditMode() {
-    setIsEditing(!isEditing);
-  }
-
   const debouncedOnUpdate = debounce(onTitleEdit, 200);
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInternalValue(event.target.value);
@@ -65,17 +66,20 @@ export function BoardColumn({
 
   return (
     <StyledColumn>
-      <StyledHeader onClick={toggleEditMode}>
-        {isEditing ? (
-          <EditColumnTitleInput
-            color={colorCode}
-            toggleEditMode={toggleEditMode}
-            value={internalValue}
-            onChange={handleChange}
-          />
-        ) : (
-          <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
-        )}
+      <StyledHeader onClick={() => setIsEditing(true)}>
+        <StyledColumnTitle color={colorCode}>
+          •
+          {isEditing ? (
+            <EditColumnTitleInput
+              color={colorCode}
+              onFocusLeave={() => setIsEditing(false)}
+              value={internalValue}
+              onChange={handleChange}
+            />
+          ) : (
+            <div>{title}</div>
+          )}
+        </StyledColumnTitle>
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
       </StyledHeader>
       {children}
