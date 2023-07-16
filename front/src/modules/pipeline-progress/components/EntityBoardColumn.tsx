@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Droppable, DroppableProvided } from '@hello-pangea/dnd';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
@@ -12,6 +12,7 @@ import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
 import { BoardColumnContext } from '../states/BoardColumnContext';
 import { boardColumnTotalsFamilySelector } from '../states/boardColumnTotalsFamilySelector';
+import { boardState } from '../states/boardState';
 import { pipelineStageIdScopedState } from '../states/pipelineStageIdScopedState';
 import { BoardOptions } from '../types/BoardOptions';
 
@@ -50,6 +51,7 @@ export function EntityBoardColumn({
   column: BoardPipelineStageColumn;
   boardOptions: BoardOptions;
 }) {
+  const [board, setBoard] = useRecoilState(boardState);
   const [pipelineStageId, setPipelineStageId] = useRecoilScopedState(
     pipelineStageIdScopedState,
     BoardColumnContext,
@@ -72,6 +74,17 @@ export function EntityBoardColumn({
         name: value,
       },
     });
+    setBoard([
+      ...(board || []).map((pipelineStage) => {
+        if (pipelineStage.pipelineStageId === pipelineStageId) {
+          return {
+            ...pipelineStage,
+            name: value,
+          };
+        }
+        return pipelineStage;
+      }),
+    ]);
   }
 
   return (
