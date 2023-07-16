@@ -6,7 +6,7 @@ import { EntityTableActionBarButton } from '@/ui/components/table/action-bar/Ent
 import { IconTrash } from '@/ui/icons/index';
 import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
 
-import { GET_PIPELINES } from '../queries';
+import { GET_PIPELINES } from '../services';
 import { selectedBoardCardsState } from '../states/selectedBoardCardsState';
 
 export function BoardActionBarButtonDeletePipelineProgress() {

@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
+
+import { debounce } from '@/utils/debounce';
+
+import { EditColumnTitleInput } from './EditColumnTitleInput';
 
 export const StyledColumn = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
@@ -26,21 +30,53 @@ export const StyledColumnTitle = styled.h3`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const StyledAmount = styled.div`
+const StyledAmount = styled.div`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
 type OwnProps = {
   colorCode?: string;
   title: string;
+  pipelineStageId?: string;
+  onTitleEdit: (title: string) => void;
+  totalAmount?: number;
   children: React.ReactNode;
 };
 
-export function BoardColumn({ colorCode, title, children }: OwnProps) {
+export function BoardColumn({
+  colorCode,
+  title,
+  onTitleEdit,
+  totalAmount,
+  children,
+}: OwnProps) {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [internalValue, setInternalValue] = React.useState(title);
+
+  function toggleEditMode() {
+    setIsEditing(!isEditing);
+  }
+
+  const debouncedOnUpdate = debounce(onTitleEdit, 200);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setInternalValue(event.target.value);
+    debouncedOnUpdate(event.target.value);
+  };
+
   return (
     <StyledColumn>
-      <StyledHeader>
-        <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
+      <StyledHeader onClick={toggleEditMode}>
+        {isEditing ? (
+          <EditColumnTitleInput
+            color={colorCode}
+            toggleEditMode={toggleEditMode}
+            value={internalValue}
+            onChange={handleChange}
+          />
+        ) : (
+          <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
+        )}
+        {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
       </StyledHeader>
       {children}
     </StyledColumn>

@@ -1,6 +1,6 @@
 import { Key } from 'ts-key-enum';
 
-import { useFilteredSearchCompanyQuery } from '@/companies/services';
+import { useFilteredSearchCompanyQuery } from '@/companies/queries';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';

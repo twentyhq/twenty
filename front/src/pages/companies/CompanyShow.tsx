@@ -7,7 +7,7 @@ import { CompanyAddressEditableField } from '@/companies/fields/components/Compa
 import { CompanyCreatedAtEditableField } from '@/companies/fields/components/CompanyCreatedAtEditableField';
 import { CompanyDomainNameEditableField } from '@/companies/fields/components/CompanyDomainNameEditableField';
 import { CompanyEmployeesEditableField } from '@/companies/fields/components/CompanyEmployeesEditableField';
-import { useCompanyQuery } from '@/companies/services';
+import { useCompanyQuery } from '@/companies/queries';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { IconBuildingSkyscraper } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';

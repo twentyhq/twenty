@@ -4,9 +4,10 @@ import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
 import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
-import { GET_PIPELINES } from '@/pipeline-progress/queries';
+import { GET_PIPELINES } from '@/pipeline-progress/services';
 import { BoardColumnContext } from '@/pipeline-progress/states/BoardColumnContext';
 import { boardState } from '@/pipeline-progress/states/boardState';
+import { currentPipelineState } from '@/pipeline-progress/states/currentPipelineState';
 import { pipelineStageIdScopedState } from '@/pipeline-progress/states/pipelineStageIdScopedState';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
@@ -19,9 +20,8 @@ import {
   PipelineProgressableType,
   useCreateOnePipelineProgressMutation,
 } from '~/generated/graphql';
-import { currentPipelineState } from '~/pages/opportunities/currentPipelineState';
 
-import { useFilteredSearchCompanyQuery } from '../services';
+import { useFilteredSearchCompanyQuery } from '../queries';
 
 export function NewCompanyProgressButton() {
   const [isCreatingCard, setIsCreatingCard] = useState(false);

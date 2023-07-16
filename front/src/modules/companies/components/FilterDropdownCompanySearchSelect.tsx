@@ -5,7 +5,7 @@ import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState'
 import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
 import { TableContext } from '@/ui/tables/states/TableContext';
 
-import { useFilteredSearchCompanyQuery } from '../services';
+import { useFilteredSearchCompanyQuery } from '../queries';
 
 export function FilterDropdownCompanySearchSelect() {
   const filterDropdownSearchInput = useRecoilScopedValue(

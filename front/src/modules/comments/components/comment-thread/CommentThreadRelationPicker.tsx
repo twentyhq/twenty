@@ -10,7 +10,7 @@ import {
 
 import { useHandleCheckableCommentThreadTargetChange } from '@/comments/hooks/useHandleCheckableCommentThreadTargetChange';
 import { CompanyChip } from '@/companies/components/CompanyChip';
-import { useFilteredSearchCompanyQuery } from '@/companies/services';
+import { useFilteredSearchCompanyQuery } from '@/companies/queries';
 import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { PersonChip } from '@/people/components/PersonChip';

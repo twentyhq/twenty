@@ -1,11 +1,15 @@
 import { useEffect } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
+import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 import {
   CompanyForBoard,
   CompanyProgress,
   PipelineProgressForBoard,
 } from '@/companies/types/CompanyProgress';
+import { boardState } from '@/pipeline-progress/states/boardState';
+import { currentPipelineState } from '@/pipeline-progress/states/currentPipelineState';
+import { isBoardLoadedState } from '@/pipeline-progress/states/isBoardLoadedState';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import {
   Pipeline,
@@ -15,11 +19,6 @@ import {
   useGetPipelinesQuery,
 } from '~/generated/graphql';
 
-import { boardState } from '../../modules/pipeline-progress/states/boardState';
-
-import { companyProgressesFamilyState } from './companyProgressesFamilyState';
-import { currentPipelineState } from './currentPipelineState';
-import { isBoardLoadedState } from './isBoardLoadedState';
 export function HookCompanyBoard() {
   const [currentPipeline, setCurrentPipeline] =
     useRecoilState(currentPipelineState);
@@ -44,6 +43,7 @@ export function HookCompanyBoard() {
           pipelineStageId: pipelineStage.id,
           title: pipelineStage.name,
           colorCode: pipelineStage.color,
+          index: pipelineStage.index || 0,
           pipelineProgressIds:
             pipelineStage.pipelineProgresses?.map(
               (item) => item.id as string,

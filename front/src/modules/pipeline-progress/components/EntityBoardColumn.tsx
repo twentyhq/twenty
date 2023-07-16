@@ -1,14 +1,18 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { Droppable, DroppableProvided } from '@hello-pangea/dnd';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
+import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
 import { BoardColumnContext } from '../states/BoardColumnContext';
+import { boardColumnTotalsFamilySelector } from '../states/boardColumnTotalsFamilySelector';
+import { boardState } from '../states/boardState';
 import { pipelineStageIdScopedState } from '../states/pipelineStageIdScopedState';
 import { BoardOptions } from '../types/BoardOptions';
 
@@ -47,9 +51,13 @@ export function EntityBoardColumn({
   column: BoardPipelineStageColumn;
   boardOptions: BoardOptions;
 }) {
+  const [board, setBoard] = useRecoilState(boardState);
   const [pipelineStageId, setPipelineStageId] = useRecoilScopedState(
     pipelineStageIdScopedState,
     BoardColumnContext,
+  );
+  const boardColumnTotal = useRecoilValue(
+    boardColumnTotalsFamilySelector(column.pipelineStageId),
   );
 
   useEffect(() => {
@@ -58,10 +66,37 @@ export function EntityBoardColumn({
     }
   }, [column, setPipelineStageId, pipelineStageId]);
 
+  const [updatePipelineStage] = useUpdatePipelineStageMutation();
+  function handleEditColumnTitle(value: string) {
+    updatePipelineStage({
+      variables: {
+        id: pipelineStageId,
+        name: value,
+      },
+    });
+    setBoard([
+      ...(board || []).map((pipelineStage) => {
+        if (pipelineStage.pipelineStageId === pipelineStageId) {
+          return {
+            ...pipelineStage,
+            name: value,
+          };
+        }
+        return pipelineStage;
+      }),
+    ]);
+  }
+
   return (
     <Droppable droppableId={column.pipelineStageId}>
       {(droppableProvided) => (
-        <BoardColumn title={`${column.title}  `} colorCode={column.colorCode}>
+        <BoardColumn
+          onTitleEdit={handleEditColumnTitle}
+          title={column.title}
+          colorCode={column.colorCode}
+          pipelineStageId={column.pipelineStageId}
+          totalAmount={boardColumnTotal}
+        >
           <BoardColumnCardsContainer droppableProvided={droppableProvided}>
             {column.pipelineProgressIds.map((pipelineProgressId, index) => (
               <RecoilScope

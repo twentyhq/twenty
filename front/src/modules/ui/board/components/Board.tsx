@@ -12,6 +12,7 @@ export const StyledBoard = styled.div`
 export type BoardPipelineStageColumn = {
   pipelineStageId: string;
   title: string;
+  index: number;
   colorCode?: string;
   pipelineProgressIds: string[];
 };

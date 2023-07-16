@@ -1,10 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { IconList } from '@tabler/icons-react';
 
-import {
-  CompaniesSelectedSortType,
-  defaultOrderBy,
-} from '@/companies/services';
+import { CompaniesSelectedSortType, defaultOrderBy } from '@/companies/queries';
 import { companyColumns } from '@/companies/table/components/companyColumns';
 import { CompanyEntityTableData } from '@/companies/table/components/CompanyEntityTableData';
 import { reduceSortsToOrderBy } from '@/lib/filters-and-sorts/helpers';

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 
-import { useFilteredSearchCompanyQuery } from '@/companies/services';
+import { useFilteredSearchCompanyQuery } from '@/companies/queries';
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/lib/hotkeys/types/AppHotkeyScope';
 import { useFilteredSearchPeopleQuery } from '@/people/services';

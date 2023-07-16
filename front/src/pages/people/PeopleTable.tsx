@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { IconList } from '@tabler/icons-react';
 
-import { defaultOrderBy } from '@/companies/services';
+import { defaultOrderBy } from '@/companies/queries';
 import { reduceSortsToOrderBy } from '@/lib/filters-and-sorts/helpers';
 import { filtersScopedState } from '@/lib/filters-and-sorts/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/lib/filters-and-sorts/utils/turnFilterIntoWhereClause';
