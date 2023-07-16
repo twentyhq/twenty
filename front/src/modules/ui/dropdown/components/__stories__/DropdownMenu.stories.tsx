@@ -7,10 +7,9 @@ import { Avatar } from '@/users/components/Avatar';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { DropdownMenu } from '../DropdownMenu';
-import { DropdownMenuButton } from '../DropdownMenuButton';
 import { DropdownMenuCheckableItem } from '../DropdownMenuCheckableItem';
 import { DropdownMenuItem } from '../DropdownMenuItem';
-import { DropdownMenuItemContainer } from '../DropdownMenuItemContainer';
+import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
 import { DropdownMenuSearch } from '../DropdownMenuSearch';
 import { DropdownMenuSelectableItem } from '../DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
@@ -128,9 +127,9 @@ export const EmptyWithContentBelow: Story = {
 export const SimpleMenuItem: Story = {
   render: getRenderWrapperForComponent(
     <DropdownMenuStoryWrapper>
-      <DropdownMenuItemContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         <FakeMenuItemList />
-      </DropdownMenuItemContainer>
+      </DropdownMenuItemsContainer>
     </DropdownMenuStoryWrapper>,
   ),
 };
@@ -143,9 +142,9 @@ export const Search: Story = {
         <DropdownMenu>
           <DropdownMenuSearch />
           <DropdownMenuSeparator />
-          <DropdownMenuItemContainer>
+          <DropdownMenuItemsContainer hasMaxHeight>
             <FakeMenuItemList />
-          </DropdownMenuItemContainer>
+          </DropdownMenuItemsContainer>
         </DropdownMenu>
       </MenuAbsolutePositionWrapper>
     </FakeBelowContainer>,
@@ -176,16 +175,16 @@ export const Button: Story = {
       <FakeContentBelow />
       <MenuAbsolutePositionWrapper>
         <DropdownMenu>
-          <DropdownMenuItemContainer>
-            <DropdownMenuButton>
+          <DropdownMenuItemsContainer hasMaxHeight>
+            <DropdownMenuItem>
               <IconPlus size={16} />
               <div>Create new</div>
-            </DropdownMenuButton>
-          </DropdownMenuItemContainer>
+            </DropdownMenuItem>
+          </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
-          <DropdownMenuItemContainer>
+          <DropdownMenuItemsContainer hasMaxHeight>
             <FakeSelectableMenuItemList />
-          </DropdownMenuItemContainer>
+          </DropdownMenuItemsContainer>
         </DropdownMenu>
       </MenuAbsolutePositionWrapper>
     </FakeBelowContainer>,
@@ -198,9 +197,9 @@ export const SelectableMenuItem: Story = {
       <FakeContentBelow />
       <MenuAbsolutePositionWrapper>
         <DropdownMenu>
-          <DropdownMenuItemContainer>
+          <DropdownMenuItemsContainer hasMaxHeight>
             <FakeSelectableMenuItemList />
-          </DropdownMenuItemContainer>
+          </DropdownMenuItemsContainer>
         </DropdownMenu>
       </MenuAbsolutePositionWrapper>
     </FakeBelowContainer>,
@@ -237,9 +236,9 @@ export const SelectableMenuItemWithAvatar: Story = {
       <FakeContentBelow />
       <MenuAbsolutePositionWrapper>
         <DropdownMenu>
-          <DropdownMenuItemContainer>
+          <DropdownMenuItemsContainer hasMaxHeight>
             <FakeSelectableMenuItemWithAvatarList />
-          </DropdownMenuItemContainer>
+          </DropdownMenuItemsContainer>
         </DropdownMenu>
       </MenuAbsolutePositionWrapper>
     </FakeBelowContainer>,
@@ -277,9 +276,9 @@ export const CheckableMenuItem: Story = {
       <FakeContentBelow />
       <MenuAbsolutePositionWrapper>
         <DropdownMenu>
-          <DropdownMenuItemContainer>
+          <DropdownMenuItemsContainer hasMaxHeight>
             <FakeCheckableMenuItemList />
-          </DropdownMenuItemContainer>
+          </DropdownMenuItemsContainer>
         </DropdownMenu>
       </MenuAbsolutePositionWrapper>
     </FakeBelowContainer>,
@@ -323,9 +322,9 @@ export const CheckableMenuItemWithAvatar: Story = {
       <FakeContentBelow />
       <MenuAbsolutePositionWrapper>
         <DropdownMenu>
-          <DropdownMenuItemContainer>
+          <DropdownMenuItemsContainer hasMaxHeight>
             <FakeCheckableMenuItemWithAvatarList />
-          </DropdownMenuItemContainer>
+          </DropdownMenuItemsContainer>
         </DropdownMenu>
       </MenuAbsolutePositionWrapper>
     </FakeBelowContainer>,

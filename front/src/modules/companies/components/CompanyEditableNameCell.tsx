@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { useOpenTimelineRightDrawer } from '@/activities/hooks/useOpenTimelineRightDrawer';
-import { CellCommentChip } from '@/activities/table/components/CellCommentChip';
 import { EditableCellChip } from '@/ui/table/editable-cell/types/EditableChip';
 import {
-  CommentableType,
   GetCompaniesQuery,
   useUpdateCompanyMutation,
 } from '~/generated/graphql';
@@ -20,22 +17,9 @@ type OwnProps = {
 };
 
 export function CompanyEditableNameChipCell({ company }: OwnProps) {
-  const openCommentRightDrawer = useOpenTimelineRightDrawer();
   const [updateCompany] = useUpdateCompanyMutation();
 
   const [internalValue, setInternalValue] = useState(company.name ?? '');
-
-  function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    openCommentRightDrawer([
-      {
-        type: CommentableType.Company,
-        id: company.id,
-      },
-    ]);
-  }
 
   useEffect(() => {
     setInternalValue(company.name ?? '');
@@ -49,12 +33,6 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       id={company.id}
       changeHandler={setInternalValue}
       ChipComponent={CompanyChip}
-      rightEndContents={[
-        <CellCommentChip
-          count={company._commentThreadCount ?? 0}
-          onClick={handleCommentClick}
-        />,
-      ]}
       onSubmit={() =>
         updateCompany({
           variables: {

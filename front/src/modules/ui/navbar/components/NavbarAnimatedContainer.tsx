@@ -47,7 +47,7 @@ export function NavbarAnimatedContainer({ children, layout }: NavbarProps) {
         opacity: isMenuOpened ? 1 : 0,
       }}
       transition={{
-        duration: theme.animation.duration.visible,
+        duration: theme.animation.duration.normal,
       }}
     >
       {children}

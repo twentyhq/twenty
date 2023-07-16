@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 const StyledPanel = styled.div`
   background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: row;

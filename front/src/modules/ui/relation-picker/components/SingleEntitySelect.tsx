@@ -2,8 +2,8 @@ import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
 
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
-import { DropdownMenuButton } from '@/ui/dropdown/components/DropdownMenuButton';
-import { DropdownMenuItemContainer } from '@/ui/dropdown/components/DropdownMenuItemContainer';
+import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
@@ -60,12 +60,12 @@ export function SingleEntitySelect<
       <DropdownMenuSeparator />
       {showCreateButton && (
         <>
-          <DropdownMenuItemContainer style={{ maxHeight: 180 }}>
-            <DropdownMenuButton onClick={onCreate}>
+          <DropdownMenuItemsContainer hasMaxHeight>
+            <DropdownMenuItem onClick={onCreate}>
               <IconPlus size={theme.icon.size.md} />
               Create new
-            </DropdownMenuButton>
-          </DropdownMenuItemContainer>
+            </DropdownMenuItem>
+          </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
         </>
       )}

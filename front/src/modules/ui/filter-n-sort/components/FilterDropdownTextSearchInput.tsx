@@ -1,5 +1,6 @@
 import { ChangeEvent, Context } from 'react';
 
+import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
 
 import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
@@ -35,7 +36,7 @@ export function FilterDropdownTextSearchInput({
   return (
     filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
-      <input
+      <DropdownMenuSearch
         type="text"
         placeholder={filterDefinitionUsedInDropdown.label}
         value={filterCurrentlyEdited?.value ?? filterDropdownSearchInput}

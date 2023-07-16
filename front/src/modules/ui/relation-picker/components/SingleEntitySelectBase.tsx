@@ -1,8 +1,9 @@
 import { useRef } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemContainer } from '@/ui/dropdown/components/DropdownMenuItemContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
@@ -12,8 +13,7 @@ import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
-import { CompanyPickerSkeleton } from './skeletons/CompanyPickerSkeleton';
-import { DropdownMenuItemContainerSkeleton } from './skeletons/DropdownMenuItemContainerSkeleton';
+import { DropdownMenuItemsContainerSkeleton } from './skeletons/DropdownMenuItemsContainerSkeleton';
 
 export type EntitiesForSingleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
@@ -64,11 +64,11 @@ export function SingleEntitySelectBase<
   );
 
   return (
-    <DropdownMenuItemContainer ref={containerRef}>
+    <DropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
       {entities.loading ? (
-        <DropdownMenuItemContainerSkeleton>
-          <CompanyPickerSkeleton count={10} />
-        </DropdownMenuItemContainerSkeleton>
+        <DropdownMenuItemsContainerSkeleton>
+          <Skeleton height={24} />
+        </DropdownMenuItemsContainerSkeleton>
       ) : entitiesInDropdown.length === 0 ? (
         <DropdownMenuItem>No result</DropdownMenuItem>
       ) : (
@@ -90,6 +90,6 @@ export function SingleEntitySelectBase<
           </DropdownMenuSelectableItem>
         ))
       )}
-    </DropdownMenuItemContainer>
+    </DropdownMenuItemsContainer>
   );
 }

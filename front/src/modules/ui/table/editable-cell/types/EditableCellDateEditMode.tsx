@@ -9,7 +9,7 @@ import { useEditableCell } from '../hooks/useEditableCell';
 
 const EditableCellDateEditModeContainer = styled.div`
   margin-top: -1px;
-  width: inherit;
+  width: 100%;
 `;
 
 export type EditableDateProps = {

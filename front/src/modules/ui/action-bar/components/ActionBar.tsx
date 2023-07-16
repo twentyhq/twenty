@@ -18,7 +18,7 @@ type StyledContainerProps = {
 const StyledContainer = styled.div<StyledContainerProps>`
   align-items: center;
   background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   bottom: ${(props) => (props.position.x ? 'auto' : '38px')};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};

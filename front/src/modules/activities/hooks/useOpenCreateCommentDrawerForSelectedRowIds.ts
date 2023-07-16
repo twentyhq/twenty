@@ -29,6 +29,7 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
     viewableCommentThreadIdState,
   );
   const setHotkeyScope = useSetHotkeyScope();
+  setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
 
   const [, setCommentableEntityArray] = useRecoilState(
     commentableEntityArrayState,

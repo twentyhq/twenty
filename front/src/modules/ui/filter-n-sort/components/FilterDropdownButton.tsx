@@ -1,6 +1,7 @@
 import { Context, useCallback, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
+import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/filter-n-sort/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
@@ -107,20 +108,19 @@ export function FilterDropdownButton({
         selectedOperandInDropdown && (
           <>
             <FilterDropdownOperandButton context={context} />
-            <DropdownButton.StyledSearchField autoFocus key={'search-filter'}>
-              {filterDefinitionUsedInDropdown.type === 'text' && (
-                <FilterDropdownTextSearchInput context={context} />
-              )}
-              {filterDefinitionUsedInDropdown.type === 'number' && (
-                <FilterDropdownNumberSearchInput context={context} />
-              )}
-              {filterDefinitionUsedInDropdown.type === 'date' && (
-                <FilterDropdownDateSearchInput context={context} />
-              )}
-              {filterDefinitionUsedInDropdown.type === 'entity' && (
-                <FilterDropdownEntitySearchInput context={context} />
-              )}
-            </DropdownButton.StyledSearchField>
+            <DropdownMenuSeparator />
+            {filterDefinitionUsedInDropdown.type === 'text' && (
+              <FilterDropdownTextSearchInput context={context} />
+            )}
+            {filterDefinitionUsedInDropdown.type === 'number' && (
+              <FilterDropdownNumberSearchInput context={context} />
+            )}
+            {filterDefinitionUsedInDropdown.type === 'date' && (
+              <FilterDropdownDateSearchInput context={context} />
+            )}
+            {filterDefinitionUsedInDropdown.type === 'entity' && (
+              <FilterDropdownEntitySearchInput context={context} />
+            )}
             {filterDefinitionUsedInDropdown.type === 'entity' && (
               <FilterDropdownEntitySelect context={context} />
             )}

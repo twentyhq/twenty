@@ -1,6 +1,6 @@
 import { Context } from 'react';
 
-import { DropdownMenuItemContainer } from '@/ui/dropdown/components/DropdownMenuItemContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
@@ -43,7 +43,7 @@ export function FilterDropdownFilterSelect({
   const setHotkeyScope = useSetHotkeyScope();
 
   return (
-    <DropdownMenuItemContainer style={{ maxHeight: '300px' }}>
+    <DropdownMenuItemsContainer>
       {availableFilters.map((availableFilter, index) => (
         <DropdownMenuSelectableItem
           key={`select-filter-${index}`}
@@ -67,6 +67,6 @@ export function FilterDropdownFilterSelect({
           {availableFilter.label}
         </DropdownMenuSelectableItem>
       ))}
-    </DropdownMenuItemContainer>
+    </DropdownMenuItemsContainer>
   );
 }

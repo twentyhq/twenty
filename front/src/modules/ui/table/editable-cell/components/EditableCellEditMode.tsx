@@ -7,8 +7,10 @@ import { useRegisterCloseCellHandlers } from '../hooks/useRegisterCloseCellHandl
 
 export const EditableCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border: ${({ transparent, theme }) =>
+    transparent ? 'none' : `1px solid ${theme.border.color.light}`};
+  border-radius: ${({ transparent, theme }) =>
+    transparent ? 'none' : theme.border.radius.sm};
   display: flex;
   left: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? 'auto' : '0'};
@@ -16,18 +18,19 @@ export const EditableCellEditModeContainer = styled.div<OwnProps>`
   margin-top: -1px;
 
   min-height: 100%;
+  min-width: 100%;
   position: absolute;
+
   right: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? '0' : 'auto'};
-
   top: ${(props) => (props.editModeVerticalPosition === 'over' ? '0' : '100%')};
-  width: 100%;
   z-index: 1;
-  ${overlayBackground}
+  ${({ transparent }) => (transparent ? '' : overlayBackground)};
 `;
 
 type OwnProps = {
   children: ReactElement;
+  transparent?: boolean;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
   onOutsideClick?: () => void;
@@ -41,6 +44,7 @@ export function EditableCellEditMode({
   children,
   onCancel,
   onSubmit,
+  transparent = false,
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
@@ -48,6 +52,7 @@ export function EditableCellEditMode({
 
   return (
     <EditableCellEditModeContainer
+      transparent={transparent}
       data-testid="editable-cell-edit-mode-container"
       ref={wrapperRef}
       editModeHorizontalAlign={editModeHorizontalAlign}

@@ -47,6 +47,7 @@ export function RightDrawer() {
     mode: OutsideClickAlerterMode.absolute,
   });
   const theme = useTheme();
+  console.log(isRightDrawerOpen);
   if (!isDefined(rightDrawerPage)) {
     return <></>;
   }
@@ -57,11 +58,11 @@ export function RightDrawer() {
         width: isRightDrawerOpen ? theme.rightDrawerWidth : '0',
       }}
       transition={{
-        duration: theme.animation.duration.visible,
+        duration: theme.animation.duration.normal,
       }}
     >
       <StyledRightDrawer ref={rightDrawerRef}>
-        <RightDrawerRouter />
+        {isRightDrawerOpen && <RightDrawerRouter />}
       </StyledRightDrawer>
     </StyledContainer>
   );

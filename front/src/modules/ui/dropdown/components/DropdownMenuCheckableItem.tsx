@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { Checkbox } from '@/ui/input/components/Checkbox';
 
-import { DropdownMenuButton } from './DropdownMenuButton';
+import { DropdownMenuItem } from './DropdownMenuItem';
 
 type Props = {
   checked: boolean;
@@ -11,7 +11,7 @@ type Props = {
   id?: string;
 };
 
-const DropdownMenuCheckableItemContainer = styled(DropdownMenuButton)`
+const DropdownMenuCheckableItemContainer = styled(DropdownMenuItem)`
   align-items: center;
   display: flex;
   justify-content: space-between;
