@@ -47,10 +47,11 @@ export function RightDrawer() {
     mode: OutsideClickAlerterMode.absolute,
   });
   const theme = useTheme();
-  console.log(isRightDrawerOpen);
   if (!isDefined(rightDrawerPage)) {
     return <></>;
   }
+
+  console.log(isRightDrawerOpen);
 
   return (
     <StyledContainer
