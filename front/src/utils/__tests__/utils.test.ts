@@ -1,4 +1,4 @@
-import { getLogoUrlFromDomainName } from '../utils';
+import { getLogoUrlFromDomainName } from '..';
 
 describe('getLogoUrlFromDomainName', () => {
   it(`should generate logo url if undefined `, () => {

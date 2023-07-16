@@ -1,8 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
 
-import { logError } from '@/utils/logs/logError';
-
 import {
   beautifyExactDate,
   beautifyPastDateAbsolute,
@@ -10,8 +8,9 @@ import {
   DEFAULT_DATE_LOCALE,
   parseDate,
 } from '../date-utils';
+import { logError } from '../logError';
 
-jest.mock('@/utils/logs/logError');
+jest.mock('~/utils/logError');
 
 describe('beautifyExactDate', () => {
   it('should return the correct relative date', () => {
