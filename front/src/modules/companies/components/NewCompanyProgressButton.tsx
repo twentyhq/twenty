@@ -9,7 +9,6 @@ import { BoardColumnContext } from '@/pipeline-progress/states/BoardColumnContex
 import { boardState } from '@/pipeline-progress/states/boardState';
 import { currentPipelineState } from '@/pipeline-progress/states/currentPipelineState';
 import { pipelineStageIdScopedState } from '@/pipeline-progress/states/pipelineStageIdScopedState';
-import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
