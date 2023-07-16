@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 import { stringToHslColor } from '@/utils/string-to-hsl';
 import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
 
+import { getImageAbsoluteURIOrBase64 } from '../utils/getProfilePictureAbsoluteURI';
+
 export type AvatarType = 'squared' | 'rounded';
 
 type OwnProps = {
@@ -44,7 +46,7 @@ export function Avatar({
 
   return (
     <StyledAvatar
-      avatarUrl={avatarUrl}
+      avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
       placeholder={placeholder}
       size={size}
       type={type}
