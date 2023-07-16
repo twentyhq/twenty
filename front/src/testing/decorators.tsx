@@ -4,16 +4,15 @@ import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { pipeline } from '@/companies/__stories__/mock-data';
+import { HookCompanyBoard } from '@/companies/components/HookCompanyBoard';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
-import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
-import { BoardColumnContext } from '@/pipeline-progress/states/BoardColumnContext';
-import { pipelineProgressIdScopedState } from '@/pipeline-progress/states/pipelineProgressIdScopedState';
-import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { HookCompanyBoard } from '~/pages/opportunities/HookCompanyBoard';
-
-import { RecoilScope } from '../modules/recoil-scope/components/RecoilScope';
-import { CellContext } from '../modules/ui/tables/states/CellContext';
-import { RowContext } from '../modules/ui/tables/states/RowContext';
+import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
+import { BoardColumnContext } from '@/pipeline/states/BoardColumnContext';
+import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
+import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { CellContext } from '@/ui/table/states/CellContext';
+import { RowContext } from '@/ui/table/states/RowContext';
 
 import { ComponentStorybookLayout } from './ComponentStorybookLayout';
 import { mockedClient } from './mockedClient';

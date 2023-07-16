@@ -3,18 +3,18 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { usePreviousHotkeyScope } from '@/lib/hotkeys/hooks/usePreviousHotkeyScope';
-import { GET_PIPELINES } from '@/pipeline-progress/services';
-import { BoardColumnContext } from '@/pipeline-progress/states/BoardColumnContext';
-import { boardState } from '@/pipeline-progress/states/boardState';
-import { currentPipelineState } from '@/pipeline-progress/states/currentPipelineState';
-import { pipelineStageIdScopedState } from '@/pipeline-progress/states/pipelineStageIdScopedState';
-import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
-import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
+import { GET_PIPELINES } from '@/pipeline/queries';
+import { BoardColumnContext } from '@/pipeline/states/BoardColumnContext';
+import { boardState } from '@/pipeline/states/boardState';
+import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
+import { pipelineStageIdScopedState } from '@/pipeline/states/pipelineStageIdScopedState';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { NewButton } from '@/ui/board/components/NewButton';
+import { usePreviousHotkeyScope } from '@/ui/hotkey/hooks/usePreviousHotkeyScope';
+import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
+import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
 import {
   PipelineProgressableType,
   useCreateOnePipelineProgressMutation,

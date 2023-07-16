@@ -1,7 +1,7 @@
 import { PersonChip } from '@/people/components/PersonChip';
-import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
-import { EditableCell } from '@/ui/components/editable-cell/EditableCell';
-import { useEditableCell } from '@/ui/components/editable-cell/hooks/useEditableCell';
+import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
+import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
+import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { Company, User } from '~/generated/graphql';
 
 import { CompanyAccountOwnerPicker } from './CompanyAccountOwnerPicker';

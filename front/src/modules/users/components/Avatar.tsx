@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import { stringToHslColor } from '@/utils/string-to-hsl';
-import { isNonEmptyString } from '@/utils/type-guards/isNonEmptyString';
+import { isNonEmptyString } from '~/utils/isNonEmptyString';
+import { stringToHslColor } from '~/utils/string-to-hsl';
 
 import { getImageAbsoluteURIOrBase64 } from '../utils/getProfilePictureAbsoluteURI';
 

@@ -2,14 +2,14 @@ import React from 'react';
 import { HotkeysProvider } from 'react-hotkeys-hook';
 import { MemoryRouter } from 'react-router-dom';
 
-import { INITIAL_HOTKEYS_SCOPES } from '@/lib/hotkeys/constants';
-import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
-import { HooksEntityTable } from '@/ui/components/table/HooksEntityTable';
-import { DefaultLayout } from '@/ui/layout/DefaultLayout';
-import { TableContext } from '@/ui/tables/states/TableContext';
+import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
+import { INITIAL_HOTKEYS_SCOPES } from '@/ui/hotkey/constants';
+import { DefaultLayout } from '@/ui/layout/components/DefaultLayout';
+import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { HooksEntityTable } from '@/ui/table/components/HooksEntityTable';
+import { TableContext } from '@/ui/table/states/TableContext';
+import { UserProvider } from '@/users/components/UserProvider';
 import { companiesFilters } from '~/pages/companies/companies-filters';
-import { ClientConfigProvider } from '~/providers/client-config/ClientConfigProvider';
-import { UserProvider } from '~/providers/user/UserProvider';
 
 import { ComponentStorybookLayout } from './ComponentStorybookLayout';
 import { FullHeightStorybookLayout } from './FullHeightStorybookLayout';

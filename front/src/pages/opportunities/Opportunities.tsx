@@ -1,15 +1,14 @@
 import { useTheme } from '@emotion/react';
 
 import { companyBoardOptions } from '@/companies/components/companyBoardOptions';
+import { HookCompanyBoard } from '@/companies/components/HookCompanyBoard';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
-import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline-progress/components/BoardActionBarButtonDeletePipelineProgress';
-import { EntityBoard } from '@/pipeline-progress/components/EntityBoard';
-import { EntityBoardActionBar } from '@/pipeline-progress/components/EntityBoardActionBar';
-import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
-import { IconTargetArrow } from '@/ui/icons/index';
-import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
-
-import { HookCompanyBoard } from './HookCompanyBoard';
+import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline/components/BoardActionBarButtonDeletePipelineProgress';
+import { EntityBoard } from '@/pipeline/components/EntityBoard';
+import { EntityBoardActionBar } from '@/pipeline/components/EntityBoardActionBar';
+import { IconTargetArrow } from '@/ui/icon/index';
+import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
+import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 
 export function Opportunities() {
   const theme = useTheme();

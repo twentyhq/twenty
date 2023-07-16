@@ -2,24 +2,24 @@ import { useCallback } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCurrencyDollar } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
-import { GET_PIPELINES } from '@/pipeline-progress/services';
-import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
-import { pipelineProgressIdScopedState } from '@/pipeline-progress/states/pipelineProgressIdScopedState';
-import { selectedBoardCardsState } from '@/pipeline-progress/states/selectedBoardCardsState';
-import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { BoardCardEditableFieldDate } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldDate';
-import { BoardCardEditableFieldText } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldText';
-import { Checkbox } from '@/ui/components/form/Checkbox';
-import { IconCalendarEvent } from '@/ui/icons';
-import { getLogoUrlFromDomainName } from '@/utils/utils';
+import { GET_PIPELINES } from '@/pipeline/queries';
+import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
+import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
+import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
+import { BoardCardEditableFieldDate } from '@/ui/board/card-field/components/BoardCardEditableFieldDate';
+import { BoardCardEditableFieldText } from '@/ui/board/card-field/components/BoardCardEditableFieldText';
+import { IconCurrencyDollar } from '@/ui/icon';
+import { IconCalendarEvent } from '@/ui/icon';
+import { Checkbox } from '@/ui/input/components/Checkbox';
+import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
 import {
   PipelineProgress,
   useUpdateOnePipelineProgressMutation,
 } from '~/generated/graphql';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>

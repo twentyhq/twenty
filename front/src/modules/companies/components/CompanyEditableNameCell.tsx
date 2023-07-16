@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 
-import { CellCommentChip } from '@/comments/components/table/CellCommentChip';
-import { useOpenTimelineRightDrawer } from '@/comments/hooks/useOpenTimelineRightDrawer';
-import { EditableCellChip } from '@/ui/components/editable-cell/types/EditableChip';
-import { getLogoUrlFromDomainName } from '@/utils/utils';
+import { useOpenTimelineRightDrawer } from '@/activities/hooks/useOpenTimelineRightDrawer';
+import { CellCommentChip } from '@/activities/table/components/CellCommentChip';
+import { EditableCellChip } from '@/ui/table/editable-cell/types/EditableChip';
 import {
   CommentableType,
   GetCompaniesQuery,
   useUpdateCompanyMutation,
 } from '~/generated/graphql';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 import { CompanyChip } from './CompanyChip';
 

@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { PeopleCompanyCell } from '@/people/components/PeopleCompanyCell';
 import { peopleCompanyFamilyState } from '@/people/states/peopleCompanyFamilyState';
-import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
+import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
 export function EditablePeopleCompanyCell() {
   const currentRowEntityId = useCurrentRowEntityId();

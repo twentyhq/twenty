@@ -14,10 +14,10 @@ import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
 import { AuthTokenPair } from '~/generated/graphql';
+import { assertNotNull } from '~/utils/assert';
 
-import { loggerLink } from '../../utils/apollo-logger';
-import { assertNotNull } from '../../utils/assert';
-import { ApolloManager } from '../interfaces/apolloManager.interface';
+import { ApolloManager } from '../types/apolloManager.interface';
+import { loggerLink } from '../utils';
 
 const logger = loggerLink(() => 'Twenty');
 

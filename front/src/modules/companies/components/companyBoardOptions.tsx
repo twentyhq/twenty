@@ -1,8 +1,7 @@
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
 import { NewCompanyProgressButton } from '@/companies/components/NewCompanyProgressButton';
-import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
-
-import { BoardOptions } from '../../pipeline-progress/types/BoardOptions';
+import { BoardOptions } from '@/pipeline/types/BoardOptions';
+import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 
 export const companyBoardOptions: BoardOptions = {
   newCardComponent: (

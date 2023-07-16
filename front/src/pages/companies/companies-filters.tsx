@@ -1,4 +1,4 @@
-import { FilterDefinitionByEntity } from '@/lib/filters-and-sorts/types/FilterDefinitionByEntity';
+import { FilterDefinitionByEntity } from '@/ui/filter-n-sort/types/FilterDefinitionByEntity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -6,7 +6,7 @@ import {
   IconMap,
   IconUser,
   IconUsers,
-} from '@/ui/icons/index';
+} from '@/ui/icon/index';
 import { icon } from '@/ui/themes/icon';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Company } from '~/generated/graphql';

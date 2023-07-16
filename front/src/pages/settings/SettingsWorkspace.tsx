@@ -2,9 +2,9 @@ import styled from '@emotion/styled';
 
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { MainSectionTitle } from '@/ui/components/section-titles/MainSectionTitle';
-import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
-import { NoTopBarContainer } from '@/ui/layout/containers/NoTopBarContainer';
+import { NoTopBarContainer } from '@/ui/layout/components/NoTopBarContainer';
+import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
+import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
 
 const StyledContainer = styled.div`
   display: flex;

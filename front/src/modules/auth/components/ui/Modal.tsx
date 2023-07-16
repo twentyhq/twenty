@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { Modal as UIModal } from '@/ui/components/modal/Modal';
+import { Modal as UIModal } from '@/ui/modal/components/Modal';
 
 type Props = React.ComponentProps<'div'>;
 

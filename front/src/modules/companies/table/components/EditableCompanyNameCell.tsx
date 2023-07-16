@@ -4,7 +4,7 @@ import { CompanyEditableNameChipCell } from '@/companies/components/CompanyEdita
 import { companyCommentCountFamilyState } from '@/companies/states/companyCommentCountFamilyState';
 import { companyDomainNameFamilyState } from '@/companies/states/companyDomainNameFamilyState';
 import { companyNameFamilyState } from '@/companies/states/companyNameFamilyState';
-import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
+import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 
 export function EditableCompanyNameCell() {
   const currentRowEntityId = useCurrentRowEntityId();
