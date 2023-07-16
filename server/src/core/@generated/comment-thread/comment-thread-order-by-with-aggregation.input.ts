@@ -24,6 +24,21 @@ export class CommentThreadOrderByWithAggregationInput {
     @Field(() => SortOrder, {nullable:true})
     title?: keyof typeof SortOrder;
 
+    @Field(() => SortOrder, {nullable:true})
+    type?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    reminderAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    dueAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    completedAt?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    assigneeId?: keyof typeof SortOrder;
+
     @HideField()
     deletedAt?: keyof typeof SortOrder;
 

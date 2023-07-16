@@ -69,32 +69,25 @@ export const DELETE_COMMENT_THREAD = gql`
   }
 `;
 
-export const UPDATE_COMMENT_THREAD_TITLE = gql`
-  mutation UpdateCommentThreadTitle(
-    $commentThreadId: String!
-    $commentThreadTitle: String
+export const UPDATE_COMMENT_THREAD = gql`
+  mutation UpdateCommentThread(
+    $id: String!
+    $body: String
+    $title: String
+    $type: ActivityType
   ) {
     updateOneCommentThread(
-      where: { id: $commentThreadId }
-      data: { title: { set: $commentThreadTitle } }
-    ) {
-      id
-      title
-    }
-  }
-`;
-
-export const UPDATE_COMMENT_THREAD_BODY = gql`
-  mutation UpdateCommentThreadBody(
-    $commentThreadId: String!
-    $commentThreadBody: String
-  ) {
-    updateOneCommentThread(
-      where: { id: $commentThreadId }
-      data: { body: { set: $commentThreadBody } }
+      where: { id: $id }
+      data: {
+        body: { set: $body }
+        title: { set: $title }
+        type: { set: $type }
+      }
     ) {
       id
       body
+      title
+      type
     }
   }
 `;

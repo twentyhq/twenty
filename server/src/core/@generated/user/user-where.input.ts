@@ -83,5 +83,8 @@ export class UserWhereInput {
     comments?: CommentListRelationFilter;
 
     @Field(() => CommentThreadListRelationFilter, {nullable:true})
-    CommentThread?: CommentThreadListRelationFilter;
+    authoredCommentThreads?: CommentThreadListRelationFilter;
+
+    @Field(() => CommentThreadListRelationFilter, {nullable:true})
+    assignedCommentThreads?: CommentThreadListRelationFilter;
 }

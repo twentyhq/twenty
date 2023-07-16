@@ -18,6 +18,11 @@ export type Scalars = {
   Upload: any;
 };
 
+export enum ActivityType {
+  Note = 'Note',
+  Task = 'Task'
+}
+
 export type AffectedRows = {
   __typename?: 'AffectedRows';
   count: Scalars['Int'];
@@ -206,33 +211,67 @@ export type CommentScalarWhereInput = {
 
 export type CommentThread = {
   __typename?: 'CommentThread';
+  assignee?: Maybe<User>;
+  assigneeId?: Maybe<Scalars['String']>;
   author: User;
   authorId: Scalars['String'];
   body?: Maybe<Scalars['String']>;
   commentThreadTargets?: Maybe<Array<CommentThreadTarget>>;
   comments?: Maybe<Array<Comment>>;
+  completedAt?: Maybe<Scalars['DateTime']>;
   createdAt: Scalars['DateTime'];
+  dueAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['ID'];
+  reminderAt?: Maybe<Scalars['DateTime']>;
   title?: Maybe<Scalars['String']>;
+  type: ActivityType;
   updatedAt: Scalars['DateTime'];
 };
 
 export type CommentThreadCreateInput = {
-  author: UserCreateNestedOneWithoutCommentThreadInput;
+  assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedCommentThreadsInput>;
+  author: UserCreateNestedOneWithoutAuthoredCommentThreadsInput;
   body?: InputMaybe<Scalars['String']>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
   comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
+  completedAt?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  dueAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  reminderAt?: InputMaybe<Scalars['DateTime']>;
   title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type CommentThreadCreateManyAuthorInput = {
+export type CommentThreadCreateManyAssigneeInput = {
+  authorId: Scalars['String'];
   body?: InputMaybe<Scalars['String']>;
+  completedAt?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  dueAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  reminderAt?: InputMaybe<Scalars['DateTime']>;
   title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ActivityType>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentThreadCreateManyAssigneeInputEnvelope = {
+  data: Array<CommentThreadCreateManyAssigneeInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CommentThreadCreateManyAuthorInput = {
+  assigneeId?: InputMaybe<Scalars['String']>;
+  body?: InputMaybe<Scalars['String']>;
+  completedAt?: InputMaybe<Scalars['DateTime']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  dueAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  reminderAt?: InputMaybe<Scalars['DateTime']>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -242,17 +281,29 @@ export type CommentThreadCreateManyAuthorInputEnvelope = {
 };
 
 export type CommentThreadCreateManyWorkspaceInput = {
+  assigneeId?: InputMaybe<Scalars['String']>;
   authorId: Scalars['String'];
   body?: InputMaybe<Scalars['String']>;
+  completedAt?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  dueAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  reminderAt?: InputMaybe<Scalars['DateTime']>;
   title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CommentThreadCreateManyWorkspaceInputEnvelope = {
   data: Array<CommentThreadCreateManyWorkspaceInput>;
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CommentThreadCreateNestedManyWithoutAssigneeInput = {
+  connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentThreadCreateOrConnectWithoutAssigneeInput>>;
+  create?: InputMaybe<Array<CommentThreadCreateWithoutAssigneeInput>>;
+  createMany?: InputMaybe<CommentThreadCreateManyAssigneeInputEnvelope>;
 };
 
 export type CommentThreadCreateNestedManyWithoutAuthorInput = {
@@ -264,6 +315,11 @@ export type CommentThreadCreateNestedManyWithoutAuthorInput = {
 
 export type CommentThreadCreateNestedOneWithoutCommentsInput = {
   connect?: InputMaybe<CommentThreadWhereUniqueInput>;
+};
+
+export type CommentThreadCreateOrConnectWithoutAssigneeInput = {
+  create: CommentThreadCreateWithoutAssigneeInput;
+  where: CommentThreadWhereUniqueInput;
 };
 
 export type CommentThreadCreateOrConnectWithoutAuthorInput = {
@@ -281,34 +337,64 @@ export type CommentThreadCreateOrConnectWithoutWorkspaceInput = {
   where: CommentThreadWhereUniqueInput;
 };
 
-export type CommentThreadCreateWithoutAuthorInput = {
+export type CommentThreadCreateWithoutAssigneeInput = {
+  author: UserCreateNestedOneWithoutAuthoredCommentThreadsInput;
   body?: InputMaybe<Scalars['String']>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
   comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
+  completedAt?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  dueAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  reminderAt?: InputMaybe<Scalars['DateTime']>;
   title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ActivityType>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentThreadCreateWithoutAuthorInput = {
+  assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedCommentThreadsInput>;
+  body?: InputMaybe<Scalars['String']>;
+  commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
+  comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
+  completedAt?: InputMaybe<Scalars['DateTime']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  dueAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  reminderAt?: InputMaybe<Scalars['DateTime']>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CommentThreadCreateWithoutCommentsInput = {
-  author: UserCreateNestedOneWithoutCommentThreadInput;
+  assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedCommentThreadsInput>;
+  author: UserCreateNestedOneWithoutAuthoredCommentThreadsInput;
   body?: InputMaybe<Scalars['String']>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
+  completedAt?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  dueAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  reminderAt?: InputMaybe<Scalars['DateTime']>;
   title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CommentThreadCreateWithoutWorkspaceInput = {
-  author: UserCreateNestedOneWithoutCommentThreadInput;
+  assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedCommentThreadsInput>;
+  author: UserCreateNestedOneWithoutAuthoredCommentThreadsInput;
   body?: InputMaybe<Scalars['String']>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
   comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
+  completedAt?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  dueAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  reminderAt?: InputMaybe<Scalars['DateTime']>;
   title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -323,14 +409,20 @@ export type CommentThreadOrderByRelationAggregateInput = {
 };
 
 export type CommentThreadOrderByWithRelationInput = {
+  assignee?: InputMaybe<UserOrderByWithRelationInput>;
+  assigneeId?: InputMaybe<SortOrder>;
   author?: InputMaybe<UserOrderByWithRelationInput>;
   authorId?: InputMaybe<SortOrder>;
   body?: InputMaybe<SortOrder>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetOrderByRelationAggregateInput>;
   comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
+  completedAt?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
+  dueAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  reminderAt?: InputMaybe<SortOrder>;
   title?: InputMaybe<SortOrder>;
+  type?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
@@ -340,12 +432,17 @@ export type CommentThreadRelationFilter = {
 };
 
 export enum CommentThreadScalarFieldEnum {
+  AssigneeId = 'assigneeId',
   AuthorId = 'authorId',
   Body = 'body',
+  CompletedAt = 'completedAt',
   CreatedAt = 'createdAt',
   DeletedAt = 'deletedAt',
+  DueAt = 'dueAt',
   Id = 'id',
+  ReminderAt = 'reminderAt',
   Title = 'title',
+  Type = 'type',
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
 }
@@ -354,11 +451,16 @@ export type CommentThreadScalarWhereInput = {
   AND?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
   NOT?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
   OR?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
+  assigneeId?: InputMaybe<StringNullableFilter>;
   authorId?: InputMaybe<StringFilter>;
   body?: InputMaybe<StringNullableFilter>;
+  completedAt?: InputMaybe<DateTimeNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
+  dueAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
+  reminderAt?: InputMaybe<DateTimeNullableFilter>;
   title?: InputMaybe<StringNullableFilter>;
+  type?: InputMaybe<EnumActivityTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
@@ -489,22 +591,36 @@ export type CommentThreadTargetWhereUniqueInput = {
 };
 
 export type CommentThreadUpdateInput = {
-  author?: InputMaybe<UserUpdateOneRequiredWithoutCommentThreadNestedInput>;
+  assignee?: InputMaybe<UserUpdateOneWithoutAssignedCommentThreadsNestedInput>;
+  author?: InputMaybe<UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput>;
   body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
+  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
 export type CommentThreadUpdateManyMutationInput = {
   body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type CommentThreadUpdateManyWithWhereWithoutAssigneeInput = {
+  data: CommentThreadUpdateManyMutationInput;
+  where: CommentThreadScalarWhereInput;
 };
 
 export type CommentThreadUpdateManyWithWhereWithoutAuthorInput = {
@@ -515,6 +631,20 @@ export type CommentThreadUpdateManyWithWhereWithoutAuthorInput = {
 export type CommentThreadUpdateManyWithWhereWithoutWorkspaceInput = {
   data: CommentThreadUpdateManyMutationInput;
   where: CommentThreadScalarWhereInput;
+};
+
+export type CommentThreadUpdateManyWithoutAssigneeNestedInput = {
+  connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentThreadCreateOrConnectWithoutAssigneeInput>>;
+  create?: InputMaybe<Array<CommentThreadCreateWithoutAssigneeInput>>;
+  createMany?: InputMaybe<CommentThreadCreateManyAssigneeInputEnvelope>;
+  delete?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
+  set?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
+  update?: InputMaybe<Array<CommentThreadUpdateWithWhereUniqueWithoutAssigneeInput>>;
+  updateMany?: InputMaybe<Array<CommentThreadUpdateManyWithWhereWithoutAssigneeInput>>;
+  upsert?: InputMaybe<Array<CommentThreadUpsertWithWhereUniqueWithoutAssigneeInput>>;
 };
 
 export type CommentThreadUpdateManyWithoutAuthorNestedInput = {
@@ -553,6 +683,11 @@ export type CommentThreadUpdateOneRequiredWithoutCommentsNestedInput = {
   upsert?: InputMaybe<CommentThreadUpsertWithoutCommentsInput>;
 };
 
+export type CommentThreadUpdateWithWhereUniqueWithoutAssigneeInput = {
+  data: CommentThreadUpdateWithoutAssigneeInput;
+  where: CommentThreadWhereUniqueInput;
+};
+
 export type CommentThreadUpdateWithWhereUniqueWithoutAuthorInput = {
   data: CommentThreadUpdateWithoutAuthorInput;
   where: CommentThreadWhereUniqueInput;
@@ -563,35 +698,71 @@ export type CommentThreadUpdateWithWhereUniqueWithoutWorkspaceInput = {
   where: CommentThreadWhereUniqueInput;
 };
 
-export type CommentThreadUpdateWithoutAuthorInput = {
+export type CommentThreadUpdateWithoutAssigneeInput = {
+  author?: InputMaybe<UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput>;
   body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
+  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type CommentThreadUpdateWithoutAuthorInput = {
+  assignee?: InputMaybe<UserUpdateOneWithoutAssignedCommentThreadsNestedInput>;
+  body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
+  comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
+  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
 export type CommentThreadUpdateWithoutCommentsInput = {
-  author?: InputMaybe<UserUpdateOneRequiredWithoutCommentThreadNestedInput>;
+  assignee?: InputMaybe<UserUpdateOneWithoutAssignedCommentThreadsNestedInput>;
+  author?: InputMaybe<UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput>;
   body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
+  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
 export type CommentThreadUpdateWithoutWorkspaceInput = {
-  author?: InputMaybe<UserUpdateOneRequiredWithoutCommentThreadNestedInput>;
+  assignee?: InputMaybe<UserUpdateOneWithoutAssignedCommentThreadsNestedInput>;
+  author?: InputMaybe<UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput>;
   body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
+  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
   title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type CommentThreadUpsertWithWhereUniqueWithoutAssigneeInput = {
+  create: CommentThreadCreateWithoutAssigneeInput;
+  update: CommentThreadUpdateWithoutAssigneeInput;
+  where: CommentThreadWhereUniqueInput;
 };
 
 export type CommentThreadUpsertWithWhereUniqueWithoutAuthorInput = {
@@ -615,14 +786,20 @@ export type CommentThreadWhereInput = {
   AND?: InputMaybe<Array<CommentThreadWhereInput>>;
   NOT?: InputMaybe<Array<CommentThreadWhereInput>>;
   OR?: InputMaybe<Array<CommentThreadWhereInput>>;
+  assignee?: InputMaybe<UserRelationFilter>;
+  assigneeId?: InputMaybe<StringNullableFilter>;
   author?: InputMaybe<UserRelationFilter>;
   authorId?: InputMaybe<StringFilter>;
   body?: InputMaybe<StringNullableFilter>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetListRelationFilter>;
   comments?: InputMaybe<CommentListRelationFilter>;
+  completedAt?: InputMaybe<DateTimeNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
+  dueAt?: InputMaybe<DateTimeNullableFilter>;
   id?: InputMaybe<StringFilter>;
+  reminderAt?: InputMaybe<DateTimeNullableFilter>;
   title?: InputMaybe<StringNullableFilter>;
+  type?: InputMaybe<EnumActivityTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
@@ -1089,6 +1266,17 @@ export type DateTimeNullableFilter = {
   notIn?: InputMaybe<Array<Scalars['DateTime']>>;
 };
 
+export type EnumActivityTypeFieldUpdateOperationsInput = {
+  set?: InputMaybe<ActivityType>;
+};
+
+export type EnumActivityTypeFilter = {
+  equals?: InputMaybe<ActivityType>;
+  in?: InputMaybe<Array<ActivityType>>;
+  not?: InputMaybe<NestedEnumActivityTypeFilter>;
+  notIn?: InputMaybe<Array<ActivityType>>;
+};
+
 export type EnumCommentableTypeFieldUpdateOperationsInput = {
   set?: InputMaybe<CommentableType>;
 };
@@ -1345,6 +1533,13 @@ export type NestedDateTimeNullableFilter = {
   lte?: InputMaybe<Scalars['DateTime']>;
   not?: InputMaybe<NestedDateTimeNullableFilter>;
   notIn?: InputMaybe<Array<Scalars['DateTime']>>;
+};
+
+export type NestedEnumActivityTypeFilter = {
+  equals?: InputMaybe<ActivityType>;
+  in?: InputMaybe<Array<ActivityType>>;
+  not?: InputMaybe<NestedEnumActivityTypeFilter>;
+  notIn?: InputMaybe<Array<ActivityType>>;
 };
 
 export type NestedEnumCommentableTypeFilter = {
@@ -2634,7 +2829,8 @@ export type Telemetry = {
 
 export type User = {
   __typename?: 'User';
-  CommentThread?: Maybe<Array<CommentThread>>;
+  assignedCommentThreads?: Maybe<Array<CommentThread>>;
+  authoredCommentThreads?: Maybe<Array<CommentThread>>;
   avatarUrl?: Maybe<Scalars['String']>;
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
@@ -2654,10 +2850,16 @@ export type User = {
   workspaceMember?: Maybe<WorkspaceMember>;
 };
 
-export type UserCreateNestedOneWithoutCommentThreadInput = {
+export type UserCreateNestedOneWithoutAssignedCommentThreadsInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutCommentThreadInput>;
-  create?: InputMaybe<UserCreateWithoutCommentThreadInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutAssignedCommentThreadsInput>;
+  create?: InputMaybe<UserCreateWithoutAssignedCommentThreadsInput>;
+};
+
+export type UserCreateNestedOneWithoutAuthoredCommentThreadsInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutAuthoredCommentThreadsInput>;
+  create?: InputMaybe<UserCreateWithoutAuthoredCommentThreadsInput>;
 };
 
 export type UserCreateNestedOneWithoutCommentsInput = {
@@ -2674,8 +2876,13 @@ export type UserCreateNestedOneWithoutWorkspaceMemberInput = {
   create?: InputMaybe<UserCreateWithoutWorkspaceMemberInput>;
 };
 
-export type UserCreateOrConnectWithoutCommentThreadInput = {
-  create: UserCreateWithoutCommentThreadInput;
+export type UserCreateOrConnectWithoutAssignedCommentThreadsInput = {
+  create: UserCreateWithoutAssignedCommentThreadsInput;
+  where: UserWhereUniqueInput;
+};
+
+export type UserCreateOrConnectWithoutAuthoredCommentThreadsInput = {
+  create: UserCreateWithoutAuthoredCommentThreadsInput;
   where: UserWhereUniqueInput;
 };
 
@@ -2689,7 +2896,27 @@ export type UserCreateOrConnectWithoutWorkspaceMemberInput = {
   where: UserWhereUniqueInput;
 };
 
-export type UserCreateWithoutCommentThreadInput = {
+export type UserCreateWithoutAssignedCommentThreadsInput = {
+  authoredCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAuthorInput>;
+  avatarUrl?: InputMaybe<Scalars['String']>;
+  comments?: InputMaybe<CommentCreateNestedManyWithoutAuthorInput>;
+  companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  disabled?: InputMaybe<Scalars['Boolean']>;
+  email: Scalars['String'];
+  emailVerified?: InputMaybe<Scalars['Boolean']>;
+  firstName?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  lastSeen?: InputMaybe<Scalars['DateTime']>;
+  locale: Scalars['String'];
+  metadata?: InputMaybe<Scalars['JSON']>;
+  phoneNumber?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type UserCreateWithoutAuthoredCommentThreadsInput = {
+  assignedCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAssigneeInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
   comments?: InputMaybe<CommentCreateNestedManyWithoutAuthorInput>;
   companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
@@ -2708,7 +2935,8 @@ export type UserCreateWithoutCommentThreadInput = {
 };
 
 export type UserCreateWithoutCommentsInput = {
-  CommentThread?: InputMaybe<CommentThreadCreateNestedManyWithoutAuthorInput>;
+  assignedCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAssigneeInput>;
+  authoredCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAuthorInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
   companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -2726,7 +2954,8 @@ export type UserCreateWithoutCommentsInput = {
 };
 
 export type UserCreateWithoutWorkspaceMemberInput = {
-  CommentThread?: InputMaybe<CommentThreadCreateNestedManyWithoutAuthorInput>;
+  assignedCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAssigneeInput>;
+  authoredCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAuthorInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
   comments?: InputMaybe<CommentCreateNestedManyWithoutAuthorInput>;
   companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
@@ -2750,7 +2979,8 @@ export type UserExists = {
 };
 
 export type UserOrderByWithRelationInput = {
-  CommentThread?: InputMaybe<CommentThreadOrderByRelationAggregateInput>;
+  assignedCommentThreads?: InputMaybe<CommentThreadOrderByRelationAggregateInput>;
+  authoredCommentThreads?: InputMaybe<CommentThreadOrderByRelationAggregateInput>;
   avatarUrl?: InputMaybe<SortOrder>;
   comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
   companies?: InputMaybe<CompanyOrderByRelationAggregateInput>;
@@ -2792,7 +3022,8 @@ export enum UserScalarFieldEnum {
 }
 
 export type UserUpdateInput = {
-  CommentThread?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
+  assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
+  authoredCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
   avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
@@ -2810,12 +3041,12 @@ export type UserUpdateInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type UserUpdateOneRequiredWithoutCommentThreadNestedInput = {
+export type UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutCommentThreadInput>;
-  create?: InputMaybe<UserCreateWithoutCommentThreadInput>;
-  update?: InputMaybe<UserUpdateWithoutCommentThreadInput>;
-  upsert?: InputMaybe<UserUpsertWithoutCommentThreadInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutAuthoredCommentThreadsInput>;
+  create?: InputMaybe<UserCreateWithoutAuthoredCommentThreadsInput>;
+  update?: InputMaybe<UserUpdateWithoutAuthoredCommentThreadsInput>;
+  upsert?: InputMaybe<UserUpsertWithoutAuthoredCommentThreadsInput>;
 };
 
 export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
@@ -2834,11 +3065,41 @@ export type UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput = {
   upsert?: InputMaybe<UserUpsertWithoutWorkspaceMemberInput>;
 };
 
+export type UserUpdateOneWithoutAssignedCommentThreadsNestedInput = {
+  connect?: InputMaybe<UserWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutAssignedCommentThreadsInput>;
+  create?: InputMaybe<UserCreateWithoutAssignedCommentThreadsInput>;
+  delete?: InputMaybe<Scalars['Boolean']>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+  update?: InputMaybe<UserUpdateWithoutAssignedCommentThreadsInput>;
+  upsert?: InputMaybe<UserUpsertWithoutAssignedCommentThreadsInput>;
+};
+
 export type UserUpdateOneWithoutCompaniesNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
 };
 
-export type UserUpdateWithoutCommentThreadInput = {
+export type UserUpdateWithoutAssignedCommentThreadsInput = {
+  authoredCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
+  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
+  companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  email?: InputMaybe<StringFieldUpdateOperationsInput>;
+  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
+  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
+  metadata?: InputMaybe<Scalars['JSON']>;
+  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type UserUpdateWithoutAuthoredCommentThreadsInput = {
+  assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
   avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
@@ -2857,7 +3118,8 @@ export type UserUpdateWithoutCommentThreadInput = {
 };
 
 export type UserUpdateWithoutCommentsInput = {
-  CommentThread?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
+  assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
+  authoredCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
   avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -2875,7 +3137,8 @@ export type UserUpdateWithoutCommentsInput = {
 };
 
 export type UserUpdateWithoutWorkspaceMemberInput = {
-  CommentThread?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
+  assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
+  authoredCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
   avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
@@ -2893,9 +3156,14 @@ export type UserUpdateWithoutWorkspaceMemberInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type UserUpsertWithoutCommentThreadInput = {
-  create: UserCreateWithoutCommentThreadInput;
-  update: UserUpdateWithoutCommentThreadInput;
+export type UserUpsertWithoutAssignedCommentThreadsInput = {
+  create: UserCreateWithoutAssignedCommentThreadsInput;
+  update: UserUpdateWithoutAssignedCommentThreadsInput;
+};
+
+export type UserUpsertWithoutAuthoredCommentThreadsInput = {
+  create: UserCreateWithoutAuthoredCommentThreadsInput;
+  update: UserUpdateWithoutAuthoredCommentThreadsInput;
 };
 
 export type UserUpsertWithoutCommentsInput = {
@@ -2910,9 +3178,10 @@ export type UserUpsertWithoutWorkspaceMemberInput = {
 
 export type UserWhereInput = {
   AND?: InputMaybe<Array<UserWhereInput>>;
-  CommentThread?: InputMaybe<CommentThreadListRelationFilter>;
   NOT?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
+  assignedCommentThreads?: InputMaybe<CommentThreadListRelationFilter>;
+  authoredCommentThreads?: InputMaybe<CommentThreadListRelationFilter>;
   avatarUrl?: InputMaybe<StringNullableFilter>;
   comments?: InputMaybe<CommentListRelationFilter>;
   companies?: InputMaybe<CompanyListRelationFilter>;
@@ -3169,13 +3438,14 @@ export type CreateCommentThreadMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
   body?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
+  type: ActivityType;
   authorId: Scalars['String'];
   createdAt: Scalars['DateTime'];
   commentThreadTargetArray: Array<CommentThreadTargetCreateManyCommentThreadInput> | CommentThreadTargetCreateManyCommentThreadInput;
 }>;
 
 
-export type CreateCommentThreadMutation = { __typename?: 'Mutation', createOneCommentThread: { __typename?: 'CommentThread', id: string, createdAt: string, updatedAt: string, authorId: string, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, createdAt: string, updatedAt: string, commentThreadId: string, commentableType: CommentableType, commentableId: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
+export type CreateCommentThreadMutation = { __typename?: 'Mutation', createOneCommentThread: { __typename?: 'CommentThread', id: string, createdAt: string, updatedAt: string, authorId: string, type: ActivityType, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, createdAt: string, updatedAt: string, commentThreadId: string, commentableType: CommentableType, commentableId: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
 
 export type GetCommentThreadsByTargetsQueryVariables = Exact<{
   commentThreadTargetIds: Array<Scalars['String']> | Scalars['String'];
@@ -3183,14 +3453,14 @@ export type GetCommentThreadsByTargetsQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, title?: string | null, body?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
+export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
 
 export type GetCommentThreadQueryVariables = Exact<{
   commentThreadId: Scalars['String'];
 }>;
 
 
-export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, body?: string | null, title?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
+export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
 
 export type AddCommentThreadTargetOnCommentThreadMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
@@ -3218,21 +3488,15 @@ export type DeleteCommentThreadMutationVariables = Exact<{
 
 export type DeleteCommentThreadMutation = { __typename?: 'Mutation', deleteManyCommentThreads: { __typename?: 'AffectedRows', count: number } };
 
-export type UpdateCommentThreadTitleMutationVariables = Exact<{
-  commentThreadId: Scalars['String'];
-  commentThreadTitle?: InputMaybe<Scalars['String']>;
+export type UpdateCommentThreadMutationVariables = Exact<{
+  id: Scalars['String'];
+  body?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ActivityType>;
 }>;
 
 
-export type UpdateCommentThreadTitleMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, title?: string | null } };
-
-export type UpdateCommentThreadBodyMutationVariables = Exact<{
-  commentThreadId: Scalars['String'];
-  commentThreadBody?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type UpdateCommentThreadBodyMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, body?: string | null } };
+export type UpdateCommentThreadMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, body?: string | null, title?: string | null, type: ActivityType } };
 
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
@@ -3874,14 +4138,15 @@ export type CreateCommentMutationHookResult = ReturnType<typeof useCreateComment
 export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
 export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
 export const CreateCommentThreadDocument = gql`
-    mutation CreateCommentThread($commentThreadId: String!, $body: String, $title: String, $authorId: String!, $createdAt: DateTime!, $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!) {
+    mutation CreateCommentThread($commentThreadId: String!, $body: String, $title: String, $type: ActivityType!, $authorId: String!, $createdAt: DateTime!, $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!) {
   createOneCommentThread(
-    data: {id: $commentThreadId, createdAt: $createdAt, updatedAt: $createdAt, author: {connect: {id: $authorId}}, body: $body, title: $title, commentThreadTargets: {createMany: {data: $commentThreadTargetArray, skipDuplicates: true}}}
+    data: {id: $commentThreadId, createdAt: $createdAt, updatedAt: $createdAt, author: {connect: {id: $authorId}}, body: $body, title: $title, type: $type, commentThreadTargets: {createMany: {data: $commentThreadTargetArray, skipDuplicates: true}}}
   ) {
     id
     createdAt
     updatedAt
     authorId
+    type
     commentThreadTargets {
       id
       createdAt
@@ -3920,6 +4185,7 @@ export type CreateCommentThreadMutationFn = Apollo.MutationFunction<CreateCommen
  *      commentThreadId: // value for 'commentThreadId'
  *      body: // value for 'body'
  *      title: // value for 'title'
+ *      type: // value for 'type'
  *      authorId: // value for 'authorId'
  *      createdAt: // value for 'createdAt'
  *      commentThreadTargetArray: // value for 'commentThreadTargetArray'
@@ -3943,6 +4209,7 @@ export const GetCommentThreadsByTargetsDocument = gql`
     createdAt
     title
     body
+    type
     author {
       id
       firstName
@@ -4005,6 +4272,7 @@ export const GetCommentThreadDocument = gql`
     createdAt
     body
     title
+    type
     author {
       id
       firstName
@@ -4187,82 +4455,48 @@ export function useDeleteCommentThreadMutation(baseOptions?: Apollo.MutationHook
 export type DeleteCommentThreadMutationHookResult = ReturnType<typeof useDeleteCommentThreadMutation>;
 export type DeleteCommentThreadMutationResult = Apollo.MutationResult<DeleteCommentThreadMutation>;
 export type DeleteCommentThreadMutationOptions = Apollo.BaseMutationOptions<DeleteCommentThreadMutation, DeleteCommentThreadMutationVariables>;
-export const UpdateCommentThreadTitleDocument = gql`
-    mutation UpdateCommentThreadTitle($commentThreadId: String!, $commentThreadTitle: String) {
+export const UpdateCommentThreadDocument = gql`
+    mutation UpdateCommentThread($id: String!, $body: String, $title: String, $type: ActivityType) {
   updateOneCommentThread(
-    where: {id: $commentThreadId}
-    data: {title: {set: $commentThreadTitle}}
-  ) {
-    id
-    title
-  }
-}
-    `;
-export type UpdateCommentThreadTitleMutationFn = Apollo.MutationFunction<UpdateCommentThreadTitleMutation, UpdateCommentThreadTitleMutationVariables>;
-
-/**
- * __useUpdateCommentThreadTitleMutation__
- *
- * To run a mutation, you first call `useUpdateCommentThreadTitleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCommentThreadTitleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCommentThreadTitleMutation, { data, loading, error }] = useUpdateCommentThreadTitleMutation({
- *   variables: {
- *      commentThreadId: // value for 'commentThreadId'
- *      commentThreadTitle: // value for 'commentThreadTitle'
- *   },
- * });
- */
-export function useUpdateCommentThreadTitleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCommentThreadTitleMutation, UpdateCommentThreadTitleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCommentThreadTitleMutation, UpdateCommentThreadTitleMutationVariables>(UpdateCommentThreadTitleDocument, options);
-      }
-export type UpdateCommentThreadTitleMutationHookResult = ReturnType<typeof useUpdateCommentThreadTitleMutation>;
-export type UpdateCommentThreadTitleMutationResult = Apollo.MutationResult<UpdateCommentThreadTitleMutation>;
-export type UpdateCommentThreadTitleMutationOptions = Apollo.BaseMutationOptions<UpdateCommentThreadTitleMutation, UpdateCommentThreadTitleMutationVariables>;
-export const UpdateCommentThreadBodyDocument = gql`
-    mutation UpdateCommentThreadBody($commentThreadId: String!, $commentThreadBody: String) {
-  updateOneCommentThread(
-    where: {id: $commentThreadId}
-    data: {body: {set: $commentThreadBody}}
+    where: {id: $id}
+    data: {body: {set: $body}, title: {set: $title}, type: {set: $type}}
   ) {
     id
     body
+    title
+    type
   }
 }
     `;
-export type UpdateCommentThreadBodyMutationFn = Apollo.MutationFunction<UpdateCommentThreadBodyMutation, UpdateCommentThreadBodyMutationVariables>;
+export type UpdateCommentThreadMutationFn = Apollo.MutationFunction<UpdateCommentThreadMutation, UpdateCommentThreadMutationVariables>;
 
 /**
- * __useUpdateCommentThreadBodyMutation__
+ * __useUpdateCommentThreadMutation__
  *
- * To run a mutation, you first call `useUpdateCommentThreadBodyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCommentThreadBodyMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateCommentThreadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCommentThreadMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateCommentThreadBodyMutation, { data, loading, error }] = useUpdateCommentThreadBodyMutation({
+ * const [updateCommentThreadMutation, { data, loading, error }] = useUpdateCommentThreadMutation({
  *   variables: {
- *      commentThreadId: // value for 'commentThreadId'
- *      commentThreadBody: // value for 'commentThreadBody'
+ *      id: // value for 'id'
+ *      body: // value for 'body'
+ *      title: // value for 'title'
+ *      type: // value for 'type'
  *   },
  * });
  */
-export function useUpdateCommentThreadBodyMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCommentThreadBodyMutation, UpdateCommentThreadBodyMutationVariables>) {
+export function useUpdateCommentThreadMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCommentThreadMutation, UpdateCommentThreadMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCommentThreadBodyMutation, UpdateCommentThreadBodyMutationVariables>(UpdateCommentThreadBodyDocument, options);
+        return Apollo.useMutation<UpdateCommentThreadMutation, UpdateCommentThreadMutationVariables>(UpdateCommentThreadDocument, options);
       }
-export type UpdateCommentThreadBodyMutationHookResult = ReturnType<typeof useUpdateCommentThreadBodyMutation>;
-export type UpdateCommentThreadBodyMutationResult = Apollo.MutationResult<UpdateCommentThreadBodyMutation>;
-export type UpdateCommentThreadBodyMutationOptions = Apollo.BaseMutationOptions<UpdateCommentThreadBodyMutation, UpdateCommentThreadBodyMutationVariables>;
+export type UpdateCommentThreadMutationHookResult = ReturnType<typeof useUpdateCommentThreadMutation>;
+export type UpdateCommentThreadMutationResult = Apollo.MutationResult<UpdateCommentThreadMutation>;
+export type UpdateCommentThreadMutationOptions = Apollo.BaseMutationOptions<UpdateCommentThreadMutation, UpdateCommentThreadMutationVariables>;
 export const GetCompaniesDocument = gql`
     query GetCompanies($orderBy: [CompanyOrderByWithRelationInput!], $where: CompanyWhereInput) {
   companies: findManyCompany(orderBy: $orderBy, where: $where) {

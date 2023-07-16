@@ -9,7 +9,7 @@ import { BlockEditor } from '@/ui/components/editor/BlockEditor';
 import { debounce } from '@/utils/debounce';
 import {
   CommentThread,
-  useUpdateCommentThreadBodyMutation,
+  useUpdateCommentThreadMutation,
 } from '~/generated/graphql';
 
 const BlockNoteStyledContainer = styled.div`
@@ -22,8 +22,7 @@ type OwnProps = {
 };
 
 export function CommentThreadBodyEditor({ commentThread, onChange }: OwnProps) {
-  const [updateCommentThreadBodyMutation] =
-    useUpdateCommentThreadBodyMutation();
+  const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
 
   const [body, setBody] = useState<string | null>(null);
 
@@ -36,10 +35,10 @@ export function CommentThreadBodyEditor({ commentThread, onChange }: OwnProps) {
   const debounceOnChange = useMemo(() => {
     function onInternalChange(commentThreadBody: string) {
       setBody(commentThreadBody);
-      updateCommentThreadBodyMutation({
+      updateCommentThreadMutation({
         variables: {
-          commentThreadId: commentThread.id,
-          commentThreadBody: commentThreadBody,
+          id: commentThread.id,
+          body: commentThreadBody,
         },
         refetchQueries: [
           getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
@@ -48,7 +47,7 @@ export function CommentThreadBodyEditor({ commentThread, onChange }: OwnProps) {
     }
 
     return debounce(onInternalChange, 200);
-  }, [commentThread, updateCommentThreadBodyMutation, setBody]);
+  }, [commentThread, updateCommentThreadMutation, setBody]);
 
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent: commentThread.body

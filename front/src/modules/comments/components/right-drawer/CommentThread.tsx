@@ -9,7 +9,7 @@ import { IconArrowUpRight } from '@/ui/icons/index';
 import { debounce } from '@/utils/debounce';
 import {
   useGetCommentThreadQuery,
-  useUpdateCommentThreadTitleMutation,
+  useUpdateCommentThreadMutation,
 } from '~/generated/graphql';
 
 import { CommentThreadBodyEditor } from '../comment-thread/CommentThreadBodyEditor';
@@ -105,21 +105,20 @@ export function CommentThread({
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 
-  const [updateCommentThreadTitleMutation] =
-    useUpdateCommentThreadTitleMutation();
+  const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
 
   const debounceUpdateTitle = useMemo(() => {
     function updateTitle(title: string) {
-      updateCommentThreadTitleMutation({
+      updateCommentThreadMutation({
         variables: {
-          commentThreadId: commentThreadId,
-          commentThreadTitle: title ?? '',
+          id: commentThreadId,
+          title: title ?? '',
         },
         refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
       });
     }
     return debounce(updateTitle, 200);
-  }, [commentThreadId, updateCommentThreadTitleMutation]);
+  }, [commentThreadId, updateCommentThreadMutation]);
 
   function updateTitleFromBody(body: string) {
     const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
@@ -144,11 +143,11 @@ export function CommentThread({
       <StyledUpperPartContainer>
         <StyledTopContainer>
           <StyledTopActionsContainer>
-            <CommentThreadTypeDropdown />
+            <CommentThreadTypeDropdown commentThread={commentThread} />
             <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
           </StyledTopActionsContainer>
           <StyledEditableTitleInput
-            placeholder="Note title (optional)"
+            placeholder={`${commentThread.type} title (optional)`}
             onChange={(event) => {
               setHasUserManuallySetTitle(true);
               setTitle(event.target.value);

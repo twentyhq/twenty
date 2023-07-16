@@ -7,6 +7,7 @@ import { WorkspaceMemberCreateNestedOneWithoutUserInput } from '../workspace-mem
 import { CompanyCreateNestedManyWithoutAccountOwnerInput } from '../company/company-create-nested-many-without-account-owner.input';
 import { RefreshTokenCreateNestedManyWithoutUserInput } from '../refresh-token/refresh-token-create-nested-many-without-user.input';
 import { CommentThreadCreateNestedManyWithoutAuthorInput } from '../comment-thread/comment-thread-create-nested-many-without-author.input';
+import { CommentThreadCreateNestedManyWithoutAssigneeInput } from '../comment-thread/comment-thread-create-nested-many-without-assignee.input';
 
 @InputType()
 export class UserCreateWithoutCommentsInput {
@@ -86,5 +87,8 @@ export class UserCreateWithoutCommentsInput {
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput;
 
     @Field(() => CommentThreadCreateNestedManyWithoutAuthorInput, {nullable:true})
-    CommentThread?: CommentThreadCreateNestedManyWithoutAuthorInput;
+    authoredCommentThreads?: CommentThreadCreateNestedManyWithoutAuthorInput;
+
+    @Field(() => CommentThreadCreateNestedManyWithoutAssigneeInput, {nullable:true})
+    assignedCommentThreads?: CommentThreadCreateNestedManyWithoutAssigneeInput;
 }

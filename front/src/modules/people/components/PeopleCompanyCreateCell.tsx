@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { v4 } from 'uuid';
 
+import { GET_COMPANIES } from '@/companies/services';
 import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
@@ -49,6 +51,7 @@ export function PeopleCompanyCreateCell({ people }: OwnProps) {
           address: '',
           createdAt: new Date().toISOString(),
         },
+        refetchQueries: [getOperationName(GET_COMPANIES) || ''],
       });
 
       await updatePeople({

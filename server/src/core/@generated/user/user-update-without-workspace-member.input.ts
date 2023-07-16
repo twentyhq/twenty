@@ -12,6 +12,7 @@ import { CompanyUpdateManyWithoutAccountOwnerNestedInput } from '../company/comp
 import { RefreshTokenUpdateManyWithoutUserNestedInput } from '../refresh-token/refresh-token-update-many-without-user-nested.input';
 import { CommentUpdateManyWithoutAuthorNestedInput } from '../comment/comment-update-many-without-author-nested.input';
 import { CommentThreadUpdateManyWithoutAuthorNestedInput } from '../comment-thread/comment-thread-update-many-without-author-nested.input';
+import { CommentThreadUpdateManyWithoutAssigneeNestedInput } from '../comment-thread/comment-thread-update-many-without-assignee-nested.input';
 
 @InputType()
 export class UserUpdateWithoutWorkspaceMemberInput {
@@ -73,5 +74,8 @@ export class UserUpdateWithoutWorkspaceMemberInput {
     comments?: CommentUpdateManyWithoutAuthorNestedInput;
 
     @Field(() => CommentThreadUpdateManyWithoutAuthorNestedInput, {nullable:true})
-    CommentThread?: CommentThreadUpdateManyWithoutAuthorNestedInput;
+    authoredCommentThreads?: CommentThreadUpdateManyWithoutAuthorNestedInput;
+
+    @Field(() => CommentThreadUpdateManyWithoutAssigneeNestedInput, {nullable:true})
+    assignedCommentThreads?: CommentThreadUpdateManyWithoutAssigneeNestedInput;
 }

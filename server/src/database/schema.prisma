@@ -175,9 +175,10 @@ model User {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  CommentThread CommentThread[]
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  authoredCommentThreads CommentThread[] @relation(name: "authoredCommentThreads")
+  assignedCommentThreads CommentThread[] @relation(name: "assignedCommentThreads")
 
   @@map("users")
 }
@@ -324,6 +325,11 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
+enum ActivityType {
+  Note
+  Task
+}
+
 model CommentThread {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
@@ -337,10 +343,17 @@ model CommentThread {
   workspaceId          String
 
   authorId String
-  author   User   @relation(fields: [authorId], references: [id])
+  author   User   @relation(fields: [authorId], references: [id], name: "authoredCommentThreads")
 
   body  String?
   title String?
+  type  ActivityType @default(Note)
+
+  reminderAt  DateTime?
+  dueAt       DateTime?
+  completedAt DateTime?
+  assignee    User?     @relation(fields: [assigneeId], references: [id], name: "assignedCommentThreads")
+  assigneeId  String?
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?

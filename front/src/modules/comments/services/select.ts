@@ -17,6 +17,7 @@ export const GET_COMMENT_THREADS_BY_TARGETS = gql`
       createdAt
       title
       body
+      type
       author {
         id
         firstName
@@ -51,6 +52,7 @@ export const GET_COMMENT_THREAD = gql`
       createdAt
       body
       title
+      type
       author {
         id
         firstName

@@ -71,7 +71,10 @@ export class User {
     comments?: Array<Comment>;
 
     @Field(() => [CommentThread], {nullable:true})
-    CommentThread?: Array<CommentThread>;
+    authoredCommentThreads?: Array<CommentThread>;
+
+    @Field(() => [CommentThread], {nullable:true})
+    assignedCommentThreads?: Array<CommentThread>;
 
     @HideField()
     _count?: UserCount;

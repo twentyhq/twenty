@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
 import { HideField } from '@nestjs/graphql';
 import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
+import { EnumActivityTypeFieldUpdateOperationsInput } from '../prisma/enum-activity-type-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { CommentUncheckedUpdateManyWithoutCommentThreadNestedInput } from '../comment/comment-unchecked-update-many-without-comment-thread-nested.input';
@@ -24,6 +25,21 @@ export class CommentThreadUncheckedUpdateWithoutCommentThreadTargetsInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     title?: NullableStringFieldUpdateOperationsInput;
+
+    @Field(() => EnumActivityTypeFieldUpdateOperationsInput, {nullable:true})
+    type?: EnumActivityTypeFieldUpdateOperationsInput;
+
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    reminderAt?: NullableDateTimeFieldUpdateOperationsInput;
+
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    dueAt?: NullableDateTimeFieldUpdateOperationsInput;
+
+    @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    assigneeId?: NullableStringFieldUpdateOperationsInput;
 
     @HideField()
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput;

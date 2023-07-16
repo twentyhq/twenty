@@ -12,7 +12,7 @@ export function RightDrawerEditCommentThread() {
 
   return (
     <RightDrawerPage>
-      <RightDrawerTopBar title="" />
+      <RightDrawerTopBar />
       <RightDrawerBody>
         {commentThreadId && <CommentThread commentThreadId={commentThreadId} />}
       </RightDrawerBody>
