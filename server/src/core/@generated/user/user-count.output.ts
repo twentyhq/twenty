@@ -15,5 +15,8 @@ export class UserCount {
     comments?: number;
 
     @Field(() => Int, {nullable:false})
-    CommentThread?: number;
+    authoredCommentThreads?: number;
+
+    @Field(() => Int, {nullable:false})
+    assignedCommentThreads?: number;
 }

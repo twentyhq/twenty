@@ -6,6 +6,11 @@ export enum CommentThreadScalarFieldEnum {
     authorId = "authorId",
     body = "body",
     title = "title",
+    type = "type",
+    reminderAt = "reminderAt",
+    dueAt = "dueAt",
+    completedAt = "completedAt",
+    assigneeId = "assigneeId",
     deletedAt = "deletedAt",
     createdAt = "createdAt",
     updatedAt = "updatedAt"

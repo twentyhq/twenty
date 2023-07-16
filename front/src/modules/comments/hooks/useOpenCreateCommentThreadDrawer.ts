@@ -8,7 +8,10 @@ import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { GET_PEOPLE } from '@/people/services';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { useCreateCommentThreadMutation } from '~/generated/graphql';
+import {
+  ActivityType,
+  useCreateCommentThreadMutation,
+} from '~/generated/graphql';
 
 import { useOpenRightDrawer } from '../../ui/layout/right-drawer/hooks/useOpenRightDrawer';
 import {
@@ -32,12 +35,16 @@ export function useOpenCreateCommentThreadDrawer() {
     viewableCommentThreadIdState,
   );
 
-  return function openCreateCommentThreadDrawer(entity: CommentableEntity) {
+  return function openCreateCommentThreadDrawer(
+    entity: CommentableEntity,
+    type: ActivityType,
+  ) {
     createCommentThreadMutation({
       variables: {
         authorId: currentUser?.id ?? '',
         commentThreadId: v4(),
         createdAt: new Date().toISOString(),
+        type: type,
         commentThreadTargetArray: [
           {
             commentableId: entity.id,

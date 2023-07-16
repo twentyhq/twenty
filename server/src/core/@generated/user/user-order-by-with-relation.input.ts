@@ -69,5 +69,8 @@ export class UserOrderByWithRelationInput {
     comments?: CommentOrderByRelationAggregateInput;
 
     @Field(() => CommentThreadOrderByRelationAggregateInput, {nullable:true})
-    CommentThread?: CommentThreadOrderByRelationAggregateInput;
+    authoredCommentThreads?: CommentThreadOrderByRelationAggregateInput;
+
+    @Field(() => CommentThreadOrderByRelationAggregateInput, {nullable:true})
+    assignedCommentThreads?: CommentThreadOrderByRelationAggregateInput;
 }

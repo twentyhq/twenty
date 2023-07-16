@@ -12,6 +12,7 @@ import {
   beautifyPastDateRelativeToNow,
 } from '@/utils/datetime/date-utils';
 import {
+  ActivityType,
   SortOrder,
   useGetCommentThreadsByTargetsQuery,
 } from '~/generated/graphql';
@@ -187,7 +188,7 @@ const StyledTopActionBar = styled.div`
 `;
 
 export function Timeline({ entity }: { entity: CommentableEntity }) {
-  const { data: queryResult } = useGetCommentThreadsByTargetsQuery({
+  const { data: queryResult, loading } = useGetCommentThreadsByTargetsQuery({
     variables: {
       commentThreadTargetIds: [entity.id],
       orderBy: [
@@ -205,13 +206,18 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
   const commentThreads: CommentThreadForDrawer[] =
     queryResult?.findManyCommentThreads ?? [];
 
+  if (loading) {
+    return <></>;
+  }
+
   if (!commentThreads.length) {
     return (
       <StyledTimelineEmptyContainer>
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
         <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
         <CommentThreadCreateButton
-          onNoteClick={() => openCreateCommandThread(entity)}
+          onNoteClick={() => openCreateCommandThread(entity, ActivityType.Note)}
+          onTaskClick={() => openCreateCommandThread(entity, ActivityType.Task)}
         />
       </StyledTimelineEmptyContainer>
     );
@@ -222,7 +228,12 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
       <StyledTopActionBar>
         <StyledTimelineItemContainer>
           <CommentThreadCreateButton
-            onNoteClick={() => openCreateCommandThread(entity)}
+            onNoteClick={() =>
+              openCreateCommandThread(entity, ActivityType.Note)
+            }
+            onTaskClick={() =>
+              openCreateCommandThread(entity, ActivityType.Task)
+            }
           />
         </StyledTimelineItemContainer>
       </StyledTopActionBar>

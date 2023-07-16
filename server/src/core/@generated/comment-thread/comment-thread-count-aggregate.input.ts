@@ -20,6 +20,21 @@ export class CommentThreadCountAggregateInput {
     @Field(() => Boolean, {nullable:true})
     title?: true;
 
+    @Field(() => Boolean, {nullable:true})
+    type?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    reminderAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    dueAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    completedAt?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    assigneeId?: true;
+
     @HideField()
     deletedAt?: true;
 

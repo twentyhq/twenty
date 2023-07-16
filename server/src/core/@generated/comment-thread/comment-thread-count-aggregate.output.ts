@@ -21,6 +21,21 @@ export class CommentThreadCountAggregate {
     @Field(() => Int, {nullable:false})
     title!: number;
 
+    @Field(() => Int, {nullable:false})
+    type!: number;
+
+    @Field(() => Int, {nullable:false})
+    reminderAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    dueAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    completedAt!: number;
+
+    @Field(() => Int, {nullable:false})
+    assigneeId!: number;
+
     @HideField()
     deletedAt!: number;
 

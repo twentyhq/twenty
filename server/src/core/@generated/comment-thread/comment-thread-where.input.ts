@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { StringFilter } from '../prisma/string-filter.input';
 import { HideField } from '@nestjs/graphql';
 import { StringNullableFilter } from '../prisma/string-nullable-filter.input';
+import { EnumActivityTypeFilter } from '../prisma/enum-activity-type-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { CommentThreadTargetListRelationFilter } from '../comment-thread-target/comment-thread-target-list-relation-filter.input';
@@ -37,6 +38,21 @@ export class CommentThreadWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     title?: StringNullableFilter;
 
+    @Field(() => EnumActivityTypeFilter, {nullable:true})
+    type?: EnumActivityTypeFilter;
+
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    reminderAt?: DateTimeNullableFilter;
+
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    dueAt?: DateTimeNullableFilter;
+
+    @Field(() => DateTimeNullableFilter, {nullable:true})
+    completedAt?: DateTimeNullableFilter;
+
+    @Field(() => StringNullableFilter, {nullable:true})
+    assigneeId?: StringNullableFilter;
+
     @HideField()
     deletedAt?: DateTimeNullableFilter;
 
@@ -57,4 +73,7 @@ export class CommentThreadWhereInput {
 
     @Field(() => UserRelationFilter, {nullable:true})
     author?: UserRelationFilter;
+
+    @Field(() => UserRelationFilter, {nullable:true})
+    assignee?: UserRelationFilter;
 }

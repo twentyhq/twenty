@@ -37,6 +37,7 @@ export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
     $commentThreadId: String!
     $body: String
     $title: String
+    $type: ActivityType!
     $authorId: String!
     $createdAt: DateTime!
     $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!
@@ -49,6 +50,7 @@ export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
         author: { connect: { id: $authorId } }
         body: $body
         title: $title
+        type: $type
         commentThreadTargets: {
           createMany: { data: $commentThreadTargetArray, skipDuplicates: true }
         }
@@ -58,6 +60,7 @@ export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
       createdAt
       updatedAt
       authorId
+      type
       commentThreadTargets {
         id
         createdAt

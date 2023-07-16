@@ -12,7 +12,7 @@ export function RightDrawerCreateCommentThread() {
 
   return (
     <RightDrawerPage>
-      <RightDrawerTopBar title="New note" />
+      <RightDrawerTopBar />
       <RightDrawerBody>
         {commentThreadId && (
           <CommentThread

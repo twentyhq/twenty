@@ -10,6 +10,7 @@ import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDraw
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { selectedRowIdsSelector } from '@/ui/tables/states/selectedRowIdsSelector';
 import {
+  ActivityType,
   CommentableType,
   useCreateCommentThreadMutation,
 } from '~/generated/graphql';
@@ -53,6 +54,7 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
         authorId: currentUser?.id ?? '',
         commentThreadId: v4(),
         createdAt: new Date().toISOString(),
+        type: ActivityType.Note,
         commentThreadTargetArray: commentableEntityArray.map((entity) => ({
           commentableId: entity.id,
           commentableType: entity.type,
