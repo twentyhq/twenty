@@ -13,8 +13,8 @@ import { EntityTable } from '@/ui/table/components/EntityTable';
 import { HooksEntityTable } from '@/ui/table/components/HooksEntityTable';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { PersonOrderByWithRelationInput } from '~/generated/graphql';
-import { availableSorts } from '~/pages/companies/companies-sorts';
 import { peopleFilters } from '~/pages/people/people-filters';
+import { availableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
   const [orderBy, setOrderBy] =
