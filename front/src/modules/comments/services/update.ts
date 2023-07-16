@@ -98,3 +98,17 @@ export const UPDATE_COMMENT_THREAD_BODY = gql`
     }
   }
 `;
+
+export const REMOVE_COMMENT_THREAD_ATTACHMENT = gql`
+  mutation RemoveCommentThreadAttachment($attachmentId: String!) {
+    remove(where: { id: { equals: $attachmentId } }) {
+      updateOneCommentThread(
+      where: { id: $commentThreadId }
+      data: { commentThreadAttachments: { delete: { id: $commentThreadTargetId } } }
+    ) {
+      id
+      createdAt
+      updatedAt
+    }
+  }
+`;

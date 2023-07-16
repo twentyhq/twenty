@@ -5,13 +5,14 @@ import styled from '@emotion/styled';
 import { GET_COMMENT_THREAD } from '@/comments/services';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
-import { IconArrowUpRight } from '@/ui/icons/index';
+import { IconArrowUpRight, IconPaperclip } from '@/ui/icons/index';
 import { debounce } from '@/utils/debounce';
 import {
   useGetCommentThreadQuery,
   useUpdateCommentThreadTitleMutation,
 } from '~/generated/graphql';
 
+import { CommentThreadAttachments } from '../comment-thread/CommentThreadAttachments';
 import { CommentThreadBodyEditor } from '../comment-thread/CommentThreadBodyEditor';
 import { CommentThreadComments } from '../comment-thread/CommentThreadComments';
 import { CommentThreadRelationPicker } from '../comment-thread/CommentThreadRelationPicker';
@@ -169,6 +170,11 @@ export function CommentThread({
                 />
               }
               label="Relations"
+            />
+            <PropertyBoxItem
+              icon={<IconPaperclip />}
+              value={<CommentThreadAttachments />}
+              label="Attachments"
             />
           </PropertyBox>
         </StyledTopContainer>

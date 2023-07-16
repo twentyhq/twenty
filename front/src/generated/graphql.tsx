@@ -206,6 +206,7 @@ export type CommentScalarWhereInput = {
 
 export type CommentThread = {
   __typename?: 'CommentThread';
+  CommentThreadAttachment?: Maybe<Array<CommentThreadAttachment>>;
   author: User;
   authorId: Scalars['String'];
   body?: Maybe<Scalars['String']>;
@@ -217,7 +218,144 @@ export type CommentThread = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type CommentThreadAttachment = {
+  __typename?: 'CommentThreadAttachment';
+  commentThread: CommentThread;
+  commentThreadId: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  fullPath: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  type: FileType;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type CommentThreadAttachmentCreateManyCommentThreadInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  fullPath: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  type: FileType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentThreadAttachmentCreateManyCommentThreadInputEnvelope = {
+  data: Array<CommentThreadAttachmentCreateManyCommentThreadInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type CommentThreadAttachmentCreateNestedManyWithoutCommentThreadInput = {
+  connect?: InputMaybe<Array<CommentThreadAttachmentWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentThreadAttachmentCreateOrConnectWithoutCommentThreadInput>>;
+  create?: InputMaybe<Array<CommentThreadAttachmentCreateWithoutCommentThreadInput>>;
+  createMany?: InputMaybe<CommentThreadAttachmentCreateManyCommentThreadInputEnvelope>;
+};
+
+export type CommentThreadAttachmentCreateOrConnectWithoutCommentThreadInput = {
+  create: CommentThreadAttachmentCreateWithoutCommentThreadInput;
+  where: CommentThreadAttachmentWhereUniqueInput;
+};
+
+export type CommentThreadAttachmentCreateWithoutCommentThreadInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  fullPath: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  type: FileType;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentThreadAttachmentListRelationFilter = {
+  every?: InputMaybe<CommentThreadAttachmentWhereInput>;
+  none?: InputMaybe<CommentThreadAttachmentWhereInput>;
+  some?: InputMaybe<CommentThreadAttachmentWhereInput>;
+};
+
+export type CommentThreadAttachmentOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type CommentThreadAttachmentScalarWhereInput = {
+  AND?: InputMaybe<Array<CommentThreadAttachmentScalarWhereInput>>;
+  NOT?: InputMaybe<Array<CommentThreadAttachmentScalarWhereInput>>;
+  OR?: InputMaybe<Array<CommentThreadAttachmentScalarWhereInput>>;
+  commentThreadId?: InputMaybe<StringFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  fullPath?: InputMaybe<StringFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  type?: InputMaybe<EnumFileTypeFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type CommentThreadAttachmentUpdateManyMutationInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  fullPath?: InputMaybe<StringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumFileTypeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type CommentThreadAttachmentUpdateManyWithWhereWithoutCommentThreadInput = {
+  data: CommentThreadAttachmentUpdateManyMutationInput;
+  where: CommentThreadAttachmentScalarWhereInput;
+};
+
+export type CommentThreadAttachmentUpdateManyWithoutCommentThreadNestedInput = {
+  connect?: InputMaybe<Array<CommentThreadAttachmentWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentThreadAttachmentCreateOrConnectWithoutCommentThreadInput>>;
+  create?: InputMaybe<Array<CommentThreadAttachmentCreateWithoutCommentThreadInput>>;
+  createMany?: InputMaybe<CommentThreadAttachmentCreateManyCommentThreadInputEnvelope>;
+  delete?: InputMaybe<Array<CommentThreadAttachmentWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<CommentThreadAttachmentScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<CommentThreadAttachmentWhereUniqueInput>>;
+  set?: InputMaybe<Array<CommentThreadAttachmentWhereUniqueInput>>;
+  update?: InputMaybe<Array<CommentThreadAttachmentUpdateWithWhereUniqueWithoutCommentThreadInput>>;
+  updateMany?: InputMaybe<Array<CommentThreadAttachmentUpdateManyWithWhereWithoutCommentThreadInput>>;
+  upsert?: InputMaybe<Array<CommentThreadAttachmentUpsertWithWhereUniqueWithoutCommentThreadInput>>;
+};
+
+export type CommentThreadAttachmentUpdateWithWhereUniqueWithoutCommentThreadInput = {
+  data: CommentThreadAttachmentUpdateWithoutCommentThreadInput;
+  where: CommentThreadAttachmentWhereUniqueInput;
+};
+
+export type CommentThreadAttachmentUpdateWithoutCommentThreadInput = {
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  fullPath?: InputMaybe<StringFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  type?: InputMaybe<EnumFileTypeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type CommentThreadAttachmentUpsertWithWhereUniqueWithoutCommentThreadInput = {
+  create: CommentThreadAttachmentCreateWithoutCommentThreadInput;
+  update: CommentThreadAttachmentUpdateWithoutCommentThreadInput;
+  where: CommentThreadAttachmentWhereUniqueInput;
+};
+
+export type CommentThreadAttachmentWhereInput = {
+  AND?: InputMaybe<Array<CommentThreadAttachmentWhereInput>>;
+  NOT?: InputMaybe<Array<CommentThreadAttachmentWhereInput>>;
+  OR?: InputMaybe<Array<CommentThreadAttachmentWhereInput>>;
+  commentThread?: InputMaybe<CommentThreadRelationFilter>;
+  commentThreadId?: InputMaybe<StringFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  fullPath?: InputMaybe<StringFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  type?: InputMaybe<EnumFileTypeFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type CommentThreadAttachmentWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type CommentThreadCreateInput = {
+  CommentThreadAttachment?: InputMaybe<CommentThreadAttachmentCreateNestedManyWithoutCommentThreadInput>;
   author: UserCreateNestedOneWithoutCommentThreadInput;
   body?: InputMaybe<Scalars['String']>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
@@ -282,6 +420,7 @@ export type CommentThreadCreateOrConnectWithoutWorkspaceInput = {
 };
 
 export type CommentThreadCreateWithoutAuthorInput = {
+  CommentThreadAttachment?: InputMaybe<CommentThreadAttachmentCreateNestedManyWithoutCommentThreadInput>;
   body?: InputMaybe<Scalars['String']>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
   comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
@@ -292,6 +431,7 @@ export type CommentThreadCreateWithoutAuthorInput = {
 };
 
 export type CommentThreadCreateWithoutCommentsInput = {
+  CommentThreadAttachment?: InputMaybe<CommentThreadAttachmentCreateNestedManyWithoutCommentThreadInput>;
   author: UserCreateNestedOneWithoutCommentThreadInput;
   body?: InputMaybe<Scalars['String']>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
@@ -302,6 +442,7 @@ export type CommentThreadCreateWithoutCommentsInput = {
 };
 
 export type CommentThreadCreateWithoutWorkspaceInput = {
+  CommentThreadAttachment?: InputMaybe<CommentThreadAttachmentCreateNestedManyWithoutCommentThreadInput>;
   author: UserCreateNestedOneWithoutCommentThreadInput;
   body?: InputMaybe<Scalars['String']>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
@@ -323,6 +464,7 @@ export type CommentThreadOrderByRelationAggregateInput = {
 };
 
 export type CommentThreadOrderByWithRelationInput = {
+  CommentThreadAttachment?: InputMaybe<CommentThreadAttachmentOrderByRelationAggregateInput>;
   author?: InputMaybe<UserOrderByWithRelationInput>;
   authorId?: InputMaybe<SortOrder>;
   body?: InputMaybe<SortOrder>;
@@ -489,6 +631,7 @@ export type CommentThreadTargetWhereUniqueInput = {
 };
 
 export type CommentThreadUpdateInput = {
+  CommentThreadAttachment?: InputMaybe<CommentThreadAttachmentUpdateManyWithoutCommentThreadNestedInput>;
   author?: InputMaybe<UserUpdateOneRequiredWithoutCommentThreadNestedInput>;
   body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
@@ -564,6 +707,7 @@ export type CommentThreadUpdateWithWhereUniqueWithoutWorkspaceInput = {
 };
 
 export type CommentThreadUpdateWithoutAuthorInput = {
+  CommentThreadAttachment?: InputMaybe<CommentThreadAttachmentUpdateManyWithoutCommentThreadNestedInput>;
   body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
@@ -574,6 +718,7 @@ export type CommentThreadUpdateWithoutAuthorInput = {
 };
 
 export type CommentThreadUpdateWithoutCommentsInput = {
+  CommentThreadAttachment?: InputMaybe<CommentThreadAttachmentUpdateManyWithoutCommentThreadNestedInput>;
   author?: InputMaybe<UserUpdateOneRequiredWithoutCommentThreadNestedInput>;
   body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
@@ -584,6 +729,7 @@ export type CommentThreadUpdateWithoutCommentsInput = {
 };
 
 export type CommentThreadUpdateWithoutWorkspaceInput = {
+  CommentThreadAttachment?: InputMaybe<CommentThreadAttachmentUpdateManyWithoutCommentThreadNestedInput>;
   author?: InputMaybe<UserUpdateOneRequiredWithoutCommentThreadNestedInput>;
   body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
@@ -613,6 +759,7 @@ export type CommentThreadUpsertWithoutCommentsInput = {
 
 export type CommentThreadWhereInput = {
   AND?: InputMaybe<Array<CommentThreadWhereInput>>;
+  CommentThreadAttachment?: InputMaybe<CommentThreadAttachmentListRelationFilter>;
   NOT?: InputMaybe<Array<CommentThreadWhereInput>>;
   OR?: InputMaybe<Array<CommentThreadWhereInput>>;
   author?: InputMaybe<UserRelationFilter>;
@@ -1100,6 +1247,17 @@ export type EnumCommentableTypeFilter = {
   notIn?: InputMaybe<Array<CommentableType>>;
 };
 
+export type EnumFileTypeFieldUpdateOperationsInput = {
+  set?: InputMaybe<FileType>;
+};
+
+export type EnumFileTypeFilter = {
+  equals?: InputMaybe<FileType>;
+  in?: InputMaybe<Array<FileType>>;
+  not?: InputMaybe<NestedEnumFileTypeFilter>;
+  notIn?: InputMaybe<Array<FileType>>;
+};
+
 export type EnumPipelineProgressableTypeFieldUpdateOperationsInput = {
   set?: InputMaybe<PipelineProgressableType>;
 };
@@ -1112,8 +1270,19 @@ export type EnumPipelineProgressableTypeFilter = {
 };
 
 export enum FileFolder {
+  Attachments = 'Attachments',
   ProfilePicture = 'ProfilePicture',
   WorkspaceLogo = 'WorkspaceLogo'
+}
+
+export enum FileType {
+  Archive = 'Archive',
+  Audio = 'Audio',
+  Image = 'Image',
+  Other = 'Other',
+  Spreadsheet = 'Spreadsheet',
+  TextDocument = 'TextDocument',
+  Video = 'Video'
 }
 
 export type IntNullableFilter = {
@@ -1171,6 +1340,7 @@ export type Mutation = {
   updateOnePipelineStage?: Maybe<PipelineStage>;
   updateUser: User;
   updateWorkspace: Workspace;
+  uploadCommentThreadAttachment: Scalars['String'];
   uploadFile: Scalars['String'];
   uploadImage: Scalars['String'];
   uploadProfilePicture: Scalars['String'];
@@ -1294,6 +1464,11 @@ export type MutationUpdateWorkspaceArgs = {
 };
 
 
+export type MutationUploadCommentThreadAttachmentArgs = {
+  file: Scalars['Upload'];
+};
+
+
 export type MutationUploadFileArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
@@ -1352,6 +1527,13 @@ export type NestedEnumCommentableTypeFilter = {
   in?: InputMaybe<Array<CommentableType>>;
   not?: InputMaybe<NestedEnumCommentableTypeFilter>;
   notIn?: InputMaybe<Array<CommentableType>>;
+};
+
+export type NestedEnumFileTypeFilter = {
+  equals?: InputMaybe<FileType>;
+  in?: InputMaybe<Array<FileType>>;
+  not?: InputMaybe<NestedEnumFileTypeFilter>;
+  notIn?: InputMaybe<Array<FileType>>;
 };
 
 export type NestedEnumPipelineProgressableTypeFilter = {
@@ -3154,29 +3336,6 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', demoMode: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean } } };
 
-export type CreateCommentMutationVariables = Exact<{
-  commentId: Scalars['String'];
-  commentText: Scalars['String'];
-  authorId: Scalars['String'];
-  commentThreadId: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-}>;
-
-
-export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, commentThreadId: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } };
-
-export type CreateCommentThreadMutationVariables = Exact<{
-  commentThreadId: Scalars['String'];
-  body?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
-  authorId: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  commentThreadTargetArray: Array<CommentThreadTargetCreateManyCommentThreadInput> | CommentThreadTargetCreateManyCommentThreadInput;
-}>;
-
-
-export type CreateCommentThreadMutation = { __typename?: 'Mutation', createOneCommentThread: { __typename?: 'CommentThread', id: string, createdAt: string, updatedAt: string, authorId: string, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, createdAt: string, updatedAt: string, commentThreadId: string, commentableType: CommentableType, commentableId: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
-
 export type GetCommentThreadsByTargetsQueryVariables = Exact<{
   commentThreadTargetIds: Array<Scalars['String']> | Scalars['String'];
   orderBy?: InputMaybe<Array<CommentThreadOrderByWithRelationInput> | CommentThreadOrderByWithRelationInput>;
@@ -3191,48 +3350,6 @@ export type GetCommentThreadQueryVariables = Exact<{
 
 
 export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, body?: string | null, title?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
-
-export type AddCommentThreadTargetOnCommentThreadMutationVariables = Exact<{
-  commentThreadId: Scalars['String'];
-  commentThreadTargetCreationDate: Scalars['DateTime'];
-  commentThreadTargetId: Scalars['String'];
-  commentableEntityId: Scalars['String'];
-  commentableEntityType: CommentableType;
-}>;
-
-
-export type AddCommentThreadTargetOnCommentThreadMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, createdAt: string, updatedAt: string, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, createdAt: string, updatedAt: string, commentableType: CommentableType, commentableId: string }> | null } };
-
-export type RemoveCommentThreadTargetOnCommentThreadMutationVariables = Exact<{
-  commentThreadId: Scalars['String'];
-  commentThreadTargetId: Scalars['String'];
-}>;
-
-
-export type RemoveCommentThreadTargetOnCommentThreadMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, createdAt: string, updatedAt: string, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, createdAt: string, updatedAt: string, commentableType: CommentableType, commentableId: string }> | null } };
-
-export type DeleteCommentThreadMutationVariables = Exact<{
-  commentThreadId: Scalars['String'];
-}>;
-
-
-export type DeleteCommentThreadMutation = { __typename?: 'Mutation', deleteManyCommentThreads: { __typename?: 'AffectedRows', count: number } };
-
-export type UpdateCommentThreadTitleMutationVariables = Exact<{
-  commentThreadId: Scalars['String'];
-  commentThreadTitle?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type UpdateCommentThreadTitleMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, title?: string | null } };
-
-export type UpdateCommentThreadBodyMutationVariables = Exact<{
-  commentThreadId: Scalars['String'];
-  commentThreadBody?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type UpdateCommentThreadBodyMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, body?: string | null } };
 
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
@@ -3824,115 +3941,6 @@ export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
-export const CreateCommentDocument = gql`
-    mutation CreateComment($commentId: String!, $commentText: String!, $authorId: String!, $commentThreadId: String!, $createdAt: DateTime!) {
-  createOneComment(
-    data: {id: $commentId, createdAt: $createdAt, body: $commentText, author: {connect: {id: $authorId}}, commentThread: {connect: {id: $commentThreadId}}}
-  ) {
-    id
-    createdAt
-    body
-    author {
-      id
-      displayName
-      firstName
-      lastName
-      avatarUrl
-    }
-    commentThreadId
-  }
-}
-    `;
-export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
-
-/**
- * __useCreateCommentMutation__
- *
- * To run a mutation, you first call `useCreateCommentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCommentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
- *   variables: {
- *      commentId: // value for 'commentId'
- *      commentText: // value for 'commentText'
- *      authorId: // value for 'authorId'
- *      commentThreadId: // value for 'commentThreadId'
- *      createdAt: // value for 'createdAt'
- *   },
- * });
- */
-export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommentMutation, CreateCommentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument, options);
-      }
-export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
-export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
-export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
-export const CreateCommentThreadDocument = gql`
-    mutation CreateCommentThread($commentThreadId: String!, $body: String, $title: String, $authorId: String!, $createdAt: DateTime!, $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!) {
-  createOneCommentThread(
-    data: {id: $commentThreadId, createdAt: $createdAt, updatedAt: $createdAt, author: {connect: {id: $authorId}}, body: $body, title: $title, commentThreadTargets: {createMany: {data: $commentThreadTargetArray, skipDuplicates: true}}}
-  ) {
-    id
-    createdAt
-    updatedAt
-    authorId
-    commentThreadTargets {
-      id
-      createdAt
-      updatedAt
-      commentThreadId
-      commentableType
-      commentableId
-    }
-    comments {
-      id
-      createdAt
-      updatedAt
-      body
-      author {
-        id
-      }
-    }
-  }
-}
-    `;
-export type CreateCommentThreadMutationFn = Apollo.MutationFunction<CreateCommentThreadMutation, CreateCommentThreadMutationVariables>;
-
-/**
- * __useCreateCommentThreadMutation__
- *
- * To run a mutation, you first call `useCreateCommentThreadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCommentThreadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCommentThreadMutation, { data, loading, error }] = useCreateCommentThreadMutation({
- *   variables: {
- *      commentThreadId: // value for 'commentThreadId'
- *      body: // value for 'body'
- *      title: // value for 'title'
- *      authorId: // value for 'authorId'
- *      createdAt: // value for 'createdAt'
- *      commentThreadTargetArray: // value for 'commentThreadTargetArray'
- *   },
- * });
- */
-export function useCreateCommentThreadMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommentThreadMutation, CreateCommentThreadMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCommentThreadMutation, CreateCommentThreadMutationVariables>(CreateCommentThreadDocument, options);
-      }
-export type CreateCommentThreadMutationHookResult = ReturnType<typeof useCreateCommentThreadMutation>;
-export type CreateCommentThreadMutationResult = Apollo.MutationResult<CreateCommentThreadMutation>;
-export type CreateCommentThreadMutationOptions = Apollo.BaseMutationOptions<CreateCommentThreadMutation, CreateCommentThreadMutationVariables>;
 export const GetCommentThreadsByTargetsDocument = gql`
     query GetCommentThreadsByTargets($commentThreadTargetIds: [String!]!, $orderBy: [CommentThreadOrderByWithRelationInput!]) {
   findManyCommentThreads(
@@ -4059,210 +4067,6 @@ export function useGetCommentThreadLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetCommentThreadQueryHookResult = ReturnType<typeof useGetCommentThreadQuery>;
 export type GetCommentThreadLazyQueryHookResult = ReturnType<typeof useGetCommentThreadLazyQuery>;
 export type GetCommentThreadQueryResult = Apollo.QueryResult<GetCommentThreadQuery, GetCommentThreadQueryVariables>;
-export const AddCommentThreadTargetOnCommentThreadDocument = gql`
-    mutation AddCommentThreadTargetOnCommentThread($commentThreadId: String!, $commentThreadTargetCreationDate: DateTime!, $commentThreadTargetId: String!, $commentableEntityId: String!, $commentableEntityType: CommentableType!) {
-  updateOneCommentThread(
-    where: {id: $commentThreadId}
-    data: {commentThreadTargets: {connectOrCreate: {create: {id: $commentThreadTargetId, createdAt: $commentThreadTargetCreationDate, commentableType: $commentableEntityType, commentableId: $commentableEntityId}, where: {id: $commentThreadTargetId}}}}
-  ) {
-    id
-    createdAt
-    updatedAt
-    commentThreadTargets {
-      id
-      createdAt
-      updatedAt
-      commentableType
-      commentableId
-    }
-  }
-}
-    `;
-export type AddCommentThreadTargetOnCommentThreadMutationFn = Apollo.MutationFunction<AddCommentThreadTargetOnCommentThreadMutation, AddCommentThreadTargetOnCommentThreadMutationVariables>;
-
-/**
- * __useAddCommentThreadTargetOnCommentThreadMutation__
- *
- * To run a mutation, you first call `useAddCommentThreadTargetOnCommentThreadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddCommentThreadTargetOnCommentThreadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addCommentThreadTargetOnCommentThreadMutation, { data, loading, error }] = useAddCommentThreadTargetOnCommentThreadMutation({
- *   variables: {
- *      commentThreadId: // value for 'commentThreadId'
- *      commentThreadTargetCreationDate: // value for 'commentThreadTargetCreationDate'
- *      commentThreadTargetId: // value for 'commentThreadTargetId'
- *      commentableEntityId: // value for 'commentableEntityId'
- *      commentableEntityType: // value for 'commentableEntityType'
- *   },
- * });
- */
-export function useAddCommentThreadTargetOnCommentThreadMutation(baseOptions?: Apollo.MutationHookOptions<AddCommentThreadTargetOnCommentThreadMutation, AddCommentThreadTargetOnCommentThreadMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddCommentThreadTargetOnCommentThreadMutation, AddCommentThreadTargetOnCommentThreadMutationVariables>(AddCommentThreadTargetOnCommentThreadDocument, options);
-      }
-export type AddCommentThreadTargetOnCommentThreadMutationHookResult = ReturnType<typeof useAddCommentThreadTargetOnCommentThreadMutation>;
-export type AddCommentThreadTargetOnCommentThreadMutationResult = Apollo.MutationResult<AddCommentThreadTargetOnCommentThreadMutation>;
-export type AddCommentThreadTargetOnCommentThreadMutationOptions = Apollo.BaseMutationOptions<AddCommentThreadTargetOnCommentThreadMutation, AddCommentThreadTargetOnCommentThreadMutationVariables>;
-export const RemoveCommentThreadTargetOnCommentThreadDocument = gql`
-    mutation RemoveCommentThreadTargetOnCommentThread($commentThreadId: String!, $commentThreadTargetId: String!) {
-  updateOneCommentThread(
-    where: {id: $commentThreadId}
-    data: {commentThreadTargets: {delete: {id: $commentThreadTargetId}}}
-  ) {
-    id
-    createdAt
-    updatedAt
-    commentThreadTargets {
-      id
-      createdAt
-      updatedAt
-      commentableType
-      commentableId
-    }
-  }
-}
-    `;
-export type RemoveCommentThreadTargetOnCommentThreadMutationFn = Apollo.MutationFunction<RemoveCommentThreadTargetOnCommentThreadMutation, RemoveCommentThreadTargetOnCommentThreadMutationVariables>;
-
-/**
- * __useRemoveCommentThreadTargetOnCommentThreadMutation__
- *
- * To run a mutation, you first call `useRemoveCommentThreadTargetOnCommentThreadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveCommentThreadTargetOnCommentThreadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeCommentThreadTargetOnCommentThreadMutation, { data, loading, error }] = useRemoveCommentThreadTargetOnCommentThreadMutation({
- *   variables: {
- *      commentThreadId: // value for 'commentThreadId'
- *      commentThreadTargetId: // value for 'commentThreadTargetId'
- *   },
- * });
- */
-export function useRemoveCommentThreadTargetOnCommentThreadMutation(baseOptions?: Apollo.MutationHookOptions<RemoveCommentThreadTargetOnCommentThreadMutation, RemoveCommentThreadTargetOnCommentThreadMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveCommentThreadTargetOnCommentThreadMutation, RemoveCommentThreadTargetOnCommentThreadMutationVariables>(RemoveCommentThreadTargetOnCommentThreadDocument, options);
-      }
-export type RemoveCommentThreadTargetOnCommentThreadMutationHookResult = ReturnType<typeof useRemoveCommentThreadTargetOnCommentThreadMutation>;
-export type RemoveCommentThreadTargetOnCommentThreadMutationResult = Apollo.MutationResult<RemoveCommentThreadTargetOnCommentThreadMutation>;
-export type RemoveCommentThreadTargetOnCommentThreadMutationOptions = Apollo.BaseMutationOptions<RemoveCommentThreadTargetOnCommentThreadMutation, RemoveCommentThreadTargetOnCommentThreadMutationVariables>;
-export const DeleteCommentThreadDocument = gql`
-    mutation DeleteCommentThread($commentThreadId: String!) {
-  deleteManyCommentThreads(where: {id: {equals: $commentThreadId}}) {
-    count
-  }
-}
-    `;
-export type DeleteCommentThreadMutationFn = Apollo.MutationFunction<DeleteCommentThreadMutation, DeleteCommentThreadMutationVariables>;
-
-/**
- * __useDeleteCommentThreadMutation__
- *
- * To run a mutation, you first call `useDeleteCommentThreadMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteCommentThreadMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteCommentThreadMutation, { data, loading, error }] = useDeleteCommentThreadMutation({
- *   variables: {
- *      commentThreadId: // value for 'commentThreadId'
- *   },
- * });
- */
-export function useDeleteCommentThreadMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCommentThreadMutation, DeleteCommentThreadMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteCommentThreadMutation, DeleteCommentThreadMutationVariables>(DeleteCommentThreadDocument, options);
-      }
-export type DeleteCommentThreadMutationHookResult = ReturnType<typeof useDeleteCommentThreadMutation>;
-export type DeleteCommentThreadMutationResult = Apollo.MutationResult<DeleteCommentThreadMutation>;
-export type DeleteCommentThreadMutationOptions = Apollo.BaseMutationOptions<DeleteCommentThreadMutation, DeleteCommentThreadMutationVariables>;
-export const UpdateCommentThreadTitleDocument = gql`
-    mutation UpdateCommentThreadTitle($commentThreadId: String!, $commentThreadTitle: String) {
-  updateOneCommentThread(
-    where: {id: $commentThreadId}
-    data: {title: {set: $commentThreadTitle}}
-  ) {
-    id
-    title
-  }
-}
-    `;
-export type UpdateCommentThreadTitleMutationFn = Apollo.MutationFunction<UpdateCommentThreadTitleMutation, UpdateCommentThreadTitleMutationVariables>;
-
-/**
- * __useUpdateCommentThreadTitleMutation__
- *
- * To run a mutation, you first call `useUpdateCommentThreadTitleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCommentThreadTitleMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCommentThreadTitleMutation, { data, loading, error }] = useUpdateCommentThreadTitleMutation({
- *   variables: {
- *      commentThreadId: // value for 'commentThreadId'
- *      commentThreadTitle: // value for 'commentThreadTitle'
- *   },
- * });
- */
-export function useUpdateCommentThreadTitleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCommentThreadTitleMutation, UpdateCommentThreadTitleMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCommentThreadTitleMutation, UpdateCommentThreadTitleMutationVariables>(UpdateCommentThreadTitleDocument, options);
-      }
-export type UpdateCommentThreadTitleMutationHookResult = ReturnType<typeof useUpdateCommentThreadTitleMutation>;
-export type UpdateCommentThreadTitleMutationResult = Apollo.MutationResult<UpdateCommentThreadTitleMutation>;
-export type UpdateCommentThreadTitleMutationOptions = Apollo.BaseMutationOptions<UpdateCommentThreadTitleMutation, UpdateCommentThreadTitleMutationVariables>;
-export const UpdateCommentThreadBodyDocument = gql`
-    mutation UpdateCommentThreadBody($commentThreadId: String!, $commentThreadBody: String) {
-  updateOneCommentThread(
-    where: {id: $commentThreadId}
-    data: {body: {set: $commentThreadBody}}
-  ) {
-    id
-    body
-  }
-}
-    `;
-export type UpdateCommentThreadBodyMutationFn = Apollo.MutationFunction<UpdateCommentThreadBodyMutation, UpdateCommentThreadBodyMutationVariables>;
-
-/**
- * __useUpdateCommentThreadBodyMutation__
- *
- * To run a mutation, you first call `useUpdateCommentThreadBodyMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateCommentThreadBodyMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateCommentThreadBodyMutation, { data, loading, error }] = useUpdateCommentThreadBodyMutation({
- *   variables: {
- *      commentThreadId: // value for 'commentThreadId'
- *      commentThreadBody: // value for 'commentThreadBody'
- *   },
- * });
- */
-export function useUpdateCommentThreadBodyMutation(baseOptions?: Apollo.MutationHookOptions<UpdateCommentThreadBodyMutation, UpdateCommentThreadBodyMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateCommentThreadBodyMutation, UpdateCommentThreadBodyMutationVariables>(UpdateCommentThreadBodyDocument, options);
-      }
-export type UpdateCommentThreadBodyMutationHookResult = ReturnType<typeof useUpdateCommentThreadBodyMutation>;
-export type UpdateCommentThreadBodyMutationResult = Apollo.MutationResult<UpdateCommentThreadBodyMutation>;
-export type UpdateCommentThreadBodyMutationOptions = Apollo.BaseMutationOptions<UpdateCommentThreadBodyMutation, UpdateCommentThreadBodyMutationVariables>;
 export const GetCompaniesDocument = gql`
     query GetCompanies($orderBy: [CompanyOrderByWithRelationInput!], $where: CompanyWhereInput) {
   companies: findManyCompany(orderBy: $orderBy, where: $where) {

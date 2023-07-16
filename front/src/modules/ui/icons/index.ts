@@ -41,3 +41,5 @@ export { IconEye } from '@tabler/icons-react';
 export { IconEyeOff } from '@tabler/icons-react';
 export { IconAlertTriangle } from '@tabler/icons-react';
 export { IconCopy } from '@tabler/icons-react';
+export { IconPaperclip } from '@tabler/icons-react';
+export { IconPhoto } from '@tabler/icons-react';

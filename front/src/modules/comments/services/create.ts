@@ -78,3 +78,9 @@ export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
     }
   }
 `;
+
+export const CREATE_COMMENT_THREAD_ATTACHMENT = gql`
+  mutation CreateAttachment($commentThreadId: String!, $file: Upload!) {
+    uploadCommentThreadAttachment(file: $file, commentThreadId: $commentThreadId) {
+  }
+`;
