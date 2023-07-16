@@ -62,26 +62,23 @@ export function EntityBoard({ boardOptions }: { boardOptions: BoardOptions }) {
     [board, updatePipelineProgressStageInDB, setBoard],
   );
 
+  const sortedBoard = board
+    ? [...board].sort((a, b) => {
+        return a.index - b.index;
+      })
+    : [];
+
   return (board?.length ?? 0) > 0 ? (
     <StyledBoard>
       <DragDropContext onDragEnd={onDragEnd}>
-        {board &&
-          [...board]
-            .sort((a, b) => {
-              if (!a.index || !b.index) return 0;
-              return a.index - b.index;
-            })
-            .map((column) => (
-              <RecoilScope
-                SpecificContext={BoardColumnContext}
-                key={column.pipelineStageId}
-              >
-                <EntityBoardColumn
-                  boardOptions={boardOptions}
-                  column={column}
-                />
-              </RecoilScope>
-            ))}
+        {sortedBoard.map((column) => (
+          <RecoilScope
+            SpecificContext={BoardColumnContext}
+            key={column.pipelineStageId}
+          >
+            <EntityBoardColumn boardOptions={boardOptions} column={column} />
+          </RecoilScope>
+        ))}
       </DragDropContext>
     </StyledBoard>
   ) : (
