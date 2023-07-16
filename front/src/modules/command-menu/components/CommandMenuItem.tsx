@@ -2,7 +2,7 @@ import React from 'react';
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { IconArrowUpRight } from '@/ui/icons';
+import { IconArrowUpRight } from '@/ui/icon';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 

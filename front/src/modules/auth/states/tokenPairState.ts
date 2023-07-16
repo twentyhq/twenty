@@ -1,7 +1,7 @@
 import { atom, AtomEffect } from 'recoil';
 
-import { cookieStorage } from '@/utils/cookie-storage';
 import { AuthTokenPair } from '~/generated/graphql';
+import { cookieStorage } from '~/utils/cookie-storage';
 
 const cookieStorageEffect =
   (key: string): AtomEffect<AuthTokenPair | null> =>

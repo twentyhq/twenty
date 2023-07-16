@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { AuthModal } from '@/auth/components/ui/Modal';
-import { AuthLayout } from '@/ui/layout/AuthLayout';
+import { AuthLayout } from '@/ui/layout/components/AuthLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 

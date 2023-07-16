@@ -1,9 +1,9 @@
-import { FilterDropdownEntitySearchSelect } from '@/lib/filters-and-sorts/components/FilterDropdownEntitySearchSelect';
-import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
-import { filterDropdownSelectedEntityIdScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSelectedEntityIdScopedState';
-import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
-import { TableContext } from '@/ui/tables/states/TableContext';
+import { FilterDropdownEntitySearchSelect } from '@/ui/filter-n-sort/components/FilterDropdownEntitySearchSelect';
+import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
+import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/states/filterDropdownSelectedEntityIdScopedState';
+import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
+import { TableContext } from '@/ui/table/states/TableContext';
 
 import { useFilteredSearchCompanyQuery } from '../queries';
 

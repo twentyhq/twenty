@@ -6,7 +6,7 @@ import {
   IconMap,
   IconUser,
   IconUsers,
-} from '@/ui/icons/index';
+} from '@/ui/icon/index';
 
 import { EditableCompanyAccountOwnerCell } from './EditableCompanyAccountOwnerCell';
 import { EditableCompanyAddressCell } from './EditableCompanyAddressCell';

@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { CellCommentChip } from '@/comments/components/table/CellCommentChip';
-import { useOpenTimelineRightDrawer } from '@/comments/hooks/useOpenTimelineRightDrawer';
-import { EditableCellDoubleText } from '@/ui/components/editable-cell/types/EditableCellDoubleText';
+import { useOpenTimelineRightDrawer } from '@/activities/hooks/useOpenTimelineRightDrawer';
+import { CellCommentChip } from '@/activities/table/components/CellCommentChip';
+import { EditableCellDoubleText } from '@/ui/table/editable-cell/types/EditableCellDoubleText';
 import { CommentableType, Person } from '~/generated/graphql';
 
 import { PersonChip } from './PersonChip';

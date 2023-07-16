@@ -1,9 +1,8 @@
 import { gql } from '@apollo/client';
 
-import { CommentableEntityForSelect } from '@/comments/types/CommentableEntityForSelect';
-import { SelectedSortType } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
+import { CommentableEntityForSelect } from '@/activities/types/CommentableEntityForSelect';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { getLogoUrlFromDomainName } from '@/utils/utils';
+import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import {
   CommentableType,
   CompanyOrderByWithRelationInput as Companies_Order_By,
@@ -12,6 +11,7 @@ import {
   useGetCompaniesQuery,
   useSearchCompanyQuery,
 } from '~/generated/graphql';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 export type CompaniesSelectedSortType = SelectedSortType<Companies_Order_By>;
 

@@ -4,8 +4,11 @@ import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { RequireOnboarded } from '@/auth/components/RequireOnboarded';
 import { RequireOnboarding } from '@/auth/components/RequireOnboarding';
 import { AuthModal } from '@/auth/components/ui/Modal';
-import { AuthLayout } from '@/ui/layout/AuthLayout';
-import { DefaultLayout } from '@/ui/layout/DefaultLayout';
+import { AppPath } from '@/types/AppPath';
+import { AuthPath } from '@/types/AuthPath';
+import { SettingsPath } from '@/types/SettingsPath';
+import { AuthLayout } from '@/ui/layout/components/AuthLayout';
+import { DefaultLayout } from '@/ui/layout/components/DefaultLayout';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { Index } from '~/pages/auth/Index';
@@ -20,10 +23,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { CompanyShow } from './pages/companies/CompanyShow';
 import { PersonShow } from './pages/people/PersonShow';
 import { SettingsWorksapce } from './pages/settings/SettingsWorkspace';
-import { AppPath } from './sync-hooks/types/AppPath';
-import { AuthPath } from './sync-hooks/types/AuthPath';
-import { SettingsPath } from './sync-hooks/types/SettingsPath';
-import { AppInternalHooks } from './AppInternalHooks';
+import { AppInternalHooks } from './sync-hooks/AppInternalHooks';
 
 /**
  * AuthRoutes is used to allow transitions between auth pages with framer-motion.

@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { debounce } from '@/utils/debounce';
+import { debounce } from '~/utils/debounce';
 
 import { EditColumnTitleInput } from './EditColumnTitleInput';
 

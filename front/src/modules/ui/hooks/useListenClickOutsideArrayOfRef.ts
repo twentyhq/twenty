@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { isDefined } from '@/utils/type-guards/isDefined';
+import { isDefined } from '~/utils/isDefined';
 
 export function useListenClickOutsideArrayOfRef<T extends Element>(
   arrayOfRef: Array<React.RefObject<T>>,

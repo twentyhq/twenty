@@ -1,18 +1,15 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql } from 'msw';
 
-import { CREATE_EVENT } from '@/analytics/services';
+import { CREATE_EVENT } from '@/analytics/queries';
 import { GET_CLIENT_CONFIG } from '@/client-config/queries';
 import { GET_COMPANIES } from '@/companies/queries';
-import { GET_PEOPLE, UPDATE_PERSON } from '@/people/services';
-import {
-  GET_PIPELINE_PROGRESS,
-  GET_PIPELINES,
-} from '@/pipeline-progress/services';
+import { GET_PEOPLE, UPDATE_PERSON } from '@/people/queries';
+import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import {
   SEARCH_COMPANY_QUERY,
   SEARCH_USER_QUERY,
-} from '@/search/services/search';
+} from '@/search/queries/search';
 import { GET_CURRENT_USER } from '@/users/queries';
 import {
   GetCompaniesQuery,
