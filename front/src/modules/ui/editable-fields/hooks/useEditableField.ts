@@ -6,6 +6,7 @@ import { FieldContext } from '../states/FieldContext';
 import { isFieldInEditModeScopedState } from '../states/isFieldInEditModeScopedState';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
+// TODO: use atoms for hotkey scopes
 export function useEditableField(parentHotkeyScope?: HotkeyScope) {
   const [isFieldInEditMode, setIsFieldInEditMode] = useRecoilScopedState(
     isFieldInEditModeScopedState,
@@ -22,10 +23,14 @@ export function useEditableField(parentHotkeyScope?: HotkeyScope) {
     }
   }
 
-  function openEditableField() {
+  function openEditableField(customHotkeyScope?: HotkeyScope) {
     setIsFieldInEditMode(true);
 
-    setHotkeyScope(EditableFieldHotkeyScope.EditableField);
+    if (customHotkeyScope) {
+      setHotkeyScope(customHotkeyScope.scope, customHotkeyScope.customScopes);
+    } else {
+      setHotkeyScope(EditableFieldHotkeyScope.EditableField);
+    }
   }
 
   return {

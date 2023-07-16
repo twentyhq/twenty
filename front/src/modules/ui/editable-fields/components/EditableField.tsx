@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
@@ -59,6 +59,7 @@ type OwnProps = {
   editModeContent: React.ReactNode;
   displayModeContent: React.ReactNode;
   parentHotkeyScope?: HotkeyScope;
+  customEditHotkeyScope?: HotkeyScope;
   onSubmit?: () => void;
   onCancel?: () => void;
 };
@@ -71,6 +72,7 @@ export function EditableField({
   editModeContent,
   displayModeContent,
   parentHotkeyScope,
+  customEditHotkeyScope,
   onSubmit,
   onCancel,
 }: OwnProps) {
@@ -88,7 +90,7 @@ export function EditableField({
     useEditableField(parentHotkeyScope);
 
   function handleDisplayModeClick() {
-    openEditableField();
+    openEditableField(customEditHotkeyScope);
   }
 
   const showEditButton = !isFieldInEditMode && isHovered && useEditButton;
@@ -123,7 +125,7 @@ export function EditableField({
           transition={{ duration: 0.1 }}
           whileHover={{ scale: 1.04 }}
         >
-          <EditableFieldEditButton />
+          <EditableFieldEditButton customHotkeyScope={customEditHotkeyScope} />
         </motion.div>
       )}
     </EditableFieldBaseContainer>

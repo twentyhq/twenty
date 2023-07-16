@@ -1,25 +1,24 @@
 import { useEffect, useState } from 'react';
-import { IconLink } from '@tabler/icons-react';
+import { IconMap } from '@tabler/icons-react';
 
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EditableField } from '@/ui/editable-fields/components/EditableField';
-import { FieldDisplayURL } from '@/ui/editable-fields/components/FieldDisplayURL';
 import { FieldContext } from '@/ui/editable-fields/states/FieldContext';
 import { InplaceInputText } from '@/ui/inplace-inputs/components/InplaceInputText';
 import { Company, useUpdateCompanyMutation } from '~/generated/graphql';
 
 type OwnProps = {
-  company: Pick<Company, 'id' | 'domainName'>;
+  company: Pick<Company, 'id' | 'address'>;
 };
 
-export function CompanyEditableFieldURL({ company }: OwnProps) {
-  const [internalValue, setInternalValue] = useState(company.domainName);
+export function CompanyEditableFieldAddress({ company }: OwnProps) {
+  const [internalValue, setInternalValue] = useState(company.address);
 
   const [updateCompany] = useUpdateCompanyMutation();
 
   useEffect(() => {
-    setInternalValue(company.domainName);
-  }, [company.domainName]);
+    setInternalValue(company.address);
+  }, [company.address]);
 
   async function handleChange(newValue: string) {
     setInternalValue(newValue);
@@ -29,24 +28,25 @@ export function CompanyEditableFieldURL({ company }: OwnProps) {
     await updateCompany({
       variables: {
         id: company.id,
-        domainName: internalValue ?? '',
+        address: internalValue ?? '',
       },
     });
   }
 
   async function handleCancel() {
-    setInternalValue(company.domainName);
+    setInternalValue(company.address);
   }
 
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <EditableField
-        iconLabel={<IconLink />}
-        onCancel={handleCancel}
         onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        iconLabel={<IconMap />}
+        // label="Address"
         editModeContent={
           <InplaceInputText
-            placeholder={'URL'}
+            placeholder={'Address'}
             autoFocus
             value={internalValue}
             onChange={(newValue: string) => {
@@ -54,8 +54,7 @@ export function CompanyEditableFieldURL({ company }: OwnProps) {
             }}
           />
         }
-        displayModeContent={<FieldDisplayURL URL={internalValue} />}
-        useEditButton
+        displayModeContent={internalValue !== '' ? internalValue : 'No address'}
       />
     </RecoilScope>
   );

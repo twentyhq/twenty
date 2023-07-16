@@ -12,4 +12,6 @@ export const InplaceInputContainer = styled.div`
   width: inherit;
 
   ${overlayBackground}
+
+  z-index: 10;
 `;

@@ -1,8 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { EditableFieldEditButton } from './EditableFieldEditButton';
-
 export const EditableFieldNormalModeOuterContainer = styled.div<
   Pick<OwnProps, 'disableClick'>
 >`

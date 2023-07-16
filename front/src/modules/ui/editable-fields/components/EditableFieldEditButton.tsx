@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { IconPencil } from '@tabler/icons-react';
 
+import { HotkeyScope } from '@/lib/hotkeys/types/HotkeyScope';
 import { IconButton } from '@/ui/components/buttons/IconButton';
 import { overlayBackground } from '@/ui/themes/effects';
 
@@ -25,15 +26,21 @@ export const StyledEditableFieldEditButton = styled.div`
   ${overlayBackground}
 `;
 
-export function EditableFieldEditButton() {
+type OwnProps = {
+  customHotkeyScope?: HotkeyScope;
+};
+
+export function EditableFieldEditButton({ customHotkeyScope }: OwnProps) {
   const { openEditableField } = useEditableField();
 
   function handleClick() {
-    openEditableField();
+    openEditableField(customHotkeyScope);
   }
 
   return (
     <IconButton
+      variant="shadow"
+      size="small"
       onClick={handleClick}
       icon={<IconPencil size={14} />}
       data-testid="editable-field-edit-mode-container"

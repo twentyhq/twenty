@@ -1,24 +1,26 @@
 import { useEffect, useState } from 'react';
-import { IconMap } from '@tabler/icons-react';
+import { IconCalendar } from '@tabler/icons-react';
 
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EditableField } from '@/ui/editable-fields/components/EditableField';
 import { FieldContext } from '@/ui/editable-fields/states/FieldContext';
-import { InplaceInputText } from '@/ui/inplace-inputs/components/InplaceInputText';
+import { EditableFieldEditModeDate } from '@/ui/editable-fields/variants/components/EditableFieldEditModeDate';
+import { parseDate } from '@/utils/datetime/date-utils';
+import { formatToHumanReadableDate } from '@/utils/utils';
 import { Company, useUpdateCompanyMutation } from '~/generated/graphql';
 
 type OwnProps = {
-  company: Pick<Company, 'id' | 'address'>;
+  company: Pick<Company, 'id' | 'createdAt'>;
 };
 
-export function CompanyEditableFieldAddress({ company }: OwnProps) {
-  const [internalValue, setInternalValue] = useState(company.address);
+export function CompanyEditableFieldCreatedAt({ company }: OwnProps) {
+  const [internalValue, setInternalValue] = useState(company.createdAt);
 
   const [updateCompany] = useUpdateCompanyMutation();
 
   useEffect(() => {
-    setInternalValue(company.address);
-  }, [company.address]);
+    setInternalValue(company.createdAt);
+  }, [company.createdAt]);
 
   async function handleChange(newValue: string) {
     setInternalValue(newValue);
@@ -28,13 +30,13 @@ export function CompanyEditableFieldAddress({ company }: OwnProps) {
     await updateCompany({
       variables: {
         id: company.id,
-        address: internalValue ?? '',
+        createdAt: internalValue ?? '',
       },
     });
   }
 
   async function handleCancel() {
-    setInternalValue(company.address);
+    setInternalValue(company.createdAt);
   }
 
   return (
@@ -42,18 +44,18 @@ export function CompanyEditableFieldAddress({ company }: OwnProps) {
       <EditableField
         onSubmit={handleSubmit}
         onCancel={handleCancel}
-        iconLabel={<IconMap />}
+        iconLabel={<IconCalendar />}
         editModeContent={
-          <InplaceInputText
-            placeholder={'Address'}
-            autoFocus
+          <EditableFieldEditModeDate
             value={internalValue}
-            onChange={(newValue: string) => {
-              handleChange(newValue);
-            }}
+            onChange={handleChange}
           />
         }
-        displayModeContent={internalValue !== '' ? internalValue : 'No address'}
+        displayModeContent={
+          internalValue !== ''
+            ? formatToHumanReadableDate(parseDate(internalValue).toJSDate())
+            : 'No date'
+        }
       />
     </RecoilScope>
   );

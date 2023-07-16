@@ -2,13 +2,14 @@ import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/comments/components/timeline/Timeline';
+import { CompanyEditableFieldAccountOwner } from '@/companies/fields/components/CompanyEditableFieldAccountOwner';
 import { CompanyEditableFieldAddress } from '@/companies/fields/components/CompanyEditableFieldAddress';
+import { CompanyEditableFieldCreatedAt } from '@/companies/fields/components/CompanyEditableFieldCreatedAt';
+import { CompanyEditableFieldEmployees } from '@/companies/fields/components/CompanyEditableFieldEmployees';
 import { CompanyEditableFieldURL } from '@/companies/fields/components/CompanyEditableFieldURL';
 import { useCompanyQuery } from '@/companies/services';
-import { RawLink } from '@/ui/components/links/RawLink';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
-import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
-import { IconBuildingSkyscraper, IconLink, IconMap } from '@/ui/icons/index';
+import { IconBuildingSkyscraper } from '@/ui/icons/index';
 import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/containers/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/containers/ShowPageRightContainer';
@@ -40,25 +41,11 @@ export function CompanyShow() {
         />
         <PropertyBox extraPadding={true}>
           <>
-            <CompanyEditableFieldAddress company={company} />
             <CompanyEditableFieldURL company={company} />
-
-            <PropertyBoxItem
-              icon={<IconLink />}
-              value={
-                <RawLink
-                  href={
-                    company?.domainName ? 'https://' + company?.domainName : ''
-                  }
-                >
-                  {company?.domainName}
-                </RawLink>
-              }
-            />
-            <PropertyBoxItem
-              icon={<IconMap />}
-              value={company?.address ? company?.address : 'No address'}
-            />
+            <CompanyEditableFieldAccountOwner company={company} />
+            <CompanyEditableFieldEmployees company={company} />
+            <CompanyEditableFieldAddress company={company} />
+            <CompanyEditableFieldCreatedAt company={company} />
           </>
         </PropertyBox>
       </ShowPageLeftContainer>

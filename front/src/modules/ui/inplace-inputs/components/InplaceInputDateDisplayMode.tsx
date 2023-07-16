@@ -1,9 +1,9 @@
-import { humanReadableDate } from '@/utils/utils';
+import { formatToHumanReadableDate } from '@/utils/utils';
 
 type OwnProps = {
   value: Date;
 };
 
 export function InplaceInputDateDisplayMode({ value }: OwnProps) {
-  return <div>{value && humanReadableDate(value)}</div>;
+  return <div>{value && formatToHumanReadableDate(value)}</div>;
 }

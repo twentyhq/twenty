@@ -1,10 +1,14 @@
-export const humanReadableDate = (date: Date) => {
+import { parseDate } from './datetime/date-utils';
+
+export function formatToHumanReadableDate(date: Date | string) {
+  const parsedJSDate = parseDate(date).toJSDate();
+
   return new Intl.DateTimeFormat(undefined, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-  }).format(date);
-};
+  }).format(parsedJSDate);
+}
 
 export const getLogoUrlFromDomainName = (domainName?: string): string => {
   return `https://api.faviconkit.com/${domainName}/144`;
