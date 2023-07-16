@@ -2,36 +2,40 @@ import { forwardRef } from 'react';
 import styled from '@emotion/styled';
 
 import DatePicker from '@/ui/components/form/DatePicker';
-import { humanReadableDate } from '@/utils/utils';
+import { formatToHumanReadableDate } from '@/utils/utils';
 
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  margin: 0px ${({ theme }) => theme.spacing(2)};
-`;
+import { InplaceInputContainer } from './InplaceInputContainer';
 
 export type StyledCalendarContainerProps = {
   editModeHorizontalAlign?: 'left' | 'right';
 };
+
+const StyledInputContainer = styled.div`
+  display: flex;
+
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
 
 const StyledCalendarContainer = styled.div<StyledCalendarContainerProps>`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  left: -10px;
+
+  margin-top: 1px;
+
   position: absolute;
-  top: 10px;
+
   z-index: 1;
 `;
 
 type DivProps = React.HTMLProps<HTMLDivElement>;
 
-const DateDisplay = forwardRef<HTMLDivElement, DivProps>(
+export const DateDisplay = forwardRef<HTMLDivElement, DivProps>(
   ({ value, onClick }, ref) => (
-    <div onClick={onClick} ref={ref}>
-      {value && humanReadableDate(new Date(value as string))}
-    </div>
+    <StyledInputContainer onClick={onClick} ref={ref}>
+      {value && formatToHumanReadableDate(new Date(value as string))}
+    </StyledInputContainer>
   ),
 );
 
@@ -39,7 +43,7 @@ type DatePickerContainerProps = {
   children: React.ReactNode;
 };
 
-const DatePickerContainer = ({ children }: DatePickerContainerProps) => {
+export const DatePickerContainer = ({ children }: DatePickerContainerProps) => {
   return <StyledCalendarContainer>{children}</StyledCalendarContainer>;
 };
 
@@ -48,15 +52,15 @@ type OwnProps = {
   onChange: (newDate: Date) => void;
 };
 
-export function InplaceInputDateEditMode({ onChange, value }: OwnProps) {
+export function InplaceInputDate({ onChange, value }: OwnProps) {
   return (
-    <StyledContainer>
+    <InplaceInputContainer>
       <DatePicker
         date={value}
         onChangeHandler={onChange}
         customInput={<DateDisplay />}
         customCalendarContainer={DatePickerContainer}
       />
-    </StyledContainer>
+    </InplaceInputContainer>
   );
 }

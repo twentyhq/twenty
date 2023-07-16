@@ -1,4 +1,4 @@
-import { InplaceInputDateEditMode } from '@/ui/inplace-inputs/components/InplaceInputDateEditMode';
+import { InplaceInputDate } from '@/ui/inplace-inputs/components/InplaceInputDate';
 
 type OwnProps = {
   value: Date;
@@ -13,5 +13,5 @@ export function BoardCardEditableFieldDateEditMode({
     onChange(newDate);
   }
 
-  return <InplaceInputDateEditMode value={value} onChange={handleDateChange} />;
+  return <InplaceInputDate value={value} onChange={handleDateChange} />;
 }

@@ -7,12 +7,12 @@ const StyledPropertyBoxContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(0.5)};
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(3)};
 `;
 
 interface PropertyBoxProps {
-  children: JSX.Element;
+  children: React.ReactNode;
   extraPadding?: boolean;
 }
 

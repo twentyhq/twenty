@@ -4,7 +4,6 @@ import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/
 import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
 import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { useEditableCell } from '@/ui/components/editable-cell/hooks/useEditableCell';
 import {
   Company,
   User,
@@ -16,19 +15,23 @@ export type OwnProps = {
   company: Pick<Company, 'id'> & {
     accountOwner?: Pick<User, 'id' | 'displayName'> | null;
   };
+  onSubmit?: () => void;
+  onCancel?: () => void;
 };
 
 type UserForSelect = EntityForSelect & {
   entityType: Entity.User;
 };
 
-export function CompanyAccountOwnerPicker({ company }: OwnProps) {
+export function CompanyAccountOwnerPicker({
+  company,
+  onSubmit,
+  onCancel,
+}: OwnProps) {
   const [searchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
   const [updateCompany] = useUpdateCompanyMutation();
-
-  const { closeEditableCell } = useEditableCell();
 
   const companies = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
@@ -52,12 +55,13 @@ export function CompanyAccountOwnerPicker({ company }: OwnProps) {
       },
     });
 
-    closeEditableCell();
+    onSubmit?.();
   }
 
   return (
     <SingleEntitySelect
       onEntitySelected={handleEntitySelected}
+      onCancel={onCancel}
       entities={{
         loading: companies.loading,
         entitiesToSelect: companies.entitiesToSelect,

@@ -1,6 +1,7 @@
 import { PersonChip } from '@/people/components/PersonChip';
 import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
 import { EditableCell } from '@/ui/components/editable-cell/EditableCell';
+import { useEditableCell } from '@/ui/components/editable-cell/hooks/useEditableCell';
 import { Company, User } from '~/generated/graphql';
 
 import { CompanyAccountOwnerPicker } from './CompanyAccountOwnerPicker';
@@ -14,10 +15,26 @@ export type OwnProps = {
 };
 
 export function CompanyAccountOwnerCell({ company }: OwnProps) {
+  const { closeEditableCell } = useEditableCell();
+
+  function handleCancel() {
+    closeEditableCell();
+  }
+
+  function handleSubmit() {
+    closeEditableCell();
+  }
+
   return (
     <EditableCell
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
-      editModeContent={<CompanyAccountOwnerPicker company={company} />}
+      editModeContent={
+        <CompanyAccountOwnerPicker
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+          company={company}
+        />
+      }
       nonEditModeContent={
         company.accountOwner?.displayName ? (
           <PersonChip

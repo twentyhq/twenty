@@ -1,10 +1,16 @@
+import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
-import { InplaceInputDateEditMode } from '@/ui/inplace-inputs/components/InplaceInputDateEditMode';
+import { InplaceInputDate } from '@/ui/inplace-inputs/components/InplaceInputDate';
 import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 
 import { useEditableCell } from '../hooks/useEditableCell';
+
+const EditableCellDateEditModeContainer = styled.div`
+  margin-top: -1px;
+  width: inherit;
+`;
 
 export type EditableDateProps = {
   value: Date;
@@ -31,5 +37,9 @@ export function EditableCellDateEditMode({
     [closeEditableCell],
   );
 
-  return <InplaceInputDateEditMode onChange={handleDateChange} value={value} />;
+  return (
+    <EditableCellDateEditModeContainer>
+      <InplaceInputDate onChange={handleDateChange} value={value} />
+    </EditableCellDateEditModeContainer>
+  );
 }

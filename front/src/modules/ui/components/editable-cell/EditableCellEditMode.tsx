@@ -12,14 +12,16 @@ export const EditableCellEditModeContainer = styled.div<OwnProps>`
   display: flex;
   left: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? 'auto' : '0'};
-  margin-left: -2px;
-  min-height: 100%;
-  min-width: calc(100% + 20px);
-  position: absolute;
+  margin-left: -1px;
+  margin-top: -1px;
 
+  min-height: 100%;
+  position: absolute;
   right: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? '0' : 'auto'};
+
   top: ${(props) => (props.editModeVerticalPosition === 'over' ? '0' : '100%')};
+  width: 100%;
   z-index: 1;
   ${overlayBackground}
 `;
