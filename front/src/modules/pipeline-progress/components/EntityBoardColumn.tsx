@@ -11,7 +11,7 @@ import { BoardColumn } from '@/ui/board/components/BoardColumn';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
 import { BoardColumnContext } from '../states/BoardColumnContext';
-import { boardColumnTotalsFamilyState } from '../states/boardColumnTotalsFamilyState';
+import { boardColumnTotalsFamilySelector } from '../states/boardColumnTotalsFamilySelector';
 import { pipelineStageIdScopedState } from '../states/pipelineStageIdScopedState';
 import { BoardOptions } from '../types/BoardOptions';
 
@@ -78,7 +78,7 @@ export function EntityBoardColumn({
     <Droppable droppableId={column.pipelineStageId}>
       {(droppableProvided) => (
         <BoardColumn
-          onEditTitle={handleEditColumnTitle}
+          onTitleEdit={handleEditColumnTitle}
           title={column.title}
           colorCode={column.colorCode}
           pipelineStageId={column.pipelineStageId}

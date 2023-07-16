@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import { defaultOrderBy } from '@/companies/services';
+import { defaultOrderBy } from '@/companies/queries';
 import { isFetchingEntityTableDataState } from '@/ui/tables/states/isFetchingEntityTableDataState';
 import { tableRowIdsState } from '@/ui/tables/states/tableRowIdsState';
 import {

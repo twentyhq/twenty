@@ -4,7 +4,7 @@ import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState'
 import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
 
-import { useFilteredSearchCompanyQuery } from '../services';
+import { useFilteredSearchCompanyQuery } from '../queries';
 
 export function NewCompanyBoardCard() {
   const [searchFilter] = useRecoilScopedState(

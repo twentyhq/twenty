@@ -29,18 +29,18 @@ export function EditColumnTitleInput({
   color,
   value,
   onChange,
-  switchEditMode,
+  toggleEditMode,
 }: {
   color?: string;
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  switchEditMode: () => void;
+  toggleEditMode: () => void;
 }) {
   const setHotkeyScope = useSetHotkeyScope();
   setHotkeyScope(ColumnHotkeyScope.EditColumnName, { goto: false });
 
-  useScopedHotkeys('enter', switchEditMode, ColumnHotkeyScope.EditColumnName);
-  useScopedHotkeys('esc', switchEditMode, ColumnHotkeyScope.EditColumnName);
+  useScopedHotkeys('enter', toggleEditMode, ColumnHotkeyScope.EditColumnName);
+  useScopedHotkeys('esc', toggleEditMode, ColumnHotkeyScope.EditColumnName);
   return (
     <StyledEditTitleInput
       placeholder={'Enter column name'}

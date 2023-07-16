@@ -38,7 +38,7 @@ type OwnProps = {
   colorCode?: string;
   title: string;
   pipelineStageId?: string;
-  onEditTitle: (title: string) => void;
+  onTitleEdit: (title: string) => void;
   totalAmount?: number;
   children: React.ReactNode;
 };
@@ -46,18 +46,18 @@ type OwnProps = {
 export function BoardColumn({
   colorCode,
   title,
-  onEditTitle,
+  onTitleEdit,
   totalAmount,
   children,
 }: OwnProps) {
   const [isEditing, setIsEditing] = React.useState(false);
   const [internalValue, setInternalValue] = React.useState(title);
 
-  function switchEditMode() {
+  function toggleEditMode() {
     setIsEditing(!isEditing);
   }
 
-  const debouncedOnUpdate = debounce(onEditTitle, 200);
+  const debouncedOnUpdate = debounce(onTitleEdit, 200);
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInternalValue(event.target.value);
     debouncedOnUpdate(event.target.value);
@@ -65,11 +65,11 @@ export function BoardColumn({
 
   return (
     <StyledColumn>
-      <StyledHeader onClick={switchEditMode}>
+      <StyledHeader onClick={toggleEditMode}>
         {isEditing ? (
           <EditColumnTitleInput
             color={colorCode}
-            switchEditMode={switchEditMode}
+            toggleEditMode={toggleEditMode}
             value={internalValue}
             onChange={handleChange}
           />

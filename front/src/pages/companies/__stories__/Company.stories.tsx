@@ -8,7 +8,7 @@ import {
   GET_COMMENT_THREADS_BY_TARGETS,
 } from '@/comments/services';
 import { CREATE_COMMENT_THREAD_WITH_COMMENT } from '@/comments/services/create';
-import { GET_COMPANY } from '@/companies/services';
+import { GET_COMPANY } from '@/companies/queries';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCommentThreads } from '~/testing/mock-data/comment-threads';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';

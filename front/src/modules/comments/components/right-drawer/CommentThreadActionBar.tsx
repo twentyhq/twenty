@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { GET_COMMENT_THREADS_BY_TARGETS } from '@/comments/services';
-import { GET_COMPANIES } from '@/companies/services';
+import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE } from '@/people/services';
 import { Button } from '@/ui/components/buttons/Button';
 import { IconTrash } from '@/ui/icons';

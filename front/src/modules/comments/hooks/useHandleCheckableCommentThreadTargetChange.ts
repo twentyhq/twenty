@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { v4 } from 'uuid';
 
-import { GET_COMPANIES } from '@/companies/services';
+import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE } from '@/people/services';
 import {
   CommentThread,

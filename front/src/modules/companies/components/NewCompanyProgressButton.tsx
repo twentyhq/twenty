@@ -21,7 +21,7 @@ import {
   useCreateOnePipelineProgressMutation,
 } from '~/generated/graphql';
 
-import { useFilteredSearchCompanyQuery } from '../services';
+import { useFilteredSearchCompanyQuery } from '../queries';
 
 export function NewCompanyProgressButton() {
   const [isCreatingCard, setIsCreatingCard] = useState(false);

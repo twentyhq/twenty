@@ -3,7 +3,7 @@ import { graphql } from 'msw';
 
 import { CREATE_EVENT } from '@/analytics/services';
 import { GET_CLIENT_CONFIG } from '@/client-config/queries';
-import { GET_COMPANIES } from '@/companies/services';
+import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE, UPDATE_PERSON } from '@/people/services';
 import {
   GET_PIPELINE_PROGRESS,
