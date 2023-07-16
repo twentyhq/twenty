@@ -11,7 +11,7 @@ import { BoardColumn } from '@/ui/board/components/BoardColumn';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
 import { BoardColumnContext } from '../states/BoardColumnContext';
-import { boardColumnTotalsState } from '../states/boardColumnTotalsState';
+import { boardColumnTotalsFamilyState } from '../states/boardColumnTotalsFamilyState';
 import { pipelineStageIdScopedState } from '../states/pipelineStageIdScopedState';
 import { BoardOptions } from '../types/BoardOptions';
 
@@ -54,7 +54,9 @@ export function EntityBoardColumn({
     pipelineStageIdScopedState,
     BoardColumnContext,
   );
-  const boardColumnTotals = useRecoilValue(boardColumnTotalsState);
+  const boardColumnTotal = useRecoilValue(
+    boardColumnTotalsFamilyState(column.pipelineStageId),
+  );
 
   useEffect(() => {
     if (pipelineStageId !== column.pipelineStageId) {
@@ -80,7 +82,7 @@ export function EntityBoardColumn({
           title={column.title}
           colorCode={column.colorCode}
           pipelineStageId={column.pipelineStageId}
-          totalAmount={boardColumnTotals[column.pipelineStageId]}
+          totalAmount={boardColumnTotal}
         >
           <BoardColumnCardsContainer droppableProvided={droppableProvided}>
             {column.pipelineProgressIds.map((pipelineProgressId, index) => (
