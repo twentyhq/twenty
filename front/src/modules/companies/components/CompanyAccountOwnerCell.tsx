@@ -7,7 +7,7 @@ import { Company, User } from '~/generated/graphql';
 import { CompanyAccountOwnerPicker } from './CompanyAccountOwnerPicker';
 
 export type CompanyAccountOnwer = Pick<Company, 'id'> & {
-  accountOwner?: Pick<User, 'id' | 'displayName'> | null;
+  accountOwner?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
 };
 
 export type OwnProps = {
@@ -40,6 +40,7 @@ export function CompanyAccountOwnerCell({ company }: OwnProps) {
           <PersonChip
             id={company.accountOwner.id}
             name={company.accountOwner?.displayName ?? ''}
+            picture={company.accountOwner?.avatarUrl ?? ''}
           />
         ) : (
           <></>
