@@ -11,6 +11,7 @@ export const EditableFieldEditModeContainer = styled.div<OwnProps>`
   margin-left: -${({ theme }) => theme.spacing(1)};
 
   width: inherit;
+  z-index: 10;
 `;
 
 type OwnProps = {

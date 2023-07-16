@@ -53,7 +53,7 @@ export function CompanyEditableFieldAddress({ company }: OwnProps) {
             }}
           />
         }
-        displayModeContent={internalValue !== '' ? internalValue : 'No address'}
+        displayModeContent={internalValue ?? ''}
       />
     </RecoilScope>
   );
