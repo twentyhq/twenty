@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -10,6 +11,7 @@ import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
+import { GET_PIPELINES } from '../services';
 import { BoardColumnContext } from '../states/BoardColumnContext';
 import { boardColumnTotalsFamilySelector } from '../states/boardColumnTotalsFamilySelector';
 import { boardState } from '../states/boardState';
@@ -73,18 +75,8 @@ export function EntityBoardColumn({
         id: pipelineStageId,
         name: value,
       },
+      refetchQueries: [getOperationName(GET_PIPELINES) || ''],
     });
-    setBoard([
-      ...(board || []).map((pipelineStage) => {
-        if (pipelineStage.pipelineStageId === pipelineStageId) {
-          return {
-            ...pipelineStage,
-            name: value,
-          };
-        }
-        return pipelineStage;
-      }),
-    ]);
   }
 
   return (
