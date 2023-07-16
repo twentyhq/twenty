@@ -42,6 +42,7 @@ export function CompanyAccountOwnerPicker({
       id: user.id,
       name: user.displayName,
       avatarType: 'rounded',
+      avatarUrl: user.avatarUrl ?? '',
     }),
     orderByField: 'firstName',
     searchOnFields: ['firstName', 'lastName'],

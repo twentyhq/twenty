@@ -38,6 +38,7 @@ export const SEARCH_USER_QUERY = gql`
       displayName
       firstName
       lastName
+      avatarUrl
     }
   }
 `;

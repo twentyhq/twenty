@@ -34,6 +34,7 @@ export const GET_COMPANIES = gql`
         displayName
         firstName
         lastName
+        avatarUrl
       }
     }
   }

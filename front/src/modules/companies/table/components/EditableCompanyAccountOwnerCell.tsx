@@ -16,6 +16,7 @@ export function EditableCompanyAccountOwnerCell() {
       company={{
         id: currentRowEntityId ?? '',
         accountOwner: {
+          avatarUrl: accountOwner?.avatarUrl ?? '',
           displayName: accountOwner?.displayName ?? '',
           id: accountOwner?.id ?? '',
         },

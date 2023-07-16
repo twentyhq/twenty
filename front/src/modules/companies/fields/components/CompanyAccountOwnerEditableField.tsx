@@ -12,7 +12,7 @@ import { CompanyAccountOwnerPickerFieldEditMode } from './CompanyAccountOwnerPic
 
 type OwnProps = {
   company: Pick<Company, 'id' | 'accountOwnerId'> & {
-    accountOwner?: Pick<User, 'id' | 'displayName'> | null;
+    accountOwner?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
   };
 };
 
@@ -41,6 +41,7 @@ export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
               <PersonChip
                 id={company.accountOwner.id}
                 name={company.accountOwner?.displayName ?? ''}
+                picture={company.accountOwner?.avatarUrl ?? ''}
               />
             ) : (
               <></>

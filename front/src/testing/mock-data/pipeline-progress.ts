@@ -6,7 +6,13 @@ type MockedPipelineProgress = Pick<
 > & {
   accountOwner: Pick<
     User,
-    'id' | 'email' | 'displayName' | '__typename' | 'firstName' | 'lastName'
+    | 'id'
+    | 'email'
+    | 'displayName'
+    | 'avatarUrl'
+    | '__typename'
+    | 'firstName'
+    | 'lastName'
   > | null;
 };
 
