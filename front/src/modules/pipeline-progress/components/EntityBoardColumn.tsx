@@ -55,7 +55,7 @@ export function EntityBoardColumn({
     BoardColumnContext,
   );
   const boardColumnTotal = useRecoilValue(
-    boardColumnTotalsFamilyState(column.pipelineStageId),
+    boardColumnTotalsFamilySelector(column.pipelineStageId),
   );
 
   useEffect(() => {

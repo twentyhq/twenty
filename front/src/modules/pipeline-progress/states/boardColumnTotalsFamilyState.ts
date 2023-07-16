@@ -5,7 +5,7 @@ import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 
 import { boardState } from './boardState';
 
-export const boardColumnTotalsFamilyState = selectorFamily({
+export const boardColumnTotalsFamilySelector = selectorFamily({
   key: 'BoardColumnTotalsFamily',
   get:
     (pipelineStageId: string) =>
