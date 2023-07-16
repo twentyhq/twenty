@@ -15,10 +15,6 @@ export type DatePickerProps = {
 };
 
 const StyledContainer = styled.div`
-  & .react-datepicker__tab-loop {
-    position: none;
-  }
-
   & .react-datepicker {
     border-color: ${({ theme }) => theme.border.color.light};
     background: transparent;

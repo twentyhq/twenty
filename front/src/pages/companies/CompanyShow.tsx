@@ -25,7 +25,7 @@ export function CompanyShow() {
 
   const theme = useTheme();
 
-  if (!company) return <div>Company not found</div>;
+  if (!company) return <></>;
 
   return (
     <WithTopBarContainer

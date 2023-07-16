@@ -1,4 +1,4 @@
-import { IconCalendar, IconUser, IconUserCircle } from '@tabler/icons-react';
+import { IconUserCircle } from '@tabler/icons-react';
 
 import { PersonChip } from '@/people/components/PersonChip';
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';

@@ -43,7 +43,6 @@ export function CompanyEditableFieldAddress({ company }: OwnProps) {
         onSubmit={handleSubmit}
         onCancel={handleCancel}
         iconLabel={<IconMap />}
-        // label="Address"
         editModeContent={
           <InplaceInputText
             placeholder={'Address'}

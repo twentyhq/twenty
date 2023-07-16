@@ -14,10 +14,10 @@ export const textInputStyle = (props: { theme: ThemeType }) =>
     background-color: transparent;
     border: none;
     color: ${props.theme.font.color.primary};
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
+    font-family: ${props.theme.font.family};
+    font-size: ${props.theme.font.size.md};
 
-    font-weight: 400;
+    font-weight: ${props.theme.font.weight.regular};
     outline: none;
     padding: ${props.theme.spacing(0)} ${props.theme.spacing(2)};
 

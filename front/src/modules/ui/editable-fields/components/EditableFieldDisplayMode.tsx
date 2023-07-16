@@ -23,12 +23,12 @@ export const EditableFieldNormalModeOuterContainer = styled.div<
         cursor: default;
       `;
     } else {
-      return `
-      cursor: pointer;
-  
-      &:hover {
-        background-color: ${props.theme.background.transparent.light};
-      }
+      return css`
+        cursor: pointer;
+
+        &:hover {
+          background-color: ${props.theme.background.transparent.light};
+        }
       `;
     }
   }}
@@ -37,8 +37,8 @@ export const EditableFieldNormalModeOuterContainer = styled.div<
 export const EditableFieldNormalModeInnerContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
-  font-size: 13px;
-  font-weight: 400;
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
 
   height: fit-content;
 
