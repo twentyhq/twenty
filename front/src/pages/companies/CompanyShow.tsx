@@ -2,11 +2,11 @@ import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/comments/components/timeline/Timeline';
-import { CompanyEditableFieldAccountOwner } from '@/companies/fields/components/CompanyEditableFieldAccountOwner';
-import { CompanyEditableFieldAddress } from '@/companies/fields/components/CompanyEditableFieldAddress';
-import { CompanyEditableFieldCreatedAt } from '@/companies/fields/components/CompanyEditableFieldCreatedAt';
-import { CompanyEditableFieldEmployees } from '@/companies/fields/components/CompanyEditableFieldEmployees';
-import { CompanyEditableFieldURL } from '@/companies/fields/components/CompanyEditableFieldURL';
+import { CompanyAccountOwnerEditableField } from '@/companies/fields/components/CompanyAccountOwnerEditableField';
+import { CompanyAddressEditableField } from '@/companies/fields/components/CompanyAddressEditableField';
+import { CompanyCreatedAtEditableField } from '@/companies/fields/components/CompanyCreatedAtEditableField';
+import { CompanyDomainNameEditableField } from '@/companies/fields/components/CompanyDomainNameEditableField';
+import { CompanyEmployeesEditableField } from '@/companies/fields/components/CompanyEmployeesEditableField';
 import { useCompanyQuery } from '@/companies/services';
 import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
 import { IconBuildingSkyscraper } from '@/ui/icons/index';
@@ -40,13 +40,11 @@ export function CompanyShow() {
           date={company?.createdAt ?? ''}
         />
         <PropertyBox extraPadding={true}>
-          <>
-            <CompanyEditableFieldURL company={company} />
-            <CompanyEditableFieldAccountOwner company={company} />
-            <CompanyEditableFieldEmployees company={company} />
-            <CompanyEditableFieldAddress company={company} />
-            <CompanyEditableFieldCreatedAt company={company} />
-          </>
+          <CompanyDomainNameEditableField company={company} />
+          <CompanyAccountOwnerEditableField company={company} />
+          <CompanyEmployeesEditableField company={company} />
+          <CompanyAddressEditableField company={company} />
+          <CompanyCreatedAtEditableField company={company} />
         </PropertyBox>
       </ShowPageLeftContainer>
       <ShowPageRightContainer>

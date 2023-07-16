@@ -16,7 +16,7 @@ type OwnProps = {
   };
 };
 
-export function CompanyEditableFieldAccountOwner({ company }: OwnProps) {
+export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <RecoilScope>

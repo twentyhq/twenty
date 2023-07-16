@@ -13,7 +13,7 @@ type OwnProps = {
   company: Pick<Company, 'id' | 'createdAt'>;
 };
 
-export function CompanyEditableFieldCreatedAt({ company }: OwnProps) {
+export function CompanyCreatedAtEditableField({ company }: OwnProps) {
   const [internalValue, setInternalValue] = useState(company.createdAt);
 
   const [updateCompany] = useUpdateCompanyMutation();

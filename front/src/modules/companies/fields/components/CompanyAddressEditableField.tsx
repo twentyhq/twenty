@@ -11,7 +11,7 @@ type OwnProps = {
   company: Pick<Company, 'id' | 'address'>;
 };
 
-export function CompanyEditableFieldAddress({ company }: OwnProps) {
+export function CompanyAddressEditableField({ company }: OwnProps) {
   const [internalValue, setInternalValue] = useState(company.address);
 
   const [updateCompany] = useUpdateCompanyMutation();

@@ -12,7 +12,7 @@ const StyledPropertyBoxContainer = styled.div`
 `;
 
 interface PropertyBoxProps {
-  children: JSX.Element;
+  children: React.ReactNode;
   extraPadding?: boolean;
 }
 

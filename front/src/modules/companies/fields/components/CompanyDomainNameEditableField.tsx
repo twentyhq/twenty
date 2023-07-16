@@ -1,75 +1,61 @@
 import { useEffect, useState } from 'react';
-import { IconMap, IconUsers } from '@tabler/icons-react';
+import { IconLink } from '@tabler/icons-react';
 
 import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
 import { EditableField } from '@/ui/editable-fields/components/EditableField';
+import { FieldDisplayURL } from '@/ui/editable-fields/components/FieldDisplayURL';
 import { FieldContext } from '@/ui/editable-fields/states/FieldContext';
 import { InplaceInputText } from '@/ui/inplace-inputs/components/InplaceInputText';
 import { Company, useUpdateCompanyMutation } from '~/generated/graphql';
 
 type OwnProps = {
-  company: Pick<Company, 'id' | 'employees'>;
+  company: Pick<Company, 'id' | 'domainName'>;
 };
 
-export function CompanyEditableFieldEmployees({ company }: OwnProps) {
-  const [internalValue, setInternalValue] = useState(
-    company.employees?.toString(),
-  );
+export function CompanyDomainNameEditableField({ company }: OwnProps) {
+  const [internalValue, setInternalValue] = useState(company.domainName);
 
   const [updateCompany] = useUpdateCompanyMutation();
 
   useEffect(() => {
-    setInternalValue(company.employees?.toString());
-  }, [company.employees]);
+    setInternalValue(company.domainName);
+  }, [company.domainName]);
 
   async function handleChange(newValue: string) {
     setInternalValue(newValue);
   }
 
   async function handleSubmit() {
-    if (!internalValue) return;
-
-    try {
-      const numberValue = parseInt(internalValue);
-
-      if (isNaN(numberValue)) {
-        throw new Error('Not a number');
-      }
-
-      await updateCompany({
-        variables: {
-          id: company.id,
-          employees: numberValue,
-        },
-      });
-
-      setInternalValue(numberValue.toString());
-    } catch {
-      handleCancel();
-    }
+    await updateCompany({
+      variables: {
+        id: company.id,
+        domainName: internalValue ?? '',
+      },
+    });
   }
 
   async function handleCancel() {
-    setInternalValue(company.employees?.toString());
+    setInternalValue(company.domainName);
   }
 
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <EditableField
-        onSubmit={handleSubmit}
+        iconLabel={<IconLink />}
         onCancel={handleCancel}
-        iconLabel={<IconUsers />}
+        onSubmit={handleSubmit}
         editModeContent={
           <InplaceInputText
-            placeholder={'Employees'}
+            placeholder={'URL'}
             autoFocus
-            value={internalValue ?? ''}
+            value={internalValue}
             onChange={(newValue: string) => {
               handleChange(newValue);
             }}
           />
         }
-        displayModeContent={internalValue}
+        displayModeContent={<FieldDisplayURL URL={internalValue} />}
+        useEditButton
       />
     </RecoilScope>
   );
