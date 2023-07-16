@@ -65,7 +65,6 @@ export function BoardColumn({
 
   return (
     <StyledColumn>
-      <StyledHeader></StyledHeader>
       <StyledHeader onClick={switchEditMode}>
         {isEditing ? (
           <EditColumnTitleInput
