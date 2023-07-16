@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { IconUsers } from '@tabler/icons-react';
 
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
+import { IconUsers } from '@/ui/icon';
 import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { Company, useUpdateCompanyMutation } from '~/generated/graphql';

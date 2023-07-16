@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import { IconList } from '@tabler/icons-react';
 
 import { defaultOrderBy } from '@/companies/queries';
 import { PeopleEntityTableData } from '@/people/components/PeopleEntityTableData';
@@ -8,6 +7,7 @@ import { peopleColumns } from '@/people/table/components/peopleColumns';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
+import { IconList } from '@/ui/icon';
 import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { HooksEntityTable } from '@/ui/table/components/HooksEntityTable';

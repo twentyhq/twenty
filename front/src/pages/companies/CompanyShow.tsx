@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
-import { IconBuildingSkyscraper } from '@tabler/icons-react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { CompanyAccountOwnerEditableField } from '@/companies/editable-field/components/CompanyAccountOwnerEditableField';
@@ -10,6 +9,7 @@ import { CompanyDomainNameEditableField } from '@/companies/editable-field/compo
 import { CompanyEmployeesEditableField } from '@/companies/editable-field/components/CompanyEmployeesEditableField';
 import { useCompanyQuery } from '@/companies/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
+import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';

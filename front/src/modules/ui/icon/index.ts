@@ -41,3 +41,7 @@ export { IconEye } from '@tabler/icons-react';
 export { IconEyeOff } from '@tabler/icons-react';
 export { IconAlertTriangle } from '@tabler/icons-react';
 export { IconCopy } from '@tabler/icons-react';
+export { IconCurrencyDollar } from '@tabler/icons-react';
+export { IconUserCircle } from '@tabler/icons-react';
+export { IconCalendar } from '@tabler/icons-react';
+export { IconPencil } from '@tabler/icons-react';

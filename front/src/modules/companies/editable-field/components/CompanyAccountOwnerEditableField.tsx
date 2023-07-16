@@ -1,9 +1,8 @@
-import { IconUserCircle } from '@tabler/icons-react';
-
 import { PersonChip } from '@/people/components/PersonChip';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
+import { IconUserCircle } from '@/ui/icon';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
 import { Company, User } from '~/generated/graphql';

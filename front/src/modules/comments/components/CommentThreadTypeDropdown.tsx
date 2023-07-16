@@ -1,9 +1,8 @@
-import { IconCheck, IconNotes } from '@tabler/icons-react';
-
 import {
   DropdownButton,
   DropdownOptionType,
 } from '@/ui/button/components/DropdownButton';
+import { IconCheck, IconNotes } from '@/ui/icon';
 import {
   ActivityType,
   CommentThread,

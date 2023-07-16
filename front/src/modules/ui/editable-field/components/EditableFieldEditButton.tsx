@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { IconPencil } from '@tabler/icons-react';
 
 import { IconButton } from '@/ui/button/components/IconButton';
 import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
+import { IconPencil } from '@/ui/icon';
 import { overlayBackground } from '@/ui/themes/effects';
 
 import { useEditableField } from '../hooks/useEditableField';

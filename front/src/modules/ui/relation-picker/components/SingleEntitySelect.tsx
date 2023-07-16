@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
-import { IconPlus } from '@tabler/icons-react';
 
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuButton } from '@/ui/dropdown/components/DropdownMenuButton';
@@ -8,6 +7,7 @@ import { DropdownMenuItemContainer } from '@/ui/dropdown/components/DropdownMenu
 import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { IconPlus } from '@/ui/icon';
 import { isDefined } from '~/utils/isDefined';
 
 import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';

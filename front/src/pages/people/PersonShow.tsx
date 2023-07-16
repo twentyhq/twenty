@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
-import { IconLink, IconUser } from '@tabler/icons-react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { usePersonQuery } from '@/people/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { PropertyBoxItem } from '@/ui/editable-field/property-box/components/PropertyBoxItem';
+import { IconLink, IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';

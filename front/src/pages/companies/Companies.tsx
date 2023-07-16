@@ -1,13 +1,13 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconBuildingSkyscraper } from '@tabler/icons-react';
 import { v4 as uuidv4 } from 'uuid';
 
 import { GET_COMPANIES } from '@/companies/queries';
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { TableActionBarButtonCreateCommentThreadCompany } from '@/companies/table/components/TableActionBarButtonCreateCommentThreadCompany';
 import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
+import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';

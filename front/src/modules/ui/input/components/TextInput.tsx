@@ -7,11 +7,11 @@ import {
 } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconAlertCircle } from '@tabler/icons-react';
 import { Key } from 'ts-key-enum';
 
 import { usePreviousHotkeyScope } from '@/ui/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
+import { IconAlertCircle } from '@/ui/icon';
 import { IconEye, IconEyeOff } from '@/ui/icon/index';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
