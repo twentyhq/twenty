@@ -30,7 +30,7 @@ export const StyledColumnTitle = styled.h3`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const StyledAmount = styled.div`
+const StyledAmount = styled.div`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
@@ -39,6 +39,7 @@ type OwnProps = {
   title: string;
   pipelineStageId?: string;
   onEditTitle: (title: string) => void;
+  totalAmount?: number;
   children: React.ReactNode;
 };
 
@@ -46,6 +47,7 @@ export function BoardColumn({
   colorCode,
   title,
   onEditTitle,
+  totalAmount,
   children,
 }: OwnProps) {
   const [isEditing, setIsEditing] = React.useState(false);
@@ -63,6 +65,7 @@ export function BoardColumn({
 
   return (
     <StyledColumn>
+      <StyledHeader></StyledHeader>
       <StyledHeader onClick={switchEditMode}>
         {isEditing ? (
           <EditColumnTitleInput
@@ -74,6 +77,7 @@ export function BoardColumn({
         ) : (
           <StyledColumnTitle color={colorCode}>• {title}</StyledColumnTitle>
         )}
+        {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
       </StyledHeader>
       {children}
     </StyledColumn>
