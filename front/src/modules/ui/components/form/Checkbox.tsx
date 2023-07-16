@@ -12,6 +12,7 @@ type OwnProps = {
 const StyledInputContainer = styled.div`
   align-items: center;
   display: flex;
+  position: relative;
 `;
 
 const StyledInput = styled.input<{ indeterminate?: boolean }>`

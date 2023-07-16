@@ -96,18 +96,16 @@ export function NewCompanyProgressButton() {
   return (
     <>
       {isCreatingCard ? (
-        <RecoilScope>
-          <SingleEntitySelect
-            onEntitySelected={(value) => handleEntitySelect(value)}
-            onCancel={handleCancel}
-            entities={{
-              entitiesToSelect: companies.entitiesToSelect,
-              selectedEntity: companies.selectedEntities[0],
-              loading: companies.loading,
-            }}
-            disableBackgroundBlur={true}
-          />
-        </RecoilScope>
+        <SingleEntitySelect
+          onEntitySelected={(value) => handleEntitySelect(value)}
+          onCancel={handleCancel}
+          entities={{
+            entitiesToSelect: companies.entitiesToSelect,
+            selectedEntity: companies.selectedEntities[0],
+            loading: companies.loading,
+          }}
+          disableBackgroundBlur={true}
+        />
       ) : (
         <NewButton onClick={handleNewClick} />
       )}
