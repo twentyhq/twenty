@@ -13,7 +13,6 @@ import { isBoardLoadedState } from '@/pipeline/states/isBoardLoadedState';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import {
   Pipeline,
-  PipelineStage,
   useGetCompaniesQuery,
   useGetPipelineProgressQuery,
   useGetPipelinesQuery,
@@ -44,29 +43,37 @@ export function HookCompanyBoard() {
           title: pipelineStage.name,
           colorCode: pipelineStage.color,
           index: pipelineStage.index || 0,
-          pipelineProgressIds:
-            pipelineStage.pipelineProgresses?.map(
-              (item) => item.id as string,
-            ) || [],
+          pipelineProgressIds: [],
         })) || [];
       setBoard(initialBoard);
-      setIsBoardLoaded(true);
     },
   });
 
-  const pipelineProgressIds = currentPipeline?.pipelineStages
-    ?.map((pipelineStage: PipelineStage) =>
-      (
-        pipelineStage.pipelineProgresses?.map((item) => item.id as string) || []
-      ).flat(),
-    )
+  const pipelineStageIds = currentPipeline?.pipelineStages
+    ?.map((pipelineStage) => pipelineStage.id)
     .flat();
 
   const pipelineProgressesQuery = useGetPipelineProgressQuery({
     variables: {
       where: {
-        id: { in: pipelineProgressIds },
+        pipelineStageId: { in: pipelineStageIds },
       },
+    },
+    onCompleted: (data) => {
+      const pipelineProgresses = data?.findManyPipelineProgress || [];
+      setBoard((board) =>
+        board?.map((boardPipelineStage) => ({
+          ...boardPipelineStage,
+          pipelineProgressIds: pipelineProgresses
+            .filter(
+              (pipelineProgress) =>
+                pipelineProgress.pipelineStageId ===
+                boardPipelineStage.pipelineStageId,
+            )
+            .map((pipelineProgress) => pipelineProgress.id),
+        })),
+      );
+      setIsBoardLoaded(true);
     },
   });
 

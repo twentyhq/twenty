@@ -11,9 +11,6 @@ export const GET_PIPELINES = gql`
         name
         color
         index
-        pipelineProgresses {
-          id
-        }
       }
     }
   }
@@ -23,6 +20,7 @@ export const GET_PIPELINE_PROGRESS = gql`
   query GetPipelineProgress($where: PipelineProgressWhereInput) {
     findManyPipelineProgress(where: $where, orderBy: { createdAt: asc }) {
       id
+      pipelineStageId
       progressableType
       progressableId
       amount
