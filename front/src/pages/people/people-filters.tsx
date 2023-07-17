@@ -8,6 +8,7 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/icon/index';
+import { TableContext } from '@/ui/table/states/TableContext';
 import { icon } from '@/ui/themes/icon';
 import { Person } from '~/generated/graphql';
 
@@ -37,7 +38,9 @@ export const peopleFilters: FilterDefinitionByEntity<Person>[] = [
       <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.sm} />
     ),
     type: 'entity',
-    entitySelectComponent: <FilterDropdownCompanySearchSelect />,
+    entitySelectComponent: (
+      <FilterDropdownCompanySearchSelect context={TableContext} />
+    ),
   },
   {
     field: 'phone',
