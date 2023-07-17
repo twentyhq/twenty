@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
@@ -19,6 +20,7 @@ import {
   getOptimisticlyUpdatedBoard,
   StyledBoard,
 } from '../../ui/board/components/Board';
+import { GET_PIPELINE_PROGRESS } from '../queries';
 import { BoardColumnContext } from '../states/BoardColumnContext';
 import { boardState } from '../states/boardState';
 import { BoardOptions } from '../types/BoardOptions';
@@ -58,6 +60,7 @@ export function EntityBoard({
           id: pipelineProgressId,
           pipelineStageId,
         },
+        refetchQueries: [getOperationName(GET_PIPELINE_PROGRESS) ?? ''],
       });
     },
     [updatePipelineProgressStage],
