@@ -345,8 +345,9 @@ model CommentThread {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  CommentThreadAttachment CommentThreadAttachment[]
 
   @@map("comment_threads")
 }
@@ -379,6 +380,38 @@ model Comment {
 enum CommentableType {
   Person
   Company
+}
+
+enum FileType {
+  Image
+  Audio
+  Video
+  TextDocument
+  Spreadsheet
+  Archive
+  Other
+}
+
+model CommentThreadAttachment {
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
+
+  fullPath String
+  type     FileType
+  name     String
+
+  commentThreadId String
+  commentThread   CommentThread @relation(fields: [commentThreadId], references: [id])
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CommentThreadTarget {

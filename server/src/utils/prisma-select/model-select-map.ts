@@ -10,6 +10,7 @@ export type ModelSelectMap = {
   RefreshToken: Prisma.RefreshTokenSelect;
   CommentThread: Prisma.CommentThreadSelect;
   Comment: Prisma.CommentSelect;
+  CommentThreadAttachment: Prisma.CommentThreadAttachmentSelect;
   CommentThreadTarget: Prisma.CommentThreadTargetSelect;
   Pipeline: Prisma.PipelineSelect;
   PipelineStage: Prisma.PipelineStageSelect;

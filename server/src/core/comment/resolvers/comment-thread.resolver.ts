@@ -26,12 +26,23 @@ import { AppAbility } from 'src/ability/ability.factory';
 import { accessibleBy } from '@casl/prisma';
 import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
 import { DeleteManyCommentThreadArgs } from 'src/core/@generated/comment-thread/delete-many-comment-thread.args';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
+import { FileUploadService } from 'src/core/file/services/file-upload.service';
+import { v4 as uuidV4 } from 'uuid';
+import { CommentThreadAttachmentService } from './comment-thread-attachment.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)
 export class CommentThreadResolver {
-  constructor(private readonly commentThreadService: CommentThreadService) {}
+  constructor(
+    private readonly commentThreadService: CommentThreadService,
+    private readonly commentThreadAttachmentService: CommentThreadAttachmentService,
+    private readonly fileUploadService: FileUploadService,
+  ) {}
 
   @UseGuards(CreateOneCommentThreadGuard)
   @Mutation(() => CommentThread, {
@@ -111,5 +122,40 @@ export class CommentThreadResolver {
     return this.commentThreadService.deleteMany({
       where: args.where,
     });
+  }
+
+  @Mutation(() => String)
+  async uploadCommentThreadAttachment(
+    @AuthUser() { id }: User,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename, mimetype }: FileUpload,
+    @PrismaSelector({ modelName: 'CommentThreadAttachment' })
+    prismaSelect: PrismaSelect<'CommentThreadAttachment'>,
+  ): Promise<string> {
+    const stream = createReadStream();
+    const buffer = await streamToBuffer(stream);
+    const fileFolder = FileFolder.Attachments;
+    const fileId = uuidV4();
+
+    const { path } = await this.fileUploadService.uploadFile({
+      file: buffer,
+      filename,
+      mimeType: mimetype,
+      fileFolder,
+    });
+
+    await this.commentThreadAttachmentService.create({
+      data: {
+        id: fileId,
+        fullPath: 'filename',
+        type: 'Image',
+        name: filename,
+        workspaceId: 'dede',
+        commentThreadId: 'dede',
+      },
+      select: prismaSelect.value,
+    });
+
+    return path;
   }
 }
