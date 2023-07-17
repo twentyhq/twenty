@@ -1,0 +1,27 @@
+import React from 'react';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+
+import { IconCheck } from '@/ui/icon';
+
+const StyledContainer = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.color.blue};
+  border-radius: 50%;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+`;
+
+export type CheckmarkProps = React.ComponentPropsWithoutRef<'div'>;
+
+export function Checkmark(props: CheckmarkProps) {
+  const theme = useTheme();
+
+  return (
+    <StyledContainer {...props}>
+      <IconCheck color={theme.color.gray0} size={14} />
+    </StyledContainer>
+  );
+}

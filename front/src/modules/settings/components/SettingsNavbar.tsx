@@ -42,7 +42,6 @@ export function SettingsNavbar() {
           label="Experience"
           to="/settings/profile/experience"
           icon={<IconColorSwatch size={theme.icon.size.md} />}
-          soon={true}
           active={
             !!useMatch({
               path: useResolvedPath('/settings/profile/experience').pathname,

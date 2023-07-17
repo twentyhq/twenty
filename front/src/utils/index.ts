@@ -13,7 +13,3 @@ export function formatToHumanReadableDate(date: Date | string) {
 export const getLogoUrlFromDomainName = (domainName?: string): string => {
   return `https://api.faviconkit.com/${domainName}/144`;
 };
-
-export const browserPrefersDarkMode = (): boolean => {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
-};
