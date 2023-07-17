@@ -18,7 +18,7 @@ import {
   useGetPipelinesQuery,
 } from '~/generated/graphql';
 
-export function HookCompanyBoard() {
+export function HooksCompanyBoard() {
   const [currentPipeline, setCurrentPipeline] =
     useRecoilState(currentPipelineState);
 

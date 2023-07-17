@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 
 import { companyBoardOptions } from '@/companies/components/companyBoardOptions';
-import { HookCompanyBoard } from '@/companies/components/HookCompanyBoard';
+import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline/components/BoardActionBarButtonDeletePipelineProgress';
 import { EntityBoard } from '@/pipeline/components/EntityBoard';
@@ -18,7 +18,7 @@ export function Opportunities() {
       title="Opportunities"
       icon={<IconTargetArrow size={theme.icon.size.md} />}
     >
-      <HookCompanyBoard />
+      <HooksCompanyBoard />
       <RecoilScope SpecificContext={CompanyBoardContext}>
         <EntityBoard boardOptions={companyBoardOptions} />
         <EntityBoardActionBar>
