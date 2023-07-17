@@ -3,7 +3,7 @@ import debounce from 'lodash.debounce';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuCheckableItem } from '@/ui/dropdown/components/DropdownMenuCheckableItem';
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
-import { DropdownMenuItemContainer } from '@/ui/dropdown/components/DropdownMenuItemContainer';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
 import { Avatar } from '@/users/components/Avatar';
@@ -57,7 +57,7 @@ export function MultipleEntitySelect<
         autoFocus
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemContainer>
+      <DropdownMenuItemsContainer hasMaxHeight>
         {entitiesInDropdown?.map((entity) => (
           <DropdownMenuCheckableItem
             key={entity.id}
@@ -83,7 +83,7 @@ export function MultipleEntitySelect<
         {entitiesInDropdown?.length === 0 && (
           <DropdownMenuItem>No result</DropdownMenuItem>
         )}
-      </DropdownMenuItemContainer>
+      </DropdownMenuItemsContainer>
     </DropdownMenu>
   );
 }

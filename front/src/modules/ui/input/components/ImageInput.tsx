@@ -28,7 +28,8 @@ const Picture = styled.button<{ withPicture: boolean }>`
   width: 66px;
 
   img {
-    object-fit: cover;
+    height: 100%;
+    object-fit: fill;
     width: 100%;
   }
 

@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { IconCheck } from '@/ui/icon/index';
 import { hoverBackground } from '@/ui/themes/effects';
 
-import { DropdownMenuButton } from './DropdownMenuButton';
+import { DropdownMenuItem } from './DropdownMenuItem';
 
 type Props = {
   selected?: boolean;
@@ -13,7 +13,7 @@ type Props = {
   hovered?: boolean;
 };
 
-const DropdownMenuSelectableItemContainer = styled(DropdownMenuButton)<Props>`
+const DropdownMenuSelectableItemContainer = styled(DropdownMenuItem)<Props>`
   ${hoverBackground};
 
   align-items: center;

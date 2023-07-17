@@ -27,6 +27,7 @@ type OwnProps = {
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
   editHotkeyScope?: HotkeyScope;
+  transparent?: boolean;
   onSubmit?: () => void;
   onCancel?: () => void;
 };
@@ -37,6 +38,7 @@ export function EditableCell({
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
+  transparent = false,
   onSubmit,
   onCancel,
 }: OwnProps) {
@@ -48,6 +50,7 @@ export function EditableCell({
     <CellBaseContainer>
       {isCurrentCellInEditMode ? (
         <EditableCellEditMode
+          transparent={transparent}
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
           onSubmit={onSubmit}

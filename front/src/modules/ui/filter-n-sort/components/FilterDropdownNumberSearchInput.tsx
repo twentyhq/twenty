@@ -1,5 +1,6 @@
 import { ChangeEvent, Context } from 'react';
 
+import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
 
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
@@ -28,7 +29,7 @@ export function FilterDropdownNumberSearchInput({
   return (
     filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
-      <input
+      <DropdownMenuSearch
         type="number"
         placeholder={filterDefinitionUsedInDropdown.label}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {

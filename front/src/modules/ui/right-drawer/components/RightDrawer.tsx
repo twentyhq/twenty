@@ -51,17 +51,19 @@ export function RightDrawer() {
     return <></>;
   }
 
+  console.log(isRightDrawerOpen);
+
   return (
     <StyledContainer
       animate={{
         width: isRightDrawerOpen ? theme.rightDrawerWidth : '0',
       }}
       transition={{
-        duration: theme.animation.duration.visible,
+        duration: theme.animation.duration.normal,
       }}
     >
       <StyledRightDrawer ref={rightDrawerRef}>
-        <RightDrawerRouter />
+        {isRightDrawerOpen && <RightDrawerRouter />}
       </StyledRightDrawer>
     </StyledContainer>
   );

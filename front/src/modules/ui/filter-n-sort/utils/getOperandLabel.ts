@@ -5,7 +5,7 @@ export function getOperandLabel(operand: FilterOperand | null | undefined) {
     case 'contains':
       return 'Contains';
     case 'does-not-contain':
-      return "Does'nt contain";
+      return "Doesn't contain";
     case 'greater-than':
       return 'Greater than';
     case 'less-than':

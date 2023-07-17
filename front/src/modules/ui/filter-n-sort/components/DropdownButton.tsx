@@ -2,10 +2,10 @@ import { ReactNode, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
+import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { useOutsideAlerter } from '@/ui/hooks/useOutsideAlerter';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { IconChevronDown } from '@/ui/icon/index';
-import { overlayBackground, textInputStyle } from '@/ui/themes/effects';
 
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 
@@ -50,69 +50,22 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   }
 `;
 
-const StyledDropdown = styled.ul`
-  --outer-border-radius: calc(var(--wraper-border-radius) - 2px);
-  --wraper-border: 1px;
-  --wraper-border-radius: ${({ theme }) => theme.border.radius.md};
-
-  border: var(--wraper-border) solid ${({ theme }) => theme.border.color.light};
-  border-radius: var(--wraper-border-radius);
-  display: flex;
-  flex-direction: column;
-  min-width: 160px;
-  padding: 0px;
+const StyledDropdownMenuContainer = styled.ul`
   position: absolute;
   right: 0;
   top: 14px;
-  ${overlayBackground}
-  li {
-    &:first-of-type {
-      border-top-left-radius: var(--outer-border-radius);
-      border-top-right-radius: var(--outer-border-radius);
-    }
-    &:last-of-type {
-      border-bottom: 0;
-      border-bottom-left-radius: var(--outer-border-radius);
-      border-bottom-right-radius: var(--outer-border-radius);
-    }
-  }
-`;
-
-const StyledDropdownItem = styled.li`
-  align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  margin: 2px;
-  padding: ${({ theme }) => theme.spacing(2)}
-    calc(${({ theme }) => theme.spacing(2)} - 2px);
-  user-select: none;
-  width: calc(160px - ${({ theme }) => theme.spacing(4)});
-
-  &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-  }
-`;
-
-const StyledDropdownItemClipped = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledDropdownTopOption = styled.li`
-  align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   justify-content: space-between;
+
   padding: calc(${({ theme }) => theme.spacing(2)})
     calc(${({ theme }) => theme.spacing(2)});
-
   &:hover {
     background: ${({ theme }) => theme.background.transparent.light};
   }
@@ -124,35 +77,6 @@ const StyledIcon = styled.div`
   justify-content: center;
   margin-right: ${({ theme }) => theme.spacing(1)};
   min-width: ${({ theme }) => theme.spacing(4)};
-`;
-
-const StyledSearchField = styled.li`
-  align-items: center;
-  border-bottom: var(--wraper-border) solid
-    ${({ theme }) => theme.border.color.light};
-  color: ${({ theme }) => theme.font.color.secondary};
-
-  cursor: pointer;
-  display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  justify-content: space-between;
-  overflow: hidden;
-
-  user-select: none;
-  input {
-    border-radius: ${({ theme }) => theme.border.radius.md};
-    box-sizing: border-box;
-    font-family: ${({ theme }) => theme.font.family};
-    height: 36px;
-    padding: 8px;
-    width: 100%;
-
-    ${textInputStyle}
-
-    &:focus {
-      outline: 0 none;
-    }
-  }
 `;
 
 function DropdownButton({
@@ -194,7 +118,9 @@ function DropdownButton({
         {label}
       </StyledDropdownButton>
       {isUnfolded && (
-        <StyledDropdown ref={dropdownRef}>{children}</StyledDropdown>
+        <StyledDropdownMenuContainer>
+          <DropdownMenu ref={dropdownRef}>{children}</DropdownMenu>
+        </StyledDropdownMenuContainer>
       )}
     </StyledDropdownButtonContainer>
   );
@@ -215,9 +141,6 @@ function DropdownTopOptionAngleDown() {
     </StyleAngleDownContainer>
   );
 }
-DropdownButton.StyledDropdownItem = StyledDropdownItem;
-DropdownButton.StyledDropdownItemClipped = StyledDropdownItemClipped;
-DropdownButton.StyledSearchField = StyledSearchField;
 DropdownButton.StyledDropdownTopOption = StyledDropdownTopOption;
 DropdownButton.StyledDropdownTopOptionAngleDown = DropdownTopOptionAngleDown;
 DropdownButton.StyledIcon = StyledIcon;

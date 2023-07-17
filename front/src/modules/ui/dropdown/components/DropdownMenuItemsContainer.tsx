@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
 
-export const DropdownMenuItemContainer = styled.div`
-  --padding: ${({ theme }) => theme.spacing(1 / 2)};
+export const DropdownMenuItemsContainer = styled.div<{
+  hasMaxHeight?: boolean;
+}>`
+  --padding: ${({ theme }) => theme.spacing(1)};
 
   align-items: flex-start;
   display: flex;
@@ -9,7 +11,7 @@ export const DropdownMenuItemContainer = styled.div`
   flex-direction: column;
   gap: 2px;
   height: 100%;
-  max-height: 180px;
+  max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '180px' : 'none')};
   overflow-y: auto;
 
   padding: var(--padding);

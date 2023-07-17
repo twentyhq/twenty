@@ -1,5 +1,9 @@
 import { useCallback, useState } from 'react';
 
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
+import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '../types/interface';
 
@@ -56,9 +60,10 @@ export function SortDropdownButton<SortField>({
       onIsUnfoldedChange={handleIsUnfoldedChange}
       HotkeyScope={HotkeyScope}
     >
-      {isOptionUnfolded
-        ? options.map((option, index) => (
-            <DropdownButton.StyledDropdownItem
+      {isOptionUnfolded ? (
+        <DropdownMenuItemsContainer>
+          {options.map((option, index) => (
+            <DropdownMenuSelectableItem
               key={index}
               onClick={() => {
                 setSelectedSortDirection(option);
@@ -66,19 +71,23 @@ export function SortDropdownButton<SortField>({
               }}
             >
               {option === 'asc' ? 'Ascending' : 'Descending'}
-            </DropdownButton.StyledDropdownItem>
-          ))
-        : [
-            <DropdownButton.StyledDropdownTopOption
-              key={0}
-              onClick={() => setIsOptionUnfolded(true)}
-            >
-              {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+            </DropdownMenuSelectableItem>
+          ))}
+        </DropdownMenuItemsContainer>
+      ) : (
+        [
+          <DropdownButton.StyledDropdownTopOption
+            key={0}
+            onClick={() => setIsOptionUnfolded(true)}
+          >
+            {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
 
-              <DropdownButton.StyledDropdownTopOptionAngleDown />
-            </DropdownButton.StyledDropdownTopOption>,
-            ...availableSorts.map((sort, index) => (
-              <DropdownButton.StyledDropdownItem
+            <DropdownButton.StyledDropdownTopOptionAngleDown />
+          </DropdownButton.StyledDropdownTopOption>,
+          <DropdownMenuSeparator />,
+          <DropdownMenuItemsContainer>
+            {availableSorts.map((sort, index) => (
+              <DropdownMenuSelectableItem
                 key={index + 1}
                 onClick={() => {
                   setIsUnfolded(false);
@@ -89,9 +98,11 @@ export function SortDropdownButton<SortField>({
                   {sort.icon}
                 </DropdownButton.StyledIcon>
                 {sort.label}
-              </DropdownButton.StyledDropdownItem>
-            )),
-          ]}
+              </DropdownMenuSelectableItem>
+            ))}
+          </DropdownMenuItemsContainer>,
+        ]
+      )}
     </DropdownButton>
   );
 }

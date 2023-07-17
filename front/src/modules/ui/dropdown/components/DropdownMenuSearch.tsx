@@ -7,7 +7,6 @@ export const DropdownMenuSearchContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};
 
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 
   display: flex;
   flex-direction: row;

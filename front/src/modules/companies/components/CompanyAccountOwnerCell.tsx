@@ -27,6 +27,7 @@ export function CompanyAccountOwnerCell({ company }: OwnProps) {
 
   return (
     <EditableCell
+      transparent
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={
         <CompanyAccountOwnerPicker
