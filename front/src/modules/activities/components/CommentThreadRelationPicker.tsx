@@ -63,9 +63,6 @@ const StyledRelationContainer = styled.div`
     border: 1px solid ${({ theme }) => theme.border.color.light};
   }
 
-  &:focus {
-  }
-
   min-height: calc(32px - 2 * var(--vertical-padding));
 
   overflow: hidden;
