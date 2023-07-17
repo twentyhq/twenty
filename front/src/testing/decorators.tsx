@@ -41,7 +41,7 @@ export const CellPositionDecorator: Decorator = (Story) => (
 
 export const BoardDecorator: Decorator = (Story) => (
   <>
-    <HooksCompanyBoard />
+    <HooksCompanyBoard availableFilters={[]} />
     <RecoilScope SpecificContext={CompanyBoardContext}>
       <Story />
     </RecoilScope>
@@ -64,7 +64,7 @@ function HookLoadFakeBoardContextState() {
 export const BoardCardDecorator: Decorator = (Story) => {
   return (
     <>
-      <HooksCompanyBoard />
+      <HooksCompanyBoard availableFilters={[]} />
       <RecoilScope SpecificContext={CompanyBoardContext}>
         <RecoilScope SpecificContext={BoardColumnContext}>
           <RecoilScope SpecificContext={BoardCardContext}>

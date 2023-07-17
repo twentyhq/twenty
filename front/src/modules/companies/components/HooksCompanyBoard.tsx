@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
+import { useInitializeCompanyBoardFilters } from '@/companies/hooks/useInitializeCompanyBoardFilters';
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 import {
   CompanyForBoard,
@@ -11,6 +12,10 @@ import { boardState } from '@/pipeline/states/boardState';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { isBoardLoadedState } from '@/pipeline/states/isBoardLoadedState';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
+import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
+import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
+import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
 import {
   Pipeline,
   useGetCompaniesQuery,
@@ -18,7 +23,16 @@ import {
   useGetPipelinesQuery,
 } from '~/generated/graphql';
 
-export function HooksCompanyBoard() {
+import { CompanyBoardContext } from '../states/CompanyBoardContext';
+
+export function HooksCompanyBoard({
+  availableFilters,
+}: {
+  availableFilters: FilterDefinition[];
+}) {
+  useInitializeCompanyBoardFilters({
+    availableFilters,
+  });
   const [currentPipeline, setCurrentPipeline] =
     useRecoilState(currentPipelineState);
 
@@ -53,11 +67,20 @@ export function HooksCompanyBoard() {
     ?.map((pipelineStage) => pipelineStage.id)
     .flat();
 
+  const filters = useRecoilScopedValue(filtersScopedState, CompanyBoardContext);
+
+  const whereFilters = useMemo(() => {
+    return {
+      AND: [
+        { pipelineStageId: { in: pipelineStageIds } },
+        ...filters.map(turnFilterIntoWhereClause),
+      ],
+    };
+  }, [filters, pipelineStageIds]) as any;
+
   const pipelineProgressesQuery = useGetPipelineProgressQuery({
     variables: {
-      where: {
-        pipelineStageId: { in: pipelineStageIds },
-      },
+      where: whereFilters,
     },
     onCompleted: (data) => {
       const pipelineProgresses = data?.findManyPipelineProgress || [];
