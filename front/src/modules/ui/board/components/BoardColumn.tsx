@@ -36,7 +36,7 @@ export const StyledColumnTitle = styled.h3`
 `;
 
 const StyledAmount = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
 type OwnProps = {
