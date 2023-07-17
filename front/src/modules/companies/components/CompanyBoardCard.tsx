@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
-import { GET_PIPELINES } from '@/pipeline/queries';
+import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
 import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
 import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
@@ -108,7 +108,10 @@ export function CompanyBoardCard() {
           amount: pipelineProgress.amount,
           closeDate: pipelineProgress.closeDate || null,
         },
-        refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
+        refetchQueries: [
+          getOperationName(GET_PIPELINE_PROGRESS) ?? '',
+          getOperationName(GET_PIPELINES) ?? '',
+        ],
       });
     },
     [updatePipelineProgress],
