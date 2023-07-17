@@ -51,8 +51,6 @@ export function RightDrawer() {
     return <></>;
   }
 
-  console.log(isRightDrawerOpen);
-
   return (
     <StyledContainer
       animate={{

@@ -42,7 +42,7 @@ export function People() {
   return (
     <RecoilScope SpecificContext={TableContext}>
       <WithTopBarContainer
-        title="Companies"
+        title="People"
         icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
         onAddButtonClick={handleAddButtonClick}
       >
