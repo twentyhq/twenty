@@ -29,10 +29,15 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
     <EditableCellChip
       value={internalValue}
       placeholder="Name"
-      picture={getLogoUrlFromDomainName(company.domainName)}
-      id={company.id}
       changeHandler={setInternalValue}
-      ChipComponent={CompanyChip}
+      ChipComponent={
+        <CompanyChip
+          id={company.id}
+          name={company.name}
+          clickable
+          picture={getLogoUrlFromDomainName(company.domainName)}
+        />
+      }
       onSubmit={() =>
         updateCompany({
           variables: {
