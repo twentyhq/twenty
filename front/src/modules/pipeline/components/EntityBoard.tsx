@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
-import { IconTargetArrow } from '@tabler/icons-react';
+import { IconList } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import { CompanyBoardHeader } from '@/ui/board/components/BoardHeader';
@@ -81,16 +81,16 @@ export function EntityBoard({ boardOptions }: { boardOptions: BoardOptions }) {
     : [];
 
   return (board?.length ?? 0) > 0 ? (
-    <>
+    <StyledBoardWithHeader>
+      <CompanyBoardHeader
+        viewName="All opportunities"
+        viewIcon={<IconList size={theme.icon.size.md} />}
+        availableSorts={[]}
+        onSortsUpdate={() => {
+          return;
+        }}
+      />
       <StyledBoard>
-        <CompanyBoardHeader
-          viewName="Opportunities"
-          viewIcon={<IconTargetArrow size={theme.icon.size.md} />}
-          availableSorts={[]}
-          onSortsUpdate={() => {
-            return;
-          }}
-        />
         <DragDropContext onDragEnd={onDragEnd}>
           {sortedBoard.map((column) => (
             <RecoilScope
@@ -102,7 +102,7 @@ export function EntityBoard({ boardOptions }: { boardOptions: BoardOptions }) {
           ))}
         </DragDropContext>
       </StyledBoard>
-    </>
+    </StyledBoardWithHeader>
   ) : (
     <></>
   );
