@@ -8,7 +8,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { MainButton } from '../MainButton';
 
 const meta: Meta<typeof MainButton> = {
-  title: 'UI/Buttons/MainButton',
+  title: 'UI/Button/MainButton',
   component: MainButton,
 };
 

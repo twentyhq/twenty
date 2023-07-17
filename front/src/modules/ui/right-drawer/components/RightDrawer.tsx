@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 
 import {
-  OutsideClickAlerterMode,
-  useOutsideAlerter,
-} from '@/ui/hooks/useOutsideAlerter';
+  ClickOutsideMode,
+  useListenClickOutsideArrayOfRef,
+} from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { isDefined } from '~/utils/isDefined';
 
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -41,10 +41,10 @@ export function RightDrawer() {
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
 
   const rightDrawerRef = useRef(null);
-  useOutsideAlerter({
-    ref: rightDrawerRef,
+  useListenClickOutsideArrayOfRef({
+    refs: [rightDrawerRef],
     callback: () => setIsRightDrawerOpen(false),
-    mode: OutsideClickAlerterMode.absolute,
+    mode: ClickOutsideMode.absolute,
   });
   const theme = useTheme();
   if (!isDefined(rightDrawerPage)) {

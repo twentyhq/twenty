@@ -90,8 +90,11 @@ export function EntityTable<SortField>({
 
   const leaveTableFocus = useLeaveTableFocus();
 
-  useListenClickOutsideArrayOfRef([tableBodyRef], () => {
-    leaveTableFocus();
+  useListenClickOutsideArrayOfRef({
+    refs: [tableBodyRef],
+    callback: () => {
+      leaveTableFocus();
+    },
   });
 
   return (

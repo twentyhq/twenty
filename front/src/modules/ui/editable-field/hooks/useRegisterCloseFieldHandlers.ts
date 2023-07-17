@@ -12,11 +12,14 @@ export function useRegisterCloseFieldHandlers(
 ) {
   const { closeEditableField, isFieldInEditMode } = useEditableField();
 
-  useListenClickOutsideArrayOfRef([wrapperRef], () => {
-    if (isFieldInEditMode) {
-      onSubmit?.();
-      closeEditableField();
-    }
+  useListenClickOutsideArrayOfRef({
+    refs: [wrapperRef],
+    callback: () => {
+      if (isFieldInEditMode) {
+        onSubmit?.();
+        closeEditableField();
+      }
+    },
   });
 
   useScopedHotkeys(

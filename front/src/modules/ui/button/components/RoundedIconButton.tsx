@@ -14,15 +14,16 @@ const StyledIconButton = styled.button`
 
   justify-content: center;
 
+  outline: none;
   padding: 0;
   transition: color 0.1s ease-in-out, background 0.1s ease-in-out;
-  width: 20px;
 
   &:disabled {
     background: ${({ theme }) => theme.background.quaternary};
     color: ${({ theme }) => theme.font.color.tertiary};
     cursor: default;
   }
+  width: 20px;
 `;
 
 export function RoundedIconButton({

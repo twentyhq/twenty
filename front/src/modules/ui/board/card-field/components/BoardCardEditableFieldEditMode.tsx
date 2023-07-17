@@ -43,8 +43,11 @@ export function BoardCardEditableFieldEditMode({
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
-  useListenClickOutsideArrayOfRef([wrapperRef], () => {
-    onExit();
+  useListenClickOutsideArrayOfRef({
+    refs: [wrapperRef],
+    callback: () => {
+      onExit();
+    },
   });
 
   useScopedHotkeys(

@@ -1,4 +1,5 @@
 import {
+  ActivityType,
   Comment,
   CommentableType,
   CommentThread,
@@ -11,6 +12,7 @@ type MockedCommentThread = Pick<
   | 'createdAt'
   | 'updatedAt'
   | '__typename'
+  | 'type'
   | 'body'
   | 'title'
   | 'authorId'
@@ -42,6 +44,7 @@ export const mockedCommentThreads: Array<MockedCommentThread> = [
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
     title: 'My very first note',
+    type: ActivityType.Note,
     body: null,
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
@@ -88,6 +91,7 @@ export const mockedCommentThreads: Array<MockedCommentThread> = [
     updatedAt: new Date().toISOString(),
     title: 'Another note',
     body: null,
+    type: ActivityType.Note,
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',

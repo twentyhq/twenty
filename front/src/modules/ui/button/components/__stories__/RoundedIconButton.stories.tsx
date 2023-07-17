@@ -8,7 +8,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { RoundedIconButton } from '../RoundedIconButton';
 
 const meta: Meta<typeof RoundedIconButton> = {
-  title: 'UI/Buttons/RoundedIconButton',
+  title: 'UI/Button/RoundedIconButton',
   component: RoundedIconButton,
 };
 

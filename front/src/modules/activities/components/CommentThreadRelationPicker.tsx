@@ -152,8 +152,11 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     placement: 'bottom-start',
   });
 
-  useListenClickOutsideArrayOfRef([refs.floating, refs.domReference], () => {
-    exitEditMode();
+  useListenClickOutsideArrayOfRef({
+    refs: [refs.floating, refs.domReference],
+    callback: () => {
+      exitEditMode();
+    },
   });
 
   const selectedEntities = flatMapAndSortEntityForSelectArrayOfArrayByName([

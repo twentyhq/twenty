@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
-import { useOutsideAlerter } from '@/ui/hooks/useOutsideAlerter';
+import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { IconChevronDown } from '@/ui/icon/index';
 
@@ -105,7 +105,10 @@ function DropdownButton({
   };
 
   const dropdownRef = useRef(null);
-  useOutsideAlerter({ ref: dropdownRef, callback: onOutsideClick });
+  useListenClickOutsideArrayOfRef({
+    refs: [dropdownRef],
+    callback: onOutsideClick,
+  });
 
   return (
     <StyledDropdownButtonContainer>

@@ -37,6 +37,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
       displayName: 'Charles Test',
       firstName: 'Charles',
       lastName: 'Test',
+      avatarUrl: null,
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       __typename: 'User',
     },

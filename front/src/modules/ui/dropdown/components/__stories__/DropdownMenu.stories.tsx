@@ -15,7 +15,7 @@ import { DropdownMenuSelectableItem } from '../DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
 
 const meta: Meta<typeof DropdownMenu> = {
-  title: 'UI/Menu/DropdownMenu',
+  title: 'UI/Dropdown/DropdownMenu',
   component: DropdownMenu,
 };
 
