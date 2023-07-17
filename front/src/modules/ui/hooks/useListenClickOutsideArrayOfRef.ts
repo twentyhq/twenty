@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { c } from 'msw/lib/glossary-de6278a9';
 
 import { isDefined } from '~/utils/isDefined';
 
@@ -27,6 +28,7 @@ export function useListenClickOutsideArrayOfRef<T extends Element>({
           callback(event);
         }
       }
+
       if (mode === ClickOutsideMode.absolute) {
         const clickedOnAtLeastOneRef = refs
           .filter((ref) => !!ref.current)
@@ -41,6 +43,8 @@ export function useListenClickOutsideArrayOfRef<T extends Element>({
               'clientX' in event ? event.clientX : event.touches[0].clientX;
             const clientY =
               'clientY' in event ? event.clientY : event.touches[0].clientY;
+
+            console.log(clientX, clientY, x, y, width, height);
 
             if (
               clientX < x ||
