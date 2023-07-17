@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  ComponentType,
-  ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { textInputStyle } from '@/ui/themes/effects';

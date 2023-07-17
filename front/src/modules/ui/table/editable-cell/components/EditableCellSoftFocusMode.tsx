@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useRef } from 'react';
+import { PropsWithChildren } from 'react';
 
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
