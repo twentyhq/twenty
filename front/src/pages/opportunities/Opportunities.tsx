@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 
 import { companyBoardOptions } from '@/companies/components/companyBoardOptions';
@@ -6,14 +7,36 @@ import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline/components/BoardActionBarButtonDeletePipelineProgress';
 import { EntityBoard } from '@/pipeline/components/EntityBoard';
 import { EntityBoardActionBar } from '@/pipeline/components/EntityBoardActionBar';
+import {
+  defaultPipelineProgressOrderBy,
+  PipelineProgressesSelectedSortType,
+} from '@/pipeline/queries';
+import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { IconTargetArrow } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { PipelineProgressOrderByWithRelationInput } from '~/generated/graphql';
 
 import { opportunitiesFilters } from './opportunities-filters';
+import { availableSorts } from './opportunities-sorts';
 
 export function Opportunities() {
   const theme = useTheme();
+
+  const [orderBy, setOrderBy] = useState<
+    PipelineProgressOrderByWithRelationInput[]
+  >(defaultPipelineProgressOrderBy);
+
+  const updateSorts = useCallback(
+    (sorts: Array<PipelineProgressesSelectedSortType>) => {
+      setOrderBy(
+        sorts.length
+          ? reduceSortsToOrderBy(sorts)
+          : defaultPipelineProgressOrderBy,
+      );
+    },
+    [],
+  );
 
   return (
     <WithTopBarContainer
@@ -21,8 +44,15 @@ export function Opportunities() {
       icon={<IconTargetArrow size={theme.icon.size.md} />}
     >
       <RecoilScope SpecificContext={CompanyBoardContext}>
-        <HooksCompanyBoard availableFilters={opportunitiesFilters} />
-        <EntityBoard boardOptions={companyBoardOptions} />
+        <HooksCompanyBoard
+          availableFilters={opportunitiesFilters}
+          orderBy={orderBy}
+        />
+        <EntityBoard
+          boardOptions={companyBoardOptions}
+          availableSorts={availableSorts}
+          updateSorts={updateSorts}
+        />
         <EntityBoardActionBar>
           <BoardActionBarButtonDeletePipelineProgress />
         </EntityBoardActionBar>

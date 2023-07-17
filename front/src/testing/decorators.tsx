@@ -6,6 +6,7 @@ import { RecoilRoot } from 'recoil';
 import { pipeline } from '@/companies/__stories__/mock-data';
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
+import { defaultPipelineProgressOrderBy } from '@/pipeline/queries';
 import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
 import { BoardColumnContext } from '@/pipeline/states/BoardColumnContext';
 import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
@@ -41,7 +42,10 @@ export const CellPositionDecorator: Decorator = (Story) => (
 
 export const BoardDecorator: Decorator = (Story) => (
   <>
-    <HooksCompanyBoard availableFilters={[]} />
+    <HooksCompanyBoard
+      availableFilters={[]}
+      orderBy={defaultPipelineProgressOrderBy}
+    />
     <RecoilScope SpecificContext={CompanyBoardContext}>
       <Story />
     </RecoilScope>
@@ -64,7 +68,10 @@ function HookLoadFakeBoardContextState() {
 export const BoardCardDecorator: Decorator = (Story) => {
   return (
     <>
-      <HooksCompanyBoard availableFilters={[]} />
+      <HooksCompanyBoard
+        availableFilters={[]}
+        orderBy={defaultPipelineProgressOrderBy}
+      />
       <RecoilScope SpecificContext={CompanyBoardContext}>
         <RecoilScope SpecificContext={BoardColumnContext}>
           <RecoilScope SpecificContext={BoardCardContext}>

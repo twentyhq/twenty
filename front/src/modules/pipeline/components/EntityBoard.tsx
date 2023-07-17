@@ -6,9 +6,11 @@ import { IconList } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import { CompanyBoardHeader } from '@/ui/board/components/BoardHeader';
+import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import {
   PipelineProgress,
+  PipelineProgressOrderByWithRelationInput,
   PipelineStage,
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
@@ -30,7 +32,17 @@ const StyledBoardWithHeader = styled.div`
   width: 100%;
 `;
 
-export function EntityBoard({ boardOptions }: { boardOptions: BoardOptions }) {
+export function EntityBoard({
+  boardOptions,
+  availableSorts,
+  updateSorts,
+}: {
+  boardOptions: BoardOptions;
+  availableSorts: Array<SortType<PipelineProgressOrderByWithRelationInput>>;
+  updateSorts: (
+    sorts: Array<SelectedSortType<PipelineProgressOrderByWithRelationInput>>,
+  ) => void;
+}) {
   const [board, setBoard] = useRecoilState(boardState);
   const theme = useTheme();
   const [updatePipelineProgressStage] =
@@ -85,10 +97,8 @@ export function EntityBoard({ boardOptions }: { boardOptions: BoardOptions }) {
       <CompanyBoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
-        availableSorts={[]}
-        onSortsUpdate={() => {
-          return;
-        }}
+        availableSorts={availableSorts}
+        onSortsUpdate={updateSorts}
       />
       <StyledBoard>
         <DragDropContext onDragEnd={onDragEnd}>

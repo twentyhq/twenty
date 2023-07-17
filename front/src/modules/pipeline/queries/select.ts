@@ -1,5 +1,14 @@
 import { gql } from '@apollo/client';
 
+import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
+import {
+  PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By,
+  SortOrder as Order_By,
+} from '~/generated/graphql';
+
+export type PipelineProgressesSelectedSortType =
+  SelectedSortType<PipelineProgresses_Order_By>;
+
 export const GET_PIPELINES = gql`
   query GetPipelines($where: PipelineWhereInput) {
     findManyPipeline(where: $where) {
@@ -17,8 +26,11 @@ export const GET_PIPELINES = gql`
 `;
 
 export const GET_PIPELINE_PROGRESS = gql`
-  query GetPipelineProgress($where: PipelineProgressWhereInput) {
-    findManyPipelineProgress(where: $where, orderBy: { createdAt: asc }) {
+  query GetPipelineProgress(
+    $where: PipelineProgressWhereInput
+    $orderBy: [PipelineProgressOrderByWithRelationInput!]
+  ) {
+    findManyPipelineProgress(where: $where, orderBy: $orderBy) {
       id
       pipelineStageId
       progressableType
@@ -81,3 +93,9 @@ export const ADD_ENTITY_TO_PIPELINE = gql`
     }
   }
 `;
+
+export const defaultPipelineProgressOrderBy: PipelineProgresses_Order_By[] = [
+  {
+    createdAt: Order_By.Asc,
+  },
+];

@@ -16,6 +16,7 @@ import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
+import { PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By } from '~/generated/graphql';
 import {
   Pipeline,
   useGetCompaniesQuery,
@@ -27,8 +28,10 @@ import { CompanyBoardContext } from '../states/CompanyBoardContext';
 
 export function HooksCompanyBoard({
   availableFilters,
+  orderBy,
 }: {
   availableFilters: FilterDefinition[];
+  orderBy: PipelineProgresses_Order_By[];
 }) {
   useInitializeCompanyBoardFilters({
     availableFilters,
@@ -81,6 +84,7 @@ export function HooksCompanyBoard({
   const pipelineProgressesQuery = useGetPipelineProgressQuery({
     variables: {
       where: whereFilters,
+      orderBy,
     },
     onCompleted: (data) => {
       const pipelineProgresses = data?.findManyPipelineProgress || [];

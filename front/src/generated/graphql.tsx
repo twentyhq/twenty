@@ -3653,6 +3653,7 @@ export type GetPipelinesQuery = { __typename?: 'Query', findManyPipeline: Array<
 
 export type GetPipelineProgressQueryVariables = Exact<{
   where?: InputMaybe<PipelineProgressWhereInput>;
+  orderBy?: InputMaybe<Array<PipelineProgressOrderByWithRelationInput> | PipelineProgressOrderByWithRelationInput>;
 }>;
 
 
@@ -5260,8 +5261,8 @@ export type GetPipelinesQueryHookResult = ReturnType<typeof useGetPipelinesQuery
 export type GetPipelinesLazyQueryHookResult = ReturnType<typeof useGetPipelinesLazyQuery>;
 export type GetPipelinesQueryResult = Apollo.QueryResult<GetPipelinesQuery, GetPipelinesQueryVariables>;
 export const GetPipelineProgressDocument = gql`
-    query GetPipelineProgress($where: PipelineProgressWhereInput) {
-  findManyPipelineProgress(where: $where, orderBy: {createdAt: asc}) {
+    query GetPipelineProgress($where: PipelineProgressWhereInput, $orderBy: [PipelineProgressOrderByWithRelationInput!]) {
+  findManyPipelineProgress(where: $where, orderBy: $orderBy) {
     id
     pipelineStageId
     progressableType
@@ -5285,6 +5286,7 @@ export const GetPipelineProgressDocument = gql`
  * const { data, loading, error } = useGetPipelineProgressQuery({
  *   variables: {
  *      where: // value for 'where'
+ *      orderBy: // value for 'orderBy'
  *   },
  * });
  */
