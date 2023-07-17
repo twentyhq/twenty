@@ -1,7 +1,6 @@
-import { ReactNode, useCallback, useState } from 'react';
+import { Context, ReactNode, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
@@ -13,6 +12,7 @@ type OwnProps<SortField> = {
   viewIcon?: ReactNode;
   availableSorts?: Array<SortType<SortField>>;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
+  context: Context<string | null>;
 };
 
 const StyledContainer = styled.div`
@@ -52,11 +52,12 @@ const StyledFilters = styled.div`
   gap: 2px;
 `;
 
-export function CompanyBoardHeader<SortField>({
+export function BoardHeader<SortField>({
   viewName,
   viewIcon,
   availableSorts,
   onSortsUpdate,
+  context,
 }: OwnProps<SortField>) {
   const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
     [],
@@ -89,7 +90,7 @@ export function CompanyBoardHeader<SortField>({
         </StyledViewSection>
         <StyledFilters>
           <FilterDropdownButton
-            context={CompanyBoardContext}
+            context={context}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
           <SortDropdownButton<SortField>
@@ -101,7 +102,7 @@ export function CompanyBoardHeader<SortField>({
         </StyledFilters>
       </StyledTableHeader>
       <SortAndFilterBar
-        context={CompanyBoardContext}
+        context={context}
         sorts={sorts}
         onRemoveSort={sortUnselect}
         onCancelClick={() => {

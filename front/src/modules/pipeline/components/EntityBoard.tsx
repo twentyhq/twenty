@@ -6,7 +6,8 @@ import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atla
 import { IconList } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
-import { CompanyBoardHeader } from '@/ui/board/components/BoardHeader';
+import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
+import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import {
@@ -97,11 +98,12 @@ export function EntityBoard({
 
   return (board?.length ?? 0) > 0 ? (
     <StyledBoardWithHeader>
-      <CompanyBoardHeader
+      <BoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
         availableSorts={availableSorts}
         onSortsUpdate={updateSorts}
+        context={CompanyBoardContext}
       />
       <StyledBoard>
         <DragDropContext onDragEnd={onDragEnd}>
