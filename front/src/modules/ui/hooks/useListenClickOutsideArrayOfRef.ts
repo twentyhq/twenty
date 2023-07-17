@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { c } from 'msw/lib/glossary-de6278a9';
 
 import { isDefined } from '~/utils/isDefined';
 
