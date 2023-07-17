@@ -4,6 +4,7 @@ import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { IconUserCircle } from '@/ui/icon';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
 import { Company, User } from '~/generated/graphql';
 
 import { CompanyAccountOwnerPickerFieldEditMode } from './CompanyAccountOwnerPickerFieldEditMode';
@@ -20,7 +21,7 @@ export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
       <RecoilScope>
         <EditableField
           customEditHotkeyScope={{
-            scope: 'asd',
+            scope: RelationPickerHotkeyScope.RelationPicker,
           }}
           parentHotkeyScope={{
             scope: PageHotkeyScope.CompanyShowPage,
