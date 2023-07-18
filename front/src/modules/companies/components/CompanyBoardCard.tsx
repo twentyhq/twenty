@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -23,17 +23,12 @@ import { getLogoUrlFromDomainName } from '~/utils';
 
 import { CompanyChip } from './CompanyChip';
 
-const StyledBoardCard = styled.div<{ selected: boolean }>`
-  background-color: ${({ theme, selected }) =>
-    selected ? theme.selectedCard : theme.background.secondary};
+const StyledBoardCard = styled.div<{ backgroundColor: string }>`
+  background-color: ${({ backgroundColor }) => backgroundColor};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
-  &:hover {
-    background-color: ${({ theme, selected }) =>
-      selected ? theme.selectedCardHover : theme.background.tertiary};
-  }
   cursor: pointer;
 `;
 
@@ -73,6 +68,7 @@ const StyledBoardCardBody = styled.div`
 `;
 
 export function CompanyBoardCard() {
+  const [isHovered, setIsHovered] = useState(false);
   const theme = useTheme();
 
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
@@ -99,6 +95,14 @@ export function CompanyBoardCard() {
       );
     }
   }
+
+  const backgroundColor = isHovered
+    ? selected
+      ? theme.selectedCardHover
+      : theme.background.tertiary
+    : selected
+    ? theme.selectedCard
+    : theme.background.secondary;
 
   const handleCardUpdate = useCallback(
     async (
@@ -128,49 +132,52 @@ export function CompanyBoardCard() {
   }
 
   return (
-    <StyledBoardCardWrapper>
-      <StyledBoardCard selected={selected}>
-        <StyledBoardCardHeader>
-          <CompanyChip
-            id={company.id}
-            name={company.name}
-            clickable
-            picture={getLogoUrlFromDomainName(company.domainName)}
-            customColor={
-              selected ? theme.selectedCard : theme.background.secondary
-            }
-          />
-          <div style={{ display: 'flex', flex: 1 }} />
-          <Checkbox checked={selected} onChange={handleCheckboxChange} />
-        </StyledBoardCardHeader>
-        <StyledBoardCardBody>
-          <span>
-            <IconCurrencyDollar size={theme.icon.size.md} />
-            <BoardCardEditableFieldText
-              value={pipelineProgress.amount?.toString() || ''}
-              placeholder="Opportunity amount"
-              onChange={(value) =>
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  amount: parseInt(value),
-                })
-              }
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <StyledBoardCardWrapper>
+        <StyledBoardCard backgroundColor={backgroundColor}>
+          <StyledBoardCardHeader>
+            <CompanyChip
+              id={company.id}
+              name={company.name}
+              clickable
+              picture={getLogoUrlFromDomainName(company.domainName)}
+              customColor={backgroundColor}
             />
-          </span>
-          <span>
-            <IconCalendarEvent size={theme.icon.size.md} />
-            <BoardCardEditableFieldDate
-              value={new Date(pipelineProgress.closeDate || Date.now())}
-              onChange={(value) => {
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  closeDate: value.toISOString(),
-                });
-              }}
-            />
-          </span>
-        </StyledBoardCardBody>
-      </StyledBoardCard>
-    </StyledBoardCardWrapper>
+            <div style={{ display: 'flex', flex: 1 }} />
+            <Checkbox checked={selected} onChange={handleCheckboxChange} />
+          </StyledBoardCardHeader>
+          <StyledBoardCardBody>
+            <span>
+              <IconCurrencyDollar size={theme.icon.size.md} />
+              <BoardCardEditableFieldText
+                value={pipelineProgress.amount?.toString() || ''}
+                placeholder="Opportunity amount"
+                onChange={(value) =>
+                  handleCardUpdate({
+                    ...pipelineProgress,
+                    amount: parseInt(value),
+                  })
+                }
+              />
+            </span>
+            <span>
+              <IconCalendarEvent size={theme.icon.size.md} />
+              <BoardCardEditableFieldDate
+                value={new Date(pipelineProgress.closeDate || Date.now())}
+                onChange={(value) => {
+                  handleCardUpdate({
+                    ...pipelineProgress,
+                    closeDate: value.toISOString(),
+                  });
+                }}
+              />
+            </span>
+          </StyledBoardCardBody>
+        </StyledBoardCard>
+      </StyledBoardCardWrapper>
+    </div>
   );
 }
