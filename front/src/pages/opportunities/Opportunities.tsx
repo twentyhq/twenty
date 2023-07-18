@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 
-import { companyBoardOptions } from '@/companies/components/companyBoardOptions';
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline/components/BoardActionBarButtonDeletePipelineProgress';
@@ -16,9 +15,7 @@ import { IconTargetArrow } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { PipelineProgressOrderByWithRelationInput } from '~/generated/graphql';
-
-import { opportunitiesFilters } from './opportunities-filters';
-import { availableSorts } from './opportunities-sorts';
+import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 export function Opportunities() {
   const theme = useTheme();
@@ -45,12 +42,11 @@ export function Opportunities() {
     >
       <RecoilScope SpecificContext={CompanyBoardContext}>
         <HooksCompanyBoard
-          availableFilters={opportunitiesFilters}
+          availableFilters={opportunitiesBoardOptions.filters}
           orderBy={orderBy}
         />
         <EntityBoard
-          boardOptions={companyBoardOptions}
-          availableSorts={availableSorts}
+          boardOptions={opportunitiesBoardOptions}
           updateSorts={updateSorts}
         />
         <EntityBoardActionBar>

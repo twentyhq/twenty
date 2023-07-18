@@ -8,7 +8,7 @@ import { useRecoilState } from 'recoil';
 
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
-import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
+import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import {
   PipelineProgress,
@@ -37,11 +37,9 @@ const StyledBoardWithHeader = styled.div`
 
 export function EntityBoard({
   boardOptions,
-  availableSorts,
   updateSorts,
 }: {
   boardOptions: BoardOptions;
-  availableSorts: Array<SortType<PipelineProgressOrderByWithRelationInput>>;
   updateSorts: (
     sorts: Array<SelectedSortType<PipelineProgressOrderByWithRelationInput>>,
   ) => void;
@@ -101,7 +99,7 @@ export function EntityBoard({
       <BoardHeader
         viewName="All opportunities"
         viewIcon={<IconList size={theme.icon.size.md} />}
-        availableSorts={availableSorts}
+        availableSorts={boardOptions.sorts}
         onSortsUpdate={updateSorts}
         context={CompanyBoardContext}
       />
