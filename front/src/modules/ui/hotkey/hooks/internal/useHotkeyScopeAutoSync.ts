@@ -25,6 +25,13 @@ export function useHotkeyScopeAutoSync() {
 
     scopesToSet.push(currentHotkeyScope.scope);
 
+    console.log(
+      JSON.stringify({
+        currentHotkeyScope,
+        scopesToSet,
+      }),
+    );
+
     setHotkeyScopes(scopesToSet);
   }, [setHotkeyScopes, currentHotkeyScope]);
 }
