@@ -101,7 +101,6 @@ You can navigate quickly through the app using keyboard shortcuts and our integr
 </p>
 
 # Next developments
-In the next two weeks we will release:
 
 ⚙️  A task system<br>
 ⚙️  A notification center<br>
