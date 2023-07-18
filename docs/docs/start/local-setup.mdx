@@ -6,20 +6,12 @@ sidebar_custom_props:
 
 # Local Setup
 
-We recommend using Docker to avoid potential problems with version compatibility, but it's also fairly simple to run the app directly on your machine.
+This section will guide you through the Twenty installation on your local environment. 
+Twenty is designed to be developer-friendly, and your local installation should be up and running in a few minutes.
 
-## With Docker
-
-### 1. Pre-requisites
-
-Make sure you have the latest Docker and Docker-compose versions installed on your computer.
-
-You can run `docker-compose --version` and `docker --version` to check they are installed.
-
-### 2. Git clone
-```
-git clone git@github.com:twentyhq/twenty.git
-```
+In a nutshell:
+- we recommend using `yarn` installation but we also provide an easy way to provide the project with Docker.
+- Twenty uses PostgreSQL as a database. If we don't have one available, we also provide a one-line command to provision a PostgreSQL instance through Docker.
 
 The repository is structured as follows:
 ```
@@ -27,25 +19,111 @@ twenty
 └───docs // contains this documentation
 └───front // contains the frontend code for the application
 └───server // contains the backend code for the application
-└───infra // contains the deployment configurations for dev and prod
+└───infra // contains docker development/production-ready deployment configuration
+```
+
+## Yarn install (recommended)
+
+**Note:** `npm` is currently not supporting local packages satisfactorily. We strongly recommend using `yarn` instead.
+
+### 1. Pre-requisites
+
+You need to have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [node](https://nodejs.org/en/download) and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) installed on your computer.
+
+### 2. Git clone
+```
+git clone git@github.com:twentyhq/twenty.git
+```
+
+
+### 3. PostgresSQL database
+You also need to have a PosgresSQL database available. If you already have one available, you can skip this step.
+
+If you don't, you can provision one through `docker` using the following command:
+
+```
+make provision-postgres
+```
+
+This will create a docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
+
+### 4. Setup env variables
+
+Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` file.
+
+To do so, make a copy of .env.example files:
+```
+cp ./front/.env.example ./front/.env
+cp ./server/.env.example ./server/.env
+```
+
+The default values should work out of the box. Don't forget to update the database connection string if you are using your own database instance.
+
+### 5. Server setup
+
+**Note:** we recommend that you use `nvm` to install the correct `node` version. We have added a `server/.nvmrc` to ensure all contributors are using the same version.
+
+To build Twenty server and seed some data into your database:
+```
+cd server
+nvm use #recommended 
+yarn
+yarn prisma:reset
+yarn start:dev
+```
+
+Twenty server will be running at [http://localhost:3000](http://localhost:3000).
+
+### 6. Front setup
+
+**Note:** similarly, we recommend that you use `nvm` to install the right node version.
+
+```
+cd front
+nvm use #recommended 
+yarn
+yarn start
+```
+
+Twenty front will be running at [http://localhost:3001](http://localhost:3001).
+
+### 7. Sign in to your local Twenty installation
+
+Browse [http://localhost:3001](http://localhost:3001). You can connect using our recently seeded demo account `tim@apple.dev`.
+
+## Docker install
+
+If you wish, you can also provision the project with docker. This come with a few advantages:
+- provides the exact same environment as our core developer team
+- includes some additional dependencies (such as `playwright`) that you might need if you wish to contribute to some advanced areas of the project.
+- provisions a postgres database
+
+### 1. Pre-requisites
+
+Make sure you have the latest `Docker` and [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) versions installed on your computer.
+
+You can run `docker --version` to check they it is installed.
+
+### 2. Git clone
+```
+git clone git@github.com:twentyhq/twenty.git
 ```
 
 ### 3. Setup env variables
 
-Go to the cloned folder (`cd twenty`). Then copy the env files:
+Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` pattern.
 ```
-cp ./infra/dev/.env.example ./infra/dev/.env
 cp ./front/.env.example ./front/.env
 cp ./server/.env.example ./server/.env 
 ```
-Default values should work out of the box with the docker setup.
+The default values should work out of the box.
 
 ### 4. Build
 
 We provide a containerized environment with Docker and orchestrated with docker-compose.
 This install will also provision a Postgres container.
 
-The configuration is stored `infra/dev` folder.
+**Note:**: the configuration is stored `infra/dev` folder but you can run `make` commands direclty from the root folder.
 
 ```
 make build
@@ -53,9 +131,7 @@ make build
 
 ### 5. Migrate & seed
 
-Before running the project, we need to init the database by running migration and seeds.
-
-Always go the `infra/dev` folder to run the `make` commands.
+Before running the project, you need to initialize the database by running migration and seeds.
 
 Start the containers:
 ```
@@ -64,24 +140,10 @@ make up
 
 Run database migrations, generate prisma client and seed:
 ```
-make server-prisma-migrate
-make server-prisma-generate-client
-make server-prisma-seed
+make server-prisma-reset
 ```
 
-You can also ssh directly in the container and run these commands from the container:
-```
-make sh
-```
-Then
-```
-cd server
-yarn prisma:migrate
-yarn prisma:generate-client
-yarn prisma:seed
-```
-
-### 6. Start
+### 6. Start Twenty
 
 Once this is completed you can run the project with the following commands:
 
@@ -95,62 +157,23 @@ server:
 make server-start
 ```
 
-(optional) [storybook](https://storybook.js.org/): 
-```
-make front-storybook
-```
-
 - front available on: http://localhost:3001
 - server available on: http://localhost:3000/healthz
-- postgres: available on http://localhost:5432 and should contain database named `twenty` 
+- postgres: available on http://localhost:5432 and should contain database named `default` 
 
+### 7. Sign in to your local Twenty installation
 
-## Without Docker
+Browse [http://localhost:3001](http://localhost:3001). You can connect using our recently seeded demo account `tim@apple.dev`.
 
-While Docker is the recommended way to run Twenty, you might want to run the project directly on your machine.
+### 8. (Optional)
 
-### 1. Pre-requisites
-You need to have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git), [node](https://nodejs.org/en/download) and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/) installed on your computer.
-You also need to bring your own Postgres database.
+If you don't want to use make command and work directly from the container, you can also ssh directly in the container 
 
-### 2. Git clone
 ```
-git clone git@github.com:twentyhq/twenty.git
+make sh
 ```
-
-### 3. Setup env variables
-Make a copy of .env.example files:
-```
-cp ./front/.env.example ./front/.env
-cp ./server/.env.example ./server/.env
-```
-
-Most default value should work out of the box, but don't forget to update the database connection string.
-
-### 4. Build, Migrate & Seed
-On the frontend:
-```
-cd front
-yarn
-```
-
-On the server side:
+Then run commands through yarn:
 ```
 cd server
-yarn
-yarn prisma:migrate
-yarn prisma:generate-client
-yarn prisma:seed
-```
-
-### 5. Start
-On the frontend:
-```
-cd front
-yarn start
-```
-On the server side:
-```
-cd server
-yarn start
+yarn prisma:reset
 ```

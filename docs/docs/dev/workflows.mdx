@@ -2,20 +2,42 @@
 sidebar_custom_props:
   icon: TbTopologyStar
 ---
-# Workflows
+# Development workflow
 
-The following steps assume that you have installed and configure the project with Docker.
 
 ## IDE Setup
 
-If you are using VSCode, please use the `Dev Containers` extension to open the project in a container.
-This will allow you to run Visual Studio on top of the docker container.
+If you are using VSCode, we provide a [.vscode](https://github.com/twentyhq/twenty/tree/main/.vscode) configuration.
 
-## Front tests
+## Front development commands
 
-Run tests: `make front-test`  
-Run tests with coverage: `make front-coverage`
+```
+yarn # install dependencies
+yarn start # start local development server
 
-## Running commands
-If you are using Docker install, make sure to ssh in the docker container during development to execute commands.
-You can use `Makefile` to help you do this: `make sh` will open a CLI in the docker container and commands such as `make front-test` have been setup to be executed in the container.
+yarn test # run jest tests
+yarn storybook:dev # run storybook
+yarn storybook:test # run tests (needs yarn storybook:dev to be running)
+yarn storybook:coverage # run tests (needs yarn storybook:dev to be running)
+yarn lint # run linter
+
+yarn graphql:generate
+```
+
+See [front/package.json](https://github.com/twentyhq/twenty/blob/main/front/package.json) script section to see the full list of available commands.
+
+## Server development
+
+```
+yarn # install dependencies
+yarn start:dev
+
+yarn prisma:migrate # run migrations
+yarn prisma:generate # generate prisma and nestjs-graphql schemas
+yarn prisma:seed # provision database with seeds
+yarn:reset # all-in-one command to reset, migrate, seed and generate schemas
+
+yarn:test
+```
+
+See [server/package.json](https://github.com/twentyhq/twenty/blob/main/server/package.json) script section to see the full list of available commands.
