@@ -5,9 +5,16 @@ type OwnProps = {
   name: string;
   picture?: string;
   clickable?: boolean;
+  customColor?: string;
 };
 
-export function CompanyChip({ id, name, picture, clickable }: OwnProps) {
+export function CompanyChip({
+  id,
+  name,
+  picture,
+  clickable,
+  customColor,
+}: OwnProps) {
   return (
     <EntityChip
       entityId={id}
@@ -16,6 +23,7 @@ export function CompanyChip({ id, name, picture, clickable }: OwnProps) {
       avatarType="squared"
       clickable={clickable}
       picture={picture}
+      customColor={customColor}
     />
   );
 }

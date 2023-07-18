@@ -21,6 +21,8 @@ import {
 } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
+import { CompanyChip } from './CompanyChip';
+
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
     selected ? theme.selectedCard : theme.background.secondary};
@@ -129,11 +131,15 @@ export function CompanyBoardCard() {
     <StyledBoardCardWrapper>
       <StyledBoardCard selected={selected}>
         <StyledBoardCardHeader>
-          <img
-            src={getLogoUrlFromDomainName(company.domainName).toString()}
-            alt={`${company.name}-company-logo`}
+          <CompanyChip
+            id={company.id}
+            name={company.name}
+            clickable
+            picture={getLogoUrlFromDomainName(company.domainName)}
+            customColor={
+              selected ? theme.selectedCard : theme.background.secondary
+            }
           />
-          <span>{company.name}</span>
           <div style={{ display: 'flex', flex: 1 }} />
           <Checkbox checked={selected} onChange={handleCheckboxChange} />
         </StyledBoardCardHeader>
