@@ -5,6 +5,9 @@ build:
 	@docker volume rm dev_twenty_node_modules_docs > /dev/null 2>&1 || true
 	@docker-compose build
 
+provision-postgres:
+	@docker-compose up postgres -d
+
 up:
 	@docker-compose up -d
 
