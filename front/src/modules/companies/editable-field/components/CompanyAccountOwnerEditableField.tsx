@@ -1,5 +1,4 @@
 import { PersonChip } from '@/people/components/PersonChip';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { IconUserCircle } from '@/ui/icon';
@@ -23,12 +22,6 @@ export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,
           }}
-          parentHotkeyScope={{
-            scope: PageHotkeyScope.CompanyShowPage,
-            customScopes: {
-              goto: true,
-            },
-          }}
           iconLabel={<IconUserCircle />}
           editModeContent={
             <CompanyAccountOwnerPickerFieldEditMode company={company} />
@@ -44,6 +37,7 @@ export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
               <></>
             )
           }
+          isDisplayModeContentEmpty={!company.accountOwner}
         />
       </RecoilScope>
     </RecoilScope>

@@ -10,8 +10,8 @@ import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
 import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
 import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
 import { BoardCardEditableFieldDate } from '@/ui/board/card-field/components/BoardCardEditableFieldDate';
-import { BoardCardEditableFieldText } from '@/ui/board/card-field/components/BoardCardEditableFieldText';
 import { ChipVariant } from '@/ui/chip/components/EntityChip';
+import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
 import { IconCurrencyDollar } from '@/ui/icon';
 import { IconCalendarEvent } from '@/ui/icon';
 import { Checkbox } from '@/ui/input/components/Checkbox';
@@ -21,6 +21,8 @@ import {
   useUpdateOnePipelineProgressMutation,
 } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
+
+import { CompanyAccountOwnerEditableField } from '../editable-field/components/CompanyAccountOwnerEditableField';
 
 import { CompanyChip } from './CompanyChip';
 
@@ -143,19 +145,18 @@ export function CompanyBoardCard() {
           <Checkbox checked={selected} onChange={handleCheckboxChange} />
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          <span>
-            <IconCurrencyDollar size={theme.icon.size.md} />
-            <BoardCardEditableFieldText
-              value={pipelineProgress.amount?.toString() || ''}
-              placeholder="Opportunity amount"
-              onChange={(value) =>
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  amount: parseInt(value),
-                })
-              }
-            />
-          </span>
+          <NumberEditableField
+            icon={<IconCurrencyDollar />}
+            placeholder="Opportunity amount"
+            value={pipelineProgress.amount}
+            onSubmit={(value) =>
+              handleCardUpdate({
+                ...pipelineProgress,
+                amount: value,
+              })
+            }
+          />
+          <CompanyAccountOwnerEditableField company={company} />
           <span>
             <IconCalendarEvent size={theme.icon.size.md} />
             <BoardCardEditableFieldDate

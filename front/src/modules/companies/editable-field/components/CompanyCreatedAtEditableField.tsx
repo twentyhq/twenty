@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { EditableField } from '@/ui/editable-field/components/EditableField';
+import { EditableFieldEditModeDate } from '@/ui/editable-field/components/EditableFieldEditModeDate';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { EditableFieldEditModeDate } from '@/ui/editable-field/variants/components/EditableFieldEditModeDate';
 import { IconCalendar } from '@/ui/icon';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { Company, useUpdateCompanyMutation } from '~/generated/graphql';
