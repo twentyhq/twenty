@@ -11,6 +11,7 @@ import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgres
 import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
 import { BoardCardEditableFieldDate } from '@/ui/board/card-field/components/BoardCardEditableFieldDate';
 import { BoardCardEditableFieldText } from '@/ui/board/card-field/components/BoardCardEditableFieldText';
+import { ChipVariant } from '@/ui/chip/components/EntityChip';
 import { IconCurrencyDollar } from '@/ui/icon';
 import { IconCalendarEvent } from '@/ui/icon';
 import { Checkbox } from '@/ui/input/components/Checkbox';
@@ -20,6 +21,8 @@ import {
   useUpdateOnePipelineProgressMutation,
 } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
+
+import { CompanyChip } from './CompanyChip';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -129,11 +132,13 @@ export function CompanyBoardCard() {
     <StyledBoardCardWrapper>
       <StyledBoardCard selected={selected}>
         <StyledBoardCardHeader>
-          <img
-            src={getLogoUrlFromDomainName(company.domainName).toString()}
-            alt={`${company.name}-company-logo`}
+          <CompanyChip
+            id={company.id}
+            name={company.name}
+            clickable
+            picture={getLogoUrlFromDomainName(company.domainName)}
+            variant={ChipVariant.transparent}
           />
-          <span>{company.name}</span>
           <div style={{ display: 'flex', flex: 1 }} />
           <Checkbox checked={selected} onChange={handleCheckboxChange} />
         </StyledBoardCardHeader>
