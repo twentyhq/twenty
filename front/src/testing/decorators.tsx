@@ -3,7 +3,6 @@ import { ApolloProvider } from '@apollo/client';
 import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { pipeline } from '@/companies/__stories__/mock-data';
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { defaultPipelineProgressOrderBy } from '@/pipeline/queries';
