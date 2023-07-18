@@ -16,15 +16,15 @@
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./docs/static/img/Preview-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="./docs/static/img/Preview-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/preview-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/preview-light.png">
       <img src="./docs/static/img/preview-light.png" alt="Companies view" />
     </picture>
   </a>
 </p>
 
 # About
-At Twenty PBC, we are building an Open Source CRM designed to be: Enjoyable to use, easily extendable, perfectly in-sync with your data. We think that being open source will better serve our customer needs and could also benefit the open source community.
+At Twenty, we are building an Open Source CRM designed to be: Enjoyable to use, easily extendable, perfectly in-sync with your data. We think that being open source will better serve our customer needs and could also benefit the open source community.
 
 **For our users:**
 - Transparency on what we are building.
@@ -57,8 +57,8 @@ You can add, filter, sort, edit and track your customers in a table:
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./docs/static/img/visualise-customer-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="./docs/static/img/visualise-customer-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/visualise-customer-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/visualise-customer-light.png">
       <img src="./docs/static/img/preview-light.png" alt="Companies view" />
     </picture>
   </a>
@@ -69,8 +69,8 @@ You can create one or several opportunities for each companies:
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./docs/static/img/follow-your-deals-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="./docs/static/img/follow-your-deals-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/follow-your-deals-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/follow-your-deals-light.png">
       <img src="./docs/static/img/preview-light.png" alt="Companies view" />
     </picture>
   </a>
@@ -81,8 +81,8 @@ You can create some rich notes (and very soon tasks) that will be displayed in a
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./docs/static/img/rich-notes-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="./docs/static/img/rich-notes-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/rich-notes-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/rich-notes-light.png">
       <img src="./docs/static/img/preview-light.png" alt="Companies view" />
     </picture>
   </a>
@@ -93,8 +93,8 @@ You can navigate quickly through the app using keyboard shortcuts and our integr
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./docs/static/img/shortcut-navigation-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="./docs/static/img/shortcut-navigation-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/shortcut-navigation-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/shortcut-navigation-light.png">
       <img src="./docs/static/img/preview-light.png" alt="Companies view" />
     </picture>
   </a>
