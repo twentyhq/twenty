@@ -172,26 +172,27 @@ export function ColorSchemeCard({
 
   if (variant === 'system') {
     return (
-      <AnimatePresence>
-        <StyledContainer>
-          <StyledMixedColorSchemeSegment
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            {...rest}
-          >
-            <ColorSchemeSegment
-              style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
-              controls={controls}
-              variant="light"
-            />
-            <ColorSchemeSegment
-              style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
-              controls={controls}
-              variant="dark"
-            />
-          </StyledMixedColorSchemeSegment>
+      <StyledContainer>
+        <StyledMixedColorSchemeSegment
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          {...rest}
+        >
+          <ColorSchemeSegment
+            style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+            controls={controls}
+            variant="light"
+          />
+          <ColorSchemeSegment
+            style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+            controls={controls}
+            variant="dark"
+          />
+        </StyledMixedColorSchemeSegment>
+        <AnimatePresence>
           {selected && (
             <StyledCheckmarkContainer
+              key="system"
               variants={checkmarkAnimationVariants}
               initial="initial"
               animate="animate"
@@ -201,23 +202,24 @@ export function ColorSchemeCard({
               <Checkmark />
             </StyledCheckmarkContainer>
           )}
-        </StyledContainer>
-      </AnimatePresence>
+        </AnimatePresence>
+      </StyledContainer>
     );
   }
 
   return (
-    <AnimatePresence>
-      <StyledContainer>
-        <ColorSchemeSegment
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          controls={controls}
-          variant={variant}
-          {...rest}
-        />
+    <StyledContainer>
+      <ColorSchemeSegment
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        controls={controls}
+        variant={variant}
+        {...rest}
+      />
+      <AnimatePresence>
         {selected && (
           <StyledCheckmarkContainer
+            key={variant}
             variants={checkmarkAnimationVariants}
             initial="initial"
             animate="animate"
@@ -227,7 +229,7 @@ export function ColorSchemeCard({
             <Checkmark />
           </StyledCheckmarkContainer>
         )}
-      </StyledContainer>
-    </AnimatePresence>
+      </AnimatePresence>
+    </StyledContainer>
   );
 }
