@@ -48,7 +48,7 @@ export const DatePickerContainer = ({ children }: DatePickerContainerProps) => {
 };
 
 type OwnProps = {
-  value: Date;
+  value: Date | null | undefined;
   onChange: (newDate: Date) => void;
 };
 
@@ -56,7 +56,7 @@ export function InplaceInputDate({ onChange, value }: OwnProps) {
   return (
     <InplaceInputContainer>
       <DatePicker
-        date={value}
+        date={value ?? new Date()}
         onChangeHandler={onChange}
         customInput={<DateDisplay />}
         customCalendarContainer={DatePickerContainer}

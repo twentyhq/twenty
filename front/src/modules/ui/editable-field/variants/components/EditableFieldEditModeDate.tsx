@@ -2,7 +2,7 @@ import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
 import { InplaceInputDate } from '@/ui/inplace-input/components/InplaceInputDate';
 import { parseDate } from '~/utils/date-utils';
 
-import { useEditableField } from '../hooks/useEditableField';
+import { useEditableField } from '../../hooks/useEditableField';
 
 type OwnProps = {
   value: string;

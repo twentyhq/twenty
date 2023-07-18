@@ -2116,7 +2116,7 @@ export type GetPersonQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName: string, lastName: string, displayName: string, email: string, createdAt: string, _commentThreadCount: number, company?: { __typename?: 'Company', id: string } | null } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName: string, lastName: string, displayName: string, email: string, createdAt: string, city: string, phone: string, _commentThreadCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
 
 export type UpdatePeopleMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -3583,9 +3583,13 @@ export const GetPersonDocument = gql`
     displayName
     email
     createdAt
+    city
+    phone
     _commentThreadCount
     company {
       id
+      name
+      domainName
     }
   }
 }
