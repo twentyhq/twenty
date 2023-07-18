@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
@@ -35,4 +36,58 @@ export class PipelineStageService {
 
   // GroupBy
   groupBy = this.prismaService.pipelineStage.groupBy;
+
+  // Customs
+  async createDefaultPipelineStages({
+    workspaceId,
+    pipelineId,
+  }: {
+    workspaceId: string;
+    pipelineId: string;
+  }) {
+    return this.createMany({
+      data: [
+        {
+          name: 'New',
+          color: '#B76796',
+          index: 0,
+          type: 'open',
+          pipelineId,
+          workspaceId,
+        },
+        {
+          name: 'Screening',
+          color: '#CB912F',
+          index: 1,
+          type: 'ongoing',
+          pipelineId,
+          workspaceId,
+        },
+        {
+          name: 'Meeting',
+          color: '#9065B0',
+          index: 2,
+          type: 'ongoing',
+          pipelineId,
+          workspaceId,
+        },
+        {
+          name: 'Proposal',
+          color: '#337EA9',
+          index: 3,
+          type: 'ongoing',
+          pipelineId,
+          workspaceId,
+        },
+        {
+          name: 'Customer',
+          color: '#079039',
+          index: 4,
+          type: 'won',
+          pipelineId,
+          workspaceId,
+        },
+      ],
+    });
+  }
 }

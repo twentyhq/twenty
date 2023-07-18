@@ -35,4 +35,16 @@ export class PipelineService {
 
   // GroupBy
   groupBy = this.prismaService.pipeline.groupBy;
+
+  // Customs
+  async createDefaultPipeline({ workspaceId }: { workspaceId: string }) {
+    return this.create({
+      data: {
+        name: 'Sales pipeline',
+        icon: '💰',
+        pipelineProgressableType: 'Company',
+        workspaceId,
+      },
+    });
+  }
 }

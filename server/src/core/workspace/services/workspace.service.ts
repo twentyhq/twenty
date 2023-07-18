@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.service';
+import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
 import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class WorkspaceService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly pipelineService: PipelineService,
+    private readonly pipelineStageService: PipelineStageService,
+  ) {}
 
   // Find
   findFirst = this.prismaService.workspace.findFirst;
@@ -35,4 +41,22 @@ export class WorkspaceService {
 
   // GroupBy
   groupBy = this.prismaService.workspace.groupBy;
+
+  // Customs
+  async createDefaultWorkspace() {
+    const workspace = await this.create({ data: {} });
+
+    // Create default pipeline
+    const pipeline = await this.pipelineService.createDefaultPipeline({
+      workspaceId: workspace.id,
+    });
+
+    // Create default stages
+    await this.pipelineStageService.createDefaultPipelineStages({
+      pipelineId: pipeline.id,
+      workspaceId: workspace.id,
+    });
+
+    return workspace;
+  }
 }
