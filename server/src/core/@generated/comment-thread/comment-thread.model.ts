@@ -7,6 +7,7 @@ import { CommentThreadTarget } from '../comment-thread-target/comment-thread-tar
 import { Comment } from '../comment/comment.model';
 import { Workspace } from '../workspace/workspace.model';
 import { User } from '../user/user.model';
+import { Attachment } from '../attachment/attachment.model';
 import { CommentThreadCount } from '../comment/comment-thread-count.output';
 
 @ObjectType()
@@ -65,6 +66,9 @@ export class CommentThread {
 
     @Field(() => User, {nullable:true})
     assignee?: User | null;
+
+    @Field(() => [Attachment], {nullable:true})
+    attachments?: Array<Attachment>;
 
     @HideField()
     _count?: CommentThreadCount;

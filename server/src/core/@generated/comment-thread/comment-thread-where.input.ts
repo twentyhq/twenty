@@ -10,6 +10,7 @@ import { CommentThreadTargetListRelationFilter } from '../comment-thread-target/
 import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
 import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.input';
 import { UserRelationFilter } from '../user/user-relation-filter.input';
+import { AttachmentListRelationFilter } from '../attachment/attachment-list-relation-filter.input';
 
 @InputType()
 export class CommentThreadWhereInput {
@@ -76,4 +77,7 @@ export class CommentThreadWhereInput {
 
     @Field(() => UserRelationFilter, {nullable:true})
     assignee?: UserRelationFilter;
+
+    @Field(() => AttachmentListRelationFilter, {nullable:true})
+    attachments?: AttachmentListRelationFilter;
 }

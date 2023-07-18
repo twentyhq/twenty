@@ -8,6 +8,7 @@ import { RefreshTokenOrderByRelationAggregateInput } from '../refresh-token/refr
 import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
 import { CommentThreadOrderByRelationAggregateInput } from '../comment-thread/comment-thread-order-by-relation-aggregate.input';
 import { UserSettingsOrderByWithRelationInput } from '../user-settings/user-settings-order-by-with-relation.input';
+import { AttachmentOrderByRelationAggregateInput } from '../attachment/attachment-order-by-relation-aggregate.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -80,4 +81,7 @@ export class UserOrderByWithRelationInput {
 
     @Field(() => UserSettingsOrderByWithRelationInput, {nullable:true})
     settings?: UserSettingsOrderByWithRelationInput;
+
+    @Field(() => AttachmentOrderByRelationAggregateInput, {nullable:true})
+    authoredAttachments?: AttachmentOrderByRelationAggregateInput;
 }

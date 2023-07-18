@@ -9,6 +9,7 @@ import { RefreshTokenCreateNestedManyWithoutUserInput } from '../refresh-token/r
 import { CommentCreateNestedManyWithoutAuthorInput } from '../comment/comment-create-nested-many-without-author.input';
 import { CommentThreadCreateNestedManyWithoutAssigneeInput } from '../comment-thread/comment-thread-create-nested-many-without-assignee.input';
 import { UserSettingsCreateNestedOneWithoutUserInput } from '../user-settings/user-settings-create-nested-one-without-user.input';
+import { AttachmentCreateNestedManyWithoutAuthorInput } from '../attachment/attachment-create-nested-many-without-author.input';
 
 @InputType()
 export class UserCreateWithoutAuthoredCommentThreadsInput {
@@ -95,4 +96,7 @@ export class UserCreateWithoutAuthoredCommentThreadsInput {
 
     @Field(() => UserSettingsCreateNestedOneWithoutUserInput, {nullable:false})
     settings!: UserSettingsCreateNestedOneWithoutUserInput;
+
+    @Field(() => AttachmentCreateNestedManyWithoutAuthorInput, {nullable:true})
+    authoredAttachments?: AttachmentCreateNestedManyWithoutAuthorInput;
 }

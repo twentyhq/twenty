@@ -13,6 +13,7 @@ import { RefreshTokenListRelationFilter } from '../refresh-token/refresh-token-l
 import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
 import { CommentThreadListRelationFilter } from '../comment-thread/comment-thread-list-relation-filter.input';
 import { UserSettingsRelationFilter } from '../user-settings/user-settings-relation-filter.input';
+import { AttachmentListRelationFilter } from '../attachment/attachment-list-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -94,4 +95,7 @@ export class UserWhereInput {
 
     @Field(() => UserSettingsRelationFilter, {nullable:true})
     settings?: UserSettingsRelationFilter;
+
+    @Field(() => AttachmentListRelationFilter, {nullable:true})
+    authoredAttachments?: AttachmentListRelationFilter;
 }

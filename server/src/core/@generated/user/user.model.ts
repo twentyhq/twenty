@@ -9,6 +9,7 @@ import { RefreshToken } from '../refresh-token/refresh-token.model';
 import { Comment } from '../comment/comment.model';
 import { CommentThread } from '../comment-thread/comment-thread.model';
 import { UserSettings } from '../user-settings/user-settings.model';
+import { Attachment } from '../attachment/attachment.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -82,6 +83,9 @@ export class User {
 
     @Field(() => UserSettings, {nullable:false})
     settings?: UserSettings;
+
+    @Field(() => [Attachment], {nullable:true})
+    authoredAttachments?: Array<Attachment>;
 
     @HideField()
     _count?: UserCount;

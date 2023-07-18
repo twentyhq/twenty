@@ -18,7 +18,7 @@ generator nestgraphql {
   fields_Validator_model  = true
   fields_Validator_from   = "class-validator"
 
-  // CommentThread create: Only Allow targets createMany and comments createMany
+  // CommentThread create: Only Allow targets createMany, comments createMany, attachment connect
   decorate_createCommentThreadTargets_type      = "*CommentThreadTargetCreateNestedManyWithoutCommentThreadInput"
   decorate_createCommentThreadTargets_field     = "!(createMany)"
   decorate_createCommentThreadTargets_name      = "HideField"
@@ -180,8 +180,9 @@ model User {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  authoredAttachments Attachment[] @relation(name: "authoredAttachments")
 
   @@map("users")
 }
@@ -386,6 +387,8 @@ model CommentThread {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  attachments Attachment[]
+
   @@map("comment_threads")
 }
 
@@ -526,4 +529,40 @@ model PipelineProgress {
   updatedAt DateTime @updatedAt
 
   @@map("pipeline_progresses")
+}
+
+enum AttachmentType {
+  Image
+  Audio
+  Video
+  TextDocument
+  Spreadsheet
+  Archive
+  Other
+}
+
+model Attachment {
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
+
+  fullPath String
+  type     AttachmentType
+  name     String
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], name: "authoredAttachments")
+
+  activityId String
+  activity   CommentThread @relation(fields: [activityId], references: [id])
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("attachments")
 }

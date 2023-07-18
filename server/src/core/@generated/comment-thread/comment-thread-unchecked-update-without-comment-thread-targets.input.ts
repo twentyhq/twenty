@@ -7,6 +7,7 @@ import { EnumActivityTypeFieldUpdateOperationsInput } from '../prisma/enum-activ
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { CommentUncheckedUpdateManyWithoutCommentThreadNestedInput } from '../comment/comment-unchecked-update-many-without-comment-thread-nested.input';
+import { AttachmentUncheckedUpdateManyWithoutActivityNestedInput } from '../attachment/attachment-unchecked-update-many-without-activity-nested.input';
 
 @InputType()
 export class CommentThreadUncheckedUpdateWithoutCommentThreadTargetsInput {
@@ -52,4 +53,7 @@ export class CommentThreadUncheckedUpdateWithoutCommentThreadTargetsInput {
 
     @Field(() => CommentUncheckedUpdateManyWithoutCommentThreadNestedInput, {nullable:true})
     comments?: CommentUncheckedUpdateManyWithoutCommentThreadNestedInput;
+
+    @Field(() => AttachmentUncheckedUpdateManyWithoutActivityNestedInput, {nullable:true})
+    attachments?: AttachmentUncheckedUpdateManyWithoutActivityNestedInput;
 }

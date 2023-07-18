@@ -14,6 +14,7 @@ import { RefreshTokenUpdateManyWithoutUserNestedInput } from '../refresh-token/r
 import { CommentUpdateManyWithoutAuthorNestedInput } from '../comment/comment-update-many-without-author-nested.input';
 import { CommentThreadUpdateManyWithoutAuthorNestedInput } from '../comment-thread/comment-thread-update-many-without-author-nested.input';
 import { UserSettingsUpdateOneRequiredWithoutUserNestedInput } from '../user-settings/user-settings-update-one-required-without-user-nested.input';
+import { AttachmentUpdateManyWithoutAuthorNestedInput } from '../attachment/attachment-update-many-without-author-nested.input';
 
 @InputType()
 export class UserUpdateWithoutAssignedCommentThreadsInput {
@@ -82,4 +83,7 @@ export class UserUpdateWithoutAssignedCommentThreadsInput {
 
     @Field(() => UserSettingsUpdateOneRequiredWithoutUserNestedInput, {nullable:true})
     settings?: UserSettingsUpdateOneRequiredWithoutUserNestedInput;
+
+    @Field(() => AttachmentUpdateManyWithoutAuthorNestedInput, {nullable:true})
+    authoredAttachments?: AttachmentUpdateManyWithoutAuthorNestedInput;
 }

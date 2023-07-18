@@ -8,6 +8,7 @@ import { CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput } from '../com
 import { RefreshTokenUncheckedCreateNestedManyWithoutUserInput } from '../refresh-token/refresh-token-unchecked-create-nested-many-without-user.input';
 import { CommentThreadUncheckedCreateNestedManyWithoutAuthorInput } from '../comment-thread/comment-thread-unchecked-create-nested-many-without-author.input';
 import { CommentThreadUncheckedCreateNestedManyWithoutAssigneeInput } from '../comment-thread/comment-thread-unchecked-create-nested-many-without-assignee.input';
+import { AttachmentUncheckedCreateNestedManyWithoutAuthorInput } from '../attachment/attachment-unchecked-create-nested-many-without-author.input';
 
 @InputType()
 export class UserUncheckedCreateWithoutCommentsInput {
@@ -94,4 +95,7 @@ export class UserUncheckedCreateWithoutCommentsInput {
 
     @Field(() => CommentThreadUncheckedCreateNestedManyWithoutAssigneeInput, {nullable:true})
     assignedCommentThreads?: CommentThreadUncheckedCreateNestedManyWithoutAssigneeInput;
+
+    @Field(() => AttachmentUncheckedCreateNestedManyWithoutAuthorInput, {nullable:true})
+    authoredAttachments?: AttachmentUncheckedCreateNestedManyWithoutAuthorInput;
 }

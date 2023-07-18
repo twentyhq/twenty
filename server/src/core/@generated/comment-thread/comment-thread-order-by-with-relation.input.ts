@@ -6,6 +6,7 @@ import { CommentThreadTargetOrderByRelationAggregateInput } from '../comment-thr
 import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
 import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-by-with-relation.input';
 import { UserOrderByWithRelationInput } from '../user/user-order-by-with-relation.input';
+import { AttachmentOrderByRelationAggregateInput } from '../attachment/attachment-order-by-relation-aggregate.input';
 
 @InputType()
 export class CommentThreadOrderByWithRelationInput {
@@ -63,4 +64,7 @@ export class CommentThreadOrderByWithRelationInput {
 
     @Field(() => UserOrderByWithRelationInput, {nullable:true})
     assignee?: UserOrderByWithRelationInput;
+
+    @Field(() => AttachmentOrderByRelationAggregateInput, {nullable:true})
+    attachments?: AttachmentOrderByRelationAggregateInput;
 }

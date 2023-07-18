@@ -7,6 +7,7 @@ import { CommentThreadTargetCreateNestedManyWithoutCommentThreadInput } from '..
 import { CommentCreateNestedManyWithoutCommentThreadInput } from '../comment/comment-create-nested-many-without-comment-thread.input';
 import { WorkspaceCreateNestedOneWithoutCommentThreadsInput } from '../workspace/workspace-create-nested-one-without-comment-threads.input';
 import { UserCreateNestedOneWithoutAuthoredCommentThreadsInput } from '../user/user-create-nested-one-without-authored-comment-threads.input';
+import { AttachmentCreateNestedManyWithoutActivityInput } from '../attachment/attachment-create-nested-many-without-activity.input';
 
 @InputType()
 export class CommentThreadCreateWithoutAssigneeInput {
@@ -54,4 +55,7 @@ export class CommentThreadCreateWithoutAssigneeInput {
 
     @Field(() => UserCreateNestedOneWithoutAuthoredCommentThreadsInput, {nullable:false})
     author!: UserCreateNestedOneWithoutAuthoredCommentThreadsInput;
+
+    @Field(() => AttachmentCreateNestedManyWithoutActivityInput, {nullable:true})
+    attachments?: AttachmentCreateNestedManyWithoutActivityInput;
 }

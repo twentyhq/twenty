@@ -34,14 +34,16 @@ export class FileUploadService {
     filename,
     mimeType,
     fileFolder,
+    fileId,
   }: {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
+    fileId?: string;
   }) {
     const ext = filename.split('.')?.[1];
-    const id = uuidV4();
+    const id = fileId ?? uuidV4();
     const name = `${id}${ext ? `.${ext}` : ''}`;
 
     await this._uploadFile({

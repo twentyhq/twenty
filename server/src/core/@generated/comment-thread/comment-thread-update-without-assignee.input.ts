@@ -10,6 +10,7 @@ import { CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput } from '..
 import { CommentUpdateManyWithoutCommentThreadNestedInput } from '../comment/comment-update-many-without-comment-thread-nested.input';
 import { WorkspaceUpdateOneRequiredWithoutCommentThreadsNestedInput } from '../workspace/workspace-update-one-required-without-comment-threads-nested.input';
 import { UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput } from '../user/user-update-one-required-without-authored-comment-threads-nested.input';
+import { AttachmentUpdateManyWithoutActivityNestedInput } from '../attachment/attachment-update-many-without-activity-nested.input';
 
 @InputType()
 export class CommentThreadUpdateWithoutAssigneeInput {
@@ -55,4 +56,7 @@ export class CommentThreadUpdateWithoutAssigneeInput {
 
     @Field(() => UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput, {nullable:true})
     author?: UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput;
+
+    @Field(() => AttachmentUpdateManyWithoutActivityNestedInput, {nullable:true})
+    attachments?: AttachmentUpdateManyWithoutActivityNestedInput;
 }

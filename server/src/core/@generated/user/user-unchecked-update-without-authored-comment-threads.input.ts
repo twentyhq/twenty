@@ -13,6 +13,7 @@ import { CompanyUncheckedUpdateManyWithoutAccountOwnerNestedInput } from '../com
 import { RefreshTokenUncheckedUpdateManyWithoutUserNestedInput } from '../refresh-token/refresh-token-unchecked-update-many-without-user-nested.input';
 import { CommentUncheckedUpdateManyWithoutAuthorNestedInput } from '../comment/comment-unchecked-update-many-without-author-nested.input';
 import { CommentThreadUncheckedUpdateManyWithoutAssigneeNestedInput } from '../comment-thread/comment-thread-unchecked-update-many-without-assignee-nested.input';
+import { AttachmentUncheckedUpdateManyWithoutAuthorNestedInput } from '../attachment/attachment-unchecked-update-many-without-author-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutAuthoredCommentThreadsInput {
@@ -81,4 +82,7 @@ export class UserUncheckedUpdateWithoutAuthoredCommentThreadsInput {
 
     @Field(() => CommentThreadUncheckedUpdateManyWithoutAssigneeNestedInput, {nullable:true})
     assignedCommentThreads?: CommentThreadUncheckedUpdateManyWithoutAssigneeNestedInput;
+
+    @Field(() => AttachmentUncheckedUpdateManyWithoutAuthorNestedInput, {nullable:true})
+    authoredAttachments?: AttachmentUncheckedUpdateManyWithoutAuthorNestedInput;
 }

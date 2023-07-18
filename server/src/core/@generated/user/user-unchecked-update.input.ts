@@ -14,6 +14,7 @@ import { RefreshTokenUncheckedUpdateManyWithoutUserNestedInput } from '../refres
 import { CommentUncheckedUpdateManyWithoutAuthorNestedInput } from '../comment/comment-unchecked-update-many-without-author-nested.input';
 import { CommentThreadUncheckedUpdateManyWithoutAuthorNestedInput } from '../comment-thread/comment-thread-unchecked-update-many-without-author-nested.input';
 import { CommentThreadUncheckedUpdateManyWithoutAssigneeNestedInput } from '../comment-thread/comment-thread-unchecked-update-many-without-assignee-nested.input';
+import { AttachmentUncheckedUpdateManyWithoutAuthorNestedInput } from '../attachment/attachment-unchecked-update-many-without-author-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateInput {
@@ -85,4 +86,7 @@ export class UserUncheckedUpdateInput {
 
     @Field(() => CommentThreadUncheckedUpdateManyWithoutAssigneeNestedInput, {nullable:true})
     assignedCommentThreads?: CommentThreadUncheckedUpdateManyWithoutAssigneeNestedInput;
+
+    @Field(() => AttachmentUncheckedUpdateManyWithoutAuthorNestedInput, {nullable:true})
+    authoredAttachments?: AttachmentUncheckedUpdateManyWithoutAuthorNestedInput;
 }

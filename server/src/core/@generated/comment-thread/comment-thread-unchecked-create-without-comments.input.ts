@@ -4,6 +4,7 @@ import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
 import { ActivityType } from '../prisma/activity-type.enum';
 import { CommentThreadTargetUncheckedCreateNestedManyWithoutCommentThreadInput } from '../comment-thread-target/comment-thread-target-unchecked-create-nested-many-without-comment-thread.input';
+import { AttachmentUncheckedCreateNestedManyWithoutActivityInput } from '../attachment/attachment-unchecked-create-nested-many-without-activity.input';
 
 @InputType()
 export class CommentThreadUncheckedCreateWithoutCommentsInput {
@@ -51,4 +52,7 @@ export class CommentThreadUncheckedCreateWithoutCommentsInput {
 
     @Field(() => CommentThreadTargetUncheckedCreateNestedManyWithoutCommentThreadInput, {nullable:true})
     commentThreadTargets?: CommentThreadTargetUncheckedCreateNestedManyWithoutCommentThreadInput;
+
+    @Field(() => AttachmentUncheckedCreateNestedManyWithoutActivityInput, {nullable:true})
+    attachments?: AttachmentUncheckedCreateNestedManyWithoutActivityInput;
 }

@@ -10,6 +10,7 @@ import { CommentCreateNestedManyWithoutAuthorInput } from '../comment/comment-cr
 import { CommentThreadCreateNestedManyWithoutAuthorInput } from '../comment-thread/comment-thread-create-nested-many-without-author.input';
 import { CommentThreadCreateNestedManyWithoutAssigneeInput } from '../comment-thread/comment-thread-create-nested-many-without-assignee.input';
 import { UserSettingsCreateNestedOneWithoutUserInput } from '../user-settings/user-settings-create-nested-one-without-user.input';
+import { AttachmentCreateNestedManyWithoutAuthorInput } from '../attachment/attachment-create-nested-many-without-author.input';
 
 @InputType()
 export class UserCreateInput {
@@ -99,4 +100,7 @@ export class UserCreateInput {
 
     @Field(() => UserSettingsCreateNestedOneWithoutUserInput, {nullable:false})
     settings!: UserSettingsCreateNestedOneWithoutUserInput;
+
+    @Field(() => AttachmentCreateNestedManyWithoutAuthorInput, {nullable:true})
+    authoredAttachments?: AttachmentCreateNestedManyWithoutAuthorInput;
 }

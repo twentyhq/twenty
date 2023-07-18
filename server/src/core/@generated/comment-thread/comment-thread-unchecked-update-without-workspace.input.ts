@@ -8,6 +8,7 @@ import { HideField } from '@nestjs/graphql';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { CommentThreadTargetUncheckedUpdateManyWithoutCommentThreadNestedInput } from '../comment-thread-target/comment-thread-target-unchecked-update-many-without-comment-thread-nested.input';
 import { CommentUncheckedUpdateManyWithoutCommentThreadNestedInput } from '../comment/comment-unchecked-update-many-without-comment-thread-nested.input';
+import { AttachmentUncheckedUpdateManyWithoutActivityNestedInput } from '../attachment/attachment-unchecked-update-many-without-activity-nested.input';
 
 @InputType()
 export class CommentThreadUncheckedUpdateWithoutWorkspaceInput {
@@ -53,4 +54,7 @@ export class CommentThreadUncheckedUpdateWithoutWorkspaceInput {
 
     @Field(() => CommentUncheckedUpdateManyWithoutCommentThreadNestedInput, {nullable:true})
     comments?: CommentUncheckedUpdateManyWithoutCommentThreadNestedInput;
+
+    @Field(() => AttachmentUncheckedUpdateManyWithoutActivityNestedInput, {nullable:true})
+    attachments?: AttachmentUncheckedUpdateManyWithoutActivityNestedInput;
 }

@@ -19,4 +19,7 @@ export class UserCount {
 
     @Field(() => Int, {nullable:false})
     assignedCommentThreads?: number;
+
+    @Field(() => Int, {nullable:false})
+    authoredAttachments?: number;
 }
