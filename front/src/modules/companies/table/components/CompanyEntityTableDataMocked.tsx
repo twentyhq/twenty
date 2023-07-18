@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { isFetchingEntityTableDataState } from '@/ui/tables/states/isFetchingEntityTableDataState';
-import { tableRowIdsState } from '@/ui/tables/states/tableRowIdsState';
+import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
+import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 
 import { useSetCompanyEntityTable } from '../hooks/useSetCompanyEntityTable';

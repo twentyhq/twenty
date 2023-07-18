@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { AnimatedTextWord } from '@/ui/components/motion/AnimatedTextWord';
+import { AnimatedTextWord } from '@/ui/animation/components/AnimatedTextWord';
 
 type Props = React.PropsWithChildren & {
   animate?: boolean;

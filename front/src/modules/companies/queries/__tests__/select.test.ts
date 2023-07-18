@@ -1,4 +1,4 @@
-import { reduceSortsToOrderBy } from '@/lib/filters-and-sorts/helpers';
+import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 
 import { CompaniesSelectedSortType } from '../select';
 

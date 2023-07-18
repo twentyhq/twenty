@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
@@ -6,7 +7,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 const meta: Meta<typeof CompanyBoardCard> = {
-  title: 'UI/Board/CompanyBoardCard',
+  title: 'Modules/Companies/CompanyBoardCard',
   component: CompanyBoardCard,
   decorators: [BoardCardDecorator],
 };
@@ -15,7 +16,11 @@ export default meta;
 type Story = StoryObj<typeof CompanyBoardCard>;
 
 const FakeSelectableCompanyBoardCard = () => {
-  return <CompanyBoardCard />;
+  return (
+    <MemoryRouter>
+      <CompanyBoardCard />
+    </MemoryRouter>
+  );
 };
 
 export const CompanyCompanyBoardCard: Story = {

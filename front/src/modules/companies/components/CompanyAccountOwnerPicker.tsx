@@ -1,9 +1,9 @@
-import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
-import { EntityForSelect } from '@/relation-picker/types/EntityForSelect';
-import { Entity } from '@/relation-picker/types/EntityTypeForSelect';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
+import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 import {
   Company,
   User,
@@ -42,6 +42,7 @@ export function CompanyAccountOwnerPicker({
       id: user.id,
       name: user.displayName,
       avatarType: 'rounded',
+      avatarUrl: user.avatarUrl ?? '',
     }),
     orderByField: 'firstName',
     searchOnFields: ['firstName', 'lastName'],

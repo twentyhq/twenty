@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { debounce } from '@/utils/debounce';
+import { debounce } from '~/utils/debounce';
 
 import { EditColumnTitleInput } from './EditColumnTitleInput';
 
@@ -36,7 +36,7 @@ export const StyledColumnTitle = styled.h3`
 `;
 
 const StyledAmount = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
 type OwnProps = {

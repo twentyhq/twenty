@@ -1,10 +1,10 @@
 import { CompanyChip } from '@/companies/components/CompanyChip';
-import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
-import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
-import { EditableCell } from '@/ui/components/editable-cell/EditableCell';
-import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
-import { getLogoUrlFromDomainName } from '@/utils/utils';
+import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
+import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
+import { isCreateModeScopedState } from '@/ui/table/editable-cell/states/isCreateModeScopedState';
 import { Company, Person } from '~/generated/graphql';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 import { PeopleCompanyCreateCell } from './PeopleCompanyCreateCell';
 import { PeopleCompanyPicker } from './PeopleCompanyPicker';
@@ -24,6 +24,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
 
   return (
     <EditableCell
+      transparent
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={
         isCreating ? (

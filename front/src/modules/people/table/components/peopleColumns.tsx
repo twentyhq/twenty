@@ -5,7 +5,7 @@ import {
   IconMap,
   IconPhone,
   IconUser,
-} from '@/ui/icons/index';
+} from '@/ui/icon/index';
 
 import { EditablePeopleCityCell } from './EditablePeopleCityCell';
 import { EditablePeopleCompanyCell } from './EditablePeopleCompanyCell';

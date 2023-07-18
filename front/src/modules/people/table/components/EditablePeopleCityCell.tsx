@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { peopleCityFamilyState } from '@/people/states/peopleCityFamilyState';
-import { EditableCellPhone } from '@/ui/components/editable-cell/types/EditableCellPhone';
-import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
+import { EditableCellText } from '@/ui/table/editable-cell/types/EditableCellText';
+import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdatePeopleMutation } from '~/generated/graphql';
 
 export function EditablePeopleCityCell() {
@@ -20,7 +20,7 @@ export function EditablePeopleCityCell() {
   }, [city]);
 
   return (
-    <EditableCellPhone
+    <EditableCellText
       value={internalValue}
       onChange={setInternalValue}
       onSubmit={() =>

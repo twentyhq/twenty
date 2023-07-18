@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { peoplePhoneFamilyState } from '@/people/states/peoplePhoneFamilyState';
-import { EditableCellPhone } from '@/ui/components/editable-cell/types/EditableCellPhone';
-import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
+import { EditableCellPhone } from '@/ui/table/editable-cell/types/EditableCellPhone';
+import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdatePeopleMutation } from '~/generated/graphql';
 
 export function EditablePeoplePhoneCell() {

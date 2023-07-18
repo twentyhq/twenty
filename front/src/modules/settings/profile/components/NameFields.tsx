@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { TextInput } from '@/ui/components/inputs/TextInput';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { GET_CURRENT_USER } from '@/users/queries';
 import { useUpdateUserMutation } from '~/generated/graphql';
 
@@ -72,9 +72,13 @@ export function NameFields({
   }, 500);
 
   useEffect(() => {
+    if (!currentUser) {
+      return;
+    }
+
     if (
-      currentUser?.firstName !== firstName ||
-      currentUser?.lastName !== lastName
+      currentUser.firstName !== firstName ||
+      currentUser.lastName !== lastName
     ) {
       debouncedUpdate();
     }

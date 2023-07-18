@@ -7,5 +7,9 @@ export function getImageAbsoluteURIOrBase64(imageUrl?: string | null) {
     return imageUrl;
   }
 
+  if (imageUrl?.startsWith('https:')) {
+    return imageUrl;
+  }
+
   return `${process.env.REACT_APP_FILES_URL}/${imageUrl}`;
 }

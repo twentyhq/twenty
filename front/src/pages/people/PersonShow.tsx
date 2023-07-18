@@ -1,15 +1,15 @@
 import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
-import { Timeline } from '@/comments/components/timeline/Timeline';
-import { usePersonQuery } from '@/people/services';
-import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
-import { PropertyBoxItem } from '@/ui/components/property-box/PropertyBoxItem';
-import { IconLink, IconUser } from '@/ui/icons/index';
-import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
-import { ShowPageLeftContainer } from '@/ui/layout/show-page/containers/ShowPageLeftContainer';
-import { ShowPageRightContainer } from '@/ui/layout/show-page/containers/ShowPageRightContainer';
-import { ShowPageSummaryCard } from '@/ui/layout/show-page/ShowPageSummaryCard';
+import { Timeline } from '@/activities/timeline/components/Timeline';
+import { usePersonQuery } from '@/people/queries';
+import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
+import { PropertyBoxItem } from '@/ui/editable-field/property-box/components/PropertyBoxItem';
+import { IconLink, IconUser } from '@/ui/icon';
+import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
+import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
+import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
+import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { CommentableType } from '~/generated/graphql';
 
 export function PersonShow() {

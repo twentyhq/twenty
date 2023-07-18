@@ -2,8 +2,8 @@ import { DateTime } from 'luxon';
 import { useRecoilValue } from 'recoil';
 
 import { peopleCreatedAtFamilyState } from '@/people/states/peopleCreatedAtFamilyState';
-import { EditableCellDate } from '@/ui/components/editable-cell/types/EditableCellDate';
-import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
+import { EditableCellDate } from '@/ui/table/editable-cell/types/EditableCellDate';
+import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdatePeopleMutation } from '~/generated/graphql';
 
 export function EditablePeopleCreatedAtCell() {
