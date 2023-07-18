@@ -1,11 +1,11 @@
-import { EntityChip } from '@/ui/chip/components/EntityChip';
+import { ChipVariantType, EntityChip } from '@/ui/chip/components/EntityChip';
 
 type OwnProps = {
   id: string;
   name: string;
   picture?: string;
   clickable?: boolean;
-  customColor?: string;
+  variant?: ChipVariantType;
 };
 
 export function CompanyChip({
@@ -13,7 +13,7 @@ export function CompanyChip({
   name,
   picture,
   clickable,
-  customColor,
+  variant = ChipVariantType.opaque,
 }: OwnProps) {
   return (
     <EntityChip
@@ -23,7 +23,7 @@ export function CompanyChip({
       avatarType="squared"
       clickable={clickable}
       picture={picture}
-      customColor={customColor}
+      variant={variant}
     />
   );
 }

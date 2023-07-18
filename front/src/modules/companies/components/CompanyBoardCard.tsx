@@ -11,6 +11,7 @@ import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgres
 import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
 import { BoardCardEditableFieldDate } from '@/ui/board/card-field/components/BoardCardEditableFieldDate';
 import { BoardCardEditableFieldText } from '@/ui/board/card-field/components/BoardCardEditableFieldText';
+import { ChipVariantType } from '@/ui/chip/components/EntityChip';
 import { IconCurrencyDollar } from '@/ui/icon';
 import { IconCalendarEvent } from '@/ui/icon';
 import { Checkbox } from '@/ui/input/components/Checkbox';
@@ -136,9 +137,7 @@ export function CompanyBoardCard() {
             name={company.name}
             clickable
             picture={getLogoUrlFromDomainName(company.domainName)}
-            customColor={
-              selected ? theme.selectedCard : theme.background.secondary
-            }
+            variant={ChipVariantType.transparent}
           />
           <div style={{ display: 'flex', flex: 1 }} />
           <Checkbox checked={selected} onChange={handleCheckboxChange} />

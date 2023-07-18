@@ -5,6 +5,11 @@ import styled from '@emotion/styled';
 
 import { Avatar, AvatarType } from '@/users/components/Avatar';
 
+export enum ChipVariantType {
+  opaque = 'opaque',
+  transparent = 'transparent',
+}
+
 const baseStyle = ({ theme }: { theme: Theme }) => `
   align-items: center;
   border-radius: ${theme.spacing(1)};
@@ -26,12 +31,18 @@ const baseStyle = ({ theme }: { theme: Theme }) => `
   white-space: nowrap;
 `;
 
-const StyledContainerLink = styled.div<{ customColor?: string }>`
+const StyledContainerLink = styled.div<{ variant: string }>`
   ${baseStyle}
-  background-color: ${({ theme, customColor }) =>
-    customColor ? customColor : theme.background.tertiary};
+  background-color: ${({ theme, variant }) =>
+    variant === ChipVariantType.opaque
+      ? theme.background.tertiary
+      : 'transparent'};
   :hover {
-    filter: brightness(95%);
+    background-color: ${({ variant, theme }) =>
+      variant === ChipVariantType.transparent &&
+      theme.background.transparent.light};
+    filter: ${({ variant }) =>
+      variant === ChipVariantType.opaque && 'brightness(95%)'};
   }
 `;
 
@@ -52,7 +63,7 @@ type OwnProps = {
   picture?: string;
   clickable?: boolean;
   avatarType?: AvatarType;
-  customColor?: string;
+  variant?: ChipVariantType;
 };
 
 export function EntityChip({
@@ -62,7 +73,7 @@ export function EntityChip({
   picture,
   clickable,
   avatarType = 'rounded',
-  customColor,
+  variant = ChipVariantType.opaque,
 }: OwnProps) {
   const navigate = useNavigate();
 
@@ -75,9 +86,9 @@ export function EntityChip({
 
   return clickable && linkToEntity ? (
     <StyledContainerLink
-      customColor={customColor}
       data-testid="entity-chip"
       onClick={handleLinkClick}
+      variant={variant}
     >
       <Avatar
         avatarUrl={picture}
