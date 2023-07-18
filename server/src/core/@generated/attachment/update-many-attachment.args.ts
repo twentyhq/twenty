@@ -10,8 +10,8 @@ export class UpdateManyAttachmentArgs {
 
     @Field(() => AttachmentUpdateManyMutationInput, {nullable:false})
     @Type(() => AttachmentUpdateManyMutationInput)
-    @ValidateNested({each: true})
     @Type(() => AttachmentUpdateManyMutationInput)
+    @ValidateNested({each: true})
     data!: AttachmentUpdateManyMutationInput;
 
     @Field(() => AttachmentWhereInput, {nullable:true})

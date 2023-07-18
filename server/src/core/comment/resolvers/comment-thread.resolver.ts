@@ -26,24 +26,12 @@ import { AppAbility } from 'src/ability/ability.factory';
 import { accessibleBy } from '@casl/prisma';
 import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
 import { DeleteManyCommentThreadArgs } from 'src/core/@generated/comment-thread/delete-many-comment-thread.args';
-import { Prisma, User } from '@prisma/client';
-import { AuthUser } from 'src/decorators/auth-user.decorator';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
-import { v4 } from 'uuid';
-import { FileUploadService } from 'src/core/file/services/file-upload.service';
-import { getAttachmentTypeFromFileName } from 'src/core/file/file.utils';
-import { AttachmentService } from 'src/core/file/services/attachment.service';
+import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)
 export class CommentThreadResolver {
-  constructor(
-    private readonly commentThreadService: CommentThreadService,
-    private readonly fileUploadService: FileUploadService,
-    private readonly attachmentService: AttachmentService,
-  ) {}
+  constructor(private readonly commentThreadService: CommentThreadService) {}
 
   @UseGuards(CreateOneCommentThreadGuard)
   @Mutation(() => CommentThread, {
@@ -137,48 +125,5 @@ export class CommentThreadResolver {
     return this.commentThreadService.deleteMany({
       where: args.where,
     });
-  }
-
-  @Mutation(() => String)
-  async uploadActivityAttachment(
-    @AuthUser() user: User,
-    @AuthWorkspace() workspace: Workspace,
-    @Args('activityId') activityId: string,
-    @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, filename, mimetype }: FileUpload,
-  ): Promise<string> {
-    const stream = createReadStream();
-    const buffer = await streamToBuffer(stream);
-    const fileFolder = FileFolder.Attachment;
-    const fileId = v4();
-
-    console.log(mimetype);
-    console.log(getAttachmentTypeFromFileName(mimetype));
-
-    const { path } = await this.fileUploadService.uploadFile({
-      file: buffer,
-      filename,
-      mimeType: mimetype,
-      fileFolder,
-      fileId,
-    });
-
-    await this.attachmentService.create({
-      data: {
-        id: fileId,
-        fullPath: path,
-        type: getAttachmentTypeFromFileName(filename),
-        name: filename,
-        activityId: activityId,
-        authorId: user.id,
-        workspaceId: workspace.id,
-      },
-      select: {
-        id: true,
-        fullPath: true,
-      },
-    });
-
-    return path;
   }
 }

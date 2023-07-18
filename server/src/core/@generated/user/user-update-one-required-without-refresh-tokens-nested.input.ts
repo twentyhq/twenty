@@ -1,32 +1,29 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { UserCreateWithoutRefreshTokensInput } from './user-create-without-refresh-tokens.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { UserCreateOrConnectWithoutRefreshTokensInput } from './user-create-or-connect-without-refresh-tokens.input';
 import { UserUpsertWithoutRefreshTokensInput } from './user-upsert-without-refresh-tokens.input';
 import { UserWhereUniqueInput } from './user-where-unique.input';
+import { Type } from 'class-transformer';
 import { UserUpdateWithoutRefreshTokensInput } from './user-update-without-refresh-tokens.input';
 
 @InputType()
 export class UserUpdateOneRequiredWithoutRefreshTokensNestedInput {
 
-    @Field(() => UserCreateWithoutRefreshTokensInput, {nullable:true})
-    @Type(() => UserCreateWithoutRefreshTokensInput)
+    @HideField()
     create?: UserCreateWithoutRefreshTokensInput;
 
-    @Field(() => UserCreateOrConnectWithoutRefreshTokensInput, {nullable:true})
-    @Type(() => UserCreateOrConnectWithoutRefreshTokensInput)
+    @HideField()
     connectOrCreate?: UserCreateOrConnectWithoutRefreshTokensInput;
 
-    @Field(() => UserUpsertWithoutRefreshTokensInput, {nullable:true})
-    @Type(() => UserUpsertWithoutRefreshTokensInput)
+    @HideField()
     upsert?: UserUpsertWithoutRefreshTokensInput;
 
     @Field(() => UserWhereUniqueInput, {nullable:true})
     @Type(() => UserWhereUniqueInput)
     connect?: UserWhereUniqueInput;
 
-    @Field(() => UserUpdateWithoutRefreshTokensInput, {nullable:true})
-    @Type(() => UserUpdateWithoutRefreshTokensInput)
+    @HideField()
     update?: UserUpdateWithoutRefreshTokensInput;
 }

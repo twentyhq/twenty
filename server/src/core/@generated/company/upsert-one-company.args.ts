@@ -3,6 +3,7 @@ import { ArgsType } from '@nestjs/graphql';
 import { CompanyWhereUniqueInput } from './company-where-unique.input';
 import { Type } from 'class-transformer';
 import { CompanyCreateInput } from './company-create.input';
+import { HideField } from '@nestjs/graphql';
 import { CompanyUpdateInput } from './company-update.input';
 
 @ArgsType()
@@ -12,11 +13,9 @@ export class UpsertOneCompanyArgs {
     @Type(() => CompanyWhereUniqueInput)
     where!: CompanyWhereUniqueInput;
 
-    @Field(() => CompanyCreateInput, {nullable:false})
-    @Type(() => CompanyCreateInput)
+    @HideField()
     create!: CompanyCreateInput;
 
-    @Field(() => CompanyUpdateInput, {nullable:false})
-    @Type(() => CompanyUpdateInput)
+    @HideField()
     update!: CompanyUpdateInput;
 }

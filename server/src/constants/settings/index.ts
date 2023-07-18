@@ -5,7 +5,6 @@ export const settings: Settings = {
     imageCropSizes: {
       'profile-picture': ['original'],
       'workspace-logo': ['original'],
-      attachment: ['original'],
     },
   },
 };

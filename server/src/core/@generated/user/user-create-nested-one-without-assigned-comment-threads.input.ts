@@ -1,19 +1,18 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { UserCreateWithoutAssignedCommentThreadsInput } from './user-create-without-assigned-comment-threads.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { UserCreateOrConnectWithoutAssignedCommentThreadsInput } from './user-create-or-connect-without-assigned-comment-threads.input';
 import { UserWhereUniqueInput } from './user-where-unique.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class UserCreateNestedOneWithoutAssignedCommentThreadsInput {
 
-    @Field(() => UserCreateWithoutAssignedCommentThreadsInput, {nullable:true})
-    @Type(() => UserCreateWithoutAssignedCommentThreadsInput)
+    @HideField()
     create?: UserCreateWithoutAssignedCommentThreadsInput;
 
-    @Field(() => UserCreateOrConnectWithoutAssignedCommentThreadsInput, {nullable:true})
-    @Type(() => UserCreateOrConnectWithoutAssignedCommentThreadsInput)
+    @HideField()
     connectOrCreate?: UserCreateOrConnectWithoutAssignedCommentThreadsInput;
 
     @Field(() => UserWhereUniqueInput, {nullable:true})

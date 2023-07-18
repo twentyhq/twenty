@@ -9,8 +9,8 @@ export class CreateManyCompanyArgs {
 
     @Field(() => [CompanyCreateManyInput], {nullable:false})
     @Type(() => CompanyCreateManyInput)
-    @ValidateNested({each: true})
     @Type(() => CompanyCreateManyInput)
+    @ValidateNested({each: true})
     data!: Array<CompanyCreateManyInput>;
 
     @Field(() => Boolean, {nullable:true})

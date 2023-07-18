@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { UserWhereUniqueInput } from './user-where-unique.input';
 import { Type } from 'class-transformer';
 import { UserCreateWithoutAuthoredAttachmentsInput } from './user-create-without-authored-attachments.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class UserCreateOrConnectWithoutAuthoredAttachmentsInput {
@@ -11,7 +12,6 @@ export class UserCreateOrConnectWithoutAuthoredAttachmentsInput {
     @Type(() => UserWhereUniqueInput)
     where!: UserWhereUniqueInput;
 
-    @Field(() => UserCreateWithoutAuthoredAttachmentsInput, {nullable:false})
-    @Type(() => UserCreateWithoutAuthoredAttachmentsInput)
+    @HideField()
     create!: UserCreateWithoutAuthoredAttachmentsInput;
 }

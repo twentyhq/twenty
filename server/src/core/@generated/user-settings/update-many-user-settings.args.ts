@@ -10,8 +10,8 @@ export class UpdateManyUserSettingsArgs {
 
     @Field(() => UserSettingsUpdateManyMutationInput, {nullable:false})
     @Type(() => UserSettingsUpdateManyMutationInput)
-    @ValidateNested({each: true})
     @Type(() => UserSettingsUpdateManyMutationInput)
+    @ValidateNested({each: true})
     data!: UserSettingsUpdateManyMutationInput;
 
     @Field(() => UserSettingsWhereInput, {nullable:true})

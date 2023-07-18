@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { CommentThreadWhereUniqueInput } from './comment-thread-where-unique.input';
 import { Type } from 'class-transformer';
 import { CommentThreadCreateWithoutCommentThreadTargetsInput } from './comment-thread-create-without-comment-thread-targets.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput {
@@ -11,7 +12,6 @@ export class CommentThreadCreateOrConnectWithoutCommentThreadTargetsInput {
     @Type(() => CommentThreadWhereUniqueInput)
     where!: CommentThreadWhereUniqueInput;
 
-    @Field(() => CommentThreadCreateWithoutCommentThreadTargetsInput, {nullable:false})
-    @Type(() => CommentThreadCreateWithoutCommentThreadTargetsInput)
+    @HideField()
     create!: CommentThreadCreateWithoutCommentThreadTargetsInput;
 }

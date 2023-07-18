@@ -1,17 +1,15 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { WorkspaceUpdateWithoutPipelineProgressesInput } from './workspace-update-without-pipeline-progresses.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { WorkspaceCreateWithoutPipelineProgressesInput } from './workspace-create-without-pipeline-progresses.input';
 
 @InputType()
 export class WorkspaceUpsertWithoutPipelineProgressesInput {
 
-    @Field(() => WorkspaceUpdateWithoutPipelineProgressesInput, {nullable:false})
-    @Type(() => WorkspaceUpdateWithoutPipelineProgressesInput)
+    @HideField()
     update!: WorkspaceUpdateWithoutPipelineProgressesInput;
 
-    @Field(() => WorkspaceCreateWithoutPipelineProgressesInput, {nullable:false})
-    @Type(() => WorkspaceCreateWithoutPipelineProgressesInput)
+    @HideField()
     create!: WorkspaceCreateWithoutPipelineProgressesInput;
 }

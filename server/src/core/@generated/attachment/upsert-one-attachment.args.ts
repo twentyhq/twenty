@@ -3,6 +3,7 @@ import { ArgsType } from '@nestjs/graphql';
 import { AttachmentWhereUniqueInput } from './attachment-where-unique.input';
 import { Type } from 'class-transformer';
 import { AttachmentCreateInput } from './attachment-create.input';
+import { HideField } from '@nestjs/graphql';
 import { AttachmentUpdateInput } from './attachment-update.input';
 
 @ArgsType()
@@ -12,11 +13,9 @@ export class UpsertOneAttachmentArgs {
     @Type(() => AttachmentWhereUniqueInput)
     where!: AttachmentWhereUniqueInput;
 
-    @Field(() => AttachmentCreateInput, {nullable:false})
-    @Type(() => AttachmentCreateInput)
+    @HideField()
     create!: AttachmentCreateInput;
 
-    @Field(() => AttachmentUpdateInput, {nullable:false})
-    @Type(() => AttachmentUpdateInput)
+    @HideField()
     update!: AttachmentUpdateInput;
 }

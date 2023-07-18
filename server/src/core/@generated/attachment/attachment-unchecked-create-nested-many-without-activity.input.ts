@@ -1,24 +1,22 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { AttachmentCreateWithoutActivityInput } from './attachment-create-without-activity.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { AttachmentCreateOrConnectWithoutActivityInput } from './attachment-create-or-connect-without-activity.input';
 import { AttachmentCreateManyActivityInputEnvelope } from './attachment-create-many-activity-input-envelope.input';
 import { AttachmentWhereUniqueInput } from './attachment-where-unique.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class AttachmentUncheckedCreateNestedManyWithoutActivityInput {
 
-    @Field(() => [AttachmentCreateWithoutActivityInput], {nullable:true})
-    @Type(() => AttachmentCreateWithoutActivityInput)
+    @HideField()
     create?: Array<AttachmentCreateWithoutActivityInput>;
 
-    @Field(() => [AttachmentCreateOrConnectWithoutActivityInput], {nullable:true})
-    @Type(() => AttachmentCreateOrConnectWithoutActivityInput)
+    @HideField()
     connectOrCreate?: Array<AttachmentCreateOrConnectWithoutActivityInput>;
 
-    @Field(() => AttachmentCreateManyActivityInputEnvelope, {nullable:true})
-    @Type(() => AttachmentCreateManyActivityInputEnvelope)
+    @HideField()
     createMany?: AttachmentCreateManyActivityInputEnvelope;
 
     @Field(() => [AttachmentWhereUniqueInput], {nullable:true})

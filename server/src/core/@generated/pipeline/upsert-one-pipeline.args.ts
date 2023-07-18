@@ -3,6 +3,7 @@ import { ArgsType } from '@nestjs/graphql';
 import { PipelineWhereUniqueInput } from './pipeline-where-unique.input';
 import { Type } from 'class-transformer';
 import { PipelineCreateInput } from './pipeline-create.input';
+import { HideField } from '@nestjs/graphql';
 import { PipelineUpdateInput } from './pipeline-update.input';
 
 @ArgsType()
@@ -12,11 +13,9 @@ export class UpsertOnePipelineArgs {
     @Type(() => PipelineWhereUniqueInput)
     where!: PipelineWhereUniqueInput;
 
-    @Field(() => PipelineCreateInput, {nullable:false})
-    @Type(() => PipelineCreateInput)
+    @HideField()
     create!: PipelineCreateInput;
 
-    @Field(() => PipelineUpdateInput, {nullable:false})
-    @Type(() => PipelineUpdateInput)
+    @HideField()
     update!: PipelineUpdateInput;
 }

@@ -10,8 +10,8 @@ export class UpdateOneAttachmentArgs {
 
     @Field(() => AttachmentUpdateInput, {nullable:false})
     @Type(() => AttachmentUpdateInput)
-    @ValidateNested({each: true})
     @Type(() => AttachmentUpdateInput)
+    @ValidateNested({each: true})
     data!: AttachmentUpdateInput;
 
     @Field(() => AttachmentWhereUniqueInput, {nullable:false})

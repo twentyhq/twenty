@@ -1,11 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { CommentCreateWithoutWorkspaceInput } from './comment-create-without-workspace.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { CommentCreateOrConnectWithoutWorkspaceInput } from './comment-create-or-connect-without-workspace.input';
 import { CommentUpsertWithWhereUniqueWithoutWorkspaceInput } from './comment-upsert-with-where-unique-without-workspace.input';
 import { CommentCreateManyWorkspaceInputEnvelope } from './comment-create-many-workspace-input-envelope.input';
 import { CommentWhereUniqueInput } from './comment-where-unique.input';
+import { Type } from 'class-transformer';
 import { CommentUpdateWithWhereUniqueWithoutWorkspaceInput } from './comment-update-with-where-unique-without-workspace.input';
 import { CommentUpdateManyWithWhereWithoutWorkspaceInput } from './comment-update-many-with-where-without-workspace.input';
 import { CommentScalarWhereInput } from './comment-scalar-where.input';
@@ -13,20 +14,16 @@ import { CommentScalarWhereInput } from './comment-scalar-where.input';
 @InputType()
 export class CommentUncheckedUpdateManyWithoutWorkspaceNestedInput {
 
-    @Field(() => [CommentCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CommentCreateWithoutWorkspaceInput)
+    @HideField()
     create?: Array<CommentCreateWithoutWorkspaceInput>;
 
-    @Field(() => [CommentCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CommentCreateOrConnectWithoutWorkspaceInput)
+    @HideField()
     connectOrCreate?: Array<CommentCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => [CommentUpsertWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CommentUpsertWithWhereUniqueWithoutWorkspaceInput)
+    @HideField()
     upsert?: Array<CommentUpsertWithWhereUniqueWithoutWorkspaceInput>;
 
-    @Field(() => CommentCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => CommentCreateManyWorkspaceInputEnvelope)
+    @HideField()
     createMany?: CommentCreateManyWorkspaceInputEnvelope;
 
     @Field(() => [CommentWhereUniqueInput], {nullable:true})
@@ -37,23 +34,19 @@ export class CommentUncheckedUpdateManyWithoutWorkspaceNestedInput {
     @Type(() => CommentWhereUniqueInput)
     disconnect?: Array<CommentWhereUniqueInput>;
 
-    @Field(() => [CommentWhereUniqueInput], {nullable:true})
-    @Type(() => CommentWhereUniqueInput)
+    @HideField()
     delete?: Array<CommentWhereUniqueInput>;
 
     @Field(() => [CommentWhereUniqueInput], {nullable:true})
     @Type(() => CommentWhereUniqueInput)
     connect?: Array<CommentWhereUniqueInput>;
 
-    @Field(() => [CommentUpdateWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CommentUpdateWithWhereUniqueWithoutWorkspaceInput)
+    @HideField()
     update?: Array<CommentUpdateWithWhereUniqueWithoutWorkspaceInput>;
 
-    @Field(() => [CommentUpdateManyWithWhereWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CommentUpdateManyWithWhereWithoutWorkspaceInput)
+    @HideField()
     updateMany?: Array<CommentUpdateManyWithWhereWithoutWorkspaceInput>;
 
-    @Field(() => [CommentScalarWhereInput], {nullable:true})
-    @Type(() => CommentScalarWhereInput)
+    @HideField()
     deleteMany?: Array<CommentScalarWhereInput>;
 }

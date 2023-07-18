@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { WorkspaceMemberWhereUniqueInput } from './workspace-member-where-unique.input';
 import { Type } from 'class-transformer';
 import { WorkspaceMemberCreateWithoutWorkspaceInput } from './workspace-member-create-without-workspace.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceMemberCreateOrConnectWithoutWorkspaceInput {
@@ -11,7 +12,6 @@ export class WorkspaceMemberCreateOrConnectWithoutWorkspaceInput {
     @Type(() => WorkspaceMemberWhereUniqueInput)
     where!: WorkspaceMemberWhereUniqueInput;
 
-    @Field(() => WorkspaceMemberCreateWithoutWorkspaceInput, {nullable:false})
-    @Type(() => WorkspaceMemberCreateWithoutWorkspaceInput)
+    @HideField()
     create!: WorkspaceMemberCreateWithoutWorkspaceInput;
 }

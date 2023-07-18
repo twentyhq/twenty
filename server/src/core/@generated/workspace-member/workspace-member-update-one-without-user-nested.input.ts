@@ -1,38 +1,35 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { WorkspaceMemberCreateWithoutUserInput } from './workspace-member-create-without-user.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { WorkspaceMemberCreateOrConnectWithoutUserInput } from './workspace-member-create-or-connect-without-user.input';
 import { WorkspaceMemberUpsertWithoutUserInput } from './workspace-member-upsert-without-user.input';
 import { WorkspaceMemberWhereUniqueInput } from './workspace-member-where-unique.input';
+import { Type } from 'class-transformer';
 import { WorkspaceMemberUpdateWithoutUserInput } from './workspace-member-update-without-user.input';
 
 @InputType()
 export class WorkspaceMemberUpdateOneWithoutUserNestedInput {
 
-    @Field(() => WorkspaceMemberCreateWithoutUserInput, {nullable:true})
-    @Type(() => WorkspaceMemberCreateWithoutUserInput)
+    @HideField()
     create?: WorkspaceMemberCreateWithoutUserInput;
 
-    @Field(() => WorkspaceMemberCreateOrConnectWithoutUserInput, {nullable:true})
-    @Type(() => WorkspaceMemberCreateOrConnectWithoutUserInput)
+    @HideField()
     connectOrCreate?: WorkspaceMemberCreateOrConnectWithoutUserInput;
 
-    @Field(() => WorkspaceMemberUpsertWithoutUserInput, {nullable:true})
-    @Type(() => WorkspaceMemberUpsertWithoutUserInput)
+    @HideField()
     upsert?: WorkspaceMemberUpsertWithoutUserInput;
 
     @Field(() => Boolean, {nullable:true})
     disconnect?: boolean;
 
-    @Field(() => Boolean, {nullable:true})
+    @HideField()
     delete?: boolean;
 
     @Field(() => WorkspaceMemberWhereUniqueInput, {nullable:true})
     @Type(() => WorkspaceMemberWhereUniqueInput)
     connect?: WorkspaceMemberWhereUniqueInput;
 
-    @Field(() => WorkspaceMemberUpdateWithoutUserInput, {nullable:true})
-    @Type(() => WorkspaceMemberUpdateWithoutUserInput)
+    @HideField()
     update?: WorkspaceMemberUpdateWithoutUserInput;
 }

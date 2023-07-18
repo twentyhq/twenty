@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { CompanyWhereUniqueInput } from './company-where-unique.input';
 import { Type } from 'class-transformer';
 import { CompanyCreateWithoutAccountOwnerInput } from './company-create-without-account-owner.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class CompanyCreateOrConnectWithoutAccountOwnerInput {
@@ -11,7 +12,6 @@ export class CompanyCreateOrConnectWithoutAccountOwnerInput {
     @Type(() => CompanyWhereUniqueInput)
     where!: CompanyWhereUniqueInput;
 
-    @Field(() => CompanyCreateWithoutAccountOwnerInput, {nullable:false})
-    @Type(() => CompanyCreateWithoutAccountOwnerInput)
+    @HideField()
     create!: CompanyCreateWithoutAccountOwnerInput;
 }

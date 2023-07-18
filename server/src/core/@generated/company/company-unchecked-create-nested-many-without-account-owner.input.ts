@@ -1,24 +1,22 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { CompanyCreateWithoutAccountOwnerInput } from './company-create-without-account-owner.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { CompanyCreateOrConnectWithoutAccountOwnerInput } from './company-create-or-connect-without-account-owner.input';
 import { CompanyCreateManyAccountOwnerInputEnvelope } from './company-create-many-account-owner-input-envelope.input';
 import { CompanyWhereUniqueInput } from './company-where-unique.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class CompanyUncheckedCreateNestedManyWithoutAccountOwnerInput {
 
-    @Field(() => [CompanyCreateWithoutAccountOwnerInput], {nullable:true})
-    @Type(() => CompanyCreateWithoutAccountOwnerInput)
+    @HideField()
     create?: Array<CompanyCreateWithoutAccountOwnerInput>;
 
-    @Field(() => [CompanyCreateOrConnectWithoutAccountOwnerInput], {nullable:true})
-    @Type(() => CompanyCreateOrConnectWithoutAccountOwnerInput)
+    @HideField()
     connectOrCreate?: Array<CompanyCreateOrConnectWithoutAccountOwnerInput>;
 
-    @Field(() => CompanyCreateManyAccountOwnerInputEnvelope, {nullable:true})
-    @Type(() => CompanyCreateManyAccountOwnerInputEnvelope)
+    @HideField()
     createMany?: CompanyCreateManyAccountOwnerInputEnvelope;
 
     @Field(() => [CompanyWhereUniqueInput], {nullable:true})

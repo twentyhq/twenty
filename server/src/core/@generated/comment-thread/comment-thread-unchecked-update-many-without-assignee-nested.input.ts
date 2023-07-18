@@ -1,11 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { CommentThreadCreateWithoutAssigneeInput } from './comment-thread-create-without-assignee.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { CommentThreadCreateOrConnectWithoutAssigneeInput } from './comment-thread-create-or-connect-without-assignee.input';
 import { CommentThreadUpsertWithWhereUniqueWithoutAssigneeInput } from './comment-thread-upsert-with-where-unique-without-assignee.input';
 import { CommentThreadCreateManyAssigneeInputEnvelope } from './comment-thread-create-many-assignee-input-envelope.input';
 import { CommentThreadWhereUniqueInput } from './comment-thread-where-unique.input';
+import { Type } from 'class-transformer';
 import { CommentThreadUpdateWithWhereUniqueWithoutAssigneeInput } from './comment-thread-update-with-where-unique-without-assignee.input';
 import { CommentThreadUpdateManyWithWhereWithoutAssigneeInput } from './comment-thread-update-many-with-where-without-assignee.input';
 import { CommentThreadScalarWhereInput } from './comment-thread-scalar-where.input';
@@ -13,20 +14,16 @@ import { CommentThreadScalarWhereInput } from './comment-thread-scalar-where.inp
 @InputType()
 export class CommentThreadUncheckedUpdateManyWithoutAssigneeNestedInput {
 
-    @Field(() => [CommentThreadCreateWithoutAssigneeInput], {nullable:true})
-    @Type(() => CommentThreadCreateWithoutAssigneeInput)
+    @HideField()
     create?: Array<CommentThreadCreateWithoutAssigneeInput>;
 
-    @Field(() => [CommentThreadCreateOrConnectWithoutAssigneeInput], {nullable:true})
-    @Type(() => CommentThreadCreateOrConnectWithoutAssigneeInput)
+    @HideField()
     connectOrCreate?: Array<CommentThreadCreateOrConnectWithoutAssigneeInput>;
 
-    @Field(() => [CommentThreadUpsertWithWhereUniqueWithoutAssigneeInput], {nullable:true})
-    @Type(() => CommentThreadUpsertWithWhereUniqueWithoutAssigneeInput)
+    @HideField()
     upsert?: Array<CommentThreadUpsertWithWhereUniqueWithoutAssigneeInput>;
 
-    @Field(() => CommentThreadCreateManyAssigneeInputEnvelope, {nullable:true})
-    @Type(() => CommentThreadCreateManyAssigneeInputEnvelope)
+    @HideField()
     createMany?: CommentThreadCreateManyAssigneeInputEnvelope;
 
     @Field(() => [CommentThreadWhereUniqueInput], {nullable:true})
@@ -37,23 +34,19 @@ export class CommentThreadUncheckedUpdateManyWithoutAssigneeNestedInput {
     @Type(() => CommentThreadWhereUniqueInput)
     disconnect?: Array<CommentThreadWhereUniqueInput>;
 
-    @Field(() => [CommentThreadWhereUniqueInput], {nullable:true})
-    @Type(() => CommentThreadWhereUniqueInput)
+    @HideField()
     delete?: Array<CommentThreadWhereUniqueInput>;
 
     @Field(() => [CommentThreadWhereUniqueInput], {nullable:true})
     @Type(() => CommentThreadWhereUniqueInput)
     connect?: Array<CommentThreadWhereUniqueInput>;
 
-    @Field(() => [CommentThreadUpdateWithWhereUniqueWithoutAssigneeInput], {nullable:true})
-    @Type(() => CommentThreadUpdateWithWhereUniqueWithoutAssigneeInput)
+    @HideField()
     update?: Array<CommentThreadUpdateWithWhereUniqueWithoutAssigneeInput>;
 
-    @Field(() => [CommentThreadUpdateManyWithWhereWithoutAssigneeInput], {nullable:true})
-    @Type(() => CommentThreadUpdateManyWithWhereWithoutAssigneeInput)
+    @HideField()
     updateMany?: Array<CommentThreadUpdateManyWithWhereWithoutAssigneeInput>;
 
-    @Field(() => [CommentThreadScalarWhereInput], {nullable:true})
-    @Type(() => CommentThreadScalarWhereInput)
+    @HideField()
     deleteMany?: Array<CommentThreadScalarWhereInput>;
 }

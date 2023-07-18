@@ -1,11 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { RefreshTokenCreateWithoutUserInput } from './refresh-token-create-without-user.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { RefreshTokenCreateOrConnectWithoutUserInput } from './refresh-token-create-or-connect-without-user.input';
 import { RefreshTokenUpsertWithWhereUniqueWithoutUserInput } from './refresh-token-upsert-with-where-unique-without-user.input';
 import { RefreshTokenCreateManyUserInputEnvelope } from './refresh-token-create-many-user-input-envelope.input';
 import { RefreshTokenWhereUniqueInput } from './refresh-token-where-unique.input';
+import { Type } from 'class-transformer';
 import { RefreshTokenUpdateWithWhereUniqueWithoutUserInput } from './refresh-token-update-with-where-unique-without-user.input';
 import { RefreshTokenUpdateManyWithWhereWithoutUserInput } from './refresh-token-update-many-with-where-without-user.input';
 import { RefreshTokenScalarWhereInput } from './refresh-token-scalar-where.input';
@@ -13,20 +14,16 @@ import { RefreshTokenScalarWhereInput } from './refresh-token-scalar-where.input
 @InputType()
 export class RefreshTokenUncheckedUpdateManyWithoutUserNestedInput {
 
-    @Field(() => [RefreshTokenCreateWithoutUserInput], {nullable:true})
-    @Type(() => RefreshTokenCreateWithoutUserInput)
+    @HideField()
     create?: Array<RefreshTokenCreateWithoutUserInput>;
 
-    @Field(() => [RefreshTokenCreateOrConnectWithoutUserInput], {nullable:true})
-    @Type(() => RefreshTokenCreateOrConnectWithoutUserInput)
+    @HideField()
     connectOrCreate?: Array<RefreshTokenCreateOrConnectWithoutUserInput>;
 
-    @Field(() => [RefreshTokenUpsertWithWhereUniqueWithoutUserInput], {nullable:true})
-    @Type(() => RefreshTokenUpsertWithWhereUniqueWithoutUserInput)
+    @HideField()
     upsert?: Array<RefreshTokenUpsertWithWhereUniqueWithoutUserInput>;
 
-    @Field(() => RefreshTokenCreateManyUserInputEnvelope, {nullable:true})
-    @Type(() => RefreshTokenCreateManyUserInputEnvelope)
+    @HideField()
     createMany?: RefreshTokenCreateManyUserInputEnvelope;
 
     @Field(() => [RefreshTokenWhereUniqueInput], {nullable:true})
@@ -37,23 +34,19 @@ export class RefreshTokenUncheckedUpdateManyWithoutUserNestedInput {
     @Type(() => RefreshTokenWhereUniqueInput)
     disconnect?: Array<RefreshTokenWhereUniqueInput>;
 
-    @Field(() => [RefreshTokenWhereUniqueInput], {nullable:true})
-    @Type(() => RefreshTokenWhereUniqueInput)
+    @HideField()
     delete?: Array<RefreshTokenWhereUniqueInput>;
 
     @Field(() => [RefreshTokenWhereUniqueInput], {nullable:true})
     @Type(() => RefreshTokenWhereUniqueInput)
     connect?: Array<RefreshTokenWhereUniqueInput>;
 
-    @Field(() => [RefreshTokenUpdateWithWhereUniqueWithoutUserInput], {nullable:true})
-    @Type(() => RefreshTokenUpdateWithWhereUniqueWithoutUserInput)
+    @HideField()
     update?: Array<RefreshTokenUpdateWithWhereUniqueWithoutUserInput>;
 
-    @Field(() => [RefreshTokenUpdateManyWithWhereWithoutUserInput], {nullable:true})
-    @Type(() => RefreshTokenUpdateManyWithWhereWithoutUserInput)
+    @HideField()
     updateMany?: Array<RefreshTokenUpdateManyWithWhereWithoutUserInput>;
 
-    @Field(() => [RefreshTokenScalarWhereInput], {nullable:true})
-    @Type(() => RefreshTokenScalarWhereInput)
+    @HideField()
     deleteMany?: Array<RefreshTokenScalarWhereInput>;
 }

@@ -9,6 +9,7 @@ import { WorkspaceModule } from './workspace/workspace.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
 import { ClientConfigModule } from './client-config/client-config.module';
+import { AttachmentModule } from './attachment/attachment.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
     AnalyticsModule,
     FileModule,
     ClientConfigModule,
+    AttachmentModule,
   ],
   exports: [
     AuthModule,
@@ -32,6 +34,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
     PipelineModule,
     WorkspaceModule,
     AnalyticsModule,
+    AttachmentModule,
   ],
 })
 export class CoreModule {}

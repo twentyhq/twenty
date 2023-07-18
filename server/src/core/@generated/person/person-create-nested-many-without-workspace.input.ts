@@ -1,24 +1,22 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { PersonCreateWithoutWorkspaceInput } from './person-create-without-workspace.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { PersonCreateOrConnectWithoutWorkspaceInput } from './person-create-or-connect-without-workspace.input';
 import { PersonCreateManyWorkspaceInputEnvelope } from './person-create-many-workspace-input-envelope.input';
 import { PersonWhereUniqueInput } from './person-where-unique.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class PersonCreateNestedManyWithoutWorkspaceInput {
 
-    @Field(() => [PersonCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PersonCreateWithoutWorkspaceInput)
+    @HideField()
     create?: Array<PersonCreateWithoutWorkspaceInput>;
 
-    @Field(() => [PersonCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PersonCreateOrConnectWithoutWorkspaceInput)
+    @HideField()
     connectOrCreate?: Array<PersonCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => PersonCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => PersonCreateManyWorkspaceInputEnvelope)
+    @HideField()
     createMany?: PersonCreateManyWorkspaceInputEnvelope;
 
     @Field(() => [PersonWhereUniqueInput], {nullable:true})

@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { AttachmentWhereUniqueInput } from './attachment-where-unique.input';
 import { Type } from 'class-transformer';
 import { AttachmentUpdateWithoutAuthorInput } from './attachment-update-without-author.input';
+import { HideField } from '@nestjs/graphql';
 import { AttachmentCreateWithoutAuthorInput } from './attachment-create-without-author.input';
 
 @InputType()
@@ -12,11 +13,9 @@ export class AttachmentUpsertWithWhereUniqueWithoutAuthorInput {
     @Type(() => AttachmentWhereUniqueInput)
     where!: AttachmentWhereUniqueInput;
 
-    @Field(() => AttachmentUpdateWithoutAuthorInput, {nullable:false})
-    @Type(() => AttachmentUpdateWithoutAuthorInput)
+    @HideField()
     update!: AttachmentUpdateWithoutAuthorInput;
 
-    @Field(() => AttachmentCreateWithoutAuthorInput, {nullable:false})
-    @Type(() => AttachmentCreateWithoutAuthorInput)
+    @HideField()
     create!: AttachmentCreateWithoutAuthorInput;
 }

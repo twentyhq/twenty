@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { WorkspaceWhereUniqueInput } from './workspace-where-unique.input';
 import { Type } from 'class-transformer';
 import { WorkspaceCreateWithoutPipelineProgressesInput } from './workspace-create-without-pipeline-progresses.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceCreateOrConnectWithoutPipelineProgressesInput {
@@ -11,7 +12,6 @@ export class WorkspaceCreateOrConnectWithoutPipelineProgressesInput {
     @Type(() => WorkspaceWhereUniqueInput)
     where!: WorkspaceWhereUniqueInput;
 
-    @Field(() => WorkspaceCreateWithoutPipelineProgressesInput, {nullable:false})
-    @Type(() => WorkspaceCreateWithoutPipelineProgressesInput)
+    @HideField()
     create!: WorkspaceCreateWithoutPipelineProgressesInput;
 }

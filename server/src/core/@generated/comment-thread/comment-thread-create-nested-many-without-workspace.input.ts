@@ -1,24 +1,22 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { CommentThreadCreateWithoutWorkspaceInput } from './comment-thread-create-without-workspace.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { CommentThreadCreateOrConnectWithoutWorkspaceInput } from './comment-thread-create-or-connect-without-workspace.input';
 import { CommentThreadCreateManyWorkspaceInputEnvelope } from './comment-thread-create-many-workspace-input-envelope.input';
 import { CommentThreadWhereUniqueInput } from './comment-thread-where-unique.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class CommentThreadCreateNestedManyWithoutWorkspaceInput {
 
-    @Field(() => [CommentThreadCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CommentThreadCreateWithoutWorkspaceInput)
+    @HideField()
     create?: Array<CommentThreadCreateWithoutWorkspaceInput>;
 
-    @Field(() => [CommentThreadCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => CommentThreadCreateOrConnectWithoutWorkspaceInput)
+    @HideField()
     connectOrCreate?: Array<CommentThreadCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => CommentThreadCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => CommentThreadCreateManyWorkspaceInputEnvelope)
+    @HideField()
     createMany?: CommentThreadCreateManyWorkspaceInputEnvelope;
 
     @Field(() => [CommentThreadWhereUniqueInput], {nullable:true})

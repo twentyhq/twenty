@@ -1,32 +1,29 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { UserCreateWithoutAuthoredAttachmentsInput } from './user-create-without-authored-attachments.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { UserCreateOrConnectWithoutAuthoredAttachmentsInput } from './user-create-or-connect-without-authored-attachments.input';
 import { UserUpsertWithoutAuthoredAttachmentsInput } from './user-upsert-without-authored-attachments.input';
 import { UserWhereUniqueInput } from './user-where-unique.input';
+import { Type } from 'class-transformer';
 import { UserUpdateWithoutAuthoredAttachmentsInput } from './user-update-without-authored-attachments.input';
 
 @InputType()
 export class UserUpdateOneRequiredWithoutAuthoredAttachmentsNestedInput {
 
-    @Field(() => UserCreateWithoutAuthoredAttachmentsInput, {nullable:true})
-    @Type(() => UserCreateWithoutAuthoredAttachmentsInput)
+    @HideField()
     create?: UserCreateWithoutAuthoredAttachmentsInput;
 
-    @Field(() => UserCreateOrConnectWithoutAuthoredAttachmentsInput, {nullable:true})
-    @Type(() => UserCreateOrConnectWithoutAuthoredAttachmentsInput)
+    @HideField()
     connectOrCreate?: UserCreateOrConnectWithoutAuthoredAttachmentsInput;
 
-    @Field(() => UserUpsertWithoutAuthoredAttachmentsInput, {nullable:true})
-    @Type(() => UserUpsertWithoutAuthoredAttachmentsInput)
+    @HideField()
     upsert?: UserUpsertWithoutAuthoredAttachmentsInput;
 
     @Field(() => UserWhereUniqueInput, {nullable:true})
     @Type(() => UserWhereUniqueInput)
     connect?: UserWhereUniqueInput;
 
-    @Field(() => UserUpdateWithoutAuthoredAttachmentsInput, {nullable:true})
-    @Type(() => UserUpdateWithoutAuthoredAttachmentsInput)
+    @HideField()
     update?: UserUpdateWithoutAuthoredAttachmentsInput;
 }

@@ -3,6 +3,7 @@ import { ArgsType } from '@nestjs/graphql';
 import { UserWhereUniqueInput } from './user-where-unique.input';
 import { Type } from 'class-transformer';
 import { UserCreateInput } from './user-create.input';
+import { HideField } from '@nestjs/graphql';
 import { UserUpdateInput } from './user-update.input';
 
 @ArgsType()
@@ -12,11 +13,9 @@ export class UpsertOneUserArgs {
     @Type(() => UserWhereUniqueInput)
     where!: UserWhereUniqueInput;
 
-    @Field(() => UserCreateInput, {nullable:false})
-    @Type(() => UserCreateInput)
+    @HideField()
     create!: UserCreateInput;
 
-    @Field(() => UserUpdateInput, {nullable:false})
-    @Type(() => UserUpdateInput)
+    @HideField()
     update!: UserUpdateInput;
 }

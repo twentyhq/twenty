@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { RefreshTokenWhereUniqueInput } from './refresh-token-where-unique.input';
 import { Type } from 'class-transformer';
 import { RefreshTokenCreateWithoutUserInput } from './refresh-token-create-without-user.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class RefreshTokenCreateOrConnectWithoutUserInput {
@@ -11,7 +12,6 @@ export class RefreshTokenCreateOrConnectWithoutUserInput {
     @Type(() => RefreshTokenWhereUniqueInput)
     where!: RefreshTokenWhereUniqueInput;
 
-    @Field(() => RefreshTokenCreateWithoutUserInput, {nullable:false})
-    @Type(() => RefreshTokenCreateWithoutUserInput)
+    @HideField()
     create!: RefreshTokenCreateWithoutUserInput;
 }

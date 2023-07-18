@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { UserWhereUniqueInput } from './user-where-unique.input';
 import { Type } from 'class-transformer';
 import { UserCreateWithoutSettingsInput } from './user-create-without-settings.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class UserCreateOrConnectWithoutSettingsInput {
@@ -11,7 +12,6 @@ export class UserCreateOrConnectWithoutSettingsInput {
     @Type(() => UserWhereUniqueInput)
     where!: UserWhereUniqueInput;
 
-    @Field(() => UserCreateWithoutSettingsInput, {nullable:false})
-    @Type(() => UserCreateWithoutSettingsInput)
+    @HideField()
     create!: UserCreateWithoutSettingsInput;
 }

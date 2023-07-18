@@ -26,10 +26,12 @@ export class PersonUpdateManyWithoutCompanyNestedInput {
     @HideField()
     createMany?: PersonCreateManyCompanyInputEnvelope;
 
-    @HideField()
+    @Field(() => [PersonWhereUniqueInput], {nullable:true})
+    @Type(() => PersonWhereUniqueInput)
     set?: Array<PersonWhereUniqueInput>;
 
-    @HideField()
+    @Field(() => [PersonWhereUniqueInput], {nullable:true})
+    @Type(() => PersonWhereUniqueInput)
     disconnect?: Array<PersonWhereUniqueInput>;
 
     @HideField()

@@ -9,7 +9,7 @@ export class CreateOneCommentThreadTargetArgs {
 
     @Field(() => CommentThreadTargetCreateInput, {nullable:false})
     @Type(() => CommentThreadTargetCreateInput)
-    @ValidateNested({each: true})
     @Type(() => CommentThreadTargetCreateInput)
+    @ValidateNested({each: true})
     data!: CommentThreadTargetCreateInput;
 }

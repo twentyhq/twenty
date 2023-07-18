@@ -4,8 +4,8 @@ import { CommentCreateWithoutCommentThreadInput } from './comment-create-without
 import { HideField } from '@nestjs/graphql';
 import { CommentCreateOrConnectWithoutCommentThreadInput } from './comment-create-or-connect-without-comment-thread.input';
 import { CommentCreateManyCommentThreadInputEnvelope } from './comment-create-many-comment-thread-input-envelope.input';
-import { Type } from 'class-transformer';
 import { CommentWhereUniqueInput } from './comment-where-unique.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class CommentCreateNestedManyWithoutCommentThreadInput {
@@ -16,10 +16,10 @@ export class CommentCreateNestedManyWithoutCommentThreadInput {
     @HideField()
     connectOrCreate?: Array<CommentCreateOrConnectWithoutCommentThreadInput>;
 
-    @Field(() => CommentCreateManyCommentThreadInputEnvelope, {nullable:true})
-    @Type(() => CommentCreateManyCommentThreadInputEnvelope)
+    @HideField()
     createMany?: CommentCreateManyCommentThreadInputEnvelope;
 
-    @HideField()
+    @Field(() => [CommentWhereUniqueInput], {nullable:true})
+    @Type(() => CommentWhereUniqueInput)
     connect?: Array<CommentWhereUniqueInput>;
 }

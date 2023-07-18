@@ -1,11 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { PipelineStageCreateWithoutWorkspaceInput } from './pipeline-stage-create-without-workspace.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { PipelineStageCreateOrConnectWithoutWorkspaceInput } from './pipeline-stage-create-or-connect-without-workspace.input';
 import { PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput } from './pipeline-stage-upsert-with-where-unique-without-workspace.input';
 import { PipelineStageCreateManyWorkspaceInputEnvelope } from './pipeline-stage-create-many-workspace-input-envelope.input';
 import { PipelineStageWhereUniqueInput } from './pipeline-stage-where-unique.input';
+import { Type } from 'class-transformer';
 import { PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput } from './pipeline-stage-update-with-where-unique-without-workspace.input';
 import { PipelineStageUpdateManyWithWhereWithoutWorkspaceInput } from './pipeline-stage-update-many-with-where-without-workspace.input';
 import { PipelineStageScalarWhereInput } from './pipeline-stage-scalar-where.input';
@@ -13,20 +14,16 @@ import { PipelineStageScalarWhereInput } from './pipeline-stage-scalar-where.inp
 @InputType()
 export class PipelineStageUpdateManyWithoutWorkspaceNestedInput {
 
-    @Field(() => [PipelineStageCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PipelineStageCreateWithoutWorkspaceInput)
+    @HideField()
     create?: Array<PipelineStageCreateWithoutWorkspaceInput>;
 
-    @Field(() => [PipelineStageCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PipelineStageCreateOrConnectWithoutWorkspaceInput)
+    @HideField()
     connectOrCreate?: Array<PipelineStageCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => [PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput)
+    @HideField()
     upsert?: Array<PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput>;
 
-    @Field(() => PipelineStageCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => PipelineStageCreateManyWorkspaceInputEnvelope)
+    @HideField()
     createMany?: PipelineStageCreateManyWorkspaceInputEnvelope;
 
     @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
@@ -37,23 +34,19 @@ export class PipelineStageUpdateManyWithoutWorkspaceNestedInput {
     @Type(() => PipelineStageWhereUniqueInput)
     disconnect?: Array<PipelineStageWhereUniqueInput>;
 
-    @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
-    @Type(() => PipelineStageWhereUniqueInput)
+    @HideField()
     delete?: Array<PipelineStageWhereUniqueInput>;
 
     @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
     @Type(() => PipelineStageWhereUniqueInput)
     connect?: Array<PipelineStageWhereUniqueInput>;
 
-    @Field(() => [PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput)
+    @HideField()
     update?: Array<PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput>;
 
-    @Field(() => [PipelineStageUpdateManyWithWhereWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PipelineStageUpdateManyWithWhereWithoutWorkspaceInput)
+    @HideField()
     updateMany?: Array<PipelineStageUpdateManyWithWhereWithoutWorkspaceInput>;
 
-    @Field(() => [PipelineStageScalarWhereInput], {nullable:true})
-    @Type(() => PipelineStageScalarWhereInput)
+    @HideField()
     deleteMany?: Array<PipelineStageScalarWhereInput>;
 }

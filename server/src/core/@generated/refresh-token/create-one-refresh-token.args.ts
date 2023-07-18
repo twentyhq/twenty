@@ -9,7 +9,7 @@ export class CreateOneRefreshTokenArgs {
 
     @Field(() => RefreshTokenCreateInput, {nullable:false})
     @Type(() => RefreshTokenCreateInput)
-    @ValidateNested({each: true})
     @Type(() => RefreshTokenCreateInput)
+    @ValidateNested({each: true})
     data!: RefreshTokenCreateInput;
 }

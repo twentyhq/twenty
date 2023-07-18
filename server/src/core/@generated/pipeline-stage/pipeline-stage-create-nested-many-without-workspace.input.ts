@@ -1,24 +1,22 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { PipelineStageCreateWithoutWorkspaceInput } from './pipeline-stage-create-without-workspace.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { PipelineStageCreateOrConnectWithoutWorkspaceInput } from './pipeline-stage-create-or-connect-without-workspace.input';
 import { PipelineStageCreateManyWorkspaceInputEnvelope } from './pipeline-stage-create-many-workspace-input-envelope.input';
 import { PipelineStageWhereUniqueInput } from './pipeline-stage-where-unique.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class PipelineStageCreateNestedManyWithoutWorkspaceInput {
 
-    @Field(() => [PipelineStageCreateWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PipelineStageCreateWithoutWorkspaceInput)
+    @HideField()
     create?: Array<PipelineStageCreateWithoutWorkspaceInput>;
 
-    @Field(() => [PipelineStageCreateOrConnectWithoutWorkspaceInput], {nullable:true})
-    @Type(() => PipelineStageCreateOrConnectWithoutWorkspaceInput)
+    @HideField()
     connectOrCreate?: Array<PipelineStageCreateOrConnectWithoutWorkspaceInput>;
 
-    @Field(() => PipelineStageCreateManyWorkspaceInputEnvelope, {nullable:true})
-    @Type(() => PipelineStageCreateManyWorkspaceInputEnvelope)
+    @HideField()
     createMany?: PipelineStageCreateManyWorkspaceInputEnvelope;
 
     @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})

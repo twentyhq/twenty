@@ -1,17 +1,15 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { WorkspaceUpdateWithoutCommentsInput } from './workspace-update-without-comments.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { WorkspaceCreateWithoutCommentsInput } from './workspace-create-without-comments.input';
 
 @InputType()
 export class WorkspaceUpsertWithoutCommentsInput {
 
-    @Field(() => WorkspaceUpdateWithoutCommentsInput, {nullable:false})
-    @Type(() => WorkspaceUpdateWithoutCommentsInput)
+    @HideField()
     update!: WorkspaceUpdateWithoutCommentsInput;
 
-    @Field(() => WorkspaceCreateWithoutCommentsInput, {nullable:false})
-    @Type(() => WorkspaceCreateWithoutCommentsInput)
+    @HideField()
     create!: WorkspaceCreateWithoutCommentsInput;
 }

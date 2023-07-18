@@ -3,6 +3,7 @@ import { ArgsType } from '@nestjs/graphql';
 import { CommentWhereUniqueInput } from './comment-where-unique.input';
 import { Type } from 'class-transformer';
 import { CommentCreateInput } from './comment-create.input';
+import { HideField } from '@nestjs/graphql';
 import { CommentUpdateInput } from './comment-update.input';
 
 @ArgsType()
@@ -12,11 +13,9 @@ export class UpsertOneCommentArgs {
     @Type(() => CommentWhereUniqueInput)
     where!: CommentWhereUniqueInput;
 
-    @Field(() => CommentCreateInput, {nullable:false})
-    @Type(() => CommentCreateInput)
+    @HideField()
     create!: CommentCreateInput;
 
-    @Field(() => CommentUpdateInput, {nullable:false})
-    @Type(() => CommentUpdateInput)
+    @HideField()
     update!: CommentUpdateInput;
 }

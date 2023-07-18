@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { PipelineProgressWhereUniqueInput } from './pipeline-progress-where-unique.input';
 import { Type } from 'class-transformer';
 import { PipelineProgressUpdateWithoutPipelineStageInput } from './pipeline-progress-update-without-pipeline-stage.input';
+import { HideField } from '@nestjs/graphql';
 import { PipelineProgressCreateWithoutPipelineStageInput } from './pipeline-progress-create-without-pipeline-stage.input';
 
 @InputType()
@@ -12,11 +13,9 @@ export class PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput {
     @Type(() => PipelineProgressWhereUniqueInput)
     where!: PipelineProgressWhereUniqueInput;
 
-    @Field(() => PipelineProgressUpdateWithoutPipelineStageInput, {nullable:false})
-    @Type(() => PipelineProgressUpdateWithoutPipelineStageInput)
+    @HideField()
     update!: PipelineProgressUpdateWithoutPipelineStageInput;
 
-    @Field(() => PipelineProgressCreateWithoutPipelineStageInput, {nullable:false})
-    @Type(() => PipelineProgressCreateWithoutPipelineStageInput)
+    @HideField()
     create!: PipelineProgressCreateWithoutPipelineStageInput;
 }

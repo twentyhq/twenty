@@ -1,24 +1,22 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { AttachmentCreateWithoutAuthorInput } from './attachment-create-without-author.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { AttachmentCreateOrConnectWithoutAuthorInput } from './attachment-create-or-connect-without-author.input';
 import { AttachmentCreateManyAuthorInputEnvelope } from './attachment-create-many-author-input-envelope.input';
 import { AttachmentWhereUniqueInput } from './attachment-where-unique.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class AttachmentCreateNestedManyWithoutAuthorInput {
 
-    @Field(() => [AttachmentCreateWithoutAuthorInput], {nullable:true})
-    @Type(() => AttachmentCreateWithoutAuthorInput)
+    @HideField()
     create?: Array<AttachmentCreateWithoutAuthorInput>;
 
-    @Field(() => [AttachmentCreateOrConnectWithoutAuthorInput], {nullable:true})
-    @Type(() => AttachmentCreateOrConnectWithoutAuthorInput)
+    @HideField()
     connectOrCreate?: Array<AttachmentCreateOrConnectWithoutAuthorInput>;
 
-    @Field(() => AttachmentCreateManyAuthorInputEnvelope, {nullable:true})
-    @Type(() => AttachmentCreateManyAuthorInputEnvelope)
+    @HideField()
     createMany?: AttachmentCreateManyAuthorInputEnvelope;
 
     @Field(() => [AttachmentWhereUniqueInput], {nullable:true})

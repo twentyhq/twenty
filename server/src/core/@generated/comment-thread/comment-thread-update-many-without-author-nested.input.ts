@@ -1,11 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { CommentThreadCreateWithoutAuthorInput } from './comment-thread-create-without-author.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { CommentThreadCreateOrConnectWithoutAuthorInput } from './comment-thread-create-or-connect-without-author.input';
 import { CommentThreadUpsertWithWhereUniqueWithoutAuthorInput } from './comment-thread-upsert-with-where-unique-without-author.input';
 import { CommentThreadCreateManyAuthorInputEnvelope } from './comment-thread-create-many-author-input-envelope.input';
 import { CommentThreadWhereUniqueInput } from './comment-thread-where-unique.input';
+import { Type } from 'class-transformer';
 import { CommentThreadUpdateWithWhereUniqueWithoutAuthorInput } from './comment-thread-update-with-where-unique-without-author.input';
 import { CommentThreadUpdateManyWithWhereWithoutAuthorInput } from './comment-thread-update-many-with-where-without-author.input';
 import { CommentThreadScalarWhereInput } from './comment-thread-scalar-where.input';
@@ -13,20 +14,16 @@ import { CommentThreadScalarWhereInput } from './comment-thread-scalar-where.inp
 @InputType()
 export class CommentThreadUpdateManyWithoutAuthorNestedInput {
 
-    @Field(() => [CommentThreadCreateWithoutAuthorInput], {nullable:true})
-    @Type(() => CommentThreadCreateWithoutAuthorInput)
+    @HideField()
     create?: Array<CommentThreadCreateWithoutAuthorInput>;
 
-    @Field(() => [CommentThreadCreateOrConnectWithoutAuthorInput], {nullable:true})
-    @Type(() => CommentThreadCreateOrConnectWithoutAuthorInput)
+    @HideField()
     connectOrCreate?: Array<CommentThreadCreateOrConnectWithoutAuthorInput>;
 
-    @Field(() => [CommentThreadUpsertWithWhereUniqueWithoutAuthorInput], {nullable:true})
-    @Type(() => CommentThreadUpsertWithWhereUniqueWithoutAuthorInput)
+    @HideField()
     upsert?: Array<CommentThreadUpsertWithWhereUniqueWithoutAuthorInput>;
 
-    @Field(() => CommentThreadCreateManyAuthorInputEnvelope, {nullable:true})
-    @Type(() => CommentThreadCreateManyAuthorInputEnvelope)
+    @HideField()
     createMany?: CommentThreadCreateManyAuthorInputEnvelope;
 
     @Field(() => [CommentThreadWhereUniqueInput], {nullable:true})
@@ -37,23 +34,19 @@ export class CommentThreadUpdateManyWithoutAuthorNestedInput {
     @Type(() => CommentThreadWhereUniqueInput)
     disconnect?: Array<CommentThreadWhereUniqueInput>;
 
-    @Field(() => [CommentThreadWhereUniqueInput], {nullable:true})
-    @Type(() => CommentThreadWhereUniqueInput)
+    @HideField()
     delete?: Array<CommentThreadWhereUniqueInput>;
 
     @Field(() => [CommentThreadWhereUniqueInput], {nullable:true})
     @Type(() => CommentThreadWhereUniqueInput)
     connect?: Array<CommentThreadWhereUniqueInput>;
 
-    @Field(() => [CommentThreadUpdateWithWhereUniqueWithoutAuthorInput], {nullable:true})
-    @Type(() => CommentThreadUpdateWithWhereUniqueWithoutAuthorInput)
+    @HideField()
     update?: Array<CommentThreadUpdateWithWhereUniqueWithoutAuthorInput>;
 
-    @Field(() => [CommentThreadUpdateManyWithWhereWithoutAuthorInput], {nullable:true})
-    @Type(() => CommentThreadUpdateManyWithWhereWithoutAuthorInput)
+    @HideField()
     updateMany?: Array<CommentThreadUpdateManyWithWhereWithoutAuthorInput>;
 
-    @Field(() => [CommentThreadScalarWhereInput], {nullable:true})
-    @Type(() => CommentThreadScalarWhereInput)
+    @HideField()
     deleteMany?: Array<CommentThreadScalarWhereInput>;
 }

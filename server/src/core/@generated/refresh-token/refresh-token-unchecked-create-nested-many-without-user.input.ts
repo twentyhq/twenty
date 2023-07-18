@@ -1,24 +1,22 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { RefreshTokenCreateWithoutUserInput } from './refresh-token-create-without-user.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { RefreshTokenCreateOrConnectWithoutUserInput } from './refresh-token-create-or-connect-without-user.input';
 import { RefreshTokenCreateManyUserInputEnvelope } from './refresh-token-create-many-user-input-envelope.input';
 import { RefreshTokenWhereUniqueInput } from './refresh-token-where-unique.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class RefreshTokenUncheckedCreateNestedManyWithoutUserInput {
 
-    @Field(() => [RefreshTokenCreateWithoutUserInput], {nullable:true})
-    @Type(() => RefreshTokenCreateWithoutUserInput)
+    @HideField()
     create?: Array<RefreshTokenCreateWithoutUserInput>;
 
-    @Field(() => [RefreshTokenCreateOrConnectWithoutUserInput], {nullable:true})
-    @Type(() => RefreshTokenCreateOrConnectWithoutUserInput)
+    @HideField()
     connectOrCreate?: Array<RefreshTokenCreateOrConnectWithoutUserInput>;
 
-    @Field(() => RefreshTokenCreateManyUserInputEnvelope, {nullable:true})
-    @Type(() => RefreshTokenCreateManyUserInputEnvelope)
+    @HideField()
     createMany?: RefreshTokenCreateManyUserInputEnvelope;
 
     @Field(() => [RefreshTokenWhereUniqueInput], {nullable:true})

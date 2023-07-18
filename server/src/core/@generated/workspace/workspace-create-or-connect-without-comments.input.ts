@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { WorkspaceWhereUniqueInput } from './workspace-where-unique.input';
 import { Type } from 'class-transformer';
 import { WorkspaceCreateWithoutCommentsInput } from './workspace-create-without-comments.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class WorkspaceCreateOrConnectWithoutCommentsInput {
@@ -11,7 +12,6 @@ export class WorkspaceCreateOrConnectWithoutCommentsInput {
     @Type(() => WorkspaceWhereUniqueInput)
     where!: WorkspaceWhereUniqueInput;
 
-    @Field(() => WorkspaceCreateWithoutCommentsInput, {nullable:false})
-    @Type(() => WorkspaceCreateWithoutCommentsInput)
+    @HideField()
     create!: WorkspaceCreateWithoutCommentsInput;
 }

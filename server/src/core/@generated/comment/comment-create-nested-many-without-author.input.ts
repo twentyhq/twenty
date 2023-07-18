@@ -1,24 +1,22 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { CommentCreateWithoutAuthorInput } from './comment-create-without-author.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { CommentCreateOrConnectWithoutAuthorInput } from './comment-create-or-connect-without-author.input';
 import { CommentCreateManyAuthorInputEnvelope } from './comment-create-many-author-input-envelope.input';
 import { CommentWhereUniqueInput } from './comment-where-unique.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class CommentCreateNestedManyWithoutAuthorInput {
 
-    @Field(() => [CommentCreateWithoutAuthorInput], {nullable:true})
-    @Type(() => CommentCreateWithoutAuthorInput)
+    @HideField()
     create?: Array<CommentCreateWithoutAuthorInput>;
 
-    @Field(() => [CommentCreateOrConnectWithoutAuthorInput], {nullable:true})
-    @Type(() => CommentCreateOrConnectWithoutAuthorInput)
+    @HideField()
     connectOrCreate?: Array<CommentCreateOrConnectWithoutAuthorInput>;
 
-    @Field(() => CommentCreateManyAuthorInputEnvelope, {nullable:true})
-    @Type(() => CommentCreateManyAuthorInputEnvelope)
+    @HideField()
     createMany?: CommentCreateManyAuthorInputEnvelope;
 
     @Field(() => [CommentWhereUniqueInput], {nullable:true})

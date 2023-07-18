@@ -3,6 +3,7 @@ import { ArgsType } from '@nestjs/graphql';
 import { RefreshTokenWhereUniqueInput } from './refresh-token-where-unique.input';
 import { Type } from 'class-transformer';
 import { RefreshTokenCreateInput } from './refresh-token-create.input';
+import { HideField } from '@nestjs/graphql';
 import { RefreshTokenUpdateInput } from './refresh-token-update.input';
 
 @ArgsType()
@@ -12,11 +13,9 @@ export class UpsertOneRefreshTokenArgs {
     @Type(() => RefreshTokenWhereUniqueInput)
     where!: RefreshTokenWhereUniqueInput;
 
-    @Field(() => RefreshTokenCreateInput, {nullable:false})
-    @Type(() => RefreshTokenCreateInput)
+    @HideField()
     create!: RefreshTokenCreateInput;
 
-    @Field(() => RefreshTokenUpdateInput, {nullable:false})
-    @Type(() => RefreshTokenUpdateInput)
+    @HideField()
     update!: RefreshTokenUpdateInput;
 }

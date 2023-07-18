@@ -1,17 +1,15 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { UserUpdateWithoutCompaniesInput } from './user-update-without-companies.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { UserCreateWithoutCompaniesInput } from './user-create-without-companies.input';
 
 @InputType()
 export class UserUpsertWithoutCompaniesInput {
 
-    @Field(() => UserUpdateWithoutCompaniesInput, {nullable:false})
-    @Type(() => UserUpdateWithoutCompaniesInput)
+    @HideField()
     update!: UserUpdateWithoutCompaniesInput;
 
-    @Field(() => UserCreateWithoutCompaniesInput, {nullable:false})
-    @Type(() => UserCreateWithoutCompaniesInput)
+    @HideField()
     create!: UserCreateWithoutCompaniesInput;
 }

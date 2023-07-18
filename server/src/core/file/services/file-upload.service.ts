@@ -34,16 +34,14 @@ export class FileUploadService {
     filename,
     mimeType,
     fileFolder,
-    fileId,
   }: {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
-    fileId?: string;
   }) {
     const ext = filename.split('.')?.[1];
-    const id = fileId ?? uuidV4();
+    const id = uuidV4();
     const name = `${id}${ext ? `.${ext}` : ''}`;
 
     await this._uploadFile({
@@ -54,6 +52,8 @@ export class FileUploadService {
     });
 
     return {
+      id,
+      mimeType,
       path: `${fileFolder}/${name}`,
     };
   }
@@ -73,11 +73,12 @@ export class FileUploadService {
     const id = uuidV4();
     const name = `${id}${ext ? `.${ext}` : ''}`;
 
-    // Get all cropSizes for this fileFolder
     const cropSizes = settings.storage.imageCropSizes[fileFolder];
-    // Extract the values from ShortCropSize
+    if (!cropSizes) {
+      throw new Error(`No crop sizes found for ${fileFolder}`);
+    }
+
     const sizes = cropSizes.map((shortSize) => getCropSize(shortSize));
-    // Crop images based on sizes
     const images = await Promise.all(
       sizes.map((size) =>
         sharp(file).resize({
@@ -88,7 +89,6 @@ export class FileUploadService {
 
     const paths: Array<string> = [];
 
-    // Upload all images to corresponding folders
     await Promise.all(
       images.map(async (image, index) => {
         const buffer = await image.toBuffer();
@@ -105,6 +105,8 @@ export class FileUploadService {
     );
 
     return {
+      id,
+      mimeType,
       paths,
     };
   }

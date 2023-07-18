@@ -4,8 +4,6 @@ import { CommentResolver } from './resolvers/comment.resolver';
 import { CommentThreadTargetService } from './services/comment-thread-target.service';
 import { CommentThreadResolver } from './resolvers/comment-thread.resolver';
 import { CommentThreadService } from './services/comment-thread.service';
-import { FileUploadService } from '../file/services/file-upload.service';
-import { AttachmentService } from '../file/services/attachment.service';
 
 @Module({
   providers: [
@@ -14,8 +12,6 @@ import { AttachmentService } from '../file/services/attachment.service';
     CommentThreadTargetService,
     CommentResolver,
     CommentThreadResolver,
-    FileUploadService,
-    AttachmentService,
   ],
   exports: [CommentService, CommentThreadService, CommentThreadTargetService],
 })

@@ -9,8 +9,8 @@ export class CreateManyAttachmentArgs {
 
     @Field(() => [AttachmentCreateManyInput], {nullable:false})
     @Type(() => AttachmentCreateManyInput)
-    @ValidateNested({each: true})
     @Type(() => AttachmentCreateManyInput)
+    @ValidateNested({each: true})
     data!: Array<AttachmentCreateManyInput>;
 
     @Field(() => Boolean, {nullable:true})

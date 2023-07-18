@@ -1,11 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { PipelineStageCreateWithoutPipelineInput } from './pipeline-stage-create-without-pipeline.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { PipelineStageCreateOrConnectWithoutPipelineInput } from './pipeline-stage-create-or-connect-without-pipeline.input';
 import { PipelineStageUpsertWithWhereUniqueWithoutPipelineInput } from './pipeline-stage-upsert-with-where-unique-without-pipeline.input';
 import { PipelineStageCreateManyPipelineInputEnvelope } from './pipeline-stage-create-many-pipeline-input-envelope.input';
 import { PipelineStageWhereUniqueInput } from './pipeline-stage-where-unique.input';
+import { Type } from 'class-transformer';
 import { PipelineStageUpdateWithWhereUniqueWithoutPipelineInput } from './pipeline-stage-update-with-where-unique-without-pipeline.input';
 import { PipelineStageUpdateManyWithWhereWithoutPipelineInput } from './pipeline-stage-update-many-with-where-without-pipeline.input';
 import { PipelineStageScalarWhereInput } from './pipeline-stage-scalar-where.input';
@@ -13,20 +14,16 @@ import { PipelineStageScalarWhereInput } from './pipeline-stage-scalar-where.inp
 @InputType()
 export class PipelineStageUncheckedUpdateManyWithoutPipelineNestedInput {
 
-    @Field(() => [PipelineStageCreateWithoutPipelineInput], {nullable:true})
-    @Type(() => PipelineStageCreateWithoutPipelineInput)
+    @HideField()
     create?: Array<PipelineStageCreateWithoutPipelineInput>;
 
-    @Field(() => [PipelineStageCreateOrConnectWithoutPipelineInput], {nullable:true})
-    @Type(() => PipelineStageCreateOrConnectWithoutPipelineInput)
+    @HideField()
     connectOrCreate?: Array<PipelineStageCreateOrConnectWithoutPipelineInput>;
 
-    @Field(() => [PipelineStageUpsertWithWhereUniqueWithoutPipelineInput], {nullable:true})
-    @Type(() => PipelineStageUpsertWithWhereUniqueWithoutPipelineInput)
+    @HideField()
     upsert?: Array<PipelineStageUpsertWithWhereUniqueWithoutPipelineInput>;
 
-    @Field(() => PipelineStageCreateManyPipelineInputEnvelope, {nullable:true})
-    @Type(() => PipelineStageCreateManyPipelineInputEnvelope)
+    @HideField()
     createMany?: PipelineStageCreateManyPipelineInputEnvelope;
 
     @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
@@ -37,23 +34,19 @@ export class PipelineStageUncheckedUpdateManyWithoutPipelineNestedInput {
     @Type(() => PipelineStageWhereUniqueInput)
     disconnect?: Array<PipelineStageWhereUniqueInput>;
 
-    @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
-    @Type(() => PipelineStageWhereUniqueInput)
+    @HideField()
     delete?: Array<PipelineStageWhereUniqueInput>;
 
     @Field(() => [PipelineStageWhereUniqueInput], {nullable:true})
     @Type(() => PipelineStageWhereUniqueInput)
     connect?: Array<PipelineStageWhereUniqueInput>;
 
-    @Field(() => [PipelineStageUpdateWithWhereUniqueWithoutPipelineInput], {nullable:true})
-    @Type(() => PipelineStageUpdateWithWhereUniqueWithoutPipelineInput)
+    @HideField()
     update?: Array<PipelineStageUpdateWithWhereUniqueWithoutPipelineInput>;
 
-    @Field(() => [PipelineStageUpdateManyWithWhereWithoutPipelineInput], {nullable:true})
-    @Type(() => PipelineStageUpdateManyWithWhereWithoutPipelineInput)
+    @HideField()
     updateMany?: Array<PipelineStageUpdateManyWithWhereWithoutPipelineInput>;
 
-    @Field(() => [PipelineStageScalarWhereInput], {nullable:true})
-    @Type(() => PipelineStageScalarWhereInput)
+    @HideField()
     deleteMany?: Array<PipelineStageScalarWhereInput>;
 }

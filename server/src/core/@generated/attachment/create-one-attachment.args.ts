@@ -9,7 +9,7 @@ export class CreateOneAttachmentArgs {
 
     @Field(() => AttachmentCreateInput, {nullable:false})
     @Type(() => AttachmentCreateInput)
-    @ValidateNested({each: true})
     @Type(() => AttachmentCreateInput)
+    @ValidateNested({each: true})
     data!: AttachmentCreateInput;
 }

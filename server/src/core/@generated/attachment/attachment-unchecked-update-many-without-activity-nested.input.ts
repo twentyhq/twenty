@@ -1,11 +1,12 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { AttachmentCreateWithoutActivityInput } from './attachment-create-without-activity.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { AttachmentCreateOrConnectWithoutActivityInput } from './attachment-create-or-connect-without-activity.input';
 import { AttachmentUpsertWithWhereUniqueWithoutActivityInput } from './attachment-upsert-with-where-unique-without-activity.input';
 import { AttachmentCreateManyActivityInputEnvelope } from './attachment-create-many-activity-input-envelope.input';
 import { AttachmentWhereUniqueInput } from './attachment-where-unique.input';
+import { Type } from 'class-transformer';
 import { AttachmentUpdateWithWhereUniqueWithoutActivityInput } from './attachment-update-with-where-unique-without-activity.input';
 import { AttachmentUpdateManyWithWhereWithoutActivityInput } from './attachment-update-many-with-where-without-activity.input';
 import { AttachmentScalarWhereInput } from './attachment-scalar-where.input';
@@ -13,20 +14,16 @@ import { AttachmentScalarWhereInput } from './attachment-scalar-where.input';
 @InputType()
 export class AttachmentUncheckedUpdateManyWithoutActivityNestedInput {
 
-    @Field(() => [AttachmentCreateWithoutActivityInput], {nullable:true})
-    @Type(() => AttachmentCreateWithoutActivityInput)
+    @HideField()
     create?: Array<AttachmentCreateWithoutActivityInput>;
 
-    @Field(() => [AttachmentCreateOrConnectWithoutActivityInput], {nullable:true})
-    @Type(() => AttachmentCreateOrConnectWithoutActivityInput)
+    @HideField()
     connectOrCreate?: Array<AttachmentCreateOrConnectWithoutActivityInput>;
 
-    @Field(() => [AttachmentUpsertWithWhereUniqueWithoutActivityInput], {nullable:true})
-    @Type(() => AttachmentUpsertWithWhereUniqueWithoutActivityInput)
+    @HideField()
     upsert?: Array<AttachmentUpsertWithWhereUniqueWithoutActivityInput>;
 
-    @Field(() => AttachmentCreateManyActivityInputEnvelope, {nullable:true})
-    @Type(() => AttachmentCreateManyActivityInputEnvelope)
+    @HideField()
     createMany?: AttachmentCreateManyActivityInputEnvelope;
 
     @Field(() => [AttachmentWhereUniqueInput], {nullable:true})
@@ -37,23 +34,19 @@ export class AttachmentUncheckedUpdateManyWithoutActivityNestedInput {
     @Type(() => AttachmentWhereUniqueInput)
     disconnect?: Array<AttachmentWhereUniqueInput>;
 
-    @Field(() => [AttachmentWhereUniqueInput], {nullable:true})
-    @Type(() => AttachmentWhereUniqueInput)
+    @HideField()
     delete?: Array<AttachmentWhereUniqueInput>;
 
     @Field(() => [AttachmentWhereUniqueInput], {nullable:true})
     @Type(() => AttachmentWhereUniqueInput)
     connect?: Array<AttachmentWhereUniqueInput>;
 
-    @Field(() => [AttachmentUpdateWithWhereUniqueWithoutActivityInput], {nullable:true})
-    @Type(() => AttachmentUpdateWithWhereUniqueWithoutActivityInput)
+    @HideField()
     update?: Array<AttachmentUpdateWithWhereUniqueWithoutActivityInput>;
 
-    @Field(() => [AttachmentUpdateManyWithWhereWithoutActivityInput], {nullable:true})
-    @Type(() => AttachmentUpdateManyWithWhereWithoutActivityInput)
+    @HideField()
     updateMany?: Array<AttachmentUpdateManyWithWhereWithoutActivityInput>;
 
-    @Field(() => [AttachmentScalarWhereInput], {nullable:true})
-    @Type(() => AttachmentScalarWhereInput)
+    @HideField()
     deleteMany?: Array<AttachmentScalarWhereInput>;
 }

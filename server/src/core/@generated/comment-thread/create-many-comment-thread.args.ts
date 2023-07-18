@@ -9,8 +9,8 @@ export class CreateManyCommentThreadArgs {
 
     @Field(() => [CommentThreadCreateManyInput], {nullable:false})
     @Type(() => CommentThreadCreateManyInput)
-    @ValidateNested({each: true})
     @Type(() => CommentThreadCreateManyInput)
+    @ValidateNested({each: true})
     data!: Array<CommentThreadCreateManyInput>;
 
     @Field(() => Boolean, {nullable:true})

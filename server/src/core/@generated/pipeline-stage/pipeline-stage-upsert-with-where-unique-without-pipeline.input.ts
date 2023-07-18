@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { PipelineStageWhereUniqueInput } from './pipeline-stage-where-unique.input';
 import { Type } from 'class-transformer';
 import { PipelineStageUpdateWithoutPipelineInput } from './pipeline-stage-update-without-pipeline.input';
+import { HideField } from '@nestjs/graphql';
 import { PipelineStageCreateWithoutPipelineInput } from './pipeline-stage-create-without-pipeline.input';
 
 @InputType()
@@ -12,11 +13,9 @@ export class PipelineStageUpsertWithWhereUniqueWithoutPipelineInput {
     @Type(() => PipelineStageWhereUniqueInput)
     where!: PipelineStageWhereUniqueInput;
 
-    @Field(() => PipelineStageUpdateWithoutPipelineInput, {nullable:false})
-    @Type(() => PipelineStageUpdateWithoutPipelineInput)
+    @HideField()
     update!: PipelineStageUpdateWithoutPipelineInput;
 
-    @Field(() => PipelineStageCreateWithoutPipelineInput, {nullable:false})
-    @Type(() => PipelineStageCreateWithoutPipelineInput)
+    @HideField()
     create!: PipelineStageCreateWithoutPipelineInput;
 }

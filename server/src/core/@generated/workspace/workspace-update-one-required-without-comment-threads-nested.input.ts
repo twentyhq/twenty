@@ -1,32 +1,29 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { WorkspaceCreateWithoutCommentThreadsInput } from './workspace-create-without-comment-threads.input';
-import { Type } from 'class-transformer';
+import { HideField } from '@nestjs/graphql';
 import { WorkspaceCreateOrConnectWithoutCommentThreadsInput } from './workspace-create-or-connect-without-comment-threads.input';
 import { WorkspaceUpsertWithoutCommentThreadsInput } from './workspace-upsert-without-comment-threads.input';
 import { WorkspaceWhereUniqueInput } from './workspace-where-unique.input';
+import { Type } from 'class-transformer';
 import { WorkspaceUpdateWithoutCommentThreadsInput } from './workspace-update-without-comment-threads.input';
 
 @InputType()
 export class WorkspaceUpdateOneRequiredWithoutCommentThreadsNestedInput {
 
-    @Field(() => WorkspaceCreateWithoutCommentThreadsInput, {nullable:true})
-    @Type(() => WorkspaceCreateWithoutCommentThreadsInput)
+    @HideField()
     create?: WorkspaceCreateWithoutCommentThreadsInput;
 
-    @Field(() => WorkspaceCreateOrConnectWithoutCommentThreadsInput, {nullable:true})
-    @Type(() => WorkspaceCreateOrConnectWithoutCommentThreadsInput)
+    @HideField()
     connectOrCreate?: WorkspaceCreateOrConnectWithoutCommentThreadsInput;
 
-    @Field(() => WorkspaceUpsertWithoutCommentThreadsInput, {nullable:true})
-    @Type(() => WorkspaceUpsertWithoutCommentThreadsInput)
+    @HideField()
     upsert?: WorkspaceUpsertWithoutCommentThreadsInput;
 
     @Field(() => WorkspaceWhereUniqueInput, {nullable:true})
     @Type(() => WorkspaceWhereUniqueInput)
     connect?: WorkspaceWhereUniqueInput;
 
-    @Field(() => WorkspaceUpdateWithoutCommentThreadsInput, {nullable:true})
-    @Type(() => WorkspaceUpdateWithoutCommentThreadsInput)
+    @HideField()
     update?: WorkspaceUpdateWithoutCommentThreadsInput;
 }

@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { AttachmentWhereUniqueInput } from './attachment-where-unique.input';
 import { Type } from 'class-transformer';
 import { AttachmentCreateWithoutActivityInput } from './attachment-create-without-activity.input';
+import { HideField } from '@nestjs/graphql';
 
 @InputType()
 export class AttachmentCreateOrConnectWithoutActivityInput {
@@ -11,7 +12,6 @@ export class AttachmentCreateOrConnectWithoutActivityInput {
     @Type(() => AttachmentWhereUniqueInput)
     where!: AttachmentWhereUniqueInput;
 
-    @Field(() => AttachmentCreateWithoutActivityInput, {nullable:false})
-    @Type(() => AttachmentCreateWithoutActivityInput)
+    @HideField()
     create!: AttachmentCreateWithoutActivityInput;
 }

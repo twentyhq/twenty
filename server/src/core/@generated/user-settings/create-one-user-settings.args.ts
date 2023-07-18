@@ -9,7 +9,7 @@ export class CreateOneUserSettingsArgs {
 
     @Field(() => UserSettingsCreateInput, {nullable:false})
     @Type(() => UserSettingsCreateInput)
-    @ValidateNested({each: true})
     @Type(() => UserSettingsCreateInput)
+    @ValidateNested({each: true})
     data!: UserSettingsCreateInput;
 }

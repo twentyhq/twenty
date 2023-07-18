@@ -3,6 +3,7 @@ import { ArgsType } from '@nestjs/graphql';
 import { WorkspaceWhereUniqueInput } from './workspace-where-unique.input';
 import { Type } from 'class-transformer';
 import { WorkspaceCreateInput } from './workspace-create.input';
+import { HideField } from '@nestjs/graphql';
 import { WorkspaceUpdateInput } from './workspace-update.input';
 
 @ArgsType()
@@ -12,11 +13,9 @@ export class UpsertOneWorkspaceArgs {
     @Type(() => WorkspaceWhereUniqueInput)
     where!: WorkspaceWhereUniqueInput;
 
-    @Field(() => WorkspaceCreateInput, {nullable:false})
-    @Type(() => WorkspaceCreateInput)
+    @HideField()
     create!: WorkspaceCreateInput;
 
-    @Field(() => WorkspaceUpdateInput, {nullable:false})
-    @Type(() => WorkspaceUpdateInput)
+    @HideField()
     update!: WorkspaceUpdateInput;
 }

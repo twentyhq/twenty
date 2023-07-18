@@ -20,7 +20,7 @@ export class UserUpdateOneWithoutCompaniesNestedInput {
     @HideField()
     upsert?: UserUpsertWithoutCompaniesInput;
 
-    @HideField()
+    @Field(() => Boolean, {nullable:true})
     disconnect?: boolean;
 
     @HideField()
