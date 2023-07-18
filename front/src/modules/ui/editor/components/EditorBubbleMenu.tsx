@@ -26,7 +26,6 @@ export interface BubbleMenuItem {
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, 'children'>;
 
 const BubbleMenuStyled = styled(BubbleMenu)`
-  background-color: #fff;
   border: 1px solid #cbd5e0;
   border-radius: 0.375rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),

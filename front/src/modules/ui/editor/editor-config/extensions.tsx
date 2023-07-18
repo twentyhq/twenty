@@ -12,6 +12,8 @@ import TiptapUnderline from '@tiptap/extension-underline';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from 'tiptap-markdown';
 
+import SlashCommand from './slash-command';
+
 // import UploadImagesPlugin from '@/ui/editor/plugins/upload-images';
 
 // import SlashCommand from './slash-command';
@@ -98,7 +100,7 @@ export const TiptapExtensions = [
     },
     includeChildren: true,
   }),
-  // SlashCommand,
+  SlashCommand,
   TiptapUnderline,
   TextStyle,
   Color,

@@ -12,6 +12,7 @@ import styled from '@emotion/styled';
 import { Editor, Extension, Range } from '@tiptap/core';
 import { ReactRenderer } from '@tiptap/react';
 import Suggestion from '@tiptap/suggestion';
+import { useCompletion } from 'ai/react';
 import tippy from 'tippy.js';
 
 import {
@@ -23,7 +24,6 @@ import {
   IconList,
   IconListNumbers,
   IconLoader,
-  IconMessage2Plus,
   IconPhoto,
   IconQuote,
   IconSquareCheck,
@@ -50,43 +50,46 @@ const SlashCommandContainer = styled.div`
 
 const ButtonItem = styled.button<{ isSelected: boolean }>`
   align-items: center;
-  border-radius: 0.375rem;
-  color: var(--stone-900);
+  background-color: ${({ theme }) => theme.background.primary};
+  border: none;
+  cursor: pointer;
   display: flex;
-  font-size: 0.875rem;
-  justify-content: space-between;
-  padding: 0.25rem 0.5rem;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
   text-align: left;
   width: 100%;
   &:hover {
     background-color: var(--stone-100);
   }
-  ${({ isSelected }) =>
+  ${({ isSelected, theme }) =>
     isSelected &&
     `
-      background-color: var(--stone-100);
+      background-color: ${theme.background.tertiary};
       color: var(--stone-900);
     `}
 `;
 
 const ItemIconContainer = styled.div`
   align-items: center;
-  background-color: white;
-  border: 1px solid var(--stone-200);
-  border-radius: 0.375rem;
   display: flex;
   height: 2.5rem;
   justify-content: center;
   width: 2.5rem;
 `;
 
-const ItemTitle = styled.p`
+const ItemTitle = styled.div`
   font-weight: 500;
 `;
 
-const ItemDescription = styled.p`
-  color: var(--stone-500);
-  font-size: 0.75rem;
+const ItemDescription = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
+const ItemTitleAndDescription = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 interface CommandItemProps {
@@ -137,15 +140,6 @@ const getSuggestionItems = ({ query }: { query: string }) => {
       description: 'Use AI to expand your thoughts.',
       searchTerms: ['gpt'],
       icon: <IconWand className="w-7" />,
-    },
-    {
-      title: 'Send Feedback',
-      description: 'Let us know how we can improve.',
-      icon: <IconMessage2Plus size={18} />,
-      command: ({ editor, range }: CommandProps) => {
-        editor.chain().focus().deleteRange(range).run();
-        window.open('/feedback', '_blank');
-      },
     },
     {
       title: 'Text',
@@ -254,7 +248,7 @@ const getSuggestionItems = ({ query }: { query: string }) => {
     },
     {
       title: 'Image',
-      description: 'Upload an image from your computer.',
+      description: 'Upload from your computer.',
       searchTerms: ['photo', 'picture', 'media'],
       icon: <IconPhoto size={18} />,
       command: ({ editor, range }: CommandProps) => {
@@ -314,9 +308,7 @@ const CommandList = ({
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const { complete, isLoading } = useState('';)
-  
-  /* useCompletion({
+  const { complete, isLoading } = useCompletion({
     id: 'novel',
     api: '/api/generate',
     onResponse: (response: any) => {
@@ -336,7 +328,7 @@ const CommandList = ({
     onError: () => {
       console.error('Something went wrong.');
     },
-  });*/
+  });
 
   const selectItem = useCallback(
     (index: number) => {
@@ -412,10 +404,10 @@ const CommandList = ({
               item.icon
             )}
           </ItemIconContainer>
-          <div>
+          <ItemTitleAndDescription>
             <ItemTitle>{item.title}</ItemTitle>
             <ItemDescription>{item.description}</ItemDescription>
-          </div>
+          </ItemTitleAndDescription>
         </ButtonItem>
       ))}
     </SlashCommandContainer>

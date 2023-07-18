@@ -58,6 +58,5 @@ export { IconH3 } from '@tabler/icons-react';
 export { IconListNumbers } from '@tabler/icons-react';
 export { IconAlignLeft } from '@tabler/icons-react';
 export { IconWand } from '@tabler/icons-react';
-export { IconMessage2Plus } from '@tabler/icons-react';
 export { IconPhoto } from '@tabler/icons-react';
 export { IconLoader } from '@tabler/icons-react';

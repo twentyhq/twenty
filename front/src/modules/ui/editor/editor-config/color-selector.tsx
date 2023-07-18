@@ -44,8 +44,10 @@ const ButtonBase = styled.button`
   }
 `;
 
-const ButtonIcon = styled.span`
+const ButtonIcon = styled.span<{ color: string; backgroundColor: string }>`
   align-items: center;
+  background-color: ${(props) => props.backgroundColor};
+  color: ${(props) => props.color};
   display: inline-flex;
   height: 1rem;
   justify-content: center;
@@ -203,7 +205,12 @@ export const ColorSelector: FC<ColorSelectorProps> = ({
   return (
     <div className="relative h-full">
       <ButtonBase onClick={() => setIsOpen(!isOpen)}>
-        <ButtonIcon>{/* Your button content here */}</ButtonIcon>
+        <ButtonIcon
+          color={activeColorItem?.color ?? 'inherit'}
+          backgroundColor={activeHighlightItem?.color ?? 'inherit'}
+        >
+          A
+        </ButtonIcon>
         <IconChevronDown />
       </ButtonBase>
 

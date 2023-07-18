@@ -6037,6 +6037,17 @@ aggregate-error@^3.0.0:
     clean-stack "^2.0.0"
     indent-string "^4.0.0"
 
+ai@^2.1.22:
+  version "2.1.22"
+  resolved "https://registry.yarnpkg.com/ai/-/ai-2.1.22.tgz#efe4097044a4a6c9def6e3422e81f0e916ee2b05"
+  integrity sha512-aj9cfaEKyqdu1ypNKZ+6bmySp1+EwOokOL62Pmz7RsGSz803H31+z3fzeoPT64s8ARr2SRvIjjhwOEehKYrj2g==
+  dependencies:
+    eventsource-parser "1.0.0"
+    nanoid "^3.3.6"
+    sswr "^1.10.0"
+    swr "2.1.5"
+    swrv "1.0.3"
+
 ajv-formats@^2.1.1:
   version "2.1.1"
   resolved "https://registry.npmjs.org/ajv-formats/-/ajv-formats-2.1.1.tgz"
@@ -9808,6 +9819,11 @@ events@^3.2.0, events@^3.3.0:
   version "3.3.0"
   resolved "https://registry.npmjs.org/events/-/events-3.3.0.tgz"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
+
+eventsource-parser@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/eventsource-parser/-/eventsource-parser-1.0.0.tgz#6332e37fd5512e3c8d9df05773b2bf9e152ccc04"
+  integrity sha512-9jgfSCa3dmEme2ES3mPByGXfgZ87VbP97tng1G2nWwWx6bV2nYxm2AWCrbQjXToSe+yYlqaZNtxffR9IeQr95g==
 
 execa@^5.0.0, execa@^5.1.1:
   version "5.1.1"
@@ -17293,6 +17309,13 @@ sprintf-js@~1.0.2:
   resolved "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
+sswr@^1.10.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/sswr/-/sswr-1.11.0.tgz#907010045378dfe47fceb71301df90429d1fb3e2"
+  integrity sha512-D7nEdEH0A1TKZjA1wRP6frxw/dtTCuV70EK5/pELP+FrcPmyaP8jLC49mrg86Ez5cb5z3NQb2MPx2M7ZZlSupQ==
+  dependencies:
+    swrev "^3.0.0"
+
 stable@^0.1.8:
   version "0.1.8"
   resolved "https://registry.npmjs.org/stable/-/stable-0.1.8.tgz"
@@ -17651,6 +17674,23 @@ swap-case@^2.0.2:
   integrity sha512-kc6S2YS/2yXbtkSMunBtKdah4VFETZ8Oh6ONSmSd9bRxhqTrtARUCBUiWXH3xVPpvR7tz2CSnkuXVE42EcGnMw==
   dependencies:
     tslib "^2.0.3"
+
+swr@2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/swr/-/swr-2.1.5.tgz#688effa719c03f6d35c66decbb0f8e79c7190399"
+  integrity sha512-/OhfZMcEpuz77KavXST5q6XE9nrOBOVcBLWjMT+oAE/kQHyE3PASrevXCtQDZ8aamntOfFkbVJp7Il9tNBQWrw==
+  dependencies:
+    use-sync-external-store "^1.2.0"
+
+swrev@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/swrev/-/swrev-3.0.0.tgz#4b5c0c1a28ef017dd20041c9c2cb24f60d8eca52"
+  integrity sha512-QJuZiptdOmbDY45pECBRVEgnoBlOKjeT2MWVz04wKHpWX15hM3P7EjcIbHDg5yLoPCMQ7to3349MEE+l9QF5HA==
+
+swrv@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/swrv/-/swrv-1.0.3.tgz#b1af4f55a77d74336d29956924cb1b61f564490f"
+  integrity sha512-sl+eLEE+aPPjhP1E8gQ75q3RPRyw5Gd/kROnrTFo3+LkCeLskv7F+uAl5W97wgJkzitobL6FLsRPVm0DgIgN8A==
 
 symbol-observable@^4.0.0:
   version "4.0.0"
@@ -18488,7 +18528,7 @@ use-sidecar@^1.1.2:
     detect-node-es "^1.1.0"
     tslib "^2.0.0"
 
-use-sync-external-store@^1.0.0:
+use-sync-external-store@^1.0.0, use-sync-external-store@^1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz"
   integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
