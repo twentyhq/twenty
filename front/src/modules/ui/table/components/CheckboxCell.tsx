@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
@@ -9,6 +9,7 @@ import { contextMenuPositionState } from '../states/contextMenuPositionState';
 
 const StyledContainer = styled.div`
   align-items: center;
+  cursor: pointer;
 
   display: flex;
   height: 32px;
@@ -21,19 +22,14 @@ export function CheckboxCell() {
 
   const { currentRowSelected, setCurrentRowSelected } = useCurrentRowSelected();
 
-  function onChange(checked: boolean) {
-    handleCheckboxChange(checked);
-  }
-
-  function handleCheckboxChange(newCheckedValue: boolean) {
-    setCurrentRowSelected(newCheckedValue);
-
+  const handleClick = useCallback(() => {
+    setCurrentRowSelected(!currentRowSelected);
     setContextMenuPosition({ x: null, y: null });
-  }
+  }, [currentRowSelected, setContextMenuPosition, setCurrentRowSelected]);
 
   return (
-    <StyledContainer>
-      <Checkbox checked={currentRowSelected} onChange={onChange} />
+    <StyledContainer onClick={handleClick}>
+      <Checkbox checked={currentRowSelected} onChange={() => undefined} />
     </StyledContainer>
   );
 }
