@@ -155,6 +155,7 @@
     "prop-types": "^15.8.1",
     "react-scripts": "5.0.1",
     "storybook": "^7.0.22",
+    "storybook-addon-cookie": "^3.0.1",
     "storybook-addon-pseudo-states": "^2.1.0",
     "ts-jest": "^29.1.0",
     "typescript": "^4.9.3",
@@ -164,8 +165,9 @@
     "workerDirectory": "public"
   },
   "nyc": {
-    "lines": 60,
-    "statements": 60,
+    "lines": 65,
+    "statements": 65,
+    "functions": 60,
     "exclude": [
       "src/generated/**/*"
     ]

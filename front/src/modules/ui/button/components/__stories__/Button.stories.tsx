@@ -56,7 +56,7 @@ const StyledButtonContainer = styled.div`
 `;
 
 const meta: Meta<typeof Button> = {
-  title: 'UI/Buttons/Button',
+  title: 'UI/Button/Button',
   component: Button,
   decorators: [withKnobs],
 };

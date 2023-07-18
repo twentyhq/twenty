@@ -40,8 +40,11 @@ export function EditColumnTitleInput({
 }) {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  useListenClickOutsideArrayOfRef([inputRef], () => {
-    onFocusLeave();
+  useListenClickOutsideArrayOfRef({
+    refs: [inputRef],
+    callback: () => {
+      onFocusLeave();
+    },
   });
   const setHotkeyScope = useSetHotkeyScope();
   setHotkeyScope(ColumnHotkeyScope.EditColumnName, { goto: false });

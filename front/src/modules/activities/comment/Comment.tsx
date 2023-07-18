@@ -30,7 +30,7 @@ const StyledCommentBody = styled.div`
   text-align: left;
 `;
 
-export function CommentThreadItem({ comment, actionBar }: OwnProps) {
+export function Comment({ comment, actionBar }: OwnProps) {
   return (
     <StyledContainer>
       <CommentHeader comment={comment} actionBar={actionBar} />

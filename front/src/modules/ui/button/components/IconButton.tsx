@@ -83,12 +83,18 @@ const StyledIconButton = styled.button<Pick<ButtonProps, 'variant' | 'size'>>`
     }
   }};
   justify-content: center;
+  outline: none;
   padding: 0;
   transition: background 0.1s ease;
-  user-select: none;
   &:hover {
     background: ${({ theme, disabled }) => {
       return disabled ? 'auto' : theme.background.transparent.light;
+    }};
+  }
+  user-select: none;
+  &:active {
+    background: ${({ theme, disabled }) => {
+      return disabled ? 'auto' : theme.background.transparent.medium;
     }};
   }
   width: ${({ size }) => {
@@ -102,11 +108,6 @@ const StyledIconButton = styled.button<Pick<ButtonProps, 'variant' | 'size'>>`
         return '20px';
     }
   }};
-  &:active {
-    background: ${({ theme, disabled }) => {
-      return disabled ? 'auto' : theme.background.transparent.medium;
-    }};
-  }
 `;
 
 export function IconButton({

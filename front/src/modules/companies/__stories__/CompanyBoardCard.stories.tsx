@@ -6,7 +6,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 const meta: Meta<typeof CompanyBoardCard> = {
-  title: 'UI/Board/CompanyBoardCard',
+  title: 'Modules/Companies/CompanyBoardCard',
   component: CompanyBoardCard,
   decorators: [BoardCardDecorator],
 };

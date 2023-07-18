@@ -7,7 +7,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { PersonChip } from '../PersonChip';
 
 const meta: Meta<typeof PersonChip> = {
-  title: 'Modules/Companies/PersonChip',
+  title: 'Modules/People/PersonChip',
   component: PersonChip,
 };
 

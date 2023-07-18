@@ -8,7 +8,7 @@ import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
 import { CommentThread, useCreateCommentMutation } from '~/generated/graphql';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
-import { CommentThreadItem } from '../comment/CommentThreadItem';
+import { Comment } from '../comment/Comment';
 import { GET_COMMENT_THREAD } from '../queries';
 import { CommentForDrawer } from '../types/CommentForDrawer';
 
@@ -80,7 +80,7 @@ export function CommentThreadComments({ commentThread }: OwnProps) {
           <StyledThreadItemListContainer>
             <StyledThreadCommentTitle>Comments</StyledThreadCommentTitle>
             {commentThread?.comments?.map((comment, index) => (
-              <CommentThreadItem key={comment.id} comment={comment} />
+              <Comment key={comment.id} comment={comment} />
             ))}
           </StyledThreadItemListContainer>
         </>

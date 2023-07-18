@@ -46,8 +46,11 @@ export function SingleEntitySelect<
 
   const showCreateButton = isDefined(onCreate) && searchFilter !== '';
 
-  useListenClickOutsideArrayOfRef([containerRef], () => {
-    onCancel?.();
+  useListenClickOutsideArrayOfRef({
+    refs: [containerRef],
+    callback: () => {
+      onCancel?.();
+    },
   });
 
   return (

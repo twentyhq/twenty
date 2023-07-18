@@ -53,7 +53,7 @@ const StyledIconButtonContainer = styled.div`
 `;
 
 const meta: Meta<typeof IconButton> = {
-  title: 'UI/Buttons/IconButton',
+  title: 'UI/Button/IconButton',
   component: IconButton,
   decorators: [withKnobs],
 };

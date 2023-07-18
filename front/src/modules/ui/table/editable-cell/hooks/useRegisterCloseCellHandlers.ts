@@ -14,11 +14,14 @@ export function useRegisterCloseCellHandlers(
 ) {
   const { closeEditableCell } = useEditableCell();
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
-  useListenClickOutsideArrayOfRef([wrapperRef], () => {
-    if (isCurrentCellInEditMode) {
-      onSubmit?.();
-      closeEditableCell();
-    }
+  useListenClickOutsideArrayOfRef({
+    refs: [wrapperRef],
+    callback: () => {
+      if (isCurrentCellInEditMode) {
+        onSubmit?.();
+        closeEditableCell();
+      }
+    },
   });
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 

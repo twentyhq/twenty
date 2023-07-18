@@ -7,7 +7,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 const meta: Meta<typeof EntityBoard> = {
-  title: 'UI/Board/Board',
+  title: 'Modules/Companies/Board',
   component: EntityBoard,
   decorators: [BoardDecorator],
 };

@@ -72,9 +72,13 @@ export function NameFields({
   }, 500);
 
   useEffect(() => {
+    if (!currentUser) {
+      return;
+    }
+
     if (
-      currentUser?.firstName !== firstName ||
-      currentUser?.lastName !== lastName
+      currentUser.firstName !== firstName ||
+      currentUser.lastName !== lastName
     ) {
       debouncedUpdate();
     }
