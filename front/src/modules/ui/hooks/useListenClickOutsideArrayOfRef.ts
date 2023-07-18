@@ -43,8 +43,6 @@ export function useListenClickOutsideArrayOfRef<T extends Element>({
             const clientY =
               'clientY' in event ? event.clientY : event.touches[0].clientY;
 
-            console.log(clientX, clientY, x, y, width, height);
-
             if (
               clientX < x ||
               clientX > x + width ||
@@ -64,12 +62,12 @@ export function useListenClickOutsideArrayOfRef<T extends Element>({
     const hasAtLeastOneRefDefined = refs.some((ref) => isDefined(ref.current));
 
     if (hasAtLeastOneRefDefined) {
-      document.addEventListener('click', handleClickOutside);
+      document.addEventListener('mouseup', handleClickOutside);
       document.addEventListener('touchend', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('mouseup', handleClickOutside);
       document.removeEventListener('touchend', handleClickOutside);
     };
   }, [refs, callback, mode]);

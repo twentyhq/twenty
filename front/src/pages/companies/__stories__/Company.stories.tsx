@@ -1,7 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { expect } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/testing-library';
+import { fireEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
 import {
@@ -71,7 +71,7 @@ export const EditNote: Story = {
     ).toBeInTheDocument();
 
     const workspaceName = await canvas.findByText('Twenty');
-    await workspaceName.click();
+    await fireEvent.mouseUp(workspaceName);
 
     expect(await canvas.queryByDisplayValue('My very first note')).toBeNull();
 
