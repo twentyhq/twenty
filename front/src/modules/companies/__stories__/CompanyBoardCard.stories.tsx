@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
@@ -15,7 +16,11 @@ export default meta;
 type Story = StoryObj<typeof CompanyBoardCard>;
 
 const FakeSelectableCompanyBoardCard = () => {
-  return <CompanyBoardCard />;
+  return (
+    <MemoryRouter>
+      <CompanyBoardCard />
+    </MemoryRouter>
+  );
 };
 
 export const CompanyCompanyBoardCard: Story = {
