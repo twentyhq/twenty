@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 const StyledLayout = styled.div`
@@ -19,5 +20,9 @@ type OwnProps = {
 };
 
 export function ComponentStorybookLayout({ children }: OwnProps) {
-  return <StyledLayout>{children}</StyledLayout>;
+  return (
+    <StyledLayout>
+      <MemoryRouter>{children}</MemoryRouter>
+    </StyledLayout>
+  );
 }
