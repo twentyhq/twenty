@@ -37,6 +37,7 @@ export const GET_PIPELINE_PROGRESS = gql`
       progressableId
       amount
       closeDate
+      pointOfContactId
       pointOfContact {
         id
         firstName
