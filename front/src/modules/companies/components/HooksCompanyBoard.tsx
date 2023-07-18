@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
+import { useInitializeCompanyBoardFilters } from '@/companies/hooks/useInitializeCompanyBoardFilters';
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 import {
   CompanyForBoard,
@@ -11,15 +12,30 @@ import { boardState } from '@/pipeline/states/boardState';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { isBoardLoadedState } from '@/pipeline/states/isBoardLoadedState';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
+import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
+import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
+import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
+import { PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By } from '~/generated/graphql';
 import {
   Pipeline,
-  PipelineStage,
   useGetCompaniesQuery,
   useGetPipelineProgressQuery,
   useGetPipelinesQuery,
 } from '~/generated/graphql';
 
-export function HookCompanyBoard() {
+import { CompanyBoardContext } from '../states/CompanyBoardContext';
+
+export function HooksCompanyBoard({
+  availableFilters,
+  orderBy,
+}: {
+  availableFilters: FilterDefinition[];
+  orderBy: PipelineProgresses_Order_By[];
+}) {
+  useInitializeCompanyBoardFilters({
+    availableFilters,
+  });
   const [currentPipeline, setCurrentPipeline] =
     useRecoilState(currentPipelineState);
 
@@ -44,29 +60,47 @@ export function HookCompanyBoard() {
           title: pipelineStage.name,
           colorCode: pipelineStage.color,
           index: pipelineStage.index || 0,
-          pipelineProgressIds:
-            pipelineStage.pipelineProgresses?.map(
-              (item) => item.id as string,
-            ) || [],
+          pipelineProgressIds: [],
         })) || [];
       setBoard(initialBoard);
-      setIsBoardLoaded(true);
     },
   });
 
-  const pipelineProgressIds = currentPipeline?.pipelineStages
-    ?.map((pipelineStage: PipelineStage) =>
-      (
-        pipelineStage.pipelineProgresses?.map((item) => item.id as string) || []
-      ).flat(),
-    )
+  const pipelineStageIds = currentPipeline?.pipelineStages
+    ?.map((pipelineStage) => pipelineStage.id)
     .flat();
+
+  const filters = useRecoilScopedValue(filtersScopedState, CompanyBoardContext);
+
+  const whereFilters = useMemo(() => {
+    return {
+      AND: [
+        { pipelineStageId: { in: pipelineStageIds } },
+        ...filters.map(turnFilterIntoWhereClause),
+      ],
+    };
+  }, [filters, pipelineStageIds]) as any;
 
   const pipelineProgressesQuery = useGetPipelineProgressQuery({
     variables: {
-      where: {
-        id: { in: pipelineProgressIds },
-      },
+      where: whereFilters,
+      orderBy,
+    },
+    onCompleted: (data) => {
+      const pipelineProgresses = data?.findManyPipelineProgress || [];
+      setBoard((board) =>
+        board?.map((boardPipelineStage) => ({
+          ...boardPipelineStage,
+          pipelineProgressIds: pipelineProgresses
+            .filter(
+              (pipelineProgress) =>
+                pipelineProgress.pipelineStageId ===
+                boardPipelineStage.pipelineStageId,
+            )
+            .map((pipelineProgress) => pipelineProgress.id),
+        })),
+      );
+      setIsBoardLoaded(true);
     },
   });
 

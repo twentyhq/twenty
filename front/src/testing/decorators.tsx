@@ -3,9 +3,9 @@ import { ApolloProvider } from '@apollo/client';
 import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { pipeline } from '@/companies/__stories__/mock-data';
-import { HookCompanyBoard } from '@/companies/components/HookCompanyBoard';
+import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
+import { defaultPipelineProgressOrderBy } from '@/pipeline/queries';
 import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
 import { BoardColumnContext } from '@/pipeline/states/BoardColumnContext';
 import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
@@ -14,6 +14,7 @@ import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedSta
 import { CellContext } from '@/ui/table/states/CellContext';
 import { RowContext } from '@/ui/table/states/RowContext';
 
+import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { ComponentStorybookLayout } from './ComponentStorybookLayout';
 import { mockedClient } from './mockedClient';
 
@@ -41,8 +42,11 @@ export const CellPositionDecorator: Decorator = (Story) => (
 
 export const BoardDecorator: Decorator = (Story) => (
   <>
-    <HookCompanyBoard />
     <RecoilScope SpecificContext={CompanyBoardContext}>
+      <HooksCompanyBoard
+        availableFilters={[]}
+        orderBy={defaultPipelineProgressOrderBy}
+      />
       <Story />
     </RecoilScope>
   </>
@@ -53,8 +57,7 @@ function HookLoadFakeBoardContextState() {
     pipelineProgressIdScopedState,
     BoardCardContext,
   );
-  const pipelineProgress =
-    pipeline?.pipelineStages?.[0]?.pipelineProgresses?.[0];
+  const pipelineProgress = mockedPipelineProgressData[1];
   useEffect(() => {
     setPipelineProgressId(pipelineProgress?.id || '');
   }, [pipelineProgress?.id, setPipelineProgressId]);
@@ -64,8 +67,11 @@ function HookLoadFakeBoardContextState() {
 export const BoardCardDecorator: Decorator = (Story) => {
   return (
     <>
-      <HookCompanyBoard />
       <RecoilScope SpecificContext={CompanyBoardContext}>
+        <HooksCompanyBoard
+          availableFilters={[]}
+          orderBy={defaultPipelineProgressOrderBy}
+        />
         <RecoilScope SpecificContext={BoardColumnContext}>
           <RecoilScope SpecificContext={BoardCardContext}>
             <HookLoadFakeBoardContextState />

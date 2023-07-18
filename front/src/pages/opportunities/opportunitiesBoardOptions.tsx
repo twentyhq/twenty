@@ -3,11 +3,16 @@ import { NewCompanyProgressButton } from '@/companies/components/NewCompanyProgr
 import { BoardOptions } from '@/pipeline/types/BoardOptions';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 
-export const companyBoardOptions: BoardOptions = {
+import { opportunitiesFilters } from './opportunities-filters';
+import { opportunitiesSorts } from './opportunities-sorts';
+
+export const opportunitiesBoardOptions: BoardOptions = {
   newCardComponent: (
     <RecoilScope>
       <NewCompanyProgressButton />
     </RecoilScope>
   ),
   cardComponent: <CompanyBoardCard />,
+  filters: opportunitiesFilters,
+  sorts: opportunitiesSorts,
 };

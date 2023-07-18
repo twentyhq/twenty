@@ -3,7 +3,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { GET_PIPELINES } from '@/pipeline/queries';
+import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardColumnContext } from '@/pipeline/states/BoardColumnContext';
 import { boardState } from '@/pipeline/states/boardState';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
@@ -37,7 +37,10 @@ export function NewCompanyProgressButton() {
   } = usePreviousHotkeyScope();
 
   const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation({
-    refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
+    refetchQueries: [
+      getOperationName(GET_PIPELINE_PROGRESS) ?? '',
+      getOperationName(GET_PIPELINES) ?? '',
+    ],
   });
 
   const handleEntitySelect = useCallback(

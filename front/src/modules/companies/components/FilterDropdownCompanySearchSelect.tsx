@@ -1,21 +1,26 @@
+import { Context } from 'react';
+
 import { FilterDropdownEntitySearchSelect } from '@/ui/filter-n-sort/components/FilterDropdownEntitySearchSelect';
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/states/filterDropdownSelectedEntityIdScopedState';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
-import { TableContext } from '@/ui/table/states/TableContext';
 
 import { useFilteredSearchCompanyQuery } from '../queries';
 
-export function FilterDropdownCompanySearchSelect() {
+export function FilterDropdownCompanySearchSelect({
+  context,
+}: {
+  context: Context<string | null>;
+}) {
   const filterDropdownSearchInput = useRecoilScopedValue(
     filterDropdownSearchInputScopedState,
-    TableContext,
+    context,
   );
 
   const [filterDropdownSelectedEntityId] = useRecoilScopedState(
     filterDropdownSelectedEntityIdScopedState,
-    TableContext,
+    context,
   );
 
   const usersForSelect = useFilteredSearchCompanyQuery({
@@ -28,7 +33,7 @@ export function FilterDropdownCompanySearchSelect() {
   return (
     <FilterDropdownEntitySearchSelect
       entitiesForSelect={usersForSelect}
-      context={TableContext}
+      context={context}
     />
   );
 }
