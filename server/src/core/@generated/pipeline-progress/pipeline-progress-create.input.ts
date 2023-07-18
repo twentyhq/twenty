@@ -6,6 +6,7 @@ import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.e
 import { HideField } from '@nestjs/graphql';
 import { PipelineCreateNestedOneWithoutPipelineProgressesInput } from '../pipeline/pipeline-create-nested-one-without-pipeline-progresses.input';
 import { PipelineStageCreateNestedOneWithoutPipelineProgressesInput } from '../pipeline-stage/pipeline-stage-create-nested-one-without-pipeline-progresses.input';
+import { PersonCreateNestedOneWithoutPipelineProgressInput } from '../person/person-create-nested-one-without-pipeline-progress.input';
 import { WorkspaceCreateNestedOneWithoutPipelineProgressesInput } from '../workspace/workspace-create-nested-one-without-pipeline-progresses.input';
 
 @InputType()
@@ -21,6 +22,9 @@ export class PipelineProgressCreateInput {
 
     @Field(() => Date, {nullable:true})
     closeDate?: Date | string;
+
+    @Field(() => Int, {nullable:true})
+    closeConfidence?: number;
 
     @Field(() => PipelineProgressableType, {nullable:false})
     progressableType!: keyof typeof PipelineProgressableType;
@@ -42,6 +46,9 @@ export class PipelineProgressCreateInput {
 
     @Field(() => PipelineStageCreateNestedOneWithoutPipelineProgressesInput, {nullable:false})
     pipelineStage!: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
+
+    @Field(() => PersonCreateNestedOneWithoutPipelineProgressInput, {nullable:true})
+    pointOfContact?: PersonCreateNestedOneWithoutPipelineProgressInput;
 
     @HideField()
     workspace!: WorkspaceCreateNestedOneWithoutPipelineProgressesInput;

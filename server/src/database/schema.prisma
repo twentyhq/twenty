@@ -296,8 +296,9 @@ model Person {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  PipelineProgress PipelineProgress[]
 
   @@map("people")
 }
@@ -479,14 +480,17 @@ enum PipelineProgressableType {
 model PipelineProgress {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  id        String    @id @default(uuid())
-  amount    Int?
-  closeDate DateTime?
+  id              String    @id @default(uuid())
+  amount          Int?
+  closeDate       DateTime?
+  closeConfidence Int?
 
   pipeline         Pipeline                 @relation(fields: [pipelineId], references: [id])
   pipelineId       String
   pipelineStage    PipelineStage            @relation(fields: [pipelineStageId], references: [id])
   pipelineStageId  String
+  pointOfContact   Person?                  @relation(fields: [pointOfContactId], references: [id])
+  pointOfContactId String?
   progressableType PipelineProgressableType
   progressableId   String
   /// @TypeGraphQL.omit(input: true, output: true)

@@ -24,11 +24,17 @@ export class PipelineProgressGroupBy {
     @Field(() => Date, {nullable:true})
     closeDate?: Date | string;
 
+    @Field(() => Int, {nullable:true})
+    closeConfidence?: number;
+
     @Field(() => String, {nullable:false})
     pipelineId!: string;
 
     @Field(() => String, {nullable:false})
     pipelineStageId!: string;
+
+    @Field(() => String, {nullable:true})
+    pointOfContactId?: string;
 
     @Field(() => PipelineProgressableType, {nullable:false})
     progressableType!: keyof typeof PipelineProgressableType;

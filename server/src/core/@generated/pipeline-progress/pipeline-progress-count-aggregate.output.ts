@@ -16,10 +16,16 @@ export class PipelineProgressCountAggregate {
     closeDate!: number;
 
     @Field(() => Int, {nullable:false})
+    closeConfidence!: number;
+
+    @Field(() => Int, {nullable:false})
     pipelineId!: number;
 
     @Field(() => Int, {nullable:false})
     pipelineStageId!: number;
+
+    @Field(() => Int, {nullable:false})
+    pointOfContactId!: number;
 
     @Field(() => Int, {nullable:false})
     progressableType!: number;

@@ -2,6 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
+import { PipelineProgressUncheckedCreateNestedManyWithoutPointOfContactInput } from '../pipeline-progress/pipeline-progress-unchecked-create-nested-many-without-point-of-contact.input';
 
 @InputType()
 export class PersonUncheckedCreateInput {
@@ -45,4 +46,7 @@ export class PersonUncheckedCreateInput {
 
     @Field(() => Date, {nullable:true})
     updatedAt?: Date | string;
+
+    @Field(() => PipelineProgressUncheckedCreateNestedManyWithoutPointOfContactInput, {nullable:true})
+    PipelineProgress?: PipelineProgressUncheckedCreateNestedManyWithoutPointOfContactInput;
 }

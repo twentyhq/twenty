@@ -4,6 +4,7 @@ import { SortOrder } from '../prisma/sort-order.enum';
 import { HideField } from '@nestjs/graphql';
 import { CompanyOrderByWithRelationInput } from '../company/company-order-by-with-relation.input';
 import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-by-with-relation.input';
+import { PipelineProgressOrderByRelationAggregateInput } from '../pipeline-progress/pipeline-progress-order-by-relation-aggregate.input';
 
 @InputType()
 export class PersonOrderByWithRelationInput {
@@ -46,4 +47,7 @@ export class PersonOrderByWithRelationInput {
 
     @HideField()
     workspace?: WorkspaceOrderByWithRelationInput;
+
+    @Field(() => PipelineProgressOrderByRelationAggregateInput, {nullable:true})
+    PipelineProgress?: PipelineProgressOrderByRelationAggregateInput;
 }

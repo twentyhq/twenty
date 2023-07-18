@@ -19,6 +19,9 @@ export class PipelineProgressUpdateManyMutationInput {
     @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
     closeDate?: NullableDateTimeFieldUpdateOperationsInput;
 
+    @Field(() => NullableIntFieldUpdateOperationsInput, {nullable:true})
+    closeConfidence?: NullableIntFieldUpdateOperationsInput;
+
     @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {nullable:true})
     progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
 

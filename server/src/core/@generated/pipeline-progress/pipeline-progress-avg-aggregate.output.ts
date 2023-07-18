@@ -7,4 +7,7 @@ export class PipelineProgressAvgAggregate {
 
     @Field(() => Float, {nullable:true})
     amount?: number;
+
+    @Field(() => Float, {nullable:true})
+    closeConfidence?: number;
 }

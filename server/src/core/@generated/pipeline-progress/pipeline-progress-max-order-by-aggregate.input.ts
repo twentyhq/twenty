@@ -16,10 +16,16 @@ export class PipelineProgressMaxOrderByAggregateInput {
     closeDate?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
+    closeConfidence?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
     pipelineId?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     pipelineStageId?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    pointOfContactId?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     progressableType?: keyof typeof SortOrder;

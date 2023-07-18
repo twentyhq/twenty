@@ -4,6 +4,7 @@ import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-
 import { HideField } from '@nestjs/graphql';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
+import { PipelineProgressUncheckedUpdateManyWithoutPointOfContactNestedInput } from '../pipeline-progress/pipeline-progress-unchecked-update-many-without-point-of-contact-nested.input';
 
 @InputType()
 export class PersonUncheckedUpdateWithoutCompanyInput {
@@ -37,4 +38,7 @@ export class PersonUncheckedUpdateWithoutCompanyInput {
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     updatedAt?: DateTimeFieldUpdateOperationsInput;
+
+    @Field(() => PipelineProgressUncheckedUpdateManyWithoutPointOfContactNestedInput, {nullable:true})
+    PipelineProgress?: PipelineProgressUncheckedUpdateManyWithoutPointOfContactNestedInput;
 }

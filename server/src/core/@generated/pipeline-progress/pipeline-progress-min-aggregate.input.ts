@@ -15,10 +15,16 @@ export class PipelineProgressMinAggregateInput {
     closeDate?: true;
 
     @Field(() => Boolean, {nullable:true})
+    closeConfidence?: true;
+
+    @Field(() => Boolean, {nullable:true})
     pipelineId?: true;
 
     @Field(() => Boolean, {nullable:true})
     pipelineStageId?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    pointOfContactId?: true;
 
     @Field(() => Boolean, {nullable:true})
     progressableType?: true;

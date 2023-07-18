@@ -7,4 +7,7 @@ export class PipelineProgressSumAggregate {
 
     @Field(() => Int, {nullable:true})
     amount?: number;
+
+    @Field(() => Int, {nullable:true})
+    closeConfidence?: number;
 }

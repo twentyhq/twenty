@@ -6,6 +6,7 @@ import { PipelineProgressableType } from '../prisma/pipeline-progressable-type.e
 import { HideField } from '@nestjs/graphql';
 import { Pipeline } from '../pipeline/pipeline.model';
 import { PipelineStage } from '../pipeline-stage/pipeline-stage.model';
+import { Person } from '../person/person.model';
 import { Workspace } from '../workspace/workspace.model';
 
 @ObjectType()
@@ -20,11 +21,17 @@ export class PipelineProgress {
     @Field(() => Date, {nullable:true})
     closeDate!: Date | null;
 
+    @Field(() => Int, {nullable:true})
+    closeConfidence!: number | null;
+
     @Field(() => String, {nullable:false})
     pipelineId!: string;
 
     @Field(() => String, {nullable:false})
     pipelineStageId!: string;
+
+    @Field(() => String, {nullable:true})
+    pointOfContactId!: string | null;
 
     @Field(() => PipelineProgressableType, {nullable:false})
     progressableType!: keyof typeof PipelineProgressableType;
@@ -49,6 +56,9 @@ export class PipelineProgress {
 
     @Field(() => PipelineStage, {nullable:false})
     pipelineStage?: PipelineStage;
+
+    @Field(() => Person, {nullable:true})
+    pointOfContact?: Person | null;
 
     @HideField()
     workspace?: Workspace;

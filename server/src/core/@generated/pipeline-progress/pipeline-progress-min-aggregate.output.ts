@@ -19,11 +19,17 @@ export class PipelineProgressMinAggregate {
     @Field(() => Date, {nullable:true})
     closeDate?: Date | string;
 
+    @Field(() => Int, {nullable:true})
+    closeConfidence?: number;
+
     @Field(() => String, {nullable:true})
     pipelineId?: string;
 
     @Field(() => String, {nullable:true})
     pipelineStageId?: string;
+
+    @Field(() => String, {nullable:true})
+    pointOfContactId?: string;
 
     @Field(() => PipelineProgressableType, {nullable:true})
     progressableType?: keyof typeof PipelineProgressableType;

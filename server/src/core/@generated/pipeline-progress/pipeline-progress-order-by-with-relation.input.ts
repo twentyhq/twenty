@@ -4,6 +4,7 @@ import { SortOrder } from '../prisma/sort-order.enum';
 import { HideField } from '@nestjs/graphql';
 import { PipelineOrderByWithRelationInput } from '../pipeline/pipeline-order-by-with-relation.input';
 import { PipelineStageOrderByWithRelationInput } from '../pipeline-stage/pipeline-stage-order-by-with-relation.input';
+import { PersonOrderByWithRelationInput } from '../person/person-order-by-with-relation.input';
 import { WorkspaceOrderByWithRelationInput } from '../workspace/workspace-order-by-with-relation.input';
 
 @InputType()
@@ -19,10 +20,16 @@ export class PipelineProgressOrderByWithRelationInput {
     closeDate?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
+    closeConfidence?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
     pipelineId?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     pipelineStageId?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    pointOfContactId?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
     progressableType?: keyof typeof SortOrder;
@@ -47,6 +54,9 @@ export class PipelineProgressOrderByWithRelationInput {
 
     @Field(() => PipelineStageOrderByWithRelationInput, {nullable:true})
     pipelineStage?: PipelineStageOrderByWithRelationInput;
+
+    @Field(() => PersonOrderByWithRelationInput, {nullable:true})
+    pointOfContact?: PersonOrderByWithRelationInput;
 
     @HideField()
     workspace?: WorkspaceOrderByWithRelationInput;

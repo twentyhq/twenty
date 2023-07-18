@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
 import { NullableIntFieldUpdateOperationsInput } from '../prisma/nullable-int-field-update-operations.input';
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
+import { NullableStringFieldUpdateOperationsInput } from '../prisma/nullable-string-field-update-operations.input';
 import { EnumPipelineProgressableTypeFieldUpdateOperationsInput } from '../prisma/enum-pipeline-progressable-type-field-update-operations.input';
 import { HideField } from '@nestjs/graphql';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
@@ -19,8 +20,14 @@ export class PipelineProgressUncheckedUpdateWithoutPipelineInput {
     @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
     closeDate?: NullableDateTimeFieldUpdateOperationsInput;
 
+    @Field(() => NullableIntFieldUpdateOperationsInput, {nullable:true})
+    closeConfidence?: NullableIntFieldUpdateOperationsInput;
+
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     pipelineStageId?: StringFieldUpdateOperationsInput;
+
+    @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
+    pointOfContactId?: NullableStringFieldUpdateOperationsInput;
 
     @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {nullable:true})
     progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;

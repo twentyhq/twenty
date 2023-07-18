@@ -6,6 +6,7 @@ import { HideField } from '@nestjs/graphql';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { CompanyUpdateOneWithoutPeopleNestedInput } from '../company/company-update-one-without-people-nested.input';
 import { WorkspaceUpdateOneRequiredWithoutPeopleNestedInput } from '../workspace/workspace-update-one-required-without-people-nested.input';
+import { PipelineProgressUpdateManyWithoutPointOfContactNestedInput } from '../pipeline-progress/pipeline-progress-update-many-without-point-of-contact-nested.input';
 
 @InputType()
 export class PersonUpdateInput {
@@ -42,4 +43,7 @@ export class PersonUpdateInput {
 
     @HideField()
     workspace?: WorkspaceUpdateOneRequiredWithoutPeopleNestedInput;
+
+    @Field(() => PipelineProgressUpdateManyWithoutPointOfContactNestedInput, {nullable:true})
+    PipelineProgress?: PipelineProgressUpdateManyWithoutPointOfContactNestedInput;
 }

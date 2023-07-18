@@ -7,6 +7,7 @@ import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.inpu
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
 import { CompanyRelationFilter } from '../company/company-relation-filter.input';
 import { WorkspaceRelationFilter } from '../workspace/workspace-relation-filter.input';
+import { PipelineProgressListRelationFilter } from '../pipeline-progress/pipeline-progress-list-relation-filter.input';
 
 @InputType()
 export class PersonWhereInput {
@@ -58,4 +59,7 @@ export class PersonWhereInput {
 
     @HideField()
     workspace?: WorkspaceRelationFilter;
+
+    @Field(() => PipelineProgressListRelationFilter, {nullable:true})
+    PipelineProgress?: PipelineProgressListRelationFilter;
 }

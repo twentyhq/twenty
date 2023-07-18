@@ -4,6 +4,8 @@ import { ID } from '@nestjs/graphql';
 import { HideField } from '@nestjs/graphql';
 import { Company } from '../company/company.model';
 import { Workspace } from '../workspace/workspace.model';
+import { PipelineProgress } from '../pipeline-progress/pipeline-progress.model';
+import { PersonCount } from './person-count.output';
 
 @ObjectType()
 export class Person {
@@ -46,4 +48,10 @@ export class Person {
 
     @HideField()
     workspace?: Workspace;
+
+    @Field(() => [PipelineProgress], {nullable:true})
+    PipelineProgress?: Array<PipelineProgress>;
+
+    @HideField()
+    _count?: PersonCount;
 }

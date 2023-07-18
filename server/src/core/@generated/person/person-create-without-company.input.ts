@@ -3,6 +3,7 @@ import { InputType } from '@nestjs/graphql';
 import * as Validator from 'class-validator';
 import { HideField } from '@nestjs/graphql';
 import { WorkspaceCreateNestedOneWithoutPeopleInput } from '../workspace/workspace-create-nested-one-without-people.input';
+import { PipelineProgressCreateNestedManyWithoutPointOfContactInput } from '../pipeline-progress/pipeline-progress-create-nested-many-without-point-of-contact.input';
 
 @InputType()
 export class PersonCreateWithoutCompanyInput {
@@ -43,4 +44,7 @@ export class PersonCreateWithoutCompanyInput {
 
     @HideField()
     workspace!: WorkspaceCreateNestedOneWithoutPeopleInput;
+
+    @Field(() => PipelineProgressCreateNestedManyWithoutPointOfContactInput, {nullable:true})
+    PipelineProgress?: PipelineProgressCreateNestedManyWithoutPointOfContactInput;
 }

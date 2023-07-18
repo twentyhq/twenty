@@ -7,6 +7,7 @@ import { EnumPipelineProgressableTypeFieldUpdateOperationsInput } from '../prism
 import { HideField } from '@nestjs/graphql';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
 import { PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput } from '../pipeline/pipeline-update-one-required-without-pipeline-progresses-nested.input';
+import { PersonUpdateOneWithoutPipelineProgressNestedInput } from '../person/person-update-one-without-pipeline-progress-nested.input';
 import { WorkspaceUpdateOneRequiredWithoutPipelineProgressesNestedInput } from '../workspace/workspace-update-one-required-without-pipeline-progresses-nested.input';
 
 @InputType()
@@ -20,6 +21,9 @@ export class PipelineProgressUpdateWithoutPipelineStageInput {
 
     @Field(() => NullableDateTimeFieldUpdateOperationsInput, {nullable:true})
     closeDate?: NullableDateTimeFieldUpdateOperationsInput;
+
+    @Field(() => NullableIntFieldUpdateOperationsInput, {nullable:true})
+    closeConfidence?: NullableIntFieldUpdateOperationsInput;
 
     @Field(() => EnumPipelineProgressableTypeFieldUpdateOperationsInput, {nullable:true})
     progressableType?: EnumPipelineProgressableTypeFieldUpdateOperationsInput;
@@ -38,6 +42,9 @@ export class PipelineProgressUpdateWithoutPipelineStageInput {
 
     @Field(() => PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput, {nullable:true})
     pipeline?: PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput;
+
+    @Field(() => PersonUpdateOneWithoutPipelineProgressNestedInput, {nullable:true})
+    pointOfContact?: PersonUpdateOneWithoutPipelineProgressNestedInput;
 
     @HideField()
     workspace?: WorkspaceUpdateOneRequiredWithoutPipelineProgressesNestedInput;
