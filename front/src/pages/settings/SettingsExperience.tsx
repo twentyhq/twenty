@@ -17,6 +17,12 @@ const StyledContainer = styled.div`
   }
 `;
 
+const StyledSectionContainer = styled.div`
+  > * + * {
+    margin-top: ${({ theme }) => theme.spacing(4)};
+  }
+`;
+
 export function SettingsExperience() {
   const { colorScheme, setColorScheme } = useColorScheme();
 
@@ -25,8 +31,10 @@ export function SettingsExperience() {
       <div>
         <StyledContainer>
           <MainSectionTitle>Experience</MainSectionTitle>
-          <SubSectionTitle title="Appearance" />
-          <ColorSchemePicker value={colorScheme} onChange={setColorScheme} />
+          <StyledSectionContainer>
+            <SubSectionTitle title="Appearance" />
+            <ColorSchemePicker value={colorScheme} onChange={setColorScheme} />
+          </StyledSectionContainer>
         </StyledContainer>
       </div>
     </NoTopBarContainer>

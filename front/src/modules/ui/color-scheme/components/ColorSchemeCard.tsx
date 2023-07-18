@@ -154,21 +154,21 @@ export function ColorSchemeCard({
 }: ColorSchemeCardProps) {
   const controls = useAnimation();
 
-  const handleMouseEnter = () => {
+  function handleMouseEnter() {
     controls.start({
       height: 61,
       fontSize: '22px',
       transition: { duration: 0.1 },
     });
-  };
+  }
 
-  const handleMouseLeave = () => {
+  function handleMouseLeave() {
     controls.start({
       height: 56,
       fontSize: '20px',
       transition: { duration: 0.1 },
     });
-  };
+  }
 
   if (variant === 'system') {
     return (
