@@ -75,20 +75,20 @@ export function SortDropdownButton<SortField>({
           ))}
         </DropdownMenuItemsContainer>
       ) : (
-        [
+        <>
           <DropdownButton.StyledDropdownTopOption
-            key={0}
             onClick={() => setIsOptionUnfolded(true)}
           >
             {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
 
             <DropdownButton.StyledDropdownTopOptionAngleDown />
-          </DropdownButton.StyledDropdownTopOption>,
-          <DropdownMenuSeparator />,
+          </DropdownButton.StyledDropdownTopOption>
+          <DropdownMenuSeparator />
+
           <DropdownMenuItemsContainer>
             {availableSorts.map((sort, index) => (
               <DropdownMenuSelectableItem
-                key={index + 1}
+                key={index}
                 onClick={() => {
                   setIsUnfolded(false);
                   onSortItemSelect(sort);
@@ -100,8 +100,8 @@ export function SortDropdownButton<SortField>({
                 {sort.label}
               </DropdownMenuSelectableItem>
             ))}
-          </DropdownMenuItemsContainer>,
-        ]
+          </DropdownMenuItemsContainer>
+        </>
       )}
     </DropdownButton>
   );
