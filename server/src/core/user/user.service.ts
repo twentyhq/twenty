@@ -73,6 +73,7 @@ export class UserService {
                 },
               },
             },
+        locale: 'en',
       },
       update: {},
       ...(args.select ? { select: args.select } : {}),

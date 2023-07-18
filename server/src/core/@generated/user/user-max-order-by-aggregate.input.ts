@@ -25,6 +25,9 @@ export class UserMaxOrderByAggregateInput {
     avatarUrl?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
+    locale?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
     phoneNumber?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})

@@ -41,6 +41,10 @@ export class UserUncheckedCreateWithoutAuthoredCommentThreadsInput {
     @Validator.IsOptional()
     avatarUrl?: string;
 
+    @Field(() => String, {nullable:false})
+    @Validator.IsString()
+    locale!: string;
+
     @Field(() => String, {nullable:true})
     @Validator.IsString()
     @Validator.IsOptional()

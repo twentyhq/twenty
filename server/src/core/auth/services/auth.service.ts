@@ -81,6 +81,7 @@ export class AuthService {
           data: {
             email: signUpInput.email,
             passwordHash,
+            locale: 'en',
             settings: {
               create: {
                 locale: 'en',
@@ -96,6 +97,7 @@ export class AuthService {
       data: {
         email: signUpInput.email,
         passwordHash,
+        locale: 'en',
         settings: {
           create: {
             locale: 'en',

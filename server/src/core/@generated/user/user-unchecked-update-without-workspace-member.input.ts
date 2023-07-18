@@ -35,6 +35,9 @@ export class UserUncheckedUpdateWithoutWorkspaceMemberInput {
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     avatarUrl?: NullableStringFieldUpdateOperationsInput;
 
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    locale?: StringFieldUpdateOperationsInput;
+
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     phoneNumber?: NullableStringFieldUpdateOperationsInput;
 

@@ -25,6 +25,9 @@ export class UserCountAggregate {
     avatarUrl!: number;
 
     @Field(() => Int, {nullable:false})
+    locale!: number;
+
+    @Field(() => Int, {nullable:false})
     phoneNumber!: number;
 
     @Field(() => Int, {nullable:false})

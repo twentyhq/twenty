@@ -32,6 +32,9 @@ export class User {
     @Field(() => String, {nullable:true})
     avatarUrl!: string | null;
 
+    @Field(() => String, {nullable:false})
+    locale!: string;
+
     @Field(() => String, {nullable:true})
     phoneNumber!: string | null;
 

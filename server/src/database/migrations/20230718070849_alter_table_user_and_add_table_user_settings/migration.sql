@@ -14,7 +14,6 @@ CREATE TABLE "user_settings" (
 );
 
 -- Applying constraints and indexes
-ALTER TABLE "users" ALTER COLUMN "settingsId" SET NOT NULL;
 CREATE UNIQUE INDEX "users_settingsId_key" ON "users"("settingsId");
 ALTER TABLE "users" ADD CONSTRAINT "users_settingsId_fkey" FOREIGN KEY ("settingsId") REFERENCES "user_settings"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 

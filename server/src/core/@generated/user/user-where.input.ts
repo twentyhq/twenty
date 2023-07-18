@@ -44,6 +44,9 @@ export class UserWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     avatarUrl?: StringNullableFilter;
 
+    @Field(() => StringFilter, {nullable:true})
+    locale?: StringFilter;
+
     @Field(() => StringNullableFilter, {nullable:true})
     phoneNumber?: StringNullableFilter;
 

@@ -24,6 +24,9 @@ export class UserMinAggregateInput {
     avatarUrl?: true;
 
     @Field(() => Boolean, {nullable:true})
+    locale?: true;
+
+    @Field(() => Boolean, {nullable:true})
     phoneNumber?: true;
 
     @Field(() => Boolean, {nullable:true})

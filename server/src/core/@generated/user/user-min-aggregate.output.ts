@@ -37,6 +37,10 @@ export class UserMinAggregate {
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
+    locale?: string;
+
+    @Field(() => String, {nullable:true})
+    @Validator.IsString()
     @Validator.IsOptional()
     phoneNumber?: string;
 
