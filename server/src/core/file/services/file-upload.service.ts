@@ -95,7 +95,7 @@ export class FileUploadService {
 
         paths.push(`${fileFolder}/${cropSizes[index]}/${name}`);
 
-        return this.uploadFile({
+        return this._uploadFile({
           file: buffer,
           filename: `${cropSizes[index]}/${name}`,
           mimeType,
