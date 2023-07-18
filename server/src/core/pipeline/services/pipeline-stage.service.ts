@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
+import seedPipelineStages from '../seed-data/pipeline-stages.json';
 
 @Injectable()
 export class PipelineStageService {
@@ -35,4 +36,22 @@ export class PipelineStageService {
 
   // GroupBy
   groupBy = this.prismaService.pipelineStage.groupBy;
+
+  // Customs
+  async createDefaultPipelineStages({
+    workspaceId,
+    pipelineId,
+  }: {
+    workspaceId: string;
+    pipelineId: string;
+  }) {
+    const pipelineStages = seedPipelineStages.map((pipelineStage) => ({
+      ...pipelineStage,
+      workspaceId,
+      pipelineId,
+    }));
+    return this.createMany({
+      data: pipelineStages,
+    });
+  }
 }

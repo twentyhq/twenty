@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { Prisma } from '@prisma/client';
 import { assert } from 'src/utils/assert';
+import { WorkspaceService } from '../workspace/services/workspace.service';
 
 export type UserPayload = {
   displayName: string | undefined | null;
@@ -10,7 +11,10 @@ export type UserPayload = {
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly workspaceService: WorkspaceService,
+  ) {}
 
   // Find
   findFirst = this.prismaService.user.findFirst;
@@ -50,6 +54,18 @@ export class UserService {
   ): Promise<Prisma.UserGetPayload<T>> {
     assert(args.data.email, 'email is missing', BadRequestException);
 
+    // Create workspace if not exists
+    const workspace = workspaceId
+      ? await this.workspaceService.findUnique({
+          where: {
+            id: workspaceId,
+          },
+        })
+      : await this.workspaceService.createDefaultWorkspace();
+
+    assert(workspace, 'workspace is missing', BadRequestException);
+
+    // Create user
     const user = await this.prismaService.user.upsert({
       where: {
         email: args.data.email,
@@ -57,22 +73,13 @@ export class UserService {
       create: {
         ...(args.data as Prisma.UserCreateInput),
 
-        workspaceMember: workspaceId
-          ? {
-              create: {
-                workspace: {
-                  connect: { id: workspaceId },
-                },
-              },
-            }
-          : // Assign the user to a new workspace by default
-            {
-              create: {
-                workspace: {
-                  create: {},
-                },
-              },
+        workspaceMember: {
+          create: {
+            workspace: {
+              connect: { id: workspace.id },
             },
+          },
+        },
         locale: 'en',
       },
       update: {},
