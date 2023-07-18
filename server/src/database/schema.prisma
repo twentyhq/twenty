@@ -19,18 +19,25 @@ generator nestgraphql {
   fields_Validator_from   = "class-validator"
 
   // All relations, only allow connect
-  decorate_all_type      = "!(CommentThreadTargetCreateNestedManyWithoutCommentThreadInput)"
+  decorate_all_type      = "!(CommentThreadTarget*Input|UserSettingsUpdateOneRequiredWithoutUserNestedInput)"
   decorate_all_field     = "*(create|connectOrCreate|update|upsert|delete|createMany|updateMany|deleteMany)"
   decorate_all_name      = "HideField"
   decorate_all_from      = "@nestjs/graphql"
   decorate_all_arguments = "[]"
 
-  // CommentThread create: Only Allow targets createMany and comments createMany / attachment, author connect
-  decorate_createCommentThreadTargets_type      = "*CommentThreadTargetCreateNestedManyWithoutCommentThreadInput"
-  decorate_createCommentThreadTargets_field     = "!(createMany)"
-  decorate_createCommentThreadTargets_name      = "HideField"
-  decorate_createCommentThreadTargets_from      = "@nestjs/graphql"
-  decorate_createCommentThreadTargets_arguments = "[]"
+  // CommentThread: Only Allow targets createOrConnect / createMany
+  decorate_commentThreadTargets_type      = "*CommentThreadTarget*Input"
+  decorate_commentThreadTargets_field     = "*(update|upsert|updateMany|deleteMany)"
+  decorate_commentThreadTargets_name      = "HideField"
+  decorate_commentThreadTargets_from      = "@nestjs/graphql"
+  decorate_commentThreadTargets_arguments = "[]"
+
+  // CommentThread: Only Allow targets createOrConnect / createMany
+  decorate_userSettings_type      = "*UserSettingsUpdateOneRequiredWithoutUserNestedInput"
+  decorate_userSettings_field     = "!(update)"
+  decorate_userSettings_name      = "HideField"
+  decorate_userSettings_from      = "@nestjs/graphql"
+  decorate_userSettings_arguments = "[]"
 
   // Disable _count on all models except Aggregation use case
   decorate_count_type      = "!(*Aggregate*|*GroupBy*|*OrderBy*)"

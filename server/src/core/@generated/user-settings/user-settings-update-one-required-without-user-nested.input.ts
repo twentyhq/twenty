@@ -5,8 +5,8 @@ import { HideField } from '@nestjs/graphql';
 import { UserSettingsCreateOrConnectWithoutUserInput } from './user-settings-create-or-connect-without-user.input';
 import { UserSettingsUpsertWithoutUserInput } from './user-settings-upsert-without-user.input';
 import { UserSettingsWhereUniqueInput } from './user-settings-where-unique.input';
-import { Type } from 'class-transformer';
 import { UserSettingsUpdateWithoutUserInput } from './user-settings-update-without-user.input';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class UserSettingsUpdateOneRequiredWithoutUserNestedInput {
@@ -20,10 +20,10 @@ export class UserSettingsUpdateOneRequiredWithoutUserNestedInput {
     @HideField()
     upsert?: UserSettingsUpsertWithoutUserInput;
 
-    @Field(() => UserSettingsWhereUniqueInput, {nullable:true})
-    @Type(() => UserSettingsWhereUniqueInput)
+    @HideField()
     connect?: UserSettingsWhereUniqueInput;
 
-    @HideField()
+    @Field(() => UserSettingsUpdateWithoutUserInput, {nullable:true})
+    @Type(() => UserSettingsUpdateWithoutUserInput)
     update?: UserSettingsUpdateWithoutUserInput;
 }

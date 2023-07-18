@@ -14,6 +14,7 @@ import {
   Pipeline,
   PipelineStage,
   PipelineProgress,
+  Attachment,
 } from '@prisma/client';
 import { AbilityAction } from './ability.action';
 
@@ -30,6 +31,7 @@ type SubjectsAbility = Subjects<{
   Pipeline: Pipeline;
   PipelineStage: PipelineStage;
   PipelineProgress: PipelineProgress;
+  Attachment: Attachment;
 }>;
 
 export type AppAbility = PureAbility<
@@ -97,6 +99,11 @@ export class AbilityFactory {
 
     // CommentThreadTarget
     can(AbilityAction.Read, 'CommentThreadTarget');
+
+    // Attachment
+    can(AbilityAction.Read, 'Attachment', { workspaceId: workspace.id });
+    can(AbilityAction.Update, 'Attachment', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'Attachment', { workspaceId: workspace.id });
 
     // Pipeline
     can(AbilityAction.Read, 'Pipeline', { workspaceId: workspace.id });

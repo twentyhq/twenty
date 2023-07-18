@@ -85,6 +85,13 @@ import {
   UpdatePipelineProgressAbilityHandler,
   DeletePipelineProgressAbilityHandler,
 } from './handlers/pipeline-progress.ability-handler';
+import {
+  CreateAttachmentAbilityHandler,
+  DeleteAttachmentAbilityHandler,
+  ManageAttachmentAbilityHandler,
+  ReadAttachmentAbilityHandler,
+  UpdateAttachmentAbilityHandler,
+} from './handlers/attachment.ability-handler';
 
 @Global()
 @Module({
@@ -145,6 +152,12 @@ import {
     CreateCommentThreadTargetAbilityHandler,
     UpdateCommentThreadTargetAbilityHandler,
     DeleteCommentThreadTargetAbilityHandler,
+    //Attachment
+    ManageAttachmentAbilityHandler,
+    ReadAttachmentAbilityHandler,
+    CreateAttachmentAbilityHandler,
+    UpdateAttachmentAbilityHandler,
+    DeleteAttachmentAbilityHandler,
     // Pipeline
     ManagePipelineAbilityHandler,
     ReadPipelineAbilityHandler,

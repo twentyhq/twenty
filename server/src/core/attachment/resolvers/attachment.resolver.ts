@@ -8,7 +8,15 @@ import { v4 as uuidV4 } from 'uuid';
 import { AttachmentService } from '../services/attachment.service';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { Attachment } from 'src/core/@generated/attachment/attachment.model';
+import { AbilityGuard } from 'src/guards/ability.guard';
+import { CreateAttachmentAbilityHandler } from 'src/ability/handlers/attachment.ability-handler';
+import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 
+@UseGuards(JwtAuthGuard)
+@Resolver(() => Attachment)
 @Resolver()
 export class AttachmentResolver {
   constructor(
@@ -16,6 +24,8 @@ export class AttachmentResolver {
     private readonly attachmentService: AttachmentService,
   ) {}
 
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreateAttachmentAbilityHandler)
   @Mutation(() => String)
   async uploadAttachment(
     @AuthUser() user: User,

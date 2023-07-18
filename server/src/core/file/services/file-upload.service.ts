@@ -46,7 +46,7 @@ export class FileUploadService {
 
     await this._uploadFile({
       file,
-      filename,
+      filename: name,
       mimeType,
       fileFolder,
     });

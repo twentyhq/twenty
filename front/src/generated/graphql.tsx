@@ -34,6 +34,76 @@ export type Analytics = {
   success: Scalars['Boolean'];
 };
 
+export type Attachment = {
+  __typename?: 'Attachment';
+  activity: CommentThread;
+  activityId: Scalars['String'];
+  author: User;
+  authorId: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  fullPath: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  type: AttachmentType;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type AttachmentCreateNestedManyWithoutActivityInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentListRelationFilter = {
+  every?: InputMaybe<AttachmentWhereInput>;
+  none?: InputMaybe<AttachmentWhereInput>;
+  some?: InputMaybe<AttachmentWhereInput>;
+};
+
+export type AttachmentOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export enum AttachmentType {
+  Archive = 'Archive',
+  Audio = 'Audio',
+  Image = 'Image',
+  Other = 'Other',
+  Spreadsheet = 'Spreadsheet',
+  TextDocument = 'TextDocument',
+  Video = 'Video'
+}
+
+export type AttachmentUpdateManyWithoutActivityNestedInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentUpdateManyWithoutAuthorNestedInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentWhereInput = {
+  AND?: InputMaybe<Array<AttachmentWhereInput>>;
+  NOT?: InputMaybe<Array<AttachmentWhereInput>>;
+  OR?: InputMaybe<Array<AttachmentWhereInput>>;
+  activity?: InputMaybe<CommentThreadRelationFilter>;
+  activityId?: InputMaybe<StringFilter>;
+  author?: InputMaybe<UserRelationFilter>;
+  authorId?: InputMaybe<StringFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  fullPath?: InputMaybe<StringFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  type?: InputMaybe<EnumAttachmentTypeFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
+export type AttachmentWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean'];
@@ -102,95 +172,8 @@ export type CommentCreateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type CommentCreateManyAuthorInput = {
-  body: Scalars['String'];
-  commentThreadId: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentCreateManyAuthorInputEnvelope = {
-  data: Array<CommentCreateManyAuthorInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CommentCreateManyCommentThreadInput = {
-  authorId: Scalars['String'];
-  body: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentCreateManyCommentThreadInputEnvelope = {
-  data: Array<CommentCreateManyCommentThreadInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CommentCreateManyWorkspaceInput = {
-  authorId: Scalars['String'];
-  body: Scalars['String'];
-  commentThreadId: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentCreateManyWorkspaceInputEnvelope = {
-  data: Array<CommentCreateManyWorkspaceInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CommentCreateNestedManyWithoutAuthorInput = {
-  connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutAuthorInput>>;
-  create?: InputMaybe<Array<CommentCreateWithoutAuthorInput>>;
-  createMany?: InputMaybe<CommentCreateManyAuthorInputEnvelope>;
-};
-
 export type CommentCreateNestedManyWithoutCommentThreadInput = {
-  createMany?: InputMaybe<CommentCreateManyCommentThreadInputEnvelope>;
-};
-
-export type CommentCreateOrConnectWithoutAuthorInput = {
-  create: CommentCreateWithoutAuthorInput;
-  where: CommentWhereUniqueInput;
-};
-
-export type CommentCreateOrConnectWithoutCommentThreadInput = {
-  create: CommentCreateWithoutCommentThreadInput;
-  where: CommentWhereUniqueInput;
-};
-
-export type CommentCreateOrConnectWithoutWorkspaceInput = {
-  create: CommentCreateWithoutWorkspaceInput;
-  where: CommentWhereUniqueInput;
-};
-
-export type CommentCreateWithoutAuthorInput = {
-  body: Scalars['String'];
-  commentThread: CommentThreadCreateNestedOneWithoutCommentsInput;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentCreateWithoutCommentThreadInput = {
-  author: UserCreateNestedOneWithoutCommentsInput;
-  body: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentCreateWithoutWorkspaceInput = {
-  author: UserCreateNestedOneWithoutCommentsInput;
-  body: Scalars['String'];
-  commentThread: CommentThreadCreateNestedOneWithoutCommentsInput;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
 };
 
 export type CommentListRelationFilter = {
@@ -203,22 +186,11 @@ export type CommentOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
-export type CommentScalarWhereInput = {
-  AND?: InputMaybe<Array<CommentScalarWhereInput>>;
-  NOT?: InputMaybe<Array<CommentScalarWhereInput>>;
-  OR?: InputMaybe<Array<CommentScalarWhereInput>>;
-  authorId?: InputMaybe<StringFilter>;
-  body?: InputMaybe<StringFilter>;
-  commentThreadId?: InputMaybe<StringFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
 export type CommentThread = {
   __typename?: 'CommentThread';
   assignee?: Maybe<User>;
   assigneeId?: Maybe<Scalars['String']>;
+  attachments?: Maybe<Array<Attachment>>;
   author: User;
   authorId: Scalars['String'];
   body?: Maybe<Scalars['String']>;
@@ -236,6 +208,7 @@ export type CommentThread = {
 
 export type CommentThreadCreateInput = {
   assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedCommentThreadsInput>;
+  attachments?: InputMaybe<AttachmentCreateNestedManyWithoutActivityInput>;
   author: UserCreateNestedOneWithoutAuthoredCommentThreadsInput;
   body?: InputMaybe<Scalars['String']>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
@@ -248,160 +221,10 @@ export type CommentThreadCreateInput = {
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<ActivityType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadCreateManyAssigneeInput = {
-  authorId: Scalars['String'];
-  body?: InputMaybe<Scalars['String']>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  dueAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  reminderAt?: InputMaybe<Scalars['DateTime']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadCreateManyAssigneeInputEnvelope = {
-  data: Array<CommentThreadCreateManyAssigneeInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CommentThreadCreateManyAuthorInput = {
-  assigneeId?: InputMaybe<Scalars['String']>;
-  body?: InputMaybe<Scalars['String']>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  dueAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  reminderAt?: InputMaybe<Scalars['DateTime']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadCreateManyAuthorInputEnvelope = {
-  data: Array<CommentThreadCreateManyAuthorInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CommentThreadCreateManyWorkspaceInput = {
-  assigneeId?: InputMaybe<Scalars['String']>;
-  authorId: Scalars['String'];
-  body?: InputMaybe<Scalars['String']>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  dueAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  reminderAt?: InputMaybe<Scalars['DateTime']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadCreateManyWorkspaceInputEnvelope = {
-  data: Array<CommentThreadCreateManyWorkspaceInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CommentThreadCreateNestedManyWithoutAssigneeInput = {
-  connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentThreadCreateOrConnectWithoutAssigneeInput>>;
-  create?: InputMaybe<Array<CommentThreadCreateWithoutAssigneeInput>>;
-  createMany?: InputMaybe<CommentThreadCreateManyAssigneeInputEnvelope>;
-};
-
-export type CommentThreadCreateNestedManyWithoutAuthorInput = {
-  connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentThreadCreateOrConnectWithoutAuthorInput>>;
-  create?: InputMaybe<Array<CommentThreadCreateWithoutAuthorInput>>;
-  createMany?: InputMaybe<CommentThreadCreateManyAuthorInputEnvelope>;
 };
 
 export type CommentThreadCreateNestedOneWithoutCommentsInput = {
   connect?: InputMaybe<CommentThreadWhereUniqueInput>;
-};
-
-export type CommentThreadCreateOrConnectWithoutAssigneeInput = {
-  create: CommentThreadCreateWithoutAssigneeInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadCreateOrConnectWithoutAuthorInput = {
-  create: CommentThreadCreateWithoutAuthorInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadCreateOrConnectWithoutCommentsInput = {
-  create: CommentThreadCreateWithoutCommentsInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadCreateOrConnectWithoutWorkspaceInput = {
-  create: CommentThreadCreateWithoutWorkspaceInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadCreateWithoutAssigneeInput = {
-  author: UserCreateNestedOneWithoutAuthoredCommentThreadsInput;
-  body?: InputMaybe<Scalars['String']>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
-  comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  dueAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  reminderAt?: InputMaybe<Scalars['DateTime']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadCreateWithoutAuthorInput = {
-  assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedCommentThreadsInput>;
-  body?: InputMaybe<Scalars['String']>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
-  comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  dueAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  reminderAt?: InputMaybe<Scalars['DateTime']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadCreateWithoutCommentsInput = {
-  assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedCommentThreadsInput>;
-  author: UserCreateNestedOneWithoutAuthoredCommentThreadsInput;
-  body?: InputMaybe<Scalars['String']>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  dueAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  reminderAt?: InputMaybe<Scalars['DateTime']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadCreateWithoutWorkspaceInput = {
-  assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedCommentThreadsInput>;
-  author: UserCreateNestedOneWithoutAuthoredCommentThreadsInput;
-  body?: InputMaybe<Scalars['String']>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
-  comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  dueAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  reminderAt?: InputMaybe<Scalars['DateTime']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CommentThreadListRelationFilter = {
@@ -417,6 +240,7 @@ export type CommentThreadOrderByRelationAggregateInput = {
 export type CommentThreadOrderByWithRelationInput = {
   assignee?: InputMaybe<UserOrderByWithRelationInput>;
   assigneeId?: InputMaybe<SortOrder>;
+  attachments?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
   author?: InputMaybe<UserOrderByWithRelationInput>;
   authorId?: InputMaybe<SortOrder>;
   body?: InputMaybe<SortOrder>;
@@ -453,23 +277,6 @@ export enum CommentThreadScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
-export type CommentThreadScalarWhereInput = {
-  AND?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
-  NOT?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
-  OR?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
-  assigneeId?: InputMaybe<StringNullableFilter>;
-  authorId?: InputMaybe<StringFilter>;
-  body?: InputMaybe<StringNullableFilter>;
-  completedAt?: InputMaybe<DateTimeNullableFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  dueAt?: InputMaybe<DateTimeNullableFilter>;
-  id?: InputMaybe<StringFilter>;
-  reminderAt?: InputMaybe<DateTimeNullableFilter>;
-  title?: InputMaybe<StringNullableFilter>;
-  type?: InputMaybe<EnumActivityTypeFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
 export type CommentThreadTarget = {
   __typename?: 'CommentThreadTarget';
   commentThread: CommentThread;
@@ -495,6 +302,9 @@ export type CommentThreadTargetCreateManyCommentThreadInputEnvelope = {
 };
 
 export type CommentThreadTargetCreateNestedManyWithoutCommentThreadInput = {
+  connect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>>;
+  create?: InputMaybe<Array<CommentThreadTargetCreateWithoutCommentThreadInput>>;
   createMany?: InputMaybe<CommentThreadTargetCreateManyCommentThreadInputEnvelope>;
 };
 
@@ -521,62 +331,14 @@ export type CommentThreadTargetOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
-export type CommentThreadTargetScalarWhereInput = {
-  AND?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  NOT?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  OR?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  commentThreadId?: InputMaybe<StringFilter>;
-  commentableId?: InputMaybe<StringFilter>;
-  commentableType?: InputMaybe<EnumCommentableTypeFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
-export type CommentThreadTargetUpdateManyMutationInput = {
-  commentableId?: InputMaybe<StringFieldUpdateOperationsInput>;
-  commentableType?: InputMaybe<EnumCommentableTypeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadTargetUpdateManyWithWhereWithoutCommentThreadInput = {
-  data: CommentThreadTargetUpdateManyMutationInput;
-  where: CommentThreadTargetScalarWhereInput;
-};
-
 export type CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput = {
   connect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>>;
   create?: InputMaybe<Array<CommentThreadTargetCreateWithoutCommentThreadInput>>;
   createMany?: InputMaybe<CommentThreadTargetCreateManyCommentThreadInputEnvelope>;
   delete?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
   set?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  update?: InputMaybe<Array<CommentThreadTargetUpdateWithWhereUniqueWithoutCommentThreadInput>>;
-  updateMany?: InputMaybe<Array<CommentThreadTargetUpdateManyWithWhereWithoutCommentThreadInput>>;
-  upsert?: InputMaybe<Array<CommentThreadTargetUpsertWithWhereUniqueWithoutCommentThreadInput>>;
-};
-
-export type CommentThreadTargetUpdateWithWhereUniqueWithoutCommentThreadInput = {
-  data: CommentThreadTargetUpdateWithoutCommentThreadInput;
-  where: CommentThreadTargetWhereUniqueInput;
-};
-
-export type CommentThreadTargetUpdateWithoutCommentThreadInput = {
-  commentableId?: InputMaybe<StringFieldUpdateOperationsInput>;
-  commentableType?: InputMaybe<EnumCommentableTypeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadTargetUpsertWithWhereUniqueWithoutCommentThreadInput = {
-  create: CommentThreadTargetCreateWithoutCommentThreadInput;
-  update: CommentThreadTargetUpdateWithoutCommentThreadInput;
-  where: CommentThreadTargetWhereUniqueInput;
 };
 
 export type CommentThreadTargetWhereInput = {
@@ -598,6 +360,7 @@ export type CommentThreadTargetWhereUniqueInput = {
 
 export type CommentThreadUpdateInput = {
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedCommentThreadsNestedInput>;
+  attachments?: InputMaybe<AttachmentUpdateManyWithoutActivityNestedInput>;
   author?: InputMaybe<UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput>;
   body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
@@ -610,182 +373,24 @@ export type CommentThreadUpdateInput = {
   title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadUpdateManyMutationInput = {
-  body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadUpdateManyWithWhereWithoutAssigneeInput = {
-  data: CommentThreadUpdateManyMutationInput;
-  where: CommentThreadScalarWhereInput;
-};
-
-export type CommentThreadUpdateManyWithWhereWithoutAuthorInput = {
-  data: CommentThreadUpdateManyMutationInput;
-  where: CommentThreadScalarWhereInput;
-};
-
-export type CommentThreadUpdateManyWithWhereWithoutWorkspaceInput = {
-  data: CommentThreadUpdateManyMutationInput;
-  where: CommentThreadScalarWhereInput;
 };
 
 export type CommentThreadUpdateManyWithoutAssigneeNestedInput = {
   connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentThreadCreateOrConnectWithoutAssigneeInput>>;
-  create?: InputMaybe<Array<CommentThreadCreateWithoutAssigneeInput>>;
-  createMany?: InputMaybe<CommentThreadCreateManyAssigneeInputEnvelope>;
-  delete?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
   set?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  update?: InputMaybe<Array<CommentThreadUpdateWithWhereUniqueWithoutAssigneeInput>>;
-  updateMany?: InputMaybe<Array<CommentThreadUpdateManyWithWhereWithoutAssigneeInput>>;
-  upsert?: InputMaybe<Array<CommentThreadUpsertWithWhereUniqueWithoutAssigneeInput>>;
 };
 
 export type CommentThreadUpdateManyWithoutAuthorNestedInput = {
   connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentThreadCreateOrConnectWithoutAuthorInput>>;
-  create?: InputMaybe<Array<CommentThreadCreateWithoutAuthorInput>>;
-  createMany?: InputMaybe<CommentThreadCreateManyAuthorInputEnvelope>;
-  delete?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
   set?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  update?: InputMaybe<Array<CommentThreadUpdateWithWhereUniqueWithoutAuthorInput>>;
-  updateMany?: InputMaybe<Array<CommentThreadUpdateManyWithWhereWithoutAuthorInput>>;
-  upsert?: InputMaybe<Array<CommentThreadUpsertWithWhereUniqueWithoutAuthorInput>>;
 };
 
 export type CommentThreadUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentThreadCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<CommentThreadCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<CommentThreadCreateManyWorkspaceInputEnvelope>;
-  delete?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentThreadScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
   set?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  update?: InputMaybe<Array<CommentThreadUpdateWithWhereUniqueWithoutWorkspaceInput>>;
-  updateMany?: InputMaybe<Array<CommentThreadUpdateManyWithWhereWithoutWorkspaceInput>>;
-  upsert?: InputMaybe<Array<CommentThreadUpsertWithWhereUniqueWithoutWorkspaceInput>>;
-};
-
-export type CommentThreadUpdateOneRequiredWithoutCommentsNestedInput = {
-  connect?: InputMaybe<CommentThreadWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<CommentThreadCreateOrConnectWithoutCommentsInput>;
-  create?: InputMaybe<CommentThreadCreateWithoutCommentsInput>;
-  update?: InputMaybe<CommentThreadUpdateWithoutCommentsInput>;
-  upsert?: InputMaybe<CommentThreadUpsertWithoutCommentsInput>;
-};
-
-export type CommentThreadUpdateWithWhereUniqueWithoutAssigneeInput = {
-  data: CommentThreadUpdateWithoutAssigneeInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadUpdateWithWhereUniqueWithoutAuthorInput = {
-  data: CommentThreadUpdateWithoutAuthorInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadUpdateWithWhereUniqueWithoutWorkspaceInput = {
-  data: CommentThreadUpdateWithoutWorkspaceInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadUpdateWithoutAssigneeInput = {
-  author?: InputMaybe<UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput>;
-  body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
-  comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
-  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadUpdateWithoutAuthorInput = {
-  assignee?: InputMaybe<UserUpdateOneWithoutAssignedCommentThreadsNestedInput>;
-  body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
-  comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
-  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadUpdateWithoutCommentsInput = {
-  assignee?: InputMaybe<UserUpdateOneWithoutAssignedCommentThreadsNestedInput>;
-  author?: InputMaybe<UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput>;
-  body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
-  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadUpdateWithoutWorkspaceInput = {
-  assignee?: InputMaybe<UserUpdateOneWithoutAssignedCommentThreadsNestedInput>;
-  author?: InputMaybe<UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput>;
-  body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
-  comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
-  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentThreadUpsertWithWhereUniqueWithoutAssigneeInput = {
-  create: CommentThreadCreateWithoutAssigneeInput;
-  update: CommentThreadUpdateWithoutAssigneeInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadUpsertWithWhereUniqueWithoutAuthorInput = {
-  create: CommentThreadCreateWithoutAuthorInput;
-  update: CommentThreadUpdateWithoutAuthorInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadUpsertWithWhereUniqueWithoutWorkspaceInput = {
-  create: CommentThreadCreateWithoutWorkspaceInput;
-  update: CommentThreadUpdateWithoutWorkspaceInput;
-  where: CommentThreadWhereUniqueInput;
-};
-
-export type CommentThreadUpsertWithoutCommentsInput = {
-  create: CommentThreadCreateWithoutCommentsInput;
-  update: CommentThreadUpdateWithoutCommentsInput;
 };
 
 export type CommentThreadWhereInput = {
@@ -794,6 +399,7 @@ export type CommentThreadWhereInput = {
   OR?: InputMaybe<Array<CommentThreadWhereInput>>;
   assignee?: InputMaybe<UserRelationFilter>;
   assigneeId?: InputMaybe<StringNullableFilter>;
+  attachments?: InputMaybe<AttachmentListRelationFilter>;
   author?: InputMaybe<UserRelationFilter>;
   authorId?: InputMaybe<StringFilter>;
   body?: InputMaybe<StringNullableFilter>;
@@ -813,126 +419,22 @@ export type CommentThreadWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
-export type CommentUpdateManyMutationInput = {
-  body?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentUpdateManyWithWhereWithoutAuthorInput = {
-  data: CommentUpdateManyMutationInput;
-  where: CommentScalarWhereInput;
-};
-
-export type CommentUpdateManyWithWhereWithoutCommentThreadInput = {
-  data: CommentUpdateManyMutationInput;
-  where: CommentScalarWhereInput;
-};
-
-export type CommentUpdateManyWithWhereWithoutWorkspaceInput = {
-  data: CommentUpdateManyMutationInput;
-  where: CommentScalarWhereInput;
-};
-
 export type CommentUpdateManyWithoutAuthorNestedInput = {
   connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutAuthorInput>>;
-  create?: InputMaybe<Array<CommentCreateWithoutAuthorInput>>;
-  createMany?: InputMaybe<CommentCreateManyAuthorInputEnvelope>;
-  delete?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CommentWhereUniqueInput>>;
   set?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  update?: InputMaybe<Array<CommentUpdateWithWhereUniqueWithoutAuthorInput>>;
-  updateMany?: InputMaybe<Array<CommentUpdateManyWithWhereWithoutAuthorInput>>;
-  upsert?: InputMaybe<Array<CommentUpsertWithWhereUniqueWithoutAuthorInput>>;
 };
 
 export type CommentUpdateManyWithoutCommentThreadNestedInput = {
   connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutCommentThreadInput>>;
-  create?: InputMaybe<Array<CommentCreateWithoutCommentThreadInput>>;
-  createMany?: InputMaybe<CommentCreateManyCommentThreadInputEnvelope>;
-  delete?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CommentWhereUniqueInput>>;
   set?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  update?: InputMaybe<Array<CommentUpdateWithWhereUniqueWithoutCommentThreadInput>>;
-  updateMany?: InputMaybe<Array<CommentUpdateManyWithWhereWithoutCommentThreadInput>>;
-  upsert?: InputMaybe<Array<CommentUpsertWithWhereUniqueWithoutCommentThreadInput>>;
 };
 
 export type CommentUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<CommentCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<CommentCreateManyWorkspaceInputEnvelope>;
-  delete?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CommentWhereUniqueInput>>;
   set?: InputMaybe<Array<CommentWhereUniqueInput>>;
-  update?: InputMaybe<Array<CommentUpdateWithWhereUniqueWithoutWorkspaceInput>>;
-  updateMany?: InputMaybe<Array<CommentUpdateManyWithWhereWithoutWorkspaceInput>>;
-  upsert?: InputMaybe<Array<CommentUpsertWithWhereUniqueWithoutWorkspaceInput>>;
-};
-
-export type CommentUpdateWithWhereUniqueWithoutAuthorInput = {
-  data: CommentUpdateWithoutAuthorInput;
-  where: CommentWhereUniqueInput;
-};
-
-export type CommentUpdateWithWhereUniqueWithoutCommentThreadInput = {
-  data: CommentUpdateWithoutCommentThreadInput;
-  where: CommentWhereUniqueInput;
-};
-
-export type CommentUpdateWithWhereUniqueWithoutWorkspaceInput = {
-  data: CommentUpdateWithoutWorkspaceInput;
-  where: CommentWhereUniqueInput;
-};
-
-export type CommentUpdateWithoutAuthorInput = {
-  body?: InputMaybe<StringFieldUpdateOperationsInput>;
-  commentThread?: InputMaybe<CommentThreadUpdateOneRequiredWithoutCommentsNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentUpdateWithoutCommentThreadInput = {
-  author?: InputMaybe<UserUpdateOneRequiredWithoutCommentsNestedInput>;
-  body?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentUpdateWithoutWorkspaceInput = {
-  author?: InputMaybe<UserUpdateOneRequiredWithoutCommentsNestedInput>;
-  body?: InputMaybe<StringFieldUpdateOperationsInput>;
-  commentThread?: InputMaybe<CommentThreadUpdateOneRequiredWithoutCommentsNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
-  create: CommentCreateWithoutAuthorInput;
-  update: CommentUpdateWithoutAuthorInput;
-  where: CommentWhereUniqueInput;
-};
-
-export type CommentUpsertWithWhereUniqueWithoutCommentThreadInput = {
-  create: CommentCreateWithoutCommentThreadInput;
-  update: CommentUpdateWithoutCommentThreadInput;
-  where: CommentWhereUniqueInput;
-};
-
-export type CommentUpsertWithWhereUniqueWithoutWorkspaceInput = {
-  create: CommentCreateWithoutWorkspaceInput;
-  update: CommentUpdateWithoutWorkspaceInput;
-  where: CommentWhereUniqueInput;
 };
 
 export type CommentWhereInput = {
@@ -987,79 +489,8 @@ export type CompanyCreateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type CompanyCreateManyAccountOwnerInput = {
-  address: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  domainName: Scalars['String'];
-  employees?: InputMaybe<Scalars['Int']>;
-  id?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CompanyCreateManyAccountOwnerInputEnvelope = {
-  data: Array<CompanyCreateManyAccountOwnerInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CompanyCreateManyWorkspaceInput = {
-  accountOwnerId?: InputMaybe<Scalars['String']>;
-  address: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  domainName: Scalars['String'];
-  employees?: InputMaybe<Scalars['Int']>;
-  id?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CompanyCreateManyWorkspaceInputEnvelope = {
-  data: Array<CompanyCreateManyWorkspaceInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CompanyCreateNestedManyWithoutAccountOwnerInput = {
-  connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutAccountOwnerInput>>;
-  create?: InputMaybe<Array<CompanyCreateWithoutAccountOwnerInput>>;
-  createMany?: InputMaybe<CompanyCreateManyAccountOwnerInputEnvelope>;
-};
-
 export type CompanyCreateNestedOneWithoutPeopleInput = {
   connect?: InputMaybe<CompanyWhereUniqueInput>;
-};
-
-export type CompanyCreateOrConnectWithoutAccountOwnerInput = {
-  create: CompanyCreateWithoutAccountOwnerInput;
-  where: CompanyWhereUniqueInput;
-};
-
-export type CompanyCreateOrConnectWithoutWorkspaceInput = {
-  create: CompanyCreateWithoutWorkspaceInput;
-  where: CompanyWhereUniqueInput;
-};
-
-export type CompanyCreateWithoutAccountOwnerInput = {
-  address: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  domainName: Scalars['String'];
-  employees?: InputMaybe<Scalars['Int']>;
-  id?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CompanyCreateWithoutWorkspaceInput = {
-  accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
-  address: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  domainName: Scalars['String'];
-  employees?: InputMaybe<Scalars['Int']>;
-  id?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CompanyListRelationFilter = {
@@ -1103,20 +534,6 @@ export enum CompanyScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
-export type CompanyScalarWhereInput = {
-  AND?: InputMaybe<Array<CompanyScalarWhereInput>>;
-  NOT?: InputMaybe<Array<CompanyScalarWhereInput>>;
-  OR?: InputMaybe<Array<CompanyScalarWhereInput>>;
-  accountOwnerId?: InputMaybe<StringNullableFilter>;
-  address?: InputMaybe<StringFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  domainName?: InputMaybe<StringFilter>;
-  employees?: InputMaybe<IntNullableFilter>;
-  id?: InputMaybe<StringFilter>;
-  name?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
 export type CompanyUpdateInput = {
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
   address?: InputMaybe<StringFieldUpdateOperationsInput>;
@@ -1129,101 +546,21 @@ export type CompanyUpdateInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type CompanyUpdateManyMutationInput = {
-  address?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  employees?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CompanyUpdateManyWithWhereWithoutAccountOwnerInput = {
-  data: CompanyUpdateManyMutationInput;
-  where: CompanyScalarWhereInput;
-};
-
-export type CompanyUpdateManyWithWhereWithoutWorkspaceInput = {
-  data: CompanyUpdateManyMutationInput;
-  where: CompanyScalarWhereInput;
-};
-
 export type CompanyUpdateManyWithoutAccountOwnerNestedInput = {
   connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutAccountOwnerInput>>;
-  create?: InputMaybe<Array<CompanyCreateWithoutAccountOwnerInput>>;
-  createMany?: InputMaybe<CompanyCreateManyAccountOwnerInputEnvelope>;
-  delete?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CompanyScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
   set?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  update?: InputMaybe<Array<CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput>>;
-  updateMany?: InputMaybe<Array<CompanyUpdateManyWithWhereWithoutAccountOwnerInput>>;
-  upsert?: InputMaybe<Array<CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput>>;
 };
 
 export type CompanyUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CompanyCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<CompanyCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<CompanyCreateManyWorkspaceInputEnvelope>;
-  delete?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CompanyScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CompanyWhereUniqueInput>>;
   set?: InputMaybe<Array<CompanyWhereUniqueInput>>;
-  update?: InputMaybe<Array<CompanyUpdateWithWhereUniqueWithoutWorkspaceInput>>;
-  updateMany?: InputMaybe<Array<CompanyUpdateManyWithWhereWithoutWorkspaceInput>>;
-  upsert?: InputMaybe<Array<CompanyUpsertWithWhereUniqueWithoutWorkspaceInput>>;
 };
 
 export type CompanyUpdateOneWithoutPeopleNestedInput = {
   connect?: InputMaybe<CompanyWhereUniqueInput>;
-};
-
-export type CompanyUpdateWithWhereUniqueWithoutAccountOwnerInput = {
-  data: CompanyUpdateWithoutAccountOwnerInput;
-  where: CompanyWhereUniqueInput;
-};
-
-export type CompanyUpdateWithWhereUniqueWithoutWorkspaceInput = {
-  data: CompanyUpdateWithoutWorkspaceInput;
-  where: CompanyWhereUniqueInput;
-};
-
-export type CompanyUpdateWithoutAccountOwnerInput = {
-  address?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  employees?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CompanyUpdateWithoutWorkspaceInput = {
-  accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
-  address?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  employees?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type CompanyUpsertWithWhereUniqueWithoutAccountOwnerInput = {
-  create: CompanyCreateWithoutAccountOwnerInput;
-  update: CompanyUpdateWithoutAccountOwnerInput;
-  where: CompanyWhereUniqueInput;
-};
-
-export type CompanyUpsertWithWhereUniqueWithoutWorkspaceInput = {
-  create: CompanyCreateWithoutWorkspaceInput;
-  update: CompanyUpdateWithoutWorkspaceInput;
-  where: CompanyWhereUniqueInput;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CompanyWhereInput = {
@@ -1283,6 +620,13 @@ export type EnumActivityTypeFilter = {
   notIn?: InputMaybe<Array<ActivityType>>;
 };
 
+export type EnumAttachmentTypeFilter = {
+  equals?: InputMaybe<AttachmentType>;
+  in?: InputMaybe<Array<AttachmentType>>;
+  not?: InputMaybe<NestedEnumAttachmentTypeFilter>;
+  notIn?: InputMaybe<Array<AttachmentType>>;
+};
+
 export type EnumColorSchemeFieldUpdateOperationsInput = {
   set?: InputMaybe<ColorScheme>;
 };
@@ -1292,10 +636,6 @@ export type EnumColorSchemeFilter = {
   in?: InputMaybe<Array<ColorScheme>>;
   not?: InputMaybe<NestedEnumColorSchemeFilter>;
   notIn?: InputMaybe<Array<ColorScheme>>;
-};
-
-export type EnumCommentableTypeFieldUpdateOperationsInput = {
-  set?: InputMaybe<CommentableType>;
 };
 
 export type EnumCommentableTypeFilter = {
@@ -1317,6 +657,7 @@ export type EnumPipelineProgressableTypeFilter = {
 };
 
 export enum FileFolder {
+  Attachment = 'Attachment',
   ProfilePicture = 'ProfilePicture',
   WorkspaceLogo = 'WorkspaceLogo'
 }
@@ -1376,6 +717,7 @@ export type Mutation = {
   updateOnePipelineStage?: Maybe<PipelineStage>;
   updateUser: User;
   updateWorkspace: Workspace;
+  uploadAttachment: Scalars['String'];
   uploadFile: Scalars['String'];
   uploadImage: Scalars['String'];
   uploadProfilePicture: Scalars['String'];
@@ -1499,6 +841,12 @@ export type MutationUpdateWorkspaceArgs = {
 };
 
 
+export type MutationUploadAttachmentArgs = {
+  activityId: Scalars['String'];
+  file: Scalars['Upload'];
+};
+
+
 export type MutationUploadFileArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
@@ -1557,6 +905,13 @@ export type NestedEnumActivityTypeFilter = {
   in?: InputMaybe<Array<ActivityType>>;
   not?: InputMaybe<NestedEnumActivityTypeFilter>;
   notIn?: InputMaybe<Array<ActivityType>>;
+};
+
+export type NestedEnumAttachmentTypeFilter = {
+  equals?: InputMaybe<AttachmentType>;
+  in?: InputMaybe<Array<AttachmentType>>;
+  not?: InputMaybe<NestedEnumAttachmentTypeFilter>;
+  notIn?: InputMaybe<Array<AttachmentType>>;
 };
 
 export type NestedEnumColorSchemeFilter = {
@@ -1665,42 +1020,8 @@ export type PersonCreateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type PersonCreateManyWorkspaceInput = {
-  city: Scalars['String'];
-  companyId?: InputMaybe<Scalars['String']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  email: Scalars['String'];
-  firstName: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
-  lastName: Scalars['String'];
-  phone: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PersonCreateManyWorkspaceInputEnvelope = {
-  data: Array<PersonCreateManyWorkspaceInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
 export type PersonCreateNestedManyWithoutCompanyInput = {
   connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
-};
-
-export type PersonCreateOrConnectWithoutWorkspaceInput = {
-  create: PersonCreateWithoutWorkspaceInput;
-  where: PersonWhereUniqueInput;
-};
-
-export type PersonCreateWithoutWorkspaceInput = {
-  city: Scalars['String'];
-  company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  email: Scalars['String'];
-  firstName: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
-  lastName: Scalars['String'];
-  phone: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PersonListRelationFilter = {
@@ -1740,21 +1061,6 @@ export enum PersonScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
-export type PersonScalarWhereInput = {
-  AND?: InputMaybe<Array<PersonScalarWhereInput>>;
-  NOT?: InputMaybe<Array<PersonScalarWhereInput>>;
-  OR?: InputMaybe<Array<PersonScalarWhereInput>>;
-  city?: InputMaybe<StringFilter>;
-  companyId?: InputMaybe<StringNullableFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  email?: InputMaybe<StringFilter>;
-  firstName?: InputMaybe<StringFilter>;
-  id?: InputMaybe<StringFilter>;
-  lastName?: InputMaybe<StringFilter>;
-  phone?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
 export type PersonUpdateInput = {
   city?: InputMaybe<StringFieldUpdateOperationsInput>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
@@ -1767,61 +1073,16 @@ export type PersonUpdateInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type PersonUpdateManyMutationInput = {
-  city?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  phone?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PersonUpdateManyWithWhereWithoutWorkspaceInput = {
-  data: PersonUpdateManyMutationInput;
-  where: PersonScalarWhereInput;
-};
-
 export type PersonUpdateManyWithoutCompanyNestedInput = {
   connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<PersonWhereUniqueInput>>;
+  set?: InputMaybe<Array<PersonWhereUniqueInput>>;
 };
 
 export type PersonUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PersonCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<PersonCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<PersonCreateManyWorkspaceInputEnvelope>;
-  delete?: InputMaybe<Array<PersonWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<PersonScalarWhereInput>>;
   disconnect?: InputMaybe<Array<PersonWhereUniqueInput>>;
   set?: InputMaybe<Array<PersonWhereUniqueInput>>;
-  update?: InputMaybe<Array<PersonUpdateWithWhereUniqueWithoutWorkspaceInput>>;
-  updateMany?: InputMaybe<Array<PersonUpdateManyWithWhereWithoutWorkspaceInput>>;
-  upsert?: InputMaybe<Array<PersonUpsertWithWhereUniqueWithoutWorkspaceInput>>;
-};
-
-export type PersonUpdateWithWhereUniqueWithoutWorkspaceInput = {
-  data: PersonUpdateWithoutWorkspaceInput;
-  where: PersonWhereUniqueInput;
-};
-
-export type PersonUpdateWithoutWorkspaceInput = {
-  city?: InputMaybe<StringFieldUpdateOperationsInput>;
-  company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  phone?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PersonUpsertWithWhereUniqueWithoutWorkspaceInput = {
-  create: PersonCreateWithoutWorkspaceInput;
-  update: PersonUpdateWithoutWorkspaceInput;
-  where: PersonWhereUniqueInput;
 };
 
 export type PersonWhereInput = {
@@ -1856,59 +1117,8 @@ export type Pipeline = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type PipelineCreateManyWorkspaceInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  icon: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  pipelineProgressableType?: InputMaybe<PipelineProgressableType>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineCreateManyWorkspaceInputEnvelope = {
-  data: Array<PipelineCreateManyWorkspaceInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
 export type PipelineCreateNestedOneWithoutPipelineProgressesInput = {
   connect?: InputMaybe<PipelineWhereUniqueInput>;
-};
-
-export type PipelineCreateNestedOneWithoutPipelineStagesInput = {
-  connect?: InputMaybe<PipelineWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<PipelineCreateOrConnectWithoutPipelineStagesInput>;
-  create?: InputMaybe<PipelineCreateWithoutPipelineStagesInput>;
-};
-
-export type PipelineCreateOrConnectWithoutPipelineStagesInput = {
-  create: PipelineCreateWithoutPipelineStagesInput;
-  where: PipelineWhereUniqueInput;
-};
-
-export type PipelineCreateOrConnectWithoutWorkspaceInput = {
-  create: PipelineCreateWithoutWorkspaceInput;
-  where: PipelineWhereUniqueInput;
-};
-
-export type PipelineCreateWithoutPipelineStagesInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  icon: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  pipelineProgressableType?: InputMaybe<PipelineProgressableType>;
-  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineCreateWithoutWorkspaceInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  icon: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  pipelineProgressableType?: InputMaybe<PipelineProgressableType>;
-  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineInput>;
-  pipelineStages?: InputMaybe<PipelineStageCreateNestedManyWithoutPipelineInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PipelineOrderByWithRelationInput = {
@@ -1938,118 +1148,6 @@ export type PipelineProgress = {
 };
 
 export type PipelineProgressCreateInput = {
-  amount?: InputMaybe<Scalars['Int']>;
-  closeDate?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
-  pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
-  progressableId: Scalars['String'];
-  progressableType: PipelineProgressableType;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineProgressCreateManyPipelineInput = {
-  amount?: InputMaybe<Scalars['Int']>;
-  closeDate?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  pipelineStageId: Scalars['String'];
-  progressableId: Scalars['String'];
-  progressableType: PipelineProgressableType;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineProgressCreateManyPipelineInputEnvelope = {
-  data: Array<PipelineProgressCreateManyPipelineInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type PipelineProgressCreateManyPipelineStageInput = {
-  amount?: InputMaybe<Scalars['Int']>;
-  closeDate?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  pipelineId: Scalars['String'];
-  progressableId: Scalars['String'];
-  progressableType: PipelineProgressableType;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineProgressCreateManyPipelineStageInputEnvelope = {
-  data: Array<PipelineProgressCreateManyPipelineStageInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type PipelineProgressCreateManyWorkspaceInput = {
-  amount?: InputMaybe<Scalars['Int']>;
-  closeDate?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  pipelineId: Scalars['String'];
-  pipelineStageId: Scalars['String'];
-  progressableId: Scalars['String'];
-  progressableType: PipelineProgressableType;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineProgressCreateManyWorkspaceInputEnvelope = {
-  data: Array<PipelineProgressCreateManyWorkspaceInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type PipelineProgressCreateNestedManyWithoutPipelineInput = {
-  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutPipelineInput>>;
-  create?: InputMaybe<Array<PipelineProgressCreateWithoutPipelineInput>>;
-  createMany?: InputMaybe<PipelineProgressCreateManyPipelineInputEnvelope>;
-};
-
-export type PipelineProgressCreateNestedManyWithoutPipelineStageInput = {
-  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutPipelineStageInput>>;
-  create?: InputMaybe<Array<PipelineProgressCreateWithoutPipelineStageInput>>;
-  createMany?: InputMaybe<PipelineProgressCreateManyPipelineStageInputEnvelope>;
-};
-
-export type PipelineProgressCreateOrConnectWithoutPipelineInput = {
-  create: PipelineProgressCreateWithoutPipelineInput;
-  where: PipelineProgressWhereUniqueInput;
-};
-
-export type PipelineProgressCreateOrConnectWithoutPipelineStageInput = {
-  create: PipelineProgressCreateWithoutPipelineStageInput;
-  where: PipelineProgressWhereUniqueInput;
-};
-
-export type PipelineProgressCreateOrConnectWithoutWorkspaceInput = {
-  create: PipelineProgressCreateWithoutWorkspaceInput;
-  where: PipelineProgressWhereUniqueInput;
-};
-
-export type PipelineProgressCreateWithoutPipelineInput = {
-  amount?: InputMaybe<Scalars['Int']>;
-  closeDate?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
-  progressableId: Scalars['String'];
-  progressableType: PipelineProgressableType;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineProgressCreateWithoutPipelineStageInput = {
-  amount?: InputMaybe<Scalars['Int']>;
-  closeDate?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
-  progressableId: Scalars['String'];
-  progressableType: PipelineProgressableType;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineProgressCreateWithoutWorkspaceInput = {
   amount?: InputMaybe<Scalars['Int']>;
   closeDate?: InputMaybe<Scalars['DateTime']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -2099,21 +1197,6 @@ export enum PipelineProgressScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
-export type PipelineProgressScalarWhereInput = {
-  AND?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
-  NOT?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
-  OR?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
-  amount?: InputMaybe<IntNullableFilter>;
-  closeDate?: InputMaybe<DateTimeNullableFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<StringFilter>;
-  pipelineId?: InputMaybe<StringFilter>;
-  pipelineStageId?: InputMaybe<StringFilter>;
-  progressableId?: InputMaybe<StringFilter>;
-  progressableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
 export type PipelineProgressUpdateInput = {
   amount?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   closeDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
@@ -2126,138 +1209,16 @@ export type PipelineProgressUpdateInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type PipelineProgressUpdateManyMutationInput = {
-  amount?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  closeDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
-  progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PipelineProgressUpdateManyWithWhereWithoutPipelineInput = {
-  data: PipelineProgressUpdateManyMutationInput;
-  where: PipelineProgressScalarWhereInput;
-};
-
-export type PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput = {
-  data: PipelineProgressUpdateManyMutationInput;
-  where: PipelineProgressScalarWhereInput;
-};
-
-export type PipelineProgressUpdateManyWithWhereWithoutWorkspaceInput = {
-  data: PipelineProgressUpdateManyMutationInput;
-  where: PipelineProgressScalarWhereInput;
-};
-
-export type PipelineProgressUpdateManyWithoutPipelineNestedInput = {
-  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutPipelineInput>>;
-  create?: InputMaybe<Array<PipelineProgressCreateWithoutPipelineInput>>;
-  createMany?: InputMaybe<PipelineProgressCreateManyPipelineInputEnvelope>;
-  delete?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  set?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  update?: InputMaybe<Array<PipelineProgressUpdateWithWhereUniqueWithoutPipelineInput>>;
-  updateMany?: InputMaybe<Array<PipelineProgressUpdateManyWithWhereWithoutPipelineInput>>;
-  upsert?: InputMaybe<Array<PipelineProgressUpsertWithWhereUniqueWithoutPipelineInput>>;
-};
-
 export type PipelineProgressUpdateManyWithoutPipelineStageNestedInput = {
   connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutPipelineStageInput>>;
-  create?: InputMaybe<Array<PipelineProgressCreateWithoutPipelineStageInput>>;
-  createMany?: InputMaybe<PipelineProgressCreateManyPipelineStageInputEnvelope>;
-  delete?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
   disconnect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
   set?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  update?: InputMaybe<Array<PipelineProgressUpdateWithWhereUniqueWithoutPipelineStageInput>>;
-  updateMany?: InputMaybe<Array<PipelineProgressUpdateManyWithWhereWithoutPipelineStageInput>>;
-  upsert?: InputMaybe<Array<PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput>>;
 };
 
 export type PipelineProgressUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineProgressCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<PipelineProgressCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<PipelineProgressCreateManyWorkspaceInputEnvelope>;
-  delete?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<PipelineProgressScalarWhereInput>>;
   disconnect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
   set?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
-  update?: InputMaybe<Array<PipelineProgressUpdateWithWhereUniqueWithoutWorkspaceInput>>;
-  updateMany?: InputMaybe<Array<PipelineProgressUpdateManyWithWhereWithoutWorkspaceInput>>;
-  upsert?: InputMaybe<Array<PipelineProgressUpsertWithWhereUniqueWithoutWorkspaceInput>>;
-};
-
-export type PipelineProgressUpdateWithWhereUniqueWithoutPipelineInput = {
-  data: PipelineProgressUpdateWithoutPipelineInput;
-  where: PipelineProgressWhereUniqueInput;
-};
-
-export type PipelineProgressUpdateWithWhereUniqueWithoutPipelineStageInput = {
-  data: PipelineProgressUpdateWithoutPipelineStageInput;
-  where: PipelineProgressWhereUniqueInput;
-};
-
-export type PipelineProgressUpdateWithWhereUniqueWithoutWorkspaceInput = {
-  data: PipelineProgressUpdateWithoutWorkspaceInput;
-  where: PipelineProgressWhereUniqueInput;
-};
-
-export type PipelineProgressUpdateWithoutPipelineInput = {
-  amount?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  closeDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
-  progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
-  progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PipelineProgressUpdateWithoutPipelineStageInput = {
-  amount?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  closeDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
-  progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
-  progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PipelineProgressUpdateWithoutWorkspaceInput = {
-  amount?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  closeDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
-  pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
-  progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
-  progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PipelineProgressUpsertWithWhereUniqueWithoutPipelineInput = {
-  create: PipelineProgressCreateWithoutPipelineInput;
-  update: PipelineProgressUpdateWithoutPipelineInput;
-  where: PipelineProgressWhereUniqueInput;
-};
-
-export type PipelineProgressUpsertWithWhereUniqueWithoutPipelineStageInput = {
-  create: PipelineProgressCreateWithoutPipelineStageInput;
-  update: PipelineProgressUpdateWithoutPipelineStageInput;
-  where: PipelineProgressWhereUniqueInput;
-};
-
-export type PipelineProgressUpsertWithWhereUniqueWithoutWorkspaceInput = {
-  create: PipelineProgressCreateWithoutWorkspaceInput;
-  update: PipelineProgressUpdateWithoutWorkspaceInput;
-  where: PipelineProgressWhereUniqueInput;
 };
 
 export type PipelineProgressWhereInput = {
@@ -2302,18 +1263,6 @@ export enum PipelineScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
-export type PipelineScalarWhereInput = {
-  AND?: InputMaybe<Array<PipelineScalarWhereInput>>;
-  NOT?: InputMaybe<Array<PipelineScalarWhereInput>>;
-  OR?: InputMaybe<Array<PipelineScalarWhereInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  icon?: InputMaybe<StringFilter>;
-  id?: InputMaybe<StringFilter>;
-  name?: InputMaybe<StringFilter>;
-  pipelineProgressableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
 export type PipelineStage = {
   __typename?: 'PipelineStage';
   color: Scalars['String'];
@@ -2328,79 +1277,8 @@ export type PipelineStage = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type PipelineStageCreateManyPipelineInput = {
-  color: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  index?: InputMaybe<Scalars['Int']>;
-  name: Scalars['String'];
-  type: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineStageCreateManyPipelineInputEnvelope = {
-  data: Array<PipelineStageCreateManyPipelineInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type PipelineStageCreateManyWorkspaceInput = {
-  color: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  index?: InputMaybe<Scalars['Int']>;
-  name: Scalars['String'];
-  pipelineId: Scalars['String'];
-  type: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineStageCreateManyWorkspaceInputEnvelope = {
-  data: Array<PipelineStageCreateManyWorkspaceInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type PipelineStageCreateNestedManyWithoutPipelineInput = {
-  connect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineStageCreateOrConnectWithoutPipelineInput>>;
-  create?: InputMaybe<Array<PipelineStageCreateWithoutPipelineInput>>;
-  createMany?: InputMaybe<PipelineStageCreateManyPipelineInputEnvelope>;
-};
-
 export type PipelineStageCreateNestedOneWithoutPipelineProgressesInput = {
   connect?: InputMaybe<PipelineStageWhereUniqueInput>;
-};
-
-export type PipelineStageCreateOrConnectWithoutPipelineInput = {
-  create: PipelineStageCreateWithoutPipelineInput;
-  where: PipelineStageWhereUniqueInput;
-};
-
-export type PipelineStageCreateOrConnectWithoutWorkspaceInput = {
-  create: PipelineStageCreateWithoutWorkspaceInput;
-  where: PipelineStageWhereUniqueInput;
-};
-
-export type PipelineStageCreateWithoutPipelineInput = {
-  color: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  index?: InputMaybe<Scalars['Int']>;
-  name: Scalars['String'];
-  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineStageInput>;
-  type: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type PipelineStageCreateWithoutWorkspaceInput = {
-  color: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  index?: InputMaybe<Scalars['Int']>;
-  name: Scalars['String'];
-  pipeline: PipelineCreateNestedOneWithoutPipelineStagesInput;
-  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPipelineStageInput>;
-  type: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PipelineStageListRelationFilter = {
@@ -2444,20 +1322,6 @@ export enum PipelineStageScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
-export type PipelineStageScalarWhereInput = {
-  AND?: InputMaybe<Array<PipelineStageScalarWhereInput>>;
-  NOT?: InputMaybe<Array<PipelineStageScalarWhereInput>>;
-  OR?: InputMaybe<Array<PipelineStageScalarWhereInput>>;
-  color?: InputMaybe<StringFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<StringFilter>;
-  index?: InputMaybe<IntNullableFilter>;
-  name?: InputMaybe<StringFilter>;
-  pipelineId?: InputMaybe<StringFilter>;
-  type?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
 export type PipelineStageUpdateInput = {
   color?: InputMaybe<StringFieldUpdateOperationsInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -2470,101 +1334,14 @@ export type PipelineStageUpdateInput = {
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
-export type PipelineStageUpdateManyMutationInput = {
-  color?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  index?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  type?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PipelineStageUpdateManyWithWhereWithoutPipelineInput = {
-  data: PipelineStageUpdateManyMutationInput;
-  where: PipelineStageScalarWhereInput;
-};
-
-export type PipelineStageUpdateManyWithWhereWithoutWorkspaceInput = {
-  data: PipelineStageUpdateManyMutationInput;
-  where: PipelineStageScalarWhereInput;
-};
-
-export type PipelineStageUpdateManyWithoutPipelineNestedInput = {
-  connect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineStageCreateOrConnectWithoutPipelineInput>>;
-  create?: InputMaybe<Array<PipelineStageCreateWithoutPipelineInput>>;
-  createMany?: InputMaybe<PipelineStageCreateManyPipelineInputEnvelope>;
-  delete?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<PipelineStageScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
-  set?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
-  update?: InputMaybe<Array<PipelineStageUpdateWithWhereUniqueWithoutPipelineInput>>;
-  updateMany?: InputMaybe<Array<PipelineStageUpdateManyWithWhereWithoutPipelineInput>>;
-  upsert?: InputMaybe<Array<PipelineStageUpsertWithWhereUniqueWithoutPipelineInput>>;
-};
-
 export type PipelineStageUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineStageCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<PipelineStageCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<PipelineStageCreateManyWorkspaceInputEnvelope>;
-  delete?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<PipelineStageScalarWhereInput>>;
   disconnect?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
   set?: InputMaybe<Array<PipelineStageWhereUniqueInput>>;
-  update?: InputMaybe<Array<PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput>>;
-  updateMany?: InputMaybe<Array<PipelineStageUpdateManyWithWhereWithoutWorkspaceInput>>;
-  upsert?: InputMaybe<Array<PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput>>;
 };
 
 export type PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput = {
   connect?: InputMaybe<PipelineStageWhereUniqueInput>;
-};
-
-export type PipelineStageUpdateWithWhereUniqueWithoutPipelineInput = {
-  data: PipelineStageUpdateWithoutPipelineInput;
-  where: PipelineStageWhereUniqueInput;
-};
-
-export type PipelineStageUpdateWithWhereUniqueWithoutWorkspaceInput = {
-  data: PipelineStageUpdateWithoutWorkspaceInput;
-  where: PipelineStageWhereUniqueInput;
-};
-
-export type PipelineStageUpdateWithoutPipelineInput = {
-  color?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  index?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineStageNestedInput>;
-  type?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PipelineStageUpdateWithoutWorkspaceInput = {
-  color?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  index?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput>;
-  pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineStageNestedInput>;
-  type?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PipelineStageUpsertWithWhereUniqueWithoutPipelineInput = {
-  create: PipelineStageCreateWithoutPipelineInput;
-  update: PipelineStageUpdateWithoutPipelineInput;
-  where: PipelineStageWhereUniqueInput;
-};
-
-export type PipelineStageUpsertWithWhereUniqueWithoutWorkspaceInput = {
-  create: PipelineStageCreateWithoutWorkspaceInput;
-  update: PipelineStageUpdateWithoutWorkspaceInput;
-  where: PipelineStageWhereUniqueInput;
 };
 
 export type PipelineStageWhereInput = {
@@ -2587,32 +1364,10 @@ export type PipelineStageWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
-export type PipelineUpdateManyMutationInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  icon?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  pipelineProgressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PipelineUpdateManyWithWhereWithoutWorkspaceInput = {
-  data: PipelineUpdateManyMutationInput;
-  where: PipelineScalarWhereInput;
-};
-
 export type PipelineUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<PipelineWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<PipelineCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<PipelineCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<PipelineCreateManyWorkspaceInputEnvelope>;
-  delete?: InputMaybe<Array<PipelineWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<PipelineScalarWhereInput>>;
   disconnect?: InputMaybe<Array<PipelineWhereUniqueInput>>;
   set?: InputMaybe<Array<PipelineWhereUniqueInput>>;
-  update?: InputMaybe<Array<PipelineUpdateWithWhereUniqueWithoutWorkspaceInput>>;
-  updateMany?: InputMaybe<Array<PipelineUpdateManyWithWhereWithoutWorkspaceInput>>;
-  upsert?: InputMaybe<Array<PipelineUpsertWithWhereUniqueWithoutWorkspaceInput>>;
 };
 
 export type PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput = {
@@ -2621,47 +1376,6 @@ export type PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput = {
 
 export type PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput = {
   connect?: InputMaybe<PipelineWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<PipelineCreateOrConnectWithoutPipelineStagesInput>;
-  create?: InputMaybe<PipelineCreateWithoutPipelineStagesInput>;
-  update?: InputMaybe<PipelineUpdateWithoutPipelineStagesInput>;
-  upsert?: InputMaybe<PipelineUpsertWithoutPipelineStagesInput>;
-};
-
-export type PipelineUpdateWithWhereUniqueWithoutWorkspaceInput = {
-  data: PipelineUpdateWithoutWorkspaceInput;
-  where: PipelineWhereUniqueInput;
-};
-
-export type PipelineUpdateWithoutPipelineStagesInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  icon?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  pipelineProgressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
-  pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PipelineUpdateWithoutWorkspaceInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  icon?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
-  pipelineProgressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
-  pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineNestedInput>;
-  pipelineStages?: InputMaybe<PipelineStageUpdateManyWithoutPipelineNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type PipelineUpsertWithWhereUniqueWithoutWorkspaceInput = {
-  create: PipelineCreateWithoutWorkspaceInput;
-  update: PipelineUpdateWithoutWorkspaceInput;
-  where: PipelineWhereUniqueInput;
-};
-
-export type PipelineUpsertWithoutPipelineStagesInput = {
-  create: PipelineCreateWithoutPipelineStagesInput;
-  update: PipelineUpdateWithoutPipelineStagesInput;
 };
 
 export type PipelineWhereInput = {
@@ -2854,6 +1568,7 @@ export type Telemetry = {
 export type User = {
   __typename?: 'User';
   assignedCommentThreads?: Maybe<Array<CommentThread>>;
+  authoredAttachments?: Maybe<Array<Attachment>>;
   authoredCommentThreads?: Maybe<Array<CommentThread>>;
   avatarUrl?: Maybe<Scalars['String']>;
   comments?: Maybe<Array<Comment>>;
@@ -2867,6 +1582,7 @@ export type User = {
   id: Scalars['ID'];
   lastName?: Maybe<Scalars['String']>;
   lastSeen?: Maybe<Scalars['DateTime']>;
+  locale: Scalars['String'];
   metadata?: Maybe<Scalars['JSON']>;
   phoneNumber?: Maybe<Scalars['String']>;
   settings: UserSettings;
@@ -2877,14 +1593,10 @@ export type User = {
 
 export type UserCreateNestedOneWithoutAssignedCommentThreadsInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutAssignedCommentThreadsInput>;
-  create?: InputMaybe<UserCreateWithoutAssignedCommentThreadsInput>;
 };
 
 export type UserCreateNestedOneWithoutAuthoredCommentThreadsInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutAuthoredCommentThreadsInput>;
-  create?: InputMaybe<UserCreateWithoutAuthoredCommentThreadsInput>;
 };
 
 export type UserCreateNestedOneWithoutCommentsInput = {
@@ -2895,109 +1607,6 @@ export type UserCreateNestedOneWithoutCompaniesInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
 };
 
-export type UserCreateNestedOneWithoutWorkspaceMemberInput = {
-  connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutWorkspaceMemberInput>;
-  create?: InputMaybe<UserCreateWithoutWorkspaceMemberInput>;
-};
-
-export type UserCreateOrConnectWithoutAssignedCommentThreadsInput = {
-  create: UserCreateWithoutAssignedCommentThreadsInput;
-  where: UserWhereUniqueInput;
-};
-
-export type UserCreateOrConnectWithoutAuthoredCommentThreadsInput = {
-  create: UserCreateWithoutAuthoredCommentThreadsInput;
-  where: UserWhereUniqueInput;
-};
-
-export type UserCreateOrConnectWithoutCommentsInput = {
-  create: UserCreateWithoutCommentsInput;
-  where: UserWhereUniqueInput;
-};
-
-export type UserCreateOrConnectWithoutWorkspaceMemberInput = {
-  create: UserCreateWithoutWorkspaceMemberInput;
-  where: UserWhereUniqueInput;
-};
-
-export type UserCreateWithoutAssignedCommentThreadsInput = {
-  authoredCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAuthorInput>;
-  avatarUrl?: InputMaybe<Scalars['String']>;
-  comments?: InputMaybe<CommentCreateNestedManyWithoutAuthorInput>;
-  companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  disabled?: InputMaybe<Scalars['Boolean']>;
-  email: Scalars['String'];
-  emailVerified?: InputMaybe<Scalars['Boolean']>;
-  firstName?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  lastName?: InputMaybe<Scalars['String']>;
-  lastSeen?: InputMaybe<Scalars['DateTime']>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  phoneNumber?: InputMaybe<Scalars['String']>;
-  settings: UserSettingsCreateNestedOneWithoutUserInput;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UserCreateWithoutAuthoredCommentThreadsInput = {
-  assignedCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAssigneeInput>;
-  avatarUrl?: InputMaybe<Scalars['String']>;
-  comments?: InputMaybe<CommentCreateNestedManyWithoutAuthorInput>;
-  companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  disabled?: InputMaybe<Scalars['Boolean']>;
-  email: Scalars['String'];
-  emailVerified?: InputMaybe<Scalars['Boolean']>;
-  firstName?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  lastName?: InputMaybe<Scalars['String']>;
-  lastSeen?: InputMaybe<Scalars['DateTime']>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  phoneNumber?: InputMaybe<Scalars['String']>;
-  settings: UserSettingsCreateNestedOneWithoutUserInput;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UserCreateWithoutCommentsInput = {
-  assignedCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAssigneeInput>;
-  authoredCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAuthorInput>;
-  avatarUrl?: InputMaybe<Scalars['String']>;
-  companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  disabled?: InputMaybe<Scalars['Boolean']>;
-  email: Scalars['String'];
-  emailVerified?: InputMaybe<Scalars['Boolean']>;
-  firstName?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  lastName?: InputMaybe<Scalars['String']>;
-  lastSeen?: InputMaybe<Scalars['DateTime']>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  phoneNumber?: InputMaybe<Scalars['String']>;
-  settings: UserSettingsCreateNestedOneWithoutUserInput;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type UserCreateWithoutWorkspaceMemberInput = {
-  assignedCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAssigneeInput>;
-  authoredCommentThreads?: InputMaybe<CommentThreadCreateNestedManyWithoutAuthorInput>;
-  avatarUrl?: InputMaybe<Scalars['String']>;
-  comments?: InputMaybe<CommentCreateNestedManyWithoutAuthorInput>;
-  companies?: InputMaybe<CompanyCreateNestedManyWithoutAccountOwnerInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  disabled?: InputMaybe<Scalars['Boolean']>;
-  email: Scalars['String'];
-  emailVerified?: InputMaybe<Scalars['Boolean']>;
-  firstName?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  lastName?: InputMaybe<Scalars['String']>;
-  lastSeen?: InputMaybe<Scalars['DateTime']>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  phoneNumber?: InputMaybe<Scalars['String']>;
-  settings: UserSettingsCreateNestedOneWithoutUserInput;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
 export type UserExists = {
   __typename?: 'UserExists';
   exists: Scalars['Boolean'];
@@ -3005,6 +1614,7 @@ export type UserExists = {
 
 export type UserOrderByWithRelationInput = {
   assignedCommentThreads?: InputMaybe<CommentThreadOrderByRelationAggregateInput>;
+  authoredAttachments?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
   authoredCommentThreads?: InputMaybe<CommentThreadOrderByRelationAggregateInput>;
   avatarUrl?: InputMaybe<SortOrder>;
   comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
@@ -3017,6 +1627,7 @@ export type UserOrderByWithRelationInput = {
   id?: InputMaybe<SortOrder>;
   lastName?: InputMaybe<SortOrder>;
   lastSeen?: InputMaybe<SortOrder>;
+  locale?: InputMaybe<SortOrder>;
   metadata?: InputMaybe<SortOrder>;
   phoneNumber?: InputMaybe<SortOrder>;
   settings?: InputMaybe<UserSettingsOrderByWithRelationInput>;
@@ -3040,6 +1651,7 @@ export enum UserScalarFieldEnum {
   Id = 'id',
   LastName = 'lastName',
   LastSeen = 'lastSeen',
+  Locale = 'locale',
   Metadata = 'metadata',
   PasswordHash = 'passwordHash',
   PhoneNumber = 'phoneNumber',
@@ -3057,25 +1669,6 @@ export type UserSettings = {
   user?: Maybe<User>;
 };
 
-export type UserSettingsCreateNestedOneWithoutUserInput = {
-  connect?: InputMaybe<UserSettingsWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserSettingsCreateOrConnectWithoutUserInput>;
-  create?: InputMaybe<UserSettingsCreateWithoutUserInput>;
-};
-
-export type UserSettingsCreateOrConnectWithoutUserInput = {
-  create: UserSettingsCreateWithoutUserInput;
-  where: UserSettingsWhereUniqueInput;
-};
-
-export type UserSettingsCreateWithoutUserInput = {
-  colorScheme?: InputMaybe<ColorScheme>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  locale: Scalars['String'];
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
 export type UserSettingsOrderByWithRelationInput = {
   colorScheme?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
@@ -3091,11 +1684,7 @@ export type UserSettingsRelationFilter = {
 };
 
 export type UserSettingsUpdateOneRequiredWithoutUserNestedInput = {
-  connect?: InputMaybe<UserSettingsWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserSettingsCreateOrConnectWithoutUserInput>;
-  create?: InputMaybe<UserSettingsCreateWithoutUserInput>;
   update?: InputMaybe<UserSettingsUpdateWithoutUserInput>;
-  upsert?: InputMaybe<UserSettingsUpsertWithoutUserInput>;
 };
 
 export type UserSettingsUpdateWithoutUserInput = {
@@ -3104,11 +1693,6 @@ export type UserSettingsUpdateWithoutUserInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type UserSettingsUpsertWithoutUserInput = {
-  create: UserSettingsCreateWithoutUserInput;
-  update: UserSettingsUpdateWithoutUserInput;
 };
 
 export type UserSettingsWhereInput = {
@@ -3123,12 +1707,9 @@ export type UserSettingsWhereInput = {
   user?: InputMaybe<UserRelationFilter>;
 };
 
-export type UserSettingsWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
-};
-
 export type UserUpdateInput = {
   assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
+  authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutAuthorNestedInput>;
   authoredCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
   avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
@@ -3141,6 +1722,7 @@ export type UserUpdateInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
+  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
@@ -3149,137 +1731,16 @@ export type UserUpdateInput = {
 
 export type UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutAuthoredCommentThreadsInput>;
-  create?: InputMaybe<UserCreateWithoutAuthoredCommentThreadsInput>;
-  update?: InputMaybe<UserUpdateWithoutAuthoredCommentThreadsInput>;
-  upsert?: InputMaybe<UserUpsertWithoutAuthoredCommentThreadsInput>;
-};
-
-export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
-  connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutCommentsInput>;
-  create?: InputMaybe<UserCreateWithoutCommentsInput>;
-  update?: InputMaybe<UserUpdateWithoutCommentsInput>;
-  upsert?: InputMaybe<UserUpsertWithoutCommentsInput>;
-};
-
-export type UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput = {
-  connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutWorkspaceMemberInput>;
-  create?: InputMaybe<UserCreateWithoutWorkspaceMemberInput>;
-  update?: InputMaybe<UserUpdateWithoutWorkspaceMemberInput>;
-  upsert?: InputMaybe<UserUpsertWithoutWorkspaceMemberInput>;
 };
 
 export type UserUpdateOneWithoutAssignedCommentThreadsNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
-  connectOrCreate?: InputMaybe<UserCreateOrConnectWithoutAssignedCommentThreadsInput>;
-  create?: InputMaybe<UserCreateWithoutAssignedCommentThreadsInput>;
-  delete?: InputMaybe<Scalars['Boolean']>;
   disconnect?: InputMaybe<Scalars['Boolean']>;
-  update?: InputMaybe<UserUpdateWithoutAssignedCommentThreadsInput>;
-  upsert?: InputMaybe<UserUpsertWithoutAssignedCommentThreadsInput>;
 };
 
 export type UserUpdateOneWithoutCompaniesNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
-};
-
-export type UserUpdateWithoutAssignedCommentThreadsInput = {
-  authoredCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
-  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
-  companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type UserUpdateWithoutAuthoredCommentThreadsInput = {
-  assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
-  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
-  companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type UserUpdateWithoutCommentsInput = {
-  assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
-  authoredCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
-  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type UserUpdateWithoutWorkspaceMemberInput = {
-  assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
-  authoredCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
-  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
-  companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  metadata?: InputMaybe<Scalars['JSON']>;
-  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type UserUpsertWithoutAssignedCommentThreadsInput = {
-  create: UserCreateWithoutAssignedCommentThreadsInput;
-  update: UserUpdateWithoutAssignedCommentThreadsInput;
-};
-
-export type UserUpsertWithoutAuthoredCommentThreadsInput = {
-  create: UserCreateWithoutAuthoredCommentThreadsInput;
-  update: UserUpdateWithoutAuthoredCommentThreadsInput;
-};
-
-export type UserUpsertWithoutCommentsInput = {
-  create: UserCreateWithoutCommentsInput;
-  update: UserUpdateWithoutCommentsInput;
-};
-
-export type UserUpsertWithoutWorkspaceMemberInput = {
-  create: UserCreateWithoutWorkspaceMemberInput;
-  update: UserUpdateWithoutWorkspaceMemberInput;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UserWhereInput = {
@@ -3287,6 +1748,7 @@ export type UserWhereInput = {
   NOT?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
   assignedCommentThreads?: InputMaybe<CommentThreadListRelationFilter>;
+  authoredAttachments?: InputMaybe<AttachmentListRelationFilter>;
   authoredCommentThreads?: InputMaybe<CommentThreadListRelationFilter>;
   avatarUrl?: InputMaybe<StringNullableFilter>;
   comments?: InputMaybe<CommentListRelationFilter>;
@@ -3299,6 +1761,7 @@ export type UserWhereInput = {
   id?: InputMaybe<StringFilter>;
   lastName?: InputMaybe<StringNullableFilter>;
   lastSeen?: InputMaybe<DateTimeNullableFilter>;
+  locale?: InputMaybe<StringFilter>;
   metadata?: InputMaybe<JsonNullableFilter>;
   phoneNumber?: InputMaybe<StringNullableFilter>;
   settings?: InputMaybe<UserSettingsRelationFilter>;
@@ -3352,30 +1815,6 @@ export type WorkspaceMember = {
   workspace: Workspace;
 };
 
-export type WorkspaceMemberCreateManyWorkspaceInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  userId: Scalars['String'];
-};
-
-export type WorkspaceMemberCreateManyWorkspaceInputEnvelope = {
-  data: Array<WorkspaceMemberCreateManyWorkspaceInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type WorkspaceMemberCreateOrConnectWithoutWorkspaceInput = {
-  create: WorkspaceMemberCreateWithoutWorkspaceInput;
-  where: WorkspaceMemberWhereUniqueInput;
-};
-
-export type WorkspaceMemberCreateWithoutWorkspaceInput = {
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-  user: UserCreateNestedOneWithoutWorkspaceMemberInput;
-};
-
 export type WorkspaceMemberOrderByWithRelationInput = {
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
@@ -3393,57 +1832,10 @@ export enum WorkspaceMemberScalarFieldEnum {
   WorkspaceId = 'workspaceId'
 }
 
-export type WorkspaceMemberScalarWhereInput = {
-  AND?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
-  NOT?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
-  OR?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-  userId?: InputMaybe<StringFilter>;
-};
-
-export type WorkspaceMemberUpdateManyMutationInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-};
-
-export type WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput = {
-  data: WorkspaceMemberUpdateManyMutationInput;
-  where: WorkspaceMemberScalarWhereInput;
-};
-
 export type WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<WorkspaceMemberCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<WorkspaceMemberCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<WorkspaceMemberCreateManyWorkspaceInputEnvelope>;
-  delete?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<WorkspaceMemberScalarWhereInput>>;
   disconnect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
   set?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  update?: InputMaybe<Array<WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput>>;
-  updateMany?: InputMaybe<Array<WorkspaceMemberUpdateManyWithWhereWithoutWorkspaceInput>>;
-  upsert?: InputMaybe<Array<WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput>>;
-};
-
-export type WorkspaceMemberUpdateWithWhereUniqueWithoutWorkspaceInput = {
-  data: WorkspaceMemberUpdateWithoutWorkspaceInput;
-  where: WorkspaceMemberWhereUniqueInput;
-};
-
-export type WorkspaceMemberUpdateWithoutWorkspaceInput = {
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  user?: InputMaybe<UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput>;
-};
-
-export type WorkspaceMemberUpsertWithWhereUniqueWithoutWorkspaceInput = {
-  create: WorkspaceMemberCreateWithoutWorkspaceInput;
-  update: WorkspaceMemberUpdateWithoutWorkspaceInput;
-  where: WorkspaceMemberWhereUniqueInput;
 };
 
 export type WorkspaceMemberWhereInput = {
@@ -3554,6 +1946,14 @@ export type UpdateCommentThreadMutationVariables = Exact<{
 
 
 export type UpdateCommentThreadMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, body?: string | null, title?: string | null, type: ActivityType } };
+
+export type UploadAttachmentMutationVariables = Exact<{
+  file: Scalars['Upload'];
+  activityId: Scalars['String'];
+}>;
+
+
+export type UploadAttachmentMutation = { __typename?: 'Mutation', uploadAttachment: string };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
@@ -4315,6 +2715,38 @@ export function useUpdateCommentThreadMutation(baseOptions?: Apollo.MutationHook
 export type UpdateCommentThreadMutationHookResult = ReturnType<typeof useUpdateCommentThreadMutation>;
 export type UpdateCommentThreadMutationResult = Apollo.MutationResult<UpdateCommentThreadMutation>;
 export type UpdateCommentThreadMutationOptions = Apollo.BaseMutationOptions<UpdateCommentThreadMutation, UpdateCommentThreadMutationVariables>;
+export const UploadAttachmentDocument = gql`
+    mutation UploadAttachment($file: Upload!, $activityId: String!) {
+  uploadAttachment(file: $file, activityId: $activityId)
+}
+    `;
+export type UploadAttachmentMutationFn = Apollo.MutationFunction<UploadAttachmentMutation, UploadAttachmentMutationVariables>;
+
+/**
+ * __useUploadAttachmentMutation__
+ *
+ * To run a mutation, you first call `useUploadAttachmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadAttachmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadAttachmentMutation, { data, loading, error }] = useUploadAttachmentMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *      activityId: // value for 'activityId'
+ *   },
+ * });
+ */
+export function useUploadAttachmentMutation(baseOptions?: Apollo.MutationHookOptions<UploadAttachmentMutation, UploadAttachmentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadAttachmentMutation, UploadAttachmentMutationVariables>(UploadAttachmentDocument, options);
+      }
+export type UploadAttachmentMutationHookResult = ReturnType<typeof useUploadAttachmentMutation>;
+export type UploadAttachmentMutationResult = Apollo.MutationResult<UploadAttachmentMutation>;
+export type UploadAttachmentMutationOptions = Apollo.BaseMutationOptions<UploadAttachmentMutation, UploadAttachmentMutationVariables>;
 export const CreateEventDocument = gql`
     mutation CreateEvent($type: String!, $data: JSON!) {
   createEvent(type: $type, data: $data) {

@@ -16,6 +16,7 @@ export class CommentThreadTargetUpsertWithWhereUniqueWithoutCommentThreadInput {
     @HideField()
     update!: CommentThreadTargetUpdateWithoutCommentThreadInput;
 
-    @HideField()
+    @Field(() => CommentThreadTargetCreateWithoutCommentThreadInput, {nullable:false})
+    @Type(() => CommentThreadTargetCreateWithoutCommentThreadInput)
     create!: CommentThreadTargetCreateWithoutCommentThreadInput;
 }
