@@ -22,16 +22,16 @@ export function useSystemColorScheme(): SystemColorScheme {
       return;
     }
 
-    function onChange(event: MediaQueryListEvent): void {
+    function handleChange(event: MediaQueryListEvent): void {
       setPreferredColorScheme(
         event.matches ? ColorScheme.Dark : ColorScheme.Light,
       );
     }
 
-    mediaQuery.addEventListener('change', onChange);
+    mediaQuery.addEventListener('change', handleChange);
 
     return () => {
-      mediaQuery.removeEventListener('change', onChange);
+      mediaQuery.removeEventListener('change', handleChange);
     };
   }, [mediaQuery]);
 
