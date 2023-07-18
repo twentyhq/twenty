@@ -1,6 +1,7 @@
 /* eslint twenty/no-hardcoded-colors: 0 */
 
 import { Dispatch, FC, SetStateAction } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Editor } from '@tiptap/core';
 
@@ -32,21 +33,18 @@ const StyledDiv = styled.div`
 `;
 
 const StyledButton = styled.button`
-  background-color: inherit;
-  font-weight: ${(props) => props.theme.font.weight.semiBold};
-  display: flex;
-  height: 100%;
   align-items: center;
+  background-color: inherit;
+  display: flex;
   gap: 0.25rem;
-  white-space: nowrap;
+  height: 100%;
   padding: 0.5rem;
-  font-size: 0.875rem;
-  color: #4a5568; // replace with actual color
+  white-space: nowrap;
   &:hover {
-    background-color: #f7fafc; // replace with actual color
+    background-color: #f7fafc;
   }
   &:active {
-    background-color: #edf2f7; // replace with actual color
+    background-color: #edf2f7;
   }
 `;
 
@@ -60,7 +58,7 @@ const StyledSection = styled.section`
   flex-direction: column;
   overflow: hidden;
   border-radius: 0.25rem;
-  border: 1px solid #edf2f7; // replace with actual color
+  border: 1px solid #edf2f7;
   background-color: #ffffff;
   padding: 0.25rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
@@ -75,7 +73,6 @@ const StyledItemButton = styled.button`
   border-radius: 0.125rem;
   padding: 0.5rem 0.25rem;
   font-size: 0.875rem;
-  color: #4a5568; // replace with actual color
   &:hover {
     background-color: #f7fafc; // replace with actual color
   }
@@ -169,11 +166,14 @@ export const NodeSelector: FC<NodeSelectorProps> = ({
   const activeItem = items.filter((item) => item.isActive()).pop() ?? {
     name: 'Multiple',
   };
+
+  const theme = useTheme();
+
   return (
     <StyledDiv>
       <StyledButton onClick={() => setIsOpen(!isOpen)}>
         <span>{activeItem?.name}</span>
-        <IconChevronDown />
+        <IconChevronDown size={theme.icon.size.sm} />
       </StyledButton>
 
       {isOpen && (
@@ -188,7 +188,7 @@ export const NodeSelector: FC<NodeSelectorProps> = ({
             >
               <StyledIconContainer>
                 <StyledIconBorder>
-                  <item.icon />
+                  <item.icon size={theme.icon.size.sm} />
                 </StyledIconBorder>
                 <span>{item.name}</span>
               </StyledIconContainer>

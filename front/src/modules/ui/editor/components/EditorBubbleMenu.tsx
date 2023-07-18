@@ -1,6 +1,7 @@
 /* eslint twenty/no-hardcoded-colors: 0 */
 
 import { FC, useState } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { BubbleMenu, BubbleMenuProps } from '@tiptap/react';
 
@@ -26,11 +27,11 @@ export interface BubbleMenuItem {
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, 'children'>;
 
 const BubbleMenuStyled = styled(BubbleMenu)`
+  align-items: center;
   background-color: ${(props) => props.theme.background.primary};
-  border: 1px solid #cbd5e0;
-  border-radius: 0.375rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid ${(props) => props.theme.border.color.medium};
+  border-radius: ${(props) => props.theme.border.radius.sm};
+  box-shadow: ${(props) => props.theme.boxShadow.light};
   display: flex;
   max-width: fit-content;
 
@@ -38,20 +39,18 @@ const BubbleMenuStyled = styled(BubbleMenu)`
     background-color: inherit;
     border: none;
     color: ${(props) => props.theme.font.color.primary};
-    padding: 0.5rem;
+    padding: ${(props) => props.theme.spacing(1)};
     &:hover {
-      background-color: #f7fafc;
+      background-color: ${(props) => props.theme.background.tertiary};
     }
     &:active {
-      background-color: #edf2f7;
+      background-color: ${(props) => props.theme.background.secondary};
     }
   }
 `;
 
 const IconStyled = styled.span<{ isActive?: boolean }>`
-  color: ${(props) => (props.isActive ? '#4299e1' : 'inherit')};
-  height: 1rem;
-  width: 1rem;
+  color: ${(props) => (props.isActive ? props.theme.color.blue : 'inherit')};
 `;
 
 export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
@@ -111,6 +110,8 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
   const [isColorSelectorOpen, setIsColorSelectorOpen] = useState(false);
   const [isLinkSelectorOpen, setIsLinkSelectorOpen] = useState(false);
 
+  const theme = useTheme();
+
   return (
     <BubbleMenuStyled {...bubbleMenuProps}>
       <NodeSelector
@@ -134,7 +135,7 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
       {items.map((item, index) => (
         <button key={index} onClick={item.command}>
           <IconStyled isActive={item.isActive()}>
-            <item.icon />
+            <item.icon size={theme.icon.size.sm} />
           </IconStyled>
         </button>
       ))}

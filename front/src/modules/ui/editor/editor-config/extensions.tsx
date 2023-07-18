@@ -13,14 +13,11 @@ import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from 'tiptap-markdown';
 
 import SlashCommand from './slash-command';
-
-// import UploadImagesPlugin from '@/ui/editor/plugins/upload-images';
-
-// import SlashCommand from './slash-command';
+import UploadImagesPlugin from './upload-image';
 
 const CustomImage = TiptapImage.extend({
   addProseMirrorPlugins() {
-    return []; // [UploadImagesPlugin()];
+    return [UploadImagesPlugin()];
   },
 });
 
@@ -107,11 +104,7 @@ export const TiptapExtensions = [
   Highlight.configure({
     multicolor: true,
   }),
-  TaskList.configure({
-    HTMLAttributes: {
-      class: 'not-prose pl-2',
-    },
-  }),
+  TaskList.configure({}),
   TaskItem.configure({
     HTMLAttributes: {
       class: 'flex items-start my-4',

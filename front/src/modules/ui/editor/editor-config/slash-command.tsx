@@ -35,13 +35,12 @@ import { getPrevText } from './utils';
 
 const SlashCommandContainer = styled.div`
   background-color: white;
-  border: 1px solid var(--stone-200);
-  border-radius: 0.375rem;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
   height: auto;
   max-height: 330px;
   overflow-y: auto;
-  padding: 0.25rem 0.5rem;
   position: relative;
   transition: all 0.3s ease;
   width: 18rem;
@@ -56,6 +55,7 @@ const ButtonItem = styled.button<{ isSelected: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
+
   text-align: left;
   width: 100%;
   &:hover {

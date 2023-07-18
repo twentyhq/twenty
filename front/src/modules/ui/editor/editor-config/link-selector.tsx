@@ -1,6 +1,7 @@
 /* eslint twenty/no-hardcoded-colors: 0 */
 
 import { Dispatch, FC, SetStateAction, useEffect, useRef } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Editor } from '@tiptap/core';
 
@@ -24,12 +25,11 @@ const StyledButton = styled.button`
 `;
 
 const StyledLink = styled.div<{ active?: boolean }>`
-  text-decoration: underline;
-  text-decoration-color: #edf2f7; // replace with actual color
-  text-decoration-thickness: 4px;
   color: ${(props) =>
-    props.active ? '#3182ce' : props.theme.font.color.primary};
-}; // replace with actual colors
+    props.active ? props.theme.color.blue : props.theme.font.color.primary};
+  text-decoration: underline;
+  text-decoration-color: #edf2f7;
+  text-decoration-thickness: 4px;
 `;
 
 const StyledForm = styled.form`
@@ -41,8 +41,7 @@ const StyledForm = styled.form`
   width: 15rem;
   overflow: hidden;
   border-radius: 0.25rem;
-  border: 1px solid #edf2f7; // replace with actual color
-  background-color: #ffffff;
+  border: none;
   padding: 0.25rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -51,33 +50,33 @@ const StyledForm = styled.form`
 
 const StyledInput = styled.input`
   background-color: #ffffff;
+  border: none;
   flex: 1;
-  font-size: 0.875rem;
   outline: none;
   padding: 0.25rem;
 `;
 
 const StyledTrashButton = styled.button`
-  display: flex;
   align-items: center;
   border-radius: 0.125rem;
+  color: #e53e3e;
+  display: flex;
   padding: 0.25rem;
-  color: #e53e3e; // replace with actual color
   transition: all 0.2s;
   &:hover {
-    background-color: #f7fafc; // replace with actual color
+    background-color: #f7fafc;
   }
 `;
 
 const StyledCheckButton = styled.button`
-  display: flex;
   align-items: center;
   border-radius: 0.125rem;
+  color: #4a5568;
+  display: flex;
   padding: 0.25rem;
-  color: #4a5568; // replace with actual color
   transition: all 0.2s;
   &:hover {
-    background-color: #f7fafc; // replace with actual color
+    background-color: #f7fafc;
   }
 `;
 
@@ -99,11 +98,13 @@ export const LinkSelector: FC<LinkSelectorProps> = ({
     inputRef.current && inputRef.current?.focus();
   });
 
+  const theme = useTheme();
+
   return (
     <RelativeDiv>
       <StyledButton onClick={() => setIsOpen(!isOpen)}>
         <StyledLink active={editor.isActive('link')}>
-          <IconLink />
+          <IconLink size={theme.icon.size.sm} />
         </StyledLink>
       </StyledButton>
 

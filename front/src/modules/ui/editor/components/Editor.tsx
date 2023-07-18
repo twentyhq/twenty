@@ -25,17 +25,17 @@ const StyledEditorContainer = styled.div`
     outline: none;
   }
 
-  .ProseMirror .is-editor-empty:first-child::before {
+  .ProseMirror .is-editor-empty:first-of-type::before {
     content: attr(data-placeholder);
     float: left;
-    color: var(--novel-stone-400);
+    color: ${({ theme }) => theme.font.color.tertiary};
     pointer-events: none;
     height: 0;
   }
   .ProseMirror .is-empty::before {
     content: attr(data-placeholder);
     float: left;
-    color: var(--novel-stone-400);
+    color: ${({ theme }) => theme.font.color.tertiary};
     pointer-events: none;
     height: 0;
   }
@@ -51,7 +51,7 @@ const StyledEditorContainer = styled.div`
     }
 
     &.ProseMirror-selectednode {
-      outline: 3px solid #5abbf7;
+      outline: 3px solid ${({ theme }) => theme.color.blue};
       filter: brightness(90%);
     }
   }
@@ -67,9 +67,9 @@ const StyledEditorContainer = styled.div`
       left: 50%;
       width: 36px;
       height: 36px;
-      border-radius: 50%;
-      border: 3px solid var(--novel-stone-200);
-      border-top-color: var(--novel-stone-800);
+      border-radius: ${({ theme }) => theme.border.radius.sm};
+      border: 3px solid ${({ theme }) => theme.border.color.light};
+      border-top-color: ${({ theme }) => theme.border.color.strong};
       animation: spinning 0.6s linear infinite;
     }
   }
@@ -81,16 +81,18 @@ const StyledEditorContainer = styled.div`
   }
 
   /* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
-
-  ul[data-type='taskList'] li > label {
-    margin-right: 0.2rem;
-    user-select: none;
+  ul[data-type='taskList'] {
+    padding-left: ${({ theme }) => theme.spacing(5)};
   }
 
-  @media screen and (max-width: 768px) {
-    ul[data-type='taskList'] li > label {
-      margin-right: 0.5rem;
-    }
+  ul[data-type='taskList'] li {
+    display: flex;
+    align-items: center;
+  }
+
+  ul[data-type='taskList'] li > label {
+    margin-right: ${({ theme }) => theme.spacing(0.5)};
+    user-select: none;
   }
 
   ul[data-type='taskList'] li > label input[type='checkbox'] {
@@ -99,21 +101,20 @@ const StyledEditorContainer = styled.div`
     background-color: var(--novel-white);
     margin: 0;
     cursor: pointer;
-    width: 1.2em;
-    height: 1.2em;
-    position: relative;
+    width: 1em;
+    height: 1em;
     top: 5px;
-    border: 2px solid var(--novel-stone-900);
-    margin-right: 0.3rem;
+    border: 2px solid ${({ theme }) => theme.border.color.light};
+    margin-right: ${({ theme }) => theme.spacing(1)};
     display: grid;
     place-content: center;
 
     &:hover {
-      background-color: var(--novel-stone-50);
+      background-color: ${({ theme }) => theme.background.quaternary};
     }
 
     &:active {
-      background-color: var(--novel-stone-200);
+      background-color: ${({ theme }) => theme.background.tertiary};
     }
 
     &::before {
@@ -130,6 +131,11 @@ const StyledEditorContainer = styled.div`
     &:checked::before {
       transform: scale(1);
     }
+  }
+
+  ul[data-type='taskList'] li > div > p {
+    margin-top: ${({ theme }) => theme.spacing(2)};
+    margin-bottom: ${({ theme }) => theme.spacing(2)};
   }
 
   ul[data-type='taskList'] li[data-checked='true'] > div > p {

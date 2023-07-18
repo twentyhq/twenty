@@ -1,7 +1,7 @@
 /* eslint twenty/no-hardcoded-colors: 0 */
 
 import { Dispatch, FC, SetStateAction } from 'react';
-import { keyframes } from '@emotion/react';
+import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Editor } from '@tiptap/core';
 
@@ -26,12 +26,10 @@ const slideInFromTop = keyframes`
   }
 `;
 
-// Define your styled components
 const ButtonBase = styled.button`
   align-items: center;
   background-color: inherit;
   display: flex;
-  font-weight: ${(props) => props.theme.font.weight.semiBold};
   justify-content: space-between;
   padding: 0.5rem;
   text-align: left;
@@ -55,11 +53,10 @@ const ButtonIcon = styled.span<{ color: string; backgroundColor: string }>`
 
 const ButtonSection = styled.section`
   animation: ${fadeIn} 0.3s ease-in-out, ${slideInFromTop} 0.3s ease-in-out;
-  background-color: white;
-  border: 1px solid #edf2f7;
-  border-radius: 0.25rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  background-color: ${(props) => props.theme.background.primary};
+  border: 1px solid ${(props) => props.theme.border.color.light};
+  border-radius: ${(props) => props.theme.border.radius.sm};
+  box-shadow: ${(props) => props.theme.boxShadow.light};
   display: flex;
   flex-direction: column;
   margin-top: 0.25rem;
@@ -74,7 +71,6 @@ const ButtonSection = styled.section`
 const ButtonContent = styled.div`
   align-items: center;
   border-radius: 0.25rem;
-  color: #4a5568;
   display: flex;
   font-size: 0.875rem;
   justify-content: space-between;
@@ -201,8 +197,9 @@ export const ColorSelector: FC<ColorSelectorProps> = ({
     editor.isActive('highlight', { color }),
   );
 
+  const theme = useTheme();
   return (
-    <div className="relative h-full">
+    <>
       <ButtonBase onClick={() => setIsOpen(!isOpen)}>
         <ButtonIcon
           color={activeColorItem?.color ?? 'inherit'}
@@ -210,7 +207,7 @@ export const ColorSelector: FC<ColorSelectorProps> = ({
         >
           A
         </ButtonIcon>
-        <IconChevronDown />
+        <IconChevronDown size={theme.icon.size.sm} />
       </ButtonBase>
 
       {isOpen && (
@@ -269,6 +266,6 @@ export const ColorSelector: FC<ColorSelectorProps> = ({
           ))}
         </ButtonSection>
       )}
-    </div>
+    </>
   );
 };
