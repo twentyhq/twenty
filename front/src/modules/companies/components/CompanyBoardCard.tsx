@@ -110,7 +110,7 @@ export function CompanyBoardCard() {
         variables: {
           id: pipelineProgress.id,
           amount: pipelineProgress.amount,
-          closeDate: pipelineProgress.closeDate || null,
+          closeDate: pipelineProgress.closeDate,
           closeConfidence: pipelineProgress.closeConfidence,
           pointOfContactId: pipelineProgress.pointOfContact?.id,
         },
