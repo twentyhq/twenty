@@ -12,6 +12,7 @@ import { CompanyListRelationFilter } from '../company/company-list-relation-filt
 import { RefreshTokenListRelationFilter } from '../refresh-token/refresh-token-list-relation-filter.input';
 import { CommentListRelationFilter } from '../comment/comment-list-relation-filter.input';
 import { CommentThreadListRelationFilter } from '../comment-thread/comment-thread-list-relation-filter.input';
+import { UserSettingsRelationFilter } from '../user-settings/user-settings-relation-filter.input';
 
 @InputType()
 export class UserWhereInput {
@@ -43,9 +44,6 @@ export class UserWhereInput {
     @Field(() => StringNullableFilter, {nullable:true})
     avatarUrl?: StringNullableFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    locale?: StringFilter;
-
     @Field(() => StringNullableFilter, {nullable:true})
     phoneNumber?: StringNullableFilter;
 
@@ -60,6 +58,9 @@ export class UserWhereInput {
 
     @Field(() => JsonNullableFilter, {nullable:true})
     metadata?: JsonNullableFilter;
+
+    @Field(() => StringFilter, {nullable:true})
+    settingsId?: StringFilter;
 
     @HideField()
     deletedAt?: DateTimeNullableFilter;
@@ -87,4 +88,7 @@ export class UserWhereInput {
 
     @Field(() => CommentThreadListRelationFilter, {nullable:true})
     assignedCommentThreads?: CommentThreadListRelationFilter;
+
+    @Field(() => UserSettingsRelationFilter, {nullable:true})
+    settings?: UserSettingsRelationFilter;
 }

@@ -1,8 +1,9 @@
 import { ThemeProvider } from '@emotion/react';
 
 import { darkTheme, lightTheme } from '@/ui/themes/themes';
+import { ColorScheme } from '~/generated/graphql';
 
-import { ColorScheme, useColorScheme } from '../hooks/useColorScheme';
+import { useColorScheme } from '../hooks/useColorScheme';
 import { useSystemColorScheme } from '../hooks/useSystemColorScheme';
 
 type OwnProps = {
@@ -18,9 +19,6 @@ export function AppThemeProvider({ children }: OwnProps) {
   const systemColorScheme = useSystemColorScheme();
 
   const { colorScheme } = useColorScheme();
-
-  console.log('systemColorScheme', systemColorScheme);
-  console.log('colorScheme', colorScheme);
 
   const theme =
     themes[

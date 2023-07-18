@@ -75,6 +75,12 @@ export type ClientConfig = {
   telemetry: Telemetry;
 };
 
+export enum ColorScheme {
+  Dark = 'Dark',
+  Light = 'Light',
+  System = 'System'
+}
+
 export type Comment = {
   __typename?: 'Comment';
   author: User;
@@ -1277,6 +1283,17 @@ export type EnumActivityTypeFilter = {
   notIn?: InputMaybe<Array<ActivityType>>;
 };
 
+export type EnumColorSchemeFieldUpdateOperationsInput = {
+  set?: InputMaybe<ColorScheme>;
+};
+
+export type EnumColorSchemeFilter = {
+  equals?: InputMaybe<ColorScheme>;
+  in?: InputMaybe<Array<ColorScheme>>;
+  not?: InputMaybe<NestedEnumColorSchemeFilter>;
+  notIn?: InputMaybe<Array<ColorScheme>>;
+};
+
 export type EnumCommentableTypeFieldUpdateOperationsInput = {
   set?: InputMaybe<CommentableType>;
 };
@@ -1540,6 +1557,13 @@ export type NestedEnumActivityTypeFilter = {
   in?: InputMaybe<Array<ActivityType>>;
   not?: InputMaybe<NestedEnumActivityTypeFilter>;
   notIn?: InputMaybe<Array<ActivityType>>;
+};
+
+export type NestedEnumColorSchemeFilter = {
+  equals?: InputMaybe<ColorScheme>;
+  in?: InputMaybe<Array<ColorScheme>>;
+  not?: InputMaybe<NestedEnumColorSchemeFilter>;
+  notIn?: InputMaybe<Array<ColorScheme>>;
 };
 
 export type NestedEnumCommentableTypeFilter = {
@@ -2843,9 +2867,10 @@ export type User = {
   id: Scalars['ID'];
   lastName?: Maybe<Scalars['String']>;
   lastSeen?: Maybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
   metadata?: Maybe<Scalars['JSON']>;
   phoneNumber?: Maybe<Scalars['String']>;
+  settings: UserSettings;
+  settingsId: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
 };
@@ -2909,9 +2934,9 @@ export type UserCreateWithoutAssignedCommentThreadsInput = {
   id?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   lastSeen?: InputMaybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
+  settings: UserSettingsCreateNestedOneWithoutUserInput;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -2928,9 +2953,9 @@ export type UserCreateWithoutAuthoredCommentThreadsInput = {
   id?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   lastSeen?: InputMaybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
+  settings: UserSettingsCreateNestedOneWithoutUserInput;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -2947,9 +2972,9 @@ export type UserCreateWithoutCommentsInput = {
   id?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   lastSeen?: InputMaybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
+  settings: UserSettingsCreateNestedOneWithoutUserInput;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -2967,9 +2992,9 @@ export type UserCreateWithoutWorkspaceMemberInput = {
   id?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   lastSeen?: InputMaybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
+  settings: UserSettingsCreateNestedOneWithoutUserInput;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -2992,9 +3017,10 @@ export type UserOrderByWithRelationInput = {
   id?: InputMaybe<SortOrder>;
   lastName?: InputMaybe<SortOrder>;
   lastSeen?: InputMaybe<SortOrder>;
-  locale?: InputMaybe<SortOrder>;
   metadata?: InputMaybe<SortOrder>;
   phoneNumber?: InputMaybe<SortOrder>;
+  settings?: InputMaybe<UserSettingsOrderByWithRelationInput>;
+  settingsId?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
@@ -3014,12 +3040,92 @@ export enum UserScalarFieldEnum {
   Id = 'id',
   LastName = 'lastName',
   LastSeen = 'lastSeen',
-  Locale = 'locale',
   Metadata = 'metadata',
   PasswordHash = 'passwordHash',
   PhoneNumber = 'phoneNumber',
+  SettingsId = 'settingsId',
   UpdatedAt = 'updatedAt'
 }
+
+export type UserSettings = {
+  __typename?: 'UserSettings';
+  colorScheme: ColorScheme;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  locale: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  user?: Maybe<User>;
+};
+
+export type UserSettingsCreateNestedOneWithoutUserInput = {
+  connect?: InputMaybe<UserSettingsWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserSettingsCreateOrConnectWithoutUserInput>;
+  create?: InputMaybe<UserSettingsCreateWithoutUserInput>;
+};
+
+export type UserSettingsCreateOrConnectWithoutUserInput = {
+  create: UserSettingsCreateWithoutUserInput;
+  where: UserSettingsWhereUniqueInput;
+};
+
+export type UserSettingsCreateWithoutUserInput = {
+  colorScheme?: InputMaybe<ColorScheme>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  locale: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type UserSettingsOrderByWithRelationInput = {
+  colorScheme?: InputMaybe<SortOrder>;
+  createdAt?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  locale?: InputMaybe<SortOrder>;
+  updatedAt?: InputMaybe<SortOrder>;
+  user?: InputMaybe<UserOrderByWithRelationInput>;
+};
+
+export type UserSettingsRelationFilter = {
+  is?: InputMaybe<UserSettingsWhereInput>;
+  isNot?: InputMaybe<UserSettingsWhereInput>;
+};
+
+export type UserSettingsUpdateOneRequiredWithoutUserNestedInput = {
+  connect?: InputMaybe<UserSettingsWhereUniqueInput>;
+  connectOrCreate?: InputMaybe<UserSettingsCreateOrConnectWithoutUserInput>;
+  create?: InputMaybe<UserSettingsCreateWithoutUserInput>;
+  update?: InputMaybe<UserSettingsUpdateWithoutUserInput>;
+  upsert?: InputMaybe<UserSettingsUpsertWithoutUserInput>;
+};
+
+export type UserSettingsUpdateWithoutUserInput = {
+  colorScheme?: InputMaybe<EnumColorSchemeFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+};
+
+export type UserSettingsUpsertWithoutUserInput = {
+  create: UserSettingsCreateWithoutUserInput;
+  update: UserSettingsUpdateWithoutUserInput;
+};
+
+export type UserSettingsWhereInput = {
+  AND?: InputMaybe<Array<UserSettingsWhereInput>>;
+  NOT?: InputMaybe<Array<UserSettingsWhereInput>>;
+  OR?: InputMaybe<Array<UserSettingsWhereInput>>;
+  colorScheme?: InputMaybe<EnumColorSchemeFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<StringFilter>;
+  locale?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+  user?: InputMaybe<UserRelationFilter>;
+};
+
+export type UserSettingsWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
 
 export type UserUpdateInput = {
   assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
@@ -3035,9 +3141,9 @@ export type UserUpdateInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
@@ -3092,9 +3198,9 @@ export type UserUpdateWithoutAssignedCommentThreadsInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
@@ -3111,9 +3217,9 @@ export type UserUpdateWithoutAuthoredCommentThreadsInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
@@ -3130,9 +3236,9 @@ export type UserUpdateWithoutCommentsInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
@@ -3150,9 +3256,9 @@ export type UserUpdateWithoutWorkspaceMemberInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
   lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
@@ -3193,15 +3299,17 @@ export type UserWhereInput = {
   id?: InputMaybe<StringFilter>;
   lastName?: InputMaybe<StringNullableFilter>;
   lastSeen?: InputMaybe<DateTimeNullableFilter>;
-  locale?: InputMaybe<StringFilter>;
   metadata?: InputMaybe<JsonNullableFilter>;
   phoneNumber?: InputMaybe<StringNullableFilter>;
+  settings?: InputMaybe<UserSettingsRelationFilter>;
+  settingsId?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
 export type UserWhereUniqueInput = {
   email?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
+  settingsId?: InputMaybe<Scalars['String']>;
 };
 
 export type Verify = {
@@ -3737,7 +3845,7 @@ export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3750,7 +3858,7 @@ export type UpdateUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
 
 export type UploadProfilePictureMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -3764,7 +3872,7 @@ export type RemoveProfilePictureMutationVariables = Exact<{
 }>;
 
 
-export type RemoveProfilePictureMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string } };
+export type RemoveProfilePictureMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, avatarUrl?: string | null } };
 
 export type GetWorkspaceMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5662,6 +5770,11 @@ export const GetCurrentUserDocument = gql`
         inviteHash
       }
     }
+    settings {
+      id
+      locale
+      colorScheme
+    }
   }
 }
     `;
@@ -5739,6 +5852,21 @@ export const UpdateUserDocument = gql`
     firstName
     lastName
     avatarUrl
+    workspaceMember {
+      id
+      workspace {
+        id
+        domainName
+        displayName
+        logo
+        inviteHash
+      }
+    }
+    settings {
+      id
+      locale
+      colorScheme
+    }
   }
 }
     `;
@@ -5804,6 +5932,7 @@ export const RemoveProfilePictureDocument = gql`
     mutation RemoveProfilePicture($where: UserWhereUniqueInput!) {
   updateUser(data: {avatarUrl: {set: null}}, where: $where) {
     id
+    avatarUrl
   }
 }
     `;

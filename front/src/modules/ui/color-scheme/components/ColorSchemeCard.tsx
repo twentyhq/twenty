@@ -11,7 +11,7 @@ import { Checkmark } from '@/ui/checkmark/components/Checkmark';
 import DarkNoise from '@/ui/themes/assets/dark-noise.png';
 import LightNoise from '@/ui/themes/assets/light-noise.png';
 import { grayScale } from '@/ui/themes/colors';
-import { ColorScheme } from '@/ui/themes/states/colorSchemeState';
+import { ColorScheme } from '~/generated/graphql';
 
 const StyledColorSchemeBackground = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>
@@ -97,7 +97,7 @@ const StyledColorSchemeContent = styled(motion.div)<
 `;
 
 export type ColorSchemeSegmentProps = {
-  variant: `${ColorScheme.Dark | ColorScheme.Light}`;
+  variant: `${Lowercase<ColorScheme.Dark | ColorScheme.Light>}`;
   controls: AnimationControls;
 } & React.ComponentPropsWithoutRef<'div'>;
 
@@ -137,7 +137,7 @@ const StyledCheckmarkContainer = styled(motion.div)`
 `;
 
 export type ColorSchemeCardProps = {
-  variant: `${ColorScheme}`;
+  variant: `${Lowercase<ColorScheme>}`;
   selected?: boolean;
 } & React.ComponentPropsWithoutRef<'div'>;
 

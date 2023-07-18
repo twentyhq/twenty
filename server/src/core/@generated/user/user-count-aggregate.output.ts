@@ -25,9 +25,6 @@ export class UserCountAggregate {
     avatarUrl!: number;
 
     @Field(() => Int, {nullable:false})
-    locale!: number;
-
-    @Field(() => Int, {nullable:false})
     phoneNumber!: number;
 
     @Field(() => Int, {nullable:false})
@@ -41,6 +38,9 @@ export class UserCountAggregate {
 
     @Field(() => Int, {nullable:false})
     metadata!: number;
+
+    @Field(() => Int, {nullable:false})
+    settingsId!: number;
 
     @HideField()
     deletedAt!: number;

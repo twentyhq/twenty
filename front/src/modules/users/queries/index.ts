@@ -20,6 +20,11 @@ export const GET_CURRENT_USER = gql`
           inviteHash
         }
       }
+      settings {
+        id
+        locale
+        colorScheme
+      }
     }
   }
 `;

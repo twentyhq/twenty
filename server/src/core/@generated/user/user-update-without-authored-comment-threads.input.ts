@@ -13,6 +13,7 @@ import { CompanyUpdateManyWithoutAccountOwnerNestedInput } from '../company/comp
 import { RefreshTokenUpdateManyWithoutUserNestedInput } from '../refresh-token/refresh-token-update-many-without-user-nested.input';
 import { CommentUpdateManyWithoutAuthorNestedInput } from '../comment/comment-update-many-without-author-nested.input';
 import { CommentThreadUpdateManyWithoutAssigneeNestedInput } from '../comment-thread/comment-thread-update-many-without-assignee-nested.input';
+import { UserSettingsUpdateOneRequiredWithoutUserNestedInput } from '../user-settings/user-settings-update-one-required-without-user-nested.input';
 
 @InputType()
 export class UserUpdateWithoutAuthoredCommentThreadsInput {
@@ -34,9 +35,6 @@ export class UserUpdateWithoutAuthoredCommentThreadsInput {
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     avatarUrl?: NullableStringFieldUpdateOperationsInput;
-
-    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
-    locale?: StringFieldUpdateOperationsInput;
 
     @Field(() => NullableStringFieldUpdateOperationsInput, {nullable:true})
     phoneNumber?: NullableStringFieldUpdateOperationsInput;
@@ -78,4 +76,7 @@ export class UserUpdateWithoutAuthoredCommentThreadsInput {
 
     @Field(() => CommentThreadUpdateManyWithoutAssigneeNestedInput, {nullable:true})
     assignedCommentThreads?: CommentThreadUpdateManyWithoutAssigneeNestedInput;
+
+    @Field(() => UserSettingsUpdateOneRequiredWithoutUserNestedInput, {nullable:true})
+    settings?: UserSettingsUpdateOneRequiredWithoutUserNestedInput;
 }

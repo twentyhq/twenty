@@ -24,9 +24,6 @@ export class UserMaxAggregateInput {
     avatarUrl?: true;
 
     @Field(() => Boolean, {nullable:true})
-    locale?: true;
-
-    @Field(() => Boolean, {nullable:true})
     phoneNumber?: true;
 
     @Field(() => Boolean, {nullable:true})
@@ -37,6 +34,9 @@ export class UserMaxAggregateInput {
 
     @HideField()
     passwordHash?: true;
+
+    @Field(() => Boolean, {nullable:true})
+    settingsId?: true;
 
     @HideField()
     deletedAt?: true;

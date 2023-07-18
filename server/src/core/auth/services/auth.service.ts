@@ -81,7 +81,11 @@ export class AuthService {
           data: {
             email: signUpInput.email,
             passwordHash,
-            locale: 'en',
+            settings: {
+              create: {
+                locale: 'en',
+              },
+            },
           },
         } as Prisma.UserCreateArgs,
         workspace.id,
@@ -92,7 +96,11 @@ export class AuthService {
       data: {
         email: signUpInput.email,
         passwordHash,
-        locale: 'en',
+        settings: {
+          create: {
+            locale: 'en',
+          },
+        },
       },
     } as Prisma.UserCreateArgs);
   }

@@ -26,13 +26,7 @@ export function SettingsExperience() {
         <StyledContainer>
           <MainSectionTitle>Experience</MainSectionTitle>
           <SubSectionTitle title="Appearance" />
-          <ColorSchemePicker
-            value={colorScheme}
-            onChange={(value) => {
-              console.log('value', value);
-              setColorScheme(value);
-            }}
-          />
+          <ColorSchemePicker value={colorScheme} onChange={setColorScheme} />
         </StyledContainer>
       </div>
     </NoTopBarContainer>

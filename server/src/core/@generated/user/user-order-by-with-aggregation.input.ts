@@ -28,9 +28,6 @@ export class UserOrderByWithAggregationInput {
     avatarUrl?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
-    locale?: keyof typeof SortOrder;
-
-    @Field(() => SortOrder, {nullable:true})
     phoneNumber?: keyof typeof SortOrder;
 
     @Field(() => SortOrder, {nullable:true})
@@ -44,6 +41,9 @@ export class UserOrderByWithAggregationInput {
 
     @Field(() => SortOrder, {nullable:true})
     metadata?: keyof typeof SortOrder;
+
+    @Field(() => SortOrder, {nullable:true})
+    settingsId?: keyof typeof SortOrder;
 
     @HideField()
     deletedAt?: keyof typeof SortOrder;

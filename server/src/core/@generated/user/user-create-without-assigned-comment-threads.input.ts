@@ -8,6 +8,7 @@ import { CompanyCreateNestedManyWithoutAccountOwnerInput } from '../company/comp
 import { RefreshTokenCreateNestedManyWithoutUserInput } from '../refresh-token/refresh-token-create-nested-many-without-user.input';
 import { CommentCreateNestedManyWithoutAuthorInput } from '../comment/comment-create-nested-many-without-author.input';
 import { CommentThreadCreateNestedManyWithoutAuthorInput } from '../comment-thread/comment-thread-create-nested-many-without-author.input';
+import { UserSettingsCreateNestedOneWithoutUserInput } from '../user-settings/user-settings-create-nested-one-without-user.input';
 
 @InputType()
 export class UserCreateWithoutAssignedCommentThreadsInput {
@@ -40,10 +41,6 @@ export class UserCreateWithoutAssignedCommentThreadsInput {
     @Validator.IsString()
     @Validator.IsOptional()
     avatarUrl?: string;
-
-    @Field(() => String, {nullable:false})
-    @Validator.IsString()
-    locale!: string;
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
@@ -91,4 +88,7 @@ export class UserCreateWithoutAssignedCommentThreadsInput {
 
     @Field(() => CommentThreadCreateNestedManyWithoutAuthorInput, {nullable:true})
     authoredCommentThreads?: CommentThreadCreateNestedManyWithoutAuthorInput;
+
+    @Field(() => UserSettingsCreateNestedOneWithoutUserInput, {nullable:false})
+    settings!: UserSettingsCreateNestedOneWithoutUserInput;
 }

@@ -38,9 +38,6 @@ export class UserScalarWhereWithAggregatesInput {
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     avatarUrl?: StringNullableWithAggregatesFilter;
 
-    @Field(() => StringWithAggregatesFilter, {nullable:true})
-    locale?: StringWithAggregatesFilter;
-
     @Field(() => StringNullableWithAggregatesFilter, {nullable:true})
     phoneNumber?: StringNullableWithAggregatesFilter;
 
@@ -55,6 +52,9 @@ export class UserScalarWhereWithAggregatesInput {
 
     @Field(() => JsonNullableWithAggregatesFilter, {nullable:true})
     metadata?: JsonNullableWithAggregatesFilter;
+
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    settingsId?: StringWithAggregatesFilter;
 
     @HideField()
     deletedAt?: DateTimeNullableWithAggregatesFilter;

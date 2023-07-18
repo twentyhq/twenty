@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { ColorScheme } from '../states/colorSchemeState';
+import { ColorScheme } from '~/generated/graphql';
 
 export type SystemColorScheme = ColorScheme.Light | ColorScheme.Dark;
 

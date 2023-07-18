@@ -37,10 +37,6 @@ export class UserMinAggregate {
 
     @Field(() => String, {nullable:true})
     @Validator.IsString()
-    locale?: string;
-
-    @Field(() => String, {nullable:true})
-    @Validator.IsString()
     @Validator.IsOptional()
     phoneNumber?: string;
 
@@ -56,6 +52,9 @@ export class UserMinAggregate {
 
     @HideField()
     passwordHash?: string;
+
+    @Field(() => String, {nullable:true})
+    settingsId?: string;
 
     @HideField()
     deletedAt?: Date | string;

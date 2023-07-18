@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 
 export type ModelSelectMap = {
   User: Prisma.UserSelect;
+  UserSettings: Prisma.UserSettingsSelect;
   Workspace: Prisma.WorkspaceSelect;
   WorkspaceMember: Prisma.WorkspaceMemberSelect;
   Company: Prisma.CompanySelect;

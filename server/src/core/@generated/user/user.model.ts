@@ -8,6 +8,7 @@ import { Company } from '../company/company.model';
 import { RefreshToken } from '../refresh-token/refresh-token.model';
 import { Comment } from '../comment/comment.model';
 import { CommentThread } from '../comment-thread/comment-thread.model';
+import { UserSettings } from '../user-settings/user-settings.model';
 import { UserCount } from './user-count.output';
 
 @ObjectType()
@@ -31,9 +32,6 @@ export class User {
     @Field(() => String, {nullable:true})
     avatarUrl!: string | null;
 
-    @Field(() => String, {nullable:false})
-    locale!: string;
-
     @Field(() => String, {nullable:true})
     phoneNumber!: string | null;
 
@@ -48,6 +46,9 @@ export class User {
 
     @Field(() => GraphQLJSON, {nullable:true})
     metadata!: any | null;
+
+    @Field(() => String, {nullable:false})
+    settingsId!: string;
 
     @HideField()
     deletedAt!: Date | null;
@@ -75,6 +76,9 @@ export class User {
 
     @Field(() => [CommentThread], {nullable:true})
     assignedCommentThreads?: Array<CommentThread>;
+
+    @Field(() => UserSettings, {nullable:false})
+    settings?: UserSettings;
 
     @HideField()
     _count?: UserCount;
