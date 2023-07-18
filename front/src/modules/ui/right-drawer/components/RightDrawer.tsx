@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
+import { Key } from 'ts-key-enum';
 
 import {
   ClickOutsideMode,
@@ -10,8 +11,10 @@ import {
 } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { isDefined } from '~/utils/isDefined';
 
+import { useScopedHotkeys } from '../../hotkey/hooks/useScopedHotkeys';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
+import { RightDrawerHotkeyScope } from '../types/RightDrawerHotkeyScope';
 
 import { RightDrawerRouter } from './RightDrawerRouter';
 
@@ -47,6 +50,14 @@ export function RightDrawer() {
     mode: ClickOutsideMode.absolute,
   });
   const theme = useTheme();
+
+  useScopedHotkeys(
+    [Key.Escape],
+    () => setIsRightDrawerOpen(false),
+    RightDrawerHotkeyScope.RightDrawer,
+    [setIsRightDrawerOpen],
+  );
+
   if (!isDefined(rightDrawerPage)) {
     return <></>;
   }
