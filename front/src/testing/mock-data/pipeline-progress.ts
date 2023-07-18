@@ -2,7 +2,7 @@ import { PipelineProgress, User } from '../../generated/graphql';
 
 type MockedPipelineProgress = Pick<
   PipelineProgress,
-  'id' | 'amount' | 'closeDate' | 'progressableId'
+  'id' | 'amount' | 'closeDate' | 'progressableId' | 'pipelineStageId'
 > & {
   accountOwner: Pick<
     User,
@@ -31,10 +31,12 @@ export const mockedPipelineProgressData: Array<MockedPipelineProgress> = [
     closeDate: '2021-10-01T00:00:00.000Z',
     progressableId: '0',
     accountOwner: accountOwner,
+    pipelineStageId: 'another-pipeline-stage-1',
   },
   {
     id: 'fe256b39-3ec3-4fe7-8998-b76aa0bfb600',
     progressableId: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+    pipelineStageId: 'fe256b39-3ec3-4fe3-8998-b76aa0bfb600',
     amount: 7,
     closeDate: '2021-10-01T00:00:00.000Z',
     accountOwner,
@@ -45,5 +47,6 @@ export const mockedPipelineProgressData: Array<MockedPipelineProgress> = [
     amount: 100,
     closeDate: '2021-10-01T00:00:00.000Z',
     accountOwner,
+    pipelineStageId: 'fe256b39-3ec3-4fe3-8998-b76aa0bfb600',
   },
 ];
