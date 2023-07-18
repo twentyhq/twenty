@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { EntityBoard } from '@/pipeline/components/EntityBoard';
@@ -17,12 +18,15 @@ type Story = StoryObj<typeof EntityBoard>;
 
 export const OneColumnBoard: Story = {
   render: getRenderWrapperForComponent(
-    <EntityBoard
-      boardOptions={opportunitiesBoardOptions}
-      updateSorts={() => {
-        return;
-      }}
-    />,
+    <MemoryRouter>
+      <EntityBoard
+        boardOptions={opportunitiesBoardOptions}
+        updateSorts={() => {
+          return;
+        }}
+      />
+      ,
+    </MemoryRouter>,
   ),
   parameters: {
     msw: graphqlMocks,
