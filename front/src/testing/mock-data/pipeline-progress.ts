@@ -1,8 +1,17 @@
-import { PipelineProgress, User } from '../../generated/graphql';
+import {
+  PipelineProgress,
+  PipelineProgressableType,
+  User,
+} from '../../generated/graphql';
 
 type MockedPipelineProgress = Pick<
   PipelineProgress,
-  'id' | 'amount' | 'closeDate' | 'progressableId' | 'pipelineStageId'
+  | 'id'
+  | 'amount'
+  | 'closeDate'
+  | 'progressableId'
+  | 'pipelineStageId'
+  | 'progressableType'
 > & {
   accountOwner: Pick<
     User,
@@ -32,6 +41,7 @@ export const mockedPipelineProgressData: Array<MockedPipelineProgress> = [
     progressableId: '0',
     accountOwner: accountOwner,
     pipelineStageId: 'another-pipeline-stage-1',
+    progressableType: PipelineProgressableType.Company,
   },
   {
     id: 'fe256b39-3ec3-4fe7-8998-b76aa0bfb600',
@@ -40,6 +50,7 @@ export const mockedPipelineProgressData: Array<MockedPipelineProgress> = [
     amount: 7,
     closeDate: '2021-10-01T00:00:00.000Z',
     accountOwner,
+    progressableType: PipelineProgressableType.Company,
   },
   {
     id: '4a886c90-f4f2-4984-8222-882ebbb905d6',
@@ -48,5 +59,6 @@ export const mockedPipelineProgressData: Array<MockedPipelineProgress> = [
     closeDate: '2021-10-01T00:00:00.000Z',
     accountOwner,
     pipelineStageId: 'fe256b39-3ec3-4fe3-8998-b76aa0bfb600',
+    progressableType: PipelineProgressableType.Company,
   },
 ];

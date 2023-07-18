@@ -15,6 +15,7 @@ import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedSta
 import { CellContext } from '@/ui/table/states/CellContext';
 import { RowContext } from '@/ui/table/states/RowContext';
 
+import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { ComponentStorybookLayout } from './ComponentStorybookLayout';
 import { mockedClient } from './mockedClient';
 
@@ -57,8 +58,7 @@ function HookLoadFakeBoardContextState() {
     pipelineProgressIdScopedState,
     BoardCardContext,
   );
-  const pipelineProgress =
-    pipeline?.pipelineStages?.[0]?.pipelineProgresses?.[0];
+  const pipelineProgress = mockedPipelineProgressData[1];
   useEffect(() => {
     setPipelineProgressId(pipelineProgress?.id || '');
   }, [pipelineProgress?.id, setPipelineProgressId]);
