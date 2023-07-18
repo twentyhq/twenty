@@ -17,8 +17,8 @@
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./docs/static/img/Preview-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="./docs/static/img/Preview-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="./docs/static/img/preview-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="./docs/static/img/preview-light.png">
       <img src="./docs/static/img/preview-light.png" alt="Companies view" />
     </picture>
   </a>
