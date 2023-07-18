@@ -6,7 +6,7 @@ import { IconCheck, IconMinus } from '@/ui/icon';
 type OwnProps = {
   checked: boolean;
   indeterminate?: boolean;
-  onChange: (value: boolean) => void;
+  onChange?: (value: boolean) => void;
 };
 
 const StyledInputContainer = styled.div`
@@ -71,7 +71,7 @@ export function Checkbox({ checked, onChange, indeterminate }: OwnProps) {
   }, [checked]);
 
   function handleChange(value: boolean) {
-    onChange(value);
+    onChange?.(value);
     setIsInternalChecked(!isInternalChecked);
   }
 
