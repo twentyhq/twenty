@@ -29,7 +29,7 @@ export function CheckboxCell() {
 
   return (
     <StyledContainer onClick={handleClick}>
-      <Checkbox checked={currentRowSelected} onChange={() => undefined} />
+      <Checkbox checked={currentRowSelected} />
     </StyledContainer>
   );
 }
