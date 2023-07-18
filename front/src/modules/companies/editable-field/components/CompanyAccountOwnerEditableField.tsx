@@ -25,15 +25,13 @@ export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
           }}
           parentHotkeyScope={{
             scope: PageHotkeyScope.CompanyShowPage,
+            customScopes: {
+              goto: true,
+            },
           }}
           iconLabel={<IconUserCircle />}
           editModeContent={
-            <CompanyAccountOwnerPickerFieldEditMode
-              parentHotkeyScope={{
-                scope: PageHotkeyScope.CompanyShowPage,
-              }}
-              company={company}
-            />
+            <CompanyAccountOwnerPickerFieldEditMode company={company} />
           }
           displayModeContent={
             company.accountOwner?.displayName ? (

@@ -1,4 +1,4 @@
-import React from 'react';
+import { PropsWithChildren } from 'react';
 
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
@@ -7,15 +7,16 @@ import { isNonTextWritingKey } from '@/ui/hotkey/utils/isNonTextWritingKey';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useEditableCell } from '../hooks/useEditableCell';
 
-import {
-  EditableCellNormalModeInnerContainer,
-  EditableCellNormalModeOuterContainer,
-} from './EditableCellDisplayMode';
+import { EditableCellDisplayContainer } from './EditableCellContainer';
+
+type OwnProps = PropsWithChildren<{
+  editHotkeyScope?: HotkeyScope;
+}>;
 
 export function EditableCellSoftFocusMode({
   children,
   editHotkeyScope,
-}: React.PropsWithChildren<{ editHotkeyScope?: HotkeyScope }>) {
+}: OwnProps) {
   const { openEditableCell } = useEditableCell();
 
   function openEditMode() {
@@ -61,13 +62,8 @@ export function EditableCellSoftFocusMode({
   }
 
   return (
-    <EditableCellNormalModeOuterContainer
-      onClick={handleClick}
-      softFocus={true}
-    >
-      <EditableCellNormalModeInnerContainer>
-        {children}
-      </EditableCellNormalModeInnerContainer>
-    </EditableCellNormalModeOuterContainer>
+    <EditableCellDisplayContainer onClick={handleClick} softFocus>
+      {children}
+    </EditableCellDisplayContainer>
   );
 }

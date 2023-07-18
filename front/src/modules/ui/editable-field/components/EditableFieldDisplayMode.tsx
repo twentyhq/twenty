@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 export const EditableFieldNormalModeOuterContainer = styled.div<
-  Pick<OwnProps, 'disableClick'>
+  Pick<OwnProps, 'disableClick' | 'isDisplayModeContentEmpty'>
 >`
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -15,7 +15,18 @@ export const EditableFieldNormalModeOuterContainer = styled.div<
 
   padding: ${({ theme }) => theme.spacing(1)};
 
-  width: 100%;
+  ${(props) => {
+    console.log(props.isDisplayModeContentEmpty);
+    if (props.isDisplayModeContentEmpty) {
+      return css`
+        min-width: 50px;
+      `;
+    } else {
+      return css`
+        width: fit-content;
+      `;
+    }
+  }}
 
   ${(props) => {
     if (props.disableClick) {
@@ -51,17 +62,20 @@ export const EditableFieldNormalModeInnerContainer = styled.div`
 type OwnProps = {
   disableClick?: boolean;
   onClick?: () => void;
+  isDisplayModeContentEmpty?: boolean;
 };
 
 export function EditableFieldDisplayMode({
   children,
   disableClick,
   onClick,
+  isDisplayModeContentEmpty,
 }: React.PropsWithChildren<OwnProps>) {
   return (
     <EditableFieldNormalModeOuterContainer
       onClick={disableClick ? undefined : onClick}
       disableClick={disableClick}
+      isDisplayModeContentEmpty={isDisplayModeContentEmpty}
     >
       <EditableFieldNormalModeInnerContainer>
         {children}

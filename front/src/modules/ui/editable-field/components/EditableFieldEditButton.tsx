@@ -34,7 +34,7 @@ export function EditableFieldEditButton({ customHotkeyScope }: OwnProps) {
   const { openEditableField } = useEditableField();
 
   function handleClick() {
-    openEditableField(customHotkeyScope);
+    openEditableField();
   }
 
   return (

@@ -10,12 +10,8 @@ type OwnProps = {
   parentHotkeyScope?: HotkeyScope;
 };
 
-export function EditableFieldEditModeDate({
-  value,
-  onChange,
-  parentHotkeyScope,
-}: OwnProps) {
-  const { closeEditableField } = useEditableField(parentHotkeyScope);
+export function EditableFieldEditModeDate({ value, onChange }: OwnProps) {
+  const { closeEditableField } = useEditableField();
 
   function handleChange(newValue: string) {
     onChange?.(newValue);

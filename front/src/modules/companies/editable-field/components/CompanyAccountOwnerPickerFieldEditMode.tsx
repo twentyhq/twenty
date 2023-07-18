@@ -24,9 +24,8 @@ export function CompanyAccountOwnerPickerFieldEditMode({
   company,
   onSubmit,
   onCancel,
-  parentHotkeyScope,
 }: OwnProps) {
-  const { closeEditableField } = useEditableField(parentHotkeyScope);
+  const { closeEditableField } = useEditableField();
 
   function handleSubmit() {
     closeEditableField();
