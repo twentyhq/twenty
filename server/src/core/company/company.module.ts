@@ -5,7 +5,7 @@ import { CompanyRelationsResolver } from './company-relations.resolver';
 import { CommentModule } from '../comment/comment.module';
 
 @Module({
-  imports: [CommentModule, CommentModule],
+  imports: [CommentModule],
   providers: [CompanyService, CompanyResolver, CompanyRelationsResolver],
   exports: [CompanyService],
 })

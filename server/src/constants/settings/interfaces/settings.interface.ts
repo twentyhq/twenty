@@ -6,7 +6,7 @@ type ValueOfFileFolder = `${FileFolder}`;
 export interface Settings {
   storage: {
     imageCropSizes: {
-      [key in ValueOfFileFolder]: ShortCropSize[];
+      [key in ValueOfFileFolder]?: ShortCropSize[];
     };
   };
 }
