@@ -9,10 +9,10 @@ import {
   IconSettings,
   IconUser,
   IconUsers,
-} from '@/ui/icon/index';
-import NavItem from '@/ui/navbar/components/NavItem';
-import NavTitle from '@/ui/navbar/components/NavTitle';
-import SubNavbar from '@/ui/navbar/components/SubNavbar';
+} from '@/ui/icons/index';
+import NavItem from '@/ui/layout/navbar/NavItem';
+import NavTitle from '@/ui/layout/navbar/NavTitle';
+import SubNavbar from '@/ui/layout/navbar/sub-navbar/SubNavbar';
 
 export function SettingsNavbar() {
   const theme = useTheme();

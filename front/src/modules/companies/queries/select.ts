@@ -1,8 +1,9 @@
 import { gql } from '@apollo/client';
 
-import { CommentableEntityForSelect } from '@/activities/types/CommentableEntityForSelect';
+import { CommentableEntityForSelect } from '@/comments/types/CommentableEntityForSelect';
+import { SelectedSortType } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
+import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   CommentableType,
   CompanyOrderByWithRelationInput as Companies_Order_By,
@@ -11,7 +12,6 @@ import {
   useGetCompaniesQuery,
   useSearchCompanyQuery,
 } from '~/generated/graphql';
-import { getLogoUrlFromDomainName } from '~/utils';
 
 export type CompaniesSelectedSortType = SelectedSortType<Companies_Order_By>;
 
@@ -34,7 +34,6 @@ export const GET_COMPANIES = gql`
         displayName
         firstName
         lastName
-        avatarUrl
       }
     }
   }

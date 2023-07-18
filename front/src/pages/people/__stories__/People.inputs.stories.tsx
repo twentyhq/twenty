@@ -4,8 +4,8 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { UPDATE_PERSON } from '@/people/queries';
-import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
+import { UPDATE_PERSON } from '@/people/services';
+import { SEARCH_COMPANY_QUERY } from '@/search/services/search';
 import { Company } from '~/generated/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { fetchOneFromData } from '~/testing/mock-data';

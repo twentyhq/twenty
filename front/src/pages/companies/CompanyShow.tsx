@@ -1,21 +1,21 @@
 import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
-import { Timeline } from '@/activities/timeline/components/Timeline';
-import { CompanyAccountOwnerEditableField } from '@/companies/editable-field/components/CompanyAccountOwnerEditableField';
-import { CompanyAddressEditableField } from '@/companies/editable-field/components/CompanyAddressEditableField';
-import { CompanyCreatedAtEditableField } from '@/companies/editable-field/components/CompanyCreatedAtEditableField';
-import { CompanyDomainNameEditableField } from '@/companies/editable-field/components/CompanyDomainNameEditableField';
-import { CompanyEmployeesEditableField } from '@/companies/editable-field/components/CompanyEmployeesEditableField';
+import { Timeline } from '@/comments/components/timeline/Timeline';
+import { CompanyAccountOwnerEditableField } from '@/companies/fields/components/CompanyAccountOwnerEditableField';
+import { CompanyAddressEditableField } from '@/companies/fields/components/CompanyAddressEditableField';
+import { CompanyCreatedAtEditableField } from '@/companies/fields/components/CompanyCreatedAtEditableField';
+import { CompanyDomainNameEditableField } from '@/companies/fields/components/CompanyDomainNameEditableField';
+import { CompanyEmployeesEditableField } from '@/companies/fields/components/CompanyEmployeesEditableField';
 import { useCompanyQuery } from '@/companies/queries';
-import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
-import { IconBuildingSkyscraper } from '@/ui/icon';
-import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
-import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
-import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
-import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
+import { PropertyBox } from '@/ui/components/property-box/PropertyBox';
+import { IconBuildingSkyscraper } from '@/ui/icons/index';
+import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
+import { ShowPageLeftContainer } from '@/ui/layout/show-page/containers/ShowPageLeftContainer';
+import { ShowPageRightContainer } from '@/ui/layout/show-page/containers/ShowPageRightContainer';
+import { ShowPageSummaryCard } from '@/ui/layout/show-page/ShowPageSummaryCard';
+import { getLogoUrlFromDomainName } from '@/utils/utils';
 import { CommentableType } from '~/generated/graphql';
-import { getLogoUrlFromDomainName } from '~/utils';
 
 export function CompanyShow() {
   const companyId = useParams().companyId ?? '';

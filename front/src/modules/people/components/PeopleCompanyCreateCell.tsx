@@ -1,18 +1,16 @@
 import { useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 import { v4 } from 'uuid';
 
-import { GET_COMPANIES } from '@/companies/queries';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
-import { isCreateModeScopedState } from '@/ui/table/editable-cell/states/isCreateModeScopedState';
-import { EditableCellDoubleTextEditMode } from '@/ui/table/editable-cell/types/EditableCellDoubleTextEditMode';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
+import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
+import { EditableCellDoubleTextEditMode } from '@/ui/components/editable-cell/types/EditableCellDoubleTextEditMode';
+import { logError } from '@/utils/logs/logError';
 import {
   Person,
   useInsertCompanyMutation,
   useUpdatePeopleMutation,
 } from '~/generated/graphql';
-import { logError } from '~/utils/logError';
 
 type OwnProps = {
   people: Pick<Person, 'id'>;
@@ -51,7 +49,6 @@ export function PeopleCompanyCreateCell({ people }: OwnProps) {
           address: '',
           createdAt: new Date().toISOString(),
         },
-        refetchQueries: [getOperationName(GET_COMPANIES) || ''],
       });
 
       await updatePeople({

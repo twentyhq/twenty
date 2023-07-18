@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import usePrevious from '~/hooks/usePrevious';
+import usePrevious from '@/utils/hooks/usePrevious';
 
 import { useEventTracker } from './useEventTracker';
 

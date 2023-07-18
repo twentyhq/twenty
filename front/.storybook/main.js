@@ -55,7 +55,6 @@ module.exports = {
     "@storybook/addon-styling",
     "@storybook/addon-knobs",
     "storybook-addon-pseudo-states",
-    "storybook-addon-cookie",
   ],
   framework: {
     name: '@storybook/react-webpack5',

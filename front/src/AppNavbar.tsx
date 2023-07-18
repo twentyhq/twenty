@@ -10,11 +10,12 @@ import {
   IconSettings,
   IconTargetArrow,
   IconUser,
-} from '@/ui/icon/index';
+} from '@/ui/icons/index';
 import { useIsSubNavbarDisplayed } from '@/ui/layout/hooks/useIsSubNavbarDisplayed';
-import MainNavbar from '@/ui/navbar/components/MainNavbar';
-import NavItem from '@/ui/navbar/components/NavItem';
-import NavTitle from '@/ui/navbar/components/NavTitle';
+import MainNavbar from '@/ui/layout/navbar/MainNavbar';
+
+import NavItem from './modules/ui/layout/navbar/NavItem';
+import NavTitle from './modules/ui/layout/navbar/NavTitle';
 
 export function AppNavbar() {
   const theme = useTheme();

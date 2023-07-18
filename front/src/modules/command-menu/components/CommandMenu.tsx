@@ -3,9 +3,9 @@ import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
-import { useFilteredSearchPeopleQuery } from '@/people/queries';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { AppHotkeyScope } from '@/ui/hotkey/types/AppHotkeyScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { AppHotkeyScope } from '@/lib/hotkeys/types/AppHotkeyScope';
+import { useFilteredSearchPeopleQuery } from '@/people/services';
 import { Avatar } from '@/users/components/Avatar';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
@@ -49,7 +49,7 @@ export function CommandMenu() {
   TODO: Allow performing actions on page through CommandBar 
 
   import { useMatch, useResolvedPath } from 'react-router-dom';
-  import { IconBuildingSkyscraper, IconUser } from '@/ui/icon';
+  import { IconBuildingSkyscraper, IconUser } from '@/ui/icons';
 
   const createSection = (
     <StyledGroup heading="Create">

@@ -4,16 +4,16 @@ import { HotkeysProvider } from 'react-hotkeys-hook';
 import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
-import { ApolloProvider } from '@/apollo/components/ApolloProvider';
-import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
-import { INITIAL_HOTKEYS_SCOPES } from '@/ui/hotkey/constants';
-import { SnackBarProvider } from '@/ui/snack-bar/components/SnackBarProvider';
-import { AppThemeProvider } from '@/ui/themes/components/AppThemeProvider';
+import { INITIAL_HOTKEYS_SCOPES } from '@/lib/hotkeys/constants';
 import { ThemeType } from '@/ui/themes/themes';
-import { UserProvider } from '@/users/components/UserProvider';
 
 import '@emotion/react';
 
+import { ApolloProvider } from './providers/apollo/ApolloProvider';
+import { ClientConfigProvider } from './providers/client-config/ClientConfigProvider';
+import { SnackBarProvider } from './providers/snack-bar/SnackBarProvider';
+import { AppThemeProvider } from './providers/theme/AppThemeProvider';
+import { UserProvider } from './providers/user/UserProvider';
 import { App } from './App';
 
 import './index.css';

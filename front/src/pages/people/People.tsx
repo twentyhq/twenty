@@ -1,23 +1,19 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 
-import { GET_PEOPLE } from '@/people/queries';
-import { PeopleTable } from '@/people/table/components/PeopleTable';
-import { TableActionBarButtonCreateCommentThreadPeople } from '@/people/table/components/TableActionBarButtonCreateCommentThreadPeople';
-import { TableActionBarButtonDeletePeople } from '@/people/table/components/TableActionBarButtonDeletePeople';
-import { IconBuildingSkyscraper } from '@/ui/icon';
-import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { GET_PEOPLE } from '@/people/services';
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
+import { IconBuildingSkyscraper } from '@/ui/icons/index';
+import { FlexExpandingContainer } from '@/ui/layout/containers/FlexExpandingContainer';
+import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
+import { TableContext } from '@/ui/tables/states/TableContext';
 import { useInsertPersonMutation } from '~/generated/graphql';
 
-const StyledTableContainer = styled.div`
-  display: flex;
-  width: 100%;
-`;
+import { TableActionBarButtonCreateCommentThreadPeople } from './table/TableActionBarButtonCreateCommentThreadPeople';
+import { TableActionBarButtonDeletePeople } from './table/TableActionBarButtonDeletePeople';
+import { PeopleTable } from './PeopleTable';
 
 export function People() {
   const [insertPersonMutation] = useInsertPersonMutation();
@@ -42,13 +38,13 @@ export function People() {
   return (
     <RecoilScope SpecificContext={TableContext}>
       <WithTopBarContainer
-        title="People"
+        title="Companies"
         icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
         onAddButtonClick={handleAddButtonClick}
       >
-        <StyledTableContainer>
+        <FlexExpandingContainer>
           <PeopleTable />
-        </StyledTableContainer>
+        </FlexExpandingContainer>
         <EntityTableActionBar>
           <TableActionBarButtonCreateCommentThreadPeople />
           <TableActionBarButtonDeletePeople />

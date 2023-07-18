@@ -1,22 +1,23 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql } from 'msw';
 
-import { CREATE_EVENT } from '@/analytics/queries';
+import { CREATE_EVENT } from '@/analytics/services';
 import { GET_CLIENT_CONFIG } from '@/client-config/queries';
 import { GET_COMPANIES } from '@/companies/queries';
-import { GET_PEOPLE, UPDATE_PERSON } from '@/people/queries';
-import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
+import { GET_PEOPLE, UPDATE_PERSON } from '@/people/services';
+import {
+  GET_PIPELINE_PROGRESS,
+  GET_PIPELINES,
+} from '@/pipeline-progress/services';
 import {
   SEARCH_COMPANY_QUERY,
-  SEARCH_PEOPLE_QUERY,
   SEARCH_USER_QUERY,
-} from '@/search/queries/search';
+} from '@/search/services/search';
 import { GET_CURRENT_USER } from '@/users/queries';
 import {
   GetCompaniesQuery,
   GetPeopleQuery,
   SearchCompanyQuery,
-  SearchPeopleQuery,
   SearchUserQuery,
 } from '~/generated/graphql';
 
@@ -50,26 +51,6 @@ export const graphqlMocks = [
         SearchCompanyQuery['searchResults'][0]
       >(
         mockedCompaniesData,
-        req.variables.where,
-        Array.isArray(req.variables.orderBy)
-          ? req.variables.orderBy
-          : [req.variables.orderBy],
-        req.variables.limit,
-      );
-      return res(
-        ctx.data({
-          searchResults: returnedMockedData,
-        }),
-      );
-    },
-  ),
-  graphql.query(
-    getOperationName(SEARCH_PEOPLE_QUERY) ?? '',
-    (req, res, ctx) => {
-      const returnedMockedData = filterAndSortData<
-        SearchPeopleQuery['searchResults'][0]
-      >(
-        mockedPeopleData,
         req.variables.where,
         Array.isArray(req.variables.orderBy)
           ? req.variables.orderBy

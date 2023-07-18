@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
 import { peopleNameCellFamilyState } from '@/people/states/peopleNamesFamilyState';
-import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
+import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
 import { useUpdatePeopleMutation } from '~/generated/graphql';
 
 export function EditablePeopleFullNameCell() {

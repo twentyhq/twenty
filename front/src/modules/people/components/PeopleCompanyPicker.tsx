@@ -1,15 +1,15 @@
 import { Key } from 'ts-key-enum';
 
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
-import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
-import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
-import { isCreateModeScopedState } from '@/ui/table/editable-cell/states/isCreateModeScopedState';
-import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { SingleEntitySelect } from '@/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/relation-picker/states/relationPickerSearchFilterScopedState';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
+import { useEditableCell } from '@/ui/components/editable-cell/hooks/useEditableCell';
+import { isCreateModeScopedState } from '@/ui/components/editable-cell/states/isCreateModeScopedState';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
 import { Company, Person, useUpdatePeopleMutation } from '~/generated/graphql';
 
 export type OwnProps = {

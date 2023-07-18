@@ -9,6 +9,10 @@ export const pipeline = {
       name: 'New',
       index: 0,
       color: '#B76796',
+      pipelineProgresses: [
+        { id: 'fe256b39-3ec3-4fe7-8998-b76aa0bfb600' },
+        { id: '4a886c90-f4f2-4984-8222-882ebbb905d6' },
+      ],
     },
     {
       id: 'pipeline-stage-2',

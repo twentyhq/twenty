@@ -1,11 +1,11 @@
-import { SortType } from '@/ui/filter-n-sort/types/interface';
+import { SortType } from '@/lib/filters-and-sorts/interfaces/sorts/interface';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
   IconLink,
   IconMap,
   IconUsers,
-} from '@/ui/icon/index';
+} from '@/ui/icons/index';
 import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
 
 export const availableSorts = [

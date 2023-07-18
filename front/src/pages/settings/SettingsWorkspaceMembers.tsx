@@ -3,11 +3,11 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { Button } from '@/ui/button/components/Button';
-import { IconTrash } from '@/ui/icon';
-import { NoTopBarContainer } from '@/ui/layout/components/NoTopBarContainer';
-import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
-import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
+import { Button } from '@/ui/components/buttons/Button';
+import { MainSectionTitle } from '@/ui/components/section-titles/MainSectionTitle';
+import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
+import { IconTrash } from '@/ui/icons';
+import { NoTopBarContainer } from '@/ui/layout/containers/NoTopBarContainer';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import {

@@ -6,7 +6,7 @@ import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 import { Opportunities } from '../Opportunities';
 
 const meta: Meta<typeof Opportunities> = {
-  title: 'Pages/Opportunities/Default',
+  title: 'Pages/Opportunities',
   component: Opportunities,
 };
 

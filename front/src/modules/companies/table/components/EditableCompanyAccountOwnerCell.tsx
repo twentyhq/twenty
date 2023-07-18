@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { CompanyAccountOwnerCell } from '@/companies/components/CompanyAccountOwnerCell';
 import { companyAccountOwnerFamilyState } from '@/companies/states/companyAccountOwnerFamilyState';
-import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
+import { useCurrentRowEntityId } from '@/ui/tables/hooks/useCurrentEntityId';
 
 export function EditableCompanyAccountOwnerCell() {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -16,7 +16,6 @@ export function EditableCompanyAccountOwnerCell() {
       company={{
         id: currentRowEntityId ?? '',
         accountOwner: {
-          avatarUrl: accountOwner?.avatarUrl ?? '',
           displayName: accountOwner?.displayName ?? '',
           id: accountOwner?.id ?? '',
         },

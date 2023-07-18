@@ -4,8 +4,8 @@ import { useRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
+import { useUpdateEffect } from '@/utils/hooks/useUpdateEffect';
 import { CommentThreadTarget } from '~/generated/graphql';
-import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 import { ApolloFactory } from '../services/apollo.factory';
 

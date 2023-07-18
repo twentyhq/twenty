@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
 
 import { ColumnHotkeyScope } from './ColumnHotkeyScope';
 
@@ -40,11 +40,8 @@ export function EditColumnTitleInput({
 }) {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  useListenClickOutsideArrayOfRef({
-    refs: [inputRef],
-    callback: () => {
-      onFocusLeave();
-    },
+  useListenClickOutsideArrayOfRef([inputRef], () => {
+    onFocusLeave();
   });
   const setHotkeyScope = useSetHotkeyScope();
   setHotkeyScope(ColumnHotkeyScope.EditColumnName, { goto: false });

@@ -13,13 +13,7 @@ type MockedCompany = Pick<
 > & {
   accountOwner: Pick<
     User,
-    | 'id'
-    | 'email'
-    | 'displayName'
-    | 'avatarUrl'
-    | '__typename'
-    | 'firstName'
-    | 'lastName'
+    'id' | 'email' | 'displayName' | '__typename' | 'firstName' | 'lastName'
   > | null;
 };
 
@@ -37,7 +31,6 @@ export const mockedCompaniesData: Array<MockedCompany> = [
       displayName: 'Charles Test',
       firstName: 'Charles',
       lastName: 'Test',
-      avatarUrl: null,
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       __typename: 'User',
     },

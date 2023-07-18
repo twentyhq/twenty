@@ -13,13 +13,13 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { MainButton } from '@/ui/button/components/MainButton';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { useSnackBar } from '@/snack-bar/hooks/useSnackBar';
+import { MainButton } from '@/ui/components/buttons/MainButton';
+import { TextInput } from '@/ui/components/inputs/TextInput';
+import { SubSectionTitle } from '@/ui/components/section-titles/SubSectionTitle';
 import { useCheckUserExistsQuery } from '~/generated/graphql';
+import { PageHotkeyScope } from '~/sync-hooks/types/PageHotkeyScope';
 
 const StyledContentContainer = styled.div`
   width: 100%;

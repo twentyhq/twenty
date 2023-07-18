@@ -1,54 +1,27 @@
-import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 
-import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
+import { companyBoardOptions } from '@/companies/components/companyBoardOptions';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
-import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline/components/BoardActionBarButtonDeletePipelineProgress';
-import { EntityBoard } from '@/pipeline/components/EntityBoard';
-import { EntityBoardActionBar } from '@/pipeline/components/EntityBoardActionBar';
-import {
-  defaultPipelineProgressOrderBy,
-  PipelineProgressesSelectedSortType,
-} from '@/pipeline/queries';
-import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
-import { IconTargetArrow } from '@/ui/icon/index';
-import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { PipelineProgressOrderByWithRelationInput } from '~/generated/graphql';
-import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
+import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline-progress/components/BoardActionBarButtonDeletePipelineProgress';
+import { EntityBoard } from '@/pipeline-progress/components/EntityBoard';
+import { EntityBoardActionBar } from '@/pipeline-progress/components/EntityBoardActionBar';
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { IconTargetArrow } from '@/ui/icons/index';
+import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
+
+import { HookCompanyBoard } from './HookCompanyBoard';
 
 export function Opportunities() {
   const theme = useTheme();
-
-  const [orderBy, setOrderBy] = useState<
-    PipelineProgressOrderByWithRelationInput[]
-  >(defaultPipelineProgressOrderBy);
-
-  const updateSorts = useCallback(
-    (sorts: Array<PipelineProgressesSelectedSortType>) => {
-      setOrderBy(
-        sorts.length
-          ? reduceSortsToOrderBy(sorts)
-          : defaultPipelineProgressOrderBy,
-      );
-    },
-    [],
-  );
 
   return (
     <WithTopBarContainer
       title="Opportunities"
       icon={<IconTargetArrow size={theme.icon.size.md} />}
     >
+      <HookCompanyBoard />
       <RecoilScope SpecificContext={CompanyBoardContext}>
-        <HooksCompanyBoard
-          availableFilters={opportunitiesBoardOptions.filters}
-          orderBy={orderBy}
-        />
-        <EntityBoard
-          boardOptions={opportunitiesBoardOptions}
-          updateSorts={updateSorts}
-        />
+        <EntityBoard boardOptions={companyBoardOptions} />
         <EntityBoardActionBar>
           <BoardActionBarButtonDeletePipelineProgress />
         </EntityBoardActionBar>

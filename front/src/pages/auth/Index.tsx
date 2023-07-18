@@ -12,12 +12,12 @@ import { Title } from '@/auth/components/ui/Title';
 import { authFlowUserEmailState } from '@/auth/states/authFlowUserEmailState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { AnimatedEaseIn } from '@/ui/animation/components/AnimatedEaseIn';
-import { MainButton } from '@/ui/button/components/MainButton';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { IconBrandGoogle } from '@/ui/icon';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { useScopedHotkeys } from '@/lib/hotkeys/hooks/useScopedHotkeys';
+import { MainButton } from '@/ui/components/buttons/MainButton';
+import { TextInput } from '@/ui/components/inputs/TextInput';
+import { AnimatedEaseIn } from '@/ui/components/motion/AnimatedEaseIn';
+import { IconBrandGoogle } from '@/ui/icons';
+import { PageHotkeyScope } from '~/sync-hooks/types/PageHotkeyScope';
 
 const StyledContentContainer = styled.div`
   width: 200px;

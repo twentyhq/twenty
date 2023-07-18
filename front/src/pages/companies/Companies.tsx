@@ -4,18 +4,19 @@ import styled from '@emotion/styled';
 import { v4 as uuidv4 } from 'uuid';
 
 import { GET_COMPANIES } from '@/companies/queries';
-import { CompanyTable } from '@/companies/table/components/CompanyTable';
-import { TableActionBarButtonCreateCommentThreadCompany } from '@/companies/table/components/TableActionBarButtonCreateCommentThreadCompany';
-import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
-import { IconBuildingSkyscraper } from '@/ui/icon';
-import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
-import { TableContext } from '@/ui/table/states/TableContext';
+import { RecoilScope } from '@/recoil-scope/components/RecoilScope';
+import { EntityTableActionBar } from '@/ui/components/table/action-bar/EntityTableActionBar';
+import { IconBuildingSkyscraper } from '@/ui/icons/index';
+import { WithTopBarContainer } from '@/ui/layout/containers/WithTopBarContainer';
+import { TableContext } from '@/ui/tables/states/TableContext';
 import {
   InsertCompanyMutationVariables,
   useInsertCompanyMutation,
 } from '~/generated/graphql';
+
+import { TableActionBarButtonCreateCommentThreadCompany } from './table/TableActionBarButtonCreateCommentThreadCompany';
+import { TableActionBarButtonDeleteCompanies } from './table/TableActionBarButtonDeleteCompanies';
+import { CompanyTable } from './CompanyTable';
 
 const StyledTableContainer = styled.div`
   display: flex;

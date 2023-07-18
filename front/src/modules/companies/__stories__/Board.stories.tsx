@@ -1,14 +1,13 @@
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { EntityBoard } from '@/pipeline/components/EntityBoard';
-import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
+import { companyBoardOptions } from '@/companies/components/companyBoardOptions';
+import { EntityBoard } from '@/pipeline-progress/components/EntityBoard';
 import { BoardDecorator } from '~/testing/decorators';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 const meta: Meta<typeof EntityBoard> = {
-  title: 'Modules/Companies/Board',
+  title: 'UI/Board/Board',
   component: EntityBoard,
   decorators: [BoardDecorator],
 };
@@ -18,15 +17,7 @@ type Story = StoryObj<typeof EntityBoard>;
 
 export const OneColumnBoard: Story = {
   render: getRenderWrapperForComponent(
-    <MemoryRouter>
-      <EntityBoard
-        boardOptions={opportunitiesBoardOptions}
-        updateSorts={() => {
-          return;
-        }}
-      />
-      ,
-    </MemoryRouter>,
+    <EntityBoard boardOptions={companyBoardOptions} />,
   ),
   parameters: {
     msw: graphqlMocks,

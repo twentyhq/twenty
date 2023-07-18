@@ -1,26 +1,21 @@
-import { Context } from 'react';
-
-import { FilterDropdownEntitySearchSelect } from '@/ui/filter-n-sort/components/FilterDropdownEntitySearchSelect';
-import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
-import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/states/filterDropdownSelectedEntityIdScopedState';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
+import { FilterDropdownEntitySearchSelect } from '@/lib/filters-and-sorts/components/FilterDropdownEntitySearchSelect';
+import { filterDropdownSearchInputScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSearchInputScopedState';
+import { filterDropdownSelectedEntityIdScopedState } from '@/lib/filters-and-sorts/states/filterDropdownSelectedEntityIdScopedState';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedValue } from '@/recoil-scope/hooks/useRecoilScopedValue';
+import { TableContext } from '@/ui/tables/states/TableContext';
 
 import { useFilteredSearchCompanyQuery } from '../queries';
 
-export function FilterDropdownCompanySearchSelect({
-  context,
-}: {
-  context: Context<string | null>;
-}) {
+export function FilterDropdownCompanySearchSelect() {
   const filterDropdownSearchInput = useRecoilScopedValue(
     filterDropdownSearchInputScopedState,
-    context,
+    TableContext,
   );
 
   const [filterDropdownSelectedEntityId] = useRecoilScopedState(
     filterDropdownSelectedEntityIdScopedState,
-    context,
+    TableContext,
   );
 
   const usersForSelect = useFilteredSearchCompanyQuery({
@@ -33,7 +28,7 @@ export function FilterDropdownCompanySearchSelect({
   return (
     <FilterDropdownEntitySearchSelect
       entitiesForSelect={usersForSelect}
-      context={context}
+      context={TableContext}
     />
   );
 }

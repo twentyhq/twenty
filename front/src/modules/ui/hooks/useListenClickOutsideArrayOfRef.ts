@@ -1,65 +1,25 @@
 import React, { useEffect } from 'react';
 
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from '@/utils/type-guards/isDefined';
 
-export enum ClickOutsideMode {
-  absolute = 'absolute',
-  dom = 'dom',
-}
-
-export function useListenClickOutsideArrayOfRef<T extends Element>({
-  refs,
-  callback,
-  mode = ClickOutsideMode.dom,
-}: {
-  refs: Array<React.RefObject<T>>;
-  callback: (event?: MouseEvent | TouchEvent) => void;
-  mode?: ClickOutsideMode;
-}) {
+export function useListenClickOutsideArrayOfRef<T extends Element>(
+  arrayOfRef: Array<React.RefObject<T>>,
+  outsideClickCallback: (event?: MouseEvent | TouchEvent) => void,
+) {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent | TouchEvent) {
-      if (mode === ClickOutsideMode.dom) {
-        const clickedOnAtLeastOneRef = refs
-          .filter((ref) => !!ref.current)
-          .some((ref) => ref.current?.contains(event.target as Node));
+      const clickedOnAtLeastOneRef = arrayOfRef
+        .filter((ref) => !!ref.current)
+        .some((ref) => ref.current?.contains(event.target as Node));
 
-        if (!clickedOnAtLeastOneRef) {
-          callback(event);
-        }
-      }
-
-      if (mode === ClickOutsideMode.absolute) {
-        const clickedOnAtLeastOneRef = refs
-          .filter((ref) => !!ref.current)
-          .some((ref) => {
-            if (!ref.current) {
-              return false;
-            }
-
-            const { x, y, width, height } = ref.current.getBoundingClientRect();
-
-            const clientX =
-              'clientX' in event ? event.clientX : event.touches[0].clientX;
-            const clientY =
-              'clientY' in event ? event.clientY : event.touches[0].clientY;
-
-            if (
-              clientX < x ||
-              clientX > x + width ||
-              clientY < y ||
-              clientY > y + height
-            ) {
-              return false;
-            }
-            return true;
-          });
-        if (!clickedOnAtLeastOneRef) {
-          callback(event);
-        }
+      if (!clickedOnAtLeastOneRef) {
+        outsideClickCallback(event);
       }
     }
 
-    const hasAtLeastOneRefDefined = refs.some((ref) => isDefined(ref.current));
+    const hasAtLeastOneRefDefined = arrayOfRef.some((ref) =>
+      isDefined(ref.current),
+    );
 
     if (hasAtLeastOneRefDefined) {
       document.addEventListener('mouseup', handleClickOutside);
@@ -70,5 +30,6 @@ export function useListenClickOutsideArrayOfRef<T extends Element>({
       document.removeEventListener('mouseup', handleClickOutside);
       document.removeEventListener('touchend', handleClickOutside);
     };
-  }, [refs, callback, mode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arrayOfRef, outsideClickCallback]);
 }

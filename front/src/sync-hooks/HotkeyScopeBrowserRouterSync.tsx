@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 
-import { AppBasePath } from '@/types/AppBasePath';
-import { AppPath } from '@/types/AppPath';
-import { AuthPath } from '@/types/AuthPath';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { SettingsPath } from '@/types/SettingsPath';
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { useSetHotkeyScope } from '@/lib/hotkeys/hooks/useSetHotkeyScope';
+import { TableHotkeyScope } from '@/ui/tables/types/TableHotkeyScope';
+
+import { useIsMatchingLocation } from './hooks/useIsMatchingLocation';
+import { AppBasePath } from './types/AppBasePath';
+import { AppPath } from './types/AppPath';
+import { AuthPath } from './types/AuthPath';
+import { PageHotkeyScope } from './types/PageHotkeyScope';
+import { SettingsPath } from './types/SettingsPath';
 
 export function HotkeyScopeBrowserRouterSync() {
   const isMatchingLocation = useIsMatchingLocation();

@@ -1,29 +1,70 @@
-import { ChipVariant, EntityChip } from '@/ui/chip/components/EntityChip';
+import { Link } from 'react-router-dom';
+import { Theme } from '@emotion/react';
+import styled from '@emotion/styled';
 
-type OwnProps = {
+import { Avatar } from '@/users/components/Avatar';
+
+export type CompanyChipPropsType = {
   id: string;
   name: string;
   picture?: string;
-  clickable?: boolean;
-  variant?: ChipVariant;
 };
 
-export function CompanyChip({
-  id,
-  name,
-  picture,
-  clickable,
-  variant = ChipVariant.opaque,
-}: OwnProps) {
+const baseStyle = ({ theme }: { theme: Theme }) => `
+  align-items: center;
+  background-color: ${theme.background.tertiary};
+  border-radius: ${theme.spacing(1)};
+  color: ${theme.font.color.primary};
+  display: inline-flex;
+  gap: ${theme.spacing(1)};
+  height: calc(20px - 2 * ${theme.spacing(1)});
+  overflow: hidden;
+  padding: ${theme.spacing(1)};
+
+  text-decoration: none;
+
+  user-select: none;
+
+  :hover {
+    filter: brightness(95%);
+  }
+
+  img {
+    height: 14px;
+    object-fit: cover;
+    width: 14px;
+  }
+`;
+
+const StyledName = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledContainerLink = styled(Link)`
+  ${baseStyle}
+`;
+
+const StyledContainerNoLink = styled.div`
+  ${baseStyle}
+`;
+
+export function CompanyChip({ id, name, picture }: CompanyChipPropsType) {
+  const ContainerComponent = id ? StyledContainerLink : StyledContainerNoLink;
+
   return (
-    <EntityChip
-      entityId={id}
-      linkToEntity={`/companies/${id}`}
-      name={name}
-      avatarType="squared"
-      clickable={clickable}
-      picture={picture}
-      variant={variant}
-    />
+    <ContainerComponent data-testid="company-chip" to={`/companies/${id}`}>
+      {picture && (
+        <Avatar
+          avatarUrl={picture?.toString()}
+          colorId={id}
+          placeholder={name}
+          type="squared"
+          size={14}
+        />
+      )}
+      <StyledName>{name}</StyledName>
+    </ContainerComponent>
   );
 }

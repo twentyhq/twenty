@@ -2,27 +2,24 @@ import { useCallback } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconCurrencyDollar } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
-import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
-import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
-import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
-import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
-import { BoardCardEditableFieldDate } from '@/ui/board/card-field/components/BoardCardEditableFieldDate';
-import { BoardCardEditableFieldText } from '@/ui/board/card-field/components/BoardCardEditableFieldText';
-import { ChipVariant } from '@/ui/chip/components/EntityChip';
-import { IconCurrencyDollar } from '@/ui/icon';
-import { IconCalendarEvent } from '@/ui/icon';
-import { Checkbox } from '@/ui/input/components/Checkbox';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { GET_PIPELINES } from '@/pipeline-progress/services';
+import { BoardCardContext } from '@/pipeline-progress/states/BoardCardContext';
+import { pipelineProgressIdScopedState } from '@/pipeline-progress/states/pipelineProgressIdScopedState';
+import { selectedBoardCardsState } from '@/pipeline-progress/states/selectedBoardCardsState';
+import { useRecoilScopedState } from '@/recoil-scope/hooks/useRecoilScopedState';
+import { BoardCardEditableFieldDate } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldDate';
+import { BoardCardEditableFieldText } from '@/ui/board-card-field-inputs/components/BoardCardEditableFieldText';
+import { Checkbox } from '@/ui/components/form/Checkbox';
+import { IconCalendarEvent } from '@/ui/icons';
+import { getLogoUrlFromDomainName } from '@/utils/utils';
 import {
   PipelineProgress,
   useUpdateOnePipelineProgressMutation,
 } from '~/generated/graphql';
-import { getLogoUrlFromDomainName } from '~/utils';
-
-import { CompanyChip } from './CompanyChip';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -111,10 +108,7 @@ export function CompanyBoardCard() {
           amount: pipelineProgress.amount,
           closeDate: pipelineProgress.closeDate || null,
         },
-        refetchQueries: [
-          getOperationName(GET_PIPELINE_PROGRESS) ?? '',
-          getOperationName(GET_PIPELINES) ?? '',
-        ],
+        refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
       });
     },
     [updatePipelineProgress],
@@ -132,13 +126,11 @@ export function CompanyBoardCard() {
     <StyledBoardCardWrapper>
       <StyledBoardCard selected={selected}>
         <StyledBoardCardHeader>
-          <CompanyChip
-            id={company.id}
-            name={company.name}
-            clickable
-            picture={getLogoUrlFromDomainName(company.domainName)}
-            variant={ChipVariant.transparent}
+          <img
+            src={getLogoUrlFromDomainName(company.domainName).toString()}
+            alt={`${company.name}-company-logo`}
           />
+          <span>{company.name}</span>
           <div style={{ display: 'flex', flex: 1 }} />
           <Checkbox checked={selected} onChange={handleCheckboxChange} />
         </StyledBoardCardHeader>

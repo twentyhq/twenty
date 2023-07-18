@@ -1,13 +1,13 @@
 import { PersonChip } from '@/people/components/PersonChip';
-import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
-import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
-import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
+import { RelationPickerHotkeyScope } from '@/relation-picker/types/RelationPickerHotkeyScope';
+import { EditableCell } from '@/ui/components/editable-cell/EditableCell';
+import { useEditableCell } from '@/ui/components/editable-cell/hooks/useEditableCell';
 import { Company, User } from '~/generated/graphql';
 
 import { CompanyAccountOwnerPicker } from './CompanyAccountOwnerPicker';
 
 export type CompanyAccountOnwer = Pick<Company, 'id'> & {
-  accountOwner?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
+  accountOwner?: Pick<User, 'id' | 'displayName'> | null;
 };
 
 export type OwnProps = {
@@ -27,7 +27,6 @@ export function CompanyAccountOwnerCell({ company }: OwnProps) {
 
   return (
     <EditableCell
-      transparent
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={
         <CompanyAccountOwnerPicker
@@ -41,7 +40,6 @@ export function CompanyAccountOwnerCell({ company }: OwnProps) {
           <PersonChip
             id={company.accountOwner.id}
             name={company.accountOwner?.displayName ?? ''}
-            picture={company.accountOwner?.avatarUrl ?? ''}
           />
         ) : (
           <></>

@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
 
-import { EditableCellDoubleText } from '@/ui/table/editable-cell/types/EditableCellDoubleText';
-import { Person } from '~/generated/graphql';
+import { CellCommentChip } from '@/comments/components/table/CellCommentChip';
+import { useOpenTimelineRightDrawer } from '@/comments/hooks/useOpenTimelineRightDrawer';
+import { EditableCellDoubleText } from '@/ui/components/editable-cell/types/EditableCellDoubleText';
+import { CommentableType, Person } from '~/generated/graphql';
 
 import { PersonChip } from './PersonChip';
 
@@ -24,17 +26,39 @@ const NoEditModeContainer = styled.div`
   width: 100%;
 `;
 
+const RightContainer = styled.div`
+  margin-left: ${(props) => props.theme.spacing(1)};
+`;
+
 export function EditablePeopleFullName({
   person,
   onChange,
   onSubmit,
   onCancel,
 }: OwnProps) {
+  const openCommentRightDrawer = useOpenTimelineRightDrawer();
+
   function handleDoubleTextChange(
     firstValue: string,
     secondValue: string,
   ): void {
     onChange(firstValue, secondValue);
+  }
+
+  function handleCommentClick(event: React.MouseEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!person) {
+      return;
+    }
+
+    openCommentRightDrawer([
+      {
+        type: CommentableType.Person,
+        id: person.id ?? '',
+      },
+    ]);
   }
 
   return (
@@ -51,8 +75,13 @@ export function EditablePeopleFullName({
           <PersonChip
             name={person?.firstName + ' ' + person?.lastName}
             id={person?.id ?? ''}
-            clickable
           />
+          <RightContainer>
+            <CellCommentChip
+              count={person?._commentThreadCount ?? 0}
+              onClick={handleCommentClick}
+            />
+          </RightContainer>
         </NoEditModeContainer>
       }
     />

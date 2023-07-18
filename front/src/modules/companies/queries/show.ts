@@ -16,7 +16,6 @@ export const GET_COMPANY = gql`
         id
         email
         displayName
-        avatarUrl
       }
     }
   }
