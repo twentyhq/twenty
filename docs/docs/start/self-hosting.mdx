@@ -4,5 +4,42 @@ sidebar_custom_props:
 ---
 # Self hosting
 
-We will soon be working on options to make it easy to self host the app (click-to-deploy buttons for Heroku, Railway...).
-Contributions are welcome!
+Right now, docker containers are the only option we currently support. However we are actively working on providing simple options to self host Twenty yourself. 
+Feel free to open issues on [Github](https://github.com/twentyhq/twenty) if you want a specific cloud provider to be supported.
+
+Refer to this list to see what future options will be available
+
+## Production docker containers
+
+We provide a production-ready set of `Dockerfile` to allow you to build your own image and deploy it to your favorite cloud provider (Amazon Web Services, Google Cloud Platform, ...)
+
+You will find these in [infra/prod/front/Dockerfile](https://github.com/twentyhq/twenty/blob/main/infra/prod/front/Dockerfile) and [infra/prod/server/Dockerfile](https://github.com/twentyhq/twenty/blob/main/infra/prod/server/Dockerfile) files.
+
+### Front
+
+```
+docker build \
+ --build-arg REACT_APP_API_URL=REPLACE_ME \
+ --build-arg REACT_APP_AUTH_URL=REPLACE_ME \
+ --build-arg REACT_APP_FILES_URL=REPLACE_ME \
+ -t twenty-front:latest \
+ -f ./infra/prod/front/Dockerfile .
+```
+
+### Server
+
+```
+docker build \
+  -t twenty-server:latest \
+  -f ./infra/prod/server/Dockerfile .
+```
+
+To run the server, you will need to set a few environment variables you can find [here](https://github.com/twentyhq/twenty/blob/main/server/.env.example).
+
+## Ready-to-deploy joint image (soon)
+
+We are working on providing a joint docker image containing Twenty front and server, that you can deploy to Amazon Web Services (Elastic Beanstalk).
+
+## Railway (soon)
+
+Railway(railway.app) is an infrastructure platform that let you deploy to the cloud in one-click
