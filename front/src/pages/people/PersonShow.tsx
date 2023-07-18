@@ -24,6 +24,7 @@ export function PersonShow() {
     <WithTopBarContainer
       title={person?.firstName ?? ''}
       icon={<IconUser size={theme.icon.size.md} />}
+      hasBackButton
     >
       <>
         <ShowPageLeftContainer>
