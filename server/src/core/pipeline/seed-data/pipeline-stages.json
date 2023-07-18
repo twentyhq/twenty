@@ -1,0 +1,33 @@
+[
+    {
+      "name": "New",
+      "color": "#B76796",
+      "index": 0,
+      "type": "open"
+    },
+    {
+      "name": "Screening",
+      "color": "#CB912F",
+      "index": 1,
+      "type": "ongoing"
+    },
+    {
+      "name": "Meeting",
+      "color": "#9065B0",
+      "index": 2,
+      "type": "ongoing"
+    },
+    {
+      "name": "Proposal",
+      "color": "#337EA9",
+      "index": 3,
+      "type": "ongoing"
+    },
+    {
+      "name": "Customer",
+      "color": "#079039",
+      "index": 4,
+      "type": "won"
+    }
+  ]
+  

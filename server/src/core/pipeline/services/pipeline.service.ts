@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
+import salesPipeline from '../seed-data/sales-pipeline.json';
+import { PipelineProgressableType } from '@prisma/client';
 
 @Injectable()
 export class PipelineService {
@@ -38,13 +40,15 @@ export class PipelineService {
 
   // Customs
   async createDefaultPipeline({ workspaceId }: { workspaceId: string }) {
+    const pipeline = {
+      ...salesPipeline,
+      pipelineProgressableType:
+        salesPipeline.pipelineProgressableType as PipelineProgressableType,
+      workspaceId,
+    };
+
     return this.create({
-      data: {
-        name: 'Sales pipeline',
-        icon: '💰',
-        pipelineProgressableType: 'Company',
-        workspaceId,
-      },
+      data: pipeline,
     });
   }
 }

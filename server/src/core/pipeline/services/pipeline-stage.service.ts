@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/database/prisma.service';
+import seedPipelineStages from '../seed-data/pipeline-stages.json';
 
 @Injectable()
 export class PipelineStageService {
@@ -45,49 +45,13 @@ export class PipelineStageService {
     workspaceId: string;
     pipelineId: string;
   }) {
+    const pipelineStages = seedPipelineStages.map((pipelineStage) => ({
+      ...pipelineStage,
+      workspaceId,
+      pipelineId,
+    }));
     return this.createMany({
-      data: [
-        {
-          name: 'New',
-          color: '#B76796',
-          index: 0,
-          type: 'open',
-          pipelineId,
-          workspaceId,
-        },
-        {
-          name: 'Screening',
-          color: '#CB912F',
-          index: 1,
-          type: 'ongoing',
-          pipelineId,
-          workspaceId,
-        },
-        {
-          name: 'Meeting',
-          color: '#9065B0',
-          index: 2,
-          type: 'ongoing',
-          pipelineId,
-          workspaceId,
-        },
-        {
-          name: 'Proposal',
-          color: '#337EA9',
-          index: 3,
-          type: 'ongoing',
-          pipelineId,
-          workspaceId,
-        },
-        {
-          name: 'Customer',
-          color: '#079039',
-          index: 4,
-          type: 'won',
-          pipelineId,
-          workspaceId,
-        },
-      ],
+      data: pipelineStages,
     });
   }
 }

@@ -13,7 +13,7 @@ export type UserPayload = {
 export class UserService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly workspaceSerice: WorkspaceService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   // Find
@@ -56,12 +56,12 @@ export class UserService {
 
     // Create workspace if not exists
     const workspace = workspaceId
-      ? await this.workspaceSerice.findUnique({
+      ? await this.workspaceService.findUnique({
           where: {
             id: workspaceId,
           },
         })
-      : await this.workspaceSerice.createDefaultWorkspace();
+      : await this.workspaceService.createDefaultWorkspace();
 
     assert(workspace, 'workspace is missing', BadRequestException);
 
