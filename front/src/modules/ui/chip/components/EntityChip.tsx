@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 
 import { Avatar, AvatarType } from '@/users/components/Avatar';
 
-export enum ChipVariantType {
+export enum ChipVariant {
   opaque = 'opaque',
   transparent = 'transparent',
 }
@@ -34,15 +34,12 @@ const baseStyle = ({ theme }: { theme: Theme }) => `
 const StyledContainerLink = styled.div<{ variant: string }>`
   ${baseStyle}
   background-color: ${({ theme, variant }) =>
-    variant === ChipVariantType.opaque
-      ? theme.background.tertiary
-      : 'transparent'};
+    variant === ChipVariant.opaque ? theme.background.tertiary : 'transparent'};
   :hover {
     background-color: ${({ variant, theme }) =>
-      variant === ChipVariantType.transparent &&
-      theme.background.transparent.light};
-    filter: ${({ variant }) =>
-      variant === ChipVariantType.opaque && 'brightness(95%)'};
+      variant === ChipVariant.transparent
+        ? theme.background.transparent.light
+        : theme.background.quaternary};
   }
 `;
 
@@ -63,7 +60,7 @@ type OwnProps = {
   picture?: string;
   clickable?: boolean;
   avatarType?: AvatarType;
-  variant?: ChipVariantType;
+  variant?: ChipVariant;
 };
 
 export function EntityChip({
@@ -73,7 +70,7 @@ export function EntityChip({
   picture,
   clickable,
   avatarType = 'rounded',
-  variant = ChipVariantType.opaque,
+  variant = ChipVariant.opaque,
 }: OwnProps) {
   const navigate = useNavigate();
 
