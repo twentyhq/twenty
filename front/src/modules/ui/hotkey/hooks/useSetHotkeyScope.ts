@@ -19,12 +19,12 @@ function isCustomScopesEqual(
 export function useSetHotkeyScope() {
   return useRecoilCallback(
     ({ snapshot, set }) =>
-      async (HotkeyScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
+      async (hotkeyScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
         const currentHotkeyScope = await snapshot.getPromise(
           currentHotkeyScopeState,
         );
 
-        if (currentHotkeyScope.scope === HotkeyScopeToSet) {
+        if (currentHotkeyScope.scope === hotkeyScopeToSet) {
           if (!isDefined(customScopes)) {
             if (
               isCustomScopesEqual(
@@ -47,7 +47,7 @@ export function useSetHotkeyScope() {
         }
 
         set(currentHotkeyScopeState, {
-          scope: HotkeyScopeToSet,
+          scope: hotkeyScopeToSet,
           customScopes: {
             commandMenu: customScopes?.commandMenu ?? true,
             goto: customScopes?.goto ?? false,
