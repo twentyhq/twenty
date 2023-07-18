@@ -37,9 +37,9 @@ const StyledContainerLink = styled.div<{ variant: string }>`
     variant === ChipVariant.opaque ? theme.background.tertiary : 'transparent'};
   :hover {
     background-color: ${({ variant, theme }) =>
-      variant === ChipVariant.transparent
-        ? theme.background.transparent.light
-        : theme.background.quaternary};
+      variant === ChipVariant.opaque
+        ? theme.background.quaternary
+        : theme.background.transparent.light};
   }
 `;
 
