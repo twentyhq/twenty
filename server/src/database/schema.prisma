@@ -149,6 +149,8 @@ model User {
   /// @Validator.IsOptional()
   avatarUrl     String?
   /// @Validator.IsString()
+  locale        String
+  /// @Validator.IsString()
   /// @Validator.IsOptional()
   phoneNumber   String?
   /// @Validator.IsDate()
