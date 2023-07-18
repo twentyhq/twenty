@@ -233,6 +233,12 @@ import {
     CreateCommentThreadTargetAbilityHandler,
     UpdateCommentThreadTargetAbilityHandler,
     DeleteCommentThreadTargetAbilityHandler,
+    //Attachment
+    ManageAttachmentAbilityHandler,
+    ReadAttachmentAbilityHandler,
+    CreateAttachmentAbilityHandler,
+    UpdateAttachmentAbilityHandler,
+    DeleteAttachmentAbilityHandler,
     // Pipeline
     ManagePipelineAbilityHandler,
     ReadPipelineAbilityHandler,

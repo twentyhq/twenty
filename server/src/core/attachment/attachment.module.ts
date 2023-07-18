@@ -4,6 +4,7 @@ import { FileUploadService } from '../file/services/file-upload.service';
 import { AttachmentService } from './services/attachment.service';
 
 @Module({
-  providers: [AttachmentResolver, FileUploadService, AttachmentService],
+  providers: [AttachmentService, AttachmentResolver, FileUploadService],
+  exports: [AttachmentService],
 })
 export class AttachmentModule {}
