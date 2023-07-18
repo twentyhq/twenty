@@ -28,11 +28,10 @@ const slideInFromTop = keyframes`
 
 // Define your styled components
 const ButtonBase = styled.button`
-  border-radius: 0.25rem;
-  color: #4a5568;
+  align-items: center;
+  background-color: inherit;
   display: flex;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: ${(props) => props.theme.font.weight.semiBold};
   justify-content: space-between;
   padding: 0.5rem;
   text-align: left;
@@ -85,19 +84,19 @@ const ButtonContent = styled.div`
   }
 `;
 
-const IconBase = styled.span`
-  align-items: center;
-  color: #4a5568;
-  display: inline-flex;
-  height: 1rem;
-  justify-content: center;
-  width: 1rem;
+const TextLabel = styled.div`
+  color: ${(props) => props.theme.font.color.tertiary};
+  font-size: ${(props) => props.theme.font.size.xs};
+  font-weight: ${(props) => props.theme.font.weight.medium};
+  margin: 0.25rem 0.5rem;
+  text-transform: uppercase;
 `;
 
-const TextLabel = styled.div`
-  color: #718096;
-  font-size: 0.875rem;
-  margin: 0.25rem 0.5rem;
+const ColorNameIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: ${(props) => props.theme.spacing(2)};
 `;
 
 export interface BubbleColorMenuItem {
@@ -231,7 +230,7 @@ export const ColorSelector: FC<ColorSelectorProps> = ({
                 setIsOpen(false);
               }}
             >
-              <div className="flex items-center space-x-2">
+              <ColorNameIconContainer>
                 <div
                   className="rounded-sm border border-stone-200 px-1 py-px font-medium"
                   style={{ color: color ?? '' }}
@@ -239,7 +238,7 @@ export const ColorSelector: FC<ColorSelectorProps> = ({
                   A
                 </div>
                 <span>{name}</span>
-              </div>
+              </ColorNameIconContainer>
               {editor.isActive('textStyle', { color }) && <IconCheck />}
             </ButtonContent>
           ))}
@@ -256,7 +255,7 @@ export const ColorSelector: FC<ColorSelectorProps> = ({
                 setIsOpen(false);
               }}
             >
-              <div className="flex items-center space-x-2">
+              <ColorNameIconContainer>
                 <div
                   className="rounded-sm border border-stone-200 px-1 py-px font-medium"
                   style={{ backgroundColor: color ?? '' }}
@@ -264,7 +263,7 @@ export const ColorSelector: FC<ColorSelectorProps> = ({
                   A
                 </div>
                 <span>{name}</span>
-              </div>
+              </ColorNameIconContainer>
               {editor.isActive('highlight', { color }) && <IconCheck />}
             </ButtonContent>
           ))}

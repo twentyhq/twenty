@@ -32,6 +32,8 @@ const StyledDiv = styled.div`
 `;
 
 const StyledButton = styled.button`
+  background-color: inherit;
+  font-weight: ${(props) => props.theme.font.weight.semiBold};
   display: flex;
   height: 100%;
   align-items: center;
@@ -39,7 +41,6 @@ const StyledButton = styled.button`
   white-space: nowrap;
   padding: 0.5rem;
   font-size: 0.875rem;
-  font-weight: 500;
   color: #4a5568; // replace with actual color
   &:hover {
     background-color: #f7fafc; // replace with actual color

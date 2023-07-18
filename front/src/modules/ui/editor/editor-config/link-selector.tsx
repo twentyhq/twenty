@@ -4,21 +4,17 @@ import { Dispatch, FC, SetStateAction, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Editor } from '@tiptap/core';
 
-import { IconCheck, IconTrash } from '@/ui/icon/index';
+import { IconCheck, IconLink, IconTrash } from '@/ui/icon/index';
 
 const RelativeDiv = styled.div`
   position: relative;
 `;
 
 const StyledButton = styled.button`
+  background-color: inherit;
   display: flex;
-  height: 100%;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #4a5568; // replace with actual color
+  height: 100%;
   &:hover {
     background-color: #f7fafc; // replace with actual color
   }
@@ -27,16 +23,13 @@ const StyledButton = styled.button`
   }
 `;
 
-const TextBase = styled.p`
-  font-size: 1rem;
-`;
-
-const StyledLink = styled.p<{ active?: boolean }>`
+const StyledLink = styled.div<{ active?: boolean }>`
   text-decoration: underline;
   text-decoration-color: #edf2f7; // replace with actual color
   text-decoration-thickness: 4px;
   color: ${(props) =>
-    props.active ? '#3182ce' : '#4a5568'}; // replace with actual colors
+    props.active ? '#3182ce' : props.theme.font.color.primary};
+}; // replace with actual colors
 `;
 
 const StyledForm = styled.form`
@@ -109,8 +102,9 @@ export const LinkSelector: FC<LinkSelectorProps> = ({
   return (
     <RelativeDiv>
       <StyledButton onClick={() => setIsOpen(!isOpen)}>
-        <TextBase>↗</TextBase>
-        <StyledLink active={editor.isActive('link')}>Link</StyledLink>
+        <StyledLink active={editor.isActive('link')}>
+          <IconLink />
+        </StyledLink>
       </StyledButton>
 
       {isOpen && (

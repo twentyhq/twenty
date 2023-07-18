@@ -65,7 +65,6 @@ const ButtonItem = styled.button<{ isSelected: boolean }>`
     isSelected &&
     `
       background-color: ${theme.background.tertiary};
-      color: var(--stone-900);
     `}
 `;
 
@@ -310,7 +309,7 @@ const CommandList = ({
 
   const { complete, isLoading } = useCompletion({
     id: 'novel',
-    api: '/api/generate',
+    api: 'https://novel.sh/api/generate',
     onResponse: (response: any) => {
       if (response.status === 429) {
         console.error('You have reached your request limit for the day.');

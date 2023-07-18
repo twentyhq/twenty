@@ -26,22 +26,25 @@ export interface BubbleMenuItem {
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, 'children'>;
 
 const BubbleMenuStyled = styled(BubbleMenu)`
+  background-color: ${(props) => props.theme.background.primary};
   border: 1px solid #cbd5e0;
   border-radius: 0.375rem;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
   display: flex;
   max-width: fit-content;
-`;
 
-const ItemButton = styled.button`
-  color: #718096;
-  padding: 0.5rem;
-  &:hover {
-    background-color: #f7fafc;
-  }
-  &:active {
-    background-color: #edf2f7;
+  button {
+    background-color: inherit;
+    border: none;
+    color: ${(props) => props.theme.font.color.primary};
+    padding: 0.5rem;
+    &:hover {
+      background-color: #f7fafc;
+    }
+    &:active {
+      background-color: #edf2f7;
+    }
   }
 `;
 
@@ -128,15 +131,13 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
           setIsNodeSelectorOpen(false);
         }}
       />
-      <div className="flex">
-        {items.map((item, index) => (
-          <ItemButton key={index} onClick={item.command}>
-            <IconStyled isActive={item.isActive()}>
-              <item.icon />
-            </IconStyled>
-          </ItemButton>
-        ))}
-      </div>
+      {items.map((item, index) => (
+        <button key={index} onClick={item.command}>
+          <IconStyled isActive={item.isActive()}>
+            <item.icon />
+          </IconStyled>
+        </button>
+      ))}
       <ColorSelector
         editor={props.editor}
         isOpen={isColorSelectorOpen}
