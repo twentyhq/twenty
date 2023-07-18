@@ -172,15 +172,40 @@ model User {
   refreshTokens   RefreshToken[]
   comments        Comment[]
 
+  authoredCommentThreads CommentThread[] @relation(name: "authoredCommentThreads")
+  assignedCommentThreads CommentThread[] @relation(name: "assignedCommentThreads")
+  settings               UserSettings    @relation(fields: [settingsId], references: [id])
+  settingsId             String          @unique
+
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt              DateTime        @default(now())
-  updatedAt              DateTime        @updatedAt
-  authoredCommentThreads CommentThread[] @relation(name: "authoredCommentThreads")
-  assignedCommentThreads CommentThread[] @relation(name: "assignedCommentThreads")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+enum ColorScheme {
+  Light
+  Dark
+  System
+}
+
+model UserSettings {
+  id          String      @id @default(uuid())
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  colorScheme ColorScheme @default(System)
+  /// @Validator.IsString()
+  locale      String
+
+  user User?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_settings")
 }
 
 /// @TypeGraphQL.omit(input: true)

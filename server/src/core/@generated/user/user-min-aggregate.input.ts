@@ -38,6 +38,9 @@ export class UserMinAggregateInput {
     @HideField()
     passwordHash?: true;
 
+    @Field(() => Boolean, {nullable:true})
+    settingsId?: true;
+
     @HideField()
     deletedAt?: true;
 

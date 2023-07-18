@@ -68,6 +68,9 @@ export class UserUncheckedCreateWithoutRefreshTokensInput {
     @Validator.IsOptional()
     metadata?: any;
 
+    @Field(() => String, {nullable:false})
+    settingsId!: string;
+
     @HideField()
     deletedAt?: Date | string;
 

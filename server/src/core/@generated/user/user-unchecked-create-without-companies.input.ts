@@ -68,6 +68,9 @@ export class UserUncheckedCreateWithoutCompaniesInput {
     @Validator.IsOptional()
     metadata?: any;
 
+    @Field(() => String, {nullable:false})
+    settingsId!: string;
+
     @HideField()
     deletedAt?: Date | string;
 

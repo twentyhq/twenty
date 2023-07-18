@@ -42,6 +42,9 @@ export class UserCountAggregate {
     @Field(() => Int, {nullable:false})
     metadata!: number;
 
+    @Field(() => Int, {nullable:false})
+    settingsId!: number;
+
     @HideField()
     deletedAt!: number;
 

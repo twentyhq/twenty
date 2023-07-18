@@ -63,6 +63,9 @@ export class UserCreateManyInput {
     @Validator.IsOptional()
     metadata?: any;
 
+    @Field(() => String, {nullable:false})
+    settingsId!: string;
+
     @HideField()
     deletedAt?: Date | string;
 

@@ -1,14 +1,29 @@
 import { ThemeProvider } from '@emotion/react';
 
 import { darkTheme, lightTheme } from '@/ui/themes/themes';
-import { browserPrefersDarkMode } from '~/utils';
+import { ColorScheme } from '~/generated/graphql';
+
+import { useColorScheme } from '../hooks/useColorScheme';
+import { useSystemColorScheme } from '../hooks/useSystemColorScheme';
 
 type OwnProps = {
   children: JSX.Element;
 };
 
-export function AppThemeProvider({ children }: OwnProps) {
-  const selectedTheme = browserPrefersDarkMode() ? darkTheme : lightTheme;
+const themes = {
+  [ColorScheme.Dark]: darkTheme,
+  [ColorScheme.Light]: lightTheme,
+};
 
-  return <ThemeProvider theme={selectedTheme}>{children}</ThemeProvider>;
+export function AppThemeProvider({ children }: OwnProps) {
+  const systemColorScheme = useSystemColorScheme();
+
+  const { colorScheme } = useColorScheme();
+
+  const theme =
+    themes[
+      colorScheme === ColorScheme.System ? systemColorScheme : colorScheme
+    ];
+
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }

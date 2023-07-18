@@ -7,6 +7,7 @@ import { CompanyOrderByRelationAggregateInput } from '../company/company-order-b
 import { RefreshTokenOrderByRelationAggregateInput } from '../refresh-token/refresh-token-order-by-relation-aggregate.input';
 import { CommentOrderByRelationAggregateInput } from '../comment/comment-order-by-relation-aggregate.input';
 import { CommentThreadOrderByRelationAggregateInput } from '../comment-thread/comment-thread-order-by-relation-aggregate.input';
+import { UserSettingsOrderByWithRelationInput } from '../user-settings/user-settings-order-by-with-relation.input';
 
 @InputType()
 export class UserOrderByWithRelationInput {
@@ -47,6 +48,9 @@ export class UserOrderByWithRelationInput {
     @Field(() => SortOrder, {nullable:true})
     metadata?: keyof typeof SortOrder;
 
+    @Field(() => SortOrder, {nullable:true})
+    settingsId?: keyof typeof SortOrder;
+
     @HideField()
     deletedAt?: keyof typeof SortOrder;
 
@@ -73,4 +77,7 @@ export class UserOrderByWithRelationInput {
 
     @Field(() => CommentThreadOrderByRelationAggregateInput, {nullable:true})
     assignedCommentThreads?: CommentThreadOrderByRelationAggregateInput;
+
+    @Field(() => UserSettingsOrderByWithRelationInput, {nullable:true})
+    settings?: UserSettingsOrderByWithRelationInput;
 }

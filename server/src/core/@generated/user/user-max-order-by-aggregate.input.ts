@@ -39,6 +39,9 @@ export class UserMaxOrderByAggregateInput {
     @HideField()
     passwordHash?: keyof typeof SortOrder;
 
+    @Field(() => SortOrder, {nullable:true})
+    settingsId?: keyof typeof SortOrder;
+
     @HideField()
     deletedAt?: keyof typeof SortOrder;
 

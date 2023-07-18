@@ -41,6 +41,9 @@ export class UserCountAggregateInput {
     @Field(() => Boolean, {nullable:true})
     metadata?: true;
 
+    @Field(() => Boolean, {nullable:true})
+    settingsId?: true;
+
     @HideField()
     deletedAt?: true;
 

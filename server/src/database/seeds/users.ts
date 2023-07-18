@@ -8,9 +8,14 @@ export const seedUsers = async (prisma: PrismaClient) => {
       firstName: 'Tim',
       lastName: 'Apple',
       email: 'tim@apple.dev',
+      locale: 'en',
       passwordHash:
         '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-      locale: 'en',
+      settings: {
+        create: {
+          locale: 'en',
+        },
+      },
       avatarUrl: null,
       workspaceMember: {
         connectOrCreate: {
@@ -34,6 +39,11 @@ export const seedUsers = async (prisma: PrismaClient) => {
       lastName: 'Ive',
       email: 'jony.ive@apple.dev',
       locale: 'en',
+      settings: {
+        create: {
+          locale: 'en',
+        },
+      },
       avatarUrl: null,
       workspaceMember: {
         create: {
@@ -53,6 +63,11 @@ export const seedUsers = async (prisma: PrismaClient) => {
       lastName: 'Schiler',
       email: 'phil.schiler@apple.dev',
       locale: 'en',
+      settings: {
+        create: {
+          locale: 'en',
+        },
+      },
       avatarUrl: null,
       workspaceMember: {
         create: {
@@ -72,6 +87,11 @@ export const seedUsers = async (prisma: PrismaClient) => {
       lastName: 'Bochet',
       email: 'charles@twenty.dev',
       locale: 'en',
+      settings: {
+        create: {
+          locale: 'en',
+        },
+      },
       workspaceMember: {
         create: {
           id: 'twenty-dev-7ed9d213-1c25-4d02-bf35-6aeccf7oa419',

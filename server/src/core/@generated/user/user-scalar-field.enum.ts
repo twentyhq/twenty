@@ -13,6 +13,7 @@ export enum UserScalarFieldEnum {
     disabled = "disabled",
     passwordHash = "passwordHash",
     metadata = "metadata",
+    settingsId = "settingsId",
     deletedAt = "deletedAt",
     createdAt = "createdAt",
     updatedAt = "updatedAt"

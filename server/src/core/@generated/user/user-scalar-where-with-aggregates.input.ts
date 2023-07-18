@@ -56,6 +56,9 @@ export class UserScalarWhereWithAggregatesInput {
     @Field(() => JsonNullableWithAggregatesFilter, {nullable:true})
     metadata?: JsonNullableWithAggregatesFilter;
 
+    @Field(() => StringWithAggregatesFilter, {nullable:true})
+    settingsId?: StringWithAggregatesFilter;
+
     @HideField()
     deletedAt?: DateTimeNullableWithAggregatesFilter;
 

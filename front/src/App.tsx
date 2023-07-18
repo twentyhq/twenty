@@ -15,15 +15,15 @@ import { Index } from '~/pages/auth/Index';
 import { PasswordLogin } from '~/pages/auth/PasswordLogin';
 import { Verify } from '~/pages/auth/Verify';
 import { Companies } from '~/pages/companies/Companies';
+import { CompanyShow } from '~/pages/companies/CompanyShow';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { People } from '~/pages/people/People';
+import { PersonShow } from '~/pages/people/PersonShow';
+import { SettingsExperience } from '~/pages/settings/SettingsExperience';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
+import { SettingsWorksapce } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
-
-import { CompanyShow } from './pages/companies/CompanyShow';
-import { PersonShow } from './pages/people/PersonShow';
-import { SettingsWorksapce } from './pages/settings/SettingsWorkspace';
-import { AppInternalHooks } from './sync-hooks/AppInternalHooks';
+import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
 
 /**
  * AuthRoutes is used to allow transitions between auth pages with framer-motion.
@@ -99,6 +99,10 @@ export function App() {
                         <Route
                           path={SettingsPath.ProfilePage}
                           element={<SettingsProfile />}
+                        />
+                        <Route
+                          path={SettingsPath.Experience}
+                          element={<SettingsExperience />}
                         />
                         <Route
                           path={SettingsPath.WorkspaceMembersPage}

@@ -38,6 +38,11 @@ export class GoogleAuthController {
         firstName: firstName ?? '',
         lastName: lastName ?? '',
         locale: 'en',
+        settings: {
+          create: {
+            locale: 'en',
+          },
+        },
       },
     });
 

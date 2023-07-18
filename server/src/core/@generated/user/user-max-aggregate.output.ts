@@ -57,6 +57,9 @@ export class UserMaxAggregate {
     @HideField()
     passwordHash?: string;
 
+    @Field(() => String, {nullable:true})
+    settingsId?: string;
+
     @HideField()
     deletedAt?: Date | string;
 

@@ -55,6 +55,9 @@ export class UserUncheckedUpdateWithoutWorkspaceMemberInput {
     @Validator.IsOptional()
     metadata?: any;
 
+    @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
+    settingsId?: StringFieldUpdateOperationsInput;
+
     @HideField()
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput;
 

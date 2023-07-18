@@ -9,6 +9,21 @@ export const UPDATE_USER = gql`
       firstName
       lastName
       avatarUrl
+      workspaceMember {
+        id
+        workspace {
+          id
+          domainName
+          displayName
+          logo
+          inviteHash
+        }
+      }
+      settings {
+        id
+        locale
+        colorScheme
+      }
     }
   }
 `;
@@ -23,6 +38,7 @@ export const REMOVE_PROFILE_PICTURE = gql`
   mutation RemoveProfilePicture($where: UserWhereUniqueInput!) {
     updateUser(data: { avatarUrl: { set: null } }, where: $where) {
       id
+      avatarUrl
     }
   }
 `;

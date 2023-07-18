@@ -104,6 +104,7 @@ export const color = {
   orange30: '#f09797',
   orange20: '#fbc5c5',
   orange10: '#fde4e4',
+  // TODO: Why color are not matching with design?
   gray: grayScale.gray30,
   gray80: grayScale.gray65,
   gray70: grayScale.gray60,

@@ -6,7 +6,7 @@ type OwnProps = {
 };
 
 const StyledMainSectionTitle = styled.h2`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
