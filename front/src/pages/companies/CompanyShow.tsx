@@ -30,6 +30,7 @@ export function CompanyShow() {
   return (
     <WithTopBarContainer
       title={company?.name ?? ''}
+      hasBackButton
       icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
     >
       <ShowPageLeftContainer>

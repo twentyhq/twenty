@@ -9,6 +9,7 @@ import { RightDrawerContainer } from './RightDrawerContainer';
 type OwnProps = {
   children: JSX.Element | JSX.Element[];
   title: string;
+  hasBackButton?: boolean;
   icon: ReactNode;
   onAddButtonClick?: () => void;
 };
@@ -22,13 +23,19 @@ const StyledContainer = styled.div`
 export function WithTopBarContainer({
   children,
   title,
+  hasBackButton,
   icon,
   onAddButtonClick,
 }: OwnProps) {
   return (
     <StyledContainer>
       <TopBarHotkeys onAddButtonClick={onAddButtonClick} />
-      <TopBar title={title} icon={icon} onAddButtonClick={onAddButtonClick} />
+      <TopBar
+        title={title}
+        hasBackButton={hasBackButton}
+        icon={icon}
+        onAddButtonClick={onAddButtonClick}
+      />
       <RightDrawerContainer topMargin={TOP_BAR_MIN_HEIGHT + 16 + 16}>
         {children}
       </RightDrawerContainer>
