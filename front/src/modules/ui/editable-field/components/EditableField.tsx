@@ -59,7 +59,9 @@ type OwnProps = {
   label?: string;
   labelFixedWidth?: number;
   useEditButton?: boolean;
-  editModeContent: React.ReactNode;
+  editModeContent?: React.ReactNode;
+  displayModeContentOnly?: boolean;
+  disableHoverEffect?: boolean;
   displayModeContent: React.ReactNode;
   parentHotkeyScope?: HotkeyScope;
   customEditHotkeyScope?: HotkeyScope;
@@ -77,7 +79,9 @@ export function EditableField({
   displayModeContent,
   parentHotkeyScope,
   customEditHotkeyScope,
+  disableHoverEffect,
   isDisplayModeContentEmpty,
+  displayModeContentOnly,
   onSubmit,
   onCancel,
 }: OwnProps) {
@@ -115,12 +119,13 @@ export function EditableField({
           <StyledLabel labelFixedWidth={labelFixedWidth}>{label}</StyledLabel>
         )}
       </StyledLabelAndIconContainer>
-      {isFieldInEditMode ? (
+      {isFieldInEditMode && !displayModeContentOnly ? (
         <EditableFieldEditMode onSubmit={onSubmit} onCancel={onCancel}>
           {editModeContent}
         </EditableFieldEditMode>
       ) : (
         <EditableFieldDisplayMode
+          disableHoverEffect={disableHoverEffect}
           disableClick={useEditButton}
           onClick={handleDisplayModeClick}
           isDisplayModeContentEmpty={isDisplayModeContentEmpty}

@@ -2,7 +2,10 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 export const EditableFieldNormalModeOuterContainer = styled.div<
-  Pick<OwnProps, 'disableClick' | 'isDisplayModeContentEmpty'>
+  Pick<
+    OwnProps,
+    'disableClick' | 'isDisplayModeContentEmpty' | 'disableHoverEffect'
+  >
 >`
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -37,7 +40,8 @@ export const EditableFieldNormalModeOuterContainer = styled.div<
         cursor: pointer;
 
         &:hover {
-          background-color: ${props.theme.background.transparent.light};
+          background-color: ${!props.disableHoverEffect &&
+          props.theme.background.transparent.light};
         }
       `;
     }
@@ -62,6 +66,7 @@ type OwnProps = {
   disableClick?: boolean;
   onClick?: () => void;
   isDisplayModeContentEmpty?: boolean;
+  disableHoverEffect?: boolean;
 };
 
 export function EditableFieldDisplayMode({
@@ -69,12 +74,14 @@ export function EditableFieldDisplayMode({
   disableClick,
   onClick,
   isDisplayModeContentEmpty,
+  disableHoverEffect,
 }: React.PropsWithChildren<OwnProps>) {
   return (
     <EditableFieldNormalModeOuterContainer
       onClick={disableClick ? undefined : onClick}
       disableClick={disableClick}
       isDisplayModeContentEmpty={isDisplayModeContentEmpty}
+      disableHoverEffect={disableHoverEffect}
     >
       <EditableFieldNormalModeInnerContainer>
         {children}

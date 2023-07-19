@@ -1,16 +1,16 @@
 import { useCallback } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
+import { ProbabilityEditableField } from '@/pipeline/editable-field/components/ProbabilityEditableField';
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
 import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
 import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
-import { BoardCardEditableFieldDate } from '@/ui/board/card-field/components/BoardCardEditableFieldDate';
 import { ChipVariant } from '@/ui/chip/components/EntityChip';
+import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
 import { IconCheck, IconCurrencyDollar } from '@/ui/icon';
 import { IconCalendarEvent } from '@/ui/icon';
@@ -74,8 +74,6 @@ const StyledBoardCardBody = styled.div`
 `;
 
 export function CompanyBoardCard() {
-  const theme = useTheme();
-
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
 
   const [pipelineProgressId] = useRecoilScopedState(
@@ -155,21 +153,19 @@ export function CompanyBoardCard() {
             }
           />
           <CompanyAccountOwnerEditableField company={company} />
-          <span>
-            <IconCalendarEvent size={theme.icon.size.md} />
-            <BoardCardEditableFieldDate
-              value={new Date(pipelineProgress.closeDate || Date.now())}
-              onChange={(value) => {
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  closeDate: value.toISOString(),
-                });
-              }}
-            />
-          </span>
-          <NumberEditableField
+          <DateEditableField
+            icon={<IconCalendarEvent />}
+            value={pipelineProgress.closeDate || new Date().toISOString()}
+            onSubmit={(value) =>
+              handleCardUpdate({
+                ...pipelineProgress,
+                closeDate: value,
+              })
+            }
+          />
+
+          <ProbabilityEditableField
             icon={<IconCheck />}
-            placeholder="Opportunity probability for closing"
             value={pipelineProgress.probability}
             onSubmit={(value) =>
               handleCardUpdate({
