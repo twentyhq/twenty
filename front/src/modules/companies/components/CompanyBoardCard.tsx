@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
@@ -10,7 +9,6 @@ import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
 import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
 import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
-import { BoardCardEditableFieldDate } from '@/ui/board/card-field/components/BoardCardEditableFieldDate';
 import { ChipVariant } from '@/ui/chip/components/EntityChip';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
@@ -76,8 +74,6 @@ const StyledBoardCardBody = styled.div`
 `;
 
 export function CompanyBoardCard() {
-  const theme = useTheme();
-
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
 
   const [pipelineProgressId] = useRecoilScopedState(
