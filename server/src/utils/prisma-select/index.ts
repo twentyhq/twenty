@@ -1,6 +1,7 @@
 import { PrismaSelect as PalJSPrismaSelect } from '@paljs/plugins';
 import { DMMF } from '@prisma/client/runtime';
 import { GraphQLResolveInfo } from 'graphql';
+
 import { ModelSelectMap } from './model-select-map';
 
 export type DefaultFieldsMap = {

@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WorkspaceResolver } from './workspace.resolver';
-import { WorkspaceService } from '../services/workspace.service';
+
+import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { AbilityFactory } from 'src/ability/ability.factory';
+
+import { WorkspaceResolver } from './workspace.resolver';
 
 describe('WorkspaceResolver', () => {
   let resolver: WorkspaceResolver;

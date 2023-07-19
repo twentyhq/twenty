@@ -4,8 +4,10 @@ import {
   Logger,
   OnModuleInit,
 } from '@nestjs/common';
+
 import { PrismaClient } from '@prisma/client';
 import { createPrismaQueryEventHandler } from 'prisma-query-log';
+
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 // TODO: Check if this is still needed

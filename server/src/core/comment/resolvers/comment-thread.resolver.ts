@@ -1,13 +1,17 @@
 import { Resolver, Args, Mutation, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+
+import { accessibleBy } from '@casl/prisma';
+import { Prisma } from '@prisma/client';
+
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { Workspace } from '../../../core/@generated/workspace/workspace.model';
-import { AuthWorkspace } from '../../../decorators/auth-workspace.decorator';
-import { CommentThread } from '../../../core/@generated/comment-thread/comment-thread.model';
-import { CreateOneCommentThreadArgs } from '../../../core/@generated/comment-thread/create-one-comment-thread.args';
-import { CreateOneCommentThreadGuard } from '../../../guards/create-one-comment-thread.guard';
-import { FindManyCommentThreadArgs } from '../../../core/@generated/comment-thread/find-many-comment-thread.args';
-import { CommentThreadService } from '../services/comment-thread.service';
+import { Workspace } from 'src/core/@generated/workspace/workspace.model';
+import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { CommentThread } from 'src/core/@generated/comment-thread/comment-thread.model';
+import { CreateOneCommentThreadArgs } from 'src/core/@generated/comment-thread/create-one-comment-thread.args';
+import { CreateOneCommentThreadGuard } from 'src/guards/create-one-comment-thread.guard';
+import { FindManyCommentThreadArgs } from 'src/core/@generated/comment-thread/find-many-comment-thread.args';
+import { CommentThreadService } from 'src/core/comment/services/comment-thread.service';
 import { UpdateOneCommentThreadArgs } from 'src/core/@generated/comment-thread/update-one-comment-thread.args';
 import {
   PrismaSelector,
@@ -23,10 +27,8 @@ import {
 } from 'src/ability/handlers/comment-thread.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
-import { accessibleBy } from '@casl/prisma';
 import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
 import { DeleteManyCommentThreadArgs } from 'src/core/@generated/comment-thread/delete-many-comment-thread.args';
-import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => CommentThread)

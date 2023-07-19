@@ -1,12 +1,15 @@
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+
+import { Prisma } from '@prisma/client';
+
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { Workspace } from '../../../core/@generated/workspace/workspace.model';
-import { AuthWorkspace } from '../../../decorators/auth-workspace.decorator';
-import { CreateOneCommentArgs } from '../../../core/@generated/comment/create-one-comment.args';
-import { Comment } from '../../../core/@generated/comment/comment.model';
-import { CreateOneCommentGuard } from '../../../guards/create-one-comment.guard';
-import { CommentService } from '../services/comment.service';
+import { Workspace } from 'src/core/@generated/workspace/workspace.model';
+import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { CreateOneCommentArgs } from 'src/core/@generated/comment/create-one-comment.args';
+import { Comment } from 'src/core/@generated/comment/comment.model';
+import { CreateOneCommentGuard } from 'src/guards/create-one-comment.guard';
+import { CommentService } from 'src/core/comment/services/comment.service';
 import {
   PrismaSelector,
   PrismaSelect,
@@ -16,7 +19,6 @@ import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import { CreateCommentAbilityHandler } from 'src/ability/handlers/comment.ability-handler';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { User } from 'src/core/@generated/user/user.model';
-import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Comment)

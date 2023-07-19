@@ -1,10 +1,13 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { GraphQLUpload, FileUpload } from 'graphql-upload';
-import { FileUploadService } from '../services/file-upload.service';
 import { UseGuards } from '@nestjs/common';
+
+import { GraphQLUpload, FileUpload } from 'graphql-upload';
+
+import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
+
+import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { FileFolder } from '../interfaces/file-folder.interface';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()

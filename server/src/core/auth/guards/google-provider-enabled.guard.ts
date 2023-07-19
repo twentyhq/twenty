@@ -1,7 +1,9 @@
 import { Injectable, CanActivate, NotFoundException } from '@nestjs/common';
+
 import { Observable } from 'rxjs';
+
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { GoogleStrategy } from '../strategies/google.auth.strategy';
+import { GoogleStrategy } from 'src/core/auth/strategies/google.auth.strategy';
 
 @Injectable()
 export class GoogleProviderEnabledGuard implements CanActivate {

@@ -1,8 +1,10 @@
-import { Strategy, ExtractJwt } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
+
+import { Strategy, ExtractJwt } from 'passport-jwt';
 import { User, Workspace } from '@prisma/client';
+
+import { PrismaService } from 'src/database/prisma.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 export type JwtPayload = { sub: string; workspaceId: string };

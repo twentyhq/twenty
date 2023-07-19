@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
+
 import { AnalyticsResolver } from './analytics.resolver';
 import { AnalyticsService } from './analytics.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 describe('AnalyticsResolver', () => {
   let resolver: AnalyticsResolver;

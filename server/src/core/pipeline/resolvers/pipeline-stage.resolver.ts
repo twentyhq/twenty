@@ -1,10 +1,13 @@
 import { Resolver, Args, Query, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+
 import { accessibleBy } from '@casl/prisma';
+import { Prisma } from '@prisma/client';
+
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { PipelineStage } from '../../../core/@generated/pipeline-stage/pipeline-stage.model';
-import { FindManyPipelineStageArgs } from '../../../core/@generated/pipeline-stage/find-many-pipeline-stage.args';
-import { PipelineStageService } from '../services/pipeline-stage.service';
+import { PipelineStage } from 'src/core/@generated/pipeline-stage/pipeline-stage.model';
+import { FindManyPipelineStageArgs } from 'src/core/@generated/pipeline-stage/find-many-pipeline-stage.args';
+import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.service';
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
@@ -18,7 +21,6 @@ import {
   PrismaSelect,
 } from 'src/decorators/prisma-select.decorator';
 import { UpdateOnePipelineStageArgs } from 'src/core/@generated/pipeline-stage/update-one-pipeline-stage.args';
-import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => PipelineStage)

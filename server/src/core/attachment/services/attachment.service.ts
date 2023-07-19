@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+
 import { AttachmentType } from '@prisma/client';
+
 import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()

@@ -1,6 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { AuthTokens } from './token.entity';
+
 import { User } from 'src/core/@generated/user/user.model';
+
+import { AuthTokens } from './token.entity';
 
 @ObjectType()
 export class Verify extends AuthTokens {

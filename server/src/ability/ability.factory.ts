@@ -1,6 +1,7 @@
+import { Injectable } from '@nestjs/common';
+
 import { PureAbility, AbilityBuilder } from '@casl/ability';
 import { createPrismaAbility, PrismaQuery, Subjects } from '@casl/prisma';
-import { Injectable } from '@nestjs/common';
 import {
   CommentThread,
   Company,
@@ -16,6 +17,7 @@ import {
   PipelineProgress,
   Attachment,
 } from '@prisma/client';
+
 import { AbilityAction } from './ability.action';
 
 type SubjectsAbility = Subjects<{

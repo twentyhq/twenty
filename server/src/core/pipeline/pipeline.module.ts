@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { PipelineService } from './services/pipeline.service';
 import { PipelineResolver } from './resolvers/pipeline.resolver';
 import { PipelineStageResolver } from './resolvers/pipeline-stage.resolver';

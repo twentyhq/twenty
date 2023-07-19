@@ -1,3 +1,5 @@
+import { Readable } from 'stream';
+
 import {
   CreateBucketCommandInput,
   GetObjectCommand,
@@ -7,8 +9,8 @@ import {
   S3,
   S3ClientConfig,
 } from '@aws-sdk/client-s3';
+
 import { StorageDriver } from './interfaces/storage-driver.interface';
-import { Readable } from 'stream';
 
 export interface S3DriverOptions extends S3ClientConfig {
   bucketName: string;

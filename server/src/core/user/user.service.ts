@@ -1,8 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
+
 import { Prisma } from '@prisma/client';
+
+import { PrismaService } from 'src/database/prisma.service';
 import { assert } from 'src/utils/assert';
-import { WorkspaceService } from '../workspace/services/workspace.service';
+import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 
 export type UserPayload = {
   displayName: string | undefined | null;

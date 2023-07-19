@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PipelineStageService } from './pipeline-stage.service';
+
 import { PrismaService } from 'src/database/prisma.service';
 import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
+
+import { PipelineStageService } from './pipeline-stage.service';
 
 describe('PipelineStageService', () => {
   let service: PipelineStageService;

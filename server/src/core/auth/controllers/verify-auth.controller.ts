@@ -1,8 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
-import { VerifyInput } from '../dto/verify.input';
-import { Verify } from '../dto/verify.entity';
-import { TokenService } from '../services/token.service';
+
+import { AuthService } from 'src/core/auth/services/auth.service';
+import { VerifyInput } from 'src/core/auth/dto/verify.input';
+import { Verify } from 'src/core/auth/dto/verify.entity';
+import { TokenService } from 'src/core/auth/services/token.service';
 
 @Controller('auth/verify')
 export class VerifyAuthController {

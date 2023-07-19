@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
+
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
 import { FileStorageModule } from './file-storage/file-storage.module';
