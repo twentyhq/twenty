@@ -14,6 +14,8 @@ import {
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
+import { SEARCH_COMPANY_QUERY } from '../../search/queries/search';
+
 type OwnProps = {
   people: Pick<Person, 'id'>;
 };
@@ -51,7 +53,10 @@ export function PeopleCompanyCreateCell({ people }: OwnProps) {
           address: '',
           createdAt: new Date().toISOString(),
         },
-        refetchQueries: [getOperationName(GET_COMPANIES) || ''],
+        refetchQueries: [
+          getOperationName(GET_COMPANIES) ?? '',
+          getOperationName(SEARCH_COMPANY_QUERY) ?? '',
+        ],
       });
 
       await updatePeople({

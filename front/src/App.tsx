@@ -75,7 +75,7 @@ export function App() {
                 <Routes>
                   <Route
                     path=""
-                    element={<Navigate to={AppPath.PeoplePage} replace />}
+                    element={<Navigate to={AppPath.CompaniesPage} replace />}
                   />
                   <Route path={AppPath.PeoplePage} element={<People />} />
                   <Route

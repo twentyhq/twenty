@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from 'src/database/prisma.service';
+import companiesSeed from 'src/core/company/seed-data/companies.json';
 
 @Injectable()
 export class CompanyService {
@@ -36,4 +37,15 @@ export class CompanyService {
 
   // GroupBy
   groupBy = this.prismaService.company.groupBy;
+  async createDefaultCompanies({ workspaceId }: { workspaceId: string }) {
+    const companies = companiesSeed.map((company) => ({
+      ...company,
+      workspaceId,
+    }));
+    await this.createMany({
+      data: companies,
+    });
+
+    return this.findMany();
+  }
 }

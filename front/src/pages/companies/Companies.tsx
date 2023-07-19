@@ -17,6 +17,8 @@ import {
   useInsertCompanyMutation,
 } from '~/generated/graphql';
 
+import { SEARCH_COMPANY_QUERY } from '../../modules/search/queries/search';
+
 const StyledTableContainer = styled.div`
   display: flex;
   width: 100%;
@@ -37,7 +39,10 @@ export function Companies() {
 
     await insertCompany({
       variables: newCompany,
-      refetchQueries: [getOperationName(GET_COMPANIES) ?? ''],
+      refetchQueries: [
+        getOperationName(GET_COMPANIES) ?? '',
+        getOperationName(SEARCH_COMPANY_QUERY) ?? '',
+      ],
     });
   }
 

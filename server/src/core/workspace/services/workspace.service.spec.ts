@@ -6,6 +6,8 @@ import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
 import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.service';
 
 import { WorkspaceService } from './workspace.service';
+import { PersonService } from '../../person/person.service';
+import { CompanyService } from '../../company/company.service';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -24,6 +26,14 @@ describe('WorkspaceService', () => {
         },
         {
           provide: PipelineStageService,
+          useValue: {},
+        },
+        {
+          provide: PersonService,
+          useValue: {},
+        },
+        {
+          provide: CompanyService,
           useValue: {},
         },
       ],
