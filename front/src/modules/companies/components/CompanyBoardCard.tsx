@@ -168,12 +168,12 @@ export function CompanyBoardCard() {
           <ProbabilityEditableField
             icon={<IconCheck />}
             value={pipelineProgress.probability}
-            onSubmit={(value) =>
+            onSubmit={(value) => {
               handleCardUpdate({
                 ...pipelineProgress,
                 probability: value,
-              })
-            }
+              });
+            }}
           />
           <PipelineProgressPointOfContactEditableField
             pipelineProgress={pipelineProgress}
