@@ -16,10 +16,7 @@ export function PersonShow() {
 
   const location = useLocation();
 
-  console.log({ location, personId, params: useParams() });
-
   const { data } = usePersonQuery(personId);
-  console.log({ data });
   const person = data?.findUniquePerson;
 
   const theme = useTheme();
