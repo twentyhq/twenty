@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 
 import { EditableCellChip } from '@/ui/table/editable-cell/types/EditableChip';
 import {
@@ -6,6 +7,8 @@ import {
   useUpdateCompanyMutation,
 } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
+
+import { GET_COMPANY } from '../queries';
 
 import { CompanyChip } from './CompanyChip';
 
@@ -44,6 +47,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
             id: company.id,
             name: internalValue,
           },
+          refetchQueries: [getOperationName(GET_COMPANY) ?? ''],
         })
       }
       onCancel={() => setInternalValue(company.name ?? '')}

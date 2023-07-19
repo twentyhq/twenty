@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
 import { peopleNameCellFamilyState } from '@/people/states/peopleNamesFamilyState';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdatePeopleMutation } from '~/generated/graphql';
+
+import { GET_PERSON } from '../../queries';
 
 export function EditablePeopleFullNameCell() {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -42,6 +45,7 @@ export function EditablePeopleFullNameCell() {
             firstName: internalFirstName,
             lastName: internalLastName,
           },
+          refetchQueries: [getOperationName(GET_PERSON) ?? ''],
         })
       }
       onCancel={() => {
