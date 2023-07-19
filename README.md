@@ -32,9 +32,10 @@ It's a straightforward process that should have you up and running in minutes.
 # About
 We are building an Open Source CRM designed to be: enjoyable to use, easily extendable, and perfectly in-sync with your data. 
 
-Why go open source when the majority of CRMs are not?
+Twenty was created as a Public Benefits Company. This means we're legally bound to consider the impact of our decisions not just on shareholders, but also on society.
+Our belief is simple: great companies focus on helping people and meeting their users' needs above all. The decision to go open source was therefore a natural one for us. It fits with our aim to do what's right and with our goals for the business:
 
-**For day-to-day users:**
+**For our users:**
 - A commitment to being completely open about what we're building, enabling them to peek under the hood and see the intricate machinery at work.
 - An opportunity to be a decisive actor with a very short feedback loop and an the ability to shape the roadmap
   
