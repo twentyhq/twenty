@@ -11,6 +11,7 @@ import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgres
 import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
 import { BoardCardEditableFieldDate } from '@/ui/board/card-field/components/BoardCardEditableFieldDate';
 import { ChipVariant } from '@/ui/chip/components/EntityChip';
+import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
 import { IconCheck, IconCurrencyDollar } from '@/ui/icon';
 import { IconCalendarEvent } from '@/ui/icon';
@@ -155,18 +156,17 @@ export function CompanyBoardCard() {
             }
           />
           <CompanyAccountOwnerEditableField company={company} />
-          <span>
-            <IconCalendarEvent size={theme.icon.size.md} />
-            <BoardCardEditableFieldDate
-              value={new Date(pipelineProgress.closeDate || Date.now())}
-              onChange={(value) => {
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  closeDate: value.toISOString(),
-                });
-              }}
-            />
-          </span>
+          <DateEditableField
+            icon={<IconCalendarEvent />}
+            value={pipelineProgress.closeDate || new Date().toISOString()}
+            onSubmit={(value) =>
+              handleCardUpdate({
+                ...pipelineProgress,
+                closeDate: value,
+              })
+            }
+          />
+
           <NumberEditableField
             icon={<IconCheck />}
             placeholder="Opportunity probability for closing"
