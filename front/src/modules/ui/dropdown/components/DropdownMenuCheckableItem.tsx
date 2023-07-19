@@ -42,9 +42,9 @@ export function DropdownMenuCheckableItem({
   }
 
   return (
-    <DropdownMenuCheckableItemContainer>
+    <DropdownMenuCheckableItemContainer onClick={handleClick}>
       <StyledLeftContainer>
-        <Checkbox checked={checked} onChange={handleClick} />
+        <Checkbox checked={checked} />
         <StyledChildrenContainer>{children}</StyledChildrenContainer>
       </StyledLeftContainer>
     </DropdownMenuCheckableItemContainer>
