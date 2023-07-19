@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
+import { ProbabilityEditableField } from '@/pipeline/editable-field/components/ProbabilityEditableField';
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
 import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
@@ -167,9 +168,8 @@ export function CompanyBoardCard() {
             }
           />
 
-          <NumberEditableField
+          <ProbabilityEditableField
             icon={<IconCheck />}
-            placeholder="Opportunity probability for closing"
             value={pipelineProgress.probability}
             onSubmit={(value) =>
               handleCardUpdate({
