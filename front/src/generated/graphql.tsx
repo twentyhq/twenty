@@ -992,6 +992,7 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type Person = {
   __typename?: 'Person';
+  PipelineProgress?: Maybe<Array<PipelineProgress>>;
   _commentThreadCount: Scalars['Int'];
   city: Scalars['String'];
   commentThreads: Array<CommentThread>;
@@ -1009,6 +1010,7 @@ export type Person = {
 };
 
 export type PersonCreateInput = {
+  PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutPointOfContactInput>;
   city: Scalars['String'];
   company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1024,6 +1026,10 @@ export type PersonCreateNestedManyWithoutCompanyInput = {
   connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
 };
 
+export type PersonCreateNestedOneWithoutPipelineProgressInput = {
+  connect?: InputMaybe<PersonWhereUniqueInput>;
+};
+
 export type PersonListRelationFilter = {
   every?: InputMaybe<PersonWhereInput>;
   none?: InputMaybe<PersonWhereInput>;
@@ -1035,6 +1041,7 @@ export type PersonOrderByRelationAggregateInput = {
 };
 
 export type PersonOrderByWithRelationInput = {
+  PipelineProgress?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   city?: InputMaybe<SortOrder>;
   company?: InputMaybe<CompanyOrderByWithRelationInput>;
   companyId?: InputMaybe<SortOrder>;
@@ -1045,6 +1052,11 @@ export type PersonOrderByWithRelationInput = {
   lastName?: InputMaybe<SortOrder>;
   phone?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
+};
+
+export type PersonRelationFilter = {
+  is?: InputMaybe<PersonWhereInput>;
+  isNot?: InputMaybe<PersonWhereInput>;
 };
 
 export enum PersonScalarFieldEnum {
@@ -1062,6 +1074,7 @@ export enum PersonScalarFieldEnum {
 }
 
 export type PersonUpdateInput = {
+  PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutPointOfContactNestedInput>;
   city?: InputMaybe<StringFieldUpdateOperationsInput>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
   createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
@@ -1085,10 +1098,16 @@ export type PersonUpdateManyWithoutWorkspaceNestedInput = {
   set?: InputMaybe<Array<PersonWhereUniqueInput>>;
 };
 
+export type PersonUpdateOneWithoutPipelineProgressNestedInput = {
+  connect?: InputMaybe<PersonWhereUniqueInput>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type PersonWhereInput = {
   AND?: InputMaybe<Array<PersonWhereInput>>;
   NOT?: InputMaybe<Array<PersonWhereInput>>;
   OR?: InputMaybe<Array<PersonWhereInput>>;
+  PipelineProgress?: InputMaybe<PipelineProgressListRelationFilter>;
   city?: InputMaybe<StringFilter>;
   company?: InputMaybe<CompanyRelationFilter>;
   companyId?: InputMaybe<StringNullableFilter>;
@@ -1142,6 +1161,9 @@ export type PipelineProgress = {
   pipelineId: Scalars['String'];
   pipelineStage: PipelineStage;
   pipelineStageId: Scalars['String'];
+  pointOfContact?: Maybe<Person>;
+  pointOfContactId?: Maybe<Scalars['String']>;
+  probability?: Maybe<Scalars['Int']>;
   progressableId: Scalars['String'];
   progressableType: PipelineProgressableType;
   updatedAt: Scalars['DateTime'];
@@ -1154,9 +1176,15 @@ export type PipelineProgressCreateInput = {
   id?: InputMaybe<Scalars['String']>;
   pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
   pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
+  pointOfContact?: InputMaybe<PersonCreateNestedOneWithoutPipelineProgressInput>;
+  probability?: InputMaybe<Scalars['Int']>;
   progressableId: Scalars['String'];
   progressableType: PipelineProgressableType;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineProgressCreateNestedManyWithoutPointOfContactInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
 };
 
 export type PipelineProgressListRelationFilter = {
@@ -1178,6 +1206,9 @@ export type PipelineProgressOrderByWithRelationInput = {
   pipelineId?: InputMaybe<SortOrder>;
   pipelineStage?: InputMaybe<PipelineStageOrderByWithRelationInput>;
   pipelineStageId?: InputMaybe<SortOrder>;
+  pointOfContact?: InputMaybe<PersonOrderByWithRelationInput>;
+  pointOfContactId?: InputMaybe<SortOrder>;
+  probability?: InputMaybe<SortOrder>;
   progressableId?: InputMaybe<SortOrder>;
   progressableType?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
@@ -1191,6 +1222,8 @@ export enum PipelineProgressScalarFieldEnum {
   Id = 'id',
   PipelineId = 'pipelineId',
   PipelineStageId = 'pipelineStageId',
+  PointOfContactId = 'pointOfContactId',
+  Probability = 'probability',
   ProgressableId = 'progressableId',
   ProgressableType = 'progressableType',
   UpdatedAt = 'updatedAt',
@@ -1204,12 +1237,20 @@ export type PipelineProgressUpdateInput = {
   id?: InputMaybe<StringFieldUpdateOperationsInput>;
   pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
   pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
+  pointOfContact?: InputMaybe<PersonUpdateOneWithoutPipelineProgressNestedInput>;
+  probability?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
   progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
   progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
   updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
 };
 
 export type PipelineProgressUpdateManyWithoutPipelineStageNestedInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  set?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+};
+
+export type PipelineProgressUpdateManyWithoutPointOfContactNestedInput = {
   connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
   set?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
@@ -1233,6 +1274,9 @@ export type PipelineProgressWhereInput = {
   pipelineId?: InputMaybe<StringFilter>;
   pipelineStage?: InputMaybe<PipelineStageRelationFilter>;
   pipelineStageId?: InputMaybe<StringFilter>;
+  pointOfContact?: InputMaybe<PersonRelationFilter>;
+  pointOfContactId?: InputMaybe<StringNullableFilter>;
+  probability?: InputMaybe<IntNullableFilter>;
   progressableId?: InputMaybe<StringFilter>;
   progressableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
@@ -2165,12 +2209,14 @@ export type GetPipelineProgressQueryVariables = Exact<{
 }>;
 
 
-export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, pipelineStageId: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null }> };
+export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, pipelineStageId: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null, pointOfContactId?: string | null, probability?: number | null, pointOfContact?: { __typename?: 'Person', id: string, firstName: string, lastName: string } | null }> };
 
 export type UpdateOnePipelineProgressMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
   amount?: InputMaybe<Scalars['Int']>;
   closeDate?: InputMaybe<Scalars['DateTime']>;
+  probability?: InputMaybe<Scalars['Int']>;
+  pointOfContactId?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -3809,6 +3855,13 @@ export const GetPipelineProgressDocument = gql`
     progressableId
     amount
     closeDate
+    pointOfContactId
+    pointOfContact {
+      id
+      firstName
+      lastName
+    }
+    probability
   }
 }
     `;
@@ -3842,10 +3895,10 @@ export type GetPipelineProgressQueryHookResult = ReturnType<typeof useGetPipelin
 export type GetPipelineProgressLazyQueryHookResult = ReturnType<typeof useGetPipelineProgressLazyQuery>;
 export type GetPipelineProgressQueryResult = Apollo.QueryResult<GetPipelineProgressQuery, GetPipelineProgressQueryVariables>;
 export const UpdateOnePipelineProgressDocument = gql`
-    mutation UpdateOnePipelineProgress($id: String, $amount: Int, $closeDate: DateTime) {
+    mutation UpdateOnePipelineProgress($id: String, $amount: Int, $closeDate: DateTime, $probability: Int, $pointOfContactId: String) {
   updateOnePipelineProgress(
     where: {id: $id}
-    data: {amount: {set: $amount}, closeDate: {set: $closeDate}}
+    data: {amount: {set: $amount}, closeDate: {set: $closeDate}, probability: {set: $probability}, pointOfContact: {connect: {id: $pointOfContactId}}}
   ) {
     id
     amount
@@ -3871,6 +3924,8 @@ export type UpdateOnePipelineProgressMutationFn = Apollo.MutationFunction<Update
  *      id: // value for 'id'
  *      amount: // value for 'amount'
  *      closeDate: // value for 'closeDate'
+ *      probability: // value for 'probability'
+ *      pointOfContactId: // value for 'pointOfContactId'
  *   },
  * });
  */

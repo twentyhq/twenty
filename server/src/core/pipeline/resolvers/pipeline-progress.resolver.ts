@@ -68,6 +68,20 @@ export class PipelineProgressResolver {
     @PrismaSelector({ modelName: 'PipelineProgress' })
     prismaSelect: PrismaSelect<'PipelineProgress'>,
   ): Promise<Partial<PipelineProgress> | null> {
+    // TODO: Do a proper check with recursion testing on args in a more generic place
+    for (const key in args.data) {
+      if (args.data[key]) {
+        for (const subKey in args.data[key]) {
+          if (JSON.stringify(args.data[key][subKey]) === '{}') {
+            delete args.data[key][subKey];
+          }
+        }
+      }
+
+      if (JSON.stringify(args.data[key]) === '{}') {
+        delete args.data[key];
+      }
+    }
     return this.pipelineProgressService.update({
       where: args.where,
       data: args.data,

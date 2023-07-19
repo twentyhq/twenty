@@ -12,17 +12,15 @@ import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsSta
 import { BoardCardEditableFieldDate } from '@/ui/board/card-field/components/BoardCardEditableFieldDate';
 import { ChipVariant } from '@/ui/chip/components/EntityChip';
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
-import { IconCurrencyDollar } from '@/ui/icon';
+import { IconCheck, IconCurrencyDollar } from '@/ui/icon';
 import { IconCalendarEvent } from '@/ui/icon';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import {
-  PipelineProgress,
-  useUpdateOnePipelineProgressMutation,
-} from '~/generated/graphql';
+import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { CompanyAccountOwnerEditableField } from '../editable-field/components/CompanyAccountOwnerEditableField';
+import { PipelineProgressForBoard } from '../types/CompanyProgress';
 
 import { CompanyChip } from './CompanyChip';
 
@@ -104,14 +102,14 @@ export function CompanyBoardCard() {
   }
 
   const handleCardUpdate = useCallback(
-    async (
-      pipelineProgress: Pick<PipelineProgress, 'id' | 'amount' | 'closeDate'>,
-    ) => {
+    async (pipelineProgress: PipelineProgressForBoard) => {
       await updatePipelineProgress({
         variables: {
           id: pipelineProgress.id,
           amount: pipelineProgress.amount,
-          closeDate: pipelineProgress.closeDate || null,
+          closeDate: pipelineProgress.closeDate,
+          probability: pipelineProgress.probability,
+          pointOfContactId: pipelineProgress.pointOfContactId || undefined,
         },
         refetchQueries: [
           getOperationName(GET_PIPELINE_PROGRESS) ?? '',
@@ -169,6 +167,17 @@ export function CompanyBoardCard() {
               }}
             />
           </span>
+          <NumberEditableField
+            icon={<IconCheck />}
+            placeholder="Opportunity probability for closing"
+            value={pipelineProgress.probability}
+            onSubmit={(value) =>
+              handleCardUpdate({
+                ...pipelineProgress,
+                probability: value,
+              })
+            }
+          />
         </StyledBoardCardBody>
       </StyledBoardCard>
     </StyledBoardCardWrapper>
