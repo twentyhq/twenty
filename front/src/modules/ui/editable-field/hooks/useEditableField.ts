@@ -1,4 +1,3 @@
-import { usePreviousHotkeyScope } from '@/ui/hotkey/hooks/usePreviousHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
 
