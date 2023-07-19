@@ -11,20 +11,20 @@ const common = {
 
 export const borderLight = {
   color: {
-    strong: grayScale.gray25,
-    medium: grayScale.gray20,
-    light: grayScale.gray15,
-    inverted: grayScale.gray55,
+    strong: grayScale.gray20,
+    medium: grayScale.gray15,
+    light: grayScale.gray10,
+    inverted: grayScale.gray60,
   },
   ...common,
 };
 
 export const borderDark = {
   color: {
-    strong: grayScale.gray60,
-    medium: grayScale.gray65,
-    light: grayScale.gray70,
-    inverted: grayScale.gray30,
+    strong: grayScale.gray65,
+    medium: grayScale.gray70,
+    light: grayScale.gray75,
+    inverted: grayScale.gray25,
   },
   ...common,
 };

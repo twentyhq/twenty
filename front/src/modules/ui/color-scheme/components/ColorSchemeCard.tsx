@@ -29,10 +29,10 @@ const StyledColorSchemeBackground = styled.div<
   border: ${({ variant }) => {
     switch (variant) {
       case 'dark':
-        return `1px solid ${grayScale.gray65};`;
+        return `1px solid ${grayScale.gray70};`;
       case 'light':
       default:
-        return `1px solid ${grayScale.gray20};`;
+        return `1px solid ${grayScale.gray15};`;
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -53,7 +53,7 @@ const StyledColorSchemeContent = styled(motion.div)<
   background: ${({ theme, variant }) => {
     switch (variant) {
       case 'dark':
-        return grayScale.gray70;
+        return grayScale.gray75;
       case 'light':
         return theme.color.gray0;
     }
@@ -62,30 +62,30 @@ const StyledColorSchemeContent = styled(motion.div)<
   border-left: ${({ variant }) => {
     switch (variant) {
       case 'dark':
-        return `1px solid ${grayScale.gray55};`;
+        return `1px solid ${grayScale.gray60};`;
       case 'light':
       default:
-        return `1px solid ${grayScale.gray20};`;
+        return `1px solid ${grayScale.gray15};`;
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md} 0px 0px 0px;
   border-top: ${({ variant }) => {
     switch (variant) {
       case 'dark':
-        return `1px solid ${grayScale.gray55};`;
+        return `1px solid ${grayScale.gray60};`;
       case 'light':
       default:
-        return `1px solid ${grayScale.gray20};`;
+        return `1px solid ${grayScale.gray15};`;
     }
   }};
   box-sizing: border-box;
   color: ${({ variant }) => {
     switch (variant) {
       case 'dark':
-        return grayScale.gray30;
+        return grayScale.gray25;
       case 'light':
       default:
-        return grayScale.gray55;
+        return grayScale.gray60;
     }
   }};
   display: flex;
