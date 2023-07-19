@@ -86,7 +86,7 @@ export function CreateWorkspace() {
           throw result.errors ?? new Error('Unknown error');
         }
 
-        navigate('/auth/create/profile');
+        navigate('/create/profile');
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: 'error',
@@ -107,7 +107,7 @@ export function CreateWorkspace() {
 
   useEffect(() => {
     if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceCreation) {
-      navigate('/auth/create/profile');
+      navigate('/create/profile');
     }
   }, [onboardingStatus, navigate]);
 

@@ -23,7 +23,7 @@ export const Default: Story = {
         <CreateWorkspace />
       </AuthModal>
     </AuthLayout>,
-    '/auth/create-workspace',
+    '/create-workspace',
   ),
   parameters: {
     msw: graphqlMocks,

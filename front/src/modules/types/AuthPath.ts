@@ -1,8 +1,9 @@
 export enum AuthPath {
   Index = '',
-  Callback = 'callback',
-  PasswordLogin = 'password-login',
+  Verify = 'verify',
+  SignIn = 'sign-in',
+  SignUp = 'sign-up',
+  Invite = 'invite/:workspaceInviteHash',
   CreateWorkspace = 'create/workspace',
   CreateProfile = 'create/profile',
-  InviteLink = 'invite/:workspaceInviteHash',
 }

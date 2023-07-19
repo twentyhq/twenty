@@ -6,7 +6,7 @@ import { AppBasePath } from '@/types/AppBasePath';
 export function useIsMatchingLocation() {
   const location = useLocation();
 
-  return function isMatchingLocation(basePath: AppBasePath, path: string) {
+  return function isMatchingLocation(path: string, basePath?: AppBasePath) {
     const constructedPath = basePath
       ? parse(`${basePath}/${path}`).pathname ?? ''
       : path;
