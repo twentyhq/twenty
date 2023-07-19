@@ -82,6 +82,10 @@ const StyledBoardCardBody = styled.div`
   }
 `;
 
+const FieldContainer = styled.div`
+  width: max-content;
+`;
+
 export function CompanyBoardCard() {
   const [isHovered, setIsHovered] = useState(false);
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
@@ -128,10 +132,6 @@ export function CompanyBoardCard() {
     [updatePipelineProgress],
   );
 
-  const handleCheckboxChange = (checked: boolean) => {
-    setSelected(checked);
-  };
-
   if (!company || !pipelineProgress) {
     return null;
   }
@@ -140,7 +140,7 @@ export function CompanyBoardCard() {
     <StyledBoardCardWrapper>
       <StyledBoardCard
         selected={selected}
-        onClick={() => handleCheckboxChange(!selected)}
+        onClick={() => setSelected(!selected)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -152,46 +152,57 @@ export function CompanyBoardCard() {
             picture={getLogoUrlFromDomainName(company.domainName)}
             variant={ChipVariant.transparent}
           />
-          <div style={{ display: 'flex', flex: 1 }} />
+          <FieldContainer style={{ display: 'flex', flex: 1 }} />
           {(isHovered || selected) && (
-            <Checkbox checked={selected} onChange={handleCheckboxChange} />
+            <Checkbox
+              checked={selected}
+              onChange={() => setSelected(!selected)}
+            />
           )}
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          <DateEditableField
-            icon={<IconCalendarEvent />}
-            value={pipelineProgress.closeDate || new Date().toISOString()}
-            onSubmit={(value) =>
-              handleCardUpdate({
-                ...pipelineProgress,
-                closeDate: value,
-              })
-            }
-          />
-          <NumberEditableField
-            icon={<IconCurrencyDollar />}
-            placeholder="Opportunity amount"
-            value={pipelineProgress.amount}
-            onSubmit={(value) =>
-              handleCardUpdate({
-                ...pipelineProgress,
-                amount: value,
-              })
-            }
-          />
-          <ProbabilityEditableField
-            icon={<IconProgressCheck />}
-            value={pipelineProgress.probability}
-            onSubmit={(value) => {
-              handleCardUpdate({
-                ...pipelineProgress,
-                probability: value,
-              });
-            }}
-          />
-          <PipelineProgressPointOfContactEditableField
-            pipelineProgress={pipelineProgress}
-          />
+          <FieldContainer onClick={(e) => e.stopPropagation()}>
+            <DateEditableField
+              icon={<IconCalendarEvent />}
+              value={pipelineProgress.closeDate || new Date().toISOString()}
+              onSubmit={(value) =>
+                handleCardUpdate({
+                  ...pipelineProgress,
+                  closeDate: value,
+                })
+              }
+            />
+          </FieldContainer>
+          <FieldContainer onClick={(e) => e.stopPropagation()}>
+            <NumberEditableField
+              icon={<IconCurrencyDollar />}
+              placeholder="Opportunity amount"
+              value={pipelineProgress.amount}
+              onSubmit={(value) =>
+                handleCardUpdate({
+                  ...pipelineProgress,
+                  amount: value,
+                })
+              }
+            />
+          </FieldContainer>
+          <FieldContainer onClick={(e) => e.stopPropagation()}>
+            <ProbabilityEditableField
+              icon={<IconProgressCheck />}
+              value={pipelineProgress.probability}
+              onSubmit={(value) => {
+                handleCardUpdate({
+                  ...pipelineProgress,
+                  probability: value,
+                });
+              }}
+            />
+          </FieldContainer>
+          <FieldContainer onClick={(e) => e.stopPropagation()}>
+            <PipelineProgressPointOfContactEditableField
+              pipelineProgress={pipelineProgress}
+            />
+          </FieldContainer>
         </StyledBoardCardBody>
       </StyledBoardCard>
     </StyledBoardCardWrapper>
