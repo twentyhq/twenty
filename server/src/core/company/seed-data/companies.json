@@ -1,15 +1,33 @@
 [
     {
-      "name": "Linkedin",
-      "domainName": "linkedin.com",
-      "address": "Mountain View, CA",
-      "employees": 0
+      "name": "Rudderstack",
+      "domainName": "rudderstack.com",
+      "address": "San Francisco",
+      "employees": 195
     },
     {
-      "name": "Airbnb",
-      "domainName": "airbnb.com",
-      "address": "Mountain View, CA",
-      "employees": 0
+      "name": "Medusa",
+      "domainName": "medusajs.com",
+      "address": "Copenhagen",
+      "employees": 57
+    },
+    {
+      "name": "Metabase",
+      "domainName": "metabase.com",
+      "address": "San Francisco",
+      "employees": 68
+    },
+    {
+      "name": "Strapi",
+      "domainName": "strapi.com",
+      "address": "Paris",
+      "employees": 95
+    },
+    {
+      "name": "Posthog",
+      "domainName": "posthog.com",
+      "address": "San Francisco",
+      "employees": 34
     }
   ]
   

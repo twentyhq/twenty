@@ -46,6 +46,6 @@ export class CompanyService {
       data: companies,
     });
 
-    return this.findMany();
+    return this.findMany({ where: { workspaceId }});
   }
 }
