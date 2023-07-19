@@ -116,6 +116,14 @@ export const color = {
   gray20: grayScale.gray15,
   gray10: grayScale.gray10,
   gray0: grayScale.gray0,
+  blueAccent90: '#141a25',
+  blueAccent85: '#151D2E',
+  blueAccent80: '#152037',
+  blueAccent75: '#16233F',
+  blueAccent25: '#dae6fc',
+  blueAccent20: '#e2ecfd',
+  blueAccent15: '#edf2fe',
+  blueAccent10: '#f5f9fd',
 };
 
 export function rgba(hex: string, alpha: number) {

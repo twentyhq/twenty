@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -13,28 +13,32 @@ import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsSta
 import { ChipVariant } from '@/ui/chip/components/EntityChip';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
-import { IconCheck, IconCurrencyDollar } from '@/ui/icon';
+import { IconCurrencyDollar, IconProgressCheck } from '@/ui/icon';
 import { IconCalendarEvent } from '@/ui/icon';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import { CompanyAccountOwnerEditableField } from '../editable-field/components/CompanyAccountOwnerEditableField';
 import { PipelineProgressForBoard } from '../types/CompanyProgress';
 
 import { CompanyChip } from './CompanyChip';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
-    selected ? theme.selectedCard : theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+    selected ? theme.accent.quaternary : theme.background.secondary};
+  border: 1px solid
+    ${({ theme, selected }) =>
+      selected ? theme.accent.secondary : theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
   &:hover {
     background-color: ${({ theme, selected }) =>
-      selected ? theme.selectedCardHover : theme.background.tertiary};
+      selected && theme.accent.tertiary};
+    border: 1px solid
+      ${({ theme, selected }) =>
+        selected ? theme.accent.primary : theme.border.color.medium};
   }
   cursor: pointer;
 `;
@@ -49,6 +53,7 @@ const StyledBoardCardHeader = styled.div`
   flex-direction: row;
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   height: 24px;
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
@@ -62,7 +67,10 @@ const StyledBoardCardHeader = styled.div`
 const StyledBoardCardBody = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(0.5)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2.5)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
   span {
     align-items: center;
     display: flex;
@@ -74,7 +82,12 @@ const StyledBoardCardBody = styled.div`
   }
 `;
 
+const StyledFieldContainer = styled.div`
+  width: max-content;
+`;
+
 export function CompanyBoardCard() {
+  const [isHovered, setIsHovered] = useState(false);
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
 
   const [pipelineProgressId] = useRecoilScopedState(
@@ -119,17 +132,34 @@ export function CompanyBoardCard() {
     [updatePipelineProgress],
   );
 
-  const handleCheckboxChange = (checked: boolean) => {
-    setSelected(checked);
-  };
-
   if (!company || !pipelineProgress) {
     return null;
   }
 
+  function PreventSelectOnClickContainer({
+    children,
+  }: {
+    children: ReactNode;
+  }) {
+    return (
+      <StyledFieldContainer
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        {children}
+      </StyledFieldContainer>
+    );
+  }
+
   return (
     <StyledBoardCardWrapper>
-      <StyledBoardCard selected={selected}>
+      <StyledBoardCard
+        selected={selected}
+        onClick={() => setSelected(!selected)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <StyledBoardCardHeader>
           <CompanyChip
             id={company.id}
@@ -139,45 +169,56 @@ export function CompanyBoardCard() {
             variant={ChipVariant.transparent}
           />
           <div style={{ display: 'flex', flex: 1 }} />
-          <Checkbox checked={selected} onChange={handleCheckboxChange} />
+          {(isHovered || selected) && (
+            <Checkbox
+              checked={selected}
+              onChange={() => setSelected(!selected)}
+            />
+          )}
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          <NumberEditableField
-            icon={<IconCurrencyDollar />}
-            placeholder="Opportunity amount"
-            value={pipelineProgress.amount}
-            onSubmit={(value) =>
-              handleCardUpdate({
-                ...pipelineProgress,
-                amount: value,
-              })
-            }
-          />
-          <CompanyAccountOwnerEditableField company={company} />
-          <DateEditableField
-            icon={<IconCalendarEvent />}
-            value={pipelineProgress.closeDate || new Date().toISOString()}
-            onSubmit={(value) =>
-              handleCardUpdate({
-                ...pipelineProgress,
-                closeDate: value,
-              })
-            }
-          />
-
-          <ProbabilityEditableField
-            icon={<IconCheck />}
-            value={pipelineProgress.probability}
-            onSubmit={(value) => {
-              handleCardUpdate({
-                ...pipelineProgress,
-                probability: value,
-              });
-            }}
-          />
-          <PipelineProgressPointOfContactEditableField
-            pipelineProgress={pipelineProgress}
-          />
+          <PreventSelectOnClickContainer>
+            <DateEditableField
+              icon={<IconCalendarEvent />}
+              value={pipelineProgress.closeDate || new Date().toISOString()}
+              onSubmit={(value) =>
+                handleCardUpdate({
+                  ...pipelineProgress,
+                  closeDate: value,
+                })
+              }
+            />
+          </PreventSelectOnClickContainer>
+          <PreventSelectOnClickContainer>
+            <NumberEditableField
+              icon={<IconCurrencyDollar />}
+              placeholder="Opportunity amount"
+              value={pipelineProgress.amount}
+              onSubmit={(value) =>
+                handleCardUpdate({
+                  ...pipelineProgress,
+                  amount: value,
+                })
+              }
+            />
+          </PreventSelectOnClickContainer>
+          <PreventSelectOnClickContainer>
+            <ProbabilityEditableField
+              icon={<IconProgressCheck />}
+              value={pipelineProgress.probability}
+              onSubmit={(value) => {
+                handleCardUpdate({
+                  ...pipelineProgress,
+                  probability: value,
+                });
+              }}
+            />
+          </PreventSelectOnClickContainer>
+          <PreventSelectOnClickContainer>
+            <PipelineProgressPointOfContactEditableField
+              pipelineProgress={pipelineProgress}
+            />
+          </PreventSelectOnClickContainer>
         </StyledBoardCardBody>
       </StyledBoardCard>
     </StyledBoardCardWrapper>

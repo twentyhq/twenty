@@ -24,7 +24,7 @@ const StyledPlaceholder = styled.div`
 `;
 
 const StyledNewCardButtonContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(40)};
+  padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
 const BoardColumnCardsContainer = ({
@@ -86,6 +86,7 @@ export function EntityBoardColumn({
           colorCode={column.colorCode}
           pipelineStageId={column.pipelineStageId}
           totalAmount={boardColumnTotal}
+          isFirstColumn={column.index === 0}
         >
           <BoardColumnCardsContainer droppableProvided={droppableProvided}>
             {column.pipelineProgressIds.map((pipelineProgressId, index) => (
