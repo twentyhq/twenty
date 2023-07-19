@@ -17,7 +17,6 @@ export type OwnProps = {
 };
 
 export function PeopleCompanyEditableField({ people }: OwnProps) {
-  console.log({ people });
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <RecoilScope>
