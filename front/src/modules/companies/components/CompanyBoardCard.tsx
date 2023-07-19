@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
+import { PipelineProgressPointOfContactEditableField } from '@/pipeline/editable-field/components/PipelineProgressPointOfContactEditableField';
 import { ProbabilityEditableField } from '@/pipeline/editable-field/components/ProbabilityEditableField';
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
@@ -167,12 +168,15 @@ export function CompanyBoardCard() {
           <ProbabilityEditableField
             icon={<IconCheck />}
             value={pipelineProgress.probability}
-            onSubmit={(value) =>
+            onSubmit={(value) => {
               handleCardUpdate({
                 ...pipelineProgress,
                 probability: value,
-              })
-            }
+              });
+            }}
+          />
+          <PipelineProgressPointOfContactEditableField
+            pipelineProgress={pipelineProgress}
           />
         </StyledBoardCardBody>
       </StyledBoardCard>
