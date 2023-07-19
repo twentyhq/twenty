@@ -1,62 +1,65 @@
 import { useEffect, useState } from 'react';
 
+import { InplaceInputPhoneDisplayMode } from '@/ui/display/component/InplaceInputPhoneDisplayMode';
 import { EditableField } from '@/ui/editable-field/components/EditableField';
-import { FieldDisplayURL } from '@/ui/editable-field/components/FieldDisplayURL';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { IconLink } from '@/ui/icon';
 import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { Company, useUpdateCompanyMutation } from '~/generated/graphql';
 
 type OwnProps = {
-  company: Pick<Company, 'id' | 'domainName'>;
+  icon?: React.ReactNode;
+  placeholder?: string;
+  value: string | null | undefined;
+  onSubmit?: (newValue: string) => void;
 };
 
-export function CompanyDomainNameEditableField({ company }: OwnProps) {
-  const [internalValue, setInternalValue] = useState(company.domainName);
-
-  const [updateCompany] = useUpdateCompanyMutation();
+export function PhoneEditableField({
+  icon,
+  placeholder,
+  value,
+  onSubmit,
+}: OwnProps) {
+  const [internalValue, setInternalValue] = useState(value);
 
   useEffect(() => {
-    setInternalValue(company.domainName);
-  }, [company.domainName]);
+    setInternalValue(value);
+  }, [value]);
 
   async function handleChange(newValue: string) {
     setInternalValue(newValue);
   }
 
   async function handleSubmit() {
-    await updateCompany({
-      variables: {
-        id: company.id,
-        domainName: internalValue ?? '',
-      },
-    });
+    if (!internalValue) return;
+
+    onSubmit?.(internalValue);
   }
 
   async function handleCancel() {
-    setInternalValue(company.domainName);
+    setInternalValue(value);
   }
 
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <EditableField
-        iconLabel={<IconLink />}
-        onCancel={handleCancel}
         onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        iconLabel={icon}
         editModeContent={
           <InplaceInputText
-            placeholder={'URL'}
+            placeholder={placeholder ?? ''}
             autoFocus
-            value={internalValue}
+            value={internalValue ?? ''}
             onChange={(newValue: string) => {
               handleChange(newValue);
             }}
           />
         }
-        displayModeContent={<FieldDisplayURL URL={internalValue} />}
-        useEditButton
+        displayModeContent={
+          <InplaceInputPhoneDisplayMode value={internalValue ?? ''} />
+        }
         isDisplayModeContentEmpty={!(internalValue !== '')}
+        useEditButton
       />
     </RecoilScope>
   );

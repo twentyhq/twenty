@@ -7,7 +7,6 @@ import { isFieldInEditModeScopedState } from '../states/isFieldInEditModeScopedS
 import { parentHotkeyScopeForFieldScopedState } from '../states/parentHotkeyScopeForFieldScopedState';
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 
-// TODO: use atoms for hotkey scopes
 export function useEditableField() {
   const [isFieldInEditMode, setIsFieldInEditMode] = useRecoilScopedState(
     isFieldInEditModeScopedState,

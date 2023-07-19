@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 
 import { CompanyAccountOwnerPicker } from '@/companies/components/CompanyAccountOwnerPicker';
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
 import { Company, User } from '~/generated/graphql';
 
 const CompanyAccountOwnerPickerContainer = styled.div`
@@ -17,7 +16,6 @@ export type OwnProps = {
   };
   onSubmit?: () => void;
   onCancel?: () => void;
-  parentHotkeyScope?: HotkeyScope;
 };
 
 export function CompanyAccountOwnerPickerFieldEditMode({

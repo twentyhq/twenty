@@ -70,6 +70,7 @@ export function CompanyEmployeesEditableField({ company }: OwnProps) {
           />
         }
         displayModeContent={internalValue}
+        isDisplayModeContentEmpty={!(internalValue && internalValue !== '0')}
       />
     </RecoilScope>
   );

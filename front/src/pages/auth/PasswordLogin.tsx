@@ -112,7 +112,6 @@ export function PasswordLogin() {
         }
         navigate('/auth/create/workspace');
       } catch (err: any) {
-        console.log('err', err);
         enqueueSnackBar(err?.message, {
           variant: 'error',
         });

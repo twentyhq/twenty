@@ -11,9 +11,13 @@ export const GET_PERSON = gql`
       displayName
       email
       createdAt
+      city
+      phone
       _commentThreadCount
       company {
         id
+        name
+        domainName
       }
     }
   }

@@ -2,10 +2,9 @@ import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { PersonPropertyBox } from '@/people/components/PersonPropertyBox';
 import { usePersonQuery } from '@/people/queries';
-import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
-import { PropertyBoxItem } from '@/ui/editable-field/property-box/components/PropertyBoxItem';
-import { IconLink, IconUser } from '@/ui/icon';
+import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
@@ -33,14 +32,7 @@ export function PersonShow() {
             title={person?.displayName ?? 'No name'}
             date={person?.createdAt ?? ''}
           />
-          <PropertyBox extraPadding={true}>
-            <>
-              <PropertyBoxItem
-                icon={<IconLink />}
-                value={person?.firstName ?? 'No First name'}
-              />
-            </>
-          </PropertyBox>
+          {person && <PersonPropertyBox person={person} />}
         </ShowPageLeftContainer>
         <ShowPageRightContainer>
           <Timeline

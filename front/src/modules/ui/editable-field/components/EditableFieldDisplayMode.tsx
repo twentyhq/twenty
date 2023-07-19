@@ -16,7 +16,6 @@ export const EditableFieldNormalModeOuterContainer = styled.div<
   padding: ${({ theme }) => theme.spacing(1)};
 
   ${(props) => {
-    console.log(props.isDisplayModeContentEmpty);
     if (props.isDisplayModeContentEmpty) {
       return css`
         min-width: 50px;

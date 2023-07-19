@@ -99,7 +99,6 @@ export const EditNote: Story = {
       graphql.query(
         getOperationName(GET_COMMENT_THREAD) ?? '',
         (req, res, ctx) => {
-          console.log('coucou');
           return res(
             ctx.data({
               findManyCommentThreads: [mockedCommentThreads[0]],
