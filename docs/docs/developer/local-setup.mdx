@@ -10,7 +10,7 @@ This section will guide you through the Twenty installation on your local enviro
 Twenty is designed to be developer-friendly, and your local installation should be up and running in a few minutes.
 
 In a nutshell:
-- we recommend using `yarn` installation but we also provide an easy way to provide the project with Docker.
+- We recommend using `yarn` installation but we also provide an easy way to provide the project with Docker.
 - Twenty uses PostgreSQL as a database. If we don't have one available, we also provide a one-line command to provision a PostgreSQL instance through Docker.
 
 The repository is structured as follows:
@@ -94,9 +94,9 @@ Browse [http://localhost:3001](http://localhost:3001). You can connect using our
 ## Docker install
 
 If you wish, you can also provision the project with docker. This come with a few advantages:
-- provides the exact same environment as our core developer team
-- includes some additional dependencies (such as `playwright`) that you might need if you wish to contribute to some advanced areas of the project.
-- provisions a postgres database
+- It provides the exact same environment as our core developer team.
+- It includes some additional dependencies (such as `playwright`) that you might need if you wish to contribute to some advanced areas of the project.
+- It provisions a postgres database.
 
 ### 1. Pre-requisites
 
@@ -123,7 +123,7 @@ The default values should work out of the box.
 We provide a containerized environment with Docker and orchestrated with docker-compose.
 This install will also provision a Postgres container.
 
-**Note:**: the configuration is stored `infra/dev` folder but you can run `make` commands direclty from the root folder.
+**Note:** the configuration is stored `infra/dev` folder but you can run `make` commands direclty from the root folder.
 
 ```
 make build
@@ -157,9 +157,9 @@ server:
 make server-start
 ```
 
-- front available on: http://localhost:3001
-- server available on: http://localhost:3000/healthz
-- postgres: available on http://localhost:5432 and should contain database named `default` 
+- front available on: [http://localhost:3001](http://localhost:3001)
+- server available on: [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- postgres: available on [http://localhost:5432](http://localhost:5432) and should contain database named `default`
 
 ### 7. Sign in to your local Twenty installation
 
