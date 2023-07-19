@@ -39,7 +39,7 @@ export function HooksCompanyBoard({
   const [currentPipeline, setCurrentPipeline] =
     useRecoilState(currentPipelineState);
 
-  const [, setBoard] = useRecoilState(boardState);
+  const [board, setBoard] = useRecoilState(boardState);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
@@ -55,12 +55,12 @@ export function HooksCompanyBoard({
           })
         : [];
       const initialBoard: BoardPipelineStageColumn[] =
-        orderedPipelineStages?.map((pipelineStage) => ({
+        orderedPipelineStages?.map((pipelineStage, i) => ({
           pipelineStageId: pipelineStage.id,
           title: pipelineStage.name,
           colorCode: pipelineStage.color,
           index: pipelineStage.index || 0,
-          pipelineProgressIds: [],
+          pipelineProgressIds: board?.[i].pipelineProgressIds || [],
         })) || [];
       setBoard(initialBoard);
     },
