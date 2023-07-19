@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
@@ -14,7 +14,12 @@ import { CommentableType } from '~/generated/graphql';
 export function PersonShow() {
   const personId = useParams().personId ?? '';
 
+  const location = useLocation();
+
+  console.log({ location, personId, params: useParams() });
+
   const { data } = usePersonQuery(personId);
+  console.log({ data });
   const person = data?.findUniquePerson;
 
   const theme = useTheme();

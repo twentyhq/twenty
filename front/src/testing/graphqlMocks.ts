@@ -4,7 +4,7 @@ import { graphql } from 'msw';
 import { CREATE_EVENT } from '@/analytics/queries';
 import { GET_CLIENT_CONFIG } from '@/client-config/queries';
 import { GET_COMPANIES } from '@/companies/queries';
-import { GET_PEOPLE, UPDATE_PERSON } from '@/people/queries';
+import { GET_PEOPLE, GET_PERSON, UPDATE_PERSON } from '@/people/queries';
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import {
   SEARCH_COMPANY_QUERY,
@@ -15,6 +15,7 @@ import { GET_CURRENT_USER } from '@/users/queries';
 import {
   GetCompaniesQuery,
   GetPeopleQuery,
+  GetPersonQuery,
   SearchCompanyQuery,
   SearchPeopleQuery,
   SearchUserQuery,
@@ -25,7 +26,11 @@ import { mockedPeopleData } from './mock-data/people';
 import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { mockedPipelinesData } from './mock-data/pipelines';
 import { mockedUsersData } from './mock-data/users';
-import { filterAndSortData, updateOneFromData } from './mock-data';
+import {
+  fetchOneFromData,
+  filterAndSortData,
+  updateOneFromData,
+} from './mock-data';
 
 export const graphqlMocks = [
   graphql.query(getOperationName(GET_COMPANIES) ?? '', (req, res, ctx) => {
@@ -102,6 +107,17 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         currentUser: mockedUsersData[0],
+      }),
+    );
+  }),
+  graphql.query(getOperationName(GET_PERSON) ?? '', (req, res, ctx) => {
+    console.log({ req });
+    const returnedMockedData = fetchOneFromData<
+      GetPersonQuery['findUniquePerson']
+    >(mockedPeopleData, req.variables.id);
+    return res(
+      ctx.data({
+        findUniquePerson: returnedMockedData,
       }),
     );
   }),
