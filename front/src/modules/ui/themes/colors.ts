@@ -111,10 +111,10 @@ export const color = {
   gray70: grayScale.gray65,
   gray60: grayScale.gray55,
   gray50: grayScale.gray40,
-  gray40: grayScale.gray35,
-  gray30: grayScale.gray30,
-  gray20: grayScale.gray25,
-  gray10: grayScale.gray20,
+  gray40: grayScale.gray25,
+  gray30: grayScale.gray20,
+  gray20: grayScale.gray15,
+  gray10: grayScale.gray10,
   gray0: grayScale.gray0,
 };
 
