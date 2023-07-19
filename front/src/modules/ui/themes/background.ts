@@ -16,22 +16,22 @@ export const backgroundLight = {
     light: rgba(grayScale.gray100, 0.04),
     lighter: rgba(grayScale.gray100, 0.02),
   },
-  overlay: rgba(grayScale.gray80, 0.8),
+  overlay: rgba(grayScale.gray85, 0.8),
 };
 
 export const backgroundDark = {
   noisy: `url(${DarkNoise.toString()});`,
-  primary: grayScale.gray85,
-  secondary: grayScale.gray80,
-  tertiary: grayScale.gray75,
-  quaternary: grayScale.gray70,
+  primary: grayScale.gray90,
+  secondary: grayScale.gray85,
+  tertiary: grayScale.gray80,
+  quaternary: grayScale.gray75,
   transparent: {
-    primary: rgba(grayScale.gray85, 0.8),
-    secondary: rgba(grayScale.gray80, 0.8),
+    primary: rgba(grayScale.gray90, 0.8),
+    secondary: rgba(grayScale.gray85, 0.8),
     strong: rgba(grayScale.gray0, 0.09),
     medium: rgba(grayScale.gray0, 0.06),
     light: rgba(grayScale.gray0, 0.03),
     lighter: rgba(grayScale.gray0, 0.02),
   },
-  overlay: rgba(grayScale.gray80, 0.8),
+  overlay: rgba(grayScale.gray85, 0.8),
 };

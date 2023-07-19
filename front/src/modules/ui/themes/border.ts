@@ -14,16 +14,16 @@ export const borderLight = {
     strong: grayScale.gray25,
     medium: grayScale.gray20,
     light: grayScale.gray15,
-    inverted: grayScale.gray55,
+    inverted: grayScale.gray60,
   },
   ...common,
 };
 
 export const borderDark = {
   color: {
-    strong: grayScale.gray60,
-    medium: grayScale.gray65,
-    light: grayScale.gray70,
+    strong: grayScale.gray65,
+    medium: grayScale.gray70,
+    light: grayScale.gray75,
     inverted: grayScale.gray30,
   },
   ...common,
