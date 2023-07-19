@@ -5,9 +5,12 @@ import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
   IconCurrencyDollar,
+  IconUser,
 } from '@/ui/icon/index';
 import { icon } from '@/ui/themes/icon';
 import { PipelineProgress } from '~/generated/graphql';
+
+import { FilterDropdownPeopleSearchSelect } from '../../modules/people/components/FilterDropdownPeopleSearchSelect';
 
 export const opportunitiesFilters: FilterDefinitionByEntity<PipelineProgress>[] =
   [
@@ -32,6 +35,15 @@ export const opportunitiesFilters: FilterDefinitionByEntity<PipelineProgress>[] 
       type: 'entity',
       entitySelectComponent: (
         <FilterDropdownCompanySearchSelect context={CompanyBoardContext} />
+      ),
+    },
+    {
+      field: 'pointOfContactId',
+      label: 'Point of contact',
+      icon: <IconUser size={icon.size.md} stroke={icon.stroke.sm} />,
+      type: 'entity',
+      entitySelectComponent: (
+        <FilterDropdownPeopleSearchSelect context={CompanyBoardContext} />
       ),
     },
   ];
