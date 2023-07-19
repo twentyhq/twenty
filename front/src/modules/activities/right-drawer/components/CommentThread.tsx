@@ -100,7 +100,7 @@ export function CommentThread({
   });
   const commentThread = data?.findManyCommentThreads[0];
 
-  const [title, setTitle] = useState<string | null | undefined>(undefined);
+  const [title, setTitle] = useState<string | null>(null);
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 
@@ -128,7 +128,7 @@ export function CommentThread({
   }
 
   useEffect(() => {
-    if (commentThread && !title) {
+    if (commentThread && !(title || title === '')) {
       setTitle(commentThread?.title ?? '');
     }
   }, [commentThread, title]);
