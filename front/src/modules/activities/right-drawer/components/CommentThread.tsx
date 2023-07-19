@@ -128,10 +128,10 @@ export function CommentThread({
   }
 
   useEffect(() => {
-    if (commentThread && !(title || title === '')) {
+    if (commentThread) {
       setTitle(commentThread?.title ?? '');
     }
-  }, [commentThread, title]);
+  }, [commentThread]);
 
   if (!commentThread) {
     return <></>;
