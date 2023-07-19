@@ -35,6 +35,7 @@ const common = {
     checkboxColumnWidth: '32px',
   },
   rightDrawerWidth: '500px',
+  leftNavBarWidth: '220px',
   clickableElementBackgroundTransition: 'background 0.1s ease',
   lastLayerZIndex: 2147483647,
 };

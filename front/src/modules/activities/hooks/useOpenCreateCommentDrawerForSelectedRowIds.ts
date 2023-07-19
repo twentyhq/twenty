@@ -6,7 +6,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE } from '@/people/queries';
 import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { useOpenRightDrawer } from '@/ui/right-drawer/hooks/useOpenRightDrawer';
+import { useRightDrawer } from '@/ui/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector';
@@ -22,7 +22,7 @@ import { viewableCommentThreadIdState } from '../states/viewableCommentThreadIdS
 import { CommentableEntity } from '../types/CommentableEntity';
 
 export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
-  const openRightDrawer = useOpenRightDrawer();
+  const { openRightDrawer } = useRightDrawer();
   const [createCommentThreadMutation] = useCreateCommentThreadMutation();
   const currentUser = useRecoilValue(currentUserState);
   const [, setViewableCommentThreadId] = useRecoilState(

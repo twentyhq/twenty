@@ -22,7 +22,7 @@ type Story = StoryObj<typeof RightDrawerTopBar>;
 export const Default: Story = {
   render: getRenderWrapperForComponent(
     <div style={{ width: '500px' }}>
-      <RightDrawerTopBar title={'Title'} />
+      <RightDrawerTopBar />
     </div>,
   ),
   parameters: {
