@@ -1,9 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CommentResolver } from './comment.resolver';
-import { CommentService } from '../services/comment.service';
-import { CreateOneCommentGuard } from 'src/guards/create-one-comment.guard';
 import { CanActivate } from '@nestjs/common';
+
+import { CommentService } from 'src/core/comment/services/comment.service';
+import { CreateOneCommentGuard } from 'src/guards/create-one-comment.guard';
 import { AbilityFactory } from 'src/ability/ability.factory';
+
+import { CommentResolver } from './comment.resolver';
 
 describe('CommentResolver', () => {
   let resolver: CommentResolver;

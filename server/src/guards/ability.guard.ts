@@ -5,10 +5,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ModuleRef, Reflector } from '@nestjs/core';
+
+import { AbilityHandler } from 'src/ability/interfaces/ability-handler.interface';
+
 import { PassportUser } from 'src/core/auth/strategies/jwt.auth.strategy';
 import { CHECK_ABILITIES_KEY } from 'src/decorators/check-abilities.decorator';
 import { AbilityFactory, AppAbility } from 'src/ability/ability.factory';
-import { AbilityHandler } from 'src/ability/interfaces/ability-handler.interface';
 import { assert } from 'src/utils/assert';
 import { getRequest } from 'src/utils/extract-request';
 

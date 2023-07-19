@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PersonResolver } from './person.resolver';
-import { PersonService } from './person.service';
-import { UpdateOneGuard } from 'src/guards/update-one.guard';
 import { CanActivate } from '@nestjs/common';
+
+import { UpdateOneGuard } from 'src/guards/update-one.guard';
 import { DeleteManyGuard } from 'src/guards/delete-many.guard';
 import { CreateOneGuard } from 'src/guards/create-one.guard';
 import { AbilityFactory } from 'src/ability/ability.factory';
+
+import { PersonService } from './person.service';
+import { PersonResolver } from './person.resolver';
 
 describe('PersonResolver', () => {
   let resolver: PersonResolver;

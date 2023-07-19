@@ -1,6 +1,8 @@
 import { Global, Module } from '@nestjs/common';
+
 import { AbilityFactory } from 'src/ability/ability.factory';
 import { PrismaService } from 'src/database/prisma.service';
+
 import {
   CreateUserAbilityHandler,
   DeleteUserAbilityHandler,

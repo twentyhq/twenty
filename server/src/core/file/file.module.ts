@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { FileService } from './services/file.service';
 import { FileUploadService } from './services/file-upload.service';
 import { FileUploadResolver } from './resolvers/file-upload.resolver';

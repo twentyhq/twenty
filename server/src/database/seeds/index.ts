@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+
 import { seedCompanies } from './companies';
 import { seedWorkspaces } from './workspaces';
 import { seedPeople } from './people';

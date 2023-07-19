@@ -1,7 +1,13 @@
 import { Query, Args, Mutation, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+
+import { Prisma } from '@prisma/client';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
+
+import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
+
 import { Workspace } from 'src/core/@generated/workspace/workspace.model';
-import { WorkspaceService } from '../services/workspace.service';
+import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import {
   PrismaSelect,
   PrismaSelector,
@@ -9,12 +15,9 @@ import {
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { WorkspaceUpdateInput } from 'src/core/@generated/workspace/workspace-update.input';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { Prisma } from '@prisma/client';
 import { assert } from 'src/utils/assert';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import { UpdateWorkspaceAbilityHandler } from 'src/ability/handlers/workspace.ability-handler';

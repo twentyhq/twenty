@@ -1,18 +1,20 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
-import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { UseGuards } from '@nestjs/common';
-import { AuthWorkspace } from '../../decorators/auth-workspace.decorator';
-import { Company } from '../../core/@generated/company/company.model';
-import { FindManyCompanyArgs } from '../../core/@generated/company/find-many-company.args';
-import { UpdateOneCompanyArgs } from '../../core/@generated/company/update-one-company.args';
-import { CreateOneCompanyArgs } from '../../core/@generated/company/create-one-company.args';
-import { AffectedRows } from '../../core/@generated/prisma/affected-rows.output';
-import { DeleteManyCompanyArgs } from '../../core/@generated/company/delete-many-company.args';
+
 import { Prisma, Workspace } from '@prisma/client';
-import { UpdateOneGuard } from '../../guards/update-one.guard';
-import { DeleteManyGuard } from '../../guards/delete-many.guard';
-import { CreateOneGuard } from '../../guards/create-one.guard';
-import { CompanyService } from './company.service';
+import { accessibleBy } from '@casl/prisma';
+
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { Company } from 'src/core/@generated/company/company.model';
+import { FindManyCompanyArgs } from 'src/core/@generated/company/find-many-company.args';
+import { UpdateOneCompanyArgs } from 'src/core/@generated/company/update-one-company.args';
+import { CreateOneCompanyArgs } from 'src/core/@generated/company/create-one-company.args';
+import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
+import { DeleteManyCompanyArgs } from 'src/core/@generated/company/delete-many-company.args';
+import { UpdateOneGuard } from 'src/guards/update-one.guard';
+import { DeleteManyGuard } from 'src/guards/delete-many.guard';
+import { CreateOneGuard } from 'src/guards/create-one.guard';
 import {
   PrismaSelect,
   PrismaSelector,
@@ -27,7 +29,8 @@ import {
 } from 'src/ability/handlers/company.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
-import { accessibleBy } from '@casl/prisma';
+
+import { CompanyService } from './company.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Company)

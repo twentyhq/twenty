@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+
+import { CommentModule } from 'src/core/comment/comment.module';
+
 import { PersonService } from './person.service';
 import { PersonResolver } from './person.resolver';
 import { PersonRelationsResolver } from './person-relations.resolver';
-import { CommentModule } from '../comment/comment.module';
 
 @Module({
   imports: [CommentModule, CommentModule],

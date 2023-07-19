@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { FileUploadService } from 'src/core/file/services/file-upload.service';
+
 import { FileUploadResolver } from './file-upload.resolver';
-import { FileUploadService } from '../services/file-upload.service';
 
 describe('FileUploadResolver', () => {
   let resolver: FileUploadResolver;

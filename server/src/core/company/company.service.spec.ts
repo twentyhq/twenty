@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CompanyService } from './company.service';
+
 import { PrismaService } from 'src/database/prisma.service';
 import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
+
+import { CompanyService } from './company.service';
 
 describe('CompanyService', () => {
   let service: CompanyService;

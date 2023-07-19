@@ -7,19 +7,22 @@ import {
   Parent,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+
+import { accessibleBy } from '@casl/prisma';
+import { Prisma } from '@prisma/client';
+
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { Person } from '../../core/@generated/person/person.model';
-import { FindManyPersonArgs } from '../../core/@generated/person/find-many-person.args';
-import { UpdateOnePersonArgs } from '../../core/@generated/person/update-one-person.args';
-import { CreateOnePersonArgs } from '../../core/@generated/person/create-one-person.args';
-import { AffectedRows } from '../../core/@generated/prisma/affected-rows.output';
-import { DeleteManyPersonArgs } from '../../core/@generated/person/delete-many-person.args';
-import { Workspace } from '../../core/@generated/workspace/workspace.model';
-import { AuthWorkspace } from '../../decorators/auth-workspace.decorator';
-import { UpdateOneGuard } from '../../guards/update-one.guard';
-import { DeleteManyGuard } from '../../guards/delete-many.guard';
-import { CreateOneGuard } from '../../guards/create-one.guard';
-import { PersonService } from './person.service';
+import { Person } from 'src/core/@generated/person/person.model';
+import { FindManyPersonArgs } from 'src/core/@generated/person/find-many-person.args';
+import { UpdateOnePersonArgs } from 'src/core/@generated/person/update-one-person.args';
+import { CreateOnePersonArgs } from 'src/core/@generated/person/create-one-person.args';
+import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
+import { DeleteManyPersonArgs } from 'src/core/@generated/person/delete-many-person.args';
+import { Workspace } from 'src/core/@generated/workspace/workspace.model';
+import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { UpdateOneGuard } from 'src/guards/update-one.guard';
+import { DeleteManyGuard } from 'src/guards/delete-many.guard';
+import { CreateOneGuard } from 'src/guards/create-one.guard';
 import {
   PrismaSelect,
   PrismaSelector,
@@ -34,8 +37,8 @@ import {
 } from 'src/ability/handlers/person.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
-import { accessibleBy } from '@casl/prisma';
-import { Prisma } from '@prisma/client';
+
+import { PersonService } from './person.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Person)

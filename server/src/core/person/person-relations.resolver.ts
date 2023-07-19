@@ -1,9 +1,10 @@
 import { Resolver, Root, ResolveField, Int } from '@nestjs/graphql';
+
 import { CommentThread } from 'src/core/@generated/comment-thread/comment-thread.model';
 import { Comment } from 'src/core/@generated/comment/comment.model';
 import { Person } from 'src/core/@generated/person/person.model';
-import { CommentThreadService } from '../comment/services/comment-thread.service';
-import { CommentService } from '../comment/services/comment.service';
+import { CommentThreadService } from 'src/core/comment/services/comment-thread.service';
+import { CommentService } from 'src/core/comment/services/comment.service';
 import {
   PrismaSelect,
   PrismaSelector,

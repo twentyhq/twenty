@@ -1,8 +1,9 @@
 import * as fs from 'fs/promises';
 import { createReadStream, existsSync } from 'fs';
 import { join, dirname } from 'path';
-import { StorageDriver } from './interfaces/storage-driver.interface';
 import { Readable } from 'stream';
+
+import { StorageDriver } from './interfaces/storage-driver.interface';
 
 export interface LocalDriverOptions {
   storagePath: string;

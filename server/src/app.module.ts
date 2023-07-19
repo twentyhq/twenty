@@ -1,17 +1,19 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { AppService } from './app.service';
-
 import { ConfigModule } from '@nestjs/config';
-import { CoreModule } from './core/core.module';
-import { IntegrationsModule } from './integrations/integrations.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { GraphQLError } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
+
+import { AppService } from './app.service';
+
+import { CoreModule } from './core/core.module';
+import { IntegrationsModule } from './integrations/integrations.module';
 import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
-import GraphQLJSON from 'graphql-type-json';
 
 @Module({
   imports: [

@@ -1,9 +1,13 @@
-import { kebabCase } from 'src/utils/kebab-case';
-import { FileFolder } from './interfaces/file-folder.interface';
-import { KebabCase } from 'type-fest';
 import { BadRequestException } from '@nestjs/common';
+
 import { basename } from 'path';
+
+import { KebabCase } from 'type-fest';
+
+import { kebabCase } from 'src/utils/kebab-case';
 import { settings } from 'src/constants/settings';
+
+import { FileFolder } from './interfaces/file-folder.interface';
 
 type AllowedFolders = KebabCase<keyof typeof FileFolder>;
 

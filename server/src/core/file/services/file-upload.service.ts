@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
+
 import sharp from 'sharp';
+import { v4 as uuidV4 } from 'uuid';
+
+import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
+
 import { getCropSize } from 'src/utils/image';
 import { settings } from 'src/constants/settings';
-import { FileFolder } from '../interfaces/file-folder.interface';
 import { FileStorageService } from 'src/integrations/file-storage/file-storage.service';
-import { v4 as uuidV4 } from 'uuid';
 
 @Injectable()
 export class FileUploadService {

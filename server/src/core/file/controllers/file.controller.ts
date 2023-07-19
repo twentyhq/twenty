@@ -1,7 +1,9 @@
 import { Controller, Get, Param, Res } from '@nestjs/common';
+
 import { Response } from 'express';
-import { checkFilePath, checkFilename } from '../file.utils';
-import { FileService } from '../services/file.service';
+
+import { checkFilePath, checkFilename } from 'src/core/file/file.utils';
+import { FileService } from 'src/core/file/services/file.service';
 
 // TODO: Add cookie authentication
 @Controller('files')

@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CommentService } from './comment.service';
+
 import { PrismaService } from 'src/database/prisma.service';
 import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
+
+import { CommentService } from './comment.service';
 
 describe('CommentService', () => {
   let service: CommentService;

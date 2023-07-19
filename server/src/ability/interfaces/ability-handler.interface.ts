@@ -1,5 +1,6 @@
 import { ExecutionContext, Type } from '@nestjs/common';
-import { AppAbility } from '../ability.factory';
+
+import { AppAbility } from 'src/ability/ability.factory';
 
 export interface IAbilityHandler {
   handle(

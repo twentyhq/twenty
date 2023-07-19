@@ -1,5 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+
 import { getRequest } from 'src/utils/extract-request';
 
 @Injectable()

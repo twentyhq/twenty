@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
+
+import { FileUploadService } from 'src/core/file/services/file-upload.service';
+
 import { AttachmentResolver } from './resolvers/attachment.resolver';
-import { FileUploadService } from '../file/services/file-upload.service';
 import { AttachmentService } from './services/attachment.service';
 
 @Module({

@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WorkspaceMemberService } from './workspace-member.service';
+
 import { PrismaService } from 'src/database/prisma.service';
 import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
+
+import { WorkspaceMemberService } from './workspace-member.service';
 
 describe('WorkspaceMemberService', () => {
   let service: WorkspaceMemberService;

@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CompanyResolver } from './company.resolver';
-import { CompanyService } from './company.service';
-import { UpdateOneGuard } from 'src/guards/update-one.guard';
 import { CanActivate } from '@nestjs/common';
+
+import { UpdateOneGuard } from 'src/guards/update-one.guard';
 import { DeleteManyGuard } from 'src/guards/delete-many.guard';
 import { CreateOneGuard } from 'src/guards/create-one.guard';
 import { AbilityFactory } from 'src/ability/ability.factory';
+
+import { CompanyService } from './company.service';
+import { CompanyResolver } from './company.resolver';
 
 describe('CompanyResolver', () => {
   let resolver: CompanyResolver;

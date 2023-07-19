@@ -4,17 +4,24 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ChallengeInput } from '../dto/challenge.input';
+
+import { Prisma } from '@prisma/client';
+
+import { ChallengeInput } from 'src/core/auth/dto/challenge.input';
 import { UserService } from 'src/core/user/user.service';
 import { assert } from 'src/utils/assert';
-import { PASSWORD_REGEX, compareHash, hashPassword } from '../auth.util';
-import { Verify } from '../dto/verify.entity';
-import { TokenService } from './token.service';
-import { Prisma } from '@prisma/client';
-import { UserExists } from '../dto/user-exists.entity';
+import {
+  PASSWORD_REGEX,
+  compareHash,
+  hashPassword,
+} from 'src/core/auth/auth.util';
+import { Verify } from 'src/core/auth/dto/verify.entity';
+import { UserExists } from 'src/core/auth/dto/user-exists.entity';
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
-import { WorkspaceInviteHashValid } from '../dto/workspace-invite-hash-valid.entity';
-import { SignUpInput } from '../dto/sign-up.input';
+import { WorkspaceInviteHashValid } from 'src/core/auth/dto/workspace-invite-hash-valid.entity';
+import { SignUpInput } from 'src/core/auth/dto/sign-up.input';
+
+import { TokenService } from './token.service';
 
 export type UserPayload = {
   firstName: string;

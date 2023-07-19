@@ -1,18 +1,21 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { BadRequestException } from '@nestjs/common';
+
+import { Prisma } from '@prisma/client';
+
+import {
+  PrismaSelect,
+  PrismaSelector,
+} from 'src/decorators/prisma-select.decorator';
+
 import { AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
 import { RefreshTokenInput } from './dto/refresh-token.input';
-import { BadRequestException } from '@nestjs/common';
 import { Verify } from './dto/verify.entity';
 import { VerifyInput } from './dto/verify.input';
 import { AuthService } from './services/auth.service';
 import { LoginToken } from './dto/login-token.entity';
 import { ChallengeInput } from './dto/challenge.input';
-import {
-  PrismaSelect,
-  PrismaSelector,
-} from 'src/decorators/prisma-select.decorator';
-import { Prisma } from '@prisma/client';
 import { UserExists } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';

@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WorkspaceMemberResolver } from './workspace-member.resolver';
-import { WorkspaceMemberService } from '../services/workspace-member.service';
+
+import { WorkspaceMemberService } from 'src/core/workspace/services/workspace-member.service';
 import { AbilityFactory } from 'src/ability/ability.factory';
+
+import { WorkspaceMemberResolver } from './workspace-member.resolver';
 
 describe('WorkspaceMemberResolver', () => {
   let resolver: WorkspaceMemberResolver;

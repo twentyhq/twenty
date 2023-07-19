@@ -1,12 +1,14 @@
 import { DynamicModule, Global } from '@nestjs/common';
+
 import { FileStorageService } from './file-storage.service';
-import { LocalDriver } from './drivers/local.driver';
-import { S3Driver } from './drivers/s3.driver';
 import {
   FileStorageModuleAsyncOptions,
   FileStorageModuleOptions,
 } from './interfaces';
 import { STORAGE_DRIVER } from './file-storage.constants';
+
+import { LocalDriver } from './drivers/local.driver';
+import { S3Driver } from './drivers/s3.driver';
 
 @Global()
 export class FileStorageModule {

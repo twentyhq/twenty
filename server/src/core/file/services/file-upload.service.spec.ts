@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FileUploadService } from './file-upload.service';
+
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { FileStorageService } from 'src/integrations/file-storage/file-storage.service';
+
+import { FileUploadService } from './file-upload.service';
 
 describe('FileUploadService', () => {
   let service: FileUploadService;

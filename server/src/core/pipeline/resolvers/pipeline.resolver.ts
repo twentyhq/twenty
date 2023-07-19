@@ -1,10 +1,12 @@
 import { Resolver, Args, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+
 import { accessibleBy } from '@casl/prisma';
+
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { Pipeline } from '../../@generated/pipeline/pipeline.model';
-import { FindManyPipelineArgs } from '../../@generated/pipeline/find-many-pipeline.args';
-import { PipelineService } from '../services/pipeline.service';
+import { Pipeline } from 'src/core/@generated/pipeline/pipeline.model';
+import { FindManyPipelineArgs } from 'src/core/@generated/pipeline/find-many-pipeline.args';
+import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import { ReadPipelineAbilityHandler } from 'src/ability/handlers/pipeline.ability-handler';

@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AttachmentResolver } from './attachment.resolver';
+
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
-import { AttachmentService } from '../services/attachment.service';
+import { AttachmentService } from 'src/core/attachment/services/attachment.service';
 import { AbilityFactory } from 'src/ability/ability.factory';
+
+import { AttachmentResolver } from './attachment.resolver';
 
 describe('AttachmentResolver', () => {
   let resolver: AttachmentResolver;

@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PipelineProgressResolver } from './pipeline-progress.resolver';
-import { PipelineProgressService } from '../services/pipeline-progress.service';
+
+import { PipelineProgressService } from 'src/core/pipeline/services/pipeline-progress.service';
 import { AbilityFactory } from 'src/ability/ability.factory';
+
+import { PipelineProgressResolver } from './pipeline-progress.resolver';
 
 describe('PipelineProgressResolver', () => {
   let resolver: PipelineProgressResolver;

@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
-import seedSalesPipeline from '../seed-data/sales-pipeline.json';
+
 import { PipelineProgressableType } from '@prisma/client';
+
+import { PrismaService } from 'src/database/prisma.service';
+import seedSalesPipeline from 'src/core/pipeline/seed-data/sales-pipeline.json';
 
 @Injectable()
 export class PipelineService {

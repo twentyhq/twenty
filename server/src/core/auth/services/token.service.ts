@@ -7,13 +7,15 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from '../strategies/jwt.auth.strategy';
-import { PrismaService } from 'src/database/prisma.service';
-import { assert } from 'src/utils/assert';
+
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { AuthToken } from '../dto/token.entity';
 import { TokenExpiredError } from 'jsonwebtoken';
+
+import { JwtPayload } from 'src/core/auth/strategies/jwt.auth.strategy';
+import { PrismaService } from 'src/database/prisma.service';
+import { assert } from 'src/utils/assert';
+import { AuthToken } from 'src/core/auth/dto/token.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Injectable()
