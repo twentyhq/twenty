@@ -53,10 +53,7 @@ const validationSchema = Yup.object()
     exist: Yup.boolean().required(),
     email: Yup.string().email('Email must be a valid email').required(),
     password: Yup.string()
-      .matches(
-        PASSWORD_REGEX,
-        'Password must contain at least 8 characters, one uppercase and one number',
-      )
+      .matches(PASSWORD_REGEX, 'Password must contain at least 8 characters')
       .required(),
   })
   .required();

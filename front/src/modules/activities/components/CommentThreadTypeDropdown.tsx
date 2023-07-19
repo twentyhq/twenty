@@ -2,7 +2,7 @@ import {
   DropdownButton,
   DropdownOptionType,
 } from '@/ui/button/components/DropdownButton';
-import { IconCheck, IconNotes } from '@/ui/icon/index';
+import { IconNotes } from '@/ui/icon/index';
 import {
   ActivityType,
   CommentThread,
@@ -17,7 +17,6 @@ export function CommentThreadTypeDropdown({ commentThread }: OwnProps) {
   const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
   const options: DropdownOptionType[] = [
     { label: 'Note', key: 'note', icon: <IconNotes /> },
-    { label: 'Task', key: 'task', icon: <IconCheck /> },
   ];
 
   function getSelectedOptionKey() {
