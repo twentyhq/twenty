@@ -1,3 +1,4 @@
+import { accentDark, accentLight } from './accent';
 import { animation } from './animation';
 import { backgroundDark, backgroundLight } from './background';
 import { blur } from './blur';
@@ -42,11 +43,10 @@ const common = {
 export const lightTheme = {
   ...common,
   ...{
+    accent: accentLight,
     background: backgroundLight,
     border: borderLight,
     boxShadow: boxShadowLight,
-    selectedCardHover: color.blue20,
-    selectedCard: color.blue10,
     font: fontLight,
     name: 'light',
   },
@@ -56,11 +56,10 @@ export type ThemeType = typeof lightTheme;
 export const darkTheme: ThemeType = {
   ...common,
   ...{
+    accent: accentDark,
     background: backgroundDark,
     border: borderDark,
     boxShadow: boxShadowDark,
-    selectedCardHover: color.blue70,
-    selectedCard: color.blue80,
     font: fontDark,
     name: 'dark',
   },

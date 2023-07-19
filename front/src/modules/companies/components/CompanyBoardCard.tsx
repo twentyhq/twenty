@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -13,7 +13,7 @@ import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsSta
 import { ChipVariant } from '@/ui/chip/components/EntityChip';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
-import { IconCheck, IconCurrencyDollar } from '@/ui/icon';
+import { IconCurrencyDollar, IconProgressCheck } from '@/ui/icon';
 import { IconCalendarEvent } from '@/ui/icon';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
@@ -26,14 +26,19 @@ import { CompanyChip } from './CompanyChip';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
-    selected ? theme.selectedCard : theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+    selected ? theme.accent.quaternary : theme.background.secondary};
+  border: 1px solid
+    ${({ theme, selected }) =>
+      selected ? theme.accent.secondary : theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   color: ${({ theme }) => theme.font.color.primary};
   &:hover {
     background-color: ${({ theme, selected }) =>
-      selected ? theme.selectedCardHover : theme.background.tertiary};
+      selected && theme.accent.tertiary};
+    border: 1px solid
+      ${({ theme, selected }) =>
+        selected ? theme.accent.primary : theme.border.color.medium};
   }
   cursor: pointer;
 `;
@@ -78,6 +83,7 @@ const StyledBoardCardBody = styled.div`
 `;
 
 export function CompanyBoardCard() {
+  const [isHovered, setIsHovered] = useState(false);
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
 
   const [pipelineProgressId] = useRecoilScopedState(
@@ -132,7 +138,12 @@ export function CompanyBoardCard() {
 
   return (
     <StyledBoardCardWrapper>
-      <StyledBoardCard selected={selected}>
+      <StyledBoardCard
+        selected={selected}
+        onClick={() => handleCheckboxChange(!selected)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <StyledBoardCardHeader>
           <CompanyChip
             id={company.id}
@@ -142,7 +153,9 @@ export function CompanyBoardCard() {
             variant={ChipVariant.transparent}
           />
           <div style={{ display: 'flex', flex: 1 }} />
-          <Checkbox checked={selected} onChange={handleCheckboxChange} />
+          {(isHovered || selected) && (
+            <Checkbox checked={selected} onChange={handleCheckboxChange} />
+          )}
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <DateEditableField
@@ -167,7 +180,7 @@ export function CompanyBoardCard() {
             }
           />
           <ProbabilityEditableField
-            icon={<IconCheck />}
+            icon={<IconProgressCheck />}
             value={pipelineProgress.probability}
             onSubmit={(value) => {
               handleCardUpdate({
