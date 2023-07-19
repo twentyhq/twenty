@@ -6,6 +6,7 @@ export const StyledBoard = styled.div`
   display: flex;
   flex-direction: row;
   overflow-x: auto;
+  padding-left: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
