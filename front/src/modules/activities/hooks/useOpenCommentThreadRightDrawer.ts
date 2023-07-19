@@ -1,14 +1,14 @@
 import { useRecoilState } from 'recoil';
 
 import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { useOpenRightDrawer } from '@/ui/right-drawer/hooks/useOpenRightDrawer';
+import { useRightDrawer } from '@/ui/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 
 import { viewableCommentThreadIdState } from '../states/viewableCommentThreadIdState';
 
 export function useOpenCommentThreadRightDrawer() {
-  const openRightDrawer = useOpenRightDrawer();
+  const { openRightDrawer } = useRightDrawer();
   const [, setViewableCommentThreadId] = useRecoilState(
     viewableCommentThreadIdState,
   );
