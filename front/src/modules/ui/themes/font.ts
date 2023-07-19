@@ -32,7 +32,7 @@ export const fontLight = {
 
 export const fontDark = {
   color: {
-    primary: grayScale.gray35,
+    primary: grayScale.gray30,
     secondary: grayScale.gray40,
     tertiary: grayScale.gray50,
     light: grayScale.gray55,
