@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -82,7 +82,7 @@ const StyledBoardCardBody = styled.div`
   }
 `;
 
-const FieldContainer = styled.div`
+const StyledFieldContainer = styled.div`
   width: max-content;
 `;
 
@@ -136,6 +136,22 @@ export function CompanyBoardCard() {
     return null;
   }
 
+  function PreventSelectOnClickContainer({
+    children,
+  }: {
+    children: ReactNode;
+  }) {
+    return (
+      <StyledFieldContainer
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        {children}
+      </StyledFieldContainer>
+    );
+  }
+
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard
@@ -152,7 +168,7 @@ export function CompanyBoardCard() {
             picture={getLogoUrlFromDomainName(company.domainName)}
             variant={ChipVariant.transparent}
           />
-          <FieldContainer style={{ display: 'flex', flex: 1 }} />
+          <div style={{ display: 'flex', flex: 1 }} />
           {(isHovered || selected) && (
             <Checkbox
               checked={selected}
@@ -161,7 +177,7 @@ export function CompanyBoardCard() {
           )}
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          <FieldContainer onClick={(e) => e.stopPropagation()}>
+          <PreventSelectOnClickContainer>
             <DateEditableField
               icon={<IconCalendarEvent />}
               value={pipelineProgress.closeDate || new Date().toISOString()}
@@ -172,8 +188,8 @@ export function CompanyBoardCard() {
                 })
               }
             />
-          </FieldContainer>
-          <FieldContainer onClick={(e) => e.stopPropagation()}>
+          </PreventSelectOnClickContainer>
+          <PreventSelectOnClickContainer>
             <NumberEditableField
               icon={<IconCurrencyDollar />}
               placeholder="Opportunity amount"
@@ -185,8 +201,8 @@ export function CompanyBoardCard() {
                 })
               }
             />
-          </FieldContainer>
-          <FieldContainer onClick={(e) => e.stopPropagation()}>
+          </PreventSelectOnClickContainer>
+          <PreventSelectOnClickContainer>
             <ProbabilityEditableField
               icon={<IconProgressCheck />}
               value={pipelineProgress.probability}
@@ -197,12 +213,12 @@ export function CompanyBoardCard() {
                 });
               }}
             />
-          </FieldContainer>
-          <FieldContainer onClick={(e) => e.stopPropagation()}>
+          </PreventSelectOnClickContainer>
+          <PreventSelectOnClickContainer>
             <PipelineProgressPointOfContactEditableField
               pipelineProgress={pipelineProgress}
             />
-          </FieldContainer>
+          </PreventSelectOnClickContainer>
         </StyledBoardCardBody>
       </StyledBoardCard>
     </StyledBoardCardWrapper>
