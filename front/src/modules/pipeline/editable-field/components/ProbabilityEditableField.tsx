@@ -11,11 +11,6 @@ type OwnProps = {
 };
 
 export function ProbabilityEditableField({ icon, value, onSubmit }: OwnProps) {
-  async function handleSubmit(probabilityValue: number | null | undefined) {
-    if (!probabilityValue) return;
-    onSubmit?.(probabilityValue);
-  }
-
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <EditableField
@@ -23,10 +18,7 @@ export function ProbabilityEditableField({ icon, value, onSubmit }: OwnProps) {
         displayModeContentOnly
         disableHoverEffect
         displayModeContent={
-          <ProbabilityFieldEditMode
-            value={value ?? 0}
-            onChange={handleSubmit}
-          />
+          <ProbabilityFieldEditMode value={value ?? 0} onChange={onSubmit} />
         }
       />
     </RecoilScope>
