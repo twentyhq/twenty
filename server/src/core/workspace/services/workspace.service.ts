@@ -1,14 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.service';
 import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
 import { PrismaService } from 'src/database/prisma.service';
+import { CompanyService } from 'src/core/company/company.service';
+import { PersonService } from 'src/core/person/person.service';
 
 @Injectable()
 export class WorkspaceService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly pipelineService: PipelineService,
+    private readonly companyService: CompanyService,
+    private readonly personService: PersonService,
     private readonly pipelineStageService: PipelineStageService,
   ) {}
 
@@ -45,7 +51,22 @@ export class WorkspaceService {
 
   // Customs
   async createDefaultWorkspace() {
-    const workspace = await this.create({ data: {} });
+    const workspace = await this.create({
+      data: {
+        inviteHash: v4(),
+      },
+    });
+
+    // Create default companies
+    const companies = await this.companyService.createDefaultCompanies({
+      workspaceId: workspace.id,
+    });
+
+    // Create default people
+    await this.personService.createDefaultPeople({
+      workspaceId: workspace.id,
+      companies,
+    });
 
     // Create default pipeline
     const pipeline = await this.pipelineService.createDefaultPipeline({

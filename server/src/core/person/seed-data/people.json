@@ -1,0 +1,38 @@
+[
+  {
+    "firstName": "Soumyadeb",
+    "lastName": "Mitra",
+    "city": "San Francisco",
+    "email": "soumyadeb@rudderstack.com",
+    "phone": ""
+  },
+  {
+    "firstName": "Sebastian",
+    "lastName": "Rindom",
+    "city": "Copenhagen",
+    "email": "sebastian@medusajs.com",
+    "phone": ""
+  },
+  {
+    "firstName": "Sameer",
+    "lastName": "Al-Sakran",
+    "city": "San Francisco",
+    "email": "sameer@metabase.com",
+    "phone": ""
+  },
+  {
+    "firstName": "Pierre",
+    "lastName": "Burgy",
+    "city": "Paris",
+    "email": "pierre@strapi.com",
+    "phone": ""
+  },
+  {
+    "firstName": "James",
+    "lastName": "Hawkins",
+    "city": "San Francisco",
+    "email": "james@posthog.com",
+    "phone": ""
+  }
+]
+  
