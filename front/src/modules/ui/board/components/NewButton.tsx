@@ -16,7 +16,7 @@ const StyledButton = styled.button`
   padding: ${({ theme }) => theme.spacing(1)};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.secondary};
+    background-color: ${({ theme }) => theme.background.tertiary};
   }
 `;
 

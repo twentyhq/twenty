@@ -5,8 +5,11 @@ import { debounce } from '~/utils/debounce';
 
 import { EditColumnTitleInput } from './EditColumnTitleInput';
 
-export const StyledColumn = styled.div`
+export const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   background-color: ${({ theme }) => theme.background.primary};
+  border-left: 1px solid
+    ${({ theme, isFirstColumn }) =>
+      isFirstColumn ? 'none' : theme.border.color.light};
   display: flex;
   flex-direction: column;
   min-width: 200px;
@@ -14,15 +17,19 @@ export const StyledColumn = styled.div`
 `;
 
 const StyledHeader = styled.div`
+  align-items: center;
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  height: 24px;
+  justify-content: left;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
 export const StyledColumnTitle = styled.h3`
   align-items: center;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ color }) => color};
   display: flex;
   flex-direction: row;
@@ -30,13 +37,16 @@ export const StyledColumnTitle = styled.h3`
   font-style: normal;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
-  height: 24px;
   margin: 0;
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledAmount = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 type OwnProps = {
@@ -46,6 +56,7 @@ type OwnProps = {
   onTitleEdit: (title: string) => void;
   totalAmount?: number;
   children: React.ReactNode;
+  isFirstColumn: boolean;
 };
 
 export function BoardColumn({
@@ -54,6 +65,7 @@ export function BoardColumn({
   onTitleEdit,
   totalAmount,
   children,
+  isFirstColumn,
 }: OwnProps) {
   const [isEditing, setIsEditing] = React.useState(false);
   const [internalValue, setInternalValue] = React.useState(title);
@@ -65,10 +77,9 @@ export function BoardColumn({
   };
 
   return (
-    <StyledColumn>
+    <StyledColumn isFirstColumn={isFirstColumn}>
       <StyledHeader onClick={() => setIsEditing(true)}>
         <StyledColumnTitle color={colorCode}>
-          •
           {isEditing ? (
             <EditColumnTitleInput
               color={colorCode}

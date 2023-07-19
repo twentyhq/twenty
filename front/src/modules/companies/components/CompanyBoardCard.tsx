@@ -20,7 +20,6 @@ import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedSta
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import { CompanyAccountOwnerEditableField } from '../editable-field/components/CompanyAccountOwnerEditableField';
 import { PipelineProgressForBoard } from '../types/CompanyProgress';
 
 import { CompanyChip } from './CompanyChip';
@@ -49,6 +48,7 @@ const StyledBoardCardHeader = styled.div`
   flex-direction: row;
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   height: 24px;
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
@@ -62,7 +62,10 @@ const StyledBoardCardHeader = styled.div`
 const StyledBoardCardBody = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(0.5)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2.5)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
   span {
     align-items: center;
     display: flex;
@@ -142,6 +145,16 @@ export function CompanyBoardCard() {
           <Checkbox checked={selected} onChange={handleCheckboxChange} />
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
+          <DateEditableField
+            icon={<IconCalendarEvent />}
+            value={pipelineProgress.closeDate || new Date().toISOString()}
+            onSubmit={(value) =>
+              handleCardUpdate({
+                ...pipelineProgress,
+                closeDate: value,
+              })
+            }
+          />
           <NumberEditableField
             icon={<IconCurrencyDollar />}
             placeholder="Opportunity amount"
@@ -153,18 +166,6 @@ export function CompanyBoardCard() {
               })
             }
           />
-          <CompanyAccountOwnerEditableField company={company} />
-          <DateEditableField
-            icon={<IconCalendarEvent />}
-            value={pipelineProgress.closeDate || new Date().toISOString()}
-            onSubmit={(value) =>
-              handleCardUpdate({
-                ...pipelineProgress,
-                closeDate: value,
-              })
-            }
-          />
-
           <ProbabilityEditableField
             icon={<IconCheck />}
             value={pipelineProgress.probability}
