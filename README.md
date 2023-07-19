@@ -26,7 +26,7 @@
 You can access and use the alpha version on [app.twenty.com](https://app.twenty.com).  
 Soon, we will release click-to-deploy buttons for Render and Railway.
 
-For a local setup, please check [the documentation](https://docs.twenty.com/start/local-setup).  
+For a local setup, please check [the documentation](https://docs.twenty.com/developer/local-setup).  
 It's a straightforward process that should have you up and running in minutes.
 
 # About
