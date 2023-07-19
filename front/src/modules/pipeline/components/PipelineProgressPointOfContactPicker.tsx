@@ -14,6 +14,7 @@ import {
   useUpdateOnePipelineProgressMutation,
 } from '~/generated/graphql';
 
+import { EntityForSelect } from '../../ui/relation-picker/types/EntityForSelect';
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '../queries';
 
 export type OwnProps = {
@@ -36,14 +37,14 @@ export function PipelineProgressPointOfContactPicker({
   );
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
 
-  const companies = useFilteredSearchPeopleQuery({
+  const people = useFilteredSearchPeopleQuery({
     searchFilter,
     selectedIds: pipelineProgress.pointOfContact?.id
       ? [pipelineProgress.pointOfContact.id]
       : [],
   });
 
-  async function handleEntitySelected(entity: any) {
+  async function handleEntitySelected(entity: EntityForSelect) {
     await updatePipelineProgress({
       variables: {
         ...pipelineProgress,
@@ -55,12 +56,12 @@ export function PipelineProgressPointOfContactPicker({
       ],
     });
 
-    onSubmit && onSubmit();
+    onSubmit?.();
   }
 
   function handleCreate() {
     setIsCreating(true);
-    onSubmit && onSubmit();
+    onSubmit?.();
   }
 
   useScopedHotkeys(
@@ -77,9 +78,9 @@ export function PipelineProgressPointOfContactPicker({
       onCreate={handleCreate}
       onEntitySelected={handleEntitySelected}
       entities={{
-        entitiesToSelect: companies.entitiesToSelect,
-        selectedEntity: companies.selectedEntities[0],
-        loading: companies.loading,
+        entitiesToSelect: people.entitiesToSelect,
+        selectedEntity: people.selectedEntities[0],
+        loading: people.loading,
       }}
     />
   );

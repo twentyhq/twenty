@@ -90,6 +90,7 @@ export function ProbabilityFieldEditMode({ value, onChange }: OwnProps) {
       <StyledProgressBarContainer>
         {PROBABILITY_VALUES.map((probability, i) => (
           <StyledProgressBarItemContainer
+            key={i}
             onClick={() => handleChange(probability.value)}
             onMouseEnter={() => setNextProbabilityIndex(i)}
             onMouseLeave={() => setNextProbabilityIndex(null)}
