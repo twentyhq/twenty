@@ -105,15 +105,15 @@ export const color = {
   orange20: '#fbc5c5',
   orange10: '#fde4e4',
   // TODO: Why color are not matching with design?
-  gray: grayScale.gray25,
+  gray: grayScale.gray30,
   gray80: grayScale.gray70,
   gray70: grayScale.gray65,
   gray60: grayScale.gray55,
-  gray50: grayScale.gray35,
-  gray40: grayScale.gray30,
-  gray30: grayScale.gray25,
-  gray20: grayScale.gray20,
-  gray10: grayScale.gray15,
+  gray50: grayScale.gray40,
+  gray40: grayScale.gray35,
+  gray30: grayScale.gray30,
+  gray20: grayScale.gray25,
+  gray10: grayScale.gray20,
   gray0: grayScale.gray0,
 };
 

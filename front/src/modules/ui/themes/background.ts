@@ -5,12 +5,12 @@ import { grayScale, rgba } from './colors';
 export const backgroundLight = {
   noisy: `url(${LightNoise.toString()});`,
   primary: grayScale.gray0,
-  secondary: grayScale.gray5,
-  tertiary: grayScale.gray10,
-  quaternary: grayScale.gray15,
+  secondary: grayScale.gray10,
+  tertiary: grayScale.gray15,
+  quaternary: grayScale.gray20,
   transparent: {
     primary: rgba(grayScale.gray0, 0.8),
-    secondary: rgba(grayScale.gray5, 0.8),
+    secondary: rgba(grayScale.gray10, 0.8),
     strong: rgba(grayScale.gray100, 0.16),
     medium: rgba(grayScale.gray100, 0.08),
     light: rgba(grayScale.gray100, 0.04),

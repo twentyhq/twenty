@@ -11,9 +11,9 @@ const common = {
 
 export const borderLight = {
   color: {
-    strong: grayScale.gray20,
-    medium: grayScale.gray15,
-    light: grayScale.gray10,
+    strong: grayScale.gray25,
+    medium: grayScale.gray20,
+    light: grayScale.gray15,
     inverted: grayScale.gray60,
   },
   ...common,
@@ -24,7 +24,7 @@ export const borderDark = {
     strong: grayScale.gray65,
     medium: grayScale.gray70,
     light: grayScale.gray75,
-    inverted: grayScale.gray25,
+    inverted: grayScale.gray30,
   },
   ...common,
 };

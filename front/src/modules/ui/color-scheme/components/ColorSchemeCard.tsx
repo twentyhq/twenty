@@ -32,7 +32,7 @@ const StyledColorSchemeBackground = styled.div<
         return `1px solid ${grayScale.gray70};`;
       case 'light':
       default:
-        return `1px solid ${grayScale.gray15};`;
+        return `1px solid ${grayScale.gray20};`;
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -65,7 +65,7 @@ const StyledColorSchemeContent = styled(motion.div)<
         return `1px solid ${grayScale.gray60};`;
       case 'light':
       default:
-        return `1px solid ${grayScale.gray15};`;
+        return `1px solid ${grayScale.gray20};`;
     }
   }};
   border-radius: ${({ theme }) => theme.border.radius.md} 0px 0px 0px;
@@ -75,14 +75,14 @@ const StyledColorSchemeContent = styled(motion.div)<
         return `1px solid ${grayScale.gray60};`;
       case 'light':
       default:
-        return `1px solid ${grayScale.gray15};`;
+        return `1px solid ${grayScale.gray20};`;
     }
   }};
   box-sizing: border-box;
   color: ${({ variant }) => {
     switch (variant) {
       case 'dark':
-        return grayScale.gray25;
+        return grayScale.gray30;
       case 'light':
       default:
         return grayScale.gray60;
