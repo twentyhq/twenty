@@ -26,7 +26,7 @@ export function CommentThreadCreateButton({
       <Button
         icon={<IconCheckbox size={theme.icon.size.sm} />}
         title="Task"
-        onClick={onTaskClick}
+        soon={true}
       />
       <Button
         icon={<IconTimelineEvent size={theme.icon.size.sm} />}
