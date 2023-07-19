@@ -19,7 +19,7 @@ export const UPDATE_WORKSPACE_LOGO = gql`
 
 export const REMOVE_WORKSPACE_LOGO = gql`
   mutation RemoveWorkspaceLogo {
-    updateWorkspace(data: { logo: { set: null } }) {
+    updateWorkspace(data: { logo: null }) {
       id
     }
   }

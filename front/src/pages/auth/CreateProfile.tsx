@@ -98,12 +98,8 @@ export function CreateProfile() {
               id: currentUser?.id,
             },
             data: {
-              firstName: {
-                set: data.firstName,
-              },
-              lastName: {
-                set: data.lastName,
-              },
+              firstName: data.firstName,
+              lastName: data.lastName,
             },
           },
           refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],

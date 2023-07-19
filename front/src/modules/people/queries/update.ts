@@ -14,14 +14,14 @@ export const UPDATE_PERSON = gql`
     updateOnePerson(
       where: { id: $id }
       data: {
-        city: { set: $city }
+        city: $city
         company: { connect: { id: $companyId } }
-        email: { set: $email }
-        firstName: { set: $firstName }
-        id: { set: $id }
-        lastName: { set: $lastName }
-        phone: { set: $phone }
-        createdAt: { set: $createdAt }
+        email: $email
+        firstName: $firstName
+        id: $id
+        lastName: $lastName
+        phone: $phone
+        createdAt: $createdAt
       }
     ) {
       id

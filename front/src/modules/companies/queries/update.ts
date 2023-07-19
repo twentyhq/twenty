@@ -14,11 +14,11 @@ export const UPDATE_COMPANY = gql`
       where: { id: $id }
       data: {
         accountOwner: { connect: { id: $accountOwnerId } }
-        address: { set: $address }
-        domainName: { set: $domainName }
-        employees: { set: $employees }
-        name: { set: $name }
-        createdAt: { set: $createdAt }
+        address: $address
+        domainName: $domainName
+        employees: $employees
+        name: $name
+        createdAt: $createdAt
       }
     ) {
       accountOwner {

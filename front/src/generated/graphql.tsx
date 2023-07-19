@@ -128,10 +128,6 @@ export type AuthTokens = {
   tokens: AuthTokenPair;
 };
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: InputMaybe<Scalars['Boolean']>;
-};
-
 export type BoolFilter = {
   equals?: InputMaybe<Scalars['Boolean']>;
   not?: InputMaybe<NestedBoolFilter>;
@@ -362,17 +358,17 @@ export type CommentThreadUpdateInput = {
   assignee?: InputMaybe<UserUpdateOneWithoutAssignedCommentThreadsNestedInput>;
   attachments?: InputMaybe<AttachmentUpdateManyWithoutActivityNestedInput>;
   author?: InputMaybe<UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput>;
-  body?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  body?: InputMaybe<Scalars['String']>;
   commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
-  completedAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  dueAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  reminderAt?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  title?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  type?: InputMaybe<EnumActivityTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  completedAt?: InputMaybe<Scalars['DateTime']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  dueAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  reminderAt?: InputMaybe<Scalars['DateTime']>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<ActivityType>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CommentThreadUpdateManyWithoutAssigneeNestedInput = {
@@ -536,14 +532,14 @@ export enum CompanyScalarFieldEnum {
 
 export type CompanyUpdateInput = {
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
-  address?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  employees?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  address?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  domainName?: InputMaybe<Scalars['String']>;
+  employees?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
   people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CompanyUpdateManyWithoutAccountOwnerNestedInput = {
@@ -583,10 +579,6 @@ export type CompanyWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: InputMaybe<Scalars['DateTime']>;
-};
-
 export type DateTimeFilter = {
   equals?: InputMaybe<Scalars['DateTime']>;
   gt?: InputMaybe<Scalars['DateTime']>;
@@ -609,10 +601,6 @@ export type DateTimeNullableFilter = {
   notIn?: InputMaybe<Array<Scalars['DateTime']>>;
 };
 
-export type EnumActivityTypeFieldUpdateOperationsInput = {
-  set?: InputMaybe<ActivityType>;
-};
-
 export type EnumActivityTypeFilter = {
   equals?: InputMaybe<ActivityType>;
   in?: InputMaybe<Array<ActivityType>>;
@@ -627,10 +615,6 @@ export type EnumAttachmentTypeFilter = {
   notIn?: InputMaybe<Array<AttachmentType>>;
 };
 
-export type EnumColorSchemeFieldUpdateOperationsInput = {
-  set?: InputMaybe<ColorScheme>;
-};
-
 export type EnumColorSchemeFilter = {
   equals?: InputMaybe<ColorScheme>;
   in?: InputMaybe<Array<ColorScheme>>;
@@ -643,10 +627,6 @@ export type EnumCommentableTypeFilter = {
   in?: InputMaybe<Array<CommentableType>>;
   not?: InputMaybe<NestedEnumCommentableTypeFilter>;
   notIn?: InputMaybe<Array<CommentableType>>;
-};
-
-export type EnumPipelineProgressableTypeFieldUpdateOperationsInput = {
-  set?: InputMaybe<PipelineProgressableType>;
 };
 
 export type EnumPipelineProgressableTypeFilter = {
@@ -974,22 +954,6 @@ export type NestedStringNullableFilter = {
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type NullableIntFieldUpdateOperationsInput = {
-  decrement?: InputMaybe<Scalars['Int']>;
-  divide?: InputMaybe<Scalars['Int']>;
-  increment?: InputMaybe<Scalars['Int']>;
-  multiply?: InputMaybe<Scalars['Int']>;
-  set?: InputMaybe<Scalars['Int']>;
-};
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: InputMaybe<Scalars['String']>;
-};
-
 export type Person = {
   __typename?: 'Person';
   PipelineProgress?: Maybe<Array<PipelineProgress>>;
@@ -1075,15 +1039,15 @@ export enum PersonScalarFieldEnum {
 
 export type PersonUpdateInput = {
   PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutPointOfContactNestedInput>;
-  city?: InputMaybe<StringFieldUpdateOperationsInput>;
+  city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  firstName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastName?: InputMaybe<StringFieldUpdateOperationsInput>;
-  phone?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  email?: InputMaybe<Scalars['String']>;
+  firstName?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  phone?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PersonUpdateManyWithoutCompanyNestedInput = {
@@ -1231,17 +1195,17 @@ export enum PipelineProgressScalarFieldEnum {
 }
 
 export type PipelineProgressUpdateInput = {
-  amount?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  closeDate?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
+  amount?: InputMaybe<Scalars['Int']>;
+  closeDate?: InputMaybe<Scalars['DateTime']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
   pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
   pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
   pointOfContact?: InputMaybe<PersonUpdateOneWithoutPipelineProgressNestedInput>;
-  probability?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  progressableId?: InputMaybe<StringFieldUpdateOperationsInput>;
-  progressableType?: InputMaybe<EnumPipelineProgressableTypeFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  probability?: InputMaybe<Scalars['Int']>;
+  progressableId?: InputMaybe<Scalars['String']>;
+  progressableType?: InputMaybe<PipelineProgressableType>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PipelineProgressUpdateManyWithoutPipelineStageNestedInput = {
@@ -1367,15 +1331,15 @@ export enum PipelineStageScalarFieldEnum {
 }
 
 export type PipelineStageUpdateInput = {
-  color?: InputMaybe<StringFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  index?: InputMaybe<NullableIntFieldUpdateOperationsInput>;
-  name?: InputMaybe<StringFieldUpdateOperationsInput>;
+  color?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  index?: InputMaybe<Scalars['Int']>;
+  name?: InputMaybe<Scalars['String']>;
   pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineStagesNestedInput>;
   pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPipelineStageNestedInput>;
-  type?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  type?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type PipelineStageUpdateManyWithoutWorkspaceNestedInput = {
@@ -1569,10 +1533,6 @@ export enum SortOrder {
   Desc = 'desc'
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: InputMaybe<Scalars['String']>;
-};
-
 export type StringFilter = {
   contains?: InputMaybe<Scalars['String']>;
   endsWith?: InputMaybe<Scalars['String']>;
@@ -1732,11 +1692,11 @@ export type UserSettingsUpdateOneRequiredWithoutUserNestedInput = {
 };
 
 export type UserSettingsUpdateWithoutUserInput = {
-  colorScheme?: InputMaybe<EnumColorSchemeFieldUpdateOperationsInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  colorScheme?: InputMaybe<ColorScheme>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  locale?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type UserSettingsWhereInput = {
@@ -1755,22 +1715,22 @@ export type UserUpdateInput = {
   assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
   authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutAuthorNestedInput>;
   authoredCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
-  avatarUrl?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  avatarUrl?: InputMaybe<Scalars['String']>;
   comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  disabled?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  email?: InputMaybe<StringFieldUpdateOperationsInput>;
-  emailVerified?: InputMaybe<BoolFieldUpdateOperationsInput>;
-  firstName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  lastName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  lastSeen?: InputMaybe<NullableDateTimeFieldUpdateOperationsInput>;
-  locale?: InputMaybe<StringFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  disabled?: InputMaybe<Scalars['Boolean']>;
+  email?: InputMaybe<Scalars['String']>;
+  emailVerified?: InputMaybe<Scalars['Boolean']>;
+  firstName?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  lastSeen?: InputMaybe<Scalars['DateTime']>;
+  locale?: InputMaybe<Scalars['String']>;
   metadata?: InputMaybe<Scalars['JSON']>;
-  phoneNumber?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  phoneNumber?: InputMaybe<Scalars['String']>;
   settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput = {
@@ -1902,17 +1862,17 @@ export type WorkspaceUpdateInput = {
   commentThreads?: InputMaybe<CommentThreadUpdateManyWithoutWorkspaceNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutWorkspaceNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceNestedInput>;
-  createdAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
-  displayName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  domainName?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  id?: InputMaybe<StringFieldUpdateOperationsInput>;
-  inviteHash?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
-  logo?: InputMaybe<NullableStringFieldUpdateOperationsInput>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  displayName?: InputMaybe<Scalars['String']>;
+  domainName?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  inviteHash?: InputMaybe<Scalars['String']>;
+  logo?: InputMaybe<Scalars['String']>;
   people?: InputMaybe<PersonUpdateManyWithoutWorkspaceNestedInput>;
   pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutWorkspaceNestedInput>;
   pipelineStages?: InputMaybe<PipelineStageUpdateManyWithoutWorkspaceNestedInput>;
   pipelines?: InputMaybe<PipelineUpdateManyWithoutWorkspaceNestedInput>;
-  updatedAt?: InputMaybe<DateTimeFieldUpdateOperationsInput>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
 };
 
@@ -2723,7 +2683,7 @@ export const UpdateCommentThreadDocument = gql`
     mutation UpdateCommentThread($id: String!, $body: String, $title: String, $type: ActivityType) {
   updateOneCommentThread(
     where: {id: $id}
-    data: {body: {set: $body}, title: {set: $title}, type: {set: $type}}
+    data: {body: $body, title: $title, type: $type}
   ) {
     id
     body
@@ -3185,7 +3145,7 @@ export const UpdateCompanyDocument = gql`
     mutation UpdateCompany($id: String, $name: String, $domainName: String, $accountOwnerId: String, $createdAt: DateTime, $address: String, $employees: Int) {
   updateOneCompany(
     where: {id: $id}
-    data: {accountOwner: {connect: {id: $accountOwnerId}}, address: {set: $address}, domainName: {set: $domainName}, employees: {set: $employees}, name: {set: $name}, createdAt: {set: $createdAt}}
+    data: {accountOwner: {connect: {id: $accountOwnerId}}, address: $address, domainName: $domainName, employees: $employees, name: $name, createdAt: $createdAt}
   ) {
     accountOwner {
       id
@@ -3672,7 +3632,7 @@ export const UpdatePeopleDocument = gql`
     mutation UpdatePeople($id: String, $firstName: String, $lastName: String, $phone: String, $city: String, $companyId: String, $email: String, $createdAt: DateTime) {
   updateOnePerson(
     where: {id: $id}
-    data: {city: {set: $city}, company: {connect: {id: $companyId}}, email: {set: $email}, firstName: {set: $firstName}, id: {set: $id}, lastName: {set: $lastName}, phone: {set: $phone}, createdAt: {set: $createdAt}}
+    data: {city: $city, company: {connect: {id: $companyId}}, email: $email, firstName: $firstName, id: $id, lastName: $lastName, phone: $phone, createdAt: $createdAt}
   ) {
     id
     city
@@ -3902,7 +3862,7 @@ export const UpdateOnePipelineProgressDocument = gql`
     mutation UpdateOnePipelineProgress($id: String, $amount: Int, $closeDate: DateTime, $probability: Int, $pointOfContactId: String) {
   updateOnePipelineProgress(
     where: {id: $id}
-    data: {amount: {set: $amount}, closeDate: {set: $closeDate}, probability: {set: $probability}, pointOfContact: {connect: {id: $pointOfContactId}}}
+    data: {amount: $amount, closeDate: $closeDate, probability: $probability, pointOfContact: {connect: {id: $pointOfContactId}}}
   ) {
     id
     amount
@@ -4051,7 +4011,7 @@ export type DeleteManyPipelineProgressMutationResult = Apollo.MutationResult<Del
 export type DeleteManyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
 export const UpdatePipelineStageDocument = gql`
     mutation UpdatePipelineStage($id: String, $name: String) {
-  updateOnePipelineStage(where: {id: $id}, data: {name: {set: $name}}) {
+  updateOnePipelineStage(where: {id: $id}, data: {name: $name}) {
     id
     name
   }
@@ -4421,7 +4381,7 @@ export type UploadProfilePictureMutationResult = Apollo.MutationResult<UploadPro
 export type UploadProfilePictureMutationOptions = Apollo.BaseMutationOptions<UploadProfilePictureMutation, UploadProfilePictureMutationVariables>;
 export const RemoveProfilePictureDocument = gql`
     mutation RemoveProfilePicture($where: UserWhereUniqueInput!) {
-  updateUser(data: {avatarUrl: {set: null}}, where: $where) {
+  updateUser(data: {avatarUrl: null}, where: $where) {
     id
     avatarUrl
   }
@@ -4563,7 +4523,7 @@ export type UploadWorkspaceLogoMutationResult = Apollo.MutationResult<UploadWork
 export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
 export const RemoveWorkspaceLogoDocument = gql`
     mutation RemoveWorkspaceLogo {
-  updateWorkspace(data: {logo: {set: null}}) {
+  updateWorkspace(data: {logo: null}) {
     id
   }
 }
