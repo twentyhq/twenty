@@ -28,7 +28,7 @@ generator nestgraphql {
 
   // CommentThread: Only Allow targets createOrConnect / createMany
   decorate_commentThreadTargets_type      = "*CommentThreadTarget*Input"
-  decorate_commentThreadTargets_field     = "*(update|upsert|updateMany|deleteMany)"
+  decorate_commentThreadTargets_field     = "*(update|upsert|updateMany)"
   decorate_commentThreadTargets_name      = "HideField"
   decorate_commentThreadTargets_from      = "@nestjs/graphql"
   decorate_commentThreadTargets_arguments = "[]"

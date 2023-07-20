@@ -327,12 +327,25 @@ export type CommentThreadTargetOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
+export type CommentThreadTargetScalarWhereInput = {
+  AND?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
+  NOT?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
+  OR?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
+  commentThreadId?: InputMaybe<StringFilter>;
+  commentableId?: InputMaybe<StringFilter>;
+  commentableType?: InputMaybe<EnumCommentableTypeFilter>;
+  createdAt?: InputMaybe<DateTimeFilter>;
+  id?: InputMaybe<StringFilter>;
+  updatedAt?: InputMaybe<DateTimeFilter>;
+};
+
 export type CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput = {
   connect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>>;
   create?: InputMaybe<Array<CommentThreadTargetCreateWithoutCommentThreadInput>>;
   createMany?: InputMaybe<CommentThreadTargetCreateManyCommentThreadInputEnvelope>;
   delete?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
   set?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
 };

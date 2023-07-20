@@ -32,11 +32,11 @@ export const fontLight = {
 
 export const fontDark = {
   color: {
-    primary: grayScale.gray30,
-    secondary: grayScale.gray40,
-    tertiary: grayScale.gray50,
-    light: grayScale.gray55,
-    extraLight: grayScale.gray60,
+    primary: grayScale.gray20,
+    secondary: grayScale.gray35,
+    tertiary: grayScale.gray45,
+    light: grayScale.gray50,
+    extraLight: grayScale.gray55,
     inverted: grayScale.gray100,
   },
   ...common,
