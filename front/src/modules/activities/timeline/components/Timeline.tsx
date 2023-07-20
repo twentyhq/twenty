@@ -252,10 +252,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
                   <IconNotes />
                 </StyledIconContainer>
                 <StyledItemTitleContainer>
-                  <span>
-                    {commentThread.author.firstName}{' '}
-                    {commentThread.author.lastName}
-                  </span>
+                  <span>{commentThread.author.displayName}</span>
                   created a note
                 </StyledItemTitleContainer>
                 <StyledItemTitleDate id={`id-${commentThread.id}`}>

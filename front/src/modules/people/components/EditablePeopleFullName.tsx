@@ -8,7 +8,14 @@ import { PersonChip } from './PersonChip';
 type OwnProps = {
   person:
     | Partial<
-        Pick<Person, 'id' | 'firstName' | 'lastName' | '_commentThreadCount'>
+        Pick<
+          Person,
+          | 'id'
+          | 'firstName'
+          | 'lastName'
+          | 'displayName'
+          | '_commentThreadCount'
+        >
       >
     | null
     | undefined;
@@ -49,7 +56,7 @@ export function EditablePeopleFullName({
       nonEditModeContent={
         <NoEditModeContainer>
           <PersonChip
-            name={person?.firstName + ' ' + person?.lastName}
+            name={person?.displayName ?? ''}
             id={person?.id ?? ''}
             clickable
           />

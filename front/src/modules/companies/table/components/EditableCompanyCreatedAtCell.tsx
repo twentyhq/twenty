@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { companyCreatedAtFamilyState } from '@/companies/states/companyCreatedAtFamilyState';
 import { EditableCellDate } from '@/ui/table/editable-cell/types/EditableCellDate';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateCompanyMutation } from '~/generated/graphql';
+import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 
 export function EditableCompanyCreatedAtCell() {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -13,7 +13,7 @@ export function EditableCompanyCreatedAtCell() {
     companyCreatedAtFamilyState(currentRowEntityId ?? ''),
   );
 
-  const [updateCompany] = useUpdateCompanyMutation();
+  const [updateCompany] = useUpdateOneCompanyMutation();
 
   return (
     <EditableCellDate
@@ -22,8 +22,12 @@ export function EditableCompanyCreatedAtCell() {
 
         await updateCompany({
           variables: {
-            id: currentRowEntityId,
-            createdAt: newDate.toISOString(),
+            where: {
+              id: currentRowEntityId,
+            },
+            data: {
+              createdAt: newDate.toISOString(),
+            },
           },
         });
       }}

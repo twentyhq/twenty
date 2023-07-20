@@ -42,6 +42,7 @@ export const GET_PIPELINE_PROGRESS = gql`
         id
         firstName
         lastName
+        displayName
       }
       probability
     }

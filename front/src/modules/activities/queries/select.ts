@@ -22,6 +22,7 @@ export const GET_COMMENT_THREADS_BY_TARGETS = gql`
         id
         firstName
         lastName
+        displayName
       }
       comments {
         id
@@ -57,6 +58,7 @@ export const GET_COMMENT_THREAD = gql`
         id
         firstName
         lastName
+        displayName
       }
       comments {
         id

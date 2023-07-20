@@ -33,7 +33,10 @@ const EmailText = styled.span`
 
 type OwnProps = {
   workspaceMember: {
-    user: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatarUrl' | 'email'>;
+    user: Pick<
+      User,
+      'id' | 'firstName' | 'lastName' | 'displayName' | 'avatarUrl' | 'email'
+    >;
   };
   accessory?: React.ReactNode;
 };
@@ -49,9 +52,7 @@ export function WorkspaceMemberCard({ workspaceMember, accessory }: OwnProps) {
         size={40}
       />
       <Content>
-        <NameText>
-          {workspaceMember.user.firstName} {workspaceMember.user.lastName}{' '}
-        </NameText>
+        <NameText>{workspaceMember.user.displayName}</NameText>
         <EmailText>{workspaceMember.user.email}</EmailText>
       </Content>
 

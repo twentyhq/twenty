@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { peopleCreatedAtFamilyState } from '@/people/states/peopleCreatedAtFamilyState';
 import { EditableCellDate } from '@/ui/table/editable-cell/types/EditableCellDate';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdatePeopleMutation } from '~/generated/graphql';
+import { useUpdateOnePersonMutation } from '~/generated/graphql';
 
 export function EditablePeopleCreatedAtCell() {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -13,7 +13,7 @@ export function EditablePeopleCreatedAtCell() {
     peopleCreatedAtFamilyState(currentRowEntityId ?? ''),
   );
 
-  const [updatePerson] = useUpdatePeopleMutation();
+  const [updatePerson] = useUpdateOnePersonMutation();
 
   return (
     <EditableCellDate
@@ -22,8 +22,12 @@ export function EditablePeopleCreatedAtCell() {
 
         await updatePerson({
           variables: {
-            id: currentRowEntityId,
-            createdAt: newDate.toISOString(),
+            where: {
+              id: currentRowEntityId,
+            },
+            data: {
+              createdAt: newDate.toISOString(),
+            },
           },
         });
       }}

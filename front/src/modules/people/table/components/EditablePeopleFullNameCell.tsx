@@ -5,14 +5,14 @@ import { useRecoilValue } from 'recoil';
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
 import { peopleNameCellFamilyState } from '@/people/states/peopleNamesFamilyState';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdatePeopleMutation } from '~/generated/graphql';
+import { useUpdateOnePersonMutation } from '~/generated/graphql';
 
 import { GET_PERSON } from '../../queries';
 
 export function EditablePeopleFullNameCell() {
   const currentRowEntityId = useCurrentRowEntityId();
 
-  const [updatePerson] = useUpdatePeopleMutation();
+  const [updatePerson] = useUpdateOnePersonMutation();
 
   const { commentCount, firstName, lastName } = useRecoilValue(
     peopleNameCellFamilyState(currentRowEntityId ?? ''),
@@ -41,9 +41,13 @@ export function EditablePeopleFullNameCell() {
       onSubmit={() =>
         updatePerson({
           variables: {
-            id: currentRowEntityId,
-            firstName: internalFirstName,
-            lastName: internalLastName,
+            where: {
+              id: currentRowEntityId,
+            },
+            data: {
+              firstName: internalFirstName,
+              lastName: internalLastName,
+            },
           },
           refetchQueries: [getOperationName(GET_PERSON) ?? ''],
         })
