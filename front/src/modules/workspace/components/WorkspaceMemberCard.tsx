@@ -45,7 +45,7 @@ export function WorkspaceMemberCard({ workspaceMember, accessory }: OwnProps) {
   return (
     <StyledContainer>
       <Avatar
-        avatarUrl={getImageAbsoluteURIOrBase64(workspaceMember.user.avatarUrl)}
+        avatarUrl={workspaceMember.user.avatarUrl}
         colorId={workspaceMember.user.id}
         placeholder={workspaceMember.user.firstName || ''}
         type="squared"
