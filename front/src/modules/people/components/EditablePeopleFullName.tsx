@@ -44,8 +44,6 @@ export function EditablePeopleFullName({
     onChange(firstValue, secondValue);
   }
 
-  console.log({ person });
-
   return (
     <EditableCellDoubleText
       firstValue={person?.firstName ?? ''}

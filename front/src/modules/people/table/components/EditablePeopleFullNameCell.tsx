@@ -14,7 +14,7 @@ export function EditablePeopleFullNameCell() {
 
   const [updatePerson] = useUpdateOnePersonMutation();
 
-  const { commentCount, firstName, lastName } = useRecoilValue(
+  const { commentCount, firstName, lastName, displayName } = useRecoilValue(
     peopleNameCellFamilyState(currentRowEntityId ?? ''),
   );
 
@@ -33,6 +33,7 @@ export function EditablePeopleFullNameCell() {
         _commentThreadCount: commentCount ?? undefined,
         firstName: internalFirstName,
         lastName: internalLastName,
+        displayName: displayName ?? undefined,
       }}
       onChange={(firstName, lastName) => {
         setInternalFirstName(firstName);
