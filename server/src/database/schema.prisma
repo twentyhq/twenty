@@ -73,6 +73,7 @@ model User {
   /// @Validator.IsOptional()
   lastName      String?
   /// @Validator.IsEmail()
+  /// @Validator.IsOptional()
   email         String    @unique
   /// @Validator.IsBoolean()
   /// @Validator.IsOptional()
@@ -81,6 +82,7 @@ model User {
   /// @Validator.IsOptional()
   avatarUrl     String?
   /// @Validator.IsString()
+  /// @Validator.IsOptional()
   locale        String
   /// @Validator.IsString()
   /// @Validator.IsOptional()
