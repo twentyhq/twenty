@@ -9,6 +9,7 @@ import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
 import { isDefined } from '~/utils/isDefined';
 
+import { OverflowingTextWithTooltip } from '../../tooltip/OverflowingTextWithTooltip';
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
@@ -86,7 +87,7 @@ export function SingleEntitySelectBase<
               size={16}
               type={entity.avatarType ?? 'rounded'}
             />
-            {entity.name}
+            <OverflowingTextWithTooltip text={entity.name} />
           </DropdownMenuSelectableItem>
         ))
       )}

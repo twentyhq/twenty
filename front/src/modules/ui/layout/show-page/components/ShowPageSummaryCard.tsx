@@ -1,3 +1,4 @@
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -8,6 +9,8 @@ import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+
+import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
 
 type OwnProps = {
   id?: string;
@@ -31,6 +34,7 @@ const StyledInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 `;
 
 const StyledDate = styled.div`
@@ -42,6 +46,8 @@ const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
+
+  max-width: 100%;
 `;
 
 const StyledTooltip = styled(Tooltip)`
@@ -50,6 +56,8 @@ const StyledTooltip = styled(Tooltip)`
 
   color: ${({ theme }) => theme.font.color.primary};
 
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -74,7 +82,9 @@ export function ShowPageSummaryCard({
         placeholder={title}
       />
       <StyledInfoContainer>
-        <StyledTitle>{title}</StyledTitle>
+        <StyledTitle>
+          <OverflowingTextWithTooltip text={title} />
+        </StyledTitle>
         <StyledDate id={dateElementId}>
           Added {beautifiedCreatedAt} ago
         </StyledDate>

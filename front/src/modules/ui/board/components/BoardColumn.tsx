@@ -12,7 +12,9 @@ export const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
       isFirstColumn ? 'none' : theme.border.color.light};
   display: flex;
   flex-direction: column;
+  max-width: 200px;
   min-width: 200px;
+
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 

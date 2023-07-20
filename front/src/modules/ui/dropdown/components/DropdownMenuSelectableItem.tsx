@@ -23,6 +23,8 @@ const DropdownMenuSelectableItemContainer = styled(DropdownMenuItem)<Props>`
 
   display: flex;
   justify-content: space-between;
+
+  max-width: 150px;
 `;
 
 const StyledLeftContainer = styled.div`
@@ -30,6 +32,8 @@ const StyledLeftContainer = styled.div`
   display: flex;
 
   gap: ${({ theme }) => theme.spacing(2)};
+
+  overflow: hidden;
 `;
 
 const StyledRightIcon = styled.div`

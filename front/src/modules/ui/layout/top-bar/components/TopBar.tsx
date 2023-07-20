@@ -6,6 +6,8 @@ import { IconButton } from '@/ui/button/components/IconButton';
 import { IconChevronLeft, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 
+import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
+
 export const TOP_BAR_MIN_HEIGHT = 40;
 
 const TopBarContainer = styled.div`
@@ -25,7 +27,7 @@ const TitleContainer = styled.div`
   font-family: 'Inter';
   font-size: 14px;
   margin-left: 4px;
-  width: 100%;
+  max-width: 50%;
 `;
 
 const BackIconButton = styled(IconButton)`
@@ -59,7 +61,9 @@ export function TopBar({
           />
         )}
         {icon}
-        <TitleContainer data-testid="top-bar-title">{title}</TitleContainer>
+        <TitleContainer data-testid="top-bar-title">
+          <OverflowingTextWithTooltip text={title} />
+        </TitleContainer>
         {onAddButtonClick && (
           <IconButton
             icon={<IconPlus size={16} />}
