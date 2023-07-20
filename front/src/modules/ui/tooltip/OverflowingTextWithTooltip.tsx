@@ -68,6 +68,7 @@ export function OverflowingTextWithTooltip({
               content={text ?? ''}
               clickable
               delayHide={100}
+              offset={5}
               noArrow
               place="bottom"
               positionStrategy="absolute"

@@ -56,7 +56,7 @@ const StyledTooltip = styled(Tooltip)`
 
   color: ${({ theme }) => theme.font.color.primary};
 
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   padding: ${({ theme }) => theme.spacing(2)};
 `;
