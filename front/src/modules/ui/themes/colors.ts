@@ -23,7 +23,7 @@ export const grayScale = {
   gray0: '#ffffff',
 };
 
-export const color = {
+export const color: { [key: string]: string } = {
   yellow: '#ffd338',
   yellow80: '#2e2a1a',
   yellow70: '#453d1e',

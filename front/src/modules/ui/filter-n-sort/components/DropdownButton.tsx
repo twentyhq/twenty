@@ -50,7 +50,7 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   }
 `;
 
-const StyledDropdownMenuContainer = styled.ul`
+export const StyledDropdownMenuContainer = styled.ul`
   position: absolute;
   right: 0;
   top: 14px;

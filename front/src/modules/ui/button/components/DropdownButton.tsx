@@ -42,7 +42,7 @@ const StyledButton = styled.button<ButtonProps & { isOpen: boolean }>`
   }
 `;
 
-const StyledDropdownItem = styled.button<ButtonProps>`
+export const StyledDropdownItem = styled.button<ButtonProps>`
   align-items: center;
   background: ${({ theme }) => theme.background.tertiary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
