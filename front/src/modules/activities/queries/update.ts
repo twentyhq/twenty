@@ -1,26 +1,15 @@
 import { gql } from '@apollo/client';
 
-export const ADD_COMMENT_THREAD_TARGET = gql`
-  mutation AddCommentThreadTargetOnCommentThread(
+export const ADD_COMMENT_THREAD_TARGETS = gql`
+  mutation AddCommentThreadTargetsOnCommentThread(
     $commentThreadId: String!
-    $commentThreadTargetCreationDate: DateTime!
-    $commentThreadTargetId: String!
-    $commentableEntityId: String!
-    $commentableEntityType: CommentableType!
+    $commentThreadTargetInputs: [CommentThreadTargetCreateManyCommentThreadInput!]!
   ) {
     updateOneCommentThread(
       where: { id: $commentThreadId }
       data: {
         commentThreadTargets: {
-          connectOrCreate: {
-            create: {
-              id: $commentThreadTargetId
-              createdAt: $commentThreadTargetCreationDate
-              commentableType: $commentableEntityType
-              commentableId: $commentableEntityId
-            }
-            where: { id: $commentThreadTargetId }
-          }
+          createMany: { data: $commentThreadTargetInputs }
         }
       }
     ) {
@@ -38,14 +27,18 @@ export const ADD_COMMENT_THREAD_TARGET = gql`
   }
 `;
 
-export const REMOVE_COMMENT_THREAD_TARGET = gql`
-  mutation RemoveCommentThreadTargetOnCommentThread(
+export const REMOVE_COMMENT_THREAD_TARGETS = gql`
+  mutation RemoveCommentThreadTargetsOnCommentThread(
     $commentThreadId: String!
-    $commentThreadTargetId: String!
+    $commentThreadTargetIds: [String!]!
   ) {
     updateOneCommentThread(
       where: { id: $commentThreadId }
-      data: { commentThreadTargets: { delete: { id: $commentThreadTargetId } } }
+      data: {
+        commentThreadTargets: {
+          deleteMany: { id: { in: $commentThreadTargetIds } }
+        }
+      }
     ) {
       id
       createdAt
