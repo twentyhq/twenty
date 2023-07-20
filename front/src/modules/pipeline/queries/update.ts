@@ -9,10 +9,14 @@ export const DELETE_PIPELINE_PROGRESS = gql`
 `;
 
 export const UPDATE_PIPELINE_STAGE = gql`
-  mutation UpdatePipelineStage($id: String, $name: String) {
-    updateOnePipelineStage(where: { id: $id }, data: { name: $name }) {
+  mutation UpdatePipelineStage($id: String, $name: String, $color: String) {
+    updateOnePipelineStage(
+      where: { id: $id }
+      data: { name: { set: $name }, color: { set: $color } }
+    ) {
       id
       name
+      color
     }
   }
 `;

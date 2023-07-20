@@ -1,7 +1,12 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
-import { debounce } from '~/utils/debounce';
+import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
+
+import { useScopedHotkeys } from '../../hotkey/hooks/useScopedHotkeys';
+import { Tag } from '../../tag/components/Tag';
+import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnMenu } from './BoardColumnMenu';
 
@@ -36,7 +41,7 @@ export const StyledColumnTitle = styled.h3<{
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ colorHexCode, colorName, theme }) =>
-    colorName ? theme.color[colorName] : colorHexCode};
+    colorName ? theme.tag.text[colorName] : colorHexCode};
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
@@ -60,6 +65,7 @@ type OwnProps = {
   title: string;
   pipelineStageId?: string;
   onTitleEdit: (title: string) => void;
+  onColumnColorEdit: (colorCode: string) => void;
   totalAmount?: number;
   children: React.ReactNode;
   isFirstColumn: boolean;
@@ -69,46 +75,38 @@ export function BoardColumn({
   colorCode,
   title,
   onTitleEdit,
+  onColumnColorEdit,
   totalAmount,
   children,
   isFirstColumn,
 }: OwnProps) {
-  const debouncedOnUpdate = debounce(onTitleEdit, 200);
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
     React.useState(false);
-  // const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   setInternalValue(event.target.value);
-  //   debouncedOnUpdate(event.target.value);
-  // };
 
-  const colorHexCode = colorCode?.charAt(0) === '#' ? colorCode : undefined;
-  const colorName = colorCode?.charAt(0) === '#' ? undefined : colorCode;
+  const setHotkeyScope = useSetHotkeyScope();
+  setHotkeyScope(BoardColumnHotkeyScope.BoardColumn, { goto: false });
+  useScopedHotkeys(
+    [Key.Escape, Key.Enter],
+    () => setIsBoardColumnMenuOpen(false),
+    BoardColumnHotkeyScope.BoardColumn,
+    [],
+  );
 
   return (
     <StyledColumn isFirstColumn={isFirstColumn}>
       <StyledHeader>
-        <StyledColumnTitle
-          colorHexCode={colorHexCode}
-          colorName={colorName}
+        <Tag
           onClick={() => setIsBoardColumnMenuOpen(true)}
-        >
-          {/* {isEditing ? (
-            <EditColumnTitleInput
-              color={colorCode}
-              onFocusLeave={() => setIsEditing(false)}
-              value={internalValue}
-              onChange={handleChange}
-            />
-          ) : ( */}
-          {/* )} */}
-          {title}
-        </StyledColumnTitle>
+          colorCode={colorCode}
+          text={title}
+        />
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
       </StyledHeader>
       {isBoardColumnMenuOpen && (
         <BoardColumnMenu
           onClose={() => setIsBoardColumnMenuOpen(false)}
           onTitleEdit={onTitleEdit}
+          onColumnColorEdit={onColumnColorEdit}
           title={title}
         />
       )}

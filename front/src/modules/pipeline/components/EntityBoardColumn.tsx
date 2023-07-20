@@ -77,10 +77,21 @@ export function EntityBoardColumn({
     });
   }
 
+  function handleEditColumnColor(value: string) {
+    updatePipelineStage({
+      variables: {
+        id: pipelineStageId,
+        color: value,
+      },
+      refetchQueries: [getOperationName(GET_PIPELINES) || ''],
+    });
+  }
+
   return (
     <Droppable droppableId={column.pipelineStageId}>
       {(droppableProvided) => (
         <BoardColumn
+          onColumnColorEdit={handleEditColumnColor}
           onTitleEdit={handleEditColumnTitle}
           title={column.title}
           colorCode={column.colorCode}

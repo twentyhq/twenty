@@ -1,58 +1,75 @@
-import React, { ChangeEvent } from 'react';
+import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
-import { IconPencil, IconPlus, IconUser } from '@tabler/icons-react';
-
-import { debounce } from '~/utils/debounce';
+import { IconPencil } from '@tabler/icons-react';
 
 import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '../../dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '../../dropdown/components/DropdownMenuSelectableItem';
 import DropdownButton from '../../filter-n-sort/components/DropdownButton';
+import { useListenClickOutsideArrayOfRef } from '../../hooks/useListenClickOutsideArrayOfRef';
 import { icon } from '../../themes/icon';
+
+import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 
 const StyledMenuContainer = styled.div`
   position: absolute;
+  z-index: 1;
 `;
 
 type OwnProps = {
   onClose: () => void;
   title: string;
   onTitleEdit: (title: string) => void;
+  onColumnColorEdit: (color: string) => void;
 };
 
-const COLOR_OPTIONS = [
-  {
-    name: 'Red',
-    value: '#ff0000',
-  },
-  {
-    name: 'Green',
-    value: '#00ff00',
-  },
-  {
-    name: 'Blue',
-    value: '#0000ff',
-  },
-];
+export function BoardColumnMenu({
+  onClose,
+  onTitleEdit,
+  onColumnColorEdit,
+  title,
+}: OwnProps) {
+  const [openMenu, setOpenMenu] = useState('actions');
+  const boardColumnMenuRef = useRef(null);
 
-export function BoardColumnMenu({ onClose, onTitleEdit, title }: OwnProps) {
+  useListenClickOutsideArrayOfRef({
+    refs: [boardColumnMenuRef],
+    callback: onClose,
+  });
+
   return (
-    <StyledMenuContainer>
+    <StyledMenuContainer ref={boardColumnMenuRef}>
       <DropdownMenu>
-        <DropdownMenuItemsContainer>
-          <DropdownMenuSelectableItem onClick={console.log}>
-            <DropdownButton.StyledIcon>
-              <IconPencil size={icon.size.md} stroke={icon.stroke.sm} />
-            </DropdownButton.StyledIcon>
-            Rename
-          </DropdownMenuSelectableItem>
-          <DropdownMenuSelectableItem onClick={console.log}>
-            <DropdownButton.StyledIcon>
-              <IconPlus size={icon.size.md} stroke={icon.stroke.sm} />
-            </DropdownButton.StyledIcon>
-            New opportunity
-          </DropdownMenuSelectableItem>
-        </DropdownMenuItemsContainer>
+        {openMenu === 'actions' && (
+          <DropdownMenuItemsContainer>
+            <DropdownMenuSelectableItem onClick={() => setOpenMenu('title')}>
+              <DropdownButton.StyledIcon>
+                <IconPencil size={icon.size.md} stroke={icon.stroke.sm} />
+              </DropdownButton.StyledIcon>
+              Rename
+            </DropdownMenuSelectableItem>
+            {/* TODO: handle card creation from menu */}
+            {/*             
+            <DropdownMenuSelectableItem
+              onClick={() => {
+                return;
+              }}
+            >
+              <DropdownButton.StyledIcon>
+                <IconPlus size={icon.size.md} stroke={icon.stroke.sm} />
+              </DropdownButton.StyledIcon>
+              New opportunity
+            </DropdownMenuSelectableItem> */}
+          </DropdownMenuItemsContainer>
+        )}
+        {openMenu === 'title' && (
+          <BoardColumnEditTitleMenu
+            onClose={onClose}
+            onTitleEdit={onTitleEdit}
+            onColumnColorEdit={onColumnColorEdit}
+            title={title}
+          />
+        )}
       </DropdownMenu>
     </StyledMenuContainer>
   );
