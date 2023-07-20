@@ -141,7 +141,7 @@ export const graphqlMocks = [
         ctx.data({
           updateOnePerson: updateOneFromData(
             mockedPeopleData,
-            req.variables.id,
+            req.variables.where.id,
             req.variables,
           ),
         }),

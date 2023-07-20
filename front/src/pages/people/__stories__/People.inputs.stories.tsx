@@ -128,10 +128,10 @@ const editRelationMocks = (
         return res(
           ctx.data({
             updateOnePerson: {
-              ...fetchOneFromData(mockedPeopleData, req.variables.id),
+              ...fetchOneFromData(mockedPeopleData, req.variables.where.id),
               ...{
                 company: {
-                  id: req.variables.companyId,
+                  id: req.variables.where.id,
                   name: updateSelectedCompany.name,
                   domainName: updateSelectedCompany.domainName,
                   __typename: 'Company',
