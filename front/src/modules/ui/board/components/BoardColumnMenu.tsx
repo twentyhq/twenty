@@ -13,6 +13,7 @@ import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 
 const StyledMenuContainer = styled.div`
   position: absolute;
+  width: 200px;
   z-index: 1;
 `;
 
@@ -50,18 +51,6 @@ export function BoardColumnMenu({
               </DropdownButton.StyledIcon>
               Rename
             </DropdownMenuSelectableItem>
-            {/* TODO: handle card creation from menu */}
-            {/*             
-            <DropdownMenuSelectableItem
-              onClick={() => {
-                return;
-              }}
-            >
-              <DropdownButton.StyledIcon>
-                <IconPlus size={icon.size.md} stroke={icon.stroke.sm} />
-              </DropdownButton.StyledIcon>
-              New opportunity
-            </DropdownMenuSelectableItem> */}
           </DropdownMenuItemsContainer>
         )}
         {openMenu === 'title' && (
