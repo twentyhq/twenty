@@ -36,8 +36,8 @@ Twenty was created as a Public Benefits Company. This means we're legally bound 
 Our belief is simple: great companies focus on helping people and meeting their users' needs above all. The decision to go open source was therefore a natural one for us. It fits with our aim to do what's right and with our goals for the business:
 
 **For our users:**
-- We are committed to complete transparency regarding what we are building, allowing them to take a look inside and observe the intricate machinery in action.
-- We provide an opportunity for our users to be a decisive actor of the roadmap: by contributing or building their own tools.
+- We are committed to complete transparency regarding what we are building, allowing you to take a look inside and observe the intricate machinery in action.
+- This enables you to be a decisive actor of the roadmap by contributing or building your own tool.
   
 **For the developer community:**
 - We offer a self-hosted CRM solution that you can use for free, keeping your data own your own servers.
