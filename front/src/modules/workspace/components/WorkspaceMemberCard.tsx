@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 import { Avatar } from '@/users/components/Avatar';
-import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import { User } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
