@@ -7,9 +7,9 @@
 </p>
 
 <h2 align="center" >A Modern Open Source CRM </h3>
-<p align="center">Crafted with Engineer-Precision. Built for Business-Success.</p>
+<p align="center">Crafted with Precision. Built for Success.</p>
 
-<p align="center"><a href="https://twenty.com">Website</a> · <a href="https://docs.twenty.com">Documentation</a> · <a href="https://twenty.com/story">Story</a> · <a href="https://discord.gg/cx5n4Jzs57">Discord</a></p>
+<p align="center">🌐 <a href="https://twenty.com">Website</a> · 📚 <a href="https://docs.twenty.com">Documentation</a> · 📖 <a href="https://twenty.com/story">Our Story</a> · 💬 <a href="https://discord.gg/cx5n4Jzs57">Discord</a></p>
 <br />
 
 <p align="center">
@@ -23,24 +23,23 @@
 </p>
 
 # Quickstart
-You can access and use the alpha version on [app.twenty.com](https://app.twenty.com).  
-Soon, we will release click-to-deploy buttons for Render and Railway.
+Access the alpha version at [app.twenty.com](https://app.twenty.com). Click-to-deploy buttons for Render and Railway are coming soon.
 
-For a local setup, please check [the documentation](https://docs.twenty.com/developer/local-setup).  
-It's a straightforward process that should have you up and running in minutes.
+For local setup, refer to [the documentation](https://docs.twenty.com/developer/local-setup). Expect a quick and easy startup.
 
 # About
 We are building an Open Source CRM designed to be: enjoyable to use, easily extendable, and perfectly in-sync with your data. 
 
 Twenty was created as a Public Benefits Company. This means we're legally bound to consider the impact of our decisions not just on shareholders, but also on society.
-Our belief is simple: great companies focus on helping people and meeting their users' needs above all. The decision to go open source was therefore a natural one for us. It fits with our aim to do what's right and with our goals for the business:
+
+Our belief is simple: **great companies focus on helping people** and meeting their users' needs above all. The decision to go open source was therefore a natural one for us. It fits with our aim to do what's right and with our goals for the business:
 
 **For our users:**
 - We are committed to complete transparency regarding what we are building, allowing you to take a look inside and observe the intricate machinery in action.
 - This enables you to be a decisive actor of the roadmap by contributing or building your own tool.
   
 **For the developer community:**
-- We offer a self-hosted CRM solution that you can use for free, keeping your data own your own servers.
+- We offer a self-hosted CRM solution that you can use for free, keeping your data on your own servers.
 - We are developing a collection of reusable components, such as tables or kanban boards (coming soon).
 - We are introducing a new approach to CRM extensibility, one that can be managed by your engineering team instead of relying on external consultants (coming soon).
 
@@ -51,7 +50,7 @@ Don't hesitate to flag a specific need by creating an issue.
 
 Below are the features we have implemented to date.
 
-You can add, filter, sort, edit and track your customers:
+## Add, filter, sort, edit and track customers:
 
 <p align="center">
     <picture>
@@ -61,7 +60,7 @@ You can add, filter, sort, edit and track your customers:
     </picture>
 </p>
 
-You can create one or several opportunities for each company:
+## Create one or several opportunities for each company:
 
 <p align="center">
     <picture>
@@ -71,7 +70,7 @@ You can create one or several opportunities for each company:
     </picture>
 </p>
 
-You can create rich notes (and soon tasks) that are displayed in a timeline:
+## Rich notes (and soon tasks) that are displayed in a timeline:
 
 <p align="center">
     <picture>
@@ -81,7 +80,7 @@ You can create rich notes (and soon tasks) that are displayed in a timeline:
     </picture>
 </p>
 
-You can navigate quickly through the app using keyboard shortcuts and search:
+## Navigate quickly through the app using keyboard shortcuts and search:
 
 <p align="center">
     <picture>
