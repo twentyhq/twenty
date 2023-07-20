@@ -61,18 +61,18 @@ const StyledAmount = styled.div`
 `;
 
 type OwnProps = {
-  colorCode?: string;
+  color?: string;
   title: string;
   pipelineStageId?: string;
   onTitleEdit: (title: string) => void;
-  onColumnColorEdit: (colorCode: string) => void;
+  onColumnColorEdit: (color: string) => void;
   totalAmount?: number;
   children: React.ReactNode;
   isFirstColumn: boolean;
 };
 
 export function BoardColumn({
-  colorCode,
+  color,
   title,
   onTitleEdit,
   onColumnColorEdit,
@@ -97,7 +97,7 @@ export function BoardColumn({
       <StyledHeader>
         <Tag
           onClick={() => setIsBoardColumnMenuOpen(true)}
-          colorCode={colorCode}
+          color={color}
           text={title}
         />
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
@@ -108,7 +108,7 @@ export function BoardColumn({
           onTitleEdit={onTitleEdit}
           onColumnColorEdit={onColumnColorEdit}
           title={title}
-          colorCode={colorCode ?? ''}
+          color={color}
         />
       )}
       {children}

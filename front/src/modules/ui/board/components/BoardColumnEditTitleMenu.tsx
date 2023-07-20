@@ -1,5 +1,4 @@
 import { ChangeEvent, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { debounce } from '../../../../utils/debounce';
@@ -34,7 +33,7 @@ type OwnProps = {
   title: string;
   onTitleEdit: (title: string) => void;
   onColumnColorEdit: (color: string) => void;
-  colorCode: string;
+  color?: string;
 };
 
 const StyledColorSample = styled.div<{ colorName: string }>`
@@ -64,9 +63,8 @@ export function BoardColumnEditTitleMenu({
   onTitleEdit,
   onColumnColorEdit,
   title,
-  colorCode,
+  color,
 }: OwnProps) {
-  const theme = useTheme();
   const [internalValue, setInternalValue] = useState(title);
   const debouncedOnUpdate = debounce(onTitleEdit, 200);
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -83,17 +81,17 @@ export function BoardColumnEditTitleMenu({
         />
       </StyledEditTitleContainer>
       <DropdownMenuSeparator />
-      {COLOR_OPTIONS.map((color) => (
+      {COLOR_OPTIONS.map((colorOption) => (
         <DropdownMenuSelectableItem
-          key={color.name}
+          key={colorOption.name}
           onClick={() => {
-            onColumnColorEdit(color.id);
+            onColumnColorEdit(colorOption.id);
             onClose();
           }}
-          selected={color.id === colorCode}
+          selected={colorOption.id === color}
         >
-          <StyledColorSample colorName={color.id} />
-          {color.name}
+          <StyledColorSample colorName={colorOption.id} />
+          {colorOption.name}
         </DropdownMenuSelectableItem>
       ))}
     </DropdownMenuItemsContainer>

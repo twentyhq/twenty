@@ -2,14 +2,14 @@ import styled from '@emotion/styled';
 
 export const StyledTag = styled.h3<{
   colorHexCode?: string;
-  colorName?: string;
+  colorId?: string;
 }>`
   align-items: center;
-  background: ${({ colorName, theme }) =>
-    colorName ? theme.tag.background[colorName] : null};
+  background: ${({ colorId, theme }) =>
+    colorId ? theme.tag.background[colorId] : null};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ colorHexCode, colorName, theme }) =>
-    colorName ? theme.tag.text[colorName] : colorHexCode};
+  color: ${({ colorHexCode, colorId, theme }) =>
+    colorId ? theme.tag.text[colorId] : colorHexCode};
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
@@ -24,21 +24,17 @@ export const StyledTag = styled.h3<{
 `;
 
 type OwnProps = {
-  colorCode?: string;
+  color?: string;
   text: string;
   onClick?: () => void;
 };
 
-export function Tag({ colorCode, text, onClick }: OwnProps) {
-  const colorHexCode = colorCode?.charAt(0) === '#' ? colorCode : undefined;
-  const colorName = colorCode?.charAt(0) === '#' ? undefined : colorCode;
+export function Tag({ color, text, onClick }: OwnProps) {
+  const colorHexCode = color?.charAt(0) === '#' ? color : undefined;
+  const colorId = color?.charAt(0) === '#' ? undefined : color;
 
   return (
-    <StyledTag
-      colorHexCode={colorHexCode}
-      colorName={colorName}
-      onClick={onClick}
-    >
+    <StyledTag colorHexCode={colorHexCode} colorId={colorId} onClick={onClick}>
       {text}
     </StyledTag>
   );

@@ -15,7 +15,7 @@ type Story = StoryObj<typeof BoardColumnEditTitleMenu>;
 export const AllTags: Story = {
   render: getRenderWrapperForComponent(
     <BoardColumnEditTitleMenu
-      colorCode="green"
+      color="green"
       title={'Column title'}
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       onClose={() => {}}

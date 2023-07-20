@@ -28,8 +28,8 @@ const TESTED_COLORS = [
 export const AllTags: Story = {
   render: getRenderWrapperForComponent(
     <>
-      {TESTED_COLORS.map((colorCode) => (
-        <Tag text="Urgent" colorCode={colorCode} />
+      {TESTED_COLORS.map((color) => (
+        <Tag text="Urgent" color={color} />
       ))}
     </>,
   ),

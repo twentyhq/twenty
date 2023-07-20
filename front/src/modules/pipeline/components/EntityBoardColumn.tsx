@@ -94,7 +94,7 @@ export function EntityBoardColumn({
           onColumnColorEdit={handleEditColumnColor}
           onTitleEdit={handleEditColumnTitle}
           title={column.title}
-          colorCode={column.colorCode}
+          color={column.colorCode}
           pipelineStageId={column.pipelineStageId}
           totalAmount={boardColumnTotal}
           isFirstColumn={column.index === 0}
