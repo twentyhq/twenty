@@ -5,16 +5,16 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { AppTooltip } from './AppTooltip';
 
-const StyledOverflowingText = styled.div`
-  color: inherit;
+const StyledOverflowingText = styled.div<{ cursorPointer: boolean }>`
+  cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
   font-family: inherit;
   font-size: inherit;
-  font-weight: inherit;
 
+  font-weight: inherit;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 
+  white-space: nowrap;
   width: 100%;
 `;
 
@@ -53,7 +53,11 @@ export function OverflowingTextWithTooltip({
 
   return (
     <>
-      <StyledOverflowingText ref={textRef} id={textElementId}>
+      <StyledOverflowingText
+        ref={textRef}
+        id={textElementId}
+        cursorPointer={isTitleOverflowing}
+      >
         {text}
       </StyledOverflowingText>
       {isTitleOverflowing &&
@@ -63,7 +67,7 @@ export function OverflowingTextWithTooltip({
               anchorSelect={`#${textElementId}`}
               content={text ?? ''}
               clickable
-              delayHide={200}
+              delayHide={100}
               noArrow
               place="bottom"
               positionStrategy="absolute"
