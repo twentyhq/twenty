@@ -15,7 +15,7 @@ import { DateEditableField } from '@/ui/editable-field/variants/components/DateE
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
 import { IconCurrencyDollar, IconProgressCheck } from '@/ui/icon';
 import { IconCalendarEvent } from '@/ui/icon';
-import { Checkbox } from '@/ui/input/components/Checkbox';
+import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
@@ -175,6 +175,7 @@ export function CompanyBoardCard() {
             <Checkbox
               checked={selected}
               onChange={() => setSelected(!selected)}
+              variant={CheckboxVariant.Secondary}
             />
           )}
         </StyledBoardCardHeader>
@@ -182,7 +183,7 @@ export function CompanyBoardCard() {
           <PreventSelectOnClickContainer>
             <DateEditableField
               icon={<IconCalendarEvent />}
-              value={pipelineProgress.closeDate || new Date().toISOString()}
+              value={pipelineProgress.closeDate}
               onSubmit={(value) =>
                 handleCardUpdate({
                   ...pipelineProgress,
