@@ -44,6 +44,8 @@ export function EditablePeopleFullName({
     onChange(firstValue, secondValue);
   }
 
+  console.log({ person });
+
   return (
     <EditableCellDoubleText
       firstValue={person?.firstName ?? ''}
@@ -56,7 +58,7 @@ export function EditablePeopleFullName({
       nonEditModeContent={
         <NoEditModeContainer>
           <PersonChip
-            name={person?.displayName ?? ''}
+            name={`${person?.firstName ?? ''} ${person?.lastName ?? ''}`}
             id={person?.id ?? ''}
             clickable
           />
