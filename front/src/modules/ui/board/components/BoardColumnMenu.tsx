@@ -19,6 +19,7 @@ const StyledMenuContainer = styled.div`
 type OwnProps = {
   onClose: () => void;
   title: string;
+  colorCode: string;
   onTitleEdit: (title: string) => void;
   onColumnColorEdit: (color: string) => void;
 };
@@ -28,6 +29,7 @@ export function BoardColumnMenu({
   onTitleEdit,
   onColumnColorEdit,
   title,
+  colorCode,
 }: OwnProps) {
   const [openMenu, setOpenMenu] = useState('actions');
   const boardColumnMenuRef = useRef(null);
@@ -64,6 +66,7 @@ export function BoardColumnMenu({
         )}
         {openMenu === 'title' && (
           <BoardColumnEditTitleMenu
+            colorCode={colorCode}
             onClose={onClose}
             onTitleEdit={onTitleEdit}
             onColumnColorEdit={onColumnColorEdit}

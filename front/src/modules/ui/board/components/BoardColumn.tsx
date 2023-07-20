@@ -108,6 +108,7 @@ export function BoardColumn({
           onTitleEdit={onTitleEdit}
           onColumnColorEdit={onColumnColorEdit}
           title={title}
+          colorCode={colorCode ?? ''}
         />
       )}
       {children}

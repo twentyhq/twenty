@@ -1,5 +1,7 @@
 import { ChangeEvent, useState } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconCheck } from '@tabler/icons-react';
 
 import { debounce } from '../../../../utils/debounce';
 import { DropdownMenuItemsContainer } from '../../dropdown/components/DropdownMenuItemsContainer';
@@ -33,6 +35,7 @@ type OwnProps = {
   title: string;
   onTitleEdit: (title: string) => void;
   onColumnColorEdit: (color: string) => void;
+  colorCode: string;
 };
 
 const StyledColorSample = styled.div<{ colorName: string }>`
@@ -62,7 +65,9 @@ export function BoardColumnEditTitleMenu({
   onTitleEdit,
   onColumnColorEdit,
   title,
+  colorCode,
 }: OwnProps) {
+  const theme = useTheme();
   const [internalValue, setInternalValue] = useState(title);
   const debouncedOnUpdate = debounce(onTitleEdit, 200);
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -89,6 +94,8 @@ export function BoardColumnEditTitleMenu({
         >
           <StyledColorSample colorName={color.id} />
           {color.name}
+          <div style={{ flex: 1, display: 'flex' }} />
+          {color.id === colorCode && <IconCheck size={theme.icon.size.md} />}
         </DropdownMenuSelectableItem>
       ))}
     </DropdownMenuItemsContainer>

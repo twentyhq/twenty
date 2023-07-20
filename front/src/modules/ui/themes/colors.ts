@@ -51,7 +51,7 @@ export const color: { [key: string]: string } = {
   turquoise30: '#9af0b0',
   turquoise20: '#c9fbd9',
   turquoise10: '#e8fde9',
-  sskyky: '#00e0ff',
+  sky: '#00e0ff',
   sky80: '#1a2d2e',
   sky70: '#1e3f40',
   sky60: '#224f50',
