@@ -4,7 +4,11 @@ import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedSta
 import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
-import { Company, Person, useUpdatePeopleMutation } from '~/generated/graphql';
+import {
+  Company,
+  Person,
+  useUpdateOnePersonMutation,
+} from '~/generated/graphql';
 
 export type OwnProps = {
   people: Pick<Person, 'id'> & { company?: Pick<Company, 'id'> | null };
@@ -16,7 +20,7 @@ export function PeopleCompanyEditableFieldEditMode({ people }: OwnProps) {
   const [searchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const [updatePeople] = useUpdatePeopleMutation();
+  const [updatePerson] = useUpdateOnePersonMutation();
 
   const companies = useFilteredSearchCompanyQuery({
     searchFilter,
@@ -24,10 +28,14 @@ export function PeopleCompanyEditableFieldEditMode({ people }: OwnProps) {
   });
 
   async function handleEntitySelected(entity: EntityForSelect) {
-    await updatePeople({
+    await updatePerson({
       variables: {
-        ...people,
-        companyId: entity.id,
+        where: {
+          id: people.id,
+        },
+        data: {
+          company: { connect: { id: entity.id } },
+        },
       },
     });
     closeEditableField();

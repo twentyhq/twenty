@@ -5,7 +5,7 @@ import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { IconUsers } from '@/ui/icon';
 import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { Company, useUpdateCompanyMutation } from '~/generated/graphql';
+import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
 
 type OwnProps = {
   company: Pick<Company, 'id' | 'employees'>;
@@ -16,7 +16,7 @@ export function CompanyEmployeesEditableField({ company }: OwnProps) {
     company.employees?.toString(),
   );
 
-  const [updateCompany] = useUpdateCompanyMutation();
+  const [updateCompany] = useUpdateOneCompanyMutation();
 
   useEffect(() => {
     setInternalValue(company.employees?.toString());
@@ -38,8 +38,12 @@ export function CompanyEmployeesEditableField({ company }: OwnProps) {
 
       await updateCompany({
         variables: {
-          id: company.id,
-          employees: numberValue,
+          where: {
+            id: company.id,
+          },
+          data: {
+            employees: numberValue,
+          },
         },
       });
 

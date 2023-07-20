@@ -29,9 +29,7 @@ export function useColorScheme() {
             data: {
               settings: {
                 update: {
-                  colorScheme: {
-                    set: value,
-                  },
+                  colorScheme: value,
                 },
               },
             },

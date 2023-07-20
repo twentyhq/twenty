@@ -7,6 +7,8 @@ import {
   UserOrderByWithRelationInput,
 } from '~/generated/graphql';
 
+import { isDefined } from '../../utils/isDefined';
+
 function filterData<DataT>(
   data: Array<DataT>,
   where: Record<string, any>,
@@ -135,15 +137,28 @@ export function fetchOneFromData<DataT extends { id: string }>(
   data: Array<DataT>,
   id: string,
 ): DataT | undefined {
+  if (!isDefined(id)) {
+    throw new Error(
+      `id is not defined in updateOneFromData, check that you provided where.id if needed.`,
+    );
+  }
+
   return data.filter((item) => item.id === id)[0];
 }
 
 export function updateOneFromData<DataT extends { id: string }>(
   data: Array<DataT>,
-  id: string,
+  id: string | undefined,
   payload: GraphQLVariables,
 ): DataT | undefined {
+  if (!isDefined(id)) {
+    throw new Error(
+      `id is not defined in updateOneFromData, check that you provided where.id if needed.`,
+    );
+  }
+
   const object = data.filter((item) => item.id === id)[0];
+
   const newObject = Object.assign(object, payload);
 
   return newObject;

@@ -44,9 +44,7 @@ export function NameField({ autoSave = true, onNameUpdate }: OwnProps) {
         const { data, errors } = await updateWorkspace({
           variables: {
             data: {
-              displayName: {
-                set: name,
-              },
+              displayName: name,
             },
           },
           refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],

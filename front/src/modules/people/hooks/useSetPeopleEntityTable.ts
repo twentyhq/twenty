@@ -19,7 +19,7 @@ export function useSetPeopleEntityTable() {
             .valueOrThrow();
 
           if (currentEmail !== person.email) {
-            set(peopleEmailFamilyState(person.id), person.email);
+            set(peopleEmailFamilyState(person.id), person.email ?? null);
           }
 
           const currentCity = snapshot
@@ -27,7 +27,7 @@ export function useSetPeopleEntityTable() {
             .valueOrThrow();
 
           if (currentCity !== person.city) {
-            set(peopleCityFamilyState(person.id), person.city);
+            set(peopleCityFamilyState(person.id), person.city ?? null);
           }
 
           const currentCompany = snapshot
@@ -45,7 +45,7 @@ export function useSetPeopleEntityTable() {
             .valueOrThrow();
 
           if (currentPhone !== person.phone) {
-            set(peoplePhoneFamilyState(person.id), person.phone);
+            set(peoplePhoneFamilyState(person.id), person.phone ?? null);
           }
 
           const currentCreatedAt = snapshot
@@ -66,9 +66,10 @@ export function useSetPeopleEntityTable() {
             currentNameCell.commentCount !== person._commentThreadCount
           ) {
             set(peopleNameCellFamilyState(person.id), {
-              firstName: person.firstName,
-              lastName: person.lastName,
+              firstName: person.firstName ?? null,
+              lastName: person.lastName ?? null,
               commentCount: person._commentThreadCount,
+              displayName: person.displayName ?? null,
             });
           }
         }

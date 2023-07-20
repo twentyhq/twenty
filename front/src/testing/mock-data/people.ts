@@ -1,22 +1,28 @@
 import { Company, Person } from '~/generated/graphql';
 
-type MockedPerson = Pick<
-  Person,
-  | 'id'
-  | 'firstName'
-  | 'lastName'
-  | 'displayName'
-  | 'email'
-  | '__typename'
-  | 'phone'
-  | 'city'
-  | '_commentThreadCount'
-  | 'createdAt'
-> & {
-  company: Pick<Company, 'id' | 'name' | 'domainName' | '__typename'>;
+type RequiredAndNotNull<T> = {
+  [P in keyof T]-?: Exclude<T[P], null | undefined>;
 };
 
-export const mockedPeopleData: Array<MockedPerson> = [
+type MockedPerson = RequiredAndNotNull<
+  Pick<
+    Person,
+    | 'id'
+    | 'firstName'
+    | 'lastName'
+    | 'displayName'
+    | 'email'
+    | '__typename'
+    | 'phone'
+    | 'city'
+    | '_commentThreadCount'
+    | 'createdAt'
+  > & {
+    company: Pick<Company, 'id' | 'name' | 'domainName' | '__typename'>;
+  }
+>;
+
+export const mockedPeopleData: MockedPerson[] = [
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
     __typename: 'Person',

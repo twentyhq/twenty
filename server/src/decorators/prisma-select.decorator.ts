@@ -17,6 +17,11 @@ const globalDefaultFields: DefaultFieldsMap = {
     firstName: true,
     lastName: true,
   },
+  Person: {
+    // Needed for displayName resolve field
+    firstName: true,
+    lastName: true,
+  },
 };
 
 export const PrismaSelector = createParamDecorator(

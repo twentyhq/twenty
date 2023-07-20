@@ -8,7 +8,7 @@ import {
   Company,
   User,
   useSearchUserQuery,
-  useUpdateCompanyMutation,
+  useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
 
 export type OwnProps = {
@@ -31,7 +31,7 @@ export function CompanyAccountOwnerPicker({
   const [searchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const [updateCompany] = useUpdateCompanyMutation();
+  const [updateCompany] = useUpdateOneCompanyMutation();
 
   const companies = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
@@ -51,8 +51,10 @@ export function CompanyAccountOwnerPicker({
   async function handleEntitySelected(selectedUser: UserForSelect) {
     await updateCompany({
       variables: {
-        ...company,
-        accountOwnerId: selectedUser.id,
+        where: { id: company.id },
+        data: {
+          accountOwner: { connect: { id: selectedUser.id } },
+        },
       },
     });
 

@@ -78,11 +78,7 @@ export const UPDATE_COMMENT_THREAD = gql`
   ) {
     updateOneCommentThread(
       where: { id: $id }
-      data: {
-        body: { set: $body }
-        title: { set: $title }
-        type: { set: $type }
-      }
+      data: { body: $body, title: $title, type: $type }
     ) {
       id
       body

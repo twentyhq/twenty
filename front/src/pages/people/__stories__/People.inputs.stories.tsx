@@ -4,7 +4,7 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { UPDATE_PERSON } from '@/people/queries';
+import { UPDATE_ONE_PERSON } from '@/people/queries';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
 import { Company } from '~/generated/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -113,7 +113,7 @@ const editRelationMocks = (
     if (
       typeof graphqlMock.info.operationName === 'string' &&
       [
-        getOperationName(UPDATE_PERSON),
+        getOperationName(UPDATE_ONE_PERSON),
         getOperationName(SEARCH_COMPANY_QUERY),
       ].includes(graphqlMock.info.operationName)
     ) {
@@ -122,23 +122,26 @@ const editRelationMocks = (
     return true;
   }),
   ...[
-    graphql.mutation(getOperationName(UPDATE_PERSON) ?? '', (req, res, ctx) => {
-      return res(
-        ctx.data({
-          updateOnePerson: {
-            ...fetchOneFromData(mockedPeopleData, req.variables.id),
-            ...{
-              company: {
-                id: req.variables.companyId,
-                name: updateSelectedCompany.name,
-                domainName: updateSelectedCompany.domainName,
-                __typename: 'Company',
+    graphql.mutation(
+      getOperationName(UPDATE_ONE_PERSON) ?? '',
+      (req, res, ctx) => {
+        return res(
+          ctx.data({
+            updateOnePerson: {
+              ...fetchOneFromData(mockedPeopleData, req.variables.where.id),
+              ...{
+                company: {
+                  id: req.variables.where.id,
+                  name: updateSelectedCompany.name,
+                  domainName: updateSelectedCompany.domainName,
+                  __typename: 'Company',
+                },
               },
             },
-          },
-        }),
-      );
-    }),
+          }),
+        );
+      },
+    ),
     graphql.query(
       getOperationName(SEARCH_COMPANY_QUERY) ?? '',
       (req, res, ctx) => {

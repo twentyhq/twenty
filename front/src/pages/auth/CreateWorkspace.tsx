@@ -73,9 +73,7 @@ export function CreateWorkspace() {
         const result = await updateWorkspace({
           variables: {
             data: {
-              displayName: {
-                set: data.name,
-              },
+              displayName: data.name,
             },
           },
           refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],

@@ -10,6 +10,7 @@ export const GET_WORKSPACE_MEMBERS = gql`
         avatarUrl
         firstName
         lastName
+        displayName
       }
     }
   }

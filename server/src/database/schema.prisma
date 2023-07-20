@@ -9,8 +9,9 @@ datasource db {
 }
 
 generator nestgraphql {
-  provider = "node node_modules/prisma-nestjs-graphql"
-  output   = "../../src/core/@generated"
+  provider           = "node node_modules/prisma-nestjs-graphql"
+  output             = "../../src/core/@generated"
+  noAtomicOperations = true
 
   // field validator
   fields_Validator_input  = true
@@ -47,11 +48,13 @@ generator nestgraphql {
   decorate_count_arguments = "[]"
 
   // create data validator
-  decorate_classValidator_type        = "@(Create|Update|Upsert)*Args"
-  decorate_classValidator_field       = "@(data|[A-Z]*)"
-  decorate_classValidator_name        = ValidateNested
-  decorate_classValidator_from        = "class-validator"
-  decorate_classValidator_arguments   = "['{each: true}']"
+  decorate_classValidator_type      = "@(Create|Update|Upsert)*Args"
+  decorate_classValidator_field     = "@(data|[A-Z]*)"
+  decorate_classValidator_name      = ValidateNested
+  decorate_classValidator_from      = "class-validator"
+  decorate_classValidator_arguments = "['{each: true}']"
+
+  // create data transformer
   decorate_classTransformer_type      = "@(Create|Update|Upsert)*Args"
   decorate_classTransformer_field     = "@(data|[A-Z]*)"
   decorate_classTransformer_from      = "class-transformer"
@@ -70,6 +73,7 @@ model User {
   /// @Validator.IsOptional()
   lastName      String?
   /// @Validator.IsEmail()
+  /// @Validator.IsOptional()
   email         String    @unique
   /// @Validator.IsBoolean()
   /// @Validator.IsOptional()
@@ -78,6 +82,7 @@ model User {
   /// @Validator.IsOptional()
   avatarUrl     String?
   /// @Validator.IsString()
+  /// @Validator.IsOptional()
   locale        String
   /// @Validator.IsString()
   /// @Validator.IsOptional()
@@ -200,10 +205,13 @@ model Company {
   /// @Validator.IsOptional()
   id         String @id @default(uuid())
   /// @Validator.IsString()
+  /// @Validator.IsOptional()
   name       String
   /// @Validator.IsString()
+  /// @Validator.IsOptional()
   domainName String
   /// @Validator.IsString()
+  /// @Validator.IsOptional()
   address    String
   /// @Validator.IsNumber()
   /// @Validator.IsOptional()
@@ -229,31 +237,36 @@ model Company {
 model Person {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  id        String @id @default(uuid())
+  id        String  @id @default(uuid())
   /// @Validator.IsString()
-  firstName String
+  /// @Validator.IsOptional()
+  firstName String?
   /// @Validator.IsString()
-  lastName  String
+  /// @Validator.IsOptional()
+  lastName  String?
   /// @Validator.IsString()
-  email     String
+  /// @Validator.IsOptional()
+  email     String?
   /// @Validator.IsString()
-  phone     String
+  /// @Validator.IsOptional()
+  phone     String?
   /// @Validator.IsString()
-  city      String
+  /// @Validator.IsOptional()
+  city      String?
 
-  company     Company?  @relation(fields: [companyId], references: [id])
-  companyId   String?
+  company            Company?           @relation(fields: [companyId], references: [id])
+  companyId          String?
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspace          Workspace          @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId String
+  workspaceId        String
+  pipelineProgresses PipelineProgress[]
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  PipelineProgress PipelineProgress[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("people")
 }
@@ -413,6 +426,7 @@ model PipelineStage {
   index Int?
 
   pipelineProgresses PipelineProgress[]
+  /// 
   pipeline           Pipeline           @relation(fields: [pipelineId], references: [id])
   pipelineId         String
   /// @TypeGraphQL.omit(input: true, output: true)

@@ -4,7 +4,7 @@ import { graphql } from 'msw';
 import { CREATE_EVENT } from '@/analytics/queries';
 import { GET_CLIENT_CONFIG } from '@/client-config/queries';
 import { GET_COMPANIES } from '@/companies/queries';
-import { GET_PEOPLE, GET_PERSON, UPDATE_PERSON } from '@/people/queries';
+import { GET_PEOPLE, GET_PERSON, UPDATE_ONE_PERSON } from '@/people/queries';
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import {
   SEARCH_COMPANY_QUERY,
@@ -134,17 +134,20 @@ export const graphqlMocks = [
       }),
     );
   }),
-  graphql.mutation(getOperationName(UPDATE_PERSON) ?? '', (req, res, ctx) => {
-    return res(
-      ctx.data({
-        updateOnePerson: updateOneFromData(
-          mockedPeopleData,
-          req.variables.id,
-          req.variables,
-        ),
-      }),
-    );
-  }),
+  graphql.mutation(
+    getOperationName(UPDATE_ONE_PERSON) ?? '',
+    (req, res, ctx) => {
+      return res(
+        ctx.data({
+          updateOnePerson: updateOneFromData(
+            mockedPeopleData,
+            req.variables.where.id,
+            req.variables,
+          ),
+        }),
+      );
+    },
+  ),
   graphql.query(getOperationName(GET_PIPELINES) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({

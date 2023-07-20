@@ -5,7 +5,7 @@ import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { IconMap } from '@/ui/icon';
 import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { Company, useUpdateCompanyMutation } from '~/generated/graphql';
+import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
 
 type OwnProps = {
   company: Pick<Company, 'id' | 'address'>;
@@ -14,7 +14,7 @@ type OwnProps = {
 export function CompanyAddressEditableField({ company }: OwnProps) {
   const [internalValue, setInternalValue] = useState(company.address);
 
-  const [updateCompany] = useUpdateCompanyMutation();
+  const [updateCompany] = useUpdateOneCompanyMutation();
 
   useEffect(() => {
     setInternalValue(company.address);
@@ -27,8 +27,12 @@ export function CompanyAddressEditableField({ company }: OwnProps) {
   async function handleSubmit() {
     await updateCompany({
       variables: {
-        id: company.id,
-        address: internalValue ?? '',
+        where: {
+          id: company.id,
+        },
+        data: {
+          address: internalValue ?? '',
+        },
       },
     });
   }
