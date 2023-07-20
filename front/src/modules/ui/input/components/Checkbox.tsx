@@ -79,7 +79,8 @@ export function Checkbox({
   indeterminate,
   variant = CheckboxVariant.Primary,
 }: OwnProps) {
-  const [isInternalChecked, setIsInternalChecked] = React.useState(false);
+  const [isInternalChecked, setIsInternalChecked] =
+    React.useState<boolean>(false);
 
   React.useEffect(() => {
     setIsInternalChecked(checked);
