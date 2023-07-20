@@ -37,7 +37,7 @@ Our belief is simple: great companies focus on helping people and meeting their 
 
 **For our users:**
 - We are committed to complete transparency regarding what we are building, allowing them to take a look inside and observe the intricate machinery in action.
-- We provide an opportunity for our users to shape the roadmap by participating in a short feedback loop
+- We provide an opportunity for our users to be a decisive actor of the roadmap: by contributing or building their own tools.
   
 **For the developer community:**
 - We offer a self-hosted CRM solution that you can use for free, keeping your data own your own servers.
