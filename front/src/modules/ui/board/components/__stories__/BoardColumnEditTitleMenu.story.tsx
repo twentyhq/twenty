@@ -5,7 +5,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { BoardColumnEditTitleMenu } from '../BoardColumnEditTitleMenu';
 
 const meta: Meta<typeof BoardColumnEditTitleMenu> = {
-  title: 'UI/Accessories/Tag',
+  title: 'UI/Board/BoardColumnMenu',
   component: BoardColumnEditTitleMenu,
 };
 
