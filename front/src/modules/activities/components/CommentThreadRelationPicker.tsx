@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import {
   autoUpdate,
@@ -79,15 +79,20 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
 
-  const peopleIds =
-    commentThread?.commentThreadTargets
-      ?.filter((relation) => relation.commentableType === 'Person')
-      .map((relation) => relation.commentableId) ?? [];
-  const companyIds =
-    commentThread?.commentThreadTargets
-      ?.filter((relation) => relation.commentableType === 'Company')
-      .map((relation) => relation.commentableId) ?? [];
-
+  const peopleIds = useMemo(
+    () =>
+      commentThread?.commentThreadTargets
+        ?.filter((relation) => relation.commentableType === 'Person')
+        .map((relation) => relation.commentableId) ?? [],
+    [commentThread?.commentThreadTargets],
+  );
+  const companyIds = useMemo(
+    () =>
+      commentThread?.commentThreadTargets
+        ?.filter((relation) => relation.commentableType === 'Company')
+        .map((relation) => relation.commentableId) ?? [],
+    [commentThread?.commentThreadTargets],
+  );
   const personsForMultiSelect = useFilteredSearchPeopleQuery({
     searchFilter,
     selectedIds: peopleIds,
@@ -103,31 +108,72 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  function handleRelationContainerClick() {
-    if (isMenuOpen) {
-      exitEditMode();
-    } else {
-      setIsMenuOpen(true);
-      setHotkeyScopeAndMemorizePreviousScope(
-        RelationPickerHotkeyScope.RelationPicker,
-      );
-    }
-  }
-
   // TODO: Place in a scoped recoil atom family
   function handleFilterChange(newSearchFilter: string) {
     setSearchFilter(newSearchFilter);
   }
 
-  const handleCheckItemChange = useHandleCheckableCommentThreadTargetChange({
+  const handleCheckItemsChange = useHandleCheckableCommentThreadTargetChange({
     commentThread,
   });
 
-  function exitEditMode() {
+  const selectedEntities = flatMapAndSortEntityForSelectArrayOfArrayByName([
+    personsForMultiSelect.selectedEntities,
+    companiesForMultiSelect.selectedEntities,
+  ]);
+
+  const filteredSelectedEntities =
+    flatMapAndSortEntityForSelectArrayOfArrayByName([
+      personsForMultiSelect.filteredSelectedEntities,
+      companiesForMultiSelect.filteredSelectedEntities,
+    ]);
+
+  const entitiesToSelect = flatMapAndSortEntityForSelectArrayOfArrayByName([
+    personsForMultiSelect.entitiesToSelect,
+    companiesForMultiSelect.entitiesToSelect,
+  ]);
+
+  const entityValuesFromProps = useMemo(
+    () =>
+      [...peopleIds, ...companyIds].reduce<Record<string, boolean>>(
+        (result, entityId) => ({ ...result, [entityId]: true }),
+        {},
+      ),
+    [companyIds, peopleIds],
+  );
+  const [entityValues, setEntityValues] = useState(entityValuesFromProps);
+
+  const exitEditMode = useCallback(() => {
     goBackToPreviousHotkeyScope();
     setIsMenuOpen(false);
     setSearchFilter('');
-  }
+
+    if (Object.values(entityValues).some((value) => !!value)) {
+      handleCheckItemsChange(entityValues, entitiesToSelect);
+    }
+  }, [
+    entitiesToSelect,
+    entityValues,
+    goBackToPreviousHotkeyScope,
+    handleCheckItemsChange,
+  ]);
+
+  const handleRelationContainerClick = useCallback(() => {
+    if (isMenuOpen) {
+      exitEditMode();
+    } else {
+      setIsMenuOpen(true);
+      setEntityValues(entityValuesFromProps);
+      setHotkeyScopeAndMemorizePreviousScope(
+        RelationPickerHotkeyScope.RelationPicker,
+      );
+    }
+  }, [
+    entityValuesFromProps,
+    exitEditMode,
+    isMenuOpen,
+    setHotkeyScopeAndMemorizePreviousScope,
+  ]);
 
   useScopedHotkeys(
     ['esc', 'enter'],
@@ -159,22 +205,6 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     },
   });
 
-  const selectedEntities = flatMapAndSortEntityForSelectArrayOfArrayByName([
-    personsForMultiSelect.selectedEntities,
-    companiesForMultiSelect.selectedEntities,
-  ]);
-
-  const filteredSelectedEntities =
-    flatMapAndSortEntityForSelectArrayOfArrayByName([
-      personsForMultiSelect.filteredSelectedEntities,
-      companiesForMultiSelect.filteredSelectedEntities,
-    ]);
-
-  const entitiesToSelect = flatMapAndSortEntityForSelectArrayOfArrayByName([
-    personsForMultiSelect.entitiesToSelect,
-    companiesForMultiSelect.entitiesToSelect,
-  ]);
-
   return (
     <StyledContainer>
       <StyledRelationContainer
@@ -204,9 +234,10 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
                 selectedEntities,
                 loading: false, // TODO implement skeleton loading
               }}
-              onItemCheckChange={handleCheckItemChange}
+              onChange={setEntityValues}
               onSearchFilterChange={handleFilterChange}
               searchFilter={searchFilter}
+              value={entityValues}
             />
           </StyledMenuWrapper>
         </RecoilScope>

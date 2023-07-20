@@ -23,17 +23,16 @@ export function MultipleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
 >({
   entities,
-  onItemCheckChange,
+  onChange,
   onSearchFilterChange,
   searchFilter,
+  value,
 }: {
   entities: EntitiesForMultipleEntitySelect<CustomEntityForSelect>;
   searchFilter: string;
   onSearchFilterChange: (newSearchFilter: string) => void;
-  onItemCheckChange: (
-    newCheckedValue: boolean,
-    entity: CustomEntityForSelect,
-  ) => void;
+  onChange: (value: Record<string, boolean>) => void;
+  value: Record<string, boolean>;
 }) {
   const debouncedSetSearchFilter = debounce(onSearchFilterChange, 100, {
     leading: true,
@@ -61,13 +60,9 @@ export function MultipleEntitySelect<
         {entitiesInDropdown?.map((entity) => (
           <DropdownMenuCheckableItem
             key={entity.id}
-            checked={
-              entities.selectedEntities
-                ?.map((selectedEntity) => selectedEntity.id)
-                ?.includes(entity.id) ?? false
-            }
+            checked={value[entity.id]}
             onChange={(newCheckedValue) =>
-              onItemCheckChange(newCheckedValue, entity)
+              onChange({ ...value, [entity.id]: newCheckedValue })
             }
           >
             <Avatar
