@@ -22,6 +22,7 @@ type MockedCommentThread = Pick<
     id: string;
     firstName: string;
     lastName: string;
+    displayName: string;
   };
   comments: Array<Pick<Comment, 'body'>>;
   commentThreadTargets: Array<
@@ -50,6 +51,7 @@ export const mockedCommentThreads: Array<MockedCommentThread> = [
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',
       lastName: 'Test',
+      displayName: 'Charles Test',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
     comments: [],
@@ -96,6 +98,7 @@ export const mockedCommentThreads: Array<MockedCommentThread> = [
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',
       lastName: 'Test',
+      displayName: 'Charles Test',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
     comments: [],
