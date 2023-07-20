@@ -1,11 +1,11 @@
 import { ChangeEvent, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { debounce } from '../../../../utils/debounce';
-import { DropdownMenuItemsContainer } from '../../dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSelectableItem } from '../../dropdown/components/DropdownMenuSelectableItem';
-import { DropdownMenuSeparator } from '../../dropdown/components/DropdownMenuSeparator';
-import { textInputStyle } from '../../themes/effects';
+import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
+import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { textInputStyle } from '@/ui/themes/effects';
+import { debounce } from '~/utils/debounce';
 
 export const StyledEditTitleContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};

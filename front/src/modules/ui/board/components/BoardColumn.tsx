@@ -2,10 +2,10 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
+import { Tag } from '@/ui/tag/components/Tag';
 
-import { useScopedHotkeys } from '../../hotkey/hooks/useScopedHotkeys';
-import { Tag } from '../../tag/components/Tag';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnMenu } from './BoardColumnMenu';
@@ -83,23 +83,34 @@ export function BoardColumn({
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
     React.useState(false);
 
-  const setHotkeyScope = useSetHotkeyScope();
-  setHotkeyScope(BoardColumnHotkeyScope.BoardColumn, { goto: false });
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
   useScopedHotkeys(
     [Key.Escape, Key.Enter],
-    () => setIsBoardColumnMenuOpen(false),
+    handleClose,
     BoardColumnHotkeyScope.BoardColumn,
     [],
   );
 
+  function handleTitleClick() {
+    setIsBoardColumnMenuOpen(true);
+    setHotkeyScopeAndMemorizePreviousScope(BoardColumnHotkeyScope.BoardColumn, {
+      goto: false,
+    });
+  }
+
+  function handleClose() {
+    goBackToPreviousHotkeyScope();
+    setIsBoardColumnMenuOpen(false);
+  }
+
   return (
     <StyledColumn isFirstColumn={isFirstColumn}>
       <StyledHeader>
-        <Tag
-          onClick={() => setIsBoardColumnMenuOpen(true)}
-          color={color}
-          text={title}
-        />
+        <Tag onClick={handleTitleClick} color={color} text={title} />
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
       </StyledHeader>
       {isBoardColumnMenuOpen && (
