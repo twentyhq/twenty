@@ -3,10 +3,16 @@ import styled from '@emotion/styled';
 
 import { IconCheck, IconMinus } from '@/ui/icon';
 
+export enum CheckboxVariant {
+  Primary = 'primary',
+  Secondary = 'secondary',
+}
+
 type OwnProps = {
   checked: boolean;
   indeterminate?: boolean;
   onChange?: (value: boolean) => void;
+  variant?: CheckboxVariant;
 };
 
 const StyledInputContainer = styled.div`
@@ -15,7 +21,10 @@ const StyledInputContainer = styled.div`
   position: relative;
 `;
 
-const StyledInput = styled.input<{ indeterminate?: boolean }>`
+const StyledInput = styled.input<{
+  indeterminate?: boolean;
+  variant?: CheckboxVariant;
+}>`
   cursor: pointer;
   margin: 0;
   opacity: 0;
@@ -31,9 +40,17 @@ const StyledInput = styled.input<{ indeterminate?: boolean }>`
   }
 
   & + label:before {
-    background: ${({ theme }) => theme.background.primary};
-    border: 1px solid ${({ theme }) => theme.border.color.strong};
     border-radius: ${({ theme }) => theme.border.radius.sm};
+    background: ${({ theme, indeterminate }) =>
+      indeterminate ? theme.color.blue : 'transparent'};
+    border-style: solid;
+    border-width: 1px;
+    border-color: ${({ theme, indeterminate, variant }) =>
+      indeterminate
+        ? theme.color.blue
+        : variant === CheckboxVariant.Primary
+        ? theme.border.color.inverted
+        : theme.border.color.secondaryInverted};
     content: '';
     cursor: pointer;
     display: inline-block;
@@ -46,13 +63,6 @@ const StyledInput = styled.input<{ indeterminate?: boolean }>`
     border-color: ${({ theme }) => theme.color.blue};
   }
 
-  & + label:before {
-    background: ${({ theme, indeterminate }) =>
-      indeterminate ? theme.color.blue : theme.background.primary};
-    border-color: ${({ theme, indeterminate }) =>
-      indeterminate ? theme.color.blue : theme.border.color.inverted};
-  }
-
   & + label > svg {
     height: 12px;
     left: 1px;
@@ -63,7 +73,12 @@ const StyledInput = styled.input<{ indeterminate?: boolean }>`
   }
 `;
 
-export function Checkbox({ checked, onChange, indeterminate }: OwnProps) {
+export function Checkbox({
+  checked,
+  onChange,
+  indeterminate,
+  variant = CheckboxVariant.Primary,
+}: OwnProps) {
   const [isInternalChecked, setIsInternalChecked] = React.useState(false);
 
   React.useEffect(() => {
@@ -83,6 +98,7 @@ export function Checkbox({ checked, onChange, indeterminate }: OwnProps) {
         data-testid="input-checkbox"
         checked={isInternalChecked}
         indeterminate={indeterminate}
+        variant={variant}
         onChange={(event) => handleChange(event.target.checked)}
       />
       <label htmlFor="checkbox">

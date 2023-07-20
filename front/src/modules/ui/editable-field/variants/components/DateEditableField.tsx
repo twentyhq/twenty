@@ -49,7 +49,7 @@ export function DateEditableField({ icon, value, onSubmit }: OwnProps) {
         iconLabel={icon}
         editModeContent={
           <EditableFieldEditModeDate
-            value={internalValue ?? ''}
+            value={internalValue || new Date().toISOString()}
             onChange={(newValue: string) => {
               handleChange(newValue);
             }}
@@ -58,7 +58,7 @@ export function DateEditableField({ icon, value, onSubmit }: OwnProps) {
         displayModeContent={
           <InplaceInputDateDisplayMode value={internalDateValue} />
         }
-        isDisplayModeContentEmpty={!(internalValue !== '')}
+        isDisplayModeContentEmpty={!internalValue}
       />
     </RecoilScope>
   );
