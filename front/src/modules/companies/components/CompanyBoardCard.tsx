@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useState } from 'react';
+import { ReactNode, useCallback } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -41,6 +41,14 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
         selected ? theme.accent.primary : theme.border.color.medium};
   }
   cursor: pointer;
+
+  .checkbox-container {
+    opacity: 0;
+  }
+
+  &:hover .checkbox-container {
+    opacity: 1;
+  }
 `;
 
 const StyledBoardCardWrapper = styled.div`
@@ -84,12 +92,17 @@ const StyledBoardCardBody = styled.div`
   }
 `;
 
+const StyledCheckboxContainer = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: end;
+`;
+
 const StyledFieldContainer = styled.div`
   width: max-content;
 `;
 
 export function CompanyBoardCard() {
-  const [isHovered, setIsHovered] = useState(false);
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
 
   const [pipelineProgressId] = useRecoilScopedState(
@@ -159,8 +172,6 @@ export function CompanyBoardCard() {
       <StyledBoardCard
         selected={selected}
         onClick={() => setSelected(!selected)}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         <StyledBoardCardHeader>
           <CompanyChip
@@ -170,14 +181,13 @@ export function CompanyBoardCard() {
             picture={getLogoUrlFromDomainName(company.domainName)}
             variant={ChipVariant.transparent}
           />
-          <div style={{ display: 'flex', flex: 1 }} />
-          {(isHovered || selected) && (
+          <StyledCheckboxContainer className="checkbox-container">
             <Checkbox
               checked={selected}
               onChange={() => setSelected(!selected)}
               variant={CheckboxVariant.Secondary}
             />
-          )}
+          </StyledCheckboxContainer>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
           <PreventSelectOnClickContainer>
