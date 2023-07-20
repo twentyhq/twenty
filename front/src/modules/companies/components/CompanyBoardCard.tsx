@@ -52,7 +52,7 @@ const StyledBoardCardHeader = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   height: 24px;
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};

@@ -32,7 +32,7 @@ const StyledInput = styled.input<{ indeterminate?: boolean }>`
 
   & + label:before {
     background: ${({ theme }) => theme.background.primary};
-    border: 1px solid ${({ theme }) => theme.border.color.strong};
+    border: 1px solid ${({ theme }) => theme.font.color.secondary};
     border-radius: ${({ theme }) => theme.border.radius.sm};
     content: '';
     cursor: pointer;
