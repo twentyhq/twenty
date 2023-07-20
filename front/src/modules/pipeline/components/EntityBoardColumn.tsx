@@ -71,7 +71,7 @@ export function EntityBoardColumn({
     updatePipelineStage({
       variables: {
         id: pipelineStageId,
-        name: value,
+        data: { name: value },
       },
       refetchQueries: [getOperationName(GET_PIPELINES) || ''],
     });
@@ -81,7 +81,7 @@ export function EntityBoardColumn({
     updatePipelineStage({
       variables: {
         id: pipelineStageId,
-        color: value,
+        data: { color: value },
       },
       refetchQueries: [getOperationName(GET_PIPELINES) || ''],
     });
