@@ -36,13 +36,13 @@ Twenty was created as a Public Benefits Company. This means we're legally bound 
 Our belief is simple: great companies focus on helping people and meeting their users' needs above all. The decision to go open source was therefore a natural one for us. It fits with our aim to do what's right and with our goals for the business:
 
 **For our users:**
-- A commitment to being completely open about what we're building, enabling them to peek under the hood and see the intricate machinery at work.
-- An opportunity to be a decisive actor with a very short feedback loop and an the ability to shape the roadmap
+- We are committed to complete transparency regarding what we are building, allowing you to take a look inside and observe the intricate machinery in action.
+- This enables you to be a decisive actor of the roadmap by contributing or building your own tool.
   
 **For the developer community:**
-- A CRM that ban self-hosted for free, on your own network and close to your data sources
-- A set of reusuable components such as tables or kanban boards (coming soon)
-- A new way to think about CRM extensibility, one that can be owned by the engineering team and not external constultants (coming soon)
+- We offer a self-hosted CRM solution that you can use for free, keeping your data own your own servers.
+- We are developing a collection of reusable components, such as tables or kanban boards (coming soon).
+- We are introducing a new approach to CRM extensibility, one that can be managed by your engineering team instead of relying on external consultants (coming soon).
 
 
 # Features
