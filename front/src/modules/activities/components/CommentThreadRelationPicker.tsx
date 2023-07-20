@@ -78,43 +78,45 @@ const StyledMenuWrapper = styled.div`
 export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
+  const [selectedEntityIds, setSelectedEntityIds] = useState<
+    Record<string, boolean>
+  >({});
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
 
-  const peopleIds = useMemo(
+  const initialPeopleIds = useMemo(
     () =>
       commentThread?.commentThreadTargets
         ?.filter((relation) => relation.commentableType === 'Person')
         .map((relation) => relation.commentableId) ?? [],
     [commentThread?.commentThreadTargets],
   );
-  const companyIds = useMemo(
+  const initialCompanyIds = useMemo(
     () =>
       commentThread?.commentThreadTargets
         ?.filter((relation) => relation.commentableType === 'Company')
         .map((relation) => relation.commentableId) ?? [],
     [commentThread?.commentThreadTargets],
   );
+
+  const initialSelectedEntityIds = useMemo(
+    () =>
+      [...initialPeopleIds, ...initialCompanyIds].reduce<
+        Record<string, boolean>
+      >((result, entityId) => ({ ...result, [entityId]: true }), {}),
+    [initialPeopleIds, initialCompanyIds],
+  );
+
   const personsForMultiSelect = useFilteredSearchPeopleQuery({
     searchFilter,
-    selectedIds: peopleIds,
+    selectedIds: initialPeopleIds,
   });
 
   const companiesForMultiSelect = useFilteredSearchCompanyQuery({
     searchFilter,
-    selectedIds: companyIds,
-  });
-
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
-
-  // TODO: Place in a scoped recoil atom family
-  function handleFilterChange(newSearchFilter: string) {
-    setSearchFilter(newSearchFilter);
-  }
-
-  const handleCheckItemsChange = useHandleCheckableCommentThreadTargetChange({
-    commentThread,
+    selectedIds: initialCompanyIds,
   });
 
   const selectedEntities = flatMapAndSortEntityForSelectArrayOfArrayByName([
@@ -133,27 +135,21 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     companiesForMultiSelect.entitiesToSelect,
   ]);
 
-  const entityValuesFromProps = useMemo(
-    () =>
-      [...peopleIds, ...companyIds].reduce<Record<string, boolean>>(
-        (result, entityId) => ({ ...result, [entityId]: true }),
-        {},
-      ),
-    [companyIds, peopleIds],
-  );
-  const [entityValues, setEntityValues] = useState(entityValuesFromProps);
+  const handleCheckItemsChange = useHandleCheckableCommentThreadTargetChange({
+    commentThread,
+  });
 
   const exitEditMode = useCallback(() => {
     goBackToPreviousHotkeyScope();
     setIsMenuOpen(false);
     setSearchFilter('');
 
-    if (Object.values(entityValues).some((value) => !!value)) {
-      handleCheckItemsChange(entityValues, entitiesToSelect);
+    if (Object.values(selectedEntityIds).some((value) => !!value)) {
+      handleCheckItemsChange(selectedEntityIds, entitiesToSelect);
     }
   }, [
     entitiesToSelect,
-    entityValues,
+    selectedEntityIds,
     goBackToPreviousHotkeyScope,
     handleCheckItemsChange,
   ]);
@@ -163,13 +159,13 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
       exitEditMode();
     } else {
       setIsMenuOpen(true);
-      setEntityValues(entityValuesFromProps);
+      setSelectedEntityIds(initialSelectedEntityIds);
       setHotkeyScopeAndMemorizePreviousScope(
         RelationPickerHotkeyScope.RelationPicker,
       );
     }
   }, [
-    entityValuesFromProps,
+    initialSelectedEntityIds,
     exitEditMode,
     isMenuOpen,
     setHotkeyScopeAndMemorizePreviousScope,
@@ -234,10 +230,10 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
                 selectedEntities,
                 loading: false, // TODO implement skeleton loading
               }}
-              onChange={setEntityValues}
-              onSearchFilterChange={handleFilterChange}
+              onChange={setSelectedEntityIds}
+              onSearchFilterChange={setSearchFilter}
               searchFilter={searchFilter}
-              value={entityValues}
+              value={selectedEntityIds}
             />
           </StyledMenuWrapper>
         </RecoilScope>
