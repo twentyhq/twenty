@@ -5,6 +5,8 @@ import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 
+import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
+
 type OwnProps = {
   icon?: React.ReactNode;
   placeholder?: string;
@@ -54,7 +56,7 @@ export function TextEditableField({
             }}
           />
         }
-        displayModeContent={internalValue}
+        displayModeContent={<OverflowingTextWithTooltip text={internalValue} />}
         isDisplayModeContentEmpty={!(internalValue !== '')}
       />
     </RecoilScope>

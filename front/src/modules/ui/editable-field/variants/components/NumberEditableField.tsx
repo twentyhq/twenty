@@ -72,7 +72,7 @@ export function NumberEditableField({
           />
         }
         displayModeContent={internalValue}
-        isDisplayModeContentEmpty={!(internalValue !== '')}
+        isDisplayModeContentEmpty={!(internalValue !== '' && internalValue)}
       />
     </RecoilScope>
   );

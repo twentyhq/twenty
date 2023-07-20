@@ -5,6 +5,8 @@ import styled from '@emotion/styled';
 
 import { Avatar, AvatarType } from '@/users/components/Avatar';
 
+import { OverflowingTextWithTooltip } from '../../tooltip/OverflowingTextWithTooltip';
+
 export enum ChipVariant {
   opaque = 'opaque',
   transparent = 'transparent',
@@ -94,7 +96,9 @@ export function EntityChip({
         size={14}
         type={avatarType}
       />
-      <StyledName>{name}</StyledName>
+      <StyledName>
+        <OverflowingTextWithTooltip text={name} />
+      </StyledName>
     </StyledContainerLink>
   ) : (
     <StyledContainerReadOnly data-testid="entity-chip">
@@ -105,7 +109,9 @@ export function EntityChip({
         size={14}
         type={avatarType}
       />
-      <StyledName>{name}</StyledName>
+      <StyledName>
+        <OverflowingTextWithTooltip text={name} />
+      </StyledName>
     </StyledContainerReadOnly>
   );
 }
