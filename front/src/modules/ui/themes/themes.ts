@@ -7,6 +7,7 @@ import { boxShadowDark, boxShadowLight } from './boxShadow';
 import { color, grayScale } from './colors';
 import { fontDark, fontLight } from './font';
 import { icon } from './icon';
+import { tagDark, tagLight } from './tag';
 import { text } from './text';
 
 const common = {
@@ -47,6 +48,7 @@ export const lightTheme = {
     accent: accentLight,
     background: backgroundLight,
     border: borderLight,
+    tag: tagLight,
     boxShadow: boxShadowLight,
     font: fontLight,
     name: 'light',
@@ -60,6 +62,7 @@ export const darkTheme: ThemeType = {
     accent: accentDark,
     background: backgroundDark,
     border: borderDark,
+    tag: tagDark,
     boxShadow: boxShadowDark,
     font: fontDark,
     name: 'dark',

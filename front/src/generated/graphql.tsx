@@ -2185,11 +2185,11 @@ export type DeleteManyPipelineProgressMutation = { __typename?: 'Mutation', dele
 
 export type UpdatePipelineStageMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
+  data: PipelineStageUpdateInput;
 }>;
 
 
-export type UpdatePipelineStageMutation = { __typename?: 'Mutation', updateOnePipelineStage?: { __typename?: 'PipelineStage', id: string, name: string } | null };
+export type UpdatePipelineStageMutation = { __typename?: 'Mutation', updateOnePipelineStage?: { __typename?: 'PipelineStage', id: string, name: string, color: string } | null };
 
 export type SearchPeopleQueryVariables = Exact<{
   where?: InputMaybe<PersonWhereInput>;
@@ -3957,10 +3957,11 @@ export type DeleteManyPipelineProgressMutationHookResult = ReturnType<typeof use
 export type DeleteManyPipelineProgressMutationResult = Apollo.MutationResult<DeleteManyPipelineProgressMutation>;
 export type DeleteManyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
 export const UpdatePipelineStageDocument = gql`
-    mutation UpdatePipelineStage($id: String, $name: String) {
-  updateOnePipelineStage(where: {id: $id}, data: {name: $name}) {
+    mutation UpdatePipelineStage($id: String, $data: PipelineStageUpdateInput!) {
+  updateOnePipelineStage(where: {id: $id}, data: $data) {
     id
     name
+    color
   }
 }
     `;
@@ -3980,7 +3981,7 @@ export type UpdatePipelineStageMutationFn = Apollo.MutationFunction<UpdatePipeli
  * const [updatePipelineStageMutation, { data, loading, error }] = useUpdatePipelineStageMutation({
  *   variables: {
  *      id: // value for 'id'
- *      name: // value for 'name'
+ *      data: // value for 'data'
  *   },
  * });
  */

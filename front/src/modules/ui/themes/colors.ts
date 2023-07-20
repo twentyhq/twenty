@@ -23,7 +23,7 @@ export const grayScale = {
   gray0: '#ffffff',
 };
 
-export const color = {
+export const color: { [key: string]: string } = {
   yellow: '#ffd338',
   yellow80: '#2e2a1a',
   yellow70: '#453d1e',
@@ -51,7 +51,7 @@ export const color = {
   turquoise30: '#9af0b0',
   turquoise20: '#c9fbd9',
   turquoise10: '#e8fde9',
-  sskyky: '#00e0ff',
+  sky: '#00e0ff',
   sky80: '#1a2d2e',
   sky70: '#1e3f40',
   sky60: '#224f50',
