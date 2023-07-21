@@ -1,24 +1,28 @@
 import { useCallback } from 'react';
+import { useApolloClient } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
 import {
   useChallengeMutation,
+  useCheckUserExistsLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
 
-import { currentUserState } from '../states/currentUserState';
 import { isAuthenticatingState } from '../states/isAuthenticatingState';
 import { tokenPairState } from '../states/tokenPairState';
 
 export function useAuth() {
   const [, setTokenPair] = useRecoilState(tokenPairState);
-  const [, setCurrentUser] = useRecoilState(currentUserState);
   const [, setIsAuthenticating] = useRecoilState(isAuthenticatingState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
+  const [checkUserExistsQuery, { data: checkUserExistsData }] =
+    useCheckUserExistsLazyQuery();
+
+  const client = useApolloClient();
 
   const handleChallenge = useCallback(
     async (email: string, password: string) => {
@@ -65,7 +69,7 @@ export function useAuth() {
     [setIsAuthenticating, setTokenPair, verify],
   );
 
-  const handleLogin = useCallback(
+  const handleCrendentialsSignIn = useCallback(
     async (email: string, password: string) => {
       const { loginToken } = await handleChallenge(email, password);
 
@@ -74,12 +78,12 @@ export function useAuth() {
     [handleChallenge, handleVerify],
   );
 
-  const handleLogout = useCallback(() => {
+  const handleSignOut = useCallback(() => {
     setTokenPair(null);
-    setCurrentUser(null);
-  }, [setTokenPair, setCurrentUser]);
+    client.clearStore();
+  }, [setTokenPair, client]);
 
-  const handleSignUp = useCallback(
+  const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, workspaceInviteHash?: string) => {
       const signUpResult = await signUp({
         variables: {
@@ -102,11 +106,19 @@ export function useAuth() {
     [signUp, handleVerify],
   );
 
+  const googleLogin = useCallback(() => {
+    window.location.href = process.env.REACT_APP_AUTH_URL + '/google' || '';
+  }, []);
+
   return {
     challenge: handleChallenge,
     verify: handleVerify,
-    login: handleLogin,
-    signUp: handleSignUp,
-    logout: handleLogout,
+
+    checkUserExists: { checkUserExistsData, checkUserExistsQuery },
+
+    signOut: handleSignOut,
+    credentialsSignUp: handleCredentialsSignUp,
+    credentialsSignIn: handleCrendentialsSignIn,
+    googleSignIn: googleLogin,
   };
 }

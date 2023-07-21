@@ -1,0 +1,191 @@
+import { useMemo } from 'react';
+import { Controller } from 'react-hook-form';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
+
+import { AnimatedEaseIn } from '@/ui/animation/components/AnimatedEaseIn';
+import { MainButton } from '@/ui/button/components/MainButton';
+import { IconBrandGoogle } from '@/ui/icon';
+import { TextInput } from '@/ui/input/components/TextInput';
+
+import { Logo } from '../../components/Logo';
+import { Title } from '../../components/Title';
+import { SignInUpMode, SignInUpStep, useSignInUp } from '../hooks/useSignInUp';
+
+import { FooterNote } from './FooterNote';
+import { HorizontalSeparator } from './HorizontalSeparator';
+
+const StyledContentContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
+  width: 200px;
+`;
+
+const StyledFooterNote = styled(FooterNote)`
+  max-width: 280px;
+`;
+
+const StyledForm = styled.form`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const StyledFullWidthMotionDiv = styled(motion.div)`
+  width: 100%;
+`;
+
+const StyledInputContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(3)};
+`;
+
+export function SignInUpForm() {
+  const {
+    authProviders,
+    googleSignIn,
+    signInUpStep,
+    signInUpMode,
+    showErrors,
+    continueWithCredentials,
+    continueWithEmail,
+    submitCredentials,
+    form: {
+      control,
+      watch,
+      handleSubmit,
+      formState: { isSubmitting },
+    },
+  } = useSignInUp();
+  const theme = useTheme();
+
+  const buttonTitle = useMemo(() => {
+    if (signInUpStep === SignInUpStep.Init) {
+      return 'Continue';
+    }
+
+    return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
+  }, [signInUpMode, signInUpStep]);
+
+  return (
+    <>
+      <AnimatedEaseIn>
+        <Logo />
+      </AnimatedEaseIn>
+      <Title animate>Welcome to Twenty</Title>
+      <StyledContentContainer>
+        {authProviders.google && (
+          <>
+            <MainButton
+              icon={<IconBrandGoogle size={theme.icon.size.sm} stroke={4} />}
+              title="Continue with Google"
+              onClick={googleSignIn}
+              fullWidth
+            />
+            <HorizontalSeparator />
+          </>
+        )}
+
+        <StyledForm
+          onSubmit={(event) => {
+            event.preventDefault();
+          }}
+        >
+          {signInUpStep !== SignInUpStep.Init && (
+            <StyledFullWidthMotionDiv
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              transition={{
+                type: 'spring',
+                stiffness: 800,
+                damping: 35,
+              }}
+            >
+              <Controller
+                name="email"
+                control={control}
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <StyledInputContainer>
+                    <TextInput
+                      value={value}
+                      placeholder="Email"
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      error={showErrors ? error?.message : undefined}
+                      fullWidth
+                    />
+                  </StyledInputContainer>
+                )}
+              />
+            </StyledFullWidthMotionDiv>
+          )}
+          {signInUpStep === SignInUpStep.Password && (
+            <StyledFullWidthMotionDiv
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              transition={{
+                type: 'spring',
+                stiffness: 800,
+                damping: 35,
+              }}
+            >
+              <Controller
+                name="password"
+                control={control}
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <StyledInputContainer>
+                    <TextInput
+                      value={value}
+                      type="password"
+                      placeholder="Password"
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      error={showErrors ? error?.message : undefined}
+                      fullWidth
+                    />
+                  </StyledInputContainer>
+                )}
+              />
+            </StyledFullWidthMotionDiv>
+          )}
+
+          <MainButton
+            variant="secondary"
+            title={buttonTitle}
+            type="submit"
+            onClick={() => {
+              if (signInUpStep === SignInUpStep.Init) {
+                continueWithEmail();
+                return;
+              }
+              if (signInUpStep === SignInUpStep.Email) {
+                continueWithCredentials();
+                return;
+              }
+              handleSubmit(submitCredentials)();
+            }}
+            disabled={
+              SignInUpStep.Init
+                ? false
+                : signInUpStep === SignInUpStep.Email
+                ? !watch('email')
+                : !watch('email') || !watch('password') || isSubmitting
+            }
+            fullWidth
+          />
+        </StyledForm>
+      </StyledContentContainer>
+      <StyledFooterNote>
+        By using Twenty, you agree to the Terms of Service and Data Processing
+        Agreement.
+      </StyledFooterNote>
+    </>
+  );
+}

@@ -6,8 +6,8 @@ import styled from '@emotion/styled';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
-import { SubTitle } from '@/auth/components/ui/SubTitle';
-import { Title } from '@/auth/components/ui/Title';
+import { SubTitle } from '@/auth/components/SubTitle';
+import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';

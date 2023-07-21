@@ -8,8 +8,8 @@ import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import * as Yup from 'yup';
 
-import { SubTitle } from '@/auth/components/ui/SubTitle';
-import { Title } from '@/auth/components/ui/Title';
+import { SubTitle } from '@/auth/components/SubTitle';
+import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';

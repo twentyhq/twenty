@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
-import { AuthModal } from '@/auth/components/ui/Modal';
+import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
@@ -89,7 +89,8 @@ export function DefaultLayout({ children }: OwnProps) {
           <AppNavbar />
         </NavbarAnimatedContainer>
         <MainContainer>
-          {onboardingStatus !== OnboardingStatus.Completed ? (
+          {onboardingStatus &&
+          onboardingStatus !== OnboardingStatus.Completed ? (
             <>
               <CompaniesMockMode />
               <AnimatePresence mode="wait">
