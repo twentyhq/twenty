@@ -16,6 +16,7 @@ type OwnProps = {
   logoOrAvatar?: string;
   title: string;
   date: string;
+  renderTitleEditComponent?: () => JSX.Element;
 };
 
 const StyledShowPageSummaryCard = styled.div`
@@ -45,7 +46,6 @@ const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-
   max-width: 100%;
 `;
 
@@ -65,6 +65,7 @@ export function ShowPageSummaryCard({
   logoOrAvatar,
   title,
   date,
+  renderTitleEditComponent,
 }: OwnProps) {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
@@ -82,7 +83,11 @@ export function ShowPageSummaryCard({
       />
       <StyledInfoContainer>
         <StyledTitle>
-          <OverflowingTextWithTooltip text={title} />
+          {renderTitleEditComponent ? (
+            renderTitleEditComponent()
+          ) : (
+            <OverflowingTextWithTooltip text={title} />
+          )}
         </StyledTitle>
         <StyledDate id={dateElementId}>
           Added {beautifiedCreatedAt} ago

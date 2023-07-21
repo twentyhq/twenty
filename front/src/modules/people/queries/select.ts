@@ -28,6 +28,8 @@ export const GET_PEOPLE = gql`
       firstName
       lastName
       displayName
+      jobTitle
+      linkedinUrl
       createdAt
       _commentThreadCount
       company {

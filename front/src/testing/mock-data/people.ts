@@ -11,6 +11,8 @@ type MockedPerson = RequiredAndNotNull<
     | 'firstName'
     | 'lastName'
     | 'displayName'
+    | 'linkedinUrl'
+    | 'jobTitle'
     | 'email'
     | '__typename'
     | 'phone'
@@ -30,6 +32,8 @@ export const mockedPeopleData: MockedPerson[] = [
     lastName: 'Prot',
     displayName: 'Alexandre Prot',
     email: 'alexandre@qonto.com',
+    linkedinUrl: 'https://www.linkedin.com/in/alexandreprot/',
+    jobTitle: 'CEO',
     company: {
       id: '5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
       name: 'Qonto',
@@ -48,6 +52,8 @@ export const mockedPeopleData: MockedPerson[] = [
     firstName: 'John',
     lastName: 'Doe',
     displayName: 'John Doe',
+    linkedinUrl: 'https://www.linkedin.com/in/johndoe/',
+    jobTitle: 'CTO',
     email: 'john@linkedin.com',
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6e',
@@ -67,6 +73,8 @@ export const mockedPeopleData: MockedPerson[] = [
     firstName: 'Jane',
     lastName: 'Doe',
     displayName: 'Jane Doe',
+    linkedinUrl: 'https://www.linkedin.com/in/janedoe/',
+    jobTitle: 'Investor',
     email: 'jane@sequoiacap.com',
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6g',
@@ -87,6 +95,8 @@ export const mockedPeopleData: MockedPerson[] = [
     lastName: 'Dane',
     displayName: 'Janice Dane',
     email: 'janice@facebook.com',
+    linkedinUrl: 'https://www.linkedin.com/in/janicedane/',
+    jobTitle: 'CEO',
     company: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6i',
       name: 'Facebook',
