@@ -51,8 +51,8 @@ export const EditableFieldNormalModeOuterContainer = styled.div<
 export const EditableFieldNormalModeInnerContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-size: 'inherit';
+  font-weight: 'inherit';
 
   height: fit-content;
 

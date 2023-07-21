@@ -11,6 +11,8 @@ import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPag
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { CommentableType } from '~/generated/graphql';
 
+import { PeopleFullNameEditableField } from '../../modules/people/editable-field/components/PeopleFullNameEditableField';
+
 export function PersonShow() {
   const personId = useParams().personId ?? '';
 
@@ -31,6 +33,9 @@ export function PersonShow() {
             id={person?.id}
             title={person?.displayName ?? 'No name'}
             date={person?.createdAt ?? ''}
+            renderTitleEditComponent={() =>
+              person ? <PeopleFullNameEditableField people={person} /> : <></>
+            }
           />
           {person && <PersonPropertyBox person={person} />}
         </ShowPageLeftContainer>
