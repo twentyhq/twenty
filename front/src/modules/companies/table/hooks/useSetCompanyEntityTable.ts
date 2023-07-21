@@ -6,6 +6,7 @@ import { companyCommentCountFamilyState } from '@/companies/states/companyCommen
 import { companyCreatedAtFamilyState } from '@/companies/states/companyCreatedAtFamilyState';
 import { companyDomainNameFamilyState } from '@/companies/states/companyDomainNameFamilyState';
 import { companyEmployeesFamilyState } from '@/companies/states/companyEmployeesFamilyState';
+import { companyLinkedinUrlFamilyState } from '@/companies/states/companyLinkedinUrlFamilyState';
 import { companyNameFamilyState } from '@/companies/states/companyNameFamilyState';
 import { GetCompaniesQuery } from '~/generated/graphql';
 
@@ -28,6 +29,17 @@ export function useSetCompanyEntityTable() {
 
           if (currentDomainName !== company.domainName) {
             set(companyDomainNameFamilyState(company.id), company.domainName);
+          }
+
+          const currentLinkedinUrl = snapshot
+            .getLoadable(companyLinkedinUrlFamilyState(company.id))
+            .valueOrThrow();
+
+          if (currentLinkedinUrl !== company.linkedinUrl) {
+            set(
+              companyLinkedinUrlFamilyState(company.id),
+              company.linkedinUrl ?? '',
+            );
           }
 
           const currentEmployees = snapshot

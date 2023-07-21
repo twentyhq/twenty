@@ -203,19 +203,22 @@ model WorkspaceMember {
 model Company {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  id         String @id @default(uuid())
+  id          String  @id @default(uuid())
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  name       String
+  name        String
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  domainName String
+  domainName  String
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  address    String
+  linkedinUrl String?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  address     String
   /// @Validator.IsNumber()
   /// @Validator.IsOptional()
-  employees  Int?
+  employees   Int?
 
   people         Person[]
   accountOwner   User?     @relation(fields: [accountOwnerId], references: [id])
@@ -237,22 +240,28 @@ model Company {
 model Person {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  id        String  @id @default(uuid())
+  id          String  @id @default(uuid())
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  firstName String?
+  firstName   String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  lastName  String?
+  lastName    String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  email     String?
+  email       String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  phone     String?
+  linkedinUrl String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  city      String?
+  jobTitle    String?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  phone       String?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  city        String?
 
   company            Company?           @relation(fields: [companyId], references: [id])
   companyId          String?
