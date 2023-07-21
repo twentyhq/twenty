@@ -2,7 +2,6 @@ import { BrowserRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { mockedPeopleData } from '~/testing/mock-data/people';
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { PeopleCompanyEditableField } from '../../editable-field/components/PeopleCompanyEditableField';
 
@@ -15,9 +14,9 @@ export default meta;
 type Story = StoryObj<typeof PeopleCompanyEditableField>;
 
 export const Default: Story = {
-  render: getRenderWrapperForComponent(
+  render: () => (
     <BrowserRouter>
       <PeopleCompanyEditableField people={mockedPeopleData[0]} />
-    </BrowserRouter>,
+    </BrowserRouter>
   ),
 };
