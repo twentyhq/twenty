@@ -78,6 +78,7 @@ export function TopBar({
             icon={<IconPlus size={16} />}
             size="large"
             data-testid="add-button"
+            textColor="secondary"
             onClick={onAddButtonClick}
             variant="border"
           />

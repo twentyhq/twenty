@@ -22,11 +22,11 @@ export const borderLight = {
 
 export const borderDark = {
   color: {
-    strong: grayScale.gray65,
-    medium: grayScale.gray70,
-    light: grayScale.gray75,
-    secondaryInverted: grayScale.gray40,
-    inverted: grayScale.gray30,
+    strong: grayScale.gray55,
+    medium: grayScale.gray65,
+    light: grayScale.gray70,
+    secondaryInverted: grayScale.gray35,
+    inverted: grayScale.gray20,
   },
   ...common,
 };

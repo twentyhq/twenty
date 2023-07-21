@@ -2,7 +2,6 @@ import hexRgb from 'hex-rgb';
 
 export const grayScale = {
   gray100: '#000000',
-  gray95: '#0f0f0f',
   gray90: '#141414',
   gray85: '#171717',
   gray80: '#1b1b1b',
@@ -18,7 +17,7 @@ export const grayScale = {
   gray30: '#cccccc',
   gray25: '#d6d6d6',
   gray20: '#ebebeb',
-  gray15: '#f5f5f5',
+  gray15: '#f1f1f1',
   gray10: '#fcfcfc',
   gray0: '#ffffff',
 };
