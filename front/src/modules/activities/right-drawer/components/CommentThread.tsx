@@ -146,6 +146,7 @@ export function CommentThread({
             <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
           </StyledTopActionsContainer>
           <StyledEditableTitleInput
+            autoFocus
             placeholder={`${commentThread.type} title (optional)`}
             onChange={(event) => {
               setHasUserManuallySetTitle(true);
