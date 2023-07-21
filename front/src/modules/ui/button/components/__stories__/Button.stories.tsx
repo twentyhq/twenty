@@ -1,12 +1,9 @@
-import React from 'react';
 import styled from '@emotion/styled';
-import { text, withKnobs } from '@storybook/addon-knobs';
 import { expect, jest } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconSearch } from '@/ui/icon';
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { Button } from '../Button';
 import { ButtonGroup } from '../ButtonGroup';
@@ -15,8 +12,8 @@ type ButtonProps = React.ComponentProps<typeof Button>;
 
 const StyledContainer = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
+  padding: 20px;
   width: 800px;
   > * + * {
     margin-top: ${({ theme }) => theme.spacing(4)};
@@ -55,15 +52,6 @@ const StyledButtonContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-const meta: Meta<typeof Button> = {
-  title: 'UI/Button/Button',
-  component: Button,
-  decorators: [withKnobs],
-};
-
-export default meta;
-type Story = StoryObj<typeof Button>;
-
 const variants: ButtonProps['variant'][] = [
   'primary',
   'secondary',
@@ -72,8 +60,6 @@ const variants: ButtonProps['variant'][] = [
   'tertiaryLight',
   'danger',
 ];
-
-const clickJestFn = jest.fn();
 
 const states = {
   'with-icon': {
@@ -127,81 +113,16 @@ const states = {
   },
 };
 
-const ButtonLine: React.FC<ButtonProps> = ({ variant, ...props }) => (
-  <>
-    {Object.entries(states).map(([state, { description, extraProps }]) => (
-      <StyledButtonContainer key={`${variant}-container-${state}`}>
-        <StyledDescription>{description}</StyledDescription>
-        <Button {...props} {...extraProps(variant ?? '')} variant={variant} />
-      </StyledButtonContainer>
-    ))}
-  </>
-);
-
-const ButtonGroupLine: React.FC<ButtonProps> = ({ variant, ...props }) => (
-  <>
-    {Object.entries(states).map(([state, { description, extraProps }]) => (
-      <StyledButtonContainer key={`${variant}-group-container-${state}`}>
-        <StyledDescription>{description}</StyledDescription>
-        <ButtonGroup>
-          <Button
-            {...props}
-            {...extraProps(`${variant}-left`)}
-            variant={variant}
-            title="Left"
-          />
-          <Button
-            {...props}
-            {...extraProps(`${variant}-center`)}
-            variant={variant}
-            title="Center"
-          />
-          <Button
-            {...props}
-            {...extraProps(`${variant}-right`)}
-            variant={variant}
-            title="Right"
-          />
-        </ButtonGroup>
-      </StyledButtonContainer>
-    ))}
-  </>
-);
-
-const generateStory = (
-  size: ButtonProps['size'],
-  type: 'button' | 'group',
-  LineComponent: React.ComponentType<ButtonProps>,
-): Story => ({
-  render: getRenderWrapperForComponent(
-    <StyledContainer>
-      {variants.map((variant) => (
-        <div key={variant}>
-          <StyledTitle>{variant}</StyledTitle>
-          <StyledLine>
-            <LineComponent
-              size={size}
-              variant={variant}
-              title={text('Text', 'A button title')}
-            />
-          </StyledLine>
-        </div>
-      ))}
-    </StyledContainer>,
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    let button;
-    if (type === 'group') {
-      button = canvas.getByTestId(`primary-left-button-default`);
-    } else {
-      button = canvas.getByTestId(`primary-button-default`);
-    }
-
-    const numberOfClicks = clickJestFn.mock.calls.length;
-    await userEvent.click(button);
-    expect(clickJestFn).toHaveBeenCalledTimes(numberOfClicks + 1);
-  },
+const meta: Meta<typeof Button> = {
+  title: 'UI/Button/Button',
+  component: Button,
+  decorators: [
+    (Story) => (
+      <StyledContainer>
+        <Story />
+      </StyledContainer>
+    ),
+  ],
   parameters: {
     pseudo: Object.keys(states).reduce(
       (acc, state) => ({
@@ -210,20 +131,105 @@ const generateStory = (
           (variant) =>
             variant &&
             ['#left', '#center', '#right'].map(
-              (pos) => `${pos}-${variant}-${type}-${state}`,
+              (pos) => `${pos}-${variant}-button-${state}`,
             ),
         ),
       }),
       {},
     ),
   },
-});
+  argTypes: { icon: { control: false }, variant: { control: false } },
+  args: { title: 'A button title' },
+};
 
-export const MediumSize = generateStory('medium', 'button', ButtonLine);
-export const SmallSize = generateStory('small', 'button', ButtonLine);
-export const MediumSizeGroup = generateStory(
-  'medium',
-  'group',
-  ButtonGroupLine,
-);
-export const SmallSizeGroup = generateStory('small', 'group', ButtonGroupLine);
+export default meta;
+type Story = StoryObj<typeof Button>;
+
+const clickJestFn = jest.fn();
+
+export const MediumSize: Story = {
+  args: { size: 'medium' },
+  render: (args) => (
+    <>
+      {variants.map((variant) => (
+        <div key={variant}>
+          <StyledTitle>{variant}</StyledTitle>
+          <StyledLine>
+            {Object.entries(states).map(
+              ([state, { description, extraProps }]) => (
+                <StyledButtonContainer key={`${variant}-container-${state}`}>
+                  <StyledDescription>{description}</StyledDescription>
+                  <Button
+                    {...args}
+                    {...extraProps(variant ?? '')}
+                    variant={variant}
+                  />
+                </StyledButtonContainer>
+              ),
+            )}
+          </StyledLine>
+        </div>
+      ))}
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByTestId('primary-button-default');
+
+    const numberOfClicks = clickJestFn.mock.calls.length;
+    await userEvent.click(button);
+    expect(clickJestFn).toHaveBeenCalledTimes(numberOfClicks + 1);
+  },
+};
+
+export const SmallSize: Story = {
+  ...MediumSize,
+  args: { size: 'small' },
+};
+
+export const MediumSizeGroup: Story = {
+  args: { size: 'medium' },
+  render: (args) => (
+    <>
+      {variants.map((variant) => (
+        <div key={variant}>
+          <StyledTitle>{variant}</StyledTitle>
+          <StyledLine>
+            {Object.entries(states).map(
+              ([state, { description, extraProps }]) => (
+                <StyledButtonContainer
+                  key={`${variant}-group-container-${state}`}
+                >
+                  <StyledDescription>{description}</StyledDescription>
+                  <ButtonGroup>
+                    {['Left', 'Center', 'Right'].map((position) => (
+                      <Button
+                        {...args}
+                        {...extraProps(`${variant}-${position.toLowerCase()}`)}
+                        variant={variant}
+                        title={position}
+                      />
+                    ))}
+                  </ButtonGroup>
+                </StyledButtonContainer>
+              ),
+            )}
+          </StyledLine>
+        </div>
+      ))}
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByTestId('primary-left-button-default');
+
+    const numberOfClicks = clickJestFn.mock.calls.length;
+    await userEvent.click(button);
+    expect(clickJestFn).toHaveBeenCalledTimes(numberOfClicks + 1);
+  },
+};
+
+export const SmallSizeGroup: Story = {
+  ...MediumSizeGroup,
+  args: { size: 'small' },
+};

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators';
 
 import { ColorSchemeCard } from '../ColorSchemeCard';
 
@@ -16,27 +16,34 @@ const Container = styled.div`
 const meta: Meta<typeof ColorSchemeCard> = {
   title: 'UI/ColorScheme/ColorSchemeCard',
   component: ColorSchemeCard,
+  decorators: [
+    (Story) => (
+      <Container>
+        <Story />
+      </Container>
+    ),
+    ComponentDecorator,
+  ],
+  argTypes: {
+    variant: { control: false },
+  },
+  args: { selected: false },
 };
 
 export default meta;
 type Story = StoryObj<typeof ColorSchemeCard>;
 
 export const Default: Story = {
-  render: getRenderWrapperForComponent(
-    <Container>
-      <ColorSchemeCard variant="light" selected={false} />
-      <ColorSchemeCard variant="dark" selected={false} />
-      <ColorSchemeCard variant="system" selected={false} />
-    </Container>,
+  render: (args) => (
+    <>
+      <ColorSchemeCard variant="light" selected={args.selected} />
+      <ColorSchemeCard variant="dark" selected={args.selected} />
+      <ColorSchemeCard variant="system" selected={args.selected} />
+    </>
   ),
 };
 
 export const Selected: Story = {
-  render: getRenderWrapperForComponent(
-    <Container>
-      <ColorSchemeCard variant="light" selected={true} />
-      <ColorSchemeCard variant="dark" selected={true} />
-      <ColorSchemeCard variant="system" selected={true} />
-    </Container>,
-  ),
+  ...Default,
+  args: { selected: true },
 };

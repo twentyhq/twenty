@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { IconPlus } from '@/ui/icon/index';
 import { Avatar } from '@/users/components/Avatar';
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators';
 
 import { DropdownMenu } from '../DropdownMenu';
 import { DropdownMenuCheckableItem } from '../DropdownMenuCheckableItem';
@@ -17,6 +17,11 @@ import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
 const meta: Meta<typeof DropdownMenu> = {
   title: 'UI/Dropdown/DropdownMenu',
   component: DropdownMenu,
+  decorators: [ComponentDecorator],
+  argTypes: {
+    as: { table: { disable: true } },
+    theme: { table: { disable: true } },
+  },
 };
 
 export default meta;
@@ -97,236 +102,169 @@ const mockSelectArray = [
   },
 ];
 
+const FakeSelectableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+
+  return (
+    <>
+      {mockSelectArray.map((item) => (
+        <DropdownMenuSelectableItem
+          key={item.id}
+          selected={selectedItem === item.id}
+          onClick={() => setSelectedItem(item.id)}
+        >
+          {hasAvatar && (
+            <Avatar
+              placeholder="A"
+              avatarUrl={item.avatarUrl}
+              size={16}
+              type="squared"
+            />
+          )}
+          {item.name}
+        </DropdownMenuSelectableItem>
+      ))}
+    </>
+  );
+};
+
+const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+
+  return (
+    <>
+      {mockSelectArray.map((item) => (
+        <DropdownMenuCheckableItem
+          key={item.id}
+          id={item.id}
+          checked={selectedItems.includes(item.id)}
+          onChange={(checked) => {
+            if (checked) {
+              setSelectedItems([...selectedItems, item.id]);
+            } else {
+              setSelectedItems(selectedItems.filter((id) => id !== item.id));
+            }
+          }}
+        >
+          {hasAvatar && (
+            <Avatar
+              placeholder="A"
+              avatarUrl={item.avatarUrl}
+              size={16}
+              type="squared"
+            />
+          )}
+          {item.name}
+        </DropdownMenuCheckableItem>
+      ))}
+    </>
+  );
+};
+
 export const Empty: Story = {
-  render: getRenderWrapperForComponent(
-    <DropdownMenu>
+  render: (args) => (
+    <DropdownMenu {...args}>
       <FakeMenuContent />
-    </DropdownMenu>,
+    </DropdownMenu>
   ),
 };
 
-const DropdownMenuStoryWrapper = ({
-  children,
-}: React.PropsWithChildren<unknown>) => (
-  <FakeBelowContainer>
-    <FakeContentBelow />
-    <MenuAbsolutePositionWrapper>
-      <DropdownMenu>{children}</DropdownMenu>
-    </MenuAbsolutePositionWrapper>
-  </FakeBelowContainer>
-);
-
-export const EmptyWithContentBelow: Story = {
-  render: getRenderWrapperForComponent(
-    <DropdownMenuStoryWrapper>
-      <FakeMenuContent />
-    </DropdownMenuStoryWrapper>,
-  ),
+export const WithContentBelow: Story = {
+  ...Empty,
+  decorators: [
+    (Story) => (
+      <FakeBelowContainer>
+        <FakeContentBelow />
+        <MenuAbsolutePositionWrapper>
+          <Story />
+        </MenuAbsolutePositionWrapper>
+      </FakeBelowContainer>
+    ),
+  ],
 };
 
 export const SimpleMenuItem: Story = {
-  render: getRenderWrapperForComponent(
-    <DropdownMenuStoryWrapper>
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
       <DropdownMenuItemsContainer hasMaxHeight>
         <FakeMenuItemList />
       </DropdownMenuItemsContainer>
-    </DropdownMenuStoryWrapper>,
+    </DropdownMenu>
   ),
 };
 
 export const Search: Story = {
-  render: getRenderWrapperForComponent(
-    <FakeBelowContainer>
-      <FakeContentBelow />
-      <MenuAbsolutePositionWrapper>
-        <DropdownMenu>
-          <DropdownMenuSearch />
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer hasMaxHeight>
-            <FakeMenuItemList />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
-      </MenuAbsolutePositionWrapper>
-    </FakeBelowContainer>,
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuSearch />
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer hasMaxHeight>
+        <FakeMenuItemList />
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
   ),
 };
 
-const FakeSelectableMenuItemList = () => {
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
-
-  return (
-    <>
-      {mockSelectArray.map((item) => (
-        <DropdownMenuSelectableItem
-          key={item.id}
-          selected={selectedItem === item.id}
-          onClick={() => setSelectedItem(item.id)}
-        >
-          {item.name}
-        </DropdownMenuSelectableItem>
-      ))}
-    </>
-  );
-};
-
 export const Button: Story = {
-  render: getRenderWrapperForComponent(
-    <FakeBelowContainer>
-      <FakeContentBelow />
-      <MenuAbsolutePositionWrapper>
-        <DropdownMenu>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            <DropdownMenuItem>
-              <IconPlus size={16} />
-              <div>Create new</div>
-            </DropdownMenuItem>
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer hasMaxHeight>
-            <FakeSelectableMenuItemList />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
-      </MenuAbsolutePositionWrapper>
-    </FakeBelowContainer>,
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        <DropdownMenuItem>
+          <IconPlus size={16} />
+          <div>Create new</div>
+        </DropdownMenuItem>
+      </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer hasMaxHeight>
+        <FakeSelectableMenuItemList />
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
   ),
 };
 
 export const SelectableMenuItem: Story = {
-  render: getRenderWrapperForComponent(
-    <FakeBelowContainer>
-      <FakeContentBelow />
-      <MenuAbsolutePositionWrapper>
-        <DropdownMenu>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            <FakeSelectableMenuItemList />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
-      </MenuAbsolutePositionWrapper>
-    </FakeBelowContainer>,
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        <FakeSelectableMenuItemList />
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
   ),
-};
-
-const FakeSelectableMenuItemWithAvatarList = () => {
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
-
-  return (
-    <>
-      {mockSelectArray.map((item) => (
-        <DropdownMenuSelectableItem
-          key={item.id}
-          selected={selectedItem === item.id}
-          onClick={() => setSelectedItem(item.id)}
-        >
-          <Avatar
-            placeholder="A"
-            avatarUrl={item.avatarUrl}
-            size={16}
-            type="squared"
-          />
-          {item.name}
-        </DropdownMenuSelectableItem>
-      ))}
-    </>
-  );
 };
 
 export const SelectableMenuItemWithAvatar: Story = {
-  render: getRenderWrapperForComponent(
-    <FakeBelowContainer>
-      <FakeContentBelow />
-      <MenuAbsolutePositionWrapper>
-        <DropdownMenu>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            <FakeSelectableMenuItemWithAvatarList />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
-      </MenuAbsolutePositionWrapper>
-    </FakeBelowContainer>,
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        <FakeSelectableMenuItemList hasAvatar />
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
   ),
-};
-
-const FakeCheckableMenuItemList = () => {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-
-  return (
-    <>
-      {mockSelectArray.map((item) => (
-        <DropdownMenuCheckableItem
-          key={item.id}
-          id={item.id}
-          checked={selectedItems.includes(item.id)}
-          onChange={(checked) => {
-            if (checked) {
-              setSelectedItems([...selectedItems, item.id]);
-            } else {
-              setSelectedItems(selectedItems.filter((id) => id !== item.id));
-            }
-          }}
-        >
-          {item.name}
-        </DropdownMenuCheckableItem>
-      ))}
-    </>
-  );
 };
 
 export const CheckableMenuItem: Story = {
-  render: getRenderWrapperForComponent(
-    <FakeBelowContainer>
-      <FakeContentBelow />
-      <MenuAbsolutePositionWrapper>
-        <DropdownMenu>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            <FakeCheckableMenuItemList />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
-      </MenuAbsolutePositionWrapper>
-    </FakeBelowContainer>,
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        <FakeCheckableMenuItemList />
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
   ),
 };
 
-const FakeCheckableMenuItemWithAvatarList = () => {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-
-  return (
-    <>
-      {mockSelectArray.map((item) => (
-        <DropdownMenuCheckableItem
-          key={item.id}
-          id={item.id}
-          checked={selectedItems.includes(item.id)}
-          onChange={(checked) => {
-            if (checked) {
-              setSelectedItems([...selectedItems, item.id]);
-            } else {
-              setSelectedItems(selectedItems.filter((id) => id !== item.id));
-            }
-          }}
-        >
-          <Avatar
-            placeholder="A"
-            avatarUrl={item.avatarUrl}
-            size={16}
-            type="squared"
-          />
-          {item.name}
-        </DropdownMenuCheckableItem>
-      ))}
-    </>
-  );
-};
-
 export const CheckableMenuItemWithAvatar: Story = {
-  render: getRenderWrapperForComponent(
-    <FakeBelowContainer>
-      <FakeContentBelow />
-      <MenuAbsolutePositionWrapper>
-        <DropdownMenu>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            <FakeCheckableMenuItemWithAvatarList />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
-      </MenuAbsolutePositionWrapper>
-    </FakeBelowContainer>,
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        <FakeCheckableMenuItemList hasAvatar />
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
   ),
 };

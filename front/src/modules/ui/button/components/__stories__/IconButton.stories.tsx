@@ -1,12 +1,9 @@
-import React from 'react';
 import styled from '@emotion/styled';
-import { withKnobs } from '@storybook/addon-knobs';
 import { expect, jest } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconUser } from '@/ui/icon';
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
 import { IconButton } from '../IconButton';
 
@@ -16,6 +13,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
+  padding: 20px;
   width: 800px;
   > * + * {
     margin-top: ${({ theme }) => theme.spacing(4)};
@@ -55,7 +53,14 @@ const StyledIconButtonContainer = styled.div`
 const meta: Meta<typeof IconButton> = {
   title: 'UI/Button/IconButton',
   component: IconButton,
-  decorators: [withKnobs],
+  decorators: [
+    (Story) => (
+      <StyledContainer>
+        <Story />
+      </StyledContainer>
+    ),
+  ],
+  argTypes: { icon: { control: false }, variant: { control: false } },
 };
 
 export default meta;
@@ -101,53 +106,51 @@ const states = {
   },
 };
 
-function IconButtonRow({ variant, size, ...props }: IconButtonProps) {
-  const iconSize = size === 'small' ? 14 : 16;
-  return (
+export const LargeSize: Story = {
+  args: { size: 'large' },
+  render: (args) => (
     <>
-      {Object.entries(states).map(([state, { description, extraProps }]) => (
-        <StyledIconButtonContainer key={`${variant}-container-${state}`}>
-          <StyledDescription>{description}</StyledDescription>
-          <IconButton
-            {...props}
-            {...extraProps(variant ?? '')}
-            variant={variant}
-            size={size}
-            icon={<IconUser size={iconSize} />}
-          />
-        </StyledIconButtonContainer>
-      ))}
-    </>
-  );
-}
-
-const generateStory = (
-  size: IconButtonProps['size'],
-  LineComponent: React.ComponentType<IconButtonProps>,
-): Story => ({
-  render: getRenderWrapperForComponent(
-    <StyledContainer>
       {variants.map((variant) => (
         <div key={variant}>
           <StyledTitle>{variant}</StyledTitle>
           <StyledLine>
-            <LineComponent size={size} variant={variant} />
+            {Object.entries(states).map(
+              ([state, { description, extraProps }]) => (
+                <StyledIconButtonContainer
+                  key={`${variant}-container-${state}`}
+                >
+                  <StyledDescription>{description}</StyledDescription>
+                  <IconButton
+                    {...args}
+                    {...extraProps(variant ?? '')}
+                    variant={variant}
+                    icon={<IconUser size={args.size === 'small' ? 14 : 16} />}
+                  />
+                </StyledIconButtonContainer>
+              ),
+            )}
           </StyledLine>
         </div>
       ))}
-    </StyledContainer>,
+    </>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const button = canvas.getByTestId(`transparent-button-default`);
+    const button = canvas.getByTestId('transparent-button-default');
 
     const numberOfClicks = clickJestFn.mock.calls.length;
     await userEvent.click(button);
     expect(clickJestFn).toHaveBeenCalledTimes(numberOfClicks + 1);
   },
-});
+};
 
-export const LargeSize = generateStory('large', IconButtonRow);
-export const MediumSize = generateStory('medium', IconButtonRow);
-export const SmallSize = generateStory('small', IconButtonRow);
+export const MediumSize: Story = {
+  ...LargeSize,
+  args: { size: 'medium' },
+};
+
+export const SmallSize: Story = {
+  ...LargeSize,
+  args: { size: 'small' },
+};
