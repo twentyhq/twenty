@@ -22,7 +22,7 @@ const StyledTable = styled.table`
   width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
 
   th {
-    border: 1px solid ${({ theme }) => theme.background.tertiary};
+    border: 1px solid ${({ theme }) => theme.border.color.light};
     border-collapse: collapse;
     color: ${({ theme }) => theme.font.color.tertiary};
     padding: 0;
@@ -42,7 +42,7 @@ const StyledTable = styled.table`
   }
 
   td {
-    border: 1px solid ${({ theme }) => theme.background.tertiary};
+    border: 1px solid ${({ theme }) => theme.border.color.light};
     border-collapse: collapse;
     color: ${({ theme }) => theme.font.color.primary};
     padding: 0;

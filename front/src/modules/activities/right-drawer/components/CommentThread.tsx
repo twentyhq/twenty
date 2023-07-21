@@ -11,6 +11,7 @@ import { PropertyBox } from '@/ui/editable-field/property-box/components/Propert
 import { PropertyBoxItem } from '@/ui/editable-field/property-box/components/PropertyBoxItem';
 import { IconArrowUpRight } from '@/ui/icon/index';
 import {
+  ActivityType,
   useGetCommentThreadQuery,
   useUpdateCommentThreadMutation,
 } from '~/generated/graphql';
@@ -100,7 +101,7 @@ export function CommentThread({
   });
   const commentThread = data?.findManyCommentThreads[0];
 
-  const [title, setTitle] = useState<string | null>(null);
+  const [title, setTitle] = useState<string | null>(commentThread?.title ?? '');
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 
@@ -114,6 +115,15 @@ export function CommentThread({
           title: title ?? '',
         },
         refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
+        optimisticResponse: {
+          __typename: 'Mutation',
+          updateOneCommentThread: {
+            __typename: 'CommentThread',
+            id: commentThreadId,
+            title: title ?? '',
+            type: commentThread?.type ?? ActivityType.Note,
+          },
+        },
       });
     }
     return debounce(updateTitle, 200);
@@ -126,12 +136,6 @@ export function CommentThread({
       debounceUpdateTitle(parsedTitle);
     }
   }
-
-  useEffect(() => {
-    if (commentThread) {
-      setTitle(commentThread?.title ?? '');
-    }
-  }, [commentThread]);
 
   if (!commentThread) {
     return <></>;
