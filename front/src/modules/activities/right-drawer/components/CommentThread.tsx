@@ -109,22 +109,24 @@ export function CommentThread({
 
   const debounceUpdateTitle = useMemo(() => {
     function updateTitle(title: string) {
-      updateCommentThreadMutation({
-        variables: {
-          id: commentThreadId,
-          title: title ?? '',
-        },
-        refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
-        optimisticResponse: {
-          __typename: 'Mutation',
-          updateOneCommentThread: {
-            __typename: 'CommentThread',
+      if (commentThread) {
+        updateCommentThreadMutation({
+          variables: {
             id: commentThreadId,
             title: title ?? '',
-            type: commentThread?.type ?? ActivityType.Note,
           },
-        },
-      });
+          refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
+          optimisticResponse: {
+            __typename: 'Mutation',
+            updateOneCommentThread: {
+              __typename: 'CommentThread',
+              id: commentThreadId,
+              title: title,
+              type: commentThread.type,
+            },
+          },
+        });
+      }
     }
     return debounce(updateTitle, 200);
   }, [commentThreadId, updateCommentThreadMutation]);
