@@ -20,8 +20,8 @@ const common = {
 
 export const fontLight = {
   color: {
-    primary: grayScale.gray55,
-    secondary: grayScale.gray45,
+    primary: grayScale.gray60,
+    secondary: grayScale.gray50,
     tertiary: grayScale.gray40,
     light: grayScale.gray35,
     extraLight: grayScale.gray30,
@@ -32,8 +32,8 @@ export const fontLight = {
 
 export const fontDark = {
   color: {
-    primary: grayScale.gray30,
-    secondary: grayScale.gray40,
+    primary: grayScale.gray20,
+    secondary: grayScale.gray35,
     tertiary: grayScale.gray45,
     light: grayScale.gray50,
     extraLight: grayScale.gray55,

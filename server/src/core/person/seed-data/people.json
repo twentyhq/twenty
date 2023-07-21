@@ -1,0 +1,38 @@
+[
+  {
+    "firstName": "Brian",
+    "lastName": "Chesky",
+    "city": "San Francisco",
+    "email": "chesky@airbnb.com",
+    "phone": ""
+  },
+  {
+    "firstName": "Alexandre",
+    "lastName": "Prot",
+    "city": "Paris",
+    "email": "prot@qonto.com",
+    "phone": ""
+  },
+  {
+    "firstName": "Patrick",
+    "lastName": "Collison",
+    "city": "San Francisco",
+    "email": "collison@stripe.com",
+    "phone": ""
+  },
+  {
+    "firstName": "Dylan",
+    "lastName": "Field",
+    "city": "San Francisco",
+    "email": "field@figma.com",
+    "phone": ""
+  },
+  {
+    "firstName": "Ivan",
+    "lastName": "Zhao",
+    "city": "San Francisco",
+    "email": "zhao@notion.com",
+    "phone": ""
+  }
+]
+  

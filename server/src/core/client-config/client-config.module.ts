@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { ClientConfigResolver } from './client-config.resolver';
 
 @Module({

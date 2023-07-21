@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
 
 import { EditablePeopleFullName } from '@/people/components/EditablePeopleFullName';
 import { peopleNameCellFamilyState } from '@/people/states/peopleNamesFamilyState';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdatePeopleMutation } from '~/generated/graphql';
+import { useUpdateOnePersonMutation } from '~/generated/graphql';
+
+import { GET_PERSON } from '../../queries';
 
 export function EditablePeopleFullNameCell() {
   const currentRowEntityId = useCurrentRowEntityId();
 
-  const [updatePerson] = useUpdatePeopleMutation();
+  const [updatePerson] = useUpdateOnePersonMutation();
 
-  const { commentCount, firstName, lastName } = useRecoilValue(
+  const { commentCount, firstName, lastName, displayName } = useRecoilValue(
     peopleNameCellFamilyState(currentRowEntityId ?? ''),
   );
 
@@ -30,6 +33,7 @@ export function EditablePeopleFullNameCell() {
         _commentThreadCount: commentCount ?? undefined,
         firstName: internalFirstName,
         lastName: internalLastName,
+        displayName: displayName ?? undefined,
       }}
       onChange={(firstName, lastName) => {
         setInternalFirstName(firstName);
@@ -38,10 +42,15 @@ export function EditablePeopleFullNameCell() {
       onSubmit={() =>
         updatePerson({
           variables: {
-            id: currentRowEntityId,
-            firstName: internalFirstName,
-            lastName: internalLastName,
+            where: {
+              id: currentRowEntityId,
+            },
+            data: {
+              firstName: internalFirstName,
+              lastName: internalLastName,
+            },
           },
+          refetchQueries: [getOperationName(GET_PERSON) ?? ''],
         })
       }
       onCancel={() => {

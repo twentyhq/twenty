@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FileService } from './file.service';
+
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { FileStorageService } from 'src/integrations/file-storage/file-storage.service';
+
+import { FileService } from './file.service';
 
 describe('FileService', () => {
   let service: FileService;

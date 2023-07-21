@@ -33,7 +33,7 @@ export function App() {
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route
             path=""
-            element={<Navigate to={AppPath.PeoplePage} replace />}
+            element={<Navigate to={AppPath.CompaniesPage} replace />}
           />
           <Route path={AppPath.PeoplePage} element={<People />} />
           <Route path={AppPath.PersonShowPage} element={<PersonShow />} />

@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ClientConfigResolver } from './client-config.resolver';
+
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+
+import { ClientConfigResolver } from './client-config.resolver';
 
 describe('ClientConfigResolver', () => {
   let resolver: ClientConfigResolver;

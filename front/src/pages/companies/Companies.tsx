@@ -1,7 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { v4 as uuidv4 } from 'uuid';
 
 import { GET_COMPANIES } from '@/companies/queries';
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
@@ -12,10 +11,9 @@ import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer'
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { TableContext } from '@/ui/table/states/TableContext';
-import {
-  InsertCompanyMutationVariables,
-  useInsertCompanyMutation,
-} from '~/generated/graphql';
+import { useInsertOneCompanyMutation } from '~/generated/graphql';
+
+import { SEARCH_COMPANY_QUERY } from '../../modules/search/queries/search';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -23,21 +21,21 @@ const StyledTableContainer = styled.div`
 `;
 
 export function Companies() {
-  const [insertCompany] = useInsertCompanyMutation();
+  const [insertCompany] = useInsertOneCompanyMutation();
 
   async function handleAddButtonClick() {
-    const newCompany: InsertCompanyMutationVariables = {
-      id: uuidv4(),
-      name: '',
-      domainName: '',
-      employees: null,
-      address: '',
-      createdAt: new Date().toISOString(),
-    };
-
     await insertCompany({
-      variables: newCompany,
-      refetchQueries: [getOperationName(GET_COMPANIES) ?? ''],
+      variables: {
+        data: {
+          name: '',
+          domainName: '',
+          address: '',
+        },
+      },
+      refetchQueries: [
+        getOperationName(GET_COMPANIES) ?? '',
+        getOperationName(SEARCH_COMPANY_QUERY) ?? '',
+      ],
     });
   }
 

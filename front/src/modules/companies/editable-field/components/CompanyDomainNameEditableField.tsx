@@ -6,7 +6,7 @@ import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { IconLink } from '@/ui/icon';
 import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { Company, useUpdateCompanyMutation } from '~/generated/graphql';
+import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
 
 type OwnProps = {
   company: Pick<Company, 'id' | 'domainName'>;
@@ -15,7 +15,7 @@ type OwnProps = {
 export function CompanyDomainNameEditableField({ company }: OwnProps) {
   const [internalValue, setInternalValue] = useState(company.domainName);
 
-  const [updateCompany] = useUpdateCompanyMutation();
+  const [updateCompany] = useUpdateOneCompanyMutation();
 
   useEffect(() => {
     setInternalValue(company.domainName);
@@ -28,8 +28,12 @@ export function CompanyDomainNameEditableField({ company }: OwnProps) {
   async function handleSubmit() {
     await updateCompany({
       variables: {
-        id: company.id,
-        domainName: internalValue ?? '',
+        where: {
+          id: company.id,
+        },
+        data: {
+          domainName: internalValue ?? '',
+        },
       },
     });
   }
@@ -56,6 +60,7 @@ export function CompanyDomainNameEditableField({ company }: OwnProps) {
         }
         displayModeContent={<FieldDisplayURL URL={internalValue} />}
         useEditButton
+        isDisplayModeContentEmpty={!(internalValue !== '')}
       />
     </RecoilScope>
   );

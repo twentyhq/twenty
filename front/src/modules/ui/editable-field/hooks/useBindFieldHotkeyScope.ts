@@ -1,8 +1,13 @@
 import { useEffect } from 'react';
+import { useRecoilCallback } from 'recoil';
 
+import { currentHotkeyScopeState } from '@/ui/hotkey/states/internal/currentHotkeyScopeState';
 import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
 import { isSameHotkeyScope } from '@/ui/hotkey/utils/isSameHotkeyScope';
+import { useContextScopeId } from '@/ui/recoil-scope/hooks/useContextScopeId';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { getSnapshotScopedState } from '@/ui/recoil-scope/utils/getSnapshotScopedState';
+import { getSnapshotState } from '@/ui/recoil-scope/utils/getSnapshotState';
 
 import { customEditHotkeyScopeForFieldScopedState } from '../states/customEditHotkeyScopeForFieldScopedState';
 import { FieldContext } from '../states/FieldContext';
@@ -21,8 +26,7 @@ export function useBindFieldHotkeyScope({
       FieldContext,
     );
 
-  const [parentHotkeyScopeForField, setParentHotkeyScopeForField] =
-    useRecoilScopedState(parentHotkeyScopeForFieldScopedState, FieldContext);
+  const fieldContextScopeId = useContextScopeId(FieldContext);
 
   useEffect(() => {
     if (
@@ -37,16 +41,35 @@ export function useBindFieldHotkeyScope({
     setCustomEditHotkeyScopeForField,
   ]);
 
+  const setParentHotkeyScopeForField = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (parentHotkeyScopeToSet: HotkeyScope | null | undefined) => {
+        const currentHotkeyScope = getSnapshotState({
+          snapshot,
+          state: currentHotkeyScopeState,
+        });
+
+        const parentHotkeyScopeForField = getSnapshotScopedState({
+          snapshot,
+          state: parentHotkeyScopeForFieldScopedState,
+          contextScopeId: fieldContextScopeId,
+        });
+
+        if (!parentHotkeyScopeToSet) {
+          set(
+            parentHotkeyScopeForFieldScopedState(fieldContextScopeId),
+            currentHotkeyScope,
+          );
+        } else if (
+          !isSameHotkeyScope(parentHotkeyScopeToSet, parentHotkeyScopeForField)
+        ) {
+          setParentHotkeyScopeForField(parentHotkeyScopeToSet);
+        }
+      },
+    [fieldContextScopeId],
+  );
+
   useEffect(() => {
-    if (
-      parentHotkeyScope &&
-      !isSameHotkeyScope(parentHotkeyScope, parentHotkeyScopeForField)
-    ) {
-      setParentHotkeyScopeForField(parentHotkeyScope);
-    }
-  }, [
-    parentHotkeyScope,
-    parentHotkeyScopeForField,
-    setParentHotkeyScopeForField,
-  ]);
+    setParentHotkeyScopeForField(parentHotkeyScope);
+  }, [parentHotkeyScope, setParentHotkeyScopeForField]);
 }

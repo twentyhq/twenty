@@ -1,14 +1,17 @@
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+
 import { User, Workspace } from '@prisma/client';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
+import { v4 as uuidV4 } from 'uuid';
+
+import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
+
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { v4 as uuidV4 } from 'uuid';
-import { AttachmentService } from '../services/attachment.service';
+import { AttachmentService } from 'src/core/attachment/services/attachment.service';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
-import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
-import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Attachment } from 'src/core/@generated/attachment/attachment.model';
 import { AbilityGuard } from 'src/guards/ability.guard';

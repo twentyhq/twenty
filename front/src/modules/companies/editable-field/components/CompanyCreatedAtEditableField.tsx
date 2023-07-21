@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import { EditableField } from '@/ui/editable-field/components/EditableField';
-import { EditableFieldEditModeDate } from '@/ui/editable-field/components/EditableFieldEditModeDate';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
+import { EditableFieldEditModeDate } from '@/ui/editable-field/variants/components/EditableFieldEditModeDate';
 import { IconCalendar } from '@/ui/icon';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { Company, useUpdateCompanyMutation } from '~/generated/graphql';
+import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
 import { parseDate } from '~/utils/date-utils';
 
@@ -16,7 +16,7 @@ type OwnProps = {
 export function CompanyCreatedAtEditableField({ company }: OwnProps) {
   const [internalValue, setInternalValue] = useState(company.createdAt);
 
-  const [updateCompany] = useUpdateCompanyMutation();
+  const [updateCompany] = useUpdateOneCompanyMutation();
 
   useEffect(() => {
     setInternalValue(company.createdAt);
@@ -29,8 +29,12 @@ export function CompanyCreatedAtEditableField({ company }: OwnProps) {
   async function handleSubmit() {
     await updateCompany({
       variables: {
-        id: company.id,
-        createdAt: internalValue ?? '',
+        where: {
+          id: company.id,
+        },
+        data: {
+          createdAt: internalValue ?? '',
+        },
       },
     });
   }
@@ -56,6 +60,7 @@ export function CompanyCreatedAtEditableField({ company }: OwnProps) {
             ? formatToHumanReadableDate(parseDate(internalValue).toJSDate())
             : 'No date'
         }
+        isDisplayModeContentEmpty={!(internalValue !== '')}
       />
     </RecoilScope>
   );

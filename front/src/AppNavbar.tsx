@@ -48,16 +48,16 @@ export function AppNavbar() {
             />
             <NavTitle label="Workspace" />
             <NavItem
-              label="People"
-              to="/people"
-              icon={<IconUser size={theme.icon.size.md} />}
-              active={currentPath === '/people'}
-            />
-            <NavItem
               label="Companies"
               to="/companies"
               icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
               active={currentPath === '/companies'}
+            />
+            <NavItem
+              label="People"
+              to="/people"
+              icon={<IconUser size={theme.icon.size.md} />}
+              active={currentPath === '/people'}
             />
             <NavItem
               label="Opportunities"

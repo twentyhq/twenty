@@ -1,16 +1,19 @@
 import { Resolver, Args, Query, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+
 import { accessibleBy } from '@casl/prisma';
+import { Prisma } from '@prisma/client';
+
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { Workspace } from '../../../core/@generated/workspace/workspace.model';
-import { AuthWorkspace } from '../../../decorators/auth-workspace.decorator';
-import { FindManyPipelineProgressArgs } from '../../@generated/pipeline-progress/find-many-pipeline-progress.args';
-import { PipelineProgress } from '../../@generated/pipeline-progress/pipeline-progress.model';
-import { UpdateOnePipelineProgressArgs } from '../../@generated/pipeline-progress/update-one-pipeline-progress.args';
-import { AffectedRows } from '../../@generated/prisma/affected-rows.output';
-import { DeleteManyPipelineProgressArgs } from '../../@generated/pipeline-progress/delete-many-pipeline-progress.args';
-import { CreateOnePipelineProgressArgs } from '../../@generated/pipeline-progress/create-one-pipeline-progress.args';
-import { PipelineProgressService } from '../services/pipeline-progress.service';
+import { Workspace } from 'src/core/@generated/workspace/workspace.model';
+import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { FindManyPipelineProgressArgs } from 'src/core/@generated/pipeline-progress/find-many-pipeline-progress.args';
+import { PipelineProgress } from 'src/core/@generated/pipeline-progress/pipeline-progress.model';
+import { UpdateOnePipelineProgressArgs } from 'src/core/@generated/pipeline-progress/update-one-pipeline-progress.args';
+import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
+import { DeleteManyPipelineProgressArgs } from 'src/core/@generated/pipeline-progress/delete-many-pipeline-progress.args';
+import { CreateOnePipelineProgressArgs } from 'src/core/@generated/pipeline-progress/create-one-pipeline-progress.args';
+import { PipelineProgressService } from 'src/core/pipeline/services/pipeline-progress.service';
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
@@ -25,7 +28,6 @@ import {
   PrismaSelector,
   PrismaSelect,
 } from 'src/decorators/prisma-select.decorator';
-import { Prisma } from '@prisma/client';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => PipelineProgress)
@@ -68,6 +70,20 @@ export class PipelineProgressResolver {
     @PrismaSelector({ modelName: 'PipelineProgress' })
     prismaSelect: PrismaSelect<'PipelineProgress'>,
   ): Promise<Partial<PipelineProgress> | null> {
+    // TODO: Do a proper check with recursion testing on args in a more generic place
+    for (const key in args.data) {
+      if (args.data[key]) {
+        for (const subKey in args.data[key]) {
+          if (JSON.stringify(args.data[key][subKey]) === '{}') {
+            delete args.data[key][subKey];
+          }
+        }
+      }
+
+      if (JSON.stringify(args.data[key]) === '{}') {
+        delete args.data[key];
+      }
+    }
     return this.pipelineProgressService.update({
       where: args.where,
       data: args.data,

@@ -7,11 +7,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+
 import { Response } from 'express';
-import { GoogleRequest } from '../strategies/google.auth.strategy';
-import { UserService } from '../../user/user.service';
-import { TokenService } from '../services/token.service';
-import { GoogleProviderEnabledGuard } from '../guards/google-provider-enabled.guard';
+
+import { GoogleRequest } from 'src/core/auth/strategies/google.auth.strategy';
+import { UserService } from 'src/core/user/user.service';
+import { TokenService } from 'src/core/auth/services/token.service';
+import { GoogleProviderEnabledGuard } from 'src/core/auth/guards/google-provider-enabled.guard';
 
 @Controller('auth/google')
 export class GoogleAuthController {

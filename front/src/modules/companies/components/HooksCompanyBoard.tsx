@@ -16,7 +16,10 @@ import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
-import { PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By } from '~/generated/graphql';
+import {
+  PipelineProgressableType,
+  PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By,
+} from '~/generated/graphql';
 import {
   Pipeline,
   useGetCompaniesQuery,
@@ -39,11 +42,16 @@ export function HooksCompanyBoard({
   const [currentPipeline, setCurrentPipeline] =
     useRecoilState(currentPipelineState);
 
-  const [, setBoard] = useRecoilState(boardState);
+  const [board, setBoard] = useRecoilState(boardState);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
   useGetPipelinesQuery({
+    variables: {
+      where: {
+        pipelineProgressableType: { equals: PipelineProgressableType.Company },
+      },
+    },
     onCompleted: async (data) => {
       const pipeline = data?.findManyPipeline[0] as Pipeline;
       setCurrentPipeline(pipeline);
@@ -55,12 +63,12 @@ export function HooksCompanyBoard({
           })
         : [];
       const initialBoard: BoardPipelineStageColumn[] =
-        orderedPipelineStages?.map((pipelineStage) => ({
+        orderedPipelineStages?.map((pipelineStage, i) => ({
           pipelineStageId: pipelineStage.id,
           title: pipelineStage.name,
           colorCode: pipelineStage.color,
           index: pipelineStage.index || 0,
-          pipelineProgressIds: [],
+          pipelineProgressIds: board?.[i].pipelineProgressIds || [],
         })) || [];
       setBoard(initialBoard);
     },

@@ -108,7 +108,6 @@
     "@storybook/addon-coverage": "^0.0.8",
     "@storybook/addon-essentials": "^7.0.22",
     "@storybook/addon-interactions": "^7.0.22",
-    "@storybook/addon-knobs": "^7.0.2",
     "@storybook/addon-links": "^7.0.22",
     "@storybook/addon-styling": "^1.3.0",
     "@storybook/jest": "^0.1.0",

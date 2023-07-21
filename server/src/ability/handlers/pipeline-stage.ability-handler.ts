@@ -1,16 +1,19 @@
-import { PrismaService } from 'src/database/prisma.service';
-import { AbilityAction } from '../ability.action';
-import { AppAbility } from '../ability.factory';
-import { IAbilityHandler } from '../interfaces/ability-handler.interface';
 import {
   ExecutionContext,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PipelineStageWhereInput } from 'src/core/@generated/pipeline-stage/pipeline-stage-where.input';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { assert } from 'src/utils/assert';
+
 import { subject } from '@casl/ability';
+
+import { IAbilityHandler } from 'src/ability/interfaces/ability-handler.interface';
+
+import { PrismaService } from 'src/database/prisma.service';
+import { AbilityAction } from 'src/ability/ability.action';
+import { AppAbility } from 'src/ability/ability.factory';
+import { PipelineStageWhereInput } from 'src/core/@generated/pipeline-stage/pipeline-stage-where.input';
+import { assert } from 'src/utils/assert';
 
 class PipelineStageArgs {
   where?: PipelineStageWhereInput;

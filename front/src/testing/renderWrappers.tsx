@@ -35,12 +35,6 @@ export function getRenderWrapperForPage(
   };
 }
 
-export function getRenderWrapperForComponent(children: React.ReactElement) {
-  return function render() {
-    return <ComponentStorybookLayout>{children}</ComponentStorybookLayout>;
-  };
-}
-
 export function getRenderWrapperForEntityTableComponent(
   children: React.ReactElement,
 ) {

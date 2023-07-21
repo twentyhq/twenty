@@ -25,6 +25,7 @@ export function EditableCellDateEditMode({
 
   function handleDateChange(newDate: Date) {
     onChange(newDate);
+
     closeEditableCell();
   }
 

@@ -1,6 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+
 import merge from 'lodash.merge';
+
 import {
   PrismaSelect,
   ModelSelectMap,
@@ -11,6 +13,11 @@ export { PrismaSelect };
 
 const globalDefaultFields: DefaultFieldsMap = {
   User: {
+    // Needed for displayName resolve field
+    firstName: true,
+    lastName: true,
+  },
+  Person: {
     // Needed for displayName resolve field
     firstName: true,
     lastName: true,

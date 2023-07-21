@@ -12,6 +12,7 @@ export { IconSearch } from '@tabler/icons-react';
 export { IconSettings } from '@tabler/icons-react';
 export { IconLogout } from '@tabler/icons-react';
 export { IconColorSwatch } from '@tabler/icons-react';
+export { IconProgressCheck } from '@tabler/icons-react';
 export { IconX } from '@tabler/icons-react';
 export { IconChevronLeft } from '@tabler/icons-react';
 export { IconPlus } from '@tabler/icons-react';

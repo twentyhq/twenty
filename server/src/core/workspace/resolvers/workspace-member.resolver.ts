@@ -1,6 +1,9 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql';
-import { WorkspaceMember } from '../../@generated/workspace-member/workspace-member.model';
 import { UseGuards } from '@nestjs/common';
+
+import { accessibleBy } from '@casl/prisma';
+
+import { WorkspaceMember } from 'src/core/@generated/workspace-member/workspace-member.model';
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
@@ -14,8 +17,7 @@ import {
   PrismaSelect,
   PrismaSelector,
 } from 'src/decorators/prisma-select.decorator';
-import { WorkspaceMemberService } from '../services/workspace-member.service';
-import { accessibleBy } from '@casl/prisma';
+import { WorkspaceMemberService } from 'src/core/workspace/services/workspace-member.service';
 import { DeleteOneWorkspaceMemberArgs } from 'src/core/@generated/workspace-member/delete-one-workspace-member.args';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 

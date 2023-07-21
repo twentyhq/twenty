@@ -9,13 +9,11 @@ describe('reduceSortsToOrderBy', () => {
         key: 'firstName',
         label: 'firstName',
         order: 'asc',
-        _type: 'default_sort',
       },
       {
         key: 'lastName',
         label: 'lastName',
         order: 'desc',
-        _type: 'default_sort',
       },
     ] satisfies PeopleSelectedSortType[];
     const result = reduceSortsToOrderBy(sorts);

@@ -14,17 +14,19 @@ export const borderLight = {
     strong: grayScale.gray25,
     medium: grayScale.gray20,
     light: grayScale.gray15,
-    inverted: grayScale.gray55,
+    secondaryInverted: grayScale.gray50,
+    inverted: grayScale.gray60,
   },
   ...common,
 };
 
 export const borderDark = {
   color: {
-    strong: grayScale.gray60,
+    strong: grayScale.gray55,
     medium: grayScale.gray65,
     light: grayScale.gray70,
-    inverted: grayScale.gray30,
+    secondaryInverted: grayScale.gray35,
+    inverted: grayScale.gray20,
   },
   ...common,
 };

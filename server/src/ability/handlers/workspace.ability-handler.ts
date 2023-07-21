@@ -1,16 +1,19 @@
-import { PrismaService } from 'src/database/prisma.service';
-import { AbilityAction } from '../ability.action';
-import { AppAbility } from '../ability.factory';
-import { IAbilityHandler } from '../interfaces/ability-handler.interface';
 import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { subject } from '@casl/ability';
-import { WorkspaceWhereInput } from 'src/core/@generated/workspace/workspace-where.input';
 import { GqlExecutionContext } from '@nestjs/graphql';
+
+import { subject } from '@casl/ability';
+
+import { IAbilityHandler } from 'src/ability/interfaces/ability-handler.interface';
+
+import { PrismaService } from 'src/database/prisma.service';
+import { AbilityAction } from 'src/ability/ability.action';
+import { AppAbility } from 'src/ability/ability.factory';
+import { WorkspaceWhereInput } from 'src/core/@generated/workspace/workspace-where.input';
 import { assert } from 'src/utils/assert';
 import { getRequest } from 'src/utils/extract-request';
 

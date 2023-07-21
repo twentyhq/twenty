@@ -29,13 +29,27 @@ export function useColorScheme() {
             data: {
               settings: {
                 update: {
-                  colorScheme: {
-                    set: value,
-                  },
+                  colorScheme: value,
                 },
               },
             },
           },
+          optimisticResponse:
+            currentUser && currentUser.settings
+              ? {
+                  __typename: 'Mutation',
+                  updateUser: {
+                    __typename: 'User',
+                    ...currentUser,
+                    settings: {
+                      __typename: 'UserSettings',
+                      id: currentUser.settings.id,
+                      colorScheme: value,
+                      locale: currentUser.settings.locale,
+                    },
+                  },
+                }
+              : undefined,
         });
 
         if (!result.data || result.errors) {
@@ -43,7 +57,7 @@ export function useColorScheme() {
         }
       } catch (err) {}
     },
-    [currentUser?.id, updateUser],
+    [currentUser, updateUser],
   );
 
   return {

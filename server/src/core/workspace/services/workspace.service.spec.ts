@@ -1,9 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WorkspaceService } from './workspace.service';
+
 import { PrismaService } from 'src/database/prisma.service';
 import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
 import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
 import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.service';
+import { PersonService } from 'src/core/person/person.service';
+import { CompanyService } from 'src/core/company/company.service';
+
+import { WorkspaceService } from './workspace.service';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -22,6 +26,14 @@ describe('WorkspaceService', () => {
         },
         {
           provide: PipelineStageService,
+          useValue: {},
+        },
+        {
+          provide: PersonService,
+          useValue: {},
+        },
+        {
+          provide: CompanyService,
           useValue: {},
         },
       ],

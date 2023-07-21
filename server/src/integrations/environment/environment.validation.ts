@@ -8,7 +8,9 @@ import {
   validateSync,
   IsBoolean,
 } from 'class-validator';
+
 import { assert } from 'src/utils/assert';
+
 import { IsDuration } from './decorators/is-duration.decorator';
 import { StorageType } from './interfaces/storage.interface';
 import { AwsRegion } from './interfaces/aws-region.interface';

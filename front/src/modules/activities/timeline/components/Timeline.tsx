@@ -18,6 +18,8 @@ import {
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
+import { OverflowingTextWithTooltip } from '../../../ui/tooltip/OverflowingTextWithTooltip';
+
 const StyledMainContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
@@ -144,17 +146,15 @@ const StyledCardTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
+
+  width: 100%;
 `;
 
 const StyledCardContent = styled.div`
-  -webkit-box-orient: vertical;
-
-  -webkit-line-clamp: 3;
   align-self: stretch;
   color: ${({ theme }) => theme.font.color.secondary};
-  display: -webkit-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+  width: 100%;
 `;
 
 const StyledTooltip = styled(Tooltip)`
@@ -252,10 +252,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
                   <IconNotes />
                 </StyledIconContainer>
                 <StyledItemTitleContainer>
-                  <span>
-                    {commentThread.author.firstName}{' '}
-                    {commentThread.author.lastName}
-                  </span>
+                  <span>{commentThread.author.displayName}</span>
                   created a note
                 </StyledItemTitleContainer>
                 <StyledItemTitleDate id={`id-${commentThread.id}`}>
@@ -279,10 +276,18 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
                     }
                   >
                     <StyledCardTitle>
-                      {commentThread.title ? commentThread.title : '(No title)'}
+                      <OverflowingTextWithTooltip
+                        text={
+                          commentThread.title
+                            ? commentThread.title
+                            : '(No title)'
+                        }
+                      />
                     </StyledCardTitle>
                     <StyledCardContent>
-                      {body ? body : '(No content)'}
+                      <OverflowingTextWithTooltip
+                        text={body ? body : '(No content)'}
+                      />
                     </StyledCardContent>
                   </StyledCard>
                 </StyledCardContainer>

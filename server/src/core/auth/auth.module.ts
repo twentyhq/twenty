@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+
+import { PrismaService } from 'src/database/prisma.service';
+import { UserModule } from 'src/core/user/user.module';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { WorkspaceModule } from 'src/core/workspace/workspace.module';
+
+import { AuthResolver } from './auth.resolver';
+
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 import { AuthService } from './services/auth.service';
 import { GoogleAuthController } from './controllers/google-auth.controller';
-import { PrismaService } from 'src/database/prisma.service';
-import { UserModule } from '../user/user.module';
 import { VerifyAuthController } from './controllers/verify-auth.controller';
 import { TokenService } from './services/token.service';
-import { AuthResolver } from './auth.resolver';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceModule } from '../workspace/workspace.module';
 
 const jwtModule = JwtModule.registerAsync({
   useFactory: async (environmentService: EnvironmentService) => {

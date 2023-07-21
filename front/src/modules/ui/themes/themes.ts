@@ -1,3 +1,4 @@
+import { accentDark, accentLight } from './accent';
 import { animation } from './animation';
 import { backgroundDark, backgroundLight } from './background';
 import { blur } from './blur';
@@ -6,6 +7,7 @@ import { boxShadowDark, boxShadowLight } from './boxShadow';
 import { color, grayScale } from './colors';
 import { fontDark, fontLight } from './font';
 import { icon } from './icon';
+import { tagDark, tagLight } from './tag';
 import { text } from './text';
 
 const common = {
@@ -35,6 +37,7 @@ const common = {
     checkboxColumnWidth: '32px',
   },
   rightDrawerWidth: '500px',
+  leftNavBarWidth: '220px',
   clickableElementBackgroundTransition: 'background 0.1s ease',
   lastLayerZIndex: 2147483647,
 };
@@ -42,11 +45,11 @@ const common = {
 export const lightTheme = {
   ...common,
   ...{
+    accent: accentLight,
     background: backgroundLight,
     border: borderLight,
+    tag: tagLight,
     boxShadow: boxShadowLight,
-    selectedCardHover: color.blue20,
-    selectedCard: color.blue10,
     font: fontLight,
     name: 'light',
   },
@@ -56,11 +59,11 @@ export type ThemeType = typeof lightTheme;
 export const darkTheme: ThemeType = {
   ...common,
   ...{
+    accent: accentDark,
     background: backgroundDark,
     border: borderDark,
+    tag: tagDark,
     boxShadow: boxShadowDark,
-    selectedCardHover: color.blue70,
-    selectedCard: color.blue80,
     font: fontDark,
     name: 'dark',
   },

@@ -16,11 +16,12 @@ type OwnProps<SortField> = {
 };
 
 const StyledContainer = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: column;
 `;
 
-const StyledTableHeader = styled.div`
+const StyledBoardHeader = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
@@ -83,7 +84,7 @@ export function BoardHeader<SortField>({
 
   return (
     <StyledContainer>
-      <StyledTableHeader>
+      <StyledBoardHeader>
         <StyledViewSection>
           <StyledIcon>{viewIcon}</StyledIcon>
           {viewName}
@@ -100,7 +101,7 @@ export function BoardHeader<SortField>({
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
         </StyledFilters>
-      </StyledTableHeader>
+      </StyledBoardHeader>
       <SortAndFilterBar
         context={context}
         sorts={sorts}

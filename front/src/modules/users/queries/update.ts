@@ -36,7 +36,7 @@ export const UPDATE_PROFILE_PICTURE = gql`
 
 export const REMOVE_PROFILE_PICTURE = gql`
   mutation RemoveProfilePicture($where: UserWhereUniqueInput!) {
-    updateUser(data: { avatarUrl: { set: null } }, where: $where) {
+    updateUser(data: { avatarUrl: null }, where: $where) {
       id
       avatarUrl
     }

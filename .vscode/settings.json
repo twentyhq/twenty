@@ -37,5 +37,6 @@
   ],
   "cSpell.words": [
     "twentyhq"
-  ]
+  ],
+  "typescript.preferences.importModuleSpecifier": "project-relative"
 }

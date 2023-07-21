@@ -2,13 +2,23 @@ import { BrowserRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators';
 
 import { CompanyChip } from '../components/CompanyChip';
 
 const meta: Meta<typeof CompanyChip> = {
   title: 'Modules/Companies/CompanyChip',
   component: CompanyChip,
+  decorators: [
+    (Story) => (
+      <TestCellContainer>
+        <BrowserRouter>
+          <Story />
+        </BrowserRouter>
+      </TestCellContainer>
+    ),
+    ComponentDecorator,
+  ],
 };
 
 export default meta;
@@ -31,29 +41,21 @@ const TestCellContainer = styled.div`
 `;
 
 export const SmallName: Story = {
-  render: getRenderWrapperForComponent(
-    <TestCellContainer>
-      <BrowserRouter>
-        <CompanyChip
-          id="airbnb"
-          name="Airbnb"
-          picture="https://api.faviconkit.com/airbnb.com/144"
-        />
-      </BrowserRouter>
-    </TestCellContainer>,
-  ),
+  args: {
+    id: 'airbnb',
+    name: 'Airbnb',
+    picture: 'https://api.faviconkit.com/airbnb.com/144',
+  },
+};
+
+export const Clickable: Story = {
+  args: { ...SmallName.args, clickable: true },
 };
 
 export const BigName: Story = {
-  render: getRenderWrapperForComponent(
-    <TestCellContainer>
-      <BrowserRouter>
-        <CompanyChip
-          id="google"
-          name="Google with a real big name to overflow the cell"
-          picture="https://api.faviconkit.com/google.com/144"
-        />
-      </BrowserRouter>
-    </TestCellContainer>,
-  ),
+  args: {
+    id: 'google',
+    name: 'Google with a real big name to overflow the cell',
+    picture: 'https://api.faviconkit.com/google.com/144',
+  },
 };

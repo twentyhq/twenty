@@ -24,7 +24,7 @@ const StyledPlaceholder = styled.div`
 `;
 
 const StyledNewCardButtonContainer = styled.div`
-  padding-bottom: ${({ theme }) => theme.spacing(40)};
+  padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
 const BoardColumnCardsContainer = ({
@@ -71,7 +71,17 @@ export function EntityBoardColumn({
     updatePipelineStage({
       variables: {
         id: pipelineStageId,
-        name: value,
+        data: { name: value },
+      },
+      refetchQueries: [getOperationName(GET_PIPELINES) || ''],
+    });
+  }
+
+  function handleEditColumnColor(value: string) {
+    updatePipelineStage({
+      variables: {
+        id: pipelineStageId,
+        data: { color: value },
       },
       refetchQueries: [getOperationName(GET_PIPELINES) || ''],
     });
@@ -81,11 +91,13 @@ export function EntityBoardColumn({
     <Droppable droppableId={column.pipelineStageId}>
       {(droppableProvided) => (
         <BoardColumn
+          onColumnColorEdit={handleEditColumnColor}
           onTitleEdit={handleEditColumnTitle}
           title={column.title}
-          colorCode={column.colorCode}
+          color={column.colorCode}
           pipelineStageId={column.pipelineStageId}
           totalAmount={boardColumnTotal}
+          isFirstColumn={column.index === 0}
         >
           <BoardColumnCardsContainer droppableProvided={droppableProvided}>
             {column.pipelineProgressIds.map((pipelineProgressId, index) => (

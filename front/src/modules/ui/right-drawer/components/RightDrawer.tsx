@@ -12,6 +12,8 @@ import {
 import { isDefined } from '~/utils/isDefined';
 
 import { useScopedHotkeys } from '../../hotkey/hooks/useScopedHotkeys';
+import { useRightDrawer } from '../hooks/useRightDrawer';
+import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerHotkeyScope } from '../types/RightDrawerHotkeyScope';
@@ -41,22 +43,38 @@ export function RightDrawer() {
     isRightDrawerOpenState,
   );
 
+  const [isRightDrawerExpanded] = useRecoilState(isRightDrawerExpandedState);
+
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
 
+  const { closeRightDrawer } = useRightDrawer();
+
   const rightDrawerRef = useRef(null);
+
   useListenClickOutsideArrayOfRef({
     refs: [rightDrawerRef],
-    callback: () => setIsRightDrawerOpen(false),
+    callback: () => closeRightDrawer(),
     mode: ClickOutsideMode.absolute,
   });
+
   const theme = useTheme();
 
   useScopedHotkeys(
     [Key.Escape],
-    () => setIsRightDrawerOpen(false),
+    () => closeRightDrawer(),
     RightDrawerHotkeyScope.RightDrawer,
     [setIsRightDrawerOpen],
   );
+
+  const rightDrawerWidthExpanded = `calc(100% - ${
+    theme.leftNavBarWidth
+  } - ${theme.spacing(2)})`;
+
+  const rightDrawerWidth = isRightDrawerOpen
+    ? isRightDrawerExpanded
+      ? rightDrawerWidthExpanded
+      : theme.rightDrawerWidth
+    : '0';
 
   if (!isDefined(rightDrawerPage)) {
     return <></>;
@@ -65,7 +83,7 @@ export function RightDrawer() {
   return (
     <StyledContainer
       animate={{
-        width: isRightDrawerOpen ? theme.rightDrawerWidth : '0',
+        width: rightDrawerWidth,
       }}
       transition={{
         duration: theme.animation.duration.normal,

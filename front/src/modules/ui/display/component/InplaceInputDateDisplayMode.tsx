@@ -1,7 +1,7 @@
 import { formatToHumanReadableDate } from '~/utils';
 
 type OwnProps = {
-  value: Date;
+  value: Date | null;
 };
 
 export function InplaceInputDateDisplayMode({ value }: OwnProps) {

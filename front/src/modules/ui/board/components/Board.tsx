@@ -4,9 +4,10 @@ import { DropResult } from '@hello-pangea/dnd'; // Atlassian dnd does not suppor
 export const StyledBoard = styled.div`
   border-radius: ${({ theme }) => theme.spacing(2)};
   display: flex;
+  flex: 1;
   flex-direction: row;
   overflow-x: auto;
-  width: 100%;
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 export type BoardPipelineStageColumn = {

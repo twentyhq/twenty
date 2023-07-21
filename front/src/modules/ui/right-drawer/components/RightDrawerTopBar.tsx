@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { RightDrawerTopBarCloseButton } from './RightDrawerTopBarCloseButton';
+import { RightDrawerTopBarExpandButton } from './RightDrawerTopBarExpandButton';
 
 const StyledRightDrawerTopBar = styled.div`
   align-items: center;
@@ -10,20 +11,19 @@ const StyledRightDrawerTopBar = styled.div`
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
+  gap: ${({ theme }) => theme.spacing(1)};
   height: 56px;
-  justify-content: space-between;
-  padding-left: 8px;
-  padding-right: 8px;
+  justify-content: flex-start;
+  padding-left: ${({ theme }) => theme.spacing(2)};
+
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-type OwnProps = {
-  title?: string | null | undefined;
-};
-
-export function RightDrawerTopBar({ title }: OwnProps) {
+export function RightDrawerTopBar() {
   return (
     <StyledRightDrawerTopBar>
       <RightDrawerTopBarCloseButton />
+      <RightDrawerTopBarExpandButton />
     </StyledRightDrawerTopBar>
   );
 }

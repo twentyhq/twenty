@@ -1,5 +1,6 @@
 import { HealthCheckService, HttpHealthIndicator } from '@nestjs/terminus';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { HealthController } from 'src/health/health.controller';
 import { PrismaHealthIndicator } from 'src/health/indicators/prisma-health-indicator';
 

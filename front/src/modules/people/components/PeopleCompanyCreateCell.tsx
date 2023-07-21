@@ -9,10 +9,12 @@ import { isCreateModeScopedState } from '@/ui/table/editable-cell/states/isCreat
 import { EditableCellDoubleTextEditMode } from '@/ui/table/editable-cell/types/EditableCellDoubleTextEditMode';
 import {
   Person,
-  useInsertCompanyMutation,
-  useUpdatePeopleMutation,
+  useInsertOneCompanyMutation,
+  useUpdateOnePersonMutation,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
+
+import { SEARCH_COMPANY_QUERY } from '../../search/queries/search';
 
 type OwnProps = {
   people: Pick<Person, 'id'>;
@@ -28,8 +30,8 @@ export function PeopleCompanyCreateCell({ people }: OwnProps) {
   const [companyName, setCompanyName] = useState(currentSearchFilter);
 
   const [companyDomainName, setCompanyDomainName] = useState('');
-  const [insertCompany] = useInsertCompanyMutation();
-  const [updatePeople] = useUpdatePeopleMutation();
+  const [insertCompany] = useInsertOneCompanyMutation();
+  const [updatePerson] = useUpdateOnePersonMutation();
 
   function handleDoubleTextChange(leftValue: string, rightValue: string): void {
     setCompanyDomainName(leftValue);
@@ -45,19 +47,27 @@ export function PeopleCompanyCreateCell({ people }: OwnProps) {
     try {
       await insertCompany({
         variables: {
-          id: newCompanyId,
-          name: companyName,
-          domainName: companyDomainName,
-          address: '',
-          createdAt: new Date().toISOString(),
+          data: {
+            id: newCompanyId,
+            name: companyName,
+            domainName: companyDomainName,
+            address: '',
+          },
         },
-        refetchQueries: [getOperationName(GET_COMPANIES) || ''],
+        refetchQueries: [
+          getOperationName(GET_COMPANIES) ?? '',
+          getOperationName(SEARCH_COMPANY_QUERY) ?? '',
+        ],
       });
 
-      await updatePeople({
+      await updatePerson({
         variables: {
-          ...people,
-          companyId: newCompanyId,
+          where: {
+            id: people.id,
+          },
+          data: {
+            company: { connect: { id: newCompanyId } },
+          },
         },
       });
     } catch (error) {

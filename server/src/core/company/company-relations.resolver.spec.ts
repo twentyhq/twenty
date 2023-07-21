@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { CommentThreadService } from 'src/core/comment/services/comment-thread.service';
+import { CommentService } from 'src/core/comment/services/comment.service';
+
 import { CompanyRelationsResolver } from './company-relations.resolver';
 import { CompanyService } from './company.service';
-import { CommentThreadService } from '../comment/services/comment-thread.service';
-import { CommentService } from '../comment/services/comment.service';
 
 describe('CompanyRelationsResolver', () => {
   let resolver: CompanyRelationsResolver;

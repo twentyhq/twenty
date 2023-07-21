@@ -8,7 +8,7 @@ import {
 } from 'framer-motion';
 
 import { Checkmark } from '@/ui/checkmark/components/Checkmark';
-import DarkNoise from '@/ui/themes/assets/dark-noise.png';
+import DarkNoise from '@/ui/themes/assets/dark-noise.jpg';
 import LightNoise from '@/ui/themes/assets/light-noise.png';
 import { grayScale } from '@/ui/themes/colors';
 import { ColorScheme } from '~/generated/graphql';
@@ -29,7 +29,7 @@ const StyledColorSchemeBackground = styled.div<
   border: ${({ variant }) => {
     switch (variant) {
       case 'dark':
-        return `1px solid ${grayScale.gray65};`;
+        return `1px solid ${grayScale.gray70};`;
       case 'light':
       default:
         return `1px solid ${grayScale.gray20};`;
@@ -53,7 +53,7 @@ const StyledColorSchemeContent = styled(motion.div)<
   background: ${({ theme, variant }) => {
     switch (variant) {
       case 'dark':
-        return grayScale.gray70;
+        return grayScale.gray75;
       case 'light':
         return theme.color.gray0;
     }
@@ -62,7 +62,7 @@ const StyledColorSchemeContent = styled(motion.div)<
   border-left: ${({ variant }) => {
     switch (variant) {
       case 'dark':
-        return `1px solid ${grayScale.gray55};`;
+        return `1px solid ${grayScale.gray60};`;
       case 'light':
       default:
         return `1px solid ${grayScale.gray20};`;
@@ -72,7 +72,7 @@ const StyledColorSchemeContent = styled(motion.div)<
   border-top: ${({ variant }) => {
     switch (variant) {
       case 'dark':
-        return `1px solid ${grayScale.gray55};`;
+        return `1px solid ${grayScale.gray60};`;
       case 'light':
       default:
         return `1px solid ${grayScale.gray20};`;
@@ -85,7 +85,7 @@ const StyledColorSchemeContent = styled(motion.div)<
         return grayScale.gray30;
       case 'light':
       default:
-        return grayScale.gray55;
+        return grayScale.gray60;
     }
   }};
   display: flex;

@@ -4,12 +4,12 @@ import { useRecoilValue } from 'recoil';
 import { peopleCityFamilyState } from '@/people/states/peopleCityFamilyState';
 import { EditableCellText } from '@/ui/table/editable-cell/types/EditableCellText';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdatePeopleMutation } from '~/generated/graphql';
+import { useUpdateOnePersonMutation } from '~/generated/graphql';
 
 export function EditablePeopleCityCell() {
   const currentRowEntityId = useCurrentRowEntityId();
 
-  const [updatePerson] = useUpdatePeopleMutation();
+  const [updatePerson] = useUpdateOnePersonMutation();
 
   const city = useRecoilValue(peopleCityFamilyState(currentRowEntityId ?? ''));
 
@@ -26,8 +26,12 @@ export function EditablePeopleCityCell() {
       onSubmit={() =>
         updatePerson({
           variables: {
-            id: currentRowEntityId,
-            city: internalValue,
+            where: {
+              id: currentRowEntityId,
+            },
+            data: {
+              city: internalValue,
+            },
           },
         })
       }

@@ -6,11 +6,17 @@ import {
   Parent,
   Mutation,
 } from '@nestjs/graphql';
-import { UserService } from './user.service';
+import { UseFilters, UseGuards } from '@nestjs/common';
+
+import { accessibleBy } from '@casl/prisma';
+import { Prisma } from '@prisma/client';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
+
+import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
+
 import { FindManyUserArgs } from 'src/core/@generated/user/find-many-user.args';
 import { User } from 'src/core/@generated/user/user.model';
 import { ExceptionFilter } from 'src/filters/exception.filter';
-import { UseFilters, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import {
   PrismaSelect,
@@ -24,15 +30,13 @@ import {
 } from 'src/ability/handlers/user.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
-import { accessibleBy } from '@casl/prisma';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { assert } from 'src/utils/assert';
-import { UpdateOneUserArgs } from '../@generated/user/update-one-user.args';
-import { Prisma } from '@prisma/client';
-import { FileUpload, GraphQLUpload } from 'graphql-upload';
+import { UpdateOneUserArgs } from 'src/core/@generated/user/update-one-user.args';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { FileUploadService } from '../file/services/file-upload.service';
-import { FileFolder } from '../file/interfaces/file-folder.interface';
+import { FileUploadService } from 'src/core/file/services/file-upload.service';
+
+import { UserService } from './user.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)

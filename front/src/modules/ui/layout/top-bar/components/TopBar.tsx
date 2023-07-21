@@ -6,6 +6,8 @@ import { IconButton } from '@/ui/button/components/IconButton';
 import { IconChevronLeft, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 
+import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
+
 export const TOP_BAR_MIN_HEIGHT = 40;
 
 const TopBarContainer = styled.div`
@@ -14,18 +16,25 @@ const TopBarContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: row;
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.font.size.lg};
+  justify-content: space-between;
   min-height: ${TOP_BAR_MIN_HEIGHT}px;
   padding: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(3)};
 `;
 
+const StyledLeftContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`;
+
 const TitleContainer = styled.div`
   display: flex;
-  font-family: 'Inter';
-  font-size: 14px;
-  margin-left: 4px;
-  width: 100%;
+  font-size: ${({ theme }) => theme.font.size.md};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  max-width: 50%;
 `;
 
 const BackIconButton = styled(IconButton)`
@@ -51,20 +60,25 @@ export function TopBar({
   return (
     <>
       <TopBarContainer>
-        <NavCollapseButton hideIfOpen={true} />
-        {hasBackButton && (
-          <BackIconButton
-            icon={<IconChevronLeft size={16} />}
-            onClick={navigateBack}
-          />
-        )}
-        {icon}
-        <TitleContainer data-testid="top-bar-title">{title}</TitleContainer>
+        <StyledLeftContainer>
+          <NavCollapseButton hideIfOpen={true} />
+          {hasBackButton && (
+            <BackIconButton
+              icon={<IconChevronLeft size={16} />}
+              onClick={navigateBack}
+            />
+          )}
+          {icon}
+          <TitleContainer data-testid="top-bar-title">
+            <OverflowingTextWithTooltip text={title} />
+          </TitleContainer>
+        </StyledLeftContainer>
         {onAddButtonClick && (
           <IconButton
             icon={<IconPlus size={16} />}
             size="large"
             data-testid="add-button"
+            textColor="secondary"
             onClick={onAddButtonClick}
             variant="border"
           />

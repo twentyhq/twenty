@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
+
+import { Company } from '@prisma/client';
+
 import { PrismaService } from 'src/database/prisma.service';
+import peopleSeed from 'src/core/person/seed-data/people.json';
 
 @Injectable()
 export class PersonService {
@@ -35,4 +39,20 @@ export class PersonService {
 
   // GroupBy
   groupBy = this.prismaService.person.groupBy;
+  async createDefaultPeople({
+    workspaceId,
+    companies,
+  }: {
+    workspaceId: string;
+    companies: Company[];
+  }) {
+    const people = peopleSeed.map((person, i) => ({
+      ...person,
+      companyId: companies[i].id || null,
+      workspaceId,
+    }));
+    return this.createMany({
+      data: people,
+    });
+  }
 }

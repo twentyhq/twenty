@@ -1,4 +1,4 @@
-import DarkNoise from './assets/dark-noise.png';
+import DarkNoise from './assets/dark-noise.jpg';
 import LightNoise from './assets/light-noise.png';
 import { grayScale, rgba } from './colors';
 
@@ -28,10 +28,10 @@ export const backgroundDark = {
   transparent: {
     primary: rgba(grayScale.gray85, 0.8),
     secondary: rgba(grayScale.gray80, 0.8),
-    strong: rgba(grayScale.gray0, 0.09),
-    medium: rgba(grayScale.gray0, 0.06),
-    light: rgba(grayScale.gray0, 0.03),
-    lighter: rgba(grayScale.gray0, 0.02),
+    strong: rgba(grayScale.gray0, 0.14),
+    medium: rgba(grayScale.gray0, 0.1),
+    light: rgba(grayScale.gray0, 0.06),
+    lighter: rgba(grayScale.gray0, 0.03),
   },
   overlay: rgba(grayScale.gray80, 0.8),
 };

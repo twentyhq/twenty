@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
 import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { useOpenRightDrawer } from '@/ui/right-drawer/hooks/useOpenRightDrawer';
+import { useRightDrawer } from '@/ui/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 
@@ -10,7 +10,7 @@ import { CommentableEntity } from '../types/CommentableEntity';
 
 // TODO: refactor with recoil callback to avoid rerender
 export function useOpenTimelineRightDrawer() {
-  const openRightDrawer = useOpenRightDrawer();
+  const { openRightDrawer } = useRightDrawer();
   const [, setCommentableEntityArray] = useRecoilState(
     commentableEntityArrayState,
   );

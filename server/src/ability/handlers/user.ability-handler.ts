@@ -1,16 +1,19 @@
-import { PrismaService } from 'src/database/prisma.service';
-import { AbilityAction } from '../ability.action';
-import { AppAbility } from '../ability.factory';
-import { IAbilityHandler } from '../interfaces/ability-handler.interface';
 import {
   ExecutionContext,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
+
+import { subject } from '@casl/ability';
+
+import { IAbilityHandler } from 'src/ability/interfaces/ability-handler.interface';
+
+import { PrismaService } from 'src/database/prisma.service';
+import { AbilityAction } from 'src/ability/ability.action';
+import { AppAbility } from 'src/ability/ability.factory';
 import { assert } from 'src/utils/assert';
 import { UserWhereInput } from 'src/core/@generated/user/user-where.input';
-import { GqlExecutionContext } from '@nestjs/graphql';
-import { subject } from '@casl/ability';
 
 class UserArgs {
   where?: UserWhereInput;

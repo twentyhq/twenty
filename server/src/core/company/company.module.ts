@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+
+import { CommentModule } from 'src/core/comment/comment.module';
+
 import { CompanyService } from './company.service';
 import { CompanyResolver } from './company.resolver';
 import { CompanyRelationsResolver } from './company-relations.resolver';
-import { CommentModule } from '../comment/comment.module';
 
 @Module({
   imports: [CommentModule],
