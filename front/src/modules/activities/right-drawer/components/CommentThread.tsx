@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
@@ -92,7 +92,7 @@ export function CommentThread({
   showComment = true,
   autoFillTitle = false,
 }: OwnProps) {
-  const { data } = useGetCommentThreadQuery({
+  const { data, loading } = useGetCommentThreadQuery({
     variables: {
       commentThreadId: commentThreadId ?? '',
     },
@@ -100,7 +100,14 @@ export function CommentThread({
   });
   const commentThread = data?.findManyCommentThreads[0];
 
-  const [title, setTitle] = useState<string | null>(commentThread?.title ?? '');
+  const [title, setTitle] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!loading) {
+      setTitle(commentThread?.title ?? '');
+    }
+  }, [loading, setTitle, commentThread?.title]);
+
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 
