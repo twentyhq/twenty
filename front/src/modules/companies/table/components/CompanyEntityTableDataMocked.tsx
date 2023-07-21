@@ -3,9 +3,10 @@ import { useRecoilState } from 'recoil';
 
 import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
 
 import { useSetCompanyEntityTable } from '../hooks/useSetCompanyEntityTable';
+
+import { mockedCompaniesData } from './companies-mock-data';
 
 export function CompanyEntityTableDataMocked() {
   const [, setTableRowIds] = useRecoilState(tableRowIdsState);

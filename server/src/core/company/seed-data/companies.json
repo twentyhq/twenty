@@ -1,33 +1,33 @@
 [
     {
-      "name": "Rudderstack",
-      "domainName": "rudderstack.com",
+      "name": "Airbnb",
+      "domainName": "airbnb.com",
       "address": "San Francisco",
-      "employees": 195
+      "employees": 5000
     },
     {
-      "name": "Medusa",
-      "domainName": "medusajs.com",
-      "address": "Copenhagen",
-      "employees": 57
-    },
-    {
-      "name": "Metabase",
-      "domainName": "metabase.com",
+      "name": "Qonto",
+      "domainName": "qonto.com",
       "address": "San Francisco",
-      "employees": 68
+      "employees": 800
     },
     {
-      "name": "Strapi",
-      "domainName": "strapi.com",
-      "address": "Paris",
-      "employees": 95
-    },
-    {
-      "name": "Posthog",
-      "domainName": "posthog.com",
+      "name": "Stripe",
+      "domainName": "stripe.com",
       "address": "San Francisco",
-      "employees": 34
+      "employees": 8000
+    },
+    {
+      "name": "Figma",
+      "domainName": "figma.com",
+      "address": "San Francisco",
+      "employees": 800
+    },
+    {
+      "name": "Notion",
+      "domainName": "notion.com",
+      "address": "San Francisco",
+      "employees": 400
     }
   ]
   
