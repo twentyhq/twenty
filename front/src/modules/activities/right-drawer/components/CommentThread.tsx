@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
@@ -11,7 +11,6 @@ import { PropertyBox } from '@/ui/editable-field/property-box/components/Propert
 import { PropertyBoxItem } from '@/ui/editable-field/property-box/components/PropertyBoxItem';
 import { IconArrowUpRight } from '@/ui/icon/index';
 import {
-  ActivityType,
   useGetCommentThreadQuery,
   useUpdateCommentThreadMutation,
 } from '~/generated/graphql';
@@ -129,7 +128,7 @@ export function CommentThread({
       }
     }
     return debounce(updateTitle, 200);
-  }, [commentThreadId, updateCommentThreadMutation]);
+  }, [commentThreadId, updateCommentThreadMutation, commentThread]);
 
   function updateTitleFromBody(body: string) {
     const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
