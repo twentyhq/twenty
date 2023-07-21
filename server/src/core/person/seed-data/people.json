@@ -1,37 +1,37 @@
 [
   {
-    "firstName": "Soumyadeb",
-    "lastName": "Mitra",
+    "firstName": "Brian",
+    "lastName": "Chesky",
     "city": "San Francisco",
-    "email": "soumyadeb@rudderstack.com",
+    "email": "chesky@airbnb.com",
     "phone": ""
   },
   {
-    "firstName": "Sebastian",
-    "lastName": "Rindom",
-    "city": "Copenhagen",
-    "email": "sebastian@medusajs.com",
-    "phone": ""
-  },
-  {
-    "firstName": "Sameer",
-    "lastName": "Al-Sakran",
-    "city": "San Francisco",
-    "email": "sameer@metabase.com",
-    "phone": ""
-  },
-  {
-    "firstName": "Pierre",
-    "lastName": "Burgy",
+    "firstName": "Alexandre",
+    "lastName": "Prot",
     "city": "Paris",
-    "email": "pierre@strapi.com",
+    "email": "prot@qonto.com",
     "phone": ""
   },
   {
-    "firstName": "James",
-    "lastName": "Hawkins",
+    "firstName": "Patrick",
+    "lastName": "Collison",
     "city": "San Francisco",
-    "email": "james@posthog.com",
+    "email": "collison@stripe.com",
+    "phone": ""
+  },
+  {
+    "firstName": "Dylan",
+    "lastName": "Field",
+    "city": "San Francisco",
+    "email": "field@figma.com",
+    "phone": ""
+  },
+  {
+    "firstName": "Ivan",
+    "lastName": "Zhao",
+    "city": "San Francisco",
+    "email": "zhao@notion.com",
     "phone": ""
   }
 ]
