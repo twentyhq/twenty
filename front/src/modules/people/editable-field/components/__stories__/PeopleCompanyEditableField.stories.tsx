@@ -14,7 +14,7 @@ const meta: Meta<typeof PeopleCompanyEditableField> = {
 export default meta;
 type Story = StoryObj<typeof PeopleCompanyEditableField>;
 
-export const PeopleCompanyEditableFields: Story = {
+export const Default: Story = {
   render: getRenderWrapperForComponent(
     <BrowserRouter>
       <PeopleCompanyEditableField people={mockedPeopleData[0]} />

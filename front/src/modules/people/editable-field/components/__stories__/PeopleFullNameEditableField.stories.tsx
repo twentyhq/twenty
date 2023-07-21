@@ -13,7 +13,7 @@ const meta: Meta<typeof PeopleFullNameEditableField> = {
 export default meta;
 type Story = StoryObj<typeof PeopleFullNameEditableField>;
 
-export const PeopleFullNameEditableFields: Story = {
+export const Default: Story = {
   render: getRenderWrapperForComponent(
     <PeopleFullNameEditableField people={mockedPeopleData[0]} />,
   ),
