@@ -66,6 +66,7 @@ The default values should work out of the box. Don't forget to update the databa
 To build Twenty server and seed some data into your database:
 ```
 cd server
+nvm install #recommended
 nvm use #recommended 
 yarn
 yarn prisma:reset
@@ -79,7 +80,8 @@ Twenty server will be running at [http://localhost:3000](http://localhost:3000).
 **Note:** similarly, we recommend that you use `nvm` to install the right node version.
 
 ```
-cd front
+cd ../front
+nvm install #recommended
 nvm use #recommended 
 yarn
 yarn start
