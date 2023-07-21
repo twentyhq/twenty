@@ -6,7 +6,7 @@ import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 import { PeopleFullNameEditableField } from '../PeopleFullNameEditableField';
 
 const meta: Meta<typeof PeopleFullNameEditableField> = {
-  title: 'MODULES/People/PeopleFullNameEditableField',
+  title: 'Modules/People/PeopleFullNameEditableField',
   component: PeopleFullNameEditableField,
 };
 
