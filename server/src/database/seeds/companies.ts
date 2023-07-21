@@ -95,7 +95,7 @@ export const seedCompanies = async (prisma: PrismaClient) => {
     create: {
       id: 'twenty-9d162de6-cfbf-4156-a790-e39854dcd4eb',
       name: 'Claap',
-      domainName: 'claap.com',
+      domainName: 'claap.io',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       address: '',
     },
