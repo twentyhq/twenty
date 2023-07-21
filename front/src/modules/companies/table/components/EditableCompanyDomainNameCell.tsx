@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { companyDomainNameFamilyState } from '@/companies/states/companyDomainNameFamilyState';
-import { EditableCellText } from '@/ui/table/editable-cell/types/EditableCellText';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateOneCompanyMutation } from '~/generated/graphql';
+
+import { EditableCellURL } from '../../../ui/table/editable-cell/types/EditableCellURL';
 
 export function EditableCompanyDomainNameCell() {
   const currentRowEntityId = useCurrentRowEntityId();
@@ -20,8 +21,8 @@ export function EditableCompanyDomainNameCell() {
   }, [name]);
 
   return (
-    <EditableCellText
-      value={internalValue}
+    <EditableCellURL
+      url={internalValue}
       onChange={setInternalValue}
       onSubmit={() =>
         updateCompany({
