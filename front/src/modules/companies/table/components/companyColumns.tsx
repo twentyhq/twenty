@@ -54,17 +54,17 @@ export const companyColumns: TableColumn[] = [
     cellComponent: <EditableCompanyEmployeesCell />,
   },
   {
-    id: 'address',
-    title: 'Address',
-    icon: <IconMap size={16} />,
-    size: 170,
-    cellComponent: <EditableCompanyAddressCell />,
-  },
-  {
     id: 'linkedinUrl',
     title: 'Linkedin',
     icon: <IconBrandLinkedin size={16} />,
     size: 170,
     cellComponent: <EditableCompanyLinkedinUrlCell />,
+  },
+  {
+    id: 'address',
+    title: 'Address',
+    icon: <IconMap size={16} />,
+    size: 170,
+    cellComponent: <EditableCompanyAddressCell />,
   },
 ];
