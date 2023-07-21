@@ -1,12 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators';
 
 import { Tag } from '../Tag';
 
 const meta: Meta<typeof Tag> = {
   title: 'UI/Accessories/Tag',
   component: Tag,
+  decorators: [ComponentDecorator],
+  argTypes: { color: { control: false } },
+  args: { text: 'Urgent' },
 };
 
 export default meta;
@@ -26,11 +29,11 @@ const TESTED_COLORS = [
 ];
 
 export const AllTags: Story = {
-  render: getRenderWrapperForComponent(
+  render: (args) => (
     <>
       {TESTED_COLORS.map((color) => (
-        <Tag text="Urgent" color={color} />
+        <Tag {...args} color={color} />
       ))}
-    </>,
+    </>
   ),
 };

@@ -45,7 +45,7 @@ const StyledColorSample = styled.div<{ colorName: string }>`
   width: 12px;
 `;
 
-const COLOR_OPTIONS = [
+export const COLOR_OPTIONS = [
   { name: 'Green', id: 'green' },
   { name: 'Turquoise', id: 'turquoise' },
   { name: 'Sky', id: 'sky' },

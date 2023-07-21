@@ -2,17 +2,9 @@ import { BrowserRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators';
 
 import { PersonChip } from '../PersonChip';
-
-const meta: Meta<typeof PersonChip> = {
-  title: 'Modules/People/PersonChip',
-  component: PersonChip,
-};
-
-export default meta;
-type Story = StoryObj<typeof PersonChip>;
 
 const TestCellContainer = styled.div`
   align-items: center;
@@ -26,22 +18,28 @@ const TestCellContainer = styled.div`
   text-wrap: nowrap;
 `;
 
+const meta: Meta<typeof PersonChip> = {
+  title: 'Modules/People/PersonChip',
+  component: PersonChip,
+  decorators: [
+    (Story) => (
+      <TestCellContainer>
+        <BrowserRouter>
+          <Story />
+        </BrowserRouter>
+      </TestCellContainer>
+    ),
+    ComponentDecorator,
+  ],
+};
+
+export default meta;
+type Story = StoryObj<typeof PersonChip>;
+
 export const SmallName: Story = {
-  render: getRenderWrapperForComponent(
-    <TestCellContainer>
-      <BrowserRouter>
-        <PersonChip id="tim_fake_id" name="Tim C." />
-      </BrowserRouter>
-    </TestCellContainer>,
-  ),
+  args: { id: 'tim_fake_id', name: 'Tim C.' },
 };
 
 export const BigName: Story = {
-  render: getRenderWrapperForComponent(
-    <TestCellContainer>
-      <BrowserRouter>
-        <PersonChip id="steve_fake_id" name="Steve J." />
-      </BrowserRouter>
-    </TestCellContainer>,
-  ),
+  args: { id: 'steve_fake_id', name: 'Steve LoremIpsumLoremIpsumLoremIpsum' },
 };

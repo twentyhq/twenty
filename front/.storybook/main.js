@@ -53,7 +53,6 @@ module.exports = {
     "@storybook/addon-interactions",
     "@storybook/addon-coverage",
     "@storybook/addon-styling",
-    "@storybook/addon-knobs",
     "storybook-addon-pseudo-states",
     "storybook-addon-cookie",
   ],

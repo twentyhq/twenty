@@ -4,37 +4,44 @@ import { jest } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators';
 
 import { TextInput } from '../TextInput';
+
+const changeJestFn = jest.fn();
 
 const meta: Meta<typeof TextInput> = {
   title: 'UI/Inputs/TextInput',
   component: TextInput,
+  decorators: [ComponentDecorator],
+  args: { value: '', onChange: changeJestFn, placeholder: 'Placeholder' },
 };
 
 export default meta;
 type Story = StoryObj<typeof TextInput>;
 
-const changeJestFn = jest.fn();
-
-function FakeTextInput({ onChange }: any) {
-  const [value, setValue] = useState<string>('A good value ');
+function FakeTextInput({
+  onChange,
+  value: initialValue,
+  ...props
+}: React.ComponentProps<typeof TextInput>) {
+  const [value, setValue] = useState(initialValue);
   return (
     <TextInput
+      {...props}
       value={value}
       onChange={(text) => {
         setValue(text);
-        onChange(text);
+        onChange?.(text);
       }}
     />
   );
 }
 
 export const Default: Story = {
-  render: getRenderWrapperForComponent(
-    <FakeTextInput onChange={changeJestFn} />,
-  ),
+  argTypes: { value: { control: false } },
+  args: { value: 'A good value ' },
+  render: (args) => <FakeTextInput {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -47,31 +54,22 @@ export const Default: Story = {
   },
 };
 
-export const Placeholder: Story = {
-  render: getRenderWrapperForComponent(
-    <TextInput value="" onChange={changeJestFn} placeholder="Placeholder" />,
-  ),
-};
+export const Placeholder: Story = {};
 
 export const FullWidth: Story = {
-  render: getRenderWrapperForComponent(
-    <TextInput
-      value="A good value"
-      onChange={changeJestFn}
-      placeholder="Placeholder"
-      fullWidth
-    />,
-  ),
+  args: { value: 'A good value', fullWidth: true },
+};
+
+export const WithLabel: Story = {
+  args: { label: 'Lorem ipsum' },
+};
+
+export const WithError: Story = {
+  args: { error: 'Lorem ipsum' },
 };
 
 export const PasswordInput: Story = {
-  render: getRenderWrapperForComponent(
-    <TextInput
-      onChange={changeJestFn}
-      type="password"
-      placeholder="Password"
-    />,
-  ),
+  args: { type: 'password', placeholder: 'Password' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
