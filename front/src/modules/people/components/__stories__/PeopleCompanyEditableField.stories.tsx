@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
 
-import { PeopleCompanyEditableField } from '../PeopleCompanyEditableField';
+import { PeopleCompanyEditableField } from '../../editable-field/components/PeopleCompanyEditableField';
 
 const meta: Meta<typeof PeopleCompanyEditableField> = {
   title: 'Modules/People/EditableFields/PeopleCompanyEditableField',
