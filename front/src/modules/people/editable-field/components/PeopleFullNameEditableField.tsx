@@ -65,6 +65,7 @@ export function PeopleFullNameEditableField({ people }: OwnProps) {
             firstValue={internalValueFirstName ?? ''}
             secondValue={internalValueLastName ?? ''}
             onChange={handleChange}
+            isTitle
           />
         }
         displayModeContent={`${internalValueFirstName}  ${internalValueLastName}`}

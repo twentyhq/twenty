@@ -9,6 +9,28 @@ export const overlayBackground = (props: { theme: ThemeType }) =>
     box-shadow: ${props.theme.boxShadow.strong};
   `;
 
+export const bigTextInputStyle = (props: { theme: ThemeType }) =>
+  css`
+    background-color: transparent;
+    border: none;
+
+    color: ${props.theme.font.color.primary};
+    font-family: ${props.theme.font.family};
+    font-size: ${props.theme.font.size.xl};
+    font-weight: ${props.theme.font.weight.semiBold};
+
+    max-width: 100%;
+    outline: none;
+    padding: ${props.theme.spacing(0)} ${props.theme.spacing(2)};
+
+    &::placeholder,
+    &::-webkit-input-placeholder {
+      color: ${props.theme.font.color.light};
+      font-family: ${props.theme.font.family};
+      font-weight: ${props.theme.font.weight.medium};
+    }
+  `;
+
 export const textInputStyle = (props: { theme: ThemeType }) =>
   css`
     background-color: transparent;

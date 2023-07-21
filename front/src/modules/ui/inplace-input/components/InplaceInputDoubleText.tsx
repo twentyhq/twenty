@@ -9,6 +9,7 @@ type OwnProps = {
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
   onChange: (firstValue: string, secondValue: string) => void;
+  isTitle?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -28,6 +29,7 @@ export function InplaceInputDoubleText({
   firstValuePlaceholder,
   secondValuePlaceholder,
   onChange,
+  isTitle,
 }: OwnProps) {
   return (
     <StyledContainer>
@@ -38,6 +40,7 @@ export function InplaceInputDoubleText({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange(event.target.value, secondValue);
         }}
+        isTitle={isTitle}
       />
       <InplaceInputTextEditMode
         placeholder={secondValuePlaceholder}
@@ -45,6 +48,7 @@ export function InplaceInputDoubleText({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           onChange(firstValue, event.target.value);
         }}
+        isTitle={isTitle}
       />
     </StyledContainer>
   );

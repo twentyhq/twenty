@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '@/ui/themes/effects';
+import { bigTextInputStyle, textInputStyle } from '@/ui/themes/effects';
 
 import { InplaceInputContainer } from './InplaceInputContainer';
 
-export const InplaceInputTextInput = styled.input`
+export const InplaceInputTextInput = styled.input<{ isTitle?: boolean }>`
   margin: 0;
   width: 100%;
-  ${textInputStyle}
+  ${({ isTitle }) => (isTitle ? bigTextInputStyle : textInputStyle)}
 `;
 
 type OwnProps = {
@@ -15,6 +15,7 @@ type OwnProps = {
   value?: string;
   onChange?: (newValue: string) => void;
   autoFocus?: boolean;
+  isTitle?: boolean;
 };
 
 export function InplaceInputText({
@@ -22,6 +23,7 @@ export function InplaceInputText({
   value,
   onChange,
   autoFocus,
+  isTitle,
 }: OwnProps) {
   return (
     <InplaceInputContainer>
@@ -30,6 +32,7 @@ export function InplaceInputText({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
+        isTitle={isTitle}
       />
     </InplaceInputContainer>
   );

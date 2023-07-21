@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '@/ui/themes/effects';
+import { bigTextInputStyle, textInputStyle } from '@/ui/themes/effects';
 
-export const InplaceInputTextEditMode = styled.input`
+export const InplaceInputTextEditMode = styled.input<{ isTitle?: boolean }>`
   margin: 0;
   width: 100%;
-  ${textInputStyle}
+  ${({ isTitle }) => (isTitle ? bigTextInputStyle : textInputStyle)}
 `;

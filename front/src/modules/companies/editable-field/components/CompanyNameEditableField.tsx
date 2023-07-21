@@ -53,6 +53,7 @@ export function CompanyNameEditableField({ company }: OwnProps) {
             onChange={(newValue: string) => {
               handleChange(newValue);
             }}
+            isTitle
           />
         }
         displayModeContent={internalValue ?? ''}

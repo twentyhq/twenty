@@ -46,7 +46,6 @@ const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-
   max-width: 100%;
 `;
 
