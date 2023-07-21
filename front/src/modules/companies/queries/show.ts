@@ -10,6 +10,7 @@ export const GET_COMPANY = gql`
       name
       createdAt
       address
+      linkedinUrl
       employees
       _commentThreadCount
       accountOwner {

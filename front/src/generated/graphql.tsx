@@ -481,6 +481,7 @@ export type Company = {
   domainName: Scalars['String'];
   employees?: Maybe<Scalars['Int']>;
   id: Scalars['ID'];
+  linkedinUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   people?: Maybe<Array<Person>>;
   updatedAt: Scalars['DateTime'];
@@ -493,6 +494,7 @@ export type CompanyCreateInput = {
   domainName: Scalars['String'];
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
+  linkedinUrl?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -520,6 +522,7 @@ export type CompanyOrderByWithRelationInput = {
   domainName?: InputMaybe<SortOrder>;
   employees?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  linkedinUrl?: InputMaybe<SortOrder>;
   name?: InputMaybe<SortOrder>;
   people?: InputMaybe<PersonOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
@@ -538,6 +541,7 @@ export enum CompanyScalarFieldEnum {
   DomainName = 'domainName',
   Employees = 'employees',
   Id = 'id',
+  LinkedinUrl = 'linkedinUrl',
   Name = 'name',
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
@@ -550,6 +554,7 @@ export type CompanyUpdateInput = {
   domainName?: InputMaybe<Scalars['String']>;
   employees?: InputMaybe<Scalars['Int']>;
   id?: InputMaybe<Scalars['String']>;
+  linkedinUrl?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   people?: InputMaybe<PersonUpdateManyWithoutCompanyNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -583,6 +588,7 @@ export type CompanyWhereInput = {
   domainName?: InputMaybe<StringFilter>;
   employees?: InputMaybe<IntNullableFilter>;
   id?: InputMaybe<StringFilter>;
+  linkedinUrl?: InputMaybe<StringNullableFilter>;
   name?: InputMaybe<StringFilter>;
   people?: InputMaybe<PersonListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
@@ -980,7 +986,9 @@ export type Person = {
   email?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  jobTitle?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
+  linkedinUrl?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   pipelineProgresses?: Maybe<Array<PipelineProgress>>;
   updatedAt: Scalars['DateTime'];
@@ -993,7 +1001,9 @@ export type PersonCreateInput = {
   email?: InputMaybe<Scalars['String']>;
   firstName?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
+  jobTitle?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
+  linkedinUrl?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPointOfContactInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -1025,7 +1035,9 @@ export type PersonOrderByWithRelationInput = {
   email?: InputMaybe<SortOrder>;
   firstName?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  jobTitle?: InputMaybe<SortOrder>;
   lastName?: InputMaybe<SortOrder>;
+  linkedinUrl?: InputMaybe<SortOrder>;
   phone?: InputMaybe<SortOrder>;
   pipelineProgresses?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
@@ -1044,7 +1056,9 @@ export enum PersonScalarFieldEnum {
   Email = 'email',
   FirstName = 'firstName',
   Id = 'id',
+  JobTitle = 'jobTitle',
   LastName = 'lastName',
+  LinkedinUrl = 'linkedinUrl',
   Phone = 'phone',
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
@@ -1057,7 +1071,9 @@ export type PersonUpdateInput = {
   email?: InputMaybe<Scalars['String']>;
   firstName?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
+  jobTitle?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
+  linkedinUrl?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPointOfContactNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -1091,7 +1107,9 @@ export type PersonWhereInput = {
   email?: InputMaybe<StringNullableFilter>;
   firstName?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<StringFilter>;
+  jobTitle?: InputMaybe<StringNullableFilter>;
   lastName?: InputMaybe<StringNullableFilter>;
+  linkedinUrl?: InputMaybe<StringNullableFilter>;
   phone?: InputMaybe<StringNullableFilter>;
   pipelineProgresses?: InputMaybe<PipelineProgressListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
@@ -2026,14 +2044,14 @@ export type GetCompaniesQueryVariables = Exact<{
 }>;
 
 
-export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentThreadCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> };
+export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _commentThreadCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> };
 
 export type GetCompanyQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
 
 
-export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, employees?: number | null, _commentThreadCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } };
+export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _commentThreadCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } };
 
 export type UpdateOneCompanyMutationVariables = Exact<{
   where: CompanyWhereUniqueInput;
@@ -2041,14 +2059,14 @@ export type UpdateOneCompanyMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null } | null } | null };
+export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null } | null } | null };
 
 export type InsertOneCompanyMutationVariables = Exact<{
   data: CompanyCreateInput;
 }>;
 
 
-export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, id: string, name: string } };
+export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: string, domainName: string, linkedinUrl?: string | null, employees?: number | null, id: string, name: string } };
 
 export type DeleteManyCompaniesMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -2064,7 +2082,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, createdAt: string, _commentThreadCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, createdAt: string, _commentThreadCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type GetPersonPhoneByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2120,7 +2138,7 @@ export type GetPersonQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, phone?: string | null, _commentThreadCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, phone?: string | null, _commentThreadCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
 
 export type UpdateOnePersonMutationVariables = Exact<{
   where: PersonWhereUniqueInput;
@@ -2128,14 +2146,14 @@ export type UpdateOnePersonMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
+export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
 
 export type InsertOnePersonMutationVariables = Exact<{
   data: PersonCreateInput;
 }>;
 
 
-export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
+export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
 
 export type DeleteManyPersonMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -3039,6 +3057,7 @@ export const GetCompaniesDocument = gql`
     name
     createdAt
     address
+    linkedinUrl
     employees
     _commentThreadCount
     accountOwner {
@@ -3089,6 +3108,7 @@ export const GetCompanyDocument = gql`
     name
     createdAt
     address
+    linkedinUrl
     employees
     _commentThreadCount
     accountOwner {
@@ -3142,6 +3162,7 @@ export const UpdateOneCompanyDocument = gql`
     createdAt
     domainName
     employees
+    linkedinUrl
     id
     name
   }
@@ -3180,6 +3201,7 @@ export const InsertOneCompanyDocument = gql`
     address
     createdAt
     domainName
+    linkedinUrl
     employees
     id
     name
@@ -3255,6 +3277,8 @@ export const GetPeopleDocument = gql`
     firstName
     lastName
     displayName
+    jobTitle
+    linkedinUrl
     createdAt
     _commentThreadCount
     company {
@@ -3564,6 +3588,8 @@ export const GetPersonDocument = gql`
     email
     createdAt
     city
+    jobTitle
+    linkedinUrl
     phone
     _commentThreadCount
     company {
@@ -3613,6 +3639,8 @@ export const UpdateOnePersonDocument = gql`
       id
     }
     email
+    jobTitle
+    linkedinUrl
     firstName
     lastName
     displayName
@@ -3661,6 +3689,8 @@ export const InsertOnePersonDocument = gql`
     email
     firstName
     lastName
+    jobTitle
+    linkedinUrl
     displayName
     phone
     createdAt

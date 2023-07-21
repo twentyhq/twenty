@@ -17,6 +17,7 @@ export const UPDATE_ONE_COMPANY = gql`
       createdAt
       domainName
       employees
+      linkedinUrl
       id
       name
     }
@@ -29,6 +30,7 @@ export const INSERT_ONE_COMPANY = gql`
       address
       createdAt
       domainName
+      linkedinUrl
       employees
       id
       name

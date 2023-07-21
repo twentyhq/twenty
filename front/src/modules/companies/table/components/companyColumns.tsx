@@ -1,5 +1,6 @@
 import { TableColumn } from '@/people/table/components/peopleColumns';
 import {
+  IconBrandLinkedin,
   IconBuildingSkyscraper,
   IconCalendarEvent,
   IconLink,
@@ -13,6 +14,7 @@ import { EditableCompanyAddressCell } from './EditableCompanyAddressCell';
 import { EditableCompanyCreatedAtCell } from './EditableCompanyCreatedAtCell';
 import { EditableCompanyDomainNameCell } from './EditableCompanyDomainNameCell';
 import { EditableCompanyEmployeesCell } from './EditableCompanyEmployeesCell';
+import { EditableCompanyLinkedinUrlCell } from './EditableCompanyLinkedinUrlCell';
 import { EditableCompanyNameCell } from './EditableCompanyNameCell';
 
 export const companyColumns: TableColumn[] = [
@@ -50,6 +52,13 @@ export const companyColumns: TableColumn[] = [
     icon: <IconUsers size={16} />,
     size: 150,
     cellComponent: <EditableCompanyEmployeesCell />,
+  },
+  {
+    id: 'linkedinUrl',
+    title: 'Linkedin',
+    icon: <IconBrandLinkedin size={16} />,
+    size: 170,
+    cellComponent: <EditableCompanyLinkedinUrlCell />,
   },
   {
     id: 'address',
