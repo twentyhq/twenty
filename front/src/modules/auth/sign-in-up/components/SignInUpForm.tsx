@@ -48,6 +48,7 @@ export function SignInUpForm() {
     signInUpStep,
     signInUpMode,
     showErrors,
+    setShowErrors,
     continueWithCredentials,
     continueWithEmail,
     submitCredentials,
@@ -62,6 +63,10 @@ export function SignInUpForm() {
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
+      return 'Continue With Email';
+    }
+
+    if (signInUpStep === SignInUpStep.Email) {
       return 'Continue';
     }
 
@@ -73,7 +78,11 @@ export function SignInUpForm() {
       <AnimatedEaseIn>
         <Logo />
       </AnimatedEaseIn>
-      <Title animate>Welcome to Twenty</Title>
+      <Title animate>
+        {signInUpMode === SignInUpMode.SignIn
+          ? 'Sign in to Twenty'
+          : 'Sign up to Twenty'}
+      </Title>
       <StyledContentContainer>
         {authProviders.google && (
           <>
@@ -111,12 +120,19 @@ export function SignInUpForm() {
                 }) => (
                   <StyledInputContainer>
                     <TextInput
+                      autoFocus
                       value={value}
                       placeholder="Email"
                       onBlur={onBlur}
-                      onChange={onChange}
+                      onChange={(value: string) => {
+                        onChange(value);
+                        if (signInUpStep === SignInUpStep.Password) {
+                          continueWithEmail();
+                        }
+                      }}
                       error={showErrors ? error?.message : undefined}
                       fullWidth
+                      disableHotkeys
                     />
                   </StyledInputContainer>
                 )}
@@ -142,6 +158,7 @@ export function SignInUpForm() {
                 }) => (
                   <StyledInputContainer>
                     <TextInput
+                      autoFocus
                       value={value}
                       type="password"
                       placeholder="Password"
@@ -149,6 +166,7 @@ export function SignInUpForm() {
                       onChange={onChange}
                       error={showErrors ? error?.message : undefined}
                       fullWidth
+                      disableHotkeys
                     />
                   </StyledInputContainer>
                 )}
@@ -169,6 +187,7 @@ export function SignInUpForm() {
                 continueWithCredentials();
                 return;
               }
+              setShowErrors(true);
               handleSubmit(submitCredentials)();
             }}
             disabled={

@@ -9,12 +9,14 @@ import {
   useVerifyMutation,
 } from '~/generated/graphql';
 
+import { currentUserState } from '../states/currentUserState';
 import { isAuthenticatingState } from '../states/isAuthenticatingState';
 import { tokenPairState } from '../states/tokenPairState';
 
 export function useAuth() {
   const [, setTokenPair] = useRecoilState(tokenPairState);
   const [, setIsAuthenticating] = useRecoilState(isAuthenticatingState);
+  const [, setCurrentUser] = useRecoilState(currentUserState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -73,15 +75,19 @@ export function useAuth() {
     async (email: string, password: string) => {
       const { loginToken } = await handleChallenge(email, password);
 
-      await handleVerify(loginToken.token);
+      const { user } = await handleVerify(loginToken.token);
+      return { user };
     },
     [handleChallenge, handleVerify],
   );
 
   const handleSignOut = useCallback(() => {
     setTokenPair(null);
-    client.clearStore();
-  }, [setTokenPair, client]);
+    setCurrentUser(null);
+    client.clearStore().then(() => {
+      sessionStorage.clear();
+    });
+  }, [setTokenPair, client, setCurrentUser]);
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, workspaceInviteHash?: string) => {
@@ -101,13 +107,22 @@ export function useAuth() {
         throw new Error('No login token');
       }
 
-      await handleVerify(signUpResult.data?.signUp.loginToken.token);
+      const { user } = await handleVerify(
+        signUpResult.data?.signUp.loginToken.token,
+      );
+
+      setCurrentUser(user);
+
+      return { user };
     },
-    [signUp, handleVerify],
+    [signUp, handleVerify, setCurrentUser],
   );
 
-  const googleLogin = useCallback(() => {
-    window.location.href = process.env.REACT_APP_AUTH_URL + '/google' || '';
+  const googleLogin = useCallback((workspaceInviteHash?: string) => {
+    window.location.href =
+      `${process.env.REACT_APP_AUTH_URL}/google/${
+        workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
+      }` || '';
   }, []);
 
   return {

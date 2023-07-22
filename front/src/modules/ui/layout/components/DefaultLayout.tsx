@@ -14,6 +14,7 @@ import { AppNavbar } from '~/AppNavbar';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { CompaniesMockMode } from '~/pages/companies/CompaniesMockMode';
 
+import { AppPath } from '../../../types/AppPath';
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 
 const StyledLayout = styled.div`
@@ -52,29 +53,29 @@ export function DefaultLayout({ children }: OwnProps) {
   useEffect(() => {
     if (onboardingStatus === OnboardingStatus.OngoingUserCreation) {
       if (
-        !isMatchingLocation('/sign-in') &&
-        !isMatchingLocation('/sign-up') &&
-        !isMatchingLocation('/invite') &&
-        !isMatchingLocation('/verify')
+        !isMatchingLocation(AppPath.SignIn) &&
+        !isMatchingLocation(AppPath.SignIn) &&
+        !isMatchingLocation(AppPath.Invite) &&
+        !isMatchingLocation(AppPath.Verify)
       ) {
-        navigate('/sign-in');
+        navigate(AppPath.SignIn);
       }
     } else if (onboardingStatus === OnboardingStatus.OngoingWorkspaceCreation) {
-      if (!isMatchingLocation('/create/workspace')) {
-        navigate('/create/workspace');
+      if (!isMatchingLocation(AppPath.CreateWorkspace)) {
+        navigate(AppPath.CreateWorkspace);
       }
     } else if (onboardingStatus === OnboardingStatus.OngoingProfileCreation) {
-      if (!isMatchingLocation('/create/profile')) {
-        navigate('/create/profile');
+      if (!isMatchingLocation(AppPath.CreateProfile)) {
+        navigate(AppPath.CreateProfile);
       }
     } else if (onboardingStatus === OnboardingStatus.Completed) {
       if (
-        isMatchingLocation('/sign-in') ||
-        isMatchingLocation('/sign-up') ||
-        isMatchingLocation('/invite') ||
-        isMatchingLocation('/verify') ||
-        isMatchingLocation('/create/workspace') ||
-        isMatchingLocation('/create/profile')
+        isMatchingLocation(AppPath.SignIn) ||
+        isMatchingLocation(AppPath.SignIn) ||
+        isMatchingLocation(AppPath.Invite) ||
+        isMatchingLocation(AppPath.Verify) ||
+        isMatchingLocation(AppPath.CreateWorkspace) ||
+        isMatchingLocation(AppPath.CreateProfile)
       ) {
         navigate('/');
       }

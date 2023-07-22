@@ -31,10 +31,7 @@ export function App() {
           <Route path={AppPath.Invite} element={<SignInUp />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
-          <Route
-            path=""
-            element={<Navigate to={AppPath.CompaniesPage} replace />}
-          />
+          <Route path="/" element={<Navigate to={AppPath.CompaniesPage} />} />
           <Route path={AppPath.PeoplePage} element={<People />} />
           <Route path={AppPath.PersonShowPage} element={<PersonShow />} />
           <Route path={AppPath.CompaniesPage} element={<Companies />} />

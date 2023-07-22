@@ -85,7 +85,7 @@ export function SettingsWorkspaceMembers() {
               description="Send an invitation to use Twenty"
             />
             <WorkspaceInviteLink
-              inviteLink={`${window.location.origin}/auth/invite/${workspace?.inviteHash}`}
+              inviteLink={`${window.location.origin}/invite/${workspace?.inviteHash}`}
             />
           </>
         )}

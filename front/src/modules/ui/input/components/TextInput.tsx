@@ -20,6 +20,7 @@ type OwnProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
   label?: string;
   onChange?: (text: string) => void;
   fullWidth?: boolean;
+  disableHotkeys?: boolean;
   error?: string;
 };
 
@@ -104,6 +105,7 @@ export function TextInput({
   error,
   required,
   type,
+  disableHotkeys = false,
   ...props
 }: OwnProps): JSX.Element {
   const theme = useTheme();
@@ -117,16 +119,20 @@ export function TextInput({
 
   const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
     onFocus?.(e);
-    setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+    if (!disableHotkeys) {
+      setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
+    }
   };
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
     onBlur?.(e);
-    goBackToPreviousHotkeyScope();
+    if (!disableHotkeys) {
+      goBackToPreviousHotkeyScope();
+    }
   };
 
   useScopedHotkeys(
-    [Key.Enter, Key.Escape],
+    [Key.Escape],
     () => {
       inputRef.current?.blur();
     },

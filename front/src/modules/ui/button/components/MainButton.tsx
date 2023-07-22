@@ -55,9 +55,9 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: center;
+  outline: none;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-
   ${({ theme, variant }) => {
     switch (variant) {
       case 'secondary':
