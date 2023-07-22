@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { on } from 'events';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
@@ -51,36 +50,41 @@ export function DefaultLayout({ children }: OwnProps) {
   const isMatchingLocation = useIsMatchingLocation();
 
   const onboardingStatus = useOnboardingStatus();
-  console.log(onboardingStatus);
   useEffect(() => {
-    if (onboardingStatus === OnboardingStatus.OngoingUserCreation) {
-      if (
-        !isMatchingLocation(AppPath.SignIn) &&
-        !isMatchingLocation(AppPath.SignIn) &&
-        !isMatchingLocation(AppPath.Invite) &&
-        !isMatchingLocation(AppPath.Verify)
-      ) {
-        navigate(AppPath.SignIn);
-      }
-    } else if (onboardingStatus === OnboardingStatus.OngoingWorkspaceCreation) {
-      if (!isMatchingLocation(AppPath.CreateWorkspace)) {
-        navigate(AppPath.CreateWorkspace);
-      }
-    } else if (onboardingStatus === OnboardingStatus.OngoingProfileCreation) {
-      if (!isMatchingLocation(AppPath.CreateProfile)) {
-        navigate(AppPath.CreateProfile);
-      }
-    } else if (onboardingStatus === OnboardingStatus.Completed) {
-      if (
-        isMatchingLocation(AppPath.SignIn) ||
-        isMatchingLocation(AppPath.SignIn) ||
-        isMatchingLocation(AppPath.Invite) ||
-        isMatchingLocation(AppPath.Verify) ||
-        isMatchingLocation(AppPath.CreateWorkspace) ||
-        isMatchingLocation(AppPath.CreateProfile)
-      ) {
-        navigate('/');
-      }
+    const isMachinOngoingUserCreationRoute =
+      isMatchingLocation(AppPath.SignUp) ||
+      isMatchingLocation(AppPath.SignIn) ||
+      isMatchingLocation(AppPath.Invite) ||
+      isMatchingLocation(AppPath.Verify);
+
+    const isMatchingOnboardingRoute =
+      isMatchingLocation(AppPath.SignUp) ||
+      isMatchingLocation(AppPath.SignIn) ||
+      isMatchingLocation(AppPath.Invite) ||
+      isMatchingLocation(AppPath.Verify) ||
+      isMatchingLocation(AppPath.CreateWorkspace) ||
+      isMatchingLocation(AppPath.CreateProfile);
+
+    if (
+      onboardingStatus === OnboardingStatus.OngoingUserCreation &&
+      !isMachinOngoingUserCreationRoute
+    ) {
+      navigate(AppPath.SignIn);
+    } else if (
+      onboardingStatus === OnboardingStatus.OngoingWorkspaceCreation &&
+      !isMatchingLocation(AppPath.CreateWorkspace)
+    ) {
+      navigate(AppPath.CreateWorkspace);
+    } else if (
+      onboardingStatus === OnboardingStatus.OngoingProfileCreation &&
+      !isMatchingLocation(AppPath.CreateProfile)
+    ) {
+      navigate(AppPath.CreateProfile);
+    } else if (
+      onboardingStatus === OnboardingStatus.Completed &&
+      isMatchingOnboardingRoute
+    ) {
+      navigate('/');
     }
   }, [onboardingStatus, navigate, isMatchingLocation]);
 

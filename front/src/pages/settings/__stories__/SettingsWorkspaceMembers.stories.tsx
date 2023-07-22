@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedUserJWT } from '~/testing/mock-data/jwt';
 import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
 import { SettingsWorkspaceMembers } from '../SettingsWorkspaceMembers';

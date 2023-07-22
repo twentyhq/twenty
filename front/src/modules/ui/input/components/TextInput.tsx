@@ -132,7 +132,7 @@ export function TextInput({
   };
 
   useScopedHotkeys(
-    [Key.Escape],
+    [Key.Escape, Key.Enter],
     () => {
       inputRef.current?.blur();
     },

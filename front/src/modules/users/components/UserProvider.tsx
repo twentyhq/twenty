@@ -8,7 +8,7 @@ export function UserProvider({ children }: React.PropsWithChildren) {
   const [, setCurrentUser] = useRecoilState(currentUserState);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { data, loading } = useGetCurrentUserQuery({});
+  const { data, loading } = useGetCurrentUserQuery();
 
   useEffect(() => {
     if (!loading) {

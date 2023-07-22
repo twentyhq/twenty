@@ -118,7 +118,7 @@ export function useAuth() {
     [signUp, handleVerify, setCurrentUser],
   );
 
-  const googleLogin = useCallback((workspaceInviteHash?: string) => {
+  const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {
     window.location.href =
       `${process.env.REACT_APP_AUTH_URL}/google/${
         workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
@@ -132,8 +132,8 @@ export function useAuth() {
     checkUserExists: { checkUserExistsData, checkUserExistsQuery },
 
     signOut: handleSignOut,
-    credentialsSignUp: handleCredentialsSignUp,
-    credentialsSignIn: handleCrendentialsSignIn,
-    googleSignIn: googleLogin,
+    signUpWithCredentials: handleCredentialsSignUp,
+    signInWithCredentials: handleCrendentialsSignIn,
+    signInWithGoogle: handleGoogleLogin,
   };
 }

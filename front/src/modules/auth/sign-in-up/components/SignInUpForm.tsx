@@ -44,7 +44,7 @@ const StyledInputContainer = styled.div`
 export function SignInUpForm() {
   const {
     authProviders,
-    googleSignIn,
+    signInWithGoogle,
     signInUpStep,
     signInUpMode,
     showErrors,
@@ -89,7 +89,7 @@ export function SignInUpForm() {
             <MainButton
               icon={<IconBrandGoogle size={theme.icon.size.sm} stroke={4} />}
               title="Continue with Google"
-              onClick={googleSignIn}
+              onClick={signInWithGoogle}
               fullWidth
             />
             <HorizontalSeparator />

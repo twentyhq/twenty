@@ -70,9 +70,9 @@ export function useSignInUp() {
   });
 
   const {
-    credentialsSignIn,
-    credentialsSignUp,
-    googleSignIn,
+    signInWithCredentials,
+    signUpWithCredentials,
+    signInWithGoogle,
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
@@ -108,10 +108,13 @@ export function useSignInUp() {
           throw new Error('Email and password are required');
         }
         if (signInUpMode === SignInUpMode.SignIn) {
-          const { user } = await credentialsSignIn(data.email, data.password);
+          const { user } = await signInWithCredentials(
+            data.email,
+            data.password,
+          );
           setCurrentUser(user);
         } else {
-          const { user } = await credentialsSignUp(
+          const { user } = await signUpWithCredentials(
             data.email,
             data.password,
             workspaceInviteHash,
@@ -127,8 +130,8 @@ export function useSignInUp() {
     },
     [
       navigate,
-      credentialsSignIn,
-      credentialsSignUp,
+      signInWithCredentials,
+      signUpWithCredentials,
       workspaceInviteHash,
       enqueueSnackBar,
       signInUpMode,
@@ -161,7 +164,7 @@ export function useSignInUp() {
 
   return {
     authProviders,
-    googleSignIn: () => googleSignIn(workspaceInviteHash),
+    signInWithGoogle: () => signInWithGoogle(workspaceInviteHash),
     signInUpStep,
     signInUpMode,
     showErrors,
