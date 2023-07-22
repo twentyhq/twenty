@@ -68,7 +68,7 @@ export function SingleEntitySelectBase<
     <DropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
       {entities.loading ? (
         <DropdownMenuItemsContainerSkeleton>
-          <Skeleton height={24} />
+          <Skeleton height={16} />
         </DropdownMenuItemsContainerSkeleton>
       ) : entitiesInDropdown.length === 0 ? (
         <DropdownMenuItem>No result</DropdownMenuItem>
