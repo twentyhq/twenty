@@ -17,7 +17,10 @@ export function DropdownMenuSkeletonItem() {
   const theme = useTheme();
   return (
     <StyledDropdownMenuSkeletonContainer>
-      <SkeletonTheme highlightColor={theme.background.tertiary}>
+      <SkeletonTheme
+        baseColor="transparent"
+        highlightColor={theme.background.tertiary}
+      >
         <Skeleton height={16} />
       </SkeletonTheme>
     </StyledDropdownMenuSkeletonContainer>
