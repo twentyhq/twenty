@@ -4,6 +4,7 @@ import { Theme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { Avatar, AvatarType } from '@/users/components/Avatar';
+import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { OverflowingTextWithTooltip } from '../../tooltip/OverflowingTextWithTooltip';
 
@@ -83,26 +84,28 @@ export function EntityChip({
     navigate(linkToEntity);
   }
 
-  return clickable && linkToEntity && name.trim() ? (
+  return clickable && linkToEntity ? (
     <StyledContainerLink
       data-testid="entity-chip"
       onClick={handleLinkClick}
       variant={variant}
     >
-      <Avatar
-        avatarUrl={picture}
-        colorId={entityId}
-        placeholder={name}
-        size={14}
-        type={avatarType}
-      />
+      {isNonEmptyString(name) && (
+        <Avatar
+          avatarUrl={picture}
+          colorId={entityId}
+          placeholder={name}
+          size={14}
+          type={avatarType}
+        />
+      )}
       <StyledName>
         <OverflowingTextWithTooltip text={name} />
       </StyledName>
     </StyledContainerLink>
   ) : (
     <StyledContainerReadOnly data-testid="entity-chip">
-      {name.trim() && (
+      {isNonEmptyString(name) && (
         <Avatar
           avatarUrl={picture}
           colorId={entityId}
