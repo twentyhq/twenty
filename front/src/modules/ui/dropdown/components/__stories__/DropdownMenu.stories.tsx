@@ -6,6 +6,7 @@ import { IconPlus } from '@/ui/icon/index';
 import { Avatar } from '@/users/components/Avatar';
 import { ComponentDecorator } from '~/testing/decorators';
 
+import { DropdownMenuSkeletonItem } from '../../../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenu } from '../DropdownMenu';
 import { DropdownMenuCheckableItem } from '../DropdownMenuCheckableItem';
 import { DropdownMenuItem } from '../DropdownMenuItem';
@@ -189,6 +190,17 @@ export const SimpleMenuItem: Story = {
     <DropdownMenu {...args}>
       <DropdownMenuItemsContainer hasMaxHeight>
         <FakeMenuItemList />
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
+  ),
+};
+
+export const LoadingMenu: Story = {
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        <DropdownMenuSkeletonItem />
       </DropdownMenuItemsContainer>
     </DropdownMenu>
   ),
