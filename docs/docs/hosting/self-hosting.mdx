@@ -4,20 +4,20 @@ sidebar_custom_props:
 ---
 # Self-hosting
 
-Right now, docker containers are the only option we currently support. However we are actively working on providing simple options to self host Twenty yourself. 
+Right now, Docker containers are the only hosting option we support. However we are actively working on providing simple options to self-host Twenty. 
 Feel free to open issues on [Github](https://github.com/twentyhq/twenty) if you want a specific cloud provider to be supported.
 
-Refer to this list to see what future options will be available
+Refer to this list to see what future options will be available.
 
 ## Production docker containers
 
-We provide a production-ready set of `Dockerfile` to allow you to build your own image and deploy it to your favorite cloud provider (Amazon Web Services, Google Cloud Platform, ...)
+We provide a production-ready set of `Dockerfile`s to allow you to build your own image and deploy it to your favorite cloud provider (Amazon Web Services, Google Cloud Platform, etc.).
 
-You will find these in [infra/prod/front/Dockerfile](https://github.com/twentyhq/twenty/blob/main/infra/prod/front/Dockerfile) and [infra/prod/server/Dockerfile](https://github.com/twentyhq/twenty/blob/main/infra/prod/server/Dockerfile) files.
+You will find these in the [infra/prod/front/Dockerfile](https://github.com/twentyhq/twenty/blob/main/infra/prod/front/Dockerfile) and [infra/prod/server/Dockerfile](https://github.com/twentyhq/twenty/blob/main/infra/prod/server/Dockerfile) files.
 
 ### Front
 
-```
+```bash
 docker build \
  --build-arg REACT_APP_API_URL=REPLACE_ME \
  --build-arg REACT_APP_AUTH_URL=REPLACE_ME \
@@ -28,18 +28,18 @@ docker build \
 
 ### Server
 
-```
+> To run the server, you will need to set the environment variables listed [here](https://github.com/twentyhq/twenty/blob/main/server/.env.example).
+
+```bash
 docker build \
   -t twenty-server:latest \
   -f ./infra/prod/server/Dockerfile .
 ```
 
-To run the server, you will need to set a few environment variables you can find [here](https://github.com/twentyhq/twenty/blob/main/server/.env.example).
+## AWS Elastic Beanstalk (soon)
 
-## Ready-to-deploy joint image (soon)
-
-We are working on providing a joint docker image containing Twenty front and server, that you can deploy to Amazon Web Services (Elastic Beanstalk).
+We are working on providing a joint Docker image - containing both the Twenty frontend and server - that you can deploy using [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/).
 
 ## Railway (soon)
 
-[Railway](https://railway.app) is an infrastructure platform that let you deploy to the cloud in one-click. We are currently working on making it available.
+[Railway](https://railway.app) is an infrastructure platform that lets you deploy to the cloud in one click. We are currently working on making it available.
