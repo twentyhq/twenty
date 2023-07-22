@@ -1,26 +1,11 @@
 import { gql } from '@apollo/client';
 
-export const UPDATE_COMPANY = gql`
-  mutation UpdateCompany(
-    $id: String
-    $name: String
-    $domainName: String
-    $accountOwnerId: String
-    $createdAt: DateTime
-    $address: String
-    $employees: Int
+export const UPDATE_ONE_COMPANY = gql`
+  mutation UpdateOneCompany(
+    $where: CompanyWhereUniqueInput!
+    $data: CompanyUpdateInput!
   ) {
-    updateOneCompany(
-      where: { id: $id }
-      data: {
-        accountOwner: { connect: { id: $accountOwnerId } }
-        address: { set: $address }
-        domainName: { set: $domainName }
-        employees: { set: $employees }
-        name: { set: $name }
-        createdAt: { set: $createdAt }
-      }
-    ) {
+    updateOneCompany(data: $data, where: $where) {
       accountOwner {
         id
         email
@@ -32,34 +17,20 @@ export const UPDATE_COMPANY = gql`
       createdAt
       domainName
       employees
+      linkedinUrl
       id
       name
     }
   }
 `;
 
-export const INSERT_COMPANY = gql`
-  mutation InsertCompany(
-    $id: String!
-    $name: String!
-    $domainName: String!
-    $createdAt: DateTime
-    $address: String!
-    $employees: Int
-  ) {
-    createOneCompany(
-      data: {
-        id: $id
-        name: $name
-        domainName: $domainName
-        createdAt: $createdAt
-        address: $address
-        employees: $employees
-      }
-    ) {
+export const INSERT_ONE_COMPANY = gql`
+  mutation InsertOneCompany($data: CompanyCreateInput!) {
+    createOneCompany(data: $data) {
       address
       createdAt
       domainName
+      linkedinUrl
       employees
       id
       name
@@ -67,8 +38,8 @@ export const INSERT_COMPANY = gql`
   }
 `;
 
-export const DELETE_COMPANIES = gql`
-  mutation DeleteCompanies($ids: [String!]) {
+export const DELETE_MANY_COMPANIES = gql`
+  mutation DeleteManyCompanies($ids: [String!]) {
     deleteManyCompany(where: { id: { in: $ids } }) {
       count
     }

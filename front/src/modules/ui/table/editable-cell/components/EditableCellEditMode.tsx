@@ -17,20 +17,23 @@ export const EditableCellEditModeContainer = styled.div<OwnProps>`
   margin-left: -1px;
   margin-top: -1px;
 
+  max-width: ${({ maxContentWidth }) =>
+    maxContentWidth ? `${maxContentWidth}px` : 'auto'};
   min-height: 100%;
   min-width: 100%;
-  position: absolute;
 
+  position: absolute;
   right: ${(props) =>
     props.editModeHorizontalAlign === 'right' ? '0' : 'auto'};
   top: ${(props) => (props.editModeVerticalPosition === 'over' ? '0' : '100%')};
-  z-index: 1;
   ${({ transparent }) => (transparent ? '' : overlayBackground)};
+  z-index: 1;
 `;
 
 type OwnProps = {
   children: ReactElement;
   transparent?: boolean;
+  maxContentWidth?: number;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
   onOutsideClick?: () => void;
@@ -45,6 +48,7 @@ export function EditableCellEditMode({
   onCancel,
   onSubmit,
   transparent = false,
+  maxContentWidth,
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
@@ -52,6 +56,7 @@ export function EditableCellEditMode({
 
   return (
     <EditableCellEditModeContainer
+      maxContentWidth={maxContentWidth}
       transparent={transparent}
       data-testid="editable-cell-edit-mode-container"
       ref={wrapperRef}

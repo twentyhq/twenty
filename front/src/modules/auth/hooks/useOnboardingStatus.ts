@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { useIsLogged } from '../hooks/useIsLogged';
@@ -12,10 +11,5 @@ export function useOnboardingStatus(): OnboardingStatus | undefined {
   const [currentUser] = useRecoilState(currentUserState);
   const isLoggedIn = useIsLogged();
 
-  const onboardingStatus = useMemo(
-    () => getOnboardingStatus(isLoggedIn, currentUser),
-    [currentUser, isLoggedIn],
-  );
-
-  return onboardingStatus;
+  return getOnboardingStatus(isLoggedIn, currentUser);
 }

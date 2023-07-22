@@ -20,7 +20,7 @@ const StyledClickable = styled.div`
 export function RawLink({ className, href, children, onClick }: OwnProps) {
   return (
     <StyledClickable className={className}>
-      <ReactLink onClick={onClick} to={href}>
+      <ReactLink target="_blank" onClick={onClick} to={href}>
         {children}
       </ReactLink>
     </StyledClickable>

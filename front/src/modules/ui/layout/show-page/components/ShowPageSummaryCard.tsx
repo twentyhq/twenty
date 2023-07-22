@@ -9,11 +9,14 @@ import {
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
+import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
+
 type OwnProps = {
   id?: string;
   logoOrAvatar?: string;
   title: string;
   date: string;
+  renderTitleEditComponent?: () => JSX.Element;
 };
 
 const StyledShowPageSummaryCard = styled.div`
@@ -31,6 +34,7 @@ const StyledInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 `;
 
 const StyledDate = styled.div`
@@ -42,6 +46,7 @@ const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  max-width: 100%;
 `;
 
 const StyledTooltip = styled(Tooltip)`
@@ -50,6 +55,8 @@ const StyledTooltip = styled(Tooltip)`
 
   color: ${({ theme }) => theme.font.color.primary};
 
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -58,6 +65,7 @@ export function ShowPageSummaryCard({
   logoOrAvatar,
   title,
   date,
+  renderTitleEditComponent,
 }: OwnProps) {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
@@ -74,7 +82,13 @@ export function ShowPageSummaryCard({
         placeholder={title}
       />
       <StyledInfoContainer>
-        <StyledTitle>{title}</StyledTitle>
+        <StyledTitle>
+          {renderTitleEditComponent ? (
+            renderTitleEditComponent()
+          ) : (
+            <OverflowingTextWithTooltip text={title} />
+          )}
+        </StyledTitle>
         <StyledDate id={dateElementId}>
           Added {beautifiedCreatedAt} ago
         </StyledDate>

@@ -92,7 +92,7 @@ export function CommentThread({
   showComment = true,
   autoFillTitle = false,
 }: OwnProps) {
-  const { data } = useGetCommentThreadQuery({
+  const { data, loading } = useGetCommentThreadQuery({
     variables: {
       commentThreadId: commentThreadId ?? '',
     },
@@ -101,6 +101,13 @@ export function CommentThread({
   const commentThread = data?.findManyCommentThreads[0];
 
   const [title, setTitle] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!loading) {
+      setTitle(commentThread?.title ?? '');
+    }
+  }, [loading, setTitle, commentThread?.title]);
+
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 
@@ -108,16 +115,27 @@ export function CommentThread({
 
   const debounceUpdateTitle = useMemo(() => {
     function updateTitle(title: string) {
-      updateCommentThreadMutation({
-        variables: {
-          id: commentThreadId,
-          title: title ?? '',
-        },
-        refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
-      });
+      if (commentThread) {
+        updateCommentThreadMutation({
+          variables: {
+            id: commentThreadId,
+            title: title ?? '',
+          },
+          refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
+          optimisticResponse: {
+            __typename: 'Mutation',
+            updateOneCommentThread: {
+              __typename: 'CommentThread',
+              id: commentThreadId,
+              title: title,
+              type: commentThread.type,
+            },
+          },
+        });
+      }
     }
     return debounce(updateTitle, 200);
-  }, [commentThreadId, updateCommentThreadMutation]);
+  }, [commentThreadId, updateCommentThreadMutation, commentThread]);
 
   function updateTitleFromBody(body: string) {
     const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
@@ -126,12 +144,6 @@ export function CommentThread({
       debounceUpdateTitle(parsedTitle);
     }
   }
-
-  useEffect(() => {
-    if (commentThread) {
-      setTitle(commentThread?.title ?? '');
-    }
-  }, [commentThread]);
 
   if (!commentThread) {
     return <></>;
@@ -146,6 +158,7 @@ export function CommentThread({
             <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
           </StyledTopActionsContainer>
           <StyledEditableTitleInput
+            autoFocus
             placeholder={`${commentThread.type} title (optional)`}
             onChange={(event) => {
               setHasUserManuallySetTitle(true);

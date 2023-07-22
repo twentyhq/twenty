@@ -12,7 +12,10 @@ const PipelineProgressPointOfContactPickerContainer = styled.div`
 
 export type OwnProps = {
   pipelineProgress: Pick<PipelineProgress, 'id'> & {
-    pointOfContact?: Pick<Person, 'id' | 'firstName' | 'lastName'> | null;
+    pointOfContact?: Pick<
+      Person,
+      'id' | 'firstName' | 'lastName' | 'displayName'
+    > | null;
   };
   onSubmit?: () => void;
   onCancel?: () => void;

@@ -42,6 +42,7 @@ export const GET_PIPELINE_PROGRESS = gql`
         id
         firstName
         lastName
+        displayName
       }
       probability
     }
@@ -59,9 +60,9 @@ export const UPDATE_PIPELINE_PROGRESS = gql`
     updateOnePipelineProgress(
       where: { id: $id }
       data: {
-        amount: { set: $amount }
-        closeDate: { set: $closeDate }
-        probability: { set: $probability }
+        amount: $amount
+        closeDate: $closeDate
+        probability: $probability
         pointOfContact: { connect: { id: $pointOfContactId } }
       }
     ) {

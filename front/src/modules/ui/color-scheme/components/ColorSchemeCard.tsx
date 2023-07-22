@@ -8,7 +8,7 @@ import {
 } from 'framer-motion';
 
 import { Checkmark } from '@/ui/checkmark/components/Checkmark';
-import DarkNoise from '@/ui/themes/assets/dark-noise.png';
+import DarkNoise from '@/ui/themes/assets/dark-noise.jpg';
 import LightNoise from '@/ui/themes/assets/light-noise.png';
 import { grayScale } from '@/ui/themes/colors';
 import { ColorScheme } from '~/generated/graphql';

@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
@@ -8,11 +8,9 @@ import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import * as Yup from 'yup';
 
-import { SubTitle } from '@/auth/components/ui/SubTitle';
-import { Title } from '@/auth/components/ui/Title';
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { SubTitle } from '@/auth/components/SubTitle';
+import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { MainButton } from '@/ui/button/components/MainButton';
@@ -25,18 +23,14 @@ import { useUpdateUserMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(6)};
-  }
 `;
 
 const StyledSectionContainer = styled.div`
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(4)};
-  }
+  margin-top: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledButtonContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(8)};
   width: 200px;
 `;
 
@@ -59,7 +53,6 @@ type Form = Yup.InferType<typeof validationSchema>;
 
 export function CreateProfile() {
   const navigate = useNavigate();
-  const onboardingStatus = useOnboardingStatus();
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -98,12 +91,8 @@ export function CreateProfile() {
               id: currentUser?.id,
             },
             data: {
-              firstName: {
-                set: data.firstName,
-              },
-              lastName: {
-                set: data.lastName,
-              },
+              firstName: data.firstName,
+              lastName: data.lastName,
             },
           },
           refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
@@ -133,12 +122,6 @@ export function CreateProfile() {
     [onSubmit],
   );
 
-  useEffect(() => {
-    if (onboardingStatus !== OnboardingStatus.OngoingProfileCreation) {
-      navigate('/');
-    }
-  }, [onboardingStatus, navigate]);
-
   return (
     <>
       <Title>Create profile</Title>
@@ -163,6 +146,7 @@ export function CreateProfile() {
                 fieldState: { error },
               }) => (
                 <TextInput
+                  autoFocus
                   label="First Name"
                   value={value}
                   onBlur={onBlur}
@@ -170,6 +154,7 @@ export function CreateProfile() {
                   placeholder="Tim"
                   error={error?.message}
                   fullWidth
+                  disableHotkeys
                 />
               )}
             />
@@ -188,6 +173,7 @@ export function CreateProfile() {
                   placeholder="Cook"
                   error={error?.message}
                   fullWidth
+                  disableHotkeys
                 />
               )}
             />

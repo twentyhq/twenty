@@ -15,9 +15,8 @@ export const textInputStyle = (props: { theme: ThemeType }) =>
     border: none;
     color: ${props.theme.font.color.primary};
     font-family: ${props.theme.font.family};
-    font-size: ${props.theme.font.size.md};
-
-    font-weight: ${props.theme.font.weight.regular};
+    font-size: inherit;
+    font-weight: inherit;
     outline: none;
     padding: ${props.theme.spacing(0)} ${props.theme.spacing(2)};
 

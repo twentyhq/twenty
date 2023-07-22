@@ -51,12 +51,8 @@ export function NameFields({
               id: currentUser?.id,
             },
             data: {
-              firstName: {
-                set: firstName,
-              },
-              lastName: {
-                set: lastName,
-              },
+              firstName,
+              lastName,
             },
           },
           refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],

@@ -9,7 +9,7 @@ type Props = Omit<
 
 export function AnimatedEaseIn({
   children,
-  duration = 0.8,
+  duration = 0.3,
   ...restProps
 }: Props) {
   const initial = { opacity: 0 };

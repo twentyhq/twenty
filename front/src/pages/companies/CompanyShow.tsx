@@ -17,6 +17,8 @@ import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSu
 import { CommentableType } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
+import { CompanyNameEditableField } from '../../modules/companies/editable-field/components/CompanyNameEditableField';
+
 export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
 
@@ -39,6 +41,9 @@ export function CompanyShow() {
           logoOrAvatar={getLogoUrlFromDomainName(company?.domainName ?? '')}
           title={company?.name ?? 'No name'}
           date={company?.createdAt ?? ''}
+          renderTitleEditComponent={() => (
+            <CompanyNameEditableField company={company} />
+          )}
         />
         <PropertyBox extraPadding={true}>
           <CompanyDomainNameEditableField company={company} />

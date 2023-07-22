@@ -1,5 +1,16 @@
 export enum AppPath {
-  AuthCatchAll = `/auth/*`,
+  // Not logged-in
+  Verify = 'verify',
+  SignIn = 'sign-in',
+  SignUp = 'sign-up',
+  Invite = 'invite/:workspaceInviteHash',
+
+  // Onboarding
+  CreateWorkspace = 'create/workspace',
+  CreateProfile = 'create/profile',
+
+  // Onboarded
+  Index = '',
   PeoplePage = '/people',
   CompaniesPage = '/companies',
   CompanyShowPage = '/companies/:companyId',

@@ -1,12 +1,20 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { AnimatePresence, LayoutGroup } from 'framer-motion';
+import { useRecoilValue } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { AuthModal } from '@/auth/components/Modal';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { NavbarAnimatedContainer } from '@/ui/navbar/components/NavbarAnimatedContainer';
 import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
 import { AppNavbar } from '~/AppNavbar';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { CompaniesMockMode } from '~/pages/companies/CompaniesMockMode';
 
+import { AppPath } from '../../../types/AppPath';
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 
 const StyledLayout = styled.div`
@@ -38,22 +46,71 @@ type OwnProps = {
 };
 
 export function DefaultLayout({ children }: OwnProps) {
-  const currentUser = useRecoilState(currentUserState);
-  const userIsAuthenticated = !!currentUser;
+  const navigate = useNavigate();
+  const isMatchingLocation = useIsMatchingLocation();
+
+  const onboardingStatus = useOnboardingStatus();
+  useEffect(() => {
+    const isMachinOngoingUserCreationRoute =
+      isMatchingLocation(AppPath.SignUp) ||
+      isMatchingLocation(AppPath.SignIn) ||
+      isMatchingLocation(AppPath.Invite) ||
+      isMatchingLocation(AppPath.Verify);
+
+    const isMatchingOnboardingRoute =
+      isMatchingLocation(AppPath.SignUp) ||
+      isMatchingLocation(AppPath.SignIn) ||
+      isMatchingLocation(AppPath.Invite) ||
+      isMatchingLocation(AppPath.Verify) ||
+      isMatchingLocation(AppPath.CreateWorkspace) ||
+      isMatchingLocation(AppPath.CreateProfile);
+
+    if (
+      onboardingStatus === OnboardingStatus.OngoingUserCreation &&
+      !isMachinOngoingUserCreationRoute
+    ) {
+      navigate(AppPath.SignIn);
+    } else if (
+      onboardingStatus === OnboardingStatus.OngoingWorkspaceCreation &&
+      !isMatchingLocation(AppPath.CreateWorkspace)
+    ) {
+      navigate(AppPath.CreateWorkspace);
+    } else if (
+      onboardingStatus === OnboardingStatus.OngoingProfileCreation &&
+      !isMatchingLocation(AppPath.CreateProfile)
+    ) {
+      navigate(AppPath.CreateProfile);
+    } else if (
+      onboardingStatus === OnboardingStatus.Completed &&
+      isMatchingOnboardingRoute
+    ) {
+      navigate('/');
+    }
+  }, [onboardingStatus, navigate, isMatchingLocation]);
 
   return (
     <StyledLayout>
-      {userIsAuthenticated ? (
-        <>
-          <CommandMenu />
-          <NavbarAnimatedContainer>
-            <AppNavbar />
-          </NavbarAnimatedContainer>
-          <MainContainer>{children}</MainContainer>
-        </>
-      ) : (
-        children
-      )}
+      <>
+        <CommandMenu />
+        <NavbarAnimatedContainer>
+          <AppNavbar />
+        </NavbarAnimatedContainer>
+        <MainContainer>
+          {onboardingStatus &&
+          onboardingStatus !== OnboardingStatus.Completed ? (
+            <>
+              <CompaniesMockMode />
+              <AnimatePresence mode="wait">
+                <LayoutGroup>
+                  <AuthModal>{children}</AuthModal>
+                </LayoutGroup>
+              </AnimatePresence>
+            </>
+          ) : (
+            <>{children}</>
+          )}
+        </MainContainer>
+      </>
     </StyledLayout>
   );
 }

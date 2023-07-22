@@ -4,12 +4,12 @@ import { useRecoilValue } from 'recoil';
 import { companyAddressFamilyState } from '@/companies/states/companyAddressFamilyState';
 import { EditableCellText } from '@/ui/table/editable-cell/types/EditableCellText';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateCompanyMutation } from '~/generated/graphql';
+import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 
 export function EditableCompanyAddressCell() {
   const currentRowEntityId = useCurrentRowEntityId();
 
-  const [updateCompany] = useUpdateCompanyMutation();
+  const [updateCompany] = useUpdateOneCompanyMutation();
 
   const address = useRecoilValue(
     companyAddressFamilyState(currentRowEntityId ?? ''),
@@ -27,8 +27,12 @@ export function EditableCompanyAddressCell() {
       onSubmit={() =>
         updateCompany({
           variables: {
-            id: currentRowEntityId,
-            address: internalValue,
+            where: {
+              id: currentRowEntityId,
+            },
+            data: {
+              address: internalValue,
+            },
           },
         })
       }

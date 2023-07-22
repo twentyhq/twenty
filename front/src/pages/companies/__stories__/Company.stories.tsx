@@ -71,7 +71,7 @@ export const EditNote: Story = {
     ).toBeInTheDocument();
 
     const workspaceName = await canvas.findByText('Twenty');
-    await fireEvent.mouseUp(workspaceName);
+    await fireEvent.click(workspaceName);
 
     expect(await canvas.queryByDisplayValue('My very first note')).toBeNull();
 

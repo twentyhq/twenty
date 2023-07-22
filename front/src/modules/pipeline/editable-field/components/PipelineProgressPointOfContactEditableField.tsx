@@ -10,7 +10,7 @@ import { PipelineProgressPointOfContactPickerFieldEditMode } from './PipelinePro
 
 type OwnProps = {
   pipelineProgress: Pick<PipelineProgress, 'id' | 'pointOfContactId'> & {
-    pointOfContact?: Pick<Person, 'id' | 'firstName' | 'lastName'> | null;
+    pointOfContact?: Pick<Person, 'id' | 'displayName'> | null;
   };
 };
 
@@ -34,10 +34,7 @@ export function PipelineProgressPointOfContactEditableField({
             pipelineProgress.pointOfContact ? (
               <PersonChip
                 id={pipelineProgress.pointOfContact.id}
-                name={
-                  pipelineProgress.pointOfContact?.firstName +
-                  pipelineProgress.pointOfContact.lastName
-                }
+                name={pipelineProgress.pointOfContact.displayName}
               />
             ) : (
               <></>

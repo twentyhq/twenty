@@ -5,6 +5,7 @@ import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
 
 import { useCurrentCellEditMode } from '../hooks/useCurrentCellEditMode';
 import { useIsSoftFocusOnCurrentCell } from '../hooks/useIsSoftFocusOnCurrentCell';
+import { useRegisterEditableCell } from '../hooks/useRegisterEditableCell';
 
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
@@ -28,6 +29,7 @@ type OwnProps = {
   editModeVerticalPosition?: 'over' | 'below';
   editHotkeyScope?: HotkeyScope;
   transparent?: boolean;
+  maxContentWidth?: number;
   onSubmit?: () => void;
   onCancel?: () => void;
 };
@@ -39,6 +41,7 @@ export function EditableCell({
   nonEditModeContent,
   editHotkeyScope,
   transparent = false,
+  maxContentWidth,
   onSubmit,
   onCancel,
 }: OwnProps) {
@@ -46,10 +49,13 @@ export function EditableCell({
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
+  useRegisterEditableCell(editHotkeyScope);
+
   return (
     <CellBaseContainer>
       {isCurrentCellInEditMode ? (
         <EditableCellEditMode
+          maxContentWidth={maxContentWidth}
           transparent={transparent}
           editModeHorizontalAlign={editModeHorizontalAlign}
           editModeVerticalPosition={editModeVerticalPosition}
@@ -59,7 +65,7 @@ export function EditableCell({
           {editModeContent}
         </EditableCellEditMode>
       ) : hasSoftFocus ? (
-        <EditableCellSoftFocusMode editHotkeyScope={editHotkeyScope}>
+        <EditableCellSoftFocusMode>
           {nonEditModeContent}
         </EditableCellSoftFocusMode>
       ) : (

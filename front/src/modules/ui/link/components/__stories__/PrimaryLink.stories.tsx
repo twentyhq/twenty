@@ -3,13 +3,21 @@ import { expect, jest } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators';
 
 import { PrimaryLink } from '../PrimaryLink';
 
 const meta: Meta<typeof PrimaryLink> = {
   title: 'UI/Links/PrimaryLink',
   component: PrimaryLink,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+    ComponentDecorator,
+  ],
 };
 
 export default meta;
@@ -18,13 +26,7 @@ type Story = StoryObj<typeof PrimaryLink>;
 const clickJestFn = jest.fn();
 
 export const Default: Story = {
-  render: getRenderWrapperForComponent(
-    <MemoryRouter>
-      <PrimaryLink href="/test" onClick={clickJestFn}>
-        A primary link
-      </PrimaryLink>
-    </MemoryRouter>,
-  ),
+  args: { href: '/test', onClick: clickJestFn, children: 'A primary link' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

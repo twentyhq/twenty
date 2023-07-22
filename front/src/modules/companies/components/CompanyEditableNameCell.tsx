@@ -4,7 +4,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { EditableCellChip } from '@/ui/table/editable-cell/types/EditableChip';
 import {
   GetCompaniesQuery,
-  useUpdateCompanyMutation,
+  useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
@@ -20,7 +20,7 @@ type OwnProps = {
 };
 
 export function CompanyEditableNameChipCell({ company }: OwnProps) {
-  const [updateCompany] = useUpdateCompanyMutation();
+  const [updateCompany] = useUpdateOneCompanyMutation();
 
   const [internalValue, setInternalValue] = useState(company.name ?? '');
 
@@ -44,8 +44,10 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
       onSubmit={() =>
         updateCompany({
           variables: {
-            id: company.id,
-            name: internalValue,
+            where: { id: company.id },
+            data: {
+              name: internalValue,
+            },
           },
           refetchQueries: [getOperationName(GET_COMPANY) ?? ''],
         })

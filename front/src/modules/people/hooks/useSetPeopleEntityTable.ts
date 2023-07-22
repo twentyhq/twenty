@@ -6,6 +6,8 @@ import { peopleCityFamilyState } from '../states/peopleCityFamilyState';
 import { peopleCompanyFamilyState } from '../states/peopleCompanyFamilyState';
 import { peopleCreatedAtFamilyState } from '../states/peopleCreatedAtFamilyState';
 import { peopleEmailFamilyState } from '../states/peopleEmailFamilyState';
+import { peopleJobTitleFamilyState } from '../states/peopleJobTitleFamilyState';
+import { peopleLinkedinUrlFamilyState } from '../states/peopleLinkedinUrlFamilyState';
 import { peopleNameCellFamilyState } from '../states/peopleNamesFamilyState';
 import { peoplePhoneFamilyState } from '../states/peoplePhoneFamilyState';
 
@@ -19,7 +21,7 @@ export function useSetPeopleEntityTable() {
             .valueOrThrow();
 
           if (currentEmail !== person.email) {
-            set(peopleEmailFamilyState(person.id), person.email);
+            set(peopleEmailFamilyState(person.id), person.email ?? null);
           }
 
           const currentCity = snapshot
@@ -27,7 +29,7 @@ export function useSetPeopleEntityTable() {
             .valueOrThrow();
 
           if (currentCity !== person.city) {
-            set(peopleCityFamilyState(person.id), person.city);
+            set(peopleCityFamilyState(person.id), person.city ?? null);
           }
 
           const currentCompany = snapshot
@@ -45,7 +47,7 @@ export function useSetPeopleEntityTable() {
             .valueOrThrow();
 
           if (currentPhone !== person.phone) {
-            set(peoplePhoneFamilyState(person.id), person.phone);
+            set(peoplePhoneFamilyState(person.id), person.phone ?? null);
           }
 
           const currentCreatedAt = snapshot
@@ -54,6 +56,25 @@ export function useSetPeopleEntityTable() {
 
           if (currentCreatedAt !== person.createdAt) {
             set(peopleCreatedAtFamilyState(person.id), person.createdAt);
+          }
+
+          const currentJobTitle = snapshot
+            .getLoadable(peopleJobTitleFamilyState(person.id))
+            .valueOrThrow();
+
+          if (currentJobTitle !== person.jobTitle) {
+            set(peopleJobTitleFamilyState(person.id), person.jobTitle ?? null);
+          }
+
+          const currentLinkedinUrl = snapshot
+            .getLoadable(peopleLinkedinUrlFamilyState(person.id))
+            .valueOrThrow();
+
+          if (currentLinkedinUrl !== person.linkedinUrl) {
+            set(
+              peopleLinkedinUrlFamilyState(person.id),
+              person.linkedinUrl ?? null,
+            );
           }
 
           const currentNameCell = snapshot
@@ -66,9 +87,10 @@ export function useSetPeopleEntityTable() {
             currentNameCell.commentCount !== person._commentThreadCount
           ) {
             set(peopleNameCellFamilyState(person.id), {
-              firstName: person.firstName,
-              lastName: person.lastName,
+              firstName: person.firstName ?? null,
+              lastName: person.lastName ?? null,
               commentCount: person._commentThreadCount,
+              displayName: person.displayName ?? null,
             });
           }
         }

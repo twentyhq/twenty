@@ -6,14 +6,14 @@ import { IconTrash } from '@/ui/icon/index';
 import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector';
-import { useDeleteCompaniesMutation } from '~/generated/graphql';
+import { useDeleteManyCompaniesMutation } from '~/generated/graphql';
 
 export function TableActionBarButtonDeleteCompanies() {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   const resetRowSelection = useResetTableRowSelection();
 
-  const [deleteCompanies] = useDeleteCompaniesMutation({
+  const [deleteCompanies] = useDeleteManyCompaniesMutation({
     refetchQueries: [getOperationName(GET_COMPANIES) ?? ''],
   });
 

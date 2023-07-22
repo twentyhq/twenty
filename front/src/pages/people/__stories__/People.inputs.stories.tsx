@@ -4,7 +4,7 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { UPDATE_PERSON } from '@/people/queries';
+import { UPDATE_ONE_PERSON } from '@/people/queries';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
 import { Company } from '~/generated/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -30,37 +30,33 @@ export const InteractWithManyRows: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    let firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
+    const firstRowEmailCell = await canvas.findByText(
+      mockedPeopleData[0].email,
+    );
+
+    const secondRowEmailCell = await canvas.findByText(
+      mockedPeopleData[1].email,
+    );
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
-    await userEvent.click(firstRowEmailCell);
-
-    firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
     await userEvent.click(firstRowEmailCell);
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
 
-    const secondRowEmailCell = await canvas.findByText(
-      mockedPeopleData[1].email,
-    );
     await userEvent.click(secondRowEmailCell);
 
     await sleep(25);
-
-    const secondRowEmailCellFocused = await canvas.findByText(
-      mockedPeopleData[1].email,
-    );
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
-    await userEvent.click(secondRowEmailCellFocused);
+    await userEvent.click(secondRowEmailCell);
 
     await sleep(25);
 
@@ -113,7 +109,7 @@ const editRelationMocks = (
     if (
       typeof graphqlMock.info.operationName === 'string' &&
       [
-        getOperationName(UPDATE_PERSON),
+        getOperationName(UPDATE_ONE_PERSON),
         getOperationName(SEARCH_COMPANY_QUERY),
       ].includes(graphqlMock.info.operationName)
     ) {
@@ -122,23 +118,26 @@ const editRelationMocks = (
     return true;
   }),
   ...[
-    graphql.mutation(getOperationName(UPDATE_PERSON) ?? '', (req, res, ctx) => {
-      return res(
-        ctx.data({
-          updateOnePerson: {
-            ...fetchOneFromData(mockedPeopleData, req.variables.id),
-            ...{
-              company: {
-                id: req.variables.companyId,
-                name: updateSelectedCompany.name,
-                domainName: updateSelectedCompany.domainName,
-                __typename: 'Company',
+    graphql.mutation(
+      getOperationName(UPDATE_ONE_PERSON) ?? '',
+      (req, res, ctx) => {
+        return res(
+          ctx.data({
+            updateOnePerson: {
+              ...fetchOneFromData(mockedPeopleData, req.variables.where.id),
+              ...{
+                company: {
+                  id: req.variables.where.id,
+                  name: updateSelectedCompany.name,
+                  domainName: updateSelectedCompany.domainName,
+                  __typename: 'Company',
+                },
               },
             },
-          },
-        }),
-      );
-    }),
+          }),
+        );
+      },
+    ),
     graphql.query(
       getOperationName(SEARCH_COMPANY_QUERY) ?? '',
       (req, res, ctx) => {
@@ -187,39 +186,44 @@ const editRelationMocks = (
 
 export const EditRelation: Story = {
   render: getRenderWrapperForPage(<People />, '/people'),
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    let secondRowCompanyCell = await canvas.findByText(
-      mockedPeopleData[1].company.name,
-    );
-    await sleep(25);
+    await step('Click on second row company cell', async () => {
+      const secondRowCompanyCell = await canvas.findByText(
+        mockedPeopleData[1].company.name,
+      );
 
-    await userEvent.click(secondRowCompanyCell);
-
-    secondRowCompanyCell = await canvas.findByText(
-      mockedPeopleData[1].company.name,
-    );
-    await sleep(25);
-
-    await userEvent.click(secondRowCompanyCell);
-
-    const relationInput = await canvas.findByPlaceholderText('Search');
-
-    await userEvent.type(relationInput, 'Air', {
-      delay: 200,
+      await userEvent.click(secondRowCompanyCell);
     });
 
-    const airbnbChip = await canvas.findByText('Airbnb', {
-      selector: 'div',
+    await step('Type "Air" in relation picker', async () => {
+      const relationInput = await canvas.findByPlaceholderText('Search');
+
+      await userEvent.type(relationInput, 'Air', {
+        delay: 200,
+      });
     });
 
-    await userEvent.click(airbnbChip);
+    await step('Select "Airbnb"', async () => {
+      const airbnbChip = await canvas.findByText('Airbnb', {
+        selector: 'div',
+      });
 
-    const otherCell = await canvas.findByText('Janice Dane');
-    await userEvent.click(otherCell);
+      await userEvent.click(airbnbChip);
+    });
 
-    await canvas.findByText('Airbnb');
+    await step(
+      'Click on last row company cell to exit relation picker',
+      async () => {
+        const otherCell = await canvas.findByText('Janice Dane');
+        await userEvent.click(otherCell);
+      },
+    );
+
+    await step('Check if Airbnb is in second row company cell', async () => {
+      await canvas.findByText('Airbnb');
+    });
   },
   parameters: {
     actions: {},

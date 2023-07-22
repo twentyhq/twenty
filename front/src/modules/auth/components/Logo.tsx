@@ -4,6 +4,8 @@ type Props = React.ComponentProps<'div'>;
 
 const StyledLogo = styled.div`
   height: 48px;
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
 
   img {
     height: 100%;

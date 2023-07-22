@@ -3,24 +3,32 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconBrandGoogle } from '@/ui/icon';
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators';
 
 import { MainButton } from '../MainButton';
+
+const clickJestFn = jest.fn();
 
 const meta: Meta<typeof MainButton> = {
   title: 'UI/Button/MainButton',
   component: MainButton,
+  decorators: [ComponentDecorator],
+  argTypes: {
+    icon: {
+      type: 'boolean',
+      mapping: {
+        true: <IconBrandGoogle size={16} stroke={4} />,
+        false: undefined,
+      },
+    },
+  },
+  args: { title: 'A primary Button', onClick: clickJestFn },
 };
 
 export default meta;
 type Story = StoryObj<typeof MainButton>;
 
-const clickJestFn = jest.fn();
-
-export const DefaultPrimary: Story = {
-  render: getRenderWrapperForComponent(
-    <MainButton title="A primary Button" onClick={clickJestFn} />,
-  ),
+export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -32,64 +40,30 @@ export const DefaultPrimary: Story = {
   },
 };
 
-export const WithIconPrimary: Story = {
-  render: getRenderWrapperForComponent(
-    <MainButton
-      icon={<IconBrandGoogle size={16} stroke={4} />}
-      title="A primary Button"
-    />,
-  ),
+export const WithIcon: Story = {
+  args: { icon: true },
 };
 
-export const WithIconPrimaryDisabled: Story = {
-  render: getRenderWrapperForComponent(
-    <MainButton
-      icon={<IconBrandGoogle size={16} stroke={4} />}
-      title="A primary Button"
-      disabled
-    />,
-  ),
+export const DisabledWithIcon: Story = {
+  args: { ...WithIcon.args, disabled: true },
 };
 
-export const FullWidthPrimary: Story = {
-  render: getRenderWrapperForComponent(
-    <MainButton title="A primary Button" fullWidth />,
-  ),
+export const FullWidth: Story = {
+  args: { fullWidth: true },
 };
 
-export const DefaultSecondary: Story = {
-  render: getRenderWrapperForComponent(
-    <MainButton
-      title="A secondary Button"
-      onClick={clickJestFn}
-      variant="secondary"
-    />,
-  ),
+export const Secondary: Story = {
+  args: { title: 'A secondary Button', variant: 'secondary' },
 };
 
-export const WithIconSecondary: Story = {
-  render: getRenderWrapperForComponent(
-    <MainButton
-      icon={<IconBrandGoogle size={16} stroke={4} />}
-      title="A secondary Button"
-      variant="secondary"
-    />,
-  ),
+export const SecondaryWithIcon: Story = {
+  args: { ...Secondary.args, ...WithIcon.args },
 };
 
-export const WithIconSecondaryDisabled: Story = {
-  render: getRenderWrapperForComponent(
-    <MainButton
-      icon={<IconBrandGoogle size={16} stroke={4} />}
-      title="A secondary Button"
-      variant="secondary"
-      disabled
-    />,
-  ),
+export const SecondaryDisabledWithIcon: Story = {
+  args: { ...SecondaryWithIcon.args, disabled: true },
 };
 
-export const FullWidthSecondary: Story = {
-  render: getRenderWrapperForComponent(
-    <MainButton title="A secondary Button" variant="secondary" fullWidth />,
-  ),
+export const SecondaryFullWidth: Story = {
+  args: { ...Secondary.args, ...FullWidth.args },
 };

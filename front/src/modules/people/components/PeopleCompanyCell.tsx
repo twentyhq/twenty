@@ -25,6 +25,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
   return (
     <EditableCell
       transparent
+      maxContentWidth={160}
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={
         isCreating ? (

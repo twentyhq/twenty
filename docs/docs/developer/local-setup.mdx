@@ -36,12 +36,13 @@ git clone git@github.com:twentyhq/twenty.git
 ```
 
 
-### 3. PostgresSQL database
+### 3. PostgreSQL database
 You also need to have a PosgresSQL database available. If you already have one available, you can skip this step.
 
 If you don't, you can provision one through `docker` using the following command:
 
 ```bash
+cd twenty
 make provision-postgres
 ```
 
@@ -66,6 +67,7 @@ The default values should work out of the box. Don't forget to update the databa
 To build Twenty server and seed some data into your database:
 ```bash
 cd server
+nvm install #recommended
 nvm use #recommended 
 yarn
 yarn prisma:reset
@@ -79,7 +81,8 @@ Twenty server will be running at [http://localhost:3000](http://localhost:3000).
 **Note:** similarly, we recommend that you use `nvm` to install the right node version.
 
 ```bash
-cd front
+cd ../front
+nvm install #recommended
 nvm use #recommended 
 yarn
 yarn start
