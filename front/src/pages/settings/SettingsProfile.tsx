@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
-import { NoTopBarContainer } from '@/ui/layout/components/NoTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
 
@@ -26,7 +26,7 @@ const StyledSectionContainer = styled.div`
 
 export function SettingsProfile() {
   return (
-    <NoTopBarContainer>
+    <SubMenuTopBarContainer>
       <div>
         <StyledContainer>
           <MainSectionTitle>Profile</MainSectionTitle>
@@ -50,6 +50,6 @@ export function SettingsProfile() {
           </StyledSectionContainer>
         </StyledContainer>
       </div>
-    </NoTopBarContainer>
+    </SubMenuTopBarContainer>
   );
 }

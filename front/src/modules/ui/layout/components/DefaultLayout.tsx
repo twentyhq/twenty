@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
@@ -11,10 +9,9 @@ import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { NavbarAnimatedContainer } from '@/ui/navbar/components/NavbarAnimatedContainer';
 import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
 import { AppNavbar } from '~/AppNavbar';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { CompaniesMockMode } from '~/pages/companies/CompaniesMockMode';
 
-import { AppPath } from '../../../types/AppPath';
+import { useAutoNavigateOnboarding } from '../hooks/useAutoNavigateOnboarding';
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 
 const StyledLayout = styled.div`
@@ -46,71 +43,30 @@ type OwnProps = {
 };
 
 export function DefaultLayout({ children }: OwnProps) {
-  const navigate = useNavigate();
-  const isMatchingLocation = useIsMatchingLocation();
+  useAutoNavigateOnboarding();
 
   const onboardingStatus = useOnboardingStatus();
-  useEffect(() => {
-    const isMachinOngoingUserCreationRoute =
-      isMatchingLocation(AppPath.SignUp) ||
-      isMatchingLocation(AppPath.SignIn) ||
-      isMatchingLocation(AppPath.Invite) ||
-      isMatchingLocation(AppPath.Verify);
-
-    const isMatchingOnboardingRoute =
-      isMatchingLocation(AppPath.SignUp) ||
-      isMatchingLocation(AppPath.SignIn) ||
-      isMatchingLocation(AppPath.Invite) ||
-      isMatchingLocation(AppPath.Verify) ||
-      isMatchingLocation(AppPath.CreateWorkspace) ||
-      isMatchingLocation(AppPath.CreateProfile);
-
-    if (
-      onboardingStatus === OnboardingStatus.OngoingUserCreation &&
-      !isMachinOngoingUserCreationRoute
-    ) {
-      navigate(AppPath.SignIn);
-    } else if (
-      onboardingStatus === OnboardingStatus.OngoingWorkspaceCreation &&
-      !isMatchingLocation(AppPath.CreateWorkspace)
-    ) {
-      navigate(AppPath.CreateWorkspace);
-    } else if (
-      onboardingStatus === OnboardingStatus.OngoingProfileCreation &&
-      !isMatchingLocation(AppPath.CreateProfile)
-    ) {
-      navigate(AppPath.CreateProfile);
-    } else if (
-      onboardingStatus === OnboardingStatus.Completed &&
-      isMatchingOnboardingRoute
-    ) {
-      navigate('/');
-    }
-  }, [onboardingStatus, navigate, isMatchingLocation]);
 
   return (
     <StyledLayout>
-      <>
-        <CommandMenu />
-        <NavbarAnimatedContainer>
-          <AppNavbar />
-        </NavbarAnimatedContainer>
-        <MainContainer>
-          {onboardingStatus &&
-          onboardingStatus !== OnboardingStatus.Completed ? (
-            <>
-              <CompaniesMockMode />
-              <AnimatePresence mode="wait">
-                <LayoutGroup>
-                  <AuthModal>{children}</AuthModal>
-                </LayoutGroup>
-              </AnimatePresence>
-            </>
-          ) : (
-            <>{children}</>
-          )}
-        </MainContainer>
-      </>
+      <CommandMenu />
+      <NavbarAnimatedContainer>
+        <AppNavbar />
+      </NavbarAnimatedContainer>
+      <MainContainer>
+        {onboardingStatus && onboardingStatus !== OnboardingStatus.Completed ? (
+          <>
+            <CompaniesMockMode />
+            <AnimatePresence mode="wait">
+              <LayoutGroup>
+                <AuthModal>{children}</AuthModal>
+              </LayoutGroup>
+            </AnimatePresence>
+          </>
+        ) : (
+          <>{children}</>
+        )}
+      </MainContainer>
     </StyledLayout>
   );
 }

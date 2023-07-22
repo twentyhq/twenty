@@ -8,6 +8,8 @@ import {
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
 
+import { useIsMobile } from '../../../../hooks/useIsMobile';
+
 const CollapseButton = styled.button<{ hideOnDesktop: boolean | undefined }>`
   align-items: center;
   background: inherit;
@@ -49,17 +51,18 @@ export default function NavCollapseButton({
 }: CollapseButtonProps) {
   const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
 
+  const showOpen = !isNavOpen && !hideIfOpen;
+
   return (
     <>
-      {isNavOpen && !hideIfOpen && (
+      {showOpen ? (
         <CollapseButton
           onClick={() => setIsNavOpen(!isNavOpen)}
           hideOnDesktop={hideOnDesktop}
         >
           <IconLayoutSidebarLeftCollapse size={16} />
         </CollapseButton>
-      )}
-      {!isNavOpen && (
+      ) : (
         <CollapseButton
           onClick={() => setIsNavOpen(!isNavOpen)}
           hideOnDesktop={hideOnDesktop}

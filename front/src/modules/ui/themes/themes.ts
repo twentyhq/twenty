@@ -38,6 +38,10 @@ const common = {
   },
   rightDrawerWidth: '500px',
   leftNavBarWidth: '220px',
+  leftSubMenuNavBarWidth: {
+    mobile: '220px',
+    desktop: '520px',
+  },
   clickableElementBackgroundTransition: 'background 0.1s ease',
   lastLayerZIndex: 2147483647,
 };

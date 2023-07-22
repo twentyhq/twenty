@@ -3,10 +3,12 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useIsSubNavbarDisplayed } from '@/ui/layout/hooks/useIsSubNavbarDisplayed';
+import { useIsInSubMenu } from '@/ui/layout/hooks/useIsInSubMenu';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
 import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
+
+import { useIsMobile } from '../../../../hooks/useIsMobile';
 
 const StyledNavbarContainer = styled(motion.div)`
   align-items: end;
@@ -26,16 +28,23 @@ const StyledNavbarContainer = styled(motion.div)`
 
 type NavbarProps = {
   children: React.ReactNode;
-  layout?: string;
 };
 
-export function NavbarAnimatedContainer({ children, layout }: NavbarProps) {
+export function NavbarAnimatedContainer({ children }: NavbarProps) {
   const isMenuOpened = useRecoilValue(isNavbarOpenedState);
   const [, setIsNavbarSwitchingSize] = useRecoilState(
     isNavbarSwitchingSizeState,
   );
-  const isSubNavbarDisplayed = useIsSubNavbarDisplayed();
+  const isSubNavbarDisplayed = useIsInSubMenu();
   const theme = useTheme();
+
+  const isMobile = useIsMobile();
+
+  const leftBarWidth = isSubNavbarDisplayed
+    ? isMobile
+      ? theme.leftSubMenuNavBarWidth.mobile
+      : theme.leftSubMenuNavBarWidth.desktop
+    : theme.leftNavBarWidth;
 
   return (
     <StyledNavbarContainer
@@ -43,7 +52,7 @@ export function NavbarAnimatedContainer({ children, layout }: NavbarProps) {
         setIsNavbarSwitchingSize(false);
       }}
       animate={{
-        width: isMenuOpened ? (isSubNavbarDisplayed ? '520px' : '220px') : '0',
+        width: isMenuOpened ? leftBarWidth : '0',
         opacity: isMenuOpened ? 1 : 0,
       }}
       transition={{

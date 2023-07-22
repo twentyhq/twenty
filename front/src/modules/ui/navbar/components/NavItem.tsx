@@ -1,8 +1,12 @@
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
+
+import { useIsMobile } from '../../../../hooks/useIsMobile';
+import { isNavbarOpenedState } from '../../layout/states/isNavbarOpenedState';
 
 type OwnProps = {
   label: string;
@@ -79,21 +83,25 @@ const StyledSoonPill = styled.div`
 
 function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
   const navigate = useNavigate();
+  const [, setIsNavBarOpened] = useRecoilState(isNavbarOpenedState);
 
-  const onItemClick = () => {
+  const isMobile = useIsMobile();
+
+  function handleItemClick() {
+    if (isMobile) {
+      setIsNavBarOpened(false);
+    }
+
     if (onClick) {
       onClick();
-      return;
-    }
-    if (to) {
+    } else if (to) {
       navigate(to);
-      return;
     }
-  };
+  }
 
   return (
     <StyledItem
-      onClick={onItemClick}
+      onClick={handleItemClick}
       active={active}
       aria-selected={active}
       danger={danger}

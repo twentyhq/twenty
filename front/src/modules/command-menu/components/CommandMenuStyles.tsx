@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { Command } from 'cmdk';
 
+import { useIsMobile } from '../../../hooks/useIsMobile';
+
 export const StyledDialog = styled(Command.Dialog)`
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -13,8 +15,9 @@ export const StyledDialog = styled(Command.Dialog)`
   padding: ${({ theme }) => theme.spacing(1)};
   position: fixed;
   top: 30%;
-  transform: translateX(-50%);
-  width: 100%;
+  transform: ${() =>
+    useIsMobile() ? 'translateX(-49.5%)' : 'translateX(-50%)'};
+  width: ${() => (useIsMobile() ? 'calc(100% - 40px)' : '100%')};
   z-index: 1000;
 `;
 

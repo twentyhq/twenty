@@ -5,7 +5,7 @@ import { useRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Button } from '@/ui/button/components/Button';
 import { IconTrash } from '@/ui/icon';
-import { NoTopBarContainer } from '@/ui/layout/components/NoTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
@@ -75,7 +75,7 @@ export function SettingsWorkspaceMembers() {
   };
 
   return (
-    <NoTopBarContainer>
+    <SubMenuTopBarContainer>
       <StyledContainer>
         <MainSectionTitle>Members</MainSectionTitle>
         {workspace?.inviteHash && (
@@ -112,6 +112,6 @@ export function SettingsWorkspaceMembers() {
           />
         ))}
       </StyledContainer>
-    </NoTopBarContainer>
+    </SubMenuTopBarContainer>
   );
 }

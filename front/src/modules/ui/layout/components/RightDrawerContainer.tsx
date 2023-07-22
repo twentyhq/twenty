@@ -2,6 +2,10 @@ import styled from '@emotion/styled';
 
 import { RightDrawer } from '@/ui/right-drawer/components/RightDrawer';
 
+import { useIsMobile } from '../../../../hooks/useIsMobile';
+import NavCollapseButton from '../../navbar/components/NavCollapseButton';
+import { useIsInSubMenu } from '../hooks/useIsInSubMenu';
+
 import { Panel } from './Panel';
 
 type OwnProps = {
@@ -28,14 +32,19 @@ type LeftContainerProps = {
 
 const StyledLeftContainer = styled.div<LeftContainerProps>`
   display: flex;
+  flex-direction: column;
   position: relative;
   width: 100%;
 `;
 
 export function RightDrawerContainer({ children, topMargin }: OwnProps) {
+  const isMobile = useIsMobile();
+  const isInSubMenu = useIsInSubMenu();
+
   return (
     <StyledMainContainer topMargin={topMargin ?? 0}>
       <StyledLeftContainer>
+        {isMobile && isInSubMenu && <NavCollapseButton />}
         <Panel>{children}</Panel>
       </StyledLeftContainer>
       <RightDrawer />
