@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import Skeleton from 'react-loading-skeleton';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
@@ -14,7 +13,7 @@ import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
-import { DropdownMenuItemsContainerSkeleton } from './skeletons/DropdownMenuItemsContainerSkeleton';
+import { DropdownMenuSkeletonItem } from './skeletons/DropdownMenuSkeletonItem';
 
 export type EntitiesForSingleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
@@ -67,9 +66,7 @@ export function SingleEntitySelectBase<
   return (
     <DropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
       {entities.loading ? (
-        <DropdownMenuItemsContainerSkeleton>
-          <Skeleton height={24} />
-        </DropdownMenuItemsContainerSkeleton>
+        <DropdownMenuSkeletonItem />
       ) : entitiesInDropdown.length === 0 ? (
         <DropdownMenuItem>No result</DropdownMenuItem>
       ) : (

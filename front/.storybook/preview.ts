@@ -4,6 +4,7 @@ import { ThemeProvider } from '@emotion/react';
 import { withThemeFromJSXProvider } from '@storybook/addon-styling';
 import { lightTheme, darkTheme } from '../src/modules/ui/themes/themes';
 import { RootDecorator } from '../src/testing/decorators';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 initialize();
 
