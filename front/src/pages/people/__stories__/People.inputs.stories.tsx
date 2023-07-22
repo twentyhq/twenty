@@ -30,37 +30,33 @@ export const InteractWithManyRows: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    let firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
+    const firstRowEmailCell = await canvas.findByText(
+      mockedPeopleData[0].email,
+    );
+
+    const secondRowEmailCell = await canvas.findByText(
+      mockedPeopleData[1].email,
+    );
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
-    await userEvent.click(firstRowEmailCell);
-
-    firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
     await userEvent.click(firstRowEmailCell);
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
 
-    const secondRowEmailCell = await canvas.findByText(
-      mockedPeopleData[1].email,
-    );
     await userEvent.click(secondRowEmailCell);
 
     await sleep(25);
-
-    const secondRowEmailCellFocused = await canvas.findByText(
-      mockedPeopleData[1].email,
-    );
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
-    await userEvent.click(secondRowEmailCellFocused);
+    await userEvent.click(secondRowEmailCell);
 
     await sleep(25);
 
@@ -190,39 +186,44 @@ const editRelationMocks = (
 
 export const EditRelation: Story = {
   render: getRenderWrapperForPage(<People />, '/people'),
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    let secondRowCompanyCell = await canvas.findByText(
-      mockedPeopleData[1].company.name,
-    );
-    await sleep(25);
+    await step('Click on second row company cell', async () => {
+      const secondRowCompanyCell = await canvas.findByText(
+        mockedPeopleData[1].company.name,
+      );
 
-    await userEvent.click(secondRowCompanyCell);
-
-    secondRowCompanyCell = await canvas.findByText(
-      mockedPeopleData[1].company.name,
-    );
-    await sleep(25);
-
-    await userEvent.click(secondRowCompanyCell);
-
-    const relationInput = await canvas.findByPlaceholderText('Search');
-
-    await userEvent.type(relationInput, 'Air', {
-      delay: 200,
+      await userEvent.click(secondRowCompanyCell);
     });
 
-    const airbnbChip = await canvas.findByText('Airbnb', {
-      selector: 'div',
+    await step('Type "Air" in relation picker', async () => {
+      const relationInput = await canvas.findByPlaceholderText('Search');
+
+      await userEvent.type(relationInput, 'Air', {
+        delay: 200,
+      });
     });
 
-    await userEvent.click(airbnbChip);
+    await step('Select "Airbnb"', async () => {
+      const airbnbChip = await canvas.findByText('Airbnb', {
+        selector: 'div',
+      });
 
-    const otherCell = await canvas.findByText('Janice Dane');
-    await userEvent.click(otherCell);
+      await userEvent.click(airbnbChip);
+    });
 
-    await canvas.findByText('Airbnb');
+    await step(
+      'Click on last row company cell to exit relation picker',
+      async () => {
+        const otherCell = await canvas.findByText('Janice Dane');
+        await userEvent.click(otherCell);
+      },
+    );
+
+    await step('Check if Airbnb is in second row company cell', async () => {
+      await canvas.findByText('Airbnb');
+    });
   },
   parameters: {
     actions: {},
