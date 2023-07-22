@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { useTheme } from '@emotion/react';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
@@ -35,7 +34,6 @@ export function SingleEntitySelectBase<
   onEntitySelected: (entity: CustomEntityForSelect) => void;
   onCancel?: () => void;
 }) {
-  const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const entitiesInDropdown = isDefined(entities.selectedEntity)
     ? [entities.selectedEntity, ...(entities.entitiesToSelect ?? [])]
