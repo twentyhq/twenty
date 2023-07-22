@@ -1,5 +1,6 @@
 import { useRef } from 'react';
-import Skeleton from 'react-loading-skeleton';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useTheme } from '@emotion/react';
 import { Key } from 'ts-key-enum';
 
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
@@ -35,6 +36,7 @@ export function SingleEntitySelectBase<
   onEntitySelected: (entity: CustomEntityForSelect) => void;
   onCancel?: () => void;
 }) {
+  const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const entitiesInDropdown = isDefined(entities.selectedEntity)
     ? [entities.selectedEntity, ...(entities.entitiesToSelect ?? [])]
@@ -68,7 +70,9 @@ export function SingleEntitySelectBase<
     <DropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
       {entities.loading ? (
         <DropdownMenuItemsContainerSkeleton>
-          <Skeleton height={16} />
+          <SkeletonTheme highlightColor={theme.background.tertiary}>
+            <Skeleton height={16} />
+          </SkeletonTheme>
         </DropdownMenuItemsContainerSkeleton>
       ) : entitiesInDropdown.length === 0 ? (
         <DropdownMenuItem>No result</DropdownMenuItem>
