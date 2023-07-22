@@ -2,7 +2,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-const DropdownMenuItemsContainerSkeleton = styled.div`
+const StyledDropdownMenuSkeletonContainer = styled.div`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
   align-items: center;
@@ -16,10 +16,10 @@ const DropdownMenuItemsContainerSkeleton = styled.div`
 export function DropdownMenuSkeletonItem() {
   const theme = useTheme();
   return (
-    <DropdownMenuItemsContainerSkeleton>
+    <StyledDropdownMenuSkeletonContainer>
       <SkeletonTheme highlightColor={theme.background.tertiary}>
         <Skeleton height={16} />
       </SkeletonTheme>
-    </DropdownMenuItemsContainerSkeleton>
+    </StyledDropdownMenuSkeletonContainer>
   );
 }
