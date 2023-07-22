@@ -28,12 +28,12 @@ test('useListenClickOutsideArrayOfRef hook works in dom mode', async () => {
   const inside2 = getByText('Inside 2');
   const outside = getByText('Outside');
 
-  fireEvent.mouseUp(inside);
+  fireEvent.click(inside);
   expect(onOutsideClick).toHaveBeenCalledTimes(0);
 
-  fireEvent.mouseUp(inside2);
+  fireEvent.click(inside2);
   expect(onOutsideClick).toHaveBeenCalledTimes(0);
 
-  fireEvent.mouseUp(outside);
+  fireEvent.click(outside);
   expect(onOutsideClick).toHaveBeenCalledTimes(1);
 });

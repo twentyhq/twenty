@@ -40,6 +40,11 @@ export function EditableCellDisplayContainer({
 }: React.PropsWithChildren<Props>) {
   return (
     <EditableCellDisplayModeOuterContainer
+      data-testid={
+        softFocus
+          ? 'editable-cell-soft-focus-mode'
+          : 'editable-cell-display-mode'
+      }
       onClick={onClick}
       softFocus={softFocus}
     >

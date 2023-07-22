@@ -1,13 +1,13 @@
-import { ReactNode, useRef } from 'react';
+import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { IconChevronDown } from '@/ui/icon/index';
 
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
+
+import { DropdownMenuContainer } from './DropdownMenuContainer';
 
 type OwnProps = {
   label: string;
@@ -48,12 +48,6 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   &:hover {
     filter: brightness(0.95);
   }
-`;
-
-export const StyledDropdownMenuContainer = styled.ul`
-  position: absolute;
-  right: 0;
-  top: 14px;
 `;
 
 const StyledDropdownTopOption = styled.li`
@@ -104,12 +98,6 @@ function DropdownButton({
     onIsUnfoldedChange?.(false);
   };
 
-  const dropdownRef = useRef(null);
-  useListenClickOutsideArrayOfRef({
-    refs: [dropdownRef],
-    callback: onOutsideClick,
-  });
-
   return (
     <StyledDropdownButtonContainer>
       <StyledDropdownButton
@@ -121,9 +109,9 @@ function DropdownButton({
         {label}
       </StyledDropdownButton>
       {isUnfolded && (
-        <StyledDropdownMenuContainer>
-          <DropdownMenu ref={dropdownRef}>{children}</DropdownMenu>
-        </StyledDropdownMenuContainer>
+        <DropdownMenuContainer onClose={onOutsideClick}>
+          {children}
+        </DropdownMenuContainer>
       )}
     </StyledDropdownButtonContainer>
   );

@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { isDefined } from '~/utils/isDefined';
-
 export enum ClickOutsideMode {
   absolute = 'absolute',
   dom = 'dom',
@@ -13,7 +11,7 @@ export function useListenClickOutsideArrayOfRef<T extends Element>({
   mode = ClickOutsideMode.dom,
 }: {
   refs: Array<React.RefObject<T>>;
-  callback: (event?: MouseEvent | TouchEvent) => void;
+  callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
 }) {
   useEffect(() => {
@@ -59,16 +57,18 @@ export function useListenClickOutsideArrayOfRef<T extends Element>({
       }
     }
 
-    const hasAtLeastOneRefDefined = refs.some((ref) => isDefined(ref.current));
-
-    if (hasAtLeastOneRefDefined) {
-      document.addEventListener('mouseup', handleClickOutside);
-      document.addEventListener('touchend', handleClickOutside);
-    }
+    document.addEventListener('click', handleClickOutside, { capture: true });
+    document.addEventListener('touchend', handleClickOutside, {
+      capture: true,
+    });
 
     return () => {
-      document.removeEventListener('mouseup', handleClickOutside);
-      document.removeEventListener('touchend', handleClickOutside);
+      document.removeEventListener('click', handleClickOutside, {
+        capture: true,
+      });
+      document.removeEventListener('touchend', handleClickOutside, {
+        capture: true,
+      });
     };
   }, [refs, callback, mode]);
 }

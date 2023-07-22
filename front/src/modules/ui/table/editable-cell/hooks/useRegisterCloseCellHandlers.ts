@@ -16,9 +16,12 @@ export function useRegisterCloseCellHandlers(
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
   useListenClickOutsideArrayOfRef({
     refs: [wrapperRef],
-    callback: () => {
+    callback: (event) => {
       if (isCurrentCellInEditMode) {
+        event.stopImmediatePropagation();
+
         onSubmit?.();
+
         closeEditableCell();
       }
     },

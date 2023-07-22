@@ -5,6 +5,7 @@ import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
 
 import { useCurrentCellEditMode } from '../hooks/useCurrentCellEditMode';
 import { useIsSoftFocusOnCurrentCell } from '../hooks/useIsSoftFocusOnCurrentCell';
+import { useRegisterEditableCell } from '../hooks/useRegisterEditableCell';
 
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
@@ -48,6 +49,8 @@ export function EditableCell({
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
+  useRegisterEditableCell(editHotkeyScope);
+
   return (
     <CellBaseContainer>
       {isCurrentCellInEditMode ? (
@@ -62,7 +65,7 @@ export function EditableCell({
           {editModeContent}
         </EditableCellEditMode>
       ) : hasSoftFocus ? (
-        <EditableCellSoftFocusMode editHotkeyScope={editHotkeyScope}>
+        <EditableCellSoftFocusMode>
           {nonEditModeContent}
         </EditableCellSoftFocusMode>
       ) : (
