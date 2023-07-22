@@ -8,6 +8,7 @@ type Props = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledTitle = styled.h2`

@@ -9,6 +9,7 @@ type MockedCompany = Pick<
   | 'createdAt'
   | 'address'
   | 'employees'
+  | 'linkedinUrl'
   | '_commentThreadCount'
 > & {
   accountOwner: Pick<
@@ -31,6 +32,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:08:54.724515+00:00',
     address: '17 rue de clignancourt',
     employees: 12,
+    linkedinUrl: 'https://www.linkedin.com/company/airbnb/',
     _commentThreadCount: 1,
     accountOwner: {
       email: 'charles@test.com',
@@ -50,6 +52,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     address: '',
     employees: 1,
+    linkedinUrl: 'https://www.linkedin.com/company/aircall/',
     _commentThreadCount: 1,
     accountOwner: null,
     __typename: 'Company',
@@ -61,6 +64,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:10:32.530184+00:00',
     address: '',
     employees: 1,
+    linkedinUrl: 'https://www.linkedin.com/company/algolia/',
     _commentThreadCount: 1,
     accountOwner: null,
     __typename: 'Company',
@@ -72,6 +76,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-03-21T06:30:25.39474+00:00',
     address: '',
     employees: 10,
+    linkedinUrl: 'https://www.linkedin.com/company/apple/',
     _commentThreadCount: 0,
     accountOwner: null,
     __typename: 'Company',
@@ -83,6 +88,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:13:29.712485+00:00',
     address: '10 rue de la Paix',
     employees: 1,
+    linkedinUrl: 'https://www.linkedin.com/company/qonto/',
     _commentThreadCount: 2,
     accountOwner: null,
     __typename: 'Company',
@@ -94,6 +100,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:09:25.656555+00:00',
     address: '',
     employees: 1,
+    linkedinUrl: 'https://www.linkedin.com/company/facebook/',
     _commentThreadCount: 13,
     accountOwner: null,
     __typename: 'Company',
@@ -105,6 +112,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:09:25.656555+00:00',
     address: '',
     employees: 1,
+    linkedinUrl: 'https://www.linkedin.com/company/sequoia/',
     _commentThreadCount: 1,
     accountOwner: null,
     __typename: 'Company',

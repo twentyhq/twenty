@@ -7,7 +7,6 @@ type OwnProps = {
 
 const StyledSubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
-  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 export function SubTitle({ children }: OwnProps): JSX.Element {

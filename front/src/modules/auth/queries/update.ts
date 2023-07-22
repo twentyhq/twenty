@@ -48,6 +48,11 @@ export const VERIFY = gql`
             logo
           }
         }
+        settings {
+          id
+          colorScheme
+          locale
+        }
       }
       tokens {
         accessToken {

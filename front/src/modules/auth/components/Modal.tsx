@@ -11,9 +11,6 @@ const StyledContainer = styled.div`
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(10)};
   width: calc(400px - ${({ theme }) => theme.spacing(10 * 2)});
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(8)};
-  }
 `;
 
 export function AuthModal({ children, ...restProps }: Props) {
