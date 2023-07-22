@@ -19,15 +19,10 @@ export function DropdownMenuContainer({
 }) {
   const dropdownRef = useRef(null);
 
-  console.log('dropdownRef', { dropdownRef });
-
   useListenClickOutsideArrayOfRef({
     refs: [dropdownRef],
-    callback: (event) => {
-      console.log('onclickoutside', { event });
+    callback: () => {
       onClose?.();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
     },
   });
 

@@ -1,3 +1,4 @@
+import { useEditableCell } from '../hooks/useEditableCell';
 import { useSetSoftFocusOnCurrentCell } from '../hooks/useSetSoftFocusOnCurrentCell';
 
 import { EditableCellDisplayContainer } from './EditableCellContainer';
@@ -7,8 +8,11 @@ export function EditableCellDisplayMode({
 }: React.PropsWithChildren<unknown>) {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
 
+  const { openEditableCell } = useEditableCell();
+
   function handleClick() {
     setSoftFocusOnCurrentCell();
+    openEditableCell();
   }
 
   return (
