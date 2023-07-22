@@ -8,6 +8,9 @@ module.exports = {
           if (error.message === "ResizeObserver loop limit exceeded") {
             return false;
           }
+          if (error.message === "Unauthorized") {
+            return false;
+          }
           return true;
         },
       },

@@ -111,7 +111,6 @@ export const graphqlMocks = [
     );
   }),
   graphql.query(getOperationName(GET_PERSON) ?? '', (req, res, ctx) => {
-    console.log({ req });
     const returnedMockedData = fetchOneFromData<
       GetPersonQuery['findUniquePerson']
     >(mockedPeopleData, req.variables.id);

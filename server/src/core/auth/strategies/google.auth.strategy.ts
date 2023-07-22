@@ -8,9 +8,10 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 
 export type GoogleRequest = Request & {
   user: {
-    firstName: string | undefined | null;
-    lastName: string | undefined | null;
+    firstName?: string | null;
+    lastName?: string | null;
     email: string;
+    workspaceInviteHash?: string;
   };
 };
 
@@ -22,23 +23,39 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientSecret: environmentService.getAuthGoogleClientSecret(),
       callbackURL: environmentService.getAuthGoogleCallbackUrl(),
       scope: ['email', 'profile'],
+      passReqToCallback: true,
     });
   }
 
+  authenticate(req: any, options: any) {
+    options = {
+      ...options,
+      state: JSON.stringify({
+        workspaceInviteHash: req.params.workspaceInviteHash,
+      }),
+    };
+
+    return super.authenticate(req, options);
+  }
+
   async validate(
+    request: GoogleRequest,
     accessToken: string,
     refreshToken: string,
     profile: any,
     done: VerifyCallback,
-  ): Promise<any> {
-    const { name, emails, photos } = profile;
+  ): Promise<void> {
+    const { name, emails } = profile;
+    const state =
+      typeof request.query.state === 'string'
+        ? JSON.parse(request.query.state)
+        : undefined;
+
     const user = {
       email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,
-      picture: photos[0].value,
-      refreshToken,
-      accessToken,
+      workspaceInviteHash: state.workspaceInviteHash,
     };
     done(null, user);
   }

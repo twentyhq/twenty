@@ -17,11 +17,11 @@ import SubNavbar from '@/ui/navbar/components/SubNavbar';
 export function SettingsNavbar() {
   const theme = useTheme();
 
-  const { logout } = useAuth();
+  const { signOut } = useAuth();
 
   const handleLogout = useCallback(() => {
-    logout();
-  }, [logout]);
+    signOut();
+  }, [signOut]);
 
   return (
     <SubNavbar backButtonTitle="Settings">
