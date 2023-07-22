@@ -83,7 +83,7 @@ export function EntityChip({
     navigate(linkToEntity);
   }
 
-  return clickable && linkToEntity ? (
+  return clickable && linkToEntity && name.trim() ? (
     <StyledContainerLink
       data-testid="entity-chip"
       onClick={handleLinkClick}
@@ -102,13 +102,15 @@ export function EntityChip({
     </StyledContainerLink>
   ) : (
     <StyledContainerReadOnly data-testid="entity-chip">
-      <Avatar
-        avatarUrl={picture}
-        colorId={entityId}
-        placeholder={name}
-        size={14}
-        type={avatarType}
-      />
+      {name.trim() && (
+        <Avatar
+          avatarUrl={picture}
+          colorId={entityId}
+          placeholder={name}
+          size={14}
+          type={avatarType}
+        />
+      )}
       <StyledName>
         <OverflowingTextWithTooltip text={name} />
       </StyledName>
