@@ -197,8 +197,10 @@ export const SimpleMenuItem: Story = {
 
 export const LoadingMenu: Story = {
   ...WithContentBelow,
-  render: (args) => (
-    <DropdownMenu {...args}>
+  render: () => (
+    <DropdownMenu>
+      <DropdownMenuSearch value={'query'} autoFocus />
+      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         <DropdownMenuSkeletonItem />
       </DropdownMenuItemsContainer>
