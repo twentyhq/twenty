@@ -35,13 +35,13 @@ export function getRenderWrapperForPage(
   };
 }
 
-export function getRenderWrapperForSignInUp(
+export function getRenderWrapperFor(
   children: React.ReactElement,
   currentPath: string,
 ) {
   return function render() {
     return (
-      <UserProvider>
+      <ClientConfigProvider>
         <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}>
           <MemoryRouter initialEntries={[currentPath]}>
             <FullHeightStorybookLayout>
@@ -49,7 +49,7 @@ export function getRenderWrapperForSignInUp(
             </FullHeightStorybookLayout>
           </MemoryRouter>
         </HotkeysProvider>
-      </UserProvider>
+      </ClientConfigProvider>
     );
   };
 }
