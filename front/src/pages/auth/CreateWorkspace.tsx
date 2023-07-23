@@ -16,10 +16,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
 import { GET_CURRENT_USER } from '@/users/queries';
-import {
-  useGetCurrentUserLazyQuery,
-  useUpdateWorkspaceMutation,
-} from '~/generated/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -48,7 +45,6 @@ export function CreateWorkspace() {
   const { enqueueSnackBar } = useSnackBar();
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
-  useGetCurrentUserLazyQuery();
 
   // Form
   const {

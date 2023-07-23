@@ -92,21 +92,25 @@ export function CommentThread({
   showComment = true,
   autoFillTitle = false,
 }: OwnProps) {
-  const { data, loading } = useGetCommentThreadQuery({
-    variables: {
-      commentThreadId: commentThreadId ?? '',
+  const [loading, setLoading] = useState<boolean>(true);
+  const { data, loading: commentThreadQueryLoading } = useGetCommentThreadQuery(
+    {
+      variables: {
+        commentThreadId: commentThreadId ?? '',
+      },
+      skip: !commentThreadId,
     },
-    skip: !commentThreadId,
-  });
+  );
   const commentThread = data?.findManyCommentThreads[0];
 
   const [title, setTitle] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!loading) {
+    if (loading) {
       setTitle(commentThread?.title ?? '');
+      setLoading(false);
     }
-  }, [loading, setTitle, commentThread?.title]);
+  }, [loading, setTitle, commentThread?.title, commentThreadQueryLoading]);
 
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);

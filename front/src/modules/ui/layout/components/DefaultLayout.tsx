@@ -50,6 +50,7 @@ export function DefaultLayout({ children }: OwnProps) {
   const isMatchingLocation = useIsMatchingLocation();
 
   const onboardingStatus = useOnboardingStatus();
+
   useEffect(() => {
     const isMachinOngoingUserCreationRoute =
       isMatchingLocation(AppPath.SignUp) ||
