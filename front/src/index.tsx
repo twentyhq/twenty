@@ -14,6 +14,8 @@ import { UserProvider } from '@/users/components/UserProvider';
 
 import '@emotion/react';
 
+import { AuthAutoRouter } from './sync-hooks/AuthAutoRouter';
+import { PageInitializationProvider } from './sync-hooks/PageInitializationProvider';
 import { App } from './App';
 
 import './index.css';
@@ -25,25 +27,24 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <RecoilRoot>
-    <ApolloProvider>
-      <AppThemeProvider>
-        <StrictMode>
-          <BrowserRouter>
-            <UserProvider>
-              <SnackBarProvider>
-                <ClientConfigProvider>
-                  <HotkeysProvider
-                    initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}
-                  >
-                    <App />
-                  </HotkeysProvider>
-                </ClientConfigProvider>
-              </SnackBarProvider>
-            </UserProvider>
-          </BrowserRouter>
-        </StrictMode>
-      </AppThemeProvider>
-    </ApolloProvider>
+    <SnackBarProvider>
+      <ApolloProvider>
+        <UserProvider>
+          <ClientConfigProvider>
+            <AppThemeProvider>
+              <BrowserRouter>
+                <AuthAutoRouter />
+                {/* <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}> */}
+                <StrictMode>
+                  <App />
+                </StrictMode>
+                {/* </HotkeysProvider> */}
+              </BrowserRouter>
+            </AppThemeProvider>
+          </ClientConfigProvider>
+        </UserProvider>
+      </ApolloProvider>
+    </SnackBarProvider>
   </RecoilRoot>,
 );
 

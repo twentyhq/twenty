@@ -10,6 +10,8 @@ import { useRecoilState } from 'recoil';
 
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
+import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
+
 export function useScopedHotkeys(
   keys: Keys,
   callback: HotkeyCallback,
@@ -23,21 +25,30 @@ export function useScopedHotkeys(
 ) {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
-  function callbackIfDirectKey(
-    keyboardEvent: KeyboardEvent,
-    hotkeysEvent: Hotkey,
-  ) {
-    if (!pendingHotkey) {
-      callback(keyboardEvent, hotkeysEvent);
-      return;
-    }
-    setPendingHotkey(null);
-  }
+  const callScopedHotkeyCallback = useScopedHotkeyCallback();
 
   return useHotkeys(
     keys,
-    callbackIfDirectKey,
-    { ...options, scopes: [scope] },
+    (keyboardEvent, hotkeysEvent) => {
+      callScopedHotkeyCallback({
+        keyboardEvent,
+        hotkeysEvent,
+        callback: () => {
+          console.log({ pendingHotkey });
+          if (!pendingHotkey) {
+            callback(keyboardEvent, hotkeysEvent);
+            return;
+          }
+          setPendingHotkey(null);
+        },
+        scope,
+        preventDefault: !!options.preventDefault,
+      });
+    },
+    {
+      enableOnContentEditable: options.enableOnContentEditable,
+      enableOnFormTags: options.enableOnFormTags,
+    },
     dependencies,
   );
 }

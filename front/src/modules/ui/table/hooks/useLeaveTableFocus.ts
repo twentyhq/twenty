@@ -46,7 +46,7 @@ export function useLeaveTableFocus() {
         closeCurrentCellInEditMode();
         disableSoftFocus();
 
-        setHotkeyScope(TableHotkeyScope.Table, { goto: true });
+        // setHotkeyScope(TableHotkeyScope.Table, { goto: true });
       },
     [setHotkeyScope, closeCurrentCellInEditMode, disableSoftFocus],
   );

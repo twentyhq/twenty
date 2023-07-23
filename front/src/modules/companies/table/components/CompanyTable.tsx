@@ -29,6 +29,8 @@ export function CompanyTable() {
     return { AND: filters.map(turnFilterIntoWhereClause) };
   }, [filters]) as any;
 
+  console.log('CompanyTable');
+
   return (
     <>
       <CompanyEntityTableData orderBy={orderBy} whereFilters={whereFilters} />

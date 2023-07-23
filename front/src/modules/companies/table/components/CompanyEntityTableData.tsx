@@ -17,32 +17,17 @@ export function CompanyEntityTableData({
   orderBy?: PersonOrderByWithRelationInput[];
   whereFilters?: any;
 }) {
-  const [, setTableRowIds] = useRecoilState(tableRowIdsState);
-
-  const [, setIsFetchingEntityTableData] = useRecoilState(
-    isFetchingEntityTableDataState,
-  );
+  console.log('CompanyEntityTableData');
 
   const setCompanyEntityTable = useSetCompanyEntityTable();
 
   useGetCompaniesQuery({
     variables: { orderBy, where: whereFilters },
     onCompleted: (data) => {
+      console.log('CompanyEntityTableData: onCompleted', { data });
       const companies = data.companies ?? [];
 
-      const companyIds = companies.map((company) => company.id);
-
-      setTableRowIds((currentRowIds) => {
-        if (JSON.stringify(currentRowIds) !== JSON.stringify(companyIds)) {
-          return companyIds;
-        }
-
-        return currentRowIds;
-      });
-
       setCompanyEntityTable(companies);
-
-      setIsFetchingEntityTableData(false);
     },
   });
 

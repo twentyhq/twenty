@@ -1,7 +1,8 @@
 import { useHotkeyScopeAutoSync } from '@/ui/hotkey/hooks/internal/useHotkeyScopeAutoSync';
 
 export function HotkeyScopeAutoSyncHook() {
-  useHotkeyScopeAutoSync();
+  console.log('HotkeyScopeAutoSyncHook');
+  // useHotkeyScopeAutoSync();
 
   return <></>;
 }

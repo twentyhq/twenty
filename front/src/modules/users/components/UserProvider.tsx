@@ -19,5 +19,7 @@ export function UserProvider({ children }: React.PropsWithChildren) {
     }
   }, [setCurrentUser, data, isLoading, loading]);
 
+  console.log('UserProvider');
+
   return isLoading ? <></> : <>{children}</>;
 }

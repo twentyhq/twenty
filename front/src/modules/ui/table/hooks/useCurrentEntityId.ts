@@ -1,7 +1,10 @@
+import { useContext } from 'react';
+
 import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
 
 import { currentRowEntityIdScopedState } from '../states/currentRowEntityIdScopedState';
 import { RowContext } from '../states/RowContext';
+import { RowIdContext } from '../states/RowIdContext';
 
 export type TableDimensions = {
   numberOfColumns: number;
@@ -9,10 +12,12 @@ export type TableDimensions = {
 };
 
 export function useCurrentRowEntityId() {
-  const currentRowEntityIdScoped = useRecoilScopedValue(
-    currentRowEntityIdScopedState,
-    RowContext,
-  );
+  const currentEntityId = useContext(RowIdContext);
 
-  return currentRowEntityIdScoped;
+  // const currentRowEntityIdScoped = useRecoilScopedValue(
+  //   currentRowEntityIdScopedState,
+  //   RowContext,
+  // );
+
+  return currentEntityId;
 }

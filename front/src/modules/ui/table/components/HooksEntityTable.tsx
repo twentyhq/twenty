@@ -11,15 +11,16 @@ export function HooksEntityTable({
   numberOfColumns: number;
   availableFilters: FilterDefinition[];
 }) {
+  console.log('HooksEntityTable');
   useMapKeyboardToSoftFocus();
 
-  useInitializeEntityTable({
-    numberOfColumns,
-  });
+  // useInitializeEntityTable({
+  //   numberOfColumns,
+  // });
 
-  useInitializeEntityTableFilters({
-    availableFilters,
-  });
+  // useInitializeEntityTableFilters({
+  //   availableFilters,
+  // });
 
   return <></>;
 }

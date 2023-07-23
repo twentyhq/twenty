@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -29,34 +29,56 @@ export function EntityTableRow({
   rowId: string;
   index: number;
 }) {
-  const [currentRowEntityId, setCurrentRowEntityId] = useRecoilScopedState(
-    currentRowEntityIdScopedState,
-    RowContext,
-  );
+  // const [isInitializing, setIsInitializing] = useState(true);
 
-  const isCurrentRowSelected = useRecoilValue(isRowSelectedFamilyState(rowId));
+  // const [currentRowEntityId, setCurrentRowEntityId] = useRecoilScopedState(
+  //   currentRowEntityIdScopedState,
+  //   RowContext,
+  // );
 
-  const [, setCurrentRowNumber] = useRecoilScopedState(
-    currentRowNumberScopedState,
-    RowContext,
-  );
+  // const isCurrentRowSelected = useRecoilValue(isRowSelectedFamilyState(rowId));
 
-  useEffect(() => {
-    if (currentRowEntityId !== rowId) {
-      setCurrentRowEntityId(rowId);
-    }
-  }, [rowId, setCurrentRowEntityId, currentRowEntityId]);
+  // const [, setCurrentRowNumber] = useRecoilScopedState(
+  //   currentRowNumberScopedState,
+  //   RowContext,
+  // );
 
-  useEffect(() => {
-    setCurrentRowNumber(index);
-  }, [index, setCurrentRowNumber]);
+  // useEffect(() => {
+  //   if (currentRowEntityId !== rowId) {
+  //     setCurrentRowEntityId(rowId);
+  //   }
+  // }, [rowId, setCurrentRowEntityId, currentRowEntityId]);
+
+  // useEffect(() => {
+  //   setCurrentRowNumber(index);
+  // }, [index, setCurrentRowNumber]);
+
+  // const isInitializing = currentRowEntityId !== rowId;
+
+  // useEffect(() => {
+  //   if (currentRowEntityId !== rowId) {
+  //     setCurrentRowEntityId(rowId);
+  //   }
+
+  //   setCurrentRowNumber(index);
+
+  //   setIsInitializing(false);
+  // }, [
+  //   index,
+  //   rowId,
+  //   currentRowEntityId,
+  //   setCurrentRowEntityId,
+  //   setCurrentRowNumber,
+  // ]);
+
+  console.log('EntityTableRow');
+
+  // if (isInitializing) {
+  //   return null;
+  // }
 
   return (
-    <StyledRow
-      key={rowId}
-      data-testid={`row-id-${rowId}`}
-      selected={isCurrentRowSelected}
-    >
+    <StyledRow key={rowId} data-testid={`row-id-${rowId}`} selected={false}>
       <td>
         <CheckboxCell />
       </td>
@@ -65,9 +87,9 @@ export function EntityTableRow({
           <RecoilScope SpecificContext={CellContext} key={column.id.toString()}>
             <RecoilScope>
               <EntityTableCell
-                rowId={rowId}
                 size={column.size}
                 cellIndex={columnIndex}
+                rowId={rowId}
               >
                 {column.cellComponent}
               </EntityTableCell>

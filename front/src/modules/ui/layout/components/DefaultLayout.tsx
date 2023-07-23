@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
@@ -15,6 +15,8 @@ import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { CompaniesMockMode } from '~/pages/companies/CompaniesMockMode';
 
 import { AppPath } from '../../../types/AppPath';
+import { useIsPageLoading } from '../../hooks/useIsPageLoading';
+import { isInitializingHotkeyScopeState } from '../../states/isInitializingHotkeyScopeState';
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 
 const StyledLayout = styled.div`
@@ -46,47 +48,15 @@ type OwnProps = {
 };
 
 export function DefaultLayout({ children }: OwnProps) {
-  const navigate = useNavigate();
-  const isMatchingLocation = useIsMatchingLocation();
-
   const onboardingStatus = useOnboardingStatus();
-  useEffect(() => {
-    const isMachinOngoingUserCreationRoute =
-      isMatchingLocation(AppPath.SignUp) ||
-      isMatchingLocation(AppPath.SignIn) ||
-      isMatchingLocation(AppPath.Invite) ||
-      isMatchingLocation(AppPath.Verify);
 
-    const isMatchingOnboardingRoute =
-      isMatchingLocation(AppPath.SignUp) ||
-      isMatchingLocation(AppPath.SignIn) ||
-      isMatchingLocation(AppPath.Invite) ||
-      isMatchingLocation(AppPath.Verify) ||
-      isMatchingLocation(AppPath.CreateWorkspace) ||
-      isMatchingLocation(AppPath.CreateProfile);
+  const isPageLoading = useIsPageLoading();
 
-    if (
-      onboardingStatus === OnboardingStatus.OngoingUserCreation &&
-      !isMachinOngoingUserCreationRoute
-    ) {
-      navigate(AppPath.SignIn);
-    } else if (
-      onboardingStatus === OnboardingStatus.OngoingWorkspaceCreation &&
-      !isMatchingLocation(AppPath.CreateWorkspace)
-    ) {
-      navigate(AppPath.CreateWorkspace);
-    } else if (
-      onboardingStatus === OnboardingStatus.OngoingProfileCreation &&
-      !isMatchingLocation(AppPath.CreateProfile)
-    ) {
-      navigate(AppPath.CreateProfile);
-    } else if (
-      onboardingStatus === OnboardingStatus.Completed &&
-      isMatchingOnboardingRoute
-    ) {
-      navigate('/');
-    }
-  }, [onboardingStatus, navigate, isMatchingLocation]);
+  console.log('Default Layout', { isPageLoading });
+
+  // if (isPageLoading) {
+  //   return null;
+  // }
 
   return (
     <StyledLayout>

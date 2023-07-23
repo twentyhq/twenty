@@ -31,6 +31,7 @@ export function FilterDropdownButton({
   context: Context<string | null>;
   HotkeyScope: FiltersHotkeyScope;
 }) {
+  console.log('FilterDropdownButton');
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [

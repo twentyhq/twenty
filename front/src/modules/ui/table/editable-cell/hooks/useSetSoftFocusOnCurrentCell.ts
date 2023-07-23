@@ -13,38 +13,42 @@ import { RowContext } from '../../states/RowContext';
 import { CellPosition } from '../../types/CellPosition';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
+import { useCurrentCellPosition } from './useCurrentCellPosition';
+
 export function useSetSoftFocusOnCurrentCell() {
   const setSoftFocusPosition = useSetSoftFocusPosition();
 
-  const [currentRowNumber] = useRecoilScopedState(
-    currentRowNumberScopedState,
-    RowContext,
-  );
+  const currentCellPosition = useCurrentCellPosition();
 
-  const [currentColumnNumber] = useRecoilScopedState(
-    currentColumnNumberScopedState,
-    CellContext,
-  );
+  // const [currentRowNumber] = useRecoilScopedState(
+  //   currentRowNumberScopedState,
+  //   RowContext,
+  // );
 
-  const currentTablePosition: CellPosition = useMemo(
-    () => ({
-      column: currentColumnNumber,
-      row: currentRowNumber,
-    }),
-    [currentColumnNumber, currentRowNumber],
-  );
+  // const [currentColumnNumber] = useRecoilScopedState(
+  //   currentColumnNumberScopedState,
+  //   CellContext,
+  // );
+
+  // const currentTablePosition: CellPosition = useMemo(
+  //   () => ({
+  //     column: currentColumnNumber,
+  //     row: currentRowNumber,
+  //   }),
+  //   [currentColumnNumber, currentRowNumber],
+  // );
 
   const setHotkeyScope = useSetHotkeyScope();
 
   return useRecoilCallback(
     ({ set }) =>
       () => {
-        setSoftFocusPosition(currentTablePosition);
+        setSoftFocusPosition(currentCellPosition);
 
         set(isSoftFocusActiveState, true);
 
         setHotkeyScope(TableHotkeyScope.TableSoftFocus);
       },
-    [setHotkeyScope, currentTablePosition, setSoftFocusPosition],
+    [setHotkeyScope, currentCellPosition, setSoftFocusPosition],
   );
 }

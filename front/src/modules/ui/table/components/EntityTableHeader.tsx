@@ -8,6 +8,7 @@ export function EntityTableHeader({
 }: {
   columns: Array<TableColumn>;
 }) {
+  console.log('EntityTableHeader');
   return (
     <thead>
       <tr>

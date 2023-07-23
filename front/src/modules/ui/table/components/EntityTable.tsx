@@ -5,6 +5,7 @@ import { TableColumn } from '@/people/table/components/peopleColumns';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 
+import { useIsPageLoading } from '../../hooks/useIsPageLoading';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { TableHeader } from '../table-header/components/TableHeader';
 
@@ -96,6 +97,16 @@ export function EntityTable<SortField>({
       leaveTableFocus();
     },
   });
+
+  console.log('EntityTable');
+
+  const isPageLoading = useIsPageLoading();
+
+  console.log('EntityTable', { isPageLoading });
+
+  if (isPageLoading) {
+    return null;
+  }
 
   return (
     <StyledTableWithHeader>

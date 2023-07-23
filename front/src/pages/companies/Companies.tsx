@@ -41,6 +41,8 @@ export function Companies() {
 
   const theme = useTheme();
 
+  console.log('Companies');
+
   return (
     <>
       <WithTopBarContainer

@@ -1,4 +1,5 @@
-import { useRecoilCallback } from 'recoil';
+import { useLocation } from 'react-router-dom';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { companyAccountOwnerFamilyState } from '@/companies/states/companyAccountOwnerFamilyState';
 import { companyAddressFamilyState } from '@/companies/states/companyAddressFamilyState';
@@ -10,7 +11,25 @@ import { companyLinkedinUrlFamilyState } from '@/companies/states/companyLinkedi
 import { companyNameFamilyState } from '@/companies/states/companyNameFamilyState';
 import { GetCompaniesQuery } from '~/generated/graphql';
 
+import { companiesFilters } from '../../../../pages/companies/companies-filters';
+import { availableFiltersScopedState } from '../../../ui/filter-n-sort/states/availableFiltersScopedState';
+import { useContextScopeId } from '../../../ui/recoil-scope/hooks/useContextScopeId';
+import { currentPageLocationState } from '../../../ui/states/currentPageLocationState';
+import { useResetTableRowSelection } from '../../../ui/table/hooks/useResetTableRowSelection';
+import { entityTableDimensionsState } from '../../../ui/table/states/entityTableDimensionsState';
+import { isFetchingEntityTableDataState } from '../../../ui/table/states/isFetchingEntityTableDataState';
+import { TableContext } from '../../../ui/table/states/TableContext';
+import { tableRowIdsState } from '../../../ui/table/states/tableRowIdsState';
+import { companyColumns } from '../components/companyColumns';
+
 export function useSetCompanyEntityTable() {
+  const resetTableRowSelection = useResetTableRowSelection();
+
+  const tableContextScopeId = useContextScopeId(TableContext);
+
+  const currentLocation = useLocation().pathname;
+  const [, setCurrentPageLocation] = useRecoilState(currentPageLocationState);
+
   return useRecoilCallback(
     ({ set, snapshot }) =>
       (newCompanyArray: GetCompaniesQuery['companies']) => {
@@ -93,8 +112,33 @@ export function useSetCompanyEntityTable() {
           if (currentCreatedAt !== company.createdAt) {
             set(companyCreatedAtFamilyState(company.id), company.createdAt);
           }
+
+          const companyIds = newCompanyArray.map((company) => company.id);
+
+          set(tableRowIdsState, (currentRowIds) => {
+            if (JSON.stringify(currentRowIds) !== JSON.stringify(companyIds)) {
+              return companyIds;
+            }
+
+            return currentRowIds;
+          });
+          resetTableRowSelection();
+
+          set(entityTableDimensionsState, {
+            numberOfColumns: companyColumns.length,
+            numberOfRows: companyIds.length,
+          });
+
+          set(
+            availableFiltersScopedState(tableContextScopeId),
+            companiesFilters,
+          );
+
+          set(currentPageLocationState, currentLocation);
+
+          set(isFetchingEntityTableDataState, false);
         }
       },
-    [],
+    [resetTableRowSelection, tableContextScopeId, currentLocation],
   );
 }

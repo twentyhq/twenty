@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
@@ -8,12 +10,26 @@ import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
+import { currentPageLocationState } from '../modules/ui/states/currentPageLocationState';
+
 export function HotkeyScopeBrowserRouterSync() {
+  console.log('HotkeyScopeBrowserRouterSync');
   const isMatchingLocation = useIsMatchingLocation();
+
+  const location = useLocation();
 
   const setHotkeyScope = useSetHotkeyScope();
 
+  const [, setCurrentPageLocation] = useRecoilState(currentPageLocationState);
+
   useEffect(() => {
+    console.log(
+      'HotkeyScopeBrowserRouterSync',
+      JSON.stringify({
+        location,
+      }),
+    );
+
     switch (true) {
       case isMatchingLocation(AppPath.CompaniesPage): {
         setHotkeyScope(TableHotkeyScope.Table, { goto: true });
@@ -67,7 +83,9 @@ export function HotkeyScopeBrowserRouterSync() {
         break;
       }
     }
-  }, [isMatchingLocation, setHotkeyScope]);
+
+    // setCurrentPageLocation(location.pathname);
+  }, [isMatchingLocation, setHotkeyScope, location, setCurrentPageLocation]);
 
   return <></>;
 }
