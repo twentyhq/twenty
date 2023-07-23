@@ -21,11 +21,11 @@ export function AppNavbar() {
   const currentPath = useLocation().pathname;
   const { openCommandMenu } = useCommandMenu();
 
-  const isSubNavbarDisplayed = useIsInSubMenu();
+  const isInSubMenu = useIsInSubMenu();
 
   return (
     <>
-      {!isSubNavbarDisplayed ? (
+      {!isInSubMenu ? (
         <MainNavbar>
           <NavItem
             label="Search"

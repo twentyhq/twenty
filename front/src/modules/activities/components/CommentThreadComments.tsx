@@ -40,11 +40,8 @@ const StyledCommentActionBar = styled.div`
   display: flex;
   padding: 16px 24px 16px 48px;
   width: calc(
-    ${({ theme }) => {
-        const isMobile = useIsMobile();
-
-        return isMobile ? '100%' : theme.rightDrawerWidth;
-      }} - 48px - 24px
+    ${({ theme }) => (useIsMobile() ? '100%' : theme.rightDrawerWidth)} - 48px -
+      24px
   );
 `;
 

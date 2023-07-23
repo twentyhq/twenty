@@ -27,12 +27,12 @@ export function NavbarAnimatedContainer({ children }: NavbarProps) {
   const [, setIsNavbarSwitchingSize] = useRecoilState(
     isNavbarSwitchingSizeState,
   );
-  const isSubNavbarDisplayed = useIsInSubMenu();
+  const isInSubMenu = useIsInSubMenu();
   const theme = useTheme();
 
   const isMobile = useIsMobile();
 
-  const leftBarWidth = isSubNavbarDisplayed
+  const leftBarWidth = isInSubMenu
     ? isMobile
       ? theme.leftSubMenuNavBarWidth.mobile
       : theme.leftSubMenuNavBarWidth.desktop
