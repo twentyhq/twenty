@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { on } from 'events';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
@@ -50,6 +51,7 @@ export function DefaultLayout({ children }: OwnProps) {
   const isMatchingLocation = useIsMatchingLocation();
 
   const onboardingStatus = useOnboardingStatus();
+  console.log(onboardingStatus);
 
   useEffect(() => {
     const isMachinOngoingUserCreationRoute =

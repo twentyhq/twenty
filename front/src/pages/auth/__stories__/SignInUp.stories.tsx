@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
 import { SignInUp } from '../SignInUp';
@@ -17,6 +16,8 @@ export type Story = StoryObj<typeof SignInUp>;
 export const Default: Story = {
   render: getRenderWrapperForPage(<SignInUp />, '/sign-in'),
   parameters: {
-    msw: graphqlMocks,
+    cookie: {
+      tokenPair: '{}',
+    },
   },
 };
