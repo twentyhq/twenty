@@ -42,15 +42,13 @@ export function getRenderWrapperForSignInUp(
   return function render() {
     return (
       <UserProvider>
-        <ClientConfigProvider>
-          <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}>
-            <MemoryRouter initialEntries={[currentPath]}>
-              <FullHeightStorybookLayout>
-                <DefaultLayout>{children}</DefaultLayout>
-              </FullHeightStorybookLayout>
-            </MemoryRouter>
-          </HotkeysProvider>
-        </ClientConfigProvider>
+        <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}>
+          <MemoryRouter initialEntries={[currentPath]}>
+            <FullHeightStorybookLayout>
+              <DefaultLayout>{children}</DefaultLayout>
+            </FullHeightStorybookLayout>
+          </MemoryRouter>
+        </HotkeysProvider>
       </UserProvider>
     );
   };
