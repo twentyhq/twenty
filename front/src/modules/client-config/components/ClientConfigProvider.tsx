@@ -14,7 +14,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   const [, setDebugMode] = useRecoilState(isDebugModeState);
   const [, setDemoMode] = useRecoilState(isDemoModeState);
   const [, setTelemetry] = useRecoilState(telemetryState);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data, loading } = useGetClientConfigQuery();
 
