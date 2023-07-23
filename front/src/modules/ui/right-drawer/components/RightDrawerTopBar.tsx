@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
+
 import { RightDrawerTopBarCloseButton } from './RightDrawerTopBarCloseButton';
 import { RightDrawerTopBarExpandButton } from './RightDrawerTopBarExpandButton';
 
@@ -20,10 +22,12 @@ const StyledRightDrawerTopBar = styled.div`
 `;
 
 export function RightDrawerTopBar() {
+  const isMobile = useIsMobile();
+
   return (
     <StyledRightDrawerTopBar>
       <RightDrawerTopBarCloseButton />
-      <RightDrawerTopBarExpandButton />
+      {!isMobile && <RightDrawerTopBarExpandButton />}
     </StyledRightDrawerTopBar>
   );
 }

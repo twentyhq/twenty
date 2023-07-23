@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export function NoTopBarContainer({ children }: OwnProps) {
+export function SubMenuTopBarContainer({ children }: OwnProps) {
   return (
     <StyledContainer>
       <RightDrawerContainer topMargin={16}>{children}</RightDrawerContainer>
