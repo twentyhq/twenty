@@ -4,6 +4,7 @@ import { graphql } from 'msw';
 
 import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
+import { GET_CLIENT_CONFIG } from '../../../modules/client-config/queries';
 import { GET_CURRENT_USER } from '../../../modules/users/queries';
 import { mockedOnboardingUsersData } from '../../../testing/mock-data/users';
 import { CreateWorkspace } from '../CreateWorkspace';
@@ -27,6 +28,25 @@ export const Default: Story = {
           return res(
             ctx.data({
               currentUser: mockedOnboardingUsersData[1],
+            }),
+          );
+        },
+      ),
+      graphql.query(
+        getOperationName(GET_CLIENT_CONFIG) ?? '',
+        (req, res, ctx) => {
+          return res(
+            ctx.data({
+              clientConfig: {
+                demoMode: true,
+                debugMode: false,
+                authProviders: {
+                  google: true,
+                  password: true,
+                  magicLink: false,
+                },
+                telemetry: { enabled: false, anonymizationEnabled: true },
+              },
             }),
           );
         },
