@@ -27,10 +27,7 @@ jobs:
       - name: Front / Write .env
         run: |
           cd front
-          touch .env
-          echo "REACT_APP_API_URL: $REACT_APP_API_URL" >> .env
-          echo "REACT_APP_AUTH_URL: $REACT_APP_AUTH_URL" >> .env
-          echo "REACT_APP_FILES_URL: $REACT_APP_FILES_URL" >> .env
+          cp .env.example .env
       - name: Front / Install Dependencies
         run: cd front && yarn
       - name: Front / Install Playwright
