@@ -22,7 +22,7 @@ type OwnProps = {
 export function TopTitle({ title }: OwnProps) {
   return (
     <TitleAndCollapseContainer>
-      <NavCollapseButton hideIfOpen={true} hideOnDesktop={true} />
+      <NavCollapseButton direction="right" />
       <TitleContainer data-testid="top-bar-title">{title}</TitleContainer>
     </TitleAndCollapseContainer>
   );

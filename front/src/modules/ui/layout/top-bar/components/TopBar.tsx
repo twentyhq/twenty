@@ -1,12 +1,15 @@
 import { ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
 import { IconChevronLeft, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 
+import { useIsMobile } from '../../../../../hooks/useIsMobile';
 import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
+import { isNavbarOpenedState } from '../../states/isNavbarOpenedState';
 
 export const TOP_BAR_MIN_HEIGHT = 40;
 
@@ -57,14 +60,21 @@ export function TopBar({
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
+  const isMobile = useIsMobile();
+  const isNavBarOpened = useRecoilValue(isNavbarOpenedState);
+
+  const showNavCollapseButton = isMobile || !isNavBarOpened;
+
+  const iconSize = isMobile ? 24 : 16;
+
   return (
     <>
       <TopBarContainer>
         <StyledLeftContainer>
-          <NavCollapseButton hideIfOpen={true} />
+          {showNavCollapseButton && <NavCollapseButton direction="right" />}
           {hasBackButton && (
             <BackIconButton
-              icon={<IconChevronLeft size={16} />}
+              icon={<IconChevronLeft size={iconSize} />}
               onClick={navigateBack}
             />
           )}

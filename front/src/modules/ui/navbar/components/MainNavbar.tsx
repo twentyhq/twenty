@@ -8,7 +8,7 @@ type OwnProps = {
 };
 
 const StyledContainer = styled.div`
-  width: ${({ theme }) => theme.leftNavBarWidth};
+  width: 100%;
 `;
 
 export default function MainNavbar({ children }: OwnProps) {

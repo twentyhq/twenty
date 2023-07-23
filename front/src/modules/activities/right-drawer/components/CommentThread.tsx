@@ -16,6 +16,8 @@ import {
 } from '~/generated/graphql';
 import { debounce } from '~/utils/debounce';
 
+import { useIsMobile } from '../../../../hooks/useIsMobile';
+
 import { CommentThreadActionBar } from './CommentThreadActionBar';
 
 import '@blocknote/core/style.css';
@@ -43,7 +45,9 @@ const StyledTopContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   background: ${({ theme }) => theme.background.secondary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-bottom: ${({ theme }) => {
+    return useIsMobile() ? 'none' : `1px solid ${theme.border.color.medium}`;
+  }};
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -188,7 +192,6 @@ export function CommentThread({
           onChange={updateTitleFromBody}
         />
       </StyledUpperPartContainer>
-
       {showComment && (
         <CommentThreadComments
           commentThread={{

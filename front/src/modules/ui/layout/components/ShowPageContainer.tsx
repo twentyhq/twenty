@@ -9,6 +9,7 @@ export const ShowPageContainer = styled.div`
 
     return isMobile ? 'column' : 'row';
   }};
+  gap: ${({ theme }) => (useIsMobile() ? theme.spacing(3) : '0')};
   height: 100%;
-  width: 100%;
+  width: ${() => (useIsMobile() ? `calc(100% - 2px);` : '100%')};
 `;

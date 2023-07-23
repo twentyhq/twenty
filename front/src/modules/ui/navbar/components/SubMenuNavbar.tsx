@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
 
-import { useIsMobile } from '../../../../hooks/useIsMobile';
-
 import NavBackButton from './NavBackButton';
 import NavItemsContainer from './NavItemsContainer';
 
@@ -13,12 +11,8 @@ type OwnProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: ${({ theme }) => theme.spacing(6)};
-  width: ${({ theme }) => {
-    const isMobile = useIsMobile();
-
-    return isMobile ? '220px' : theme.leftNavBarWidth;
-  }};
+  padding-top: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
 export default function SubMenuNavbar({ children, backButtonTitle }: OwnProps) {

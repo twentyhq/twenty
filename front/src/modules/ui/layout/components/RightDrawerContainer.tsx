@@ -26,6 +26,10 @@ const StyledMainContainer = styled.div<{ topMargin: number }>`
   width: calc(100% - ${({ theme }) => theme.spacing(3)});
 `;
 
+const StyledMobileTopBarContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
 type LeftContainerProps = {
   isRightDrawerOpen?: boolean;
 };
@@ -44,7 +48,11 @@ export function RightDrawerContainer({ children, topMargin }: OwnProps) {
   return (
     <StyledMainContainer topMargin={topMargin ?? 0}>
       <StyledLeftContainer>
-        {isMobile && isInSubMenu && <NavCollapseButton />}
+        {isMobile && isInSubMenu && (
+          <StyledMobileTopBarContainer>
+            <NavCollapseButton direction="right" />
+          </StyledMobileTopBarContainer>
+        )}
         <Panel>{children}</Panel>
       </StyledLeftContainer>
       <RightDrawer />

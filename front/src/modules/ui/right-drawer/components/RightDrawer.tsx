@@ -11,6 +11,7 @@ import {
 } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
 import { isDefined } from '~/utils/isDefined';
 
+import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { useScopedHotkeys } from '../../hotkey/hooks/useScopedHotkeys';
 import { useRightDrawer } from '../hooks/useRightDrawer';
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
@@ -54,7 +55,7 @@ export function RightDrawer() {
   useListenClickOutsideArrayOfRef({
     refs: [rightDrawerRef],
     callback: () => closeRightDrawer(),
-    mode: ClickOutsideMode.absolute,
+    mode: ClickOutsideMode.dom,
   });
 
   const theme = useTheme();
@@ -66,12 +67,16 @@ export function RightDrawer() {
     [setIsRightDrawerOpen],
   );
 
+  const isMobile = useIsMobile();
+
   const rightDrawerWidthExpanded = `calc(100% - ${
     theme.leftNavBarWidth
   } - ${theme.spacing(2)})`;
 
   const rightDrawerWidth = isRightDrawerOpen
-    ? isRightDrawerExpanded
+    ? isMobile
+      ? '100%'
+      : isRightDrawerExpanded
       ? rightDrawerWidthExpanded
       : theme.rightDrawerWidth
     : '0';

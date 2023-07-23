@@ -8,6 +8,7 @@ import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
 import { CommentThread, useCreateCommentMutation } from '~/generated/graphql';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import { Comment } from '../comment/Comment';
 import { GET_COMMENT_THREAD } from '../queries';
 import { CommentForDrawer } from '../types/CommentForDrawer';
@@ -38,7 +39,13 @@ const StyledCommentActionBar = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   padding: 16px 24px 16px 48px;
-  width: calc(${({ theme }) => theme.rightDrawerWidth} - 48px - 24px);
+  width: calc(
+    ${({ theme }) => {
+        const isMobile = useIsMobile();
+
+        return isMobile ? '100%' : theme.rightDrawerWidth;
+      }} - 48px - 24px
+  );
 `;
 
 const StyledThreadCommentTitle = styled.div`

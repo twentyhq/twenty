@@ -6,11 +6,10 @@ import {
   IconLayoutSidebarRightCollapse,
 } from '@/ui/icon';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
-import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
 
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 
-const CollapseButton = styled.button<{ hideOnDesktop: boolean | undefined }>`
+const CollapseButton = styled.button`
   align-items: center;
   background: inherit;
   border: 0;
@@ -26,48 +25,35 @@ const CollapseButton = styled.button<{ hideOnDesktop: boolean | undefined }>`
   height: 32px;
   justify-content: center;
 
+  margin-left: ${() => (useIsMobile() ? '8px' : '0')};
+  margin-right: ${() => (useIsMobile() ? '8px' : '0')};
+
   padding: 0;
+
   user-select: none;
-
   width: 32px;
-
-  ${(props) =>
-    props.hideOnDesktop &&
-    `@media (min-width: ${MOBILE_VIEWPORT}px) {
-        display:none;
-    }
-    `}
 `;
 
 type CollapseButtonProps = {
-  hideIfOpen?: boolean;
-  hideIfClosed?: boolean;
-  hideOnDesktop?: boolean;
+  direction?: 'left' | 'right';
 };
 
 export default function NavCollapseButton({
-  hideIfOpen,
-  hideOnDesktop,
+  direction = 'left',
 }: CollapseButtonProps) {
   const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
 
-  const showOpen = !isNavOpen && !hideIfOpen;
+  const iconSize = useIsMobile() ? 24 : 16;
 
   return (
     <>
-      {showOpen ? (
-        <CollapseButton
-          onClick={() => setIsNavOpen(!isNavOpen)}
-          hideOnDesktop={hideOnDesktop}
-        >
-          <IconLayoutSidebarLeftCollapse size={16} />
+      {direction === 'left' ? (
+        <CollapseButton onClick={() => setIsNavOpen(!isNavOpen)}>
+          <IconLayoutSidebarLeftCollapse size={iconSize} />
         </CollapseButton>
       ) : (
-        <CollapseButton
-          onClick={() => setIsNavOpen(!isNavOpen)}
-          hideOnDesktop={hideOnDesktop}
-        >
-          <IconLayoutSidebarRightCollapse size={16} />
+        <CollapseButton onClick={() => setIsNavOpen(!isNavOpen)}>
+          <IconLayoutSidebarRightCollapse size={iconSize} />
         </CollapseButton>
       )}
     </>

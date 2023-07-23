@@ -6,7 +6,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useIsInSubMenu } from '@/ui/layout/hooks/useIsInSubMenu';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
-import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
 
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 
@@ -17,13 +16,6 @@ const StyledNavbarContainer = styled(motion.div)`
   flex-shrink: 0;
   overflow: hidden;
   padding: ${({ theme }) => theme.spacing(2)};
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: ${(props) =>
-      useRecoilValue(isNavbarOpenedState)
-        ? `calc(100% - ` + props.theme.spacing(4) + `)`
-        : '0'};
-  }
 `;
 
 type NavbarProps = {
@@ -44,7 +36,9 @@ export function NavbarAnimatedContainer({ children }: NavbarProps) {
     ? isMobile
       ? theme.leftSubMenuNavBarWidth.mobile
       : theme.leftSubMenuNavBarWidth.desktop
-    : theme.leftNavBarWidth;
+    : isMobile
+    ? theme.leftNavBarWidth.mobile
+    : theme.leftNavBarWidth.desktop;
 
   return (
     <StyledNavbarContainer
