@@ -55,7 +55,7 @@ export function RightDrawer() {
   useListenClickOutsideArrayOfRef({
     refs: [rightDrawerRef],
     callback: () => closeRightDrawer(),
-    mode: ClickOutsideMode.dom,
+    mode: ClickOutsideMode.absolute,
   });
 
   const theme = useTheme();
