@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
@@ -25,9 +26,6 @@ const CollapseButton = styled.button`
   height: 32px;
   justify-content: center;
 
-  margin-left: ${() => (useIsMobile() ? '8px' : '0')};
-  margin-right: ${() => (useIsMobile() ? '8px' : '0')};
-
   padding: 0;
 
   user-select: none;
@@ -42,8 +40,11 @@ export default function NavCollapseButton({
   direction = 'left',
 }: CollapseButtonProps) {
   const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
+  const theme = useTheme();
 
-  const iconSize = useIsMobile() ? 24 : 16;
+  const iconSize = useIsMobile()
+    ? theme.navBarIconSize.mobile
+    : theme.navBarIconSize.desktop;
 
   return (
     <>

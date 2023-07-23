@@ -45,6 +45,10 @@ const common = {
     mobile: 'calc(100% - 16px)',
     desktop: '520px',
   },
+  navBarIconSize: {
+    mobile: 24,
+    desktop: 16,
+  },
   clickableElementBackgroundTransition: 'background 0.1s ease',
   lastLayerZIndex: 2147483647,
 };

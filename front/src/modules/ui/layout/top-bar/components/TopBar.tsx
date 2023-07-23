@@ -1,5 +1,6 @@
 import { ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -23,6 +24,7 @@ const TopBarContainer = styled.div`
   justify-content: space-between;
   min-height: ${TOP_BAR_MIN_HEIGHT}px;
   padding: ${({ theme }) => theme.spacing(2)};
+  padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
 `;
 
@@ -40,8 +42,20 @@ const TitleContainer = styled.div`
   max-width: 50%;
 `;
 
+const TopBarButtonContainer = styled.div`
+  margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
 const BackIconButton = styled(IconButton)`
   margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledTopBarIconTitleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
 type OwnProps = {
@@ -65,23 +79,35 @@ export function TopBar({
 
   const showNavCollapseButton = isMobile || !isNavBarOpened;
 
-  const iconSize = isMobile ? 24 : 16;
+  const theme = useTheme();
+
+  const iconSize = useIsMobile()
+    ? theme.navBarIconSize.mobile
+    : theme.navBarIconSize.desktop;
 
   return (
     <>
       <TopBarContainer>
         <StyledLeftContainer>
-          {showNavCollapseButton && <NavCollapseButton direction="right" />}
-          {hasBackButton && (
-            <BackIconButton
-              icon={<IconChevronLeft size={iconSize} />}
-              onClick={navigateBack}
-            />
+          {showNavCollapseButton && (
+            <TopBarButtonContainer>
+              <NavCollapseButton direction="right" />
+            </TopBarButtonContainer>
           )}
-          {icon}
-          <TitleContainer data-testid="top-bar-title">
-            <OverflowingTextWithTooltip text={title} />
-          </TitleContainer>
+          {hasBackButton && (
+            <TopBarButtonContainer>
+              <BackIconButton
+                icon={<IconChevronLeft size={iconSize} />}
+                onClick={navigateBack}
+              />
+            </TopBarButtonContainer>
+          )}
+          <StyledTopBarIconTitleContainer>
+            {icon}
+            <TitleContainer data-testid="top-bar-title">
+              <OverflowingTextWithTooltip text={title} />
+            </TitleContainer>
+          </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
         {onAddButtonClick && (
           <IconButton
