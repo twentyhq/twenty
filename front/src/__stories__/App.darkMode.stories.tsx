@@ -16,14 +16,6 @@ export default meta;
 
 export const DarkMode: Story = {
   render: () => renderWithDarkMode(true),
-  loaders: [
-    async () => ({
-      accessTokenStored: window.localStorage.setItem(
-        'accessToken',
-        mockedUserJWT,
-      ),
-    }),
-  ],
   parameters: {
     msw: graphqlMocks,
   },
