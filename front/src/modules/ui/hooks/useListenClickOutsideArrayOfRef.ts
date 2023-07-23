@@ -34,8 +34,6 @@ export function useListenClickOutsideArrayOfRef<T extends Element>({
               return false;
             }
 
-            console.log({ event, ref: ref.current.getBoundingClientRect() });
-
             const { x, y, width, height } = ref.current.getBoundingClientRect();
 
             const clientX =
