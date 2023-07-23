@@ -45,9 +45,8 @@ const StyledTopContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   background: ${({ theme }) => theme.background.secondary};
-  border-bottom: ${({ theme }) => {
-    return useIsMobile() ? 'none' : `1px solid ${theme.border.color.medium}`;
-  }};
+  border-bottom: ${({ theme }) =>
+    useIsMobile() ? 'none' : `1px solid ${theme.border.color.medium}`};
   display: flex;
   flex-direction: column;
   gap: 24px;
