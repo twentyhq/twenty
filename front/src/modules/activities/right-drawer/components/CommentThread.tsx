@@ -92,24 +92,23 @@ export function CommentThread({
   showComment = true,
   autoFillTitle = false,
 }: OwnProps) {
-  const { data, loading } = useGetCommentThreadQuery({
+  const { data } = useGetCommentThreadQuery({
     variables: {
       commentThreadId: commentThreadId ?? '',
     },
     skip: !commentThreadId,
   });
   const commentThread = data?.findManyCommentThreads[0];
+  const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
+    useState<boolean>(false);
 
   const [title, setTitle] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!loading) {
+    if (!hasUserManuallySetTitle) {
       setTitle(commentThread?.title ?? '');
     }
-  }, [loading, setTitle, commentThread?.title]);
-
-  const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
-    useState<boolean>(false);
+  }, [setTitle, commentThread?.title, hasUserManuallySetTitle]);
 
   const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
 
