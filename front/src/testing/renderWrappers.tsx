@@ -35,7 +35,7 @@ export function getRenderWrapperForPage(
   };
 }
 
-export function getRenderWrapperFor(
+export function getRenderWrapperForSignInUp(
   children: React.ReactElement,
   currentPath: string,
 ) {
