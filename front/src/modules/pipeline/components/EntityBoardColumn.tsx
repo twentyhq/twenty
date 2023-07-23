@@ -27,6 +27,10 @@ const StyledNewCardButtonContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledBoardColumnBody = styled.div`
+  flex: 1;
+`;
+
 const BoardColumnCardsContainer = ({
   children,
   droppableProvided,
@@ -35,13 +39,10 @@ const BoardColumnCardsContainer = ({
   droppableProvided: DroppableProvided;
 }) => {
   return (
-    <div
-      ref={droppableProvided?.innerRef}
-      {...droppableProvided?.droppableProps}
-    >
+    <>
       {children}
       <StyledPlaceholder>{droppableProvided?.placeholder}</StyledPlaceholder>
-    </div>
+    </>
   );
 };
 
@@ -99,23 +100,28 @@ export function EntityBoardColumn({
           totalAmount={boardColumnTotal}
           isFirstColumn={column.index === 0}
         >
-          <BoardColumnCardsContainer droppableProvided={droppableProvided}>
-            {column.pipelineProgressIds.map((pipelineProgressId, index) => (
-              <RecoilScope
-                SpecificContext={BoardCardContext}
-                key={pipelineProgressId}
-              >
-                <EntityBoardCard
-                  index={index}
-                  pipelineProgressId={pipelineProgressId}
-                  boardOptions={boardOptions}
-                />
-              </RecoilScope>
-            ))}
-          </BoardColumnCardsContainer>
-          <StyledNewCardButtonContainer>
-            <RecoilScope>{boardOptions.newCardComponent}</RecoilScope>
-          </StyledNewCardButtonContainer>
+          <StyledBoardColumnBody
+            ref={droppableProvided?.innerRef}
+            {...droppableProvided?.droppableProps}
+          >
+            <BoardColumnCardsContainer droppableProvided={droppableProvided}>
+              {column.pipelineProgressIds.map((pipelineProgressId, index) => (
+                <RecoilScope
+                  SpecificContext={BoardCardContext}
+                  key={pipelineProgressId}
+                >
+                  <EntityBoardCard
+                    index={index}
+                    pipelineProgressId={pipelineProgressId}
+                    boardOptions={boardOptions}
+                  />
+                </RecoilScope>
+              ))}
+            </BoardColumnCardsContainer>
+            <StyledNewCardButtonContainer>
+              <RecoilScope>{boardOptions.newCardComponent}</RecoilScope>
+            </StyledNewCardButtonContainer>
+          </StyledBoardColumnBody>
         </BoardColumn>
       )}
     </Droppable>
