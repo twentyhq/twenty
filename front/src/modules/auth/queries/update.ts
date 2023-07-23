@@ -46,6 +46,7 @@ export const VERIFY = gql`
             domainName
             displayName
             logo
+            inviteHash
           }
         }
         settings {

@@ -14,7 +14,6 @@ import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 import { useAuth } from '../../hooks/useAuth';
-import { currentUserState } from '../../states/currentUserState';
 import { PASSWORD_REGEX } from '../../utils/passwordRegex';
 
 export enum SignInUpMode {
@@ -57,7 +56,6 @@ export function useSignInUp() {
       : SignInUpMode.SignUp,
   );
   const [showErrors, setShowErrors] = useState(false);
-  const [, setCurrentUser] = useRecoilState(currentUserState);
 
   const form = useForm<Form>({
     mode: 'onChange',
@@ -108,18 +106,13 @@ export function useSignInUp() {
           throw new Error('Email and password are required');
         }
         if (signInUpMode === SignInUpMode.SignIn) {
-          const { user } = await signInWithCredentials(
-            data.email,
-            data.password,
-          );
-          setCurrentUser(user);
+          await signInWithCredentials(data.email, data.password);
         } else {
-          const { user } = await signUpWithCredentials(
+          await signUpWithCredentials(
             data.email,
             data.password,
             workspaceInviteHash,
           );
-          setCurrentUser(user);
         }
         navigate('/create/workspace');
       } catch (err: any) {
@@ -135,7 +128,6 @@ export function useSignInUp() {
       workspaceInviteHash,
       enqueueSnackBar,
       signInUpMode,
-      setCurrentUser,
     ],
   );
 
