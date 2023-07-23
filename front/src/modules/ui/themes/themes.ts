@@ -37,18 +37,6 @@ const common = {
     checkboxColumnWidth: '32px',
   },
   rightDrawerWidth: '500px',
-  leftNavBarWidth: {
-    mobile: 'calc(100% - 16px)',
-    desktop: '220px',
-  },
-  leftSubMenuNavBarWidth: {
-    mobile: 'calc(100% - 16px)',
-    desktop: '520px',
-  },
-  navBarIconSize: {
-    mobile: 24,
-    desktop: 16,
-  },
   clickableElementBackgroundTransition: 'background 0.1s ease',
   lastLayerZIndex: 2147483647,
 };

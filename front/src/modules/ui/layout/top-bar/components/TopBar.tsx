@@ -1,14 +1,14 @@
 import { ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { IconChevronLeft, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 
-import { useIsMobile } from '../../../../../hooks/useIsMobile';
+import { navbarIconSize } from '../../../navbar/constants';
 import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
 import { isNavbarOpenedState } from '../../states/isNavbarOpenedState';
 
@@ -75,15 +75,13 @@ export function TopBar({
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
   const isMobile = useIsMobile();
-  const isNavBarOpened = useRecoilValue(isNavbarOpenedState);
+  const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
 
-  const showNavCollapseButton = isMobile || !isNavBarOpened;
-
-  const theme = useTheme();
+  const showNavCollapseButton = isMobile || !isNavbarOpened;
 
   const iconSize = useIsMobile()
-    ? theme.navBarIconSize.mobile
-    : theme.navBarIconSize.desktop;
+    ? navbarIconSize.mobile
+    : navbarIconSize.desktop;
 
   return (
     <>

@@ -1,14 +1,14 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
 } from '@/ui/icon';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 
-import { useIsMobile } from '../../../../hooks/useIsMobile';
+import { navbarIconSize } from '../constants';
 
 const CollapseButton = styled.button`
   align-items: center;
@@ -40,11 +40,10 @@ export default function NavCollapseButton({
   direction = 'left',
 }: CollapseButtonProps) {
   const [isNavOpen, setIsNavOpen] = useRecoilState(isNavbarOpenedState);
-  const theme = useTheme();
 
   const iconSize = useIsMobile()
-    ? theme.navBarIconSize.mobile
-    : theme.navBarIconSize.desktop;
+    ? navbarIconSize.mobile
+    : navbarIconSize.desktop;
 
   return (
     <>

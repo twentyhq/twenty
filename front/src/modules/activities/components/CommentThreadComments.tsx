@@ -4,11 +4,11 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
 import { CommentThread, useCreateCommentMutation } from '~/generated/graphql';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
-import { useIsMobile } from '../../../hooks/useIsMobile';
 import { Comment } from '../comment/Comment';
 import { GET_COMMENT_THREAD } from '../queries';
 import { CommentForDrawer } from '../types/CommentForDrawer';

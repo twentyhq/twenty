@@ -3,11 +3,12 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useIsInSubMenu } from '@/ui/layout/hooks/useIsInSubMenu';
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
+import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
 
-import { useIsMobile } from '../../../../hooks/useIsMobile';
+import { leftNavbarWidth, leftSubMenuNavbarWidth } from '../constants';
 
 const StyledNavbarContainer = styled(motion.div)`
   align-items: end;
@@ -27,18 +28,18 @@ export function NavbarAnimatedContainer({ children }: NavbarProps) {
   const [, setIsNavbarSwitchingSize] = useRecoilState(
     isNavbarSwitchingSizeState,
   );
-  const isInSubMenu = useIsInSubMenu();
+  const isInSubMenu = useIsSubMenuNavbarDisplayed();
   const theme = useTheme();
 
   const isMobile = useIsMobile();
 
   const leftBarWidth = isInSubMenu
     ? isMobile
-      ? theme.leftSubMenuNavBarWidth.mobile
-      : theme.leftSubMenuNavBarWidth.desktop
+      ? leftSubMenuNavbarWidth.mobile
+      : leftSubMenuNavbarWidth.desktop
     : isMobile
-    ? theme.leftNavBarWidth.mobile
-    : theme.leftNavBarWidth.desktop;
+    ? leftNavbarWidth.mobile
+    : leftNavbarWidth.desktop;
 
   return (
     <StyledNavbarContainer

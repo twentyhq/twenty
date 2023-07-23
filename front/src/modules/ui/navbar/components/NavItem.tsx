@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
 
-import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { isNavbarOpenedState } from '../../layout/states/isNavbarOpenedState';
 
 type OwnProps = {
@@ -83,13 +83,13 @@ const StyledSoonPill = styled.div`
 
 function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
   const navigate = useNavigate();
-  const [, setIsNavBarOpened] = useRecoilState(isNavbarOpenedState);
+  const [, setIsNavbarOpened] = useRecoilState(isNavbarOpenedState);
 
   const isMobile = useIsMobile();
 
   function handleItemClick() {
     if (isMobile) {
-      setIsNavBarOpened(false);
+      setIsNavbarOpened(false);
     }
 
     if (onClick) {

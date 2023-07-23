@@ -11,7 +11,7 @@ import {
   IconTargetArrow,
   IconUser,
 } from '@/ui/icon/index';
-import { useIsInSubMenu } from '@/ui/layout/hooks/useIsInSubMenu';
+import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
 import MainNavbar from '@/ui/navbar/components/MainNavbar';
 import NavItem from '@/ui/navbar/components/NavItem';
 import NavTitle from '@/ui/navbar/components/NavTitle';
@@ -21,7 +21,7 @@ export function AppNavbar() {
   const currentPath = useLocation().pathname;
   const { openCommandMenu } = useCommandMenu();
 
-  const isInSubMenu = useIsInSubMenu();
+  const isInSubMenu = useIsSubMenuNavbarDisplayed();
 
   return (
     <>

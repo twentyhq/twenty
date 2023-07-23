@@ -5,7 +5,7 @@ export enum ClickOutsideMode {
   dom = 'dom',
 }
 
-export function useListenClickOutsideArrayOfRef<T extends Element>({
+export function useListenClickOutside<T extends Element>({
   refs,
   callback,
   mode = ClickOutsideMode.dom,

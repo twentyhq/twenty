@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useIsMobile } from '../../../../hooks/useIsMobile';
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
 
 import { RightDrawerTopBarCloseButton } from './RightDrawerTopBarCloseButton';
 import { RightDrawerTopBarExpandButton } from './RightDrawerTopBarExpandButton';

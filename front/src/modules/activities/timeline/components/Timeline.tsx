@@ -7,6 +7,7 @@ import { useOpenCommentThreadRightDrawer } from '@/activities/hooks/useOpenComme
 import { useOpenCreateCommentThreadDrawer } from '@/activities/hooks/useOpenCreateCommentThreadDrawer';
 import { CommentableEntity } from '@/activities/types/CommentableEntity';
 import { CommentThreadForDrawer } from '@/activities/types/CommentThreadForDrawer';
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { IconNotes } from '@/ui/icon/index';
 import {
   ActivityType,
@@ -18,7 +19,6 @@ import {
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
-import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { OverflowingTextWithTooltip } from '../../../ui/tooltip/OverflowingTextWithTooltip';
 
 const StyledMainContainer = styled.div`

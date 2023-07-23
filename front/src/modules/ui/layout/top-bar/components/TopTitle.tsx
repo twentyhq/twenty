@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
 
-import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
-
 const TitleAndCollapseContainer = styled.div`
   align-items: center;
   display: flex;
@@ -22,7 +20,6 @@ type OwnProps = {
 export function TopTitle({ title }: OwnProps) {
   return (
     <TitleAndCollapseContainer>
-      <NavCollapseButton direction="right" />
       <TitleContainer data-testid="top-bar-title">{title}</TitleContainer>
     </TitleAndCollapseContainer>
   );

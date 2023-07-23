@@ -5,10 +5,6 @@ import { useRecoilState } from 'recoil';
 import { IconChevronLeft } from '@/ui/icon/index';
 import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
 
-import { useIsMobile } from '../../../../hooks/useIsMobile';
-
-import NavCollapseButton from './NavCollapseButton';
-
 type OwnProps = {
   title: string;
 };
@@ -40,8 +36,6 @@ export default function NavBackButton({ title }: OwnProps) {
     isNavbarSwitchingSizeState,
   );
 
-  const isMobile = useIsMobile();
-
   return (
     <>
       <StyledContainer>
@@ -54,7 +48,6 @@ export default function NavBackButton({ title }: OwnProps) {
           <IconChevronLeft />
           <span>{title}</span>
         </IconAndButtonContainer>
-        {isMobile && <NavCollapseButton />}
       </StyledContainer>
     </>
   );

@@ -2,10 +2,6 @@ import styled from '@emotion/styled';
 
 import { RightDrawer } from '@/ui/right-drawer/components/RightDrawer';
 
-import { useIsMobile } from '../../../../hooks/useIsMobile';
-import NavCollapseButton from '../../navbar/components/NavCollapseButton';
-import { useIsInSubMenu } from '../hooks/useIsInSubMenu';
-
 import { Panel } from './Panel';
 
 type OwnProps = {
@@ -26,10 +22,6 @@ const StyledMainContainer = styled.div<{ topMargin: number }>`
   width: calc(100% - ${({ theme }) => theme.spacing(3)});
 `;
 
-const StyledMobileTopBarContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
 type LeftContainerProps = {
   isRightDrawerOpen?: boolean;
 };
@@ -42,17 +34,9 @@ const StyledLeftContainer = styled.div<LeftContainerProps>`
 `;
 
 export function RightDrawerContainer({ children, topMargin }: OwnProps) {
-  const isMobile = useIsMobile();
-  const isInSubMenu = useIsInSubMenu();
-
   return (
     <StyledMainContainer topMargin={topMargin ?? 0}>
       <StyledLeftContainer>
-        {isMobile && isInSubMenu && (
-          <StyledMobileTopBarContainer>
-            <NavCollapseButton direction="right" />
-          </StyledMobileTopBarContainer>
-        )}
         <Panel>{children}</Panel>
       </StyledLeftContainer>
       <RightDrawer />
