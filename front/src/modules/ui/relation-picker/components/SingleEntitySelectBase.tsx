@@ -36,16 +36,13 @@ export function SingleEntitySelectBase<
   onCancel?: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const entitiesInDropdown = isDefined(entities.selectedEntity)
-    ? [
-        entities.selectedEntity,
-        ...(entities.entitiesToSelect.filter((entity) =>
-          isNonEmptyString(entity.name),
-        ) ?? []),
-      ]
-    : entities.entitiesToSelect.filter((entity) =>
-        isNonEmptyString(entity.name),
-      ) ?? [];
+  let entitiesInDropdown = isDefined(entities.selectedEntity)
+    ? [entities.selectedEntity, ...(entities.entitiesToSelect ?? [])]
+    : entities.entitiesToSelect ?? [];
+
+  entitiesInDropdown = entitiesInDropdown.filter((entity) =>
+    isNonEmptyString(entity.name),
+  );
 
   const { hoveredIndex, resetScroll } = useEntitySelectScroll({
     entities: entitiesInDropdown,
