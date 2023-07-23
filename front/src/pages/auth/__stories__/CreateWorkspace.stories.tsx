@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { AuthModal } from '@/auth/components/Modal';
-import { AuthLayout } from '@/ui/layout/components/AuthLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
@@ -17,14 +16,7 @@ export default meta;
 export type Story = StoryObj<typeof CreateWorkspace>;
 
 export const Default: Story = {
-  render: getRenderWrapperForPage(
-    <AuthLayout>
-      <AuthModal>
-        <CreateWorkspace />
-      </AuthModal>
-    </AuthLayout>,
-    '/create-workspace',
-  ),
+  render: getRenderWrapperForPage(<CreateWorkspace />, '/create-workspace'),
   parameters: {
     msw: graphqlMocks,
   },
