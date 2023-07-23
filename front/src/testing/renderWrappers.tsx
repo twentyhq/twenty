@@ -35,6 +35,17 @@ export function getRenderWrapperForPage(
   };
 }
 
+export function getRenderWrapperForSignInUp(
+  children: React.ReactElement,
+  currentPath: string,
+) {
+  return function render() {
+    return (
+      <MemoryRouter initialEntries={[currentPath]}>{children}</MemoryRouter>
+    );
+  };
+}
+
 export function getRenderWrapperForEntityTableComponent(
   children: React.ReactElement,
 ) {
