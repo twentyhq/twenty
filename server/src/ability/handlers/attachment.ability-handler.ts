@@ -44,14 +44,10 @@ export class CreateAttachmentAbilityHandler implements IAbilityHandler {
 
     const activity = await this.prismaService.client.commentThread.findUnique({
       where: { id: args.activityId },
-      include: { workspace: true },
     });
-    assert(activity, '', NotFoundException);
+    assert(attachment, '', NotFoundException);
 
-    return ability.can(
-      AbilityAction.Update,
-      subject('Workspace', activity.workspace),
-    );
+    return ability.can(AbilityAction.Update, subject('Attachment', attachment));
   }
 }
 

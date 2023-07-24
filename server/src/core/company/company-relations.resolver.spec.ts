@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { CommentThreadService } from 'src/core/comment/services/comment-thread.service';
-import { CommentService } from 'src/core/comment/services/comment.service';
+import { CommentService } from 'src/core/comment/comment.service';
+import { ActivityService } from 'src/core/activity/services/activity.service';
 
 import { CompanyRelationsResolver } from './company-relations.resolver';
 import { CompanyService } from './company.service';
@@ -18,7 +18,7 @@ describe('CompanyRelationsResolver', () => {
           useValue: {},
         },
         {
-          provide: CommentThreadService,
+          provide: ActivityService,
           useValue: {},
         },
         {

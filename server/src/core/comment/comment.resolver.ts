@@ -8,7 +8,7 @@ import { Workspace } from 'src/core/@generated/workspace/workspace.model';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { CreateOneCommentArgs } from 'src/core/@generated/comment/create-one-comment.args';
 import { Comment } from 'src/core/@generated/comment/comment.model';
-import { CommentService } from 'src/core/comment/services/comment.service';
+import { CommentService } from 'src/core/comment/comment.service';
 import {
   PrismaSelector,
   PrismaSelect,

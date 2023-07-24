@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { CommentThreadService } from 'src/core/comment/services/comment-thread.service';
+import { ActivityService } from 'src/core/activity/services/activity.service';
 import { AbilityFactory } from 'src/ability/ability.factory';
 
-import { CommentThreadResolver } from './comment-thread.resolver';
+import { ActivityResolver } from './activity.resolver';
 
-describe('CommentThreadResolver', () => {
-  let resolver: CommentThreadResolver;
+describe('ActivityResolver', () => {
+  let resolver: ActivityResolver;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CommentThreadResolver,
+        ActivityResolver,
         {
-          provide: CommentThreadService,
+          provide: ActivityService,
           useValue: {},
         },
         {
@@ -23,7 +23,7 @@ describe('CommentThreadResolver', () => {
       ],
     }).compile();
 
-    resolver = module.get<CommentThreadResolver>(CommentThreadResolver);
+    resolver = module.get<ActivityResolver>(ActivityResolver);
   });
 
   it('should be defined', () => {

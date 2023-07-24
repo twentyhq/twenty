@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { CommentService } from 'src/core/comment/services/comment.service';
+import { CommentService } from 'src/core/comment/comment.service';
 import { AbilityFactory } from 'src/ability/ability.factory';
 
 import { CommentResolver } from './comment.resolver';

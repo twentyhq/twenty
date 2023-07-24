@@ -1,33 +1,33 @@
 import { Resolver, Root, ResolveField, Int } from '@nestjs/graphql';
 
-import { CommentThread } from 'src/core/@generated/comment-thread/comment-thread.model';
 import { Comment } from 'src/core/@generated/comment/comment.model';
 import { Person } from 'src/core/@generated/person/person.model';
-import { CommentThreadService } from 'src/core/comment/services/comment-thread.service';
-import { CommentService } from 'src/core/comment/services/comment.service';
+import { CommentService } from 'src/core/comment/comment.service';
 import {
   PrismaSelect,
   PrismaSelector,
 } from 'src/decorators/prisma-select.decorator';
+import { Activity } from 'src/core/@generated/activity/activity.model';
+import { ActivityService } from 'src/core/activity/services/activity.service';
 
 @Resolver(() => Person)
 export class PersonRelationsResolver {
   constructor(
-    private readonly commentThreadService: CommentThreadService,
+    private readonly activityService: ActivityService,
     private readonly commentService: CommentService,
   ) {}
 
-  @ResolveField(() => [CommentThread], {
+  @ResolveField(() => [Activity], {
     nullable: false,
   })
-  async commentThreads(
+  async activities(
     @Root() person: Person,
-    @PrismaSelector({ modelName: 'CommentThread' })
-    prismaSelect: PrismaSelect<'CommentThread'>,
-  ): Promise<Partial<CommentThread>[]> {
-    return await this.commentThreadService.findMany({
+    @PrismaSelector({ modelName: 'Activity' })
+    prismaSelect: PrismaSelect<'Activity'>,
+  ): Promise<Partial<Activity>[]> {
+    return await this.activityService.findMany({
       where: {
-        commentThreadTargets: {
+        activityTargets: {
           some: {
             commentableId: person.id,
             commentableType: 'Person',
@@ -48,8 +48,8 @@ export class PersonRelationsResolver {
   ): Promise<Partial<Comment>[]> {
     return this.commentService.findMany({
       where: {
-        commentThread: {
-          commentThreadTargets: {
+        activity: {
+          activityTargets: {
             some: {
               commentableId: person.id,
               commentableType: 'Person',
@@ -64,10 +64,10 @@ export class PersonRelationsResolver {
   @ResolveField(() => Int, {
     nullable: false,
   })
-  async _commentThreadCount(@Root() person: Person): Promise<number> {
-    return this.commentThreadService.count({
+  async _activityCount(@Root() person: Person): Promise<number> {
+    return this.activityService.count({
       where: {
-        commentThreadTargets: {
+        activityTargets: {
           some: {
             commentableId: person.id,
             commentableType: 'Person',

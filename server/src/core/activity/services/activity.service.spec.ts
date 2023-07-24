@@ -3,15 +3,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from 'src/database/prisma.service';
 import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
 
-import { CommentThreadTargetService } from './comment-thread-target.service';
+import { ActivityService } from './activity.service';
 
-describe('CommentThreadTargetService', () => {
-  let service: CommentThreadTargetService;
+describe('ActivityService', () => {
+  let service: ActivityService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CommentThreadTargetService,
+        ActivityService,
         {
           provide: PrismaService,
           useValue: prismaMock,
@@ -19,9 +19,7 @@ describe('CommentThreadTargetService', () => {
       ],
     }).compile();
 
-    service = module.get<CommentThreadTargetService>(
-      CommentThreadTargetService,
-    );
+    service = module.get<ActivityService>(ActivityService);
   });
 
   it('should be defined', () => {
