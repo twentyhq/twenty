@@ -8,6 +8,11 @@ export enum ChipSize {
   Small = 'small',
 }
 
+export enum ChipAccent {
+  TextPrimary = 'text-primary',
+  TextSecondary = 'text-secondary',
+}
+
 export enum ChipVariant {
   Highlighted = 'highlighted',
   Regular = 'regular',
@@ -21,6 +26,7 @@ type OwnProps = {
   label: string;
   maxWidth?: string;
   variant?: ChipVariant;
+  accent?: ChipAccent;
   leftComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
   className?: string;
@@ -34,8 +40,12 @@ const StyledContainer = styled.div<Partial<OwnProps>>`
       ? theme.background.transparent.light
       : 'transparent'};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme, disabled }) =>
-    disabled ? theme.font.color.light : theme.font.color.primary};
+  color: ${({ theme, disabled, accent }) =>
+    disabled
+      ? theme.font.color.light
+      : accent === ChipAccent.TextPrimary
+      ? theme.font.color.primary
+      : theme.font.color.secondary};
   cursor: ${({ clickable, disabled, variant }) =>
     disabled || variant === ChipVariant.Transparent
       ? 'auto'
@@ -98,6 +108,7 @@ export function Chip({
   variant = ChipVariant.Regular,
   leftComponent,
   rightComponent,
+  accent = ChipAccent.TextPrimary,
   maxWidth,
   className,
 }: OwnProps) {
@@ -106,9 +117,11 @@ export function Chip({
       data-testid="chip"
       clickable={clickable}
       variant={variant}
+      accent={accent}
       size={size}
       disabled={disabled}
       className={className}
+      maxWidth={maxWidth}
     >
       {leftComponent}
       <StyledLabel>
