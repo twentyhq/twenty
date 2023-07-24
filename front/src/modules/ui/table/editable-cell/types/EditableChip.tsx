@@ -9,7 +9,7 @@ export type EditableChipProps = {
   value: string;
   editModeHorizontalAlign?: 'left' | 'right';
   ChipComponent: React.ReactNode;
-  commentThreadCount?: number;
+  activityCount?: number;
   onCommentClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   rightEndContents?: ReactNode[];
   onSubmit?: (newValue: string) => void;

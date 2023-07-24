@@ -18,19 +18,15 @@ import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { MultipleEntitySelect } from '@/ui/relation-picker/components/MultipleEntitySelect';
 import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
-import {
-  CommentableType,
-  CommentThread,
-  CommentThreadTarget,
-} from '~/generated/graphql';
+import { Activity, ActivityTarget, CommentableType } from '~/generated/graphql';
 
-import { useHandleCheckableCommentThreadTargetChange } from '../hooks/useHandleCheckableCommentThreadTargetChange';
+import { useHandleCheckableActivityTargetChange } from '../hooks/useHandleCheckableActivityTargetChange';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '../utils/flatMapAndSortEntityForSelectArrayByName';
 
 type OwnProps = {
-  commentThread?: Pick<CommentThread, 'id'> & {
-    commentThreadTargets: Array<
-      Pick<CommentThreadTarget, 'id' | 'commentableId' | 'commentableType'>
+  activity?: Pick<Activity, 'id'> & {
+    activityTargets: Array<
+      Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
     >;
   };
 };
@@ -75,7 +71,7 @@ const StyledMenuWrapper = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
 
-export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
+export function ActivityRelationPicker({ activity }: OwnProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
   const [selectedEntityIds, setSelectedEntityIds] = useState<
@@ -88,17 +84,17 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
 
   const initialPeopleIds = useMemo(
     () =>
-      commentThread?.commentThreadTargets
+      activity?.activityTargets
         ?.filter((relation) => relation.commentableType === 'Person')
         .map((relation) => relation.commentableId) ?? [],
-    [commentThread?.commentThreadTargets],
+    [activity?.activityTargets],
   );
   const initialCompanyIds = useMemo(
     () =>
-      commentThread?.commentThreadTargets
+      activity?.activityTargets
         ?.filter((relation) => relation.commentableType === 'Company')
         .map((relation) => relation.commentableId) ?? [],
-    [commentThread?.commentThreadTargets],
+    [activity?.activityTargets],
   );
 
   const initialSelectedEntityIds = useMemo(
@@ -135,8 +131,8 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     companiesForMultiSelect.entitiesToSelect,
   ]);
 
-  const handleCheckItemsChange = useHandleCheckableCommentThreadTargetChange({
-    commentThread,
+  const handleCheckItemsChange = useHandleCheckableActivityTargetChange({
+    activity,
   });
 
   const exitEditMode = useCallback(() => {

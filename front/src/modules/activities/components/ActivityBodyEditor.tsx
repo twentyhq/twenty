@@ -6,24 +6,21 @@ import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 
 import { BlockEditor } from '@/ui/editor/components/BlockEditor';
-import {
-  CommentThread,
-  useUpdateCommentThreadMutation,
-} from '~/generated/graphql';
+import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
 
-import { GET_COMMENT_THREADS_BY_TARGETS } from '../queries/select';
+import { GET_ACTIVITIES_BY_TARGETS } from '../queries/select';
 
 const BlockNoteStyledContainer = styled.div`
   width: 100%;
 `;
 
 type OwnProps = {
-  commentThread: Pick<CommentThread, 'id' | 'body'>;
-  onChange?: (commentThreadBody: string) => void;
+  activity: Pick<Activity, 'id' | 'body'>;
+  onChange?: (activityBody: string) => void;
 };
 
-export function CommentThreadBodyEditor({ commentThread, onChange }: OwnProps) {
-  const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
+export function ActivityBodyEditor({ activity, onChange }: OwnProps) {
+  const [updateActivityMutation] = useUpdateActivityMutation();
 
   const [body, setBody] = useState<string | null>(null);
 
@@ -34,26 +31,22 @@ export function CommentThreadBodyEditor({ commentThread, onChange }: OwnProps) {
   }, [body, onChange]);
 
   const debounceOnChange = useMemo(() => {
-    function onInternalChange(commentThreadBody: string) {
-      setBody(commentThreadBody);
-      updateCommentThreadMutation({
+    function onInternalChange(activityBody: string) {
+      setBody(activityBody);
+      updateActivityMutation({
         variables: {
-          id: commentThread.id,
-          body: commentThreadBody,
+          id: activity.id,
+          body: activityBody,
         },
-        refetchQueries: [
-          getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
-        ],
+        refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
       });
     }
 
     return debounce(onInternalChange, 200);
-  }, [commentThread, updateCommentThreadMutation, setBody]);
+  }, [activity, updateActivityMutation, setBody]);
 
   const editor: BlockNoteEditor | null = useBlockNote({
-    initialContent: commentThread.body
-      ? JSON.parse(commentThread.body)
-      : undefined,
+    initialContent: activity.body ? JSON.parse(activity.body) : undefined,
     editorDOMAttributes: { class: 'editor' },
     onEditorContentChange: (editor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');

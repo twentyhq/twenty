@@ -4,26 +4,26 @@ import {
 } from '@/ui/button/components/DropdownButton';
 import { IconCheck, IconNotes } from '@/ui/icon';
 import {
+  Activity,
   ActivityType,
-  CommentThread,
-  useUpdateCommentThreadMutation,
+  useUpdateActivityMutation,
 } from '~/generated/graphql';
 
 type OwnProps = {
-  commentThread: Pick<CommentThread, 'id' | 'type'>;
+  activity: Pick<Activity, 'id' | 'type'>;
 };
 
-export function CommentThreadTypeDropdown({ commentThread }: OwnProps) {
-  const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
+export function ActivityTypeDropdown({ activity }: OwnProps) {
+  const [updateActivityMutation] = useUpdateActivityMutation();
   const options: DropdownOptionType[] = [
     { label: 'Note', key: 'note', icon: <IconNotes /> },
     { label: 'Task', key: 'task', icon: <IconCheck /> },
   ];
 
   function getSelectedOptionKey() {
-    if (commentThread.type === ActivityType.Note) {
+    if (activity.type === ActivityType.Note) {
       return 'note';
-    } else if (commentThread.type === ActivityType.Task) {
+    } else if (activity.type === ActivityType.Task) {
       return 'task';
     } else {
       return undefined;
@@ -42,9 +42,9 @@ export function CommentThreadTypeDropdown({ commentThread }: OwnProps) {
   };
 
   const handleSelect = (selectedOption: DropdownOptionType) => {
-    updateCommentThreadMutation({
+    updateActivityMutation({
       variables: {
-        id: commentThread.id,
+        id: activity.id,
         type: convertSelectionOptionKeyToActivityType(selectedOption.key),
       },
     });

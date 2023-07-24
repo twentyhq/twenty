@@ -4,18 +4,15 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { fireEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import {
-  GET_COMMENT_THREAD,
-  GET_COMMENT_THREADS_BY_TARGETS,
-} from '@/activities/queries';
-import { CREATE_COMMENT_THREAD_WITH_COMMENT } from '@/activities/queries/create';
+import { GET_ACTIVITIES_BY_TARGETS, GET_ACTIVITY } from '@/activities/queries';
+import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/queries/create';
 import { GET_COMPANY } from '@/companies/queries';
 import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedCommentThreads } from '~/testing/mock-data/comment-threads';
+import { mockedActivities } from '~/testing/mock-data/activities';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 
 import { CompanyShow } from '../CompanyShow';
@@ -82,25 +79,22 @@ export const EditNote: Story = {
     msw: [
       ...meta.parameters?.msw,
       graphql.mutation(
-        getOperationName(CREATE_COMMENT_THREAD_WITH_COMMENT) ?? '',
+        getOperationName(CREATE_ACTIVITY_WITH_COMMENT) ?? '',
         (req, res, ctx) => {
           return res(
             ctx.data({
-              createOneCommentThread: mockedCommentThreads[0],
+              createOneActivity: mockedActivities[0],
             }),
           );
         },
       ),
-      graphql.query(
-        getOperationName(GET_COMMENT_THREAD) ?? '',
-        (req, res, ctx) => {
-          return res(
-            ctx.data({
-              findManyCommentThreads: [mockedCommentThreads[0]],
-            }),
-          );
-        },
-      ),
+      graphql.query(getOperationName(GET_ACTIVITY) ?? '', (req, res, ctx) => {
+        return res(
+          ctx.data({
+            findManyActivitys: [mockedActivities[0]],
+          }),
+        );
+      }),
     ],
   },
 };

@@ -1,15 +1,14 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { CommentThreadCreateButton } from '@/activities/components/CommentThreadCreateButton';
-import { useOpenCreateCommentThreadDrawer } from '@/activities/hooks/useOpenCreateCommentThreadDrawer';
+import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { CommentableEntity } from '@/activities/types/CommentableEntity';
-import { CommentThreadForDrawer } from '@/activities/types/CommentThreadForDrawer';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import {
   ActivityType,
   SortOrder,
-  useGetCommentThreadsByTargetsQuery,
+  useGetActivitiesByTargetsQuery,
 } from '~/generated/graphql';
 
 import { TimelineActivity } from './TimelineActivity';
@@ -84,9 +83,9 @@ const StyledTopActionBar = styled.div`
 `;
 
 export function Timeline({ entity }: { entity: CommentableEntity }) {
-  const { data: queryResult, loading } = useGetCommentThreadsByTargetsQuery({
+  const { data: queryResult, loading } = useGetActivitiesByTargetsQuery({
     variables: {
-      commentThreadTargetIds: [entity.id],
+      activityTargetIds: [entity.id],
       orderBy: [
         {
           createdAt: SortOrder.Desc,
@@ -95,21 +94,20 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     },
   });
 
-  const openCreateCommandThread = useOpenCreateCommentThreadDrawer();
+  const openCreateCommandThread = useOpenCreateActivityDrawer();
 
-  const commentThreads: CommentThreadForDrawer[] =
-    queryResult?.findManyCommentThreads ?? [];
+  const activitys: ActivityForDrawer[] = queryResult?.findManyActivities ?? [];
 
   if (loading) {
     return <></>;
   }
 
-  if (!commentThreads.length) {
+  if (!activitys.length) {
     return (
       <StyledTimelineEmptyContainer>
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
         <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
-        <CommentThreadCreateButton
+        <ActivityCreateButton
           onNoteClick={() => openCreateCommandThread(entity, ActivityType.Note)}
           onTaskClick={() => openCreateCommandThread(entity, ActivityType.Task)}
         />
@@ -120,16 +118,20 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
   return (
     <StyledMainContainer>
       <StyledTopActionBar>
-        <CommentThreadCreateButton
-          onNoteClick={() => openCreateCommandThread(entity, ActivityType.Note)}
-          onTaskClick={() => openCreateCommandThread(entity, ActivityType.Task)}
-        />
+          <ActivityCreateButton
+            onNoteClick={() =>
+              openCreateCommandThread(entity, ActivityType.Note)
+            }
+            onTaskClick={() =>
+              openCreateCommandThread(entity, ActivityType.Task)
+            }
+          />
       </StyledTopActionBar>
       <StyledTimelineContainer>
-        {commentThreads.map((commentThread) => (
+        {activities.map((activity) => (
           <TimelineActivity
-            key={commentThread.id}
-            commentThread={commentThread}
+            key={activity.id}
+            commentThread={activity}
           />
         ))}
       </StyledTimelineContainer>

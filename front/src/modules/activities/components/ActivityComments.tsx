@@ -6,15 +6,15 @@ import { v4 } from 'uuid';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
-import { CommentThread, useCreateCommentMutation } from '~/generated/graphql';
+import { Activity, useCreateCommentMutation } from '~/generated/graphql';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { Comment } from '../comment/Comment';
-import { GET_COMMENT_THREAD } from '../queries';
+import { GET_ACTIVITY } from '../queries';
 import { CommentForDrawer } from '../types/CommentForDrawer';
 
 type OwnProps = {
-  commentThread: Pick<CommentThread, 'id'> & {
+  activity: Pick<Activity, 'id'> & {
     comments: Array<CommentForDrawer>;
   };
 };
@@ -52,7 +52,7 @@ const StyledThreadCommentTitle = styled.div`
   text-transform: uppercase;
 `;
 
-export function CommentThreadComments({ commentThread }: OwnProps) {
+export function ActivityComments({ activity }: OwnProps) {
   const [createCommentMutation] = useCreateCommentMutation();
   const currentUser = useRecoilValue(currentUserState);
 
@@ -69,21 +69,21 @@ export function CommentThreadComments({ commentThread }: OwnProps) {
       variables: {
         commentId: v4(),
         authorId: currentUser?.id ?? '',
-        commentThreadId: commentThread?.id ?? '',
+        activityId: activity?.id ?? '',
         commentText: commentText,
         createdAt: new Date().toISOString(),
       },
-      refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
+      refetchQueries: [getOperationName(GET_ACTIVITY) ?? ''],
     });
   }
 
   return (
     <>
-      {commentThread?.comments.length > 0 && (
+      {activity?.comments.length > 0 && (
         <>
           <StyledThreadItemListContainer>
             <StyledThreadCommentTitle>Comments</StyledThreadCommentTitle>
-            {commentThread?.comments?.map((comment, index) => (
+            {activity?.comments?.map((comment, index) => (
               <Comment key={comment.id} comment={comment} />
             ))}
           </StyledThreadItemListContainer>

@@ -4,17 +4,17 @@ import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/icon/index';
 
-type CommentThreadCreateButtonProps = {
+type ActivityCreateButtonProps = {
   onNoteClick?: () => void;
   onTaskClick?: () => void;
   onActivityClick?: () => void;
 };
 
-export function CommentThreadCreateButton({
+export function ActivityCreateButton({
   onNoteClick,
   onTaskClick,
   onActivityClick,
-}: CommentThreadCreateButtonProps) {
+}: ActivityCreateButtonProps) {
   const theme = useTheme();
   return (
     <ButtonGroup variant={ButtonVariant.Secondary}>
