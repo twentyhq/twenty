@@ -15,6 +15,7 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: { currentPath: '/sign-in' },
   parameters: {
+    docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
     cookie: {
       tokenPair: '{}',

@@ -13,6 +13,7 @@ const meta: Meta<typeof RoundedIconButton> = {
   title: 'UI/Button/RoundedIconButton',
   component: RoundedIconButton,
   decorators: [ComponentDecorator],
+  argTypes: { icon: { control: false } },
   args: { onClick: clickJestFn, icon: <IconArrowRight size={15} /> },
 };
 

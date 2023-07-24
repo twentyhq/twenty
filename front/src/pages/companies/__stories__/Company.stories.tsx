@@ -26,6 +26,7 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: { currentPath: '/companies/89bb825c-171e-4bcc-9cf7-43448d6fb278' },
   parameters: {
+    docs: { story: 'inline', iframeHeight: '500px' },
     msw: [
       ...graphqlMocks,
       graphql.query(

@@ -23,6 +23,7 @@ const meta: Meta<PageDecoratorArgs> = {
   ],
   args: { currentPath: `/person/${mockedPeopleData[0].id}` },
   parameters: {
+    docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
   },
 };

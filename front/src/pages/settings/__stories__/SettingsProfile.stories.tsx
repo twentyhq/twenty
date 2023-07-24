@@ -15,6 +15,7 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: { currentPath: '/settings/profile' },
   parameters: {
+    docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
   },
 };
