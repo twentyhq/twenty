@@ -12,9 +12,6 @@ import { UpdateOneCompanyArgs } from 'src/core/@generated/company/update-one-com
 import { CreateOneCompanyArgs } from 'src/core/@generated/company/create-one-company.args';
 import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
 import { DeleteManyCompanyArgs } from 'src/core/@generated/company/delete-many-company.args';
-import { UpdateOneGuard } from 'src/guards/update-one.guard';
-import { DeleteManyGuard } from 'src/guards/delete-many.guard';
-import { CreateOneGuard } from 'src/guards/create-one.guard';
 import {
   PrismaSelect,
   PrismaSelector,
@@ -78,7 +75,6 @@ export class CompanyResolver {
     });
   }
 
-  @UseGuards(UpdateOneGuard)
   @Mutation(() => Company, {
     nullable: true,
   })
@@ -96,7 +92,6 @@ export class CompanyResolver {
     } as Prisma.CompanyUpdateArgs);
   }
 
-  @UseGuards(DeleteManyGuard)
   @Mutation(() => AffectedRows, {
     nullable: false,
   })
@@ -110,7 +105,6 @@ export class CompanyResolver {
     });
   }
 
-  @UseGuards(CreateOneGuard)
   @Mutation(() => Company, {
     nullable: false,
   })

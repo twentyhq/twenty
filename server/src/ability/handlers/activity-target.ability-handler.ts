@@ -12,68 +12,68 @@ import { IAbilityHandler } from 'src/ability/interfaces/ability-handler.interfac
 import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
-import { CommentThreadWhereInput } from 'src/core/@generated/comment-thread/comment-thread-where.input';
 import { assert } from 'src/utils/assert';
+import { ActivityTargetWhereInput } from 'src/core/@generated/activity-target/activity-target-where.input';
 
-class CommentThreadArgs {
-  where?: CommentThreadWhereInput;
+class ActivityTargetArgs {
+  where?: ActivityTargetWhereInput;
 }
 
 @Injectable()
-export class ManageCommentThreadAbilityHandler implements IAbilityHandler {
+export class ManageActivityTargetAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility) {
-    return ability.can(AbilityAction.Manage, 'CommentThread');
+    return ability.can(AbilityAction.Manage, 'ActivityTarget');
   }
 }
 
 @Injectable()
-export class ReadCommentThreadAbilityHandler implements IAbilityHandler {
+export class ReadActivityTargetAbilityHandler implements IAbilityHandler {
   handle(ability: AppAbility) {
-    return ability.can(AbilityAction.Read, 'CommentThread');
+    return ability.can(AbilityAction.Read, 'ActivityTarget');
   }
 }
 
 @Injectable()
-export class CreateCommentThreadAbilityHandler implements IAbilityHandler {
+export class CreateActivityTargetAbilityHandler implements IAbilityHandler {
   handle(ability: AppAbility) {
-    return ability.can(AbilityAction.Create, 'CommentThread');
+    return ability.can(AbilityAction.Create, 'ActivityTarget');
   }
 }
 
 @Injectable()
-export class UpdateCommentThreadAbilityHandler implements IAbilityHandler {
+export class UpdateActivityTargetAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
-    const args = gqlContext.getArgs<CommentThreadArgs>();
-    const commentThread = await this.prismaService.commentThread.findFirst({
+    const args = gqlContext.getArgs<ActivityTargetArgs>();
+    const ActivityTarget = await this.prismaService.activityTarget.findFirst({
       where: args.where,
     });
-    assert(commentThread, '', NotFoundException);
+    assert(ActivityTarget, '', NotFoundException);
 
     return ability.can(
       AbilityAction.Update,
-      subject('CommentThread', commentThread),
+      subject('ActivityTarget', ActivityTarget),
     );
   }
 }
 
 @Injectable()
-export class DeleteCommentThreadAbilityHandler implements IAbilityHandler {
+export class DeleteActivityTargetAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
-    const args = gqlContext.getArgs<CommentThreadArgs>();
-    const commentThread = await this.prismaService.commentThread.findFirst({
+    const args = gqlContext.getArgs<ActivityTargetArgs>();
+    const ActivityTarget = await this.prismaService.activityTarget.findFirst({
       where: args.where,
     });
-    assert(commentThread, '', NotFoundException);
+    assert(ActivityTarget, '', NotFoundException);
 
     return ability.can(
       AbilityAction.Delete,
-      subject('CommentThread', commentThread),
+      subject('ActivityTarget', ActivityTarget),
     );
   }
 }

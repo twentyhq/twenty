@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { ActivityService } from 'src/core/activity/services/activity.service';
 import { AbilityFactory } from 'src/ability/ability.factory';
 
-import { PersonService } from './person.service';
-import { PersonResolver } from './person.resolver';
+import { ActivityResolver } from './activity.resolver';
 
-describe('PersonResolver', () => {
-  let resolver: PersonResolver;
+describe('ActivityResolver', () => {
+  let resolver: ActivityResolver;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        PersonResolver,
+        ActivityResolver,
         {
-          provide: PersonService,
+          provide: ActivityService,
           useValue: {},
         },
         {
@@ -23,7 +23,7 @@ describe('PersonResolver', () => {
       ],
     }).compile();
 
-    resolver = module.get<PersonResolver>(PersonResolver);
+    resolver = module.get<ActivityResolver>(ActivityResolver);
   });
 
   it('should be defined', () => {

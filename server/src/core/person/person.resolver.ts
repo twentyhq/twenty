@@ -18,11 +18,7 @@ import { UpdateOnePersonArgs } from 'src/core/@generated/person/update-one-perso
 import { CreateOnePersonArgs } from 'src/core/@generated/person/create-one-person.args';
 import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
 import { DeleteManyPersonArgs } from 'src/core/@generated/person/delete-many-person.args';
-import { Workspace } from 'src/core/@generated/workspace/workspace.model';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
-import { UpdateOneGuard } from 'src/guards/update-one.guard';
-import { DeleteManyGuard } from 'src/guards/delete-many.guard';
-import { CreateOneGuard } from 'src/guards/create-one.guard';
 import {
   PrismaSelect,
   PrismaSelector,
@@ -37,6 +33,7 @@ import {
 } from 'src/ability/handlers/person.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
+import { Workspace } from 'src/core/@generated/workspace/workspace.model';
 
 import { PersonService } from './person.service';
 
@@ -95,7 +92,6 @@ export class PersonResolver {
     return `${parent.firstName ?? ''} ${parent.lastName ?? ''}`;
   }
 
-  @UseGuards(UpdateOneGuard)
   @Mutation(() => Person, {
     nullable: true,
   })
@@ -128,7 +124,6 @@ export class PersonResolver {
     } as Prisma.PersonUpdateArgs);
   }
 
-  @UseGuards(DeleteManyGuard)
   @Mutation(() => AffectedRows, {
     nullable: false,
   })
@@ -142,7 +137,6 @@ export class PersonResolver {
     });
   }
 
-  @UseGuards(CreateOneGuard)
   @Mutation(() => Person, {
     nullable: false,
   })

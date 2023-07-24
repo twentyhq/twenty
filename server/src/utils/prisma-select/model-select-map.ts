@@ -9,9 +9,9 @@ export type ModelSelectMap = {
   Company: Prisma.CompanySelect;
   Person: Prisma.PersonSelect;
   RefreshToken: Prisma.RefreshTokenSelect;
-  CommentThread: Prisma.CommentThreadSelect;
+  Activity: Prisma.ActivitySelect;
   Comment: Prisma.CommentSelect;
-  CommentThreadTarget: Prisma.CommentThreadTargetSelect;
+  ActivityTarget: Prisma.ActivityTargetSelect;
   Pipeline: Prisma.PipelineSelect;
   PipelineStage: Prisma.PipelineStageSelect;
   PipelineProgress: Prisma.PipelineProgressSelect;
