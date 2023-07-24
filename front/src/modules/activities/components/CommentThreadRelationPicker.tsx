@@ -12,7 +12,7 @@ import { CompanyChip } from '@/companies/components/CompanyChip';
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
 import { PersonChip } from '@/people/components/PersonChip';
 import { useFilteredSearchPeopleQuery } from '@/people/queries';
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 import { usePreviousHotkeyScope } from '@/ui/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
@@ -194,7 +194,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
     placement: 'bottom-start',
   });
 
-  useListenClickOutsideArrayOfRef({
+  useListenClickOutside({
     refs: [refs.floating, refs.domReference],
     callback: () => {
       exitEditMode();

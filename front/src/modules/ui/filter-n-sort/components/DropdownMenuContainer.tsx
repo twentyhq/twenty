@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
-import { useListenClickOutsideArrayOfRef } from '../../hooks/useListenClickOutsideArrayOfRef';
+import { useListenClickOutside } from '../../hooks/useListenClickOutside';
 
 export const StyledDropdownMenuContainer = styled.ul`
   position: absolute;
@@ -19,7 +19,7 @@ export function DropdownMenuContainer({
 }) {
   const dropdownRef = useRef(null);
 
-  useListenClickOutsideArrayOfRef({
+  useListenClickOutside({
     refs: [dropdownRef],
     callback: () => {
       onClose?.();

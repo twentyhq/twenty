@@ -3,10 +3,12 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useIsSubNavbarDisplayed } from '@/ui/layout/hooks/useIsSubNavbarDisplayed';
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
+import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
 import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
-import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
+
+import { leftNavbarWidth, leftSubMenuNavbarWidth } from '../constants';
 
 const StyledNavbarContainer = styled(motion.div)`
   align-items: end;
@@ -15,27 +17,29 @@ const StyledNavbarContainer = styled(motion.div)`
   flex-shrink: 0;
   overflow: hidden;
   padding: ${({ theme }) => theme.spacing(2)};
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: ${(props) =>
-      useRecoilValue(isNavbarOpenedState)
-        ? `calc(100% - ` + props.theme.spacing(4) + `)`
-        : '0'};
-  }
 `;
 
 type NavbarProps = {
   children: React.ReactNode;
-  layout?: string;
 };
 
-export function NavbarAnimatedContainer({ children, layout }: NavbarProps) {
+export function NavbarAnimatedContainer({ children }: NavbarProps) {
   const isMenuOpened = useRecoilValue(isNavbarOpenedState);
   const [, setIsNavbarSwitchingSize] = useRecoilState(
     isNavbarSwitchingSizeState,
   );
-  const isSubNavbarDisplayed = useIsSubNavbarDisplayed();
+  const isInSubMenu = useIsSubMenuNavbarDisplayed();
   const theme = useTheme();
+
+  const isMobile = useIsMobile();
+
+  const leftBarWidth = isInSubMenu
+    ? isMobile
+      ? leftSubMenuNavbarWidth.mobile
+      : leftSubMenuNavbarWidth.desktop
+    : isMobile
+    ? leftNavbarWidth.mobile
+    : leftNavbarWidth.desktop;
 
   return (
     <StyledNavbarContainer
@@ -43,7 +47,7 @@ export function NavbarAnimatedContainer({ children, layout }: NavbarProps) {
         setIsNavbarSwitchingSize(false);
       }}
       animate={{
-        width: isMenuOpened ? (isSubNavbarDisplayed ? '520px' : '220px') : '0',
+        width: isMenuOpened ? leftBarWidth : '0',
         opacity: isMenuOpened ? 1 : 0,
       }}
       transition={{

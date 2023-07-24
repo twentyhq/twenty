@@ -5,13 +5,15 @@ import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import {
   ClickOutsideMode,
-  useListenClickOutsideArrayOfRef,
-} from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+  useListenClickOutside,
+} from '@/ui/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 import { useScopedHotkeys } from '../../hotkey/hooks/useScopedHotkeys';
+import { leftNavbarWidth } from '../../navbar/constants';
 import { useRightDrawer } from '../hooks/useRightDrawer';
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -51,7 +53,7 @@ export function RightDrawer() {
 
   const rightDrawerRef = useRef(null);
 
-  useListenClickOutsideArrayOfRef({
+  useListenClickOutside({
     refs: [rightDrawerRef],
     callback: () => closeRightDrawer(),
     mode: ClickOutsideMode.absolute,
@@ -66,15 +68,21 @@ export function RightDrawer() {
     [setIsRightDrawerOpen],
   );
 
+  const isMobile = useIsMobile();
+
   const rightDrawerWidthExpanded = `calc(100% - ${
-    theme.leftNavBarWidth
+    leftNavbarWidth.desktop
   } - ${theme.spacing(2)})`;
 
   const rightDrawerWidth = isRightDrawerOpen
-    ? isRightDrawerExpanded
+    ? isMobile
+      ? '100%'
+      : isRightDrawerExpanded
       ? rightDrawerWidthExpanded
       : theme.rightDrawerWidth
     : '0';
+
+  console.log(rightDrawerWidth);
 
   if (!isDefined(rightDrawerPage)) {
     return <></>;

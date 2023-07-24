@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ColorSchemePicker } from '@/ui/color-scheme/components/ColorSchemePicker';
-import { NoTopBarContainer } from '@/ui/layout/components/NoTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { useColorScheme } from '@/ui/themes/hooks/useColorScheme';
 import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
@@ -27,7 +27,7 @@ export function SettingsExperience() {
   const { colorScheme, setColorScheme } = useColorScheme();
 
   return (
-    <NoTopBarContainer>
+    <SubMenuTopBarContainer>
       <div>
         <StyledContainer>
           <MainSectionTitle>Experience</MainSectionTitle>
@@ -37,6 +37,6 @@ export function SettingsExperience() {
           </StyledSectionContainer>
         </StyledContainer>
       </div>
-    </NoTopBarContainer>
+    </SubMenuTopBarContainer>
   );
 }
