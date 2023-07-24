@@ -15,29 +15,21 @@ export function EditablePeoplePhoneCell() {
     peoplePhoneFamilyState(currentRowEntityId ?? ''),
   );
 
-  const [internalValue, setInternalValue] = useState(phone ?? '');
-
-  useEffect(() => {
-    setInternalValue(phone ?? '');
-  }, [phone]);
-
   return (
     <EditableCellPhone
-      value={internalValue}
-      onChange={setInternalValue}
-      onSubmit={() =>
+      value={phone?.toString() ?? ''}
+      onSubmit={(newPhone) =>
         updatePerson({
           variables: {
             where: {
               id: currentRowEntityId,
             },
             data: {
-              phone: internalValue,
+              phone: newPhone,
             },
           },
         })
       }
-      onCancel={() => setInternalValue(phone ?? '')}
     />
   );
 }

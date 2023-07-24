@@ -17,6 +17,7 @@
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
     "@types/react-modal": "^3.16.0",
+    "afterframe": "^1.0.2",
     "apollo-link-rest": "^0.9.0",
     "apollo-upload-client": "^17.0.0",
     "cmdk": "^0.2.0",

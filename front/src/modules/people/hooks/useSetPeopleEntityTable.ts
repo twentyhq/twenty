@@ -1,7 +1,17 @@
+import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
 import { GetPeopleQuery } from '~/generated/graphql';
 
+import { peopleFilters } from '../../../pages/people/people-filters';
+import { availableFiltersScopedState } from '../../ui/filter-n-sort/states/availableFiltersScopedState';
+import { useContextScopeId } from '../../ui/recoil-scope/hooks/useContextScopeId';
+import { currentPageLocationState } from '../../ui/states/currentPageLocationState';
+import { useResetTableRowSelection } from '../../ui/table/hooks/useResetTableRowSelection';
+import { entityTableDimensionsState } from '../../ui/table/states/entityTableDimensionsState';
+import { isFetchingEntityTableDataState } from '../../ui/table/states/isFetchingEntityTableDataState';
+import { TableContext } from '../../ui/table/states/TableContext';
+import { tableRowIdsState } from '../../ui/table/states/tableRowIdsState';
 import { peopleCityFamilyState } from '../states/peopleCityFamilyState';
 import { peopleCompanyFamilyState } from '../states/peopleCompanyFamilyState';
 import { peopleCreatedAtFamilyState } from '../states/peopleCreatedAtFamilyState';
@@ -10,8 +20,15 @@ import { peopleJobTitleFamilyState } from '../states/peopleJobTitleFamilyState';
 import { peopleLinkedinUrlFamilyState } from '../states/peopleLinkedinUrlFamilyState';
 import { peopleNameCellFamilyState } from '../states/peopleNamesFamilyState';
 import { peoplePhoneFamilyState } from '../states/peoplePhoneFamilyState';
+import { peopleColumns } from '../table/components/peopleColumns';
 
 export function useSetPeopleEntityTable() {
+  const resetTableRowSelection = useResetTableRowSelection();
+
+  const tableContextScopeId = useContextScopeId(TableContext);
+
+  const currentLocation = useLocation().pathname;
+
   return useRecoilCallback(
     ({ set, snapshot }) =>
       (newPeopleArray: GetPeopleQuery['people']) => {
@@ -94,6 +111,31 @@ export function useSetPeopleEntityTable() {
             });
           }
         }
+
+        const peopleIds = newPeopleArray.map((people) => people.id);
+
+        set(tableRowIdsState, (currentRowIds) => {
+          if (JSON.stringify(currentRowIds) !== JSON.stringify(peopleIds)) {
+            return peopleIds;
+          }
+
+          return currentRowIds;
+        });
+
+        resetTableRowSelection();
+
+        set(entityTableDimensionsState, {
+          numberOfColumns: peopleColumns.length,
+          numberOfRows: peopleIds.length,
+        });
+
+        set(availableFiltersScopedState(tableContextScopeId), peopleFilters);
+
+        set(currentPageLocationState, currentLocation);
+
+        set(isFetchingEntityTableDataState, false);
+
+        console.timeEnd('useSetPeopleEntityTable');
       },
     [],
   );

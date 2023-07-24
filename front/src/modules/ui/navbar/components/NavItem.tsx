@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import afterFrame from 'afterframe';
 
 import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
 
@@ -12,6 +13,7 @@ type OwnProps = {
   icon: ReactNode;
   danger?: boolean;
   soon?: boolean;
+  measurePageLoad?: boolean;
 };
 
 type StyledItemProps = {
@@ -77,7 +79,16 @@ const StyledSoonPill = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
+function NavItem({
+  label,
+  icon,
+  to,
+  onClick,
+  active,
+  danger,
+  soon,
+  measurePageLoad,
+}: OwnProps) {
   const navigate = useNavigate();
 
   const onItemClick = () => {
@@ -86,6 +97,16 @@ function NavItem({ label, icon, to, onClick, active, danger, soon }: OwnProps) {
       return;
     }
     if (to) {
+      if (measurePageLoad) {
+        const timerId = `Loading time for route : ${to}`;
+
+        console.time(timerId);
+
+        afterFrame(() => {
+          console.timeEnd(timerId);
+        });
+      }
+
       navigate(to);
       return;
     }

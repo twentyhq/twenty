@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { InplaceInputTextEditMode } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
+import { StyledInput } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
 
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
@@ -107,7 +107,7 @@ export function EditableCellDoubleTextEditMode({
 
   return (
     <StyledContainer>
-      <InplaceInputTextEditMode
+      <StyledInput
         autoFocus
         placeholder={firstValuePlaceholder}
         ref={firstValueInputRef}
@@ -116,7 +116,7 @@ export function EditableCellDoubleTextEditMode({
           onChange(event.target.value, secondValue);
         }}
       />
-      <InplaceInputTextEditMode
+      <StyledInput
         placeholder={secondValuePlaceholder}
         ref={secondValueInputRef}
         value={secondValue}

@@ -36,30 +36,21 @@ type OwnProps = {
   maxContentWidth?: number;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  onOutsideClick?: () => void;
-  onCancel?: () => void;
-  onSubmit?: () => void;
+  initialValue?: string;
 };
 
 export function EditableCellEditMode({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
-  onCancel,
-  onSubmit,
   transparent = false,
   maxContentWidth,
 }: OwnProps) {
-  const wrapperRef = useRef(null);
-
-  useRegisterCloseCellHandlers(wrapperRef, onSubmit, onCancel);
-
   return (
     <EditableCellEditModeContainer
       maxContentWidth={maxContentWidth}
       transparent={transparent}
       data-testid="editable-cell-edit-mode-container"
-      ref={wrapperRef}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeVerticalPosition={editModeVerticalPosition}
     >

@@ -13,29 +13,21 @@ export function EditablePeopleCityCell() {
 
   const city = useRecoilValue(peopleCityFamilyState(currentRowEntityId ?? ''));
 
-  const [internalValue, setInternalValue] = useState(city ?? '');
-
-  useEffect(() => {
-    setInternalValue(city ?? '');
-  }, [city]);
-
   return (
     <EditableCellText
-      value={internalValue}
-      onChange={setInternalValue}
-      onSubmit={() =>
+      value={city ?? ''}
+      onSubmit={(newText) =>
         updatePerson({
           variables: {
             where: {
               id: currentRowEntityId,
             },
             data: {
-              city: internalValue,
+              city: newText,
             },
           },
         })
       }
-      onCancel={() => setInternalValue(city ?? '')}
     />
   );
 }

@@ -28,7 +28,6 @@ export function useSetCompanyEntityTable() {
   const tableContextScopeId = useContextScopeId(TableContext);
 
   const currentLocation = useLocation().pathname;
-  const [, setCurrentPageLocation] = useRecoilState(currentPageLocationState);
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
@@ -112,32 +111,30 @@ export function useSetCompanyEntityTable() {
           if (currentCreatedAt !== company.createdAt) {
             set(companyCreatedAtFamilyState(company.id), company.createdAt);
           }
-
-          const companyIds = newCompanyArray.map((company) => company.id);
-
-          set(tableRowIdsState, (currentRowIds) => {
-            if (JSON.stringify(currentRowIds) !== JSON.stringify(companyIds)) {
-              return companyIds;
-            }
-
-            return currentRowIds;
-          });
-          resetTableRowSelection();
-
-          set(entityTableDimensionsState, {
-            numberOfColumns: companyColumns.length,
-            numberOfRows: companyIds.length,
-          });
-
-          set(
-            availableFiltersScopedState(tableContextScopeId),
-            companiesFilters,
-          );
-
-          set(currentPageLocationState, currentLocation);
-
-          set(isFetchingEntityTableDataState, false);
         }
+
+        const companyIds = newCompanyArray.map((company) => company.id);
+
+        set(tableRowIdsState, (currentRowIds) => {
+          if (JSON.stringify(currentRowIds) !== JSON.stringify(companyIds)) {
+            return companyIds;
+          }
+
+          return currentRowIds;
+        });
+
+        resetTableRowSelection();
+
+        set(entityTableDimensionsState, {
+          numberOfColumns: companyColumns.length,
+          numberOfRows: companyIds.length,
+        });
+
+        set(availableFiltersScopedState(tableContextScopeId), companiesFilters);
+
+        set(currentPageLocationState, currentLocation);
+
+        set(isFetchingEntityTableDataState, false);
       },
     [resetTableRowSelection, tableContextScopeId, currentLocation],
   );

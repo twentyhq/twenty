@@ -2,9 +2,8 @@ import { ApolloProvider } from '@apollo/client';
 import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { CellContext } from '@/ui/table/states/CellContext';
-import { RowContext } from '@/ui/table/states/RowContext';
+import { ColumnIndexContext } from '../modules/ui/table/states/ColumnIndexContext';
+import { RowIndexContext } from '../modules/ui/table/states/RowIndexContext';
 
 import { ComponentStorybookLayout } from './ComponentStorybookLayout';
 import { mockedClient } from './mockedClient';
@@ -24,9 +23,9 @@ export const ComponentDecorator: Decorator = (Story) => (
 );
 
 export const CellPositionDecorator: Decorator = (Story) => (
-  <RecoilScope SpecificContext={RowContext}>
-    <RecoilScope SpecificContext={CellContext}>
+  <RowIndexContext.Provider value={1}>
+    <ColumnIndexContext.Provider value={1}>
       <Story />
-    </RecoilScope>
-  </RecoilScope>
+    </ColumnIndexContext.Provider>
+  </RowIndexContext.Provider>
 );

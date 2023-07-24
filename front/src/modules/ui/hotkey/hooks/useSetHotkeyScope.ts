@@ -80,11 +80,7 @@ export function useSetHotkeyScope() {
 
         scopesToSet.push(newHotkeyScope.scope);
 
-        console.log('scopesToSet', scopesToSet);
-
         set(internalHotkeysEnabledScopesState, scopesToSet);
-
-        // setHotkeyScopes(scopesToSet);
       },
     [],
   );

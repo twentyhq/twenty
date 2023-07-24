@@ -20,5 +20,4 @@ export const INITIAL_HOTKEYS_SCOPE: HotkeyScope = {
     commandMenu: true,
     goto: true,
   },
-  _internalId: 'initial',
 };

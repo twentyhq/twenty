@@ -52,12 +52,14 @@ export function AppNavbar() {
               to="/companies"
               icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
               active={currentPath === '/companies'}
+              measurePageLoad
             />
             <NavItem
               label="People"
               to="/people"
               icon={<IconUser size={theme.icon.size.md} />}
               active={currentPath === '/people'}
+              measurePageLoad
             />
             <NavItem
               label="Opportunities"

@@ -1,6 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 import { useEventTracker } from '../modules/analytics/hooks/useEventTracker';
@@ -11,12 +10,13 @@ import { AppPath } from '../modules/types/AppPath';
 import { PageHotkeyScope } from '../modules/types/PageHotkeyScope';
 import { SettingsPath } from '../modules/types/SettingsPath';
 import { useSetHotkeyScope } from '../modules/ui/hotkey/hooks/useSetHotkeyScope';
-import { currentPageLocationState } from '../modules/ui/states/currentPageLocationState';
 import { TableHotkeyScope } from '../modules/ui/table/types/TableHotkeyScope';
 
 export function AuthAutoRouter() {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
+
+  const [previousLocation, setPreviousLocation] = useState('');
 
   const onboardingStatus = useOnboardingStatus();
 
@@ -27,7 +27,12 @@ export function AuthAutoRouter() {
   const eventTracker = useEventTracker();
 
   useEffect(() => {
-    console.log('DefaultLayout: useEffect', { onboardingStatus });
+    if (!previousLocation || previousLocation !== location.pathname) {
+      setPreviousLocation(location.pathname);
+    } else {
+      return;
+    }
+
     const isMachinOngoingUserCreationRoute =
       isMatchingLocation(AppPath.SignUp) ||
       isMatchingLocation(AppPath.SignIn) ||
@@ -118,21 +123,19 @@ export function AuthAutoRouter() {
       }
     }
 
-    // eventTracker('pageview', {
-    //   location: {
-    //     pathname: location.pathname,
-    //   },
-    // });
-
-    // setCurrentPageLocation(location.pathname);
+    eventTracker('pageview', {
+      location: {
+        pathname: location.pathname,
+      },
+    });
   }, [
     onboardingStatus,
     navigate,
     isMatchingLocation,
     setHotkeyScope,
     location,
-    // setCurrentPageLocation,
-    // eventTracker,
+    previousLocation,
+    eventTracker,
   ]);
 
   return <></>;
