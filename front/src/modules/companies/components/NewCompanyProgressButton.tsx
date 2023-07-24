@@ -22,8 +22,14 @@ import {
 
 import { useFilteredSearchCompanyQuery } from '../queries';
 
-export function NewCompanyProgressButton() {
-  const [isCreatingCard, setIsCreatingCard] = useState(false);
+export function NewCompanyProgressButton({
+  onStartCreateCard = false,
+}: {
+  onStartCreateCard?: boolean;
+}) {
+  const [isCreatingCard, setIsCreatingCard] = useState(
+    false || onStartCreateCard,
+  );
   const [board, setBoard] = useRecoilState(boardState);
   const [pipeline] = useRecoilState(currentPipelineState);
   const [pipelineStageId] = useRecoilScopedState(
@@ -109,7 +115,7 @@ export function NewCompanyProgressButton() {
           disableBackgroundBlur={true}
         />
       ) : (
-        <NewButton onClick={handleNewClick} />
+        !onStartCreateCard && <NewButton onClick={handleNewClick} />
       )}
     </>
   );

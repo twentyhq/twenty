@@ -1,13 +1,15 @@
 import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
-import { IconPencil } from '@tabler/icons-react';
+import { IconPencil, IconPlus } from '@tabler/icons-react';
 
+import { NewCompanyProgressButton } from '@/companies/components/NewCompanyProgressButton';
 import { icon } from '@/ui//themes/icon';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
 import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 
@@ -51,6 +53,14 @@ export function BoardColumnMenu({
               </DropdownButton.StyledIcon>
               Rename
             </DropdownMenuSelectableItem>
+            <DropdownMenuSelectableItem
+              onClick={() => setOpenMenu('opportunity')}
+            >
+              <DropdownButton.StyledIcon>
+                <IconPlus size={icon.size.md} stroke={icon.stroke.sm} />
+              </DropdownButton.StyledIcon>
+              New opportunity
+            </DropdownMenuSelectableItem>
           </DropdownMenuItemsContainer>
         )}
         {openMenu === 'title' && (
@@ -61,6 +71,11 @@ export function BoardColumnMenu({
             onColumnColorEdit={onColumnColorEdit}
             title={title}
           />
+        )}
+        {openMenu === 'opportunity' && (
+          <RecoilScope>
+            <NewCompanyProgressButton onStartCreateCard={true} />
+          </RecoilScope>
         )}
       </DropdownMenu>
     </StyledMenuContainer>

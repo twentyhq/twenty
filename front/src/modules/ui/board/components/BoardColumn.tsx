@@ -13,8 +13,9 @@ import { BoardColumnMenu } from './BoardColumnMenu';
 export const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   background-color: ${({ theme }) => theme.background.primary};
   border-left: 1px solid
-    ${({ theme, isFirstColumn }) =>
-      isFirstColumn ? 'none' : theme.border.color.light};
+    ${({ theme, isFirstColumn }) => {
+      return isFirstColumn ? 'none' : theme.border.color.light;
+    }};
   display: flex;
   flex-direction: column;
   max-width: 200px;
