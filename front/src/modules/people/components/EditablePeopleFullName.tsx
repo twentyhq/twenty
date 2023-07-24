@@ -58,7 +58,6 @@ export function EditablePeopleFullName({
           <PersonChip
             name={`${person?.firstName ?? ''} ${person?.lastName ?? ''}`}
             id={person?.id ?? ''}
-            clickable
           />
         </NoEditModeContainer>
       }
