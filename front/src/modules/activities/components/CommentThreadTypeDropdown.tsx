@@ -1,3 +1,5 @@
+import { useTheme } from '@emotion/react';
+
 import {
   Chip,
   ChipAccent,
@@ -12,10 +14,11 @@ type OwnProps = {
 };
 
 export function CommentThreadTypeDropdown({ commentThread }: OwnProps) {
+  const theme = useTheme();
   return (
     <Chip
       label={commentThread.type}
-      leftComponent={<IconPhone size={16} />}
+      leftComponent={<IconPhone size={theme.icon.size.md} />}
       size={ChipSize.Large}
       accent={ChipAccent.TextSecondary}
       variant={ChipVariant.Highlighted}
