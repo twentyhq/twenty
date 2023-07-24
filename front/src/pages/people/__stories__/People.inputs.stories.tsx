@@ -7,26 +7,33 @@ import { graphql } from 'msw';
 import { UPDATE_ONE_PERSON } from '@/people/queries';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
 import { Company } from '~/generated/graphql';
+import {
+  PageDecorator,
+  type PageDecoratorArgs,
+} from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { fetchOneFromData } from '~/testing/mock-data';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { mockedPeopleData } from '~/testing/mock-data/people';
-import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 import { sleep } from '~/testing/sleep';
 
 import { People } from '../People';
 
 import { Story } from './People.stories';
 
-const meta: Meta<typeof People> = {
+const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/People/Input',
   component: People,
+  decorators: [PageDecorator],
+  args: { currentPath: '/people' },
+  parameters: {
+    msw: graphqlMocks,
+  },
 };
 
 export default meta;
 
 export const InteractWithManyRows: Story = {
-  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -64,13 +71,9 @@ export const InteractWithManyRows: Story = {
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
   },
-  parameters: {
-    msw: graphqlMocks,
-  },
 };
 
 export const CheckCheckboxes: Story = {
-  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -94,9 +97,6 @@ export const CheckCheckboxes: Story = {
     await userEvent.click(secondCheckbox);
 
     expect(secondCheckbox.checked).toBe(false);
-  },
-  parameters: {
-    msw: graphqlMocks,
   },
 };
 
@@ -185,7 +185,6 @@ const editRelationMocks = (
 ];
 
 export const EditRelation: Story = {
-  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
@@ -229,7 +228,6 @@ export const EditRelation: Story = {
     });
   },
   parameters: {
-    actions: {},
     msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], {
       name: 'Airbnb',
       domainName: 'airbnb.com',
@@ -238,7 +236,6 @@ export const EditRelation: Story = {
 };
 
 export const SelectRelationWithKeys: Story = {
-  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -274,7 +271,6 @@ export const SelectRelationWithKeys: Story = {
     expect(allAirbns.length).toBe(1);
   },
   parameters: {
-    actions: {},
     msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], {
       name: 'Aircall',
       domainName: 'aircall.io',

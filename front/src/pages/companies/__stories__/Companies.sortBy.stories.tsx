@@ -2,22 +2,29 @@ import { expect } from '@storybook/jest';
 import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
+import {
+  PageDecorator,
+  type PageDecoratorArgs,
+} from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
 import { Companies } from '../Companies';
 
 import { Story } from './Companies.stories';
 
-const meta: Meta<typeof Companies> = {
+const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Companies/SortBy',
   component: Companies,
+  decorators: [PageDecorator],
+  args: { currentPath: '/companies' },
+  parameters: {
+    msw: graphqlMocks,
+  },
 };
 
 export default meta;
 
 export const SortByName: Story = {
-  render: getRenderWrapperForPage(<Companies />, '/companies'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -35,8 +42,5 @@ export const SortByName: Story = {
     await userEvent.click(cancelButton);
 
     await expect(canvas.queryAllByTestId('remove-icon-name')).toStrictEqual([]);
-  },
-  parameters: {
-    msw: graphqlMocks,
   },
 };

@@ -3,23 +3,30 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import assert from 'assert';
 
+import {
+  PageDecorator,
+  type PageDecoratorArgs,
+} from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 import { sleep } from '~/testing/sleep';
 
 import { People } from '../People';
 
 import { Story } from './People.stories';
 
-const meta: Meta<typeof People> = {
+const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/People/FilterBy',
   component: People,
+  decorators: [PageDecorator],
+  args: { currentPath: '/people' },
+  parameters: {
+    msw: graphqlMocks,
+  },
 };
 
 export default meta;
 
 export const Email: Story = {
-  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -49,13 +56,9 @@ export const Email: Story = {
     expect(await canvas.findByText('Email:')).toBeInTheDocument();
     expect(await canvas.findByText('Contains al')).toBeInTheDocument();
   },
-  parameters: {
-    msw: graphqlMocks,
-  },
 };
 
 export const CompanyName: Story = {
-  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -97,8 +100,5 @@ export const CompanyName: Story = {
 
     expect(await canvas.findByText('Company:')).toBeInTheDocument();
     expect(await canvas.findByText('Is Qonto')).toBeInTheDocument();
-  },
-  parameters: {
-    msw: graphqlMocks,
   },
 };
