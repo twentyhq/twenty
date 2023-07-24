@@ -3,24 +3,22 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { getRenderWrapperForPage } from '~/testing/renderWrappers';
+import {
+  PageDecorator,
+  type PageDecoratorArgs,
+} from '~/testing/decorators/PageDecorator';
+import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
 import { GET_CURRENT_USER } from '../../../modules/users/queries';
-import { mockedOnboardingUsersData } from '../../../testing/mock-data/users';
 import { CreateProfile } from '../CreateProfile';
 
-const meta: Meta<typeof CreateProfile> = {
+const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/CreateProfile',
   component: CreateProfile,
-};
-
-export default meta;
-
-export type Story = StoryObj<typeof CreateProfile>;
-
-export const Default: Story = {
-  render: getRenderWrapperForPage(<CreateProfile />, '/create/profile'),
+  decorators: [PageDecorator],
+  args: { currentPath: '/create/profile' },
   parameters: {
+    docs: { story: 'inline', iframeHeight: '500px' },
     msw: [
       graphql.query(
         getOperationName(GET_CURRENT_USER) ?? '',
@@ -34,6 +32,13 @@ export const Default: Story = {
       ),
     ],
   },
+};
+
+export default meta;
+
+export type Story = StoryObj<typeof CreateProfile>;
+
+export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText('Create profile');
