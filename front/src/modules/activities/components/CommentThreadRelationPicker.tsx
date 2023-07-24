@@ -213,7 +213,7 @@ export function CommentThreadRelationPicker({ commentThread }: OwnProps) {
               key={entity.id}
               id={entity.id}
               name={entity.name}
-              picture={entity.avatarUrl}
+              pictureUrl={entity.avatarUrl}
             />
           ) : (
             <PersonChip key={entity.id} name={entity.name} id={entity.id} />

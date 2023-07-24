@@ -194,7 +194,10 @@ export const EditRelation: Story = {
         mockedPeopleData[1].company.name,
       );
 
-      await userEvent.click(secondRowCompanyCell);
+      await userEvent.click(
+        secondRowCompanyCell.parentNode?.parentNode?.parentNode
+          ?.parentElement as HTMLElement,
+      );
     });
 
     await step('Type "Air" in relation picker', async () => {
@@ -244,7 +247,10 @@ export const SelectRelationWithKeys: Story = {
     );
     await sleep(25);
 
-    await userEvent.click(firstRowCompanyCell);
+    await userEvent.click(
+      firstRowCompanyCell.parentNode?.parentNode?.parentNode
+        ?.parentElement as HTMLElement,
+    );
     firstRowCompanyCell = await canvas.findByText(
       mockedPeopleData[0].company.name,
     );
