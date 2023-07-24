@@ -19,7 +19,7 @@ export const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   flex-direction: column;
   max-width: 200px;
   min-width: 200px;
-
+  overflow: auto;
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
