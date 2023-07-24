@@ -10,10 +10,8 @@ import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIn
 import { IconList } from '@/ui/icon';
 import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
 import { EntityTable } from '@/ui/table/components/EntityTable';
-import { HooksEntityTable } from '@/ui/table/components/HooksEntityTable';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { PersonOrderByWithRelationInput } from '~/generated/graphql';
-import { peopleFilters } from '~/pages/people/people-filters';
 import { availableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
@@ -33,10 +31,6 @@ export function PeopleTable() {
   return (
     <>
       <PeopleEntityTableData orderBy={orderBy} whereFilters={whereFilters} />
-      <HooksEntityTable
-        numberOfColumns={peopleColumns.length}
-        availableFilters={peopleFilters}
-      />
       <EntityTable
         columns={peopleColumns}
         viewName="All People"

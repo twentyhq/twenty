@@ -1,8 +1,4 @@
-import { useRecoilState } from 'recoil';
-
 import { defaultOrderBy } from '@/companies/queries';
-import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
-import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import {
   PersonOrderByWithRelationInput,
   useGetCompaniesQuery,

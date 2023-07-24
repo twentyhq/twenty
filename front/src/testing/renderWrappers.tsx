@@ -6,7 +6,6 @@ import { ClientConfigProvider } from '@/client-config/components/ClientConfigPro
 import { INITIAL_HOTKEYS_SCOPES } from '@/ui/hotkey/constants';
 import { DefaultLayout } from '@/ui/layout/components/DefaultLayout';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { HooksEntityTable } from '@/ui/table/components/HooksEntityTable';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { UserProvider } from '@/users/components/UserProvider';
 import { companiesFilters } from '~/pages/companies/companies-filters';
@@ -44,10 +43,7 @@ export function getRenderWrapperForEntityTableComponent(
         {/*
         TODO: add company mocked loader
         <CompanyEntityTableData */}
-        <HooksEntityTable
-          availableFilters={companiesFilters}
-          numberOfColumns={5}
-        />
+
         <ComponentStorybookLayout>{children}</ComponentStorybookLayout>
       </RecoilScope>
     );

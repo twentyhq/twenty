@@ -9,10 +9,8 @@ import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIn
 import { IconList } from '@/ui/icon';
 import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
 import { EntityTable } from '@/ui/table/components/EntityTable';
-import { HooksEntityTable } from '@/ui/table/components/HooksEntityTable';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { CompanyOrderByWithRelationInput } from '~/generated/graphql';
-import { companiesFilters } from '~/pages/companies/companies-filters';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 
 export function CompanyTable() {
@@ -32,10 +30,6 @@ export function CompanyTable() {
   return (
     <>
       <CompanyEntityTableData orderBy={orderBy} whereFilters={whereFilters} />
-      <HooksEntityTable
-        numberOfColumns={companyColumns.length}
-        availableFilters={companiesFilters}
-      />
       <EntityTable
         columns={companyColumns}
         viewName="All Companies"
