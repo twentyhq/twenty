@@ -1,5 +1,4 @@
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
 
 import { isDefined } from '~/utils/isDefined';
 
@@ -21,7 +20,6 @@ function isCustomScopesEqual(
 }
 
 export function useSetHotkeyScope() {
-  // const { setHotkeyScopes } = useHotkeyScopes();
   return useRecoilCallback(
     ({ snapshot, set }) =>
       async (hotkeyScopeToSet: string, customScopes?: CustomHotkeyScopes) => {
@@ -50,15 +48,6 @@ export function useSetHotkeyScope() {
             }
           }
         }
-
-        // set(currentHotkeyScopeState, {
-        //   scope: hotkeyScopeToSet,
-        //   customScopes: {
-        //     commandMenu: customScopes?.commandMenu ?? true,
-        //     goto: customScopes?.goto ?? false,
-        //   },
-        //   _internalId: v4(),
-        // });
 
         const newHotkeyScope: HotkeyScope = {
           scope: hotkeyScopeToSet,

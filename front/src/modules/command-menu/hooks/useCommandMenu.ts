@@ -9,19 +9,19 @@ export function useCommandMenu() {
   const [, setIsCommandMenuOpenedState] = useRecoilState(
     isCommandMenuOpenedState,
   );
-  // const {
-  //   setHotkeyScopeAndMemorizePreviousScope,
-  //   goBackToPreviousHotkeyScope,
-  // } = usePreviousHotkeyScope();
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
 
   function openCommandMenu() {
     setIsCommandMenuOpenedState(true);
-    // setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenu);
+    setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenu);
   }
 
   function closeCommandMenu() {
     setIsCommandMenuOpenedState(false);
-    // goBackToPreviousHotkeyScope();
+    goBackToPreviousHotkeyScope();
   }
 
   return {
