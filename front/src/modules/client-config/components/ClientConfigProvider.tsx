@@ -10,7 +10,6 @@ import { useGetClientConfigQuery } from '~/generated/graphql';
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  console.log('ClientConfigProvider');
   const [, setAuthProviders] = useRecoilState(authProvidersState);
   const [, setDebugMode] = useRecoilState(isDebugModeState);
   const [, setDemoMode] = useRecoilState(isDemoModeState);

@@ -24,7 +24,6 @@ export function SortDropdownButton<SortField>({
   onSortSelect,
   HotkeyScope,
 }: OwnProps<SortField>) {
-  console.log('SortDropdownButton');
   const [isUnfolded, setIsUnfolded] = useState(false);
 
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);

@@ -19,12 +19,6 @@ export function EntityTableBody({ columns }: { columns: Array<TableColumn> }) {
     isFetchingEntityTableDataState,
   );
 
-  console.log(
-    'EntityTableBody',
-    isFetchingEntityTableData,
-    isNavbarSwitchingSize,
-  );
-
   if (isFetchingEntityTableData || isNavbarSwitchingSize) {
     return null;
   }

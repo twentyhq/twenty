@@ -16,7 +16,7 @@ export function TimingProfiler({ id, children }: OwnProps) {
     commitTime: number,
     interactions: Set<Interaction>,
   ) {
-    console.log(
+    console.debug(
       'TimingProfiler',
       JSON.stringify(
         {

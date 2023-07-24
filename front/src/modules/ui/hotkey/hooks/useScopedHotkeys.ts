@@ -1,6 +1,5 @@
 import { useHotkeys } from 'react-hotkeys-hook';
 import {
-  Hotkey,
   HotkeyCallback,
   Keys,
   Options,
@@ -34,7 +33,6 @@ export function useScopedHotkeys(
         keyboardEvent,
         hotkeysEvent,
         callback: () => {
-          console.log({ pendingHotkey });
           if (!pendingHotkey) {
             callback(keyboardEvent, hotkeysEvent);
             return;

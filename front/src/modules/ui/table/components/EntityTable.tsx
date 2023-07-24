@@ -98,11 +98,7 @@ export function EntityTable<SortField>({
     },
   });
 
-  console.log('EntityTable');
-
   const isPageLoading = useIsPageLoading();
-
-  console.log('EntityTable', { isPageLoading });
 
   if (isPageLoading) {
     return null;

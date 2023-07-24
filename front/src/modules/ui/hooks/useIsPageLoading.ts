@@ -8,10 +8,5 @@ export function useIsPageLoading() {
 
   const currentPageLocation = useRecoilValue(currentPageLocationState);
 
-  console.log({
-    currentLocation,
-    currentPageLocation,
-  });
-
   return currentLocation !== currentPageLocation;
 }

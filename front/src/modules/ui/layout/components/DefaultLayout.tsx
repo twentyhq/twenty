@@ -50,14 +50,6 @@ type OwnProps = {
 export function DefaultLayout({ children }: OwnProps) {
   const onboardingStatus = useOnboardingStatus();
 
-  const isPageLoading = useIsPageLoading();
-
-  console.log('Default Layout', { isPageLoading });
-
-  // if (isPageLoading) {
-  //   return null;
-  // }
-
   return (
     <StyledLayout>
       <>

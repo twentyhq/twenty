@@ -20,7 +20,6 @@ import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
 import { SignInUp } from './pages/auth/SignInUp';
 
 export function App() {
-  console.log('App');
   return (
     <>
       <AppInternalHooks />
