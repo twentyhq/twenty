@@ -1,5 +1,3 @@
-import { CommentThreadForDrawer } from './CommentThreadForDrawer';
+import { ActivityForDrawer } from './ActivityForDrawer';
 
-export type CommentForDrawer = NonNullable<
-  CommentThreadForDrawer['comments']
->[0];
+export type CommentForDrawer = NonNullable<ActivityForDrawer['comments']>[0];

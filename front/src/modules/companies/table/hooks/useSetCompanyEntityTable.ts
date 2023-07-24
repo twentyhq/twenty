@@ -65,10 +65,10 @@ export function useSetCompanyEntityTable() {
             .getLoadable(companyCommentCountFamilyState(company.id))
             .valueOrThrow();
 
-          if (currentCommentCount !== company._commentThreadCount) {
+          if (currentCommentCount !== company._activityCount) {
             set(
               companyCommentCountFamilyState(company.id),
-              company._commentThreadCount,
+              company._activityCount,
             );
           }
 

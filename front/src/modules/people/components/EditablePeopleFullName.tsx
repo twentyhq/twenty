@@ -10,11 +10,7 @@ type OwnProps = {
     | Partial<
         Pick<
           Person,
-          | 'id'
-          | 'firstName'
-          | 'lastName'
-          | 'displayName'
-          | '_commentThreadCount'
+          'id' | 'firstName' | 'lastName' | 'displayName' | '_activityCount'
         >
       >
     | null

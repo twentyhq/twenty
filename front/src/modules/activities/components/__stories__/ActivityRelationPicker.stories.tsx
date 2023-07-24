@@ -4,17 +4,17 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedCommentThreads } from '~/testing/mock-data/comment-threads';
+import { mockedActivities } from '~/testing/mock-data/activities';
 
-import { CommentThreadRelationPicker } from '../CommentThreadRelationPicker';
+import { ActivityRelationPicker } from '../ActivityRelationPicker';
 
 const StyledContainer = styled.div`
   width: 400px;
 `;
 
-const meta: Meta<typeof CommentThreadRelationPicker> = {
-  title: 'Modules/Comments/CommentThreadRelationPicker',
-  component: CommentThreadRelationPicker,
+const meta: Meta<typeof ActivityRelationPicker> = {
+  title: 'Modules/Comments/ActivityRelationPicker',
+  component: ActivityRelationPicker,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -25,13 +25,13 @@ const meta: Meta<typeof CommentThreadRelationPicker> = {
     ),
     ComponentDecorator,
   ],
-  args: { commentThread: mockedCommentThreads[0] },
+  args: { activity: mockedActivities[0] },
   parameters: {
     msw: graphqlMocks,
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof CommentThreadRelationPicker>;
+type Story = StoryObj<typeof ActivityRelationPicker>;
 
 export const Default: Story = {};

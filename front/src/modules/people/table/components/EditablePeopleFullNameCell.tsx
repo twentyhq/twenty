@@ -30,7 +30,7 @@ export function EditablePeopleFullNameCell() {
     <EditablePeopleFullName
       person={{
         id: currentRowEntityId ?? undefined,
-        _commentThreadCount: commentCount ?? undefined,
+        _activityCount: commentCount ?? undefined,
         firstName: internalFirstName,
         lastName: internalLastName,
         displayName: displayName ?? undefined,

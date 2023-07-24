@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { CommentThreadTarget } from '~/generated/graphql';
+import { ActivityTarget } from '~/generated/graphql';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 import { ApolloFactory } from '../services/apollo.factory';
@@ -20,12 +20,12 @@ export function useApolloFactory() {
       uri: `${process.env.REACT_APP_API_URL}`,
       cache: new InMemoryCache({
         typePolicies: {
-          CommentThread: {
+          Activity: {
             fields: {
-              commentThreadTargets: {
+              activityTargets: {
                 merge(
-                  existing: CommentThreadTarget[] = [],
-                  incoming: CommentThreadTarget[],
+                  existing: ActivityTarget[] = [],
+                  incoming: ActivityTarget[],
                 ) {
                   return [...incoming];
                 },

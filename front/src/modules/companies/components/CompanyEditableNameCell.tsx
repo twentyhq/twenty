@@ -15,7 +15,7 @@ import { CompanyChip } from './CompanyChip';
 type OwnProps = {
   company: Pick<
     GetCompaniesQuery['companies'][0],
-    'id' | 'name' | 'domainName' | '_commentThreadCount'
+    'id' | 'name' | 'domainName' | '_activityCount'
   >;
 };
 

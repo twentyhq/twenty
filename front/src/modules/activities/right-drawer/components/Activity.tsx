@@ -2,22 +2,22 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
-import { CommentThreadBodyEditor } from '@/activities/components/CommentThreadBodyEditor';
-import { CommentThreadComments } from '@/activities/components/CommentThreadComments';
-import { CommentThreadRelationPicker } from '@/activities/components/CommentThreadRelationPicker';
-import { CommentThreadTypeDropdown } from '@/activities/components/CommentThreadTypeDropdown';
-import { GET_COMMENT_THREAD } from '@/activities/queries';
+import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
+import { ActivityComments } from '@/activities/components/ActivityComments';
+import { ActivityRelationPicker } from '@/activities/components/ActivityRelationPicker';
+import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
+import { GET_ACTIVITY } from '@/activities/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { PropertyBoxItem } from '@/ui/editable-field/property-box/components/PropertyBoxItem';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { IconArrowUpRight } from '@/ui/icon/index';
 import {
-  useGetCommentThreadQuery,
-  useUpdateCommentThreadMutation,
+  useGetActivityQuery,
+  useUpdateActivityMutation,
 } from '~/generated/graphql';
 import { debounce } from '~/utils/debounce';
 
-import { CommentThreadActionBar } from './CommentThreadActionBar';
+import { ActivityActionBar } from './ActivityActionBar';
 
 import '@blocknote/core/style.css';
 
@@ -84,23 +84,23 @@ const StyledTopActionsContainer = styled.div`
 `;
 
 type OwnProps = {
-  commentThreadId: string;
+  activityId: string;
   showComment?: boolean;
   autoFillTitle?: boolean;
 };
 
-export function CommentThread({
-  commentThreadId,
+export function Activity({
+  activityId,
   showComment = true,
   autoFillTitle = false,
 }: OwnProps) {
-  const { data } = useGetCommentThreadQuery({
+  const { data } = useGetActivityQuery({
     variables: {
-      commentThreadId: commentThreadId ?? '',
+      activityId: activityId ?? '',
     },
-    skip: !commentThreadId,
+    skip: !activityId,
   });
-  const commentThread = data?.findManyCommentThreads[0];
+  const activity = data?.findManyActivities[0];
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 
@@ -108,35 +108,35 @@ export function CommentThread({
 
   useEffect(() => {
     if (!hasUserManuallySetTitle) {
-      setTitle(commentThread?.title ?? '');
+      setTitle(activity?.title ?? '');
     }
-  }, [setTitle, commentThread?.title, hasUserManuallySetTitle]);
+  }, [setTitle, activity?.title, hasUserManuallySetTitle]);
 
-  const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
+  const [updateActivityMutation] = useUpdateActivityMutation();
 
   const debounceUpdateTitle = useMemo(() => {
     function updateTitle(title: string) {
-      if (commentThread) {
-        updateCommentThreadMutation({
+      if (activity) {
+        updateActivityMutation({
           variables: {
-            id: commentThreadId,
+            id: activityId,
             title: title ?? '',
           },
-          refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
+          refetchQueries: [getOperationName(GET_ACTIVITY) ?? ''],
           optimisticResponse: {
             __typename: 'Mutation',
-            updateOneCommentThread: {
-              __typename: 'CommentThread',
-              id: commentThreadId,
+            updateOneActivity: {
+              __typename: 'Activity',
+              id: activityId,
               title: title,
-              type: commentThread.type,
+              type: activity.type,
             },
           },
         });
       }
     }
     return debounce(updateTitle, 200);
-  }, [commentThreadId, updateCommentThreadMutation, commentThread]);
+  }, [activityId, updateActivityMutation, activity]);
 
   function updateTitleFromBody(body: string) {
     const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
@@ -146,7 +146,7 @@ export function CommentThread({
     }
   }
 
-  if (!commentThread) {
+  if (!activity) {
     return <></>;
   }
 
@@ -155,12 +155,12 @@ export function CommentThread({
       <StyledUpperPartContainer>
         <StyledTopContainer>
           <StyledTopActionsContainer>
-            <CommentThreadTypeDropdown commentThread={commentThread} />
-            <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
+            <ActivityTypeDropdown activity={activity} />
+            <ActivityActionBar activityId={activity?.id ?? ''} />
           </StyledTopActionsContainer>
           <StyledEditableTitleInput
             autoFocus
-            placeholder={`${commentThread.type} title (optional)`}
+            placeholder={`${activity.type} title (optional)`}
             onChange={(event) => {
               setHasUserManuallySetTitle(true);
               setTitle(event.target.value);
@@ -172,11 +172,10 @@ export function CommentThread({
             <PropertyBoxItem
               icon={<IconArrowUpRight />}
               value={
-                <CommentThreadRelationPicker
-                  commentThread={{
-                    id: commentThread.id,
-                    commentThreadTargets:
-                      commentThread.commentThreadTargets ?? [],
+                <ActivityRelationPicker
+                  activity={{
+                    id: activity.id,
+                    activityTargets: activity.activityTargets ?? [],
                   }}
                 />
               }
@@ -184,16 +183,16 @@ export function CommentThread({
             />
           </PropertyBox>
         </StyledTopContainer>
-        <CommentThreadBodyEditor
-          commentThread={commentThread}
+        <ActivityBodyEditor
+          activity={activity}
           onChange={updateTitleFromBody}
         />
       </StyledUpperPartContainer>
       {showComment && (
-        <CommentThreadComments
-          commentThread={{
-            id: commentThread.id,
-            comments: commentThread.comments ?? [],
+        <ActivityComments
+          activity={{
+            id: activity.id,
+            comments: activity.comments ?? [],
           }}
         />
       )}

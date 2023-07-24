@@ -5,18 +5,16 @@ import { useRightDrawer } from '@/ui/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 
-import { viewableCommentThreadIdState } from '../states/viewableCommentThreadIdState';
+import { viewableActivityIdState } from '../states/viewableActivityIdState';
 
-export function useOpenCommentThreadRightDrawer() {
+export function useOpenActivityRightDrawer() {
   const { openRightDrawer } = useRightDrawer();
-  const [, setViewableCommentThreadId] = useRecoilState(
-    viewableCommentThreadIdState,
-  );
+  const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
   const setHotkeyScope = useSetHotkeyScope();
 
-  return function openCommentThreadRightDrawer(commentThreadId: string) {
+  return function openActivityRightDrawer(activityId: string) {
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-    setViewableCommentThreadId(commentThreadId);
-    openRightDrawer(RightDrawerPages.EditCommentThread);
+    setViewableActivityId(activityId);
+    openRightDrawer(RightDrawerPages.EditActivity);
   };
 }

@@ -2,17 +2,17 @@ import React from 'react';
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
-import { CommentThreadCreateButton } from '@/activities/components/CommentThreadCreateButton';
-import { useOpenCommentThreadRightDrawer } from '@/activities/hooks/useOpenCommentThreadRightDrawer';
-import { useOpenCreateCommentThreadDrawer } from '@/activities/hooks/useOpenCreateCommentThreadDrawer';
+import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
+import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
 import { CommentableEntity } from '@/activities/types/CommentableEntity';
-import { CommentThreadForDrawer } from '@/activities/types/CommentThreadForDrawer';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { IconNotes } from '@/ui/icon/index';
 import {
   ActivityType,
   SortOrder,
-  useGetCommentThreadsByTargetsQuery,
+  useGetActivitiesByTargetsQuery,
 } from '~/generated/graphql';
 import {
   beautifyExactDate,
@@ -197,9 +197,9 @@ const StyledTopActionBar = styled.div`
 `;
 
 export function Timeline({ entity }: { entity: CommentableEntity }) {
-  const { data: queryResult, loading } = useGetCommentThreadsByTargetsQuery({
+  const { data: queryResult, loading } = useGetActivitiesByTargetsQuery({
     variables: {
-      commentThreadTargetIds: [entity.id],
+      activityTargetIds: [entity.id],
       orderBy: [
         {
           createdAt: SortOrder.Desc,
@@ -208,23 +208,22 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     },
   });
 
-  const openCommentThreadRightDrawer = useOpenCommentThreadRightDrawer();
+  const openActivityRightDrawer = useOpenActivityRightDrawer();
 
-  const openCreateCommandThread = useOpenCreateCommentThreadDrawer();
+  const openCreateCommandThread = useOpenCreateActivityDrawer();
 
-  const commentThreads: CommentThreadForDrawer[] =
-    queryResult?.findManyCommentThreads ?? [];
+  const activitys: ActivityForDrawer[] = queryResult?.findManyActivities ?? [];
 
   if (loading) {
     return <></>;
   }
 
-  if (!commentThreads.length) {
+  if (!activitys.length) {
     return (
       <StyledTimelineEmptyContainer>
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
         <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
-        <CommentThreadCreateButton
+        <ActivityCreateButton
           onNoteClick={() => openCreateCommandThread(entity, ActivityType.Note)}
           onTaskClick={() => openCreateCommandThread(entity, ActivityType.Task)}
         />
@@ -236,7 +235,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     <StyledMainContainer>
       <StyledTopActionBar>
         <StyledTimelineItemContainer>
-          <CommentThreadCreateButton
+          <ActivityCreateButton
             onNoteClick={() =>
               openCreateCommandThread(entity, ActivityType.Note)
             }
@@ -247,29 +246,28 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
         </StyledTimelineItemContainer>
       </StyledTopActionBar>
       <StyledTimelineContainer>
-        {commentThreads.map((commentThread) => {
+        {activitys.map((activity) => {
           const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
-            commentThread.createdAt,
+            activity.createdAt,
           );
-          const exactCreatedAt = beautifyExactDate(commentThread.createdAt);
-          const body = JSON.parse(commentThread.body ?? '{}')[0]?.content[0]
-            ?.text;
+          const exactCreatedAt = beautifyExactDate(activity.createdAt);
+          const body = JSON.parse(activity.body ?? '{}')[0]?.content[0]?.text;
 
           return (
-            <React.Fragment key={commentThread.id}>
+            <React.Fragment key={activity.id}>
               <StyledTimelineItemContainer>
                 <StyledIconContainer>
                   <IconNotes />
                 </StyledIconContainer>
                 <StyledItemTitleContainer>
-                  <span>{commentThread.author.displayName}</span>
+                  <span>{activity.author.displayName}</span>
                   created a note
                 </StyledItemTitleContainer>
-                <StyledItemTitleDate id={`id-${commentThread.id}`}>
+                <StyledItemTitleDate id={`id-${activity.id}`}>
                   {beautifiedCreatedAt} ago
                 </StyledItemTitleDate>
                 <StyledTooltip
-                  anchorSelect={`#id-${commentThread.id}`}
+                  anchorSelect={`#id-${activity.id}`}
                   content={exactCreatedAt}
                   clickable
                   noArrow
@@ -281,17 +279,11 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
                 </StyledVerticalLineContainer>
                 <StyledCardContainer>
                   <StyledCard
-                    onClick={() =>
-                      openCommentThreadRightDrawer(commentThread.id)
-                    }
+                    onClick={() => openActivityRightDrawer(activity.id)}
                   >
                     <StyledCardTitle>
                       <OverflowingTextWithTooltip
-                        text={
-                          commentThread.title
-                            ? commentThread.title
-                            : '(No title)'
-                        }
+                        text={activity.title ? activity.title : '(No title)'}
                       />
                     </StyledCardTitle>
                     <StyledCardContent>

@@ -13,21 +13,19 @@ import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector
 import {
   ActivityType,
   CommentableType,
-  useCreateCommentThreadMutation,
+  useCreateActivityMutation,
 } from '~/generated/graphql';
 
-import { GET_COMMENT_THREAD, GET_COMMENT_THREADS_BY_TARGETS } from '../queries';
+import { GET_ACTIVITIES_BY_TARGETS, GET_ACTIVITY } from '../queries';
 import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
-import { viewableCommentThreadIdState } from '../states/viewableCommentThreadIdState';
+import { viewableActivityIdState } from '../states/viewableActivityIdState';
 import { CommentableEntity } from '../types/CommentableEntity';
 
-export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
+export function useOpenCreateActivityDrawerForSelectedRowIds() {
   const { openRightDrawer } = useRightDrawer();
-  const [createCommentThreadMutation] = useCreateCommentThreadMutation();
+  const [createActivityMutation] = useCreateActivityMutation();
   const currentUser = useRecoilValue(currentUserState);
-  const [, setViewableCommentThreadId] = useRecoilState(
-    viewableCommentThreadIdState,
-  );
+  const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -47,13 +45,13 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
       }),
     );
 
-    createCommentThreadMutation({
+    createActivityMutation({
       variables: {
         authorId: currentUser?.id ?? '',
-        commentThreadId: v4(),
+        activityId: v4(),
         createdAt: new Date().toISOString(),
         type: ActivityType.Note,
-        commentThreadTargetArray: commentableEntityArray.map((entity) => ({
+        activityTargetArray: commentableEntityArray.map((entity) => ({
           commentableId: entity.id,
           commentableType: entity.type,
           id: v4(),
@@ -63,14 +61,14 @@ export function useOpenCreateCommentThreadDrawerForSelectedRowIds() {
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
         getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_COMMENT_THREAD) ?? '',
-        getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
+        getOperationName(GET_ACTIVITY) ?? '',
+        getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
       ],
       onCompleted(data) {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-        setViewableCommentThreadId(data.createOneCommentThread.id);
+        setViewableActivityId(data.createOneActivity.id);
         setCommentableEntityArray(commentableEntityArray);
-        openRightDrawer(RightDrawerPages.CreateCommentThread);
+        openRightDrawer(RightDrawerPages.CreateActivity);
       },
     });
   };

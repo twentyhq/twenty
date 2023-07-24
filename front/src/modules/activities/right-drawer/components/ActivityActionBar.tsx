@@ -3,13 +3,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { GET_COMMENT_THREADS_BY_TARGETS } from '@/activities/queries';
+import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
 import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE } from '@/people/queries';
 import { Button } from '@/ui/button/components/Button';
 import { IconTrash } from '@/ui/icon';
 import { isRightDrawerOpenState } from '@/ui/right-drawer/states/isRightDrawerOpenState';
-import { useDeleteCommentThreadMutation } from '~/generated/graphql';
+import { useDeleteActivityMutation } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -17,21 +17,21 @@ const StyledContainer = styled.div`
 `;
 
 type OwnProps = {
-  commentThreadId: string;
+  activityId: string;
 };
 
-export function CommentThreadActionBar({ commentThreadId }: OwnProps) {
+export function ActivityActionBar({ activityId }: OwnProps) {
   const theme = useTheme();
-  const [createCommentMutation] = useDeleteCommentThreadMutation();
+  const [createCommentMutation] = useDeleteActivityMutation();
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
 
-  function deleteCommentThread() {
+  function deleteActivity() {
     createCommentMutation({
-      variables: { commentThreadId },
+      variables: { activityId },
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
         getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
+        getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
       ],
     });
     setIsRightDrawerOpen(false);
@@ -43,7 +43,7 @@ export function CommentThreadActionBar({ commentThreadId }: OwnProps) {
         icon={
           <IconTrash size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
         }
-        onClick={deleteCommentThread}
+        onClick={deleteActivity}
         variant="tertiary"
       />
     </StyledContainer>
