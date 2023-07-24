@@ -81,4 +81,35 @@ export class WorkspaceService {
 
     return workspace;
   }
+
+  async deleteWorkspace(id: string, select: any) {
+    const workspace = await this.findUnique({ where: { id }, select });
+
+    // Get workspace companies
+    const companies = await this.companyService.findMany({
+      where: { workspaceId: id },
+    });
+
+    // get workspace people
+    const people = await this.personService.findMany({
+      where: { workspaceId: id },
+    });
+
+    // get workspace pipelines
+    const pipelines = await this.pipelineService.findMany({
+      where: { workspaceId: id },
+    });
+
+    // get workspace stages
+    const stages = await this.pipelineStageService.findMany({
+      where: { workspaceId: id },
+    });
+
+    // TODO: Determine order of deletion
+    // Perhaps we don't delete immediately but instead schedule for deletion
+
+    console.log({ companies, people, pipelines, stages });
+
+    return workspace;
+  }
 }

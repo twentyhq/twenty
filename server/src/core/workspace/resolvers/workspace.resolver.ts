@@ -20,7 +20,10 @@ import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
-import { UpdateWorkspaceAbilityHandler } from 'src/ability/handlers/workspace.ability-handler';
+import {
+  UpdateWorkspaceAbilityHandler,
+  DeleteWorkspaceAbilityHandler,
+} from 'src/ability/handlers/workspace.ability-handler';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Workspace)
@@ -94,5 +97,23 @@ export class WorkspaceResolver {
     });
 
     return paths[0];
+  }
+
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeleteWorkspaceAbilityHandler)
+  @Mutation(() => Workspace)
+  async deleteWorkspace(
+    @AuthWorkspace() workspace: Workspace,
+    @PrismaSelector({ modelName: 'Workspace' })
+    prismaSelect: PrismaSelect<'Workspace'>,
+  ) {
+    const res = await this.workspaceService.deleteWorkspace(
+      workspace.id,
+      prismaSelect.value,
+    );
+
+    assert(res, 'Workspace not found');
+
+    return res;
   }
 }

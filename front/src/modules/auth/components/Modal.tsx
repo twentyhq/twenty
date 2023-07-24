@@ -5,7 +5,7 @@ import { Modal as UIModal } from '@/ui/modal/components/Modal';
 
 type Props = React.ComponentProps<'div'>;
 
-const StyledContainer = styled.div`
+export const StyledContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
