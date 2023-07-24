@@ -55,7 +55,9 @@ ALTER TABLE "activities" ADD CONSTRAINT "activities_workspaceId_fkey" FOREIGN KE
 ALTER TABLE "activity_targets" ADD CONSTRAINT "activity_targets_activityId_fkey" FOREIGN KEY ("activityId") REFERENCES "activities"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Update the comments table to replace commentThreadId with activityId
+ALTER TABLE "comments" DROP COLUMN "activityId";
 ALTER TABLE "comments" RENAME COLUMN "commentThreadId" TO "activityId";
+ALTER TABLE "comments" ALTER COLUMN "activityId" SET NOT NULL;
 
 -- Add foreign key constraint on comments table
 ALTER TABLE "comments" DROP CONSTRAINT "comments_commentThreadId_fkey";
