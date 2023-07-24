@@ -48,10 +48,10 @@ const StyledContainer = styled.div<Partial<OwnProps>>`
       : theme.font.color.secondary};
   cursor: ${({ clickable, disabled, variant }) =>
     disabled || variant === ChipVariant.Transparent
-      ? 'auto'
+      ? 'inherit'
       : clickable
       ? 'pointer'
-      : 'auto'};
+      : 'inherit'};
   display: inline-flex;
   gap: ${({ theme }) => theme.spacing(1)};
 

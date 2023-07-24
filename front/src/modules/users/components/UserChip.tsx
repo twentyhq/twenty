@@ -1,26 +1,19 @@
 import { EntityChip, EntityChipVariant } from '@/ui/chip/components/EntityChip';
 
-export type PersonChipPropsType = {
+export type UserChipPropsType = {
   id: string;
   name: string;
   pictureUrl?: string;
   variant?: EntityChipVariant;
 };
 
-export function PersonChip({
-  id,
-  name,
-  pictureUrl,
-  variant,
-}: PersonChipPropsType) {
+export function UserChip({ id, name, pictureUrl, variant }: UserChipPropsType) {
   return (
     <EntityChip
       entityId={id}
-      linkToEntity={`/person/${id}`}
       name={name}
       avatarType="rounded"
       pictureUrl={pictureUrl}
-      variant={variant}
     />
   );
 }
