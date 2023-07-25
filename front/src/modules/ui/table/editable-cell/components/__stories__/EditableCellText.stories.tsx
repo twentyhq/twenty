@@ -28,9 +28,8 @@ export const SoftFocusMode: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step(
-      'Click once',
-      async () => await userEvent.click(canvas.getByText('Content')),
+    await step('Click once', () =>
+      userEvent.click(canvas.getByText('Content')),
     );
 
     await step('Escape', async () => {
@@ -48,8 +47,7 @@ export const EditMode: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    const click = async () =>
-      await userEvent.click(canvas.getByText('Content'));
+    const click = () => userEvent.click(canvas.getByText('Content'));
 
     await step('Click once', click);
 
