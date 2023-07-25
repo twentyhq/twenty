@@ -1,12 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
 import { CommentThreadBodyEditor } from '@/activities/components/CommentThreadBodyEditor';
 import { CommentThreadComments } from '@/activities/components/CommentThreadComments';
+import { CommentThreadEditor } from '@/activities/components/CommentThreadEditor';
 import { CommentThreadRelationPicker } from '@/activities/components/CommentThreadRelationPicker';
 import { CommentThreadTypeDropdown } from '@/activities/components/CommentThreadTypeDropdown';
-import { GET_COMMENT_THREAD } from '@/activities/queries';
+import {
+  GET_COMMENT_THREAD,
+  GET_COMMENT_THREADS_BY_TARGETS,
+} from '@/activities/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { PropertyBoxItem } from '@/ui/editable-field/property-box/components/PropertyBoxItem';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
@@ -101,103 +105,14 @@ export function CommentThread({
     skip: !commentThreadId,
   });
   const commentThread = data?.findManyCommentThreads[0];
-  const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
-    useState<boolean>(false);
 
-  const [title, setTitle] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!hasUserManuallySetTitle) {
-      setTitle(commentThread?.title ?? '');
-    }
-  }, [setTitle, commentThread?.title, hasUserManuallySetTitle]);
-
-  const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
-
-  const debounceUpdateTitle = useMemo(() => {
-    function updateTitle(title: string) {
-      if (commentThread) {
-        updateCommentThreadMutation({
-          variables: {
-            id: commentThreadId,
-            title: title ?? '',
-          },
-          refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
-          optimisticResponse: {
-            __typename: 'Mutation',
-            updateOneCommentThread: {
-              __typename: 'CommentThread',
-              id: commentThreadId,
-              title: title,
-              type: commentThread.type,
-            },
-          },
-        });
-      }
-    }
-    return debounce(updateTitle, 200);
-  }, [commentThreadId, updateCommentThreadMutation, commentThread]);
-
-  function updateTitleFromBody(body: string) {
-    const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
-    if (!hasUserManuallySetTitle && autoFillTitle) {
-      setTitle(parsedTitle);
-      debounceUpdateTitle(parsedTitle);
-    }
-  }
-
-  if (!commentThread) {
-    return <></>;
-  }
-
-  return (
-    <StyledContainer>
-      <StyledUpperPartContainer>
-        <StyledTopContainer>
-          <StyledTopActionsContainer>
-            <CommentThreadTypeDropdown commentThread={commentThread} />
-            <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
-          </StyledTopActionsContainer>
-          <StyledEditableTitleInput
-            autoComplete="off"
-            autoFocus
-            placeholder={`${commentThread.type} title (optional)`}
-            onChange={(event) => {
-              setHasUserManuallySetTitle(true);
-              setTitle(event.target.value);
-              debounceUpdateTitle(event.target.value);
-            }}
-            value={title ?? ''}
-          />
-          <PropertyBox>
-            <PropertyBoxItem
-              icon={<IconArrowUpRight />}
-              value={
-                <CommentThreadRelationPicker
-                  commentThread={{
-                    id: commentThread.id,
-                    commentThreadTargets:
-                      commentThread.commentThreadTargets ?? [],
-                  }}
-                />
-              }
-              label="Relations"
-            />
-          </PropertyBox>
-        </StyledTopContainer>
-        <CommentThreadBodyEditor
-          commentThread={commentThread}
-          onChange={updateTitleFromBody}
-        />
-      </StyledUpperPartContainer>
-      {showComment && (
-        <CommentThreadComments
-          commentThread={{
-            id: commentThread.id,
-            comments: commentThread.comments ?? [],
-          }}
-        />
-      )}
-    </StyledContainer>
+  return commentThread ? (
+    <CommentThreadEditor
+      commentThread={commentThread}
+      showComment={showComment}
+      autoFillTitle={autoFillTitle}
+    />
+  ) : (
+    <></>
   );
 }
