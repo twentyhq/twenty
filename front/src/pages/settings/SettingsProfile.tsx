@@ -4,6 +4,7 @@ import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
+import { IconSettings } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
@@ -27,8 +28,8 @@ const StyledSectionContainer = styled.div`
 
 export function SettingsProfile() {
   return (
-    <SubMenuTopBarContainer>
-      <div>
+    <SubMenuTopBarContainer icon={<IconSettings size={16} />} title="Settings">
+      <>
         <StyledContainer>
           <MainSectionTitle>Profile</MainSectionTitle>
           <StyledSectionContainer>
@@ -54,7 +55,7 @@ export function SettingsProfile() {
             <DeleteWorkspace />
           </StyledSectionContainer>
         </StyledContainer>
-      </div>
+      </>
     </SubMenuTopBarContainer>
   );
 }

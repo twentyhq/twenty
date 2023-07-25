@@ -19,6 +19,7 @@ import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedSta
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
+import { EntityChipVariant } from '../../ui/chip/components/EntityChip';
 import { PipelineProgressForBoard } from '../types/CompanyProgress';
 
 import { CompanyChip } from './CompanyChip';
@@ -177,7 +178,7 @@ export function CompanyBoardCard() {
             id={company.id}
             name={company.name}
             pictureUrl={getLogoUrlFromDomainName(company.domainName)}
-            clickable={false}
+            variant={EntityChipVariant.Transparent}
           />
           <StyledCheckboxContainer className="checkbox-container">
             <Checkbox

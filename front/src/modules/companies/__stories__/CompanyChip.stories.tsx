@@ -47,10 +47,6 @@ export const SmallName: Story = {
   },
 };
 
-export const Clickable: Story = {
-  args: { ...SmallName.args, clickable: true },
-};
-
 export const BigName: Story = {
   args: {
     id: 'google',

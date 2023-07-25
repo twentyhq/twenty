@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ColorSchemePicker } from '@/ui/color-scheme/components/ColorSchemePicker';
+import { IconSettings } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { useColorScheme } from '@/ui/themes/hooks/useColorScheme';
 import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
@@ -27,7 +28,7 @@ export function SettingsExperience() {
   const { colorScheme, setColorScheme } = useColorScheme();
 
   return (
-    <SubMenuTopBarContainer>
+    <SubMenuTopBarContainer icon={<IconSettings size={16} />} title="Settings">
       <div>
         <StyledContainer>
           <MainSectionTitle>Experience</MainSectionTitle>

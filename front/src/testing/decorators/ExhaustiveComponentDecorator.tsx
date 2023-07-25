@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Decorator, StrictArgs } from '@storybook/react';
+import { Decorator } from '@storybook/react';
 
 function stateProps(state: string) {
   switch (state) {
@@ -22,11 +22,20 @@ const StyledSizeTitle = styled.h1`
   margin: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledVariantTitle = styled.h1`
+const StyledVariantTitle = styled.h2`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin: ${({ theme }) => theme.spacing(2)};
+  width: 100px;
+`;
+
+const StyledAccentTitle = styled.h3`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin: ${({ theme }) => theme.spacing(2)};
+  width: 100px;
 `;
 
 const StyledStateTitle = styled.span`
@@ -49,62 +58,58 @@ const StyledSizeContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledLineContainer = styled.div`
+const StyledVariantContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledAccentContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledComponentContainer = styled.div`
+const StyledStateContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-function renderSize(
-  size: string,
-  variants: string[],
-  states: string[],
-  args: StrictArgs,
-  Story: React.FC<StrictArgs>,
-) {
-  return (
-    <StyledSizeContainer key={size}>
-      <StyledSizeTitle>{size}</StyledSizeTitle>
-      {variants.map((variant) => (
-        <div key={variant}>
-          <StyledVariantTitle>{variant}</StyledVariantTitle>
-          <StyledLineContainer>
-            {states.map((state) => (
-              <StyledComponentContainer key={`${variant}-container-${state}`}>
-                <StyledStateTitle>{state}</StyledStateTitle>
-                <Story
-                  args={{ ...args, variant: variant, ...stateProps(state) }}
-                />
-              </StyledComponentContainer>
-            ))}
-          </StyledLineContainer>
-        </div>
-      ))}
-    </StyledSizeContainer>
-  );
-}
-
 export const ExhaustiveComponentDecorator: Decorator = (Story, context) => {
   const parameters = context.parameters;
   return (
     <StyledContainer>
-      {parameters.sizes.map((size: string) =>
-        renderSize(
-          size,
-          parameters.variants,
-          parameters.states,
-          context.args,
-          Story,
-        ),
-      )}
+      {parameters.sizes.map((size: string) => (
+        <StyledSizeContainer key={size}>
+          <StyledSizeTitle>{size}</StyledSizeTitle>
+          {parameters.variants.map((variant: string) => (
+            <StyledVariantContainer key={variant}>
+              <StyledVariantTitle>{variant}</StyledVariantTitle>
+              {parameters.accents.map((accent: string) => (
+                <StyledAccentContainer key={accent}>
+                  <StyledAccentTitle>{accent}</StyledAccentTitle>
+                  {parameters.states.map((state: string) => (
+                    <StyledStateContainer key={state}>
+                      <StyledStateTitle>{state}</StyledStateTitle>
+                      <Story
+                        args={{
+                          ...context.args,
+                          accent: accent,
+                          variant: variant,
+                          ...stateProps(state),
+                        }}
+                      />
+                    </StyledStateContainer>
+                  ))}
+                </StyledAccentContainer>
+              ))}
+            </StyledVariantContainer>
+          ))}
+        </StyledSizeContainer>
+      ))}
     </StyledContainer>
   );
 };

@@ -82,8 +82,6 @@ export function RightDrawer() {
       : theme.rightDrawerWidth
     : '0';
 
-  console.log(rightDrawerWidth);
-
   if (!isDefined(rightDrawerPage)) {
     return <></>;
   }
