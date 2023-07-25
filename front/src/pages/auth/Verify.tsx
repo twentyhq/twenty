@@ -28,7 +28,7 @@ export function Verify() {
             verifyResponse.user.workspaceMember?.workspace.displayName,
           )
         ) {
-          navigate('/');
+          navigate(AppPath.Index);
         } else {
           navigate(AppPath.CreateWorkspace);
         }
