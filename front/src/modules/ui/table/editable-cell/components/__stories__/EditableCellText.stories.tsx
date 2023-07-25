@@ -1,10 +1,10 @@
 import { expect } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-import { sleep } from '@tanstack/query-core/build/lib/utils';
 
 import { CellPositionDecorator } from '~/testing/decorators/CellPositionDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { sleep } from '~/testing/sleep';
 
 import { EditableCellText } from '../../types/EditableCellText';
 
