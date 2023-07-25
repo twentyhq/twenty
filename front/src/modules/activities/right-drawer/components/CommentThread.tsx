@@ -158,6 +158,7 @@ export function CommentThread({
             <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
           </StyledTopActionsContainer>
           <StyledEditableTitleInput
+            autoComplete="off"
             autoFocus
             placeholder={`${commentThread.type} title (optional)`}
             onChange={(event) => {

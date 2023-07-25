@@ -36,6 +36,7 @@ export function EditableCellURL({
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <InplaceInputTextEditMode
+          autoComplete="off"
           placeholder={placeholder || ''}
           autoFocus
           value={internalValue}

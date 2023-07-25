@@ -31,6 +31,7 @@ export function EditableCellPhone({
     <EditableCell
       editModeContent={
         <InplaceInputTextEditMode
+          autoComplete="off"
           autoFocus
           placeholder={placeholder || ''}
           ref={inputRef}

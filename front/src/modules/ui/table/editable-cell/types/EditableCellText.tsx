@@ -45,6 +45,7 @@ export function EditableCellText({
           }}
         />
       }
+      autoComplete="off"
       onSubmit={onSubmit}
       onCancel={onCancel}
       nonEditModeContent={

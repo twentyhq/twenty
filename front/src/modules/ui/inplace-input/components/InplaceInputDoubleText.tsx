@@ -32,6 +32,7 @@ export function InplaceInputDoubleText({
   return (
     <StyledContainer>
       <InplaceInputTextEditMode
+        autoComplete="off"
         autoFocus
         placeholder={firstValuePlaceholder}
         value={firstValue}
@@ -40,6 +41,7 @@ export function InplaceInputDoubleText({
         }}
       />
       <InplaceInputTextEditMode
+        autoComplete="off"
         placeholder={secondValuePlaceholder}
         value={secondValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
