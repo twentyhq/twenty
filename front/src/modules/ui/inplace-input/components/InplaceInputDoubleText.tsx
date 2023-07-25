@@ -31,7 +31,6 @@ export function InplaceInputDoubleText({
 }: OwnProps) {
   return (
     <StyledContainer>
-      <InplaceInputTextEditMode
       <StyledInput
         autoFocus
         placeholder={firstValuePlaceholder}
