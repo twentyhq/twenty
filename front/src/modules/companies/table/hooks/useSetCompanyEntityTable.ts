@@ -130,8 +130,6 @@ export function useSetCompanyEntityTable() {
           numberOfRows: companyIds.length,
         });
 
-        console.log({ companiesFilters });
-
         set(availableFiltersScopedState(tableContextScopeId), companiesFilters);
 
         set(currentPageLocationState, currentLocation);

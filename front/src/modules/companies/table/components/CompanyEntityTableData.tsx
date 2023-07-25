@@ -13,7 +13,6 @@ export function CompanyEntityTableData({
   orderBy?: PersonOrderByWithRelationInput[];
   whereFilters?: any;
 }) {
-  console.log('CompanyEntityTableData');
   const setCompanyEntityTable = useSetCompanyEntityTable();
 
   useGetCompaniesQuery({

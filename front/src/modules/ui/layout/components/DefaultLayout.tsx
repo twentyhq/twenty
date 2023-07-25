@@ -38,7 +38,7 @@ const MainContainer = styled.div`
 `;
 
 type OwnProps = {
-  children: JSX.Element;
+  children: React.ReactNode;
 };
 
 export function DefaultLayout({ children }: OwnProps) {
