@@ -15,8 +15,8 @@ type OwnProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  width: ${({ theme }) => (useIsMobile() ? '100%' : leftNavbarWidth.desktop)};
+  padding-top: ${({ theme }) => theme.spacing(9)};
+  width: ${() => (useIsMobile() ? '100%' : leftNavbarWidth.desktop)};
 `;
 
 export default function SubMenuNavbar({ children, backButtonTitle }: OwnProps) {

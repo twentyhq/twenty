@@ -12,7 +12,13 @@ type OwnProps = {
   name: string;
   pictureUrl?: string;
   avatarType?: AvatarType;
+  variant?: EntityChipVariant;
 };
+
+export enum EntityChipVariant {
+  Regular = 'regular',
+  Transparent = 'transparent',
+}
 
 export function EntityChip({
   linkToEntity,
@@ -20,6 +26,7 @@ export function EntityChip({
   name,
   pictureUrl,
   avatarType = 'rounded',
+  variant = EntityChipVariant.Regular,
 }: OwnProps) {
   const navigate = useNavigate();
 
@@ -35,7 +42,13 @@ export function EntityChip({
     <div onClick={handleLinkClick}>
       <Chip
         label={name}
-        variant={linkToEntity ? ChipVariant.Highlighted : ChipVariant.Regular}
+        variant={
+          linkToEntity
+            ? variant === EntityChipVariant.Regular
+              ? ChipVariant.Highlighted
+              : ChipVariant.Regular
+            : ChipVariant.Transparent
+        }
         leftComponent={
           <Avatar
             avatarUrl={pictureUrl}

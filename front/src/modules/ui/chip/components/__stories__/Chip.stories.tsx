@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ExhaustiveComponentDecorator } from '~/testing/decorators/ExhaustiveComponentDecorator';
 
-import { Chip, ChipSize, ChipVariant } from '../Chip';
+import { Chip, ChipAccent, ChipSize, ChipVariant } from '../Chip';
 
 const meta: Meta<typeof Chip> = {
   title: 'UI/Chip/Chip',
@@ -18,13 +18,15 @@ export const Default: Story = {
     label: 'Chip test',
     size: ChipSize.Small,
     variant: ChipVariant.Highlighted,
+    accent: ChipAccent.TextPrimary,
+    disabled: false,
     clickable: true,
     maxWidth: '200px',
   },
   decorators: [ComponentDecorator],
 };
 
-export const All: Story = {
+export const Catalog: Story = {
   args: { size: ChipSize.Large, clickable: true, label: 'Hello' },
   argTypes: {
     size: { control: false },
@@ -42,6 +44,7 @@ export const All: Story = {
       ChipVariant.Transparent,
     ],
     sizes: [ChipSize.Small, ChipSize.Large],
+    accents: [ChipAccent.TextPrimary, ChipAccent.TextSecondary],
     states: ['default', 'hover', 'active', 'disabled'],
   },
   decorators: [ExhaustiveComponentDecorator],

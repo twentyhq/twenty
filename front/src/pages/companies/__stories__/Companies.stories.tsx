@@ -1,22 +1,26 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
+import {
+  PageDecorator,
+  type PageDecoratorArgs,
+} from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 
 import { Companies } from '../Companies';
 
-const meta: Meta<typeof Companies> = {
+const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Companies',
   component: Companies,
+  decorators: [PageDecorator],
+  args: { currentPath: '/companies' },
+  parameters: {
+    docs: { story: 'inline', iframeHeight: '500px' },
+    msw: graphqlMocks,
+  },
 };
 
 export default meta;
 
 export type Story = StoryObj<typeof Companies>;
 
-export const Default: Story = {
-  render: getRenderWrapperForPage(<Companies />, '/companies'),
-  parameters: {
-    msw: graphqlMocks,
-  },
-};
+export const Default: Story = {};
