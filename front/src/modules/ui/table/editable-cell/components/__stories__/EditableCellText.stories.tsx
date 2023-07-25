@@ -5,7 +5,6 @@ import { userEvent, within } from '@storybook/testing-library';
 import { CellPositionDecorator } from '~/testing/decorators/CellPositionDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { sleep } from '../../../../../../testing/sleep';
 import { EditableCellText } from '../../types/EditableCellText';
 
 const meta: Meta<typeof EditableCellText> = {
@@ -29,8 +28,9 @@ export const SoftFocusMode: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('Click once', () =>
-      userEvent.click(canvas.getByText('Content')),
+    await step(
+      'Click once',
+      async () => await userEvent.click(canvas.getByText('Content')),
     );
 
     await step('Escape', async () => {
@@ -48,7 +48,8 @@ export const EditMode: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    const click = async () => userEvent.click(canvas.getByText('Content'));
+    const click = async () =>
+      await userEvent.click(canvas.getByText('Content'));
 
     await step('Click once', click);
 
