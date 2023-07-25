@@ -80,6 +80,8 @@ export function ShowPageSummaryCard({
         size={theme.icon.size.xl}
         colorId={id}
         placeholder={title}
+        type="rounded"
+        fontSize={theme.font.size.md}
       />
       <StyledInfoContainer>
         <StyledTitle>

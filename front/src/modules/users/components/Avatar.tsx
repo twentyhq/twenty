@@ -1,3 +1,4 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
@@ -13,6 +14,7 @@ type OwnProps = {
   placeholder: string;
   colorId?: string;
   type?: AvatarType;
+  fontSize?: string;
 };
 
 export const StyledAvatar = styled.div<OwnProps & { colorId: string }>`
@@ -27,7 +29,7 @@ export const StyledAvatar = styled.div<OwnProps & { colorId: string }>`
   display: flex;
 
   flex-shrink: 0;
-  font-size: ${({ theme }) => theme.font.size.xs};
+  font-size: ${(props) => props.fontSize};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 
   height: ${(props) => props.size}px;
@@ -41,8 +43,10 @@ export function Avatar({
   placeholder,
   colorId = placeholder,
   type = 'squared',
+  fontSize,
 }: OwnProps) {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
+  const theme = useTheme();
 
   return (
     <StyledAvatar
@@ -51,6 +55,7 @@ export function Avatar({
       size={size}
       type={type}
       colorId={colorId}
+      fontSize={fontSize || theme.font.size.xs}
     >
       {noAvatarUrl && placeholder[0]?.toLocaleUpperCase()}
     </StyledAvatar>
