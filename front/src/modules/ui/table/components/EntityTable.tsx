@@ -72,6 +72,18 @@ const StyledTableWithHeader = styled.div`
   width: 100%;
 `;
 
+const StyledTableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+`;
+
+const StyledTableWrapper = styled.div`
+  flex: 1;
+  overflow: auto;
+`;
+
 type OwnProps<SortField> = {
   columns: Array<TableColumn>;
   viewName: string;
@@ -109,18 +121,20 @@ export function EntityTable<SortField>({
 
   return (
     <StyledTableWithHeader>
-      <TableHeader
-        viewName={viewName}
-        viewIcon={viewIcon}
-        availableSorts={availableSorts}
-        onSortsUpdate={onSortsUpdate}
-      />
-      <div ref={tableBodyRef}>
-        <StyledTable>
-          <EntityTableHeader columns={columns} />
-          <EntityTableBody columns={columns} />
-        </StyledTable>
-      </div>
+      <StyledTableContainer ref={tableBodyRef}>
+        <TableHeader
+          viewName={viewName}
+          viewIcon={viewIcon}
+          availableSorts={availableSorts}
+          onSortsUpdate={onSortsUpdate}
+        />
+        <StyledTableWrapper>
+          <StyledTable>
+            <EntityTableHeader columns={columns} />
+            <EntityTableBody columns={columns} />
+          </StyledTable>
+        </StyledTableWrapper>
+      </StyledTableContainer>
     </StyledTableWithHeader>
   );
 }
