@@ -1,5 +1,3 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-
 import { InplaceInputPhoneDisplayMode } from '@/ui/display/component/InplaceInputPhoneDisplayMode';
 import { InplaceInputTextEditMode } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
 
@@ -8,42 +6,22 @@ import { EditableCell } from '../components/EditableCell';
 type OwnProps = {
   placeholder?: string;
   value: string;
-  onChange: (updated: string) => void;
-  onSubmit?: () => void;
-  onCancel?: () => void;
+  onSubmit?: (newText: string) => void;
 };
 
-export function EditableCellPhone({
-  value,
-  placeholder,
-  onChange,
-  onSubmit,
-  onCancel,
-}: OwnProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [inputValue, setInputValue] = useState(value);
-
-  useEffect(() => {
-    setInputValue(value);
-  }, [value]);
-
+export function EditableCellPhone({ value, placeholder, onSubmit }: OwnProps) {
   return (
     <EditableCell
       editModeContent={
         <InplaceInputTextEditMode
+          autoComplete="off"
           autoFocus
           placeholder={placeholder || ''}
-          ref={inputRef}
-          value={inputValue}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            setInputValue(event.target.value);
-            onChange(event.target.value);
-          }}
+          value={value}
+          onSubmit={(newText) => onSubmit?.(newText)}
         />
       }
-      nonEditModeContent={<InplaceInputPhoneDisplayMode value={inputValue} />}
-      onSubmit={onSubmit}
-      onCancel={onCancel}
+      nonEditModeContent={<InplaceInputPhoneDisplayMode value={value} />}
     />
   );
 }

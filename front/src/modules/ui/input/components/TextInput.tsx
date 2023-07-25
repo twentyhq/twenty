@@ -150,6 +150,7 @@ export function TextInput({
       {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
       <StyledInputContainer>
         <StyledInput
+          autoComplete="off"
           ref={inputRef}
           tabIndex={props.tabIndex ?? 0}
           onFocus={handleFocus}

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { companyDomainNameFamilyState } from '@/companies/states/companyDomainNameFamilyState';
@@ -12,31 +11,25 @@ export function EditableCompanyDomainNameCell() {
 
   const [updateCompany] = useUpdateOneCompanyMutation();
 
-  const name = useRecoilValue(
+  const domainName = useRecoilValue(
     companyDomainNameFamilyState(currentRowEntityId ?? ''),
   );
-  const [internalValue, setInternalValue] = useState(name ?? '');
-  useEffect(() => {
-    setInternalValue(name ?? '');
-  }, [name]);
 
   return (
     <EditableCellURL
-      url={internalValue}
-      onChange={setInternalValue}
-      onSubmit={() =>
+      url={domainName ?? ''}
+      onSubmit={(newURL) =>
         updateCompany({
           variables: {
             where: {
               id: currentRowEntityId,
             },
             data: {
-              domainName: internalValue,
+              domainName: newURL,
             },
           },
         })
       }
-      onCancel={() => setInternalValue(name ?? '')}
     />
   );
 }

@@ -5,7 +5,9 @@ import { TableColumn } from '@/people/table/components/peopleColumns';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 
+import { useIsPageLoading } from '../../hooks/useIsPageLoading';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
+import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -88,6 +90,8 @@ export function EntityTable<SortField>({
 }: OwnProps<SortField>) {
   const tableBodyRef = React.useRef<HTMLDivElement>(null);
 
+  useMapKeyboardToSoftFocus();
+
   const leaveTableFocus = useLeaveTableFocus();
 
   useListenClickOutside({
@@ -96,6 +100,12 @@ export function EntityTable<SortField>({
       leaveTableFocus();
     },
   });
+
+  const isPageLoading = useIsPageLoading();
+
+  if (isPageLoading) {
+    return null;
+  }
 
   return (
     <StyledTableWithHeader>

@@ -32,7 +32,7 @@ export function SingleEntitySelectBase<
   onCancel,
 }: {
   entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
-  onEntitySelected: (entity: CustomEntityForSelect) => void;
+  onEntitySelected: (entity: CustomEntityForSelect | null | undefined) => void;
   onCancel?: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);

@@ -21,6 +21,7 @@ export function Verify() {
         navigate(AppPath.SignIn);
       } else {
         await verify(loginToken);
+        navigate(AppPath.CompaniesPage);
       }
     }
 

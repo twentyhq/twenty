@@ -1,33 +1,19 @@
-import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-
+import { RecoilScope } from '../../recoil-scope/components/RecoilScope';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
-import { CellContext } from '../states/CellContext';
+import { ColumnIndexContext } from '../states/ColumnIndexContext';
 import { contextMenuPositionState } from '../states/contextMenuPositionState';
-import { currentColumnNumberScopedState } from '../states/currentColumnNumberScopedState';
 
 export function EntityTableCell({
-  rowId,
   cellIndex,
   children,
   size,
 }: {
   size: number;
-  rowId: string;
   cellIndex: number;
   children: React.ReactNode;
 }) {
-  const [, setCurrentColumnNumber] = useRecoilScopedState(
-    currentColumnNumberScopedState,
-    CellContext,
-  );
-
-  useEffect(() => {
-    setCurrentColumnNumber(cellIndex);
-  }, [cellIndex, setCurrentColumnNumber]);
-
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
@@ -44,15 +30,19 @@ export function EntityTableCell({
   }
 
   return (
-    <td
-      onContextMenu={(event) => handleContextMenu(event)}
-      style={{
-        width: size,
-        minWidth: size,
-        maxWidth: size,
-      }}
-    >
-      {children}
-    </td>
+    <RecoilScope>
+      <ColumnIndexContext.Provider value={cellIndex}>
+        <td
+          onContextMenu={(event) => handleContextMenu(event)}
+          style={{
+            width: size,
+            minWidth: size,
+            maxWidth: size,
+          }}
+        >
+          {children}
+        </td>
+      </ColumnIndexContext.Provider>
+    </RecoilScope>
   );
 }

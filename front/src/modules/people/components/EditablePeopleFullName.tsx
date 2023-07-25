@@ -19,8 +19,8 @@ type OwnProps = {
       >
     | null
     | undefined;
-  onChange: (firstName: string, lastName: string) => void;
-  onSubmit?: () => void;
+  onChange?: (firstName: string, lastName: string) => void;
+  onSubmit?: (firstName: string, lastName: string) => void;
   onCancel?: () => void;
 };
 
@@ -37,20 +37,12 @@ export function EditablePeopleFullName({
   onSubmit,
   onCancel,
 }: OwnProps) {
-  function handleDoubleTextChange(
-    firstValue: string,
-    secondValue: string,
-  ): void {
-    onChange(firstValue, secondValue);
-  }
-
   return (
     <EditableCellDoubleText
       firstValue={person?.firstName ?? ''}
       secondValue={person?.lastName ?? ''}
       firstValuePlaceholder="First name"
       secondValuePlaceholder="Last name"
-      onChange={handleDoubleTextChange}
       onSubmit={onSubmit}
       onCancel={onCancel}
       nonEditModeContent={
