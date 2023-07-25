@@ -15,29 +15,21 @@ export function EditablePeopleEmailCell() {
     peopleEmailFamilyState(currentRowEntityId ?? ''),
   );
 
-  const [internalValue, setInternalValue] = useState(email ?? '');
-
-  useEffect(() => {
-    setInternalValue(email ?? '');
-  }, [email]);
-
   return (
     <EditableCellText
-      value={internalValue}
-      onChange={setInternalValue}
-      onSubmit={() =>
+      value={email || ''}
+      onSubmit={(newEmail: string) =>
         updatePerson({
           variables: {
             where: {
               id: currentRowEntityId,
             },
             data: {
-              email: internalValue,
+              email: newEmail,
             },
           },
         })
       }
-      onCancel={() => setInternalValue(email ?? '')}
     />
   );
 }

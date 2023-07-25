@@ -35,11 +35,17 @@ const createAbilityCheck: OperationAbilityChecker = async (
   data,
 ) => {
   // Handle all operations cases
-  const items = !Array.isArray(data?.data ?? data) ? [data] : data;
+  const items = data?.data
+    ? !Array.isArray(data.data)
+      ? [data.data]
+      : data.data
+    : !Array.isArray(data)
+    ? [data]
+    : data;
 
   // Check if user try to create an element that is not allowed to create
-  for (const item of items) {
-    if (!ability.can(AbilityAction.Create, subject(modelName, item))) {
+  for (const {} of items) {
+    if (!ability.can(AbilityAction.Create, modelName)) {
       return false;
     }
   }
@@ -70,6 +76,11 @@ const simpleAbilityCheck: OperationAbilityChecker = async (
 
   // Check if user try to connect an element that is not allowed to read
   for (const item of items) {
+    // TODO: Replace user by workspaceMember and remove this check
+    if (modelName === 'User') {
+      return true;
+    }
+
     if (!ability.can(AbilityAction.Read, subject(modelName, item))) {
       return false;
     }
@@ -152,6 +163,7 @@ export async function relationAbilityChecker(
           ].includes(operationType)
         ) {
           // Handle nested operations all cases
+
           const operationValues = !Array.isArray(operationValue)
             ? [operationValue]
             : operationValue;

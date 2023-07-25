@@ -51,6 +51,15 @@ export class CommentThreadResolver {
       data: {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
+        commentThreadTargets: args.data?.commentThreadTargets?.createMany
+          ? {
+              createMany: {
+                data: args.data.commentThreadTargets.createMany.data.map(
+                  (target) => ({ ...target, workspaceId: workspace.id }),
+                ),
+              },
+            }
+          : undefined,
       },
       select: prismaSelect.value,
     } as Prisma.CommentThreadCreateArgs);
@@ -65,6 +74,7 @@ export class CommentThreadResolver {
   @CheckAbilities(UpdateCommentThreadAbilityHandler)
   async updateOneCommentThread(
     @Args() args: UpdateOneCommentThreadArgs,
+    @AuthWorkspace() workspace: Workspace,
     @PrismaSelector({ modelName: 'CommentThread' })
     prismaSelect: PrismaSelect<'CommentThread'>,
   ): Promise<Partial<CommentThread>> {
@@ -84,7 +94,18 @@ export class CommentThreadResolver {
     }
     const updatedCommentThread = await this.commentThreadService.update({
       where: args.where,
-      data: args.data,
+      data: {
+        ...args.data,
+        commentThreadTargets: args.data?.commentThreadTargets?.createMany
+          ? {
+              createMany: {
+                data: args.data.commentThreadTargets.createMany.data.map(
+                  (target) => ({ ...target, workspaceId: workspace.id }),
+                ),
+              },
+            }
+          : undefined,
+      },
       select: prismaSelect.value,
     } as Prisma.CommentThreadUpdateArgs);
 
