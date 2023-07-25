@@ -67,6 +67,7 @@ export function EditableCellChip({
         <StyledInplaceInput
           placeholder={placeholder || ''}
           autoFocus
+          autoComplete="off"
           ref={inputRef}
           value={inputValue}
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
