@@ -39,7 +39,6 @@ export function InplaceInputDoubleText({
           onChange(event.target.value, secondValue);
         }}
       />
-      <InplaceInputTextEditMode
         autoComplete="off"
       <StyledInput
         autoComplete="off"
