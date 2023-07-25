@@ -29,15 +29,15 @@ export const SoftFocusMode: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('Click once', () =>
-      userEvent.click(canvas.getByText('Content')),
-    );
+    const content = await canvas.getByText('Content');
+
+    await step('Click once', () => userEvent.click(content));
 
     await step('Escape', async () => {
       await userEvent.keyboard('{esc}');
     });
 
-    await sleep(1000);
+    await sleep(10);
 
     await step('Has soft focus mode', () => {
       expect(canvas.getByTestId('editable-cell-soft-focus-mode')).toBeDefined();
