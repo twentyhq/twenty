@@ -48,7 +48,7 @@ export class CreateOneCommentThreadGuard implements CanActivate {
         );
       }
 
-      const targetEntity = await this.prismaService[
+      const targetEntity = await this.prismaService.client[
         target.commentableType
       ].findUnique({
         where: { id: target.commentableId },
@@ -74,7 +74,7 @@ export class CreateOneCommentThreadGuard implements CanActivate {
         );
       }
 
-      const author = await this.prismaService.user.findUnique({
+      const author = await this.prismaService.client.user.findUnique({
         where: { id: comment.authorId },
       });
 
@@ -86,7 +86,7 @@ export class CreateOneCommentThreadGuard implements CanActivate {
       }
 
       const userWorkspaceMember =
-        await this.prismaService.workspaceMember.findFirst({
+        await this.prismaService.client.workspaceMember.findFirst({
           where: { userId: author.id },
         });
 

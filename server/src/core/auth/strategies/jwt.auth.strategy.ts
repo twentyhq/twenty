@@ -24,7 +24,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload): Promise<PassportUser> {
-    const user = await this.prismaService.user.findUniqueOrThrow({
+    const user = await this.prismaService.client.user.findUniqueOrThrow({
       where: { id: payload.sub },
     });
 
@@ -32,7 +32,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new UnauthorizedException();
     }
 
-    const workspace = await this.prismaService.workspace.findUniqueOrThrow({
+    const workspace = await this.prismaService.client.workspace.findUniqueOrThrow({
       where: { id: payload.workspaceId },
     });
 

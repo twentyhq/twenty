@@ -28,13 +28,14 @@ export class CreateOneCommentGuard implements CanActivate {
       );
     }
 
-    const author = await this.prismaService.user.findUnique({
+    const author = await this.prismaService.client.user.findUnique({
       where: { id: authorId },
     });
 
-    const commentThread = await this.prismaService.commentThread.findUnique({
-      where: { id: commentThreadId },
-    });
+    const commentThread =
+      await this.prismaService.client.commentThread.findUnique({
+        where: { id: commentThreadId },
+      });
 
     if (!author || !commentThread) {
       throw new HttpException(
@@ -44,7 +45,7 @@ export class CreateOneCommentGuard implements CanActivate {
     }
 
     const userWorkspaceMember =
-      await this.prismaService.workspaceMember.findFirst({
+      await this.prismaService.client.workspaceMember.findFirst({
         where: { userId: author.id },
       });
 

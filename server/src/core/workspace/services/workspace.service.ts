@@ -19,35 +19,35 @@ export class WorkspaceService {
   ) {}
 
   // Find
-  findFirst = this.prismaService.workspace.findFirst;
-  findFirstOrThrow = this.prismaService.workspace.findFirstOrThrow;
+  findFirst = this.prismaService.client.workspace.findFirst;
+  findFirstOrThrow = this.prismaService.client.workspace.findFirstOrThrow;
 
-  findUnique = this.prismaService.workspace.findUnique;
-  findUniqueOrThrow = this.prismaService.workspace.findUniqueOrThrow;
+  findUnique = this.prismaService.client.workspace.findUnique;
+  findUniqueOrThrow = this.prismaService.client.workspace.findUniqueOrThrow;
 
-  findMany = this.prismaService.workspace.findMany;
+  findMany = this.prismaService.client.workspace.findMany;
 
   // Create
-  create = this.prismaService.workspace.create;
-  createMany = this.prismaService.workspace.createMany;
+  create = this.prismaService.client.workspace.create;
+  createMany = this.prismaService.client.workspace.createMany;
 
   // Update
-  update = this.prismaService.workspace.update;
-  upsert = this.prismaService.workspace.upsert;
-  updateMany = this.prismaService.workspace.updateMany;
+  update = this.prismaService.client.workspace.update;
+  upsert = this.prismaService.client.workspace.upsert;
+  updateMany = this.prismaService.client.workspace.updateMany;
 
   // Delete
-  delete = this.prismaService.workspace.delete;
-  deleteMany = this.prismaService.workspace.deleteMany;
+  delete = this.prismaService.client.workspace.delete;
+  deleteMany = this.prismaService.client.workspace.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.workspace.aggregate;
+  aggregate = this.prismaService.client.workspace.aggregate;
 
   // Count
-  count = this.prismaService.workspace.count;
+  count = this.prismaService.client.workspace.count;
 
   // GroupBy
-  groupBy = this.prismaService.workspace.groupBy;
+  groupBy = this.prismaService.client.workspace.groupBy;
 
   // Customs
   async createDefaultWorkspace() {

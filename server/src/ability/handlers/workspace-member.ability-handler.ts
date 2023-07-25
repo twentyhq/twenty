@@ -13,10 +13,12 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
 import { WorkspaceMemberWhereInput } from 'src/core/@generated/workspace-member/workspace-member-where.input';
+import { relationAbilityChecker } from 'src/ability/ability.util';
 import { assert } from 'src/utils/assert';
 
-class WorksapceMemberArgs {
+class WorkspaceMemberArgs {
   where?: WorkspaceMemberWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -35,7 +37,23 @@ export class ReadWorkspaceMemberAbilityHandler implements IAbilityHandler {
 
 @Injectable()
 export class CreateWorkspaceMemberAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'WorkspaceMember',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'WorkspaceMember');
   }
 }
@@ -46,11 +64,23 @@ export class UpdateWorkspaceMemberAbilityHandler implements IAbilityHandler {
 
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
-    const args = gqlContext.getArgs<WorksapceMemberArgs>();
-    const workspaceMember = await this.prismaService.workspaceMember.findFirst({
-      where: args.where,
-    });
+    const args = gqlContext.getArgs<WorkspaceMemberArgs>();
+    const workspaceMember =
+      await this.prismaService.client.workspaceMember.findFirst({
+        where: args.where,
+      });
     assert(workspaceMember, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'WorkspaceMember',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
 
     return ability.can(
       AbilityAction.Update,
@@ -65,10 +95,11 @@ export class DeleteWorkspaceMemberAbilityHandler implements IAbilityHandler {
 
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
-    const args = gqlContext.getArgs<WorksapceMemberArgs>();
-    const workspaceMember = await this.prismaService.workspaceMember.findFirst({
-      where: args.where,
-    });
+    const args = gqlContext.getArgs<WorkspaceMemberArgs>();
+    const workspaceMember =
+      await this.prismaService.client.workspaceMember.findFirst({
+        where: args.where,
+      });
     assert(workspaceMember, '', NotFoundException);
 
     return ability.can(

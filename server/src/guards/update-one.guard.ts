@@ -26,7 +26,7 @@ export class UpdateOneGuard implements CanActivate {
       );
     }
 
-    const object = await this.prismaService[entity].findUniqueOrThrow({
+    const object = await this.prismaService.client[entity].findUniqueOrThrow({
       where: { id: args.where.id },
     });
 

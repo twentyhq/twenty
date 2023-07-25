@@ -13,10 +13,12 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
 import { CommentThreadTargetWhereInput } from 'src/core/@generated/comment-thread-target/comment-thread-target-where.input';
+import { relationAbilityChecker } from 'src/ability/ability.util';
 import { assert } from 'src/utils/assert';
 
 class CommentThreadTargetArgs {
   where?: CommentThreadTargetWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -39,7 +41,23 @@ export class ReadCommentThreadTargetAbilityHandler implements IAbilityHandler {
 export class CreateCommentThreadTargetAbilityHandler
   implements IAbilityHandler
 {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'CommentThreadTarget',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'CommentThreadTarget');
   }
 }
@@ -54,10 +72,21 @@ export class UpdateCommentThreadTargetAbilityHandler
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<CommentThreadTargetArgs>();
     const commentThreadTarget =
-      await this.prismaService.commentThreadTarget.findFirst({
+      await this.prismaService.client.commentThreadTarget.findFirst({
         where: args.where,
       });
     assert(commentThreadTarget, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'CommentThreadTarget',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
 
     return ability.can(
       AbilityAction.Update,
@@ -76,7 +105,7 @@ export class DeleteCommentThreadTargetAbilityHandler
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<CommentThreadTargetArgs>();
     const commentThreadTarget =
-      await this.prismaService.commentThreadTarget.findFirst({
+      await this.prismaService.client.commentThreadTarget.findFirst({
         where: args.where,
       });
     assert(commentThreadTarget, '', NotFoundException);

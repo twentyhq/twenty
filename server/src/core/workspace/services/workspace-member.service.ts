@@ -7,33 +7,33 @@ export class WorkspaceMemberService {
   constructor(private readonly prismaService: PrismaService) {}
 
   // Find
-  findFirst = this.prismaService.workspaceMember.findFirst;
-  findFirstOrThrow = this.prismaService.workspaceMember.findFirstOrThrow;
+  findFirst = this.prismaService.client.workspaceMember.findFirst;
+  findFirstOrThrow = this.prismaService.client.workspaceMember.findFirstOrThrow;
 
-  findUnique = this.prismaService.workspaceMember.findUnique;
-  findUniqueOrThrow = this.prismaService.workspaceMember.findUniqueOrThrow;
+  findUnique = this.prismaService.client.workspaceMember.findUnique;
+  findUniqueOrThrow = this.prismaService.client.workspaceMember.findUniqueOrThrow;
 
-  findMany = this.prismaService.workspaceMember.findMany;
+  findMany = this.prismaService.client.workspaceMember.findMany;
 
   // Create
-  create = this.prismaService.workspaceMember.create;
-  createMany = this.prismaService.workspaceMember.createMany;
+  create = this.prismaService.client.workspaceMember.create;
+  createMany = this.prismaService.client.workspaceMember.createMany;
 
   // Update
-  update = this.prismaService.workspaceMember.update;
-  upsert = this.prismaService.workspaceMember.upsert;
-  updateMany = this.prismaService.workspaceMember.updateMany;
+  update = this.prismaService.client.workspaceMember.update;
+  upsert = this.prismaService.client.workspaceMember.upsert;
+  updateMany = this.prismaService.client.workspaceMember.updateMany;
 
   // Delete
-  delete = this.prismaService.workspaceMember.delete;
-  deleteMany = this.prismaService.workspaceMember.deleteMany;
+  delete = this.prismaService.client.workspaceMember.delete;
+  deleteMany = this.prismaService.client.workspaceMember.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.workspaceMember.aggregate;
+  aggregate = this.prismaService.client.workspaceMember.aggregate;
 
   // Count
-  count = this.prismaService.workspaceMember.count;
+  count = this.prismaService.client.workspaceMember.count;
 
   // GroupBy
-  groupBy = this.prismaService.workspaceMember.groupBy;
+  groupBy = this.prismaService.client.workspaceMember.groupBy;
 }

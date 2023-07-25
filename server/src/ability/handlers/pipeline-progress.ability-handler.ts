@@ -12,11 +12,13 @@ import { IAbilityHandler } from 'src/ability/interfaces/ability-handler.interfac
 import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
-import { assert } from 'src/utils/assert';
 import { PipelineProgressWhereInput } from 'src/core/@generated/pipeline-progress/pipeline-progress-where.input';
+import { relationAbilityChecker } from 'src/ability/ability.util';
+import { assert } from 'src/utils/assert';
 
 class PipelineProgressArgs {
   where?: PipelineProgressWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -35,7 +37,23 @@ export class ReadPipelineProgressAbilityHandler implements IAbilityHandler {
 
 @Injectable()
 export class CreatePipelineProgressAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'PipelineProgress',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'PipelineProgress');
   }
 }
@@ -48,10 +66,21 @@ export class UpdatePipelineProgressAbilityHandler implements IAbilityHandler {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<PipelineProgressArgs>();
     const pipelineProgress =
-      await this.prismaService.pipelineProgress.findFirst({
+      await this.prismaService.client.pipelineProgress.findFirst({
         where: args.where,
       });
     assert(pipelineProgress, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'PipelineProgress',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
 
     return ability.can(
       AbilityAction.Update,
@@ -68,7 +97,7 @@ export class DeletePipelineProgressAbilityHandler implements IAbilityHandler {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<PipelineProgressArgs>();
     const pipelineProgress =
-      await this.prismaService.pipelineProgress.findFirst({
+      await this.prismaService.client.pipelineProgress.findFirst({
         where: args.where,
       });
     assert(pipelineProgress, '', NotFoundException);

@@ -1,6 +1,5 @@
 import {
   ExecutionContext,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -14,11 +13,12 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
 import { WorkspaceWhereInput } from 'src/core/@generated/workspace/workspace-where.input';
+import { relationAbilityChecker } from 'src/ability/ability.util';
 import { assert } from 'src/utils/assert';
-import { getRequest } from 'src/utils/extract-request';
 
-class WorksapceArgs {
+class WorkspaceArgs {
   where?: WorkspaceWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -37,7 +37,23 @@ export class ReadWorkspaceAbilityHandler implements IAbilityHandler {
 
 @Injectable()
 export class CreateWorkspaceAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'Workspace',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'Workspace');
   }
 }
@@ -47,13 +63,23 @@ export class UpdateWorkspaceAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async handle(ability: AppAbility, context: ExecutionContext) {
-    const request = getRequest(context);
-    assert(request.user.workspace.id, '', ForbiddenException);
-
-    const workspace = await this.prismaService.workspace.findUnique({
-      where: { id: request.user.workspace.id },
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs<WorkspaceArgs>();
+    const workspace = await this.prismaService.client.workspace.findFirst({
+      where: args.where,
     });
     assert(workspace, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'Workspace',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
 
     return ability.can(AbilityAction.Update, subject('Workspace', workspace));
   }
@@ -65,8 +91,8 @@ export class DeleteWorkspaceAbilityHandler implements IAbilityHandler {
 
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
-    const args = gqlContext.getArgs<WorksapceArgs>();
-    const workspace = await this.prismaService.workspace.findFirst({
+    const args = gqlContext.getArgs<WorkspaceArgs>();
+    const workspace = await this.prismaService.client.workspace.findFirst({
       where: args.where,
     });
     assert(workspace, '', NotFoundException);

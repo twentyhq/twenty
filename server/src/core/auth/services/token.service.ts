@@ -31,7 +31,7 @@ export class TokenService {
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
-    const user = await this.prismaService.user.findUnique({
+    const user = await this.prismaService.client.user.findUnique({
       where: { id: userId },
       include: {
         workspaceMember: true,
@@ -71,7 +71,7 @@ export class TokenService {
       sub: userId,
     };
 
-    const refreshToken = await this.prismaService.refreshToken.create({
+    const refreshToken = await this.prismaService.client.refreshToken.create({
       data: refreshTokenPayload,
     });
 
@@ -122,13 +122,13 @@ export class TokenService {
       UnprocessableEntityException,
     );
 
-    const token = await this.prismaService.refreshToken.findUnique({
+    const token = await this.prismaService.client.refreshToken.findUnique({
       where: { id: jwtPayload.jti },
     });
 
     assert(token, "This refresh token doesn't exist", NotFoundException);
 
-    const user = await this.prismaService.user.findUnique({
+    const user = await this.prismaService.client.user.findUnique({
       where: {
         id: jwtPayload.sub,
       },
@@ -141,7 +141,7 @@ export class TokenService {
 
     if (token.isRevoked) {
       // Revoke all user refresh tokens
-      await this.prismaService.refreshToken.updateMany({
+      await this.prismaService.client.refreshToken.updateMany({
         where: {
           id: {
             in: user.refreshTokens.map(({ id }) => id),
@@ -172,7 +172,7 @@ export class TokenService {
     } = await this.verifyRefreshToken(token);
 
     // Revoke old refresh token
-    await this.prismaService.refreshToken.update({
+    await this.prismaService.client.refreshToken.update({
       where: {
         id,
       },

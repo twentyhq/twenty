@@ -7,33 +7,33 @@ export class CommentService {
   constructor(private readonly prismaService: PrismaService) {}
 
   // Find
-  findFirst = this.prismaService.comment.findFirst;
-  findFirstOrThrow = this.prismaService.comment.findFirstOrThrow;
+  findFirst = this.prismaService.client.comment.findFirst;
+  findFirstOrThrow = this.prismaService.client.comment.findFirstOrThrow;
 
-  findUnique = this.prismaService.comment.findUnique;
-  findUniqueOrThrow = this.prismaService.comment.findUniqueOrThrow;
+  findUnique = this.prismaService.client.comment.findUnique;
+  findUniqueOrThrow = this.prismaService.client.comment.findUniqueOrThrow;
 
-  findMany = this.prismaService.comment.findMany;
+  findMany = this.prismaService.client.comment.findMany;
 
   // Create
-  create = this.prismaService.comment.create;
-  createMany = this.prismaService.comment.createMany;
+  create = this.prismaService.client.comment.create;
+  createMany = this.prismaService.client.comment.createMany;
 
   // Update
-  update = this.prismaService.comment.update;
-  upsert = this.prismaService.comment.upsert;
-  updateMany = this.prismaService.comment.updateMany;
+  update = this.prismaService.client.comment.update;
+  upsert = this.prismaService.client.comment.upsert;
+  updateMany = this.prismaService.client.comment.updateMany;
 
   // Delete
-  delete = this.prismaService.comment.delete;
-  deleteMany = this.prismaService.comment.deleteMany;
+  delete = this.prismaService.client.comment.delete;
+  deleteMany = this.prismaService.client.comment.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.comment.aggregate;
+  aggregate = this.prismaService.client.comment.aggregate;
 
   // Count
-  count = this.prismaService.comment.count;
+  count = this.prismaService.client.comment.count;
 
   // GroupBy
-  groupBy = this.prismaService.comment.groupBy;
+  groupBy = this.prismaService.client.comment.groupBy;
 }

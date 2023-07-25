@@ -8,35 +8,35 @@ export class PipelineStageService {
   constructor(private readonly prismaService: PrismaService) {}
 
   // Find
-  findFirst = this.prismaService.pipelineStage.findFirst;
-  findFirstOrThrow = this.prismaService.pipelineStage.findFirstOrThrow;
+  findFirst = this.prismaService.client.pipelineStage.findFirst;
+  findFirstOrThrow = this.prismaService.client.pipelineStage.findFirstOrThrow;
 
-  findUnique = this.prismaService.pipelineStage.findUnique;
-  findUniqueOrThrow = this.prismaService.pipelineStage.findUniqueOrThrow;
+  findUnique = this.prismaService.client.pipelineStage.findUnique;
+  findUniqueOrThrow = this.prismaService.client.pipelineStage.findUniqueOrThrow;
 
-  findMany = this.prismaService.pipelineStage.findMany;
+  findMany = this.prismaService.client.pipelineStage.findMany;
 
   // Create
-  create = this.prismaService.pipelineStage.create;
-  createMany = this.prismaService.pipelineStage.createMany;
+  create = this.prismaService.client.pipelineStage.create;
+  createMany = this.prismaService.client.pipelineStage.createMany;
 
   // Update
-  update = this.prismaService.pipelineStage.update;
-  upsert = this.prismaService.pipelineStage.upsert;
-  updateMany = this.prismaService.pipelineStage.updateMany;
+  update = this.prismaService.client.pipelineStage.update;
+  upsert = this.prismaService.client.pipelineStage.upsert;
+  updateMany = this.prismaService.client.pipelineStage.updateMany;
 
   // Delete
-  delete = this.prismaService.pipelineStage.delete;
-  deleteMany = this.prismaService.pipelineStage.deleteMany;
+  delete = this.prismaService.client.pipelineStage.delete;
+  deleteMany = this.prismaService.client.pipelineStage.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.pipelineStage.aggregate;
+  aggregate = this.prismaService.client.pipelineStage.aggregate;
 
   // Count
-  count = this.prismaService.pipelineStage.count;
+  count = this.prismaService.client.pipelineStage.count;
 
   // GroupBy
-  groupBy = this.prismaService.pipelineStage.groupBy;
+  groupBy = this.prismaService.client.pipelineStage.groupBy;
 
   // Customs
   async createDefaultPipelineStages({
