@@ -12,7 +12,6 @@ type OwnProps = {
   icon: ReactNode;
   danger?: boolean;
   soon?: boolean;
-  measurePageLoad?: boolean;
 };
 
 type StyledItemProps = {
