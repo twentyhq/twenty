@@ -32,7 +32,6 @@ export function EditableCellText({
           autoFocus
           value={value}
           onSubmit={(newText) => onSubmit?.(newText)}
-          autoComplete="off"
         />
       }
       nonEditModeContent={

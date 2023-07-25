@@ -13,10 +13,12 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
 import { CommentWhereInput } from 'src/core/@generated/comment/comment-where.input';
+import { relationAbilityChecker } from 'src/ability/ability.util';
 import { assert } from 'src/utils/assert';
 
 class CommentArgs {
   where?: CommentWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -35,7 +37,23 @@ export class ReadCommentAbilityHandler implements IAbilityHandler {
 
 @Injectable()
 export class CreateCommentAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'Comment',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'Comment');
   }
 }
@@ -47,10 +65,21 @@ export class UpdateCommentAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<CommentArgs>();
-    const comment = await this.prismaService.comment.findFirst({
+    const comment = await this.prismaService.client.comment.findFirst({
       where: args.where,
     });
     assert(comment, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'Comment',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
 
     return ability.can(AbilityAction.Update, subject('Comment', comment));
   }
@@ -63,7 +92,7 @@ export class DeleteCommentAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<CommentArgs>();
-    const comment = await this.prismaService.comment.findFirst({
+    const comment = await this.prismaService.client.comment.findFirst({
       where: args.where,
     });
     assert(comment, '', NotFoundException);

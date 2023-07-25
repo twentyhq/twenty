@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { companyAddressFamilyState } from '@/companies/states/companyAddressFamilyState';
@@ -15,28 +14,21 @@ export function EditableCompanyAddressCell() {
     companyAddressFamilyState(currentRowEntityId ?? ''),
   );
 
-  const [internalValue, setInternalValue] = useState(address ?? '');
-  useEffect(() => {
-    setInternalValue(address ?? '');
-  }, [address]);
-
   return (
     <EditableCellText
-      value={internalValue}
-      onChange={setInternalValue}
-      onSubmit={() =>
+      value={address || ''}
+      onSubmit={(newAddress) =>
         updateCompany({
           variables: {
             where: {
               id: currentRowEntityId,
             },
             data: {
-              address: internalValue,
+              address: newAddress,
             },
           },
         })
       }
-      onCancel={() => setInternalValue(address ?? '')}
     />
   );
 }

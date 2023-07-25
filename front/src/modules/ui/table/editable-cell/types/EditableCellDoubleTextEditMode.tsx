@@ -48,9 +48,9 @@ export function EditableCellDoubleTextEditMode({
     setSecondInternalValue(secondValue);
   }, [firstValue, secondValue]);
 
-  function handleOnChange(firstValue: string, secondValue: string): void {
-    setFirstInternalValue(firstValue);
-    setSecondInternalValue(secondValue);
+  function handleOnChange(newFirstValue: string, newSecondValue: string): void {
+    setFirstInternalValue(newFirstValue);
+    setSecondInternalValue(newSecondValue);
   }
 
   const [focusPosition, setFocusPosition] = useState<'left' | 'right'>('left');
@@ -142,18 +142,18 @@ export function EditableCellDoubleTextEditMode({
         autoFocus
         placeholder={firstValuePlaceholder}
         ref={firstValueInputRef}
-        value={firstValue}
+        value={firstInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleOnChange(event.target.value, secondValue);
+          handleOnChange(event.target.value, secondInternalValue);
         }}
       />
       <StyledInput
         autoComplete="off"
         placeholder={secondValuePlaceholder}
         ref={secondValueInputRef}
-        value={secondValue}
+        value={secondInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleOnChange(firstValue, event.target.value);
+          handleOnChange(firstInternalValue, event.target.value);
         }}
       />
     </StyledContainer>

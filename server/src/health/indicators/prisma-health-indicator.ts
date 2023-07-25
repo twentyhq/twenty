@@ -15,7 +15,7 @@ export class PrismaHealthIndicator extends HealthIndicator {
 
   async isDatabaseInstanceHealthy(key: string): Promise<HealthIndicatorResult> {
     try {
-      await this.prismaService.$queryRaw`SELECT 1`;
+      await this.prismaService.client.$queryRaw`SELECT 1`;
       return this.getStatus(key, true);
     } catch (e) {
       throw new HealthCheckError('Prisma check failed', e);

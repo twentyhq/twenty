@@ -19,11 +19,11 @@ export function ButtonGroup({ children, variant, size }: ButtonGroupProps) {
         let position: ButtonPosition;
 
         if (index === 0) {
-          position = 'left';
+          position = ButtonPosition.Left;
         } else if (index === children.length - 1) {
-          position = 'right';
+          position = ButtonPosition.Right;
         } else {
-          position = 'middle';
+          position = ButtonPosition.Middle;
         }
 
         const additionalProps: any = { position };

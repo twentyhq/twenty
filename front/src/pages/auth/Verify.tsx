@@ -5,6 +5,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 
 import { AppPath } from '../../modules/types/AppPath';
+import { isNonEmptyString } from '../../utils/isNonEmptyString';
 
 export function Verify() {
   const [searchParams] = useSearchParams();
@@ -20,8 +21,17 @@ export function Verify() {
       if (!loginToken) {
         navigate(AppPath.SignIn);
       } else {
-        await verify(loginToken);
-        navigate(AppPath.CompaniesPage);
+        const verifyResponse = await verify(loginToken);
+
+        if (
+          isNonEmptyString(
+            verifyResponse.user.workspaceMember?.workspace.displayName,
+          )
+        ) {
+          navigate(AppPath.Index);
+        } else {
+          navigate(AppPath.CreateWorkspace);
+        }
       }
     }
 

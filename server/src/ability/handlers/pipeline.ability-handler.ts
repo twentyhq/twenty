@@ -13,10 +13,12 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
 import { PipelineWhereInput } from 'src/core/@generated/pipeline/pipeline-where.input';
+import { relationAbilityChecker } from 'src/ability/ability.util';
 import { assert } from 'src/utils/assert';
 
 class PipelineArgs {
   where?: PipelineWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -35,7 +37,23 @@ export class ReadPipelineAbilityHandler implements IAbilityHandler {
 
 @Injectable()
 export class CreatePipelineAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'Pipeline',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'Pipeline');
   }
 }
@@ -47,10 +65,21 @@ export class UpdatePipelineAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<PipelineArgs>();
-    const pipeline = await this.prismaService.pipeline.findFirst({
+    const pipeline = await this.prismaService.client.pipeline.findFirst({
       where: args.where,
     });
     assert(pipeline, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'Pipeline',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
 
     return ability.can(AbilityAction.Update, subject('Pipeline', pipeline));
   }
@@ -63,7 +92,7 @@ export class DeletePipelineAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<PipelineArgs>();
-    const pipeline = await this.prismaService.pipeline.findFirst({
+    const pipeline = await this.prismaService.client.pipeline.findFirst({
       where: args.where,
     });
     assert(pipeline, '', NotFoundException);

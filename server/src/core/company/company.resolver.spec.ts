@@ -1,9 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CanActivate } from '@nestjs/common';
 
-import { UpdateOneGuard } from 'src/guards/update-one.guard';
-import { DeleteManyGuard } from 'src/guards/delete-many.guard';
-import { CreateOneGuard } from 'src/guards/create-one.guard';
 import { AbilityFactory } from 'src/ability/ability.factory';
 
 import { CompanyService } from './company.service';
@@ -13,8 +9,6 @@ describe('CompanyResolver', () => {
   let resolver: CompanyResolver;
 
   beforeEach(async () => {
-    const mockGuard: CanActivate = { canActivate: jest.fn(() => true) };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CompanyResolver,
@@ -27,14 +21,7 @@ describe('CompanyResolver', () => {
           useValue: {},
         },
       ],
-    })
-      .overrideGuard(UpdateOneGuard)
-      .useValue(mockGuard)
-      .overrideGuard(DeleteManyGuard)
-      .useValue(mockGuard)
-      .overrideGuard(CreateOneGuard)
-      .useValue(mockGuard)
-      .compile();
+    }).compile();
 
     resolver = module.get<CompanyResolver>(CompanyResolver);
   });

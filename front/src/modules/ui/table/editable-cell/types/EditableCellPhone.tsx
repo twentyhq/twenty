@@ -14,7 +14,6 @@ export function EditableCellPhone({ value, placeholder, onSubmit }: OwnProps) {
     <EditableCell
       editModeContent={
         <InplaceInputTextEditMode
-          autoComplete="off"
           autoFocus
           placeholder={placeholder || ''}
           value={value}
