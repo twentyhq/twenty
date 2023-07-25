@@ -144,7 +144,7 @@ export function EditableCellDoubleTextEditMode({
         ref={firstValueInputRef}
         value={firstInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleOnChange(event.target.value, secondValue);
+          handleOnChange(event.target.value, secondInternalValue);
         }}
       />
       <StyledInput
@@ -153,7 +153,7 @@ export function EditableCellDoubleTextEditMode({
         ref={secondValueInputRef}
         value={secondInternalValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          handleOnChange(firstValue, event.target.value);
+          handleOnChange(firstInternalValue, event.target.value);
         }}
       />
     </StyledContainer>
