@@ -8,10 +8,12 @@ export class PipelineProgressService {
 
   // Find
   findFirst = this.prismaService.client.pipelineProgress.findFirst;
-  findFirstOrThrow = this.prismaService.client.pipelineProgress.findFirstOrThrow;
+  findFirstOrThrow =
+    this.prismaService.client.pipelineProgress.findFirstOrThrow;
 
   findUnique = this.prismaService.client.pipelineProgress.findUnique;
-  findUniqueOrThrow = this.prismaService.client.pipelineProgress.findUniqueOrThrow;
+  findUniqueOrThrow =
+    this.prismaService.client.pipelineProgress.findUniqueOrThrow;
 
   findMany = this.prismaService.client.pipelineProgress.findMany;
 

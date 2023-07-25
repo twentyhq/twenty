@@ -11,7 +11,8 @@ export class WorkspaceMemberService {
   findFirstOrThrow = this.prismaService.client.workspaceMember.findFirstOrThrow;
 
   findUnique = this.prismaService.client.workspaceMember.findUnique;
-  findUniqueOrThrow = this.prismaService.client.workspaceMember.findUniqueOrThrow;
+  findUniqueOrThrow =
+    this.prismaService.client.workspaceMember.findUniqueOrThrow;
 
   findMany = this.prismaService.client.workspaceMember.findMany;
 

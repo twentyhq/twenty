@@ -8,10 +8,12 @@ export class CommentThreadTargetService {
 
   // Find
   findFirst = this.prismaService.client.commentThreadTarget.findFirst;
-  findFirstOrThrow = this.prismaService.client.commentThreadTarget.findFirstOrThrow;
+  findFirstOrThrow =
+    this.prismaService.client.commentThreadTarget.findFirstOrThrow;
 
   findUnique = this.prismaService.client.commentThreadTarget.findUnique;
-  findUniqueOrThrow = this.prismaService.client.commentThreadTarget.findUniqueOrThrow;
+  findUniqueOrThrow =
+    this.prismaService.client.commentThreadTarget.findUniqueOrThrow;
 
   findMany = this.prismaService.client.commentThreadTarget.findMany;
 

@@ -32,9 +32,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new UnauthorizedException();
     }
 
-    const workspace = await this.prismaService.client.workspace.findUniqueOrThrow({
-      where: { id: payload.workspaceId },
-    });
+    const workspace =
+      await this.prismaService.client.workspace.findUniqueOrThrow({
+        where: { id: payload.workspaceId },
+      });
 
     if (!workspace) {
       throw new UnauthorizedException();
