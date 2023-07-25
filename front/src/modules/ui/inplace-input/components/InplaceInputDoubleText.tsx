@@ -32,7 +32,6 @@ export function InplaceInputDoubleText({
   return (
     <StyledContainer>
       <InplaceInputTextEditMode
-        autoComplete="off"
       <StyledInput
         autoFocus
         placeholder={firstValuePlaceholder}
