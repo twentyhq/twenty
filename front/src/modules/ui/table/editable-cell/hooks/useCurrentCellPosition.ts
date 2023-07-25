@@ -1,23 +1,12 @@
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-
-import { CellContext } from '../../states/CellContext';
-import { currentColumnNumberScopedState } from '../../states/currentColumnNumberScopedState';
-import { currentRowNumberScopedState } from '../../states/currentRowNumberScopedState';
-import { RowContext } from '../../states/RowContext';
+import { ColumnIndexContext } from '../../states/ColumnIndexContext';
+import { RowIndexContext } from '../../states/RowIndexContext';
 import { CellPosition } from '../../types/CellPosition';
 
 export function useCurrentCellPosition() {
-  const [currentRowNumber] = useRecoilScopedState(
-    currentRowNumberScopedState,
-    RowContext,
-  );
-
-  const [currentColumnNumber] = useRecoilScopedState(
-    currentColumnNumberScopedState,
-    CellContext,
-  );
+  const currentRowNumber = useContext(RowIndexContext);
+  const currentColumnNumber = useContext(ColumnIndexContext);
 
   const currentCellPosition: CellPosition = useMemo(
     () => ({

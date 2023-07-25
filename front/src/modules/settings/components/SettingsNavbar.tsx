@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
-import { useMatch, useResolvedPath } from 'react-router-dom';
+import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { AppPath } from '@/types/AppPath';
 import {
   IconColorSwatch,
   IconLogout,
@@ -16,12 +17,14 @@ import SubMenuNavbar from '@/ui/navbar/components/SubMenuNavbar';
 
 export function SettingsNavbar() {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const { signOut } = useAuth();
 
   const handleLogout = useCallback(() => {
     signOut();
-  }, [signOut]);
+    navigate(AppPath.SignIn);
+  }, [signOut, navigate]);
 
   return (
     <SubMenuNavbar backButtonTitle="Settings">

@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { CellSkeleton } from '../components/CellSkeleton';
@@ -12,8 +12,7 @@ type OwnProps = {
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
   nonEditModeContent: ReactElement;
-  onChange: (firstValue: string, secondValue: string) => void;
-  onSubmit?: () => void;
+  onSubmit?: (firstValue: string, secondValue: string) => void;
   onCancel?: () => void;
   loading?: boolean;
 };
@@ -23,36 +22,21 @@ export function EditableCellDoubleText({
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
-  onChange,
+
   onSubmit,
   onCancel,
   nonEditModeContent,
   loading,
 }: OwnProps) {
-  const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
-  const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
-
-  useEffect(() => {
-    setFirstInternalValue(firstValue);
-    setSecondInternalValue(secondValue);
-  }, [firstValue, secondValue]);
-
-  function handleOnChange(firstValue: string, secondValue: string): void {
-    setFirstInternalValue(firstValue);
-    setSecondInternalValue(secondValue);
-    onChange(firstValue, secondValue);
-  }
-
   return (
     <EditableCell
       editHotkeyScope={{ scope: TableHotkeyScope.CellDoubleTextInput }}
       editModeContent={
         <EditableCellDoubleTextEditMode
-          firstValue={firstInternalValue}
-          secondValue={secondInternalValue}
+          firstValue={firstValue}
+          secondValue={secondValue}
           firstValuePlaceholder={firstValuePlaceholder}
           secondValuePlaceholder={secondValuePlaceholder}
-          onChange={handleOnChange}
           onSubmit={onSubmit}
           onCancel={onCancel}
         />

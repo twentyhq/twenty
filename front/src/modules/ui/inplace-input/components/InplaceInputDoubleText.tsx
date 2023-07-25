@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { InplaceInputTextEditMode } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
+import { StyledInput } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
 
 type OwnProps = {
   firstValue: string;
@@ -31,7 +31,7 @@ export function InplaceInputDoubleText({
 }: OwnProps) {
   return (
     <StyledContainer>
-      <InplaceInputTextEditMode
+      <StyledInput
         autoFocus
         placeholder={firstValuePlaceholder}
         value={firstValue}
@@ -39,7 +39,7 @@ export function InplaceInputDoubleText({
           onChange(event.target.value, secondValue);
         }}
       />
-      <InplaceInputTextEditMode
+      <StyledInput
         placeholder={secondValuePlaceholder}
         value={secondValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {

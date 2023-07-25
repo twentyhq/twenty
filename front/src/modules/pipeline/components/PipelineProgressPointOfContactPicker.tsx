@@ -44,7 +44,13 @@ export function PipelineProgressPointOfContactPicker({
       : [],
   });
 
-  async function handleEntitySelected(entity: EntityForSelect) {
+  async function handleEntitySelected(
+    entity: EntityForSelect | null | undefined,
+  ) {
+    if (!entity) {
+      return;
+    }
+
     await updatePipelineProgress({
       variables: {
         ...pipelineProgress,

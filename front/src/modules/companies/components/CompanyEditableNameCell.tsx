@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 
 import { EditableCellChip } from '@/ui/table/editable-cell/types/EditableChip';
@@ -22,17 +21,10 @@ type OwnProps = {
 export function CompanyEditableNameChipCell({ company }: OwnProps) {
   const [updateCompany] = useUpdateOneCompanyMutation();
 
-  const [internalValue, setInternalValue] = useState(company.name ?? '');
-
-  useEffect(() => {
-    setInternalValue(company.name ?? '');
-  }, [company.name]);
-
   return (
     <EditableCellChip
-      value={internalValue}
+      value={company.name}
       placeholder="Name"
-      changeHandler={setInternalValue}
       ChipComponent={
         <CompanyChip
           id={company.id}
@@ -40,18 +32,17 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
           pictureUrl={getLogoUrlFromDomainName(company.domainName)}
         />
       }
-      onSubmit={() =>
+      onSubmit={(newName) =>
         updateCompany({
           variables: {
             where: { id: company.id },
             data: {
-              name: internalValue,
+              name: newName,
             },
           },
           refetchQueries: [getOperationName(GET_COMPANY) ?? ''],
         })
       }
-      onCancel={() => setInternalValue(company.name ?? '')}
     />
   );
 }

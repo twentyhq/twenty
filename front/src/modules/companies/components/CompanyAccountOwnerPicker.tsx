@@ -48,15 +48,19 @@ export function CompanyAccountOwnerPicker({
     searchOnFields: ['firstName', 'lastName'],
   });
 
-  async function handleEntitySelected(selectedUser: UserForSelect) {
-    await updateCompany({
-      variables: {
-        where: { id: company.id },
-        data: {
-          accountOwner: { connect: { id: selectedUser.id } },
+  async function handleEntitySelected(
+    selectedUser: UserForSelect | null | undefined,
+  ) {
+    if (selectedUser) {
+      await updateCompany({
+        variables: {
+          where: { id: company.id },
+          data: {
+            accountOwner: { connect: { id: selectedUser.id } },
+          },
         },
-      },
-    });
+      });
+    }
 
     onSubmit?.();
   }
