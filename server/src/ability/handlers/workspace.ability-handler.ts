@@ -81,7 +81,7 @@ export class UpdateWorkspaceAbilityHandler implements IAbilityHandler {
       return false;
     }
 
-    return ability.can(AbilityAction.Update, subject('Workspace', workspace));
+    return ability.can(AbilityAction.Update, 'Workspace');
   }
 }
 
@@ -97,6 +97,6 @@ export class DeleteWorkspaceAbilityHandler implements IAbilityHandler {
     });
     assert(workspace, '', NotFoundException);
 
-    return ability.can(AbilityAction.Delete, subject('Workspace', workspace));
+    return ability.can(AbilityAction.Delete, 'Workspace');
   }
 }

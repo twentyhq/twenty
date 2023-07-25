@@ -77,7 +77,11 @@ const simpleAbilityCheck: OperationAbilityChecker = async (
   // Check if user try to connect an element that is not allowed to read
   for (const item of items) {
     // TODO: Replace user by workspaceMember and remove this check
-    if (modelName === 'User') {
+    if (
+      modelName === 'User' ||
+      modelName === 'UserSettings' ||
+      modelName === 'Workspace'
+    ) {
       return true;
     }
 
@@ -125,7 +129,7 @@ export async function relationAbilityChecker(
     // Check if field is a relation
     if (field.relationName) {
       // Check if field is in args
-      const operation = args.data[field.name] ?? args[field.name];
+      const operation = args.data?.[field.name] ?? args?.[field.name];
 
       if (operation) {
         // Extract operation name and value
