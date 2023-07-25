@@ -51,7 +51,7 @@ This will create a docker container, exposing a PostgresSQL instance at [http://
 
 Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` file.
 
-To do so, make a copy of .env.example files:
+To do so, copy the .env.example files:
 ```
 cp ./front/.env.example ./front/.env
 cp ./server/.env.example ./server/.env
@@ -112,18 +112,25 @@ git clone git@github.com:twentyhq/twenty.git
 ### 3. Setup env variables
 
 Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` pattern.
+The default values should work out of the box, except for the postgres URL, which requires a small modification.
+
+Open `./server/env.example` and change to the following:
+```
+PG_DATABASE_URL=postgres://postgres:postgrespassword@postgres:5432/default?connection_limit=1
+```
+
+Then, copy the .env.example files:
 ```
 cp ./front/.env.example ./front/.env
 cp ./server/.env.example ./server/.env 
 ```
-The default values should work out of the box.
 
 ### 4. Build
 
 We provide a containerized environment with Docker and orchestrated with docker-compose.
 This install will also provision a Postgres container.
 
-**Note:** the configuration is stored `infra/dev` folder but you can run `make` commands direclty from the root folder.
+**Note:** the configuration is stored `infra/dev` folder but you can run `make` commands directly from the root folder.
 
 ```
 make build
@@ -167,7 +174,7 @@ Browse [http://localhost:3001](http://localhost:3001). You can connect using our
 
 ### 8. (Optional)
 
-If you don't want to use make command and work directly from the container, you can also ssh directly in the container 
+If you don't want to use make command and work directly from the container, you can also ssh directly in the container:
 
 ```
 make sh
