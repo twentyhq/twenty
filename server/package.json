@@ -100,8 +100,6 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "28.1.3",
-    "patch-package": "^7.0.2",
-    "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.3.2",
     "prisma": "^4.16.2",
     "prisma-nestjs-graphql": "^18.0.2",
