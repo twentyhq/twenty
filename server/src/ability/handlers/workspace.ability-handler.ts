@@ -5,8 +5,6 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { subject } from '@casl/ability';
-
 import { IAbilityHandler } from 'src/ability/interfaces/ability-handler.interface';
 
 import { PrismaService } from 'src/database/prisma.service';

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { companyEmployeesFamilyState } from '@/companies/states/companyEmployeesFamilyState';
