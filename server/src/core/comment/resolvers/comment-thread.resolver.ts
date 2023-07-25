@@ -9,7 +9,6 @@ import { Workspace } from 'src/core/@generated/workspace/workspace.model';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { CommentThread } from 'src/core/@generated/comment-thread/comment-thread.model';
 import { CreateOneCommentThreadArgs } from 'src/core/@generated/comment-thread/create-one-comment-thread.args';
-import { CreateOneCommentThreadGuard } from 'src/guards/create-one-comment-thread.guard';
 import { FindManyCommentThreadArgs } from 'src/core/@generated/comment-thread/find-many-comment-thread.args';
 import { CommentThreadService } from 'src/core/comment/services/comment-thread.service';
 import { UpdateOneCommentThreadArgs } from 'src/core/@generated/comment-thread/update-one-comment-thread.args';
@@ -35,7 +34,6 @@ import { DeleteManyCommentThreadArgs } from 'src/core/@generated/comment-thread/
 export class CommentThreadResolver {
   constructor(private readonly commentThreadService: CommentThreadService) {}
 
-  @UseGuards(CreateOneCommentThreadGuard)
   @Mutation(() => CommentThread, {
     nullable: false,
   })
