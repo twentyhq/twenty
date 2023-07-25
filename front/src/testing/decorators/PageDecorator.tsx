@@ -16,15 +16,13 @@ export const PageDecorator: Decorator<{ currentPath: string }> = (
 ) => (
   <UserProvider>
     <ClientConfigProvider>
-      <HotkeysProvider initiallyActiveScopes={INITIAL_HOTKEYS_SCOPES}>
-        <MemoryRouter initialEntries={[args.currentPath]}>
-          <FullHeightStorybookLayout>
-            <DefaultLayout>
-              <Story />
-            </DefaultLayout>
-          </FullHeightStorybookLayout>
-        </MemoryRouter>
-      </HotkeysProvider>
+      <MemoryRouter initialEntries={[args.currentPath]}>
+        <FullHeightStorybookLayout>
+          <DefaultLayout>
+            <Story />
+          </DefaultLayout>
+        </FullHeightStorybookLayout>
+      </MemoryRouter>
     </ClientConfigProvider>
   </UserProvider>
 );

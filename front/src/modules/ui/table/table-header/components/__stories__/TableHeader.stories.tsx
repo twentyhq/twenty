@@ -6,20 +6,24 @@ import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
+import { PageDecorator } from '../../../../../../testing/decorators/PageDecorator';
+import { RootDecorator } from '../../../../../../testing/decorators/RootDecorator';
+import { CompanyEntityTableDataMocked } from '../../../../../companies/table/components/CompanyEntityTableDataMocked';
 import { TableContext } from '../../../states/TableContext';
 import { TableHeader } from '../TableHeader';
 
 const meta: Meta<typeof TableHeader> = {
   title: 'UI/Table/TableHeader',
   component: TableHeader,
-  decorators: [
-    (Story) => (
-      <RecoilScope SpecificContext={TableContext}>
-        <Story />
-      </RecoilScope>
-    ),
-    ComponentDecorator,
-  ],
+  // decorators: [
+  //   (Story) => (
+  //     <RecoilScope SpecificContext={TableContext}>
+  //       <CompanyEntityTableDataMocked />
+  //       <Story />
+  //     </RecoilScope>
+  //   ),
+  //   // ComponentDecorator,
+  // ],
   argTypes: { viewIcon: { control: false } },
   args: {
     viewName: 'ViewName',

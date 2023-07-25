@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 
 import { EditableCellChip } from '@/ui/table/editable-cell/types/EditableChip';
