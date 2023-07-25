@@ -29,13 +29,10 @@ export const SoftFocusMode: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    const content = await canvas.getByText('Content');
+    const content = await canvas.findByText('Content');
 
-    await step('Click once', () => userEvent.click(content));
-
-    await step('Escape', async () => {
-      await userEvent.keyboard('{esc}');
-    });
+    await userEvent.click(content);
+    await userEvent.keyboard('{esc}');
 
     await sleep(10);
 
