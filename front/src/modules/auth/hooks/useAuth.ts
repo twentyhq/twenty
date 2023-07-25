@@ -62,13 +62,14 @@ export function useAuth() {
         throw new Error('No verify result');
       }
 
+      setCurrentUser(verifyResult.data?.verify.user);
       setTokenPair(verifyResult.data?.verify.tokens);
 
       setIsAuthenticating(false);
 
       return verifyResult.data?.verify;
     },
-    [setIsAuthenticating, setTokenPair, verify],
+    [setIsAuthenticating, setTokenPair, verify, setCurrentUser],
   );
 
   const handleCrendentialsSignIn = useCallback(
@@ -111,11 +112,9 @@ export function useAuth() {
         signUpResult.data?.signUp.loginToken.token,
       );
 
-      setCurrentUser(user);
-
       return { user };
     },
-    [signUp, handleVerify, setCurrentUser],
+    [signUp, handleVerify],
   );
 
   const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {

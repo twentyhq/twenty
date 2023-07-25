@@ -5,7 +5,7 @@ export enum ClickOutsideMode {
   dom = 'dom',
 }
 
-export function useListenClickOutsideArrayOfRef<T extends Element>({
+export function useListenClickOutside<T extends Element>({
   refs,
   callback,
   mode = ClickOutsideMode.dom,
@@ -37,9 +37,13 @@ export function useListenClickOutsideArrayOfRef<T extends Element>({
             const { x, y, width, height } = ref.current.getBoundingClientRect();
 
             const clientX =
-              'clientX' in event ? event.clientX : event.touches[0].clientX;
+              'clientX' in event
+                ? event.clientX
+                : event.changedTouches[0].clientX;
             const clientY =
-              'clientY' in event ? event.clientY : event.touches[0].clientY;
+              'clientY' in event
+                ? event.clientY
+                : event.changedTouches[0].clientY;
 
             if (
               clientX < x ||

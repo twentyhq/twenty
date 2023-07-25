@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { IconPlus } from '@/ui/icon/index';
 import { Avatar } from '@/users/components/Avatar';
-import { ComponentDecorator } from '~/testing/decorators';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { DropdownMenuSkeletonItem } from '../../../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenu } from '../DropdownMenu';

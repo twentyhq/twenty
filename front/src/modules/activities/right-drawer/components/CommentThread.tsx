@@ -9,6 +9,7 @@ import { CommentThreadTypeDropdown } from '@/activities/components/CommentThread
 import { GET_COMMENT_THREAD } from '@/activities/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { PropertyBoxItem } from '@/ui/editable-field/property-box/components/PropertyBoxItem';
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { IconArrowUpRight } from '@/ui/icon/index';
 import {
   useGetCommentThreadQuery,
@@ -43,7 +44,8 @@ const StyledTopContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   background: ${({ theme }) => theme.background.secondary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-bottom: ${({ theme }) =>
+    useIsMobile() ? 'none' : `1px solid ${theme.border.color.medium}`};
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -92,24 +94,23 @@ export function CommentThread({
   showComment = true,
   autoFillTitle = false,
 }: OwnProps) {
-  const { data, loading } = useGetCommentThreadQuery({
+  const { data } = useGetCommentThreadQuery({
     variables: {
       commentThreadId: commentThreadId ?? '',
     },
     skip: !commentThreadId,
   });
   const commentThread = data?.findManyCommentThreads[0];
+  const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
+    useState<boolean>(false);
 
   const [title, setTitle] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!loading) {
+    if (!hasUserManuallySetTitle) {
       setTitle(commentThread?.title ?? '');
     }
-  }, [loading, setTitle, commentThread?.title]);
-
-  const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
-    useState<boolean>(false);
+  }, [setTitle, commentThread?.title, hasUserManuallySetTitle]);
 
   const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
 
@@ -189,7 +190,6 @@ export function CommentThread({
           onChange={updateTitleFromBody}
         />
       </StyledUpperPartContainer>
-
       {showComment && (
         <CommentThreadComments
           commentThread={{

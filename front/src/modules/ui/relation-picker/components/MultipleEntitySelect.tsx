@@ -7,6 +7,7 @@ import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMen
 import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
 import { Avatar } from '@/users/components/Avatar';
+import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { EntityForSelect } from '../types/EntityForSelect';
 
@@ -43,10 +44,14 @@ export function MultipleEntitySelect<
     onSearchFilterChange(event.currentTarget.value);
   }
 
-  const entitiesInDropdown = [
+  let entitiesInDropdown = [
     ...(entities.filteredSelectedEntities ?? []),
     ...(entities.entitiesToSelect ?? []),
   ];
+
+  entitiesInDropdown = entitiesInDropdown.filter((entity) =>
+    isNonEmptyString(entity.name),
+  );
 
   return (
     <DropdownMenu>

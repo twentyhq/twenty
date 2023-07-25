@@ -1,122 +1,66 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Theme } from '@emotion/react';
-import styled from '@emotion/styled';
 
 import { Avatar, AvatarType } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
-import { OverflowingTextWithTooltip } from '../../tooltip/OverflowingTextWithTooltip';
-
-export enum ChipVariant {
-  opaque = 'opaque',
-  transparent = 'transparent',
-}
-
-const baseStyle = ({ theme }: { theme: Theme }) => `
-  align-items: center;
-  border-radius: ${theme.spacing(1)};
-  color: ${theme.font.color.primary};
-  display: inline-flex;
-  gap: ${theme.spacing(1)};
-  height: 12px;
-  overflow: hidden;
-  padding: ${theme.spacing(1)};
-  text-decoration: none;
- 
-  img {
-    border-radius: ${theme.border.radius.rounded};
-    height: 14px;
-    object-fit: cover;
-    width: 14px;
-  }
-
-  white-space: nowrap;
-`;
-
-const StyledContainerLink = styled.div<{ variant: string }>`
-  ${baseStyle}
-  background-color: ${({ theme, variant }) =>
-    variant === ChipVariant.opaque ? theme.background.tertiary : 'transparent'};
-  :hover {
-    background-color: ${({ variant, theme }) =>
-      variant === ChipVariant.opaque
-        ? theme.background.quaternary
-        : theme.background.transparent.light};
-  }
-`;
-
-const StyledContainerReadOnly = styled.div`
-  ${baseStyle}
-`;
-
-const StyledName = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+import { Chip, ChipVariant } from './Chip';
 
 type OwnProps = {
-  linkToEntity: string;
+  linkToEntity?: string;
   entityId: string;
   name: string;
-  picture?: string;
-  clickable?: boolean;
+  pictureUrl?: string;
   avatarType?: AvatarType;
-  variant?: ChipVariant;
+  variant?: EntityChipVariant;
 };
+
+export enum EntityChipVariant {
+  Regular = 'regular',
+  Transparent = 'transparent',
+}
 
 export function EntityChip({
   linkToEntity,
   entityId,
   name,
-  picture,
-  clickable,
+  pictureUrl,
   avatarType = 'rounded',
-  variant = ChipVariant.opaque,
+  variant = EntityChipVariant.Regular,
 }: OwnProps) {
   const navigate = useNavigate();
 
   function handleLinkClick(event: React.MouseEvent<HTMLDivElement>) {
     event.preventDefault();
     event.stopPropagation();
-
-    navigate(linkToEntity);
+    if (linkToEntity) {
+      navigate(linkToEntity);
+    }
   }
 
-  return clickable && linkToEntity ? (
-    <StyledContainerLink
-      data-testid="entity-chip"
-      onClick={handleLinkClick}
-      variant={variant}
-    >
-      {isNonEmptyString(name) && (
-        <Avatar
-          avatarUrl={picture}
-          colorId={entityId}
-          placeholder={name}
-          size={14}
-          type={avatarType}
-        />
-      )}
-      <StyledName>
-        <OverflowingTextWithTooltip text={name} />
-      </StyledName>
-    </StyledContainerLink>
+  return isNonEmptyString(name) ? (
+    <div onClick={handleLinkClick}>
+      <Chip
+        label={name}
+        variant={
+          linkToEntity
+            ? variant === EntityChipVariant.Regular
+              ? ChipVariant.Highlighted
+              : ChipVariant.Regular
+            : ChipVariant.Transparent
+        }
+        leftComponent={
+          <Avatar
+            avatarUrl={pictureUrl}
+            colorId={entityId}
+            placeholder={name}
+            size={14}
+            type={avatarType}
+          />
+        }
+      />
+    </div>
   ) : (
-    <StyledContainerReadOnly data-testid="entity-chip">
-      {isNonEmptyString(name) && (
-        <Avatar
-          avatarUrl={picture}
-          colorId={entityId}
-          placeholder={name}
-          size={14}
-          type={avatarType}
-        />
-      )}
-      <StyledName>
-        <OverflowingTextWithTooltip text={name} />
-      </StyledName>
-    </StyledContainerReadOnly>
+    <></>
   );
 }

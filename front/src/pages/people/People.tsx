@@ -24,7 +24,10 @@ export function People() {
   async function handleAddButtonClick() {
     await insertOnePerson({
       variables: {
-        data: {},
+        data: {
+          firstName: '',
+          lastName: '',
+        },
       },
       refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
     });

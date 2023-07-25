@@ -36,8 +36,14 @@ export function FilterDropdownEntitySearchSelect({
 
   const filterCurrentlyEdited = useFilterCurrentlyEdited(context);
 
-  function handleUserSelected(selectedEntity: EntityForSelect) {
-    if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) {
+  function handleUserSelected(
+    selectedEntity: EntityForSelect | null | undefined,
+  ) {
+    if (
+      !filterDefinitionUsedInDropdown ||
+      !selectedOperandInDropdown ||
+      !selectedEntity
+    ) {
       return;
     }
 

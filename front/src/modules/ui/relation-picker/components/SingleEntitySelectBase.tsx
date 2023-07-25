@@ -7,6 +7,7 @@ import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMen
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { Avatar } from '@/users/components/Avatar';
 import { isDefined } from '~/utils/isDefined';
+import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { OverflowingTextWithTooltip } from '../../tooltip/OverflowingTextWithTooltip';
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
@@ -31,13 +32,17 @@ export function SingleEntitySelectBase<
   onCancel,
 }: {
   entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
-  onEntitySelected: (entity: CustomEntityForSelect) => void;
+  onEntitySelected: (entity: CustomEntityForSelect | null | undefined) => void;
   onCancel?: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const entitiesInDropdown = isDefined(entities.selectedEntity)
+  let entitiesInDropdown = isDefined(entities.selectedEntity)
     ? [entities.selectedEntity, ...(entities.entitiesToSelect ?? [])]
     : entities.entitiesToSelect ?? [];
+
+  entitiesInDropdown = entitiesInDropdown.filter((entity) =>
+    isNonEmptyString(entity.name),
+  );
 
   const { hoveredIndex, resetScroll } = useEntitySelectScroll({
     entities: entitiesInDropdown,

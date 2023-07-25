@@ -7,6 +7,7 @@ import { useOpenCommentThreadRightDrawer } from '@/activities/hooks/useOpenComme
 import { useOpenCreateCommentThreadDrawer } from '@/activities/hooks/useOpenCreateCommentThreadDrawer';
 import { CommentableEntity } from '@/activities/types/CommentableEntity';
 import { CommentThreadForDrawer } from '@/activities/types/CommentThreadForDrawer';
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { IconNotes } from '@/ui/icon/index';
 import {
   ActivityType,
@@ -23,21 +24,26 @@ import { OverflowingTextWithTooltip } from '../../../ui/tooltip/OverflowingTextW
 const StyledMainContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
+  border-top: ${({ theme }) =>
+    useIsMobile() ? `1px solid ${theme.border.color.medium}` : 'none'};
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
+
   justify-content: center;
 `;
 
 const StyledTimelineContainer = styled.div`
   align-items: center;
   align-self: stretch;
+
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
   gap: 4px;
   justify-content: flex-start;
   overflow-y: auto;
+
   padding: 12px 16px 12px 16px;
 `;
 
@@ -175,9 +181,13 @@ const StyledTooltip = styled(Tooltip)`
 const StyledTopActionBar = styled.div`
   align-items: flex-start;
   align-self: stretch;
-  backdrop-filter: blur(5px);
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  border-top-right-radius: 8px;
+  backdrop-filter: ${() => (useIsMobile() ? 'none' : `blur(5px)`)};
+
+  border-bottom: ${({ theme }) =>
+    useIsMobile() ? 'none' : `1px solid ${theme.border.color.medium}`};
+
+  border-top-right-radius: ${() => (useIsMobile() ? 'none' : `8px`)};
+
   display: flex;
   flex-direction: column;
   left: 0px;

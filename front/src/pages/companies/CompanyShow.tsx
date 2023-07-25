@@ -18,6 +18,7 @@ import { CommentableType } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { CompanyNameEditableField } from '../../modules/companies/editable-field/components/CompanyNameEditableField';
+import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageContainer';
 
 export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
@@ -35,29 +36,31 @@ export function CompanyShow() {
       hasBackButton
       icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
     >
-      <ShowPageLeftContainer>
-        <ShowPageSummaryCard
-          id={company?.id}
-          logoOrAvatar={getLogoUrlFromDomainName(company?.domainName ?? '')}
-          title={company?.name ?? 'No name'}
-          date={company?.createdAt ?? ''}
-          renderTitleEditComponent={() => (
-            <CompanyNameEditableField company={company} />
-          )}
-        />
-        <PropertyBox extraPadding={true}>
-          <CompanyDomainNameEditableField company={company} />
-          <CompanyAccountOwnerEditableField company={company} />
-          <CompanyEmployeesEditableField company={company} />
-          <CompanyAddressEditableField company={company} />
-          <CompanyCreatedAtEditableField company={company} />
-        </PropertyBox>
-      </ShowPageLeftContainer>
-      <ShowPageRightContainer>
-        <Timeline
-          entity={{ id: company?.id ?? '', type: CommentableType.Company }}
-        />
-      </ShowPageRightContainer>
+      <ShowPageContainer>
+        <ShowPageLeftContainer>
+          <ShowPageSummaryCard
+            id={company?.id}
+            logoOrAvatar={getLogoUrlFromDomainName(company?.domainName ?? '')}
+            title={company?.name ?? 'No name'}
+            date={company?.createdAt ?? ''}
+            renderTitleEditComponent={() => (
+              <CompanyNameEditableField company={company} />
+            )}
+          />
+          <PropertyBox extraPadding={true}>
+            <CompanyDomainNameEditableField company={company} />
+            <CompanyAccountOwnerEditableField company={company} />
+            <CompanyEmployeesEditableField company={company} />
+            <CompanyAddressEditableField company={company} />
+            <CompanyCreatedAtEditableField company={company} />
+          </PropertyBox>
+        </ShowPageLeftContainer>
+        <ShowPageRightContainer>
+          <Timeline
+            entity={{ id: company?.id ?? '', type: CommentableType.Company }}
+          />
+        </ShowPageRightContainer>
+      </ShowPageContainer>
     </WithTopBarContainer>
   );
 }

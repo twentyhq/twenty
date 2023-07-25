@@ -27,17 +27,22 @@ export function PeopleCompanyEditableFieldEditMode({ people }: OwnProps) {
     selectedIds: people.company?.id ? [people.company.id] : [],
   });
 
-  async function handleEntitySelected(entity: EntityForSelect) {
-    await updatePerson({
-      variables: {
-        where: {
-          id: people.id,
+  async function handleEntitySelected(
+    entity: EntityForSelect | null | undefined,
+  ) {
+    if (entity) {
+      await updatePerson({
+        variables: {
+          where: {
+            id: people.id,
+          },
+          data: {
+            company: { connect: { id: entity.id } },
+          },
         },
-        data: {
-          company: { connect: { id: entity.id } },
-        },
-      },
-    });
+      });
+    }
+
     closeEditableField();
   }
 

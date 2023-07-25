@@ -1,4 +1,4 @@
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
@@ -14,7 +14,8 @@ export function useRegisterCloseCellHandlers(
 ) {
   const { closeEditableCell } = useEditableCell();
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
-  useListenClickOutsideArrayOfRef({
+
+  useListenClickOutside({
     refs: [wrapperRef],
     callback: (event) => {
       if (isCurrentCellInEditMode) {
@@ -26,6 +27,7 @@ export function useRegisterCloseCellHandlers(
       }
     },
   });
+
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   useScopedHotkeys(

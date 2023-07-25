@@ -1,5 +1,3 @@
-import { ChangeEvent, useEffect, useState } from 'react';
-
 import { InplaceInputTextDisplayMode } from '@/ui/display/component/InplaceInputTextDisplayMode';
 import { InplaceInputTextEditMode } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
 
@@ -9,10 +7,10 @@ import { EditableCell } from '../components/EditableCell';
 type OwnProps = {
   placeholder?: string;
   value: string;
-  onChange: (newValue: string) => void;
+  onChange?: (newValue: string) => void;
   editModeHorizontalAlign?: 'left' | 'right';
   loading?: boolean;
-  onSubmit?: () => void;
+  onSubmit?: (newText: string) => void;
   onCancel?: () => void;
 };
 
@@ -25,12 +23,6 @@ export function EditableCellText({
   onCancel,
   onSubmit,
 }: OwnProps) {
-  const [internalValue, setInternalValue] = useState(value);
-
-  useEffect(() => {
-    setInternalValue(value);
-  }, [value]);
-
   return (
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
@@ -38,23 +30,16 @@ export function EditableCellText({
         <InplaceInputTextEditMode
           placeholder={placeholder || ''}
           autoFocus
-          value={internalValue}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            setInternalValue(event.target.value);
-            onChange(event.target.value);
-          }}
+          value={value}
+          onSubmit={(newText) => onSubmit?.(newText)}
+          autoComplete="off"
         />
       }
-      autoComplete="off"
-      onSubmit={onSubmit}
-      onCancel={onCancel}
       nonEditModeContent={
         loading ? (
           <CellSkeleton />
         ) : (
-          <InplaceInputTextDisplayMode>
-            {internalValue}
-          </InplaceInputTextDisplayMode>
+          <InplaceInputTextDisplayMode>{value}</InplaceInputTextDisplayMode>
         )
       }
     ></EditableCell>

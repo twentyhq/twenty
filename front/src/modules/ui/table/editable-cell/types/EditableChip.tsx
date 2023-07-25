@@ -1,29 +1,20 @@
-import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { textInputStyle } from '@/ui/themes/effects';
-
+import { InplaceInputTextEditMode } from '../../../inplace-input/components/InplaceInputTextEditMode';
 import { EditableCell } from '../components/EditableCell';
 
 export type EditableChipProps = {
   placeholder?: string;
   value: string;
-  changeHandler: (updated: string) => void;
   editModeHorizontalAlign?: 'left' | 'right';
   ChipComponent: React.ReactNode;
   commentThreadCount?: number;
   onCommentClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
   rightEndContents?: ReactNode[];
-  onSubmit?: () => void;
+  onSubmit?: (newValue: string) => void;
   onCancel?: () => void;
 };
-
-// TODO: refactor
-const StyledInplaceInput = styled.input`
-  width: 100%;
-
-  ${textInputStyle}
-`;
 
 const NoEditModeContainer = styled.div`
   align-items: center;
@@ -40,14 +31,11 @@ const RightContainer = styled.div`
 export function EditableCellChip({
   value,
   placeholder,
-  changeHandler,
   editModeHorizontalAlign,
   ChipComponent,
   rightEndContents,
   onSubmit,
-  onCancel,
 }: EditableChipProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState(value);
 
   useEffect(() => {
@@ -64,20 +52,14 @@ export function EditableCellChip({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <StyledInplaceInput
+        <InplaceInputTextEditMode
           placeholder={placeholder || ''}
           autoFocus
-          autoComplete="off"
-          ref={inputRef}
           value={inputValue}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            setInputValue(event.target.value);
-            changeHandler(event.target.value);
-          }}
+          autoComplete="off"
+          onSubmit={(newValue) => onSubmit?.(newValue)}
         />
       }
-      onSubmit={onSubmit}
-      onCancel={onCancel}
       nonEditModeContent={
         <NoEditModeContainer>
           {ChipComponent}

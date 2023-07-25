@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconArrowRight } from '@/ui/icon';
-import { ComponentDecorator } from '~/testing/decorators';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { RoundedIconButton } from '../RoundedIconButton';
 
@@ -13,6 +13,7 @@ const meta: Meta<typeof RoundedIconButton> = {
   title: 'UI/Button/RoundedIconButton',
   component: RoundedIconButton,
   decorators: [ComponentDecorator],
+  argTypes: { icon: { control: false } },
   args: { onClick: clickJestFn, icon: <IconArrowRight size={15} /> },
 };
 

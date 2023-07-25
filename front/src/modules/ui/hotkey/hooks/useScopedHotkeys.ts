@@ -1,6 +1,5 @@
 import { useHotkeys } from 'react-hotkeys-hook';
 import {
-  Hotkey,
   HotkeyCallback,
   Keys,
   Options,
@@ -9,6 +8,8 @@ import {
 import { useRecoilState } from 'recoil';
 
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
+
+import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
 
 export function useScopedHotkeys(
   keys: Keys,
@@ -23,21 +24,29 @@ export function useScopedHotkeys(
 ) {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
-  function callbackIfDirectKey(
-    keyboardEvent: KeyboardEvent,
-    hotkeysEvent: Hotkey,
-  ) {
-    if (!pendingHotkey) {
-      callback(keyboardEvent, hotkeysEvent);
-      return;
-    }
-    setPendingHotkey(null);
-  }
+  const callScopedHotkeyCallback = useScopedHotkeyCallback();
 
   return useHotkeys(
     keys,
-    callbackIfDirectKey,
-    { ...options, scopes: [scope] },
+    (keyboardEvent, hotkeysEvent) => {
+      callScopedHotkeyCallback({
+        keyboardEvent,
+        hotkeysEvent,
+        callback: () => {
+          if (!pendingHotkey) {
+            callback(keyboardEvent, hotkeysEvent);
+            return;
+          }
+          setPendingHotkey(null);
+        },
+        scope,
+        preventDefault: !!options.preventDefault,
+      });
+    },
+    {
+      enableOnContentEditable: options.enableOnContentEditable,
+      enableOnFormTags: options.enableOnFormTags,
+    },
     dependencies,
   );
 }

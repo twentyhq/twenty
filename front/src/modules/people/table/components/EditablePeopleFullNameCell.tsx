@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
 
@@ -18,45 +17,29 @@ export function EditablePeopleFullNameCell() {
     peopleNameCellFamilyState(currentRowEntityId ?? ''),
   );
 
-  const [internalFirstName, setInternalFirstName] = useState(firstName ?? '');
-  const [internalLastName, setInternalLastName] = useState(lastName ?? '');
-
-  useEffect(() => {
-    setInternalFirstName(firstName ?? '');
-    setInternalLastName(lastName ?? '');
-  }, [firstName, lastName]);
-
   return (
     <EditablePeopleFullName
       person={{
         id: currentRowEntityId ?? undefined,
         _commentThreadCount: commentCount ?? undefined,
-        firstName: internalFirstName,
-        lastName: internalLastName,
+        firstName,
+        lastName,
         displayName: displayName ?? undefined,
       }}
-      onChange={(firstName, lastName) => {
-        setInternalFirstName(firstName);
-        setInternalLastName(lastName);
-      }}
-      onSubmit={() =>
+      onSubmit={(newFirstValue, newSecondValue) =>
         updatePerson({
           variables: {
             where: {
               id: currentRowEntityId,
             },
             data: {
-              firstName: internalFirstName,
-              lastName: internalLastName,
+              firstName: newFirstValue,
+              lastName: newSecondValue,
             },
           },
           refetchQueries: [getOperationName(GET_PERSON) ?? ''],
         })
       }
-      onCancel={() => {
-        setInternalFirstName(firstName ?? '');
-        setInternalLastName(lastName ?? '');
-      }}
     />
   );
 }
