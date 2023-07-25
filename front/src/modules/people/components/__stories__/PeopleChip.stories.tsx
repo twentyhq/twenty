@@ -2,7 +2,7 @@ import { BrowserRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { PersonChip } from '../PersonChip';
 
@@ -15,7 +15,6 @@ const TestCellContainer = styled.div`
   max-width: 250px;
   min-width: 250px;
   overflow: hidden;
-  text-wrap: nowrap;
 `;
 
 const meta: Meta<typeof PersonChip> = {

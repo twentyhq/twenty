@@ -1,7 +1,7 @@
 import { ReactElement, useRef } from 'react';
 import styled from '@emotion/styled';
 
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { overlayBackground } from '@/ui/themes/effects';
 
@@ -43,7 +43,7 @@ export function BoardCardEditableFieldEditMode({
 }: OwnProps) {
   const wrapperRef = useRef(null);
 
-  useListenClickOutsideArrayOfRef({
+  useListenClickOutside({
     refs: [wrapperRef],
     callback: () => {
       onExit();

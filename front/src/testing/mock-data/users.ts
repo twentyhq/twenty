@@ -60,3 +60,60 @@ export const mockedUsersData: Array<MockedUser> = [
     },
   },
 ];
+
+export const mockedOnboardingUsersData: Array<MockedUser> = [
+  {
+    id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
+    __typename: 'User',
+    email: 'workspace-onboarding@test.com',
+    displayName: '',
+    firstName: '',
+    lastName: '',
+    avatarUrl: null,
+    workspaceMember: {
+      __typename: 'WorkspaceMember',
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+      workspace: {
+        __typename: 'Workspace',
+        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+        displayName: '',
+        domainName: '',
+        inviteHash: 'twenty.com-invite-hash-1',
+        logo: '',
+      },
+    },
+    settings: {
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
+      __typename: 'UserSettings',
+      locale: 'en',
+      colorScheme: ColorScheme.System,
+    },
+  },
+  {
+    id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
+    __typename: 'User',
+    email: 'profile-onboarding@test.com',
+    displayName: '',
+    firstName: '',
+    lastName: '',
+    avatarUrl: null,
+    workspaceMember: {
+      __typename: 'WorkspaceMember',
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+      workspace: {
+        __typename: 'Workspace',
+        id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
+        displayName: 'Test',
+        domainName: 'test.com',
+        inviteHash: 'twenty.com-invite-hash-2',
+        logo: '',
+      },
+    },
+    settings: {
+      id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
+      __typename: 'UserSettings',
+      locale: 'en',
+      colorScheme: ColorScheme.System,
+    },
+  },
+];

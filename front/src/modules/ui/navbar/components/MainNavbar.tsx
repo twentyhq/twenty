@@ -4,11 +4,11 @@ import NavItemsContainer from './NavItemsContainer';
 import NavWorkspaceButton from './NavWorkspaceButton';
 
 type OwnProps = {
-  children: JSX.Element;
+  children: React.ReactNode;
 };
 
 const StyledContainer = styled.div`
-  width: ${({ theme }) => theme.leftNavBarWidth};
+  width: 100%;
 `;
 
 export default function MainNavbar({ children }: OwnProps) {

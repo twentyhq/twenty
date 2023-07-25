@@ -1,4 +1,4 @@
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
@@ -12,7 +12,7 @@ export function useRegisterCloseFieldHandlers(
 ) {
   const { closeEditableField, isFieldInEditMode } = useEditableField();
 
-  useListenClickOutsideArrayOfRef({
+  useListenClickOutside({
     refs: [wrapperRef],
     callback: () => {
       if (isFieldInEditMode) {

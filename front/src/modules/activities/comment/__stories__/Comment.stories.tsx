@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { CommentThreadActionBar } from '../../right-drawer/components/CommentThreadActionBar';
 import { Comment } from '../Comment';

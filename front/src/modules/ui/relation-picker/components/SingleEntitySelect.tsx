@@ -6,7 +6,7 @@ import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 import { IconPlus } from '@/ui/icon';
 import { isDefined } from '~/utils/isDefined';
 
@@ -46,7 +46,7 @@ export function SingleEntitySelect<
 
   const showCreateButton = isDefined(onCreate) && searchFilter !== '';
 
-  useListenClickOutsideArrayOfRef({
+  useListenClickOutside({
     refs: [containerRef],
     callback: () => {
       onCancel?.();

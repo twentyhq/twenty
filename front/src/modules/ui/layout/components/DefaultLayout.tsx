@@ -46,27 +46,24 @@ export function DefaultLayout({ children }: OwnProps) {
 
   return (
     <StyledLayout>
-      <>
-        <CommandMenu />
-        <NavbarAnimatedContainer>
-          <AppNavbar />
-        </NavbarAnimatedContainer>
-        <MainContainer>
-          {onboardingStatus &&
-          onboardingStatus !== OnboardingStatus.Completed ? (
-            <>
-              <CompaniesMockMode />
-              <AnimatePresence mode="wait">
-                <LayoutGroup>
-                  <AuthModal>{children}</AuthModal>
-                </LayoutGroup>
-              </AnimatePresence>
-            </>
-          ) : (
-            <>{children}</>
-          )}
-        </MainContainer>
-      </>
+      <CommandMenu />
+      <NavbarAnimatedContainer>
+        <AppNavbar />
+      </NavbarAnimatedContainer>
+      <MainContainer>
+        {onboardingStatus && onboardingStatus !== OnboardingStatus.Completed ? (
+          <>
+            <CompaniesMockMode />
+            <AnimatePresence mode="wait">
+              <LayoutGroup>
+                <AuthModal>{children}</AuthModal>
+              </LayoutGroup>
+            </AnimatePresence>
+          </>
+        ) : (
+          <>{children}</>
+        )}
+      </MainContainer>
     </StyledLayout>
   );
 }

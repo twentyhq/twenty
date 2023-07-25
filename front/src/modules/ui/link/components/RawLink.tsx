@@ -11,6 +11,8 @@ type OwnProps = {
 
 const StyledClickable = styled.div`
   display: flex;
+  overflow: hidden;
+  white-space: nowrap;
 
   a {
     color: inherit;

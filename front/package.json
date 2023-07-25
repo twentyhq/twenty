@@ -38,6 +38,7 @@
     "react-hotkeys-hook": "^4.4.0",
     "react-loading-skeleton": "^3.3.1",
     "react-modal": "^3.16.1",
+    "react-responsive": "^9.0.2",
     "react-router-dom": "^6.4.4",
     "react-textarea-autosize": "^8.4.1",
     "react-tooltip": "^5.13.1",
@@ -165,9 +166,9 @@
     "workerDirectory": "public"
   },
   "nyc": {
-    "lines": 65,
-    "statements": 65,
-    "functions": 55,
+    "statements": 70,
+    "lines": 70,
+    "functions": 60,
     "exclude": [
       "src/generated/**/*"
     ]

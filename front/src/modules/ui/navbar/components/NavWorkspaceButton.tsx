@@ -65,7 +65,7 @@ function NavWorkspaceButton() {
         ></StyledLogo>
         <StyledName>{currentWorkspace?.displayName ?? 'Twenty'}</StyledName>
       </LogoAndNameContainer>
-      <NavCollapseButton />
+      <NavCollapseButton direction="left" />
     </StyledContainer>
   );
 }

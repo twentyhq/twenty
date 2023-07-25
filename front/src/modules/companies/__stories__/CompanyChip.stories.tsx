@@ -2,7 +2,7 @@ import { BrowserRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { CompanyChip } from '../components/CompanyChip';
 
@@ -37,25 +37,20 @@ const TestCellContainer = styled.div`
   min-width: 250px;
 
   overflow: hidden;
-  text-wrap: nowrap;
 `;
 
 export const SmallName: Story = {
   args: {
     id: 'airbnb',
     name: 'Airbnb',
-    picture: 'https://api.faviconkit.com/airbnb.com/144',
+    pictureUrl: 'https://api.faviconkit.com/airbnb.com/144',
   },
-};
-
-export const Clickable: Story = {
-  args: { ...SmallName.args, clickable: true },
 };
 
 export const BigName: Story = {
   args: {
     id: 'google',
     name: 'Google with a real big name to overflow the cell',
-    picture: 'https://api.faviconkit.com/google.com/144',
+    pictureUrl: 'https://api.faviconkit.com/google.com/144',
   },
 };

@@ -7,7 +7,7 @@ import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 
@@ -35,7 +35,7 @@ export function BoardColumnMenu({
   const [openMenu, setOpenMenu] = useState('actions');
   const boardColumnMenuRef = useRef(null);
 
-  useListenClickOutsideArrayOfRef({
+  useListenClickOutside({
     refs: [boardColumnMenuRef],
     callback: onClose,
   });

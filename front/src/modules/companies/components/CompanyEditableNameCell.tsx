@@ -37,8 +37,7 @@ export function CompanyEditableNameChipCell({ company }: OwnProps) {
         <CompanyChip
           id={company.id}
           name={company.name}
-          clickable
-          picture={getLogoUrlFromDomainName(company.domainName)}
+          pictureUrl={getLogoUrlFromDomainName(company.domainName)}
         />
       }
       onSubmit={() =>

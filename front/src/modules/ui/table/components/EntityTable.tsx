@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { TableColumn } from '@/people/table/components/peopleColumns';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 
 import { useIsPageLoading } from '../../hooks/useIsPageLoading';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
@@ -91,7 +91,7 @@ export function EntityTable<SortField>({
 
   const leaveTableFocus = useLeaveTableFocus();
 
-  useListenClickOutsideArrayOfRef({
+  useListenClickOutside({
     refs: [tableBodyRef],
     callback: () => {
       leaveTableFocus();
