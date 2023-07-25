@@ -2,7 +2,7 @@ import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fireEvent, userEvent, within } from '@storybook/testing-library';
 
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { sleep } from '~/testing/sleep';
 
 import { CommandMenu } from '../CommandMenu';
@@ -10,25 +10,22 @@ import { CommandMenu } from '../CommandMenu';
 const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
   component: CommandMenu,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+    ComponentDecorator,
+  ],
 };
 
 export default meta;
 type Story = StoryObj<typeof CommandMenu>;
 
-export const Default: Story = {
-  render: getRenderWrapperForComponent(
-    <MemoryRouter>
-      <CommandMenu />
-    </MemoryRouter>,
-  ),
-};
+export const Default: Story = {};
 
 export const CmdK: Story = {
-  render: getRenderWrapperForComponent(
-    <MemoryRouter>
-      <CommandMenu />
-    </MemoryRouter>,
-  ),
   play: async ({ canvasElement }) => {
     fireEvent.keyDown(canvasElement, {
       key: 'k',

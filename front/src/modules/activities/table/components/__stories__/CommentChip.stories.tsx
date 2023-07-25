@@ -1,18 +1,19 @@
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { CellCommentChip } from '../CellCommentChip';
 import { CommentChip } from '../CommentChip';
 
-const meta: Meta<typeof CellCommentChip> = {
-  title: 'Modules/Comments/CellCommentChip',
-  component: CellCommentChip,
+const meta: Meta<typeof CommentChip> = {
+  title: 'Modules/Comments/CommentChip',
+  component: CommentChip,
+  decorators: [ComponentDecorator],
+  args: { count: 1 },
 };
 
 export default meta;
-type Story = StoryObj<typeof CellCommentChip>;
+type Story = StoryObj<typeof CommentChip>;
 
 const TestCellContainer = styled.div`
   align-items: center;
@@ -36,34 +37,38 @@ const StyledFakeCellText = styled.div`
   white-space: nowrap;
 `;
 
-export const OneComment: Story = {
-  render: getRenderWrapperForComponent(<CommentChip count={1} />),
-};
+export const OneComment: Story = {};
 
 export const TenComments: Story = {
-  render: getRenderWrapperForComponent(<CommentChip count={10} />),
+  args: { count: 10 },
 };
 
 export const TooManyComments: Story = {
-  render: getRenderWrapperForComponent(<CommentChip count={1000} />),
+  args: { count: 1000 },
 };
 
 export const InCellDefault: Story = {
-  render: getRenderWrapperForComponent(
-    <TestCellContainer>
-      <StyledFakeCellText>Fake short text</StyledFakeCellText>
-      <CellCommentChip count={12} />
-    </TestCellContainer>,
-  ),
+  args: { count: 12 },
+  decorators: [
+    (Story) => (
+      <TestCellContainer>
+        <StyledFakeCellText>Fake short text</StyledFakeCellText>
+        <Story />
+      </TestCellContainer>
+    ),
+  ],
 };
 
 export const InCellOverlappingBlur: Story = {
-  render: getRenderWrapperForComponent(
-    <TestCellContainer>
-      <StyledFakeCellText>
-        Fake long text to demonstrate ellipsis
-      </StyledFakeCellText>
-      <CellCommentChip count={12} />
-    </TestCellContainer>,
-  ),
+  ...InCellDefault,
+  decorators: [
+    (Story) => (
+      <TestCellContainer>
+        <StyledFakeCellText>
+          Fake long text to demonstrate ellipsis
+        </StyledFakeCellText>
+        <Story />
+      </TestCellContainer>
+    ),
+  ],
 };

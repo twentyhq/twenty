@@ -1,8 +1,10 @@
 import { useCallback } from 'react';
+import { useApolloClient } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
 import {
   useChallengeMutation,
+  useCheckUserExistsLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
@@ -13,12 +15,16 @@ import { tokenPairState } from '../states/tokenPairState';
 
 export function useAuth() {
   const [, setTokenPair] = useRecoilState(tokenPairState);
-  const [, setCurrentUser] = useRecoilState(currentUserState);
   const [, setIsAuthenticating] = useRecoilState(isAuthenticatingState);
+  const [, setCurrentUser] = useRecoilState(currentUserState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
+  const [checkUserExistsQuery, { data: checkUserExistsData }] =
+    useCheckUserExistsLazyQuery();
+
+  const client = useApolloClient();
 
   const handleChallenge = useCallback(
     async (email: string, password: string) => {
@@ -56,30 +62,35 @@ export function useAuth() {
         throw new Error('No verify result');
       }
 
+      setCurrentUser(verifyResult.data?.verify.user);
       setTokenPair(verifyResult.data?.verify.tokens);
 
       setIsAuthenticating(false);
 
       return verifyResult.data?.verify;
     },
-    [setIsAuthenticating, setTokenPair, verify],
+    [setIsAuthenticating, setTokenPair, verify, setCurrentUser],
   );
 
-  const handleLogin = useCallback(
+  const handleCrendentialsSignIn = useCallback(
     async (email: string, password: string) => {
       const { loginToken } = await handleChallenge(email, password);
 
-      await handleVerify(loginToken.token);
+      const { user } = await handleVerify(loginToken.token);
+      return { user };
     },
     [handleChallenge, handleVerify],
   );
 
-  const handleLogout = useCallback(() => {
+  const handleSignOut = useCallback(() => {
     setTokenPair(null);
     setCurrentUser(null);
-  }, [setTokenPair, setCurrentUser]);
+    client.clearStore().then(() => {
+      sessionStorage.clear();
+    });
+  }, [setTokenPair, client, setCurrentUser]);
 
-  const handleSignUp = useCallback(
+  const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, workspaceInviteHash?: string) => {
       const signUpResult = await signUp({
         variables: {
@@ -97,16 +108,31 @@ export function useAuth() {
         throw new Error('No login token');
       }
 
-      await handleVerify(signUpResult.data?.signUp.loginToken.token);
+      const { user } = await handleVerify(
+        signUpResult.data?.signUp.loginToken.token,
+      );
+
+      return { user };
     },
     [signUp, handleVerify],
   );
 
+  const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {
+    window.location.href =
+      `${process.env.REACT_APP_AUTH_URL}/google/${
+        workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
+      }` || '';
+  }, []);
+
   return {
     challenge: handleChallenge,
     verify: handleVerify,
-    login: handleLogin,
-    signUp: handleSignUp,
-    logout: handleLogout,
+
+    checkUserExists: { checkUserExistsData, checkUserExistsQuery },
+
+    signOut: handleSignOut,
+    signUpWithCredentials: handleCredentialsSignUp,
+    signInWithCredentials: handleCrendentialsSignIn,
+    signInWithGoogle: handleGoogleLogin,
   };
 }

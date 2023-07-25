@@ -1,14 +1,14 @@
 import { useRef } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import { useListenClickOutsideArrayOfRef } from '../useListenClickOutsideArrayOfRef';
+import { useListenClickOutside } from '../useListenClickOutside';
 
 const onOutsideClick = jest.fn();
 
 function TestComponentDomMode() {
   const buttonRef = useRef(null);
   const buttonRef2 = useRef(null);
-  useListenClickOutsideArrayOfRef({
+  useListenClickOutside({
     refs: [buttonRef, buttonRef2],
     callback: onOutsideClick,
   });
@@ -22,18 +22,18 @@ function TestComponentDomMode() {
   );
 }
 
-test('useListenClickOutsideArrayOfRef hook works in dom mode', async () => {
+test('useListenClickOutside hook works in dom mode', async () => {
   const { getByText } = render(<TestComponentDomMode />);
   const inside = getByText('Inside');
   const inside2 = getByText('Inside 2');
   const outside = getByText('Outside');
 
-  fireEvent.mouseUp(inside);
+  fireEvent.click(inside);
   expect(onOutsideClick).toHaveBeenCalledTimes(0);
 
-  fireEvent.mouseUp(inside2);
+  fireEvent.click(inside2);
   expect(onOutsideClick).toHaveBeenCalledTimes(0);
 
-  fireEvent.mouseUp(outside);
+  fireEvent.click(outside);
   expect(onOutsideClick).toHaveBeenCalledTimes(1);
 });

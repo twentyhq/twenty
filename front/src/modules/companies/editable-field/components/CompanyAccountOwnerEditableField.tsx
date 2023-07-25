@@ -31,7 +31,7 @@ export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
               <PersonChip
                 id={company.accountOwner.id}
                 name={company.accountOwner?.displayName ?? ''}
-                picture={company.accountOwner?.avatarUrl ?? ''}
+                pictureUrl={company.accountOwner?.avatarUrl ?? ''}
               />
             ) : (
               <></>

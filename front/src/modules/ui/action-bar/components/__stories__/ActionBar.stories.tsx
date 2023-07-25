@@ -1,19 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { ActionBar } from '../ActionBar';
 
 const meta: Meta<typeof ActionBar> = {
   title: 'UI/ActionBar/ActionBar',
   component: ActionBar,
+  decorators: [ComponentDecorator],
+  args: { children: 'Lorem ipsum', selectedIds: [] },
 };
 
 export default meta;
 type Story = StoryObj<typeof ActionBar>;
 
-export const Default: Story = {
-  render: getRenderWrapperForComponent(
-    <ActionBar children={<div />} selectedIds={[]} />,
-  ),
-};
+export const Default: Story = {};

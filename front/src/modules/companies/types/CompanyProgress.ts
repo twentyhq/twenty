@@ -10,7 +10,7 @@ export type PipelineProgressForBoard = Pick<
   | 'probability'
   | 'pointOfContactId'
 > & {
-  pointOfContact?: Pick<Person, 'id' | 'firstName' | 'lastName'> | null;
+  pointOfContact?: Pick<Person, 'id' | 'displayName'> | null;
 };
 
 export type CompanyProgress = {

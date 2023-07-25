@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
-import { AuthPath } from '@/types/AuthPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
@@ -16,49 +15,53 @@ export function HotkeyScopeBrowserRouterSync() {
 
   useEffect(() => {
     switch (true) {
-      case isMatchingLocation(AppBasePath.Root, AppPath.CompaniesPage): {
+      case isMatchingLocation(AppPath.CompaniesPage): {
         setHotkeyScope(TableHotkeyScope.Table, { goto: true });
         break;
       }
-      case isMatchingLocation(AppBasePath.Root, AppPath.PeoplePage): {
+      case isMatchingLocation(AppPath.PeoplePage): {
         setHotkeyScope(TableHotkeyScope.Table, { goto: true });
         break;
       }
-      case isMatchingLocation(AppBasePath.Root, AppPath.CompanyShowPage): {
+      case isMatchingLocation(AppPath.CompanyShowPage): {
         setHotkeyScope(PageHotkeyScope.CompanyShowPage, { goto: true });
         break;
       }
-      case isMatchingLocation(AppBasePath.Root, AppPath.PersonShowPage): {
+      case isMatchingLocation(AppPath.PersonShowPage): {
         setHotkeyScope(PageHotkeyScope.PersonShowPage, { goto: true });
         break;
       }
-      case isMatchingLocation(AppBasePath.Root, AppPath.OpportunitiesPage): {
+      case isMatchingLocation(AppPath.OpportunitiesPage): {
         setHotkeyScope(PageHotkeyScope.OpportunitiesPage, { goto: true });
         break;
       }
-      case isMatchingLocation(AppBasePath.Auth, AuthPath.Index): {
-        setHotkeyScope(PageHotkeyScope.AuthIndex);
+      case isMatchingLocation(AppPath.SignIn): {
+        setHotkeyScope(PageHotkeyScope.SignInUp);
         break;
       }
-      case isMatchingLocation(AppBasePath.Auth, AuthPath.CreateProfile): {
+      case isMatchingLocation(AppPath.SignUp): {
+        setHotkeyScope(PageHotkeyScope.SignInUp);
+        break;
+      }
+      case isMatchingLocation(AppPath.Invite): {
+        setHotkeyScope(PageHotkeyScope.SignInUp);
+        break;
+      }
+      case isMatchingLocation(AppPath.CreateProfile): {
         setHotkeyScope(PageHotkeyScope.CreateProfile);
         break;
       }
-      case isMatchingLocation(AppBasePath.Auth, AuthPath.CreateWorkspace): {
+      case isMatchingLocation(AppPath.CreateWorkspace): {
         setHotkeyScope(PageHotkeyScope.CreateWokspace);
         break;
       }
-      case isMatchingLocation(AppBasePath.Auth, AuthPath.PasswordLogin): {
-        setHotkeyScope(PageHotkeyScope.PasswordLogin);
-        break;
-      }
-      case isMatchingLocation(AppBasePath.Settings, SettingsPath.ProfilePage): {
+      case isMatchingLocation(SettingsPath.ProfilePage, AppBasePath.Settings): {
         setHotkeyScope(PageHotkeyScope.ProfilePage, { goto: true });
         break;
       }
       case isMatchingLocation(
-        AppBasePath.Settings,
         SettingsPath.WorkspaceMembersPage,
+        AppBasePath.Settings,
       ): {
         setHotkeyScope(PageHotkeyScope.WorkspaceMemberPage, { goto: true });
         break;

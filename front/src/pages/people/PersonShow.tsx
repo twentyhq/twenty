@@ -11,6 +11,9 @@ import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPag
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { CommentableType } from '~/generated/graphql';
 
+import { PeopleFullNameEditableField } from '../../modules/people/editable-field/components/PeopleFullNameEditableField';
+import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageContainer';
+
 export function PersonShow() {
   const personId = useParams().personId ?? '';
 
@@ -25,12 +28,15 @@ export function PersonShow() {
       icon={<IconUser size={theme.icon.size.md} />}
       hasBackButton
     >
-      <>
+      <ShowPageContainer>
         <ShowPageLeftContainer>
           <ShowPageSummaryCard
             id={person?.id}
             title={person?.displayName ?? 'No name'}
             date={person?.createdAt ?? ''}
+            renderTitleEditComponent={() =>
+              person ? <PeopleFullNameEditableField people={person} /> : <></>
+            }
           />
           {person && <PersonPropertyBox person={person} />}
         </ShowPageLeftContainer>
@@ -39,7 +45,7 @@ export function PersonShow() {
             entity={{ id: person?.id ?? '', type: CommentableType.Person }}
           />
         </ShowPageRightContainer>
-      </>
+      </ShowPageContainer>
     </WithTopBarContainer>
   );
 }

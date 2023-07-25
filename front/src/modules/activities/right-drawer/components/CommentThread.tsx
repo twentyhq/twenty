@@ -9,6 +9,7 @@ import { CommentThreadTypeDropdown } from '@/activities/components/CommentThread
 import { GET_COMMENT_THREAD } from '@/activities/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { PropertyBoxItem } from '@/ui/editable-field/property-box/components/PropertyBoxItem';
+import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { IconArrowUpRight } from '@/ui/icon/index';
 import {
   useGetCommentThreadQuery,
@@ -43,7 +44,8 @@ const StyledTopContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   background: ${({ theme }) => theme.background.secondary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-bottom: ${({ theme }) =>
+    useIsMobile() ? 'none' : `1px solid ${theme.border.color.medium}`};
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -99,25 +101,42 @@ export function CommentThread({
     skip: !commentThreadId,
   });
   const commentThread = data?.findManyCommentThreads[0];
-
-  const [title, setTitle] = useState<string | null>(null);
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
+
+  const [title, setTitle] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!hasUserManuallySetTitle) {
+      setTitle(commentThread?.title ?? '');
+    }
+  }, [setTitle, commentThread?.title, hasUserManuallySetTitle]);
 
   const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
 
   const debounceUpdateTitle = useMemo(() => {
     function updateTitle(title: string) {
-      updateCommentThreadMutation({
-        variables: {
-          id: commentThreadId,
-          title: title ?? '',
-        },
-        refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
-      });
+      if (commentThread) {
+        updateCommentThreadMutation({
+          variables: {
+            id: commentThreadId,
+            title: title ?? '',
+          },
+          refetchQueries: [getOperationName(GET_COMMENT_THREAD) ?? ''],
+          optimisticResponse: {
+            __typename: 'Mutation',
+            updateOneCommentThread: {
+              __typename: 'CommentThread',
+              id: commentThreadId,
+              title: title,
+              type: commentThread.type,
+            },
+          },
+        });
+      }
     }
     return debounce(updateTitle, 200);
-  }, [commentThreadId, updateCommentThreadMutation]);
+  }, [commentThreadId, updateCommentThreadMutation, commentThread]);
 
   function updateTitleFromBody(body: string) {
     const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
@@ -126,12 +145,6 @@ export function CommentThread({
       debounceUpdateTitle(parsedTitle);
     }
   }
-
-  useEffect(() => {
-    if (commentThread) {
-      setTitle(commentThread?.title ?? '');
-    }
-  }, [commentThread]);
 
   if (!commentThread) {
     return <></>;
@@ -146,6 +159,7 @@ export function CommentThread({
             <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
           </StyledTopActionsContainer>
           <StyledEditableTitleInput
+            autoFocus
             placeholder={`${commentThread.type} title (optional)`}
             onChange={(event) => {
               setHasUserManuallySetTitle(true);
@@ -175,7 +189,6 @@ export function CommentThread({
           onChange={updateTitleFromBody}
         />
       </StyledUpperPartContainer>
-
       {showComment && (
         <CommentThreadComments
           commentThread={{

@@ -6,8 +6,8 @@ import { GET_PEOPLE } from '@/people/queries';
 import {
   CommentThread,
   CommentThreadTarget,
-  useAddCommentThreadTargetOnCommentThreadMutation,
-  useRemoveCommentThreadTargetOnCommentThreadMutation,
+  useAddCommentThreadTargetsOnCommentThreadMutation,
+  useRemoveCommentThreadTargetsOnCommentThreadMutation,
 } from '~/generated/graphql';
 
 import { GET_COMMENT_THREADS_BY_TARGETS } from '../queries';
@@ -22,8 +22,8 @@ export function useHandleCheckableCommentThreadTargetChange({
     >;
   };
 }) {
-  const [addCommentThreadTargetOnCommentThread] =
-    useAddCommentThreadTargetOnCommentThreadMutation({
+  const [addCommentThreadTargetsOnCommentThread] =
+    useAddCommentThreadTargetsOnCommentThreadMutation({
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
         getOperationName(GET_PEOPLE) ?? '',
@@ -31,8 +31,8 @@ export function useHandleCheckableCommentThreadTargetChange({
       ],
     });
 
-  const [removeCommentThreadTargetOnCommentThread] =
-    useRemoveCommentThreadTargetOnCommentThreadMutation({
+  const [removeCommentThreadTargetsOnCommentThread] =
+    useRemoveCommentThreadTargetsOnCommentThreadMutation({
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
         getOperationName(GET_PEOPLE) ?? '',
@@ -40,36 +40,45 @@ export function useHandleCheckableCommentThreadTargetChange({
       ],
     });
 
-  return function handleCheckItemChange(
-    newCheckedValue: boolean,
-    entity: CommentableEntityForSelect,
+  return async function handleCheckItemsChange(
+    entityValues: Record<string, boolean>,
+    entities: CommentableEntityForSelect[],
   ) {
     if (!commentThread) {
       return;
     }
-    if (newCheckedValue) {
-      addCommentThreadTargetOnCommentThread({
+
+    const currentEntityIds = commentThread.commentThreadTargets.map(
+      ({ commentableId }) => commentableId,
+    );
+
+    const entitiesToAdd = entities.filter(
+      ({ id }) => entityValues[id] && !currentEntityIds.includes(id),
+    );
+
+    if (entitiesToAdd.length)
+      await addCommentThreadTargetsOnCommentThread({
         variables: {
-          commentableEntityId: entity.id,
-          commentableEntityType: entity.entityType,
           commentThreadId: commentThread.id,
-          commentThreadTargetCreationDate: new Date().toISOString(),
-          commentThreadTargetId: v4(),
+          commentThreadTargetInputs: entitiesToAdd.map((entity) => ({
+            id: v4(),
+            createdAt: new Date().toISOString(),
+            commentableType: entity.entityType,
+            commentableId: entity.id,
+          })),
         },
       });
-    } else {
-      const foundCorrespondingTarget = commentThread.commentThreadTargets?.find(
-        (target) => target.commentableId === entity.id,
-      );
 
-      if (foundCorrespondingTarget) {
-        removeCommentThreadTargetOnCommentThread({
-          variables: {
-            commentThreadId: commentThread.id,
-            commentThreadTargetId: foundCorrespondingTarget.id,
-          },
-        });
-      }
-    }
+    const commentThreadTargetIdsToDelete = commentThread.commentThreadTargets
+      .filter(({ commentableId }) => !entityValues[commentableId])
+      .map(({ id }) => id);
+
+    if (commentThreadTargetIdsToDelete.length)
+      await removeCommentThreadTargetsOnCommentThread({
+        variables: {
+          commentThreadId: commentThread.id,
+          commentThreadTargetIds: commentThreadTargetIdsToDelete,
+        },
+      });
   };
 }

@@ -10,7 +10,11 @@ import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPi
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { isCreateModeScopedState } from '@/ui/table/editable-cell/states/isCreateModeScopedState';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
-import { Company, Person, useUpdatePeopleMutation } from '~/generated/graphql';
+import {
+  Company,
+  Person,
+  useUpdateOnePersonMutation,
+} from '~/generated/graphql';
 
 export type OwnProps = {
   people: Pick<Person, 'id'> & { company?: Pick<Company, 'id'> | null };
@@ -22,7 +26,7 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
   const [searchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const [updatePeople] = useUpdatePeopleMutation();
+  const [updatePerson] = useUpdateOnePersonMutation();
 
   const { closeEditableCell } = useEditableCell();
 
@@ -34,10 +38,14 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
   });
 
   async function handleEntitySelected(entity: any) {
-    await updatePeople({
+    await updatePerson({
       variables: {
-        ...people,
-        companyId: entity.id,
+        where: {
+          id: people.id,
+        },
+        data: {
+          company: { connect: { id: entity.id } },
+        },
       },
     });
 

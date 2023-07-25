@@ -4,6 +4,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 
+import { AppPath } from '../../modules/types/AppPath';
+
 export function Verify() {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
@@ -16,10 +18,10 @@ export function Verify() {
   useEffect(() => {
     async function getTokens() {
       if (!loginToken) {
-        return;
+        navigate(AppPath.SignIn);
+      } else {
+        await verify(loginToken);
       }
-      await verify(loginToken);
-      navigate('/');
     }
 
     if (!isLogged) {

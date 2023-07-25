@@ -11,6 +11,8 @@ type OwnProps = {
 
 const StyledClickable = styled.div`
   display: flex;
+  overflow: hidden;
+  white-space: nowrap;
 
   a {
     color: inherit;
@@ -20,7 +22,7 @@ const StyledClickable = styled.div`
 export function RawLink({ className, href, children, onClick }: OwnProps) {
   return (
     <StyledClickable className={className}>
-      <ReactLink onClick={onClick} to={href}>
+      <ReactLink target="_blank" onClick={onClick} to={href}>
         {children}
       </ReactLink>
     </StyledClickable>

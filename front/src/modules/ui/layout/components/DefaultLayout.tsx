@@ -1,12 +1,17 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { AnimatePresence, LayoutGroup } from 'framer-motion';
+import { useRecoilValue } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { AuthModal } from '@/auth/components/Modal';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { NavbarAnimatedContainer } from '@/ui/navbar/components/NavbarAnimatedContainer';
 import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
 import { AppNavbar } from '~/AppNavbar';
+import { CompaniesMockMode } from '~/pages/companies/CompaniesMockMode';
 
+import { useAutoNavigateOnboarding } from '../hooks/useAutoNavigateOnboarding';
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 
 const StyledLayout = styled.div`
@@ -38,22 +43,30 @@ type OwnProps = {
 };
 
 export function DefaultLayout({ children }: OwnProps) {
-  const currentUser = useRecoilState(currentUserState);
-  const userIsAuthenticated = !!currentUser;
+  useAutoNavigateOnboarding();
+
+  const onboardingStatus = useOnboardingStatus();
 
   return (
     <StyledLayout>
-      {userIsAuthenticated ? (
-        <>
-          <CommandMenu />
-          <NavbarAnimatedContainer>
-            <AppNavbar />
-          </NavbarAnimatedContainer>
-          <MainContainer>{children}</MainContainer>
-        </>
-      ) : (
-        children
-      )}
+      <CommandMenu />
+      <NavbarAnimatedContainer>
+        <AppNavbar />
+      </NavbarAnimatedContainer>
+      <MainContainer>
+        {onboardingStatus && onboardingStatus !== OnboardingStatus.Completed ? (
+          <>
+            <CompaniesMockMode />
+            <AnimatePresence mode="wait">
+              <LayoutGroup>
+                <AuthModal>{children}</AuthModal>
+              </LayoutGroup>
+            </AnimatePresence>
+          </>
+        ) : (
+          <>{children}</>
+        )}
+      </MainContainer>
     </StyledLayout>
   );
 }

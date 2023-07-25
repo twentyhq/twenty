@@ -5,8 +5,6 @@ import { useRecoilState } from 'recoil';
 import { IconChevronLeft } from '@/ui/icon/index';
 import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
 
-import NavCollapseButton from './NavCollapseButton';
-
 type OwnProps = {
   title: string;
 };
@@ -50,7 +48,6 @@ export default function NavBackButton({ title }: OwnProps) {
           <IconChevronLeft />
           <span>{title}</span>
         </IconAndButtonContainer>
-        <NavCollapseButton hideOnDesktop={true} />
       </StyledContainer>
     </>
   );

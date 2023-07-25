@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 import { Avatar } from '@/users/components/Avatar';
-import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import { User } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -33,7 +32,10 @@ const EmailText = styled.span`
 
 type OwnProps = {
   workspaceMember: {
-    user: Pick<User, 'id' | 'firstName' | 'lastName' | 'avatarUrl' | 'email'>;
+    user: Pick<
+      User,
+      'id' | 'firstName' | 'lastName' | 'displayName' | 'avatarUrl' | 'email'
+    >;
   };
   accessory?: React.ReactNode;
 };
@@ -42,16 +44,14 @@ export function WorkspaceMemberCard({ workspaceMember, accessory }: OwnProps) {
   return (
     <StyledContainer>
       <Avatar
-        avatarUrl={getImageAbsoluteURIOrBase64(workspaceMember.user.avatarUrl)}
+        avatarUrl={workspaceMember.user.avatarUrl}
         colorId={workspaceMember.user.id}
         placeholder={workspaceMember.user.firstName || ''}
         type="squared"
         size={40}
       />
       <Content>
-        <NameText>
-          {workspaceMember.user.firstName} {workspaceMember.user.lastName}{' '}
-        </NameText>
+        <NameText>{workspaceMember.user.displayName}</NameText>
         <EmailText>{workspaceMember.user.email}</EmailText>
       </Content>
 

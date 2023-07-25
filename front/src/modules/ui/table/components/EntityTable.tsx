@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { TableColumn } from '@/people/table/components/peopleColumns';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
-import { useListenClickOutsideArrayOfRef } from '@/ui/hooks/useListenClickOutsideArrayOfRef';
+import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { TableHeader } from '../table-header/components/TableHeader';
@@ -22,7 +22,7 @@ const StyledTable = styled.table`
   width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
 
   th {
-    border: 1px solid ${({ theme }) => theme.background.tertiary};
+    border: 1px solid ${({ theme }) => theme.border.color.light};
     border-collapse: collapse;
     color: ${({ theme }) => theme.font.color.tertiary};
     padding: 0;
@@ -42,7 +42,7 @@ const StyledTable = styled.table`
   }
 
   td {
-    border: 1px solid ${({ theme }) => theme.background.tertiary};
+    border: 1px solid ${({ theme }) => theme.border.color.light};
     border-collapse: collapse;
     color: ${({ theme }) => theme.font.color.primary};
     padding: 0;
@@ -90,7 +90,7 @@ export function EntityTable<SortField>({
 
   const leaveTableFocus = useLeaveTableFocus();
 
-  useListenClickOutsideArrayOfRef({
+  useListenClickOutside({
     refs: [tableBodyRef],
     callback: () => {
       leaveTableFocus();

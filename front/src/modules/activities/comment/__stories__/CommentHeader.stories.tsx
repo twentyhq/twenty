@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { DateTime } from 'luxon';
 
 import { CommentThreadActionBar } from '@/activities/right-drawer/components/CommentThreadActionBar';
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { avatarUrl } from '~/testing/mock-data/users';
 
 import { CommentHeader } from '../CommentHeader';
 
@@ -10,60 +12,76 @@ import { mockComment, mockCommentWithLongValues } from './mock-comment';
 const meta: Meta<typeof CommentHeader> = {
   title: 'Modules/Activity/Comment/CommentHeader',
   component: CommentHeader,
+  decorators: [ComponentDecorator],
+  argTypes: {
+    actionBar: {
+      type: 'boolean',
+      mapping: {
+        true: <CommentThreadActionBar commentThreadId="test-id" />,
+        false: undefined,
+      },
+    },
+  },
+  args: { comment: mockComment },
 };
 
 export default meta;
 type Story = StoryObj<typeof CommentHeader>;
 
-export const Default: Story = {
-  render: getRenderWrapperForComponent(<CommentHeader comment={mockComment} />),
+export const Default: Story = {};
+
+export const FewHoursAgo: Story = {
+  args: {
+    comment: {
+      ...mockComment,
+      createdAt: DateTime.now().minus({ hours: 2 }).toISO() ?? '',
+    },
+  },
 };
 
 export const FewDaysAgo: Story = {
-  render: getRenderWrapperForComponent(<CommentHeader comment={mockComment} />),
+  args: {
+    comment: {
+      ...mockComment,
+      createdAt: DateTime.now().minus({ days: 2 }).toISO() ?? '',
+    },
+  },
 };
 
 export const FewMonthsAgo: Story = {
-  render: getRenderWrapperForComponent(<CommentHeader comment={mockComment} />),
+  args: {
+    comment: {
+      ...mockComment,
+      createdAt: DateTime.now().minus({ months: 2 }).toISO() ?? '',
+    },
+  },
 };
 
 export const FewYearsAgo: Story = {
-  render: getRenderWrapperForComponent(<CommentHeader comment={mockComment} />),
+  args: {
+    comment: {
+      ...mockComment,
+      createdAt: DateTime.now().minus({ years: 2 }).toISO() ?? '',
+    },
+  },
 };
 
-export const WithoutAvatar: Story = {
-  render: getRenderWrapperForComponent(
-    <CommentHeader
-      comment={{
-        ...mockComment,
-        author: {
-          ...mockComment.author,
-          avatarUrl: '',
-        },
-      }}
-    />,
-  ),
+export const WithAvatar: Story = {
+  args: {
+    comment: {
+      ...mockComment,
+      author: {
+        ...mockComment.author,
+        avatarUrl,
+      },
+    },
+  },
 };
 
 export const WithLongUserName: Story = {
-  render: getRenderWrapperForComponent(
-    <CommentHeader
-      comment={{
-        ...mockCommentWithLongValues,
-        author: {
-          ...mockCommentWithLongValues.author,
-          avatarUrl: '',
-        },
-      }}
-    />,
-  ),
+  args: { comment: mockCommentWithLongValues },
 };
 
 export const WithActionBar: Story = {
-  render: getRenderWrapperForComponent(
-    <CommentHeader
-      comment={mockComment}
-      actionBar={<CommentThreadActionBar commentThreadId="test-id" />}
-    />,
-  ),
+  args: { actionBar: true },
 };

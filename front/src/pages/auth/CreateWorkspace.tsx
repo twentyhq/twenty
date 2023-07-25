@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
@@ -6,10 +6,8 @@ import styled from '@emotion/styled';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
-import { SubTitle } from '@/auth/components/ui/SubTitle';
-import { Title } from '@/auth/components/ui/Title';
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { SubTitle } from '@/auth/components/SubTitle';
+import { Title } from '@/auth/components/Title';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { MainButton } from '@/ui/button/components/MainButton';
@@ -22,18 +20,14 @@ import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(6)};
-  }
 `;
 
 const StyledSectionContainer = styled.div`
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(4)};
-  }
+  margin-top: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledButtonContainer = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(8)};
   width: 200px;
 `;
 
@@ -47,7 +41,6 @@ type Form = Yup.InferType<typeof validationSchema>;
 
 export function CreateWorkspace() {
   const navigate = useNavigate();
-  const onboardingStatus = useOnboardingStatus();
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -73,9 +66,7 @@ export function CreateWorkspace() {
         const result = await updateWorkspace({
           variables: {
             data: {
-              displayName: {
-                set: data.name,
-              },
+              displayName: data.name,
             },
           },
           refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
@@ -86,7 +77,9 @@ export function CreateWorkspace() {
           throw result.errors ?? new Error('Unknown error');
         }
 
-        navigate('/auth/create/profile');
+        setTimeout(() => {
+          navigate('/create/profile');
+        }, 20);
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: 'error',
@@ -105,12 +98,6 @@ export function CreateWorkspace() {
     [onSubmit],
   );
 
-  useEffect(() => {
-    if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceCreation) {
-      navigate('/auth/create/profile');
-    }
-  }, [onboardingStatus, navigate]);
-
   return (
     <>
       <Title>Create your workspace</Title>
@@ -121,7 +108,6 @@ export function CreateWorkspace() {
       <StyledContentContainer>
         <StyledSectionContainer>
           <SubSectionTitle title="Workspace logo" />
-          {/* Picture is actually uploaded on the fly */}
           <WorkspaceLogoUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
@@ -137,12 +123,14 @@ export function CreateWorkspace() {
               fieldState: { error },
             }) => (
               <TextInput
+                autoFocus
                 value={value}
                 placeholder="Apple"
                 onBlur={onBlur}
                 onChange={onChange}
                 error={error?.message}
                 fullWidth
+                disableHotkeys
               />
             )}
           />

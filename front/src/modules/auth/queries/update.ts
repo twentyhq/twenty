@@ -46,7 +46,13 @@ export const VERIFY = gql`
             domainName
             displayName
             logo
+            inviteHash
           }
+        }
+        settings {
+          id
+          colorScheme
+          locale
         }
       }
       tokens {

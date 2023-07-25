@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { NoTopBarContainer } from '@/ui/layout/components/NoTopBarContainer';
+import { IconSettings } from '@/ui/icon';
+import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
 
@@ -24,7 +25,7 @@ const StyledSectionContainer = styled.div`
 
 export function SettingsWorksapce() {
   return (
-    <NoTopBarContainer>
+    <SubMenuTopBarContainer icon={<IconSettings size={16} />} title="Settings">
       <div>
         <StyledContainer>
           <MainSectionTitle>General</MainSectionTitle>
@@ -41,6 +42,6 @@ export function SettingsWorksapce() {
           </StyledSectionContainer>
         </StyledContainer>
       </div>
-    </NoTopBarContainer>
+    </SubMenuTopBarContainer>
   );
 }

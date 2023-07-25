@@ -25,6 +25,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
   return (
     <EditableCell
       transparent
+      maxContentWidth={160}
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={
         isCreating ? (
@@ -37,7 +38,7 @@ export function PeopleCompanyCell({ people }: OwnProps) {
         <CompanyChip
           id={people.company?.id ?? ''}
           name={people.company?.name ?? ''}
-          picture={getLogoUrlFromDomainName(people.company?.domainName)}
+          pictureUrl={getLogoUrlFromDomainName(people.company?.domainName)}
         />
       }
     />

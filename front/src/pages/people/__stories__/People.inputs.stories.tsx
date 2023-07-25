@@ -4,63 +4,67 @@ import type { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { UPDATE_PERSON } from '@/people/queries';
+import { UPDATE_ONE_PERSON } from '@/people/queries';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
 import { Company } from '~/generated/graphql';
+import {
+  PageDecorator,
+  type PageDecoratorArgs,
+} from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { fetchOneFromData } from '~/testing/mock-data';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { mockedPeopleData } from '~/testing/mock-data/people';
-import { getRenderWrapperForPage } from '~/testing/renderWrappers';
 import { sleep } from '~/testing/sleep';
 
 import { People } from '../People';
 
 import { Story } from './People.stories';
 
-const meta: Meta<typeof People> = {
+const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/People/Input',
   component: People,
+  decorators: [PageDecorator],
+  args: { currentPath: '/people' },
+  parameters: {
+    docs: { story: 'inline', iframeHeight: '500px' },
+    msw: graphqlMocks,
+  },
 };
 
 export default meta;
 
 export const InteractWithManyRows: Story = {
-  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    let firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
-
-    expect(
-      canvas.queryByTestId('editable-cell-edit-mode-container'),
-    ).toBeNull();
-
-    await userEvent.click(firstRowEmailCell);
-
-    firstRowEmailCell = await canvas.findByText(mockedPeopleData[0].email);
-    await userEvent.click(firstRowEmailCell);
-
-    expect(
-      canvas.queryByTestId('editable-cell-edit-mode-container'),
-    ).toBeInTheDocument();
+    const firstRowEmailCell = await canvas.findByText(
+      mockedPeopleData[0].email,
+    );
 
     const secondRowEmailCell = await canvas.findByText(
       mockedPeopleData[1].email,
     );
-    await userEvent.click(secondRowEmailCell);
-
-    await sleep(25);
-
-    const secondRowEmailCellFocused = await canvas.findByText(
-      mockedPeopleData[1].email,
-    );
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
 
-    await userEvent.click(secondRowEmailCellFocused);
+    await userEvent.click(firstRowEmailCell);
+
+    expect(
+      canvas.queryByTestId('editable-cell-edit-mode-container'),
+    ).toBeInTheDocument();
+
+    await userEvent.click(secondRowEmailCell);
+
+    await sleep(25);
+
+    expect(
+      canvas.queryByTestId('editable-cell-edit-mode-container'),
+    ).toBeNull();
+
+    await userEvent.click(secondRowEmailCell);
 
     await sleep(25);
 
@@ -68,13 +72,9 @@ export const InteractWithManyRows: Story = {
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeInTheDocument();
   },
-  parameters: {
-    msw: graphqlMocks,
-  },
 };
 
 export const CheckCheckboxes: Story = {
-  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -99,9 +99,6 @@ export const CheckCheckboxes: Story = {
 
     expect(secondCheckbox.checked).toBe(false);
   },
-  parameters: {
-    msw: graphqlMocks,
-  },
 };
 
 const editRelationMocks = (
@@ -113,7 +110,7 @@ const editRelationMocks = (
     if (
       typeof graphqlMock.info.operationName === 'string' &&
       [
-        getOperationName(UPDATE_PERSON),
+        getOperationName(UPDATE_ONE_PERSON),
         getOperationName(SEARCH_COMPANY_QUERY),
       ].includes(graphqlMock.info.operationName)
     ) {
@@ -122,23 +119,26 @@ const editRelationMocks = (
     return true;
   }),
   ...[
-    graphql.mutation(getOperationName(UPDATE_PERSON) ?? '', (req, res, ctx) => {
-      return res(
-        ctx.data({
-          updateOnePerson: {
-            ...fetchOneFromData(mockedPeopleData, req.variables.id),
-            ...{
-              company: {
-                id: req.variables.companyId,
-                name: updateSelectedCompany.name,
-                domainName: updateSelectedCompany.domainName,
-                __typename: 'Company',
+    graphql.mutation(
+      getOperationName(UPDATE_ONE_PERSON) ?? '',
+      (req, res, ctx) => {
+        return res(
+          ctx.data({
+            updateOnePerson: {
+              ...fetchOneFromData(mockedPeopleData, req.variables.where.id),
+              ...{
+                company: {
+                  id: req.variables.where.id,
+                  name: updateSelectedCompany.name,
+                  domainName: updateSelectedCompany.domainName,
+                  __typename: 'Company',
+                },
               },
             },
-          },
-        }),
-      );
-    }),
+          }),
+        );
+      },
+    ),
     graphql.query(
       getOperationName(SEARCH_COMPANY_QUERY) ?? '',
       (req, res, ctx) => {
@@ -186,43 +186,49 @@ const editRelationMocks = (
 ];
 
 export const EditRelation: Story = {
-  render: getRenderWrapperForPage(<People />, '/people'),
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    let secondRowCompanyCell = await canvas.findByText(
-      mockedPeopleData[1].company.name,
-    );
-    await sleep(25);
+    await step('Click on second row company cell', async () => {
+      const secondRowCompanyCell = await canvas.findByText(
+        mockedPeopleData[1].company.name,
+      );
 
-    await userEvent.click(secondRowCompanyCell);
-
-    secondRowCompanyCell = await canvas.findByText(
-      mockedPeopleData[1].company.name,
-    );
-    await sleep(25);
-
-    await userEvent.click(secondRowCompanyCell);
-
-    const relationInput = await canvas.findByPlaceholderText('Search');
-
-    await userEvent.type(relationInput, 'Air', {
-      delay: 200,
+      await userEvent.click(
+        secondRowCompanyCell.parentNode?.parentNode?.parentNode
+          ?.parentElement as HTMLElement,
+      );
     });
 
-    const airbnbChip = await canvas.findByText('Airbnb', {
-      selector: 'div',
+    await step('Type "Air" in relation picker', async () => {
+      const relationInput = await canvas.findByPlaceholderText('Search');
+
+      await userEvent.type(relationInput, 'Air', {
+        delay: 200,
+      });
     });
 
-    await userEvent.click(airbnbChip);
+    await step('Select "Airbnb"', async () => {
+      const airbnbChip = await canvas.findByText('Airbnb', {
+        selector: 'div',
+      });
 
-    const otherCell = await canvas.findByText('Janice Dane');
-    await userEvent.click(otherCell);
+      await userEvent.click(airbnbChip);
+    });
 
-    await canvas.findByText('Airbnb');
+    await step(
+      'Click on last row company cell to exit relation picker',
+      async () => {
+        const otherCell = await canvas.findByText('Janice Dane');
+        await userEvent.click(otherCell);
+      },
+    );
+
+    await step('Check if Airbnb is in second row company cell', async () => {
+      await canvas.findByText('Airbnb');
+    });
   },
   parameters: {
-    actions: {},
     msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], {
       name: 'Airbnb',
       domainName: 'airbnb.com',
@@ -231,7 +237,6 @@ export const EditRelation: Story = {
 };
 
 export const SelectRelationWithKeys: Story = {
-  render: getRenderWrapperForPage(<People />, '/people'),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -240,7 +245,10 @@ export const SelectRelationWithKeys: Story = {
     );
     await sleep(25);
 
-    await userEvent.click(firstRowCompanyCell);
+    await userEvent.click(
+      firstRowCompanyCell.parentNode?.parentNode?.parentNode
+        ?.parentElement as HTMLElement,
+    );
     firstRowCompanyCell = await canvas.findByText(
       mockedPeopleData[0].company.name,
     );
@@ -264,7 +272,6 @@ export const SelectRelationWithKeys: Story = {
     expect(allAirbns.length).toBe(1);
   },
   parameters: {
-    actions: {},
     msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], {
       name: 'Aircall',
       domainName: 'aircall.io',

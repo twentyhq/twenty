@@ -37,6 +37,7 @@
     "react-hotkeys-hook": "^4.4.0",
     "react-loading-skeleton": "^3.3.1",
     "react-modal": "^3.16.1",
+    "react-responsive": "^9.0.2",
     "react-router-dom": "^6.4.4",
     "react-textarea-autosize": "^8.4.1",
     "react-tooltip": "^5.13.1",
@@ -108,7 +109,6 @@
     "@storybook/addon-coverage": "^0.0.8",
     "@storybook/addon-essentials": "^7.0.22",
     "@storybook/addon-interactions": "^7.0.22",
-    "@storybook/addon-knobs": "^7.0.2",
     "@storybook/addon-links": "^7.0.22",
     "@storybook/addon-styling": "^1.3.0",
     "@storybook/jest": "^0.1.0",
@@ -165,8 +165,8 @@
     "workerDirectory": "public"
   },
   "nyc": {
-    "lines": 65,
-    "statements": 65,
+    "statements": 70,
+    "lines": 70,
     "functions": 60,
     "exclude": [
       "src/generated/**/*"

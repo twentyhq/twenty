@@ -1,19 +1,17 @@
-import { ChipVariant, EntityChip } from '@/ui/chip/components/EntityChip';
+import { EntityChip, EntityChipVariant } from '@/ui/chip/components/EntityChip';
 
 type OwnProps = {
   id: string;
   name: string;
-  picture?: string;
-  clickable?: boolean;
-  variant?: ChipVariant;
+  pictureUrl?: string;
+  variant?: EntityChipVariant;
 };
 
 export function CompanyChip({
   id,
   name,
-  picture,
-  clickable,
-  variant = ChipVariant.opaque,
+  pictureUrl,
+  variant = EntityChipVariant.Regular,
 }: OwnProps) {
   return (
     <EntityChip
@@ -21,8 +19,7 @@ export function CompanyChip({
       linkToEntity={`/companies/${id}`}
       name={name}
       avatarType="squared"
-      clickable={clickable}
-      picture={picture}
+      pictureUrl={pictureUrl}
       variant={variant}
     />
   );

@@ -3,32 +3,41 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { EntityBoard } from '@/pipeline/components/EntityBoard';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
-import { BoardDecorator } from '~/testing/decorators';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getRenderWrapperForComponent } from '~/testing/renderWrappers';
+
+import { defaultPipelineProgressOrderBy } from '../../pipeline/queries';
+import { RecoilScope } from '../../ui/recoil-scope/components/RecoilScope';
+import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
+import { CompanyBoardContext } from '../states/CompanyBoardContext';
 
 const meta: Meta<typeof EntityBoard> = {
   title: 'Modules/Companies/Board',
   component: EntityBoard,
-  decorators: [BoardDecorator],
+  decorators: [
+    (Story) => (
+      <RecoilScope SpecificContext={CompanyBoardContext}>
+        <HooksCompanyBoard
+          availableFilters={[]}
+          orderBy={defaultPipelineProgressOrderBy}
+        />
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </RecoilScope>
+    ),
+    ComponentDecorator,
+  ],
+  parameters: {
+    msw: graphqlMocks,
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof EntityBoard>;
 
 export const OneColumnBoard: Story = {
-  render: getRenderWrapperForComponent(
-    <MemoryRouter>
-      <EntityBoard
-        boardOptions={opportunitiesBoardOptions}
-        updateSorts={() => {
-          return;
-        }}
-      />
-      ,
-    </MemoryRouter>,
+  render: (args) => (
+    <EntityBoard {...args} boardOptions={opportunitiesBoardOptions} />
   ),
-  parameters: {
-    msw: graphqlMocks,
-  },
 };

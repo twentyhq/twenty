@@ -27,6 +27,9 @@ export const GET_PEOPLE = gql`
       city
       firstName
       lastName
+      displayName
+      jobTitle
+      linkedinUrl
       createdAt
       _commentThreadCount
       company {
@@ -103,6 +106,7 @@ export const GET_PERSON_NAMES_AND_COMMENT_COUNT = gql`
       id
       firstName
       lastName
+      displayName
       _commentThreadCount
     }
   }

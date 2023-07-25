@@ -1,4 +1,6 @@
 import {
+  IconBrandLinkedin,
+  IconBriefcase,
   IconBuildingSkyscraper,
   IconCalendarEvent,
   IconMail,
@@ -12,6 +14,8 @@ import { EditablePeopleCompanyCell } from './EditablePeopleCompanyCell';
 import { EditablePeopleCreatedAtCell } from './EditablePeopleCreatedAtCell';
 import { EditablePeopleEmailCell } from './EditablePeopleEmailCell';
 import { EditablePeopleFullNameCell } from './EditablePeopleFullNameCell';
+import { EditablePeopleJobTitleCell } from './EditablePeopleJobTitleCell';
+import { EditablePeopleLinkedinUrlCell } from './EditablePeopleLinkedinUrlCell';
 import { EditablePeoplePhoneCell } from './EditablePeoplePhoneCell';
 
 export type TableColumn = {
@@ -64,5 +68,19 @@ export const peopleColumns: TableColumn[] = [
     icon: <IconMap size={16} />,
     size: 150,
     cellComponent: <EditablePeopleCityCell />,
+  },
+  {
+    id: 'jobTitle',
+    title: 'Job title',
+    icon: <IconBriefcase size={16} />,
+    size: 150,
+    cellComponent: <EditablePeopleJobTitleCell />,
+  },
+  {
+    id: 'linkedinUrl',
+    title: 'Linkedin',
+    icon: <IconBrandLinkedin size={16} />,
+    size: 150,
+    cellComponent: <EditablePeopleLinkedinUrlCell />,
   },
 ];

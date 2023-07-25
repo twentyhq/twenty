@@ -1,18 +1,17 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { v4 as uuidv4 } from 'uuid';
 
 import { GET_PEOPLE } from '@/people/queries';
 import { PeopleTable } from '@/people/table/components/PeopleTable';
 import { TableActionBarButtonCreateCommentThreadPeople } from '@/people/table/components/TableActionBarButtonCreateCommentThreadPeople';
 import { TableActionBarButtonDeletePeople } from '@/people/table/components/TableActionBarButtonDeletePeople';
-import { IconBuildingSkyscraper } from '@/ui/icon';
+import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { TableContext } from '@/ui/table/states/TableContext';
-import { useInsertPersonMutation } from '~/generated/graphql';
+import { useInsertOnePersonMutation } from '~/generated/graphql';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -20,18 +19,15 @@ const StyledTableContainer = styled.div`
 `;
 
 export function People() {
-  const [insertPersonMutation] = useInsertPersonMutation();
+  const [insertOnePerson] = useInsertOnePersonMutation();
 
   async function handleAddButtonClick() {
-    await insertPersonMutation({
+    await insertOnePerson({
       variables: {
-        id: uuidv4(),
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        createdAt: new Date().toISOString(),
-        city: '',
+        data: {
+          firstName: '',
+          lastName: '',
+        },
       },
       refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
     });
@@ -43,7 +39,7 @@ export function People() {
     <RecoilScope SpecificContext={TableContext}>
       <WithTopBarContainer
         title="People"
-        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+        icon={<IconUser size={theme.icon.size.sm} />}
         onAddButtonClick={handleAddButtonClick}
       >
         <StyledTableContainer>

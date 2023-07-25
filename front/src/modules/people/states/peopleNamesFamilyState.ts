@@ -5,6 +5,7 @@ export const peopleNameCellFamilyState = atomFamily<
     firstName: string | null;
     lastName: string | null;
     commentCount: number | null;
+    displayName: string | null;
   },
   string
 >({
@@ -13,5 +14,6 @@ export const peopleNameCellFamilyState = atomFamily<
     firstName: null,
     lastName: null,
     commentCount: null,
+    displayName: null,
   },
 });

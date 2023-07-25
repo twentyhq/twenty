@@ -24,7 +24,7 @@ const DropdownMenuSelectableItemContainer = styled(DropdownMenuItem)<Props>`
   display: flex;
   justify-content: space-between;
 
-  max-width: 150px;
+  width: calc(100% - ${({ theme }) => theme.spacing(2)});
 `;
 
 const StyledLeftContainer = styled.div`

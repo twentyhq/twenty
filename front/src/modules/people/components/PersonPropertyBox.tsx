@@ -9,7 +9,11 @@ import { PropertyBox } from '@/ui/editable-field/property-box/components/Propert
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { PhoneEditableField } from '@/ui/editable-field/variants/components/PhoneEditableField';
 import { TextEditableField } from '@/ui/editable-field/variants/components/TextEditableField';
-import { Company, Person, useUpdatePeopleMutation } from '~/generated/graphql';
+import {
+  Company,
+  Person,
+  useUpdateOnePersonMutation,
+} from '~/generated/graphql';
 
 import { PeopleCompanyEditableField } from '../editable-field/components/PeopleCompanyEditableField';
 
@@ -23,7 +27,7 @@ type OwnProps = {
 };
 
 export function PersonPropertyBox({ person }: OwnProps) {
-  const [updatePerson] = useUpdatePeopleMutation();
+  const [updatePerson] = useUpdateOnePersonMutation();
 
   return (
     <PropertyBox extraPadding={true}>
@@ -34,8 +38,12 @@ export function PersonPropertyBox({ person }: OwnProps) {
         onSubmit={(newEmail) => {
           updatePerson({
             variables: {
-              id: person.id,
-              email: newEmail,
+              where: {
+                id: person.id,
+              },
+              data: {
+                email: newEmail,
+              },
             },
           });
         }}
@@ -47,8 +55,12 @@ export function PersonPropertyBox({ person }: OwnProps) {
         onSubmit={(newPhone) => {
           updatePerson({
             variables: {
-              id: person.id,
-              phone: newPhone,
+              where: {
+                id: person.id,
+              },
+              data: {
+                phone: newPhone,
+              },
             },
           });
         }}
@@ -59,8 +71,12 @@ export function PersonPropertyBox({ person }: OwnProps) {
         onSubmit={(newDate) => {
           updatePerson({
             variables: {
-              id: person.id,
-              createdAt: newDate,
+              where: {
+                id: person.id,
+              },
+              data: {
+                createdAt: newDate,
+              },
             },
           });
         }}
@@ -73,8 +89,12 @@ export function PersonPropertyBox({ person }: OwnProps) {
         onSubmit={(newCity) => {
           updatePerson({
             variables: {
-              id: person.id,
-              city: newCity,
+              where: {
+                id: person.id,
+              },
+              data: {
+                city: newCity,
+              },
             },
           });
         }}

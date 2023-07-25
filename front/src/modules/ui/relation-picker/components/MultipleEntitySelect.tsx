@@ -7,6 +7,7 @@ import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMen
 import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
 import { Avatar } from '@/users/components/Avatar';
+import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { EntityForSelect } from '../types/EntityForSelect';
 
@@ -23,17 +24,16 @@ export function MultipleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
 >({
   entities,
-  onItemCheckChange,
+  onChange,
   onSearchFilterChange,
   searchFilter,
+  value,
 }: {
   entities: EntitiesForMultipleEntitySelect<CustomEntityForSelect>;
   searchFilter: string;
   onSearchFilterChange: (newSearchFilter: string) => void;
-  onItemCheckChange: (
-    newCheckedValue: boolean,
-    entity: CustomEntityForSelect,
-  ) => void;
+  onChange: (value: Record<string, boolean>) => void;
+  value: Record<string, boolean>;
 }) {
   const debouncedSetSearchFilter = debounce(onSearchFilterChange, 100, {
     leading: true,
@@ -44,10 +44,14 @@ export function MultipleEntitySelect<
     onSearchFilterChange(event.currentTarget.value);
   }
 
-  const entitiesInDropdown = [
+  let entitiesInDropdown = [
     ...(entities.filteredSelectedEntities ?? []),
     ...(entities.entitiesToSelect ?? []),
   ];
+
+  entitiesInDropdown = entitiesInDropdown.filter((entity) =>
+    isNonEmptyString(entity.name),
+  );
 
   return (
     <DropdownMenu>
@@ -61,13 +65,9 @@ export function MultipleEntitySelect<
         {entitiesInDropdown?.map((entity) => (
           <DropdownMenuCheckableItem
             key={entity.id}
-            checked={
-              entities.selectedEntities
-                ?.map((selectedEntity) => selectedEntity.id)
-                ?.includes(entity.id) ?? false
-            }
+            checked={value[entity.id]}
             onChange={(newCheckedValue) =>
-              onItemCheckChange(newCheckedValue, entity)
+              onChange({ ...value, [entity.id]: newCheckedValue })
             }
           >
             <Avatar
