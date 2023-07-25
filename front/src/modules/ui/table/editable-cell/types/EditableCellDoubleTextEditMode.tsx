@@ -138,6 +138,7 @@ export function EditableCellDoubleTextEditMode({
   return (
     <StyledContainer ref={wrapperRef}>
       <StyledInput
+        autoComplete="off"
         autoFocus
         placeholder={firstValuePlaceholder}
         ref={firstValueInputRef}
@@ -147,6 +148,7 @@ export function EditableCellDoubleTextEditMode({
         }}
       />
       <StyledInput
+        autoComplete="off"
         placeholder={secondValuePlaceholder}
         ref={secondValueInputRef}
         value={secondValue}

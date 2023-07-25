@@ -94,6 +94,7 @@ export function Checkbox({
   return (
     <StyledInputContainer>
       <StyledInput
+        autoComplete="off"
         type="checkbox"
         name="styled-checkbox"
         data-testid="input-checkbox"

@@ -56,6 +56,7 @@ export function EditableCellChip({
           placeholder={placeholder || ''}
           autoFocus
           value={inputValue}
+          autoComplete="off"
           onSubmit={(newValue) => onSubmit?.(newValue)}
         />
       }

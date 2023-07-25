@@ -33,6 +33,7 @@ export function BoardCardEditableFieldText({
           placeholder={placeholder || ''}
           autoFocus
           value={internalValue}
+          autoComplete="off"
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             setInternalValue(event.target.value);
             debouncedOnChange(event.target.value);

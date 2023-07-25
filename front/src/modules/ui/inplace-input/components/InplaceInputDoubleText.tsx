@@ -40,6 +40,7 @@ export function InplaceInputDoubleText({
         }}
       />
       <StyledInput
+        autoComplete="off"
         placeholder={secondValuePlaceholder}
         value={secondValue}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
