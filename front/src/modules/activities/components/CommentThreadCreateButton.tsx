@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 
-import { Button } from '@/ui/button/components/Button';
+import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { ButtonGroup } from '@/ui/button/components/ButtonGroup';
 import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/icon/index';
 
@@ -17,7 +17,7 @@ export function CommentThreadCreateButton({
 }: CommentThreadCreateButtonProps) {
   const theme = useTheme();
   return (
-    <ButtonGroup variant="secondary">
+    <ButtonGroup variant={ButtonVariant.Secondary}>
       <Button
         icon={<IconNotes size={theme.icon.size.sm} />}
         title="Note"

@@ -6,7 +6,7 @@ import { useRecoilState } from 'recoil';
 import { GET_COMMENT_THREADS_BY_TARGETS } from '@/activities/queries';
 import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE } from '@/people/queries';
-import { Button } from '@/ui/button/components/Button';
+import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { IconTrash } from '@/ui/icon';
 import { isRightDrawerOpenState } from '@/ui/right-drawer/states/isRightDrawerOpenState';
 import { useDeleteCommentThreadMutation } from '~/generated/graphql';
@@ -44,7 +44,7 @@ export function CommentThreadActionBar({ commentThreadId }: OwnProps) {
           <IconTrash size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
         }
         onClick={deleteCommentThread}
-        variant="tertiary"
+        variant={ButtonVariant.Tertiary}
       />
     </StyledContainer>
   );

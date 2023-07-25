@@ -27,7 +27,6 @@ export function EditableCellURL({
       editModeContent={
         <InplaceInputTextEditMode
           placeholder={placeholder}
-          autoComplete="off"
           autoFocus
           value={url}
           onSubmit={(newURL) => onSubmit?.(newURL)}

@@ -48,6 +48,7 @@ export function InplaceInputTextEditMode({
 
   return (
     <StyledInput
+      autoComplete="off"
       ref={wrapperRef}
       placeholder={placeholder}
       onChange={handleChange}

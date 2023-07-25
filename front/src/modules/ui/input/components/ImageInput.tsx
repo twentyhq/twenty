@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Button } from '@/ui/button/components/Button';
+import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { IconFileUpload, IconTrash, IconUpload } from '@/ui/icon';
 
 const Container = styled.div`
@@ -123,7 +123,7 @@ export function ImageInput({
           <Button
             icon={<IconUpload size={theme.icon.size.sm} />}
             onClick={onUploadButtonClick}
-            variant="secondary"
+            variant={ButtonVariant.Secondary}
             title="Upload"
             disabled={disabled}
             fullWidth
@@ -131,7 +131,7 @@ export function ImageInput({
           <Button
             icon={<IconTrash size={theme.icon.size.sm} />}
             onClick={onRemove}
-            variant="secondary"
+            variant={ButtonVariant.Secondary}
             title="Remove"
             disabled={!picture || disabled}
             fullWidth
