@@ -5,6 +5,7 @@ import { userEvent, within } from '@storybook/testing-library';
 import { CellPositionDecorator } from '~/testing/decorators/CellPositionDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
+import { sleep } from '../../../../../../testing/sleep';
 import { EditableCellText } from '../../types/EditableCellText';
 
 const meta: Meta<typeof EditableCellText> = {
@@ -32,8 +33,8 @@ export const SoftFocusMode: Story = {
       userEvent.click(canvas.getByText('Content')),
     );
 
-    await step('Escape', () => {
-      userEvent.keyboard('{esc}');
+    await step('Escape', async () => {
+      await userEvent.keyboard('{esc}');
     });
 
     await step('Has soft focus mode', () => {
