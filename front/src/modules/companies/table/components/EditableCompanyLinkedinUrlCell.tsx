@@ -15,28 +15,22 @@ export function EditableCompanyLinkedinUrlCell() {
   const linkedinUrl = useRecoilValue(
     companyLinkedinUrlFamilyState(currentRowEntityId ?? ''),
   );
-  const [internalValue, setInternalValue] = useState(linkedinUrl ?? '');
-  useEffect(() => {
-    setInternalValue(linkedinUrl ?? '');
-  }, [linkedinUrl]);
 
   return (
     <EditableCellURL
-      url={internalValue}
-      onChange={setInternalValue}
-      onSubmit={() =>
+      url={linkedinUrl || ''}
+      onSubmit={(newUrl) =>
         updateCompany({
           variables: {
             where: {
               id: currentRowEntityId,
             },
             data: {
-              linkedinUrl: internalValue,
+              linkedinUrl: newUrl,
             },
           },
         })
       }
-      onCancel={() => setInternalValue(linkedinUrl ?? '')}
     />
   );
 }
