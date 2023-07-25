@@ -134,8 +134,6 @@ export function useSetPeopleEntityTable() {
         set(currentPageLocationState, currentLocation);
 
         set(isFetchingEntityTableDataState, false);
-
-        console.timeEnd('useSetPeopleEntityTable');
       },
     [],
   );

@@ -3,11 +3,9 @@ import { userEvent, within } from '@storybook/testing-library';
 
 import { IconList } from '@/ui/icon/index';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { companiesFilters } from '~/pages/companies/companies-filters';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { HooksEntityTable } from '../../../components/HooksEntityTable';
 import { TableContext } from '../../../states/TableContext';
 import { TableHeader } from '../TableHeader';
 
@@ -17,11 +15,6 @@ const meta: Meta<typeof TableHeader> = {
   decorators: [
     (Story) => (
       <RecoilScope SpecificContext={TableContext}>
-        {/* TODO: add company mocked loader <CompanyEntityTableData */}
-        <HooksEntityTable
-          availableFilters={companiesFilters}
-          numberOfColumns={5}
-        />
         <Story />
       </RecoilScope>
     ),

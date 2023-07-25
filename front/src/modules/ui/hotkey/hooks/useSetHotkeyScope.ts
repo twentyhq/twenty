@@ -69,6 +69,8 @@ export function useSetHotkeyScope() {
 
         scopesToSet.push(newHotkeyScope.scope);
 
+        console.log(JSON.stringify({ scopesToSet, newHotkeyScope }));
+
         set(internalHotkeysEnabledScopesState, scopesToSet);
       },
     [],

@@ -16,6 +16,8 @@ import {
   useUpdateOnePersonMutation,
 } from '~/generated/graphql';
 
+import { EntityForSelect } from '../../ui/relation-picker/types/EntityForSelect';
+
 export type OwnProps = {
   people: Pick<Person, 'id'> & { company?: Pick<Company, 'id'> | null };
 };
@@ -37,17 +39,21 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
     selectedIds: people.company?.id ? [people.company.id] : [],
   });
 
-  async function handleEntitySelected(entity: any) {
-    await updatePerson({
-      variables: {
-        where: {
-          id: people.id,
+  async function handleEntitySelected(
+    entity: EntityForSelect | null | undefined,
+  ) {
+    if (entity) {
+      await updatePerson({
+        variables: {
+          where: {
+            id: people.id,
+          },
+          data: {
+            company: { connect: { id: entity.id } },
+          },
         },
-        data: {
-          company: { connect: { id: entity.id } },
-        },
-      },
-    });
+      });
+    }
 
     closeEditableCell();
   }
@@ -67,6 +73,7 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
   return (
     <SingleEntitySelect
       onCreate={handleCreate}
+      onCancel={() => closeEditableCell()}
       onEntitySelected={handleEntitySelected}
       entities={{
         entitiesToSelect: companies.entitiesToSelect,

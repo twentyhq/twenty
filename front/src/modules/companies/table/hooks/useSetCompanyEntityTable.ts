@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { companyAccountOwnerFamilyState } from '@/companies/states/companyAccountOwnerFamilyState';
 import { companyAddressFamilyState } from '@/companies/states/companyAddressFamilyState';

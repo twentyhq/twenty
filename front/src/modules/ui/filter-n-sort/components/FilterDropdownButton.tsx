@@ -83,15 +83,6 @@ export function FilterDropdownButton({
     }
   }
 
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      handleIsUnfoldedChange(false);
-    },
-    RelationPickerHotkeyScope.RelationPicker,
-    [handleIsUnfoldedChange],
-  );
-
   return (
     <DropdownButton
       label="Filter"

@@ -24,8 +24,15 @@ export function useScopedHotkeyCallback() {
           .valueOrThrow();
 
         if (!currentHotkeyScopes.includes(scope)) {
+          console.log(
+            `I can't handle ${keyboardEvent.key} for scope: ${scope}, because current hotkey scopes are: ${currentHotkeyScopes}`,
+          );
           return;
         }
+
+        console.log(
+          `I can handle ${keyboardEvent.key} for scope: ${scope}, because current hotkey scopes are: ${currentHotkeyScopes}`,
+        );
 
         if (preventDefault) {
           keyboardEvent.stopPropagation();

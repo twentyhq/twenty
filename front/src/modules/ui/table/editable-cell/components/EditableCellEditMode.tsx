@@ -1,9 +1,7 @@
-import { ReactElement, useRef } from 'react';
+import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
 import { overlayBackground } from '@/ui/themes/effects';
-
-import { useRegisterCloseCellHandlers } from '../hooks/useRegisterCloseCellHandlers';
 
 export const EditableCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;

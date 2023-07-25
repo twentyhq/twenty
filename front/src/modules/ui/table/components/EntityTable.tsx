@@ -7,6 +7,7 @@ import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 
 import { useIsPageLoading } from '../../hooks/useIsPageLoading';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
+import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -88,6 +89,8 @@ export function EntityTable<SortField>({
   onSortsUpdate,
 }: OwnProps<SortField>) {
   const tableBodyRef = React.useRef<HTMLDivElement>(null);
+
+  useMapKeyboardToSoftFocus();
 
   const leaveTableFocus = useLeaveTableFocus();
 
