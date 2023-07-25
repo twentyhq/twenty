@@ -94,7 +94,6 @@ export const color: { [key: string]: string } = {
   red40: '#bf5a5a',
   red30: '#f09797',
   red20: '#fbc5c5',
-  'red20-1': '#fed8d8',
   red10: '#fde4e4',
   orange: '#ff7222',
   orange80: '#2d1a16',
