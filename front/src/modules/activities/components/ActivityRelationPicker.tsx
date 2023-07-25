@@ -18,7 +18,7 @@ import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { MultipleEntitySelect } from '@/ui/relation-picker/components/MultipleEntitySelect';
 import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
-import { Activity, ActivityTarget, CommentableType } from '~/generated/graphql';
+import { Activity, ActivityTarget } from '~/generated/graphql';
 
 import { useHandleCheckableActivityTargetChange } from '../hooks/useHandleCheckableActivityTargetChange';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '../utils/flatMapAndSortEntityForSelectArrayByName';
@@ -26,7 +26,7 @@ import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '../utils/flatMa
 type OwnProps = {
   activity?: Pick<Activity, 'id'> & {
     activityTargets: Array<
-      Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
+      Pick<ActivityTarget, 'id' | 'companyId' | 'personId'>
     >;
   };
 };
@@ -85,15 +85,21 @@ export function ActivityRelationPicker({ activity }: OwnProps) {
   const initialPeopleIds = useMemo(
     () =>
       activity?.activityTargets
-        ?.filter((relation) => relation.commentableType === 'Person')
-        .map((relation) => relation.commentableId) ?? [],
+        .filter((target) => target.personId !== null)
+        .map((target) => target.personId)
+        .filter(
+          (id: string | undefined | null) => id !== null && id !== undefined,
+        ) ?? [],
     [activity?.activityTargets],
   );
+
   const initialCompanyIds = useMemo(
     () =>
-      activity?.activityTargets
-        ?.filter((relation) => relation.commentableType === 'Company')
-        .map((relation) => relation.commentableId) ?? [],
+      (
+        activity?.activityTargets
+          ?.filter((relation) => relation.companyId !== null)
+          .map((relation) => relation.companyId) ?? []
+      ).filter((id) => id != null),
     [activity?.activityTargets],
   );
 
@@ -101,13 +107,19 @@ export function ActivityRelationPicker({ activity }: OwnProps) {
     () =>
       [...initialPeopleIds, ...initialCompanyIds].reduce<
         Record<string, boolean>
-      >((result, entityId) => ({ ...result, [entityId]: true }), {}),
+      >((result, entityId) => {
+        if (entityId) {
+          return { ...result, [entityId]: true };
+        } else {
+          return result;
+        }
+      }, {}),
     [initialPeopleIds, initialCompanyIds],
   );
 
   const personsForMultiSelect = useFilteredSearchPeopleQuery({
     searchFilter,
-    selectedIds: initialPeopleIds,
+    selectedIds: initialPeopleIds.filter((id) => typeof id === 'string'),
   });
 
   const companiesForMultiSelect = useFilteredSearchCompanyQuery({
@@ -204,7 +216,7 @@ export function ActivityRelationPicker({ activity }: OwnProps) {
         onClick={handleRelationContainerClick}
       >
         {selectedEntities?.map((entity) =>
-          entity.entityType === CommentableType.Company ? (
+          entity.companyId !== null ? (
             <CompanyChip
               key={entity.id}
               id={entity.id}
