@@ -10,14 +10,14 @@ import { IconPhone } from '@/ui/icon';
 import { Activity } from '~/generated/graphql';
 
 type OwnProps = {
-  commentThread: Pick<Activity, 'type'>;
+  activity: Pick<Activity, 'type'>;
 };
 
-export function CommentThreadTypeDropdown({ commentThread }: OwnProps) {
+export function ActivityTypeDropdown({ activity }: OwnProps) {
   const theme = useTheme();
   return (
     <Chip
-      label={commentThread.type}
+      label={activity.type}
       leftComponent={<IconPhone size={theme.icon.size.md} />}
       size={ChipSize.Large}
       accent={ChipAccent.TextSecondary}

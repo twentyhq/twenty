@@ -3,7 +3,6 @@ import {
   ActivityTarget,
   ActivityType,
   Comment,
-  CommentableType,
 } from '~/generated/graphql';
 
 type MockedActivity = Pick<
@@ -32,9 +31,9 @@ type MockedActivity = Pick<
       | '__typename'
       | 'createdAt'
       | 'updatedAt'
-      | 'commentableType'
-      | 'commentableId'
       | 'activityId'
+      | 'personId'
+      | 'companyId'
     > & { activity: Pick<Activity, 'id' | 'createdAt' | 'updatedAt'> }
   >;
 };
@@ -60,8 +59,7 @@ export const mockedActivities: Array<MockedActivity> = [
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb300',
         createdAt: '2023-04-26T10:12:42.33625+00:00',
         updatedAt: '2023-04-26T10:23:42.33625+00:00',
-        commentableType: CommentableType.Company,
-        commentableId: '89bb825c-171e-4bcc-9cf7-43448d6fb278', // airbnb
+        companyId: '89bb825c-171e-4bcc-9cf7-43448d6fb278', // airbnb
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
         activity: {
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
@@ -74,8 +72,7 @@ export const mockedActivities: Array<MockedActivity> = [
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb301',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        commentableType: CommentableType.Company,
-        commentableId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae', // aircall
+        companyId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae', // aircall
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb231',
         activity: {
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb231',
@@ -107,8 +104,7 @@ export const mockedActivities: Array<MockedActivity> = [
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
         createdAt: '2023-04-26T10:12:42.33625+00:00',
         updatedAt: '2023-04-26T10:23:42.33625+00:00',
-        commentableType: CommentableType.Person,
-        commentableId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b', // Alexandre
+        companyId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b', // Alexandre
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
         activity: {
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
@@ -121,8 +117,7 @@ export const mockedActivities: Array<MockedActivity> = [
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        commentableType: CommentableType.Person,
-        commentableId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d', // Jean d'Eau
+        personId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d', // Jean d'Eau
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
         activity: {
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',

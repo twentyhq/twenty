@@ -29,8 +29,7 @@ export class CompanyRelationsResolver {
       where: {
         activityTargets: {
           some: {
-            commentableId: company.id,
-            commentableType: 'Company',
+            companyId: company.id,
           },
         },
       },
@@ -51,8 +50,7 @@ export class CompanyRelationsResolver {
         activity: {
           activityTargets: {
             some: {
-              commentableId: company.id,
-              commentableType: 'Company',
+              companyId: company.id,
             },
           },
         },
@@ -69,8 +67,7 @@ export class CompanyRelationsResolver {
       where: {
         activityTargets: {
           some: {
-            commentableId: company.id,
-            commentableType: 'Company',
+            companyId: company.id,
           },
         },
       },

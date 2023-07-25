@@ -173,8 +173,9 @@ model Workspace {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ActivityTarget ActivityTarget[]
 
   @@map("workspaces")
 }
@@ -231,8 +232,9 @@ model Company {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ActivityTarget ActivityTarget[]
 
   @@map("companies")
 }
@@ -274,8 +276,9 @@ model Person {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ActivityTarget ActivityTarget[]
 
   @@map("people")
 }
@@ -365,11 +368,6 @@ model Comment {
   @@map("comments")
 }
 
-enum CommentableType {
-  Person
-  Company
-}
-
 model ActivityTarget {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
@@ -378,8 +376,15 @@ model ActivityTarget {
   activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId String
 
-  commentableType CommentableType
-  commentableId   String
+  person    Person?  @relation(fields: [personId], references: [id])
+  personId  String?
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?

@@ -16,8 +16,8 @@ export const ADD_ACTIVITY_TARGETS = gql`
         id
         createdAt
         updatedAt
-        commentableType
-        commentableId
+        personId
+        companyId
       }
     }
   }
@@ -41,8 +41,8 @@ export const REMOVE_ACTIVITY_TARGETS = gql`
         id
         createdAt
         updatedAt
-        commentableType
-        commentableId
+        personId
+        companyId
       }
     }
   }
