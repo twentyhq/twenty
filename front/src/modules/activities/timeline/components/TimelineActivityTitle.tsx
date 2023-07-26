@@ -17,12 +17,14 @@ const StyledTitleContainer = styled.div`
 
 const StyledTitleText = styled.div<{ completed?: boolean }>`
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
+  width: 100%;
 `;
 
 const StyledCheckboxContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
+  width: 100%;
 `;
 
 type OwnProps = {

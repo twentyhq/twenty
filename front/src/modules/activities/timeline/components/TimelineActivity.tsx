@@ -81,7 +81,8 @@ const StyledCard = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   max-width: 400px;
-  padding: 12px;
+  padding: ${({ theme }) => theme.spacing(3)};
+  position: relative;
 `;
 
 const StyledCardContent = styled.div`
