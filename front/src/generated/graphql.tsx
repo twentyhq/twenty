@@ -1992,14 +1992,14 @@ export type GetCommentThreadsByTargetsQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
+export type GetCommentThreadsByTargetsQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
 
 export type GetCommentThreadQueryVariables = Exact<{
   commentThreadId: Scalars['String'];
 }>;
 
 
-export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
+export type GetCommentThreadQuery = { __typename?: 'Query', findManyCommentThreads: Array<{ __typename?: 'CommentThread', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, commentThreadTargets?: Array<{ __typename?: 'CommentThreadTarget', id: string, commentableId: string, commentableType: CommentableType }> | null }> };
 
 export type AddCommentThreadTargetsOnCommentThreadMutationVariables = Exact<{
   commentThreadId: Scalars['String'];
@@ -2029,10 +2029,11 @@ export type UpdateCommentThreadMutationVariables = Exact<{
   body?: InputMaybe<Scalars['String']>;
   title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<ActivityType>;
+  completedAt?: InputMaybe<Scalars['DateTime']>;
 }>;
 
 
-export type UpdateCommentThreadMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, body?: string | null, title?: string | null, type: ActivityType } };
+export type UpdateCommentThreadMutation = { __typename?: 'Mutation', updateOneCommentThread: { __typename?: 'CommentThread', id: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null } };
 
 export type UploadAttachmentMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -2495,6 +2496,7 @@ export const GetCommentThreadsByTargetsDocument = gql`
     title
     body
     type
+    completedAt
     author {
       id
       firstName
@@ -2559,6 +2561,7 @@ export const GetCommentThreadDocument = gql`
     body
     title
     type
+    completedAt
     author {
       id
       firstName
@@ -2740,15 +2743,16 @@ export type DeleteCommentThreadMutationHookResult = ReturnType<typeof useDeleteC
 export type DeleteCommentThreadMutationResult = Apollo.MutationResult<DeleteCommentThreadMutation>;
 export type DeleteCommentThreadMutationOptions = Apollo.BaseMutationOptions<DeleteCommentThreadMutation, DeleteCommentThreadMutationVariables>;
 export const UpdateCommentThreadDocument = gql`
-    mutation UpdateCommentThread($id: String!, $body: String, $title: String, $type: ActivityType) {
+    mutation UpdateCommentThread($id: String!, $body: String, $title: String, $type: ActivityType, $completedAt: DateTime) {
   updateOneCommentThread(
     where: {id: $id}
-    data: {body: $body, title: $title, type: $type}
+    data: {body: $body, title: $title, type: $type, completedAt: $completedAt}
   ) {
     id
     body
     title
     type
+    completedAt
   }
 }
     `;
@@ -2771,6 +2775,7 @@ export type UpdateCommentThreadMutationFn = Apollo.MutationFunction<UpdateCommen
  *      body: // value for 'body'
  *      title: // value for 'title'
  *      type: // value for 'type'
+ *      completedAt: // value for 'completedAt'
  *   },
  * });
  */
