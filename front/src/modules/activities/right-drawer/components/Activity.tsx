@@ -175,8 +175,7 @@ export function Activity({
                 <ActivityRelationPicker
                   activity={{
                     id: activity.id,
-                    activityTargets:
-                      activity.activityTargets ?? [],
+                    activityTargets: activity.activityTargets ?? [],
                   }}
                 />
               }

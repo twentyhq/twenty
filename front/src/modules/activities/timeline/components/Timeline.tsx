@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
 import { CommentableEntity } from '@/activities/types/CommentableEntity';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import {
@@ -12,7 +13,6 @@ import {
 } from '~/generated/graphql';
 
 import { TimelineActivity } from './TimelineActivity';
-import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
 
 const StyledMainContainer = styled.div`
   align-items: flex-start;
@@ -119,21 +119,14 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
   return (
     <StyledMainContainer>
       <StyledTopActionBar>
-          <ActivityCreateButton
-            onNoteClick={() =>
-              openCreateCommandThread(entity, ActivityType.Note)
-            }
-            onTaskClick={() =>
-              openCreateCommandThread(entity, ActivityType.Task)
-            }
-          />
+        <ActivityCreateButton
+          onNoteClick={() => openCreateCommandThread(entity, ActivityType.Note)}
+          onTaskClick={() => openCreateCommandThread(entity, ActivityType.Task)}
+        />
       </StyledTopActionBar>
       <StyledTimelineContainer>
         {activities.map((activity) => (
-          <TimelineActivity
-            key={activity.id}
-            activity={activity}
-          />
+          <TimelineActivity key={activity.id} activity={activity} />
         ))}
       </StyledTimelineContainer>
     </StyledMainContainer>

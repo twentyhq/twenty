@@ -7,10 +7,7 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
 import { IconNotes } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
-import {
-  Activity,
-  useUpdateActivityMutation,
-} from '~/generated/graphql';
+import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
@@ -122,9 +119,7 @@ type OwnProps = {
 };
 
 export function TimelineActivity({ activity }: OwnProps) {
-  const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
-    activity.createdAt,
-  );
+  const beautifiedCreatedAt = beautifyPastDateRelativeToNow(activity.createdAt);
   const exactCreatedAt = beautifyExactDate(activity.createdAt);
   const body = JSON.parse(activity.body ?? '{}')[0]?.content[0]?.text;
 
@@ -138,9 +133,7 @@ export function TimelineActivity({ activity }: OwnProps) {
           id: activity.id,
           completedAt: value ? new Date().toISOString() : null,
         },
-        refetchQueries: [
-          getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
-        ],
+        refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
       });
     },
     [activity, updateActivityMutation],
@@ -171,9 +164,7 @@ export function TimelineActivity({ activity }: OwnProps) {
           <StyledVerticalLine></StyledVerticalLine>
         </StyledVerticalLineContainer>
         <StyledCardContainer>
-          <StyledCard
-            onClick={() => openActivityRightDrawer(activity.id)}
-          >
+          <StyledCard onClick={() => openActivityRightDrawer(activity.id)}>
             <TimelineActivityTitle
               title={activity.title ?? ''}
               completed={!!activity.completedAt}
