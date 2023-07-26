@@ -50,3 +50,4 @@ export { IconUserCircle } from '@tabler/icons-react';
 export { IconCalendar } from '@tabler/icons-react';
 export { IconPencil } from '@tabler/icons-react';
 export { IconCircleDot } from '@tabler/icons-react';
+export { IconHeart } from '@tabler/icons-react';

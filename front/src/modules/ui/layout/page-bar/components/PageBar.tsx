@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import { IconChevronLeft, IconPlus } from '@/ui/icon/index';
+import { IconChevronLeft, IconPlus, IconHeart } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -63,6 +63,7 @@ type OwnProps = {
   hasBackButton?: boolean;
   icon: ReactNode;
   onAddButtonClick?: () => void;
+  onFavouriteButtonClick?: () => void;
 };
 
 export function PageBar({
@@ -70,6 +71,7 @@ export function PageBar({
   hasBackButton,
   icon,
   onAddButtonClick,
+  onFavouriteButtonClick,
 }: OwnProps) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
@@ -104,6 +106,14 @@ export function PageBar({
             </TitleContainer>
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
+        <IconButton
+          icon={<IconHeart size={16} />}
+          size="large"
+          data-testid="add-button"
+          textColor="secondary"
+          onClick={onFavouriteButtonClick}
+          variant="border"
+        />
         {onAddButtonClick && (
           <IconButton
             icon={<IconPlus size={16} />}
