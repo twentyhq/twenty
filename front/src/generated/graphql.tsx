@@ -46,6 +46,7 @@ export type Attachment = {
   name: Scalars['String'];
   type: AttachmentType;
   updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
 };
 
 export type AttachmentCreateNestedManyWithoutActivityInput = {
@@ -79,6 +80,12 @@ export type AttachmentUpdateManyWithoutActivityNestedInput = {
 };
 
 export type AttachmentUpdateManyWithoutAuthorNestedInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
   set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
@@ -219,6 +226,10 @@ export type CommentThreadCreateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
+export type CommentThreadCreateNestedOneWithoutCommentThreadTargetsInput = {
+  connect?: InputMaybe<CommentThreadWhereUniqueInput>;
+};
+
 export type CommentThreadCreateNestedOneWithoutCommentsInput = {
   connect?: InputMaybe<CommentThreadWhereUniqueInput>;
 };
@@ -282,6 +293,7 @@ export type CommentThreadTarget = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
 };
 
 export type CommentThreadTargetCreateManyCommentThreadInput = {
@@ -297,6 +309,20 @@ export type CommentThreadTargetCreateManyCommentThreadInputEnvelope = {
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type CommentThreadTargetCreateManyWorkspaceInput = {
+  commentThreadId: Scalars['String'];
+  commentableId: Scalars['String'];
+  commentableType: CommentableType;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentThreadTargetCreateManyWorkspaceInputEnvelope = {
+  data: Array<CommentThreadTargetCreateManyWorkspaceInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type CommentThreadTargetCreateNestedManyWithoutCommentThreadInput = {
   connect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
   connectOrCreate?: InputMaybe<Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>>;
@@ -309,7 +335,21 @@ export type CommentThreadTargetCreateOrConnectWithoutCommentThreadInput = {
   where: CommentThreadTargetWhereUniqueInput;
 };
 
+export type CommentThreadTargetCreateOrConnectWithoutWorkspaceInput = {
+  create: CommentThreadTargetCreateWithoutWorkspaceInput;
+  where: CommentThreadTargetWhereUniqueInput;
+};
+
 export type CommentThreadTargetCreateWithoutCommentThreadInput = {
+  commentableId: Scalars['String'];
+  commentableType: CommentableType;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type CommentThreadTargetCreateWithoutWorkspaceInput = {
+  commentThread: CommentThreadCreateNestedOneWithoutCommentThreadTargetsInput;
   commentableId: Scalars['String'];
   commentableType: CommentableType;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -344,6 +384,17 @@ export type CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput = {
   connectOrCreate?: InputMaybe<Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>>;
   create?: InputMaybe<Array<CommentThreadTargetCreateWithoutCommentThreadInput>>;
   createMany?: InputMaybe<CommentThreadTargetCreateManyCommentThreadInputEnvelope>;
+  delete?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
+  deleteMany?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
+  disconnect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
+  set?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
+};
+
+export type CommentThreadTargetUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
+  connectOrCreate?: InputMaybe<Array<CommentThreadTargetCreateOrConnectWithoutWorkspaceInput>>;
+  create?: InputMaybe<Array<CommentThreadTargetCreateWithoutWorkspaceInput>>;
+  createMany?: InputMaybe<CommentThreadTargetCreateManyWorkspaceInputEnvelope>;
   delete?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
   deleteMany?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
   disconnect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
@@ -1818,6 +1869,8 @@ export type Verify = {
 
 export type Workspace = {
   __typename?: 'Workspace';
+  Attachment?: Maybe<Array<Attachment>>;
+  CommentThreadTarget?: Maybe<Array<CommentThreadTarget>>;
   commentThreads?: Maybe<Array<CommentThread>>;
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
@@ -1890,6 +1943,8 @@ export type WorkspaceMemberWhereUniqueInput = {
 };
 
 export type WorkspaceUpdateInput = {
+  Attachment?: InputMaybe<AttachmentUpdateManyWithoutWorkspaceNestedInput>;
+  CommentThreadTarget?: InputMaybe<CommentThreadTargetUpdateManyWithoutWorkspaceNestedInput>;
   commentThreads?: InputMaybe<CommentThreadUpdateManyWithoutWorkspaceNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutWorkspaceNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceNestedInput>;

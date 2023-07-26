@@ -19,7 +19,6 @@ type OwnProps = {
       >
     | null
     | undefined;
-  onChange?: (firstName: string, lastName: string) => void;
   onSubmit?: (firstName: string, lastName: string) => void;
   onCancel?: () => void;
 };
@@ -33,7 +32,6 @@ const NoEditModeContainer = styled.div`
 
 export function EditablePeopleFullName({
   person,
-  onChange,
   onSubmit,
   onCancel,
 }: OwnProps) {

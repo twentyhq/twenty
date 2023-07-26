@@ -76,7 +76,7 @@ const StyledButton = styled.button<
     }
   }};
   border-style: solid;
-  border-width: ${({ theme, variant, position }) => {
+  border-width: ${({ variant, position }) => {
     switch (variant) {
       case 'primary':
       case 'secondary':

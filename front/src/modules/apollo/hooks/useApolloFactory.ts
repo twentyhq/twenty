@@ -24,7 +24,7 @@ export function useApolloFactory() {
             fields: {
               commentThreadTargets: {
                 merge(
-                  existing: CommentThreadTarget[] = [],
+                  _existing: CommentThreadTarget[] = [],
                   incoming: CommentThreadTarget[],
                 ) {
                   return [...incoming];

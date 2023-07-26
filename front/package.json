@@ -51,7 +51,7 @@
     "yup": "^1.2.0"
   },
   "scripts": {
-    "start": "PORT=3001 craco start",
+    "start": "PORT=3001 craco start --max-warnings=0",
     "build": "craco build",
     "test": "craco test",
     "coverage": "craco test --coverage .",
@@ -148,6 +148,7 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-storybook": "^0.6.12",
     "eslint-plugin-twenty": "file:../packages/eslint-plugin-twenty",
+    "eslint-plugin-unused-imports": "^3.0.0",
     "http-server": "^14.1.1",
     "mock-apollo-client": "^1.2.1",
     "msw": "1.2.1",
