@@ -384,9 +384,9 @@ model CommentThreadTarget {
   commentThread   CommentThread   @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
   commentThreadId String
   /// @TypeGraphQL.omit(input: true, output: false)
-  workspace       Workspace       @relation(fields: [workspaceId], references: [id])
+  workspace       Workspace?      @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId     String
+  workspaceId     String?
   commentableType CommentableType
   commentableId   String
 
