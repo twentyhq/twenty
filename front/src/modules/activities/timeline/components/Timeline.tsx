@@ -12,6 +12,7 @@ import {
 } from '~/generated/graphql';
 
 import { TimelineActivity } from './TimelineActivity';
+import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
 
 const StyledMainContainer = styled.div`
   align-items: flex-start;
@@ -96,13 +97,13 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
 
   const openCreateCommandThread = useOpenCreateActivityDrawer();
 
-  const activitys: ActivityForDrawer[] = queryResult?.findManyActivities ?? [];
+  const activities: ActivityForDrawer[] = queryResult?.findManyActivities ?? [];
 
   if (loading) {
     return <></>;
   }
 
-  if (!activitys.length) {
+  if (!activities.length) {
     return (
       <StyledTimelineEmptyContainer>
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
@@ -131,7 +132,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
         {activities.map((activity) => (
           <TimelineActivity
             key={activity.id}
-            commentThread={activity}
+            activity={activity}
           />
         ))}
       </StyledTimelineContainer>

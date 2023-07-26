@@ -83,7 +83,7 @@ export function ActivityComments({ activity }: OwnProps) {
         <>
           <StyledThreadItemListContainer>
             <StyledThreadCommentTitle>Comments</StyledThreadCommentTitle>
-            {activity?.comments?.map((comment, index) => (
+            {activity?.comments?.map((comment) => (
               <Comment key={comment.id} comment={comment} />
             ))}
           </StyledThreadItemListContainer>

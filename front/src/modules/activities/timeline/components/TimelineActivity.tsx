@@ -3,13 +3,13 @@ import { Tooltip } from 'react-tooltip';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
-import { useOpenCommentThreadRightDrawer } from '@/activities/hooks/useOpenCommentThreadRightDrawer';
-import { GET_COMMENT_THREADS_BY_TARGETS } from '@/activities/queries';
+import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
 import { IconNotes } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import {
-  CommentThread,
-  useUpdateCommentThreadMutation,
+  Activity,
+  useUpdateActivityMutation,
 } from '~/generated/graphql';
 import {
   beautifyExactDate,
@@ -115,35 +115,35 @@ const StyledTimelineItemContainer = styled.div`
 `;
 
 type OwnProps = {
-  commentThread: Pick<
-    CommentThread,
+  activity: Pick<
+    Activity,
     'id' | 'title' | 'body' | 'createdAt' | 'completedAt' | 'type'
-  > & { author: Pick<CommentThread['author'], 'displayName'> };
+  > & { author: Pick<Activity['author'], 'displayName'> };
 };
 
-export function TimelineActivity({ commentThread }: OwnProps) {
+export function TimelineActivity({ activity }: OwnProps) {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
-    commentThread.createdAt,
+    activity.createdAt,
   );
-  const exactCreatedAt = beautifyExactDate(commentThread.createdAt);
-  const body = JSON.parse(commentThread.body ?? '{}')[0]?.content[0]?.text;
+  const exactCreatedAt = beautifyExactDate(activity.createdAt);
+  const body = JSON.parse(activity.body ?? '{}')[0]?.content[0]?.text;
 
-  const openCommentThreadRightDrawer = useOpenCommentThreadRightDrawer();
-  const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
+  const openActivityRightDrawer = useOpenActivityRightDrawer();
+  const [updateActivityMutation] = useUpdateActivityMutation();
 
   const handleActivityCompletionChange = useCallback(
     (value: boolean) => {
-      updateCommentThreadMutation({
+      updateActivityMutation({
         variables: {
-          id: commentThread.id,
+          id: activity.id,
           completedAt: value ? new Date().toISOString() : null,
         },
         refetchQueries: [
-          getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
+          getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
         ],
       });
     },
-    [commentThread, updateCommentThreadMutation],
+    [activity, updateActivityMutation],
   );
 
   return (
@@ -153,14 +153,14 @@ export function TimelineActivity({ commentThread }: OwnProps) {
           <IconNotes />
         </StyledIconContainer>
         <StyledItemTitleContainer>
-          <span>{commentThread.author.displayName}</span>
+          <span>{activity.author.displayName}</span>
           created a note
         </StyledItemTitleContainer>
-        <StyledItemTitleDate id={`id-${commentThread.id}`}>
+        <StyledItemTitleDate id={`id-${activity.id}`}>
           {beautifiedCreatedAt} ago
         </StyledItemTitleDate>
         <StyledTooltip
-          anchorSelect={`#id-${commentThread.id}`}
+          anchorSelect={`#id-${activity.id}`}
           content={exactCreatedAt}
           clickable
           noArrow
@@ -172,12 +172,12 @@ export function TimelineActivity({ commentThread }: OwnProps) {
         </StyledVerticalLineContainer>
         <StyledCardContainer>
           <StyledCard
-            onClick={() => openCommentThreadRightDrawer(commentThread.id)}
+            onClick={() => openActivityRightDrawer(activity.id)}
           >
             <TimelineActivityTitle
-              title={commentThread.title ?? ''}
-              completed={!!commentThread.completedAt}
-              type={commentThread.type}
+              title={activity.title ?? ''}
+              completed={!!activity.completedAt}
+              type={activity.type}
               onCompletionChange={handleActivityCompletionChange}
             />
             <StyledCardContent>

@@ -51,7 +51,7 @@ type OwnProps = {
   onCompletionChange: (value: boolean) => void;
 };
 
-export function CommentThreadTitle({
+export function ActivityTitle({
   title,
   completed,
   type,

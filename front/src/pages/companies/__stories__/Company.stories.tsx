@@ -27,11 +27,11 @@ const meta: Meta<PageDecoratorArgs> = {
     msw: [
       ...graphqlMocks,
       graphql.query(
-        getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
+        getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
         (req, res, ctx) => {
           return res(
             ctx.data({
-              findManyCommentThreads: mockedCommentThreads,
+              findManyActivities: mockedActivities,
             }),
           );
         },
