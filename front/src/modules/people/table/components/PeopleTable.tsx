@@ -15,6 +15,7 @@ import { PersonOrderByWithRelationInput } from '~/generated/graphql';
 import { availableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
+  console.log('PeopleTable');
   const [orderBy, setOrderBy] =
     useState<PersonOrderByWithRelationInput[]>(defaultOrderBy);
 

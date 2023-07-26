@@ -1,12 +1,10 @@
 import { useContext } from 'react';
-import { useRecoilCallback } from 'recoil';
 
 import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
 
 import { useCloseCurrentCellInEditMode } from '../../hooks/useClearCellInEditMode';
 import { CellHotkeyScopeContext } from '../../states/CellHotkeyScopeContext';
-import { isSomeInputInEditModeState } from '../../states/isSomeInputInEditModeState';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentCellEditMode } from './useCurrentCellEditMode';
@@ -29,33 +27,18 @@ export function useEditableCell() {
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   }
 
-  const openEditableCell = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        const isSomeInputInEditMode = snapshot
-          .getLoadable(isSomeInputInEditModeState)
-          .valueOrThrow();
+  function openEditableCell() {
+    setCurrentCellInEditMode();
 
-        if (!isSomeInputInEditMode) {
-          set(isSomeInputInEditModeState, true);
-
-          setCurrentCellInEditMode();
-
-          if (customCellHotkeyScope) {
-            setHotkeyScope(
-              customCellHotkeyScope.scope,
-              customCellHotkeyScope.customScopes,
-            );
-          } else {
-            setHotkeyScope(
-              DEFAULT_CELL_SCOPE.scope,
-              DEFAULT_CELL_SCOPE.customScopes,
-            );
-          }
-        }
-      },
-    [setCurrentCellInEditMode, setHotkeyScope, customCellHotkeyScope],
-  );
+    if (customCellHotkeyScope) {
+      setHotkeyScope(
+        customCellHotkeyScope.scope,
+        customCellHotkeyScope.customScopes,
+      );
+    } else {
+      setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
+    }
+  }
 
   return {
     closeEditableCell,

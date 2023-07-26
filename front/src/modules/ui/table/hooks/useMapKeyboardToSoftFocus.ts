@@ -1,10 +1,8 @@
-import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
 
-import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { useDisableSoftFocus } from './useDisableSoftFocus';
@@ -16,50 +14,40 @@ export function useMapKeyboardToSoftFocus() {
   const disableSoftFocus = useDisableSoftFocus();
   const setHotkeyScope = useSetHotkeyScope();
 
-  const [isSomeInputInEditMode] = useRecoilState(isSomeInputInEditModeState);
-
   useScopedHotkeys(
     [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
     () => {
-      if (!isSomeInputInEditMode) {
-        moveUp();
-      }
+      moveUp();
     },
     TableHotkeyScope.TableSoftFocus,
-    [moveUp, isSomeInputInEditMode],
+    [moveUp],
   );
 
   useScopedHotkeys(
     Key.ArrowDown,
     () => {
-      if (!isSomeInputInEditMode) {
-        moveDown();
-      }
+      moveDown();
     },
     TableHotkeyScope.TableSoftFocus,
-    [moveDown, isSomeInputInEditMode],
+    [moveDown],
   );
 
   useScopedHotkeys(
     [Key.ArrowLeft, `${Key.Shift}+${Key.Tab}`],
     () => {
-      if (!isSomeInputInEditMode) {
-        moveLeft();
-      }
+      moveLeft();
     },
     TableHotkeyScope.TableSoftFocus,
-    [moveLeft, isSomeInputInEditMode],
+    [moveLeft],
   );
 
   useScopedHotkeys(
     [Key.ArrowRight, Key.Tab],
     () => {
-      if (!isSomeInputInEditMode) {
-        moveRight();
-      }
+      moveRight();
     },
     TableHotkeyScope.TableSoftFocus,
-    [moveRight, isSomeInputInEditMode],
+    [moveRight],
   );
 
   useScopedHotkeys(
