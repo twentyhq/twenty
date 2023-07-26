@@ -33,8 +33,6 @@ export function AuthAutoRouter() {
       return;
     }
 
-    console.log(location, onboardingStatus);
-
     const isMachinOngoingUserCreationRoute =
       isMatchingLocation(AppPath.SignUp) ||
       isMatchingLocation(AppPath.SignIn) ||

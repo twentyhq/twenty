@@ -24,22 +24,22 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <RecoilRoot>
-    <ApolloProvider>
-      <UserProvider>
-        <ClientConfigProvider>
-          <AppThemeProvider>
-            <SnackBarProvider>
-              <BrowserRouter>
+    <BrowserRouter>
+      <ApolloProvider>
+        <UserProvider>
+          <ClientConfigProvider>
+            <AppThemeProvider>
+              <SnackBarProvider>
                 <AuthAutoRouter />
                 <StrictMode>
                   <App />
                 </StrictMode>
-              </BrowserRouter>
-            </SnackBarProvider>
-          </AppThemeProvider>
-        </ClientConfigProvider>
-      </UserProvider>
-    </ApolloProvider>
+              </SnackBarProvider>
+            </AppThemeProvider>
+          </ClientConfigProvider>
+        </UserProvider>
+      </ApolloProvider>
+    </BrowserRouter>
   </RecoilRoot>,
 );
 

@@ -1,9 +1,11 @@
 import { useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
+import { AppPath } from '@/types/AppPath';
 import { CommentThreadTarget } from '~/generated/graphql';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
@@ -13,6 +15,7 @@ export function useApolloFactory() {
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
+  const navigate = useNavigate();
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
 
   const apolloClient = useMemo(() => {
@@ -46,6 +49,7 @@ export function useApolloFactory() {
       },
       onUnauthenticatedError() {
         setTokenPair(null);
+        navigate(AppPath.SignIn);
       },
       extraLinks: [],
       isDebugMode,
