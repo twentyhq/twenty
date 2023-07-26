@@ -11,7 +11,7 @@ import { TextInput } from '../TextInput';
 const changeJestFn = jest.fn();
 
 const meta: Meta<typeof TextInput> = {
-  title: 'UI/Inputs/TextInput',
+  title: 'UI/Input/TextInput',
   component: TextInput,
   decorators: [ComponentDecorator],
   args: { value: '', onChange: changeJestFn, placeholder: 'Placeholder' },

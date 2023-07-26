@@ -21,6 +21,8 @@ import { debounce } from '~/utils/debounce';
 import { CommentThreadActionBar } from '../right-drawer/components/CommentThreadActionBar';
 import { CommentForDrawer } from '../types/CommentForDrawer';
 
+import { CommentThreadTitle } from './CommentThreadTitle';
+
 import '@blocknote/core/style.css';
 
 const StyledContainer = styled.div`
@@ -54,29 +56,6 @@ const StyledTopContainer = styled.div`
   padding: 24px 24px 24px 48px;
 `;
 
-const StyledEditableTitleInput = styled.input`
-  background: transparent;
-
-  border: none;
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  flex: 1 0 0;
-
-  flex-direction: column;
-  font-family: Inter;
-  font-size: ${({ theme }) => theme.font.size.xl};
-  font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  justify-content: center;
-
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  outline: none;
-  width: calc(100% - ${({ theme }) => theme.spacing(2)});
-  &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
-  }
-`;
-
 const StyledTopActionsContainer = styled.div`
   align-items: center;
   display: flex;
@@ -86,7 +65,10 @@ const StyledTopActionsContainer = styled.div`
 `;
 
 type OwnProps = {
-  commentThread: Pick<CommentThread, 'id' | 'title' | 'body' | 'type'> & {
+  commentThread: Pick<
+    CommentThread,
+    'id' | 'title' | 'body' | 'type' | 'completedAt'
+  > & {
     comments?: Array<CommentForDrawer> | null;
   } & {
     commentThreadTargets?: Array<
@@ -106,6 +88,9 @@ export function CommentThreadEditor({
     useState<boolean>(false);
 
   const [title, setTitle] = useState<string | null>(commentThread.title ?? '');
+  const [completedAt, setCompletedAt] = useState<string | null>(
+    commentThread.completedAt ?? '',
+  );
 
   const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
 
@@ -123,6 +108,23 @@ export function CommentThreadEditor({
     },
     [commentThread, updateCommentThreadMutation],
   );
+
+  const handleActivityCompletionChange = useCallback(
+    (value: boolean) => {
+      updateCommentThreadMutation({
+        variables: {
+          id: commentThread.id,
+          completedAt: value ? new Date().toISOString() : null,
+        },
+        refetchQueries: [
+          getOperationName(GET_COMMENT_THREADS_BY_TARGETS) ?? '',
+        ],
+      });
+      setCompletedAt(value ? new Date().toISOString() : null);
+    },
+    [commentThread, updateCommentThreadMutation],
+  );
+
   const debouncedUpdateTitle = debounce(updateTitle, 200);
 
   function updateTitleFromBody(body: string) {
@@ -145,16 +147,16 @@ export function CommentThreadEditor({
             <CommentThreadTypeDropdown commentThread={commentThread} />
             <CommentThreadActionBar commentThreadId={commentThread?.id ?? ''} />
           </StyledTopActionsContainer>
-          <StyledEditableTitleInput
-            autoComplete="off"
-            autoFocus
-            placeholder={`${commentThread.type} title (optional)`}
-            onChange={(event) => {
+          <CommentThreadTitle
+            title={title ?? ''}
+            completed={!!completedAt}
+            type={commentThread.type}
+            onTitleChange={(newTitle) => {
+              setTitle(newTitle);
               setHasUserManuallySetTitle(true);
-              setTitle(event.target.value);
-              debouncedUpdateTitle(event.target.value);
+              debouncedUpdateTitle(newTitle);
             }}
-            value={title ?? ''}
+            onCompletionChange={handleActivityCompletionChange}
           />
           <PropertyBox>
             <PropertyBoxItem
