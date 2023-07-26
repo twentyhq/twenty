@@ -1,25 +1,22 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { CatalogDecorator } from '../../../../../testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '../../../../../testing/decorators/ComponentDecorator';
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+
 import { ProgressBar } from '../ProgressBar';
 
 const meta: Meta<typeof ProgressBar> = {
   title: 'UI/ProgressBar/ProgressBar',
   component: ProgressBar,
+  args: {
+    duration: 10000,
+  },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof ProgressBar>;
-const args = {
-  duration: 10,
-  delay: 10,
-  easing: 'easeInOut',
-  barHeight: 24,
-  barColor: 'red',
-  autoStart: false,
-};
+const args = {};
 const defaultArgTypes = {
   control: false,
 };
@@ -31,13 +28,8 @@ export const Default: Story = {
 export const Catalog = {
   args: {
     ...args,
-    autoStart: true,
-    duration: 10000,
   },
   argTypes: {
-    duration: defaultArgTypes,
-    delay: defaultArgTypes,
-    easing: defaultArgTypes,
     barHeight: defaultArgTypes,
     barColor: defaultArgTypes,
     autoStart: defaultArgTypes,
@@ -45,34 +37,22 @@ export const Catalog = {
   parameters: {
     catalog: [
       {
-        name: 'animations',
-        values: [
-          'linear',
-          'easeIn',
-          'easeOut',
-          'easeInOut',
-          'circIn',
-          'circOut',
-          'circInOut',
-          'backIn',
-          'backOut',
-          'backInOut',
-          'anticipate',
-        ],
-        props: (easing: string) => ({ easing }),
-        labels: (animation: string) => `Animation: ${animation}`,
+        name: 'animation',
+        values: [true, false],
+        props: (autoStart: string) => ({ autoStart }),
+        labels: (autoStart: string) => `AutoStart: ${autoStart}`,
       },
       {
-        name: 'delays',
-        values: [0, 10, 100, 1000],
-        props: (delay: number) => ({ delay }),
-        labels: (delay: number) => `Delay: ${delay} ms`,
+        name: 'colors',
+        values: [undefined, 'blue'],
+        props: (barColor: string) => ({ barColor }),
+        labels: (color: string) => `Color: ${color ?? 'default'}`,
       },
       {
         name: 'sizes',
-        values: [10, 20, 30, 40],
+        values: [undefined, 10],
         props: (barHeight: number) => ({ barHeight }),
-        labels: (size: number) => `Size: ${size} px`,
+        labels: (size: number) => `Size: ${size ? size + ' px' : 'default'}`,
       },
     ],
   },
