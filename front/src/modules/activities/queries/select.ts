@@ -8,7 +8,7 @@ export const GET_ACTIVITIES_BY_TARGETS = gql`
     findManyActivities(
       orderBy: $orderBy
       where: {
-        activityTargets: { some: { personId: { in: $activityTargetIds } } }
+        activityTargets: { some: { commentableId: { in: $activityTargetIds } } }
       }
     ) {
       id
@@ -38,8 +38,8 @@ export const GET_ACTIVITIES_BY_TARGETS = gql`
       }
       activityTargets {
         id
-        personId
-        companyId
+        commentableType
+        commentableId
       }
     }
   }
@@ -75,8 +75,8 @@ export const GET_ACTIVITY = gql`
       }
       activityTargets {
         id
-        personId
-        companyId
+        commentableType
+        commentableId
       }
     }
   }

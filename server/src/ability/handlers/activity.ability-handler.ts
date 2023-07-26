@@ -47,7 +47,7 @@ export class UpdateActivityAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<ActivityArgs>();
-    const Activity = await this.prismaService.activity.findFirst({
+    const Activity = await this.prismaService.client.activity.findFirst({
       where: args.where,
     });
     assert(Activity, '', NotFoundException);
@@ -63,7 +63,7 @@ export class DeleteActivityAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<ActivityArgs>();
-    const Activity = await this.prismaService.activity.findFirst({
+    const Activity = await this.prismaService.client.activity.findFirst({
       where: args.where,
     });
     assert(Activity, '', NotFoundException);

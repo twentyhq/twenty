@@ -174,8 +174,9 @@ model Workspace {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Attachment Attachment[]
 
   @@map("workspaces")
 }
@@ -232,9 +233,8 @@ model Company {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  ActivityTarget ActivityTarget[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("companies")
 }
@@ -276,9 +276,8 @@ model Person {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  ActivityTarget ActivityTarget[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("people")
 }
@@ -343,6 +342,11 @@ model Activity {
   @@map("activities")
 }
 
+enum CommentableType {
+  Person
+  Company
+}
+
 model Comment {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
@@ -373,16 +377,14 @@ model ActivityTarget {
   /// @Validator.IsOptional()
   id String @id @default(uuid())
 
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  activityId String
-
+  activity        Activity        @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId      String
   commentableType CommentableType
   commentableId   String
-
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspace       Workspace       @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId String
+  workspaceId     String
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -517,7 +519,7 @@ model Attachment {
   activityId String
 
   /// @TypeGraphQL.omit(input: true, output: false)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
   createdAt DateTime  @default(now())

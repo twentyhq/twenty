@@ -47,7 +47,7 @@ export class CreateAttachmentAbilityHandler implements IAbilityHandler {
     });
     assert(activity, '', NotFoundException);
 
-    return ability.can(AbilityAction.Update, subject('Attachment', activity));
+    return ability.can(AbilityAction.Update, subject('Activity', activity));
   }
 }
 

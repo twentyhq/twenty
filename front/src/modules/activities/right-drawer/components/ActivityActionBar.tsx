@@ -6,7 +6,7 @@ import { useRecoilState } from 'recoil';
 import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
 import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE } from '@/people/queries';
-import { Button } from '@/ui/button/components/Button';
+import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { IconTrash } from '@/ui/icon';
 import { isRightDrawerOpenState } from '@/ui/right-drawer/states/isRightDrawerOpenState';
 import { useDeleteActivityMutation } from '~/generated/graphql';
@@ -44,7 +44,7 @@ export function ActivityActionBar({ activityId }: OwnProps) {
           <IconTrash size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
         }
         onClick={deleteActivity}
-        variant="tertiary"
+        variant={ButtonVariant.Tertiary}
       />
     </StyledContainer>
   );

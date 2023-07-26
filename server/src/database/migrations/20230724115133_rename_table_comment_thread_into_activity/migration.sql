@@ -1,4 +1,7 @@
--- Create the new tables first, without any foreign key constraints
+-- AlterTable
+ALTER TABLE "comments" ALTER COLUMN "commentThreadId" DROP NOT NULL;
+ALTER TABLE "comments" ADD COLUMN "activityId" TEXT NOT NULL;
+
 -- Activities Table
 CREATE TABLE "activities" (
     "id" TEXT NOT NULL,
@@ -22,8 +25,8 @@ CREATE TABLE "activities" (
 CREATE TABLE "activity_targets" (
     "id" TEXT NOT NULL,
     "activityId" TEXT NOT NULL,
-    "personId" TEXT NOT NULL,
-    "companyId" TEXT NOT NULL,
+    "commentableType" "CommentableType" NOT NULL,
+    "commentableId" TEXT NOT NULL,
     "workspaceId" TEXT NOT NULL,
     "deletedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

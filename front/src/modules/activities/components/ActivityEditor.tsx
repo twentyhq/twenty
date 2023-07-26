@@ -65,14 +65,11 @@ const StyledTopActionsContainer = styled.div`
 `;
 
 type OwnProps = {
-  activity: Pick<
-    Activity,
-    'id' | 'title' | 'body' | 'type' | 'completedAt'
-  > & {
+  activity: Pick<Activity, 'id' | 'title' | 'body' | 'type' | 'completedAt'> & {
     comments?: Array<CommentForDrawer> | null;
   } & {
     activityTargets?: Array<
-      Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>
+      Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
     > | null;
   };
   showComment?: boolean;
@@ -101,9 +98,7 @@ export function ActivityEditor({
           id: activity.id,
           title: newTitle ?? '',
         },
-        refetchQueries: [
-          getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
-        ],
+        refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
       });
     },
     [activity, updateActivityMutation],
@@ -116,9 +111,7 @@ export function ActivityEditor({
           id: activity.id,
           completedAt: value ? new Date().toISOString() : null,
         },
-        refetchQueries: [
-          getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
-        ],
+        refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
       });
       setCompletedAt(value ? new Date().toISOString() : null);
     },
@@ -165,8 +158,7 @@ export function ActivityEditor({
                 <ActivityRelationPicker
                   activity={{
                     id: activity.id,
-                    activityTargets:
-                      activity.activityTargets ?? [],
+                    activityTargets: activity.activityTargets ?? [],
                   }}
                 />
               }

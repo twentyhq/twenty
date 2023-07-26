@@ -39,7 +39,8 @@ export function useOpenCreateActivityDrawer() {
         type: type,
         activityTargetArray: [
           {
-            personId: entity.id,
+            commentableId: entity.id,
+            commentableType: entity.type,
             id: v4(),
             createdAt: new Date().toISOString(),
           },

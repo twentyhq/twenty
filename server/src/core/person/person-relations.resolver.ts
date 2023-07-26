@@ -29,7 +29,8 @@ export class PersonRelationsResolver {
       where: {
         activityTargets: {
           some: {
-            personId: person.id,
+            commentableType: 'Person',
+            commentableId: person.id,
           },
         },
       },
@@ -50,7 +51,8 @@ export class PersonRelationsResolver {
         activity: {
           activityTargets: {
             some: {
-              personId: person.id,
+              commentableType: 'Person',
+              commentableId: person.id,
             },
           },
         },
@@ -67,7 +69,8 @@ export class PersonRelationsResolver {
       where: {
         activityTargets: {
           some: {
-            personId: person.id,
+            commentableType: 'Person',
+            commentableId: person.id,
           },
         },
       },

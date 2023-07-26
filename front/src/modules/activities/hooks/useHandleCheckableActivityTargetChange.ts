@@ -18,7 +18,7 @@ export function useHandleCheckableActivityTargetChange({
 }: {
   activity?: Pick<Activity, 'id'> & {
     activityTargets: Array<
-      Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>
+      Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
     >;
   };
 }) {
@@ -49,7 +49,7 @@ export function useHandleCheckableActivityTargetChange({
     }
 
     const currentEntityIds = activity.activityTargets.map(
-      ({ personId }) => personId,
+      ({ commentableId }) => commentableId,
     );
 
     const entitiesToAdd = entities.filter(
@@ -63,7 +63,8 @@ export function useHandleCheckableActivityTargetChange({
           activityTargetInputs: entitiesToAdd.map((entity) => ({
             id: v4(),
             createdAt: new Date().toISOString(),
-            personId: entity.id,
+            commentableType: entity.entityType,
+            commentableId: entity.id,
           })),
         },
       });

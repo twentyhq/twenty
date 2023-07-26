@@ -16,7 +16,6 @@ import {
   Pipeline,
   PipelineStage,
   PipelineProgress,
-  Attachment,
   UserSettings,
 } from '@prisma/client';
 

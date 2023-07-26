@@ -7,33 +7,34 @@ export class ActivityTargetService {
   constructor(private readonly prismaService: PrismaService) {}
 
   // Find
-  findFirst = this.prismaService.activityTarget.findFirst;
-  findFirstOrThrow = this.prismaService.activityTarget.findFirstOrThrow;
+  findFirst = this.prismaService.client.activityTarget.findFirst;
+  findFirstOrThrow = this.prismaService.client.activityTarget.findFirstOrThrow;
 
-  findUnique = this.prismaService.activityTarget.findUnique;
-  findUniqueOrThrow = this.prismaService.activityTarget.findUniqueOrThrow;
+  findUnique = this.prismaService.client.activityTarget.findUnique;
+  findUniqueOrThrow =
+    this.prismaService.client.activityTarget.findUniqueOrThrow;
 
-  findMany = this.prismaService.activityTarget.findMany;
+  findMany = this.prismaService.client.activityTarget.findMany;
 
   // Create
-  create = this.prismaService.activityTarget.create;
-  createMany = this.prismaService.activityTarget.createMany;
+  create = this.prismaService.client.activityTarget.create;
+  createMany = this.prismaService.client.activityTarget.createMany;
 
   // Update
-  update = this.prismaService.activityTarget.update;
-  upsert = this.prismaService.activityTarget.upsert;
-  updateMany = this.prismaService.activityTarget.updateMany;
+  update = this.prismaService.client.activityTarget.update;
+  upsert = this.prismaService.client.activityTarget.upsert;
+  updateMany = this.prismaService.client.activityTarget.updateMany;
 
   // Delete
-  delete = this.prismaService.activityTarget.delete;
-  deleteMany = this.prismaService.activityTarget.deleteMany;
+  delete = this.prismaService.client.activityTarget.delete;
+  deleteMany = this.prismaService.client.activityTarget.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.activityTarget.aggregate;
+  aggregate = this.prismaService.client.activityTarget.aggregate;
 
   // Count
-  count = this.prismaService.activityTarget.count;
+  count = this.prismaService.client.activityTarget.count;
 
   // GroupBy
-  groupBy = this.prismaService.activityTarget.groupBy;
+  groupBy = this.prismaService.client.activityTarget.groupBy;
 }

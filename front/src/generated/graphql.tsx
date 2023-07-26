@@ -117,21 +117,18 @@ export type ActivityTarget = {
   __typename?: 'ActivityTarget';
   activity: Activity;
   activityId: Scalars['String'];
-  company?: Maybe<Company>;
-  companyId?: Maybe<Scalars['String']>;
+  commentableId: Scalars['String'];
+  commentableType: CommentableType;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  person?: Maybe<Person>;
-  personId?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
 };
 
 export type ActivityTargetCreateManyActivityInput = {
-  companyId?: InputMaybe<Scalars['String']>;
+  commentableId: Scalars['String'];
+  commentableType: CommentableType;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
-  personId?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -140,38 +137,12 @@ export type ActivityTargetCreateManyActivityInputEnvelope = {
   skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
-export type ActivityTargetCreateManyCompanyInput = {
-  activityId: Scalars['String'];
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  personId?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type ActivityTargetCreateManyCompanyInputEnvelope = {
-  data: Array<ActivityTargetCreateManyCompanyInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type ActivityTargetCreateManyPersonInput = {
-  activityId: Scalars['String'];
-  companyId?: InputMaybe<Scalars['String']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type ActivityTargetCreateManyPersonInputEnvelope = {
-  data: Array<ActivityTargetCreateManyPersonInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
 export type ActivityTargetCreateManyWorkspaceInput = {
   activityId: Scalars['String'];
-  companyId?: InputMaybe<Scalars['String']>;
+  commentableId: Scalars['String'];
+  commentableType: CommentableType;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
-  personId?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -187,32 +158,8 @@ export type ActivityTargetCreateNestedManyWithoutActivityInput = {
   createMany?: InputMaybe<ActivityTargetCreateManyActivityInputEnvelope>;
 };
 
-export type ActivityTargetCreateNestedManyWithoutCompanyInput = {
-  connect?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<ActivityTargetCreateOrConnectWithoutCompanyInput>>;
-  create?: InputMaybe<Array<ActivityTargetCreateWithoutCompanyInput>>;
-  createMany?: InputMaybe<ActivityTargetCreateManyCompanyInputEnvelope>;
-};
-
-export type ActivityTargetCreateNestedManyWithoutPersonInput = {
-  connect?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<ActivityTargetCreateOrConnectWithoutPersonInput>>;
-  create?: InputMaybe<Array<ActivityTargetCreateWithoutPersonInput>>;
-  createMany?: InputMaybe<ActivityTargetCreateManyPersonInputEnvelope>;
-};
-
 export type ActivityTargetCreateOrConnectWithoutActivityInput = {
   create: ActivityTargetCreateWithoutActivityInput;
-  where: ActivityTargetWhereUniqueInput;
-};
-
-export type ActivityTargetCreateOrConnectWithoutCompanyInput = {
-  create: ActivityTargetCreateWithoutCompanyInput;
-  where: ActivityTargetWhereUniqueInput;
-};
-
-export type ActivityTargetCreateOrConnectWithoutPersonInput = {
-  create: ActivityTargetCreateWithoutPersonInput;
   where: ActivityTargetWhereUniqueInput;
 };
 
@@ -222,24 +169,8 @@ export type ActivityTargetCreateOrConnectWithoutWorkspaceInput = {
 };
 
 export type ActivityTargetCreateWithoutActivityInput = {
-  company?: InputMaybe<CompanyCreateNestedOneWithoutActivityTargetInput>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  person?: InputMaybe<PersonCreateNestedOneWithoutActivityTargetInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type ActivityTargetCreateWithoutCompanyInput = {
-  activity: ActivityCreateNestedOneWithoutActivityTargetsInput;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  person?: InputMaybe<PersonCreateNestedOneWithoutActivityTargetInput>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type ActivityTargetCreateWithoutPersonInput = {
-  activity: ActivityCreateNestedOneWithoutActivityTargetsInput;
-  company?: InputMaybe<CompanyCreateNestedOneWithoutActivityTargetInput>;
+  commentableId: Scalars['String'];
+  commentableType: CommentableType;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -247,10 +178,10 @@ export type ActivityTargetCreateWithoutPersonInput = {
 
 export type ActivityTargetCreateWithoutWorkspaceInput = {
   activity: ActivityCreateNestedOneWithoutActivityTargetsInput;
-  company?: InputMaybe<CompanyCreateNestedOneWithoutActivityTargetInput>;
+  commentableId: Scalars['String'];
+  commentableType: CommentableType;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
-  person?: InputMaybe<PersonCreateNestedOneWithoutActivityTargetInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -269,10 +200,10 @@ export type ActivityTargetScalarWhereInput = {
   NOT?: InputMaybe<Array<ActivityTargetScalarWhereInput>>;
   OR?: InputMaybe<Array<ActivityTargetScalarWhereInput>>;
   activityId?: InputMaybe<StringFilter>;
-  companyId?: InputMaybe<StringNullableFilter>;
+  commentableId?: InputMaybe<StringFilter>;
+  commentableType?: InputMaybe<EnumCommentableTypeFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
-  personId?: InputMaybe<StringNullableFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
@@ -281,28 +212,6 @@ export type ActivityTargetUpdateManyWithoutActivityNestedInput = {
   connectOrCreate?: InputMaybe<Array<ActivityTargetCreateOrConnectWithoutActivityInput>>;
   create?: InputMaybe<Array<ActivityTargetCreateWithoutActivityInput>>;
   createMany?: InputMaybe<ActivityTargetCreateManyActivityInputEnvelope>;
-  delete?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<ActivityTargetScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
-  set?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
-};
-
-export type ActivityTargetUpdateManyWithoutCompanyNestedInput = {
-  connect?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<ActivityTargetCreateOrConnectWithoutCompanyInput>>;
-  create?: InputMaybe<Array<ActivityTargetCreateWithoutCompanyInput>>;
-  createMany?: InputMaybe<ActivityTargetCreateManyCompanyInputEnvelope>;
-  delete?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<ActivityTargetScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
-  set?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
-};
-
-export type ActivityTargetUpdateManyWithoutPersonNestedInput = {
-  connect?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<ActivityTargetCreateOrConnectWithoutPersonInput>>;
-  create?: InputMaybe<Array<ActivityTargetCreateWithoutPersonInput>>;
-  createMany?: InputMaybe<ActivityTargetCreateManyPersonInputEnvelope>;
   delete?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
   deleteMany?: InputMaybe<Array<ActivityTargetScalarWhereInput>>;
   disconnect?: InputMaybe<Array<ActivityTargetWhereUniqueInput>>;
@@ -326,12 +235,10 @@ export type ActivityTargetWhereInput = {
   OR?: InputMaybe<Array<ActivityTargetWhereInput>>;
   activity?: InputMaybe<ActivityRelationFilter>;
   activityId?: InputMaybe<StringFilter>;
-  company?: InputMaybe<CompanyRelationFilter>;
-  companyId?: InputMaybe<StringNullableFilter>;
+  commentableId?: InputMaybe<StringFilter>;
+  commentableType?: InputMaybe<EnumCommentableTypeFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
-  person?: InputMaybe<PersonRelationFilter>;
-  personId?: InputMaybe<StringNullableFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
@@ -428,6 +335,7 @@ export type Attachment = {
   name: Scalars['String'];
   type: AttachmentType;
   updatedAt: Scalars['DateTime'];
+  workspace: Workspace;
 };
 
 export type AttachmentCreateNestedManyWithoutActivityInput = {
@@ -461,6 +369,12 @@ export type AttachmentUpdateManyWithoutActivityNestedInput = {
 };
 
 export type AttachmentUpdateManyWithoutAuthorNestedInput = {
+  connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+  set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
+};
+
+export type AttachmentUpdateManyWithoutWorkspaceNestedInput = {
   connect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
   set?: InputMaybe<Array<AttachmentWhereUniqueInput>>;
@@ -600,9 +514,13 @@ export type CommentWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
 };
 
+export enum CommentableType {
+  Company = 'Company',
+  Person = 'Person'
+}
+
 export type Company = {
   __typename?: 'Company';
-  ActivityTarget?: Maybe<Array<ActivityTarget>>;
   _activityCount: Scalars['Int'];
   accountOwner?: Maybe<User>;
   accountOwnerId?: Maybe<Scalars['String']>;
@@ -620,7 +538,6 @@ export type Company = {
 };
 
 export type CompanyCreateInput = {
-  ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutCompanyInput>;
   accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
   address: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -631,10 +548,6 @@ export type CompanyCreateInput = {
   name: Scalars['String'];
   people?: InputMaybe<PersonCreateNestedManyWithoutCompanyInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CompanyCreateNestedOneWithoutActivityTargetInput = {
-  connect?: InputMaybe<CompanyWhereUniqueInput>;
 };
 
 export type CompanyCreateNestedOneWithoutPeopleInput = {
@@ -652,7 +565,6 @@ export type CompanyOrderByRelationAggregateInput = {
 };
 
 export type CompanyOrderByWithRelationInput = {
-  ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
   accountOwner?: InputMaybe<UserOrderByWithRelationInput>;
   accountOwnerId?: InputMaybe<SortOrder>;
   address?: InputMaybe<SortOrder>;
@@ -686,7 +598,6 @@ export enum CompanyScalarFieldEnum {
 }
 
 export type CompanyUpdateInput = {
-  ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutCompanyNestedInput>;
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
   address?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -718,7 +629,6 @@ export type CompanyUpdateOneWithoutPeopleNestedInput = {
 
 export type CompanyWhereInput = {
   AND?: InputMaybe<Array<CompanyWhereInput>>;
-  ActivityTarget?: InputMaybe<ActivityTargetListRelationFilter>;
   NOT?: InputMaybe<Array<CompanyWhereInput>>;
   OR?: InputMaybe<Array<CompanyWhereInput>>;
   accountOwner?: InputMaybe<UserRelationFilter>;
@@ -779,6 +689,13 @@ export type EnumColorSchemeFilter = {
   in?: InputMaybe<Array<ColorScheme>>;
   not?: InputMaybe<NestedEnumColorSchemeFilter>;
   notIn?: InputMaybe<Array<ColorScheme>>;
+};
+
+export type EnumCommentableTypeFilter = {
+  equals?: InputMaybe<CommentableType>;
+  in?: InputMaybe<Array<CommentableType>>;
+  not?: InputMaybe<NestedEnumCommentableTypeFilter>;
+  notIn?: InputMaybe<Array<CommentableType>>;
 };
 
 export type EnumPipelineProgressableTypeFilter = {
@@ -1053,6 +970,13 @@ export type NestedEnumColorSchemeFilter = {
   notIn?: InputMaybe<Array<ColorScheme>>;
 };
 
+export type NestedEnumCommentableTypeFilter = {
+  equals?: InputMaybe<CommentableType>;
+  in?: InputMaybe<Array<CommentableType>>;
+  not?: InputMaybe<NestedEnumCommentableTypeFilter>;
+  notIn?: InputMaybe<Array<CommentableType>>;
+};
+
 export type NestedEnumPipelineProgressableTypeFilter = {
   equals?: InputMaybe<PipelineProgressableType>;
   in?: InputMaybe<Array<PipelineProgressableType>>;
@@ -1101,7 +1025,6 @@ export type NestedStringNullableFilter = {
 
 export type Person = {
   __typename?: 'Person';
-  ActivityTarget?: Maybe<Array<ActivityTarget>>;
   _activityCount: Scalars['Int'];
   activities: Array<Activity>;
   city?: Maybe<Scalars['String']>;
@@ -1122,7 +1045,6 @@ export type Person = {
 };
 
 export type PersonCreateInput = {
-  ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutPersonInput>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1141,10 +1063,6 @@ export type PersonCreateNestedManyWithoutCompanyInput = {
   connect?: InputMaybe<Array<PersonWhereUniqueInput>>;
 };
 
-export type PersonCreateNestedOneWithoutActivityTargetInput = {
-  connect?: InputMaybe<PersonWhereUniqueInput>;
-};
-
 export type PersonCreateNestedOneWithoutPipelineProgressesInput = {
   connect?: InputMaybe<PersonWhereUniqueInput>;
 };
@@ -1160,7 +1078,6 @@ export type PersonOrderByRelationAggregateInput = {
 };
 
 export type PersonOrderByWithRelationInput = {
-  ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
   city?: InputMaybe<SortOrder>;
   company?: InputMaybe<CompanyOrderByWithRelationInput>;
   companyId?: InputMaybe<SortOrder>;
@@ -1198,7 +1115,6 @@ export enum PersonScalarFieldEnum {
 }
 
 export type PersonUpdateInput = {
-  ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutPersonNestedInput>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1232,7 +1148,6 @@ export type PersonUpdateOneWithoutPipelineProgressesNestedInput = {
 
 export type PersonWhereInput = {
   AND?: InputMaybe<Array<PersonWhereInput>>;
-  ActivityTarget?: InputMaybe<ActivityTargetListRelationFilter>;
   NOT?: InputMaybe<Array<PersonWhereInput>>;
   OR?: InputMaybe<Array<PersonWhereInput>>;
   city?: InputMaybe<StringNullableFilter>;
@@ -1953,8 +1868,9 @@ export type Verify = {
 
 export type Workspace = {
   __typename?: 'Workspace';
-  ActivityTarget?: Maybe<Array<ActivityTarget>>;
+  Attachment?: Maybe<Array<Attachment>>;
   activities?: Maybe<Array<Activity>>;
+  activityTargets?: Maybe<Array<ActivityTarget>>;
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
@@ -2026,8 +1942,9 @@ export type WorkspaceMemberWhereUniqueInput = {
 };
 
 export type WorkspaceUpdateInput = {
-  ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutWorkspaceNestedInput>;
+  Attachment?: InputMaybe<AttachmentUpdateManyWithoutWorkspaceNestedInput>;
   activities?: InputMaybe<ActivityUpdateManyWithoutWorkspaceNestedInput>;
+  activityTargets?: InputMaybe<ActivityTargetUpdateManyWithoutWorkspaceNestedInput>;
   comments?: InputMaybe<CommentUpdateManyWithoutWorkspaceNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutWorkspaceNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -2066,7 +1983,7 @@ export type CreateActivityMutationVariables = Exact<{
 }>;
 
 
-export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId: string, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, personId?: string | null, companyId?: string | null }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
+export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId: string, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, commentableType: CommentableType, commentableId: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
 
 export type GetActivitiesByTargetsQueryVariables = Exact<{
   activityTargetIds: Array<Scalars['String']> | Scalars['String'];
@@ -2074,14 +1991,14 @@ export type GetActivitiesByTargetsQueryVariables = Exact<{
 }>;
 
 
-export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, personId?: string | null, companyId?: string | null }> | null }> };
+export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType: CommentableType, commentableId: string }> | null }> };
 
 export type GetActivityQueryVariables = Exact<{
   activityId: Scalars['String'];
 }>;
 
 
-export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, personId?: string | null, companyId?: string | null }> | null }> };
+export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType: CommentableType, commentableId: string }> | null }> };
 
 export type AddActivityTargetsOnActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2089,7 +2006,7 @@ export type AddActivityTargetsOnActivityMutationVariables = Exact<{
 }>;
 
 
-export type AddActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, personId?: string | null, companyId?: string | null }> | null } };
+export type AddActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, commentableType: CommentableType, commentableId: string }> | null } };
 
 export type RemoveActivityTargetsOnActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2097,7 +2014,7 @@ export type RemoveActivityTargetsOnActivityMutationVariables = Exact<{
 }>;
 
 
-export type RemoveActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, personId?: string | null, companyId?: string | null }> | null } };
+export type RemoveActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, commentableType: CommentableType, commentableId: string }> | null } };
 
 export type DeleteActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2115,7 +2032,7 @@ export type UpdateActivityMutationVariables = Exact<{
 }>;
 
 
-export type UpdateActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, body?: string | null, title?: string | null, type: ActivityType } };
+export type UpdateActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null } };
 
 export type UploadAttachmentMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -2520,8 +2437,8 @@ export const CreateActivityDocument = gql`
       createdAt
       updatedAt
       activityId
-      personId
-      companyId
+      commentableType
+      commentableId
     }
     comments {
       id
@@ -2571,7 +2488,7 @@ export const GetActivitiesByTargetsDocument = gql`
     query GetActivitiesByTargets($activityTargetIds: [String!]!, $orderBy: [ActivityOrderByWithRelationInput!]) {
   findManyActivities(
     orderBy: $orderBy
-    where: {activityTargets: {some: {personId: {in: $activityTargetIds}}}}
+    where: {activityTargets: {some: {commentableId: {in: $activityTargetIds}}}}
   ) {
     id
     createdAt
@@ -2600,8 +2517,8 @@ export const GetActivitiesByTargetsDocument = gql`
     }
     activityTargets {
       id
-      personId
-      companyId
+      commentableType
+      commentableId
     }
   }
 }
@@ -2665,8 +2582,8 @@ export const GetActivityDocument = gql`
     }
     activityTargets {
       id
-      personId
-      companyId
+      commentableType
+      commentableId
     }
   }
 }
@@ -2712,8 +2629,8 @@ export const AddActivityTargetsOnActivityDocument = gql`
       id
       createdAt
       updatedAt
-      personId
-      companyId
+      commentableType
+      commentableId
     }
   }
 }
@@ -2758,8 +2675,8 @@ export const RemoveActivityTargetsOnActivityDocument = gql`
       id
       createdAt
       updatedAt
-      personId
-      companyId
+      commentableType
+      commentableId
     }
   }
 }
@@ -2825,7 +2742,7 @@ export type DeleteActivityMutationHookResult = ReturnType<typeof useDeleteActivi
 export type DeleteActivityMutationResult = Apollo.MutationResult<DeleteActivityMutation>;
 export type DeleteActivityMutationOptions = Apollo.BaseMutationOptions<DeleteActivityMutation, DeleteActivityMutationVariables>;
 export const UpdateActivityDocument = gql`
-    mutation UpdateActivity($id: String!, $body: String, $title: String, $type: ActivityType) {
+    mutation UpdateActivity($id: String!, $body: String, $title: String, $type: ActivityType, $completedAt: DateTime) {
   updateOneActivity(
     where: {id: $id}
     data: {body: $body, title: $title, type: $type, completedAt: $completedAt}
