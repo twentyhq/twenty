@@ -10,9 +10,13 @@ import { createPrismaQueryEventHandler } from 'prisma-query-log';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
+import { useSoftDeleteMiddleware } from './middleware';
+
 // Prepare Prisma extenstion ability
 const createPrismaClient = (options: Prisma.PrismaClientOptions) => {
   const client = new PrismaClient(options);
+
+  useSoftDeleteMiddleware(client);
 
   return client;
 };

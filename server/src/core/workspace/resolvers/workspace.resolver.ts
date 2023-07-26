@@ -24,6 +24,8 @@ import {
   UpdateWorkspaceAbilityHandler,
   DeleteWorkspaceAbilityHandler,
 } from 'src/ability/handlers/workspace.ability-handler';
+import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { User } from 'src/core/@generated/user/user.model';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Workspace)
@@ -99,20 +101,20 @@ export class WorkspaceResolver {
     return paths[0];
   }
 
-  @UseGuards(AbilityGuard)
-  @CheckAbilities(DeleteWorkspaceAbilityHandler)
+  // @UseGuards(AbilityGuard)
+  // @CheckAbilities(DeleteWorkspaceAbilityHandler)
   @Mutation(() => Workspace)
   async deleteWorkspace(
-    @AuthWorkspace() workspace: Workspace,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
     @PrismaSelector({ modelName: 'Workspace' })
-    prismaSelect: PrismaSelect<'Workspace'>,
+    { value: select }: PrismaSelect<'Workspace'>,
+    @AuthUser() { id: userId }: User,
   ) {
-    const res = await this.workspaceService.deleteWorkspace(
-      workspace.id,
-      prismaSelect.value,
-    );
-
-    assert(res, 'Workspace not found');
+    const res = await this.workspaceService.deleteWorkspace({
+      workspaceId,
+      select,
+      userId,
+    });
 
     return res;
   }

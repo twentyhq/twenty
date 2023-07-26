@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { Button } from '@/ui/button/components/Button';
+import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/modal/components/Modal';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
@@ -27,35 +27,9 @@ const StyledTitle = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-function EmailField({
-  email,
-  setEmail,
-  userEmail,
-  isDeleteDisabled,
-}: {
-  email: string;
-  setEmail: Dispatch<SetStateAction<string>>;
-  userEmail?: string;
-  isDeleteDisabled: boolean;
-}) {
-  const errorMessage =
-    email && isDeleteDisabled ? 'email provided is not correct' : '';
-
-  return (
-    <TextInput
-      value={email}
-      placeholder={userEmail}
-      fullWidth
-      key={'email-' + userEmail}
-      onChange={setEmail}
-      error={errorMessage}
-    />
-  );
-}
-
 export function DeleteWorkspace() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDeleteDisabled, setIsDeleteDisabled] = useState(true);
+  const [isValidEmail, setIsValidEmail] = useState(true);
   const [email, setEmail] = useState('');
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
@@ -65,13 +39,17 @@ export function DeleteWorkspace() {
     setIsOpen(false);
   };
 
-  const validate = debounce(() => {
-    setIsDeleteDisabled(!userEmail || !email || email !== userEmail);
+  const validateEmails = debounce((email1?: string, email2?: string) => {
+    setIsValidEmail(Boolean(email1 && email2 && email1 === email2));
   }, 250);
 
-  useEffect(() => {
-    validate();
-  }, [validate, email]);
+  const onEmailChange = (val: string) => {
+    setEmail(val);
+    validateEmails(val, userEmail);
+  };
+
+  const errorMessage =
+    email && !isValidEmail ? 'email provided is not correct' : '';
 
   return (
     <>
@@ -81,7 +59,7 @@ export function DeleteWorkspace() {
       />
       <StyledDeleteButton
         onClick={() => setIsOpen(!isOpen)}
-        variant="secondary"
+        variant={ButtonVariant.Secondary}
         title="Delete workspace"
       />
 
@@ -93,17 +71,24 @@ export function DeleteWorkspace() {
               This action cannot be undone. This will permanently delete your
               entire workspace. Please type in your email to confirm.
             </div>
-            <EmailField {...{ email, setEmail, userEmail, isDeleteDisabled }} />
+            <TextInput
+              value={email}
+              onChange={onEmailChange}
+              placeholder={userEmail}
+              fullWidth
+              key={'email-' + userEmail}
+              error={errorMessage}
+            />
             <StyledDeleteButton
               onClick={deleteWorkspace}
-              variant="secondary"
+              variant={ButtonVariant.Secondary}
               title="Delete workspace"
-              disabled={isDeleteDisabled}
+              disabled={!isValidEmail}
               fullWidth
             />
             <StyledCenteredButton
               onClick={() => setIsOpen(false)}
-              variant="secondary"
+              variant={ButtonVariant.Secondary}
               title="Cancel"
               fullWidth
               style={{

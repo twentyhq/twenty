@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { v4 } from 'uuid';
+import { Prisma } from '@prisma/client';
 
 import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.service';
+import { PipelineProgressService } from 'src/core/pipeline/services/pipeline-progress.service';
 import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { CompanyService } from 'src/core/company/company.service';
 import { PersonService } from 'src/core/person/person.service';
+import { assert } from 'src/utils/assert';
 
 @Injectable()
 export class WorkspaceService {
@@ -16,6 +19,7 @@ export class WorkspaceService {
     private readonly companyService: CompanyService,
     private readonly personService: PersonService,
     private readonly pipelineStageService: PipelineStageService,
+    private readonly pipelineProgressService: PipelineProgressService,
   ) {}
 
   // Find
@@ -82,34 +86,69 @@ export class WorkspaceService {
     return workspace;
   }
 
-  async deleteWorkspace(id: string, select: any) {
-    const workspace = await this.findUnique({ where: { id }, select });
-
-    // Get workspace companies
-    const companies = await this.companyService.findMany({
-      where: { workspaceId: id },
+  async deleteWorkspace({
+    workspaceId,
+    select,
+    userId,
+  }: {
+    workspaceId: string;
+    select: Prisma.WorkspaceSelect;
+    userId: string;
+  }) {
+    const workspace = await this.findUnique({
+      where: { id: workspaceId },
+      select,
     });
+    assert(workspace, 'Workspace not found');
 
-    // get workspace people
-    const people = await this.personService.findMany({
-      where: { workspaceId: id },
-    });
+    // const where = { workspaceId: id };
 
-    // get workspace pipelines
-    const pipelines = await this.pipelineService.findMany({
-      where: { workspaceId: id },
-    });
+    // // Delete pipeline progresses
+    // await this.pipelineProgressService.deleteMany({
+    //   where,
+    // });
 
-    // get workspace stages
-    const stages = await this.pipelineStageService.findMany({
-      where: { workspaceId: id },
-    });
+    // // Delete companies
+    // await this.companyService.deleteMany({
+    //   where,
+    // });
 
-    // TODO: Determine order of deletion
+    // // Delete people
+    // await this.personService.deleteMany({
+    //   where,
+    // });
+
+    // // Delete pipeline stages
+    // await this.pipelineStageService.deleteMany({
+    //   where,
+    // });
+
+    // // Delete pipelines
+    // await this.pipelineService.deleteMany({
+    //   where,
+    // });
+
+    // Delete User
+    // await this.prismaService.user.delete({
+    //   where: {
+    //     id: userId,
+    //   },
+    // });
+
     // Perhaps we don't delete immediately but instead schedule for deletion
 
-    console.log({ companies, people, pipelines, stages });
-
     return workspace;
+  }
+
+  play({
+    workspaceId,
+    select,
+    userId,
+  }: {
+    workspaceId: string;
+    select: Prisma.WorkspaceSelect;
+    userId: string;
+  }) {
+    // const where = { workspaceId: id };
   }
 }
