@@ -12,6 +12,7 @@ type OwnProps = {
   hasBackButton?: boolean;
   icon: ReactNode;
   onAddButtonClick?: () => void;
+  onFavouriteButtonClick?: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -26,6 +27,7 @@ export function WithTopBarContainer({
   hasBackButton,
   icon,
   onAddButtonClick,
+  onFavouriteButtonClick,
 }: OwnProps) {
   return (
     <StyledContainer>
@@ -35,6 +37,7 @@ export function WithTopBarContainer({
         hasBackButton={hasBackButton}
         icon={icon}
         onAddButtonClick={onAddButtonClick}
+        onFavouriteButtonClick={onFavouriteButtonClick}
       />
       <RightDrawerContainer topMargin={TOP_BAR_MIN_HEIGHT + 16 + 16}>
         {children}

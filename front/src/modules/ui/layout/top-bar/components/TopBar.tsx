@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
-import { IconChevronLeft, IconPlus } from '@/ui/icon/index';
+import { IconChevronLeft, IconPlus, IconHeart } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 
 import { navbarIconSize } from '../../../navbar/constants';
@@ -63,6 +63,7 @@ type OwnProps = {
   hasBackButton?: boolean;
   icon: ReactNode;
   onAddButtonClick?: () => void;
+  onFavouriteButtonClick?: () => void;
 };
 
 export function TopBar({
@@ -70,6 +71,7 @@ export function TopBar({
   hasBackButton,
   icon,
   onAddButtonClick,
+  onFavouriteButtonClick,
 }: OwnProps) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
@@ -104,6 +106,14 @@ export function TopBar({
             </TitleContainer>
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
+        <IconButton
+          icon={<IconHeart size={16} />}
+          size="large"
+          data-testid="add-button"
+          textColor="secondary"
+          onClick={onFavouriteButtonClick}
+          variant="border"
+        />
         {onAddButtonClick && (
           <IconButton
             icon={<IconPlus size={16} />}
