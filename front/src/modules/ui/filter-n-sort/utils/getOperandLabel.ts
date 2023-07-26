@@ -18,3 +18,21 @@ export function getOperandLabel(operand: FilterOperand | null | undefined) {
       return '';
   }
 }
+export function getOperandLabelShort(
+  operand: FilterOperand | null | undefined,
+) {
+  switch (operand) {
+    case 'is':
+    case 'contains':
+      return '';
+    case 'is-not':
+    case 'does-not-contain':
+      return 'not';
+    case 'greater-than':
+      return '>';
+    case 'less-than':
+      return '<';
+    default:
+      return '';
+  }
+}
