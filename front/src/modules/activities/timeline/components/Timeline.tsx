@@ -6,6 +6,7 @@ import { useOpenCreateCommentThreadDrawer } from '@/activities/hooks/useOpenCrea
 import { CommentableEntity } from '@/activities/types/CommentableEntity';
 import { CommentThreadForDrawer } from '@/activities/types/CommentThreadForDrawer';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
+import { IconCircleDot } from '@/ui/icon';
 import {
   ActivityType,
   SortOrder,
@@ -95,6 +96,17 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     },
   });
 
+  const StyledStartIcon = styled.div`
+    align-items: center;
+    align-self: stretch;
+    color: ${({ theme }) => theme.font.color.tertiary};
+    display: flex;
+    gap: 16px;
+    height: 20px;
+    justify-content: center;
+    width: 20px;
+  `;
+
   const openCreateCommandThread = useOpenCreateCommentThreadDrawer();
 
   const commentThreads: CommentThreadForDrawer[] =
@@ -132,6 +144,9 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
             commentThread={commentThread}
           />
         ))}
+        <StyledStartIcon>
+          <IconCircleDot />
+        </StyledStartIcon>
       </StyledTimelineContainer>
     </StyledMainContainer>
   );
