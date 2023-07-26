@@ -8,7 +8,6 @@ import { Workspace } from 'src/core/@generated/workspace/workspace.model';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { CreateOneCommentArgs } from 'src/core/@generated/comment/create-one-comment.args';
 import { Comment } from 'src/core/@generated/comment/comment.model';
-import { CreateOneCommentGuard } from 'src/guards/create-one-comment.guard';
 import { CommentService } from 'src/core/comment/services/comment.service';
 import {
   PrismaSelector,
@@ -25,7 +24,6 @@ import { User } from 'src/core/@generated/user/user.model';
 export class CommentResolver {
   constructor(private readonly commentService: CommentService) {}
 
-  @UseGuards(CreateOneCommentGuard)
   @Mutation(() => Comment, {
     nullable: false,
   })

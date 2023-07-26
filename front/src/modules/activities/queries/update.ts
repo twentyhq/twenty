@@ -68,15 +68,22 @@ export const UPDATE_COMMENT_THREAD = gql`
     $body: String
     $title: String
     $type: ActivityType
+    $completedAt: DateTime
   ) {
     updateOneCommentThread(
       where: { id: $id }
-      data: { body: $body, title: $title, type: $type }
+      data: {
+        body: $body
+        title: $title
+        type: $type
+        completedAt: $completedAt
+      }
     ) {
       id
       body
       title
       type
+      completedAt
     }
   }
 `;

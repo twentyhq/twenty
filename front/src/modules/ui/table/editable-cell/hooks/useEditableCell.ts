@@ -1,15 +1,13 @@
+import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
 
-import { useContextScopeId } from '../../../recoil-scope/hooks/useContextScopeId';
-import { getSnapshotScopedState } from '../../../recoil-scope/utils/getSnapshotScopedState';
 import { useCloseCurrentCellInEditMode } from '../../hooks/useClearCellInEditMode';
-import { CellContext } from '../../states/CellContext';
+import { CellHotkeyScopeContext } from '../../states/CellHotkeyScopeContext';
 import { isSomeInputInEditModeState } from '../../states/isSomeInputInEditModeState';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-import { customCellHotkeyScopeScopedState } from '../states/customCellHotkeyScopeScopedState';
 
 import { useCurrentCellEditMode } from './useCurrentCellEditMode';
 
@@ -24,7 +22,7 @@ export function useEditableCell() {
 
   const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
 
-  const cellContextId = useContextScopeId(CellContext);
+  const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
 
   function closeEditableCell() {
     closeCurrentCellInEditMode();
@@ -37,12 +35,6 @@ export function useEditableCell() {
         const isSomeInputInEditMode = snapshot
           .getLoadable(isSomeInputInEditModeState)
           .valueOrThrow();
-
-        const customCellHotkeyScope = getSnapshotScopedState({
-          snapshot,
-          state: customCellHotkeyScopeScopedState,
-          contextScopeId: cellContextId,
-        });
 
         if (!isSomeInputInEditMode) {
           set(isSomeInputInEditModeState, true);
@@ -62,7 +54,7 @@ export function useEditableCell() {
           }
         }
       },
-    [setCurrentCellInEditMode, setHotkeyScope, cellContextId],
+    [setCurrentCellInEditMode, setHotkeyScope, customCellHotkeyScope],
   );
 
   return {

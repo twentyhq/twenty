@@ -8,35 +8,35 @@ export class CompanyService {
   constructor(private readonly prismaService: PrismaService) {}
 
   // Find
-  findFirst = this.prismaService.company.findFirst;
-  findFirstOrThrow = this.prismaService.company.findFirstOrThrow;
+  findFirst = this.prismaService.client.company.findFirst;
+  findFirstOrThrow = this.prismaService.client.company.findFirstOrThrow;
 
-  findUnique = this.prismaService.company.findUnique;
-  findUniqueOrThrow = this.prismaService.company.findUniqueOrThrow;
+  findUnique = this.prismaService.client.company.findUnique;
+  findUniqueOrThrow = this.prismaService.client.company.findUniqueOrThrow;
 
-  findMany = this.prismaService.company.findMany;
+  findMany = this.prismaService.client.company.findMany;
 
   // Create
-  create = this.prismaService.company.create;
-  createMany = this.prismaService.company.createMany;
+  create = this.prismaService.client.company.create;
+  createMany = this.prismaService.client.company.createMany;
 
   // Update
-  update = this.prismaService.company.update;
-  upsert = this.prismaService.company.upsert;
-  updateMany = this.prismaService.company.updateMany;
+  update = this.prismaService.client.company.update;
+  upsert = this.prismaService.client.company.upsert;
+  updateMany = this.prismaService.client.company.updateMany;
 
   // Delete
-  delete = this.prismaService.company.delete;
-  deleteMany = this.prismaService.company.deleteMany;
+  delete = this.prismaService.client.company.delete;
+  deleteMany = this.prismaService.client.company.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.company.aggregate;
+  aggregate = this.prismaService.client.company.aggregate;
 
   // Count
-  count = this.prismaService.company.count;
+  count = this.prismaService.client.company.count;
 
   // GroupBy
-  groupBy = this.prismaService.company.groupBy;
+  groupBy = this.prismaService.client.company.groupBy;
   async createDefaultCompanies({ workspaceId }: { workspaceId: string }) {
     const companies = companiesSeed.map((company) => ({
       ...company,

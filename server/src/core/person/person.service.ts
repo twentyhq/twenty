@@ -10,35 +10,35 @@ export class PersonService {
   constructor(private readonly prismaService: PrismaService) {}
 
   // Find
-  findFirst = this.prismaService.person.findFirst;
-  findFirstOrThrow = this.prismaService.person.findFirstOrThrow;
+  findFirst = this.prismaService.client.person.findFirst;
+  findFirstOrThrow = this.prismaService.client.person.findFirstOrThrow;
 
-  findUnique = this.prismaService.person.findUnique;
-  findUniqueOrThrow = this.prismaService.person.findUniqueOrThrow;
+  findUnique = this.prismaService.client.person.findUnique;
+  findUniqueOrThrow = this.prismaService.client.person.findUniqueOrThrow;
 
-  findMany = this.prismaService.person.findMany;
+  findMany = this.prismaService.client.person.findMany;
 
   // Create
-  create = this.prismaService.person.create;
-  createMany = this.prismaService.person.createMany;
+  create = this.prismaService.client.person.create;
+  createMany = this.prismaService.client.person.createMany;
 
   // Update
-  update = this.prismaService.person.update;
-  upsert = this.prismaService.person.upsert;
-  updateMany = this.prismaService.person.updateMany;
+  update = this.prismaService.client.person.update;
+  upsert = this.prismaService.client.person.upsert;
+  updateMany = this.prismaService.client.person.updateMany;
 
   // Delete
-  delete = this.prismaService.person.delete;
-  deleteMany = this.prismaService.person.deleteMany;
+  delete = this.prismaService.client.person.delete;
+  deleteMany = this.prismaService.client.person.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.person.aggregate;
+  aggregate = this.prismaService.client.person.aggregate;
 
   // Count
-  count = this.prismaService.person.count;
+  count = this.prismaService.client.person.count;
 
   // GroupBy
-  groupBy = this.prismaService.person.groupBy;
+  groupBy = this.prismaService.client.person.groupBy;
   async createDefaultPeople({
     workspaceId,
     companies,

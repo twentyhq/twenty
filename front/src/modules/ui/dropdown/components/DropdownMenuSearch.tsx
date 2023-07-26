@@ -30,6 +30,7 @@ export function DropdownMenuSearch(
   return (
     <DropdownMenuSearchContainer>
       <StyledEditModeSearchInput
+        autoComplete="off"
         {...props}
         placeholder={props.placeholder ?? 'Search'}
       />

@@ -4,10 +4,12 @@ import { useRecoilState } from 'recoil';
 
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
+import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
+
 export function useSequenceHotkeys(
   firstKey: Keys,
   secondKey: Keys,
-  callback: () => void,
+  sequenceCallback: () => void,
   scope: string,
   options: Options = {
     enableOnContentEditable: true,
@@ -18,25 +20,57 @@ export function useSequenceHotkeys(
 ) {
   const [pendingHotkey, setPendingHotkey] = useRecoilState(pendingHotkeyState);
 
+  const callScopedHotkeyCallback = useScopedHotkeyCallback();
+
   useHotkeys(
     firstKey,
-    () => {
-      setPendingHotkey(firstKey);
+    (keyboardEvent, hotkeysEvent) => {
+      callScopedHotkeyCallback({
+        keyboardEvent,
+        hotkeysEvent,
+        callback: () => {
+          setPendingHotkey(firstKey);
+        },
+        scope,
+        preventDefault: !!options.preventDefault,
+      });
     },
-    { ...options, scopes: [scope] },
-    [setPendingHotkey],
+    {
+      enableOnContentEditable: options.enableOnContentEditable,
+      enableOnFormTags: options.enableOnFormTags,
+    },
+    [setPendingHotkey, scope],
   );
 
   useHotkeys(
     secondKey,
-    () => {
-      if (pendingHotkey !== firstKey) {
-        return;
-      }
-      setPendingHotkey(null);
-      callback();
+    (keyboardEvent, hotkeysEvent) => {
+      callScopedHotkeyCallback({
+        keyboardEvent,
+        hotkeysEvent,
+        callback: () => {
+          if (pendingHotkey !== firstKey) {
+            return;
+          }
+
+          setPendingHotkey(null);
+
+          if (!!options.preventDefault) {
+            keyboardEvent.stopImmediatePropagation();
+            keyboardEvent.stopPropagation();
+            keyboardEvent.preventDefault();
+          }
+
+          sequenceCallback();
+        },
+        scope,
+        preventDefault: false,
+      });
     },
-    { ...options, scopes: [scope] },
-    [pendingHotkey, setPendingHotkey, ...deps],
+    {
+      enableOnContentEditable: options.enableOnContentEditable,
+      enableOnFormTags: options.enableOnFormTags,
+    },
+    [pendingHotkey, setPendingHotkey, scope, ...deps],
   );
 }

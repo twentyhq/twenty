@@ -23,7 +23,6 @@ export function EditableCompanyAddressCell() {
   return (
     <EditableCellText
       value={internalValue}
-      onChange={setInternalValue}
       onSubmit={() =>
         updateCompany({
           variables: {
@@ -36,7 +35,6 @@ export function EditableCompanyAddressCell() {
           },
         })
       }
-      onCancel={() => setInternalValue(address ?? '')}
     />
   );
 }

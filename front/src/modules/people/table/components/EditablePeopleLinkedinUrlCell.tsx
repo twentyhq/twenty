@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { peopleLinkedinUrlFamilyState } from '@/people/states/peopleLinkedinUrlFamilyState';
@@ -16,29 +15,21 @@ export function EditablePeopleLinkedinUrlCell() {
     peopleLinkedinUrlFamilyState(currentRowEntityId ?? ''),
   );
 
-  const [internalValue, setInternalValue] = useState(linkedinUrl ?? '');
-
-  useEffect(() => {
-    setInternalValue(linkedinUrl ?? '');
-  }, [linkedinUrl]);
-
   return (
     <EditableCellURL
-      url={internalValue}
-      onChange={setInternalValue}
-      onSubmit={() =>
+      url={linkedinUrl ?? ''}
+      onSubmit={(newURL) =>
         updatePerson({
           variables: {
             where: {
               id: currentRowEntityId,
             },
             data: {
-              linkedinUrl: internalValue,
+              linkedinUrl: newURL,
             },
           },
         })
       }
-      onCancel={() => setInternalValue(linkedinUrl ?? '')}
     />
   );
 }

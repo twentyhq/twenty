@@ -77,6 +77,7 @@ export function BoardColumnEditTitleMenu({
         <StyledEditModeInput
           value={internalValue}
           onChange={handleChange}
+          autoComplete="off"
           autoFocus
         />
       </StyledEditTitleContainer>

@@ -35,7 +35,7 @@ export function SingleEntitySelect<
   onCancel?: () => void;
   onCreate?: () => void;
   entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
-  onEntitySelected: (entity: CustomEntityForSelect) => void;
+  onEntitySelected: (entity: CustomEntityForSelect | null | undefined) => void;
   disableBackgroundBlur?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -48,7 +48,11 @@ export function SingleEntitySelect<
 
   useListenClickOutside({
     refs: [containerRef],
-    callback: () => {
+    callback: (event) => {
+      event.stopImmediatePropagation();
+      event.stopPropagation();
+      event.preventDefault();
+
       onCancel?.();
     },
   });

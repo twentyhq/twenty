@@ -140,7 +140,7 @@ export function EditableField({
           transition={{ duration: 0.1 }}
           whileHover={{ scale: 1.04 }}
         >
-          <EditableFieldEditButton customHotkeyScope={customEditHotkeyScope} />
+          <EditableFieldEditButton />
         </motion.div>
       )}
     </EditableFieldBaseContainer>

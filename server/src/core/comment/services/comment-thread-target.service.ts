@@ -7,33 +7,35 @@ export class CommentThreadTargetService {
   constructor(private readonly prismaService: PrismaService) {}
 
   // Find
-  findFirst = this.prismaService.commentThreadTarget.findFirst;
-  findFirstOrThrow = this.prismaService.commentThreadTarget.findFirstOrThrow;
+  findFirst = this.prismaService.client.commentThreadTarget.findFirst;
+  findFirstOrThrow =
+    this.prismaService.client.commentThreadTarget.findFirstOrThrow;
 
-  findUnique = this.prismaService.commentThreadTarget.findUnique;
-  findUniqueOrThrow = this.prismaService.commentThreadTarget.findUniqueOrThrow;
+  findUnique = this.prismaService.client.commentThreadTarget.findUnique;
+  findUniqueOrThrow =
+    this.prismaService.client.commentThreadTarget.findUniqueOrThrow;
 
-  findMany = this.prismaService.commentThreadTarget.findMany;
+  findMany = this.prismaService.client.commentThreadTarget.findMany;
 
   // Create
-  create = this.prismaService.commentThreadTarget.create;
-  createMany = this.prismaService.commentThreadTarget.createMany;
+  create = this.prismaService.client.commentThreadTarget.create;
+  createMany = this.prismaService.client.commentThreadTarget.createMany;
 
   // Update
-  update = this.prismaService.commentThreadTarget.update;
-  upsert = this.prismaService.commentThreadTarget.upsert;
-  updateMany = this.prismaService.commentThreadTarget.updateMany;
+  update = this.prismaService.client.commentThreadTarget.update;
+  upsert = this.prismaService.client.commentThreadTarget.upsert;
+  updateMany = this.prismaService.client.commentThreadTarget.updateMany;
 
   // Delete
-  delete = this.prismaService.commentThreadTarget.delete;
-  deleteMany = this.prismaService.commentThreadTarget.deleteMany;
+  delete = this.prismaService.client.commentThreadTarget.delete;
+  deleteMany = this.prismaService.client.commentThreadTarget.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.commentThreadTarget.aggregate;
+  aggregate = this.prismaService.client.commentThreadTarget.aggregate;
 
   // Count
-  count = this.prismaService.commentThreadTarget.count;
+  count = this.prismaService.client.commentThreadTarget.count;
 
   // GroupBy
-  groupBy = this.prismaService.commentThreadTarget.groupBy;
+  groupBy = this.prismaService.client.commentThreadTarget.groupBy;
 }

@@ -117,7 +117,6 @@ const StyledIconButton = styled.button<
 
 export function IconButton({
   icon,
-  title,
   variant = 'transparent',
   size = 'medium',
   textColor = 'tertiary',

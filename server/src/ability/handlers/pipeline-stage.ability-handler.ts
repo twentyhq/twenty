@@ -13,10 +13,12 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
 import { PipelineStageWhereInput } from 'src/core/@generated/pipeline-stage/pipeline-stage-where.input';
+import { relationAbilityChecker } from 'src/ability/ability.util';
 import { assert } from 'src/utils/assert';
 
 class PipelineStageArgs {
   where?: PipelineStageWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -35,7 +37,23 @@ export class ReadPipelineStageAbilityHandler implements IAbilityHandler {
 
 @Injectable()
 export class CreatePipelineStageAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'PipelineStage',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'PipelineStage');
   }
 }
@@ -47,10 +65,22 @@ export class UpdatePipelineStageAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<PipelineStageArgs>();
-    const pipelineStage = await this.prismaService.pipelineStage.findFirst({
-      where: args.where,
-    });
+    const pipelineStage =
+      await this.prismaService.client.pipelineStage.findFirst({
+        where: args.where,
+      });
     assert(pipelineStage, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'PipelineStage',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
 
     return ability.can(
       AbilityAction.Update,
@@ -66,9 +96,10 @@ export class DeletePipelineStageAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<PipelineStageArgs>();
-    const pipelineStage = await this.prismaService.pipelineStage.findFirst({
-      where: args.where,
-    });
+    const pipelineStage =
+      await this.prismaService.client.pipelineStage.findFirst({
+        where: args.where,
+      });
     assert(pipelineStage, '', NotFoundException);
 
     return ability.can(
