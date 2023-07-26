@@ -36,7 +36,6 @@ export function EditableCellDoubleTextEditMode({
   secondValue,
   firstValuePlaceholder,
   secondValuePlaceholder,
-  onChange,
   onSubmit,
   onCancel,
 }: OwnProps) {

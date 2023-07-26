@@ -83,7 +83,7 @@ export function CommentThreadComments({ commentThread }: OwnProps) {
         <>
           <StyledThreadItemListContainer>
             <StyledThreadCommentTitle>Comments</StyledThreadCommentTitle>
-            {commentThread?.comments?.map((comment, index) => (
+            {commentThread?.comments?.map((comment) => (
               <Comment key={comment.id} comment={comment} />
             ))}
           </StyledThreadItemListContainer>
