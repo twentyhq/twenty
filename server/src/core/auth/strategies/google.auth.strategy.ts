@@ -11,6 +11,7 @@ export type GoogleRequest = Request & {
     firstName?: string | null;
     lastName?: string | null;
     email: string;
+    picture: string | null;
     workspaceInviteHash?: string;
   };
 };
@@ -45,16 +46,17 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: VerifyCallback,
   ): Promise<void> {
-    const { name, emails } = profile;
+    const { name, emails, photos } = profile;
     const state =
       typeof request.query.state === 'string'
         ? JSON.parse(request.query.state)
         : undefined;
 
-    const user = {
+    const user: GoogleRequest['user'] = {
       email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,
+      picture: photos?.[0]?.value,
       workspaceInviteHash: state.workspaceInviteHash,
     };
     done(null, user);

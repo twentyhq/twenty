@@ -21,11 +21,12 @@ import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
   CreateCompanyAbilityHandler,
   DeleteCompanyAbilityHandler,
-  ReadCompanyAbilityHandler,
+  ReadOneCompanyAbilityHandler,
   UpdateCompanyAbilityHandler,
 } from 'src/ability/handlers/company.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
+import { FindUniqueCompanyArgs } from 'src/core/@generated/company/find-unique-company.args';
 
 import { CompanyService } from './company.service';
 
@@ -36,7 +37,6 @@ export class CompanyResolver {
 
   @Query(() => [Company])
   @UseGuards(AbilityGuard)
-  @CheckAbilities(ReadCompanyAbilityHandler)
   async findManyCompany(
     @Args() args: FindManyCompanyArgs,
     @UserAbility() ability: AppAbility,
@@ -60,19 +60,18 @@ export class CompanyResolver {
 
   @Query(() => Company)
   @UseGuards(AbilityGuard)
-  @CheckAbilities(ReadCompanyAbilityHandler)
+  @CheckAbilities(ReadOneCompanyAbilityHandler)
   async findUniqueCompany(
-    @Args('id') id: string,
-    @UserAbility() ability: AppAbility,
+    @Args() args: FindUniqueCompanyArgs,
     @PrismaSelector({ modelName: 'Company' })
     prismaSelect: PrismaSelect<'Company'>,
   ): Promise<Partial<Company>> {
-    return this.companyService.findUniqueOrThrow({
-      where: {
-        id: id,
-      },
+    const company = this.companyService.findUniqueOrThrow({
+      where: args.where,
       select: prismaSelect.value,
     });
+
+    return company;
   }
 
   @Mutation(() => Company, {
