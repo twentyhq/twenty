@@ -186,10 +186,10 @@ model WorkspaceMember {
   /// @Validator.IsOptional()
   id String @id @default(uuid())
 
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id])
   userId      String    @unique
   /// @TypeGraphQL.omit(input: true, output: false)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
 

@@ -6,6 +6,7 @@ import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
 import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.service';
 import { PersonService } from 'src/core/person/person.service';
 import { CompanyService } from 'src/core/company/company.service';
+import { PipelineProgressService } from 'src/core/pipeline/services/pipeline-progress.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -34,6 +35,10 @@ describe('WorkspaceService', () => {
         },
         {
           provide: CompanyService,
+          useValue: {},
+        },
+        {
+          provide: PipelineProgressService,
           useValue: {},
         },
       ],

@@ -101,54 +101,67 @@ export class WorkspaceService {
     });
     assert(workspace, 'Workspace not found');
 
-    // const where = { workspaceId: id };
+    const where = { workspaceId };
 
-    // // Delete pipeline progresses
-    // await this.pipelineProgressService.deleteMany({
-    //   where,
-    // });
+    const {
+      user,
+      workspaceMember,
+      refreshToken,
+      attachment,
+      comment,
+      commentThreadTarget,
+      commentThread,
+      $transaction,
+    } = this.prismaService.client;
 
-    // // Delete companies
-    // await this.companyService.deleteMany({
-    //   where,
-    // });
+    const commentThreads = await commentThread.findMany({
+      where: { authorId: userId },
+    });
 
-    // // Delete people
-    // await this.personService.deleteMany({
-    //   where,
-    // });
-
-    // // Delete pipeline stages
-    // await this.pipelineStageService.deleteMany({
-    //   where,
-    // });
-
-    // // Delete pipelines
-    // await this.pipelineService.deleteMany({
-    //   where,
-    // });
-
-    // Delete User
-    // await this.prismaService.user.delete({
-    //   where: {
-    //     id: userId,
-    //   },
-    // });
-
-    // Perhaps we don't delete immediately but instead schedule for deletion
+    await $transaction([
+      this.pipelineProgressService.deleteMany({
+        where,
+      }),
+      this.companyService.deleteMany({
+        where,
+      }),
+      this.personService.deleteMany({
+        where,
+      }),
+      this.pipelineStageService.deleteMany({
+        where,
+      }),
+      this.pipelineService.deleteMany({
+        where,
+      }),
+      workspaceMember.deleteMany({
+        where,
+      }),
+      attachment.deleteMany({
+        where,
+      }),
+      comment.deleteMany({
+        where,
+      }),
+      ...commentThreads.map(({ id: commentThreadId }) =>
+        commentThreadTarget.deleteMany({
+          where: { commentThreadId },
+        }),
+      ),
+      commentThread.deleteMany({
+        where,
+      }),
+      refreshToken.deleteMany({
+        where: { userId },
+      }),
+      user.delete({
+        where: {
+          id: userId,
+        },
+      }),
+      this.delete({ where: { id: workspaceId } }),
+    ]);
 
     return workspace;
-  }
-
-  play({
-    workspaceId,
-    select,
-    userId,
-  }: {
-    workspaceId: string;
-    select: Prisma.WorkspaceSelect;
-    userId: string;
-  }) {
-    // const where = { workspaceId: id };
   }
 }
