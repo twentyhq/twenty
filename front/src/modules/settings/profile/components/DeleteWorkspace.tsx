@@ -13,8 +13,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/modal/components/Modal';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
 import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
-
-import { debounce } from '../../../../utils/debounce';
+import { debounce } from '~/utils/debounce';
 
 const StyledCenteredButton = styled(Button)`
   justify-content: center;
