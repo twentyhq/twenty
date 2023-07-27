@@ -4,7 +4,6 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { MainSectionTitle } from '../MainSectionTitle';
 
-
 const meta: Meta<typeof MainSectionTitle> = {
   title: 'UI/Title/MainSectionTitle',
   component: MainSectionTitle,
