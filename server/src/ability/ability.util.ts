@@ -2,6 +2,8 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { subject } from '@casl/ability';
 
 import { camelCase } from 'src/utils/camel-case';
+import { CompanyWhereInput } from 'src/core/@generated/company/company-where.input';
+import { CompanyWhereUniqueInput } from 'src/core/@generated/company/company-where-unique.input';
 
 import { AppAbility } from './ability.factory';
 import { AbilityAction } from './ability.action';
@@ -205,3 +207,42 @@ export async function relationAbilityChecker(
 
   return true;
 }
+
+const isWhereInput = (input: any): boolean => {
+  return Object.values(input).some((value) => typeof value === 'object');
+};
+
+type ExcludeUnique<T> = T extends infer U
+  ? 'AND' extends keyof U
+    ? U
+    : never
+  : never;
+
+/**
+ * Convert a where unique input to a where input prisma
+ * @param args Can be a where unique input or a where input
+ * @returns whare input
+ */
+export const convertToWhereInput = <T>(
+  where: T | undefined,
+): ExcludeUnique<T> | undefined => {
+  const input = where as any;
+
+  if (!input) {
+    return input;
+  }
+
+  // If it's already a WhereInput, return it directly
+  if (isWhereInput(input)) {
+    return input;
+  }
+
+  // If not convert it to a WhereInput
+  const whereInput = {};
+
+  for (const key in input) {
+    whereInput[key] = { equals: input[key] };
+  }
+
+  return whereInput as ExcludeUnique<T>;
+};
