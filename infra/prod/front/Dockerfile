@@ -1,4 +1,4 @@
-FROM node:18.16.0-alpine as front
+FROM node:18.16.0-alpine as build
 
 ARG REACT_APP_API_URL
 ARG REACT_APP_AUTH_URL
@@ -11,6 +11,11 @@ COPY ./front .
 
 RUN yarn install
 RUN yarn build
+
+FROM node:18.16.0-alpine as front
+
+WORKDIR /app/front
+COPY --from=build /app/front/build ./build
 
 RUN yarn global add serve
 
