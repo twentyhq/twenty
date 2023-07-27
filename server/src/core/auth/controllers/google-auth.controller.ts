@@ -56,34 +56,13 @@ export class GoogleAuthController {
       workspaceId = workspace.id;
     }
 
-    let imagePath: string | undefined = undefined;
-
-    if (picture) {
-      // Get image buffer from url
-      const buffer = await getImageBufferFromUrl(picture);
-
-      // Extract mimetype and extension from buffer
-      const type = await FileType.fromBuffer(buffer);
-
-      // Upload image
-      const { paths } = await this.fileUploadService.uploadImage({
-        file: buffer,
-        filename: `${uuidV4()}.${type?.ext}`,
-        mimeType: type?.mime,
-        fileFolder: FileFolder.ProfilePicture,
-      });
-
-      imagePath = paths[0];
-    }
-
-    const user = await this.userService.createUser(
+    let user = await this.userService.createUser(
       {
         data: {
           email,
           firstName: firstName ?? '',
           lastName: lastName ?? '',
           locale: 'en',
-          ...(imagePath ? { avatarUrl: imagePath } : {}),
           settings: {
             create: {
               locale: 'en',
@@ -93,6 +72,37 @@ export class GoogleAuthController {
       },
       workspaceId,
     );
+
+    if (!user.avatarUrl) {
+      let imagePath: string | undefined = undefined;
+
+      if (picture) {
+        // Get image buffer from url
+        const buffer = await getImageBufferFromUrl(picture);
+
+        // Extract mimetype and extension from buffer
+        const type = await FileType.fromBuffer(buffer);
+
+        // Upload image
+        const { paths } = await this.fileUploadService.uploadImage({
+          file: buffer,
+          filename: `${uuidV4()}.${type?.ext}`,
+          mimeType: type?.mime,
+          fileFolder: FileFolder.ProfilePicture,
+        });
+
+        imagePath = paths[0];
+      }
+
+      user = await this.userService.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          avatarUrl: imagePath,
+        },
+      });
+    }
 
     const loginToken = await this.tokenService.generateLoginToken(user.email);
 
