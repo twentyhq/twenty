@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { defaultOrderBy } from '@/companies/queries';
 import { PeopleEntityTableData } from '@/people/components/PeopleEntityTableData';
-import { useUpdatePeopleField } from '@/people/hooks/useUpdatePeopleField';
 import { PeopleSelectedSortType } from '@/people/queries';
 import { peopleColumns } from '@/people/table/components/peopleColumns';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
@@ -38,7 +37,6 @@ export function PeopleTable() {
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
         onSortsUpdate={updateSorts}
-        useUpdateField={useUpdatePeopleField}
       />
     </>
   );

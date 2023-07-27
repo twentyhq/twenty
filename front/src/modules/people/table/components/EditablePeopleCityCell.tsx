@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil';
 
+import { peopleCityFamilyState } from '@/people/states/peopleCityFamilyState';
 import { EditableCellText } from '@/ui/table/editable-cell/types/EditableCellText';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 import { useUpdateOnePersonMutation } from '~/generated/graphql';
 
 export function EditablePeopleCityCell() {
@@ -10,12 +10,7 @@ export function EditablePeopleCityCell() {
 
   const [updatePerson] = useUpdateOnePersonMutation();
 
-  const city = useRecoilValue<string>(
-    tableEntityFieldFamilySelector({
-      entityId: currentRowEntityId ?? '',
-      fieldName: 'city',
-    }),
-  );
+  const city = useRecoilValue(peopleCityFamilyState(currentRowEntityId ?? ''));
 
   return (
     <EditableCellText

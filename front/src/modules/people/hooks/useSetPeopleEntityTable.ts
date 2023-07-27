@@ -1,7 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
-import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
 import { GetPeopleQuery } from '~/generated/graphql';
 
 import { peopleFilters } from '../../../pages/people/people-filters';
@@ -34,14 +33,6 @@ export function useSetPeopleEntityTable() {
     ({ set, snapshot }) =>
       (newPeopleArray: GetPeopleQuery['people']) => {
         for (const person of newPeopleArray) {
-          const currentEntity = snapshot
-            .getLoadable(tableEntitiesFamilyState(person.id))
-            .valueOrThrow();
-
-          if (JSON.stringify(currentEntity) !== JSON.stringify(person)) {
-            set(tableEntitiesFamilyState(person.id), person);
-          }
-
           const currentEmail = snapshot
             .getLoadable(peopleEmailFamilyState(person.id))
             .valueOrThrow();
