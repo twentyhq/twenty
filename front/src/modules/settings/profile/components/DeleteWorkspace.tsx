@@ -1,13 +1,18 @@
 import { useState } from 'react';
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
+import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { AppPath } from '@/types/AppPath';
 import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/modal/components/Modal';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
+import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 
 import { debounce } from '../../../../utils/debounce';
 
@@ -34,9 +39,21 @@ export function DeleteWorkspace() {
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
 
+  const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = useCallback(() => {
+    signOut();
+    navigate(AppPath.SignIn);
+  }, [signOut, navigate]);
+
   const deleteWorkspace = async () => {
+    const res = await deleteCurrentWorkspace({});
+    console.log({ res });
     setEmail('');
     setIsOpen(false);
+    handleLogout();
   };
 
   const validateEmails = debounce((email1?: string, email2?: string) => {
@@ -83,7 +100,7 @@ export function DeleteWorkspace() {
               onClick={deleteWorkspace}
               variant={ButtonVariant.Secondary}
               title="Delete workspace"
-              disabled={!isValidEmail}
+              disabled={!isValidEmail || !email}
               fullWidth
             />
             <StyledCenteredButton
