@@ -2,8 +2,6 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { subject } from '@casl/ability';
 
 import { camelCase } from 'src/utils/camel-case';
-import { CompanyWhereInput } from 'src/core/@generated/company/company-where.input';
-import { CompanyWhereUniqueInput } from 'src/core/@generated/company/company-where-unique.input';
 
 import { AppAbility } from './ability.factory';
 import { AbilityAction } from './ability.action';

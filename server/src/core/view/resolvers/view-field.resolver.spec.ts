@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ViewFieldService } from 'src/core/view/services/view-field.service';
+import { AbilityFactory } from 'src/ability/ability.factory';
 
 import { ViewFieldResolver } from './view-field.resolver';
-import { AbilityFactory } from 'src/ability/ability.factory';
 
 describe('ViewFieldResolver', () => {
   let resolver: ViewFieldResolver;
