@@ -70,7 +70,7 @@ const emptyVariable = {
 };
 
 export const CatalogDecorator: Decorator = (Story, context) => {
-  const { catalog, providers = [], providerProps = [] } = context.parameters;
+  const { catalog } = context.parameters;
   const [
     variable1,
     variable2 = emptyVariable,
@@ -95,41 +95,24 @@ export const CatalogDecorator: Decorator = (Story, context) => {
                   {(variable2.labels?.(value2) || value2) && (
                     <RowTitle>{variable2.labels?.(value2) || value2}</RowTitle>
                   )}
-                  {variable1.values.map((value1: string, index: number) => {
-                    const Provider = providers[index];
-
-                    const StoryProvider = (props: {
-                      children: React.ReactNode;
-                    }) =>
-                      providers.length > 0 ? (
-                        <Provider {...(providerProps[index] ?? {})}>
-                          {props.children}
-                        </Provider>
-                      ) : (
-                        <>{props.children}</>
-                      );
-
-                    return (
-                      <ElementContainer key={value1}>
-                        {(variable1.labels?.(value1) || value1) && (
-                          <ElementTitle>
-                            {variable1.labels?.(value1) || value1}
-                          </ElementTitle>
-                        )}
-                        <StoryProvider>
-                          <Story
-                            args={{
-                              ...context.args,
-                              ...variable1.props(value1),
-                              ...variable2.props(value2),
-                              ...variable3.props(value3),
-                              ...variable4.props(value4),
-                            }}
-                          />
-                        </StoryProvider>
-                      </ElementContainer>
-                    );
-                  })}
+                  {variable1.values.map((value1: string) => (
+                    <ElementContainer key={value1}>
+                      {(variable1.labels?.(value1) || value1) && (
+                        <ElementTitle>
+                          {variable1.labels?.(value1) || value1}
+                        </ElementTitle>
+                      )}
+                      <Story
+                        args={{
+                          ...context.args,
+                          ...variable1.props(value1),
+                          ...variable2.props(value2),
+                          ...variable3.props(value3),
+                          ...variable4.props(value4),
+                        }}
+                      />
+                    </ElementContainer>
+                  ))}
                 </RowContainer>
               ))}
             </RowsContainer>
