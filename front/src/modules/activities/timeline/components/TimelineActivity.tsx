@@ -154,7 +154,7 @@ export function TimelineActivity({ commentThread }: OwnProps) {
         </StyledIconContainer>
         <StyledItemTitleContainer>
           <span>{commentThread.author.displayName}</span>
-          created a note
+          created a {commentThread.type.toLowerCase()}
         </StyledItemTitleContainer>
         <StyledItemTitleDate id={`id-${commentThread.id}`}>
           {beautifiedCreatedAt} ago

@@ -7,6 +7,7 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { AppPath } from '@/types/AppPath';
 import { CommentThreadTarget } from '~/generated/graphql';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 import { ApolloFactory } from '../services/apollo.factory';
@@ -16,6 +17,7 @@ export function useApolloFactory() {
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const navigate = useNavigate();
+  const isMatchingLocation = useIsMatchingLocation();
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
 
   const apolloClient = useMemo(() => {
@@ -49,7 +51,14 @@ export function useApolloFactory() {
       },
       onUnauthenticatedError() {
         setTokenPair(null);
-        navigate(AppPath.SignIn);
+        if (
+          !isMatchingLocation(AppPath.Verify) &&
+          !isMatchingLocation(AppPath.SignIn) &&
+          !isMatchingLocation(AppPath.SignUp) &&
+          !isMatchingLocation(AppPath.Invite)
+        ) {
+          navigate(AppPath.SignIn);
+        }
       },
       extraLinks: [],
       isDebugMode,
