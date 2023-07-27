@@ -6,5 +6,6 @@ export const settings: Settings = {
       'profile-picture': ['original'],
       'workspace-logo': ['original'],
     },
+    maxFileSize: '10MB',
   },
 };
