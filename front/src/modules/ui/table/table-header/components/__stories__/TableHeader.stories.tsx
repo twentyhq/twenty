@@ -2,37 +2,40 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconList } from '@/ui/icon/index';
+import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { availableSorts } from '~/pages/companies/companies-sorts';
-import { getRenderWrapperForEntityTableComponent } from '~/testing/renderWrappers';
 
+import { ComponentWithRouterDecorator } from '../../../../../../testing/decorators/ComponentWithRouterDecorator';
+import { CompanyEntityTableDataMocked } from '../../../../../companies/table/components/CompanyEntityTableDataMocked';
+import { TableContext } from '../../../states/TableContext';
 import { TableHeader } from '../TableHeader';
 
 const meta: Meta<typeof TableHeader> = {
   title: 'UI/Table/TableHeader',
   component: TableHeader,
+  decorators: [
+    (Story) => (
+      <RecoilScope SpecificContext={TableContext}>
+        <CompanyEntityTableDataMocked />
+        <Story />
+      </RecoilScope>
+    ),
+    ComponentWithRouterDecorator,
+  ],
+  argTypes: { viewIcon: { control: false } },
+  args: {
+    viewName: 'ViewName',
+    viewIcon: <IconList />,
+    availableSorts,
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof TableHeader>;
 
-export const Empty: Story = {
-  render: getRenderWrapperForEntityTableComponent(
-    <TableHeader
-      viewName="ViewName"
-      viewIcon={<IconList />}
-      availableSorts={availableSorts}
-    />,
-  ),
-};
+export const Empty: Story = {};
 
 export const WithSortsAndFilters: Story = {
-  render: getRenderWrapperForEntityTableComponent(
-    <TableHeader
-      viewName="ViewName"
-      viewIcon={<IconList />}
-      availableSorts={availableSorts}
-    />,
-  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const outsideClick = await canvas.findByText('ViewName');

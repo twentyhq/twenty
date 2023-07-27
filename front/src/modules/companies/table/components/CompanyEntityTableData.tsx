@@ -1,8 +1,4 @@
-import { useRecoilState } from 'recoil';
-
 import { defaultOrderBy } from '@/companies/queries';
-import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
-import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import {
   PersonOrderByWithRelationInput,
   useGetCompaniesQuery,
@@ -17,12 +13,6 @@ export function CompanyEntityTableData({
   orderBy?: PersonOrderByWithRelationInput[];
   whereFilters?: any;
 }) {
-  const [, setTableRowIds] = useRecoilState(tableRowIdsState);
-
-  const [, setIsFetchingEntityTableData] = useRecoilState(
-    isFetchingEntityTableDataState,
-  );
-
   const setCompanyEntityTable = useSetCompanyEntityTable();
 
   useGetCompaniesQuery({
@@ -30,19 +20,7 @@ export function CompanyEntityTableData({
     onCompleted: (data) => {
       const companies = data.companies ?? [];
 
-      const companyIds = companies.map((company) => company.id);
-
-      setTableRowIds((currentRowIds) => {
-        if (JSON.stringify(currentRowIds) !== JSON.stringify(companyIds)) {
-          return companyIds;
-        }
-
-        return currentRowIds;
-      });
-
       setCompanyEntityTable(companies);
-
-      setIsFetchingEntityTableData(false);
     },
   });
 

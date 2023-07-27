@@ -9,6 +9,7 @@ const StyledLayout = styled.div`
   flex-direction: row;
 
   height: fit-content;
+  max-width: calc(100% - 40px);
   min-width: 300px;
   padding: 20px;
   width: fit-content;

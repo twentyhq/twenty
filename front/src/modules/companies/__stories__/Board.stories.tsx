@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { EntityBoard } from '@/pipeline/components/EntityBoard';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
-import { ComponentDecorator } from '~/testing/decorators';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { defaultPipelineProgressOrderBy } from '../../pipeline/queries';

@@ -18,6 +18,7 @@ export const GET_COMMENT_THREADS_BY_TARGETS = gql`
       title
       body
       type
+      completedAt
       author {
         id
         firstName
@@ -54,6 +55,7 @@ export const GET_COMMENT_THREAD = gql`
       body
       title
       type
+      completedAt
       author {
         id
         firstName

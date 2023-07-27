@@ -74,10 +74,7 @@ export function TopBar({
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
-  const isMobile = useIsMobile();
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
-
-  const showNavCollapseButton = isMobile || !isNavbarOpened;
 
   const iconSize = useIsMobile()
     ? navbarIconSize.mobile
@@ -87,7 +84,7 @@ export function TopBar({
     <>
       <TopBarContainer>
         <StyledLeftContainer>
-          {showNavCollapseButton && (
+          {!isNavbarOpened && (
             <TopBarButtonContainer>
               <NavCollapseButton direction="right" />
             </TopBarButtonContainer>

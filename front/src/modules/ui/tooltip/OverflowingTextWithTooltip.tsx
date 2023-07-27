@@ -12,6 +12,7 @@ const StyledOverflowingText = styled.div<{ cursorPointer: boolean }>`
 
   font-weight: inherit;
   overflow: hidden;
+  text-decoration: inherit;
   text-overflow: ellipsis;
 
   white-space: nowrap;

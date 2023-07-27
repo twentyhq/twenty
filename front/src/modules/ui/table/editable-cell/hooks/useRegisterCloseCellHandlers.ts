@@ -14,6 +14,7 @@ export function useRegisterCloseCellHandlers(
 ) {
   const { closeEditableCell } = useEditableCell();
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
+
   useListenClickOutside({
     refs: [wrapperRef],
     callback: (event) => {
@@ -26,6 +27,7 @@ export function useRegisterCloseCellHandlers(
       }
     },
   });
+
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   useScopedHotkeys(

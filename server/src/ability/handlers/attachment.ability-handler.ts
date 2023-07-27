@@ -42,7 +42,7 @@ export class CreateAttachmentAbilityHandler implements IAbilityHandler {
     const args = gqlContext.getArgs<AttachmentArgs>();
     assert(args.activityId, '', ForbiddenException);
 
-    const activity = await this.prismaService.commentThread.findUnique({
+    const activity = await this.prismaService.client.commentThread.findUnique({
       where: { id: args.activityId },
       include: { workspace: true },
     });

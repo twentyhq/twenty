@@ -26,6 +26,7 @@ export function InplaceInputText({
   return (
     <InplaceInputContainer>
       <InplaceInputTextInput
+        autoComplete="off"
         autoFocus={autoFocus}
         placeholder={placeholder}
         value={value}

@@ -7,33 +7,33 @@ export class CommentThreadService {
   constructor(private readonly prismaService: PrismaService) {}
 
   // Find
-  findFirst = this.prismaService.commentThread.findFirst;
-  findFirstOrThrow = this.prismaService.commentThread.findFirstOrThrow;
+  findFirst = this.prismaService.client.commentThread.findFirst;
+  findFirstOrThrow = this.prismaService.client.commentThread.findFirstOrThrow;
 
-  findUnique = this.prismaService.commentThread.findUnique;
-  findUniqueOrThrow = this.prismaService.commentThread.findUniqueOrThrow;
+  findUnique = this.prismaService.client.commentThread.findUnique;
+  findUniqueOrThrow = this.prismaService.client.commentThread.findUniqueOrThrow;
 
-  findMany = this.prismaService.commentThread.findMany;
+  findMany = this.prismaService.client.commentThread.findMany;
 
   // Create
-  create = this.prismaService.commentThread.create;
-  createMany = this.prismaService.commentThread.createMany;
+  create = this.prismaService.client.commentThread.create;
+  createMany = this.prismaService.client.commentThread.createMany;
 
   // Update
-  update = this.prismaService.commentThread.update;
-  upsert = this.prismaService.commentThread.upsert;
-  updateMany = this.prismaService.commentThread.updateMany;
+  update = this.prismaService.client.commentThread.update;
+  upsert = this.prismaService.client.commentThread.upsert;
+  updateMany = this.prismaService.client.commentThread.updateMany;
 
   // Delete
-  delete = this.prismaService.commentThread.delete;
-  deleteMany = this.prismaService.commentThread.deleteMany;
+  delete = this.prismaService.client.commentThread.delete;
+  deleteMany = this.prismaService.client.commentThread.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.commentThread.aggregate;
+  aggregate = this.prismaService.client.commentThread.aggregate;
 
   // Count
-  count = this.prismaService.commentThread.count;
+  count = this.prismaService.client.commentThread.count;
 
   // GroupBy
-  groupBy = this.prismaService.commentThread.groupBy;
+  groupBy = this.prismaService.client.commentThread.groupBy;
 }

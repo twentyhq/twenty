@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from '@emotion/styled';
 
 import { Checkbox } from '@/ui/input/components/Checkbox';
@@ -19,7 +18,8 @@ export const SelectAllCheckbox = () => {
 
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
-  function onChange(value: boolean) {
+
+  function onChange() {
     selectAllRows();
   }
 

@@ -1,8 +1,9 @@
-import { PersonChip } from '@/people/components/PersonChip';
 import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { Company, User } from '~/generated/graphql';
+
+import { UserChip } from '../../users/components/UserChip';
 
 import { CompanyAccountOwnerPicker } from './CompanyAccountOwnerPicker';
 
@@ -38,10 +39,10 @@ export function CompanyAccountOwnerCell({ company }: OwnProps) {
       }
       nonEditModeContent={
         company.accountOwner?.displayName ? (
-          <PersonChip
+          <UserChip
             id={company.accountOwner.id}
             name={company.accountOwner?.displayName ?? ''}
-            picture={company.accountOwner?.avatarUrl ?? ''}
+            pictureUrl={company.accountOwner?.avatarUrl ?? ''}
           />
         ) : (
           <></>

@@ -5,7 +5,9 @@ import { TableColumn } from '@/people/table/components/peopleColumns';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 
+import { useIsPageLoading } from '../../hooks/useIsPageLoading';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
+import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -70,6 +72,18 @@ const StyledTableWithHeader = styled.div`
   width: 100%;
 `;
 
+const StyledTableContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+`;
+
+const StyledTableWrapper = styled.div`
+  flex: 1;
+  overflow: auto;
+`;
+
 type OwnProps<SortField> = {
   columns: Array<TableColumn>;
   viewName: string;
@@ -88,6 +102,8 @@ export function EntityTable<SortField>({
 }: OwnProps<SortField>) {
   const tableBodyRef = React.useRef<HTMLDivElement>(null);
 
+  useMapKeyboardToSoftFocus();
+
   const leaveTableFocus = useLeaveTableFocus();
 
   useListenClickOutside({
@@ -97,20 +113,28 @@ export function EntityTable<SortField>({
     },
   });
 
+  const isPageLoading = useIsPageLoading();
+
+  if (isPageLoading) {
+    return null;
+  }
+
   return (
     <StyledTableWithHeader>
-      <TableHeader
-        viewName={viewName}
-        viewIcon={viewIcon}
-        availableSorts={availableSorts}
-        onSortsUpdate={onSortsUpdate}
-      />
-      <div ref={tableBodyRef}>
-        <StyledTable>
-          <EntityTableHeader columns={columns} />
-          <EntityTableBody columns={columns} />
-        </StyledTable>
-      </div>
+      <StyledTableContainer ref={tableBodyRef}>
+        <TableHeader
+          viewName={viewName}
+          viewIcon={viewIcon}
+          availableSorts={availableSorts}
+          onSortsUpdate={onSortsUpdate}
+        />
+        <StyledTableWrapper>
+          <StyledTable>
+            <EntityTableHeader columns={columns} />
+            <EntityTableBody columns={columns} />
+          </StyledTable>
+        </StyledTableWrapper>
+      </StyledTableContainer>
     </StyledTableWithHeader>
   );
 }

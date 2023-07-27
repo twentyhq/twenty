@@ -1,9 +1,11 @@
+import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { InplaceInputDate } from '@/ui/inplace-input/components/InplaceInputDate';
 
+import { useListenClickOutside } from '../../../hooks/useListenClickOutside';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useEditableCell } from '../hooks/useEditableCell';
 
@@ -38,8 +40,21 @@ export function EditableCellDateEditMode({
     [closeEditableCell],
   );
 
+  const containerRef = useRef(null);
+
+  useListenClickOutside({
+    refs: [containerRef],
+    callback: (event) => {
+      event.stopImmediatePropagation();
+      event.stopPropagation();
+      event.preventDefault();
+
+      closeEditableCell();
+    },
+  });
+
   return (
-    <EditableCellDateEditModeContainer>
+    <EditableCellDateEditModeContainer ref={containerRef}>
       <InplaceInputDate onChange={handleDateChange} value={value} />
     </EditableCellDateEditModeContainer>
   );

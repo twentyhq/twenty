@@ -3,8 +3,12 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { Button } from '@/ui/button/components/Button';
-import { IconTrash } from '@/ui/icon';
+import {
+  Button,
+  ButtonSize,
+  ButtonVariant,
+} from '@/ui/button/components/Button';
+import { IconSettings, IconTrash } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
@@ -75,7 +79,7 @@ export function SettingsWorkspaceMembers() {
   };
 
   return (
-    <SubMenuTopBarContainer>
+    <SubMenuTopBarContainer icon={<IconSettings size={16} />} title="Settings">
       <StyledContainer>
         <MainSectionTitle>Members</MainSectionTitle>
         {workspace?.inviteHash && (
@@ -102,8 +106,8 @@ export function SettingsWorkspaceMembers() {
                 <ButtonContainer>
                   <Button
                     onClick={() => handleRemoveWorkspaceMember(member.user.id)}
-                    variant="tertiary"
-                    size="small"
+                    variant={ButtonVariant.Tertiary}
+                    size={ButtonSize.Small}
                     icon={<IconTrash size={theme.icon.size.md} />}
                   />
                 </ButtonContainer>

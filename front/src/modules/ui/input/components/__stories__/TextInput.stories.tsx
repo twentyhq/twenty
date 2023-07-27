@@ -4,14 +4,14 @@ import { jest } from '@storybook/jest';
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { ComponentDecorator } from '~/testing/decorators';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { TextInput } from '../TextInput';
 
 const changeJestFn = jest.fn();
 
 const meta: Meta<typeof TextInput> = {
-  title: 'UI/Inputs/TextInput',
+  title: 'UI/Input/TextInput',
   component: TextInput,
   decorators: [ComponentDecorator],
   args: { value: '', onChange: changeJestFn, placeholder: 'Placeholder' },

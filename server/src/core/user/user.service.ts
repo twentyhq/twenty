@@ -19,35 +19,35 @@ export class UserService {
   ) {}
 
   // Find
-  findFirst = this.prismaService.user.findFirst;
-  findFirstOrThrow = this.prismaService.user.findFirstOrThrow;
+  findFirst = this.prismaService.client.user.findFirst;
+  findFirstOrThrow = this.prismaService.client.user.findFirstOrThrow;
 
-  findUnique = this.prismaService.user.findUnique;
-  findUniqueOrThrow = this.prismaService.user.findUniqueOrThrow;
+  findUnique = this.prismaService.client.user.findUnique;
+  findUniqueOrThrow = this.prismaService.client.user.findUniqueOrThrow;
 
-  findMany = this.prismaService.user.findMany;
+  findMany = this.prismaService.client.user.findMany;
 
   // Create
-  create = this.prismaService.user.create;
-  createMany = this.prismaService.user.createMany;
+  create = this.prismaService.client.user.create;
+  createMany = this.prismaService.client.user.createMany;
 
   // Update
-  update = this.prismaService.user.update;
-  upsert = this.prismaService.user.upsert;
-  updateMany = this.prismaService.user.updateMany;
+  update = this.prismaService.client.user.update;
+  upsert = this.prismaService.client.user.upsert;
+  updateMany = this.prismaService.client.user.updateMany;
 
   // Delete
-  delete = this.prismaService.user.delete;
-  deleteMany = this.prismaService.user.deleteMany;
+  delete = this.prismaService.client.user.delete;
+  deleteMany = this.prismaService.client.user.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.user.aggregate;
+  aggregate = this.prismaService.client.user.aggregate;
 
   // Count
-  count = this.prismaService.user.count;
+  count = this.prismaService.client.user.count;
 
   // GroupBy
-  groupBy = this.prismaService.user.groupBy;
+  groupBy = this.prismaService.client.user.groupBy;
 
   // Customs
   async createUser<T extends Prisma.UserCreateArgs>(
@@ -68,7 +68,7 @@ export class UserService {
     assert(workspace, 'workspace is missing', BadRequestException);
 
     // Create user
-    const user = await this.prismaService.user.upsert({
+    const user = await this.prismaService.client.user.upsert({
       where: {
         email: args.data.email,
       },

@@ -1,7 +1,7 @@
 import { ChangeEvent, useMemo, useState } from 'react';
 
 import { InplaceInputTextDisplayMode } from '@/ui/display/component/InplaceInputTextDisplayMode';
-import { InplaceInputTextEditMode } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
+import { StyledInput } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
 import { debounce } from '~/utils/debounce';
 
 import { BoardCardEditableField } from './BoardCardEditableField';
@@ -29,10 +29,11 @@ export function BoardCardEditableFieldText({
     <BoardCardEditableField
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <InplaceInputTextEditMode
+        <StyledInput
           placeholder={placeholder || ''}
           autoFocus
           value={internalValue}
+          autoComplete="off"
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             setInternalValue(event.target.value);
             debouncedOnChange(event.target.value);

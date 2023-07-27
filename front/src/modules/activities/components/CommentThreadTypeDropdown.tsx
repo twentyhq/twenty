@@ -1,59 +1,27 @@
+import { useTheme } from '@emotion/react';
+
 import {
-  DropdownButton,
-  DropdownOptionType,
-} from '@/ui/button/components/DropdownButton';
-import { IconNotes } from '@/ui/icon/index';
-import {
-  ActivityType,
-  CommentThread,
-  useUpdateCommentThreadMutation,
-} from '~/generated/graphql';
+  Chip,
+  ChipAccent,
+  ChipSize,
+  ChipVariant,
+} from '@/ui/chip/components/Chip';
+import { IconPhone } from '@/ui/icon';
+import { CommentThread } from '~/generated/graphql';
 
 type OwnProps = {
-  commentThread: Pick<CommentThread, 'id' | 'type'>;
+  commentThread: Pick<CommentThread, 'type'>;
 };
 
 export function CommentThreadTypeDropdown({ commentThread }: OwnProps) {
-  const [updateCommentThreadMutation] = useUpdateCommentThreadMutation();
-  const options: DropdownOptionType[] = [
-    { label: 'Note', key: 'note', icon: <IconNotes /> },
-  ];
-
-  function getSelectedOptionKey() {
-    if (commentThread.type === ActivityType.Note) {
-      return 'note';
-    } else if (commentThread.type === ActivityType.Task) {
-      return 'task';
-    } else {
-      return undefined;
-    }
-  }
-
-  const convertSelectionOptionKeyToActivityType = (key: string) => {
-    switch (key) {
-      case 'note':
-        return ActivityType.Note;
-      case 'task':
-        return ActivityType.Task;
-      default:
-        return undefined;
-    }
-  };
-
-  const handleSelect = (selectedOption: DropdownOptionType) => {
-    updateCommentThreadMutation({
-      variables: {
-        id: commentThread.id,
-        type: convertSelectionOptionKeyToActivityType(selectedOption.key),
-      },
-    });
-  };
-
+  const theme = useTheme();
   return (
-    <DropdownButton
-      options={options}
-      onSelection={handleSelect}
-      selectedOptionKey={getSelectedOptionKey()}
+    <Chip
+      label={commentThread.type}
+      leftComponent={<IconPhone size={theme.icon.size.md} />}
+      size={ChipSize.Large}
+      accent={ChipAccent.TextSecondary}
+      variant={ChipVariant.Highlighted}
     />
   );
 }

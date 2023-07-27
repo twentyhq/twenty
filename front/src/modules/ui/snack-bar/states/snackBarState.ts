@@ -19,9 +19,10 @@ export const snackBarInternalState = atom<SnackBarState>({
   },
 });
 
+// TODO: use a recoil callback
 export const snackBarSetQueueState = selector<SnackBarOptions | null>({
   key: 'snackBarQueueState',
-  get: ({ get }) => null, // We don't care about getting the value
+  get: ({ get: _get }) => null, // We don't care about getting the value
   set: ({ set }, newValue) =>
     set(snackBarInternalState, (prev) => {
       if (prev.queue.length >= prev.maxQueue) {

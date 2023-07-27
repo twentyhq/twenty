@@ -10,7 +10,6 @@ import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
 import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
 import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
-import { ChipVariant } from '@/ui/chip/components/EntityChip';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
 import { IconCurrencyDollar, IconProgressCheck } from '@/ui/icon';
@@ -20,6 +19,7 @@ import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedSta
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
+import { EntityChipVariant } from '../../ui/chip/components/EntityChip';
 import { PipelineProgressForBoard } from '../types/CompanyProgress';
 
 import { CompanyChip } from './CompanyChip';
@@ -177,9 +177,8 @@ export function CompanyBoardCard() {
           <CompanyChip
             id={company.id}
             name={company.name}
-            clickable
-            picture={getLogoUrlFromDomainName(company.domainName)}
-            variant={ChipVariant.transparent}
+            pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+            variant={EntityChipVariant.Transparent}
           />
           <StyledCheckboxContainer className="checkbox-container">
             <Checkbox

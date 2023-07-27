@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { IconCalendar } from '@tabler/icons-react';
 
-import { ComponentDecorator } from '~/testing/decorators';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { DateEditableField } from '../DateEditableField';
 

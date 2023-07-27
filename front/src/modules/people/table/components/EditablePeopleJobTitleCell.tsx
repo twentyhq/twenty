@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { peopleJobTitleFamilyState } from '@/people/states/peopleJobTitleFamilyState';
@@ -15,29 +14,21 @@ export function EditablePeopleJobTitleCell() {
     peopleJobTitleFamilyState(currentRowEntityId ?? ''),
   );
 
-  const [internalValue, setInternalValue] = useState(jobTitle ?? '');
-
-  useEffect(() => {
-    setInternalValue(jobTitle ?? '');
-  }, [jobTitle]);
-
   return (
     <EditableCellText
-      value={internalValue}
-      onChange={setInternalValue}
-      onSubmit={() =>
+      value={jobTitle ?? ''}
+      onSubmit={(newText) =>
         updatePerson({
           variables: {
             where: {
               id: currentRowEntityId,
             },
             data: {
-              jobTitle: internalValue,
+              jobTitle: newText,
             },
           },
         })
       }
-      onCancel={() => setInternalValue(jobTitle ?? '')}
     />
   );
 }

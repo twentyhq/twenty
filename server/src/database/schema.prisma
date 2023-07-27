@@ -173,8 +173,10 @@ model Workspace {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  Attachment          Attachment[]
+  CommentThreadTarget CommentThreadTarget[]
 
   @@map("workspaces")
 }
@@ -379,9 +381,12 @@ model CommentThreadTarget {
   /// @Validator.IsOptional()
   id String @id @default(uuid())
 
-  commentThread   CommentThread @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
+  commentThread   CommentThread   @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
   commentThreadId String
-
+  /// @TypeGraphQL.omit(input: true, output: false)
+  workspace       Workspace?      @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId     String?
   commentableType CommentableType
   commentableId   String
 
@@ -515,6 +520,8 @@ model Attachment {
   activityId String
   activity   CommentThread @relation(fields: [activityId], references: [id])
 
+  /// @TypeGraphQL.omit(input: true, output: false)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
 

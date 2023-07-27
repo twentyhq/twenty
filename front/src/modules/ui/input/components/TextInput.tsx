@@ -27,7 +27,7 @@ type OwnProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
 const StyledContainer = styled.div<Pick<OwnProps, 'fullWidth'>>`
   display: flex;
   flex-direction: column;
-  width: ${({ fullWidth, theme }) => (fullWidth ? `100%` : 'auto')};
+  width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
 `;
 
 const StyledLabel = styled.span`
@@ -150,6 +150,7 @@ export function TextInput({
       {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
       <StyledInputContainer>
         <StyledInput
+          autoComplete="off"
           ref={inputRef}
           tabIndex={props.tabIndex ?? 0}
           onFocus={handleFocus}

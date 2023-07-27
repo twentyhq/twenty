@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DateTime } from 'luxon';
 
 import { CommentThreadActionBar } from '@/activities/right-drawer/components/CommentThreadActionBar';
-import { ComponentDecorator } from '~/testing/decorators';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { avatarUrl } from '~/testing/mock-data/users';
 
 import { CommentHeader } from '../CommentHeader';

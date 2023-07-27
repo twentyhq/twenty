@@ -4,17 +4,25 @@ import styled from '@emotion/styled';
 import { SoonPill } from '@/ui/pill/components/SoonPill';
 import { rgba } from '@/ui/themes/colors';
 
-export type ButtonVariant =
-  | 'primary'
-  | 'secondary'
-  | 'tertiary'
-  | 'tertiaryBold'
-  | 'tertiaryLight'
-  | 'danger';
+export enum ButtonSize {
+  Medium = 'medium',
+  Small = 'small',
+}
 
-export type ButtonSize = 'medium' | 'small';
+export enum ButtonPosition {
+  Left = 'left',
+  Middle = 'middle',
+  Right = 'right',
+}
 
-export type ButtonPosition = 'left' | 'middle' | 'right' | undefined;
+export enum ButtonVariant {
+  Primary = 'primary',
+  Secondary = 'secondary',
+  Tertiary = 'tertiary',
+  TertiaryBold = 'tertiaryBold',
+  TertiaryLight = 'tertiaryLight',
+  Danger = 'danger',
+}
 
 export type ButtonProps = {
   icon?: React.ReactNode;
@@ -24,6 +32,7 @@ export type ButtonProps = {
   size?: ButtonSize;
   position?: ButtonPosition;
   soon?: boolean;
+  disabled?: boolean;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
@@ -67,7 +76,7 @@ const StyledButton = styled.button<
     }
   }};
   border-style: solid;
-  border-width: ${({ theme, variant, position }) => {
+  border-width: ${({ variant, position }) => {
     switch (variant) {
       case 'primary':
       case 'secondary':
@@ -172,8 +181,8 @@ export function Button({
   icon,
   title,
   fullWidth = false,
-  variant = 'primary',
-  size = 'medium',
+  variant = ButtonVariant.Primary,
+  size = ButtonSize.Medium,
   position,
   soon = false,
   disabled = false,
