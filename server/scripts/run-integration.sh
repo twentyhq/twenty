@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # src/run-integration.sh
 
+DIR="$(cd "$(dirname "$0")" && pwd)"
+source $DIR/setenv.sh
+
 npx ts-node ./test/utils/check-db.ts
 EXIT_CODE=$?
 
