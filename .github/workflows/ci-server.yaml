@@ -16,6 +16,7 @@ jobs:
         env:
           POSTGRES_HOST: postgres
           POSTGRES_PASSWORD: postgrespassword
+          POSTGRES_DB: test
           POSTGRES_PORT: 5432
         options: >-
           --health-cmd pg_isready
