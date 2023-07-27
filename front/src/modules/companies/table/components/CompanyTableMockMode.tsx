@@ -13,9 +13,6 @@ export function CompanyTableMockMode() {
         viewName="All Companies"
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
-        useUpdateField={() => () => {
-          //
-        }}
       />
     </>
   );
