@@ -55,6 +55,7 @@ export function OverflowingTextWithTooltip({
   return (
     <>
       <StyledOverflowingText
+        data-testid="tooltip"
         ref={textRef}
         id={textElementId}
         cursorPointer={isTitleOverflowing}

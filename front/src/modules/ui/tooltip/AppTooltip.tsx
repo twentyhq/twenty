@@ -1,6 +1,13 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
+export enum TooltipValues {
+  top = 'top',
+  left = 'left',
+  right = 'right',
+  bottom = 'bottom',
+}
+
 export const AppTooltip = styled(Tooltip)`
   background-color: ${({ theme }) => theme.background.primary};
   box-shadow: ${({ theme }) => theme.boxShadow.light};

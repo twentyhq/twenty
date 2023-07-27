@@ -96,7 +96,7 @@ export const CatalogDecorator: Decorator = (Story, context) => {
                     <RowTitle>{variable2.labels?.(value2) || value2}</RowTitle>
                   )}
                   {variable1.values.map((value1: string) => (
-                    <ElementContainer key={value1}>
+                    <ElementContainer key={value1} id={value1}>
                       {(variable1.labels?.(value1) || value1) && (
                         <ElementTitle>
                           {variable1.labels?.(value1) || value1}
