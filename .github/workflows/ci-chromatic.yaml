@@ -9,9 +9,7 @@ jobs:
   chromatic-deployment:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_API_URL: http://127.0.0.1:3000/graphql
-      REACT_APP_AUTH_URL: http://127.0.0.1:3000/auth
-      REACT_APP_FILES_URL: http://127.0.0.1:3000/files
+      REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
     steps:
       - uses: actions/checkout@v3
         if: github.event_name == 'push'
@@ -31,9 +29,7 @@ jobs:
         run: |
           cd front
           touch .env
-          echo "REACT_APP_API_URL: $REACT_APP_API_URL" >> .env
-          echo "REACT_APP_AUTH_URL: $REACT_APP_AUTH_URL" >> .env
-          echo "REACT_APP_FILES_URL: $REACT_APP_FILES_URL" >> .env
+          echo "REACT_APP_SERVER_BASE_URL: $REACT_APP_SERVER_BASE_URL" >> .env
       - name: Front / Install Dependencies
         run: cd front && yarn
       - name: Publish to Chromatic

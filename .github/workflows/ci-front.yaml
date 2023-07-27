@@ -8,9 +8,7 @@ jobs:
   front-test:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_API_URL: http://localhost:3000/graphql
-      REACT_APP_AUTH_URL: http://localhost:3000/auth
-      REACT_APP_FILES_URL: http://localhost:3000/files
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000/graphql
     steps:
       - uses: actions/checkout@v3
         if: github.event_name == 'push'

@@ -19,9 +19,7 @@ You will find these in the [infra/prod/front/Dockerfile](https://github.com/twen
 
 ```bash
 docker build \
- --build-arg REACT_APP_API_URL=REPLACE_ME \
- --build-arg REACT_APP_AUTH_URL=REPLACE_ME \
- --build-arg REACT_APP_FILES_URL=REPLACE_ME \
+ --build-arg REACT_APP_SERVER_BASE_URL=REPLACE_ME \
  -t twenty-front:latest \
  -f ./infra/prod/front/Dockerfile .
 ```
@@ -36,10 +34,15 @@ docker build \
   -f ./infra/prod/server/Dockerfile .
 ```
 
+## Render
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/twentyhq/twenty)
+
+## Railway
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/YWGqza?referralCode=3CLObs)
+
 ## AWS Elastic Beanstalk (soon)
 
 We are working on providing a joint Docker image - containing both the Twenty frontend and server - that you can deploy using [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/).
 
-## Railway (soon)
-
-[Railway](https://railway.app) is an infrastructure platform that lets you deploy to the cloud in one click. We are currently working on making it available.

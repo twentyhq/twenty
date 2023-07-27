@@ -118,8 +118,11 @@ export function useAuth() {
   );
 
   const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {
+    const authServerUrl =
+      process.env.REACT_APP_SERVER_AUTH_URL ??
+      process.env.REACT_APP_SERVER_BASE_URL + '/auth';
     window.location.href =
-      `${process.env.REACT_APP_AUTH_URL}/google/${
+      `${authServerUrl}/google/${
         workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
       }` || '';
   }, []);

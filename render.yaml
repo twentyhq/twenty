@@ -2,71 +2,41 @@ services:
 - type: web
   name: front
   env: docker
-  buildCommand: docker build -f ./infra/prod/front/Dockerfile --build-arg REACT_APP_API_URL=http://localhost:3000/graphql --build-arg REACT_APP_AUTH_URL=http://localhost:3000/auth --build-arg REACT_APP_FILES_URL=http://localhost:3000/files ..
-  startCommand: npm start
+  dockerfilePath: ./infra/prod/front/Dockerfile
+  autoDeploy: false
   envVars:
-  - key: REACT_APP_API_URL
+  - key: REACT_APP_SERVER_BASE_URL
     fromService:
       name: server
-      property: host
-    sync:
-      - key: REACT_APP_API_URL
-        append: /graphql
-  - key: REACT_APP_AUTH_URL
-    fromService:
-      name: server
-      property: host
-    sync:
-      - key: REACT_APP_AUTH_URL
-        append: /auth
-  - key: REACT_APP_FILES_URL
-    fromService:
-      name: server
-      property: host
-    sync:
-      - key: REACT_APP_FILES_URL
-        append: /files
-  port: 3001
-
+      type: web
+      envVarKey: RENDER_EXTERNAL_URL
 - type: web
   name: server
   env: docker
-  buildCommand: docker build -f ./infra/prod/server/Dockerfile ..
-  startCommand: sh -c "yarn prisma migrate reset --force && node dist/src/main"
+  dockerfilePath: ./infra/prod/server/Dockerfile
+  autoDeploy: false
   envVars:
-  - key: DEBUG_MODE
-    value: false
-  - key: DEMO_MODE
-    value: true
   - key: ACCESS_TOKEN_SECRET
-    value: secret_jwt
-  - key: ACCESS_TOKEN_EXPIRES_IN
-    value: 30m
+    generateValue: true
   - key: LOGIN_TOKEN_SECRET
-    value: secret_login_token
-  - key: LOGIN_TOKEN_EXPIRES_IN
-    value: 15m
+    generateValue: true
   - key: REFRESH_TOKEN_SECRET
-    value: secret_refresh_token
-  - key: REFRESH_TOKEN_EXPIRES_IN
-    value: 90d
+    generateValue: true
   - key: PG_DATABASE_URL
     fromDatabase:
       name: twenty-db
       property: connectionString
-  - key: FRONT_AUTH_CALLBACK_URL
+  - key: FRONT_BASE_URL
     fromService:
-      name: server
-      property: host
-    sync:
-      - key: FRONT_AUTH_CALLBACK_URL
-        append: /verify
-  - key: STORAGE_TYPE
-    value: local
-  - key: STORAGE_LOCAL_PATH
-    value: .local-storage
-  port: 3000
+      name: front
+      type: web
+      envVarKey: RENDER_EXTERNAL_URL
+  disk:
+    name: twenty-disk
+    mountPath: /.local-storage
+    sizeGB: 5
 
 databases:
 - name: twenty-db
   plan: starter
+
