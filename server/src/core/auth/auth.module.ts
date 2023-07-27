@@ -5,6 +5,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { UserModule } from 'src/core/user/user.module';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { WorkspaceModule } from 'src/core/workspace/workspace.module';
+import { FileModule } from 'src/core/file/file.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -27,7 +28,7 @@ const jwtModule = JwtModule.registerAsync({
 });
 
 @Module({
-  imports: [jwtModule, UserModule, WorkspaceModule],
+  imports: [jwtModule, UserModule, WorkspaceModule, FileModule],
   controllers: [GoogleAuthController, VerifyAuthController],
   providers: [
     AuthService,
