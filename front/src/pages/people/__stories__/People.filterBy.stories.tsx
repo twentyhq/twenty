@@ -54,13 +54,10 @@ export const Email: Story = {
     expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
     await expect(canvas.queryAllByText('John Doe')).toStrictEqual([]);
 
-    const emailFilter = canvas
-    .getAllByText('Email')
-    .find((item) => {
+    const emailFilter = canvas.getAllByText('Email').find((item) => {
       return item.parentElement?.textContent?.includes('Email:  al');
     });
     expect(emailFilter).toBeInTheDocument();
-
   },
 };
 
@@ -104,9 +101,7 @@ export const CompanyName: Story = {
     // expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
     // await expect(canvas.queryAllByText('John Doe')).toStrictEqual([]);
 
-    const companyFilter = canvas
-    .getAllByText('Company')
-    .find((item) => {
+    const companyFilter = canvas.getAllByText('Company').find((item) => {
       return item.parentElement?.textContent?.includes('Company:  Qonto');
     });
     expect(companyFilter).toBeInTheDocument();
