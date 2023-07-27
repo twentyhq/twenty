@@ -1,7 +1,3 @@
-import { useRecoilState } from 'recoil';
-
-import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
-import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import {
   PersonOrderByWithRelationInput,
   useGetPeopleQuery,
@@ -17,12 +13,6 @@ export function PeopleEntityTableData({
   orderBy?: PersonOrderByWithRelationInput[];
   whereFilters?: any;
 }) {
-  const [, setTableRowIds] = useRecoilState(tableRowIdsState);
-
-  const [, setIsFetchingEntityTableData] = useRecoilState(
-    isFetchingEntityTableDataState,
-  );
-
   const setPeopleEntityTable = useSetPeopleEntityTable();
 
   useGetPeopleQuery({
@@ -30,19 +20,7 @@ export function PeopleEntityTableData({
     onCompleted: (data) => {
       const people = data.people ?? [];
 
-      const peopleIds = people.map((person) => person.id);
-
-      setTableRowIds((currentRowIds) => {
-        if (JSON.stringify(currentRowIds) !== JSON.stringify(peopleIds)) {
-          return peopleIds;
-        }
-
-        return currentRowIds;
-      });
-
       setPeopleEntityTable(people);
-
-      setIsFetchingEntityTableData(false);
     },
   });
 
