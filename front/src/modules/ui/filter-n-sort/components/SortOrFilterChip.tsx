@@ -59,7 +59,7 @@ function SortOrFilterChip({
   return (
     <StyledChip>
       <StyledIcon>{icon}</StyledIcon>
-      {labelKey && <StyledLabelKey>{labelKey}:&nbsp;</StyledLabelKey>}
+      {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
       {labelValue}
       <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + id}>
         <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />

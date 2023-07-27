@@ -24,15 +24,15 @@ export function getOperandLabelShort(
   switch (operand) {
     case 'is':
     case 'contains':
-      return '';
+      return ': ';
     case 'is-not':
     case 'does-not-contain':
-      return 'not';
+      return ': Not';
     case 'greater-than':
-      return '>';
+      return '\u00A0> ';
     case 'less-than':
-      return '<';
+      return '\u00A0< ';
     default:
-      return '';
+      return ': ';
   }
 }
