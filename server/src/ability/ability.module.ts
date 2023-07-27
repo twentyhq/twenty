@@ -94,6 +94,10 @@ import {
   ReadAttachmentAbilityHandler,
   UpdateAttachmentAbilityHandler,
 } from './handlers/attachment.ability-handler';
+import {
+  ReadViewFieldAbilityHandler,
+  UpdateViewFieldAbilityHandler,
+} from './handlers/view-field.ability-handler';
 
 @Global()
 @Module({
@@ -178,6 +182,9 @@ import {
     CreatePipelineProgressAbilityHandler,
     UpdatePipelineProgressAbilityHandler,
     DeletePipelineProgressAbilityHandler,
+    // ViewField
+    ReadViewFieldAbilityHandler,
+    UpdateViewFieldAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -259,6 +266,9 @@ import {
     CreatePipelineProgressAbilityHandler,
     UpdatePipelineProgressAbilityHandler,
     DeletePipelineProgressAbilityHandler,
+    // ViewField
+    ReadViewFieldAbilityHandler,
+    UpdateViewFieldAbilityHandler,
   ],
 })
 export class AbilityModule {}

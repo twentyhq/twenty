@@ -169,6 +169,7 @@ model Workspace {
   pipelines          Pipeline[]
   pipelineStages     PipelineStage[]
   pipelineProgresses PipelineProgress[]
+  viewFields         ViewField[]
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -531,4 +532,23 @@ model Attachment {
   updatedAt DateTime  @updatedAt
 
   @@map("attachments")
+}
+
+model ViewField {
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
+
+  fieldName  String
+  index      Int
+  isVisible  Boolean
+  objectName String
+  sizeInPx   Int
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+
+  @@map("viewFields")
 }
