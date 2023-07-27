@@ -9,7 +9,7 @@ import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { SelectedSortType } from '../types/interface';
-import { getOperandLabel } from '../utils/getOperandLabel';
+import { getOperandLabelShort } from '../utils/getOperandLabel';
 
 import SortOrFilterChip from './SortOrFilterChip';
 
@@ -126,7 +126,7 @@ function SortAndFilterBar<SortField>({
             <SortOrFilterChip
               key={filter.field}
               labelKey={filter.label}
-              labelValue={`${getOperandLabel(filter.operand)} ${
+              labelValue={`${getOperandLabelShort(filter.operand)} ${
                 filter.displayValue
               }`}
               id={filter.field}
