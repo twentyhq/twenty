@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { CommentThreadCreateButton } from '@/activities/components/CommentThreadCreateButton';
@@ -6,6 +7,7 @@ import { useOpenCreateCommentThreadDrawer } from '@/activities/hooks/useOpenCrea
 import { CommentableEntity } from '@/activities/types/CommentableEntity';
 import { CommentThreadForDrawer } from '@/activities/types/CommentThreadForDrawer';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
+import { IconCircleDot } from '@/ui/icon';
 import {
   ActivityType,
   SortOrder,
@@ -83,7 +85,17 @@ const StyledTopActionBar = styled.div`
   top: 0px;
 `;
 
+const StyledStartIcon = styled.div`
+  align-self: flex-start;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  height: 20px;
+  width: 20px;
+`;
+
 export function Timeline({ entity }: { entity: CommentableEntity }) {
+  const theme = useTheme();
+
   const { data: queryResult, loading } = useGetCommentThreadsByTargetsQuery({
     variables: {
       commentThreadTargetIds: [entity.id],
@@ -132,6 +144,9 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
             commentThread={commentThread}
           />
         ))}
+        <StyledStartIcon>
+          <IconCircleDot size={theme.icon.size.lg} />
+        </StyledStartIcon>
       </StyledTimelineContainer>
     </StyledMainContainer>
   );
