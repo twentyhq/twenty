@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { GenericEditableCell } from '@/people/table/components/GenericEditableCell';
+import { GenericEditableCell } from '@/ui/table/components/GenericEditableCell';
 
 import { RecoilScope } from '../../recoil-scope/components/RecoilScope';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';

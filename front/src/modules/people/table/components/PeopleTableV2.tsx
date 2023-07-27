@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { defaultOrderBy } from '@/companies/queries';
 import { GenericEntityTableData } from '@/people/components/GenericEntityTableData';
 import { peopleFieldMetadataArray } from '@/people/constants/peopleFieldMetadataArray';
-import { useUpdatePeopleField } from '@/people/hooks/useUpdatePeopleField';
 import { PeopleSelectedSortType } from '@/people/queries';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
@@ -15,6 +14,7 @@ import { TableContext } from '@/ui/table/states/TableContext';
 import {
   PersonOrderByWithRelationInput,
   useGetPeopleQuery,
+  useUpdateOnePersonMutation,
 } from '~/generated/graphql';
 import { availableSorts } from '~/pages/people/people-sorts';
 
@@ -46,7 +46,7 @@ export function PeopleTable() {
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
         onSortsUpdate={updateSorts}
-        useUpdateField={useUpdatePeopleField}
+        useUpdateEntityMutation={useUpdateOnePersonMutation}
       />
     </>
   );
