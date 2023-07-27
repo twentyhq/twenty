@@ -25,6 +25,10 @@ const StyledContainer = styled.div`
   display: flex;
   justify-content: space-between;
 
+  input {
+    width: ${({ theme }) => theme.spacing(24)};
+  }
+
   & > input:last-child {
     border-left: 1px solid ${({ theme }) => theme.border.color.medium};
     padding-left: ${({ theme }) => theme.spacing(2)};

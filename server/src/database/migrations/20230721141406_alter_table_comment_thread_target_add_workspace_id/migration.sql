@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE "comment_thread_targets" ADD COLUMN     "workspaceId" TEXT NOT NULL;
+ALTER TABLE "comment_thread_targets" ADD COLUMN     "workspaceId" TEXT;
 
 -- AddForeignKey
 ALTER TABLE "comment_thread_targets" ADD CONSTRAINT "comment_thread_targets_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "workspaces"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
