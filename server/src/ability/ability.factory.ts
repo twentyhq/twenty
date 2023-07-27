@@ -18,6 +18,7 @@ import {
   Attachment,
   UserSettings,
   Favorite,
+  ViewField,
 } from '@prisma/client';
 
 import { AbilityAction } from './ability.action';
@@ -38,6 +39,7 @@ type SubjectsAbility = Subjects<{
   Attachment: Attachment;
   UserSettings: UserSettings;
   Favorite: Favorite;
+  ViewField: ViewField;
 }>;
 
 export type AppAbility = PureAbility<
@@ -136,6 +138,9 @@ export class AbilityFactory {
     can(AbilityAction.Delete, 'Favorite', {
       workspaceId: workspace.id,
     });
+    // ViewField
+    can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
+    can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
 
     return build();
   }
