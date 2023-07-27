@@ -101,21 +101,19 @@ export class WorkspaceResolver {
     return paths[0];
   }
 
-  // @UseGuards(AbilityGuard)
-  // @CheckAbilities(DeleteWorkspaceAbilityHandler)
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeleteWorkspaceAbilityHandler)
   @Mutation(() => Workspace)
-  async deleteWorkspace(
+  async deleteCurrentWorkspace(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @PrismaSelector({ modelName: 'Workspace' })
     { value: select }: PrismaSelect<'Workspace'>,
     @AuthUser() { id: userId }: User,
   ) {
-    const res = await this.workspaceService.deleteWorkspace({
+    return this.workspaceService.deleteWorkspace({
       workspaceId,
       select,
       userId,
     });
-
-    return res;
   }
 }

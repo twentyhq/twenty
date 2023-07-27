@@ -49,10 +49,7 @@ export function DeleteWorkspace() {
   }, [signOut, navigate]);
 
   const deleteWorkspace = async () => {
-    const res = await deleteCurrentWorkspace({});
-    console.log({ res });
-    setEmail('');
-    setIsOpen(false);
+    await deleteCurrentWorkspace();
     handleLogout();
   };
 

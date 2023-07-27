@@ -111,14 +111,13 @@ export class WorkspaceService {
       comment,
       commentThreadTarget,
       commentThread,
-      $transaction,
     } = this.prismaService.client;
 
     const commentThreads = await commentThread.findMany({
       where: { authorId: userId },
     });
 
-    await $transaction([
+    await this.prismaService.client.$transaction([
       this.pipelineProgressService.deleteMany({
         where,
       }),
