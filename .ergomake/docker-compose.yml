@@ -42,3 +42,4 @@ services:
       POSTGRES_PASSWORD: postgrespassword
     ports:
       - "5432"
+
