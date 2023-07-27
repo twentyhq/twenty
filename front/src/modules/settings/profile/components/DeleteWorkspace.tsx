@@ -32,6 +32,13 @@ const StyledTitle = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
+const StyledModal = styled(Modal)`
+  width: calc(400px - ${({ theme }) => theme.spacing(10 * 2)});
+  > * + * {
+    margin-top: ${({ theme }) => theme.spacing(8)};
+  }
+`;
+
 export function DeleteWorkspace() {
   const [isOpen, setIsOpen] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(true);
@@ -53,13 +60,16 @@ export function DeleteWorkspace() {
     handleLogout();
   };
 
-  const validateEmails = debounce((email1?: string, email2?: string) => {
-    setIsValidEmail(Boolean(email1 && email2 && email1 === email2));
-  }, 250);
+  const isEmailMatchingUserEmail = debounce(
+    (email1?: string, email2?: string) => {
+      setIsValidEmail(Boolean(email1 && email2 && email1 === email2));
+    },
+    250,
+  );
 
-  const onEmailChange = (val: string) => {
+  const handleEmailChange = (val: string) => {
     setEmail(val);
-    validateEmails(val, userEmail);
+    isEmailMatchingUserEmail(val, userEmail);
   };
 
   const errorMessage =
@@ -79,7 +89,7 @@ export function DeleteWorkspace() {
 
       <AnimatePresence mode="wait">
         <LayoutGroup>
-          <Modal isOpen={isOpen}>
+          <StyledModal isOpen={isOpen}>
             <StyledTitle>Workspace Deletion</StyledTitle>
             <div>
               This action cannot be undone. This will permanently delete your
@@ -87,7 +97,7 @@ export function DeleteWorkspace() {
             </div>
             <TextInput
               value={email}
-              onChange={onEmailChange}
+              onChange={handleEmailChange}
               placeholder={userEmail}
               fullWidth
               key={'email-' + userEmail}
@@ -109,7 +119,7 @@ export function DeleteWorkspace() {
                 marginTop: 10,
               }}
             />
-          </Modal>
+          </StyledModal>
         </LayoutGroup>
       </AnimatePresence>
     </>

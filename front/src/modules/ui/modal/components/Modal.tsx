@@ -8,10 +8,6 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(10)};
-  width: calc(400px - ${({ theme }) => theme.spacing(10 * 2)});
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(8)};
-  }
 `;
 
 const ModalDiv = styled(motion.div)`
