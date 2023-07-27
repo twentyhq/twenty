@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { CommentThreadCreateButton } from '@/activities/components/CommentThreadCreateButton';
@@ -93,6 +94,8 @@ const StyledStartIcon = styled.div`
 `;
 
 export function Timeline({ entity }: { entity: CommentableEntity }) {
+  const theme = useTheme();
+
   const { data: queryResult, loading } = useGetCommentThreadsByTargetsQuery({
     variables: {
       commentThreadTargetIds: [entity.id],
@@ -142,7 +145,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
           />
         ))}
         <StyledStartIcon>
-          <IconCircleDot />
+          <IconCircleDot size={theme.icon.size.lg} />
         </StyledStartIcon>
       </StyledTimelineContainer>
     </StyledMainContainer>
