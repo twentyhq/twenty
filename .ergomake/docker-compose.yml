@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  front:
+    build:
+      context: ..
+      dockerfile: ./infra/prod/front/Dockerfile
+      args:
+        REACT_APP_API_URL: "http://localhost:3000/graphql"
+        REACT_APP_AUTH_URL: "http://localhost:3000/auth"
+        REACT_APP_FILES_URL: "http://localhost:3000/files"
+    ports:
+      - "3001:3000"
+    labels:
+      dev.ergomake.env.replace-arg.REACT_APP_API_URL: "https://{{ services.server.url }}/graphql"
+      dev.ergomake.env.replace-arg.REACT_APP_AUTH_URL: "https://{{ services.server.url }}/auth"
+      dev.ergomake.env.replace-arg.REACT_APP_FILES_URL: "https://{{ services.server.url }}/files"
+  server:
+    build:
+      context: ..
+      dockerfile: ./infra/prod/server/Dockerfile
+    command: sh -c "yarn prisma migrate reset --force && node dist/src/main"
+    ports:
+      - "3000:3000"
+    environment:
+      DEBUG_MODE: false
+      DEMO_MODE: true
+      ACCESS_TOKEN_SECRET: "secret_jwt"
+      ACCESS_TOKEN_EXPIRES_IN: "30m"
+      LOGIN_TOKEN_SECRET: "secret_login_token"
+      LOGIN_TOKEN_EXPIRES_IN: "15m"
+      REFRESH_TOKEN_SECRET: "secret_refresh_token"
+      REFRESH_TOKEN_EXPIRES_IN: "90d"
+      PG_DATABASE_URL: "postgres://postgres:postgrespassword@postgres:5432/default?connection_limit=1"
+      FRONT_AUTH_CALLBACK_URL: "http://localhost:3000/verify"
+      STORAGE_TYPE: "local"
+      STORAGE_LOCAL_PATH: ".local-storage"
+    labels:
+      dev.ergomake.env.replace-env.FRONT_AUTH_CALLBACK_URL: "https://{{ services.server.url }}/verify"
+  postgres:
+    build: ../infra/dev/postgres
+    environment:
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432"
