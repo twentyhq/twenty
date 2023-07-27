@@ -9,5 +9,6 @@ export interface Settings {
     imageCropSizes: {
       [key in ValueOfFileFolder]?: ShortCropSize[];
     };
+    maxFileSize: `${number}MB`;
   };
 }
