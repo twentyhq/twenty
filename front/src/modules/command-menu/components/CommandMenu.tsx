@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
@@ -81,8 +80,6 @@ export function CommandMenu() {
       />
     </StyledGroup>
   );*/
-
-  const theme = useTheme();
 
   return (
     <StyledDialog

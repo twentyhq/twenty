@@ -1,5 +1,4 @@
 import { Tooltip } from 'react-tooltip';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { Avatar } from '@/users/components/Avatar';
@@ -64,7 +63,6 @@ const StyledTooltip = styled(Tooltip)`
 `;
 
 export function CommentHeader({ comment, actionBar }: OwnProps) {
-  const theme = useTheme();
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(comment.createdAt);
   const exactCreatedAt = beautifyExactDate(comment.createdAt);
   const showDate = beautifiedCreatedAt !== '';
