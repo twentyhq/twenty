@@ -9,7 +9,7 @@ ENV_PATH="${SCRIPT_DIR}/../.env.test"
 
 # Check if the file exists
 if [ -f "${ENV_PATH}" ]; then
-  echo "🟡 - Loading environment variables from "${ENV_PATH}"..."
+  echo "🔵 - Loading environment variables from "${ENV_PATH}"..."
   # Export env vars
   export $(grep -v '^#' ${ENV_PATH} | xargs)
 else

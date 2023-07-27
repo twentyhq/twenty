@@ -5,7 +5,25 @@ on:
       - main
   pull_request_target:
 jobs:
+  postgres-job:
+    runs-on: ubuntu-latest
+    container: node:10.18-jessie
+    steps:
+      - run: echo "Postgres job finished"
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_HOST: postgres
+          POSTGRES_PASSWORD: postgrespassword
+          POSTGRES_PORT: 5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
   server-test:
+    needs: postgres-job
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -27,3 +45,6 @@ jobs:
       - name: Server / Run jest tests
         run: |
           cd server && yarn test
+      - name: Server / Run e2e tests
+        run: |
+          cd server && yarn test:e2e
