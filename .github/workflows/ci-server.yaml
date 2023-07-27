@@ -5,11 +5,10 @@ on:
       - main
   pull_request_target:
 jobs:
-  postgres-job:
+  server-test:
     runs-on: ubuntu-latest
-    container: node:10.18-jessie
-    steps:
-      - run: echo "Postgres job finished"
+    env:
+      PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/test?connection_limit=1
     services:
       postgres:
         image: postgres
@@ -23,11 +22,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-  server-test:
-    needs: postgres-job
-    runs-on: ubuntu-latest
-    env:
-      PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/test?connection_limit=1
     steps:
       - uses: actions/checkout@v3
         if: github.event_name == 'push'
