@@ -1727,7 +1727,7 @@ export type QueryFindManyWorkspaceMemberArgs = {
 
 
 export type QueryFindUniqueCompanyArgs = {
-  id: Scalars['String'];
+  where: CompanyWhereUniqueInput;
 };
 
 
@@ -2299,7 +2299,7 @@ export type GetCompaniesQueryVariables = Exact<{
 export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _commentThreadCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> };
 
 export type GetCompanyQueryVariables = Exact<{
-  id: Scalars['String'];
+  where: CompanyWhereUniqueInput;
 }>;
 
 
@@ -3390,8 +3390,8 @@ export type GetCompaniesQueryHookResult = ReturnType<typeof useGetCompaniesQuery
 export type GetCompaniesLazyQueryHookResult = ReturnType<typeof useGetCompaniesLazyQuery>;
 export type GetCompaniesQueryResult = Apollo.QueryResult<GetCompaniesQuery, GetCompaniesQueryVariables>;
 export const GetCompanyDocument = gql`
-    query GetCompany($id: String!) {
-  findUniqueCompany(id: $id) {
+    query GetCompany($where: CompanyWhereUniqueInput!) {
+  findUniqueCompany(where: $where) {
     id
     domainName
     name
@@ -3422,7 +3422,7 @@ export const GetCompanyDocument = gql`
  * @example
  * const { data, loading, error } = useGetCompanyQuery({
  *   variables: {
- *      id: // value for 'id'
+ *      where: // value for 'where'
  *   },
  * });
  */

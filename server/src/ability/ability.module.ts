@@ -26,7 +26,7 @@ import {
 } from './handlers/workspace-member.ability-handler';
 import {
   ManageCompanyAbilityHandler,
-  ReadCompanyAbilityHandler,
+  ReadOneCompanyAbilityHandler,
   CreateCompanyAbilityHandler,
   UpdateCompanyAbilityHandler,
   DeleteCompanyAbilityHandler,
@@ -128,7 +128,7 @@ import {
     DeleteWorkspaceMemberAbilityHandler,
     // Company
     ManageCompanyAbilityHandler,
-    ReadCompanyAbilityHandler,
+    ReadOneCompanyAbilityHandler,
     CreateCompanyAbilityHandler,
     UpdateCompanyAbilityHandler,
     DeleteCompanyAbilityHandler,
@@ -215,7 +215,7 @@ import {
     DeleteWorkspaceMemberAbilityHandler,
     // Company
     ManageCompanyAbilityHandler,
-    ReadCompanyAbilityHandler,
+    ReadOneCompanyAbilityHandler,
     CreateCompanyAbilityHandler,
     UpdateCompanyAbilityHandler,
     DeleteCompanyAbilityHandler,

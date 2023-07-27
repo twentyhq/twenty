@@ -2,6 +2,7 @@ import {
   INestApplication,
   Injectable,
   Logger,
+  OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
 
@@ -20,7 +21,7 @@ const createPrismaClient = (options: Prisma.PrismaClientOptions) => {
 type ExtendedPrismaClient = ReturnType<typeof createPrismaClient>;
 
 @Injectable()
-export class PrismaService implements OnModuleInit {
+export class PrismaService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
   private prismaClient!: ExtendedPrismaClient;
 
@@ -59,6 +60,10 @@ export class PrismaService implements OnModuleInit {
 
   async onModuleInit(): Promise<void> {
     await this.prismaClient.$connect();
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.prismaClient.$disconnect();
   }
 
   async enableShutdownHooks(app: INestApplication) {
