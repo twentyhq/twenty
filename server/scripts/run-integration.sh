@@ -48,7 +48,7 @@ else
     echo "🟢 - Database container is already running."
 fi
 
-npx ts-node ./test/check-db.ts
+npx ts-node ./test/utils/check-db.ts
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -ne 0 ]; then

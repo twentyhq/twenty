@@ -99,7 +99,6 @@
     "@types/uuid": "^9.0.2",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
-    "apollo-boost": "^0.4.9",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.27.5",
