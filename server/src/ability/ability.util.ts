@@ -205,3 +205,42 @@ export async function relationAbilityChecker(
 
   return true;
 }
+
+const isWhereInput = (input: any): boolean => {
+  return Object.values(input).some((value) => typeof value === 'object');
+};
+
+type ExcludeUnique<T> = T extends infer U
+  ? 'AND' extends keyof U
+    ? U
+    : never
+  : never;
+
+/**
+ * Convert a where unique input to a where input prisma
+ * @param args Can be a where unique input or a where input
+ * @returns whare input
+ */
+export const convertToWhereInput = <T>(
+  where: T | undefined,
+): ExcludeUnique<T> | undefined => {
+  const input = where as any;
+
+  if (!input) {
+    return input;
+  }
+
+  // If it's already a WhereInput, return it directly
+  if (isWhereInput(input)) {
+    return input;
+  }
+
+  // If not convert it to a WhereInput
+  const whereInput = {};
+
+  for (const key in input) {
+    whereInput[key] = { equals: input[key] };
+  }
+
+  return whereInput as ExcludeUnique<T>;
+};
