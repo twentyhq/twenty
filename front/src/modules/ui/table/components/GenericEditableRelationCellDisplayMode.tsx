@@ -36,6 +36,9 @@ export function GenericEditableRelationCellDisplayMode({
       );
     }
     default:
+      console.warn(
+        `Unknown relation type: "${fieldMetadata.relationType}" in GenericEditableRelationCellEditMode`,
+      );
       return <> </>;
   }
 }
