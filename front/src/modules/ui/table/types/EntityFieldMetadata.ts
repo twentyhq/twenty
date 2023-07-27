@@ -1,13 +1,6 @@
 import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 
-export type EntityFieldType =
-  | 'text'
-  | 'number'
-  | 'date'
-  | 'select'
-  | 'checkbox'
-  | 'icon'
-  | 'relation';
+export type EntityFieldType = 'text' | 'relation';
 
 export type EntityFieldMetadata = {
   fieldName: string;
