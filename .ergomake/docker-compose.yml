@@ -9,7 +9,7 @@ services:
         REACT_APP_AUTH_URL: "http://localhost:3000/auth"
         REACT_APP_FILES_URL: "http://localhost:3000/files"
     ports:
-      - "3001:3001"
+      - "3001:3000"
     labels:
       dev.ergomake.env.replace-arg.REACT_APP_API_URL: "https://{{ services.server.url }}/graphql"
       dev.ergomake.env.replace-arg.REACT_APP_AUTH_URL: "https://{{ services.server.url }}/auth"
@@ -42,3 +42,4 @@ services:
       POSTGRES_PASSWORD: postgrespassword
     ports:
       - "5432"
+
