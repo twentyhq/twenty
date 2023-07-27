@@ -84,6 +84,14 @@ const StyledTopActionBar = styled.div`
   top: 0px;
 `;
 
+const StyledStartIcon = styled.div`
+  align-self: flex-start;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  height: 20px;
+  width: 20px;
+`;
+
 export function Timeline({ entity }: { entity: CommentableEntity }) {
   const { data: queryResult, loading } = useGetCommentThreadsByTargetsQuery({
     variables: {
@@ -95,17 +103,6 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
       ],
     },
   });
-
-  const StyledStartIcon = styled.div`
-    align-items: center;
-    align-self: stretch;
-    color: ${({ theme }) => theme.font.color.tertiary};
-    display: flex;
-    gap: 16px;
-    height: 20px;
-    justify-content: center;
-    width: 20px;
-  `;
 
   const openCreateCommandThread = useOpenCreateCommentThreadDrawer();
 
