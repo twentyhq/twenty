@@ -1,18 +1,21 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { defaultOrderBy } from '@/companies/queries';
-import { PeopleEntityTableData } from '@/people/components/PeopleEntityTableData';
+import { GenericEntityTableData } from '@/people/components/GenericEntityTableData';
+import { peopleFieldMetadataArray } from '@/people/constants/peopleFieldMetadataArray';
 import { useUpdatePeopleField } from '@/people/hooks/useUpdatePeopleField';
 import { PeopleSelectedSortType } from '@/people/queries';
-import { peopleColumns } from '@/people/table/components/peopleColumns';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { IconList } from '@/ui/icon';
 import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
-import { EntityTable } from '@/ui/table/components/EntityTable';
+import { EntityTable } from '@/ui/table/components/EntityTableV2';
 import { TableContext } from '@/ui/table/states/TableContext';
-import { PersonOrderByWithRelationInput } from '~/generated/graphql';
+import {
+  PersonOrderByWithRelationInput,
+  useGetPeopleQuery,
+} from '~/generated/graphql';
 import { availableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
@@ -31,9 +34,14 @@ export function PeopleTable() {
 
   return (
     <>
-      <PeopleEntityTableData orderBy={orderBy} whereFilters={whereFilters} />
+      <GenericEntityTableData
+        getRequestResultKey="people"
+        useGetRequest={useGetPeopleQuery}
+        orderBy={orderBy}
+        whereFilters={whereFilters}
+        fieldMetadataArray={peopleFieldMetadataArray}
+      />
       <EntityTable
-        columns={peopleColumns}
         viewName="All People"
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}

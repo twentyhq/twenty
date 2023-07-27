@@ -1,19 +1,17 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 
-import { TableColumn } from '@/people/table/components/peopleColumns';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 
-import { useIsPageLoading } from '../../hooks/useIsPageLoading';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { EntityUpdateFieldHookContext } from '../states/EntityUpdateFieldHookContext';
 import { TableHeader } from '../table-header/components/TableHeader';
 import { EntityUpdateFieldHook } from '../types/CellUpdateFieldHook';
 
-import { EntityTableBody } from './EntityTableBody';
-import { EntityTableHeader } from './EntityTableHeader';
+import { EntityTableBody } from './EntityTableBodyV2';
+import { EntityTableHeader } from './EntityTableHeaderV2';
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -87,7 +85,6 @@ const StyledTableWrapper = styled.div`
 `;
 
 type OwnProps<SortField> = {
-  columns: Array<TableColumn>;
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
@@ -97,7 +94,6 @@ type OwnProps<SortField> = {
 };
 
 export function EntityTable<SortField>({
-  columns,
   viewName,
   viewIcon,
   availableSorts,
@@ -117,12 +113,6 @@ export function EntityTable<SortField>({
     },
   });
 
-  const isPageLoading = useIsPageLoading();
-
-  if (isPageLoading) {
-    return null;
-  }
-
   return (
     <EntityUpdateFieldHookContext.Provider value={useUpdateField}>
       <StyledTableWithHeader>
@@ -135,8 +125,8 @@ export function EntityTable<SortField>({
           />
           <StyledTableWrapper>
             <StyledTable>
-              <EntityTableHeader columns={columns} />
-              <EntityTableBody columns={columns} />
+              <EntityTableHeader />
+              <EntityTableBody />
             </StyledTable>
           </StyledTableWrapper>
         </StyledTableContainer>
