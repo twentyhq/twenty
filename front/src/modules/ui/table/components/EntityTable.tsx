@@ -8,9 +8,7 @@ import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 import { useIsPageLoading } from '../../hooks/useIsPageLoading';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
-import { EntityUpdateFieldHookContext } from '../states/EntityUpdateFieldHookContext';
 import { TableHeader } from '../table-header/components/TableHeader';
-import { EntityUpdateFieldHook } from '../types/CellUpdateFieldHook';
 
 import { EntityTableBody } from './EntityTableBody';
 import { EntityTableHeader } from './EntityTableHeader';
@@ -93,7 +91,6 @@ type OwnProps<SortField> = {
   availableSorts?: Array<SortType<SortField>>;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onRowSelectionChange?: (rowSelection: string[]) => void;
-  useUpdateField: EntityUpdateFieldHook;
 };
 
 export function EntityTable<SortField>({
@@ -102,7 +99,6 @@ export function EntityTable<SortField>({
   viewIcon,
   availableSorts,
   onSortsUpdate,
-  useUpdateField,
 }: OwnProps<SortField>) {
   const tableBodyRef = React.useRef<HTMLDivElement>(null);
 
@@ -124,23 +120,21 @@ export function EntityTable<SortField>({
   }
 
   return (
-    <EntityUpdateFieldHookContext.Provider value={useUpdateField}>
-      <StyledTableWithHeader>
-        <StyledTableContainer ref={tableBodyRef}>
-          <TableHeader
-            viewName={viewName}
-            viewIcon={viewIcon}
-            availableSorts={availableSorts}
-            onSortsUpdate={onSortsUpdate}
-          />
-          <StyledTableWrapper>
-            <StyledTable>
-              <EntityTableHeader columns={columns} />
-              <EntityTableBody columns={columns} />
-            </StyledTable>
-          </StyledTableWrapper>
-        </StyledTableContainer>
-      </StyledTableWithHeader>
-    </EntityUpdateFieldHookContext.Provider>
+    <StyledTableWithHeader>
+      <StyledTableContainer ref={tableBodyRef}>
+        <TableHeader
+          viewName={viewName}
+          viewIcon={viewIcon}
+          availableSorts={availableSorts}
+          onSortsUpdate={onSortsUpdate}
+        />
+        <StyledTableWrapper>
+          <StyledTable>
+            <EntityTableHeader columns={columns} />
+            <EntityTableBody columns={columns} />
+          </StyledTable>
+        </StyledTableWrapper>
+      </StyledTableContainer>
+    </StyledTableWithHeader>
   );
 }

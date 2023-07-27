@@ -36,9 +36,6 @@ export function CompanyTable() {
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
         onSortsUpdate={updateSorts}
-        useUpdateField={() => () => {
-          //
-        }}
       />
     </>
   );
