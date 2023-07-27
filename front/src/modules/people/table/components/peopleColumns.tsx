@@ -9,13 +9,14 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 
+import { EditablePeopleCityCell } from './EditablePeopleCityCell';
 import { EditablePeopleCompanyCell } from './EditablePeopleCompanyCell';
 import { EditablePeopleCreatedAtCell } from './EditablePeopleCreatedAtCell';
 import { EditablePeopleEmailCell } from './EditablePeopleEmailCell';
 import { EditablePeopleFullNameCell } from './EditablePeopleFullNameCell';
+import { EditablePeopleJobTitleCell } from './EditablePeopleJobTitleCell';
 import { EditablePeopleLinkedinUrlCell } from './EditablePeopleLinkedinUrlCell';
 import { EditablePeoplePhoneCell } from './EditablePeoplePhoneCell';
-import { GenericEditableTextCell } from './GenericEditableTextCell';
 
 export type TableColumn = {
   id: string;
@@ -66,18 +67,14 @@ export const peopleColumns: TableColumn[] = [
     title: 'City',
     icon: <IconMap size={16} />,
     size: 150,
-    cellComponent: (
-      <GenericEditableTextCell fieldName="city" placeholder="City" />
-    ),
+    cellComponent: <EditablePeopleCityCell />,
   },
   {
     id: 'jobTitle',
     title: 'Job title',
     icon: <IconBriefcase size={16} />,
     size: 150,
-    cellComponent: (
-      <GenericEditableTextCell fieldName="jobTitle" placeholder="Job title" />
-    ),
+    cellComponent: <EditablePeopleJobTitleCell />,
   },
   {
     id: 'linkedinUrl',
