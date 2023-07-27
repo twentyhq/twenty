@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Avatar, AvatarType } from '@/users/components/Avatar';
+import { Avatar, AvatarSize, AvatarType } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
 import { Chip, ChipSize, ChipVariant } from './Chip';
@@ -11,7 +11,7 @@ type OwnProps = {
   entityId: string;
   name: string;
   size?: ChipSize;
-  avatarSize?: number;
+  avatarSize?: AvatarSize;
   pictureUrl?: string;
   avatarType?: AvatarType;
   variant?: EntityChipVariant;
@@ -27,7 +27,7 @@ export function EntityChip({
   entityId,
   name,
   size,
-  avatarSize = 14,
+  avatarSize = "sm",
   pictureUrl,
   avatarType = 'rounded',
   variant = EntityChipVariant.Regular,

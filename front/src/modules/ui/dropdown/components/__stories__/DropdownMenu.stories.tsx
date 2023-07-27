@@ -118,7 +118,7 @@ const FakeSelectableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
             <Avatar
               placeholder="A"
               avatarUrl={item.avatarUrl}
-              size={16}
+              size="md"
               type="squared"
             />
           )}
@@ -151,7 +151,7 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
             <Avatar
               placeholder="A"
               avatarUrl={item.avatarUrl}
-              size={16}
+              size="md"
               type="squared"
             />
           )}
