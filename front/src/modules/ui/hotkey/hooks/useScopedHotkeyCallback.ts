@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { internalHotkeysEnabledScopesState } from '../states/internal/internalHotkeysEnabledScopesState';
 
-const DEBUG_HOTKEY_SCOPE = true;
+const DEBUG_HOTKEY_SCOPE = false;
 
 export function useScopedHotkeyCallback() {
   return useRecoilCallback(
