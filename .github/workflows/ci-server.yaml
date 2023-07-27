@@ -8,7 +8,7 @@ jobs:
   server-test:
     runs-on: ubuntu-latest
     env:
-      PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/test?connection_limit=1
+      PG_DATABASE_URL: postgres://postgres:postgrespassword@localhost:5432/test?connection_limit=1
     services:
       postgres:
         image: postgres
@@ -17,6 +17,8 @@ jobs:
           POSTGRES_PASSWORD: postgrespassword
           POSTGRES_DB: test
           POSTGRES_PORT: 5432
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
