@@ -7,8 +7,6 @@ on:
 jobs:
   server-test:
     runs-on: ubuntu-latest
-    env:
-      PG_DATABASE_URL: postgres://postgres:postgrespassword@localhost:5432/test?connection_limit=1
     services:
       postgres:
         image: postgres
@@ -46,4 +44,4 @@ jobs:
           cd server && yarn test
       - name: Server / Run e2e tests
         run: |
-          cd server && yarn test:e2e-ci
+          cd server && yarn test:e2e
