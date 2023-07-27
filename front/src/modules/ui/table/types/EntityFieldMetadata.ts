@@ -1,10 +1,6 @@
-export type EntityFieldType =
-  | 'text'
-  | 'number'
-  | 'date'
-  | 'select'
-  | 'checkbox'
-  | 'icon';
+import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
+
+export type EntityFieldType = 'text' | 'relation';
 
 export type EntityFieldMetadata = {
   fieldName: string;
@@ -13,4 +9,5 @@ export type EntityFieldMetadata = {
   icon: JSX.Element;
   columnSize: number;
   filterIcon?: JSX.Element;
+  relationType?: Entity; // TODO: condition this type with type === "relation"
 };
