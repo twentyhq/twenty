@@ -1,5 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
+import { InplaceInputTextDisplayMode } from '@/ui/display/component/InplaceInputTextDisplayMode';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
@@ -35,7 +36,9 @@ export function GenericEditableTextCell({
           placeholder={placeholder}
         />
       }
-      nonEditModeContent={<>{fieldValue}</>}
+      nonEditModeContent={
+        <InplaceInputTextDisplayMode>{fieldValue}</InplaceInputTextDisplayMode>
+      }
     ></EditableCell>
   );
 }
