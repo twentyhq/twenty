@@ -79,7 +79,7 @@ export function CommentHeader({ comment, actionBar }: OwnProps) {
       <StyledLeftContainer>
         <Avatar
           avatarUrl={avatarUrl}
-          size={theme.icon.size.md}
+          size="md"
           colorId={author.id}
           placeholder={author.displayName}
         />

@@ -112,7 +112,7 @@ export function CommandMenu() {
                 icon={
                   <Avatar
                     avatarUrl={person.avatarUrl}
-                    size={theme.icon.size.sm}
+                    size="sm"
                     colorId={person.id}
                     placeholder={person.name}
                   />
@@ -131,7 +131,7 @@ export function CommandMenu() {
                 icon={
                   <Avatar
                     avatarUrl={company.avatarUrl}
-                    size={theme.icon.size.sm}
+                    size="sm"
                     colorId={company.id}
                     placeholder={company.name}
                   />
