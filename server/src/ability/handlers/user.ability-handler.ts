@@ -65,6 +65,7 @@ export class UpdateUserAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<UserArgs>();
+    // TODO: Confirm if this is correct
     const user = await this.prismaService.client.user.findFirst({
       where: args.where,
     });
@@ -92,8 +93,14 @@ export class DeleteUserAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<UserArgs>();
+
+    // obtain the auth user from the context
+    const reqUser = gqlContext.getContext().req.user;
+
+    // FIXME: When `args.where` (which it is in almost all the cases I've tested) is undefined,
+    // this query will return the first user entry in the DB, which is most likely not the current user
     const user = await this.prismaService.client.user.findFirst({
-      where: args.where,
+      where: { ...args.where, id: reqUser.user.id },
     });
     assert(user, '', NotFoundException);
 

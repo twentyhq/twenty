@@ -99,8 +99,16 @@ export class UserService {
     workspaceId: string;
     userId: string;
   }) {
-    const { user: userService } = this.prismaService.client;
-    const user = await userService.findUnique({
+    const {
+      workspaceMember,
+      company,
+      comment,
+      attachment,
+      refreshToken,
+      activity,
+      activityTarget,
+    } = this.prismaService.client;
+    const user = await this.findUnique({
       where: {
         id: userId,
       },
@@ -116,9 +124,55 @@ export class UserService {
     });
     assert(workspace, 'Workspace not found');
 
-    console.log({ user, workspace });
+    const workSpaceMembers = await workspaceMember.findMany({
+      where: {
+        workspaceId,
+      },
+    });
 
-    // TODO: Figure out actual deletion
+    const isLastMember =
+      workSpaceMembers.length === 1 && workSpaceMembers[0].userId === userId;
+
+    if (isLastMember) {
+      // Delete entire workspace
+      await this.workspaceService.deleteWorkspace({
+        workspaceId,
+        userId,
+        select: { id: true },
+      });
+    } else {
+      const where = { authorId: userId };
+      const activities = await activity.findMany({
+        where,
+      });
+
+      await this.prismaService.client.$transaction([
+        workspaceMember.deleteMany({
+          where: { userId },
+        }),
+        company.deleteMany({
+          where: { accountOwnerId: userId },
+        }),
+        comment.deleteMany({
+          where,
+        }),
+        attachment.deleteMany({
+          where,
+        }),
+        refreshToken.deleteMany({
+          where: { userId },
+        }),
+        ...activities.map(({ id: activityId }) =>
+          activityTarget.deleteMany({
+            where: { activityId },
+          }),
+        ),
+        activity.deleteMany({
+          where,
+        }),
+        this.delete({ where: { id: userId } }),
+      ]);
+    }
 
     return user;
   }
