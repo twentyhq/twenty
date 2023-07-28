@@ -107,7 +107,7 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     },
   });
 
-  const openCreateCommandThread = useOpenCreateActivityDrawer();
+  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const activities: ActivityForDrawer[] = queryResult?.findManyActivities ?? [];
 
@@ -121,8 +121,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
         <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
         <ActivityCreateButton
-          onNoteClick={() => openCreateCommandThread(entity, ActivityType.Note)}
-          onTaskClick={() => openCreateCommandThread(entity, ActivityType.Task)}
+          onNoteClick={() => openCreateActivity(entity, ActivityType.Note)}
+          onTaskClick={() => openCreateActivity(entity, ActivityType.Task)}
         />
       </StyledTimelineEmptyContainer>
     );
@@ -132,8 +132,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     <StyledMainContainer>
       <StyledTopActionBar>
         <ActivityCreateButton
-          onNoteClick={() => openCreateCommandThread(entity, ActivityType.Note)}
-          onTaskClick={() => openCreateCommandThread(entity, ActivityType.Task)}
+          onNoteClick={() => openCreateActivity(entity, ActivityType.Note)}
+          onTaskClick={() => openCreateActivity(entity, ActivityType.Task)}
         />
       </StyledTopActionBar>
       <StyledTimelineContainer>

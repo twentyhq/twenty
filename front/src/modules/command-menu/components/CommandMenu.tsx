@@ -1,11 +1,18 @@
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useFilteredSearchCompanyQuery } from '@/companies/queries';
-import { useFilteredSearchPeopleQuery } from '@/people/queries';
+import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/hotkey/types/AppHotkeyScope';
+import { IconNotes } from '@/ui/icon';
 import { Avatar } from '@/users/components/Avatar';
+import {
+  QueryMode,
+  useSearchActivityQuery,
+  useSearchCompanyQuery,
+  useSearchPeopleQuery,
+} from '~/generated/graphql';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
@@ -21,6 +28,7 @@ import {
 
 export function CommandMenu() {
   const { openCommandMenu, closeCommandMenu } = useCommandMenu();
+  const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
 
@@ -33,16 +41,41 @@ export function CommandMenu() {
     [openCommandMenu],
   );
 
-  const people = useFilteredSearchPeopleQuery({
-    searchFilter: search,
-    selectedIds: [],
-    limit: 3,
+  const { data: peopleData } = useSearchPeopleQuery({
+    variables: {
+      where: {
+        OR: [
+          { firstName: { contains: search, mode: QueryMode.Insensitive } },
+          { lastName: { contains: search, mode: QueryMode.Insensitive } },
+        ],
+      },
+      limit: 3,
+    },
   });
-  const companies = useFilteredSearchCompanyQuery({
-    searchFilter: search,
-    selectedIds: [],
-    limit: 3,
+  const people = peopleData?.searchResults ?? [];
+
+  const { data: companyData } = useSearchCompanyQuery({
+    variables: {
+      where: {
+        OR: [{ name: { contains: search, mode: QueryMode.Insensitive } }],
+      },
+      limit: 3,
+    },
   });
+  const companies = companyData?.searchResults ?? [];
+
+  const { data: activityData } = useSearchActivityQuery({
+    variables: {
+      where: {
+        OR: [
+          { title: { contains: search, mode: QueryMode.Insensitive } },
+          { body: { contains: search, mode: QueryMode.Insensitive } },
+        ],
+      },
+      limit: 3,
+    },
+  });
+  const activities = activityData?.searchResults ?? [];
 
   /*
   TODO: Allow performing actions on page through CommandBar 
@@ -99,40 +132,52 @@ export function CommandMenu() {
       />
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
-        {!!people.entitiesToSelect.length && (
+        {!!people.length && (
           <StyledGroup heading="People">
-            {people.entitiesToSelect.map((person) => (
+            {people.map((person) => (
               <CommandMenuItem
                 to={`person/${person.id}`}
-                label={person.name}
+                label={person.displayName}
                 key={person.id}
                 icon={
                   <Avatar
-                    avatarUrl={person.avatarUrl}
+                    avatarUrl={null}
                     size="sm"
                     colorId={person.id}
-                    placeholder={person.name}
+                    placeholder={person.displayName}
                   />
                 }
               />
             ))}
           </StyledGroup>
         )}
-        {!!companies.entitiesToSelect.length && (
+        {!!companies.length && (
           <StyledGroup heading="Companies">
-            {companies.entitiesToSelect.map((company) => (
+            {companies.map((company) => (
               <CommandMenuItem
                 to={`companies/${company.id}`}
                 label={company.name}
                 key={company.id}
                 icon={
                   <Avatar
-                    avatarUrl={company.avatarUrl}
+                    avatarUrl={getLogoUrlFromDomainName(company.domainName)}
                     size="sm"
                     colorId={company.id}
                     placeholder={company.name}
                   />
                 }
+              />
+            ))}
+          </StyledGroup>
+        )}
+        {!!activities.length && (
+          <StyledGroup heading="Notes">
+            {activities.map((activity) => (
+              <CommandMenuItem
+                onClick={() => openActivityRightDrawer(activity.id)}
+                label={activity.title ?? ''}
+                key={activity.id}
+                icon={<IconNotes />}
               />
             ))}
           </StyledGroup>

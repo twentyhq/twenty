@@ -17,6 +17,8 @@ export const SEARCH_PEOPLE_QUERY = gql`
       city
       firstName
       lastName
+      displayName
+      avatarUrl
       createdAt
     }
   }
@@ -65,6 +67,24 @@ export const SEARCH_COMPANY_QUERY = gql`
       id
       name
       domainName
+    }
+  }
+`;
+
+export const SEARCH_ACTIVITY_QUERY = gql`
+  query SearchActivity(
+    $where: ActivityWhereInput
+    $limit: Int
+    $orderBy: [ActivityOrderByWithRelationInput!]
+  ) {
+    searchResults: findManyActivities(
+      where: $where
+      take: $limit
+      orderBy: $orderBy
+    ) {
+      id
+      title
+      body
     }
   }
 `;
