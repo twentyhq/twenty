@@ -36,10 +36,7 @@ export function EditableCellURL({
         loading ? (
           <CellSkeleton />
         ) : (
-          <RawLink
-            onClick={(e) => e.stopPropagation()}
-            href={url ? 'https://' + url : ''}
-          >
+          <RawLink onClick={(e) => e.stopPropagation()} href={url ?? ''}>
             {url}
           </RawLink>
         )
