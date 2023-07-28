@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+
+import {
+  ClickOutsideMode,
+  useListenClickOutside,
+} from '@/ui/hooks/useListenClickOutside';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -32,6 +37,7 @@ const BackDrop = styled(motion.div)`
 type Props = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
     isOpen?: boolean;
+    onOutsideClick?: () => void;
   };
 
 const modalVariants = {
@@ -40,24 +46,36 @@ const modalVariants = {
   exit: { opacity: 0 },
 };
 
-export function Modal({ isOpen = false, children, ...restProps }: Props) {
+export function Modal({
+  isOpen = false,
+  children,
+  onOutsideClick,
+  ...restProps
+}: Props) {
+  const modalRef = useRef(null);
+
+  useListenClickOutside({
+    refs: [modalRef],
+    callback: () => onOutsideClick?.(),
+    mode: ClickOutsideMode.absolute,
+  });
+
   if (!isOpen) {
     return null;
   }
 
   return (
-    <>
-      <BackDrop>
-        <ModalDiv
-          layout
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={modalVariants}
-        >
-          <StyledContainer {...restProps}>{children}</StyledContainer>
-        </ModalDiv>
-      </BackDrop>
-    </>
+    <BackDrop>
+      <ModalDiv
+        layout
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        variants={modalVariants}
+        ref={modalRef}
+      >
+        <StyledContainer {...restProps}>{children}</StyledContainer>
+      </ModalDiv>
+    </BackDrop>
   );
 }
