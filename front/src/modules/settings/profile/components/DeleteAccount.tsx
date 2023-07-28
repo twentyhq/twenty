@@ -5,15 +5,15 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import { ButtonVariant } from '@/ui/button/components/Button';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
-import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
+import { useDeleteUserAccountMutation } from '~/generated/graphql';
 
 import { DeleteModal, StyledDeleteButton } from './DeleteModal';
 
-export function DeleteWorkspace() {
-  const [isDeleteWorkSpaceModalOpen, setIsDeleteWorkSpaceModalOpen] =
+export function DeleteAccount() {
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
 
-  const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
+  const [deleteUserAccount] = useDeleteUserAccountMutation();
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -22,8 +22,8 @@ export function DeleteWorkspace() {
     navigate(AppPath.SignIn);
   }, [signOut, navigate]);
 
-  const deleteWorkspace = async () => {
-    await deleteCurrentWorkspace();
+  const deleteAccount = async () => {
+    await deleteUserAccount();
     handleLogout();
   };
 
@@ -31,26 +31,27 @@ export function DeleteWorkspace() {
     <>
       <SubSectionTitle
         title="Danger zone"
-        description="Delete your whole workspace"
+        description="Delete account and all the associated data"
       />
+
       <StyledDeleteButton
-        onClick={() => setIsDeleteWorkSpaceModalOpen(true)}
+        onClick={() => setIsDeleteAccountModalOpen(true)}
         variant={ButtonVariant.Secondary}
-        title="Delete workspace"
+        title="Delete account"
       />
 
       <DeleteModal
-        isOpen={isDeleteWorkSpaceModalOpen}
-        setIsOpen={setIsDeleteWorkSpaceModalOpen}
-        title="Workspace Deletion"
+        isOpen={isDeleteAccountModalOpen}
+        setIsOpen={setIsDeleteAccountModalOpen}
+        title="Account Deletion"
         subtitle={
           <>
             This action cannot be undone. This will permanently delete your
-            entire workspace. <br /> Please type in your email to confirm.
+            entire account. <br /> Please type in your email to confirm.
           </>
         }
-        handleConfirmDelete={deleteWorkspace}
-        deleteButtonText="Delete workspace"
+        handleConfirmDelete={deleteAccount}
+        deleteButtonText="Delete account"
       />
     </>
   );

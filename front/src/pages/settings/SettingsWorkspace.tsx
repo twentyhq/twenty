@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { IconSettings } from '@/ui/icon';
@@ -39,6 +40,10 @@ export function SettingsWorksapce() {
               description="Name of your workspace"
             />
             <NameField />
+          </StyledSectionContainer>
+
+          <StyledSectionContainer>
+            <DeleteWorkspace />
           </StyledSectionContainer>
         </StyledContainer>
       </div>
