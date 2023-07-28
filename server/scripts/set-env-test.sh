@@ -11,7 +11,14 @@ ENV_PATH="${SCRIPT_DIR}/../.env.test"
 if [ -f "${ENV_PATH}" ]; then
   echo "🔵 - Loading environment variables from "${ENV_PATH}"..."
   # Export env vars
-  export $(grep -v '^#' ${ENV_PATH} | xargs)
+  while IFS= read -r line || [ -n "$line" ]; do
+    if echo "$line" | grep -F = &>/dev/null
+    then
+      varname=$(echo "$line" | cut -d '=' -f 1)
+      varvalue=$(echo "$line" | cut -d '=' -f 2-)
+      export "$varname"="$varvalue"
+    fi
+  done < <(grep -v '^#' "${ENV_PATH}")
 else
   echo "Error: ${ENV_PATH} does not exist."
   exit 1
