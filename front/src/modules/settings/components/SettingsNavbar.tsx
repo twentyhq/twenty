@@ -53,23 +53,23 @@ export function SettingsNavbar() {
       />
       <NavTitle label="Workspace" />
       <NavItem
-        label="Members"
-        to="/settings/workspace-members"
-        icon={<IconUsers size={theme.icon.size.md} />}
-        active={
-          !!useMatch({
-            path: useResolvedPath('/settings/workspace-members').pathname,
-            end: true,
-          })
-        }
-      />
-      <NavItem
         label="General"
         to="/settings/workspace"
         icon={<IconSettings size={theme.icon.size.md} />}
         active={
           !!useMatch({
             path: useResolvedPath('/settings/workspace').pathname,
+            end: true,
+          })
+        }
+      />
+      <NavItem
+        label="Members"
+        to="/settings/workspace-members"
+        icon={<IconUsers size={theme.icon.size.md} />}
+        active={
+          !!useMatch({
+            path: useResolvedPath('/settings/workspace-members').pathname,
             end: true,
           })
         }

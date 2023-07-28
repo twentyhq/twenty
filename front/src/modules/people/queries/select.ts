@@ -30,6 +30,7 @@ export const GET_PEOPLE = gql`
       displayName
       jobTitle
       linkedinUrl
+      avatarUrl
       createdAt
       _activityCount
       company {
@@ -69,6 +70,7 @@ export function useFilteredSearchPeopleQuery({
         id: entity.id,
         entityType: CommentableType.Person,
         name: `${entity.firstName} ${entity.lastName}`,
+        avatarUrl: entity.avatarUrl,
         avatarType: 'rounded',
       } as CommentableEntityForSelect),
     searchFilter,

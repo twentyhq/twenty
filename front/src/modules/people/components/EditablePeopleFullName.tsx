@@ -10,7 +10,12 @@ type OwnProps = {
     | Partial<
         Pick<
           Person,
-          'id' | 'firstName' | 'lastName' | 'displayName' | '_activityCount'
+          | 'id'
+          | 'firstName'
+          | 'lastName'
+          | 'displayName'
+          | 'avatarUrl'
+          | '_activityCount'
         >
       >
     | null
@@ -44,6 +49,7 @@ export function EditablePeopleFullName({
           <PersonChip
             name={`${person?.firstName ?? ''} ${person?.lastName ?? ''}`}
             id={person?.id ?? ''}
+            pictureUrl={person?.avatarUrl ?? ''}
           />
         </NoEditModeContainer>
       }

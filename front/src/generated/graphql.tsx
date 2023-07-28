@@ -1185,6 +1185,7 @@ export type Person = {
   ActivityTarget?: Maybe<Array<ActivityTarget>>;
   _activityCount: Scalars['Int'];
   activities: Array<Activity>;
+  avatarUrl?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   comments: Array<Comment>;
   company?: Maybe<Company>;
@@ -1204,6 +1205,7 @@ export type Person = {
 
 export type PersonCreateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutPersonInput>;
+  avatarUrl?: InputMaybe<Scalars['String']>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1242,6 +1244,7 @@ export type PersonOrderByRelationAggregateInput = {
 
 export type PersonOrderByWithRelationInput = {
   ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
+  avatarUrl?: InputMaybe<SortOrder>;
   city?: InputMaybe<SortOrder>;
   company?: InputMaybe<CompanyOrderByWithRelationInput>;
   companyId?: InputMaybe<SortOrder>;
@@ -1263,6 +1266,7 @@ export type PersonRelationFilter = {
 };
 
 export enum PersonScalarFieldEnum {
+  AvatarUrl = 'avatarUrl',
   City = 'city',
   CompanyId = 'companyId',
   CreatedAt = 'createdAt',
@@ -1280,6 +1284,7 @@ export enum PersonScalarFieldEnum {
 
 export type PersonUpdateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutPersonNestedInput>;
+  avatarUrl?: InputMaybe<Scalars['String']>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1316,6 +1321,7 @@ export type PersonWhereInput = {
   ActivityTarget?: InputMaybe<ActivityTargetListRelationFilter>;
   NOT?: InputMaybe<Array<PersonWhereInput>>;
   OR?: InputMaybe<Array<PersonWhereInput>>;
+  avatarUrl?: InputMaybe<StringNullableFilter>;
   city?: InputMaybe<StringNullableFilter>;
   company?: InputMaybe<CompanyRelationFilter>;
   companyId?: InputMaybe<StringNullableFilter>;
@@ -2376,7 +2382,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type GetPersonPhoneByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2432,7 +2438,7 @@ export type GetPersonQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
 
 export type UpdateOnePersonMutationVariables = Exact<{
   where: PersonWhereUniqueInput;
@@ -2469,7 +2475,7 @@ export type GetPipelineProgressQueryVariables = Exact<{
 }>;
 
 
-export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, pipelineStageId: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null, pointOfContactId?: string | null, probability?: number | null, pointOfContact?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null }> };
+export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, pipelineStageId: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null, pointOfContactId?: string | null, probability?: number | null, pointOfContact?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null }> };
 
 export type UpdateOnePipelineProgressMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -2523,7 +2529,7 @@ export type SearchPeopleQueryVariables = Exact<{
 }>;
 
 
-export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, createdAt: string }> };
+export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string }> };
 
 export type SearchUserQueryVariables = Exact<{
   where?: InputMaybe<UserWhereInput>;
@@ -3617,6 +3623,7 @@ export const GetPeopleDocument = gql`
     displayName
     jobTitle
     linkedinUrl
+    avatarUrl
     createdAt
     _activityCount
     company {
@@ -3928,6 +3935,7 @@ export const GetPersonDocument = gql`
     city
     jobTitle
     linkedinUrl
+    avatarUrl
     phone
     _activityCount
     company {
@@ -4152,6 +4160,7 @@ export const GetPipelineProgressDocument = gql`
       firstName
       lastName
       displayName
+      avatarUrl
     }
     probability
   }
@@ -4383,6 +4392,7 @@ export const SearchPeopleDocument = gql`
     firstName
     lastName
     displayName
+    avatarUrl
     createdAt
   }
 }

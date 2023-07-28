@@ -13,9 +13,8 @@ export function EditablePeopleFullNameCell() {
 
   const [updatePerson] = useUpdateOnePersonMutation();
 
-  const { commentCount, firstName, lastName, displayName } = useRecoilValue(
-    peopleNameCellFamilyState(currentRowEntityId ?? ''),
-  );
+  const { commentCount, firstName, lastName, displayName, avatarUrl } =
+    useRecoilValue(peopleNameCellFamilyState(currentRowEntityId ?? ''));
 
   return (
     <EditablePeopleFullName
@@ -25,6 +24,7 @@ export function EditablePeopleFullNameCell() {
         firstName,
         lastName,
         displayName: displayName ?? undefined,
+        avatarUrl: avatarUrl,
       }}
       onSubmit={(newFirstValue, newSecondValue) =>
         updatePerson({

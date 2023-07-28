@@ -33,6 +33,7 @@ export function PersonShow() {
           <ShowPageSummaryCard
             id={person?.id}
             title={person?.displayName ?? 'No name'}
+            logoOrAvatar={person?.avatarUrl ?? undefined}
             date={person?.createdAt ?? ''}
             renderTitleEditComponent={() =>
               person ? <PeopleFullNameEditableField people={person} /> : <></>

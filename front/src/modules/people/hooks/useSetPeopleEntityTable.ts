@@ -108,6 +108,7 @@ export function useSetPeopleEntityTable() {
               lastName: person.lastName ?? null,
               commentCount: person._activityCount,
               displayName: person.displayName ?? null,
+              avatarUrl: person.avatarUrl ?? null,
             });
           }
         }

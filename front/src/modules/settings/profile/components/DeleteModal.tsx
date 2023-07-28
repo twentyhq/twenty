@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
@@ -12,7 +12,7 @@ import { debounce } from '~/utils/debounce';
 interface DeleteModalProps {
   isOpen: boolean;
   title: string;
-  subtitle: string;
+  subtitle: ReactNode;
   setIsOpen: (val: boolean) => void;
   handleConfirmDelete: () => void;
   deleteButtonText?: string;
@@ -21,6 +21,10 @@ interface DeleteModalProps {
 const StyledTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
+`;
+
+const StyledSubtitle = styled.div`
+  text-align: center;
 `;
 
 const StyledModal = styled(Modal)`
@@ -70,22 +74,18 @@ export function DeleteModal({
     250,
   );
 
-  const errorMessage =
-    email && !isValidEmail ? 'email provided is not correct' : '';
-
   return (
     <AnimatePresence mode="wait">
       <LayoutGroup>
-        <StyledModal isOpen={isOpen}>
+        <StyledModal isOpen={isOpen} onOutsideClick={() => setIsOpen(!isOpen)}>
           <StyledTitle>{title}</StyledTitle>
-          <div>{subtitle}</div>
+          <StyledSubtitle>{subtitle}</StyledSubtitle>
           <TextInput
             value={email}
             onChange={handleEmailChange}
             placeholder={userEmail}
             fullWidth
             key={'email-' + userEmail}
-            error={errorMessage}
           />
           <StyledDeleteButton
             onClick={handleConfirmDelete}
