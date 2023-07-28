@@ -40,9 +40,13 @@ const StyledCenteredButton = styled(Button)`
 
 export const StyledDeleteButton = styled(StyledCenteredButton)`
   border-color: ${({ theme }) => theme.color.red20};
+  box-shadow: none;
   color: ${({ theme }) => theme.color.red};
   font-size: ${({ theme }) => theme.font.size.md};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  :hover {
+    background-color: ${({ theme }) => theme.color.red10};
+  }
 `;
 
 export function DeleteModal({
