@@ -894,6 +894,7 @@ export type Mutation = {
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
+  deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
   renewToken: AuthTokens;
   signUp: LoginToken;
@@ -2587,6 +2588,11 @@ export type RemoveProfilePictureMutationVariables = Exact<{
 
 
 export type RemoveProfilePictureMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, avatarUrl?: string | null } };
+
+export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DeleteUserAccountMutation = { __typename?: 'Mutation', deleteUserAccount: { __typename?: 'User', id: string } };
 
 export type GetViewFieldsQueryVariables = Exact<{
   where?: InputMaybe<ViewFieldWhereInput>;
@@ -4780,6 +4786,38 @@ export function useRemoveProfilePictureMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveProfilePictureMutationHookResult = ReturnType<typeof useRemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationResult = Apollo.MutationResult<RemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationOptions = Apollo.BaseMutationOptions<RemoveProfilePictureMutation, RemoveProfilePictureMutationVariables>;
+export const DeleteUserAccountDocument = gql`
+    mutation DeleteUserAccount {
+  deleteUserAccount {
+    id
+  }
+}
+    `;
+export type DeleteUserAccountMutationFn = Apollo.MutationFunction<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
+
+/**
+ * __useDeleteUserAccountMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserAccountMutation, { data, loading, error }] = useDeleteUserAccountMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDeleteUserAccountMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>(DeleteUserAccountDocument, options);
+      }
+export type DeleteUserAccountMutationHookResult = ReturnType<typeof useDeleteUserAccountMutation>;
+export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAccountMutation>;
+export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
 export const GetViewFieldsDocument = gql`
     query GetViewFields($where: ViewFieldWhereInput) {
   viewFields: findManyViewField(where: $where) {
