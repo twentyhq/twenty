@@ -18,4 +18,5 @@ export type ModelSelectMap = {
   Attachment: Prisma.AttachmentSelect;
   Favorite: Prisma.FavoriteSelect;
   ViewField: Prisma.ViewFieldSelect;
+  Favorite: Prisma.FavoriteSelect;
 };

@@ -245,6 +245,7 @@ model Company {
   updatedAt      DateTime         @updatedAt
   Favorite       Favorite[]
   ActivityTarget ActivityTarget[]
+  Favorite       Favorite[]
 
   @@map("companies")
 }
@@ -293,6 +294,7 @@ model Person {
   updatedAt      DateTime         @updatedAt
   Favorite       Favorite[]
   ActivityTarget ActivityTarget[]
+  Favorite       Favorite[]
 
   @@map("people")
 }
