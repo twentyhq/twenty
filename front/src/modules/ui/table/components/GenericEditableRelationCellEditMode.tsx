@@ -8,12 +8,12 @@ import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell'
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 import {
-  EntityFieldDefinition,
-  EntityFieldRelationMetadata,
-} from '@/ui/table/types/EntityFieldMetadata';
+  ViewFieldDefinition,
+  ViewFieldRelationMetadata,
+} from '@/ui/table/types/ViewField';
 
 type OwnProps = {
-  fieldDefinition: EntityFieldDefinition<EntityFieldRelationMetadata>;
+  fieldDefinition: ViewFieldDefinition<ViewFieldRelationMetadata>;
 };
 
 export function GenericEditableRelationCellEditMode({

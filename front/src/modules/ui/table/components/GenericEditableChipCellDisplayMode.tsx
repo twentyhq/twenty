@@ -5,13 +5,13 @@ import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 import {
-  EntityFieldChipMetadata,
-  EntityFieldDefinition,
-} from '@/ui/table/types/EntityFieldMetadata';
+  ViewFieldChipMetadata,
+  ViewFieldDefinition,
+} from '@/ui/table/types/ViewField';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 type OwnProps = {
-  fieldDefinition: EntityFieldDefinition<EntityFieldChipMetadata>;
+  fieldDefinition: ViewFieldDefinition<ViewFieldChipMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };

@@ -15,6 +15,7 @@ import {
   useGetCompaniesQuery,
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
+import { companiesFilters } from '~/pages/companies/companies-filters';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 
 export function CompanyTable() {
@@ -39,6 +40,7 @@ export function CompanyTable() {
         orderBy={orderBy}
         whereFilters={whereFilters}
         fieldMetadataArray={companyFieldMetadataArray}
+        filterDefinitionArray={companiesFilters}
       />
       <EntityTable
         viewName="All Companies"

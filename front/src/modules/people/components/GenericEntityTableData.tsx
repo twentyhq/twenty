@@ -1,4 +1,5 @@
-import { EntityFieldDefinition } from '@/ui/table/types/EntityFieldMetadata';
+import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
+import { ViewFieldDefinition } from '@/ui/table/types/ViewField';
 
 import { useSetEntityTableData } from '../hooks/useSetEntityTableData';
 import { defaultOrderBy } from '../queries';
@@ -9,12 +10,14 @@ export function GenericEntityTableData({
   orderBy = defaultOrderBy,
   whereFilters,
   fieldMetadataArray,
+  filterDefinitionArray,
 }: {
   useGetRequest: any;
   getRequestResultKey: string;
   orderBy?: any;
   whereFilters?: any;
-  fieldMetadataArray: EntityFieldDefinition[];
+  fieldMetadataArray: ViewFieldDefinition<unknown>[];
+  filterDefinitionArray: FilterDefinition[];
 }) {
   const setEntityTableData = useSetEntityTableData();
 
@@ -26,7 +29,7 @@ export function GenericEntityTableData({
       const entities = data[getRequestResultKey] ?? [];
       console.log({ entities });
 
-      setEntityTableData(entities, fieldMetadataArray);
+      setEntityTableData(entities, fieldMetadataArray, filterDefinitionArray);
     },
   });
 

@@ -1,36 +1,36 @@
 import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 
-export type EntityFieldType = 'text' | 'relation' | 'chip';
+export type ViewFieldType = 'text' | 'relation' | 'chip';
 
-export type EntityFieldTextMetadata = {
+export type ViewFieldTextMetadata = {
   placeHolder: string;
   fieldName: string;
 };
 
-export type EntityFieldRelationMetadata = {
+export type ViewFieldRelationMetadata = {
   relationType: Entity;
   fieldName: string;
 };
 
-export type EntityFieldChipMetadata = {
+export type ViewFieldChipMetadata = {
   relationType: Entity;
   contentFieldName: string;
   urlFieldName: string;
 };
 
-export type EntityFieldDefinition<
+export type ViewFieldDefinition<
   T extends
-    | EntityFieldTextMetadata
-    | EntityFieldRelationMetadata
-    | EntityFieldChipMetadata
+    | ViewFieldTextMetadata
+    | ViewFieldRelationMetadata
+    | ViewFieldChipMetadata
     | unknown,
 > = {
+  id: string;
   columnLabel: string;
   columnSize: number;
   columnOrder: number;
   columnIcon?: JSX.Element;
   filterIcon?: JSX.Element;
-  type: EntityFieldType;
-  fieldName: string;
+  type: ViewFieldType;
   metadata: T;
 };

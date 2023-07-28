@@ -7,7 +7,7 @@ import { RecoilScope } from '../../recoil-scope/components/RecoilScope';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 import { ColumnIndexContext } from '../states/ColumnIndexContext';
 import { contextMenuPositionState } from '../states/contextMenuPositionState';
-import { EntityFieldMetadataContext } from '../states/EntityFieldMetadataContext';
+import { ViewFieldContext } from '../states/ViewFieldContext';
 
 export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
@@ -25,7 +25,7 @@ export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
     });
   }
 
-  const entityFieldMetadata = useContext(EntityFieldMetadataContext);
+  const entityFieldMetadata = useContext(ViewFieldContext);
 
   if (!entityFieldMetadata) {
     return null;

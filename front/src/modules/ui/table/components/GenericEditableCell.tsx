@@ -1,19 +1,19 @@
-import { EntityFieldDefinition } from '@/ui/table/types/EntityFieldMetadata';
+import { ViewFieldDefinition } from '@/ui/table/types/ViewField';
 
-import { isEntityFieldChip } from '../types/guards/isEntityFieldChip';
-import { isEntityFieldRelation } from '../types/guards/isEntityFieldRelation';
-import { isEntityFieldText } from '../types/guards/isEntityFieldText';
+import { isViewFieldChip } from '../types/guards/isViewFieldChip';
+import { isViewFieldRelation } from '../types/guards/isViewFieldRelation';
+import { isViewFieldText } from '../types/guards/isViewFieldText';
 
 import { GenericEditableChipCell } from './GenericEditableChipCell';
 import { GenericEditableRelationCell } from './GenericEditableRelationCell';
 import { GenericEditableTextCell } from './GenericEditableTextCell';
 
 type OwnProps = {
-  fieldDefinition: EntityFieldDefinition<unknown>;
+  fieldDefinition: ViewFieldDefinition<unknown>;
 };
 
 export function GenericEditableCell({ fieldDefinition }: OwnProps) {
-  if (isEntityFieldText(fieldDefinition)) {
+  if (isViewFieldText(fieldDefinition)) {
     return (
       <GenericEditableTextCell
         fieldName={fieldDefinition.metadata.fieldName}
@@ -21,9 +21,9 @@ export function GenericEditableCell({ fieldDefinition }: OwnProps) {
         editModeHorizontalAlign="left"
       />
     );
-  } else if (isEntityFieldRelation(fieldDefinition)) {
+  } else if (isViewFieldRelation(fieldDefinition)) {
     return <GenericEditableRelationCell fieldDefinition={fieldDefinition} />;
-  } else if (isEntityFieldChip(fieldDefinition)) {
+  } else if (isViewFieldChip(fieldDefinition)) {
     return (
       <GenericEditableChipCell
         fieldDefinition={fieldDefinition}

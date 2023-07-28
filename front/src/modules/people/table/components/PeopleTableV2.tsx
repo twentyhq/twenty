@@ -16,6 +16,7 @@ import {
   useGetPeopleQuery,
   useUpdateOnePersonMutation,
 } from '~/generated/graphql';
+import { peopleFilters } from '~/pages/people/people-filters';
 import { availableSorts } from '~/pages/people/people-sorts';
 
 export function PeopleTable() {
@@ -40,6 +41,7 @@ export function PeopleTable() {
         orderBy={orderBy}
         whereFilters={whereFilters}
         fieldMetadataArray={peopleFieldMetadataArray}
+        filterDefinitionArray={peopleFilters}
       />
       <EntityTable
         viewName="All People"

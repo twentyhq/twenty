@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
-import { entityFieldMetadataArrayState } from '@/ui/table/states/entityFieldMetadataArrayState';
+import { viewFieldsState } from '@/ui/table/states/viewFieldsState';
 import { EntityUpdateMutationHookContext } from '@/ui/table/states/EntityUpdateMutationHookContext';
 
 export function useUpdateEntityField() {
@@ -10,9 +10,7 @@ export function useUpdateEntityField() {
 
   const [updateEntity] = useUpdateEntityMutation();
 
-  const entityFieldMetadataArray = useRecoilValue(
-    entityFieldMetadataArrayState,
-  );
+  const entityFieldMetadataArray = useRecoilValue(viewFieldsState);
 
   return function updatePeopleField(
     currentEntityId: string,
@@ -20,7 +18,7 @@ export function useUpdateEntityField() {
     newFieldValue: unknown,
   ) {
     const fieldMetadata = entityFieldMetadataArray.find(
-      (metadata) => metadata === fieldName,
+      (metadata) => metadata.id === fieldName,
     );
 
     if (!fieldMetadata) {
