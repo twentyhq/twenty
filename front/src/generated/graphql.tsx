@@ -293,7 +293,7 @@ export type CommentThreadTarget = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
+  workspace?: Maybe<Workspace>;
 };
 
 export type CommentThreadTargetCreateManyCommentThreadInput = {
@@ -712,6 +712,17 @@ export enum FileFolder {
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
+export type IntFilter = {
+  equals?: InputMaybe<Scalars['Int']>;
+  gt?: InputMaybe<Scalars['Int']>;
+  gte?: InputMaybe<Scalars['Int']>;
+  in?: InputMaybe<Array<Scalars['Int']>>;
+  lt?: InputMaybe<Scalars['Int']>;
+  lte?: InputMaybe<Scalars['Int']>;
+  not?: InputMaybe<NestedIntFilter>;
+  notIn?: InputMaybe<Array<Scalars['Int']>>;
+};
+
 export type IntNullableFilter = {
   equals?: InputMaybe<Scalars['Int']>;
   gt?: InputMaybe<Scalars['Int']>;
@@ -765,6 +776,7 @@ export type Mutation = {
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
   updateOnePipelineStage?: Maybe<PipelineStage>;
+  updateOneViewField: ViewField;
   updateUser: User;
   updateWorkspace: Workspace;
   uploadAttachment: Scalars['String'];
@@ -880,6 +892,12 @@ export type MutationUpdateOnePipelineStageArgs = {
 };
 
 
+export type MutationUpdateOneViewFieldArgs = {
+  data: ViewFieldUpdateInput;
+  where: ViewFieldWhereUniqueInput;
+};
+
+
 export type MutationUpdateUserArgs = {
   data: UserUpdateInput;
   where: UserWhereUniqueInput;
@@ -983,6 +1001,17 @@ export type NestedEnumPipelineProgressableTypeFilter = {
   in?: InputMaybe<Array<PipelineProgressableType>>;
   not?: InputMaybe<NestedEnumPipelineProgressableTypeFilter>;
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
+};
+
+export type NestedIntFilter = {
+  equals?: InputMaybe<Scalars['Int']>;
+  gt?: InputMaybe<Scalars['Int']>;
+  gte?: InputMaybe<Scalars['Int']>;
+  in?: InputMaybe<Array<Scalars['Int']>>;
+  lt?: InputMaybe<Scalars['Int']>;
+  lte?: InputMaybe<Scalars['Int']>;
+  not?: InputMaybe<NestedIntFilter>;
+  notIn?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 export type NestedIntNullableFilter = {
@@ -1500,6 +1529,7 @@ export type Query = {
   findManyPipelineProgress: Array<PipelineProgress>;
   findManyPipelineStage: Array<PipelineStage>;
   findManyUser: Array<User>;
+  findManyViewField: Array<ViewField>;
   findManyWorkspaceMember: Array<WorkspaceMember>;
   findUniqueCompany: Company;
   findUniquePerson: Person;
@@ -1586,6 +1616,16 @@ export type QueryFindManyUserArgs = {
 };
 
 
+export type QueryFindManyViewFieldArgs = {
+  cursor?: InputMaybe<ViewFieldWhereUniqueInput>;
+  distinct?: InputMaybe<Array<ViewFieldScalarFieldEnum>>;
+  orderBy?: InputMaybe<Array<ViewFieldOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ViewFieldWhereInput>;
+};
+
+
 export type QueryFindManyWorkspaceMemberArgs = {
   cursor?: InputMaybe<WorkspaceMemberWhereUniqueInput>;
   distinct?: InputMaybe<Array<WorkspaceMemberScalarFieldEnum>>;
@@ -1597,7 +1637,7 @@ export type QueryFindManyWorkspaceMemberArgs = {
 
 
 export type QueryFindUniqueCompanyArgs = {
-  id: Scalars['String'];
+  where: CompanyWhereUniqueInput;
 };
 
 
@@ -1867,6 +1907,66 @@ export type Verify = {
   user: User;
 };
 
+export type ViewField = {
+  __typename?: 'ViewField';
+  fieldName: Scalars['String'];
+  id: Scalars['ID'];
+  index: Scalars['Int'];
+  isVisible: Scalars['Boolean'];
+  objectName: Scalars['String'];
+  sizeInPx: Scalars['Int'];
+};
+
+export type ViewFieldOrderByWithRelationInput = {
+  fieldName?: InputMaybe<SortOrder>;
+  id?: InputMaybe<SortOrder>;
+  index?: InputMaybe<SortOrder>;
+  isVisible?: InputMaybe<SortOrder>;
+  objectName?: InputMaybe<SortOrder>;
+  sizeInPx?: InputMaybe<SortOrder>;
+};
+
+export enum ViewFieldScalarFieldEnum {
+  FieldName = 'fieldName',
+  Id = 'id',
+  Index = 'index',
+  IsVisible = 'isVisible',
+  ObjectName = 'objectName',
+  SizeInPx = 'sizeInPx',
+  WorkspaceId = 'workspaceId'
+}
+
+export type ViewFieldUpdateInput = {
+  fieldName?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  index?: InputMaybe<Scalars['Int']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  objectName?: InputMaybe<Scalars['String']>;
+  sizeInPx?: InputMaybe<Scalars['Int']>;
+};
+
+export type ViewFieldUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<ViewFieldWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ViewFieldWhereUniqueInput>>;
+  set?: InputMaybe<Array<ViewFieldWhereUniqueInput>>;
+};
+
+export type ViewFieldWhereInput = {
+  AND?: InputMaybe<Array<ViewFieldWhereInput>>;
+  NOT?: InputMaybe<Array<ViewFieldWhereInput>>;
+  OR?: InputMaybe<Array<ViewFieldWhereInput>>;
+  fieldName?: InputMaybe<StringFilter>;
+  id?: InputMaybe<StringFilter>;
+  index?: InputMaybe<IntFilter>;
+  isVisible?: InputMaybe<BoolFilter>;
+  objectName?: InputMaybe<StringFilter>;
+  sizeInPx?: InputMaybe<IntFilter>;
+};
+
+export type ViewFieldWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export type Workspace = {
   __typename?: 'Workspace';
   Attachment?: Maybe<Array<Attachment>>;
@@ -1885,6 +1985,7 @@ export type Workspace = {
   pipelineStages?: Maybe<Array<PipelineStage>>;
   pipelines?: Maybe<Array<Pipeline>>;
   updatedAt: Scalars['DateTime'];
+  viewFields?: Maybe<Array<ViewField>>;
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
 };
 
@@ -1959,6 +2060,7 @@ export type WorkspaceUpdateInput = {
   pipelineStages?: InputMaybe<PipelineStageUpdateManyWithoutWorkspaceNestedInput>;
   pipelines?: InputMaybe<PipelineUpdateManyWithoutWorkspaceNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  viewFields?: InputMaybe<ViewFieldUpdateManyWithoutWorkspaceNestedInput>;
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
 };
 
@@ -2103,7 +2205,7 @@ export type GetCompaniesQueryVariables = Exact<{
 export type GetCompaniesQuery = { __typename?: 'Query', companies: Array<{ __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _commentThreadCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null }> };
 
 export type GetCompanyQueryVariables = Exact<{
-  id: Scalars['String'];
+  where: CompanyWhereUniqueInput;
 }>;
 
 
@@ -2341,6 +2443,21 @@ export type RemoveProfilePictureMutationVariables = Exact<{
 
 
 export type RemoveProfilePictureMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, avatarUrl?: string | null } };
+
+export type GetViewFieldsQueryVariables = Exact<{
+  where?: InputMaybe<ViewFieldWhereInput>;
+}>;
+
+
+export type GetViewFieldsQuery = { __typename?: 'Query', viewFields: Array<{ __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number }> };
+
+export type UpdateViewFieldMutationVariables = Exact<{
+  data: ViewFieldUpdateInput;
+  where: ViewFieldWhereUniqueInput;
+}>;
+
+
+export type UpdateViewFieldMutation = { __typename?: 'Mutation', updateOneViewField: { __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number } };
 
 export type GetWorkspaceMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3167,8 +3284,8 @@ export type GetCompaniesQueryHookResult = ReturnType<typeof useGetCompaniesQuery
 export type GetCompaniesLazyQueryHookResult = ReturnType<typeof useGetCompaniesLazyQuery>;
 export type GetCompaniesQueryResult = Apollo.QueryResult<GetCompaniesQuery, GetCompaniesQueryVariables>;
 export const GetCompanyDocument = gql`
-    query GetCompany($id: String!) {
-  findUniqueCompany(id: $id) {
+    query GetCompany($where: CompanyWhereUniqueInput!) {
+  findUniqueCompany(where: $where) {
     id
     domainName
     name
@@ -3199,7 +3316,7 @@ export const GetCompanyDocument = gql`
  * @example
  * const { data, loading, error } = useGetCompanyQuery({
  *   variables: {
- *      id: // value for 'id'
+ *      where: // value for 'where'
  *   },
  * });
  */
@@ -4470,6 +4587,83 @@ export function useRemoveProfilePictureMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveProfilePictureMutationHookResult = ReturnType<typeof useRemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationResult = Apollo.MutationResult<RemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationOptions = Apollo.BaseMutationOptions<RemoveProfilePictureMutation, RemoveProfilePictureMutationVariables>;
+export const GetViewFieldsDocument = gql`
+    query GetViewFields($where: ViewFieldWhereInput) {
+  viewFields: findManyViewField(where: $where) {
+    id
+    fieldName
+    isVisible
+    sizeInPx
+    index
+  }
+}
+    `;
+
+/**
+ * __useGetViewFieldsQuery__
+ *
+ * To run a query within a React component, call `useGetViewFieldsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetViewFieldsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetViewFieldsQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGetViewFieldsQuery(baseOptions?: Apollo.QueryHookOptions<GetViewFieldsQuery, GetViewFieldsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetViewFieldsQuery, GetViewFieldsQueryVariables>(GetViewFieldsDocument, options);
+      }
+export function useGetViewFieldsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewFieldsQuery, GetViewFieldsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetViewFieldsQuery, GetViewFieldsQueryVariables>(GetViewFieldsDocument, options);
+        }
+export type GetViewFieldsQueryHookResult = ReturnType<typeof useGetViewFieldsQuery>;
+export type GetViewFieldsLazyQueryHookResult = ReturnType<typeof useGetViewFieldsLazyQuery>;
+export type GetViewFieldsQueryResult = Apollo.QueryResult<GetViewFieldsQuery, GetViewFieldsQueryVariables>;
+export const UpdateViewFieldDocument = gql`
+    mutation UpdateViewField($data: ViewFieldUpdateInput!, $where: ViewFieldWhereUniqueInput!) {
+  updateOneViewField(data: $data, where: $where) {
+    id
+    fieldName
+    isVisible
+    sizeInPx
+    index
+  }
+}
+    `;
+export type UpdateViewFieldMutationFn = Apollo.MutationFunction<UpdateViewFieldMutation, UpdateViewFieldMutationVariables>;
+
+/**
+ * __useUpdateViewFieldMutation__
+ *
+ * To run a mutation, you first call `useUpdateViewFieldMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateViewFieldMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateViewFieldMutation, { data, loading, error }] = useUpdateViewFieldMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useUpdateViewFieldMutation(baseOptions?: Apollo.MutationHookOptions<UpdateViewFieldMutation, UpdateViewFieldMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateViewFieldMutation, UpdateViewFieldMutationVariables>(UpdateViewFieldDocument, options);
+      }
+export type UpdateViewFieldMutationHookResult = ReturnType<typeof useUpdateViewFieldMutation>;
+export type UpdateViewFieldMutationResult = Apollo.MutationResult<UpdateViewFieldMutation>;
+export type UpdateViewFieldMutationOptions = Apollo.BaseMutationOptions<UpdateViewFieldMutation, UpdateViewFieldMutationVariables>;
 export const GetWorkspaceMembersDocument = gql`
     query GetWorkspaceMembers {
   workspaceMembers: findManyWorkspaceMember {

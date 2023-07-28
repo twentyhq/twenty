@@ -48,7 +48,7 @@ export function WorkspaceMemberCard({ workspaceMember, accessory }: OwnProps) {
         colorId={workspaceMember.user.id}
         placeholder={workspaceMember.user.firstName || ''}
         type="squared"
-        size={40}
+        size="xl"
       />
       <Content>
         <NameText>{workspaceMember.user.displayName}</NameText>

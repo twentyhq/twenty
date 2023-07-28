@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
@@ -82,8 +81,6 @@ export function CommandMenu() {
     </StyledGroup>
   );*/
 
-  const theme = useTheme();
-
   return (
     <StyledDialog
       open={isCommandMenuOpened}
@@ -112,7 +109,7 @@ export function CommandMenu() {
                 icon={
                   <Avatar
                     avatarUrl={person.avatarUrl}
-                    size={theme.icon.size.sm}
+                    size="sm"
                     colorId={person.id}
                     placeholder={person.name}
                   />
@@ -131,7 +128,7 @@ export function CommandMenu() {
                 icon={
                   <Avatar
                     avatarUrl={company.avatarUrl}
-                    size={theme.icon.size.sm}
+                    size="sm"
                     colorId={company.id}
                     placeholder={company.name}
                   />

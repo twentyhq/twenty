@@ -55,8 +55,10 @@ export const FilterByName: Story = {
     expect(await canvas.findByText('Aircall')).toBeInTheDocument();
     await expect(canvas.queryAllByText('Qonto')).toStrictEqual([]);
 
-    expect(await canvas.findByText('Name:')).toBeInTheDocument();
-    expect(await canvas.findByText('Contains Air')).toBeInTheDocument();
+    const accountOwnerFilter = canvas.getAllByText('Name').find((item) => {
+      return item.parentElement?.textContent?.includes('Name:  Air');
+    });
+    expect(accountOwnerFilter).toBeInTheDocument();
   },
 };
 
@@ -100,7 +102,13 @@ export const FilterByAccountOwner: Story = {
     // expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
     // await expect(canvas.queryAllByText('Qonto')).toStrictEqual([]);
 
-    expect(await canvas.findByText('Account owner:')).toBeInTheDocument();
-    expect(await canvas.findByText('Is Charles Test')).toBeInTheDocument();
+    const accountOwnerFilter = canvas
+      .getAllByText('Account owner')
+      .find((item) => {
+        return item.parentElement?.textContent?.includes(
+          'Account owner:  Charles Test',
+        );
+      });
+    expect(accountOwnerFilter).toBeInTheDocument();
   },
 };
