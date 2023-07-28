@@ -82,6 +82,7 @@ export function PipelineProgressPointOfContactPicker({
   return (
     <SingleEntitySelect
       onCreate={handleCreate}
+      onCancel={onCancel}
       onEntitySelected={handleEntitySelected}
       entities={{
         entitiesToSelect: people.entitiesToSelect,

@@ -35,6 +35,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
 const StyledCheckboxContainer = styled.div`

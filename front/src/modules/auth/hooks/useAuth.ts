@@ -77,7 +77,7 @@ export function useAuth() {
       const { loginToken } = await handleChallenge(email, password);
 
       const { user } = await handleVerify(loginToken.token);
-      return { user };
+      return user;
     },
     [handleChallenge, handleVerify],
   );
@@ -112,7 +112,7 @@ export function useAuth() {
         signUpResult.data?.signUp.loginToken.token,
       );
 
-      return { user };
+      return user;
     },
     [signUp, handleVerify],
   );

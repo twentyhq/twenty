@@ -105,16 +105,21 @@ export function useSignInUp() {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
         }
+        let user;
         if (signInUpMode === SignInUpMode.SignIn) {
-          await signInWithCredentials(data.email, data.password);
+          user = await signInWithCredentials(data.email, data.password);
         } else {
-          await signUpWithCredentials(
+          user = await signUpWithCredentials(
             data.email,
             data.password,
             workspaceInviteHash,
           );
         }
-        navigate('/create/workspace');
+        if (user?.workspaceMember?.workspace?.displayName) {
+          navigate('/');
+        } else {
+          navigate('/create/workspace');
+        }
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: 'error',
