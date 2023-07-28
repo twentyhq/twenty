@@ -14,14 +14,15 @@ export default meta;
 
 type Story = StoryObj<typeof Modal>;
 
-const Child = styled.div`
+const StyledContentContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   margin: 5px;
+  padding: ${({ theme })=>theme.spacing(10) } 
 `;
 
 const args = {
   isOpen: true,
-  children: <Child>Lorem ipsum</Child>,
+  children: <StyledContentContainer>Lorem ipsum</StyledContentContainer>,
 };
 
 export const Default: Story = {
