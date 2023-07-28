@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 
 const StyledContainer = styled.div`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: column;
   padding: ${({ theme }) => theme.spacing(10)};
+  width: calc(400px - ${({ theme }) => theme.spacing(10 * 2)});
 `;
 
 const ModalDiv = styled(motion.div)`

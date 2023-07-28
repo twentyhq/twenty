@@ -32,7 +32,7 @@ const StyledTitle = styled.div`
 `;
 
 const StyledModal = styled(Modal)`
-  width: calc(400px - ${({ theme }) => theme.spacing(10 * 2)});
+  color: ${({ theme }) => theme.font.color.primary};
   > * + * {
     margin-top: ${({ theme }) => theme.spacing(8)};
   }
