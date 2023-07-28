@@ -894,6 +894,7 @@ export type Mutation = {
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
+  deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
   renewToken: AuthTokens;
   signUp: LoginToken;
@@ -2522,7 +2523,7 @@ export type SearchPeopleQueryVariables = Exact<{
 }>;
 
 
-export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, createdAt: string }> };
+export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, createdAt: string }> };
 
 export type SearchUserQueryVariables = Exact<{
   where?: InputMaybe<UserWhereInput>;
@@ -2546,6 +2547,15 @@ export type SearchCompanyQueryVariables = Exact<{
 
 
 export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> };
+
+export type SearchActivityQueryVariables = Exact<{
+  where?: InputMaybe<ActivityWhereInput>;
+  limit?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ActivityOrderByWithRelationInput> | ActivityOrderByWithRelationInput>;
+}>;
+
+
+export type SearchActivityQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Activity', id: string, title?: string | null, body?: string | null }> };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2578,6 +2588,11 @@ export type RemoveProfilePictureMutationVariables = Exact<{
 
 
 export type RemoveProfilePictureMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, avatarUrl?: string | null } };
+
+export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DeleteUserAccountMutation = { __typename?: 'Mutation', deleteUserAccount: { __typename?: 'User', id: string } };
 
 export type GetViewFieldsQueryVariables = Exact<{
   where?: InputMaybe<ViewFieldWhereInput>;
@@ -4367,6 +4382,7 @@ export const SearchPeopleDocument = gql`
     city
     firstName
     lastName
+    displayName
     createdAt
   }
 }
@@ -4516,6 +4532,49 @@ export function useSearchCompanyLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type SearchCompanyQueryHookResult = ReturnType<typeof useSearchCompanyQuery>;
 export type SearchCompanyLazyQueryHookResult = ReturnType<typeof useSearchCompanyLazyQuery>;
 export type SearchCompanyQueryResult = Apollo.QueryResult<SearchCompanyQuery, SearchCompanyQueryVariables>;
+export const SearchActivityDocument = gql`
+    query SearchActivity($where: ActivityWhereInput, $limit: Int, $orderBy: [ActivityOrderByWithRelationInput!]) {
+  searchResults: findManyActivities(
+    where: $where
+    take: $limit
+    orderBy: $orderBy
+  ) {
+    id
+    title
+    body
+  }
+}
+    `;
+
+/**
+ * __useSearchActivityQuery__
+ *
+ * To run a query within a React component, call `useSearchActivityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchActivityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchActivityQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      limit: // value for 'limit'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useSearchActivityQuery(baseOptions?: Apollo.QueryHookOptions<SearchActivityQuery, SearchActivityQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchActivityQuery, SearchActivityQueryVariables>(SearchActivityDocument, options);
+      }
+export function useSearchActivityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchActivityQuery, SearchActivityQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchActivityQuery, SearchActivityQueryVariables>(SearchActivityDocument, options);
+        }
+export type SearchActivityQueryHookResult = ReturnType<typeof useSearchActivityQuery>;
+export type SearchActivityLazyQueryHookResult = ReturnType<typeof useSearchActivityLazyQuery>;
+export type SearchActivityQueryResult = Apollo.QueryResult<SearchActivityQuery, SearchActivityQueryVariables>;
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
   currentUser {
@@ -4727,6 +4786,38 @@ export function useRemoveProfilePictureMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveProfilePictureMutationHookResult = ReturnType<typeof useRemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationResult = Apollo.MutationResult<RemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationOptions = Apollo.BaseMutationOptions<RemoveProfilePictureMutation, RemoveProfilePictureMutationVariables>;
+export const DeleteUserAccountDocument = gql`
+    mutation DeleteUserAccount {
+  deleteUserAccount {
+    id
+  }
+}
+    `;
+export type DeleteUserAccountMutationFn = Apollo.MutationFunction<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
+
+/**
+ * __useDeleteUserAccountMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserAccountMutation, { data, loading, error }] = useDeleteUserAccountMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDeleteUserAccountMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>(DeleteUserAccountDocument, options);
+      }
+export type DeleteUserAccountMutationHookResult = ReturnType<typeof useDeleteUserAccountMutation>;
+export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAccountMutation>;
+export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
 export const GetViewFieldsDocument = gql`
     query GetViewFields($where: ViewFieldWhereInput) {
   viewFields: findManyViewField(where: $where) {

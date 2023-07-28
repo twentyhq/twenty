@@ -59,7 +59,7 @@ export class AbilityFactory {
       },
     });
     can(AbilityAction.Update, 'User', { id: user.id });
-    cannot(AbilityAction.Delete, 'User');
+    can(AbilityAction.Delete, 'User', { id: user.id });
 
     // Workspace
     can(AbilityAction.Read, 'Workspace');
