@@ -554,6 +554,13 @@ model Attachment {
   @@map("attachments")
 }
 
+model Favorite {
+  id       String @id @default(uuid())
+  favorite String
+
+  @@map("favorites")
+}
+
 model ViewField {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
