@@ -54,7 +54,7 @@ export function EntityChip({
             avatarUrl={pictureUrl}
             colorId={entityId}
             placeholder={name}
-            size={14}
+            size="sm"
             type={avatarType}
           />
         }

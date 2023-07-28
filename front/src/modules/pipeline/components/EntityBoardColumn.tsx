@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
-import { Droppable, DroppableProvided } from '@hello-pangea/dnd';
+import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
@@ -27,6 +27,12 @@ const StyledNewCardButtonContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledColumnCardsContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+`;
+
 const BoardColumnCardsContainer = ({
   children,
   droppableProvided,
@@ -35,13 +41,13 @@ const BoardColumnCardsContainer = ({
   droppableProvided: DroppableProvided;
 }) => {
   return (
-    <div
+    <StyledColumnCardsContainer
       ref={droppableProvided?.innerRef}
       {...droppableProvided?.droppableProps}
     >
       {children}
       <StyledPlaceholder>{droppableProvided?.placeholder}</StyledPlaceholder>
-    </div>
+    </StyledColumnCardsContainer>
   );
 };
 
@@ -112,10 +118,22 @@ export function EntityBoardColumn({
                 />
               </RecoilScope>
             ))}
+            <Draggable
+              draggableId={`new-${column.pipelineStageId}`}
+              index={column.pipelineProgressIds.length}
+            >
+              {(draggableProvided) => (
+                <div
+                  ref={draggableProvided?.innerRef}
+                  {...draggableProvided?.draggableProps}
+                >
+                  <StyledNewCardButtonContainer>
+                    <RecoilScope>{boardOptions.newCardComponent}</RecoilScope>
+                  </StyledNewCardButtonContainer>
+                </div>
+              )}
+            </Draggable>
           </BoardColumnCardsContainer>
-          <StyledNewCardButtonContainer>
-            <RecoilScope>{boardOptions.newCardComponent}</RecoilScope>
-          </StyledNewCardButtonContainer>
         </BoardColumn>
       )}
     </Droppable>

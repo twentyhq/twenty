@@ -1,5 +1,4 @@
 import { Tooltip } from 'react-tooltip';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -70,16 +69,16 @@ export function ShowPageSummaryCard({
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDate(date) : '';
-  const theme = useTheme();
   const dateElementId = `date-id-${uuidV4()}`;
 
   return (
     <StyledShowPageSummaryCard>
       <Avatar
         avatarUrl={logoOrAvatar}
-        size={theme.icon.size.xl}
+        size="xl"
         colorId={id}
         placeholder={title}
+        type="rounded"
       />
       <StyledInfoContainer>
         <StyledTitle>
