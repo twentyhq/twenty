@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { GET_PEOPLE } from '@/people/queries';
-import { PeopleTable } from '@/people/table/components/PeopleTable';
+import { PeopleTable } from '@/people/table/components/PeopleTableV2';
 import { TableActionBarButtonCreateActivityPeople } from '@/people/table/components/TableActionBarButtonCreateActivityPeople';
 import { TableActionBarButtonDeletePeople } from '@/people/table/components/TableActionBarButtonDeletePeople';
 import { IconUser } from '@/ui/icon';

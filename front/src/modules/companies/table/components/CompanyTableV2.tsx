@@ -39,7 +39,7 @@ export function CompanyTable() {
         useGetRequest={useGetCompaniesQuery}
         orderBy={orderBy}
         whereFilters={whereFilters}
-        fieldMetadataArray={companyViewFields}
+        viewFields={companyViewFields}
         filterDefinitionArray={companiesFilters}
       />
       <EntityTable

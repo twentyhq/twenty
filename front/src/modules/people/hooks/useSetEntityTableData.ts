@@ -22,7 +22,7 @@ export function useSetEntityTableData() {
     ({ set, snapshot }) =>
       <T extends { id: string }>(
         newEntityArray: T[],
-        entityFieldMetadataArray: ViewFieldDefinition<unknown>[],
+        viewFields: ViewFieldDefinition<unknown>[],
         filters: FilterDefinition[],
       ) => {
         for (const entity of newEntityArray) {
@@ -48,13 +48,13 @@ export function useSetEntityTableData() {
         resetTableRowSelection();
 
         set(entityTableDimensionsState, {
-          numberOfColumns: entityFieldMetadataArray.length,
+          numberOfColumns: viewFields.length,
           numberOfRows: entityIds.length,
         });
 
         set(availableFiltersScopedState(tableContextScopeId), filters);
 
-        set(viewFieldsState, entityFieldMetadataArray);
+        set(viewFieldsState, viewFields);
 
         set(isFetchingEntityTableDataState, false);
       },

@@ -9,27 +9,24 @@ export function GenericEntityTableData({
   getRequestResultKey,
   orderBy = defaultOrderBy,
   whereFilters,
-  fieldMetadataArray,
+  viewFields,
   filterDefinitionArray,
 }: {
   useGetRequest: any;
   getRequestResultKey: string;
   orderBy?: any;
   whereFilters?: any;
-  fieldMetadataArray: ViewFieldDefinition<unknown>[];
+  viewFields: ViewFieldDefinition<unknown>[];
   filterDefinitionArray: FilterDefinition[];
 }) {
   const setEntityTableData = useSetEntityTableData();
-
-  console.log({ fieldMetadataArray });
 
   useGetRequest({
     variables: { orderBy, where: whereFilters },
     onCompleted: (data: any) => {
       const entities = data[getRequestResultKey] ?? [];
-      console.log({ entities });
 
-      setEntityTableData(entities, fieldMetadataArray, filterDefinitionArray);
+      setEntityTableData(entities, viewFields, filterDefinitionArray);
     },
   });
 
