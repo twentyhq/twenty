@@ -3,8 +3,8 @@ import { gql } from '@apollo/client';
 import { useGetCompanyQuery } from '~/generated/graphql';
 
 export const GET_COMPANY = gql`
-  query GetCompany($id: String!) {
-    findUniqueCompany(id: $id) {
+  query GetCompany($where: CompanyWhereUniqueInput!) {
+    findUniqueCompany(where: $where) {
       id
       domainName
       name
@@ -24,5 +24,5 @@ export const GET_COMPANY = gql`
 `;
 
 export function useCompanyQuery(id: string) {
-  return useGetCompanyQuery({ variables: { id } });
+  return useGetCompanyQuery({ variables: { where: { id } } });
 }

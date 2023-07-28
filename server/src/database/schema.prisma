@@ -170,6 +170,7 @@ model Workspace {
   pipelineStages     PipelineStage[]
   pipelineProgresses PipelineProgress[]
   activityTargets    ActivityTarget[]
+  viewFields         ViewField[]
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -233,8 +234,9 @@ model Company {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ActivityTarget ActivityTarget[]
 
   @@map("companies")
 }
@@ -276,8 +278,9 @@ model Person {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ActivityTarget ActivityTarget[]
 
   @@map("people")
 }
@@ -385,6 +388,12 @@ model ActivityTarget {
   workspace       Workspace       @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId     String
+
+  personId String?
+  person   Person? @relation(fields: [personId], references: [id])
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -526,4 +535,23 @@ model Attachment {
   updatedAt DateTime  @updatedAt
 
   @@map("attachments")
+}
+
+model ViewField {
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
+
+  fieldName  String
+  index      Int
+  isVisible  Boolean
+  objectName String
+  sizeInPx   Int
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+
+  @@map("viewFields")
 }

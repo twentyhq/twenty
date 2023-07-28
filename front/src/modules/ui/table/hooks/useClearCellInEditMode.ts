@@ -2,7 +2,6 @@ import { useRecoilCallback } from 'recoil';
 
 import { currentCellInEditModePositionState } from '../states/currentCellInEditModePositionState';
 import { isCellInEditModeFamilyState } from '../states/isCellInEditModeFamilyState';
-import { isSomeInputInEditModeState } from '../states/isSomeInputInEditModeState';
 
 export function useCloseCurrentCellInEditMode() {
   return useRecoilCallback(({ set, snapshot }) => {
@@ -12,11 +11,6 @@ export function useCloseCurrentCellInEditMode() {
       );
 
       set(isCellInEditModeFamilyState(currentCellInEditModePosition), false);
-
-      // TODO: find a way to remove this
-      await new Promise((resolve) => setTimeout(resolve, 20));
-
-      set(isSomeInputInEditModeState, false);
     };
   }, []);
 }

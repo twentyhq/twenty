@@ -3,6 +3,8 @@ import { useRecoilCallback } from 'recoil';
 
 import { internalHotkeysEnabledScopesState } from '../states/internal/internalHotkeysEnabledScopesState';
 
+const DEBUG_HOTKEY_SCOPE = false;
+
 export function useScopedHotkeyCallback() {
   return useRecoilCallback(
     ({ snapshot }) =>
@@ -24,7 +26,29 @@ export function useScopedHotkeyCallback() {
           .valueOrThrow();
 
         if (!currentHotkeyScopes.includes(scope)) {
+          if (DEBUG_HOTKEY_SCOPE) {
+            console.debug(
+              `%cI can't call hotkey (${
+                hotkeysEvent.keys
+              }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
+                ', ',
+              )}]`,
+              'color: gray; ',
+            );
+          }
+
           return;
+        }
+
+        if (DEBUG_HOTKEY_SCOPE) {
+          console.debug(
+            `%cI can call hotkey (${
+              hotkeysEvent.keys
+            }) because I'm in scope [${scope}] and the active scopes are : [${currentHotkeyScopes.join(
+              ', ',
+            )}]`,
+            'color: green;',
+          );
         }
 
         if (preventDefault) {

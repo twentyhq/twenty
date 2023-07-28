@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
@@ -6,6 +7,7 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
 import { CommentableEntity } from '@/activities/types/CommentableEntity';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
+import { IconCircleDot } from '@/ui/icon';
 import {
   ActivityType,
   SortOrder,
@@ -83,7 +85,17 @@ const StyledTopActionBar = styled.div`
   top: 0px;
 `;
 
+const StyledStartIcon = styled.div`
+  align-self: flex-start;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  height: 20px;
+  width: 20px;
+`;
+
 export function Timeline({ entity }: { entity: CommentableEntity }) {
+  const theme = useTheme();
+
   const { data: queryResult, loading } = useGetActivitiesByTargetsQuery({
     variables: {
       activityTargetIds: [entity.id],
@@ -128,6 +140,9 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
         {activities.map((activity) => (
           <TimelineActivity key={activity.id} activity={activity} />
         ))}
+        <StyledStartIcon>
+          <IconCircleDot size={theme.icon.size.lg} />
+        </StyledStartIcon>
       </StyledTimelineContainer>
     </StyledMainContainer>
   );

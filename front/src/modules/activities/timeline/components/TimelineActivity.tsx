@@ -147,7 +147,7 @@ export function TimelineActivity({ activity }: OwnProps) {
         </StyledIconContainer>
         <StyledItemTitleContainer>
           <span>{activity.author.displayName}</span>
-          created a note
+          created a note created a {activity.type.toLowerCase()}
         </StyledItemTitleContainer>
         <StyledItemTitleDate id={`id-${activity.id}`}>
           {beautifiedCreatedAt} ago

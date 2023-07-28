@@ -26,7 +26,7 @@ import {
 } from './handlers/workspace-member.ability-handler';
 import {
   ManageCompanyAbilityHandler,
-  ReadCompanyAbilityHandler,
+  ReadOneCompanyAbilityHandler,
   CreateCompanyAbilityHandler,
   UpdateCompanyAbilityHandler,
   DeleteCompanyAbilityHandler,
@@ -94,6 +94,10 @@ import {
   ReadAttachmentAbilityHandler,
   UpdateAttachmentAbilityHandler,
 } from './handlers/attachment.ability-handler';
+import {
+  ReadViewFieldAbilityHandler,
+  UpdateViewFieldAbilityHandler,
+} from './handlers/view-field.ability-handler';
 
 @Global()
 @Module({
@@ -120,7 +124,7 @@ import {
     DeleteWorkspaceMemberAbilityHandler,
     // Company
     ManageCompanyAbilityHandler,
-    ReadCompanyAbilityHandler,
+    ReadOneCompanyAbilityHandler,
     CreateCompanyAbilityHandler,
     UpdateCompanyAbilityHandler,
     DeleteCompanyAbilityHandler,
@@ -178,6 +182,9 @@ import {
     CreatePipelineProgressAbilityHandler,
     UpdatePipelineProgressAbilityHandler,
     DeletePipelineProgressAbilityHandler,
+    // ViewField
+    ReadViewFieldAbilityHandler,
+    UpdateViewFieldAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -201,7 +208,7 @@ import {
     DeleteWorkspaceMemberAbilityHandler,
     // Company
     ManageCompanyAbilityHandler,
-    ReadCompanyAbilityHandler,
+    ReadOneCompanyAbilityHandler,
     CreateCompanyAbilityHandler,
     UpdateCompanyAbilityHandler,
     DeleteCompanyAbilityHandler,
@@ -259,6 +266,9 @@ import {
     CreatePipelineProgressAbilityHandler,
     UpdatePipelineProgressAbilityHandler,
     DeletePipelineProgressAbilityHandler,
+    // ViewField
+    ReadViewFieldAbilityHandler,
+    UpdateViewFieldAbilityHandler,
   ],
 })
 export class AbilityModule {}

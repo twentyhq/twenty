@@ -9,7 +9,7 @@ const meta: Meta<typeof Avatar> = {
   title: 'Modules/Users/Avatar',
   component: Avatar,
   decorators: [ComponentDecorator],
-  args: { avatarUrl, size: 16, placeholder: 'L', type: 'rounded' },
+  args: { avatarUrl, size: 'md', placeholder: 'L', type: 'rounded' },
 };
 
 export default meta;

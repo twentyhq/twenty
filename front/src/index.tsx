@@ -26,18 +26,18 @@ root.render(
   <RecoilRoot>
     <BrowserRouter>
       <ApolloProvider>
-        <UserProvider>
-          <ClientConfigProvider>
+        <ClientConfigProvider>
+          <UserProvider>
+            <AuthAutoRouter />
             <AppThemeProvider>
               <SnackBarProvider>
-                <AuthAutoRouter />
                 <StrictMode>
                   <App />
                 </StrictMode>
               </SnackBarProvider>
             </AppThemeProvider>
-          </ClientConfigProvider>
-        </UserProvider>
+          </UserProvider>
+        </ClientConfigProvider>
       </ApolloProvider>
     </BrowserRouter>
   </RecoilRoot>,

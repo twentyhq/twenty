@@ -17,6 +17,7 @@ import {
   PipelineStage,
   PipelineProgress,
   UserSettings,
+  ViewField,
 } from '@prisma/client';
 
 import { AbilityAction } from './ability.action';
@@ -36,6 +37,7 @@ type SubjectsAbility = Subjects<{
   PipelineProgress: PipelineProgress;
   Attachment: Attachment;
   UserSettings: UserSettings;
+  ViewField: ViewField;
 }>;
 
 export type AppAbility = PureAbility<
@@ -127,6 +129,10 @@ export class AbilityFactory {
     can(AbilityAction.Delete, 'PipelineProgress', {
       workspaceId: workspace.id,
     });
+
+    // ViewField
+    can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
+    can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
 
     return build();
   }

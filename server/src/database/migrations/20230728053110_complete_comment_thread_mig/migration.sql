@@ -1,2 +1,0 @@
--- DropEnum
-DROP TYPE "CommentableType";
