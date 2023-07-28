@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { companyFieldMetadataArray } from '@/companies/constants/companyFieldMetadataArray';
+import { companyViewFields } from '@/companies/constants/companyFieldMetadataArray';
 import { CompaniesSelectedSortType, defaultOrderBy } from '@/companies/queries';
 import { GenericEntityTableData } from '@/people/components/GenericEntityTableData';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
@@ -39,7 +39,7 @@ export function CompanyTable() {
         useGetRequest={useGetCompaniesQuery}
         orderBy={orderBy}
         whereFilters={whereFilters}
-        fieldMetadataArray={companyFieldMetadataArray}
+        fieldMetadataArray={companyViewFields}
         filterDefinitionArray={companiesFilters}
       />
       <EntityTable

@@ -12,8 +12,6 @@ import { getLogoUrlFromDomainName } from '~/utils';
 
 type OwnProps = {
   fieldDefinition: ViewFieldDefinition<ViewFieldChipMetadata>;
-  editModeHorizontalAlign?: 'left' | 'right';
-  placeholder?: string;
 };
 
 export function GenericEditableChipCellDisplayMode({

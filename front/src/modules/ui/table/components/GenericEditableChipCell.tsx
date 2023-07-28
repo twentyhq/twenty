@@ -6,13 +6,13 @@ import { GenericEditableChipCellDisplayMode } from './GenericEditableChipCellDis
 import { GenericEditableTextCellEditMode } from './GenericEditableTextCellEditMode';
 
 type OwnProps = {
-  fieldDefinition: ViewFieldDefinition<ViewFieldChipMetadata>;
+  viewField: ViewFieldDefinition<ViewFieldChipMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };
 
 export function GenericEditableChipCell({
-  fieldDefinition,
+  viewField,
   editModeHorizontalAlign,
   placeholder,
 }: OwnProps) {
@@ -21,16 +21,13 @@ export function GenericEditableChipCell({
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
         <GenericEditableTextCellEditMode
-          fieldName={fieldDefinition.metadata.contentFieldName}
+          fieldName={viewField.metadata.contentFieldName}
+          viewFieldId={viewField.id}
           placeholder={placeholder}
         />
       }
       nonEditModeContent={
-        <GenericEditableChipCellDisplayMode
-          fieldDefinition={fieldDefinition}
-          editModeHorizontalAlign={editModeHorizontalAlign}
-          placeholder={placeholder}
-        />
+        <GenericEditableChipCellDisplayMode fieldDefinition={viewField} />
       }
     ></EditableCell>
   );

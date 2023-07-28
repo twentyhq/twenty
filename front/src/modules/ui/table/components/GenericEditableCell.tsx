@@ -16,8 +16,7 @@ export function GenericEditableCell({ fieldDefinition }: OwnProps) {
   if (isViewFieldText(fieldDefinition)) {
     return (
       <GenericEditableTextCell
-        fieldName={fieldDefinition.metadata.fieldName}
-        placeholder={fieldDefinition.metadata.placeHolder}
+        viewField={fieldDefinition}
         editModeHorizontalAlign="left"
       />
     );
@@ -26,7 +25,7 @@ export function GenericEditableCell({ fieldDefinition }: OwnProps) {
   } else if (isViewFieldChip(fieldDefinition)) {
     return (
       <GenericEditableChipCell
-        fieldDefinition={fieldDefinition}
+        viewField={fieldDefinition}
         editModeHorizontalAlign="left"
       />
     );

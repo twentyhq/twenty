@@ -13,11 +13,11 @@ import {
 } from '@/ui/table/types/ViewField';
 
 type OwnProps = {
-  fieldDefinition: ViewFieldDefinition<ViewFieldRelationMetadata>;
+  viewFieldDefinition: ViewFieldDefinition<ViewFieldRelationMetadata>;
 };
 
 export function GenericEditableRelationCellEditMode({
-  fieldDefinition,
+  viewFieldDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -26,7 +26,7 @@ export function GenericEditableRelationCellEditMode({
   const [fieldValueEntity] = useRecoilState<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -40,7 +40,7 @@ export function GenericEditableRelationCellEditMode({
     ) {
       updateEntityField(
         currentRowEntityId,
-        fieldDefinition.metadata.fieldName,
+        viewFieldDefinition.id,
         newFieldEntity,
       );
     }
@@ -52,7 +52,7 @@ export function GenericEditableRelationCellEditMode({
     closeEditableCell();
   }
 
-  switch (fieldDefinition.metadata.relationType) {
+  switch (viewFieldDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
         <CompanyPickerCell
@@ -64,7 +64,7 @@ export function GenericEditableRelationCellEditMode({
     }
     default:
       console.warn(
-        `Unknown relation type: "${fieldDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
+        `Unknown relation type: "${viewFieldDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
       );
       return <></>;
   }

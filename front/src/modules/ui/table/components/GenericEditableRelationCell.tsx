@@ -25,7 +25,7 @@ export function GenericEditableRelationCell({
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={
         <GenericEditableRelationCellEditMode
-          fieldDefinition={fieldDefinition}
+          viewFieldDefinition={fieldDefinition}
         />
       }
       nonEditModeContent={

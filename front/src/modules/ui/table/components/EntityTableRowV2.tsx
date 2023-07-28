@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { viewFieldsState } from '../states/viewFieldsState';
 import { ViewFieldContext } from '../states/ViewFieldContext';
+import { viewFieldsState } from '../states/viewFieldsState';
 
 import { CheckboxCell } from './CheckboxCell';
 import { EntityTableCell } from './EntityTableCellV2';

@@ -7,15 +7,18 @@ import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFie
 
 type OwnProps = {
   fieldName: string;
+  viewFieldId: string;
   placeholder?: string;
 };
 
 export function GenericEditableTextCellEditMode({
   fieldName,
+  viewFieldId,
   placeholder,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
+  // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
@@ -31,7 +34,7 @@ export function GenericEditableTextCellEditMode({
     setFieldValue(newText);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, fieldName, newText);
+      updateField(currentRowEntityId, viewFieldId, newText);
     }
   }
 

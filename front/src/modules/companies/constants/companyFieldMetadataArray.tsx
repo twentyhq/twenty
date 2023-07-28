@@ -6,7 +6,7 @@ import {
   ViewFieldDefinition,
 } from '@/ui/table/types/ViewField';
 
-export const companyFieldMetadataArray: ViewFieldDefinition<unknown>[] = [
+export const companyViewFields: ViewFieldDefinition<unknown>[] = [
   {
     columnLabel: 'Name',
     columnIcon: <IconBuildingSkyscraper size={16} />,
@@ -14,7 +14,7 @@ export const companyFieldMetadataArray: ViewFieldDefinition<unknown>[] = [
     type: 'chip',
     columnOrder: 1,
     metadata: {
-      urlFieldName: 'url',
+      urlFieldName: 'domainName',
       contentFieldName: 'name',
       relationType: Entity.Company,
     },

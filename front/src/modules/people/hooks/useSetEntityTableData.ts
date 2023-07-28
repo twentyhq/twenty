@@ -1,8 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
-import { viewFieldsState } from '@/ui/table/states/viewFieldsState';
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
+import { viewFieldsState } from '@/ui/table/states/viewFieldsState';
 import { ViewFieldDefinition } from '@/ui/table/types/ViewField';
 
 import { availableFiltersScopedState } from '../../ui/filter-n-sort/states/availableFiltersScopedState';
