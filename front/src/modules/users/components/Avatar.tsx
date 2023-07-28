@@ -6,10 +6,11 @@ import { stringToHslColor } from '~/utils/string-to-hsl';
 import { getImageAbsoluteURIOrBase64 } from '../utils/getProfilePictureAbsoluteURI';
 
 export type AvatarType = 'squared' | 'rounded';
+export type AvatarSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 
 type OwnProps = {
   avatarUrl: string | null | undefined;
-  size: number;
+  size: AvatarSize;
   placeholder: string;
   colorId?: string;
   type?: AvatarType;
@@ -27,12 +28,54 @@ export const StyledAvatar = styled.div<OwnProps & { colorId: string }>`
   display: flex;
 
   flex-shrink: 0;
-  font-size: ${({ theme }) => theme.font.size.xs};
+  font-size: ${({ size }) => {
+    switch (size) {
+      case 'xl':
+        return '16px';
+      case 'lg':
+        return '13px';
+      case 'md':
+      default:
+        return '12px';
+      case 'sm':
+        return '10px';
+      case 'xs':
+        return '8px';
+    }
+  }};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 
-  height: ${(props) => props.size}px;
+  height: ${({ size }) => {
+    switch (size) {
+      case 'xl':
+        return '40px';
+      case 'lg':
+        return '24px';
+      case 'md':
+      default:
+        return '16px';
+      case 'sm':
+        return '14px';
+      case 'xs':
+        return '12px';
+    }
+  }};
   justify-content: center;
-  width: ${(props) => props.size}px;
+  width: ${({ size }) => {
+    switch (size) {
+      case 'xl':
+        return '40px';
+      case 'lg':
+        return '24px';
+      case 'md':
+      default:
+        return '16px';
+      case 'sm':
+        return '14px';
+      case 'xs':
+        return '12px';
+    }
+  }};
 `;
 
 export function Avatar({

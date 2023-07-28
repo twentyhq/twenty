@@ -15,7 +15,7 @@ export const GET_PERSON = gql`
       jobTitle
       linkedinUrl
       phone
-      _commentThreadCount
+      _activityCount
       company {
         id
         name

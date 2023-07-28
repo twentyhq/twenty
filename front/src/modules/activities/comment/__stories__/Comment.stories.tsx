@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { CommentThreadActionBar } from '../../right-drawer/components/CommentThreadActionBar';
+import { ActivityActionBar } from '../../right-drawer/components/ActivityActionBar';
 import { Comment } from '../Comment';
 
 import { mockComment, mockCommentWithLongValues } from './mock-comment';
@@ -15,7 +15,7 @@ const meta: Meta<typeof Comment> = {
     actionBar: {
       type: 'boolean',
       mapping: {
-        true: <CommentThreadActionBar commentThreadId="test-id" />,
+        true: <ActivityActionBar activityId="test-id" />,
         false: undefined,
       },
     },

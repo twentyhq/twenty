@@ -1,22 +1,18 @@
 import { gql } from '@apollo/client';
 
-export const ADD_COMMENT_THREAD_TARGETS = gql`
-  mutation AddCommentThreadTargetsOnCommentThread(
-    $commentThreadId: String!
-    $commentThreadTargetInputs: [CommentThreadTargetCreateManyCommentThreadInput!]!
+export const ADD_ACTIVITY_TARGETS = gql`
+  mutation AddActivityTargetsOnActivity(
+    $activityId: String!
+    $activityTargetInputs: [ActivityTargetCreateManyActivityInput!]!
   ) {
-    updateOneCommentThread(
-      where: { id: $commentThreadId }
-      data: {
-        commentThreadTargets: {
-          createMany: { data: $commentThreadTargetInputs }
-        }
-      }
+    updateOneActivity(
+      where: { id: $activityId }
+      data: { activityTargets: { createMany: { data: $activityTargetInputs } } }
     ) {
       id
       createdAt
       updatedAt
-      commentThreadTargets {
+      activityTargets {
         id
         createdAt
         updatedAt
@@ -27,23 +23,21 @@ export const ADD_COMMENT_THREAD_TARGETS = gql`
   }
 `;
 
-export const REMOVE_COMMENT_THREAD_TARGETS = gql`
-  mutation RemoveCommentThreadTargetsOnCommentThread(
-    $commentThreadId: String!
-    $commentThreadTargetIds: [String!]!
+export const REMOVE_ACTIVITY_TARGETS = gql`
+  mutation RemoveActivityTargetsOnActivity(
+    $activityId: String!
+    $activityTargetIds: [String!]!
   ) {
-    updateOneCommentThread(
-      where: { id: $commentThreadId }
+    updateOneActivity(
+      where: { id: $activityId }
       data: {
-        commentThreadTargets: {
-          deleteMany: { id: { in: $commentThreadTargetIds } }
-        }
+        activityTargets: { deleteMany: { id: { in: $activityTargetIds } } }
       }
     ) {
       id
       createdAt
       updatedAt
-      commentThreadTargets {
+      activityTargets {
         id
         createdAt
         updatedAt
@@ -54,23 +48,23 @@ export const REMOVE_COMMENT_THREAD_TARGETS = gql`
   }
 `;
 
-export const DELETE_COMMENT_THREAD = gql`
-  mutation DeleteCommentThread($commentThreadId: String!) {
-    deleteManyCommentThreads(where: { id: { equals: $commentThreadId } }) {
+export const DELETE_ACTIVITY = gql`
+  mutation DeleteActivity($activityId: String!) {
+    deleteManyActivities(where: { id: { equals: $activityId } }) {
       count
     }
   }
 `;
 
-export const UPDATE_COMMENT_THREAD = gql`
-  mutation UpdateCommentThread(
+export const UPDATE_ACTIVITY = gql`
+  mutation UpdateActivity(
     $id: String!
     $body: String
     $title: String
     $type: ActivityType
     $completedAt: DateTime
   ) {
-    updateOneCommentThread(
+    updateOneActivity(
       where: { id: $id }
       data: {
         body: $body

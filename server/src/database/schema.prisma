@@ -20,20 +20,20 @@ generator nestgraphql {
   fields_Validator_from   = "class-validator"
 
   // All relations, only allow connect
-  decorate_all_type      = "!(CommentThreadTarget*Input|UserSettingsUpdateOneRequiredWithoutUserNestedInput)"
+  decorate_all_type      = "!(ActivityTarget*Input|UserSettingsUpdateOneRequiredWithoutUserNestedInput)"
   decorate_all_field     = "*(create|connectOrCreate|update|upsert|delete|createMany|updateMany|deleteMany)"
   decorate_all_name      = "HideField"
   decorate_all_from      = "@nestjs/graphql"
   decorate_all_arguments = "[]"
 
-  // CommentThread: Only Allow targets createOrConnect / createMany
-  decorate_commentThreadTargets_type      = "*CommentThreadTarget*Input"
-  decorate_commentThreadTargets_field     = "*(update|upsert|updateMany)"
-  decorate_commentThreadTargets_name      = "HideField"
-  decorate_commentThreadTargets_from      = "@nestjs/graphql"
-  decorate_commentThreadTargets_arguments = "[]"
+  // Activity: Only Allow targets createOrConnect / createMany
+  decorate_activityTargets_type      = "*ActivityTarget*Input"
+  decorate_activityTargets_field     = "*(update|upsert|updateMany)"
+  decorate_activityTargets_name      = "HideField"
+  decorate_activityTargets_from      = "@nestjs/graphql"
+  decorate_activityTargets_arguments = "[]"
 
-  // CommentThread: Only Allow targets createOrConnect / createMany
+  // User Settings: Only Allow targets createOrConnect / createMany
   decorate_userSettings_type      = "*UserSettingsUpdateOneRequiredWithoutUserNestedInput"
   decorate_userSettings_field     = "!(update)"
   decorate_userSettings_name      = "HideField"
@@ -106,10 +106,10 @@ model User {
   refreshTokens   RefreshToken[]
   comments        Comment[]
 
-  authoredCommentThreads CommentThread[] @relation(name: "authoredCommentThreads")
-  assignedCommentThreads CommentThread[] @relation(name: "assignedCommentThreads")
-  settings               UserSettings    @relation(fields: [settingsId], references: [id])
-  settingsId             String          @unique
+  authoredActivities Activity[]   @relation(name: "authoredActivities")
+  assignedActivities Activity[]   @relation(name: "assignedActivities")
+  settings           UserSettings @relation(fields: [settingsId], references: [id])
+  settingsId         String       @unique
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -164,20 +164,20 @@ model Workspace {
   workspaceMember    WorkspaceMember[]
   companies          Company[]
   people             Person[]
-  commentThreads     CommentThread[]
+  activities         Activity[]
   comments           Comment[]
   pipelines          Pipeline[]
   pipelineStages     PipelineStage[]
   pipelineProgresses PipelineProgress[]
+  activityTargets    ActivityTarget[]
   viewFields         ViewField[]
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  Attachment          Attachment[]
-  CommentThreadTarget CommentThreadTarget[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Attachment Attachment[]
 
   @@map("workspaces")
 }
@@ -234,8 +234,9 @@ model Company {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ActivityTarget ActivityTarget[]
 
   @@map("companies")
 }
@@ -277,8 +278,9 @@ model Person {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ActivityTarget ActivityTarget[]
 
   @@map("people")
 }
@@ -311,30 +313,28 @@ enum ActivityType {
   Task
 }
 
-model CommentThread {
+model Activity {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  id String @id @default(uuid())
-
-  commentThreadTargets CommentThreadTarget[]
-  comments             Comment[]
-  /// @TypeGraphQL.omit(input: true, output: true)
-  workspace            Workspace             @relation(fields: [workspaceId], references: [id])
-  /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId          String
-
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], name: "authoredCommentThreads")
-
-  body  String?
-  title String?
-  type  ActivityType @default(Note)
-
+  id          String       @id @default(uuid())
+  body        String?
+  title       String?
+  type        ActivityType @default(Note)
   reminderAt  DateTime?
   dueAt       DateTime?
   completedAt DateTime?
-  assignee    User?     @relation(fields: [assigneeId], references: [id], name: "assignedCommentThreads")
-  assigneeId  String?
+
+  activityTargets ActivityTarget[]
+  comments        Comment[]
+  attachments     Attachment[]
+  author          User             @relation(fields: [authorId], references: [id], name: "authoredActivities")
+  authorId        String
+  assignee        User?            @relation(fields: [assigneeId], references: [id], name: "assignedActivities")
+  assigneeId      String?
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace       Workspace        @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId     String
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -342,9 +342,12 @@ model CommentThread {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  attachments Attachment[]
+  @@map("activities")
+}
 
-  @@map("comment_threads")
+enum CommentableType {
+  Person
+  Company
 }
 
 model Comment {
@@ -354,12 +357,13 @@ model Comment {
   /// @Validator.IsString()
   body String
 
-  author          User          @relation(fields: [authorId], references: [id])
+  author          User      @relation(fields: [authorId], references: [id])
   authorId        String
-  commentThread   CommentThread @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
-  commentThreadId String
+  activity        Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId      String?
+  commentThreadId String?
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace       Workspace     @relation(fields: [workspaceId], references: [id])
+  workspace       Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId     String
 
@@ -372,24 +376,25 @@ model Comment {
   @@map("comments")
 }
 
-enum CommentableType {
-  Person
-  Company
-}
-
-model CommentThreadTarget {
+model ActivityTarget {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   id String @id @default(uuid())
 
-  commentThread   CommentThread   @relation(fields: [commentThreadId], references: [id], onDelete: Cascade)
-  commentThreadId String
-  /// @TypeGraphQL.omit(input: true, output: false)
-  workspace       Workspace?      @relation(fields: [workspaceId], references: [id])
+  activity        Activity         @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId      String
+  commentableType CommentableType?
+  commentableId   String?
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId     String?
-  commentableType CommentableType
-  commentableId   String
+  workspace       Workspace        @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId     String
+
+  personId String?
+  person   Person? @relation(fields: [personId], references: [id])
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -397,7 +402,7 @@ model CommentThreadTarget {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("comment_thread_targets")
+  @@map("activity_targets")
 }
 
 model Pipeline {
@@ -515,17 +520,16 @@ model Attachment {
   type     AttachmentType
   name     String
 
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], name: "authoredAttachments")
-
-  activityId String
-  activity   CommentThread @relation(fields: [activityId], references: [id])
-
-  /// @TypeGraphQL.omit(input: true, output: false)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
 
+  author     User     @relation(fields: [authorId], references: [id], name: "authoredAttachments")
+  authorId   String
+  activity   Activity @relation(fields: [activityId], references: [id])
+  activityId String
+
+  /// @TypeGraphQL.omit(input: true, output: false)
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
   createdAt DateTime  @default(now())

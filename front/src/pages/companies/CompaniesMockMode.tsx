@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
-import { TableActionBarButtonCreateCommentThreadCompany } from '@/companies/table/components/TableActionBarButtonCreateCommentThreadCompany';
+import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/components/TableActionBarButtonCreateActivityCompany';
 import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
@@ -29,7 +29,7 @@ export function CompaniesMockMode() {
             <CompanyTableMockMode />
           </StyledTableContainer>
           <EntityTableActionBar>
-            <TableActionBarButtonCreateCommentThreadCompany />
+            <TableActionBarButtonCreateActivityCompany />
             <TableActionBarButtonDeleteCompanies />
           </EntityTableActionBar>
         </RecoilScope>

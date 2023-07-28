@@ -101,12 +101,12 @@ export function useSetPeopleEntityTable() {
           if (
             currentNameCell.firstName !== person.firstName ||
             currentNameCell.lastName !== person.lastName ||
-            currentNameCell.commentCount !== person._commentThreadCount
+            currentNameCell.commentCount !== person._activityCount
           ) {
             set(peopleNameCellFamilyState(person.id), {
               firstName: person.firstName ?? null,
               lastName: person.lastName ?? null,
-              commentCount: person._commentThreadCount,
+              commentCount: person._activityCount,
               displayName: person.displayName ?? null,
             });
           }

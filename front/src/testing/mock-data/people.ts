@@ -17,7 +17,7 @@ type MockedPerson = RequiredAndNotNull<
     | '__typename'
     | 'phone'
     | 'city'
-    | '_commentThreadCount'
+    | '_activityCount'
     | 'createdAt'
   > & {
     company: Pick<Company, 'id' | 'name' | 'domainName' | '__typename'>;
@@ -41,7 +41,7 @@ export const mockedPeopleData: MockedPerson[] = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    _commentThreadCount: 1,
+    _activityCount: 1,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
@@ -62,7 +62,7 @@ export const mockedPeopleData: MockedPerson[] = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    _commentThreadCount: 1,
+    _activityCount: 1,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
@@ -83,7 +83,7 @@ export const mockedPeopleData: MockedPerson[] = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    _commentThreadCount: 1,
+    _activityCount: 1,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',
@@ -104,7 +104,7 @@ export const mockedPeopleData: MockedPerson[] = [
       __typename: 'Company',
     },
     phone: '06 12 34 56 78',
-    _commentThreadCount: 2,
+    _activityCount: 2,
     createdAt: '2023-04-20T13:20:09.158312+00:00',
 
     city: 'Paris',

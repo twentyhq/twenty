@@ -6,9 +6,8 @@ import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
-import { EntityUpdateFieldHookContext } from '../states/EntityUpdateFieldHookContext';
+import { EntityUpdateMutationHookContext } from '../states/EntityUpdateMutationHookContext';
 import { TableHeader } from '../table-header/components/TableHeader';
-import { EntityUpdateFieldHook } from '../types/CellUpdateFieldHook';
 
 import { EntityTableBody } from './EntityTableBodyV2';
 import { EntityTableHeader } from './EntityTableHeaderV2';
@@ -90,7 +89,7 @@ type OwnProps<SortField> = {
   availableSorts?: Array<SortType<SortField>>;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onRowSelectionChange?: (rowSelection: string[]) => void;
-  useUpdateField: EntityUpdateFieldHook;
+  useUpdateEntityMutation: any;
 };
 
 export function EntityTable<SortField>({
@@ -98,7 +97,7 @@ export function EntityTable<SortField>({
   viewIcon,
   availableSorts,
   onSortsUpdate,
-  useUpdateField,
+  useUpdateEntityMutation,
 }: OwnProps<SortField>) {
   const tableBodyRef = React.useRef<HTMLDivElement>(null);
 
@@ -114,7 +113,7 @@ export function EntityTable<SortField>({
   });
 
   return (
-    <EntityUpdateFieldHookContext.Provider value={useUpdateField}>
+    <EntityUpdateMutationHookContext.Provider value={useUpdateEntityMutation}>
       <StyledTableWithHeader>
         <StyledTableContainer ref={tableBodyRef}>
           <TableHeader
@@ -131,6 +130,6 @@ export function EntityTable<SortField>({
           </StyledTableWrapper>
         </StyledTableContainer>
       </StyledTableWithHeader>
-    </EntityUpdateFieldHookContext.Provider>
+    </EntityUpdateMutationHookContext.Provider>
   );
 }
