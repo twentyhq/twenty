@@ -23,7 +23,7 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const tooltip = await canvas.findByTestId('tooltip')
+    const tooltip = await canvas.findByTestId('tooltip');
     userEvent.hover(tooltip);
   },
 };
