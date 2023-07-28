@@ -216,7 +216,12 @@ export function ActivityRelationPicker({ activity }: OwnProps) {
               pictureUrl={entity.avatarUrl}
             />
           ) : (
-            <PersonChip key={entity.id} name={entity.name} id={entity.id} />
+            <PersonChip
+              key={entity.id}
+              name={entity.name}
+              id={entity.id}
+              pictureUrl={entity.avatarUrl ?? ''}
+            />
           ),
         )}
       </StyledRelationContainer>
