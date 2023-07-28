@@ -117,8 +117,8 @@ export type ActivityTarget = {
   __typename?: 'ActivityTarget';
   activity: Activity;
   activityId: Scalars['String'];
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
+  commentableId?: Maybe<Scalars['String']>;
+  commentableType?: Maybe<CommentableType>;
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
@@ -129,8 +129,8 @@ export type ActivityTarget = {
 };
 
 export type ActivityTargetCreateManyActivityInput = {
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
+  commentableId?: InputMaybe<Scalars['String']>;
+  commentableType?: InputMaybe<CommentableType>;
   companyId?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
@@ -145,8 +145,8 @@ export type ActivityTargetCreateManyActivityInputEnvelope = {
 
 export type ActivityTargetCreateManyCompanyInput = {
   activityId: Scalars['String'];
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
+  commentableId?: InputMaybe<Scalars['String']>;
+  commentableType?: InputMaybe<CommentableType>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   personId?: InputMaybe<Scalars['String']>;
@@ -160,8 +160,8 @@ export type ActivityTargetCreateManyCompanyInputEnvelope = {
 
 export type ActivityTargetCreateManyPersonInput = {
   activityId: Scalars['String'];
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
+  commentableId?: InputMaybe<Scalars['String']>;
+  commentableType?: InputMaybe<CommentableType>;
   companyId?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
@@ -175,8 +175,8 @@ export type ActivityTargetCreateManyPersonInputEnvelope = {
 
 export type ActivityTargetCreateManyWorkspaceInput = {
   activityId: Scalars['String'];
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
+  commentableId?: InputMaybe<Scalars['String']>;
+  commentableType?: InputMaybe<CommentableType>;
   companyId?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
@@ -231,8 +231,8 @@ export type ActivityTargetCreateOrConnectWithoutWorkspaceInput = {
 };
 
 export type ActivityTargetCreateWithoutActivityInput = {
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
+  commentableId?: InputMaybe<Scalars['String']>;
+  commentableType?: InputMaybe<CommentableType>;
   company?: InputMaybe<CompanyCreateNestedOneWithoutActivityTargetInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
@@ -242,8 +242,8 @@ export type ActivityTargetCreateWithoutActivityInput = {
 
 export type ActivityTargetCreateWithoutCompanyInput = {
   activity: ActivityCreateNestedOneWithoutActivityTargetsInput;
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
+  commentableId?: InputMaybe<Scalars['String']>;
+  commentableType?: InputMaybe<CommentableType>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   person?: InputMaybe<PersonCreateNestedOneWithoutActivityTargetInput>;
@@ -252,8 +252,8 @@ export type ActivityTargetCreateWithoutCompanyInput = {
 
 export type ActivityTargetCreateWithoutPersonInput = {
   activity: ActivityCreateNestedOneWithoutActivityTargetsInput;
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
+  commentableId?: InputMaybe<Scalars['String']>;
+  commentableType?: InputMaybe<CommentableType>;
   company?: InputMaybe<CompanyCreateNestedOneWithoutActivityTargetInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
@@ -262,8 +262,8 @@ export type ActivityTargetCreateWithoutPersonInput = {
 
 export type ActivityTargetCreateWithoutWorkspaceInput = {
   activity: ActivityCreateNestedOneWithoutActivityTargetsInput;
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
+  commentableId?: InputMaybe<Scalars['String']>;
+  commentableType?: InputMaybe<CommentableType>;
   company?: InputMaybe<CompanyCreateNestedOneWithoutActivityTargetInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
@@ -286,8 +286,8 @@ export type ActivityTargetScalarWhereInput = {
   NOT?: InputMaybe<Array<ActivityTargetScalarWhereInput>>;
   OR?: InputMaybe<Array<ActivityTargetScalarWhereInput>>;
   activityId?: InputMaybe<StringFilter>;
-  commentableId?: InputMaybe<StringFilter>;
-  commentableType?: InputMaybe<EnumCommentableTypeFilter>;
+  commentableId?: InputMaybe<StringNullableFilter>;
+  commentableType?: InputMaybe<EnumCommentableTypeNullableFilter>;
   companyId?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
@@ -345,8 +345,8 @@ export type ActivityTargetWhereInput = {
   OR?: InputMaybe<Array<ActivityTargetWhereInput>>;
   activity?: InputMaybe<ActivityRelationFilter>;
   activityId?: InputMaybe<StringFilter>;
-  commentableId?: InputMaybe<StringFilter>;
-  commentableType?: InputMaybe<EnumCommentableTypeFilter>;
+  commentableId?: InputMaybe<StringNullableFilter>;
+  commentableType?: InputMaybe<EnumCommentableTypeNullableFilter>;
   company?: InputMaybe<CompanyRelationFilter>;
   companyId?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
@@ -559,20 +559,22 @@ export enum ColorScheme {
 
 export type Comment = {
   __typename?: 'Comment';
-  activity: Activity;
-  activityId: Scalars['String'];
+  activity?: Maybe<Activity>;
+  activityId?: Maybe<Scalars['String']>;
   author: User;
   authorId: Scalars['String'];
   body: Scalars['String'];
+  commentThreadId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
 };
 
 export type CommentCreateInput = {
-  activity: ActivityCreateNestedOneWithoutCommentsInput;
+  activity?: InputMaybe<ActivityCreateNestedOneWithoutCommentsInput>;
   author: UserCreateNestedOneWithoutCommentsInput;
   body: Scalars['String'];
+  commentThreadId?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
@@ -615,10 +617,11 @@ export type CommentWhereInput = {
   NOT?: InputMaybe<Array<CommentWhereInput>>;
   OR?: InputMaybe<Array<CommentWhereInput>>;
   activity?: InputMaybe<ActivityRelationFilter>;
-  activityId?: InputMaybe<StringFilter>;
+  activityId?: InputMaybe<StringNullableFilter>;
   author?: InputMaybe<UserRelationFilter>;
   authorId?: InputMaybe<StringFilter>;
   body?: InputMaybe<StringFilter>;
+  commentThreadId?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
@@ -820,10 +823,10 @@ export type EnumColorSchemeFilter = {
   notIn?: InputMaybe<Array<ColorScheme>>;
 };
 
-export type EnumCommentableTypeFilter = {
+export type EnumCommentableTypeNullableFilter = {
   equals?: InputMaybe<CommentableType>;
   in?: InputMaybe<Array<CommentableType>>;
-  not?: InputMaybe<NestedEnumCommentableTypeFilter>;
+  not?: InputMaybe<NestedEnumCommentableTypeNullableFilter>;
   notIn?: InputMaybe<Array<CommentableType>>;
 };
 
@@ -1201,10 +1204,10 @@ export type NestedEnumColorSchemeFilter = {
   notIn?: InputMaybe<Array<ColorScheme>>;
 };
 
-export type NestedEnumCommentableTypeFilter = {
+export type NestedEnumCommentableTypeNullableFilter = {
   equals?: InputMaybe<CommentableType>;
   in?: InputMaybe<Array<CommentableType>>;
-  not?: InputMaybe<NestedEnumCommentableTypeFilter>;
+  not?: InputMaybe<NestedEnumCommentableTypeNullableFilter>;
   notIn?: InputMaybe<Array<CommentableType>>;
 };
 
@@ -2309,7 +2312,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, activityId: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, activityId?: string | null, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } };
 
 export type CreateActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2322,7 +2325,7 @@ export type CreateActivityMutationVariables = Exact<{
 }>;
 
 
-export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId: string, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, commentableType: CommentableType, commentableId: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
+export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId: string, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
 
 export type GetActivitiesByTargetsQueryVariables = Exact<{
   activityTargetIds: Array<Scalars['String']> | Scalars['String'];
@@ -2330,14 +2333,14 @@ export type GetActivitiesByTargetsQueryVariables = Exact<{
 }>;
 
 
-export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType: CommentableType, commentableId: string }> | null }> };
+export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
 
 export type GetActivityQueryVariables = Exact<{
   activityId: Scalars['String'];
 }>;
 
 
-export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType: CommentableType, commentableId: string }> | null }> };
+export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
 
 export type AddActivityTargetsOnActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2345,7 +2348,7 @@ export type AddActivityTargetsOnActivityMutationVariables = Exact<{
 }>;
 
 
-export type AddActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, commentableType: CommentableType, commentableId: string }> | null } };
+export type AddActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null } };
 
 export type RemoveActivityTargetsOnActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2353,7 +2356,7 @@ export type RemoveActivityTargetsOnActivityMutationVariables = Exact<{
 }>;
 
 
-export type RemoveActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, commentableType: CommentableType, commentableId: string }> | null } };
+export type RemoveActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null } };
 
 export type DeleteActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
