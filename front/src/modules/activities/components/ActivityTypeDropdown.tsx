@@ -6,8 +6,8 @@ import {
   ChipSize,
   ChipVariant,
 } from '@/ui/chip/components/Chip';
-import { IconPhone } from '@/ui/icon';
-import { Activity } from '~/generated/graphql';
+import { IconCheckbox, IconNotes } from '@/ui/icon';
+import { Activity, ActivityType } from '~/generated/graphql';
 
 type OwnProps = {
   activity: Pick<Activity, 'type'>;
@@ -18,7 +18,13 @@ export function ActivityTypeDropdown({ activity }: OwnProps) {
   return (
     <Chip
       label={activity.type}
-      leftComponent={<IconPhone size={theme.icon.size.md} />}
+      leftComponent={
+        activity.type === ActivityType.Note ? (
+          <IconNotes size={theme.icon.size.md} />
+        ) : (
+          <IconCheckbox size={theme.icon.size.md} />
+        )
+      }
       size={ChipSize.Large}
       accent={ChipAccent.TextSecondary}
       variant={ChipVariant.Highlighted}

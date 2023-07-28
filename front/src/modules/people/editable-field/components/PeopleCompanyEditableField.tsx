@@ -21,6 +21,7 @@ export function PeopleCompanyEditableField({ people }: OwnProps) {
     <RecoilScope SpecificContext={FieldContext}>
       <RecoilScope>
         <EditableField
+          useEditButton
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,
           }}

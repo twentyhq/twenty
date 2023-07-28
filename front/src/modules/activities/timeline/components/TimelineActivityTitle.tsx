@@ -12,7 +12,7 @@ const StyledTitleContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
 
-  width: 100%;
+  width: calc(100% - ${({ theme }) => theme.spacing(6)});
 `;
 
 const StyledTitleText = styled.div<{ completed?: boolean }>`
@@ -24,7 +24,6 @@ const StyledCheckboxContainer = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
-  width: 100%;
 `;
 
 type OwnProps = {
