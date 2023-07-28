@@ -7,7 +7,6 @@ import { overlayBackground } from '@/ui/themes/effects';
 import 'react-datepicker/dist/react-datepicker.css';
 
 export type DatePickerProps = {
-  isOpen?: boolean;
   date: Date;
   onChangeHandler: (date: Date) => void;
   customInput?: ReactElement;
@@ -129,11 +128,10 @@ const StyledContainer = styled.div`
     &:hover {
       background: ${({ theme }) => theme.background.transparent.light};
     }
+  }
 
-    &:first-of-type {
-      display: none;
-    }
-
+  & .react-datepicker__year-option {
+    &:first-of-type,
     &:last-of-type {
       display: none;
     }
