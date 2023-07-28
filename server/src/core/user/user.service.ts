@@ -91,4 +91,35 @@ export class UserService {
 
     return user as Prisma.UserGetPayload<T>;
   }
+
+  async deleteUser({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }) {
+    const { user: userService } = this.prismaService.client;
+    const user = await userService.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+    assert(user, 'User not found');
+
+    const workspace = await this.workspaceService.findUnique({
+      where: { id: workspaceId },
+      select: { id: true },
+    });
+    assert(workspace, 'Workspace not found');
+
+    console.log({ user, workspace });
+
+    // TODO: Figure out actual deletion
+
+    return user;
+  }
 }
