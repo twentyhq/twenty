@@ -1,0 +1,2 @@
+-- DropEnum
+DROP TYPE "CommentableType";
