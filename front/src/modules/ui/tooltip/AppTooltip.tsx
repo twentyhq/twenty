@@ -1,11 +1,11 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
-export enum TooltipValues {
-  top = 'top',
-  left = 'left',
-  right = 'right',
-  bottom = 'bottom',
+export enum TooltipPosition {
+  Top = 'top',
+  Left = 'left',
+  Right = 'right',
+  Bottom = 'bottom',
 }
 
 export const AppTooltip = styled(Tooltip)`

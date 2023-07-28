@@ -1,23 +1,23 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { AppTooltip, TooltipValues } from '../AppTooltip';
+import { AppTooltip as Tooltip, TooltipPosition } from '../AppTooltip';
 
-const meta: Meta<typeof AppTooltip> = {
+const meta: Meta<typeof Tooltip> = {
   title: 'UI/Tooltip/Tooltip',
-  component: AppTooltip,
+  component: Tooltip,
 };
 
 export default meta;
-type Story = StoryObj<typeof AppTooltip>;
+type Story = StoryObj<typeof Tooltip>;
 
 export const Default: Story = {
   args: {
-    place: 'bottom',
+    place: TooltipPosition.Bottom,
     content: 'Tooltip Test',
+    isOpen: true,
     anchorSelect: '#hover-text',
   },
   decorators: [ComponentDecorator],
@@ -26,20 +26,15 @@ export const Default: Story = {
       <p id="hover-text" data-testid="tooltip">
         Hover me!
       </p>
-      <AppTooltip {...args} />
+      <Tooltip {...args} />
     </>
   ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const tooltip = canvas.getByTestId('tooltip');
-    userEvent.hover(tooltip);
-  },
 };
 
 export const Catalog: Story = {
   args: { isOpen: true, content: 'Tooltip Test' },
   play: async ({ canvasElement }) => {
-    Object.values(TooltipValues).forEach((position) => {
+    Object.values(TooltipPosition).forEach((position) => {
       const element = canvasElement.querySelector(
         `#${position}`,
       ) as HTMLElement;
@@ -50,8 +45,8 @@ export const Catalog: Story = {
     catalog: [
       {
         name: 'anchorSelect',
-        values: Object.values(TooltipValues),
-        props: (anchorSelect: TooltipValues) => ({
+        values: Object.values(TooltipPosition),
+        props: (anchorSelect: TooltipPosition) => ({
           anchorSelect: `#${anchorSelect}`,
           place: anchorSelect,
         }),
