@@ -361,7 +361,7 @@ model Comment {
   authorId        String
   activity        Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId      String?
-  commentThreadId String
+  commentThreadId String?
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace       Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)

@@ -91,7 +91,7 @@ export const EditNote: Story = {
       graphql.query(getOperationName(GET_ACTIVITY) ?? '', (req, res, ctx) => {
         return res(
           ctx.data({
-            findManyActivitys: [mockedActivities[0]],
+            findManyActivities: [mockedActivities[0]],
           }),
         );
       }),
