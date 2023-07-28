@@ -1,51 +1,25 @@
-import { useState } from 'react';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from '@emotion/styled';
-import { AnimatePresence, LayoutGroup } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
-import { Button, ButtonVariant } from '@/ui/button/components/Button';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { Modal } from '@/ui/modal/components/Modal';
+import { ButtonVariant } from '@/ui/button/components/Button';
 import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
-import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
-import { debounce } from '~/utils/debounce';
+import {
+  useDeleteCurrentWorkspaceMutation,
+  useDeleteUserAccountMutation,
+} from '~/generated/graphql';
 
-const StyledCenteredButton = styled(Button)`
-  justify-content: center;
-`;
-
-const StyledDeleteButton = styled(StyledCenteredButton)`
-  border-color: ${({ theme }) => theme.color.red20};
-  color: ${({ theme }) => theme.color.red};
-  font-size: ${({ theme }) => theme.font.size.md};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
-`;
-
-const StyledTitle = styled.div`
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-`;
-
-const StyledModal = styled(Modal)`
-  color: ${({ theme }) => theme.font.color.primary};
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(8)};
-  }
-`;
+import { DeleteModal, StyledDeleteButton } from './DeleteModal';
 
 export function DeleteWorkspace() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isValidEmail, setIsValidEmail] = useState(true);
-  const [email, setEmail] = useState('');
-  const currentUser = useRecoilValue(currentUserState);
-  const userEmail = currentUser?.email;
+  const [isDeleteWorkSpaceModalOpen, setIsDeleteWorkSpaceModalOpen] =
+    useState(false);
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
+    useState(false);
 
   const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
+  const [deleteUserAccount] = useDeleteUserAccountMutation();
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -59,20 +33,15 @@ export function DeleteWorkspace() {
     handleLogout();
   };
 
-  const isEmailMatchingUserEmail = debounce(
-    (email1?: string, email2?: string) => {
-      setIsValidEmail(Boolean(email1 && email2 && email1 === email2));
-    },
-    250,
-  );
-
-  const handleEmailChange = (val: string) => {
-    setEmail(val);
-    isEmailMatchingUserEmail(val, userEmail);
+  const deleteAccount = async () => {
+    await deleteUserAccount();
+    handleLogout();
   };
 
-  const errorMessage =
-    email && !isValidEmail ? 'email provided is not correct' : '';
+  const subtitle = (
+    type: 'workspace' | 'account',
+  ) => `This action cannot be undone. This will permanently delete your
+  entire ${type}. Please type in your email to confirm.`;
 
   return (
     <>
@@ -81,46 +50,38 @@ export function DeleteWorkspace() {
         description="Delete your whole workspace"
       />
       <StyledDeleteButton
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsDeleteWorkSpaceModalOpen(true)}
         variant={ButtonVariant.Secondary}
         title="Delete workspace"
       />
 
-      <AnimatePresence mode="wait">
-        <LayoutGroup>
-          <StyledModal isOpen={isOpen}>
-            <StyledTitle>Workspace Deletion</StyledTitle>
-            <div>
-              This action cannot be undone. This will permanently delete your
-              entire workspace. Please type in your email to confirm.
-            </div>
-            <TextInput
-              value={email}
-              onChange={handleEmailChange}
-              placeholder={userEmail}
-              fullWidth
-              key={'email-' + userEmail}
-              error={errorMessage}
-            />
-            <StyledDeleteButton
-              onClick={deleteWorkspace}
-              variant={ButtonVariant.Secondary}
-              title="Delete workspace"
-              disabled={!isValidEmail || !email}
-              fullWidth
-            />
-            <StyledCenteredButton
-              onClick={() => setIsOpen(false)}
-              variant={ButtonVariant.Secondary}
-              title="Cancel"
-              fullWidth
-              style={{
-                marginTop: 10,
-              }}
-            />
-          </StyledModal>
-        </LayoutGroup>
-      </AnimatePresence>
+      <SubSectionTitle
+        title=""
+        description="Delete account and all the associated data"
+      />
+      <StyledDeleteButton
+        onClick={() => setIsDeleteAccountModalOpen(true)}
+        variant={ButtonVariant.Secondary}
+        title="Delete account"
+      />
+
+      <DeleteModal
+        isOpen={isDeleteWorkSpaceModalOpen}
+        setIsOpen={setIsDeleteWorkSpaceModalOpen}
+        title="Workspace Deletion"
+        subtitle={subtitle('workspace')}
+        handleConfirmDelete={deleteWorkspace}
+        deleteButtonText="Delete workspace"
+      />
+
+      <DeleteModal
+        isOpen={isDeleteAccountModalOpen}
+        setIsOpen={setIsDeleteAccountModalOpen}
+        title="Account Deletion"
+        subtitle={subtitle('account')}
+        handleConfirmDelete={deleteAccount}
+        deleteButtonText="Delete account"
+      />
     </>
   );
 }

@@ -42,3 +42,11 @@ export const REMOVE_PROFILE_PICTURE = gql`
     }
   }
 `;
+
+export const DELETE_USER_ACCOUNT = gql`
+  mutation DeleteUserAccount {
+    deleteUserAccount {
+      id
+    }
+  }
+`;

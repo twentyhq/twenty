@@ -9,7 +9,7 @@ import {
 import { UseFilters, UseGuards } from '@nestjs/common';
 
 import { accessibleBy } from '@casl/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma, Workspace } from '@prisma/client';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
@@ -25,6 +25,7 @@ import {
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
+  DeleteUserAbilityHandler,
   ReadUserAbilityHandler,
   UpdateUserAbilityHandler,
 } from 'src/ability/handlers/user.ability-handler';
@@ -35,6 +36,7 @@ import { assert } from 'src/utils/assert';
 import { UpdateOneUserArgs } from 'src/core/@generated/user/update-one-user.args';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
+import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 
 import { UserService } from './user.service';
 
@@ -146,5 +148,15 @@ export class UserResolver {
     });
 
     return paths[0];
+  }
+
+  @Mutation(() => User)
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeleteUserAbilityHandler)
+  async deleteUserAccount(
+    @AuthUser() { id: userId }: User,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.userService.deleteUser({ userId, workspaceId });
   }
 }
