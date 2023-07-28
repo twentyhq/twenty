@@ -49,6 +49,15 @@ export class ActivityResolver {
       data: {
         ...args.data,
         ...{ workspace: { connect: { id: workspace.id } } },
+        activityTargets: args.data?.activityTargets?.createMany
+          ? {
+              createMany: {
+                data: args.data.activityTargets.createMany.data.map(
+                  (target) => ({ ...target, workspaceId: workspace.id }),
+                ),
+              },
+            }
+          : undefined,
       },
       select: prismaSelect.value,
     } as Prisma.ActivityCreateArgs);
@@ -63,6 +72,7 @@ export class ActivityResolver {
   @CheckAbilities(UpdateActivityAbilityHandler)
   async updateOneActivity(
     @Args() args: UpdateOneActivityArgs,
+    @AuthWorkspace() workspace: Workspace,
     @PrismaSelector({ modelName: 'Activity' })
     prismaSelect: PrismaSelect<'Activity'>,
   ): Promise<Partial<Activity>> {
@@ -82,7 +92,24 @@ export class ActivityResolver {
     }
     const updatedActivity = await this.activityService.update({
       where: args.where,
-      data: args.data,
+      data: {
+        ...args.data,
+        activityTargets: args.data?.activityTargets
+          ? {
+              createMany: args.data.activityTargets.createMany
+                ? {
+                    data: args.data.activityTargets.createMany.data.map(
+                      (target) => ({
+                        ...target,
+                        workspaceId: workspace.id,
+                      }),
+                    ),
+                  }
+                : undefined,
+              deleteMany: args.data.activityTargets.deleteMany ?? undefined,
+            }
+          : undefined,
+      },
       select: prismaSelect.value,
     } as Prisma.ActivityUpdateArgs);
 
