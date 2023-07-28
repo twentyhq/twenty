@@ -21,6 +21,7 @@ export function PipelineProgressPointOfContactEditableField({
     <RecoilScope SpecificContext={FieldContext}>
       <RecoilScope>
         <EditableField
+          useEditButton
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,
           }}

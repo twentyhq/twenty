@@ -2,6 +2,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilValue } from 'recoil';
 
 import { GET_COMPANIES } from '@/companies/queries';
+import { GET_PIPELINES } from '@/pipeline/queries';
 import { IconTrash } from '@/ui/icon/index';
 import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
@@ -14,7 +15,10 @@ export function TableActionBarButtonDeleteCompanies() {
   const resetRowSelection = useResetTableRowSelection();
 
   const [deleteCompanies] = useDeleteManyCompaniesMutation({
-    refetchQueries: [getOperationName(GET_COMPANIES) ?? ''],
+    refetchQueries: [
+      getOperationName(GET_COMPANIES) ?? '',
+      getOperationName(GET_PIPELINES) ?? '',
+    ],
   });
 
   async function handleDeleteClick() {

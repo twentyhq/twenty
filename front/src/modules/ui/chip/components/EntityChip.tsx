@@ -35,9 +35,9 @@ export function EntityChip({
   const navigate = useNavigate();
 
   function handleLinkClick(event: React.MouseEvent<HTMLDivElement>) {
-    event.preventDefault();
-    event.stopPropagation();
     if (linkToEntity) {
+      event.preventDefault();
+      event.stopPropagation();
       navigate(linkToEntity);
     }
   }
