@@ -25,7 +25,7 @@ export function EditableCompanyNameCell() {
         id: currentRowEntityId ?? '',
         name: name ?? '',
         domainName: domainName ?? '',
-        _commentThreadCount: commentCount ?? 0,
+        _activityCount: commentCount ?? 0,
       }}
     />
   );

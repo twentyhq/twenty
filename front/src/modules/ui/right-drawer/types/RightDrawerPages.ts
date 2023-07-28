@@ -1,5 +1,5 @@
 export enum RightDrawerPages {
   Timeline = 'timeline',
-  CreateCommentThread = 'create-comment-thread',
-  EditCommentThread = 'edit-comment-thread',
+  CreateActivity = 'create-activity',
+  EditActivity = 'edit-activity',
 }

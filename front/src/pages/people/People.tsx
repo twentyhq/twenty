@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { GET_FAVORITES } from '@/favorites/queries/show';
 import { GET_PEOPLE } from '@/people/queries';
 import { PeopleTable } from '@/people/table/components/PeopleTable';
-import { TableActionBarButtonCreateCommentThreadPeople } from '@/people/table/components/TableActionBarButtonCreateCommentThreadPeople';
+import { TableActionBarButtonCreateActivityPeople } from '@/people/table/components/TableActionBarButtonCreateActivityPeople';
 import { TableActionBarButtonDeletePeople } from '@/people/table/components/TableActionBarButtonDeletePeople';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
@@ -77,7 +77,7 @@ export function People() {
           <PeopleTable />
         </StyledTableContainer>
         <EntityTableActionBar>
-          <TableActionBarButtonCreateCommentThreadPeople />
+          <TableActionBarButtonCreateActivityPeople />
           <TableActionBarButtonDeletePeople />
         </EntityTableActionBar>
       </WithTopBarContainer>

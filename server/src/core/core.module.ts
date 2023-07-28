@@ -12,6 +12,7 @@ import { FileModule } from './file/file.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { AttachmentModule } from './attachment/attachment.module';
 import { FavoriteModule } from './favorite/favorite.module';
+import { ActivityModule } from './activity/activity.module';
 import { ViewModule } from './view/view.module';
 
 @Module({
@@ -28,6 +29,7 @@ import { ViewModule } from './view/view.module';
     ClientConfigModule,
     AttachmentModule,
     FavoriteModule,
+    ActivityModule,
     ViewModule,
   ],
   exports: [

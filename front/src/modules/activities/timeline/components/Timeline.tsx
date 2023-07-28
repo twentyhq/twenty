@@ -2,16 +2,16 @@ import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { CommentThreadCreateButton } from '@/activities/components/CommentThreadCreateButton';
-import { useOpenCreateCommentThreadDrawer } from '@/activities/hooks/useOpenCreateCommentThreadDrawer';
+import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
 import { CommentableEntity } from '@/activities/types/CommentableEntity';
-import { CommentThreadForDrawer } from '@/activities/types/CommentThreadForDrawer';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { IconCircleDot } from '@/ui/icon';
 import {
   ActivityType,
   SortOrder,
-  useGetCommentThreadsByTargetsQuery,
+  useGetActivitiesByTargetsQuery,
 } from '~/generated/graphql';
 
 import { TimelineActivity } from './TimelineActivity';
@@ -96,9 +96,9 @@ const StyledStartIcon = styled.div`
 export function Timeline({ entity }: { entity: CommentableEntity }) {
   const theme = useTheme();
 
-  const { data: queryResult, loading } = useGetCommentThreadsByTargetsQuery({
+  const { data: queryResult, loading } = useGetActivitiesByTargetsQuery({
     variables: {
-      commentThreadTargetIds: [entity.id],
+      activityTargetIds: [entity.id],
       orderBy: [
         {
           createdAt: SortOrder.Desc,
@@ -107,21 +107,20 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     },
   });
 
-  const openCreateCommandThread = useOpenCreateCommentThreadDrawer();
+  const openCreateCommandThread = useOpenCreateActivityDrawer();
 
-  const commentThreads: CommentThreadForDrawer[] =
-    queryResult?.findManyCommentThreads ?? [];
+  const activities: ActivityForDrawer[] = queryResult?.findManyActivities ?? [];
 
   if (loading) {
     return <></>;
   }
 
-  if (!commentThreads.length) {
+  if (!activities.length) {
     return (
       <StyledTimelineEmptyContainer>
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
         <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
-        <CommentThreadCreateButton
+        <ActivityCreateButton
           onNoteClick={() => openCreateCommandThread(entity, ActivityType.Note)}
           onTaskClick={() => openCreateCommandThread(entity, ActivityType.Task)}
         />
@@ -132,17 +131,14 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
   return (
     <StyledMainContainer>
       <StyledTopActionBar>
-        <CommentThreadCreateButton
+        <ActivityCreateButton
           onNoteClick={() => openCreateCommandThread(entity, ActivityType.Note)}
           onTaskClick={() => openCreateCommandThread(entity, ActivityType.Task)}
         />
       </StyledTopActionBar>
       <StyledTimelineContainer>
-        {commentThreads.map((commentThread) => (
-          <TimelineActivity
-            key={commentThread.id}
-            commentThread={commentThread}
-          />
+        {activities.map((activity) => (
+          <TimelineActivity key={activity.id} activity={activity} />
         ))}
         <StyledStartIcon>
           <IconCircleDot size={theme.icon.size.lg} />

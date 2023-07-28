@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
-import { RightDrawerCreateCommentThread } from '@/activities/right-drawer/components/create/RightDrawerCreateCommentThread';
-import { RightDrawerEditCommentThread } from '@/activities/right-drawer/components/edit/RightDrawerEditCommentThread';
+import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
+import { RightDrawerEditActivity } from '@/activities/right-drawer/components/edit/RightDrawerEditActivity';
 import { RightDrawerTimeline } from '@/activities/right-drawer/components/RightDrawerTimeline';
 import { isDefined } from '~/utils/isDefined';
 
@@ -18,10 +18,10 @@ export function RightDrawerRouter() {
   switch (rightDrawerPage) {
     case RightDrawerPages.Timeline:
       return <RightDrawerTimeline />;
-    case RightDrawerPages.CreateCommentThread:
-      return <RightDrawerCreateCommentThread />;
-    case RightDrawerPages.EditCommentThread:
-      return <RightDrawerEditCommentThread />;
+    case RightDrawerPages.CreateActivity:
+      return <RightDrawerCreateActivity />;
+    case RightDrawerPages.EditActivity:
+      return <RightDrawerEditActivity />;
     default:
       return <></>;
   }
