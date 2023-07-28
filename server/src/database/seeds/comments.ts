@@ -33,6 +33,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       body: 'Hi Félix ! How do you like your Twenty workspace?',
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
+      commentThreadId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
       authorId: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408',
     },
   });
@@ -45,6 +46,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       body: 'I love it!',
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
+      commentThreadId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
       authorId: 'twenty-gk256b39-3ec3-4fe3-8997-b76aa0bfa408',
     },
   });
@@ -84,6 +86,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       body: 'I really like this comment thread feature!',
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfc408',
+      commentThreadId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfc408',
       authorId: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408',
     },
   });
@@ -120,6 +123,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
       body: 'I really like this comment thread feature!',
       activityId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b76aaabfb408',
+      commentThreadId: 'twenty-dev-fe256b39-3ec3-4fe3-8997-b76aaabfb408',
       authorId: 'twenty-dev-gk256b39-3ec3-4fe3-8997-b76aa0boa408',
     },
   });

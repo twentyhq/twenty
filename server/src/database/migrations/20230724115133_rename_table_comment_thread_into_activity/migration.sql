@@ -1,7 +1,3 @@
--- AlterTable
-ALTER TABLE "comments" ALTER COLUMN "commentThreadId" DROP NOT NULL;
-ALTER TABLE "comments" ADD COLUMN "activityId" TEXT NOT NULL;
-
 -- Activities Table
 CREATE TABLE "activities" (
     "id" TEXT NOT NULL,

@@ -357,14 +357,15 @@ model Comment {
   /// @Validator.IsString()
   body String
 
-  author      User      @relation(fields: [authorId], references: [id])
-  authorId    String
-  activity    Activity  @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  activityId  String
+  author          User      @relation(fields: [authorId], references: [id])
+  authorId        String
+  activity        Activity? @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId      String?
+  commentThreadId String
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspace       Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId String
+  workspaceId     String
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -380,12 +381,12 @@ model ActivityTarget {
   /// @Validator.IsOptional()
   id String @id @default(uuid())
 
-  activity        Activity        @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activity        Activity         @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId      String
-  commentableType CommentableType
-  commentableId   String
+  commentableType CommentableType?
+  commentableId   String?
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace       Workspace       @relation(fields: [workspaceId], references: [id])
+  workspace       Workspace        @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId     String
 

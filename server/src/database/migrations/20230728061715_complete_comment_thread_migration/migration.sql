@@ -1,11 +1,8 @@
 /*
   Warnings:
 
-  - You are about to drop the column `commentThreadId` on the `comments` table. All the data in the column will be lost.
   - You are about to drop the `comment_thread_targets` table. If the table is not empty, all the data it contains will be lost.
   - You are about to drop the `comment_threads` table. If the table is not empty, all the data it contains will be lost.
-  - Added the required column `commentableId` to the `activity_targets` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `commentableType` to the `activity_targets` table without a default value. This is not possible if the table is not empty.
 
 */
 -- DropForeignKey
@@ -30,13 +27,13 @@ ALTER TABLE "comment_threads" DROP CONSTRAINT "comment_threads_workspaceId_fkey"
 ALTER TABLE "comments" DROP CONSTRAINT "comments_commentThreadId_fkey";
 
 -- AlterTable
-ALTER TABLE "activity_targets" ADD COLUMN     "commentableId" TEXT NOT NULL,
-ADD COLUMN     "commentableType" "CommentableType" NOT NULL,
+ALTER TABLE "activity_targets" ADD COLUMN     "commentableId" TEXT,
+ADD COLUMN     "commentableType" "CommentableType",
 ALTER COLUMN "personId" DROP NOT NULL,
 ALTER COLUMN "companyId" DROP NOT NULL;
 
 -- AlterTable
-ALTER TABLE "comments" DROP COLUMN "commentThreadId";
+ALTER TABLE "comments" ADD COLUMN     "activityId" TEXT;
 
 -- DropTable
 DROP TABLE "comment_thread_targets";
