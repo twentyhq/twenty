@@ -13,6 +13,7 @@ const StyledTitle = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: ${({ theme }) => theme.spacing(8)};
   padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIcon = styled.div`
@@ -20,11 +21,17 @@ const StyledIcon = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledText = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 export function ColumnHead({ viewName, viewIcon }: OwnProps) {
   return (
     <StyledTitle>
       <StyledIcon>{viewIcon}</StyledIcon>
-      {viewName}
+      <StyledText>{viewName}</StyledText>
     </StyledTitle>
   );
 }
