@@ -2638,7 +2638,7 @@ export type SearchPeopleQueryVariables = Exact<{
 }>;
 
 
-export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, createdAt: string }> };
+export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, createdAt: string }> };
 
 export type SearchUserQueryVariables = Exact<{
   where?: InputMaybe<UserWhereInput>;
@@ -2662,6 +2662,15 @@ export type SearchCompanyQueryVariables = Exact<{
 
 
 export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> };
+
+export type SearchActivityQueryVariables = Exact<{
+  where?: InputMaybe<ActivityWhereInput>;
+  limit?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ActivityOrderByWithRelationInput> | ActivityOrderByWithRelationInput>;
+}>;
+
+
+export type SearchActivityQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Activity', id: string, title?: string | null, body?: string | null }> };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -4576,6 +4585,7 @@ export const SearchPeopleDocument = gql`
     city
     firstName
     lastName
+    displayName
     createdAt
   }
 }
@@ -4725,6 +4735,49 @@ export function useSearchCompanyLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type SearchCompanyQueryHookResult = ReturnType<typeof useSearchCompanyQuery>;
 export type SearchCompanyLazyQueryHookResult = ReturnType<typeof useSearchCompanyLazyQuery>;
 export type SearchCompanyQueryResult = Apollo.QueryResult<SearchCompanyQuery, SearchCompanyQueryVariables>;
+export const SearchActivityDocument = gql`
+    query SearchActivity($where: ActivityWhereInput, $limit: Int, $orderBy: [ActivityOrderByWithRelationInput!]) {
+  searchResults: findManyActivities(
+    where: $where
+    take: $limit
+    orderBy: $orderBy
+  ) {
+    id
+    title
+    body
+  }
+}
+    `;
+
+/**
+ * __useSearchActivityQuery__
+ *
+ * To run a query within a React component, call `useSearchActivityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchActivityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchActivityQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      limit: // value for 'limit'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useSearchActivityQuery(baseOptions?: Apollo.QueryHookOptions<SearchActivityQuery, SearchActivityQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchActivityQuery, SearchActivityQueryVariables>(SearchActivityDocument, options);
+      }
+export function useSearchActivityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchActivityQuery, SearchActivityQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchActivityQuery, SearchActivityQueryVariables>(SearchActivityDocument, options);
+        }
+export type SearchActivityQueryHookResult = ReturnType<typeof useSearchActivityQuery>;
+export type SearchActivityLazyQueryHookResult = ReturnType<typeof useSearchActivityLazyQuery>;
+export type SearchActivityQueryResult = Apollo.QueryResult<SearchActivityQuery, SearchActivityQueryVariables>;
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
   currentUser {
