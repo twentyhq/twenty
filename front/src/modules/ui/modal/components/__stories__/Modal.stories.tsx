@@ -17,7 +17,7 @@ type Story = StoryObj<typeof Modal>;
 const StyledContentContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   margin: 5px;
-  padding: ${({ theme })=>theme.spacing(10) } 
+  padding: ${({ theme }) => theme.spacing(10)};
 `;
 
 const args = {
