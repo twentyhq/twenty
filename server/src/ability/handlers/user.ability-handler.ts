@@ -97,7 +97,7 @@ export class DeleteUserAbilityHandler implements IAbilityHandler {
     // obtain the auth user from the context
     const reqUser = gqlContext.getContext().req.user;
 
-    // FIXME: When `args.where` (which it is in almost all the cases I've tested) is undefined,
+    // FIXME: When `args.where` is undefined(which it is in almost all the cases I've tested),
     // this query will return the first user entry in the DB, which is most likely not the current user
     const user = await this.prismaService.client.user.findFirst({
       where: { ...args.where, id: reqUser.user.id },
