@@ -15,7 +15,7 @@ if [ -f "${ENV_PATH}" ]; then
     if echo "$line" | grep -F = &>/dev/null
     then
       varname=$(echo "$line" | cut -d '=' -f 1)
-      varvalue=$(echo "$line" | cut -d '=' -f 2-)
+      varvalue=$(echo "$line" | cut -d '=' -f 2- | cut -d '#' -f 1)
       export "$varname"="$varvalue"
     fi
   done < <(grep -v '^#' "${ENV_PATH}")

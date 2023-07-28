@@ -14,8 +14,9 @@ services:
   name: server
   env: docker
   dockerfilePath: ./infra/prod/server/Dockerfile
-  dockerCommand: (yarn prisma:migrate) && serve -s build
+  dockerCommand: ./bin/bash -c 'cd server (yarn prisma:migrate) && node dist/src/main'
   autoDeploy: false
+  healthCheckPath: /healthz
   envVars:
   - key: ACCESS_TOKEN_SECRET
     generateValue: true
@@ -23,6 +24,8 @@ services:
     generateValue: true
   - key: REFRESH_TOKEN_SECRET
     generateValue: true
+  - key: IS_CORS_ENABLED
+    value: false
   - key: PG_DATABASE_URL
     fromDatabase:
       name: twenty-db
@@ -40,4 +43,3 @@ services:
 databases:
 - name: twenty-db
   plan: starter
-

@@ -43,7 +43,6 @@ export class EnvironmentVariables {
   @IsUrl({ protocols: ['postgres'], require_tld: false })
   PG_DATABASE_URL: string;
 
-
   // Frontend URL
   @IsUrl({ require_tld: false })
   FRONT_BASE_URL: string;

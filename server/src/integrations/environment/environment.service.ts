@@ -60,7 +60,10 @@ export class EnvironmentService {
   }
 
   getFrontAuthCallbackUrl(): string {
-    return this.configService.get<string>('FRONT_AUTH_CALLBACK_URL') ?? this.getFrontBaseUrl() + '/auth/callback';
+    return (
+      this.configService.get<string>('FRONT_AUTH_CALLBACK_URL') ??
+      this.getFrontBaseUrl() + '/auth/callback'
+    );
   }
 
   isAuthGoogleEnabled(): boolean {
@@ -80,7 +83,9 @@ export class EnvironmentService {
   }
 
   getStorageType(): StorageType {
-    return this.configService.get<StorageType>('STORAGE_TYPE') ?? StorageType.Local;
+    return (
+      this.configService.get<StorageType>('STORAGE_TYPE') ?? StorageType.Local
+    );
   }
 
   getStorageS3Region(): AwsRegion | undefined {
@@ -92,6 +97,8 @@ export class EnvironmentService {
   }
 
   getStorageLocalPath(): string {
-    return this.configService.get<string>('STORAGE_LOCAL_PATH') ?? '.local-storage';
+    return (
+      this.configService.get<string>('STORAGE_LOCAL_PATH') ?? '.local-storage'
+    );
   }
 }
