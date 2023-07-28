@@ -532,3 +532,10 @@ model Attachment {
 
   @@map("attachments")
 }
+
+model Favorite {
+  id       String @id @default(uuid())
+  favorite String
+
+  @@map("favorites")
+}
