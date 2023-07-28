@@ -10,7 +10,7 @@ type MockedCompany = Pick<
   | 'address'
   | 'employees'
   | 'linkedinUrl'
-  | '_commentThreadCount'
+  | '_activityCount'
 > & {
   accountOwner: Pick<
     User,
@@ -33,7 +33,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '17 rue de clignancourt',
     employees: 12,
     linkedinUrl: 'https://www.linkedin.com/company/airbnb/',
-    _commentThreadCount: 1,
+    _activityCount: 1,
     accountOwner: {
       email: 'charles@test.com',
       displayName: 'Charles Test',
@@ -53,7 +53,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '',
     employees: 1,
     linkedinUrl: 'https://www.linkedin.com/company/aircall/',
-    _commentThreadCount: 1,
+    _activityCount: 1,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -65,7 +65,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '',
     employees: 1,
     linkedinUrl: 'https://www.linkedin.com/company/algolia/',
-    _commentThreadCount: 1,
+    _activityCount: 1,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -77,7 +77,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '',
     employees: 10,
     linkedinUrl: 'https://www.linkedin.com/company/apple/',
-    _commentThreadCount: 0,
+    _activityCount: 0,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -89,7 +89,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '10 rue de la Paix',
     employees: 1,
     linkedinUrl: 'https://www.linkedin.com/company/qonto/',
-    _commentThreadCount: 2,
+    _activityCount: 2,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -101,7 +101,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '',
     employees: 1,
     linkedinUrl: 'https://www.linkedin.com/company/facebook/',
-    _commentThreadCount: 13,
+    _activityCount: 13,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -113,7 +113,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     address: '',
     employees: 1,
     linkedinUrl: 'https://www.linkedin.com/company/sequoia/',
-    _commentThreadCount: 1,
+    _activityCount: 1,
     accountOwner: null,
     __typename: 'Company',
   },

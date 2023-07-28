@@ -5,7 +5,7 @@ export const CREATE_COMMENT = gql`
     $commentId: String!
     $commentText: String!
     $authorId: String!
-    $commentThreadId: String!
+    $activityId: String!
     $createdAt: DateTime!
   ) {
     createOneComment(
@@ -14,7 +14,7 @@ export const CREATE_COMMENT = gql`
         createdAt: $createdAt
         body: $commentText
         author: { connect: { id: $authorId } }
-        commentThread: { connect: { id: $commentThreadId } }
+        activity: { connect: { id: $activityId } }
       }
     ) {
       id
@@ -27,32 +27,32 @@ export const CREATE_COMMENT = gql`
         lastName
         avatarUrl
       }
-      commentThreadId
+      activityId
     }
   }
 `;
 
-export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
-  mutation CreateCommentThread(
-    $commentThreadId: String!
+export const CREATE_ACTIVITY_WITH_COMMENT = gql`
+  mutation CreateActivity(
+    $activityId: String!
     $body: String
     $title: String
     $type: ActivityType!
     $authorId: String!
     $createdAt: DateTime!
-    $commentThreadTargetArray: [CommentThreadTargetCreateManyCommentThreadInput!]!
+    $activityTargetArray: [ActivityTargetCreateManyActivityInput!]!
   ) {
-    createOneCommentThread(
+    createOneActivity(
       data: {
-        id: $commentThreadId
+        id: $activityId
         createdAt: $createdAt
         updatedAt: $createdAt
         author: { connect: { id: $authorId } }
         body: $body
         title: $title
         type: $type
-        commentThreadTargets: {
-          createMany: { data: $commentThreadTargetArray, skipDuplicates: true }
+        activityTargets: {
+          createMany: { data: $activityTargetArray, skipDuplicates: true }
         }
       }
     ) {
@@ -61,11 +61,11 @@ export const CREATE_COMMENT_THREAD_WITH_COMMENT = gql`
       updatedAt
       authorId
       type
-      commentThreadTargets {
+      activityTargets {
         id
         createdAt
         updatedAt
-        commentThreadId
+        activityId
         commentableType
         commentableId
       }

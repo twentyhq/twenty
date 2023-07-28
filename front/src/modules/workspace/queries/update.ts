@@ -32,3 +32,11 @@ export const REMOVE_WORKSPACE_MEMBER = gql`
     }
   }
 `;
+
+export const DELETE_CURRENT_WORKSPACE = gql`
+  mutation DeleteCurrentWorkspace {
+    deleteCurrentWorkspace {
+      id
+    }
+  }
+`;

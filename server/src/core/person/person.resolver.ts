@@ -18,7 +18,6 @@ import { UpdateOnePersonArgs } from 'src/core/@generated/person/update-one-perso
 import { CreateOnePersonArgs } from 'src/core/@generated/person/create-one-person.args';
 import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
 import { DeleteManyPersonArgs } from 'src/core/@generated/person/delete-many-person.args';
-import { Workspace } from 'src/core/@generated/workspace/workspace.model';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import {
   PrismaSelect,
@@ -34,6 +33,7 @@ import {
 } from 'src/ability/handlers/person.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
+import { Workspace } from 'src/core/@generated/workspace/workspace.model';
 
 import { PersonService } from './person.service';
 

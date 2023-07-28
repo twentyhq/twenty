@@ -74,7 +74,7 @@ export function MultipleEntitySelect<
               avatarUrl={entity.avatarUrl}
               colorId={entity.id}
               placeholder={entity.name}
-              size={16}
+              size="md"
               type={entity.avatarType ?? 'rounded'}
             />
             {entity.name}
