@@ -1,9 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { defaultOrderBy } from '@/companies/queries';
+import { companyViewFields } from '@/companies/constants/companyFieldMetadataArray';
+import { CompaniesSelectedSortType, defaultOrderBy } from '@/companies/queries';
 import { GenericEntityTableData } from '@/people/components/GenericEntityTableData';
-import { peopleViewFields } from '@/people/constants/peopleFieldMetadataArray';
-import { PeopleSelectedSortType } from '@/people/queries';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
@@ -12,18 +11,18 @@ import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedVal
 import { EntityTable } from '@/ui/table/components/EntityTableV2';
 import { TableContext } from '@/ui/table/states/TableContext';
 import {
-  PersonOrderByWithRelationInput,
-  useGetPeopleQuery,
-  useUpdateOnePersonMutation,
+  CompanyOrderByWithRelationInput,
+  useGetCompaniesQuery,
+  useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
-import { peopleFilters } from '~/pages/people/people-filters';
-import { availableSorts } from '~/pages/people/people-sorts';
+import { companiesFilters } from '~/pages/companies/companies-filters';
+import { availableSorts } from '~/pages/companies/companies-sorts';
 
-export function PeopleTable() {
+export function CompanyTable() {
   const [orderBy, setOrderBy] =
-    useState<PersonOrderByWithRelationInput[]>(defaultOrderBy);
+    useState<CompanyOrderByWithRelationInput[]>(defaultOrderBy);
 
-  const updateSorts = useCallback((sorts: Array<PeopleSelectedSortType>) => {
+  const updateSorts = useCallback((sorts: Array<CompaniesSelectedSortType>) => {
     setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
   }, []);
 
@@ -36,19 +35,19 @@ export function PeopleTable() {
   return (
     <>
       <GenericEntityTableData
-        getRequestResultKey="people"
-        useGetRequest={useGetPeopleQuery}
+        getRequestResultKey="companies"
+        useGetRequest={useGetCompaniesQuery}
         orderBy={orderBy}
         whereFilters={whereFilters}
-        viewFields={peopleViewFields}
-        filterDefinitionArray={peopleFilters}
+        viewFields={companyViewFields}
+        filterDefinitionArray={companiesFilters}
       />
       <EntityTable
-        viewName="All People"
+        viewName="All Companies"
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
         onSortsUpdate={updateSorts}
-        useUpdateEntityMutation={useUpdateOnePersonMutation}
+        useUpdateEntityMutation={useUpdateOneCompanyMutation}
       />
     </>
   );

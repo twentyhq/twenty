@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
-import { entityFieldMetadataArrayState } from '@/ui/table/states/entityFieldMetadataArrayState';
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
-import { EntityFieldMetadata } from '@/ui/table/types/EntityFieldMetadata';
+import { viewFieldsState } from '@/ui/table/states/viewFieldsState';
+import { ViewFieldDefinition } from '@/ui/table/types/ViewField';
 
 import { availableFiltersScopedState } from '../../ui/filter-n-sort/states/availableFiltersScopedState';
 import { useContextScopeId } from '../../ui/recoil-scope/hooks/useContextScopeId';
@@ -22,7 +22,8 @@ export function useSetEntityTableData() {
     ({ set, snapshot }) =>
       <T extends { id: string }>(
         newEntityArray: T[],
-        entityFieldMetadataArray: EntityFieldMetadata[],
+        viewFields: ViewFieldDefinition<unknown>[],
+        filters: FilterDefinition[],
       ) => {
         for (const entity of newEntityArray) {
           const currentEntity = snapshot
@@ -47,23 +48,13 @@ export function useSetEntityTableData() {
         resetTableRowSelection();
 
         set(entityTableDimensionsState, {
-          numberOfColumns: entityFieldMetadataArray.length,
+          numberOfColumns: viewFields.length,
           numberOfRows: entityIds.length,
         });
 
-        const filters = entityFieldMetadataArray.map(
-          (fieldMetadata) =>
-            ({
-              field: fieldMetadata.fieldName,
-              icon: fieldMetadata.filterIcon,
-              label: fieldMetadata.label,
-              type: fieldMetadata.type,
-            } as FilterDefinition),
-        );
-
         set(availableFiltersScopedState(tableContextScopeId), filters);
 
-        set(entityFieldMetadataArrayState, entityFieldMetadataArray);
+        set(viewFieldsState, viewFields);
 
         set(isFetchingEntityTableDataState, false);
       },

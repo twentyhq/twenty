@@ -5,26 +5,31 @@ import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 import {
+  ViewFieldChipMetadata,
   ViewFieldDefinition,
-  ViewFieldRelationMetadata,
 } from '@/ui/table/types/ViewField';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 type OwnProps = {
-  fieldDefinition: ViewFieldDefinition<ViewFieldRelationMetadata>;
-  editModeHorizontalAlign?: 'left' | 'right';
-  placeholder?: string;
+  fieldDefinition: ViewFieldDefinition<ViewFieldChipMetadata>;
 };
 
-export function GenericEditableRelationCellDisplayMode({
+export function GenericEditableChipCellDisplayMode({
   fieldDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
-  const fieldValue = useRecoilValue<any | null>(
+  const content = useRecoilValue<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldDefinition.metadata.fieldName,
+      fieldName: fieldDefinition.metadata.contentFieldName,
+    }),
+  );
+
+  const chipUrl = useRecoilValue<any | null>(
+    tableEntityFieldFamilySelector({
+      entityId: currentRowEntityId ?? '',
+      fieldName: fieldDefinition.metadata.urlFieldName,
     }),
   );
 
@@ -32,15 +37,15 @@ export function GenericEditableRelationCellDisplayMode({
     case Entity.Company: {
       return (
         <CompanyChip
-          id={fieldValue?.id ?? ''}
-          name={fieldValue?.name ?? ''}
-          pictureUrl={getLogoUrlFromDomainName(fieldValue?.domainName)}
+          id={currentRowEntityId ?? ''}
+          name={content ?? ''}
+          pictureUrl={getLogoUrlFromDomainName(chipUrl)}
         />
       );
     }
     default:
       console.warn(
-        `Unknown relation type: "${fieldDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
+        `Unknown relation type: "${fieldDefinition.metadata.relationType}" in GenericEditableChipCellEditMode`,
       );
       return <> </>;
   }

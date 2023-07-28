@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { entityFieldMetadataArrayState } from '../states/entityFieldMetadataArrayState';
-import { EntityFieldMetadataContext } from '../states/EntityFieldMetadataContext';
+import { ViewFieldContext } from '../states/ViewFieldContext';
+import { viewFieldsState } from '../states/viewFieldsState';
 
 import { CheckboxCell } from './CheckboxCell';
 import { EntityTableCell } from './EntityTableCellV2';
@@ -13,9 +13,7 @@ const StyledRow = styled.tr<{ selected: boolean }>`
 `;
 
 export function EntityTableRow({ rowId }: { rowId: string }) {
-  const entityFieldMetadataArray = useRecoilValue(
-    entityFieldMetadataArrayState,
-  );
+  const entityFieldMetadataArray = useRecoilValue(viewFieldsState);
 
   return (
     <StyledRow data-testid={`row-id-${rowId}`} selected={false}>
@@ -24,12 +22,12 @@ export function EntityTableRow({ rowId }: { rowId: string }) {
       </td>
       {entityFieldMetadataArray.map((entityFieldMetadata, columnIndex) => {
         return (
-          <EntityFieldMetadataContext.Provider
+          <ViewFieldContext.Provider
             value={entityFieldMetadata}
-            key={entityFieldMetadata.fieldName}
+            key={entityFieldMetadata.columnOrder}
           >
             <EntityTableCell cellIndex={columnIndex} />
-          </EntityFieldMetadataContext.Provider>
+          </ViewFieldContext.Provider>
         );
       })}
       <td></td>

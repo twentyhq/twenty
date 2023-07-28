@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { GET_FAVORITES } from '@/favorites/queries/show';
 import { GET_PEOPLE } from '@/people/queries';
 import { PeopleTable } from '@/people/table/components/PeopleTable';
+import { PeopleTable as PeopleTableV2 } from '@/people/table/components/PeopleTableV2';
 import { TableActionBarButtonCreateActivityPeople } from '@/people/table/components/TableActionBarButtonCreateActivityPeople';
 import { TableActionBarButtonDeletePeople } from '@/people/table/components/TableActionBarButtonDeletePeople';
 import { IconUser } from '@/ui/icon';
@@ -18,8 +19,9 @@ import { TableContext } from '@/ui/table/states/TableContext';
 import {
   FavoriteCreateManyInput,
   useInsertManyFavoritesMutation,
-  useInsertOnePersonMutation,
 } from '~/generated/graphql';
+import { ACTIVATE_VIEW_FIELDS } from '~/App';
+import { useInsertOnePersonMutation } from '~/generated/graphql';
 
 const StyledTableContainer = styled.div`
   display: flex;
@@ -65,6 +67,10 @@ export function People() {
 
   const theme = useTheme();
 
+  const PeopleTableComponent = ACTIVATE_VIEW_FIELDS
+    ? PeopleTableV2
+    : PeopleTable;
+
   return (
     <RecoilScope SpecificContext={TableContext}>
       <WithTopBarContainer
@@ -74,7 +80,7 @@ export function People() {
         onFavouriteButtonClick={handleAddFavorite}
       >
         <StyledTableContainer>
-          <PeopleTable />
+          <PeopleTableComponent />
         </StyledTableContainer>
         <EntityTableActionBar>
           <TableActionBarButtonCreateActivityPeople />
