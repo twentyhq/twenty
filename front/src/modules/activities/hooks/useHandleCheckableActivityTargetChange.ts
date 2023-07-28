@@ -70,7 +70,9 @@ export function useHandleCheckableActivityTargetChange({
       });
 
     const activityTargetIdsToDelete = activity.activityTargets
-      .filter(({ commentableId }) => !entityValues[commentableId])
+      .filter(
+        ({ commentableId }) => commentableId && !entityValues[commentableId],
+      )
       .map(({ id }) => id);
 
     if (activityTargetIdsToDelete.length)

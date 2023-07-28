@@ -19,6 +19,7 @@ import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { MultipleEntitySelect } from '@/ui/relation-picker/components/MultipleEntitySelect';
 import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
 import { Activity, ActivityTarget, CommentableType } from '~/generated/graphql';
+import { assertNotNull } from '~/utils/assert';
 
 import { useHandleCheckableActivityTargetChange } from '../hooks/useHandleCheckableActivityTargetChange';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '../utils/flatMapAndSortEntityForSelectArrayByName';
@@ -86,7 +87,8 @@ export function ActivityRelationPicker({ activity }: OwnProps) {
     () =>
       activity?.activityTargets
         ?.filter((relation) => relation.commentableType === 'Person')
-        .map((relation) => relation.commentableId) ?? [],
+        .map((relation) => relation.commentableId)
+        .filter(assertNotNull) ?? [],
     [activity?.activityTargets],
   );
 
@@ -94,7 +96,8 @@ export function ActivityRelationPicker({ activity }: OwnProps) {
     () =>
       activity?.activityTargets
         ?.filter((relation) => relation.commentableType === 'Company')
-        .map((relation) => relation.commentableId) ?? [],
+        .map((relation) => relation.commentableId)
+        .filter(assertNotNull) ?? [],
     [activity?.activityTargets],
   );
 
