@@ -7,14 +7,17 @@ import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
-import { EntityFieldMetadata } from '@/ui/table/types/EntityFieldMetadata';
+import {
+  ViewFieldDefinition,
+  ViewFieldRelationMetadata,
+} from '@/ui/table/types/ViewField';
 
 type OwnProps = {
-  fieldMetadata: EntityFieldMetadata;
+  viewFieldDefinition: ViewFieldDefinition<ViewFieldRelationMetadata>;
 };
 
 export function GenericEditableRelationCellEditMode({
-  fieldMetadata,
+  viewFieldDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -23,7 +26,7 @@ export function GenericEditableRelationCellEditMode({
   const [fieldValueEntity] = useRecoilState<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldMetadata.fieldName,
+      fieldName: viewFieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -37,7 +40,7 @@ export function GenericEditableRelationCellEditMode({
     ) {
       updateEntityField(
         currentRowEntityId,
-        fieldMetadata.fieldName,
+        viewFieldDefinition.id,
         newFieldEntity,
       );
     }
@@ -49,7 +52,7 @@ export function GenericEditableRelationCellEditMode({
     closeEditableCell();
   }
 
-  switch (fieldMetadata.relationType) {
+  switch (viewFieldDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
         <CompanyPickerCell
@@ -61,7 +64,7 @@ export function GenericEditableRelationCellEditMode({
     }
     default:
       console.warn(
-        `Unknown relation type: "${fieldMetadata.relationType}" in GenericEditableRelationCellEditMode`,
+        `Unknown relation type: "${viewFieldDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
       );
       return <></>;
   }

@@ -5,29 +5,48 @@ import {
 } from '@tabler/icons-react';
 
 import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
-import { EntityFieldMetadata } from '@/ui/table/types/EntityFieldMetadata';
+import {
+  ViewFieldDefinition,
+  ViewFieldRelationMetadata,
+  ViewFieldTextMetadata,
+} from '@/ui/table/types/ViewField';
 
-export const peopleFieldMetadataArray: EntityFieldMetadata[] = [
+export const peopleViewFields: ViewFieldDefinition<unknown>[] = [
   {
-    fieldName: 'city',
-    label: 'City',
-    icon: <IconMap size={16} />,
+    id: 'city',
+    columnLabel: 'City',
+    columnIcon: <IconMap size={16} />,
     columnSize: 150,
     type: 'text',
-  },
+    columnOrder: 1,
+    metadata: {
+      fieldName: 'city',
+      placeHolder: 'City',
+    },
+  } as ViewFieldDefinition<ViewFieldTextMetadata>,
   {
-    fieldName: 'jobTitle',
-    label: 'Job title',
-    icon: <IconBriefcase size={16} />,
+    id: 'jobTitle',
+    columnLabel: 'Job title',
+    columnIcon: <IconBriefcase size={16} />,
     columnSize: 150,
     type: 'text',
-  },
+    columnOrder: 2,
+    metadata: {
+      fieldName: 'jobTitle',
+      placeHolder: 'Job title',
+    },
+  } as ViewFieldDefinition<ViewFieldTextMetadata>,
   {
-    fieldName: 'company',
-    label: 'Company',
-    icon: <IconBuildingSkyscraper size={16} />,
+    id: 'company',
+    columnLabel: 'Company',
+    columnIcon: <IconBuildingSkyscraper size={16} />,
     columnSize: 150,
     type: 'relation',
     relationType: Entity.Company,
-  },
+    columnOrder: 3,
+    metadata: {
+      fieldName: 'company',
+      relationType: Entity.Company,
+    },
+  } as ViewFieldDefinition<ViewFieldRelationMetadata>,
 ];

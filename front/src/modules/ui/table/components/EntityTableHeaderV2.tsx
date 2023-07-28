@@ -1,12 +1,12 @@
 import { useRecoilValue } from 'recoil';
 
-import { entityFieldMetadataArrayState } from '../states/entityFieldMetadataArrayState';
+import { viewFieldsState } from '../states/viewFieldsState';
 
 import { ColumnHead } from './ColumnHead';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
 export function EntityTableHeader() {
-  const fieldMetadataArray = useRecoilValue(entityFieldMetadataArrayState);
+  const viewFields = useRecoilValue(viewFieldsState);
 
   return (
     <thead>
@@ -20,18 +20,18 @@ export function EntityTableHeader() {
         >
           <SelectAllCheckbox />
         </th>
-        {fieldMetadataArray.map((fieldMetadata) => (
+        {viewFields.map((viewField) => (
           <th
-            key={fieldMetadata.fieldName.toString()}
+            key={viewField.columnOrder.toString()}
             style={{
-              width: fieldMetadata.columnSize,
-              minWidth: fieldMetadata.columnSize,
-              maxWidth: fieldMetadata.columnSize,
+              width: viewField.columnSize,
+              minWidth: viewField.columnSize,
+              maxWidth: viewField.columnSize,
             }}
           >
             <ColumnHead
-              viewName={fieldMetadata.label}
-              viewIcon={fieldMetadata.icon}
+              viewName={viewField.columnLabel}
+              viewIcon={viewField.columnIcon}
             />
           </th>
         ))}
