@@ -18,7 +18,7 @@ type OwnProps = {
   onSubmit: (newText: string) => void;
 };
 
-export function InplaceInputTextEditMode({
+export function InplaceInputTextCellEditMode({
   placeholder,
   autoFocus,
   value,

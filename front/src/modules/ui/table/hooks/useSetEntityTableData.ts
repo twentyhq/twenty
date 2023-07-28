@@ -1,17 +1,16 @@
 import { useRecoilCallback } from 'recoil';
 
+import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
+import { useContextScopeId } from '@/ui/recoil-scope/hooks/useContextScopeId';
+import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
+import { entityTableDimensionsState } from '@/ui/table/states/entityTableDimensionsState';
+import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
+import { TableContext } from '@/ui/table/states/TableContext';
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
-import { viewFieldsState } from '@/ui/table/states/viewFieldsState';
+import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
+import { viewFieldsFamilyState } from '@/ui/table/states/viewFieldsState';
 import { ViewFieldDefinition } from '@/ui/table/types/ViewField';
-
-import { availableFiltersScopedState } from '../../ui/filter-n-sort/states/availableFiltersScopedState';
-import { useContextScopeId } from '../../ui/recoil-scope/hooks/useContextScopeId';
-import { useResetTableRowSelection } from '../../ui/table/hooks/useResetTableRowSelection';
-import { entityTableDimensionsState } from '../../ui/table/states/entityTableDimensionsState';
-import { isFetchingEntityTableDataState } from '../../ui/table/states/isFetchingEntityTableDataState';
-import { TableContext } from '../../ui/table/states/TableContext';
-import { tableRowIdsState } from '../../ui/table/states/tableRowIdsState';
 
 export function useSetEntityTableData() {
   const resetTableRowSelection = useResetTableRowSelection();
@@ -54,7 +53,7 @@ export function useSetEntityTableData() {
 
         set(availableFiltersScopedState(tableContextScopeId), filters);
 
-        set(viewFieldsState, viewFields);
+        set(viewFieldsFamilyState, viewFields);
 
         set(isFetchingEntityTableDataState, false);
       },

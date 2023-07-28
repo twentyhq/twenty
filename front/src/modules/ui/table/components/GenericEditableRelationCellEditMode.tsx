@@ -1,11 +1,11 @@
 import { useRecoilState } from 'recoil';
 
 import { CompanyPickerCell } from '@/companies/components/CompanyPickerCell';
-import { useUpdateEntityField } from '@/people/hooks/useUpdateEntityField';
 import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
+import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 import {
   ViewFieldDefinition,
@@ -40,7 +40,7 @@ export function GenericEditableRelationCellEditMode({
     ) {
       updateEntityField(
         currentRowEntityId,
-        viewFieldDefinition.id,
+        viewFieldDefinition,
         newFieldEntity,
       );
     }

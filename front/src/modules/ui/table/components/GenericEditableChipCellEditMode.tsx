@@ -5,20 +5,20 @@ import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 
-import { ViewFieldDefinition, ViewFieldTextMetadata } from '../types/ViewField';
+import { ViewFieldChipMetadata, ViewFieldDefinition } from '../types/ViewField';
 
 type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldTextMetadata>;
+  viewField: ViewFieldDefinition<ViewFieldChipMetadata>;
 };
 
-export function GenericEditableTextCellEditMode({ viewField }: OwnProps) {
+export function GenericEditableChipCellEditMode({ viewField }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: viewField.metadata.contentFieldName,
     }),
   );
 

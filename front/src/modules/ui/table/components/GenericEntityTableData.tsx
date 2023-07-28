@@ -1,8 +1,8 @@
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
+import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
 import { ViewFieldDefinition } from '@/ui/table/types/ViewField';
 
-import { useSetEntityTableData } from '../hooks/useSetEntityTableData';
-import { defaultOrderBy } from '../queries';
+import { defaultOrderBy } from '../../../people/queries';
 
 export function GenericEntityTableData({
   useGetRequest,

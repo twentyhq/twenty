@@ -1,8 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { defaultOrderBy } from '@/companies/queries';
-import { GenericEntityTableData } from '@/people/components/GenericEntityTableData';
-import { peopleViewFields } from '@/people/constants/peopleFieldMetadataArray';
+import { peopleViewFields } from '@/people/constants/peopleViewFields';
 import { PeopleSelectedSortType } from '@/people/queries';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
@@ -10,6 +9,7 @@ import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIn
 import { IconList } from '@/ui/icon';
 import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
 import { EntityTable } from '@/ui/table/components/EntityTableV2';
+import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { TableContext } from '@/ui/table/states/TableContext';
 import {
   PersonOrderByWithRelationInput,
