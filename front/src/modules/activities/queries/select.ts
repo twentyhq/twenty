@@ -1,16 +1,14 @@
 import { gql } from '@apollo/client';
 
-export const GET_COMMENT_THREADS_BY_TARGETS = gql`
-  query GetCommentThreadsByTargets(
-    $commentThreadTargetIds: [String!]!
-    $orderBy: [CommentThreadOrderByWithRelationInput!]
+export const GET_ACTIVITIES_BY_TARGETS = gql`
+  query GetActivitiesByTargets(
+    $activityTargetIds: [String!]!
+    $orderBy: [ActivityOrderByWithRelationInput!]
   ) {
-    findManyCommentThreads(
+    findManyActivities(
       orderBy: $orderBy
       where: {
-        commentThreadTargets: {
-          some: { commentableId: { in: $commentThreadTargetIds } }
-        }
+        activityTargets: { some: { commentableId: { in: $activityTargetIds } } }
       }
     ) {
       id
@@ -38,18 +36,18 @@ export const GET_COMMENT_THREADS_BY_TARGETS = gql`
           avatarUrl
         }
       }
-      commentThreadTargets {
+      activityTargets {
         id
-        commentableId
         commentableType
+        commentableId
       }
     }
   }
 `;
 
-export const GET_COMMENT_THREAD = gql`
-  query GetCommentThread($commentThreadId: String!) {
-    findManyCommentThreads(where: { id: { equals: $commentThreadId } }) {
+export const GET_ACTIVITY = gql`
+  query GetActivity($activityId: String!) {
+    findManyActivities(where: { id: { equals: $activityId } }) {
       id
       createdAt
       body
@@ -75,10 +73,10 @@ export const GET_COMMENT_THREAD = gql`
           avatarUrl
         }
       }
-      commentThreadTargets {
+      activityTargets {
         id
-        commentableId
         commentableType
+        commentableId
       }
     }
   }

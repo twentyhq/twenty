@@ -1,4 +1,3 @@
--- Create the new tables first, without any foreign key constraints
 -- Activities Table
 CREATE TABLE "activities" (
     "id" TEXT NOT NULL,

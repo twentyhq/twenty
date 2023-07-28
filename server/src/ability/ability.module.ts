@@ -46,12 +46,12 @@ import {
   DeleteRefreshTokenAbilityHandler,
 } from './handlers/refresh-token.ability-handler';
 import {
-  ManageCommentThreadAbilityHandler,
-  ReadCommentThreadAbilityHandler,
-  CreateCommentThreadAbilityHandler,
-  UpdateCommentThreadAbilityHandler,
-  DeleteCommentThreadAbilityHandler,
-} from './handlers/comment-thread.ability-handler';
+  ManageActivityAbilityHandler,
+  ReadActivityAbilityHandler,
+  CreateActivityAbilityHandler,
+  UpdateActivityAbilityHandler,
+  DeleteActivityAbilityHandler,
+} from './handlers/activity.ability-handler';
 import {
   ManageCommentAbilityHandler,
   ReadCommentAbilityHandler,
@@ -60,12 +60,12 @@ import {
   DeleteCommentAbilityHandler,
 } from './handlers/comment.ability-handler';
 import {
-  ManageCommentThreadTargetAbilityHandler,
-  ReadCommentThreadTargetAbilityHandler,
-  CreateCommentThreadTargetAbilityHandler,
-  UpdateCommentThreadTargetAbilityHandler,
-  DeleteCommentThreadTargetAbilityHandler,
-} from './handlers/comment-thread-target.ability-handler';
+  ManageActivityTargetAbilityHandler,
+  ReadActivityTargetAbilityHandler,
+  CreateActivityTargetAbilityHandler,
+  UpdateActivityTargetAbilityHandler,
+  DeleteActivityTargetAbilityHandler,
+} from './handlers/activity-target.ability-handler';
 import {
   ManagePipelineAbilityHandler,
   ReadPipelineAbilityHandler,
@@ -140,24 +140,24 @@ import {
     CreateRefreshTokenAbilityHandler,
     UpdateRefreshTokenAbilityHandler,
     DeleteRefreshTokenAbilityHandler,
-    // CommentThread
-    ManageCommentThreadAbilityHandler,
-    ReadCommentThreadAbilityHandler,
-    CreateCommentThreadAbilityHandler,
-    UpdateCommentThreadAbilityHandler,
-    DeleteCommentThreadAbilityHandler,
+    // Activity
+    ManageActivityAbilityHandler,
+    ReadActivityAbilityHandler,
+    CreateActivityAbilityHandler,
+    UpdateActivityAbilityHandler,
+    DeleteActivityAbilityHandler,
     // Comment
     ManageCommentAbilityHandler,
     ReadCommentAbilityHandler,
     CreateCommentAbilityHandler,
     UpdateCommentAbilityHandler,
     DeleteCommentAbilityHandler,
-    // CommentThreadTarget
-    ManageCommentThreadTargetAbilityHandler,
-    ReadCommentThreadTargetAbilityHandler,
-    CreateCommentThreadTargetAbilityHandler,
-    UpdateCommentThreadTargetAbilityHandler,
-    DeleteCommentThreadTargetAbilityHandler,
+    // ActivityTarget
+    ManageActivityTargetAbilityHandler,
+    ReadActivityTargetAbilityHandler,
+    CreateActivityTargetAbilityHandler,
+    UpdateActivityTargetAbilityHandler,
+    DeleteActivityTargetAbilityHandler,
     //Attachment
     ManageAttachmentAbilityHandler,
     ReadAttachmentAbilityHandler,
@@ -224,24 +224,24 @@ import {
     CreateRefreshTokenAbilityHandler,
     UpdateRefreshTokenAbilityHandler,
     DeleteRefreshTokenAbilityHandler,
-    // CommentThread
-    ManageCommentThreadAbilityHandler,
-    ReadCommentThreadAbilityHandler,
-    CreateCommentThreadAbilityHandler,
-    UpdateCommentThreadAbilityHandler,
-    DeleteCommentThreadAbilityHandler,
+    // Activity
+    ManageActivityAbilityHandler,
+    ReadActivityAbilityHandler,
+    CreateActivityAbilityHandler,
+    UpdateActivityAbilityHandler,
+    DeleteActivityAbilityHandler,
     // Comment
     ManageCommentAbilityHandler,
     ReadCommentAbilityHandler,
     CreateCommentAbilityHandler,
     UpdateCommentAbilityHandler,
     DeleteCommentAbilityHandler,
-    // CommentThreadTarget
-    ManageCommentThreadTargetAbilityHandler,
-    ReadCommentThreadTargetAbilityHandler,
-    CreateCommentThreadTargetAbilityHandler,
-    UpdateCommentThreadTargetAbilityHandler,
-    DeleteCommentThreadTargetAbilityHandler,
+    // ActivityTarget
+    ManageActivityTargetAbilityHandler,
+    ReadActivityTargetAbilityHandler,
+    CreateActivityTargetAbilityHandler,
+    UpdateActivityTargetAbilityHandler,
+    DeleteActivityTargetAbilityHandler,
     //Attachment
     ManageAttachmentAbilityHandler,
     ReadAttachmentAbilityHandler,

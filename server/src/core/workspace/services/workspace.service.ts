@@ -109,11 +109,11 @@ export class WorkspaceService {
       refreshToken,
       attachment,
       comment,
-      commentThreadTarget,
-      commentThread,
+      activityTarget,
+      activity,
     } = this.prismaService.client;
 
-    const commentThreads = await commentThread.findMany({
+    const activitys = await activity.findMany({
       where: { authorId: userId },
     });
 
@@ -142,12 +142,12 @@ export class WorkspaceService {
       comment.deleteMany({
         where,
       }),
-      ...commentThreads.map(({ id: commentThreadId }) =>
-        commentThreadTarget.deleteMany({
-          where: { commentThreadId },
+      ...activitys.map(({ id: activityId }) =>
+        activityTarget.deleteMany({
+          where: { activityId },
         }),
       ),
-      commentThread.deleteMany({
+      activity.deleteMany({
         where,
       }),
       refreshToken.deleteMany({

@@ -12,7 +12,7 @@ export const GET_COMPANY = gql`
       address
       linkedinUrl
       employees
-      _commentThreadCount
+      _activityCount
       accountOwner {
         id
         email

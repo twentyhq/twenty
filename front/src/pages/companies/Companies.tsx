@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { GET_COMPANIES } from '@/companies/queries';
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
-import { TableActionBarButtonCreateCommentThreadCompany } from '@/companies/table/components/TableActionBarButtonCreateCommentThreadCompany';
+import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/components/TableActionBarButtonCreateActivityCompany';
 import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
@@ -53,7 +53,7 @@ export function Companies() {
             <CompanyTable />
           </StyledTableContainer>
           <EntityTableActionBar>
-            <TableActionBarButtonCreateCommentThreadCompany />
+            <TableActionBarButtonCreateActivityCompany />
             <TableActionBarButtonDeleteCompanies />
           </EntityTableActionBar>
         </RecoilScope>
