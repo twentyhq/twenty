@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { entityFieldMetadataArrayState } from '@/ui/table/states/entityFieldMetadataArrayState';
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
-import { EntityFieldMetadata } from '@/ui/table/types/EntityFieldMetadata';
+import { EntityFieldDefinition } from '@/ui/table/types/EntityFieldMetadata';
 
 import { availableFiltersScopedState } from '../../ui/filter-n-sort/states/availableFiltersScopedState';
 import { useContextScopeId } from '../../ui/recoil-scope/hooks/useContextScopeId';
@@ -22,7 +22,7 @@ export function useSetEntityTableData() {
     ({ set, snapshot }) =>
       <T extends { id: string }>(
         newEntityArray: T[],
-        entityFieldMetadataArray: EntityFieldMetadata[],
+        entityFieldMetadataArray: EntityFieldDefinition[],
       ) => {
         for (const entity of newEntityArray) {
           const currentEntity = snapshot
@@ -54,9 +54,9 @@ export function useSetEntityTableData() {
         const filters = entityFieldMetadataArray.map(
           (fieldMetadata) =>
             ({
-              field: fieldMetadata.fieldName,
+              field: fieldMetadata.valueFieldName,
               icon: fieldMetadata.filterIcon,
-              label: fieldMetadata.label,
+              label: fieldMetadata.columnLabel,
               type: fieldMetadata.type,
             } as FilterDefinition),
         );

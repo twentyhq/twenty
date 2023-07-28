@@ -26,7 +26,7 @@ export function EntityTableRow({ rowId }: { rowId: string }) {
         return (
           <EntityFieldMetadataContext.Provider
             value={entityFieldMetadata}
-            key={entityFieldMetadata.fieldName}
+            key={entityFieldMetadata.columnOrder}
           >
             <EntityTableCell cellIndex={columnIndex} />
           </EntityFieldMetadataContext.Provider>

@@ -20,7 +20,7 @@ export function useUpdateEntityField() {
     newFieldValue: unknown,
   ) {
     const fieldMetadata = entityFieldMetadataArray.find(
-      (metadata) => metadata.fieldName === fieldName,
+      (metadata) => metadata === fieldName,
     );
 
     if (!fieldMetadata) {

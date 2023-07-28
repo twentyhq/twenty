@@ -42,7 +42,7 @@ export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
             maxWidth: entityFieldMetadata.columnSize,
           }}
         >
-          <GenericEditableCell entityFieldMetadata={entityFieldMetadata} />
+          <GenericEditableCell fieldDefinition={entityFieldMetadata} />
         </td>
       </ColumnIndexContext.Provider>
     </RecoilScope>

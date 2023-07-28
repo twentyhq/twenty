@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { GET_COMPANIES } from '@/companies/queries';
-import { CompanyTable } from '@/companies/table/components/CompanyTable';
+import { CompanyTable } from '@/companies/table/components/CompanyTableV2';
 import { TableActionBarButtonCreateCommentThreadCompany } from '@/companies/table/components/TableActionBarButtonCreateCommentThreadCompany';
 import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
 import { IconBuildingSkyscraper } from '@/ui/icon';

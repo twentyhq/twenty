@@ -1,18 +1,21 @@
 import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
-import { EntityFieldMetadata } from '@/ui/table/types/EntityFieldMetadata';
+import {
+  EntityFieldDefinition,
+  EntityFieldRelationMetadata,
+} from '@/ui/table/types/EntityFieldMetadata';
 
 import { GenericEditableRelationCellDisplayMode } from './GenericEditableRelationCellDisplayMode';
 import { GenericEditableRelationCellEditMode } from './GenericEditableRelationCellEditMode';
 
 type OwnProps = {
-  fieldMetadata: EntityFieldMetadata;
+  fieldDefinition: EntityFieldDefinition<EntityFieldRelationMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
   placeholder?: string;
 };
 
 export function GenericEditableRelationCell({
-  fieldMetadata,
+  fieldDefinition,
   editModeHorizontalAlign,
   placeholder,
 }: OwnProps) {
@@ -21,11 +24,13 @@ export function GenericEditableRelationCell({
       editModeHorizontalAlign={editModeHorizontalAlign}
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={
-        <GenericEditableRelationCellEditMode fieldMetadata={fieldMetadata} />
+        <GenericEditableRelationCellEditMode
+          fieldDefinition={fieldDefinition}
+        />
       }
       nonEditModeContent={
         <GenericEditableRelationCellDisplayMode
-          fieldMetadata={fieldMetadata}
+          fieldDefinition={fieldDefinition}
           editModeHorizontalAlign={editModeHorizontalAlign}
           placeholder={placeholder}
         />

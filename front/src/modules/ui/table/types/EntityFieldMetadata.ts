@@ -1,13 +1,36 @@
 import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 
-export type EntityFieldType = 'text' | 'relation';
+export type EntityFieldType = 'text' | 'relation' | 'chip';
 
-export type EntityFieldMetadata = {
+export type EntityFieldTextMetadata = {
+  placeHolder: string;
   fieldName: string;
-  label: string;
-  type: EntityFieldType;
-  icon: JSX.Element;
+};
+
+export type EntityFieldRelationMetadata = {
+  relationType: Entity;
+  fieldName: string;
+};
+
+export type EntityFieldChipMetadata = {
+  relationType: Entity;
+  contentFieldName: string;
+  urlFieldName: string;
+};
+
+export type EntityFieldDefinition<
+  T extends
+    | EntityFieldTextMetadata
+    | EntityFieldRelationMetadata
+    | EntityFieldChipMetadata
+    | unknown,
+> = {
+  columnLabel: string;
   columnSize: number;
+  columnOrder: number;
+  columnIcon?: JSX.Element;
   filterIcon?: JSX.Element;
-  relationType?: Entity; // TODO: condition this type with type === "relation"
+  type: EntityFieldType;
+  fieldName: string;
+  metadata: T;
 };

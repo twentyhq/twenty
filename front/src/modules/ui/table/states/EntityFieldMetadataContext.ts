@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { EntityFieldMetadata } from '../types/EntityFieldMetadata';
+import { EntityFieldDefinition } from '../types/EntityFieldMetadata';
 
 export const EntityFieldMetadataContext =
-  createContext<EntityFieldMetadata | null>(null);
+  createContext<EntityFieldDefinition<unknown> | null>(null);

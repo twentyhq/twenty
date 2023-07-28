@@ -7,14 +7,17 @@ import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
-import { EntityFieldMetadata } from '@/ui/table/types/EntityFieldMetadata';
+import {
+  EntityFieldDefinition,
+  EntityFieldRelationMetadata,
+} from '@/ui/table/types/EntityFieldMetadata';
 
 type OwnProps = {
-  fieldMetadata: EntityFieldMetadata;
+  fieldDefinition: EntityFieldDefinition<EntityFieldRelationMetadata>;
 };
 
 export function GenericEditableRelationCellEditMode({
-  fieldMetadata,
+  fieldDefinition,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -23,7 +26,7 @@ export function GenericEditableRelationCellEditMode({
   const [fieldValueEntity] = useRecoilState<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName: fieldMetadata.fieldName,
+      fieldName: fieldDefinition.metadata.fieldName,
     }),
   );
 
@@ -37,7 +40,7 @@ export function GenericEditableRelationCellEditMode({
     ) {
       updateEntityField(
         currentRowEntityId,
-        fieldMetadata.fieldName,
+        fieldDefinition.metadata.fieldName,
         newFieldEntity,
       );
     }
@@ -49,7 +52,7 @@ export function GenericEditableRelationCellEditMode({
     closeEditableCell();
   }
 
-  switch (fieldMetadata.relationType) {
+  switch (fieldDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
         <CompanyPickerCell
@@ -61,7 +64,7 @@ export function GenericEditableRelationCellEditMode({
     }
     default:
       console.warn(
-        `Unknown relation type: "${fieldMetadata.relationType}" in GenericEditableRelationCellEditMode`,
+        `Unknown relation type: "${fieldDefinition.metadata.relationType}" in GenericEditableRelationCellEditMode`,
       );
       return <></>;
   }

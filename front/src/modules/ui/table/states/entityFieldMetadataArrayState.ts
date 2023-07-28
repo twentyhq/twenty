@@ -1,8 +1,10 @@
 import { atom } from 'recoil';
 
-import { EntityFieldMetadata } from '../types/EntityFieldMetadata';
+import { EntityFieldDefinition } from '../types/EntityFieldMetadata';
 
-export const entityFieldMetadataArrayState = atom<EntityFieldMetadata[]>({
+export const entityFieldMetadataArrayState = atom<
+  EntityFieldDefinition<unknown>[]
+>({
   key: 'entityFieldMetadataArrayState',
   default: [],
 });

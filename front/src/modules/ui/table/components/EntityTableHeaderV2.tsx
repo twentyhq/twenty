@@ -22,7 +22,7 @@ export function EntityTableHeader() {
         </th>
         {fieldMetadataArray.map((fieldMetadata) => (
           <th
-            key={fieldMetadata.fieldName.toString()}
+            key={fieldMetadata.columnOrder.toString()}
             style={{
               width: fieldMetadata.columnSize,
               minWidth: fieldMetadata.columnSize,
@@ -30,8 +30,8 @@ export function EntityTableHeader() {
             }}
           >
             <ColumnHead
-              viewName={fieldMetadata.label}
-              viewIcon={fieldMetadata.icon}
+              viewName={fieldMetadata.columnLabel}
+              viewIcon={fieldMetadata.columnIcon}
             />
           </th>
         ))}
