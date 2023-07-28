@@ -1,5 +1,6 @@
 import { EntityFieldMetadata } from '@/ui/table/types/EntityFieldMetadata';
 
+import { GenericEditableRelationCell } from './GenericEditableRelationCell';
 import { GenericEditableTextCell } from './GenericEditableTextCell';
 
 type OwnProps = {
@@ -16,8 +17,15 @@ export function GenericEditableCell({ entityFieldMetadata }: OwnProps) {
           editModeHorizontalAlign="left"
         />
       );
-
+    case 'relation': {
+      return (
+        <GenericEditableRelationCell fieldMetadata={entityFieldMetadata} />
+      );
+    }
     default:
+      console.warn(
+        `Unknown field type: ${entityFieldMetadata.type} in GenericEditableCell`,
+      );
       return <></>;
   }
 }

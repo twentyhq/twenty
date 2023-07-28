@@ -86,7 +86,7 @@ export function SingleEntitySelectBase<
               avatarUrl={entity.avatarUrl}
               colorId={entity.id}
               placeholder={entity.name}
-              size={16}
+              size="md"
               type={entity.avatarType ?? 'rounded'}
             />
             <OverflowingTextWithTooltip text={entity.name} />

@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
+import { useUpdateEntityField } from '@/people/hooks/useUpdateEntityField';
 import { InplaceInputTextEditMode } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
-import { useEntityUpdateFieldHook } from '@/ui/table/hooks/useCellUpdateFieldHook';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 
@@ -23,8 +23,7 @@ export function GenericEditableTextCellEditMode({
     }),
   );
 
-  const useUpdateField = useEntityUpdateFieldHook();
-  const updateField = useUpdateField?.();
+  const updateField = useUpdateEntityField();
 
   function handleSubmit(newText: string) {
     if (newText === fieldValue) return;
