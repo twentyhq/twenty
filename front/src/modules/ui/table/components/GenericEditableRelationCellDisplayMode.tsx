@@ -8,6 +8,7 @@ import {
   ViewFieldDefinition,
   ViewFieldRelationMetadata,
 } from '@/ui/table/types/ViewField';
+import { UserChip } from '@/users/components/UserChip';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 type OwnProps = {
@@ -21,12 +22,15 @@ export function GenericEditableRelationCellDisplayMode({
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
+  // TODO: type value with generic getter
   const fieldValue = useRecoilValue<any | null>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
       fieldName: fieldDefinition.metadata.fieldName,
     }),
   );
+
+  console.log(JSON.stringify({ fieldValue, fieldDefinition }));
 
   switch (fieldDefinition.metadata.relationType) {
     case Entity.Company: {
@@ -35,6 +39,15 @@ export function GenericEditableRelationCellDisplayMode({
           id={fieldValue?.id ?? ''}
           name={fieldValue?.name ?? ''}
           pictureUrl={getLogoUrlFromDomainName(fieldValue?.domainName)}
+        />
+      );
+    }
+    case Entity.User: {
+      console.log({ fieldValue });
+      return (
+        <UserChip
+          id={fieldValue?.id ?? ''}
+          name={fieldValue?.displayName ?? ''}
         />
       );
     }

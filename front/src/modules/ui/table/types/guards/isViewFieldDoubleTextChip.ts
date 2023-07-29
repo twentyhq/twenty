@@ -1,10 +1,11 @@
 import {
   ViewFieldDefinition,
   ViewFieldDoubleTextChipMetadata,
+  ViewFieldMetadata,
 } from '../ViewField';
 
 export function isViewFieldDoubleTextChip(
-  field: ViewFieldDefinition<unknown>,
+  field: ViewFieldDefinition<ViewFieldMetadata>,
 ): field is ViewFieldDefinition<ViewFieldDoubleTextChipMetadata> {
-  return field.type === 'double-text-chip';
+  return field.metadata.type === 'double-text-chip';
 }

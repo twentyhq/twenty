@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { companyViewFields } from '@/companies/constants/companyFieldMetadataArray';
+import { companyViewFields } from '@/companies/constants/companyViewFields';
 import { CompaniesSelectedSortType, defaultOrderBy } from '@/companies/queries';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';

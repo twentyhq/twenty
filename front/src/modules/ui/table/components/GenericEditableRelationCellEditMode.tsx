@@ -11,6 +11,7 @@ import {
   ViewFieldDefinition,
   ViewFieldRelationMetadata,
 } from '@/ui/table/types/ViewField';
+import { UserPicker } from '@/users/components/UserPicker';
 
 type OwnProps = {
   viewFieldDefinition: ViewFieldDefinition<ViewFieldRelationMetadata>;
@@ -52,11 +53,22 @@ export function GenericEditableRelationCellEditMode({
     closeEditableCell();
   }
 
+  console.log({ fieldValueEntity });
+
   switch (viewFieldDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
         <CompanyPickerCell
           companyId={fieldValueEntity?.id ?? null}
+          onSubmit={handleEntitySubmit}
+          onCancel={handleCancel}
+        />
+      );
+    }
+    case Entity.User: {
+      return (
+        <UserPicker
+          userId={fieldValueEntity?.id ?? null}
           onSubmit={handleEntitySubmit}
           onCancel={handleCancel}
         />

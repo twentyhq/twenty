@@ -6,25 +6,41 @@ import { isViewFieldRelation } from '@/ui/table/types/guards/isViewFieldRelation
 import { isViewFieldText } from '@/ui/table/types/guards/isViewFieldText';
 
 import { isViewFieldChipValue } from '../types/guards/isViewFieldChipValue';
+import { isViewFieldDate } from '../types/guards/isViewFieldDate';
+import { isViewFieldDateValue } from '../types/guards/isViewFieldDateValue';
 import { isViewFieldDoubleText } from '../types/guards/isViewFieldDoubleText';
 import { isViewFieldDoubleTextChip } from '../types/guards/isViewFieldDoubleTextChip';
 import { isViewFieldDoubleTextChipValue } from '../types/guards/isViewFieldDoubleTextChipValue';
 import { isViewFieldDoubleTextValue } from '../types/guards/isViewFieldDoubleTextValue';
+import { isViewFieldNumber } from '../types/guards/isViewFieldNumber';
+import { isViewFieldNumberValue } from '../types/guards/isViewFieldNumberValue';
+import { isViewFieldPhone } from '../types/guards/isViewFieldPhone';
+import { isViewFieldPhoneValue } from '../types/guards/isViewFieldPhoneValue';
 import { isViewFieldRelationValue } from '../types/guards/isViewFieldRelationValue';
 import { isViewFieldTextValue } from '../types/guards/isViewFieldTextValue';
+import { isViewFieldURL } from '../types/guards/isViewFieldURL';
+import { isViewFieldURLValue } from '../types/guards/isViewFieldURLValue';
 import {
   ViewFieldChipMetadata,
   ViewFieldChipValue,
+  ViewFieldDateMetadata,
+  ViewFieldDateValue,
   ViewFieldDefinition,
   ViewFieldDoubleTextChipMetadata,
   ViewFieldDoubleTextChipValue,
   ViewFieldDoubleTextMetadata,
   ViewFieldDoubleTextValue,
   ViewFieldMetadata,
+  ViewFieldNumberMetadata,
+  ViewFieldNumberValue,
+  ViewFieldPhoneMetadata,
+  ViewFieldPhoneValue,
   ViewFieldRelationMetadata,
   ViewFieldRelationValue,
   ViewFieldTextMetadata,
   ViewFieldTextValue,
+  ViewFieldURLMetadata,
+  ViewFieldURLValue,
 } from '../types/ViewField';
 
 export function useUpdateEntityField() {
@@ -38,6 +54,14 @@ export function useUpdateEntityField() {
       ? ViewFieldDoubleTextValue
       : MetadataType extends ViewFieldTextMetadata
       ? ViewFieldTextValue
+      : MetadataType extends ViewFieldPhoneMetadata
+      ? ViewFieldPhoneValue
+      : MetadataType extends ViewFieldURLMetadata
+      ? ViewFieldURLValue
+      : MetadataType extends ViewFieldNumberMetadata
+      ? ViewFieldNumberValue
+      : MetadataType extends ViewFieldDateMetadata
+      ? ViewFieldDateValue
       : MetadataType extends ViewFieldChipMetadata
       ? ViewFieldChipValue
       : MetadataType extends ViewFieldDoubleTextChipMetadata
@@ -56,6 +80,8 @@ export function useUpdateEntityField() {
     //
     // The goal would be to check that the view field value not only is valid,
     //    but also that it is validated against the corresponding view field type
+
+    // Relation
     if (
       isViewFieldRelation(viewField) &&
       isViewFieldRelationValue(newFieldValueUnknown)
@@ -87,6 +113,7 @@ export function useUpdateEntityField() {
           },
         });
       }
+      // Chip
     } else if (
       isViewFieldChip(viewField) &&
       isViewFieldChipValue(newFieldValueUnknown)
@@ -99,6 +126,7 @@ export function useUpdateEntityField() {
           data: { [viewField.metadata.contentFieldName]: newContent },
         },
       });
+      // Text
     } else if (
       isViewFieldText(viewField) &&
       isViewFieldTextValue(newFieldValueUnknown)
@@ -111,6 +139,7 @@ export function useUpdateEntityField() {
           data: { [viewField.metadata.fieldName]: newContent },
         },
       });
+      // Double text
     } else if (
       isViewFieldDoubleText(viewField) &&
       isViewFieldDoubleTextValue(newFieldValueUnknown)
@@ -126,6 +155,7 @@ export function useUpdateEntityField() {
           },
         },
       });
+      //  Double Text Chip
     } else if (
       isViewFieldDoubleTextChip(viewField) &&
       isViewFieldDoubleTextChipValue(newFieldValueUnknown)
@@ -139,6 +169,58 @@ export function useUpdateEntityField() {
             [viewField.metadata.firstValueFieldName]: newContent.firstValue,
             [viewField.metadata.secondValueFieldName]: newContent.secondValue,
           },
+        },
+      });
+      // Phone
+    } else if (
+      isViewFieldPhone(viewField) &&
+      isViewFieldPhoneValue(newFieldValueUnknown)
+    ) {
+      const newContent = newFieldValueUnknown;
+
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: { [viewField.metadata.fieldName]: newContent },
+        },
+      });
+      // URL
+    } else if (
+      isViewFieldURL(viewField) &&
+      isViewFieldURLValue(newFieldValueUnknown)
+    ) {
+      const newContent = newFieldValueUnknown;
+
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: { [viewField.metadata.fieldName]: newContent },
+        },
+      });
+      // Number
+    } else if (
+      isViewFieldNumber(viewField) &&
+      isViewFieldNumberValue(newFieldValueUnknown)
+    ) {
+      const newContent = newFieldValueUnknown;
+
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: { [viewField.metadata.fieldName]: newContent },
+        },
+      });
+      // Date
+    } else if (
+      isViewFieldDate(viewField) &&
+      isViewFieldDateValue(newFieldValueUnknown)
+    ) {
+      const newContent = newFieldValueUnknown;
+
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: { [viewField.metadata.fieldName]: newContent },
         },
       });
     }

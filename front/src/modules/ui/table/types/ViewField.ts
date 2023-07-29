@@ -6,19 +6,48 @@ export type ViewFieldType =
   | 'relation'
   | 'chip'
   | 'double-text-chip'
-  | 'double-text';
+  | 'double-text'
+  | 'number'
+  | 'date'
+  | 'phone'
+  | 'url';
 
 export type ViewFieldTextMetadata = {
+  type: 'text';
   placeHolder: string;
   fieldName: string;
 };
 
+export type ViewFieldPhoneMetadata = {
+  type: 'phone';
+  placeHolder: string;
+  fieldName: string;
+};
+
+export type ViewFieldURLMetadata = {
+  type: 'url';
+  placeHolder: string;
+  fieldName: string;
+};
+
+export type ViewFieldDateMetadata = {
+  type: 'date';
+  fieldName: string;
+};
+
+export type ViewFieldNumberMetadata = {
+  type: 'number';
+  fieldName: string;
+};
+
 export type ViewFieldRelationMetadata = {
+  type: 'relation';
   relationType: Entity;
   fieldName: string;
 };
 
 export type ViewFieldChipMetadata = {
+  type: 'chip';
   relationType: Entity;
   contentFieldName: string;
   urlFieldName: string;
@@ -26,6 +55,7 @@ export type ViewFieldChipMetadata = {
 };
 
 export type ViewFieldDoubleTextMetadata = {
+  type: 'double-text';
   firstValueFieldName: string;
   firstValuePlaceholder: string;
   secondValueFieldName: string;
@@ -33,6 +63,7 @@ export type ViewFieldDoubleTextMetadata = {
 };
 
 export type ViewFieldDoubleTextChipMetadata = {
+  type: 'double-text-chip';
   firstValueFieldName: string;
   firstValuePlaceholder: string;
   secondValueFieldName: string;
@@ -40,12 +71,17 @@ export type ViewFieldDoubleTextChipMetadata = {
   entityType: Entity;
 };
 
-export type ViewFieldMetadata =
+export type ViewFieldMetadata = { type: ViewFieldType } & (
   | ViewFieldTextMetadata
   | ViewFieldRelationMetadata
   | ViewFieldChipMetadata
   | ViewFieldDoubleTextChipMetadata
-  | ViewFieldDoubleTextMetadata;
+  | ViewFieldDoubleTextMetadata
+  | ViewFieldPhoneMetadata
+  | ViewFieldURLMetadata
+  | ViewFieldNumberMetadata
+  | ViewFieldDateMetadata
+);
 
 export type ViewFieldDefinition<T extends ViewFieldMetadata | unknown> = {
   id: string;
@@ -54,13 +90,16 @@ export type ViewFieldDefinition<T extends ViewFieldMetadata | unknown> = {
   columnOrder: number;
   columnIcon?: JSX.Element;
   filterIcon?: JSX.Element;
-  type: ViewFieldType;
   metadata: T;
 };
 
 export type ViewFieldTextValue = string;
 
 export type ViewFieldChipValue = string;
+export type ViewFieldDateValue = string;
+export type ViewFieldPhoneValue = string;
+export type ViewFieldURLValue = string;
+export type ViewFieldNumberValue = string;
 
 export type ViewFieldDoubleTextValue = {
   firstValue: string;

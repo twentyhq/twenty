@@ -10,7 +10,10 @@ import { TableContext } from '@/ui/table/states/TableContext';
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { viewFieldsFamilyState } from '@/ui/table/states/viewFieldsState';
-import { ViewFieldDefinition } from '@/ui/table/types/ViewField';
+import {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '@/ui/table/types/ViewField';
 
 export function useSetEntityTableData() {
   const resetTableRowSelection = useResetTableRowSelection();
@@ -21,7 +24,7 @@ export function useSetEntityTableData() {
     ({ set, snapshot }) =>
       <T extends { id: string }>(
         newEntityArray: T[],
-        viewFields: ViewFieldDefinition<unknown>[],
+        viewFields: ViewFieldDefinition<ViewFieldMetadata>[],
         filters: FilterDefinition[],
       ) => {
         for (const entity of newEntityArray) {

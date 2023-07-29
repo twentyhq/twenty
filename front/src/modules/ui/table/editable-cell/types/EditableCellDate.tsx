@@ -20,7 +20,7 @@ export function EditableCellDate({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <EditableCellDateEditMode onChange={onChange} value={value} />
+        <EditableCellDateEditMode onSubmit={onChange} value={value} />
       }
       nonEditModeContent={<InplaceInputDateDisplayMode value={value} />}
       editHotkeyScope={{ scope: TableHotkeyScope.CellDateEditMode }}

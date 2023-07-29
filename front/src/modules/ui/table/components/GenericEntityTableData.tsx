@@ -1,6 +1,9 @@
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
-import { ViewFieldDefinition } from '@/ui/table/types/ViewField';
+import {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '@/ui/table/types/ViewField';
 
 import { defaultOrderBy } from '../../../people/queries';
 
@@ -16,7 +19,7 @@ export function GenericEntityTableData({
   getRequestResultKey: string;
   orderBy?: any;
   whereFilters?: any;
-  viewFields: ViewFieldDefinition<unknown>[];
+  viewFields: ViewFieldDefinition<ViewFieldMetadata>[];
   filterDefinitionArray: FilterDefinition[];
 }) {
   const setEntityTableData = useSetEntityTableData();
