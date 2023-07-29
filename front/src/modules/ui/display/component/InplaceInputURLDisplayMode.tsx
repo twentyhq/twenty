@@ -22,8 +22,14 @@ export function InplaceInputURLDisplayMode({ value }: OwnProps) {
     event.stopPropagation();
   }
 
+  const absoluteUrl = value
+    ? value.startsWith('http')
+      ? value
+      : 'https://' + value
+    : '';
+
   return (
-    <StyledRawLink href={value} onClick={handleClick}>
+    <StyledRawLink href={absoluteUrl} onClick={handleClick}>
       {value}
     </StyledRawLink>
   );

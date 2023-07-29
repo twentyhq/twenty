@@ -53,8 +53,6 @@ export function GenericEditableRelationCellEditMode({
     closeEditableCell();
   }
 
-  console.log({ fieldValueEntity });
-
   switch (viewFieldDefinition.metadata.relationType) {
     case Entity.Company: {
       return (

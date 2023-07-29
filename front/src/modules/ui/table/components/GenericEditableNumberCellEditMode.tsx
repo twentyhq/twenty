@@ -30,10 +30,29 @@ export function GenericEditableNumberCellEditMode({ viewField }: OwnProps) {
   function handleSubmit(newText: string) {
     if (newText === fieldValue) return;
 
-    setFieldValue(newText);
+    try {
+      const numberValue = parseInt(newText);
 
-    if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, viewField, newText);
+      if (isNaN(numberValue)) {
+        throw new Error('Not a number');
+      }
+
+      // TODO: find a way to store this better in DB
+      if (numberValue > 2000000000) {
+        throw new Error('Number too big');
+      }
+
+      console.log({ numberValue });
+
+      setFieldValue(numberValue.toString());
+
+      if (currentRowEntityId && updateField) {
+        updateField(currentRowEntityId, viewField, numberValue);
+      }
+    } catch (error) {
+      console.warn(
+        `In GenericEditableNumberCellEditMode, Invalid number: ${newText}, ${error}`,
+      );
     }
   }
 

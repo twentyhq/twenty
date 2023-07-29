@@ -36,8 +36,6 @@ export function UserPicker({ userId, onSubmit, onCancel }: OwnProps) {
     searchOnFields: ['firstName', 'lastName'],
   });
 
-  console.log(JSON.stringify({ userId, searchFilter, users }));
-
   async function handleEntitySelected(
     selectedUser: UserForSelect | null | undefined,
   ) {

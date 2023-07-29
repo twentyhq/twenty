@@ -30,8 +30,6 @@ export function GenericEditableRelationCellDisplayMode({
     }),
   );
 
-  console.log(JSON.stringify({ fieldValue, fieldDefinition }));
-
   switch (fieldDefinition.metadata.relationType) {
     case Entity.Company: {
       return (
@@ -43,7 +41,6 @@ export function GenericEditableRelationCellDisplayMode({
       );
     }
     case Entity.User: {
-      console.log({ fieldValue });
       return (
         <UserChip
           id={fieldValue?.id ?? ''}

@@ -113,7 +113,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     columnLabel: 'LinkedIn',
     columnIcon: <IconBrandLinkedin size={16} />,
     columnSize: 150,
-    columnOrder: 7,
+    columnOrder: 8,
     metadata: {
       type: 'url',
       fieldName: 'linkedinUrl',

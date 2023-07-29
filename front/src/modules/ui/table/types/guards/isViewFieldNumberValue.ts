@@ -7,6 +7,6 @@ export function isViewFieldNumberValue(
   return (
     fieldValue !== null &&
     fieldValue !== undefined &&
-    typeof fieldValue === 'string'
+    typeof fieldValue === 'number'
   );
 }

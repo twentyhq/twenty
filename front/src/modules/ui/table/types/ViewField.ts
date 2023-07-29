@@ -99,7 +99,7 @@ export type ViewFieldChipValue = string;
 export type ViewFieldDateValue = string;
 export type ViewFieldPhoneValue = string;
 export type ViewFieldURLValue = string;
-export type ViewFieldNumberValue = string;
+export type ViewFieldNumberValue = number;
 
 export type ViewFieldDoubleTextValue = {
   firstValue: string;
