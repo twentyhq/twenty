@@ -33,6 +33,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       secondValueFieldName: 'lastName',
       firstValuePlaceholder: 'F​irst n​ame', // Hack: Fake character to prevent password-manager from filling the field
       secondValuePlaceholder: 'L​ast n​ame', // Hack: Fake character to prevent password-manager from filling the field
+      avatarUrlFieldName: 'avatarUrl',
       entityType: Entity.Person,
     },
   } satisfies ViewFieldDefinition<ViewFieldDoubleTextChipMetadata>,

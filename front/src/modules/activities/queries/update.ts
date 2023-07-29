@@ -58,26 +58,22 @@ export const DELETE_ACTIVITY = gql`
 
 export const UPDATE_ACTIVITY = gql`
   mutation UpdateActivity(
-    $id: String!
-    $body: String
-    $title: String
-    $type: ActivityType
-    $completedAt: DateTime
+    $where: ActivityWhereUniqueInput!
+    $data: ActivityUpdateInput!
   ) {
-    updateOneActivity(
-      where: { id: $id }
-      data: {
-        body: $body
-        title: $title
-        type: $type
-        completedAt: $completedAt
-      }
-    ) {
+    updateOneActivity(where: $where, data: $data) {
       id
       body
       title
       type
       completedAt
+      dueAt
+      assignee {
+        id
+        firstName
+        lastName
+        displayName
+      }
     }
   }
 `;

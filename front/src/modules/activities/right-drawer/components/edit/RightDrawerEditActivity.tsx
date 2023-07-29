@@ -5,7 +5,7 @@ import { RightDrawerBody } from '@/ui/right-drawer/components/RightDrawerBody';
 import { RightDrawerPage } from '@/ui/right-drawer/components/RightDrawerPage';
 import { RightDrawerTopBar } from '@/ui/right-drawer/components/RightDrawerTopBar';
 
-import { Activity } from '../Activity';
+import { RightDrawerActivity } from '../RightDrawerActivity';
 
 export function RightDrawerEditActivity() {
   const activityId = useRecoilValue(viewableActivityIdState);
@@ -14,7 +14,7 @@ export function RightDrawerEditActivity() {
     <RightDrawerPage>
       <RightDrawerTopBar />
       <RightDrawerBody>
-        {activityId && <Activity activityId={activityId} />}
+        {activityId && <RightDrawerActivity activityId={activityId} />}
       </RightDrawerBody>
     </RightDrawerPage>
   );

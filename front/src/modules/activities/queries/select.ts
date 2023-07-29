@@ -17,6 +17,13 @@ export const GET_ACTIVITIES_BY_TARGETS = gql`
       body
       type
       completedAt
+      dueAt
+      assignee {
+        id
+        firstName
+        lastName
+        displayName
+      }
       author {
         id
         firstName
@@ -54,6 +61,13 @@ export const GET_ACTIVITY = gql`
       title
       type
       completedAt
+      dueAt
+      assignee {
+        id
+        firstName
+        lastName
+        displayName
+      }
       author {
         id
         firstName

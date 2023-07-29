@@ -45,6 +45,7 @@ export function GenericEditableRelationCellDisplayMode({
         <UserChip
           id={fieldValue?.id ?? ''}
           name={fieldValue?.displayName ?? ''}
+          pictureUrl={fieldValue?.avatarUrl ?? ''}
         />
       );
     }
