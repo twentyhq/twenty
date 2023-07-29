@@ -11,6 +11,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { AttachmentModule } from './attachment/attachment.module';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AttachmentModule } from './attachment/attachment.module';
     FileModule,
     ClientConfigModule,
     AttachmentModule,
+    FavoriteModule,
   ],
   exports: [
     AuthModule,
@@ -36,6 +38,7 @@ import { AttachmentModule } from './attachment/attachment.module';
     WorkspaceModule,
     AnalyticsModule,
     AttachmentModule,
+    FavoriteModule,
   ],
 })
 export class CoreModule {}

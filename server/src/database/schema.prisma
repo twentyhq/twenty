@@ -534,8 +534,9 @@ model Attachment {
 }
 
 model Favorite {
-  id       String @id @default(uuid())
-  favorite String
+  id          String @id @default(uuid())
+  workspaceId String
+  favorite    String
 
   @@map("favorites")
 }
