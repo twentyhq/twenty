@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
+import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
@@ -52,7 +52,7 @@ export function SettingsProfile() {
           </StyledSectionContainer>
 
           <StyledSectionContainer>
-            <DeleteWorkspace />
+            <DeleteAccount />
           </StyledSectionContainer>
         </StyledContainer>
       </>

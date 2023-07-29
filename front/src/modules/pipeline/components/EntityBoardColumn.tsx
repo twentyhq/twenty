@@ -125,6 +125,10 @@ export function EntityBoardColumn({
               {(draggableProvided) => (
                 <div
                   ref={draggableProvided?.innerRef}
+                  {...{
+                    ...draggableProvided.dragHandleProps,
+                    draggable: false,
+                  }}
                   {...draggableProvided?.draggableProps}
                 >
                   <StyledNewCardButtonContainer>

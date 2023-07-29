@@ -23,14 +23,14 @@ export function EditableCompanyAddressCell() {
   return (
     <EditableCellText
       value={internalValue}
-      onSubmit={() =>
+      onSubmit={(newValue: string) =>
         updateCompany({
           variables: {
             where: {
               id: currentRowEntityId,
             },
             data: {
-              address: internalValue,
+              address: newValue,
             },
           },
         })

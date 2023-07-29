@@ -22,7 +22,7 @@ const StyledShowPageSummaryCard = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)}
     ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(3)};
