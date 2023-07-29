@@ -1,12 +1,11 @@
 import {
   IconBuildingSkyscraper,
-  IconCalendar,
+  IconCalendarEvent,
   IconLink,
   IconMap,
   IconUser,
   IconUsers,
-} from '@tabler/icons-react';
-
+} from '@/ui/icon/index';
 import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 import {
   ViewFieldChipMetadata,
@@ -60,7 +59,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'createdAt',
     columnLabel: 'Creation',
-    columnIcon: <IconCalendar />,
+    columnIcon: <IconCalendarEvent />,
     columnSize: 150,
     columnOrder: 4,
     metadata: {

@@ -7,8 +7,7 @@ import {
   IconMap,
   IconPhone,
   IconUser,
-} from '@tabler/icons-react';
-
+} from '@/ui/icon/index';
 import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
 import {
   ViewFieldDateMetadata,
