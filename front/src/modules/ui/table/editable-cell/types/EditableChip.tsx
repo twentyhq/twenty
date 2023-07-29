@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { InplaceInputTextEditMode } from '../../../inplace-input/components/InplaceInputTextEditMode';
+import { InplaceInputTextCellEditMode } from '../../../inplace-input/components/InplaceInputTextCellEditMode';
 import { EditableCell } from '../components/EditableCell';
 
 export type EditableChipProps = {
@@ -52,7 +52,7 @@ export function EditableCellChip({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <InplaceInputTextEditMode
+        <InplaceInputTextCellEditMode
           placeholder={placeholder || ''}
           autoFocus
           value={inputValue}

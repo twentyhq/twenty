@@ -8,7 +8,7 @@ import { useSearchUserQuery } from '~/generated/graphql';
 
 export type OwnProps = {
   userId: string;
-  onSubmit: (newUserId: string) => void;
+  onSubmit: (newUser: EntityForSelect | null) => void;
   onCancel?: () => void;
 };
 
@@ -23,7 +23,7 @@ export function UserPicker({ userId, onSubmit, onCancel }: OwnProps) {
 
   const users = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
-    selectedIds: [userId],
+    selectedIds: userId ? [userId] : [],
     searchFilter: searchFilter,
     mappingFunction: (user) => ({
       entityType: Entity.User,
@@ -39,7 +39,7 @@ export function UserPicker({ userId, onSubmit, onCancel }: OwnProps) {
   async function handleEntitySelected(
     selectedUser: UserForSelect | null | undefined,
   ) {
-    onSubmit(selectedUser?.id ?? '');
+    onSubmit(selectedUser ?? null);
   }
 
   return (

@@ -1,5 +1,5 @@
 import { InplaceInputTextDisplayMode } from '@/ui/display/component/InplaceInputTextDisplayMode';
-import { InplaceInputTextEditMode } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
+import { InplaceInputTextCellEditMode } from '@/ui/inplace-input/components/InplaceInputTextCellEditMode';
 
 import { CellSkeleton } from '../components/CellSkeleton';
 import { EditableCell } from '../components/EditableCell';
@@ -23,7 +23,7 @@ export function EditableCellText({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <InplaceInputTextEditMode
+        <InplaceInputTextCellEditMode
           placeholder={placeholder || ''}
           autoFocus
           value={value}

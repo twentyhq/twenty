@@ -1,4 +1,4 @@
-import { InplaceInputTextEditMode } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
+import { InplaceInputTextCellEditMode } from '@/ui/inplace-input/components/InplaceInputTextCellEditMode';
 
 import { RawLink } from '../../../link/components/RawLink';
 import { CellSkeleton } from '../components/CellSkeleton';
@@ -25,7 +25,7 @@ export function EditableCellURL({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <InplaceInputTextEditMode
+        <InplaceInputTextCellEditMode
           placeholder={placeholder}
           autoFocus
           value={url}

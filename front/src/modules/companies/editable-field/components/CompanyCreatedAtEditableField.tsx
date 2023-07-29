@@ -22,8 +22,20 @@ export function CompanyCreatedAtEditableField({ company }: OwnProps) {
     setInternalValue(company.createdAt);
   }, [company.createdAt]);
 
+  // TODO: refactor change and submit
   async function handleChange(newValue: string) {
     setInternalValue(newValue);
+
+    await updateCompany({
+      variables: {
+        where: {
+          id: company.id,
+        },
+        data: {
+          createdAt: newValue ?? '',
+        },
+      },
+    });
   }
 
   async function handleSubmit() {

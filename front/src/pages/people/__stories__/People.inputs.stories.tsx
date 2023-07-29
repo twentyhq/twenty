@@ -191,7 +191,7 @@ export const EditRelation: Story = {
 
     await step('Click on second row company cell', async () => {
       const secondRowCompanyCell = await canvas.findByText(
-        mockedPeopleData[1].company.name,
+        mockedPeopleData[2].company.name,
       );
 
       await userEvent.click(
@@ -262,11 +262,24 @@ export const SelectRelationWithKeys: Story = {
     });
 
     await userEvent.type(relationInput, '{arrowdown}');
+
+    await sleep(50);
+
     await userEvent.type(relationInput, '{arrowup}');
+
+    await sleep(50);
+
     await userEvent.type(relationInput, '{arrowdown}');
+
+    await sleep(50);
+
     await userEvent.type(relationInput, '{arrowdown}');
+
+    await sleep(50);
+
     await userEvent.type(relationInput, '{enter}');
-    sleep(25);
+
+    await sleep(50);
 
     const allAirbns = await canvas.findAllByText('Aircall');
     expect(allAirbns.length).toBe(1);

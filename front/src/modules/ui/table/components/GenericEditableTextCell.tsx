@@ -12,13 +12,11 @@ import { GenericEditableTextCellEditMode } from './GenericEditableTextCellEditMo
 type OwnProps = {
   viewField: ViewFieldDefinition<ViewFieldTextMetadata>;
   editModeHorizontalAlign?: 'left' | 'right';
-  placeholder?: string;
 };
 
 export function GenericEditableTextCell({
   viewField,
   editModeHorizontalAlign,
-  placeholder,
 }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
@@ -33,11 +31,7 @@ export function GenericEditableTextCell({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={
-        <GenericEditableTextCellEditMode
-          fieldName={viewField.metadata.fieldName}
-          viewFieldId={viewField.id}
-          placeholder={placeholder}
-        />
+        <GenericEditableTextCellEditMode viewField={viewField} />
       }
       nonEditModeContent={
         <InplaceInputTextDisplayMode>{fieldValue}</InplaceInputTextDisplayMode>
