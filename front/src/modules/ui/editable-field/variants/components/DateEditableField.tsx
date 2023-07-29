@@ -10,11 +10,12 @@ import { EditableFieldEditModeDate } from './EditableFieldEditModeDate';
 
 type OwnProps = {
   icon?: React.ReactNode;
+  label?: string;
   value: string | null | undefined;
   onSubmit?: (newValue: string) => void;
 };
 
-export function DateEditableField({ icon, value, onSubmit }: OwnProps) {
+export function DateEditableField({ icon, value, label, onSubmit }: OwnProps) {
   const [internalValue, setInternalValue] = useState(value);
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export function DateEditableField({ icon, value, onSubmit }: OwnProps) {
         onSubmit={handleSubmit}
         onCancel={handleCancel}
         iconLabel={icon}
+        label={label}
         editModeContent={
           <EditableFieldEditModeDate
             value={internalValue || new Date().toISOString()}

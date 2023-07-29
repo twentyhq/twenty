@@ -33,7 +33,7 @@ export function beautifyExactDate(dateToBeautify: Date | string | number) {
   try {
     const parsedDate = parseDate(dateToBeautify);
 
-    return parsedDate.toFormat('DD · TT');
+    return parsedDate.toFormat('DD · T');
   } catch (error) {
     logError(error);
     return '';

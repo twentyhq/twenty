@@ -16,8 +16,17 @@ type MockedActivity = Pick<
   | 'body'
   | 'title'
   | 'authorId'
+  | 'dueAt'
+  | 'completedAt'
 > & {
   author: {
+    __typename?: 'User' | undefined;
+    id: string;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+  };
+  assignee: {
     __typename?: 'User' | undefined;
     id: string;
     firstName: string;
@@ -47,7 +56,15 @@ export const mockedActivities: Array<MockedActivity> = [
     title: 'My very first note',
     type: ActivityType.Note,
     body: null,
+    dueAt: null,
+    completedAt: null,
     author: {
+      id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
+      firstName: 'Charles',
+      lastName: 'Test',
+      displayName: 'Charles Test',
+    },
+    assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',
       lastName: 'Test',
@@ -94,7 +111,15 @@ export const mockedActivities: Array<MockedActivity> = [
     title: 'Another note',
     body: null,
     type: ActivityType.Note,
+    completedAt: null,
+    dueAt: null,
     author: {
+      id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
+      firstName: 'Charles',
+      lastName: 'Test',
+      displayName: 'Charles Test',
+    },
+    assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',
       lastName: 'Test',

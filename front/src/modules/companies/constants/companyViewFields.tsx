@@ -1,4 +1,5 @@
 import {
+  IconBrandLinkedin,
   IconBuildingSkyscraper,
   IconCalendarEvent,
   IconLink,
@@ -81,7 +82,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'linkedin',
     columnLabel: 'LinkedIn',
-    columnIcon: <IconMap />,
+    columnIcon: <IconBrandLinkedin />,
     columnSize: 170,
     columnOrder: 6,
     metadata: {

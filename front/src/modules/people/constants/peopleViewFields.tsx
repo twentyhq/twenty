@@ -33,6 +33,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       secondValueFieldName: 'lastName',
       firstValuePlaceholder: 'First name',
       secondValuePlaceholder: 'Last name',
+      avatarUrlFieldName: 'avatarUrl',
       entityType: Entity.Person,
     },
   } satisfies ViewFieldDefinition<ViewFieldDoubleTextChipMetadata>,

@@ -41,6 +41,7 @@ export function PeopleCompanyEditableField({ people }: OwnProps) {
             )
           }
           isDisplayModeContentEmpty={!people.company}
+          isDisplayModeFixHeight
         />
       </RecoilScope>
     </RecoilScope>

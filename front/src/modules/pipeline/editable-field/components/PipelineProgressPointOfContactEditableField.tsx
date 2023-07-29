@@ -45,6 +45,7 @@ export function PipelineProgressPointOfContactEditableField({
             )
           }
           isDisplayModeContentEmpty={!pipelineProgress.pointOfContact}
+          isDisplayModeFixHeight
         />
       </RecoilScope>
     </RecoilScope>

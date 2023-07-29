@@ -5,7 +5,7 @@ import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
 import { Person, PipelineProgress } from '~/generated/graphql';
 
 const PipelineProgressPointOfContactPickerContainer = styled.div`
-  left: 24px;
+  left: 0px;
   position: absolute;
   top: -8px;
 `;

@@ -14,12 +14,14 @@ type OwnProps = {
 export const StyledDoubleTextContainer = styled.div`
   align-items: center;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  text-align: center;
+`;
 
-  & > input:last-child {
-    border-left: 1px solid ${({ theme }) => theme.border.color.medium};
-    padding-left: ${({ theme }) => theme.spacing(2)};
-  }
+const StyledNameInput = styled(StyledInput)`
+  padding: 0;
+  text-align: center;
+  width: auto;
 `;
 
 export function InplaceInputDoubleText({
@@ -31,7 +33,8 @@ export function InplaceInputDoubleText({
 }: OwnProps) {
   return (
     <StyledDoubleTextContainer>
-      <StyledInput
+      <StyledNameInput
+        size={firstValue.length}
         autoFocus
         placeholder={firstValuePlaceholder}
         value={firstValue}
@@ -39,7 +42,8 @@ export function InplaceInputDoubleText({
           onChange(event.target.value, secondValue);
         }}
       />
-      <StyledInput
+      <StyledNameInput
+        size={secondValue.length}
         autoComplete="off"
         placeholder={secondValuePlaceholder}
         value={secondValue}

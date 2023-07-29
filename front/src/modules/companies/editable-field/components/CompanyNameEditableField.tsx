@@ -1,14 +1,37 @@
 import { useEffect, useState } from 'react';
+import styled from '@emotion/styled';
 
-import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
 import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
 
 type OwnProps = {
   company: Pick<Company, 'id' | 'name'>;
 };
+
+const StyledEditableTitleInput = styled.input<{
+  value: string;
+}>`
+  background: transparent;
+
+  border: none;
+  color: ${({ theme, value }) =>
+    value ? theme.font.color.primary : theme.font.color.light};
+  display: flex;
+  flex-direction: column;
+
+  font-size: ${({ theme }) => theme.font.size.xl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  justify-content: center;
+
+  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  outline: none;
+  &::placeholder {
+    color: ${({ theme }) => theme.font.color.light};
+  }
+  text-align: center;
+  width: calc(100% - ${({ theme }) => theme.spacing(2)});
+`;
 
 export function CompanyNameEditableField({ company }: OwnProps) {
   const [internalValue, setInternalValue] = useState(company.name);
@@ -36,27 +59,14 @@ export function CompanyNameEditableField({ company }: OwnProps) {
     });
   }
 
-  async function handleCancel() {
-    setInternalValue(company.name);
-  }
-
   return (
     <RecoilScope SpecificContext={FieldContext}>
-      <EditableField
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-        editModeContent={
-          <InplaceInputText
-            placeholder={'Name'}
-            autoFocus
-            value={internalValue}
-            onChange={(newValue: string) => {
-              handleChange(newValue);
-            }}
-          />
-        }
-        displayModeContent={internalValue ?? ''}
-        isDisplayModeContentEmpty={!(internalValue !== '')}
+      <StyledEditableTitleInput
+        autoComplete="off"
+        autoFocus
+        onChange={(event) => handleChange(event.target.value)}
+        onBlur={handleSubmit}
+        value={internalValue}
       />
     </RecoilScope>
   );

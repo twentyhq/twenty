@@ -6,7 +6,7 @@ import { graphql } from 'msw';
 
 import { GET_ACTIVITIES_BY_TARGETS, GET_ACTIVITY } from '@/activities/queries';
 import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/queries/create';
-import { GET_COMPANY } from '@/companies/queries';
+import { GET_COMPANY, UPDATE_ONE_COMPANY } from '@/companies/queries';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -95,6 +95,16 @@ export const EditNote: Story = {
           }),
         );
       }),
+      graphql.mutation(
+        getOperationName(UPDATE_ONE_COMPANY) ?? '',
+        (req, res, ctx) => {
+          return res(
+            ctx.data({
+              updateOneCompany: [mockedCompaniesData[0]],
+            }),
+          );
+        },
+      ),
     ],
   },
 };

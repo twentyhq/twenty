@@ -12,15 +12,19 @@ const StyledTitleContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
 
-  width: calc(100% - ${({ theme }) => theme.spacing(6)});
-`;
-
-const StyledTitleText = styled.div<{ completed?: boolean }>`
-  text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
   width: 100%;
 `;
 
-const StyledCheckboxContainer = styled.div`
+const StyledTitleText = styled.div<{
+  completed?: boolean;
+  hasCheckbox?: boolean;
+}>`
+  text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
+  width: ${({ hasCheckbox, theme }) =>
+    !hasCheckbox ? '100%;' : `calc(100% - ${theme.spacing(5)});`};
+`;
+
+const StyledCheckboxContainer = styled.div<{ hasCheckbox?: boolean }>`
   align-items: center;
   display: flex;
   justify-content: center;
@@ -55,7 +59,10 @@ export function TimelineActivityTitle({
           />
         </StyledCheckboxContainer>
       )}
-      <StyledTitleText completed={completed}>
+      <StyledTitleText
+        completed={completed}
+        hasCheckbox={type === ActivityType.Task}
+      >
         <OverflowingTextWithTooltip text={title ? title : '(No title)'} />
       </StyledTitleText>
     </StyledTitleContainer>
