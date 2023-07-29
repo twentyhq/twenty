@@ -38,8 +38,6 @@ export function GenericEditableCell({ viewField: fieldDefinition }: OwnProps) {
     return <GenericEditableDoubleTextCell viewField={fieldDefinition} />;
   } else if (isViewFieldPhone(fieldDefinition)) {
     return <GenericEditablePhoneCell viewField={fieldDefinition} />;
-  } else if (isViewFieldDate(fieldDefinition)) {
-    return <GenericEditableDateCell viewField={fieldDefinition} />;
   } else if (isViewFieldURL(fieldDefinition)) {
     return <GenericEditableURLCell viewField={fieldDefinition} />;
   } else if (isViewFieldDate(fieldDefinition)) {
