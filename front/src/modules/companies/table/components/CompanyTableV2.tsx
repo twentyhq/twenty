@@ -1,14 +1,14 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { companyViewFields } from '@/companies/constants/companyFieldMetadataArray';
+import { companyViewFields } from '@/companies/constants/companyViewFields';
 import { CompaniesSelectedSortType, defaultOrderBy } from '@/companies/queries';
-import { GenericEntityTableData } from '@/people/components/GenericEntityTableData';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { IconList } from '@/ui/icon';
 import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
 import { EntityTable } from '@/ui/table/components/EntityTableV2';
+import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { TableContext } from '@/ui/table/states/TableContext';
 import {
   CompanyOrderByWithRelationInput,

@@ -1,12 +1,12 @@
 import { useRecoilValue } from 'recoil';
 
-import { viewFieldsState } from '../states/viewFieldsState';
+import { viewFieldsFamilyState } from '../states/viewFieldsState';
 
 import { ColumnHead } from './ColumnHead';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
 export function EntityTableHeader() {
-  const viewFields = useRecoilValue(viewFieldsState);
+  const viewFields = useRecoilValue(viewFieldsFamilyState);
 
   return (
     <thead>

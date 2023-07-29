@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { StyledInput } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
+import { StyledInput } from '@/ui/inplace-input/components/InplaceInputTextCellEditMode';
 
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';

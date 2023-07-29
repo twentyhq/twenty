@@ -1,7 +1,7 @@
 import { ChangeEvent, useMemo, useState } from 'react';
 
 import { InplaceInputTextDisplayMode } from '@/ui/display/component/InplaceInputTextDisplayMode';
-import { StyledInput } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
+import { StyledInput } from '@/ui/inplace-input/components/InplaceInputTextCellEditMode';
 import { debounce } from '~/utils/debounce';
 
 import { BoardCardEditableField } from './BoardCardEditableField';

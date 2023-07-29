@@ -16,17 +16,17 @@ const EditableCellDateEditModeContainer = styled.div`
 
 export type EditableDateProps = {
   value: Date;
-  onChange: (date: Date) => void;
+  onSubmit: (date: Date) => void;
 };
 
 export function EditableCellDateEditMode({
   value,
-  onChange,
+  onSubmit,
 }: EditableDateProps) {
   const { closeEditableCell } = useEditableCell();
 
   function handleDateChange(newDate: Date) {
-    onChange(newDate);
+    onSubmit(newDate);
 
     closeEditableCell();
   }

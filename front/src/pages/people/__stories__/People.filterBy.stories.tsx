@@ -34,22 +34,23 @@ export const Email: Story = {
     const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
-    const emailFilterButton = canvas
-      .getAllByTestId('dropdown-menu-item')
-      .find((item) => {
-        return item.textContent?.includes('Email');
-      });
+    const emailFilterButton = (
+      await canvas.findAllByTestId('dropdown-menu-item')
+    ).find((item) => {
+      return item.textContent?.includes('Email');
+    });
 
     assert(emailFilterButton);
 
     await userEvent.click(emailFilterButton);
 
     const emailInput = canvas.getByPlaceholderText('Email');
+
     await userEvent.type(emailInput, 'al', {
       delay: 200,
     });
 
-    await sleep(1000);
+    await sleep(50);
 
     expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
     await expect(canvas.queryAllByText('John Doe')).toStrictEqual([]);
@@ -68,11 +69,11 @@ export const CompanyName: Story = {
     const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
-    const companyFilterButton = canvas
-      .getAllByTestId('dropdown-menu-item')
-      .find((item) => {
-        return item.textContent?.includes('Company');
-      });
+    const companyFilterButton = (
+      await canvas.findAllByTestId('dropdown-menu-item')
+    ).find((item) => {
+      return item.textContent?.includes('Company');
+    });
 
     assert(companyFilterButton);
 
@@ -85,11 +86,11 @@ export const CompanyName: Story = {
 
     await sleep(500);
 
-    const qontoChip = canvas
-      .getAllByTestId('dropdown-menu-item')
-      .find((item) => {
+    const qontoChip = (await canvas.findAllByTestId('dropdown-menu-item')).find(
+      (item) => {
         return item.textContent?.includes('Qonto');
-      });
+      },
+    );
 
     expect(qontoChip).toBeInTheDocument();
 

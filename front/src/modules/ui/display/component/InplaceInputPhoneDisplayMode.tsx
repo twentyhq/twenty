@@ -15,11 +15,11 @@ const StyledRawLink = styled(RawLink)`
 `;
 
 type OwnProps = {
-  value: string;
+  value: string | null;
 };
 
 export function InplaceInputPhoneDisplayMode({ value }: OwnProps) {
-  return isValidPhoneNumber(value) ? (
+  return value && isValidPhoneNumber(value) ? (
     <StyledRawLink
       href={parsePhoneNumber(value, 'FR')?.getURI()}
       onClick={(event: MouseEvent<HTMLElement>) => {

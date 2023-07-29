@@ -1,28 +1,24 @@
 import { useRecoilState } from 'recoil';
 
-import { useUpdateEntityField } from '@/people/hooks/useUpdateEntityField';
-import { InplaceInputTextEditMode } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
+import { InplaceInputTextCellEditMode } from '@/ui/inplace-input/components/InplaceInputTextCellEditMode';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
+import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 
+import { ViewFieldDefinition, ViewFieldTextMetadata } from '../types/ViewField';
+
 type OwnProps = {
-  fieldName: string;
-  viewFieldId: string;
-  placeholder?: string;
+  viewField: ViewFieldDefinition<ViewFieldTextMetadata>;
 };
 
-export function GenericEditableTextCellEditMode({
-  fieldName,
-  viewFieldId,
-  placeholder,
-}: OwnProps) {
+export function GenericEditableTextCellEditMode({ viewField }: OwnProps) {
   const currentRowEntityId = useCurrentRowEntityId();
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     tableEntityFieldFamilySelector({
       entityId: currentRowEntityId ?? '',
-      fieldName,
+      fieldName: viewField.metadata.fieldName,
     }),
   );
 
@@ -34,13 +30,13 @@ export function GenericEditableTextCellEditMode({
     setFieldValue(newText);
 
     if (currentRowEntityId && updateField) {
-      updateField(currentRowEntityId, viewFieldId, newText);
+      updateField(currentRowEntityId, viewField, newText);
     }
   }
 
   return (
-    <InplaceInputTextEditMode
-      placeholder={placeholder ?? ''}
+    <InplaceInputTextCellEditMode
+      placeholder={viewField.metadata.placeHolder ?? ''}
       autoFocus
       value={fieldValue ?? ''}
       onSubmit={handleSubmit}

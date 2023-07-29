@@ -1,5 +1,5 @@
 import { InplaceInputPhoneDisplayMode } from '@/ui/display/component/InplaceInputPhoneDisplayMode';
-import { InplaceInputTextEditMode } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
+import { InplaceInputTextCellEditMode } from '@/ui/inplace-input/components/InplaceInputTextCellEditMode';
 
 import { EditableCell } from '../components/EditableCell';
 
@@ -13,7 +13,7 @@ export function EditableCellPhone({ value, placeholder, onSubmit }: OwnProps) {
   return (
     <EditableCell
       editModeContent={
-        <InplaceInputTextEditMode
+        <InplaceInputTextCellEditMode
           autoFocus
           placeholder={placeholder || ''}
           value={value}

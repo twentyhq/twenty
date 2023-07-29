@@ -20,7 +20,7 @@ import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
 import { SignInUp } from './pages/auth/SignInUp';
 
 // TEMP FEATURE FLAG FOR VIEW FIELDS
-export const ACTIVATE_VIEW_FIELDS = false;
+export const ACTIVATE_VIEW_FIELDS = true;
 
 export function App() {
   return (

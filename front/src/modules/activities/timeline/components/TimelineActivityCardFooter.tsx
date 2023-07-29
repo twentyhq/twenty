@@ -39,7 +39,7 @@ export function TimelineActivityCardFooter({ activity }: OwnProps) {
           )}
           {activity.dueAt && (
             <>
-              <StyledVerticalSeparator />
+              {activity.assignee && <StyledVerticalSeparator />}
               {beautifyExactDate(activity.dueAt)}
             </>
           )}

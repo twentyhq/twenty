@@ -68,6 +68,10 @@ export function SingleEntitySelectBase<
     [onCancel],
   );
 
+  entitiesInDropdown = entitiesInDropdown.filter((entity) =>
+    isNonEmptyString(entity.name.trim()),
+  );
+
   return (
     <DropdownMenuItemsContainer ref={containerRef} hasMaxHeight>
       {entities.loading ? (
