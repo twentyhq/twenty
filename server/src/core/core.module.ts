@@ -14,6 +14,7 @@ import { AttachmentModule } from './attachment/attachment.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { ActivityModule } from './activity/activity.module';
 import { ViewModule } from './view/view.module';
+import { FavoriteModule } from './favorite/favorite.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ViewModule } from './view/view.module';
     FavoriteModule,
     ActivityModule,
     ViewModule,
+    FavoriteModule,
   ],
   exports: [
     AuthModule,
