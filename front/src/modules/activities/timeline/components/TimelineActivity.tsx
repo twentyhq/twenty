@@ -130,8 +130,10 @@ export function TimelineActivity({ activity }: OwnProps) {
     (value: boolean) => {
       updateActivityMutation({
         variables: {
-          id: activity.id,
-          completedAt: value ? new Date().toISOString() : null,
+          where: { id: activity.id },
+          data: {
+            completedAt: value ? new Date().toISOString() : null,
+          },
         },
         refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
       });

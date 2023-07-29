@@ -6,15 +6,15 @@ import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPi
 import { UserChip } from '@/users/components/UserChip';
 import { Company, User } from '~/generated/graphql';
 
-import { CompanyAccountOwnerPickerFieldEditMode } from './CompanyAccountOwnerPickerFieldEditMode';
+import { ActivityAssigneeEditableFieldEditMode } from './ActivityAssigneeEditableFieldEditMode';
 
 type OwnProps = {
-  company: Pick<Company, 'id' | 'accountOwnerId'> & {
-    accountOwner?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
+  activity: Pick<Company, 'id' | 'accountOwnerId'> & {
+    assignee?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
   };
 };
 
-export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
+export function ActivityAssigneeEditableField({ activity }: OwnProps) {
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <RecoilScope>
@@ -22,22 +22,23 @@ export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,
           }}
+          label="Assignee"
           iconLabel={<IconUserCircle />}
           editModeContent={
-            <CompanyAccountOwnerPickerFieldEditMode company={company} />
+            <ActivityAssigneeEditableFieldEditMode activity={activity} />
           }
           displayModeContent={
-            company.accountOwner?.displayName ? (
+            activity.assignee?.displayName ? (
               <UserChip
-                id={company.accountOwner.id}
-                name={company.accountOwner?.displayName ?? ''}
-                pictureUrl={company.accountOwner?.avatarUrl ?? ''}
+                id={activity.assignee.id}
+                name={activity.assignee?.displayName ?? ''}
+                pictureUrl={activity.assignee?.avatarUrl ?? ''}
               />
             ) : (
               <></>
             )
           }
-          isDisplayModeContentEmpty={!company.accountOwner}
+          isDisplayModeContentEmpty={!activity.assignee}
           isDisplayModeFixHeight={true}
         />
       </RecoilScope>

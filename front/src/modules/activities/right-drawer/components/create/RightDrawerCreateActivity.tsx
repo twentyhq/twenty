@@ -5,7 +5,7 @@ import { RightDrawerBody } from '@/ui/right-drawer/components/RightDrawerBody';
 import { RightDrawerPage } from '@/ui/right-drawer/components/RightDrawerPage';
 import { RightDrawerTopBar } from '@/ui/right-drawer/components/RightDrawerTopBar';
 
-import { Activity } from '../Activity';
+import { RightDrawerActivity } from '../RightDrawerActivity';
 
 export function RightDrawerCreateActivity() {
   const activityId = useRecoilValue(viewableActivityIdState);
@@ -15,7 +15,7 @@ export function RightDrawerCreateActivity() {
       <RightDrawerTopBar />
       <RightDrawerBody>
         {activityId && (
-          <Activity
+          <RightDrawerActivity
             activityId={activityId}
             showComment={false}
             autoFillTitle={true}

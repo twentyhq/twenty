@@ -4,20 +4,22 @@ import styled from '@emotion/styled';
 
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
-import { ActivityRelationPicker } from '@/activities/components/ActivityRelationPicker';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
-import { PropertyBoxItem } from '@/ui/editable-field/property-box/components/PropertyBoxItem';
+import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { useIsMobile } from '@/ui/hooks/useIsMobile';
-import { IconArrowUpRight } from '@/ui/icon/index';
+import { IconCalendar } from '@/ui/icon/index';
 import {
   Activity,
   ActivityTarget,
+  User,
   useUpdateActivityMutation,
 } from '~/generated/graphql';
 import { debounce } from '~/utils/debounce';
 
+import { ActivityAssigneeEditableField } from '../editable-fields/components/ActivityAssigneeEditableField';
+import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
 import { ActivityActionBar } from '../right-drawer/components/ActivityActionBar';
 import { CommentForDrawer } from '../types/CommentForDrawer';
 
@@ -65,8 +67,16 @@ const StyledTopActionsContainer = styled.div`
 `;
 
 type OwnProps = {
-  activity: Pick<Activity, 'id' | 'title' | 'body' | 'type' | 'completedAt'> & {
+  activity: Pick<
+    Activity,
+    'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
+  > & {
     comments?: Array<CommentForDrawer> | null;
+  } & {
+    assignee?: Pick<
+      User,
+      'id' | 'firstName' | 'lastName' | 'displayName'
+    > | null;
   } & {
     activityTargets?: Array<
       Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
@@ -95,8 +105,12 @@ export function ActivityEditor({
     (newTitle: string) => {
       updateActivityMutation({
         variables: {
-          id: activity.id,
-          title: newTitle ?? '',
+          where: {
+            id: activity.id,
+          },
+          data: {
+            title: newTitle ?? '',
+          },
         },
         refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
       });
@@ -108,8 +122,12 @@ export function ActivityEditor({
     (value: boolean) => {
       updateActivityMutation({
         variables: {
-          id: activity.id,
-          completedAt: value ? new Date().toISOString() : null,
+          where: {
+            id: activity.id,
+          },
+          data: {
+            completedAt: value ? new Date().toISOString() : null,
+          },
         },
         refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
       });
@@ -152,18 +170,25 @@ export function ActivityEditor({
             onCompletionChange={handleActivityCompletionChange}
           />
           <PropertyBox>
-            <PropertyBoxItem
-              icon={<IconArrowUpRight />}
-              value={
-                <ActivityRelationPicker
-                  activity={{
-                    id: activity.id,
-                    activityTargets: activity.activityTargets ?? [],
-                  }}
-                />
-              }
-              label="Relations"
+            <DateEditableField
+              value={activity.dueAt}
+              icon={<IconCalendar />}
+              label="Due date"
+              onSubmit={(newDate) => {
+                updateActivityMutation({
+                  variables: {
+                    where: {
+                      id: activity.id,
+                    },
+                    data: {
+                      dueAt: newDate,
+                    },
+                  },
+                });
+              }}
             />
+            <ActivityAssigneeEditableField activity={activity} />
+            <ActivityRelationEditableField activity={activity} />
           </PropertyBox>
         </StyledTopContainer>
         <ActivityBodyEditor

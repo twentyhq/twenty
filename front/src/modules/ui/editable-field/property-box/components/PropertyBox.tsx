@@ -7,7 +7,7 @@ const StyledPropertyBoxContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(3)};
 `;
 
