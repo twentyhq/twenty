@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import debounce from 'lodash.debounce';
 
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
@@ -6,6 +7,7 @@ import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
@@ -25,6 +27,7 @@ export function MultipleEntitySelect<
 >({
   entities,
   onChange,
+  onSubmit,
   onSearchFilterChange,
   searchFilter,
   value,
@@ -33,6 +36,8 @@ export function MultipleEntitySelect<
   searchFilter: string;
   onSearchFilterChange: (newSearchFilter: string) => void;
   onChange: (value: Record<string, boolean>) => void;
+  onCancel?: () => void;
+  onSubmit?: () => void;
   value: Record<string, boolean>;
 }) {
   const debouncedSetSearchFilter = debounce(onSearchFilterChange, 100, {
@@ -53,8 +58,21 @@ export function MultipleEntitySelect<
     isNonEmptyString(entity.name),
   );
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useListenClickOutside({
+    refs: [containerRef],
+    callback: (event) => {
+      event.stopImmediatePropagation();
+      event.stopPropagation();
+      event.preventDefault();
+
+      onSubmit?.();
+    },
+  });
+
   return (
-    <DropdownMenu>
+    <DropdownMenu ref={containerRef}>
       <DropdownMenuSearch
         value={searchFilter}
         onChange={handleFilterChange}

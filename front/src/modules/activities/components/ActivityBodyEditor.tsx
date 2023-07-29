@@ -35,8 +35,12 @@ export function ActivityBodyEditor({ activity, onChange }: OwnProps) {
       setBody(activityBody);
       updateActivityMutation({
         variables: {
-          id: activity.id,
-          body: activityBody,
+          where: {
+            id: activity.id,
+          },
+          data: {
+            body: activityBody,
+          },
         },
         refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
       });

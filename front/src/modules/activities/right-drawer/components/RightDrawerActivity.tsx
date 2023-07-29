@@ -21,7 +21,7 @@ type OwnProps = {
   autoFillTitle?: boolean;
 };
 
-export function Activity({
+export function RightDrawerActivity({
   activityId,
   showComment = true,
   autoFillTitle = false,

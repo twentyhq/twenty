@@ -68,6 +68,7 @@ export type ViewFieldDoubleTextChipMetadata = {
   firstValuePlaceholder: string;
   secondValueFieldName: string;
   secondValuePlaceholder: string;
+  avatarUrlFieldName: string;
   entityType: Entity;
 };
 

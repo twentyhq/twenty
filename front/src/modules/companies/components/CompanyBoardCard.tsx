@@ -99,7 +99,9 @@ const StyledCheckboxContainer = styled.div`
 `;
 
 const StyledFieldContainer = styled.div`
-  width: max-content;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 `;
 
 export function CompanyBoardCard() {

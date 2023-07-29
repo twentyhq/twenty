@@ -77,7 +77,14 @@ export function DeleteModal({
   return (
     <AnimatePresence mode="wait">
       <LayoutGroup>
-        <StyledModal isOpen={isOpen} onOutsideClick={() => setIsOpen(!isOpen)}>
+        <StyledModal
+          isOpen={isOpen}
+          onOutsideClick={() => {
+            if (isOpen) {
+              setIsOpen(false);
+            }
+          }}
+        >
           <StyledTitle>{title}</StyledTitle>
           <StyledSubtitle>{subtitle}</StyledSubtitle>
           <TextInput

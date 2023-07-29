@@ -33,6 +33,13 @@ export function GenericEditableDoubleTextChipCellDisplayMode({
     }),
   );
 
+  const [avatarUrlValue] = useRecoilState<string>(
+    tableEntityFieldFamilySelector({
+      entityId: currentRowEntityId ?? '',
+      fieldName: viewField.metadata.avatarUrlFieldName,
+    }),
+  );
+
   const displayName = `${firstValue} ${secondValue}`;
 
   switch (viewField.metadata.entityType) {
@@ -40,7 +47,13 @@ export function GenericEditableDoubleTextChipCellDisplayMode({
       return <CompanyChip id={currentRowEntityId ?? ''} name={displayName} />;
     }
     case Entity.Person: {
-      return <PersonChip id={currentRowEntityId ?? ''} name={displayName} />;
+      return (
+        <PersonChip
+          id={currentRowEntityId ?? ''}
+          name={displayName}
+          pictureUrl={avatarUrlValue}
+        />
+      );
     }
     default:
       console.warn(

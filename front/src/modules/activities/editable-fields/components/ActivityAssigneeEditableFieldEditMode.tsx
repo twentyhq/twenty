@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { CompanyAccountOwnerPicker } from '@/companies/components/CompanyAccountOwnerPicker';
+import { ActivityAssigneePicker } from '@/activities/components/ActivityAssigneePicker';
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
-import { Company, User } from '~/generated/graphql';
+import { Activity, User } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   left: 0px;
@@ -11,15 +11,15 @@ const StyledContainer = styled.div`
 `;
 
 export type OwnProps = {
-  company: Pick<Company, 'id'> & {
-    accountOwner?: Pick<User, 'id' | 'displayName'> | null;
+  activity: Pick<Activity, 'id'> & {
+    assignee?: Pick<User, 'id' | 'displayName'> | null;
   };
   onSubmit?: () => void;
   onCancel?: () => void;
 };
 
-export function CompanyAccountOwnerPickerFieldEditMode({
-  company,
+export function ActivityAssigneeEditableFieldEditMode({
+  activity,
   onSubmit,
   onCancel,
 }: OwnProps) {
@@ -37,8 +37,8 @@ export function CompanyAccountOwnerPickerFieldEditMode({
 
   return (
     <StyledContainer>
-      <CompanyAccountOwnerPicker
-        company={company}
+      <ActivityAssigneePicker
+        activity={activity}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
       />

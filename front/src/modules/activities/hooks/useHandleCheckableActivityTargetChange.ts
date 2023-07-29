@@ -10,16 +10,16 @@ import {
   useRemoveActivityTargetsOnActivityMutation,
 } from '~/generated/graphql';
 
-import { GET_ACTIVITIES_BY_TARGETS } from '../queries';
+import { GET_ACTIVITY } from '../queries';
 import { CommentableEntityForSelect } from '../types/CommentableEntityForSelect';
 
 export function useHandleCheckableActivityTargetChange({
   activity,
 }: {
   activity?: Pick<Activity, 'id'> & {
-    activityTargets: Array<
+    activityTargets?: Array<
       Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
-    >;
+    > | null;
   };
 }) {
   const [addActivityTargetsOnActivity] =
@@ -27,7 +27,7 @@ export function useHandleCheckableActivityTargetChange({
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
         getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
+        getOperationName(GET_ACTIVITY) ?? '',
       ],
     });
 
@@ -36,7 +36,7 @@ export function useHandleCheckableActivityTargetChange({
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
         getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
+        getOperationName(GET_ACTIVITY) ?? '',
       ],
     });
 
@@ -48,9 +48,9 @@ export function useHandleCheckableActivityTargetChange({
       return;
     }
 
-    const currentEntityIds = activity.activityTargets.map(
-      ({ commentableId }) => commentableId,
-    );
+    const currentEntityIds = activity.activityTargets
+      ? activity.activityTargets.map(({ commentableId }) => commentableId)
+      : [];
 
     const entitiesToAdd = entities.filter(
       ({ id }) => entityValues[id] && !currentEntityIds.includes(id),
@@ -70,10 +70,13 @@ export function useHandleCheckableActivityTargetChange({
       });
 
     const activityTargetIdsToDelete = activity.activityTargets
-      .filter(
-        ({ commentableId }) => commentableId && !entityValues[commentableId],
-      )
-      .map(({ id }) => id);
+      ? activity.activityTargets
+          .filter(
+            ({ commentableId }) =>
+              commentableId && !entityValues[commentableId],
+          )
+          .map(({ id }) => id)
+      : [];
 
     if (activityTargetIdsToDelete.length)
       await removeActivityTargetsOnActivity({

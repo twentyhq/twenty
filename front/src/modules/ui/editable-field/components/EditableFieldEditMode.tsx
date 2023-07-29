@@ -7,10 +7,12 @@ export const EditableFieldEditModeContainer = styled.div<OwnProps>`
   align-items: center;
 
   display: flex;
+  height: 24px;
 
   margin-left: -${({ theme }) => theme.spacing(1)};
+  position: relative;
 
-  width: inherit;
+  width: 100%;
   z-index: 10;
 `;
 

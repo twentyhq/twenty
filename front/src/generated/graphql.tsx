@@ -2340,14 +2340,14 @@ export type GetActivitiesByTargetsQueryVariables = Exact<{
 }>;
 
 
-export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
+export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
 
 export type GetActivityQueryVariables = Exact<{
   activityId: Scalars['String'];
 }>;
 
 
-export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
+export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
 
 export type AddActivityTargetsOnActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2373,15 +2373,12 @@ export type DeleteActivityMutationVariables = Exact<{
 export type DeleteActivityMutation = { __typename?: 'Mutation', deleteManyActivities: { __typename?: 'AffectedRows', count: number } };
 
 export type UpdateActivityMutationVariables = Exact<{
-  id: Scalars['String'];
-  body?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
+  where: ActivityWhereUniqueInput;
+  data: ActivityUpdateInput;
 }>;
 
 
-export type UpdateActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null } };
+export type UpdateActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null } };
 
 export type UploadAttachmentMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -2891,6 +2888,13 @@ export const GetActivitiesByTargetsDocument = gql`
     body
     type
     completedAt
+    dueAt
+    assignee {
+      id
+      firstName
+      lastName
+      displayName
+    }
     author {
       id
       firstName
@@ -2956,6 +2960,13 @@ export const GetActivityDocument = gql`
     title
     type
     completedAt
+    dueAt
+    assignee {
+      id
+      firstName
+      lastName
+      displayName
+    }
     author {
       id
       firstName
@@ -3137,16 +3148,20 @@ export type DeleteActivityMutationHookResult = ReturnType<typeof useDeleteActivi
 export type DeleteActivityMutationResult = Apollo.MutationResult<DeleteActivityMutation>;
 export type DeleteActivityMutationOptions = Apollo.BaseMutationOptions<DeleteActivityMutation, DeleteActivityMutationVariables>;
 export const UpdateActivityDocument = gql`
-    mutation UpdateActivity($id: String!, $body: String, $title: String, $type: ActivityType, $completedAt: DateTime) {
-  updateOneActivity(
-    where: {id: $id}
-    data: {body: $body, title: $title, type: $type, completedAt: $completedAt}
-  ) {
+    mutation UpdateActivity($where: ActivityWhereUniqueInput!, $data: ActivityUpdateInput!) {
+  updateOneActivity(where: $where, data: $data) {
     id
     body
     title
     type
     completedAt
+    dueAt
+    assignee {
+      id
+      firstName
+      lastName
+      displayName
+    }
   }
 }
     `;
@@ -3165,11 +3180,8 @@ export type UpdateActivityMutationFn = Apollo.MutationFunction<UpdateActivityMut
  * @example
  * const [updateActivityMutation, { data, loading, error }] = useUpdateActivityMutation({
  *   variables: {
- *      id: // value for 'id'
- *      body: // value for 'body'
- *      title: // value for 'title'
- *      type: // value for 'type'
- *      completedAt: // value for 'completedAt'
+ *      where: // value for 'where'
+ *      data: // value for 'data'
  *   },
  * });
  */

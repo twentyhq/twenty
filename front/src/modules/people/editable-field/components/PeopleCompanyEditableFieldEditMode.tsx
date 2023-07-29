@@ -1,3 +1,5 @@
+import styled from '@emotion/styled';
+
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
 import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
@@ -13,6 +15,12 @@ import {
 export type OwnProps = {
   people: Pick<Person, 'id'> & { company?: Pick<Company, 'id'> | null };
 };
+
+const StyledContainer = styled.div`
+  left: 0px;
+  position: absolute;
+  top: -8px;
+`;
 
 export function PeopleCompanyEditableFieldEditMode({ people }: OwnProps) {
   const { closeEditableField } = useEditableField();
@@ -51,14 +59,16 @@ export function PeopleCompanyEditableFieldEditMode({ people }: OwnProps) {
   }
 
   return (
-    <SingleEntitySelect
-      onEntitySelected={handleEntitySelected}
-      entities={{
-        entitiesToSelect: companies.entitiesToSelect,
-        selectedEntity: companies.selectedEntities[0],
-        loading: companies.loading,
-      }}
-      onCancel={handleCancel}
-    />
+    <StyledContainer>
+      <SingleEntitySelect
+        onEntitySelected={handleEntitySelected}
+        entities={{
+          entitiesToSelect: companies.entitiesToSelect,
+          selectedEntity: companies.selectedEntities[0],
+          loading: companies.loading,
+        }}
+        onCancel={handleCancel}
+      />
+    </StyledContainer>
   );
 }
