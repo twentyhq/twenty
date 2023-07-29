@@ -7,12 +7,13 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
 import { IconNotes } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
-import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
+import { Activity, User, useUpdateActivityMutation } from '~/generated/graphql';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
+import { TimelineActivityCardFooter } from './TimelineActivityCardFooter';
 import { TimelineActivityTitle } from './TimelineActivityTitle';
 
 const StyledIconContainer = styled.div`
@@ -73,19 +74,19 @@ const StyledCard = styled.div`
   align-items: flex-start;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
-  max-width: 400px;
-  padding: ${({ theme }) => theme.spacing(3)};
+  max-width: 100%;
   position: relative;
+  width: 400px;
 `;
 
 const StyledCardContent = styled.div`
   align-self: stretch;
   color: ${({ theme }) => theme.font.color.secondary};
-
+  margin-top: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
@@ -104,6 +105,11 @@ const StyledTooltip = styled(Tooltip)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledCardDetailsContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+`;
+
 const StyledTimelineItemContainer = styled.div`
   align-items: center;
   align-self: stretch;
@@ -115,7 +121,9 @@ type OwnProps = {
   activity: Pick<
     Activity,
     'id' | 'title' | 'body' | 'createdAt' | 'completedAt' | 'type'
-  > & { author: Pick<Activity['author'], 'displayName'> };
+  > & { author: Pick<Activity['author'], 'displayName'> } & {
+    assignee?: Pick<User, 'id' | 'displayName'> | null;
+  };
 };
 
 export function TimelineActivity({ activity }: OwnProps) {
@@ -167,15 +175,20 @@ export function TimelineActivity({ activity }: OwnProps) {
         </StyledVerticalLineContainer>
         <StyledCardContainer>
           <StyledCard onClick={() => openActivityRightDrawer(activity.id)}>
-            <TimelineActivityTitle
-              title={activity.title ?? ''}
-              completed={!!activity.completedAt}
-              type={activity.type}
-              onCompletionChange={handleActivityCompletionChange}
-            />
-            <StyledCardContent>
-              <OverflowingTextWithTooltip text={body ? body : '(No content)'} />
-            </StyledCardContent>
+            <StyledCardDetailsContainer>
+              <TimelineActivityTitle
+                title={activity.title ?? ''}
+                completed={!!activity.completedAt}
+                type={activity.type}
+                onCompletionChange={handleActivityCompletionChange}
+              />
+              <StyledCardContent>
+                <OverflowingTextWithTooltip
+                  text={body ? body : '(No content)'}
+                />
+              </StyledCardContent>
+            </StyledCardDetailsContainer>
+            <TimelineActivityCardFooter activity={activity} />
           </StyledCard>
         </StyledCardContainer>
       </StyledTimelineItemContainer>

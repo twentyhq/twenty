@@ -13,6 +13,7 @@ import { IconCalendar } from '@/ui/icon/index';
 import {
   Activity,
   ActivityTarget,
+  ActivityType,
   User,
   useUpdateActivityMutation,
 } from '~/generated/graphql';
@@ -170,24 +171,28 @@ export function ActivityEditor({
             onCompletionChange={handleActivityCompletionChange}
           />
           <PropertyBox>
-            <DateEditableField
-              value={activity.dueAt}
-              icon={<IconCalendar />}
-              label="Due date"
-              onSubmit={(newDate) => {
-                updateActivityMutation({
-                  variables: {
-                    where: {
-                      id: activity.id,
-                    },
-                    data: {
-                      dueAt: newDate,
-                    },
-                  },
-                });
-              }}
-            />
-            <ActivityAssigneeEditableField activity={activity} />
+            {activity.type === ActivityType.Task && (
+              <>
+                <DateEditableField
+                  value={activity.dueAt}
+                  icon={<IconCalendar />}
+                  label="Due date"
+                  onSubmit={(newDate) => {
+                    updateActivityMutation({
+                      variables: {
+                        where: {
+                          id: activity.id,
+                        },
+                        data: {
+                          dueAt: newDate,
+                        },
+                      },
+                    });
+                  }}
+                />
+                <ActivityAssigneeEditableField activity={activity} />
+              </>
+            )}
             <ActivityRelationEditableField activity={activity} />
           </PropertyBox>
         </StyledTopContainer>

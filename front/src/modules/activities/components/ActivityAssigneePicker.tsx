@@ -35,7 +35,7 @@ export function ActivityAssigneePicker({
 
   const companies = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
-    selectedIds: [activity?.accountOwner?.id ?? ''],
+    selectedIds: activity?.accountOwner?.id ? [activity?.accountOwner?.id] : [],
     searchFilter: searchFilter,
     mappingFunction: (user) => ({
       entityType: Entity.User,
