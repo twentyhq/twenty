@@ -25,9 +25,9 @@ export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
     });
   }
 
-  const entityFieldMetadata = useContext(ViewFieldContext);
+  const viewField = useContext(ViewFieldContext);
 
-  if (!entityFieldMetadata) {
+  if (!viewField) {
     return null;
   }
 
@@ -37,12 +37,12 @@ export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
         <td
           onContextMenu={(event) => handleContextMenu(event)}
           style={{
-            width: entityFieldMetadata.columnSize,
-            minWidth: entityFieldMetadata.columnSize,
-            maxWidth: entityFieldMetadata.columnSize,
+            width: viewField.columnSize,
+            minWidth: viewField.columnSize,
+            maxWidth: viewField.columnSize,
           }}
         >
-          <GenericEditableCell viewField={entityFieldMetadata} />
+          <GenericEditableCell viewField={viewField} />
         </td>
       </ColumnIndexContext.Provider>
     </RecoilScope>
