@@ -2,7 +2,7 @@ import {
   IconBrandLinkedin,
   IconBriefcase,
   IconBuildingSkyscraper,
-  IconCalendar,
+  IconCalendarEvent,
   IconMail,
   IconMap,
   IconPhone,
@@ -25,8 +25,8 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'displayName',
     columnLabel: 'People',
-    columnIcon: <IconUser size={16} />,
-    columnSize: 150,
+    columnIcon: <IconUser />,
+    columnSize: 210,
     columnOrder: 1,
     metadata: {
       type: 'double-text-chip',
@@ -40,7 +40,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'email',
     columnLabel: 'Email',
-    columnIcon: <IconMail size={16} />,
+    columnIcon: <IconMail />,
     columnSize: 150,
     columnOrder: 2,
     metadata: {
@@ -52,7 +52,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'company',
     columnLabel: 'Company',
-    columnIcon: <IconBuildingSkyscraper size={16} />,
+    columnIcon: <IconBuildingSkyscraper />,
     columnSize: 150,
     columnOrder: 3,
     metadata: {
@@ -64,7 +64,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'phone',
     columnLabel: 'Phone',
-    columnIcon: <IconPhone size={16} />,
+    columnIcon: <IconPhone />,
     columnSize: 150,
     columnOrder: 4,
     metadata: {
@@ -76,7 +76,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'createdAt',
     columnLabel: 'Creation',
-    columnIcon: <IconCalendar size={16} />,
+    columnIcon: <IconCalendarEvent />,
     columnSize: 150,
     columnOrder: 5,
     metadata: {
@@ -87,7 +87,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'city',
     columnLabel: 'City',
-    columnIcon: <IconMap size={16} />,
+    columnIcon: <IconMap />,
     columnSize: 150,
     columnOrder: 6,
     metadata: {
@@ -99,7 +99,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'jobTitle',
     columnLabel: 'Job title',
-    columnIcon: <IconBriefcase size={16} />,
+    columnIcon: <IconBriefcase />,
     columnSize: 150,
     columnOrder: 7,
     metadata: {
@@ -111,7 +111,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'linkedin',
     columnLabel: 'LinkedIn',
-    columnIcon: <IconBrandLinkedin size={16} />,
+    columnIcon: <IconBrandLinkedin />,
     columnSize: 150,
     columnOrder: 8,
     metadata: {

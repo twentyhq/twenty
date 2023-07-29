@@ -23,8 +23,8 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'name',
     columnLabel: 'Name',
-    columnIcon: <IconBuildingSkyscraper size={16} />,
-    columnSize: 150,
+    columnIcon: <IconBuildingSkyscraper />,
+    columnSize: 180,
     columnOrder: 1,
     metadata: {
       type: 'chip',
@@ -36,8 +36,8 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'domainName',
     columnLabel: 'URL',
-    columnIcon: <IconLink size={16} />,
-    columnSize: 150,
+    columnIcon: <IconLink />,
+    columnSize: 100,
     columnOrder: 2,
     metadata: {
       type: 'url',
@@ -48,7 +48,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'accountOwner',
     columnLabel: 'Account Owner',
-    columnIcon: <IconUser size={16} />,
+    columnIcon: <IconUser />,
     columnSize: 150,
     columnOrder: 3,
     metadata: {
@@ -60,7 +60,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'createdAt',
     columnLabel: 'Creation',
-    columnIcon: <IconCalendar size={16} />,
+    columnIcon: <IconCalendar />,
     columnSize: 150,
     columnOrder: 4,
     metadata: {
@@ -71,7 +71,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'employees',
     columnLabel: 'Employees',
-    columnIcon: <IconUsers size={16} />,
+    columnIcon: <IconUsers />,
     columnSize: 150,
     columnOrder: 5,
     metadata: {
@@ -82,8 +82,8 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'linkedin',
     columnLabel: 'LinkedIn',
-    columnIcon: <IconMap size={16} />,
-    columnSize: 150,
+    columnIcon: <IconMap />,
+    columnSize: 170,
     columnOrder: 6,
     metadata: {
       type: 'url',
@@ -94,8 +94,8 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'address',
     columnLabel: 'Address',
-    columnIcon: <IconMap size={16} />,
-    columnSize: 150,
+    columnIcon: <IconMap />,
+    columnSize: 170,
     columnOrder: 7,
     metadata: {
       type: 'text',
