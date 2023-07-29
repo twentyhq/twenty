@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { ViewFieldDefinition } from '../types/ViewField';
+import { ViewFieldDefinition, ViewFieldMetadata } from '../types/ViewField';
 
 export const ViewFieldContext =
-  createContext<ViewFieldDefinition<unknown> | null>(null);
+  createContext<ViewFieldDefinition<ViewFieldMetadata> | null>(null);

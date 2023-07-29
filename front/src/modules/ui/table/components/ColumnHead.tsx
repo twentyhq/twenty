@@ -11,13 +11,18 @@ const StyledTitle = styled.div`
   display: flex;
   flex-direction: row;
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(8)};
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIcon = styled.div`
   display: flex;
-  margin-right: ${({ theme }) => theme.spacing(1)};
+
+  & > svg {
+    height: ${({ theme }) => theme.icon.size.md}px;
+    width: ${({ theme }) => theme.icon.size.md}px;
+  }
 `;
 
 export function ColumnHead({ viewName, viewIcon }: OwnProps) {

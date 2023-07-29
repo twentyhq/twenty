@@ -1,7 +1,11 @@
-import { ViewFieldDefinition, ViewFieldTextMetadata } from '../ViewField';
+import {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+  ViewFieldTextMetadata,
+} from '../ViewField';
 
 export function isViewFieldText(
-  field: ViewFieldDefinition<unknown>,
+  field: ViewFieldDefinition<ViewFieldMetadata>,
 ): field is ViewFieldDefinition<ViewFieldTextMetadata> {
-  return field.type === 'text';
+  return field.metadata.type === 'text';
 }
