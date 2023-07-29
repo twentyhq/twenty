@@ -17,6 +17,7 @@ import {
   PipelineProgress,
   Attachment,
   UserSettings,
+  Favorite,
 } from '@prisma/client';
 
 import { AbilityAction } from './ability.action';
@@ -36,6 +37,7 @@ type SubjectsAbility = Subjects<{
   PipelineProgress: PipelineProgress;
   Attachment: Attachment;
   UserSettings: UserSettings;
+  Favorite: Favorite
 }>;
 
 export type AppAbility = PureAbility<
@@ -125,6 +127,13 @@ export class AbilityFactory {
       workspaceId: workspace.id,
     });
     can(AbilityAction.Delete, 'PipelineProgress', {
+      workspaceId: workspace.id,
+    });
+
+    //Favorite
+    can(AbilityAction.Read, 'Favorite', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'Favorite');
+    can(AbilityAction.Delete, 'Favorite', {
       workspaceId: workspace.id,
     });
 
