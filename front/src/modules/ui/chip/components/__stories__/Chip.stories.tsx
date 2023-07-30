@@ -40,6 +40,12 @@ export const Catalog: Story = {
     pseudo: { hover: ['.hover'], active: ['.active'] },
     catalog: [
       {
+        name: 'states',
+        values: ['default', 'hover', 'active', 'disabled'],
+        props: (state: string) =>
+          state === 'default' ? {} : { className: state },
+      },
+      {
         name: 'variants',
         values: Object.values(ChipVariant),
         props: (variant: ChipVariant) => ({ variant }),
@@ -53,12 +59,6 @@ export const Catalog: Story = {
         name: 'accents',
         values: Object.values(ChipAccent),
         props: (accent: ChipAccent) => ({ accent }),
-      },
-      {
-        name: 'states',
-        values: ['default', 'hover', 'active', 'disabled'],
-        props: (state: string) =>
-          state === 'default' ? {} : { className: state },
       },
     ],
   },
