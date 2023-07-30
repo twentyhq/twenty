@@ -10,8 +10,9 @@ import {
 } from '@/ui/button/components/Button';
 import { IconSettings, IconTrash } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
-import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
-import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
+import { Section } from '@/ui/section/components/Section';
+import { H1Title } from '@/ui/title/components/H1Title';
+import { H2Title } from '@/ui/title/components/H2Title';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import {
@@ -22,11 +23,9 @@ import {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: ${({ theme }) => theme.spacing(8)};
   padding: ${({ theme }) => theme.spacing(8)};
   width: 350px;
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(8)};
-  }
 `;
 
 const ButtonContainer = styled.div`
@@ -81,40 +80,44 @@ export function SettingsWorkspaceMembers() {
   return (
     <SubMenuTopBarContainer icon={<IconSettings size={16} />} title="Settings">
       <StyledContainer>
-        <MainSectionTitle>Members</MainSectionTitle>
+        <H1Title title="Members" />
         {workspace?.inviteHash && (
-          <>
-            <SubSectionTitle
+          <Section>
+            <H2Title
               title="Invite"
               description="Send an invitation to use Twenty"
             />
             <WorkspaceInviteLink
               inviteLink={`${window.location.origin}/invite/${workspace?.inviteHash}`}
             />
-          </>
+          </Section>
         )}
-        <SubSectionTitle
-          title="Members"
-          description="Manage the members of your space here"
-        />
-        {data?.workspaceMembers?.map((member) => (
-          <WorkspaceMemberCard
-            key={member.user.id}
-            workspaceMember={{ user: member.user }}
-            accessory={
-              currentUser?.id !== member.user.id && (
-                <ButtonContainer>
-                  <Button
-                    onClick={() => handleRemoveWorkspaceMember(member.user.id)}
-                    variant={ButtonVariant.Tertiary}
-                    size={ButtonSize.Small}
-                    icon={<IconTrash size={theme.icon.size.md} />}
-                  />
-                </ButtonContainer>
-              )
-            }
+        <Section>
+          <H2Title
+            title="Members"
+            description="Manage the members of your space here"
           />
-        ))}
+          {data?.workspaceMembers?.map((member) => (
+            <WorkspaceMemberCard
+              key={member.user.id}
+              workspaceMember={{ user: member.user }}
+              accessory={
+                currentUser?.id !== member.user.id && (
+                  <ButtonContainer>
+                    <Button
+                      onClick={() =>
+                        handleRemoveWorkspaceMember(member.user.id)
+                      }
+                      variant={ButtonVariant.Tertiary}
+                      size={ButtonSize.Small}
+                      icon={<IconTrash size={theme.icon.size.md} />}
+                    />
+                  </ButtonContainer>
+                )
+              }
+            />
+          ))}
+        </Section>
       </StyledContainer>
     </SubMenuTopBarContainer>
   );

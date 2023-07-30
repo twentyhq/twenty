@@ -23,10 +23,10 @@ const StyledDescription = styled.h3`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin: 0;
-  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-export function SubSectionTitle({ title, description }: Props) {
+export function H2Title({ title, description }: Props) {
   return (
     <StyledContainer>
       <StyledTitle>{title}</StyledTitle>

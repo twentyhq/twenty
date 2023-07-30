@@ -39,36 +39,38 @@ export const Catalog: Story = {
     shape: { control: false },
   },
   parameters: {
-    catalog: [
-      {
-        name: 'state',
-        values: ['unchecked', 'checked', 'indeterminate'],
-        props: (state: string) => {
-          if (state === 'checked') {
-            return { checked: true };
-          }
+    catalog: {
+      dimensions: [
+        {
+          name: 'state',
+          values: ['unchecked', 'checked', 'indeterminate'],
+          props: (state: string) => {
+            if (state === 'checked') {
+              return { checked: true };
+            }
 
-          if (state === 'indeterminate') {
-            return { indeterminate: true };
-          }
+            if (state === 'indeterminate') {
+              return { indeterminate: true };
+            }
+          },
         },
-      },
-      {
-        name: 'shape',
-        values: Object.values(CheckboxShape),
-        props: (shape: CheckboxShape) => ({ shape }),
-      },
-      {
-        name: 'variant',
-        values: Object.values(CheckboxVariant),
-        props: (variant: CheckboxVariant) => ({ variant }),
-      },
-      {
-        name: 'size',
-        values: Object.values(CheckboxSize),
-        props: (size: CheckboxSize) => ({ size }),
-      },
-    ],
+        {
+          name: 'shape',
+          values: Object.values(CheckboxShape),
+          props: (shape: CheckboxShape) => ({ shape }),
+        },
+        {
+          name: 'variant',
+          values: Object.values(CheckboxVariant),
+          props: (variant: CheckboxVariant) => ({ variant }),
+        },
+        {
+          name: 'size',
+          values: Object.values(CheckboxSize),
+          props: (size: CheckboxSize) => ({ size }),
+        },
+      ],
+    },
   },
   decorators: [CatalogDecorator],
 };

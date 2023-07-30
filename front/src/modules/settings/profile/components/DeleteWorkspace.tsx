@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import { ButtonVariant } from '@/ui/button/components/Button';
-import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
+import { H2Title } from '@/ui/title/components/H2Title';
 import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 
 import { DeleteModal, StyledDeleteButton } from './DeleteModal';
@@ -29,10 +29,7 @@ export function DeleteWorkspace() {
 
   return (
     <>
-      <SubSectionTitle
-        title="Danger zone"
-        description="Delete your whole workspace"
-      />
+      <H2Title title="Danger zone" description="Delete your whole workspace" />
       <StyledDeleteButton
         onClick={() => setIsDeleteWorkSpaceModalOpen(true)}
         variant={ButtonVariant.Secondary}
