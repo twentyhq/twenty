@@ -18,7 +18,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
 
 import { SignInUp } from './pages/auth/SignInUp';
-import { OfflineScreenWrapper } from './utils/OfflineScreenWrapper';
+import { OfflineScreenWrapper } from './pages/OfflineScreenWrapper';
 
 // TEMP FEATURE FLAG FOR VIEW FIELDS
 export const ACTIVATE_VIEW_FIELDS = false;
