@@ -29,19 +29,21 @@ export const Catalog: Story = {
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.active'] },
-    catalog: [
-      {
-        name: 'states',
-        values: ['default', 'hover', 'active'],
-        props: (state: string) =>
-          state === 'default' ? {} : { className: state },
-      },
-      {
-        name: 'Active',
-        values: ['true', 'false'],
-        props: (active: string) => ({ active: active === 'true' }),
-      },
-    ],
+    catalog: {
+      dimensions: [
+        {
+          name: 'states',
+          values: ['default', 'hover', 'active'],
+          props: (state: string) =>
+            state === 'default' ? {} : { className: state },
+        },
+        {
+          name: 'Active',
+          values: ['true', 'false'],
+          props: (active: string) => ({ active: active === 'true' }),
+        },
+      ],
+    },
   },
   decorators: [CatalogDecorator],
 };

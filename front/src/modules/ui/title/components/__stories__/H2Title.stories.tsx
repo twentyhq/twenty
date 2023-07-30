@@ -2,16 +2,16 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { SubSectionTitle } from '../SubSectionTitle';
+import { H2Title } from '../H2Title';
 
 const args = {
-  title: 'Lorem ipsum',
+  title: 'Sub title',
   description: 'Lorem ipsum dolor sit amet',
 };
 
-const meta: Meta<typeof SubSectionTitle> = {
-  title: 'UI/Title/SubSectionTitle',
-  component: SubSectionTitle,
+const meta: Meta<typeof H2Title> = {
+  title: 'UI/Title/H2Title',
+  component: H2Title,
   decorators: [ComponentDecorator],
   args: {
     title: args.title,
@@ -20,7 +20,7 @@ const meta: Meta<typeof SubSectionTitle> = {
 
 export default meta;
 
-type Story = StoryObj<typeof SubSectionTitle>;
+type Story = StoryObj<typeof H2Title>;
 
 export const Default: Story = {
   decorators: [ComponentDecorator],

@@ -50,13 +50,15 @@ export const Sizes: Story = {
     size: { control: false },
   },
   parameters: {
-    catalog: [
-      {
-        name: 'sizes',
-        values: Object.values(ButtonSize),
-        props: (size: ButtonSize) => ({ size }),
-      },
-    ],
+    catalog: {
+      dimensions: [
+        {
+          name: 'sizes',
+          values: Object.values(ButtonSize),
+          props: (size: ButtonSize) => ({ size }),
+        },
+      ],
+    },
   },
   decorators: [CatalogDecorator],
 };
@@ -68,22 +70,24 @@ export const Variants: Story = {
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.active'], focus: ['.focus'] },
-    catalog: [
-      {
-        name: 'state',
-        values: ['default', 'disabled', 'hover', 'active', 'focus'],
-        props: (state: string) => {
-          if (state === 'disabled') return { disabled: true };
-          if (state === 'default') return {};
-          return { className: state };
+    catalog: {
+      dimensions: [
+        {
+          name: 'state',
+          values: ['default', 'disabled', 'hover', 'active', 'focus'],
+          props: (state: string) => {
+            if (state === 'disabled') return { disabled: true };
+            if (state === 'default') return {};
+            return { className: state };
+          },
         },
-      },
-      {
-        name: 'variants',
-        values: Object.values(ButtonVariant),
-        props: (variant: ButtonVariant) => ({ variant }),
-      },
-    ],
+        {
+          name: 'variants',
+          values: Object.values(ButtonVariant),
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
   },
   decorators: [CatalogDecorator],
 };
@@ -93,30 +97,34 @@ export const Positions: Story = {
     position: { control: false },
   },
   parameters: {
-    catalog: [
-      {
-        name: 'positions',
-        values: ['none', ...Object.values(ButtonPosition)],
-        props: (position: ButtonPosition | 'none') =>
-          position === 'none' ? {} : { position },
-      },
-    ],
+    catalog: {
+      dimensions: [
+        {
+          name: 'positions',
+          values: ['none', ...Object.values(ButtonPosition)],
+          props: (position: ButtonPosition | 'none') =>
+            position === 'none' ? {} : { position },
+        },
+      ],
+    },
   },
   decorators: [CatalogDecorator],
 };
 
 export const WithAdornments: Story = {
   parameters: {
-    catalog: [
-      {
-        name: 'adornments',
-        values: ['with icon', 'with soon pill'],
-        props: (value: string) =>
-          value === 'with icon'
-            ? { icon: <IconSearch size={14} /> }
-            : { soon: true },
-      },
-    ],
+    catalog: {
+      dimensions: [
+        {
+          name: 'adornments',
+          values: ['with icon', 'with soon pill'],
+          props: (value: string) =>
+            value === 'with icon'
+              ? { icon: <IconSearch size={14} /> }
+              : { soon: true },
+        },
+      ],
+    },
   },
   decorators: [CatalogDecorator],
 };
