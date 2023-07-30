@@ -100,7 +100,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     metadata: {
       type: 'text',
       fieldName: 'address',
-      placeHolder: 'Address',
+      placeHolder: 'Addre​ss', // Hack: Fake character to prevent password-manager from filling the field
     },
   } satisfies ViewFieldDefinition<ViewFieldTextMetadata>,
 ];

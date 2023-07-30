@@ -31,8 +31,8 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       type: 'double-text-chip',
       firstValueFieldName: 'firstName',
       secondValueFieldName: 'lastName',
-      firstValuePlaceholder: 'First name',
-      secondValuePlaceholder: 'Last name',
+      firstValuePlaceholder: 'F​irst n​ame', // Hack: Fake character to prevent password-manager from filling the field
+      secondValuePlaceholder: 'L​ast n​ame', // Hack: Fake character to prevent password-manager from filling the field
       avatarUrlFieldName: 'avatarUrl',
       entityType: Entity.Person,
     },
@@ -46,7 +46,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     metadata: {
       type: 'text',
       fieldName: 'email',
-      placeHolder: 'Email',
+      placeHolder: 'Ema​il', // Hack: Fake character to prevent password-manager from filling the field
     },
   } satisfies ViewFieldDefinition<ViewFieldTextMetadata>,
   {
@@ -70,7 +70,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     metadata: {
       type: 'phone',
       fieldName: 'phone',
-      placeHolder: 'Phone',
+      placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
     },
   } satisfies ViewFieldDefinition<ViewFieldPhoneMetadata>,
   {
@@ -93,7 +93,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     metadata: {
       type: 'text',
       fieldName: 'city',
-      placeHolder: 'City',
+      placeHolder: 'Cit​y', // Hack: Fake character to prevent password-manager from filling the field
     },
   } satisfies ViewFieldDefinition<ViewFieldTextMetadata>,
   {
