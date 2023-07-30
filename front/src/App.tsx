@@ -18,13 +18,14 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
 
 import { SignInUp } from './pages/auth/SignInUp';
+import { OfflineScreenWrapper } from './utils/OfflineScreenWrapper';
 
 // TEMP FEATURE FLAG FOR VIEW FIELDS
 export const ACTIVATE_VIEW_FIELDS = false;
 
 export function App() {
   return (
-    <>
+    <OfflineScreenWrapper>
       <AppInternalHooks />
       <DefaultLayout>
         <Routes>
@@ -66,6 +67,6 @@ export function App() {
           />
         </Routes>
       </DefaultLayout>
-    </>
+    </OfflineScreenWrapper>
   );
 }
