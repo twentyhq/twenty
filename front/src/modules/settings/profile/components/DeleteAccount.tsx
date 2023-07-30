@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import { ButtonVariant } from '@/ui/button/components/Button';
-import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
+import { H2Title } from '@/ui/title/components/H2Title';
 import { useDeleteUserAccountMutation } from '~/generated/graphql';
 
 import { DeleteModal, StyledDeleteButton } from './DeleteModal';
@@ -29,7 +29,7 @@ export function DeleteAccount() {
 
   return (
     <>
-      <SubSectionTitle
+      <H2Title
         title="Danger zone"
         description="Delete account and all the associated data"
       />

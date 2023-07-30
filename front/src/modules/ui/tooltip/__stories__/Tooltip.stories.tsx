@@ -42,16 +42,18 @@ export const Catalog: Story = {
     });
   },
   parameters: {
-    catalog: [
-      {
-        name: 'anchorSelect',
-        values: Object.values(TooltipPosition),
-        props: (anchorSelect: TooltipPosition) => ({
-          anchorSelect: `#${anchorSelect}`,
-          place: anchorSelect,
-        }),
-      },
-    ],
+    catalog: {
+      dimensions: [
+        {
+          name: 'anchorSelect',
+          values: Object.values(TooltipPosition),
+          props: (anchorSelect: TooltipPosition) => ({
+            anchorSelect: `#${anchorSelect}`,
+            place: anchorSelect,
+          }),
+        },
+      ],
+    },
   },
   decorators: [CatalogDecorator],
 };

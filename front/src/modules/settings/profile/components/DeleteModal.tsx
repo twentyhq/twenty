@@ -7,6 +7,8 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/modal/components/Modal';
+import { Section, SectionAlignment } from '@/ui/section/components/Section';
+import { H1Title, H1TitleFontColor } from '@/ui/title/components/H1Title';
 import { debounce } from '~/utils/debounce';
 
 interface DeleteModalProps {
@@ -17,22 +19,6 @@ interface DeleteModalProps {
   handleConfirmDelete: () => void;
   deleteButtonText?: string;
 }
-
-const StyledTitle = styled.div`
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-`;
-
-const StyledSubtitle = styled.div`
-  text-align: center;
-`;
-
-const StyledModal = styled(Modal)`
-  color: ${({ theme }) => theme.font.color.primary};
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(8)};
-  }
-`;
 
 const StyledCenteredButton = styled(Button)`
   justify-content: center;
@@ -77,7 +63,7 @@ export function DeleteModal({
   return (
     <AnimatePresence mode="wait">
       <LayoutGroup>
-        <StyledModal
+        <Modal
           isOpen={isOpen}
           onOutsideClick={() => {
             if (isOpen) {
@@ -85,15 +71,17 @@ export function DeleteModal({
             }
           }}
         >
-          <StyledTitle>{title}</StyledTitle>
-          <StyledSubtitle>{subtitle}</StyledSubtitle>
-          <TextInput
-            value={email}
-            onChange={handleEmailChange}
-            placeholder={userEmail}
-            fullWidth
-            key={'email-' + userEmail}
-          />
+          <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
+          <Section alignment={SectionAlignment.Center}>{subtitle}</Section>
+          <Section>
+            <TextInput
+              value={email}
+              onChange={handleEmailChange}
+              placeholder={userEmail}
+              fullWidth
+              key={'email-' + userEmail}
+            />
+          </Section>
           <StyledDeleteButton
             onClick={handleConfirmDelete}
             variant={ButtonVariant.Secondary}
@@ -110,7 +98,7 @@ export function DeleteModal({
               marginTop: 10,
             }}
           />
-        </StyledModal>
+        </Modal>
       </LayoutGroup>
     </AnimatePresence>
   );
