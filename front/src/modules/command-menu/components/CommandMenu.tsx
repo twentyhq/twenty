@@ -77,6 +77,33 @@ export function CommandMenu() {
   });
   const activities = activityData?.searchResults ?? [];
 
+  const commands = [
+    {
+      to: '/people',
+      label: 'Go to People',
+      shortcuts: ['G', 'P'],
+    },
+    {
+      to: '/companies',
+      label: 'Go to Companies',
+      shortcuts: ['G', 'C'],
+    },
+    {
+      to: '/opportunities',
+      label: 'Go to Opportunities',
+      shortcuts: ['G', 'O'],
+    },
+    {
+      to: '/settings/profile',
+      label: 'Go to Settings',
+      shortcuts: ['G', 'S'],
+    },
+  ];
+
+  const matchingCommand = commands.find(
+    (cmd) => cmd.shortcuts.join('') === search?.toUpperCase(),
+  );
+
   /*
   TODO: Allow performing actions on page through CommandBar 
 
@@ -132,6 +159,16 @@ export function CommandMenu() {
       />
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
+        {matchingCommand && (
+          <StyledGroup heading="Navigate">
+            <CommandMenuItem
+              key={matchingCommand.shortcuts?.join('')}
+              to={matchingCommand.to}
+              label={matchingCommand.label}
+              shortcuts={matchingCommand.shortcuts}
+            />
+          </StyledGroup>
+        )}
         {!!people.length && (
           <StyledGroup heading="People">
             {people.map((person) => (
@@ -182,28 +219,22 @@ export function CommandMenu() {
             ))}
           </StyledGroup>
         )}
-        <StyledGroup heading="Navigate">
-          <CommandMenuItem
-            to="/people"
-            label="Go to People"
-            shortcuts={['G', 'P']}
-          />
-          <CommandMenuItem
-            to="/companies"
-            label="Go to Companies"
-            shortcuts={['G', 'C']}
-          />
-          <CommandMenuItem
-            to="/opportunities"
-            label="Go to Opportunities"
-            shortcuts={['G', 'O']}
-          />
-          <CommandMenuItem
-            to="/settings/profile"
-            label="Go to Settings"
-            shortcuts={['G', 'S']}
-          />
-        </StyledGroup>
+        {!matchingCommand && (
+          <StyledGroup heading="Navigate">
+            {commands
+              .filter((cmd) =>
+                cmd.shortcuts?.join('').includes(search?.toUpperCase()),
+              )
+              .map((cmd) => (
+                <CommandMenuItem
+                  key={cmd.shortcuts.join('')}
+                  to={cmd.to}
+                  label={cmd.label}
+                  shortcuts={cmd.shortcuts}
+                />
+              ))}
+          </StyledGroup>
+        )}
       </StyledList>
     </StyledDialog>
   );
