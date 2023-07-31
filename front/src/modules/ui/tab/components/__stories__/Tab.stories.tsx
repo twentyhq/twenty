@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { IconCheckbox } from '@tabler/icons-react';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
@@ -22,7 +23,7 @@ export const Default: Story = {
 };
 
 export const Catalog: Story = {
-  args: { title: 'Tab title' },
+  args: { title: 'Tab title', icon: <IconCheckbox /> },
   argTypes: {
     active: { control: false },
     onClick: { control: false },
