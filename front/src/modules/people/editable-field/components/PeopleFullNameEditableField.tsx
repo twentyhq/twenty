@@ -1,10 +1,9 @@
 import { useState } from 'react';
 
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { DoubleTextInputEdit } from '@/ui/input/double-text/components/DoubleTextInputEdit';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Person, useUpdateOnePersonMutation } from '~/generated/graphql';
-
-import { InplaceInputDoubleText } from '../../../ui/inplace-input/components/InplaceInputDoubleText';
 
 type OwnProps = {
   people: Pick<Person, 'id' | 'firstName' | 'lastName'>;
@@ -48,7 +47,7 @@ export function PeopleFullNameEditableField({ people }: OwnProps) {
 
   return (
     <RecoilScope SpecificContext={FieldContext}>
-      <InplaceInputDoubleText
+      <DoubleTextInputEdit
         firstValuePlaceholder={'First name'}
         secondValuePlaceholder={'Last name'}
         firstValue={internalValueFirstName ?? ''}

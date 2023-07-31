@@ -11,8 +11,8 @@ import {
 import { IconSettings, IconTrash } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/section/components/Section';
-import { H1Title } from '@/ui/title/components/H1Title';
-import { H2Title } from '@/ui/title/components/H2Title';
+import { H1Title } from '@/ui/typography/components/H1Title';
+import { H2Title } from '@/ui/typography/components/H2Title';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import {

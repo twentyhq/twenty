@@ -1,9 +1,9 @@
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
-import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
-import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
+import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useSearchUserQuery } from '~/generated/graphql';
 
 export type OwnProps = {

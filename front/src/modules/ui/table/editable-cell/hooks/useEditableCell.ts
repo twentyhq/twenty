@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useCloseCurrentCellInEditMode } from '../../hooks/useClearCellInEditMode';
 import { CellHotkeyScopeContext } from '../../states/CellHotkeyScopeContext';

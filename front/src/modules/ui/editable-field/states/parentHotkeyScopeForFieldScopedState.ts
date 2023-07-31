@@ -1,6 +1,6 @@
 import { atomFamily } from 'recoil';
 
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 export const parentHotkeyScopeForFieldScopedState = atomFamily<
   HotkeyScope | null,

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
 
 type OwnProps = {

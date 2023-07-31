@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { InplaceInputPhoneDisplayMode } from '@/ui/display/component/InplaceInputPhoneDisplayMode';
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { PhoneInputDisplay } from '@/ui/input/phone/components/PhoneInputDisplay';
+import { TextInputEdit } from '@/ui/input/text/components/TextInputEdit';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 type OwnProps = {
   icon?: React.ReactNode;
@@ -46,7 +46,7 @@ export function PhoneEditableField({
         onCancel={handleCancel}
         iconLabel={icon}
         editModeContent={
-          <InplaceInputText
+          <TextInputEdit
             placeholder={placeholder ?? ''}
             autoFocus
             value={internalValue ?? ''}
@@ -55,9 +55,7 @@ export function PhoneEditableField({
             }}
           />
         }
-        displayModeContent={
-          <InplaceInputPhoneDisplayMode value={internalValue ?? ''} />
-        }
+        displayModeContent={<PhoneInputDisplay value={internalValue ?? ''} />}
         isDisplayModeContentEmpty={!(internalValue !== '')}
         useEditButton
       />

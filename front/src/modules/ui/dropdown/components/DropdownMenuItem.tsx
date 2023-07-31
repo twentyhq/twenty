@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { hoverBackground } from '@/ui/themes/effects';
+import { hoverBackground } from '@/ui/theme/constants/effects';
 
 export const DropdownMenuItem = styled.li`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};

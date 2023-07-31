@@ -1,6 +1,6 @@
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { ProbabilityFieldEditMode } from './ProbabilityFieldEditMode';
 

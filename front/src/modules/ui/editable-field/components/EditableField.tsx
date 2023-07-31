@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useBindFieldHotkeyScope } from '../hooks/useBindFieldHotkeyScope';
 import { useEditableField } from '../hooks/useEditableField';

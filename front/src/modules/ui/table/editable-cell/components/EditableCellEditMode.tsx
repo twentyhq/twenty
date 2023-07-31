@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { overlayBackground } from '@/ui/themes/effects';
+import { overlayBackground } from '@/ui/theme/constants/effects';
 
 export const EditableCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;

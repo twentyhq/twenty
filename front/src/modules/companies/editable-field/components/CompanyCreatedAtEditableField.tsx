@@ -4,7 +4,7 @@ import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { EditableFieldEditModeDate } from '@/ui/editable-field/variants/components/EditableFieldEditModeDate';
 import { IconCalendar } from '@/ui/icon';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
 import { parseDate } from '~/utils/date-utils';

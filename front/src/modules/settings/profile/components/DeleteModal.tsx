@@ -5,10 +5,10 @@ import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Button, ButtonVariant } from '@/ui/button/components/Button';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/input/text/components/TextInput';
 import { Modal } from '@/ui/modal/components/Modal';
 import { Section, SectionAlignment } from '@/ui/section/components/Section';
-import { H1Title, H1TitleFontColor } from '@/ui/title/components/H1Title';
+import { H1Title, H1TitleFontColor } from '@/ui/typography/components/H1Title';
 import { debounce } from '~/utils/debounce';
 
 interface DeleteModalProps {

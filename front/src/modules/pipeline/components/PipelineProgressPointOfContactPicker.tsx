@@ -2,19 +2,19 @@ import { getOperationName } from '@apollo/client/utilities';
 import { Key } from 'ts-key-enum';
 
 import { useFilteredSearchPeopleQuery } from '@/people/queries';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
-import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
+import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { isCreateModeScopedState } from '@/ui/table/editable-cell/states/isCreateModeScopedState';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import {
   Person,
   PipelineProgress,
   useUpdateOnePipelineProgressMutation,
 } from '~/generated/graphql';
 
-import { EntityForSelect } from '../../ui/relation-picker/types/EntityForSelect';
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '../queries';
 
 export type OwnProps = {

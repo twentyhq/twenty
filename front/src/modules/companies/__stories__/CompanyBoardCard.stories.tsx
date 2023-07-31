@@ -3,6 +3,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPipelineProgressData } from '~/testing/mock-data/pipeline-progress';
@@ -11,8 +13,6 @@ import { defaultPipelineProgressOrderBy } from '../../pipeline/queries';
 import { BoardCardContext } from '../../pipeline/states/BoardCardContext';
 import { BoardColumnContext } from '../../pipeline/states/BoardColumnContext';
 import { pipelineProgressIdScopedState } from '../../pipeline/states/pipelineProgressIdScopedState';
-import { RecoilScope } from '../../ui/recoil-scope/components/RecoilScope';
-import { useRecoilScopedState } from '../../ui/recoil-scope/hooks/useRecoilScopedState';
 import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
 import { CompanyBoardContext } from '../states/CompanyBoardContext';
 

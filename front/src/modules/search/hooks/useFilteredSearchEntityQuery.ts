@@ -1,7 +1,7 @@
 import * as Apollo from '@apollo/client';
 
-import { EntitiesForMultipleEntitySelect } from '@/ui/relation-picker/components/MultipleEntitySelect';
-import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
+import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import {
   Exact,
   InputMaybe,

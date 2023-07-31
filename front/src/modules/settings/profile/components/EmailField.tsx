@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/input/text/components/TextInput';
 
 export function EmailField() {
   const currentUser = useRecoilValue(currentUserState);

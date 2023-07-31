@@ -9,7 +9,7 @@ import { useRecoilState } from 'recoil';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
   PipelineProgress,
   PipelineProgressOrderByWithRelationInput,

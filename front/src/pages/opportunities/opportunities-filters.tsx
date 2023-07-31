@@ -7,7 +7,7 @@ import {
   IconCurrencyDollar,
   IconUser,
 } from '@/ui/icon/index';
-import { icon } from '@/ui/themes/icon';
+import { icon } from '@/ui/theme/constants/icon';
 import { PipelineProgress } from '~/generated/graphql';
 
 import { FilterDropdownPeopleSearchSelect } from '../../modules/people/components/FilterDropdownPeopleSearchSelect';
