@@ -5,7 +5,7 @@ services:
       context: ..
       dockerfile: ./infra/prod/front/Dockerfile
       args:
-        REACT_APP_SERVER_BASE_URL: "http://localhost:3000/graphql"
+        REACT_APP_SERVER_BASE_URL: "http://localhost:3000"
     ports:
       - "3001:3000"
     labels:
