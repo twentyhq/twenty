@@ -52,12 +52,12 @@ export const GET_ACTIVITIES_BY_TARGETS = gql`
   }
 `;
 
-export const GET_ACTIVITIES_BY_TYPE = gql`
-  query GetActivitiesByType(
-    $type: ActivityType!
+export const GET_ACTIVITIES = gql`
+  query GetActivities(
+    $where: ActivityWhereInput!
     $orderBy: [ActivityOrderByWithRelationInput!]
   ) {
-    findManyActivities(orderBy: $orderBy, where: { type: { equals: $type } }) {
+    findManyActivities(orderBy: $orderBy, where: $where) {
       id
       createdAt
       title

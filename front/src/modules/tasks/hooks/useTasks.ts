@@ -1,6 +1,6 @@
 import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { ActivityType, useGetActivitiesByTypeQuery } from '~/generated/graphql';
+import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { getWeekYear, parseDate } from '~/utils/date-utils';
 
 import { TasksContext } from '../states/TasksContext';
@@ -10,8 +10,15 @@ export function useTasks() {
     activeTabIdScopedState,
     TasksContext,
   );
-  const { data, loading } = useGetActivitiesByTypeQuery({
-    variables: { type: ActivityType.Task },
+
+  const { data, loading } = useGetActivitiesQuery({
+    variables: {
+      where: {
+        type: { equals: ActivityType.Task },
+        completedAt:
+          activeTabId === 'done' ? { not: { equals: null } } : { equals: null },
+      },
+    },
   });
 
   const todayTasks = data?.findManyActivities.filter((task) => {
