@@ -1,12 +1,12 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
+import { currentPageLocationState } from '@/ui/utilities/loading-state/states/currentPageLocationState';
+import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { GetPeopleQuery } from '~/generated/graphql';
 
 import { peopleFilters } from '../../../pages/people/people-filters';
 import { availableFiltersScopedState } from '../../ui/filter-n-sort/states/availableFiltersScopedState';
-import { useContextScopeId } from '../../ui/recoil-scope/hooks/useContextScopeId';
-import { currentPageLocationState } from '../../ui/states/currentPageLocationState';
 import { useResetTableRowSelection } from '../../ui/table/hooks/useResetTableRowSelection';
 import { entityTableDimensionsState } from '../../ui/table/states/entityTableDimensionsState';
 import { isFetchingEntityTableDataState } from '../../ui/table/states/isFetchingEntityTableDataState';
@@ -20,7 +20,6 @@ import { peopleJobTitleFamilyState } from '../states/peopleJobTitleFamilyState';
 import { peopleLinkedinUrlFamilyState } from '../states/peopleLinkedinUrlFamilyState';
 import { peopleNameCellFamilyState } from '../states/peopleNamesFamilyState';
 import { peoplePhoneFamilyState } from '../states/peoplePhoneFamilyState';
-import { peopleColumns } from '../table/components/peopleColumns';
 
 export function useSetPeopleEntityTable() {
   const resetTableRowSelection = useResetTableRowSelection();
@@ -126,7 +125,7 @@ export function useSetPeopleEntityTable() {
         resetTableRowSelection();
 
         set(entityTableDimensionsState, {
-          numberOfColumns: peopleColumns.length,
+          numberOfColumns: 10,
           numberOfRows: peopleIds.length,
         });
 

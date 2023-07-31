@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { AppHotkeyScope } from '@/ui/hotkey/types/AppHotkeyScope';
 import { IconNotes } from '@/ui/icon';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { Avatar } from '@/users/components/Avatar';
 import {
   QueryMode,

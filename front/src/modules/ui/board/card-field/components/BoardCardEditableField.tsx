@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { BoardCardFieldContext } from '../states/BoardCardFieldContext';
 

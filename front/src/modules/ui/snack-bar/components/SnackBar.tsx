@@ -7,7 +7,7 @@ import {
   ProgressBar,
   ProgressBarControls,
 } from '@/ui/progress-bar/components/ProgressBar';
-import { rgba } from '@/ui/themes/colors';
+import { rgba } from '@/ui/theme/constants/colors';
 
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
 

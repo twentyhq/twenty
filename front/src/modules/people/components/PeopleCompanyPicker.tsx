@@ -1,18 +1,17 @@
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
+import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { isCreateModeScopedState } from '@/ui/table/editable-cell/states/isCreateModeScopedState';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import {
   Company,
   Person,
   useUpdateOnePersonMutation,
 } from '~/generated/graphql';
-
-import { EntityForSelect } from '../../ui/relation-picker/types/EntityForSelect';
 
 export type OwnProps = {
   people: Pick<Person, 'id'> & { company?: Pick<Company, 'id'> | null };

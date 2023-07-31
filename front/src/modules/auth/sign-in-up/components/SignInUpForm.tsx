@@ -4,10 +4,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { AnimatedEaseIn } from '@/ui/animation/components/AnimatedEaseIn';
 import { MainButton } from '@/ui/button/components/MainButton';
 import { IconBrandGoogle } from '@/ui/icon';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/input/text/components/TextInput';
+import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 import { Logo } from '../../components/Logo';
 import { Title } from '../../components/Title';

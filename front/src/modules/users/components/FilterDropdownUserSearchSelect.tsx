@@ -2,10 +2,10 @@ import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEn
 import { FilterDropdownEntitySearchSelect } from '@/ui/filter-n-sort/components/FilterDropdownEntitySearchSelect';
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/states/filterDropdownSelectedEntityIdScopedState';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
-import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { TableContext } from '@/ui/table/states/TableContext';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useSearchUserQuery } from '~/generated/graphql';
 
 export function FilterDropdownUserSearchSelect() {

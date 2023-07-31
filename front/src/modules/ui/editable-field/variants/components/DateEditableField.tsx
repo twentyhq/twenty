@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { InplaceInputDateDisplayMode } from '@/ui/display/component/InplaceInputDateDisplayMode';
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { parseDate } from '~/utils/date-utils';
 
 import { EditableFieldEditModeDate } from './EditableFieldEditModeDate';
@@ -57,9 +57,7 @@ export function DateEditableField({ icon, value, label, onSubmit }: OwnProps) {
             }}
           />
         }
-        displayModeContent={
-          <InplaceInputDateDisplayMode value={internalDateValue} />
-        }
+        displayModeContent={<DateInputDisplay value={internalDateValue} />}
         isDisplayModeContentEmpty={!internalValue}
       />
     </RecoilScope>

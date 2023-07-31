@@ -4,15 +4,13 @@ import styled from '@emotion/styled';
 
 import { GET_COMPANIES } from '@/companies/queries';
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
-import { CompanyTable as CompanyTableV2 } from '@/companies/table/components/CompanyTableV2';
 import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/components/TableActionBarButtonCreateActivityCompany';
 import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { TableContext } from '@/ui/table/states/TableContext';
-import { ACTIVATE_VIEW_FIELDS } from '~/App';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
 import { SEARCH_COMPANY_QUERY } from '../../modules/search/queries/search';
@@ -43,10 +41,6 @@ export function Companies() {
 
   const theme = useTheme();
 
-  const CompanyTableComponent = ACTIVATE_VIEW_FIELDS
-    ? CompanyTableV2
-    : CompanyTable;
-
   return (
     <>
       <WithTopBarContainer
@@ -56,7 +50,7 @@ export function Companies() {
       >
         <RecoilScope SpecificContext={TableContext}>
           <StyledTableContainer>
-            <CompanyTableComponent />
+            <CompanyTable />
           </StyledTableContainer>
           <EntityTableActionBar>
             <TableActionBarButtonCreateActivityCompany />

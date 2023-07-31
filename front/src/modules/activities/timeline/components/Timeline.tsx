@@ -6,8 +6,8 @@ import { ActivityCreateButton } from '@/activities/components/ActivityCreateButt
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
 import { CommentableEntity } from '@/activities/types/CommentableEntity';
-import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { IconCircleDot } from '@/ui/icon';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   ActivityType,
   SortOrder,

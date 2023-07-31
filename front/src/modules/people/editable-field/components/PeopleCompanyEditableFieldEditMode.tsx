@@ -2,10 +2,10 @@ import styled from '@emotion/styled';
 
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
-import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
+import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import {
   Company,
   Person,

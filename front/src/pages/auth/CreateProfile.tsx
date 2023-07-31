@@ -14,10 +14,10 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { MainButton } from '@/ui/button/components/MainButton';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/input/text/components/TextInput';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { H2Title } from '@/ui/title/components/H2Title';
+import { H2Title } from '@/ui/typography/components/H2Title';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { GET_CURRENT_USER } from '@/users/queries';
 import { useUpdateUserMutation } from '~/generated/graphql';
 

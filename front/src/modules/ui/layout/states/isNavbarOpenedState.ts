@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 
 const isMobile = window.innerWidth <= MOBILE_VIEWPORT;
 

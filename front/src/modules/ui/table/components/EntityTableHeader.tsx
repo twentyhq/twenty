@@ -1,13 +1,13 @@
-import { TableColumn } from '@/people/table/components/peopleColumns';
+import { useRecoilValue } from 'recoil';
+
+import { viewFieldsFamilyState } from '../states/viewFieldsState';
 
 import { ColumnHead } from './ColumnHead';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
-export function EntityTableHeader({
-  columns,
-}: {
-  columns: Array<TableColumn>;
-}) {
+export function EntityTableHeader() {
+  const viewFields = useRecoilValue(viewFieldsFamilyState);
+
   return (
     <thead>
       <tr>
@@ -20,16 +20,19 @@ export function EntityTableHeader({
         >
           <SelectAllCheckbox />
         </th>
-        {columns.map((column) => (
+        {viewFields.map((viewField) => (
           <th
-            key={column.id.toString()}
+            key={viewField.columnOrder.toString()}
             style={{
-              width: column.size,
-              minWidth: column.size,
-              maxWidth: column.size,
+              width: viewField.columnSize,
+              minWidth: viewField.columnSize,
+              maxWidth: viewField.columnSize,
             }}
           >
-            <ColumnHead viewName={column.title} viewIcon={column.icon} />
+            <ColumnHead
+              viewName={viewField.columnLabel}
+              viewIcon={viewField.columnIcon}
+            />
           </th>
         ))}
         <th></th>

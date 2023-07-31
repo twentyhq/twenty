@@ -1,4 +1,4 @@
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { BoardCardFieldContext } from '../states/BoardCardFieldContext';
 import { isBoardCardFieldInEditModeScopedState } from '../states/isBoardCardFieldInEditModeScopedState';

@@ -3,10 +3,10 @@ import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { IconPlus } from '@/ui/icon/index';
+import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { Avatar } from '@/users/components/Avatar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { DropdownMenuSkeletonItem } from '../../../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenu } from '../DropdownMenu';
 import { DropdownMenuCheckableItem } from '../DropdownMenuCheckableItem';
 import { DropdownMenuItem } from '../DropdownMenuItem';

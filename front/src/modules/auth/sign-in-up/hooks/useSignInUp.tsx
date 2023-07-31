@@ -9,8 +9,8 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDemoModeState } from '@/client-config/states/isDemoModeState';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 import { useAuth } from '../../hooks/useAuth';

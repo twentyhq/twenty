@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { IconCopy, IconLink } from '@/ui/icon';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/input/text/components/TextInput';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 
 const StyledContainer = styled.div`

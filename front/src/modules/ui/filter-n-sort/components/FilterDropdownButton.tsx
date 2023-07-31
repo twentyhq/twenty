@@ -6,8 +6,8 @@ import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { isFilterDropdownOperandSelectUnfoldedScopedState } from '@/ui/filter-n-sort/states/isFilterDropdownOperandSelectUnfoldedScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/selectedOperandInDropdownScopedState';
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 

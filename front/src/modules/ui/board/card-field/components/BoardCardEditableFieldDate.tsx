@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { InplaceInputDateDisplayMode } from '@/ui/display/component/InplaceInputDateDisplayMode';
+import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
 import { debounce } from '~/utils/debounce';
 
 import { BoardCardEditableField } from './BoardCardEditableField';
@@ -33,7 +33,7 @@ export function BoardCardEditableFieldDate({
           }}
         />
       }
-      nonEditModeContent={<InplaceInputDateDisplayMode value={value} />}
+      nonEditModeContent={<DateInputDisplay value={value} />}
     ></BoardCardEditableField>
   );
 }

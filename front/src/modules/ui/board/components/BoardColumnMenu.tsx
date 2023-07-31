@@ -2,12 +2,12 @@ import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { IconPencil } from '@tabler/icons-react';
 
-import { icon } from '@/ui//themes/icon';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
-import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
+import { icon } from '@/ui/theme/constants/icon';
+import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import { ButtonVariant } from '@/ui/button/components/Button';
-import { H2Title } from '@/ui/title/components/H2Title';
+import { H2Title } from '@/ui/typography/components/H2Title';
 import { useDeleteUserAccountMutation } from '~/generated/graphql';
 
 import { DeleteModal, StyledDeleteButton } from './DeleteModal';
