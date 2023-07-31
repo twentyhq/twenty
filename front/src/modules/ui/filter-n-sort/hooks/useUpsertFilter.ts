@@ -1,7 +1,7 @@
 import { Context } from 'react';
 import { produce } from 'immer';
 
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { filtersScopedState } from '../states/filtersScopedState';
 import { Filter } from '../types/Filter';

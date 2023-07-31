@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { IconChevronDown } from '@/ui/icon/index';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 

@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react';
 
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { TextInputEdit } from '@/ui/input/text/components/TextInputEdit';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import {
+  canBeCastAsIntegerOrNull,
+  castAsIntegerOrNull,
+} from '~/utils/cast-as-integer-or-null';
 
 type OwnProps = {
   icon?: React.ReactNode;
   placeholder?: string;
   value: number | null | undefined;
-  onSubmit?: (newValue: number) => void;
+  onSubmit?: (newValue: number | null) => void;
 };
 
 export function NumberEditableField({
@@ -29,26 +33,16 @@ export function NumberEditableField({
   }
 
   async function handleSubmit() {
-    if (!internalValue) return;
-
-    try {
-      const numberValue = parseInt(internalValue);
-
-      if (isNaN(numberValue)) {
-        throw new Error('Not a number');
-      }
-
-      // TODO: find a way to store this better in DB
-      if (numberValue > 2000000000) {
-        throw new Error('Number too big');
-      }
-
-      onSubmit?.(numberValue);
-
-      setInternalValue(numberValue.toString());
-    } catch {
+    if (!canBeCastAsIntegerOrNull(internalValue)) {
       handleCancel();
+      return;
     }
+
+    const valueCastedAsNumberOrNull = castAsIntegerOrNull(internalValue);
+
+    onSubmit?.(valueCastedAsNumberOrNull);
+
+    setInternalValue(valueCastedAsNumberOrNull?.toString());
   }
 
   async function handleCancel() {
@@ -62,7 +56,7 @@ export function NumberEditableField({
         onCancel={handleCancel}
         iconLabel={icon}
         editModeContent={
-          <InplaceInputText
+          <TextInputEdit
             placeholder={placeholder ?? ''}
             autoFocus
             value={internalValue ?? ''}

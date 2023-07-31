@@ -34,11 +34,11 @@ export const FilterByName: Story = {
     const filterButton = await canvas.findByText('Filter');
     await userEvent.click(filterButton);
 
-    const nameFilterButton = canvas
-      .queryAllByTestId('dropdown-menu-item')
-      .find((item) => {
-        return item.textContent === 'Name';
-      });
+    const nameFilterButton = (
+      await canvas.findAllByTestId('dropdown-menu-item')
+    ).find((item) => {
+      return item.textContent === 'Name';
+    });
 
     assert(nameFilterButton);
 
@@ -49,7 +49,7 @@ export const FilterByName: Story = {
       delay: 200,
     });
 
-    await sleep(1000);
+    await sleep(50);
 
     expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
     expect(await canvas.findByText('Aircall')).toBeInTheDocument();
@@ -88,11 +88,11 @@ export const FilterByAccountOwner: Story = {
 
     await sleep(1000);
 
-    const charlesChip = canvas
-      .getAllByTestId('dropdown-menu-item')
-      .find((item) => {
-        return item.textContent?.includes('Charles Test');
-      });
+    const charlesChip = (
+      await canvas.findAllByTestId('dropdown-menu-item')
+    ).find((item) => {
+      return item.textContent?.includes('Charles Test');
+    });
 
     assert(charlesChip);
 

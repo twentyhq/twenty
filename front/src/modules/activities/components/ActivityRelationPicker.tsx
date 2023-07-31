@@ -12,12 +12,12 @@ import { CompanyChip } from '@/companies/components/CompanyChip';
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
 import { PersonChip } from '@/people/components/PersonChip';
 import { useFilteredSearchPeopleQuery } from '@/people/queries';
-import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
-import { usePreviousHotkeyScope } from '@/ui/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { MultipleEntitySelect } from '@/ui/relation-picker/components/MultipleEntitySelect';
-import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
+import { MultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Activity, ActivityTarget, CommentableType } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 
@@ -216,7 +216,12 @@ export function ActivityRelationPicker({ activity }: OwnProps) {
               pictureUrl={entity.avatarUrl}
             />
           ) : (
-            <PersonChip key={entity.id} name={entity.name} id={entity.id} />
+            <PersonChip
+              key={entity.id}
+              name={entity.name}
+              id={entity.id}
+              pictureUrl={entity.avatarUrl ?? ''}
+            />
           ),
         )}
       </StyledRelationContainer>

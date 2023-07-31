@@ -8,9 +8,9 @@ import { TableActionBarButtonCreateActivityPeople } from '@/people/table/compone
 import { TableActionBarButtonDeletePeople } from '@/people/table/components/TableActionBarButtonDeletePeople';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { TableContext } from '@/ui/table/states/TableContext';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOnePersonMutation } from '~/generated/graphql';
 
 const StyledTableContainer = styled.div`

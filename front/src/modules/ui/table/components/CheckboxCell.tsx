@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
-import { Checkbox } from '@/ui/input/components/Checkbox';
+import { Checkbox } from '@/ui/input/checkbox/components/Checkbox';
 
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
 import { contextMenuPositionState } from '../states/contextMenuPositionState';

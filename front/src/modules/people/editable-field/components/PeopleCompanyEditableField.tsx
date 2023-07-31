@@ -3,8 +3,8 @@ import { IconBuildingSkyscraper } from '@tabler/icons-react';
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Company, Person } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
@@ -21,6 +21,7 @@ export function PeopleCompanyEditableField({ people }: OwnProps) {
     <RecoilScope SpecificContext={FieldContext}>
       <RecoilScope>
         <EditableField
+          useEditButton
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,
           }}
@@ -40,6 +41,7 @@ export function PeopleCompanyEditableField({ people }: OwnProps) {
             )
           }
           isDisplayModeContentEmpty={!people.company}
+          isDisplayModeFixHeight
         />
       </RecoilScope>
     </RecoilScope>

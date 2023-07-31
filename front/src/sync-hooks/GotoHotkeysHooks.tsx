@@ -1,4 +1,4 @@
-import { useGoToHotkeys } from '@/ui/hotkey/hooks/useGoToHotkeys';
+import { useGoToHotkeys } from '@/ui/utilities/hotkey/hooks/useGoToHotkeys';
 
 export function GotoHotkeysHooks() {
   useGoToHotkeys('p', '/people');

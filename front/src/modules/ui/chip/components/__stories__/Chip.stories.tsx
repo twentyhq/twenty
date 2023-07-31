@@ -38,29 +38,31 @@ export const Catalog: Story = {
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.active'] },
-    catalog: [
-      {
-        name: 'variants',
-        values: Object.values(ChipVariant),
-        props: (variant: ChipVariant) => ({ variant }),
-      },
-      {
-        name: 'sizes',
-        values: Object.values(ChipSize),
-        props: (size: ChipSize) => ({ size }),
-      },
-      {
-        name: 'accents',
-        values: Object.values(ChipAccent),
-        props: (accent: ChipAccent) => ({ accent }),
-      },
-      {
-        name: 'states',
-        values: ['default', 'hover', 'active', 'disabled'],
-        props: (state: string) =>
-          state === 'default' ? {} : { className: state },
-      },
-    ],
+    catalog: {
+      dimensions: [
+        {
+          name: 'states',
+          values: ['default', 'hover', 'active', 'disabled'],
+          props: (state: string) =>
+            state === 'default' ? {} : { className: state },
+        },
+        {
+          name: 'variants',
+          values: Object.values(ChipVariant),
+          props: (variant: ChipVariant) => ({ variant }),
+        },
+        {
+          name: 'sizes',
+          values: Object.values(ChipSize),
+          props: (size: ChipSize) => ({ size }),
+        },
+        {
+          name: 'accents',
+          values: Object.values(ChipAccent),
+          props: (accent: ChipAccent) => ({ accent }),
+        },
+      ],
+    },
   },
   decorators: [CatalogDecorator],
 };

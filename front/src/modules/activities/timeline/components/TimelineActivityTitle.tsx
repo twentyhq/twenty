@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 
-import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
+import {
+  Checkbox,
+  CheckboxShape,
+} from '@/ui/input/checkbox/components/Checkbox';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { ActivityType } from '~/generated/graphql';
 
@@ -15,16 +18,19 @@ const StyledTitleContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTitleText = styled.div<{ completed?: boolean }>`
+const StyledTitleText = styled.div<{
+  completed?: boolean;
+  hasCheckbox?: boolean;
+}>`
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
-  width: 100%;
+  width: ${({ hasCheckbox, theme }) =>
+    !hasCheckbox ? '100%;' : `calc(100% - ${theme.spacing(5)});`};
 `;
 
-const StyledCheckboxContainer = styled.div`
+const StyledCheckboxContainer = styled.div<{ hasCheckbox?: boolean }>`
   align-items: center;
   display: flex;
   justify-content: center;
-  width: 100%;
 `;
 
 type OwnProps = {
@@ -56,7 +62,10 @@ export function TimelineActivityTitle({
           />
         </StyledCheckboxContainer>
       )}
-      <StyledTitleText completed={completed}>
+      <StyledTitleText
+        completed={completed}
+        hasCheckbox={type === ActivityType.Task}
+      >
         <OverflowingTextWithTooltip text={title ? title : '(No title)'} />
       </StyledTitleText>
     </StyledTitleContainer>

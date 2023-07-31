@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { useSetSoftFocusPosition } from '../../hooks/useSetSoftFocusPosition';
 import { isSoftFocusActiveState } from '../../states/isSoftFocusActiveState';

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { TextInputEdit } from '@/ui/input/text/components/TextInputEdit';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { OverflowingTextWithTooltip } from '../../../tooltip/OverflowingTextWithTooltip';
 
@@ -47,7 +47,7 @@ export function TextEditableField({
         onCancel={handleCancel}
         iconLabel={icon}
         editModeContent={
-          <InplaceInputText
+          <TextInputEdit
             placeholder={placeholder ?? ''}
             autoFocus
             value={internalValue ?? ''}

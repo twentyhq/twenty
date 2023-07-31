@@ -18,7 +18,7 @@ describe('beautifyExactDate', () => {
     const actualDate = new Date(mockDate);
     const expected = DateTime.fromJSDate(actualDate)
       .setLocale(DEFAULT_DATE_LOCALE)
-      .toFormat('DD · TT');
+      .toFormat('DD · T');
 
     const result = beautifyExactDate(mockDate);
     expect(result).toEqual(expected);

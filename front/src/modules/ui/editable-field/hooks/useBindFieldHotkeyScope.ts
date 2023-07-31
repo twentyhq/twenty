@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { currentHotkeyScopeState } from '@/ui/hotkey/states/internal/currentHotkeyScopeState';
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
-import { isSameHotkeyScope } from '@/ui/hotkey/utils/isSameHotkeyScope';
-import { useContextScopeId } from '@/ui/recoil-scope/hooks/useContextScopeId';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { getSnapshotScopedState } from '@/ui/recoil-scope/utils/getSnapshotScopedState';
-import { getSnapshotState } from '@/ui/recoil-scope/utils/getSnapshotState';
+import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { isSameHotkeyScope } from '@/ui/utilities/hotkey/utils/isSameHotkeyScope';
+import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { getSnapshotScopedState } from '@/ui/utilities/recoil-scope/utils/getSnapshotScopedState';
+import { getSnapshotState } from '@/ui/utilities/recoil-scope/utils/getSnapshotState';
 
 import { customEditHotkeyScopeForFieldScopedState } from '../states/customEditHotkeyScopeForFieldScopedState';
 import { FieldContext } from '../states/FieldContext';

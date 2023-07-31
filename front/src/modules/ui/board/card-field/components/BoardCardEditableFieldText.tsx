@@ -1,7 +1,7 @@
 import { ChangeEvent, useMemo, useState } from 'react';
 
-import { InplaceInputTextDisplayMode } from '@/ui/display/component/InplaceInputTextDisplayMode';
-import { StyledInput } from '@/ui/inplace-input/components/InplaceInputTextEditMode';
+import { TextInputDisplay } from '@/ui/input/text/components/TextInputDisplay';
+import { StyledInput } from '@/ui/table/editable-cell/type/components/TextCellEdit';
 import { debounce } from '~/utils/debounce';
 
 import { BoardCardEditableField } from './BoardCardEditableField';
@@ -40,9 +40,7 @@ export function BoardCardEditableFieldText({
           }}
         />
       }
-      nonEditModeContent={
-        <InplaceInputTextDisplayMode>{value}</InplaceInputTextDisplayMode>
-      }
+      nonEditModeContent={<TextInputDisplay>{value}</TextInputDisplay>}
     ></BoardCardEditableField>
   );
 }

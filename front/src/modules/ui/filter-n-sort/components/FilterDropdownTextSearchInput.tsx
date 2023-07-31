@@ -1,7 +1,7 @@
 import { ChangeEvent, Context } from 'react';
 
 import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
 import { useRemoveFilter } from '../hooks/useRemoveFilter';

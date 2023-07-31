@@ -1,29 +1,23 @@
 import styled from '@emotion/styled';
 
-import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
+import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { IconSettings } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
-import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
-import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
+import { Section } from '@/ui/section/components/Section';
+import { H1Title } from '@/ui/typography/components/H1Title';
+import { H2Title } from '@/ui/typography/components/H2Title';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
   padding-bottom: ${({ theme }) => theme.spacing(10)};
+  padding-bottom: 30px;
   width: 350px;
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(8)};
-  }
-`;
-
-const StyledSectionContainer = styled.div`
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(4)};
-  }
 `;
 
 export function SettingsProfile() {
@@ -31,29 +25,28 @@ export function SettingsProfile() {
     <SubMenuTopBarContainer icon={<IconSettings size={16} />} title="Settings">
       <>
         <StyledContainer>
-          <MainSectionTitle>Profile</MainSectionTitle>
-          <StyledSectionContainer>
-            <SubSectionTitle title="Picture" />
+          <H1Title title="Profile" />
+          <Section>
+            <H2Title title="Picture" />
             <ProfilePictureUploader />
-          </StyledSectionContainer>
-          <StyledSectionContainer>
-            <SubSectionTitle
+          </Section>
+          <Section>
+            <H2Title
               title="Name"
               description="Your name as it will be displayed"
             />
             <NameFields />
-          </StyledSectionContainer>
-          <StyledSectionContainer>
-            <SubSectionTitle
+          </Section>
+          <Section>
+            <H2Title
               title="Email"
               description="The email associated to your account"
             />
             <EmailField />
-          </StyledSectionContainer>
-
-          <StyledSectionContainer>
-            <DeleteWorkspace />
-          </StyledSectionContainer>
+          </Section>
+          <Section>
+            <DeleteAccount />
+          </Section>
         </StyledContainer>
       </>
     </SubMenuTopBarContainer>

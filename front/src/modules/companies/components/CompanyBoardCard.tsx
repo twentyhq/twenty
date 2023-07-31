@@ -10,16 +10,19 @@ import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
 import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
 import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
+import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
 import { IconCurrencyDollar, IconProgressCheck } from '@/ui/icon';
 import { IconCalendarEvent } from '@/ui/icon';
-import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import {
+  Checkbox,
+  CheckboxVariant,
+} from '@/ui/input/checkbox/components/Checkbox';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import { EntityChipVariant } from '../../ui/chip/components/EntityChip';
 import { PipelineProgressForBoard } from '../types/CompanyProgress';
 
 import { CompanyChip } from './CompanyChip';
@@ -99,7 +102,9 @@ const StyledCheckboxContainer = styled.div`
 `;
 
 const StyledFieldContainer = styled.div`
-  width: max-content;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 `;
 
 export function CompanyBoardCard() {

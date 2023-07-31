@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 import { SoonPill } from '@/ui/pill/components/SoonPill';
-import { rgba } from '@/ui/themes/colors';
+import { rgba } from '@/ui/theme/constants/colors';
 
 export enum ButtonSize {
   Medium = 'medium',

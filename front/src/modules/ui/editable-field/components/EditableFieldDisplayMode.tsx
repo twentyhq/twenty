@@ -4,15 +4,18 @@ import styled from '@emotion/styled';
 export const EditableFieldNormalModeOuterContainer = styled.div<
   Pick<
     OwnProps,
-    'disableClick' | 'isDisplayModeContentEmpty' | 'disableHoverEffect'
+    | 'disableClick'
+    | 'isDisplayModeContentEmpty'
+    | 'disableHoverEffect'
+    | 'isDisplayModeFixHeight'
   >
 >`
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
-  height: 100%;
-
-  height: 16px;
+  height: ${({ isDisplayModeFixHeight }) =>
+    isDisplayModeFixHeight ? '16px' : 'auto'};
+  min-height: 16px;
 
   overflow: hidden;
 
@@ -67,6 +70,7 @@ type OwnProps = {
   onClick?: () => void;
   isDisplayModeContentEmpty?: boolean;
   disableHoverEffect?: boolean;
+  isDisplayModeFixHeight?: boolean;
 };
 
 export function EditableFieldDisplayMode({
@@ -75,6 +79,7 @@ export function EditableFieldDisplayMode({
   onClick,
   isDisplayModeContentEmpty,
   disableHoverEffect,
+  isDisplayModeFixHeight,
 }: React.PropsWithChildren<OwnProps>) {
   return (
     <EditableFieldNormalModeOuterContainer
@@ -82,6 +87,7 @@ export function EditableFieldDisplayMode({
       disableClick={disableClick}
       isDisplayModeContentEmpty={isDisplayModeContentEmpty}
       disableHoverEffect={disableHoverEffect}
+      isDisplayModeFixHeight={isDisplayModeFixHeight}
     >
       <EditableFieldNormalModeInnerContainer>
         {children}

@@ -22,7 +22,7 @@ const StyledShowPageSummaryCard = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)}
     ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(3)};
@@ -43,9 +43,12 @@ const StyledDate = styled.div`
 
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  max-width: 100%;
+  justify-content: center;
+  width: 100%;
 `;
 
 const StyledTooltip = styled(Tooltip)`

@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
-import { TableColumn } from '@/people/table/components/peopleColumns';
+import { ViewFieldContext } from '../states/ViewFieldContext';
+import { viewFieldsFamilyState } from '../states/viewFieldsState';
 
 import { CheckboxCell } from './CheckboxCell';
 import { EntityTableCell } from './EntityTableCell';
@@ -10,27 +12,22 @@ const StyledRow = styled.tr<{ selected: boolean }>`
     props.selected ? props.theme.background.secondary : 'none'};
 `;
 
-export function EntityTableRow({
-  columns,
-  rowId,
-}: {
-  columns: TableColumn[];
-  rowId: string;
-}) {
+export function EntityTableRow({ rowId }: { rowId: string }) {
+  const viewFields = useRecoilValue(viewFieldsFamilyState);
+
   return (
     <StyledRow data-testid={`row-id-${rowId}`} selected={false}>
       <td>
         <CheckboxCell />
       </td>
-      {columns.map((column, columnIndex) => {
+      {viewFields.map((viewField, columnIndex) => {
         return (
-          <EntityTableCell
-            key={column.id}
-            size={column.size}
-            cellIndex={columnIndex}
+          <ViewFieldContext.Provider
+            value={viewField}
+            key={viewField.columnOrder}
           >
-            {column.cellComponent}
-          </EntityTableCell>
+            <EntityTableCell cellIndex={columnIndex} />
+          </ViewFieldContext.Provider>
         );
       })}
       <td></td>

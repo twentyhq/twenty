@@ -4,7 +4,7 @@ import {
   Checkbox,
   CheckboxShape,
   CheckboxSize,
-} from '@/ui/input/components/Checkbox';
+} from '@/ui/input/checkbox/components/Checkbox';
 import { ActivityType } from '~/generated/graphql';
 
 const StyledEditableTitleInput = styled.input<{
@@ -35,6 +35,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
 const StyledCheckboxContainer = styled.div`

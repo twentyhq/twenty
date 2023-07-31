@@ -7,6 +7,7 @@ import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE, GET_PERSON, UPDATE_ONE_PERSON } from '@/people/queries';
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import {
+  SEARCH_ACTIVITY_QUERY,
   SEARCH_COMPANY_QUERY,
   SEARCH_PEOPLE_QUERY,
   SEARCH_USER_QUERY,
@@ -16,11 +17,13 @@ import {
   GetCompaniesQuery,
   GetPeopleQuery,
   GetPersonQuery,
+  SearchActivityQuery,
   SearchCompanyQuery,
   SearchPeopleQuery,
   SearchUserQuery,
 } from '~/generated/graphql';
 
+import { mockedActivities } from './mock-data/activities';
 import { mockedCompaniesData } from './mock-data/companies';
 import { mockedPeopleData } from './mock-data/people';
 import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
@@ -103,6 +106,26 @@ export const graphqlMocks = [
       }),
     );
   }),
+  graphql.query(
+    getOperationName(SEARCH_ACTIVITY_QUERY) ?? '',
+    (req, res, ctx) => {
+      const returnedMockedData = filterAndSortData<
+        SearchActivityQuery['searchResults'][0]
+      >(
+        mockedActivities,
+        req.variables.where,
+        Array.isArray(req.variables.orderBy)
+          ? req.variables.orderBy
+          : [req.variables.orderBy],
+        req.variables.limit,
+      );
+      return res(
+        ctx.data({
+          searchResults: returnedMockedData,
+        }),
+      );
+    },
+  ),
   graphql.query(getOperationName(GET_CURRENT_USER) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({

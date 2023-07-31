@@ -9,7 +9,7 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 import { TableContext } from '@/ui/table/states/TableContext';
-import { icon } from '@/ui/themes/icon';
+import { icon } from '@/ui/theme/constants/icon';
 import { Person } from '~/generated/graphql';
 
 export const peopleFilters: FilterDefinitionByEntity<Person>[] = [

@@ -1,7 +1,7 @@
 import { DragEvent, useCallback, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { TableColumn } from '@/people/table/components/peopleColumns';
+import { ViewFieldDefinition, ViewFieldMetadata } from '../types/ViewField';
 
 import { ColumnHead } from './ColumnHead';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
@@ -9,22 +9,26 @@ import { SelectAllCheckbox } from './SelectAllCheckbox';
 const COLUMN_MIN_WIDTH = 75;
 
 const StyledColumnHeaderCell = styled.th<{ isResizing?: boolean }>`
+  cursor: col-resize;
   min-width: ${COLUMN_MIN_WIDTH}px;
   position: relative;
-
-  ${(props) =>
-    props.isResizing
-      ? `&:after {
-          background-color: ${props.theme.color.blue};
-          bottom: 0;
-          content: '';
-          display: block;
-          position: absolute;
-          right: -1.5px;
-          top: 0;
-          width: 2px;
-        }`
-      : ''}
+  user-select: none;
+  ${({ isResizing, theme }) => {
+    if (isResizing) {
+      return `
+      &:after {
+        background-color: ${theme.color.blue};
+        bottom: 0;
+        content: '';
+        display: block;
+        position: absolute;
+        right: -1.5px;
+        top: 0;
+        width: 2px;
+        cursor: col-resize;
+      }`;
+    }
+  }};
 `;
 
 const StyledResizeHandler = styled.div`
@@ -38,17 +42,20 @@ const StyledResizeHandler = styled.div`
   z-index: 1;
 `;
 
-export function EntityTableHeader({
-  columns,
-}: {
-  columns: Array<TableColumn>;
-}) {
-  const [columnWidths, setColumnWidths] = useState(
-    columns.reduce<Record<string, number>>(
-      (result, column) => ({ ...result, [column.id]: column.size }),
-      {},
-    ),
+type OwnProps = {
+  viewFields: ViewFieldDefinition<ViewFieldMetadata>[];
+};
+
+export function EntityTableHeader({ viewFields }: OwnProps) {
+  const initialColumnWidths = viewFields.reduce<Record<string, number>>(
+    (result, viewField) => ({
+      ...result,
+      [viewField.id]: viewField.columnSize,
+    }),
+    {},
   );
+  const [columnWidths, setColumnWidths] = useState(initialColumnWidths);
+
   const [offset, setOffset] = useState(0);
   const resizedColumnId = useRef('');
   const initialHandlerPosition = useRef(-1);
@@ -98,24 +105,28 @@ export function EntityTableHeader({
         >
           <SelectAllCheckbox />
         </th>
-        {columns.map((column) => (
+
+        {viewFields.map((viewField) => (
           <StyledColumnHeaderCell
-            key={column.id.toString()}
-            isResizing={resizedColumnId.current === column.id}
+            key={viewField.columnOrder.toString()}
+            isResizing={resizedColumnId.current === viewField.id}
             style={{
               width: Math.max(
-                columnWidths[column.id] +
-                  (resizedColumnId.current === column.id ? offset : 0),
+                columnWidths[viewField.id] +
+                  (resizedColumnId.current === viewField.id ? offset : 0),
                 COLUMN_MIN_WIDTH,
               ),
             }}
           >
-            <ColumnHead viewName={column.title} viewIcon={column.icon} />
+            <ColumnHead
+              viewName={viewField.columnLabel}
+              viewIcon={viewField.columnIcon}
+            />
             <StyledResizeHandler
               draggable
               role="separator"
               onDragStart={(event) =>
-                handleResizeHandlerDragStart(event, column.id)
+                handleResizeHandlerDragStart(event, viewField.id)
               }
               onDrag={handleResizeHandlerDrag}
               onDragEnd={handleResizeHandlerDragEnd}

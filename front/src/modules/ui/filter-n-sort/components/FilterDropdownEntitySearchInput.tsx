@@ -4,7 +4,7 @@ import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch'
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/filter-n-sort/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/selectedOperandInDropdownScopedState';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 export function FilterDropdownEntitySearchInput({
   context,

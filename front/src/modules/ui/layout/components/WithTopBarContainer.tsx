@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-import { TopBarHotkeys } from '../top-bar/components/TableTopBarHotkeys';
-import { TOP_BAR_MIN_HEIGHT, TopBar } from '../top-bar/components/TopBar';
+import { PAGE_BAR_MIN_HEIGHT, PageBar } from '../page-bar/components/PageBar';
+import { PageBarHotkeys } from '../page-bar/components/PageBarHotkeys';
 
 import { RightDrawerContainer } from './RightDrawerContainer';
 
@@ -29,14 +29,14 @@ export function WithTopBarContainer({
 }: OwnProps) {
   return (
     <StyledContainer>
-      <TopBarHotkeys onAddButtonClick={onAddButtonClick} />
-      <TopBar
+      <PageBarHotkeys onAddButtonClick={onAddButtonClick} />
+      <PageBar
         title={title}
         hasBackButton={hasBackButton}
         icon={icon}
         onAddButtonClick={onAddButtonClick}
       />
-      <RightDrawerContainer topMargin={TOP_BAR_MIN_HEIGHT + 16 + 16}>
+      <RightDrawerContainer topMargin={PAGE_BAR_MIN_HEIGHT + 16 + 16}>
         {children}
       </RightDrawerContainer>
     </StyledContainer>

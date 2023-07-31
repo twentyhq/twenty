@@ -7,7 +7,7 @@ import {
   IconUser,
   IconUsers,
 } from '@/ui/icon/index';
-import { icon } from '@/ui/themes/icon';
+import { icon } from '@/ui/theme/constants/icon';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 import { Company } from '~/generated/graphql';
 

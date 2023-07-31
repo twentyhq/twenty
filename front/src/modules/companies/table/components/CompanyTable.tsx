@@ -1,16 +1,21 @@
 import { useCallback, useMemo, useState } from 'react';
 
+import { companyViewFields } from '@/companies/constants/companyViewFields';
 import { CompaniesSelectedSortType, defaultOrderBy } from '@/companies/queries';
-import { companyColumns } from '@/companies/table/components/companyColumns';
-import { CompanyEntityTableData } from '@/companies/table/components/CompanyEntityTableData';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { IconList } from '@/ui/icon';
-import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
 import { EntityTable } from '@/ui/table/components/EntityTable';
+import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { TableContext } from '@/ui/table/states/TableContext';
-import { CompanyOrderByWithRelationInput } from '~/generated/graphql';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import {
+  CompanyOrderByWithRelationInput,
+  useGetCompaniesQuery,
+  useUpdateOneCompanyMutation,
+} from '~/generated/graphql';
+import { companiesFilters } from '~/pages/companies/companies-filters';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 
 export function CompanyTable() {
@@ -29,13 +34,20 @@ export function CompanyTable() {
 
   return (
     <>
-      <CompanyEntityTableData orderBy={orderBy} whereFilters={whereFilters} />
+      <GenericEntityTableData
+        getRequestResultKey="companies"
+        useGetRequest={useGetCompaniesQuery}
+        orderBy={orderBy}
+        whereFilters={whereFilters}
+        viewFields={companyViewFields}
+        filterDefinitionArray={companiesFilters}
+      />
       <EntityTable
-        columns={companyColumns}
         viewName="All Companies"
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
         onSortsUpdate={updateSorts}
+        useUpdateEntityMutation={useUpdateOneCompanyMutation}
       />
     </>
   );

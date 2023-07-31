@@ -1,13 +1,14 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
-import { TableColumn } from '@/people/table/components/peopleColumns';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
-import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
 
-import { useIsPageLoading } from '../../hooks/useIsPageLoading';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
+import { EntityUpdateMutationHookContext } from '../states/EntityUpdateMutationHookContext';
+import { viewFieldsFamilyState } from '../states/viewFieldsState';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -85,21 +86,23 @@ const StyledTableWrapper = styled.div`
 `;
 
 type OwnProps<SortField> = {
-  columns: Array<TableColumn>;
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onRowSelectionChange?: (rowSelection: string[]) => void;
+  useUpdateEntityMutation: any;
 };
 
 export function EntityTable<SortField>({
-  columns,
   viewName,
   viewIcon,
   availableSorts,
   onSortsUpdate,
+  useUpdateEntityMutation,
 }: OwnProps<SortField>) {
+  const viewFields = useRecoilValue(viewFieldsFamilyState);
+
   const tableBodyRef = React.useRef<HTMLDivElement>(null);
 
   useMapKeyboardToSoftFocus();
@@ -113,28 +116,26 @@ export function EntityTable<SortField>({
     },
   });
 
-  const isPageLoading = useIsPageLoading();
-
-  if (isPageLoading) {
-    return null;
-  }
-
   return (
-    <StyledTableWithHeader>
-      <StyledTableContainer ref={tableBodyRef}>
-        <TableHeader
-          viewName={viewName}
-          viewIcon={viewIcon}
-          availableSorts={availableSorts}
-          onSortsUpdate={onSortsUpdate}
-        />
-        <StyledTableWrapper>
-          <StyledTable>
-            <EntityTableHeader columns={columns} />
-            <EntityTableBody columns={columns} />
-          </StyledTable>
-        </StyledTableWrapper>
-      </StyledTableContainer>
-    </StyledTableWithHeader>
+    <EntityUpdateMutationHookContext.Provider value={useUpdateEntityMutation}>
+      <StyledTableWithHeader>
+        <StyledTableContainer ref={tableBodyRef}>
+          <TableHeader
+            viewName={viewName}
+            viewIcon={viewIcon}
+            availableSorts={availableSorts}
+            onSortsUpdate={onSortsUpdate}
+          />
+          <StyledTableWrapper>
+            {viewFields.length && (
+              <StyledTable>
+                <EntityTableHeader viewFields={viewFields} />
+                <EntityTableBody />
+              </StyledTable>
+            )}
+          </StyledTableWrapper>
+        </StyledTableContainer>
+      </StyledTableWithHeader>
+    </EntityUpdateMutationHookContext.Provider>
   );
 }

@@ -894,6 +894,7 @@ export type Mutation = {
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
+  deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
   renewToken: AuthTokens;
   signUp: LoginToken;
@@ -1184,6 +1185,7 @@ export type Person = {
   ActivityTarget?: Maybe<Array<ActivityTarget>>;
   _activityCount: Scalars['Int'];
   activities: Array<Activity>;
+  avatarUrl?: Maybe<Scalars['String']>;
   city?: Maybe<Scalars['String']>;
   comments: Array<Comment>;
   company?: Maybe<Company>;
@@ -1203,6 +1205,7 @@ export type Person = {
 
 export type PersonCreateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutPersonInput>;
+  avatarUrl?: InputMaybe<Scalars['String']>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1241,6 +1244,7 @@ export type PersonOrderByRelationAggregateInput = {
 
 export type PersonOrderByWithRelationInput = {
   ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
+  avatarUrl?: InputMaybe<SortOrder>;
   city?: InputMaybe<SortOrder>;
   company?: InputMaybe<CompanyOrderByWithRelationInput>;
   companyId?: InputMaybe<SortOrder>;
@@ -1262,6 +1266,7 @@ export type PersonRelationFilter = {
 };
 
 export enum PersonScalarFieldEnum {
+  AvatarUrl = 'avatarUrl',
   City = 'city',
   CompanyId = 'companyId',
   CreatedAt = 'createdAt',
@@ -1279,6 +1284,7 @@ export enum PersonScalarFieldEnum {
 
 export type PersonUpdateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutPersonNestedInput>;
+  avatarUrl?: InputMaybe<Scalars['String']>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1315,6 +1321,7 @@ export type PersonWhereInput = {
   ActivityTarget?: InputMaybe<ActivityTargetListRelationFilter>;
   NOT?: InputMaybe<Array<PersonWhereInput>>;
   OR?: InputMaybe<Array<PersonWhereInput>>;
+  avatarUrl?: InputMaybe<StringNullableFilter>;
   city?: InputMaybe<StringNullableFilter>;
   company?: InputMaybe<CompanyRelationFilter>;
   companyId?: InputMaybe<StringNullableFilter>;
@@ -2229,14 +2236,14 @@ export type GetActivitiesByTargetsQueryVariables = Exact<{
 }>;
 
 
-export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
+export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
 
 export type GetActivityQueryVariables = Exact<{
   activityId: Scalars['String'];
 }>;
 
 
-export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
+export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
 
 export type AddActivityTargetsOnActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2262,15 +2269,12 @@ export type DeleteActivityMutationVariables = Exact<{
 export type DeleteActivityMutation = { __typename?: 'Mutation', deleteManyActivities: { __typename?: 'AffectedRows', count: number } };
 
 export type UpdateActivityMutationVariables = Exact<{
-  id: Scalars['String'];
-  body?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
+  where: ActivityWhereUniqueInput;
+  data: ActivityUpdateInput;
 }>;
 
 
-export type UpdateActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null } };
+export type UpdateActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null } };
 
 export type UploadAttachmentMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -2375,7 +2379,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type GetPersonPhoneByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2431,7 +2435,7 @@ export type GetPersonQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
 
 export type UpdateOnePersonMutationVariables = Exact<{
   where: PersonWhereUniqueInput;
@@ -2468,7 +2472,7 @@ export type GetPipelineProgressQueryVariables = Exact<{
 }>;
 
 
-export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, pipelineStageId: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null, pointOfContactId?: string | null, probability?: number | null, pointOfContact?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null }> };
+export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, pipelineStageId: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null, pointOfContactId?: string | null, probability?: number | null, pointOfContact?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null }> };
 
 export type UpdateOnePipelineProgressMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -2522,7 +2526,7 @@ export type SearchPeopleQueryVariables = Exact<{
 }>;
 
 
-export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, createdAt: string }> };
+export type SearchPeopleQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null, createdAt: string }> };
 
 export type SearchUserQueryVariables = Exact<{
   where?: InputMaybe<UserWhereInput>;
@@ -2546,6 +2550,15 @@ export type SearchCompanyQueryVariables = Exact<{
 
 
 export type SearchCompanyQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> };
+
+export type SearchActivityQueryVariables = Exact<{
+  where?: InputMaybe<ActivityWhereInput>;
+  limit?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Array<ActivityOrderByWithRelationInput> | ActivityOrderByWithRelationInput>;
+}>;
+
+
+export type SearchActivityQuery = { __typename?: 'Query', searchResults: Array<{ __typename?: 'Activity', id: string, title?: string | null, body?: string | null }> };
 
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2578,6 +2591,11 @@ export type RemoveProfilePictureMutationVariables = Exact<{
 
 
 export type RemoveProfilePictureMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, avatarUrl?: string | null } };
+
+export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DeleteUserAccountMutation = { __typename?: 'Mutation', deleteUserAccount: { __typename?: 'User', id: string } };
 
 export type GetViewFieldsQueryVariables = Exact<{
   where?: InputMaybe<ViewFieldWhereInput>;
@@ -2754,6 +2772,13 @@ export const GetActivitiesByTargetsDocument = gql`
     body
     type
     completedAt
+    dueAt
+    assignee {
+      id
+      firstName
+      lastName
+      displayName
+    }
     author {
       id
       firstName
@@ -2819,6 +2844,13 @@ export const GetActivityDocument = gql`
     title
     type
     completedAt
+    dueAt
+    assignee {
+      id
+      firstName
+      lastName
+      displayName
+    }
     author {
       id
       firstName
@@ -3000,16 +3032,20 @@ export type DeleteActivityMutationHookResult = ReturnType<typeof useDeleteActivi
 export type DeleteActivityMutationResult = Apollo.MutationResult<DeleteActivityMutation>;
 export type DeleteActivityMutationOptions = Apollo.BaseMutationOptions<DeleteActivityMutation, DeleteActivityMutationVariables>;
 export const UpdateActivityDocument = gql`
-    mutation UpdateActivity($id: String!, $body: String, $title: String, $type: ActivityType, $completedAt: DateTime) {
-  updateOneActivity(
-    where: {id: $id}
-    data: {body: $body, title: $title, type: $type, completedAt: $completedAt}
-  ) {
+    mutation UpdateActivity($where: ActivityWhereUniqueInput!, $data: ActivityUpdateInput!) {
+  updateOneActivity(where: $where, data: $data) {
     id
     body
     title
     type
     completedAt
+    dueAt
+    assignee {
+      id
+      firstName
+      lastName
+      displayName
+    }
   }
 }
     `;
@@ -3028,11 +3064,8 @@ export type UpdateActivityMutationFn = Apollo.MutationFunction<UpdateActivityMut
  * @example
  * const [updateActivityMutation, { data, loading, error }] = useUpdateActivityMutation({
  *   variables: {
- *      id: // value for 'id'
- *      body: // value for 'body'
- *      title: // value for 'title'
- *      type: // value for 'type'
- *      completedAt: // value for 'completedAt'
+ *      where: // value for 'where'
+ *      data: // value for 'data'
  *   },
  * });
  */
@@ -3602,6 +3635,7 @@ export const GetPeopleDocument = gql`
     displayName
     jobTitle
     linkedinUrl
+    avatarUrl
     createdAt
     _activityCount
     company {
@@ -3913,6 +3947,7 @@ export const GetPersonDocument = gql`
     city
     jobTitle
     linkedinUrl
+    avatarUrl
     phone
     _activityCount
     company {
@@ -4137,6 +4172,7 @@ export const GetPipelineProgressDocument = gql`
       firstName
       lastName
       displayName
+      avatarUrl
     }
     probability
   }
@@ -4367,6 +4403,8 @@ export const SearchPeopleDocument = gql`
     city
     firstName
     lastName
+    displayName
+    avatarUrl
     createdAt
   }
 }
@@ -4516,6 +4554,49 @@ export function useSearchCompanyLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type SearchCompanyQueryHookResult = ReturnType<typeof useSearchCompanyQuery>;
 export type SearchCompanyLazyQueryHookResult = ReturnType<typeof useSearchCompanyLazyQuery>;
 export type SearchCompanyQueryResult = Apollo.QueryResult<SearchCompanyQuery, SearchCompanyQueryVariables>;
+export const SearchActivityDocument = gql`
+    query SearchActivity($where: ActivityWhereInput, $limit: Int, $orderBy: [ActivityOrderByWithRelationInput!]) {
+  searchResults: findManyActivities(
+    where: $where
+    take: $limit
+    orderBy: $orderBy
+  ) {
+    id
+    title
+    body
+  }
+}
+    `;
+
+/**
+ * __useSearchActivityQuery__
+ *
+ * To run a query within a React component, call `useSearchActivityQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchActivityQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchActivityQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      limit: // value for 'limit'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useSearchActivityQuery(baseOptions?: Apollo.QueryHookOptions<SearchActivityQuery, SearchActivityQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SearchActivityQuery, SearchActivityQueryVariables>(SearchActivityDocument, options);
+      }
+export function useSearchActivityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchActivityQuery, SearchActivityQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SearchActivityQuery, SearchActivityQueryVariables>(SearchActivityDocument, options);
+        }
+export type SearchActivityQueryHookResult = ReturnType<typeof useSearchActivityQuery>;
+export type SearchActivityLazyQueryHookResult = ReturnType<typeof useSearchActivityLazyQuery>;
+export type SearchActivityQueryResult = Apollo.QueryResult<SearchActivityQuery, SearchActivityQueryVariables>;
 export const GetCurrentUserDocument = gql`
     query GetCurrentUser {
   currentUser {
@@ -4727,6 +4808,38 @@ export function useRemoveProfilePictureMutation(baseOptions?: Apollo.MutationHoo
 export type RemoveProfilePictureMutationHookResult = ReturnType<typeof useRemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationResult = Apollo.MutationResult<RemoveProfilePictureMutation>;
 export type RemoveProfilePictureMutationOptions = Apollo.BaseMutationOptions<RemoveProfilePictureMutation, RemoveProfilePictureMutationVariables>;
+export const DeleteUserAccountDocument = gql`
+    mutation DeleteUserAccount {
+  deleteUserAccount {
+    id
+  }
+}
+    `;
+export type DeleteUserAccountMutationFn = Apollo.MutationFunction<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
+
+/**
+ * __useDeleteUserAccountMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserAccountMutation, { data, loading, error }] = useDeleteUserAccountMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDeleteUserAccountMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>(DeleteUserAccountDocument, options);
+      }
+export type DeleteUserAccountMutationHookResult = ReturnType<typeof useDeleteUserAccountMutation>;
+export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAccountMutation>;
+export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
 export const GetViewFieldsDocument = gql`
     query GetViewFields($where: ViewFieldWhereInput) {
   viewFields: findManyViewField(where: $where) {

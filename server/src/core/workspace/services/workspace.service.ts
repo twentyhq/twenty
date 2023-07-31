@@ -153,6 +153,7 @@ export class WorkspaceService {
       refreshToken.deleteMany({
         where: { userId },
       }),
+      // Todo delete all users from this workspace
       user.delete({
         where: {
           id: userId,
