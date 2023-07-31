@@ -60,6 +60,27 @@ const StyledAmount = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledNumChildren = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.tertiary};
+  border-radius: 50px;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-style: normal;
+  gap: 8px;
+  height: 20px;
+  justify-content: center;
+  leading-trim: both;
+  line-height: 150%;
+  margin-left: auto;
+  padding: 2px 4px;
+  text-align: center;
+  text-edge: cap;
+  width: 16px;
+`;
+
 type OwnProps = {
   color?: string;
   title: string;
@@ -69,6 +90,7 @@ type OwnProps = {
   totalAmount?: number;
   children: React.ReactNode;
   isFirstColumn: boolean;
+  numChildren: number;
 };
 
 export function BoardColumn({
@@ -79,6 +101,7 @@ export function BoardColumn({
   totalAmount,
   children,
   isFirstColumn,
+  numChildren,
 }: OwnProps) {
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
     React.useState(false);
@@ -112,6 +135,7 @@ export function BoardColumn({
       <StyledHeader>
         <Tag onClick={handleTitleClick} color={color} text={title} />
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
+        <StyledNumChildren>{numChildren}</StyledNumChildren>
       </StyledHeader>
       {isBoardColumnMenuOpen && (
         <BoardColumnMenu
