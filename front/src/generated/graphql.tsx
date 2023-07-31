@@ -547,7 +547,7 @@ export type ClientConfig = {
   __typename?: 'ClientConfig';
   authProviders: AuthProviders;
   debugMode: Scalars['Boolean'];
-  demoMode: Scalars['Boolean'];
+  signInPrefilled: Scalars['Boolean'];
   telemetry: Telemetry;
 };
 
@@ -2333,7 +2333,7 @@ export type RenewTokenMutation = { __typename?: 'Mutation', renewToken: { __type
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', demoMode: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean } } };
 
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
@@ -3369,7 +3369,7 @@ export const GetClientConfigDocument = gql`
       google
       password
     }
-    demoMode
+    signInPrefilled
     debugMode
     telemetry {
       enabled

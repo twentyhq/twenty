@@ -5,15 +5,11 @@ services:
       context: ..
       dockerfile: ./infra/prod/front/Dockerfile
       args:
-        REACT_APP_API_URL: "http://localhost:3000/graphql"
-        REACT_APP_AUTH_URL: "http://localhost:3000/auth"
-        REACT_APP_FILES_URL: "http://localhost:3000/files"
+        REACT_APP_SERVER_BASE_URL: "http://localhost:3000"
     ports:
       - "3001:3000"
     labels:
-      dev.ergomake.env.replace-arg.REACT_APP_API_URL: "https://{{ services.server.url }}/graphql"
-      dev.ergomake.env.replace-arg.REACT_APP_AUTH_URL: "https://{{ services.server.url }}/auth"
-      dev.ergomake.env.replace-arg.REACT_APP_FILES_URL: "https://{{ services.server.url }}/files"
+      dev.ergomake.env.replace-arg.REACT_APP_SERVER_BASE_URL: "https://{{ services.server.url }}"
   server:
     build:
       context: ..
@@ -23,19 +19,14 @@ services:
       - "3000:3000"
     environment:
       DEBUG_MODE: false
-      DEMO_MODE: true
+      IS_SIGN_IN_PREFILLED: true
       ACCESS_TOKEN_SECRET: "secret_jwt"
-      ACCESS_TOKEN_EXPIRES_IN: "30m"
       LOGIN_TOKEN_SECRET: "secret_login_token"
-      LOGIN_TOKEN_EXPIRES_IN: "15m"
       REFRESH_TOKEN_SECRET: "secret_refresh_token"
-      REFRESH_TOKEN_EXPIRES_IN: "90d"
       PG_DATABASE_URL: "postgres://postgres:postgrespassword@postgres:5432/default?connection_limit=1"
-      FRONT_AUTH_CALLBACK_URL: "http://localhost:3000/verify"
-      STORAGE_TYPE: "local"
-      STORAGE_LOCAL_PATH: ".local-storage"
+      FRONT_BASE_URL: "http://localhost:3000"
     labels:
-      dev.ergomake.env.replace-env.FRONT_AUTH_CALLBACK_URL: "https://{{ services.server.url }}/verify"
+      dev.ergomake.env.replace-env.FRONT_BASE_URL: "https://{{ services.server.url }}"
   postgres:
     build: ../infra/dev/postgres
     environment:

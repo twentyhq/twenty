@@ -13,15 +13,15 @@ export class EnvironmentService {
     return this.configService.get<boolean>('DEBUG_MODE') ?? false;
   }
 
-  isDemoMode(): boolean {
-    return this.configService.get<boolean>('DEMO_MODE') ?? false;
+  isSignInPrefilled(): boolean {
+    return this.configService.get<boolean>('IS_SIGN_IN_PREFILLED') ?? false;
   }
 
   isTelemetryEnabled(): boolean {
     return this.configService.get<boolean>('TELEMETRY_ENABLED') ?? true;
   }
 
-  isTelemetryAnonymizationEnabled(): boolean | undefined {
+  isTelemetryAnonymizationEnabled(): boolean {
     return (
       this.configService.get<boolean>('TELEMETRY_ANONYMIZATION_ENABLED') ?? true
     );
@@ -31,12 +31,16 @@ export class EnvironmentService {
     return this.configService.get<string>('PG_DATABASE_URL')!;
   }
 
+  getFrontBaseUrl(): string {
+    return this.configService.get<string>('FRONT_BASE_URL')!;
+  }
+
   getAccessTokenSecret(): string {
     return this.configService.get<string>('ACCESS_TOKEN_SECRET')!;
   }
 
   getAccessTokenExpiresIn(): string {
-    return this.configService.get<string>('ACCESS_TOKEN_EXPIRES_IN')!;
+    return this.configService.get<string>('ACCESS_TOKEN_EXPIRES_IN') ?? '30m';
   }
 
   getRefreshTokenSecret(): string {
@@ -44,7 +48,7 @@ export class EnvironmentService {
   }
 
   getRefreshTokenExpiresIn(): string {
-    return this.configService.get<string>('REFRESH_TOKEN_EXPIRES_IN')!;
+    return this.configService.get<string>('REFRESH_TOKEN_EXPIRES_IN') ?? '90d';
   }
 
   getLoginTokenSecret(): string {
@@ -52,15 +56,18 @@ export class EnvironmentService {
   }
 
   getLoginTokenExpiresIn(): string {
-    return this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN')!;
+    return this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN') ?? '15m';
   }
 
   getFrontAuthCallbackUrl(): string {
-    return this.configService.get<string>('FRONT_AUTH_CALLBACK_URL')!;
+    return (
+      this.configService.get<string>('FRONT_AUTH_CALLBACK_URL') ??
+      this.getFrontBaseUrl() + '/auth/callback'
+    );
   }
 
-  isAuthGoogleEnabled(): boolean | undefined {
-    return this.configService.get<boolean>('AUTH_GOOGLE_ENABLED');
+  isAuthGoogleEnabled(): boolean {
+    return this.configService.get<boolean>('AUTH_GOOGLE_ENABLED') ?? false;
   }
 
   getAuthGoogleClientId(): string | undefined {
@@ -75,8 +82,10 @@ export class EnvironmentService {
     return this.configService.get<string>('AUTH_GOOGLE_CALLBACK_URL');
   }
 
-  getStorageType(): StorageType | undefined {
-    return this.configService.get<StorageType>('STORAGE_TYPE');
+  getStorageType(): StorageType {
+    return (
+      this.configService.get<StorageType>('STORAGE_TYPE') ?? StorageType.Local
+    );
   }
 
   getStorageS3Region(): AwsRegion | undefined {
@@ -87,7 +96,9 @@ export class EnvironmentService {
     return this.configService.get<AwsRegion>('STORAGE_S3_NAME');
   }
 
-  getStorageLocalPath(): string | undefined {
-    return this.configService.get<string>('STORAGE_LOCAL_PATH')!;
+  getStorageLocalPath(): string {
+    return (
+      this.configService.get<string>('STORAGE_LOCAL_PATH') ?? '.local-storage'
+    );
   }
 }
