@@ -17,6 +17,7 @@ import { SettingsExperience } from '~/pages/settings/SettingsExperience';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorksapce } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
+import { Tasks } from '~/pages/tasks/Tasks';
 import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
 
 // TEMP FEATURE FLAG FOR VIEW FIELDS
@@ -39,6 +40,7 @@ export function App() {
           <Route path={AppPath.PersonShowPage} element={<PersonShow />} />
           <Route path={AppPath.CompaniesPage} element={<Companies />} />
           <Route path={AppPath.CompanyShowPage} element={<CompanyShow />} />
+          <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<Impersonate />} />
 
           <Route path={AppPath.OpportunitiesPage} element={<Opportunities />} />

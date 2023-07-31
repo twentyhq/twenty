@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 type OwnProps = {
   title: string;
+  icon?: React.ReactNode;
   active?: boolean;
   className?: string;
   onClick?: () => void;
@@ -28,10 +29,16 @@ const StyledTab = styled.div<{ active?: boolean }>`
   }
 `;
 
-export function Tab({ title, active = false, onClick, className }: OwnProps) {
+export function Tab({
+  title,
+  icon,
+  active = false,
+  onClick,
+  className,
+}: OwnProps) {
   return (
     <StyledTab onClick={onClick} active={active} className={className}>
-      {title}
+      {icon} {title}
     </StyledTab>
   );
 }
