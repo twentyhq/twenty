@@ -14,7 +14,7 @@ services:
   name: server
   env: docker
   dockerfilePath: ./infra/prod/server/Dockerfile
-  dockerCommand: "yarn prisma:migrate"
+  dockerCommand: "sh -c tail -f /dev/null"
   autoDeploy: false
   envVars:
   - key: ACCESS_TOKEN_SECRET
