@@ -20,6 +20,8 @@ import {
 import { WorkspaceMemberService } from 'src/core/workspace/services/workspace-member.service';
 import { DeleteOneWorkspaceMemberArgs } from 'src/core/@generated/workspace-member/delete-one-workspace-member.args';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { User } from 'src/core/@generated/user/user.model';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => WorkspaceMember)
@@ -44,6 +46,24 @@ export class WorkspaceMemberResolver {
             AND: [args.where, accessibleBy(ability).WorkspaceMember],
           }
         : accessibleBy(ability).WorkspaceMember,
+      select: prismaSelect.value,
+    });
+  }
+
+  @Mutation(() => WorkspaceMember)
+  async allowImpersonation(
+    @Args('allowImpersonation') allowImpersonation: boolean,
+    @AuthUser() user: User,
+    @PrismaSelector({ modelName: 'WorkspaceMember' })
+    prismaSelect: PrismaSelect<'WorkspaceMember'>,
+  ): Promise<Partial<WorkspaceMember>> {
+    return this.workspaceMemberService.update({
+      where: {
+        userId: user.id,
+      },
+      data: {
+        allowImpersonation,
+      },
       select: prismaSelect.value,
     });
   }

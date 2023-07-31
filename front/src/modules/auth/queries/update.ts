@@ -39,8 +39,10 @@ export const VERIFY = gql`
         displayName
         firstName
         lastName
+        canImpersonate
         workspaceMember {
           id
+          allowImpersonation
           workspace {
             id
             domainName
@@ -76,6 +78,48 @@ export const RENEW_TOKEN = gql`
         accessToken {
           expiresAt
           token
+        }
+        refreshToken {
+          token
+          expiresAt
+        }
+      }
+    }
+  }
+`;
+
+// TODO: Fragments should be used instead of duplicating the user fields !
+export const IMPERSONATE = gql`
+  mutation Impersonate($userId: String!) {
+    impersonate(userId: $userId) {
+      user {
+        id
+        email
+        displayName
+        firstName
+        lastName
+        canImpersonate
+        workspaceMember {
+          id
+          allowImpersonation
+          workspace {
+            id
+            domainName
+            displayName
+            logo
+            inviteHash
+          }
+        }
+        settings {
+          id
+          colorScheme
+          locale
+        }
+      }
+      tokens {
+        accessToken {
+          token
+          expiresAt
         }
         refreshToken {
           token

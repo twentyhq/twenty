@@ -18,4 +18,7 @@ export enum AppPath {
   TasksPage = '/tasks',
   OpportunitiesPage = '/opportunities',
   SettingsCatchAll = `/settings/*`,
+
+  // Impersonate
+  Impersonate = '/impersonate/:userId',
 }

@@ -165,4 +165,41 @@ export class AuthService {
 
     return { isValid: !!workspace };
   }
+
+  async impersonate(
+    userId: string,
+    select: Prisma.UserSelect & {
+      id: true;
+      workspaceMember: {
+        select: {
+          allowImpersonation: true;
+        };
+      };
+    },
+  ) {
+    const user = await this.userService.findUnique({
+      where: {
+        id: userId,
+      },
+      select,
+    });
+
+    assert(user, "This user doesn't exist", NotFoundException);
+    assert(
+      user.workspaceMember?.allowImpersonation,
+      'Impersonation not allowed',
+      ForbiddenException,
+    );
+
+    const accessToken = await this.tokenService.generateAccessToken(user.id);
+    const refreshToken = await this.tokenService.generateRefreshToken(user.id);
+
+    return {
+      user,
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
+    };
+  }
 }
