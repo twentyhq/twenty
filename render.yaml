@@ -14,9 +14,8 @@ services:
   name: server
   env: docker
   dockerfilePath: ./infra/prod/server/Dockerfile
-  dockerCommand: ./bin/bash -c 'cd server && yarn prisma:migrate && node dist/src/main'
+  dockerCommand: echo 'Starting server...' && tail -f /dev/null
   autoDeploy: false
-  healthCheckPath: /healthz
   envVars:
   - key: ACCESS_TOKEN_SECRET
     generateValue: true
