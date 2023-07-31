@@ -1,10 +1,13 @@
 import { useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { CommentThreadTarget } from '~/generated/graphql';
+import { AppPath } from '@/types/AppPath';
+import { ActivityTarget } from '~/generated/graphql';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 import { ApolloFactory } from '../services/apollo.factory';
@@ -13,6 +16,8 @@ export function useApolloFactory() {
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
+  const navigate = useNavigate();
+  const isMatchingLocation = useIsMatchingLocation();
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
 
   const apolloClient = useMemo(() => {
@@ -20,12 +25,12 @@ export function useApolloFactory() {
       uri: `${process.env.REACT_APP_API_URL}`,
       cache: new InMemoryCache({
         typePolicies: {
-          CommentThread: {
+          Activity: {
             fields: {
-              commentThreadTargets: {
+              activityTargets: {
                 merge(
-                  existing: CommentThreadTarget[] = [],
-                  incoming: CommentThreadTarget[],
+                  _existing: ActivityTarget[] = [],
+                  incoming: ActivityTarget[],
                 ) {
                   return [...incoming];
                 },
@@ -46,6 +51,14 @@ export function useApolloFactory() {
       },
       onUnauthenticatedError() {
         setTokenPair(null);
+        if (
+          !isMatchingLocation(AppPath.Verify) &&
+          !isMatchingLocation(AppPath.SignIn) &&
+          !isMatchingLocation(AppPath.SignUp) &&
+          !isMatchingLocation(AppPath.Invite)
+        ) {
+          navigate(AppPath.SignIn);
+        }
       },
       extraLinks: [],
       isDebugMode,

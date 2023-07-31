@@ -14,10 +14,10 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { MainButton } from '@/ui/button/components/MainButton';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInput } from '@/ui/input/text/components/TextInput';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
-import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
+import { H2Title } from '@/ui/typography/components/H2Title';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { GET_CURRENT_USER } from '@/users/queries';
 import { useUpdateUserMutation } from '~/generated/graphql';
 
@@ -128,11 +128,11 @@ export function CreateProfile() {
       <SubTitle>How you'll be identified on the app.</SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
-          <SubSectionTitle title="Picture" />
+          <H2Title title="Picture" />
           <ProfilePictureUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
-          <SubSectionTitle
+          <H2Title
             title="Name"
             description="Your name as it will be displayed on the app"
           />

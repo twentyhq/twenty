@@ -15,7 +15,7 @@ import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
-import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
   PipelineProgressableType,
   PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By,

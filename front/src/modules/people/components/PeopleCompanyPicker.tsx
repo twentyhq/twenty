@@ -1,15 +1,12 @@
-import { Key } from 'ts-key-enum';
-
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
-import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
+import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { isCreateModeScopedState } from '@/ui/table/editable-cell/states/isCreateModeScopedState';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import {
   Company,
   Person,
@@ -37,17 +34,21 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
     selectedIds: people.company?.id ? [people.company.id] : [],
   });
 
-  async function handleEntitySelected(entity: any) {
-    await updatePerson({
-      variables: {
-        where: {
-          id: people.id,
+  async function handleEntitySelected(
+    entity: EntityForSelect | null | undefined,
+  ) {
+    if (entity) {
+      await updatePerson({
+        variables: {
+          where: {
+            id: people.id,
+          },
+          data: {
+            company: { connect: { id: entity.id } },
+          },
         },
-        data: {
-          company: { connect: { id: entity.id } },
-        },
-      },
-    });
+      });
+    }
 
     closeEditableCell();
   }
@@ -57,16 +58,10 @@ export function PeopleCompanyPicker({ people }: OwnProps) {
     addToScopeStack(TableHotkeyScope.CellDoubleTextInput);
   }
 
-  useScopedHotkeys(
-    Key.Escape,
-    () => closeEditableCell(),
-    RelationPickerHotkeyScope.RelationPicker,
-    [closeEditableCell],
-  );
-
   return (
     <SingleEntitySelect
       onCreate={handleCreate}
+      onCancel={() => closeEditableCell()}
       onEntitySelected={handleEntitySelected}
       entities={{
         entitiesToSelect: companies.entitiesToSelect,

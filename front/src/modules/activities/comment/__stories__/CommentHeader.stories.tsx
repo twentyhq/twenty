@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { DateTime } from 'luxon';
 
-import { CommentThreadActionBar } from '@/activities/right-drawer/components/CommentThreadActionBar';
+import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { avatarUrl } from '~/testing/mock-data/users';
 
@@ -17,7 +17,7 @@ const meta: Meta<typeof CommentHeader> = {
     actionBar: {
       type: 'boolean',
       mapping: {
-        true: <CommentThreadActionBar commentThreadId="test-id" />,
+        true: <ActivityActionBar activityId="test-id" />,
         false: undefined,
       },
     },

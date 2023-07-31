@@ -1,5 +1,5 @@
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
-import { InplaceInputDate } from '@/ui/inplace-input/components/InplaceInputDate';
+import { DateInputEdit } from '@/ui/input/date/components/DateInputEdit';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { parseDate } from '~/utils/date-utils';
 
 import { useEditableField } from '../../hooks/useEditableField';
@@ -19,7 +19,7 @@ export function EditableFieldEditModeDate({ value, onChange }: OwnProps) {
   }
 
   return (
-    <InplaceInputDate
+    <DateInputEdit
       value={parseDate(value).toJSDate()}
       onChange={(newDate: Date) => {
         handleChange(newDate.toISOString());

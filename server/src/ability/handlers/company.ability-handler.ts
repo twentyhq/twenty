@@ -13,10 +13,16 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
 import { CompanyWhereInput } from 'src/core/@generated/company/company-where.input';
+import { CompanyWhereUniqueInput } from 'src/core/@generated/company/company-where-unique.input';
+import {
+  convertToWhereInput,
+  relationAbilityChecker,
+} from 'src/ability/ability.util';
 import { assert } from 'src/utils/assert';
 
 class CompanyArgs {
-  where?: CompanyWhereInput;
+  where?: CompanyWhereUniqueInput | CompanyWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -27,15 +33,40 @@ export class ManageCompanyAbilityHandler implements IAbilityHandler {
 }
 
 @Injectable()
-export class ReadCompanyAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
-    return ability.can(AbilityAction.Read, 'Company');
+export class ReadOneCompanyAbilityHandler implements IAbilityHandler {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs<CompanyArgs>();
+    const company = await this.prismaService.client.company.findFirst({
+      where: args.where,
+    });
+    assert(company, '', NotFoundException);
+
+    return ability.can(AbilityAction.Read, subject('Company', company));
   }
 }
 
 @Injectable()
 export class CreateCompanyAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'Company',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'Company');
   }
 }
@@ -47,13 +78,35 @@ export class UpdateCompanyAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<CompanyArgs>();
-    const company = await this.prismaService.company.findFirst({
-      where: args.where,
+    const where = convertToWhereInput(args.where);
+    const companies = await this.prismaService.client.company.findMany({
+      where,
     });
+    assert(companies.length, '', NotFoundException);
 
-    assert(company, '', NotFoundException);
+    const allowed = await relationAbilityChecker(
+      'Company',
+      ability,
+      this.prismaService.client,
+      args,
+    );
 
-    return ability.can(AbilityAction.Update, subject('Company', company));
+    if (!allowed) {
+      return false;
+    }
+
+    for (const company of companies) {
+      const allowed = ability.can(
+        AbilityAction.Delete,
+        subject('Company', company),
+      );
+
+      if (!allowed) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 
@@ -64,11 +117,23 @@ export class DeleteCompanyAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<CompanyArgs>();
-    const company = await this.prismaService.company.findFirst({
-      where: args.where,
+    const where = convertToWhereInput(args.where);
+    const companies = await this.prismaService.client.company.findMany({
+      where,
     });
-    assert(company, '', NotFoundException);
+    assert(companies.length, '', NotFoundException);
 
-    return ability.can(AbilityAction.Delete, subject('Company', company));
+    for (const company of companies) {
+      const allowed = ability.can(
+        AbilityAction.Delete,
+        subject('Company', company),
+      );
+
+      if (!allowed) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

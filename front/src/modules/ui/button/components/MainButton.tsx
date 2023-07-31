@@ -15,7 +15,7 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
   align-items: center;
   background: ${({ theme, variant, disabled }) => {
     if (disabled) {
-      return theme.background.tertiary;
+      return theme.background.secondary;
     }
 
     switch (variant) {
@@ -31,9 +31,22 @@ const StyledButton = styled.button<Pick<Props, 'fullWidth' | 'variant'>>`
         return theme.background.primary;
     }
   }};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border: 1px solid;
+  border-color: ${({ theme, disabled }) => {
+    if (disabled) {
+      return theme.background.transparent.lighter;
+    }
+
+    return theme.border.color.light;
+  }};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
+  ${({ theme, disabled }) => {
+    if (disabled) {
+      return '';
+    }
+
+    return `box-shadow: ${theme.boxShadow.light};`;
+  }}
   color: ${({ theme, variant, disabled }) => {
     if (disabled) {
       return theme.font.color.light;

@@ -13,10 +13,12 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
 import { RefreshTokenWhereInput } from 'src/core/@generated/refresh-token/refresh-token-where.input';
+import { relationAbilityChecker } from 'src/ability/ability.util';
 import { assert } from 'src/utils/assert';
 
 class RefreshTokenArgs {
   where?: RefreshTokenWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -35,7 +37,23 @@ export class ReadRefreshTokenAbilityHandler implements IAbilityHandler {
 
 @Injectable()
 export class CreateRefreshTokenAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'RefreshToken',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'RefreshToken');
   }
 }
@@ -47,10 +65,23 @@ export class UpdateRefreshTokenAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<RefreshTokenArgs>();
-    const refreshToken = await this.prismaService.refreshToken.findFirst({
-      where: args.where,
-    });
+    const refreshToken = await this.prismaService.client.refreshToken.findFirst(
+      {
+        where: args.where,
+      },
+    );
     assert(refreshToken, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'RefreshToken',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
 
     return ability.can(
       AbilityAction.Update,
@@ -66,9 +97,11 @@ export class DeleteRefreshTokenAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<RefreshTokenArgs>();
-    const refreshToken = await this.prismaService.refreshToken.findFirst({
-      where: args.where,
-    });
+    const refreshToken = await this.prismaService.client.refreshToken.findFirst(
+      {
+        where: args.where,
+      },
+    );
     assert(refreshToken, '', NotFoundException);
 
     return ability.can(

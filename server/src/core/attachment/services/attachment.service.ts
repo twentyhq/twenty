@@ -9,35 +9,35 @@ export class AttachmentService {
   constructor(private readonly prismaService: PrismaService) {}
 
   // Find
-  findFirst = this.prismaService.attachment.findFirst;
-  findFirstOrThrow = this.prismaService.attachment.findFirstOrThrow;
+  findFirst = this.prismaService.client.attachment.findFirst;
+  findFirstOrThrow = this.prismaService.client.attachment.findFirstOrThrow;
 
-  findUnique = this.prismaService.attachment.findUnique;
-  findUniqueOrThrow = this.prismaService.attachment.findUniqueOrThrow;
+  findUnique = this.prismaService.client.attachment.findUnique;
+  findUniqueOrThrow = this.prismaService.client.attachment.findUniqueOrThrow;
 
-  findMany = this.prismaService.attachment.findMany;
+  findMany = this.prismaService.client.attachment.findMany;
 
   // Create
-  create = this.prismaService.attachment.create;
-  createMany = this.prismaService.attachment.createMany;
+  create = this.prismaService.client.attachment.create;
+  createMany = this.prismaService.client.attachment.createMany;
 
   // Update
-  update = this.prismaService.attachment.update;
-  upsert = this.prismaService.attachment.upsert;
-  updateMany = this.prismaService.attachment.updateMany;
+  update = this.prismaService.client.attachment.update;
+  upsert = this.prismaService.client.attachment.upsert;
+  updateMany = this.prismaService.client.attachment.updateMany;
 
   // Delete
-  delete = this.prismaService.attachment.delete;
-  deleteMany = this.prismaService.attachment.deleteMany;
+  delete = this.prismaService.client.attachment.delete;
+  deleteMany = this.prismaService.client.attachment.deleteMany;
 
   // Aggregate
-  aggregate = this.prismaService.attachment.aggregate;
+  aggregate = this.prismaService.client.attachment.aggregate;
 
   // Count
-  count = this.prismaService.attachment.count;
+  count = this.prismaService.client.attachment.count;
 
   // GroupBy
-  groupBy = this.prismaService.attachment.groupBy;
+  groupBy = this.prismaService.client.attachment.groupBy;
 
   getFileTypeFromFileName(fileName: string): AttachmentType {
     const extension = fileName.split('.').pop()?.toLowerCase();

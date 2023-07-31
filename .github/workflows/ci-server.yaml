@@ -7,6 +7,21 @@ on:
 jobs:
   server-test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_HOST: postgres
+          POSTGRES_PASSWORD: postgrespassword
+          POSTGRES_DB: test
+          POSTGRES_PORT: 5432
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v3
         if: github.event_name == 'push'
@@ -27,3 +42,6 @@ jobs:
       - name: Server / Run jest tests
         run: |
           cd server && yarn test
+      - name: Server / Run e2e tests
+        run: |
+          cd server && yarn test:e2e

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { AnimatedEaseIn } from '../../ui/animation/components/AnimatedEaseIn';
+import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 type Props = React.PropsWithChildren & {
   animate?: boolean;

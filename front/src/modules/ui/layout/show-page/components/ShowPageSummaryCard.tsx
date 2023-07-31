@@ -1,5 +1,4 @@
 import { Tooltip } from 'react-tooltip';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -23,7 +22,7 @@ const StyledShowPageSummaryCard = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(6)} ${({ theme }) => theme.spacing(3)}
     ${({ theme }) => theme.spacing(3)} ${({ theme }) => theme.spacing(3)};
@@ -44,9 +43,12 @@ const StyledDate = styled.div`
 
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  max-width: 100%;
+  justify-content: center;
+  width: 100%;
 `;
 
 const StyledTooltip = styled(Tooltip)`
@@ -70,16 +72,16 @@ export function ShowPageSummaryCard({
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDate(date) : '';
-  const theme = useTheme();
   const dateElementId = `date-id-${uuidV4()}`;
 
   return (
     <StyledShowPageSummaryCard>
       <Avatar
         avatarUrl={logoOrAvatar}
-        size={theme.icon.size.xl}
+        size="xl"
         colorId={id}
         placeholder={title}
+        type="rounded"
       />
       <StyledInfoContainer>
         <StyledTitle>

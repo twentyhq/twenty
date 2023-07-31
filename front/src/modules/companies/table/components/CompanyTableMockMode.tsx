@@ -1,24 +1,19 @@
-import { companyColumns } from '@/companies/table/components/companyColumns';
-import { CompanyEntityTableDataMocked } from '@/companies/table/components/CompanyEntityTableDataMocked';
 import { IconList } from '@/ui/icon';
 import { EntityTable } from '@/ui/table/components/EntityTable';
-import { HooksEntityTable } from '@/ui/table/components/HooksEntityTable';
-import { companiesFilters } from '~/pages/companies/companies-filters';
+import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 import { availableSorts } from '~/pages/companies/companies-sorts';
+
+import { CompanyTableMockData } from './CompanyTableMockData';
 
 export function CompanyTableMockMode() {
   return (
     <>
-      <CompanyEntityTableDataMocked />
-      <HooksEntityTable
-        numberOfColumns={companyColumns.length}
-        availableFilters={companiesFilters}
-      />
+      <CompanyTableMockData />
       <EntityTable
-        columns={companyColumns}
         viewName="All Companies"
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
+        useUpdateEntityMutation={useUpdateOneCompanyMutation}
       />
     </>
   );

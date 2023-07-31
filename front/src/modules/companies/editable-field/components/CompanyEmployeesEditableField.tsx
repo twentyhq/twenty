@@ -3,9 +3,13 @@ import { useEffect, useState } from 'react';
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { IconUsers } from '@/ui/icon';
-import { InplaceInputText } from '@/ui/inplace-input/components/InplaceInputText';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { TextInputEdit } from '@/ui/input/text/components/TextInputEdit';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { Company, useUpdateOneCompanyMutation } from '~/generated/graphql';
+import {
+  canBeCastAsIntegerOrNull,
+  castAsIntegerOrNull,
+} from '~/utils/cast-as-integer-or-null';
 
 type OwnProps = {
   company: Pick<Company, 'id' | 'employees'>;
@@ -27,30 +31,25 @@ export function CompanyEmployeesEditableField({ company }: OwnProps) {
   }
 
   async function handleSubmit() {
-    if (!internalValue) return;
-
-    try {
-      const numberValue = parseInt(internalValue);
-
-      if (isNaN(numberValue)) {
-        throw new Error('Not a number');
-      }
-
-      await updateCompany({
-        variables: {
-          where: {
-            id: company.id,
-          },
-          data: {
-            employees: numberValue,
-          },
-        },
-      });
-
-      setInternalValue(numberValue.toString());
-    } catch {
+    if (!canBeCastAsIntegerOrNull(internalValue)) {
       handleCancel();
+      return;
     }
+
+    const valueCastedAsNumberOrNull = castAsIntegerOrNull(internalValue);
+
+    await updateCompany({
+      variables: {
+        where: {
+          id: company.id,
+        },
+        data: {
+          employees: valueCastedAsNumberOrNull,
+        },
+      },
+    });
+
+    setInternalValue(valueCastedAsNumberOrNull?.toString());
   }
 
   async function handleCancel() {
@@ -64,7 +63,7 @@ export function CompanyEmployeesEditableField({ company }: OwnProps) {
         onCancel={handleCancel}
         iconLabel={<IconUsers />}
         editModeContent={
-          <InplaceInputText
+          <TextInputEdit
             placeholder={'Employees'}
             autoFocus
             value={internalValue ?? ''}

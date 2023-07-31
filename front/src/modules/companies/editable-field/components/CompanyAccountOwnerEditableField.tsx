@@ -1,9 +1,9 @@
-import { PersonChip } from '@/people/components/PersonChip';
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { IconUserCircle } from '@/ui/icon';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { UserChip } from '@/users/components/UserChip';
 import { Company, User } from '~/generated/graphql';
 
 import { CompanyAccountOwnerPickerFieldEditMode } from './CompanyAccountOwnerPickerFieldEditMode';
@@ -28,7 +28,7 @@ export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
           }
           displayModeContent={
             company.accountOwner?.displayName ? (
-              <PersonChip
+              <UserChip
                 id={company.accountOwner.id}
                 name={company.accountOwner?.displayName ?? ''}
                 pictureUrl={company.accountOwner?.avatarUrl ?? ''}
@@ -38,6 +38,7 @@ export function CompanyAccountOwnerEditableField({ company }: OwnProps) {
             )
           }
           isDisplayModeContentEmpty={!company.accountOwner}
+          isDisplayModeFixHeight={true}
         />
       </RecoilScope>
     </RecoilScope>

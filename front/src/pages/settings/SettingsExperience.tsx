@@ -3,9 +3,10 @@ import styled from '@emotion/styled';
 import { ColorSchemePicker } from '@/ui/color-scheme/components/ColorSchemePicker';
 import { IconSettings } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
-import { useColorScheme } from '@/ui/themes/hooks/useColorScheme';
-import { MainSectionTitle } from '@/ui/title/components/MainSectionTitle';
-import { SubSectionTitle } from '@/ui/title/components/SubSectionTitle';
+import { Section } from '@/ui/section/components/Section';
+import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import { H1Title } from '@/ui/typography/components/H1Title';
+import { H2Title } from '@/ui/typography/components/H2Title';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -13,15 +14,6 @@ const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(8)};
   padding-bottom: ${({ theme }) => theme.spacing(10)};
   width: 350px;
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(8)};
-  }
-`;
-
-const StyledSectionContainer = styled.div`
-  > * + * {
-    margin-top: ${({ theme }) => theme.spacing(4)};
-  }
 `;
 
 export function SettingsExperience() {
@@ -29,15 +21,13 @@ export function SettingsExperience() {
 
   return (
     <SubMenuTopBarContainer icon={<IconSettings size={16} />} title="Settings">
-      <div>
-        <StyledContainer>
-          <MainSectionTitle>Experience</MainSectionTitle>
-          <StyledSectionContainer>
-            <SubSectionTitle title="Appearance" />
-            <ColorSchemePicker value={colorScheme} onChange={setColorScheme} />
-          </StyledSectionContainer>
-        </StyledContainer>
-      </div>
+      <StyledContainer>
+        <H1Title title="Experience" />
+        <Section>
+          <H2Title title="Appearance" />
+          <ColorSchemePicker value={colorScheme} onChange={setColorScheme} />
+        </Section>
+      </StyledContainer>
     </SubMenuTopBarContainer>
   );
 }

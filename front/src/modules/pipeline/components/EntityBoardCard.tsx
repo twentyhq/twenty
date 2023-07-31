@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { BoardCardContext } from '../states/BoardCardContext';
 import { pipelineProgressIdScopedState } from '../states/pipelineProgressIdScopedState';

@@ -4,8 +4,8 @@ import { CompanyAccountOwnerPicker } from '@/companies/components/CompanyAccount
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
 import { Company, User } from '~/generated/graphql';
 
-const CompanyAccountOwnerPickerContainer = styled.div`
-  left: 24px;
+const StyledContainer = styled.div`
+  left: 0px;
   position: absolute;
   top: -8px;
 `;
@@ -36,12 +36,12 @@ export function CompanyAccountOwnerPickerFieldEditMode({
   }
 
   return (
-    <CompanyAccountOwnerPickerContainer>
+    <StyledContainer>
       <CompanyAccountOwnerPicker
         company={company}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
       />
-    </CompanyAccountOwnerPickerContainer>
+    </StyledContainer>
   );
 }

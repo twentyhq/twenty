@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { PureAbility, AbilityBuilder } from '@casl/ability';
 import { createPrismaAbility, PrismaQuery, Subjects } from '@casl/prisma';
 import {
-  CommentThread,
+  Attachment,
+  Activity,
   Company,
   Comment,
   Person,
@@ -11,11 +12,12 @@ import {
   User,
   Workspace,
   WorkspaceMember,
-  CommentThreadTarget,
+  ActivityTarget,
   Pipeline,
   PipelineStage,
   PipelineProgress,
-  Attachment,
+  UserSettings,
+  ViewField,
 } from '@prisma/client';
 
 import { AbilityAction } from './ability.action';
@@ -27,13 +29,15 @@ type SubjectsAbility = Subjects<{
   Company: Company;
   Person: Person;
   RefreshToken: RefreshToken;
-  CommentThread: CommentThread;
+  Activity: Activity;
   Comment: Comment;
-  CommentThreadTarget: CommentThreadTarget;
+  ActivityTarget: ActivityTarget;
   Pipeline: Pipeline;
   PipelineStage: PipelineStage;
   PipelineProgress: PipelineProgress;
   Attachment: Attachment;
+  UserSettings: UserSettings;
+  ViewField: ViewField;
 }>;
 
 export type AppAbility = PureAbility<
@@ -55,11 +59,12 @@ export class AbilityFactory {
       },
     });
     can(AbilityAction.Update, 'User', { id: user.id });
-    cannot(AbilityAction.Delete, 'User');
+    can(AbilityAction.Delete, 'User', { id: user.id });
 
     // Workspace
-    can(AbilityAction.Read, 'Workspace', { id: workspace.id });
-    can(AbilityAction.Update, 'Workspace', { id: workspace.id });
+    can(AbilityAction.Read, 'Workspace');
+    can(AbilityAction.Update, 'Workspace');
+    can(AbilityAction.Delete, 'Workspace');
 
     // Workspace Member
     can(AbilityAction.Read, 'WorkspaceMember', { workspaceId: workspace.id });
@@ -81,11 +86,11 @@ export class AbilityFactory {
     // RefreshToken
     cannot(AbilityAction.Manage, 'RefreshToken');
 
-    // CommentThread
-    can(AbilityAction.Read, 'CommentThread', { workspaceId: workspace.id });
-    can(AbilityAction.Create, 'CommentThread');
-    can(AbilityAction.Update, 'CommentThread', { workspaceId: workspace.id });
-    can(AbilityAction.Delete, 'CommentThread', { workspaceId: workspace.id });
+    // Activity
+    can(AbilityAction.Read, 'Activity', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'Activity');
+    can(AbilityAction.Update, 'Activity', { workspaceId: workspace.id });
+    can(AbilityAction.Delete, 'Activity', { workspaceId: workspace.id });
 
     // Comment
     can(AbilityAction.Read, 'Comment', { workspaceId: workspace.id });
@@ -99,8 +104,9 @@ export class AbilityFactory {
       authorId: user.id,
     });
 
-    // CommentThreadTarget
-    can(AbilityAction.Read, 'CommentThreadTarget');
+    // ActivityTarget
+    can(AbilityAction.Read, 'ActivityTarget');
+    can(AbilityAction.Create, 'ActivityTarget');
 
     // Attachment
     can(AbilityAction.Read, 'Attachment', { workspaceId: workspace.id });
@@ -123,6 +129,10 @@ export class AbilityFactory {
     can(AbilityAction.Delete, 'PipelineProgress', {
       workspaceId: workspace.id,
     });
+
+    // ViewField
+    can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
+    can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
 
     return build();
   }

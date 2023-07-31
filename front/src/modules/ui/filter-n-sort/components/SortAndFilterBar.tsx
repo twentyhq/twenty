@@ -3,13 +3,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icon/index';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
 import { SelectedSortType } from '../types/interface';
-import { getOperandLabel } from '../utils/getOperandLabel';
+import { getOperandLabelShort } from '../utils/getOperandLabel';
 
 import SortOrFilterChip from './SortOrFilterChip';
 
@@ -126,7 +126,7 @@ function SortAndFilterBar<SortField>({
             <SortOrFilterChip
               key={filter.field}
               labelKey={filter.label}
-              labelValue={`${getOperandLabel(filter.operand)} ${
+              labelValue={`${getOperandLabelShort(filter.operand)} ${
                 filter.displayValue
               }`}
               id={filter.field}

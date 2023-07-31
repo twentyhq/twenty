@@ -1,9 +1,7 @@
-import { ReactElement, useRef } from 'react';
+import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { overlayBackground } from '@/ui/themes/effects';
-
-import { useRegisterCloseCellHandlers } from '../hooks/useRegisterCloseCellHandlers';
+import { overlayBackground } from '@/ui/theme/constants/effects';
 
 export const EditableCellEditModeContainer = styled.div<OwnProps>`
   align-items: center;
@@ -36,30 +34,21 @@ type OwnProps = {
   maxContentWidth?: number;
   editModeHorizontalAlign?: 'left' | 'right';
   editModeVerticalPosition?: 'over' | 'below';
-  onOutsideClick?: () => void;
-  onCancel?: () => void;
-  onSubmit?: () => void;
+  initialValue?: string;
 };
 
 export function EditableCellEditMode({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
-  onCancel,
-  onSubmit,
   transparent = false,
   maxContentWidth,
 }: OwnProps) {
-  const wrapperRef = useRef(null);
-
-  useRegisterCloseCellHandlers(wrapperRef, onSubmit, onCancel);
-
   return (
     <EditableCellEditModeContainer
       maxContentWidth={maxContentWidth}
       transparent={transparent}
       data-testid="editable-cell-edit-mode-container"
-      ref={wrapperRef}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeVerticalPosition={editModeVerticalPosition}
     >

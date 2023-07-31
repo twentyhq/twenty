@@ -1,9 +1,9 @@
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
-import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
-import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
+import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import {
   Company,
   User,
@@ -48,15 +48,19 @@ export function CompanyAccountOwnerPicker({
     searchOnFields: ['firstName', 'lastName'],
   });
 
-  async function handleEntitySelected(selectedUser: UserForSelect) {
-    await updateCompany({
-      variables: {
-        where: { id: company.id },
-        data: {
-          accountOwner: { connect: { id: selectedUser.id } },
+  async function handleEntitySelected(
+    selectedUser: UserForSelect | null | undefined,
+  ) {
+    if (selectedUser) {
+      await updateCompany({
+        variables: {
+          where: { id: company.id },
+          data: {
+            accountOwner: { connect: { id: selectedUser.id } },
+          },
         },
-      },
-    });
+      });
+    }
 
     onSubmit?.();
   }

@@ -12,11 +12,13 @@ import { IAbilityHandler } from 'src/ability/interfaces/ability-handler.interfac
 import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
-import { assert } from 'src/utils/assert';
 import { UserWhereInput } from 'src/core/@generated/user/user-where.input';
+import { relationAbilityChecker } from 'src/ability/ability.util';
+import { assert } from 'src/utils/assert';
 
 class UserArgs {
   where?: UserWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -35,7 +37,23 @@ export class ReadUserAbilityHandler implements IAbilityHandler {
 
 @Injectable()
 export class CreateUserAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'User',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'User');
   }
 }
@@ -47,10 +65,22 @@ export class UpdateUserAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<UserArgs>();
-    const user = await this.prismaService.user.findFirst({
+    // TODO: Confirm if this is correct
+    const user = await this.prismaService.client.user.findFirst({
       where: args.where,
     });
     assert(user, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'User',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
 
     return ability.can(AbilityAction.Update, subject('User', user));
   }
@@ -63,8 +93,14 @@ export class DeleteUserAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<UserArgs>();
-    const user = await this.prismaService.user.findFirst({
-      where: args.where,
+
+    // obtain the auth user from the context
+    const reqUser = gqlContext.getContext().req.user;
+
+    // FIXME: When `args.where` is undefined(which it is in almost all the cases I've tested),
+    // this query will return the first user entry in the DB, which is most likely not the current user
+    const user = await this.prismaService.client.user.findFirst({
+      where: { ...args.where, id: reqUser.user.id },
     });
     assert(user, '', NotFoundException);
 

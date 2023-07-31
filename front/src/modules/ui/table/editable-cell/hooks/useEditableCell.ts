@@ -1,15 +1,11 @@
-import { useRecoilCallback } from 'recoil';
+import { useContext } from 'react';
 
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { useContextScopeId } from '../../../recoil-scope/hooks/useContextScopeId';
-import { getSnapshotScopedState } from '../../../recoil-scope/utils/getSnapshotScopedState';
 import { useCloseCurrentCellInEditMode } from '../../hooks/useClearCellInEditMode';
-import { CellContext } from '../../states/CellContext';
-import { isSomeInputInEditModeState } from '../../states/isSomeInputInEditModeState';
+import { CellHotkeyScopeContext } from '../../states/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-import { customCellHotkeyScopeScopedState } from '../states/customCellHotkeyScopeScopedState';
 
 import { useCurrentCellEditMode } from './useCurrentCellEditMode';
 
@@ -24,46 +20,25 @@ export function useEditableCell() {
 
   const closeCurrentCellInEditMode = useCloseCurrentCellInEditMode();
 
-  const cellContextId = useContextScopeId(CellContext);
+  const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
 
   function closeEditableCell() {
     closeCurrentCellInEditMode();
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
   }
 
-  const openEditableCell = useRecoilCallback(
-    ({ snapshot, set }) =>
-      () => {
-        const isSomeInputInEditMode = snapshot
-          .getLoadable(isSomeInputInEditModeState)
-          .valueOrThrow();
+  function openEditableCell() {
+    setCurrentCellInEditMode();
 
-        const customCellHotkeyScope = getSnapshotScopedState({
-          snapshot,
-          state: customCellHotkeyScopeScopedState,
-          contextScopeId: cellContextId,
-        });
-
-        if (!isSomeInputInEditMode) {
-          set(isSomeInputInEditModeState, true);
-
-          setCurrentCellInEditMode();
-
-          if (customCellHotkeyScope) {
-            setHotkeyScope(
-              customCellHotkeyScope.scope,
-              customCellHotkeyScope.customScopes,
-            );
-          } else {
-            setHotkeyScope(
-              DEFAULT_CELL_SCOPE.scope,
-              DEFAULT_CELL_SCOPE.customScopes,
-            );
-          }
-        }
-      },
-    [setCurrentCellInEditMode, setHotkeyScope, cellContextId],
-  );
+    if (customCellHotkeyScope) {
+      setHotkeyScope(
+        customCellHotkeyScope.scope,
+        customCellHotkeyScope.customScopes,
+      );
+    } else {
+      setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
+    }
+  }
 
   return {
     closeEditableCell,

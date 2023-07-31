@@ -4,13 +4,13 @@ import styled from '@emotion/styled';
 
 import { GET_COMPANIES } from '@/companies/queries';
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
-import { TableActionBarButtonCreateCommentThreadCompany } from '@/companies/table/components/TableActionBarButtonCreateCommentThreadCompany';
+import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/components/TableActionBarButtonCreateActivityCompany';
 import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { TableContext } from '@/ui/table/states/TableContext';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOneCompanyMutation } from '~/generated/graphql';
 
 import { SEARCH_COMPANY_QUERY } from '../../modules/search/queries/search';
@@ -53,7 +53,7 @@ export function Companies() {
             <CompanyTable />
           </StyledTableContainer>
           <EntityTableActionBar>
-            <TableActionBarButtonCreateCommentThreadCompany />
+            <TableActionBarButtonCreateActivityCompany />
             <TableActionBarButtonDeleteCompanies />
           </EntityTableActionBar>
         </RecoilScope>

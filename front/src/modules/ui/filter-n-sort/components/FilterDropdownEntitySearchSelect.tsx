@@ -6,10 +6,10 @@ import { useUpsertFilter } from '@/ui/filter-n-sort/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/filter-n-sort/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/states/filterDropdownSelectedEntityIdScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/selectedOperandInDropdownScopedState';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { EntitiesForMultipleEntitySelect } from '@/ui/relation-picker/components/MultipleEntitySelect';
-import { SingleEntitySelectBase } from '@/ui/relation-picker/components/SingleEntitySelectBase';
-import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
+import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
+import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 export function FilterDropdownEntitySearchSelect({
   entitiesForSelect,
@@ -36,8 +36,14 @@ export function FilterDropdownEntitySearchSelect({
 
   const filterCurrentlyEdited = useFilterCurrentlyEdited(context);
 
-  function handleUserSelected(selectedEntity: EntityForSelect) {
-    if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) {
+  function handleUserSelected(
+    selectedEntity: EntityForSelect | null | undefined,
+  ) {
+    if (
+      !filterDefinitionUsedInDropdown ||
+      !selectedOperandInDropdown ||
+      !selectedEntity
+    ) {
       return;
     }
 

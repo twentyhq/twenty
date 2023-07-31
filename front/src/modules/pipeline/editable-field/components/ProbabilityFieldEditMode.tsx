@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -13,6 +13,9 @@ const StyledContainer = styled.div`
 `;
 
 const StyledProgressBarItemContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: ${({ theme }) => theme.spacing(4)};
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -56,7 +59,7 @@ type OwnProps = {
 };
 
 const PROBABILITY_VALUES = [
-  { label: 'Lost', value: 0 },
+  { label: '0%', value: 0 },
   { label: '25%', value: 25 },
   { label: '50%', value: 50 },
   { label: '75%', value: 75 },

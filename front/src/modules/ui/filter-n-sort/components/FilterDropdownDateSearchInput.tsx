@@ -4,8 +4,8 @@ import styled from '@emotion/styled';
 import { useUpsertFilter } from '@/ui/filter-n-sort/hooks/useUpsertFilter';
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/filter-n-sort/states/filterDefinitionUsedInDropdownScopedState';
 import { selectedOperandInDropdownScopedState } from '@/ui/filter-n-sort/states/selectedOperandInDropdownScopedState';
-import DatePicker from '@/ui/input/components/DatePicker';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import DatePicker from '@/ui/input/date/components/DatePicker';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 export function FilterDropdownDateSearchInput({
   context,

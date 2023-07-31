@@ -1,5 +1,5 @@
-import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
+import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { EditableFieldHotkeyScope } from '../types/EditableFieldHotkeyScope';
 

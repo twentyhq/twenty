@@ -1,6 +1,6 @@
 import { Context } from 'react';
 
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { filtersScopedState } from '../states/filtersScopedState';
 

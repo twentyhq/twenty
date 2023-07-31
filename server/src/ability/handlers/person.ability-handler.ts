@@ -13,10 +13,12 @@ import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
 import { PersonWhereInput } from 'src/core/@generated/person/person-where.input';
+import { relationAbilityChecker } from 'src/ability/ability.util';
 import { assert } from 'src/utils/assert';
 
 class PersonArgs {
   where?: PersonWhereInput;
+  [key: string]: any;
 }
 
 @Injectable()
@@ -35,7 +37,23 @@ export class ReadPersonAbilityHandler implements IAbilityHandler {
 
 @Injectable()
 export class CreatePersonAbilityHandler implements IAbilityHandler {
-  handle(ability: AppAbility) {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'Person',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
     return ability.can(AbilityAction.Create, 'Person');
   }
 }
@@ -47,10 +65,21 @@ export class UpdatePersonAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<PersonArgs>();
-    const person = await this.prismaService.person.findFirst({
+    const person = await this.prismaService.client.person.findFirst({
       where: args.where,
     });
     assert(person, '', NotFoundException);
+
+    const allowed = await relationAbilityChecker(
+      'Person',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
 
     return ability.can(AbilityAction.Update, subject('Person', person));
   }
@@ -63,7 +92,7 @@ export class DeletePersonAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<PersonArgs>();
-    const person = await this.prismaService.person.findFirst({
+    const person = await this.prismaService.client.person.findFirst({
       where: args.where,
     });
     assert(person, '', NotFoundException);

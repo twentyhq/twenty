@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Command } from 'cmdk';
 
-import { useIsMobile } from '@/ui/hooks/useIsMobile';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const StyledDialog = styled(Command.Dialog)`
   background: ${({ theme }) => theme.background.primary};

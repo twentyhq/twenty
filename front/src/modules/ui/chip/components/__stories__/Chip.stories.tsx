@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
+import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { ExhaustiveComponentDecorator } from '~/testing/decorators/ExhaustiveComponentDecorator';
 
 import { Chip, ChipAccent, ChipSize, ChipVariant } from '../Chip';
 
@@ -27,7 +27,7 @@ export const Default: Story = {
 };
 
 export const Catalog: Story = {
-  args: { size: ChipSize.Large, clickable: true, label: 'Hello' },
+  args: { clickable: true, label: 'Hello' },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -38,14 +38,31 @@ export const Catalog: Story = {
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.active'] },
-    variants: [
-      ChipVariant.Highlighted,
-      ChipVariant.Regular,
-      ChipVariant.Transparent,
-    ],
-    sizes: [ChipSize.Small, ChipSize.Large],
-    accents: [ChipAccent.TextPrimary, ChipAccent.TextSecondary],
-    states: ['default', 'hover', 'active', 'disabled'],
+    catalog: {
+      dimensions: [
+        {
+          name: 'states',
+          values: ['default', 'hover', 'active', 'disabled'],
+          props: (state: string) =>
+            state === 'default' ? {} : { className: state },
+        },
+        {
+          name: 'variants',
+          values: Object.values(ChipVariant),
+          props: (variant: ChipVariant) => ({ variant }),
+        },
+        {
+          name: 'sizes',
+          values: Object.values(ChipSize),
+          props: (size: ChipSize) => ({ size }),
+        },
+        {
+          name: 'accents',
+          values: Object.values(ChipAccent),
+          props: (accent: ChipAccent) => ({ accent }),
+        },
+      ],
+    },
   },
-  decorators: [ExhaustiveComponentDecorator],
+  decorators: [CatalogDecorator],
 };

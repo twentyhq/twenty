@@ -115,11 +115,20 @@ git clone git@github.com:twentyhq/twenty.git
 ### 3. Setup env variables
 
 Twenty requires a few environment variables to be set. Locally, we recommend setting them through `.env` files.
+
 ```bash
 cp ./front/.env.example ./front/.env
 cp ./server/.env.example ./server/.env 
 ```
-The default values should work out of the box.
+
+The default values should work out of the box, except for the postgres URL, which requires a small modification.
+
+Open `./server/.env` and change to the following:
+
+```bash
+PG_DATABASE_URL=postgres://postgres:postgrespassword@postgres:5432/default?connection_limit=1
+```
+
 
 ### 4. Build
 
@@ -148,16 +157,14 @@ make server-prisma-reset
 
 ### 6. Start Twenty
 
-Run the project with the following commands:
+Run the project with the following commands from `root folder`:
 
-In `/front`:
-```bash
-make front-start
-```
-
-In `/server`:
 ```bash
 make server-start
+```
+
+```bash
+make front-start
 ```
 
 You should now have:

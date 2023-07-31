@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useIsMobile } from '@/ui/hooks/useIsMobile';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const ShowPageLeftContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};

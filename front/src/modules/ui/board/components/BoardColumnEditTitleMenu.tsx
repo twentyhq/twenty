@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
-import { textInputStyle } from '@/ui/themes/effects';
+import { textInputStyle } from '@/ui/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
 
 export const StyledEditTitleContainer = styled.div`
@@ -77,6 +77,7 @@ export function BoardColumnEditTitleMenu({
         <StyledEditModeInput
           value={internalValue}
           onChange={handleChange}
+          autoComplete="off"
           autoFocus
         />
       </StyledEditTitleContainer>

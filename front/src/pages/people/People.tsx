@@ -4,13 +4,13 @@ import styled from '@emotion/styled';
 
 import { GET_PEOPLE } from '@/people/queries';
 import { PeopleTable } from '@/people/table/components/PeopleTable';
-import { TableActionBarButtonCreateCommentThreadPeople } from '@/people/table/components/TableActionBarButtonCreateCommentThreadPeople';
+import { TableActionBarButtonCreateActivityPeople } from '@/people/table/components/TableActionBarButtonCreateActivityPeople';
 import { TableActionBarButtonDeletePeople } from '@/people/table/components/TableActionBarButtonDeletePeople';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { TableContext } from '@/ui/table/states/TableContext';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOnePersonMutation } from '~/generated/graphql';
 
 const StyledTableContainer = styled.div`
@@ -46,7 +46,7 @@ export function People() {
           <PeopleTable />
         </StyledTableContainer>
         <EntityTableActionBar>
-          <TableActionBarButtonCreateCommentThreadPeople />
+          <TableActionBarButtonCreateActivityPeople />
           <TableActionBarButtonDeletePeople />
         </EntityTableActionBar>
       </WithTopBarContainer>

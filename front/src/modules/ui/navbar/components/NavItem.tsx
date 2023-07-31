@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { useIsMobile } from '@/ui/hooks/useIsMobile';
-import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isNavbarOpenedState } from '../../layout/states/isNavbarOpenedState';
 

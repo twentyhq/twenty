@@ -1,5 +1,5 @@
-import { useListenClickOutside } from '@/ui/hooks/useListenClickOutside';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
+import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
@@ -14,6 +14,7 @@ export function useRegisterCloseCellHandlers(
 ) {
   const { closeEditableCell } = useEditableCell();
   const { isCurrentCellInEditMode } = useCurrentCellEditMode();
+
   useListenClickOutside({
     refs: [wrapperRef],
     callback: (event) => {
@@ -26,6 +27,7 @@ export function useRegisterCloseCellHandlers(
       }
     },
   });
+
   const { moveRight, moveLeft, moveDown } = useMoveSoftFocus();
 
   useScopedHotkeys(

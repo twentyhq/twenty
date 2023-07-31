@@ -10,7 +10,7 @@ type MockedCompany = Pick<
   | 'address'
   | 'employees'
   | 'linkedinUrl'
-  | '_commentThreadCount'
+  | '_activityCount'
 > & {
   accountOwner: Pick<
     User,
@@ -33,7 +33,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:08:54.724515+00:00',
     address: 'San Francisco, CA',
     employees: 5000,
-    _commentThreadCount: 0,
+    _activityCount: 0,
     accountOwner: {
       email: 'charles@test.com',
       displayName: 'Charles Test',
@@ -53,7 +53,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     address: 'Paris, France',
     employees: 800,
-    _commentThreadCount: 0,
+    _activityCount: 0,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -65,7 +65,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:10:32.530184+00:00',
     address: 'San Francisco, CA',
     employees: 8000,
-    _commentThreadCount: 0,
+    _activityCount: 0,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -77,7 +77,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-03-21T06:30:25.39474+00:00',
     address: 'San Francisco, CA',
     employees: 800,
-    _commentThreadCount: 0,
+    _activityCount: 0,
     accountOwner: null,
     __typename: 'Company',
   },
@@ -89,7 +89,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     createdAt: '2023-04-26T10:13:29.712485+00:00',
     address: 'San Francisco, CA',
     employees: 400,
-    _commentThreadCount: 0,
+    _activityCount: 0,
     accountOwner: null,
     __typename: 'Company',
   },

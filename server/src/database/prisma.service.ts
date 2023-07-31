@@ -2,27 +2,37 @@ import {
   INestApplication,
   Injectable,
   Logger,
+  OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
 
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { createPrismaQueryEventHandler } from 'prisma-query-log';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
-// TODO: Check if this is still needed
-if (!global.prisma) {
-  global.prisma = new PrismaClient();
-}
-export default global.prisma;
+// Prepare Prisma extenstion ability
+const createPrismaClient = (options: Prisma.PrismaClientOptions) => {
+  const client = new PrismaClient(options);
+
+  return client;
+};
+
+type ExtendedPrismaClient = ReturnType<typeof createPrismaClient>;
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
+export class PrismaService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
+  private prismaClient!: ExtendedPrismaClient;
+
+  public get client(): ExtendedPrismaClient {
+    return this.prismaClient;
+  }
 
   constructor(private readonly environmentService: EnvironmentService) {
     const debugMode = environmentService.isDebugMode();
-    super({
+
+    this.prismaClient = createPrismaClient({
       errorFormat: 'minimal',
       log: debugMode
         ? [
@@ -44,16 +54,20 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
         colorParameter: '\u001B[90m',
       });
 
-      this.$on('query' as any, logHandler);
+      this.prismaClient.$on('query' as any, logHandler);
     }
   }
 
-  async onModuleInit() {
-    await this.$connect();
+  async onModuleInit(): Promise<void> {
+    await this.prismaClient.$connect();
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.prismaClient.$disconnect();
   }
 
   async enableShutdownHooks(app: INestApplication) {
-    this.$on('beforeExit', async () => {
+    this.prismaClient.$on('beforeExit', async () => {
       await app.close();
     });
   }

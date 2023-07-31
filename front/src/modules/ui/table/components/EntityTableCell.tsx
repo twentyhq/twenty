@@ -1,33 +1,15 @@
-import { useEffect } from 'react';
+import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
+import { GenericEditableCell } from '../editable-cell/components/GenericEditableCell';
 import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
-import { CellContext } from '../states/CellContext';
+import { ColumnIndexContext } from '../states/ColumnIndexContext';
 import { contextMenuPositionState } from '../states/contextMenuPositionState';
-import { currentColumnNumberScopedState } from '../states/currentColumnNumberScopedState';
+import { ViewFieldContext } from '../states/ViewFieldContext';
 
-export function EntityTableCell({
-  rowId,
-  cellIndex,
-  children,
-  size,
-}: {
-  size: number;
-  rowId: string;
-  cellIndex: number;
-  children: React.ReactNode;
-}) {
-  const [, setCurrentColumnNumber] = useRecoilScopedState(
-    currentColumnNumberScopedState,
-    CellContext,
-  );
-
-  useEffect(() => {
-    setCurrentColumnNumber(cellIndex);
-  }, [cellIndex, setCurrentColumnNumber]);
-
+export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
@@ -43,16 +25,26 @@ export function EntityTableCell({
     });
   }
 
+  const viewField = useContext(ViewFieldContext);
+
+  if (!viewField) {
+    return null;
+  }
+
   return (
-    <td
-      onContextMenu={(event) => handleContextMenu(event)}
-      style={{
-        width: size,
-        minWidth: size,
-        maxWidth: size,
-      }}
-    >
-      {children}
-    </td>
+    <RecoilScope>
+      <ColumnIndexContext.Provider value={cellIndex}>
+        <td
+          onContextMenu={(event) => handleContextMenu(event)}
+          style={{
+            width: viewField.columnSize,
+            minWidth: viewField.columnSize,
+            maxWidth: viewField.columnSize,
+          }}
+        >
+          <GenericEditableCell viewField={viewField} />
+        </td>
+      </ColumnIndexContext.Provider>
+    </RecoilScope>
   );
 }

@@ -12,9 +12,6 @@ import { UpdateOneCompanyArgs } from 'src/core/@generated/company/update-one-com
 import { CreateOneCompanyArgs } from 'src/core/@generated/company/create-one-company.args';
 import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
 import { DeleteManyCompanyArgs } from 'src/core/@generated/company/delete-many-company.args';
-import { UpdateOneGuard } from 'src/guards/update-one.guard';
-import { DeleteManyGuard } from 'src/guards/delete-many.guard';
-import { CreateOneGuard } from 'src/guards/create-one.guard';
 import {
   PrismaSelect,
   PrismaSelector,
@@ -24,11 +21,12 @@ import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
   CreateCompanyAbilityHandler,
   DeleteCompanyAbilityHandler,
-  ReadCompanyAbilityHandler,
+  ReadOneCompanyAbilityHandler,
   UpdateCompanyAbilityHandler,
 } from 'src/ability/handlers/company.ability-handler';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
+import { FindUniqueCompanyArgs } from 'src/core/@generated/company/find-unique-company.args';
 
 import { CompanyService } from './company.service';
 
@@ -39,7 +37,6 @@ export class CompanyResolver {
 
   @Query(() => [Company])
   @UseGuards(AbilityGuard)
-  @CheckAbilities(ReadCompanyAbilityHandler)
   async findManyCompany(
     @Args() args: FindManyCompanyArgs,
     @UserAbility() ability: AppAbility,
@@ -63,22 +60,20 @@ export class CompanyResolver {
 
   @Query(() => Company)
   @UseGuards(AbilityGuard)
-  @CheckAbilities(ReadCompanyAbilityHandler)
+  @CheckAbilities(ReadOneCompanyAbilityHandler)
   async findUniqueCompany(
-    @Args('id') id: string,
-    @UserAbility() ability: AppAbility,
+    @Args() args: FindUniqueCompanyArgs,
     @PrismaSelector({ modelName: 'Company' })
     prismaSelect: PrismaSelect<'Company'>,
   ): Promise<Partial<Company>> {
-    return this.companyService.findUniqueOrThrow({
-      where: {
-        id: id,
-      },
+    const company = this.companyService.findUniqueOrThrow({
+      where: args.where,
       select: prismaSelect.value,
     });
+
+    return company;
   }
 
-  @UseGuards(UpdateOneGuard)
   @Mutation(() => Company, {
     nullable: true,
   })
@@ -96,7 +91,6 @@ export class CompanyResolver {
     } as Prisma.CompanyUpdateArgs);
   }
 
-  @UseGuards(DeleteManyGuard)
   @Mutation(() => AffectedRows, {
     nullable: false,
   })
@@ -110,7 +104,6 @@ export class CompanyResolver {
     });
   }
 
-  @UseGuards(CreateOneGuard)
   @Mutation(() => Company, {
     nullable: false,
   })

@@ -31,9 +31,9 @@ export function EntityChip({
   const navigate = useNavigate();
 
   function handleLinkClick(event: React.MouseEvent<HTMLDivElement>) {
-    event.preventDefault();
-    event.stopPropagation();
     if (linkToEntity) {
+      event.preventDefault();
+      event.stopPropagation();
       navigate(linkToEntity);
     }
   }
@@ -54,7 +54,7 @@ export function EntityChip({
             avatarUrl={pictureUrl}
             colorId={entityId}
             placeholder={name}
-            size={14}
+            size="sm"
             type={avatarType}
           />
         }

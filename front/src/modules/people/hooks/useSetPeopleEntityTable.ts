@@ -1,7 +1,17 @@
+import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
+import { currentPageLocationState } from '@/ui/utilities/loading-state/states/currentPageLocationState';
+import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 import { GetPeopleQuery } from '~/generated/graphql';
 
+import { peopleFilters } from '../../../pages/people/people-filters';
+import { availableFiltersScopedState } from '../../ui/filter-n-sort/states/availableFiltersScopedState';
+import { useResetTableRowSelection } from '../../ui/table/hooks/useResetTableRowSelection';
+import { entityTableDimensionsState } from '../../ui/table/states/entityTableDimensionsState';
+import { isFetchingEntityTableDataState } from '../../ui/table/states/isFetchingEntityTableDataState';
+import { TableContext } from '../../ui/table/states/TableContext';
+import { tableRowIdsState } from '../../ui/table/states/tableRowIdsState';
 import { peopleCityFamilyState } from '../states/peopleCityFamilyState';
 import { peopleCompanyFamilyState } from '../states/peopleCompanyFamilyState';
 import { peopleCreatedAtFamilyState } from '../states/peopleCreatedAtFamilyState';
@@ -12,6 +22,12 @@ import { peopleNameCellFamilyState } from '../states/peopleNamesFamilyState';
 import { peoplePhoneFamilyState } from '../states/peoplePhoneFamilyState';
 
 export function useSetPeopleEntityTable() {
+  const resetTableRowSelection = useResetTableRowSelection();
+
+  const tableContextScopeId = useContextScopeId(TableContext);
+
+  const currentLocation = useLocation().pathname;
+
   return useRecoilCallback(
     ({ set, snapshot }) =>
       (newPeopleArray: GetPeopleQuery['people']) => {
@@ -84,16 +100,40 @@ export function useSetPeopleEntityTable() {
           if (
             currentNameCell.firstName !== person.firstName ||
             currentNameCell.lastName !== person.lastName ||
-            currentNameCell.commentCount !== person._commentThreadCount
+            currentNameCell.commentCount !== person._activityCount
           ) {
             set(peopleNameCellFamilyState(person.id), {
               firstName: person.firstName ?? null,
               lastName: person.lastName ?? null,
-              commentCount: person._commentThreadCount,
+              commentCount: person._activityCount,
               displayName: person.displayName ?? null,
+              avatarUrl: person.avatarUrl ?? null,
             });
           }
         }
+
+        const peopleIds = newPeopleArray.map((people) => people.id);
+
+        set(tableRowIdsState, (currentRowIds) => {
+          if (JSON.stringify(currentRowIds) !== JSON.stringify(peopleIds)) {
+            return peopleIds;
+          }
+
+          return currentRowIds;
+        });
+
+        resetTableRowSelection();
+
+        set(entityTableDimensionsState, {
+          numberOfColumns: 10,
+          numberOfRows: peopleIds.length,
+        });
+
+        set(availableFiltersScopedState(tableContextScopeId), peopleFilters);
+
+        set(currentPageLocationState, currentLocation);
+
+        set(isFetchingEntityTableDataState, false);
       },
     [],
   );

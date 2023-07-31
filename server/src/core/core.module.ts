@@ -11,6 +11,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { AttachmentModule } from './attachment/attachment.module';
+import { ActivityModule } from './activity/activity.module';
+import { ViewModule } from './view/view.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { AttachmentModule } from './attachment/attachment.module';
     FileModule,
     ClientConfigModule,
     AttachmentModule,
+    ActivityModule,
+    ViewModule,
   ],
   exports: [
     AuthModule,

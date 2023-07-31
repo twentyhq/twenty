@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { Checkbox } from '@/ui/input/components/Checkbox';
+import { Checkbox } from '@/ui/input/checkbox/components/Checkbox';
 
 import { DropdownMenuItem } from './DropdownMenuItem';
 

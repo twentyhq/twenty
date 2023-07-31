@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
 import { IconPencil } from '@/ui/icon';
-import { overlayBackground } from '@/ui/themes/effects';
+import { overlayBackground } from '@/ui/theme/constants/effects';
 
 import { useEditableField } from '../hooks/useEditableField';
 
@@ -26,11 +25,7 @@ export const StyledEditableFieldEditButton = styled.div`
   ${overlayBackground}
 `;
 
-type OwnProps = {
-  customHotkeyScope?: HotkeyScope;
-};
-
-export function EditableFieldEditButton({ customHotkeyScope }: OwnProps) {
+export function EditableFieldEditButton() {
   const { openEditableField } = useEditableField();
 
   function handleClick() {

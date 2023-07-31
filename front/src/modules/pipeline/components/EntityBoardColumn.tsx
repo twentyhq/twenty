@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
-import { Droppable, DroppableProvided } from '@hello-pangea/dnd';
+import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
 import { GET_PIPELINES } from '../queries';
@@ -27,6 +27,12 @@ const StyledNewCardButtonContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledColumnCardsContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+`;
+
 const BoardColumnCardsContainer = ({
   children,
   droppableProvided,
@@ -35,13 +41,13 @@ const BoardColumnCardsContainer = ({
   droppableProvided: DroppableProvided;
 }) => {
   return (
-    <div
+    <StyledColumnCardsContainer
       ref={droppableProvided?.innerRef}
       {...droppableProvided?.droppableProps}
     >
       {children}
       <StyledPlaceholder>{droppableProvided?.placeholder}</StyledPlaceholder>
-    </div>
+    </StyledColumnCardsContainer>
   );
 };
 
@@ -113,10 +119,26 @@ export function EntityBoardColumn({
                 />
               </RecoilScope>
             ))}
+            <Draggable
+              draggableId={`new-${column.pipelineStageId}`}
+              index={column.pipelineProgressIds.length}
+            >
+              {(draggableProvided) => (
+                <div
+                  ref={draggableProvided?.innerRef}
+                  {...{
+                    ...draggableProvided.dragHandleProps,
+                    draggable: false,
+                  }}
+                  {...draggableProvided?.draggableProps}
+                >
+                  <StyledNewCardButtonContainer>
+                    <RecoilScope>{boardOptions.newCardComponent}</RecoilScope>
+                  </StyledNewCardButtonContainer>
+                </div>
+              )}
+            </Draggable>
           </BoardColumnCardsContainer>
-          <StyledNewCardButtonContainer>
-            <RecoilScope>{boardOptions.newCardComponent}</RecoilScope>
-          </StyledNewCardButtonContainer>
         </BoardColumn>
       )}
     </Droppable>

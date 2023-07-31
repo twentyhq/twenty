@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
 } from '@/ui/icon';
 import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { navbarIconSize } from '../constants';
 

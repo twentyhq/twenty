@@ -30,8 +30,9 @@ export const GET_PEOPLE = gql`
       displayName
       jobTitle
       linkedinUrl
+      avatarUrl
       createdAt
-      _commentThreadCount
+      _activityCount
       company {
         id
         name
@@ -69,6 +70,7 @@ export function useFilteredSearchPeopleQuery({
         id: entity.id,
         entityType: CommentableType.Person,
         name: `${entity.firstName} ${entity.lastName}`,
+        avatarUrl: entity.avatarUrl,
         avatarType: 'rounded',
       } as CommentableEntityForSelect),
     searchFilter,
@@ -107,7 +109,7 @@ export const GET_PERSON_NAMES_AND_COMMENT_COUNT = gql`
       firstName
       lastName
       displayName
-      _commentThreadCount
+      _activityCount
     }
   }
 `;
@@ -129,7 +131,7 @@ export const GET_PERSON_COMMENT_COUNT = gql`
   query GetPersonCommentCountById($id: String!) {
     person: findUniquePerson(id: $id) {
       id
-      _commentThreadCount
+      _activityCount
     }
   }
 `;

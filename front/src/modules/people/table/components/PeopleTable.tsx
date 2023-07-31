@@ -1,18 +1,21 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { defaultOrderBy } from '@/companies/queries';
-import { PeopleEntityTableData } from '@/people/components/PeopleEntityTableData';
+import { peopleViewFields } from '@/people/constants/peopleViewFields';
 import { PeopleSelectedSortType } from '@/people/queries';
-import { peopleColumns } from '@/people/table/components/peopleColumns';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { IconList } from '@/ui/icon';
-import { useRecoilScopedValue } from '@/ui/recoil-scope/hooks/useRecoilScopedValue';
 import { EntityTable } from '@/ui/table/components/EntityTable';
-import { HooksEntityTable } from '@/ui/table/components/HooksEntityTable';
+import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { TableContext } from '@/ui/table/states/TableContext';
-import { PersonOrderByWithRelationInput } from '~/generated/graphql';
+import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import {
+  PersonOrderByWithRelationInput,
+  useGetPeopleQuery,
+  useUpdateOnePersonMutation,
+} from '~/generated/graphql';
 import { peopleFilters } from '~/pages/people/people-filters';
 import { availableSorts } from '~/pages/people/people-sorts';
 
@@ -32,17 +35,20 @@ export function PeopleTable() {
 
   return (
     <>
-      <PeopleEntityTableData orderBy={orderBy} whereFilters={whereFilters} />
-      <HooksEntityTable
-        numberOfColumns={peopleColumns.length}
-        availableFilters={peopleFilters}
+      <GenericEntityTableData
+        getRequestResultKey="people"
+        useGetRequest={useGetPeopleQuery}
+        orderBy={orderBy}
+        whereFilters={whereFilters}
+        viewFields={peopleViewFields}
+        filterDefinitionArray={peopleFilters}
       />
       <EntityTable
-        columns={peopleColumns}
         viewName="All People"
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
         onSortsUpdate={updateSorts}
+        useUpdateEntityMutation={useUpdateOnePersonMutation}
       />
     </>
   );
