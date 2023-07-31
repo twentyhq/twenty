@@ -170,6 +170,11 @@ export class AuthService {
     userId: string,
     select: Prisma.UserSelect & {
       id: true;
+      workspaceMember: {
+        select: {
+          allowImpersonation: true;
+        };
+      };
     },
   ) {
     const user = await this.userService.findUnique({
@@ -181,7 +186,7 @@ export class AuthService {
 
     assert(user, "This user doesn't exist", NotFoundException);
     assert(
-      user.allowImpersonation,
+      user.workspaceMember?.allowImpersonation,
       'Impersonation not allowed',
       ForbiddenException,
     );

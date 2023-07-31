@@ -10,9 +10,10 @@ export const GET_CURRENT_USER = gql`
       firstName
       lastName
       avatarUrl
-      allowImpersonation
+      canImpersonate
       workspaceMember {
         id
+        allowImpersonation
         workspace {
           id
           domainName
