@@ -1,16 +1,14 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { CompanyChip } from '@/companies/components/CompanyChip';
-import { PersonChip } from '@/people/components/PersonChip';
 import { IconCalendar, IconComment } from '@/ui/icon';
 import {
   Checkbox,
   CheckboxShape,
 } from '@/ui/input/checkbox/components/Checkbox';
 import { useGetCompaniesQuery, useGetPeopleQuery } from '~/generated/graphql';
-import { getLogoUrlFromDomainName } from '~/utils';
 import { beautifyExactDate } from '~/utils/date-utils';
 
 import { TaskForList } from '../types/TaskForList';
@@ -99,26 +97,10 @@ export function TaskRow({ task }: { task: TaskForList }) {
         </StyledCommentIcon>
       )}
       <StyledSeparator />
-      <StyledChipsContainer>
-        {targetCompanies?.companies &&
-          targetCompanies.companies.map((company) => (
-            <CompanyChip
-              key={company.id}
-              id={company.id}
-              name={company.name}
-              pictureUrl={getLogoUrlFromDomainName(company.domainName)}
-            />
-          ))}
-        {targetPeople?.people &&
-          targetPeople.people.map((person) => (
-            <PersonChip
-              key={person.id}
-              id={person.id}
-              name={person.displayName}
-              pictureUrl={person.avatarUrl ?? ''}
-            />
-          ))}
-      </StyledChipsContainer>
+      <ActivityTargetChips
+        targetCompanies={targetCompanies}
+        targetPeople={targetPeople}
+      />
       <StyledDueDate>
         <IconCalendar size={theme.icon.size.md} />
         {task.dueAt && beautifyExactDate(task.dueAt)}
