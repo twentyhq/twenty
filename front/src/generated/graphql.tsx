@@ -960,6 +960,7 @@ export type LoginToken = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
   createEvent: Analytics;
   createFavorites: Array<Favorite>;
@@ -975,6 +976,7 @@ export type Mutation = {
   deleteManyPipelineProgress: AffectedRows;
   deleteUserAccount: User;
   deleteWorkspaceMember: WorkspaceMember;
+  impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
   updateOneActivity: Activity;
@@ -991,6 +993,11 @@ export type Mutation = {
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   verify: Verify;
+};
+
+
+export type MutationAllowImpersonationArgs = {
+  allowImpersonation: Scalars['Boolean'];
 };
 
 
@@ -1063,6 +1070,11 @@ export type MutationDeleteManyPipelineProgressArgs = {
 
 export type MutationDeleteWorkspaceMemberArgs = {
   where: WorkspaceMemberWhereUniqueInput;
+};
+
+
+export type MutationImpersonateArgs = {
+  userId: Scalars['String'];
 };
 
 
@@ -1938,6 +1950,7 @@ export type User = {
   authoredActivities?: Maybe<Array<Activity>>;
   authoredAttachments?: Maybe<Array<Attachment>>;
   avatarUrl?: Maybe<Scalars['String']>;
+  canImpersonate: Scalars['Boolean'];
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
@@ -1986,6 +1999,7 @@ export type UserOrderByWithRelationInput = {
   authoredActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
   authoredAttachments?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
   avatarUrl?: InputMaybe<SortOrder>;
+  canImpersonate?: InputMaybe<SortOrder>;
   comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
   companies?: InputMaybe<CompanyOrderByRelationAggregateInput>;
   createdAt?: InputMaybe<SortOrder>;
@@ -2011,6 +2025,7 @@ export type UserRelationFilter = {
 
 export enum UserScalarFieldEnum {
   AvatarUrl = 'avatarUrl',
+  CanImpersonate = 'canImpersonate',
   CreatedAt = 'createdAt',
   DeletedAt = 'deletedAt',
   Disabled = 'disabled',
@@ -2083,6 +2098,7 @@ export type UserUpdateInput = {
   authoredActivities?: InputMaybe<ActivityUpdateManyWithoutAuthorNestedInput>;
   authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutAuthorNestedInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
+  canImpersonate?: InputMaybe<Scalars['Boolean']>;
   comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -2123,6 +2139,7 @@ export type UserWhereInput = {
   authoredActivities?: InputMaybe<ActivityListRelationFilter>;
   authoredAttachments?: InputMaybe<AttachmentListRelationFilter>;
   avatarUrl?: InputMaybe<StringNullableFilter>;
+  canImpersonate?: InputMaybe<BoolFilter>;
   comments?: InputMaybe<CommentListRelationFilter>;
   companies?: InputMaybe<CompanyListRelationFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
@@ -2242,6 +2259,7 @@ export type WorkspaceInviteHashValid = {
 
 export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
+  allowImpersonation: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
@@ -2251,6 +2269,7 @@ export type WorkspaceMember = {
 };
 
 export type WorkspaceMemberOrderByWithRelationInput = {
+  allowImpersonation?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
@@ -2259,6 +2278,7 @@ export type WorkspaceMemberOrderByWithRelationInput = {
 };
 
 export enum WorkspaceMemberScalarFieldEnum {
+  AllowImpersonation = 'allowImpersonation',
   CreatedAt = 'createdAt',
   DeletedAt = 'deletedAt',
   Id = 'id',
@@ -2277,6 +2297,7 @@ export type WorkspaceMemberWhereInput = {
   AND?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
   NOT?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
   OR?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
+  allowImpersonation?: InputMaybe<BoolFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
@@ -2425,7 +2446,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -2433,6 +2454,13 @@ export type RenewTokenMutationVariables = Exact<{
 
 
 export type RenewTokenMutation = { __typename?: 'Mutation', renewToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', expiresAt: string, token: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+
+export type ImpersonateMutationVariables = Exact<{
+  userId: Scalars['String'];
+}>;
+
+
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2679,7 +2707,7 @@ export type SearchActivityQuery = { __typename?: 'Query', searchResults: Array<{
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, canImpersonate: boolean, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2693,6 +2721,13 @@ export type UpdateUserMutationVariables = Exact<{
 
 
 export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
+
+export type UpdateAllowImpersonationMutationVariables = Exact<{
+  allowImpersonation: Scalars['Boolean'];
+}>;
+
+
+export type UpdateAllowImpersonationMutation = { __typename?: 'Mutation', allowImpersonation: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean } };
 
 export type UploadProfilePictureMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -3381,8 +3416,10 @@ export const VerifyDocument = gql`
       displayName
       firstName
       lastName
+      canImpersonate
       workspaceMember {
         id
+        allowImpersonation
         workspace {
           id
           domainName
@@ -3478,6 +3515,72 @@ export function useRenewTokenMutation(baseOptions?: Apollo.MutationHookOptions<R
 export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutation>;
 export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
 export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
+export const ImpersonateDocument = gql`
+    mutation Impersonate($userId: String!) {
+  impersonate(userId: $userId) {
+    user {
+      id
+      email
+      displayName
+      firstName
+      lastName
+      canImpersonate
+      workspaceMember {
+        id
+        allowImpersonation
+        workspace {
+          id
+          domainName
+          displayName
+          logo
+          inviteHash
+        }
+      }
+      settings {
+        id
+        colorScheme
+        locale
+      }
+    }
+    tokens {
+      accessToken {
+        token
+        expiresAt
+      }
+      refreshToken {
+        token
+        expiresAt
+      }
+    }
+  }
+}
+    `;
+export type ImpersonateMutationFn = Apollo.MutationFunction<ImpersonateMutation, ImpersonateMutationVariables>;
+
+/**
+ * __useImpersonateMutation__
+ *
+ * To run a mutation, you first call `useImpersonateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useImpersonateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [impersonateMutation, { data, loading, error }] = useImpersonateMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useImpersonateMutation(baseOptions?: Apollo.MutationHookOptions<ImpersonateMutation, ImpersonateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ImpersonateMutation, ImpersonateMutationVariables>(ImpersonateDocument, options);
+      }
+export type ImpersonateMutationHookResult = ReturnType<typeof useImpersonateMutation>;
+export type ImpersonateMutationResult = Apollo.MutationResult<ImpersonateMutation>;
+export type ImpersonateMutationOptions = Apollo.BaseMutationOptions<ImpersonateMutation, ImpersonateMutationVariables>;
 export const GetClientConfigDocument = gql`
     query GetClientConfig {
   clientConfig {
@@ -4815,8 +4918,10 @@ export const GetCurrentUserDocument = gql`
     firstName
     lastName
     avatarUrl
+    canImpersonate
     workspaceMember {
       id
+      allowImpersonation
       workspace {
         id
         domainName
@@ -4952,6 +5057,40 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
+export const UpdateAllowImpersonationDocument = gql`
+    mutation UpdateAllowImpersonation($allowImpersonation: Boolean!) {
+  allowImpersonation(allowImpersonation: $allowImpersonation) {
+    id
+    allowImpersonation
+  }
+}
+    `;
+export type UpdateAllowImpersonationMutationFn = Apollo.MutationFunction<UpdateAllowImpersonationMutation, UpdateAllowImpersonationMutationVariables>;
+
+/**
+ * __useUpdateAllowImpersonationMutation__
+ *
+ * To run a mutation, you first call `useUpdateAllowImpersonationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAllowImpersonationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAllowImpersonationMutation, { data, loading, error }] = useUpdateAllowImpersonationMutation({
+ *   variables: {
+ *      allowImpersonation: // value for 'allowImpersonation'
+ *   },
+ * });
+ */
+export function useUpdateAllowImpersonationMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAllowImpersonationMutation, UpdateAllowImpersonationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateAllowImpersonationMutation, UpdateAllowImpersonationMutationVariables>(UpdateAllowImpersonationDocument, options);
+      }
+export type UpdateAllowImpersonationMutationHookResult = ReturnType<typeof useUpdateAllowImpersonationMutation>;
+export type UpdateAllowImpersonationMutationResult = Apollo.MutationResult<UpdateAllowImpersonationMutation>;
+export type UpdateAllowImpersonationMutationOptions = Apollo.BaseMutationOptions<UpdateAllowImpersonationMutation, UpdateAllowImpersonationMutationVariables>;
 export const UploadProfilePictureDocument = gql`
     mutation UploadProfilePicture($file: Upload!) {
   uploadProfilePicture(file: $file)
