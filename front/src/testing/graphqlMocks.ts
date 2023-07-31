@@ -175,7 +175,7 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         clientConfig: {
-          demoMode: true,
+          signInPrefilled: true,
           debugMode: false,
           authProviders: { google: true, password: true, magicLink: false },
           telemetry: { enabled: false, anonymizationEnabled: true },

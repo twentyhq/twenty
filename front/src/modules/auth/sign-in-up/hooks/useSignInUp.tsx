@@ -6,7 +6,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import * as Yup from 'yup';
 
 import { authProvidersState } from '@/client-config/states/authProvidersState';
-import { isDemoModeState } from '@/client-config/states/isDemoModeState';
+import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
@@ -45,7 +45,7 @@ export function useSignInUp() {
   const { enqueueSnackBar } = useSnackBar();
   const isMatchingLocation = useIsMatchingLocation();
   const [authProviders] = useRecoilState(authProvidersState);
-  const isDemoMode = useRecoilValue(isDemoModeState);
+  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
     SignInUpStep.Init,
@@ -61,8 +61,8 @@ export function useSignInUp() {
     mode: 'onChange',
     defaultValues: {
       exist: false,
-      email: isDemoMode ? 'tim@apple.dev' : '',
-      password: isDemoMode ? 'Applecar2025' : '',
+      email: isSignInPrefilled ? 'tim@apple.dev' : '',
+      password: isSignInPrefilled ? 'Applecar2025' : '',
     },
     resolver: yupResolver(validationSchema),
   });

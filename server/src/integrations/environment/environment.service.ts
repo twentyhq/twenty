@@ -13,8 +13,8 @@ export class EnvironmentService {
     return this.configService.get<boolean>('DEBUG_MODE') ?? false;
   }
 
-  isDemoMode(): boolean {
-    return this.configService.get<boolean>('DEMO_MODE') ?? false;
+  isSignInPrefilled(): boolean {
+    return this.configService.get<boolean>('IS_SIGN_IN_PREFILLED') ?? false;
   }
 
   isTelemetryEnabled(): boolean {

@@ -21,7 +21,7 @@ export class ClientConfigResolver {
         anonymizationEnabled:
           this.environmentService.isTelemetryAnonymizationEnabled(),
       },
-      demoMode: this.environmentService.isDemoMode(),
+      signInPrefilled: this.environmentService.isSignInPrefilled(),
       debugMode: this.environmentService.isDebugMode(),
     };
 

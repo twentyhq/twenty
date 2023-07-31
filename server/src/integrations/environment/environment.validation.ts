@@ -27,7 +27,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  DEMO_MODE?: boolean;
+  IS_SIGN_IN_PREFILLED?: boolean;
 
   @CastToBoolean()
   @IsOptional()
