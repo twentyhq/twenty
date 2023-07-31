@@ -16,6 +16,7 @@ export const mockedUsersData: Array<MockedUser> = [
     firstName: 'Charles',
     lastName: 'Test',
     avatarUrl: null,
+    allowImpersonation: true,
     workspaceMember: {
       __typename: 'WorkspaceMember',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
@@ -42,6 +43,7 @@ export const mockedUsersData: Array<MockedUser> = [
     displayName: 'Felix Test',
     firstName: 'Felix',
     lastName: 'Test',
+    allowImpersonation: true,
     workspaceMember: {
       __typename: 'WorkspaceMember',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
@@ -72,6 +74,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     firstName: '',
     lastName: '',
     avatarUrl: null,
+    allowImpersonation: true,
     workspaceMember: {
       __typename: 'WorkspaceMember',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
@@ -99,6 +102,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     firstName: '',
     lastName: '',
     avatarUrl: null,
+    allowImpersonation: true,
     workspaceMember: {
       __typename: 'WorkspaceMember',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',

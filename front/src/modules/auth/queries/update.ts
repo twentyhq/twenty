@@ -39,6 +39,7 @@ export const VERIFY = gql`
         displayName
         firstName
         lastName
+        allowImpersonation
         workspaceMember {
           id
           workspace {

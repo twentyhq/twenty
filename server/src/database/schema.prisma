@@ -65,39 +65,45 @@ generator nestgraphql {
 model User {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  id            String    @id @default(uuid())
+  id                 String    @id @default(uuid())
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  firstName     String?
+  firstName          String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  lastName      String?
+  lastName           String?
   /// @Validator.IsEmail()
   /// @Validator.IsOptional()
-  email         String    @unique
+  email              String    @unique
   /// @Validator.IsBoolean()
   /// @Validator.IsOptional()
-  emailVerified Boolean   @default(false)
+  emailVerified      Boolean   @default(false)
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  avatarUrl     String?
+  avatarUrl          String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  locale        String
+  locale             String
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  phoneNumber   String?
+  phoneNumber        String?
   /// @Validator.IsDate()
   /// @Validator.IsOptional()
-  lastSeen      DateTime?
+  lastSeen           DateTime?
   /// @Validator.IsBoolean()
   /// @Validator.IsOptional()
-  disabled      Boolean   @default(false)
+  disabled           Boolean   @default(false)
   /// @TypeGraphQL.omit(input: true, output: true)
-  passwordHash  String?
+  passwordHash       String?
   /// @Validator.IsJSON()
   /// @Validator.IsOptional()
-  metadata      Json?
+  metadata           Json?
+  /// @Validator.IsBoolean()
+  /// @Validator.IsOptional()
+  canImpersonate     Boolean   @default(false)
+  /// @Validator.IsBoolean()
+  /// @Validator.IsOptional()
+  allowImpersonation Boolean   @default(true)
 
   /// @TypeGraphQL.omit(input: true)
   workspaceMember WorkspaceMember?

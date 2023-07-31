@@ -1,5 +1,9 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Prisma } from '@prisma/client';
 
@@ -7,6 +11,10 @@ import {
   PrismaSelect,
   PrismaSelector,
 } from 'src/decorators/prisma-select.decorator';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { AuthUser } from 'src/decorators/auth-user.decorator';
+import { assert } from 'src/utils/assert';
+import { User } from 'src/core/@generated/user/user.model';
 
 import { AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
@@ -21,6 +29,7 @@ import { CheckUserExistsInput } from './dto/user-exists.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { SignUpInput } from './dto/sign-up.input';
+import { ImpersonateInput } from './dto/impersonate.input';
 
 @Resolver()
 export class AuthResolver {
@@ -95,5 +104,27 @@ export class AuthResolver {
     );
 
     return { tokens: tokens };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Verify)
+  async impersonate(
+    @Args() impersonateInput: ImpersonateInput,
+    @AuthUser() user: User,
+    @PrismaSelector({
+      modelName: 'User',
+      defaultFields: {
+        User: { id: true, allowImpersonation: true },
+      },
+    })
+    prismaSelect: PrismaSelect<'User'>,
+  ): Promise<Verify> {
+    // Check if user can impersonate
+    assert(user.canImpersonate, 'User cannot impersonate', ForbiddenException);
+    const select = prismaSelect.valueOf('user') as Prisma.UserSelect & {
+      id: true;
+    };
+
+    return this.authService.impersonate(impersonateInput.userId, select);
   }
 }
