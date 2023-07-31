@@ -7,5 +7,5 @@ import { AuthTokens } from './token.entity';
 @ObjectType()
 export class Verify extends AuthTokens {
   @Field(() => User)
-  user: Partial<User>;
+  user: DeepPartial<User>;
 }

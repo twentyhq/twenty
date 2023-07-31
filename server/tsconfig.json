@@ -21,6 +21,7 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "typeRoots": ["@types", "node_modules/@types"]
   }
 }

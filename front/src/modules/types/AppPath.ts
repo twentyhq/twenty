@@ -17,4 +17,7 @@ export enum AppPath {
   PersonShowPage = '/person/:personId',
   OpportunitiesPage = '/opportunities',
   SettingsCatchAll = `/settings/*`,
+
+  // Impersonate
+  Impersonate = '/impersonate/:userId',
 }

@@ -5,7 +5,7 @@ module.exports = {
     tsconfigRootDir : __dirname, 
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin', 'import'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'import', 'unused-imports'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
@@ -74,5 +74,6 @@ module.exports = {
         pathGroupsExcludedImportTypes: ['@nestjs/**'],
       },
     ],
+    'unused-imports/no-unused-imports': 'warn',
   },
 };

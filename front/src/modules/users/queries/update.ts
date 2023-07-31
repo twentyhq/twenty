@@ -28,6 +28,15 @@ export const UPDATE_USER = gql`
   }
 `;
 
+export const UPDATE_ALLOW_IMPERONATION = gql`
+  mutation UpdateAllowImpersonation($allowImpersonation: Boolean!) {
+    allowImpersonation(allowImpersonation: $allowImpersonation) {
+      id
+      allowImpersonation
+    }
+  }
+`;
+
 export const UPDATE_PROFILE_PICTURE = gql`
   mutation UploadProfilePicture($file: Upload!) {
     uploadProfilePicture(file: $file)
