@@ -2238,6 +2238,14 @@ export type GetActivitiesByTargetsQueryVariables = Exact<{
 
 export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
 
+export type GetActivitiesByTypeQueryVariables = Exact<{
+  type: ActivityType;
+  orderBy?: InputMaybe<Array<ActivityOrderByWithRelationInput> | ActivityOrderByWithRelationInput>;
+}>;
+
+
+export type GetActivitiesByTypeQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string }> | null }> };
+
 export type GetActivityQueryVariables = Exact<{
   activityId: Scalars['String'];
 }>;
@@ -2835,6 +2843,64 @@ export function useGetActivitiesByTargetsLazyQuery(baseOptions?: Apollo.LazyQuer
 export type GetActivitiesByTargetsQueryHookResult = ReturnType<typeof useGetActivitiesByTargetsQuery>;
 export type GetActivitiesByTargetsLazyQueryHookResult = ReturnType<typeof useGetActivitiesByTargetsLazyQuery>;
 export type GetActivitiesByTargetsQueryResult = Apollo.QueryResult<GetActivitiesByTargetsQuery, GetActivitiesByTargetsQueryVariables>;
+export const GetActivitiesByTypeDocument = gql`
+    query GetActivitiesByType($type: ActivityType!, $orderBy: [ActivityOrderByWithRelationInput!]) {
+  findManyActivities(orderBy: $orderBy, where: {type: {equals: $type}}) {
+    id
+    createdAt
+    title
+    body
+    type
+    completedAt
+    dueAt
+    assignee {
+      id
+      firstName
+      lastName
+      displayName
+      avatarUrl
+    }
+    author {
+      id
+      firstName
+      lastName
+      displayName
+    }
+    comments {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetActivitiesByTypeQuery__
+ *
+ * To run a query within a React component, call `useGetActivitiesByTypeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetActivitiesByTypeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetActivitiesByTypeQuery({
+ *   variables: {
+ *      type: // value for 'type'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useGetActivitiesByTypeQuery(baseOptions: Apollo.QueryHookOptions<GetActivitiesByTypeQuery, GetActivitiesByTypeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetActivitiesByTypeQuery, GetActivitiesByTypeQueryVariables>(GetActivitiesByTypeDocument, options);
+      }
+export function useGetActivitiesByTypeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetActivitiesByTypeQuery, GetActivitiesByTypeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetActivitiesByTypeQuery, GetActivitiesByTypeQueryVariables>(GetActivitiesByTypeDocument, options);
+        }
+export type GetActivitiesByTypeQueryHookResult = ReturnType<typeof useGetActivitiesByTypeQuery>;
+export type GetActivitiesByTypeLazyQueryHookResult = ReturnType<typeof useGetActivitiesByTypeLazyQuery>;
+export type GetActivitiesByTypeQueryResult = Apollo.QueryResult<GetActivitiesByTypeQuery, GetActivitiesByTypeQueryVariables>;
 export const GetActivityDocument = gql`
     query GetActivity($activityId: String!) {
   findManyActivities(where: {id: {equals: $activityId}}) {

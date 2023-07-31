@@ -29,6 +29,17 @@ export function parseDate(dateToParse: Date | string | number) {
   return formattedDate.setLocale(DEFAULT_DATE_LOCALE);
 }
 
+export function getWeekYear(dateToParse: Date | string | number) {
+  const yearNumber = parseDate(dateToParse).year;
+  const parsedDate = parseDate(dateToParse).toJSDate();
+  const yearStartDate = new Date(parsedDate.getFullYear(), 0, 1);
+  const days = Math.floor(
+    (parsedDate.getDate() - yearStartDate.getDate()) / (24 * 60 * 60 * 1000),
+  );
+  const weekNumber = Math.ceil(days / 7);
+  return [weekNumber, yearNumber];
+}
+
 export function beautifyExactDate(dateToBeautify: Date | string | number) {
   try {
     const parsedDate = parseDate(dateToBeautify);
