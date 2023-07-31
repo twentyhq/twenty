@@ -41,11 +41,6 @@ const StyledDueDate = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledChipsContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
 export function TaskRow({ task }: { task: TaskForList }) {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
