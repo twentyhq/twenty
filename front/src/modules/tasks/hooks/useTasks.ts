@@ -25,23 +25,23 @@ export function useTasks() {
     if (!task.dueAt) {
       return false;
     }
-    const parsedDate = parseDate(task.dueAt).toJSDate();
+    const dueDate = parseDate(task.dueAt).toJSDate();
     const today = new Date();
-    return parsedDate.getDate() === today.getDate();
+    return dueDate.getDate() === today.getDate();
   });
 
   const thisWeekTasks = data?.findManyActivities.filter((task) => {
     if (!task.dueAt) {
       return false;
     }
-    const parsedDate = parseDate(task.dueAt).toJSDate();
+    const dueDate = parseDate(task.dueAt).toJSDate();
     const today = new Date();
-    if (parsedDate.getDate() === today.getDate()) {
+    if (dueDate.getDate() === today.getDate()) {
       // Do not show today tasks in this week tasks
       return false;
     }
     const [weekNumber, yearNumber] = getWeekYear(today);
-    const [taskWeekNumber, taskYearNumber] = getWeekYear(task.dueAt);
+    const [taskWeekNumber, taskYearNumber] = getWeekYear(dueDate);
     return weekNumber === taskWeekNumber && yearNumber === taskYearNumber;
   });
 

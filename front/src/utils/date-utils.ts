@@ -30,14 +30,24 @@ export function parseDate(dateToParse: Date | string | number) {
 }
 
 export function getWeekYear(dateToParse: Date | string | number) {
-  const yearNumber = parseDate(dateToParse).year;
-  const parsedDate = parseDate(dateToParse).toJSDate();
-  const yearStartDate = new Date(parsedDate.getFullYear(), 0, 1);
-  const days = Math.floor(
-    (parsedDate.getDate() - yearStartDate.getDate()) / (24 * 60 * 60 * 1000),
+  const date =
+    typeof dateToParse === 'number'
+      ? new Date(dateToParse)
+      : new Date(dateToParse);
+  const weekNumber = getISOWeekNumber(date);
+  const year = date.getFullYear();
+  return [weekNumber, year];
+}
+
+// Helper function to get the ISO week number of a given date
+function getISOWeekNumber(date: Date): number {
+  const startOfWeek = new Date(date);
+  startOfWeek.setDate(date.getDate() + 4 - (date.getDay() || 7)); // Set to the Thursday of the current week
+  const yearStart = new Date(startOfWeek.getFullYear(), 0, 1);
+  const diffInDays = Math.floor(
+    (startOfWeek.getTime() - yearStart.getTime()) / (24 * 60 * 60 * 1000),
   );
-  const weekNumber = Math.ceil(days / 7);
-  return [weekNumber, yearNumber];
+  return Math.ceil((diffInDays + 1) / 7);
 }
 
 export function beautifyExactDate(dateToBeautify: Date | string | number) {
