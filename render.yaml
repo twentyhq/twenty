@@ -23,8 +23,6 @@ services:
     generateValue: true
   - key: REFRESH_TOKEN_SECRET
     generateValue: true
-  - key: IS_CORS_ENABLED
-    value: false
   - key: PG_DATABASE_URL
     fromDatabase:
       name: twenty-db
