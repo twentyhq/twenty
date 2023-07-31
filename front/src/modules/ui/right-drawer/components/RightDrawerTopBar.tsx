@@ -22,6 +22,7 @@ const StyledRightDrawerTopBar = styled.div`
   justify-content: space-between;
   margin-right: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(2)};
+
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 

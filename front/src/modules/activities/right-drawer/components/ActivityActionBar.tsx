@@ -12,8 +12,8 @@ import { isRightDrawerOpenState } from '@/ui/right-drawer/states/isRightDrawerOp
 import { useDeleteActivityMutation } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.grayScale.gray20};
-  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
 type OwnProps = {
