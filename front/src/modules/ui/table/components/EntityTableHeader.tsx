@@ -1,4 +1,4 @@
-import { DragEvent, useCallback, useRef, useState } from 'react';
+import { PointerEvent, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { ViewFieldDefinition, ViewFieldMetadata } from '../types/ViewField';
@@ -9,23 +9,20 @@ import { SelectAllCheckbox } from './SelectAllCheckbox';
 const COLUMN_MIN_WIDTH = 75;
 
 const StyledColumnHeaderCell = styled.th<{ isResizing?: boolean }>`
-  cursor: col-resize;
   min-width: ${COLUMN_MIN_WIDTH}px;
   position: relative;
   user-select: none;
   ${({ isResizing, theme }) => {
     if (isResizing) {
-      return `
-      &:after {
+      return `&:after {
         background-color: ${theme.color.blue};
         bottom: 0;
         content: '';
         display: block;
         position: absolute;
-        right: -1.5px;
+        right: -1px;
         top: 0;
         width: 2px;
-        cursor: col-resize;
       }`;
     }
   }};
@@ -38,7 +35,7 @@ const StyledResizeHandler = styled.div`
   position: absolute;
   right: -9px;
   top: 0;
-  width: 1px;
+  width: 3px;
   z-index: 1;
 `;
 
@@ -55,43 +52,46 @@ export function EntityTableHeader({ viewFields }: OwnProps) {
     {},
   );
   const [columnWidths, setColumnWidths] = useState(initialColumnWidths);
+  const [isResizing, setIsResizing] = useState(false);
+  const [initialPointerPositionX, setInitialPointerPositionX] = useState<
+    number | null
+  >(null);
 
+  const [resizedFieldId, setResizedFieldId] = useState<string | null>(null);
   const [offset, setOffset] = useState(0);
-  const resizedColumnId = useRef('');
-  const initialHandlerPosition = useRef(-1);
 
   const handleResizeHandlerDragStart = useCallback(
-    (event: DragEvent<HTMLDivElement>, columnId: string) => {
-      resizedColumnId.current = columnId;
-      initialHandlerPosition.current = event.clientX;
+    (event: PointerEvent<HTMLDivElement>, fieldId: string) => {
+      setIsResizing(true);
+      setResizedFieldId(fieldId);
+      setInitialPointerPositionX(event.clientX);
     },
-    [],
+    [setIsResizing, setResizedFieldId, setInitialPointerPositionX],
   );
 
   const handleResizeHandlerDrag = useCallback(
-    (event: DragEvent<HTMLDivElement>) => {
-      // @see https://stackoverflow.com/q/36308460
-      // `event.screenX === 0` allows to detect the last "drag" event
-      // which is emitted on mouse release.
-      // On this last "drag" event, `event.clientX` is reset to an incorrect value
-      // which does not reflect the handler's position, so we ignore it.
-      if (event.screenX === 0) return;
+    (event: PointerEvent<HTMLDivElement>) => {
+      if (!isResizing || initialPointerPositionX === null) return;
 
-      setOffset(event.clientX - initialHandlerPosition.current);
+      setOffset(event.clientX - initialPointerPositionX);
     },
-    [],
+    [isResizing, initialPointerPositionX],
   );
 
   const handleResizeHandlerDragEnd = useCallback(() => {
-    setColumnWidths((previousColumnWidths) => ({
-      ...previousColumnWidths,
-      [resizedColumnId.current]: Math.max(
-        previousColumnWidths[resizedColumnId.current] + offset,
+    setIsResizing(false);
+    if (!resizedFieldId) return;
+
+    const newColumnWidths = {
+      ...columnWidths,
+      [resizedFieldId]: Math.max(
+        columnWidths[resizedFieldId] + offset,
         COLUMN_MIN_WIDTH,
       ),
-    }));
-    resizedColumnId.current = '';
-  }, [offset]);
+    };
+    setColumnWidths(newColumnWidths);
+    setOffset(0);
+  }, [offset, setIsResizing, columnWidths, resizedFieldId]);
 
   return (
     <thead>
@@ -109,11 +109,11 @@ export function EntityTableHeader({ viewFields }: OwnProps) {
         {viewFields.map((viewField) => (
           <StyledColumnHeaderCell
             key={viewField.columnOrder.toString()}
-            isResizing={resizedColumnId.current === viewField.id}
+            isResizing={isResizing && resizedFieldId === viewField.id}
             style={{
               width: Math.max(
                 columnWidths[viewField.id] +
-                  (resizedColumnId.current === viewField.id ? offset : 0),
+                  (resizedFieldId === viewField.id ? offset : 0),
                 COLUMN_MIN_WIDTH,
               ),
             }}
@@ -123,13 +123,14 @@ export function EntityTableHeader({ viewFields }: OwnProps) {
               viewIcon={viewField.columnIcon}
             />
             <StyledResizeHandler
-              draggable
+              className="cursor-col-resize"
               role="separator"
-              onDragStart={(event) =>
+              onPointerDown={(event) =>
                 handleResizeHandlerDragStart(event, viewField.id)
               }
-              onDrag={handleResizeHandlerDrag}
-              onDragEnd={handleResizeHandlerDragEnd}
+              onPointerMove={handleResizeHandlerDrag}
+              onPointerOut={handleResizeHandlerDragEnd}
+              onPointerUp={handleResizeHandlerDragEnd}
             />
           </StyledColumnHeaderCell>
         ))}
