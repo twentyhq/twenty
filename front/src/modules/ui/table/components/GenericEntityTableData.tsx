@@ -1,3 +1,4 @@
+import { defaultOrderBy } from '@/people/queries';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
 import {
@@ -5,31 +6,35 @@ import {
   ViewFieldMetadata,
 } from '@/ui/table/types/ViewField';
 
-import { defaultOrderBy } from '../../../people/queries';
+import { useLoadView } from '../hooks/useLoadView';
 
 export function GenericEntityTableData({
+  objectName,
   useGetRequest,
   getRequestResultKey,
   orderBy = defaultOrderBy,
   whereFilters,
-  viewFields,
+  viewFieldDefinitions,
   filterDefinitionArray,
 }: {
+  objectName: 'company' | 'person';
   useGetRequest: any;
   getRequestResultKey: string;
   orderBy?: any;
   whereFilters?: any;
-  viewFields: ViewFieldDefinition<ViewFieldMetadata>[];
+  viewFieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
   filterDefinitionArray: FilterDefinition[];
 }) {
   const setEntityTableData = useSetEntityTableData();
+
+  useLoadView({ objectName, viewFieldDefinitions });
 
   useGetRequest({
     variables: { orderBy, where: whereFilters },
     onCompleted: (data: any) => {
       const entities = data[getRequestResultKey] ?? [];
 
-      setEntityTableData(entities, viewFields, filterDefinitionArray);
+      setEntityTableData(entities, filterDefinitionArray);
     },
   });
 
