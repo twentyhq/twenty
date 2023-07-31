@@ -79,7 +79,6 @@ const CloseButton = styled.button<Pick<SnackbarProps, 'variant'>>`
   display: flex;
   height: 24px;
   justify-content: center;
-  margin-left: ${({ theme }) => theme.spacing(6)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   padding-right: ${({ theme }) => theme.spacing(1)};
   width: 24px;
@@ -87,6 +86,22 @@ const CloseButton = styled.button<Pick<SnackbarProps, 'variant'>>`
   &:hover {
     background-color: ${({ theme }) => rgba(theme.color.gray0, 0.1)};
   }
+`;
+
+const CloseContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  margin-left: ${({ theme }) => theme.spacing(6)};
+  margin-left: ${({ theme }) => theme.spacing(2.5)};
+`;
+
+const CancelText = styled.div`
+  &:hover {
+    background-color: ${({ theme }) => rgba(theme.color.gray0, 0.1)};
+  }
+  border-radius: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 export type SnackbarVariant = 'info' | 'error' | 'success';
@@ -100,11 +115,13 @@ export interface SnackbarProps extends React.ComponentPropsWithoutRef<'div'> {
   variant?: SnackbarVariant;
   children?: React.ReactNode;
   onClose?: () => void;
+  cancelText?: string;
 }
 
 export function SnackBar({
   role = 'status',
   icon: iconComponent,
+  cancelText,
   message,
   allowDismiss = true,
   duration = 6000,
@@ -171,11 +188,14 @@ export function SnackBar({
         />
       </ProgressBarContainer>
       {icon && <StyledIconContainer>{icon}</StyledIconContainer>}
-      {children ? children : message}
+      {children ?? message}
       {allowDismiss && (
-        <CloseButton variant={variant} onClick={closeSnackbar}>
-          <IconX aria-label="Close" size={theme.icon.size.md} />
-        </CloseButton>
+        <CloseContainer>
+          <CancelText onClick={closeSnackbar}>{cancelText}</CancelText>
+          <CloseButton variant={variant} onClick={closeSnackbar}>
+            <IconX aria-label="Close" size={theme.icon.size.md} />
+          </CloseButton>
+        </CloseContainer>
       )}
     </StyledMotionContainer>
   );

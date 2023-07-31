@@ -54,6 +54,7 @@ export function TableActionBarButtonDeleteCompanies({
       icon: <IconTrash />,
       duration,
       onClose: handleCloseSnackbar,
+      cancelText: 'Cancel',
     });
 
     // Delete the rows after the countdown

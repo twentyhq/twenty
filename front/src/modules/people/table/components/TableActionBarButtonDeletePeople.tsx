@@ -48,6 +48,7 @@ export function TableActionBarButtonDeletePeople({
       icon: <IconTrash />,
       duration,
       onClose: handleCloseSnackbar,
+      cancelText: 'Cancel',
     });
 
     timerRef.current = setTimeout(() => {
