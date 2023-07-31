@@ -1,7 +1,7 @@
 import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
-import { getWeekYear, parseDate } from '~/utils/date-utils';
+import { parseDate } from '~/utils/date-utils';
 
 import { TasksContext } from '../states/TasksContext';
 
@@ -30,24 +30,18 @@ export function useTasks() {
     return dueDate.getDate() === today.getDate();
   });
 
-  const thisWeekTasks = data?.findManyActivities.filter((task) => {
+  const otherTasks = data?.findManyActivities.filter((task) => {
     if (!task.dueAt) {
       return false;
     }
     const dueDate = parseDate(task.dueAt).toJSDate();
     const today = new Date();
-    if (dueDate.getDate() === today.getDate()) {
-      // Do not show today tasks in this week tasks
-      return false;
-    }
-    const [weekNumber, yearNumber] = getWeekYear(today);
-    const [taskWeekNumber, taskYearNumber] = getWeekYear(dueDate);
-    return weekNumber === taskWeekNumber && yearNumber === taskYearNumber;
+    return dueDate.getDate() !== today.getDate();
   });
 
   return {
     todayTasks,
-    thisWeekTasks,
+    otherTasks,
     loading,
   };
 }

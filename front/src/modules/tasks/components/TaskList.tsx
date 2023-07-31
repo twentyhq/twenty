@@ -19,8 +19,14 @@ const StyledContainer = styled.div`
 `;
 
 const StyledTitle = styled.h3`
+  color: ${({ theme }) => theme.font.color.primary};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledCount = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTaskRows = styled.div`
@@ -30,15 +36,26 @@ const StyledTaskRows = styled.div`
   width: 100%;
 `;
 
+const StyledEmptyListMessage = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
 export function TaskList({ title, tasks }: OwnProps) {
   return (
     <StyledContainer>
-      <StyledTitle>{title}</StyledTitle>
-      <StyledTaskRows>
-        {tasks.map((task) => (
-          <TaskRow key={task.id} task={task} />
-        ))}
-      </StyledTaskRows>
+      <StyledTitle>
+        {title} <StyledCount>{tasks ? tasks.length : 0}</StyledCount>
+      </StyledTitle>
+      {tasks && tasks.length > 0 ? (
+        <StyledTaskRows>
+          {tasks.map((task) => (
+            <TaskRow key={task.id} task={task} />
+          ))}
+        </StyledTaskRows>
+      ) : (
+        <StyledEmptyListMessage>No task in this section</StyledEmptyListMessage>
+      )}
     </StyledContainer>
   );
 }

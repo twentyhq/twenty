@@ -81,6 +81,11 @@ export const GET_ACTIVITIES = gql`
       comments {
         id
       }
+      activityTargets {
+        id
+        commentableType
+        commentableId
+      }
     }
   }
 `;
