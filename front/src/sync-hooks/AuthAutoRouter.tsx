@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { useEventTracker } from '@/analytics/hooks/useEventTracker';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { AppBasePath } from '@/types/AppBasePath';
+import { AppPath } from '@/types/AppPath';
+import { PageHotkeyScope } from '@/types/PageHotkeyScope';
+import { SettingsPath } from '@/types/SettingsPath';
+import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
-import { useEventTracker } from '../modules/analytics/hooks/useEventTracker';
-import { useOnboardingStatus } from '../modules/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '../modules/auth/utils/getOnboardingStatus';
-import { AppBasePath } from '../modules/types/AppBasePath';
-import { AppPath } from '../modules/types/AppPath';
-import { PageHotkeyScope } from '../modules/types/PageHotkeyScope';
-import { SettingsPath } from '../modules/types/SettingsPath';
-import { useSetHotkeyScope } from '../modules/ui/hotkey/hooks/useSetHotkeyScope';
-import { TableHotkeyScope } from '../modules/ui/table/types/TableHotkeyScope';
 
 export function AuthAutoRouter() {
   const navigate = useNavigate();

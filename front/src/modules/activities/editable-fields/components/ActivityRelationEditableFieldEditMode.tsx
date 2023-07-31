@@ -6,7 +6,7 @@ import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/activities/ut
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
 import { useFilteredSearchPeopleQuery } from '@/people/queries';
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
-import { MultipleEntitySelect } from '@/ui/relation-picker/components/MultipleEntitySelect';
+import { MultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { Activity, ActivityTarget } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 

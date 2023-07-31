@@ -5,10 +5,10 @@ import { v4 } from 'uuid';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE } from '@/people/queries';
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
 import { useRightDrawer } from '@/ui/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ActivityType, useCreateActivityMutation } from '~/generated/graphql';
 
 import { GET_ACTIVITIES_BY_TARGETS, GET_ACTIVITY } from '../queries';

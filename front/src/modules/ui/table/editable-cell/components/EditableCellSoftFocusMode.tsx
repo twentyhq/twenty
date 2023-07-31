@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { isNonTextWritingKey } from '@/ui/hotkey/utils/isNonTextWritingKey';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useEditableCell } from '../hooks/useEditableCell';

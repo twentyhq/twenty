@@ -8,7 +8,7 @@ import {
   IconPhone,
   IconUser,
 } from '@/ui/icon/index';
-import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import {
   ViewFieldDateMetadata,
   ViewFieldDefinition,

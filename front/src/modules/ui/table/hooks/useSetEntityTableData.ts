@@ -2,7 +2,6 @@ import { useRecoilCallback } from 'recoil';
 
 import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
-import { useContextScopeId } from '@/ui/recoil-scope/hooks/useContextScopeId';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { entityTableDimensionsState } from '@/ui/table/states/entityTableDimensionsState';
 import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
@@ -14,6 +13,7 @@ import {
   ViewFieldDefinition,
   ViewFieldMetadata,
 } from '@/ui/table/types/ViewField';
+import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 
 export function useSetEntityTableData() {
   const resetTableRowSelection = useResetTableRowSelection();

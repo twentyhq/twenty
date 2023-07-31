@@ -2,7 +2,7 @@ import { Context } from 'react';
 
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useFilterCurrentlyEdited } from '../hooks/useFilterCurrentlyEdited';
 import { useUpsertFilter } from '../hooks/useUpsertFilter';

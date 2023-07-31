@@ -8,8 +8,8 @@ import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdo
 import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
-import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import { IconCalendar } from '@/ui/icon/index';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   Activity,
   ActivityTarget,

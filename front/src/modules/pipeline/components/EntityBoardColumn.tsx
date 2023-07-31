@@ -6,8 +6,8 @@ import { useRecoilValue } from 'recoil';
 
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { BoardColumn } from '@/ui/board/components/BoardColumn';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
 import { GET_PIPELINES } from '../queries';

@@ -2,9 +2,9 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { usePreviousHotkeyScope } from '@/ui/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
 import { Tag } from '@/ui/tag/components/Tag';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 

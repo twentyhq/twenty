@@ -5,14 +5,14 @@ import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useIsMobile } from '@/ui/hooks/useIsMobile';
 import {
   ClickOutsideMode,
   useListenClickOutside,
-} from '@/ui/hooks/useListenClickOutside';
+} from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
-import { useScopedHotkeys } from '../../hotkey/hooks/useScopedHotkeys';
 import { leftNavbarWidth } from '../../navbar/constants';
 import { useRightDrawer } from '../hooks/useRightDrawer';
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';

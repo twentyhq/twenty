@@ -13,7 +13,7 @@ import {
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { IconTargetArrow } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { PipelineProgressOrderByWithRelationInput } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 

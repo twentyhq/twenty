@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../states/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';

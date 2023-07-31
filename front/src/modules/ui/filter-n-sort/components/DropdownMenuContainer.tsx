@@ -1,8 +1,9 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 
+import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+
 import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
-import { useListenClickOutside } from '../../hooks/useListenClickOutside';
 
 export const StyledDropdownMenuContainer = styled.ul`
   position: absolute;

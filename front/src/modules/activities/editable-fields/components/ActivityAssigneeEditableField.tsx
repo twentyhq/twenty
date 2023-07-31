@@ -1,8 +1,8 @@
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { IconUserCircle } from '@/ui/icon';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
-import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { UserChip } from '@/users/components/UserChip';
 import { Company, User } from '~/generated/graphql';
 

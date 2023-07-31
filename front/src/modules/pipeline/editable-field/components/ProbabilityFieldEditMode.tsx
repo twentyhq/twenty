@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 const StyledContainer = styled.div`
   align-items: center;

@@ -6,8 +6,8 @@ import { RecoilRoot } from 'recoil';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { SnackBarProvider } from '@/ui/snack-bar/components/SnackBarProvider';
-import { AppThemeProvider } from '@/ui/themes/components/AppThemeProvider';
-import { ThemeType } from '@/ui/themes/themes';
+import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
+import { ThemeType } from '@/ui/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
 
 import '@emotion/react';

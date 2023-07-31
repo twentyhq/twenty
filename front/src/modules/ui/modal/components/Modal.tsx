@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import {
   ClickOutsideMode,
   useListenClickOutside,
-} from '@/ui/hooks/useListenClickOutside';
+} from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
 
 const StyledContainer = styled.div`
   align-items: center;

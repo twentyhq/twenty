@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconArrowNarrowDown, IconArrowNarrowUp } from '@/ui/icon/index';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';

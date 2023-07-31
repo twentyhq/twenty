@@ -2,11 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { IconList } from '@/ui/icon/index';
-import { RecoilScope } from '@/ui/recoil-scope/components/RecoilScope';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 
 import { ComponentWithRouterDecorator } from '../../../../../../testing/decorators/ComponentWithRouterDecorator';
-import { CompanyEntityTableDataMocked } from '../../../../../companies/table/components/CompanyEntityTableDataMocked';
 import { TableContext } from '../../../states/TableContext';
 import { TableHeader } from '../TableHeader';
 
@@ -16,7 +15,6 @@ const meta: Meta<typeof TableHeader> = {
   decorators: [
     (Story) => (
       <RecoilScope SpecificContext={TableContext}>
-        <CompanyEntityTableDataMocked />
         <Story />
       </RecoilScope>
     ),

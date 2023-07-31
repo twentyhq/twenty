@@ -1,12 +1,11 @@
 import { useFilteredSearchCompanyQuery } from '@/companies/queries';
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
+import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { isCreateModeScopedState } from '@/ui/table/editable-cell/states/isCreateModeScopedState';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
-
-import { EntityForSelect } from '../../ui/relation-picker/types/EntityForSelect';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 export type OwnProps = {
   companyId: string | null;

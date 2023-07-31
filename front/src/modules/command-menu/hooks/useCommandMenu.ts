@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
-import { usePreviousHotkeyScope } from '@/ui/hotkey/hooks/usePreviousHotkeyScope';
-import { AppHotkeyScope } from '@/ui/hotkey/types/AppHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 

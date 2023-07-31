@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { RightDrawer } from '@/ui/right-drawer/components/RightDrawer';
 
-import { Panel } from './Panel';
+import { PagePanel } from './PagePanel';
 
 type OwnProps = {
   children: JSX.Element | JSX.Element[];
@@ -37,7 +37,7 @@ export function RightDrawerContainer({ children, topMargin }: OwnProps) {
   return (
     <StyledMainContainer topMargin={topMargin ?? 0}>
       <StyledLeftContainer>
-        <Panel>{children}</Panel>
+        <PagePanel>{children}</PagePanel>
       </StyledLeftContainer>
       <RightDrawer />
     </StyledMainContainer>

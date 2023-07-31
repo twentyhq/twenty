@@ -10,11 +10,11 @@ import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { pipelineStageIdScopedState } from '@/pipeline/states/pipelineStageIdScopedState';
 import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { NewButton } from '@/ui/board/components/NewButton';
-import { usePreviousHotkeyScope } from '@/ui/hotkey/hooks/usePreviousHotkeyScope';
-import { useRecoilScopedState } from '@/ui/recoil-scope/hooks/useRecoilScopedState';
-import { SingleEntitySelect } from '@/ui/relation-picker/components/SingleEntitySelect';
-import { relationPickerSearchFilterScopedState } from '@/ui/relation-picker/states/relationPickerSearchFilterScopedState';
-import { RelationPickerHotkeyScope } from '@/ui/relation-picker/types/RelationPickerHotkeyScope';
+import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
+import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
+import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import {
   PipelineProgressableType,
   useCreateOnePipelineProgressMutation,

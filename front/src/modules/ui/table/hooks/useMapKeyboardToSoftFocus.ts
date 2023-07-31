@@ -1,7 +1,7 @@
 import { Key } from 'ts-key-enum';
 
-import { useScopedHotkeys } from '@/ui/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/hotkey/hooks/useSetHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 

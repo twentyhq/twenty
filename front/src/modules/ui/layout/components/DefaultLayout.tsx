@@ -7,7 +7,7 @@ import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { NavbarAnimatedContainer } from '@/ui/navbar/components/NavbarAnimatedContainer';
-import { MOBILE_VIEWPORT } from '@/ui/themes/themes';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { AppNavbar } from '~/AppNavbar';
 import { CompaniesMockMode } from '~/pages/companies/CompaniesMockMode';
 

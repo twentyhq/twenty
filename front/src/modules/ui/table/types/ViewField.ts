@@ -1,5 +1,5 @@
-import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
-import { Entity } from '@/ui/relation-picker/types/EntityTypeForSelect';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 export type ViewFieldType =
   | 'text'

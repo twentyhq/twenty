@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconCheck } from '@/ui/icon/index';
-import { hoverBackground } from '@/ui/themes/effects';
+import { hoverBackground } from '@/ui/theme/constants/effects';
 
 import { DropdownMenuItem } from './DropdownMenuItem';
 

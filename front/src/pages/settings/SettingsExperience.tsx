@@ -4,9 +4,9 @@ import { ColorSchemePicker } from '@/ui/color-scheme/components/ColorSchemePicke
 import { IconSettings } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/section/components/Section';
-import { useColorScheme } from '@/ui/themes/hooks/useColorScheme';
-import { H1Title } from '@/ui/title/components/H1Title';
-import { H2Title } from '@/ui/title/components/H2Title';
+import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import { H1Title } from '@/ui/typography/components/H1Title';
+import { H2Title } from '@/ui/typography/components/H2Title';
 
 const StyledContainer = styled.div`
   display: flex;

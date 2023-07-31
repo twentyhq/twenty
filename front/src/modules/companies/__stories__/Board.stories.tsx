@@ -2,12 +2,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { EntityBoard } from '@/pipeline/components/EntityBoard';
+import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { defaultPipelineProgressOrderBy } from '../../pipeline/queries';
-import { RecoilScope } from '../../ui/recoil-scope/components/RecoilScope';
 import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
 import { CompanyBoardContext } from '../states/CompanyBoardContext';
 

@@ -1,4 +1,4 @@
-import { EntityForSelect } from '@/ui/relation-picker/types/EntityForSelect';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 
 export function flatMapAndSortEntityForSelectArrayOfArrayByName<
   T extends EntityForSelect,

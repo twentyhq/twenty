@@ -1,8 +1,8 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { usePreviousHotkeyScope } from '@/ui/hotkey/hooks/usePreviousHotkeyScope';
-import { HotkeyScope } from '@/ui/hotkey/types/HotkeyScope';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useBoardCardField } from '../hooks/useBoardCardField';
 import { BoardCardFieldHotkeyScope } from '../types/BoardCardFieldHotkeyScope';
