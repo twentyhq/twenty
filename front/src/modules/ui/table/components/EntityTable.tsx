@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
@@ -7,6 +8,7 @@ import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useLis
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { EntityUpdateMutationHookContext } from '../states/EntityUpdateMutationHookContext';
+import { viewFieldsFamilyState } from '../states/viewFieldsState';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -99,6 +101,8 @@ export function EntityTable<SortField>({
   onSortsUpdate,
   useUpdateEntityMutation,
 }: OwnProps<SortField>) {
+  const viewFields = useRecoilValue(viewFieldsFamilyState);
+
   const tableBodyRef = React.useRef<HTMLDivElement>(null);
 
   useMapKeyboardToSoftFocus();
@@ -123,10 +127,12 @@ export function EntityTable<SortField>({
             onSortsUpdate={onSortsUpdate}
           />
           <StyledTableWrapper>
-            <StyledTable>
-              <EntityTableHeader />
-              <EntityTableBody />
-            </StyledTable>
+            {viewFields.length && (
+              <StyledTable>
+                <EntityTableHeader viewFields={viewFields} />
+                <EntityTableBody />
+              </StyledTable>
+            )}
           </StyledTableWrapper>
         </StyledTableContainer>
       </StyledTableWithHeader>
