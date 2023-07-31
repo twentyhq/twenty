@@ -14,7 +14,7 @@ services:
   name: server
   env: docker
   dockerfilePath: ./infra/prod/server/Dockerfile
-  dockerCommand: ./bin/bash -c 'cd server (yarn prisma:migrate) && node dist/src/main'
+  dockerCommand: ./bin/bash -c 'cd server && yarn prisma:migrate && node dist/src/main'
   autoDeploy: false
   healthCheckPath: /healthz
   envVars:
