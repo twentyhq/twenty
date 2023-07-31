@@ -9,7 +9,6 @@ import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
   DeleteWorkspaceMemberAbilityHandler,
   ReadWorkspaceMemberAbilityHandler,
-  UpdateWorkspaceMemberAbilityHandler,
 } from 'src/ability/handlers/workspace-member.ability-handler';
 import { FindManyWorkspaceMemberArgs } from 'src/core/@generated/workspace-member/find-many-workspace-member.args';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
