@@ -1,5 +1,5 @@
 module.exports = {
-  schema: process.env.REACT_APP_API_URL,
+  schema: process.env.REACT_APP_SERVER_BASE_URL + "/graphql",
   documents: ['./src/**/*.tsx', './src/**/*.ts'],
   overwrite: true,
   generates: {

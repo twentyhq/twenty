@@ -19,7 +19,6 @@ const fileStorageModuleFactory = async (
   const type = environmentService.getStorageType();
 
   switch (type) {
-    case undefined:
     case StorageType.Local: {
       const storagePath = environmentService.getStorageLocalPath();
 
