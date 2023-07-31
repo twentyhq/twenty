@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { Ref } from 'react';
 import styled from '@emotion/styled';
 
 type Props = {
   softFocus?: boolean;
   onClick?: () => void;
+  scrollRef?: Ref<HTMLDivElement>;
 };
 
 export const EditableCellDisplayModeOuterContainer = styled.div<
@@ -38,15 +39,8 @@ export function EditableCellDisplayContainer({
   children,
   softFocus,
   onClick,
+  scrollRef,
 }: React.PropsWithChildren<Props>) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (softFocus) {
-      scrollRef.current?.scrollIntoView({ block: 'nearest' });
-    }
-  }, [softFocus]);
-
   return (
     <EditableCellDisplayModeOuterContainer
       data-testid={
