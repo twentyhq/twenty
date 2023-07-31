@@ -13,9 +13,8 @@ import { settings } from './constants/settings';
 dotenv.config();
 
 async function bootstrap() {
-  const isCorsEnabled = process.env.IS_CORS_ENABLED !== 'false';
   const app = await NestFactory.create(AppModule, {
-    cors: isCorsEnabled,
+    cors: true,
   });
 
   // Apply validation pipes globally
