@@ -127,7 +127,7 @@ export function EntityTable<SortField>({
             onSortsUpdate={onSortsUpdate}
           />
           <StyledTableWrapper>
-            {viewFields.length && (
+            {viewFields.length > 0 && (
               <StyledTable>
                 <EntityTableHeader viewFields={viewFields} />
                 <EntityTableBody />
