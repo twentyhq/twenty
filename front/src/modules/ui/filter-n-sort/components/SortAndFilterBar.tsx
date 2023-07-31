@@ -79,16 +79,19 @@ function SortAndFilterBar<SortField>({
     context,
   );
 
-  const filtersWithDefinition = filters.map((filter) => {
-    const filterDefinition = availableFilters.find((availableFilter) => {
-      return availableFilter.field === filter.field;
-    });
+  const filtersWithDefinition = filters
+    // Exclude the exclusion projection filter from being displayed in the top bar
+    .filter((filter) => filter.type !== '_exclusion_projection')
+    .map((filter) => {
+      const filterDefinition = availableFilters.find((availableFilter) => {
+        return availableFilter.field === filter.field;
+      });
 
-    return {
-      ...filter,
-      ...filterDefinition,
-    };
-  });
+      return {
+        ...filter,
+        ...filterDefinition,
+      };
+    });
 
   const removeFilter = useRemoveFilter(context);
 

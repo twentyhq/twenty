@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -18,6 +19,15 @@ const StyledTableContainer = styled.div`
 export function CompaniesMockMode() {
   const theme = useTheme();
 
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
   return (
     <>
       <WithTopBarContainer
@@ -30,7 +40,7 @@ export function CompaniesMockMode() {
           </StyledTableContainer>
           <EntityTableActionBar>
             <TableActionBarButtonCreateActivityCompany />
-            <TableActionBarButtonDeleteCompanies />
+            <TableActionBarButtonDeleteCompanies timerRef={timerRef} />
           </EntityTableActionBar>
         </RecoilScope>
       </WithTopBarContainer>

@@ -84,6 +84,21 @@ export function turnFilterIntoWhereClause(filter: Filter) {
             `Unknown operand ${filter.operand} for ${filter.type} filter`,
           );
       }
+    case '_exclusion_projection':
+      switch (filter.operand) {
+        case 'is-not':
+          return {
+            [filter.field]: {
+              not: {
+                equals: filter.value,
+              },
+            },
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${filter.operand} for ${filter.type} filter`,
+          );
+      }
     default:
       throw new Error('Unknown filter type');
   }

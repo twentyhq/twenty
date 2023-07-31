@@ -68,6 +68,7 @@ export function SnackBarProvider({ children }: React.PropsWithChildren) {
   return (
     <>
       {children}
+      {/* TODO: Perhaps make the snackbar position dynamic i.e top, bottom, e.t.c */}
       <SnackBarContainer>
         {snackBarState.queue.map((snackBar) => (
           <SnackBarMotionContainer
@@ -81,7 +82,10 @@ export function SnackBarProvider({ children }: React.PropsWithChildren) {
           >
             <SnackBar
               {...snackBar}
-              onClose={() => handleSnackBarClose(snackBar.id)}
+              onClose={() => {
+                snackBar.onClose?.();
+                handleSnackBarClose(snackBar.id);
+              }}
             />
           </SnackBarMotionContainer>
         ))}

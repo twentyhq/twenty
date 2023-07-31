@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -20,6 +21,16 @@ const StyledTableContainer = styled.div`
 
 export function People() {
   const [insertOnePerson] = useInsertOnePersonMutation();
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // Cancel the timer if the component unmounts before the timer expires
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   async function handleAddButtonClick() {
     await insertOnePerson({
@@ -47,7 +58,7 @@ export function People() {
         </StyledTableContainer>
         <EntityTableActionBar>
           <TableActionBarButtonCreateActivityPeople />
-          <TableActionBarButtonDeletePeople />
+          <TableActionBarButtonDeletePeople timerRef={timerRef} />
         </EntityTableActionBar>
       </WithTopBarContainer>
     </RecoilScope>
