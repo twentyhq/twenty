@@ -14,7 +14,7 @@ export class EnvironmentService {
   }
 
   isSignInPrefilled(): boolean {
-    return this.configService.get<boolean>('IS_SIGN_IN_PREFILLED') ?? false;
+    return this.configService.get<boolean>('SIGN_IN_PREFILLED') ?? false;
   }
 
   isTelemetryEnabled(): boolean {
