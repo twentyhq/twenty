@@ -61,23 +61,16 @@ const StyledAmount = styled.div`
 `;
 
 const StyledNumChildren = styled.div`
-  align-items: center;
   background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: 50px;
+  border-radius: ${({ theme }) => theme.border.radius.rounded};
   color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  flex-direction: column;
-  font-size: 13px;
-  font-style: normal;
-  gap: 8px;
-  height: 20px;
-  justify-content: center;
-  leading-trim: both;
-  line-height: 150%;
+  line-height: ${({ theme }) => theme.text.lineHeight.lg};
   margin-left: auto;
-  padding: 2px 4px;
+  padding-bottom: ${({ theme }) => theme.spacing(1 / 2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(1 / 2)};
   text-align: center;
-  text-edge: cap;
   width: 16px;
 `;
 
