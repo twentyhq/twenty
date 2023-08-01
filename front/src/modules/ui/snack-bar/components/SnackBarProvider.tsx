@@ -82,10 +82,7 @@ export function SnackBarProvider({ children }: React.PropsWithChildren) {
           >
             <SnackBar
               {...snackBar}
-              onClose={() => {
-                snackBar.onClose?.();
-                handleSnackBarClose(snackBar.id);
-              }}
+              onClose={() => handleSnackBarClose(snackBar.id)}
             />
           </SnackBarMotionContainer>
         ))}

@@ -1,4 +1,3 @@
-import { MutableRefObject } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 
 import { GET_COMPANIES } from '@/companies/queries';
@@ -8,11 +7,7 @@ import { IconTrash } from '@/ui/icon/index';
 import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 import { useDeleteManyCompaniesMutation } from '~/generated/graphql';
 
-export function TableActionBarButtonDeleteCompanies({
-  timerRef,
-}: {
-  timerRef: MutableRefObject<NodeJS.Timeout | null>;
-}) {
+export function TableActionBarButtonDeleteCompanies() {
   const [deleteCompanies] = useDeleteManyCompaniesMutation({
     refetchQueries: [
       getOperationName(GET_COMPANIES) ?? '',
@@ -21,7 +16,6 @@ export function TableActionBarButtonDeleteCompanies({
   });
 
   const { handleDeleteClick } = useDeleteItems({
-    timerRef,
     handleDeleteItems: deleteCompanies,
   });
 

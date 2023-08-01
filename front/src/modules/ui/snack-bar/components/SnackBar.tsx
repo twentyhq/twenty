@@ -116,30 +116,40 @@ export interface SnackbarProps extends React.ComponentPropsWithoutRef<'div'> {
   children?: React.ReactNode;
   onClose?: () => void;
   cancelText?: string;
+  onCancelClick?: () => void;
+  onTimeout?: () => void;
 }
 
 export function SnackBar({
   role = 'status',
   icon: iconComponent,
-  cancelText,
+  cancelText = 'Cancel',
   message,
   allowDismiss = true,
   duration = 6000,
   variant = 'info',
   children,
   onClose,
+  onCancelClick,
+  onTimeout,
   ...rootProps
 }: SnackbarProps) {
   const theme = useTheme();
 
   const progressBarRef = useRef<ProgressBarControls | null>(null);
 
-  const closeSnackbar = useCallback(() => {
-    onClose && onClose();
-  }, [onClose]);
+  const handleTimeout = useCallback(() => {
+    onTimeout?.();
+    onClose?.();
+  }, [onClose, onTimeout]);
+
+  const handleCancelClick = useCallback(() => {
+    onCancelClick?.();
+    onClose?.();
+  }, [onClose, onCancelClick]);
 
   const { pauseTimeout, resumeTimeout } = usePausableTimeout(
-    closeSnackbar,
+    handleTimeout,
     duration,
   );
 
@@ -191,8 +201,12 @@ export function SnackBar({
       {children ?? message}
       {allowDismiss && (
         <CloseContainer>
-          <CancelText onClick={closeSnackbar}>{cancelText}</CancelText>
-          <CloseButton variant={variant} onClick={closeSnackbar}>
+          {/* The delete will be stopped if cancelled */}
+          {handleCancelClick && (
+            <CancelText onClick={handleCancelClick}>{cancelText}</CancelText>
+          )}
+          {/* Closing the snackbar will delete the items immediately */}
+          <CloseButton variant={variant} onClick={handleTimeout}>
             <IconX aria-label="Close" size={theme.icon.size.md} />
           </CloseButton>
         </CloseContainer>
