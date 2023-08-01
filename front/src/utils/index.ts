@@ -23,7 +23,13 @@ export function getLogoUrlFromDomainName(
 
   if (!sanitizedDomain) return;
 
-  for (const prefix of ['', 'www.', 'https://']) {
+  const prioritizeWWW = ['apple.com'].includes(sanitizedDomain);
+
+  const prefixes = prioritizeWWW
+    ? ['www.', '', 'https://']
+    : ['', 'www.', 'https://'];
+
+  for (const prefix of prefixes) {
     const img = document.createElement('img');
     img.setAttribute(
       'src',
