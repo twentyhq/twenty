@@ -11,7 +11,7 @@ export function useSnackBar() {
 
   const enqueueSnackBar = (
     message: string,
-    options?: Omit<SnackBarOptions, 'message' | 'id'>,
+    options?: Omit<SnackBarOptions, 'message' | 'id'> & { id?: string },
   ) => {
     setSnackBarQueue({
       id: uuidv4(),

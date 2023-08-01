@@ -11,8 +11,10 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 
 export function useDeleteItems({
   handleDeleteItems,
+  id,
 }: {
   handleDeleteItems: (val: any) => any;
+  id: string;
 }) {
   const { enqueueSnackBar } = useSnackBar();
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
@@ -49,6 +51,7 @@ export function useDeleteItems({
       icon: <IconTrash />,
       onCancelClick: handleCancelClick,
       onTimeout: handleTimeout,
+      id,
     });
 
     // Hide the rows that are being deleted

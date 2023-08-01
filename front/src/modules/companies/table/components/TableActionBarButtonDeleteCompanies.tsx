@@ -7,7 +7,7 @@ import { IconTrash } from '@/ui/icon/index';
 import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 import { useDeleteManyCompaniesMutation } from '~/generated/graphql';
 
-export function TableActionBarButtonDeleteCompanies() {
+export function TableActionBarButtonDeleteCompanies({ id }: { id: string }) {
   const [deleteCompanies] = useDeleteManyCompaniesMutation({
     refetchQueries: [
       getOperationName(GET_COMPANIES) ?? '',
@@ -17,6 +17,7 @@ export function TableActionBarButtonDeleteCompanies() {
 
   const { handleDeleteClick } = useDeleteItems({
     handleDeleteItems: deleteCompanies,
+    id,
   });
 
   return (

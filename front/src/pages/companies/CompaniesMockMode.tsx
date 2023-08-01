@@ -30,7 +30,7 @@ export function CompaniesMockMode() {
           </StyledTableContainer>
           <EntityTableActionBar>
             <TableActionBarButtonCreateActivityCompany />
-            <TableActionBarButtonDeleteCompanies />
+            <TableActionBarButtonDeleteCompanies id="1234" />
           </EntityTableActionBar>
         </RecoilScope>
       </WithTopBarContainer>

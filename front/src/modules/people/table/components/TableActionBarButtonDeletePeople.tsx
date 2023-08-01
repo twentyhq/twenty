@@ -6,13 +6,14 @@ import { IconTrash } from '@/ui/icon/index';
 import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 import { useDeleteManyPersonMutation } from '~/generated/graphql';
 
-export function TableActionBarButtonDeletePeople() {
+export function TableActionBarButtonDeletePeople({ id }: { id: string }) {
   const [deleteManyPerson] = useDeleteManyPersonMutation({
     refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
   });
 
   const { handleDeleteClick } = useDeleteItems({
     handleDeleteItems: deleteManyPerson,
+    id,
   });
 
   return (
