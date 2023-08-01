@@ -19,7 +19,6 @@ export function FilterDropdownButton({
     availableFiltersScopedState,
     context,
   );
-  console.log('availableFilters from generic', availableFilters);
   return availableFilters.length === 1 &&
     availableFilters[0].type === 'entity' ? (
     <SingleEntityFilterDropdownButton
