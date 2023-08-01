@@ -63,8 +63,10 @@ export function SingleEntityFilterDropdownButton({
 
   const [filters] = useRecoilScopedState(filtersScopedState, context);
 
-  const [filterDefinitionUsedInDropdown, setFilterDefinitionUsedInDropdown] =
-    useRecoilScopedState(filterDefinitionUsedInDropdownScopedState, context);
+  const [, setFilterDefinitionUsedInDropdown] = useRecoilScopedState(
+    filterDefinitionUsedInDropdownScopedState,
+    context,
+  );
 
   const [, setFilterDropdownSearchInput] = useRecoilScopedState(
     filterDropdownSearchInputScopedState,
@@ -93,9 +95,7 @@ export function SingleEntityFilterDropdownButton({
       setHotkeyScope(HotkeyScope);
       setIsUnfolded(true);
     } else {
-      if (filterDefinitionUsedInDropdown?.type === 'entity') {
-        setHotkeyScope(HotkeyScope);
-      }
+      setHotkeyScope(HotkeyScope);
       setIsUnfolded(false);
       setFilterDropdownSearchInput('');
     }

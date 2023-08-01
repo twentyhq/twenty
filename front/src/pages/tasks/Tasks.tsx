@@ -56,6 +56,7 @@ export function Tasks() {
             }
             rightComponents={[
               <FilterDropdownButton
+                key="tasks-filter-dropdown-button"
                 context={TasksContext}
                 HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
               />,
