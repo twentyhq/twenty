@@ -54,9 +54,11 @@ export function MultipleFiltersDropdownButton({
   const resetState = useCallback(() => {
     setIsFilterDropdownOperandSelectUnfolded(false);
     setFilterDefinitionUsedInDropdown(null);
+    setSelectedOperandInDropdown(null);
     setFilterDropdownSearchInput('');
   }, [
     setFilterDefinitionUsedInDropdown,
+    setSelectedOperandInDropdown,
     setFilterDropdownSearchInput,
     setIsFilterDropdownOperandSelectUnfolded,
   ]);
