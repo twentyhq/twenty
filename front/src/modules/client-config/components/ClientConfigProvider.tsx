@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { isDemoModeState } from '@/client-config/states/isDemoModeState';
+import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { telemetryState } from '@/client-config/states/telemetryState';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 
@@ -12,7 +12,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
 }) => {
   const [, setAuthProviders] = useRecoilState(authProvidersState);
   const [, setDebugMode] = useRecoilState(isDebugModeState);
-  const [, setDemoMode] = useRecoilState(isDemoModeState);
+  const [, setSignInPrefilled] = useRecoilState(isSignInPrefilledState);
   const [, setTelemetry] = useRecoilState(telemetryState);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -29,14 +29,14 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
         magicLink: false,
       });
       setDebugMode(data?.clientConfig.debugMode);
-      setDemoMode(data?.clientConfig.demoMode);
+      setSignInPrefilled(data?.clientConfig.signInPrefilled);
       setTelemetry(data?.clientConfig.telemetry);
     }
   }, [
     data,
     setAuthProviders,
     setDebugMode,
-    setDemoMode,
+    setSignInPrefilled,
     setTelemetry,
     setIsLoading,
     loading,

@@ -6,7 +6,7 @@ import Link from '@docusaurus/Link';
 import isInternalUrl from '@docusaurus/isInternalUrl';
 import IconExternalLink from '@theme/Icon/ExternalLink';
 import styles from './styles.module.css';
-import { TbFaceIdError, TbTerminal2, TbCloud, TbServer, TbBolt, TbApps, TbTopologyStar, TbChartDots, TbBug, TbVocabulary, TbArrowBigRight } from "react-icons/tb";
+import { TbFaceIdError, TbTerminal2, TbCloud, TbServer, TbBolt, TbApps, TbTopologyStar, TbChartDots, TbBug, TbVocabulary, TbArrowBigRight, TbDeviceDesktop } from "react-icons/tb";
 
 
 export default function DocSidebarItemLink({
@@ -30,7 +30,8 @@ export default function DocSidebarItemLink({
     'TbTopologyStar': TbTopologyStar,
     'TbChartDots': TbChartDots,
     'TbBug': TbBug,
-    'TbVocabulary': TbVocabulary
+    'TbVocabulary': TbVocabulary,
+    'TbDeviceDesktop': TbDeviceDesktop,
   };
 
   let IconComponent = customProps && customProps.icon ? icons[customProps.icon] : TbFaceIdError;

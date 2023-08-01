@@ -7,7 +7,7 @@ export const GET_CLIENT_CONFIG = gql`
         google
         password
       }
-      demoMode
+      signInPrefilled
       debugMode
       telemetry {
         enabled

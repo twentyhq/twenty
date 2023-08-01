@@ -47,9 +47,10 @@ export class UpdateActivityTargetAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<ActivityTargetArgs>();
-    const ActivityTarget = await this.prismaService.client.activityTarget.findFirst({
-      where: args.where,
-    });
+    const ActivityTarget =
+      await this.prismaService.client.activityTarget.findFirst({
+        where: args.where,
+      });
     assert(ActivityTarget, '', NotFoundException);
 
     return ability.can(
@@ -66,9 +67,10 @@ export class DeleteActivityTargetAbilityHandler implements IAbilityHandler {
   async handle(ability: AppAbility, context: ExecutionContext) {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<ActivityTargetArgs>();
-    const ActivityTarget = await this.prismaService.client.activityTarget.findFirst({
-      where: args.where,
-    });
+    const ActivityTarget =
+      await this.prismaService.client.activityTarget.findFirst({
+        where: args.where,
+      });
     assert(ActivityTarget, '', NotFoundException);
 
     return ability.can(

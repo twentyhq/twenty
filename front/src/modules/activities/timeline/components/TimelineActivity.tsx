@@ -1,13 +1,11 @@
-import { useCallback } from 'react';
 import { Tooltip } from 'react-tooltip';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
+import { useCompleteTask } from '@/tasks/hooks/useCompleteTask';
 import { IconNotes } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
-import { Activity, User, useUpdateActivityMutation } from '~/generated/graphql';
+import { Activity, User } from '~/generated/graphql';
 import {
   beautifyExactDate,
   beautifyPastDateRelativeToNow,
@@ -87,7 +85,7 @@ const StyledCardContent = styled.div`
   align-self: stretch;
   color: ${({ theme }) => theme.font.color.secondary};
   margin-top: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
+  width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
 const StyledTooltip = styled(Tooltip)`
@@ -132,22 +130,7 @@ export function TimelineActivity({ activity }: OwnProps) {
   const body = JSON.parse(activity.body ?? '{}')[0]?.content[0]?.text;
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
-  const [updateActivityMutation] = useUpdateActivityMutation();
-
-  const handleActivityCompletionChange = useCallback(
-    (value: boolean) => {
-      updateActivityMutation({
-        variables: {
-          where: { id: activity.id },
-          data: {
-            completedAt: value ? new Date().toISOString() : null,
-          },
-        },
-        refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
-      });
-    },
-    [activity, updateActivityMutation],
-  );
+  const { completeTask } = useCompleteTask(activity);
 
   return (
     <>
@@ -180,7 +163,7 @@ export function TimelineActivity({ activity }: OwnProps) {
                 title={activity.title ?? ''}
                 completed={!!activity.completedAt}
                 type={activity.type}
-                onCompletionChange={handleActivityCompletionChange}
+                onCompletionChange={completeTask}
               />
               <StyledCardContent>
                 <OverflowingTextWithTooltip

@@ -1,7 +1,4 @@
-import styled from '@emotion/styled';
-
-import { CompanyChip } from '@/companies/components/CompanyChip';
-import { PersonChip } from '@/people/components/PersonChip';
+import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
 import { IconArrowUpRight } from '@/ui/icon';
@@ -13,15 +10,8 @@ import {
   useGetCompaniesQuery,
   useGetPeopleQuery,
 } from '~/generated/graphql';
-import { getLogoUrlFromDomainName } from '~/utils';
 
 import { ActivityRelationEditableFieldEditMode } from './ActivityRelationEditableFieldEditMode';
-
-const StyledDisplayModeContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
 
 type OwnProps = {
   activity?: Pick<Activity, 'id'> & {
@@ -74,26 +64,10 @@ export function ActivityRelationEditableField({ activity }: OwnProps) {
           }
           label="Relations"
           displayModeContent={
-            <StyledDisplayModeContainer>
-              {targetCompanies?.companies &&
-                targetCompanies.companies.map((company) => (
-                  <CompanyChip
-                    key={company.id}
-                    id={company.id}
-                    name={company.name}
-                    pictureUrl={getLogoUrlFromDomainName(company.domainName)}
-                  />
-                ))}
-              {targetPeople?.people &&
-                targetPeople.people.map((person) => (
-                  <PersonChip
-                    key={person.id}
-                    id={person.id}
-                    name={person.displayName}
-                    pictureUrl={person.avatarUrl ?? ''}
-                  />
-                ))}
-            </StyledDisplayModeContainer>
+            <ActivityTargetChips
+              targetCompanies={targetCompanies}
+              targetPeople={targetPeople}
+            />
           }
         />
       </RecoilScope>

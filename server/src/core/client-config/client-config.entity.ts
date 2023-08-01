@@ -30,7 +30,7 @@ export class ClientConfig {
   telemetry: Telemetry;
 
   @Field(() => Boolean)
-  demoMode: boolean;
+  signInPrefilled: boolean;
 
   @Field(() => Boolean)
   debugMode: boolean;

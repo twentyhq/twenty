@@ -27,7 +27,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  DEMO_MODE?: boolean;
+  SIGN_IN_PREFILLED?: boolean;
 
   @CastToBoolean()
   @IsOptional()
@@ -43,24 +43,32 @@ export class EnvironmentVariables {
   @IsUrl({ protocols: ['postgres'], require_tld: false })
   PG_DATABASE_URL: string;
 
+  // Frontend URL
+  @IsUrl({ require_tld: false })
+  FRONT_BASE_URL: string;
+
   // Json Web Token
   @IsString()
   ACCESS_TOKEN_SECRET: string;
   @IsDuration()
+  @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN: string;
 
   @IsString()
   REFRESH_TOKEN_SECRET: string;
   @IsDuration()
+  @IsOptional()
   REFRESH_TOKEN_EXPIRES_IN: string;
 
   @IsString()
   LOGIN_TOKEN_SECRET: string;
   @IsDuration()
+  @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN: string;
 
   // Auth
   @IsUrl({ require_tld: false })
+  @IsOptional()
   FRONT_AUTH_CALLBACK_URL: string;
 
   @CastToBoolean()

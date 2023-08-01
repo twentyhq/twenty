@@ -15,6 +15,10 @@ export enum AppPath {
   CompaniesPage = '/companies',
   CompanyShowPage = '/companies/:companyId',
   PersonShowPage = '/person/:personId',
+  TasksPage = '/tasks',
   OpportunitiesPage = '/opportunities',
   SettingsCatchAll = `/settings/*`,
+
+  // Impersonate
+  Impersonate = '/impersonate/:userId',
 }

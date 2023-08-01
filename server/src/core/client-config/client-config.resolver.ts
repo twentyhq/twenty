@@ -12,17 +12,17 @@ export class ClientConfigResolver {
   async clientConfig(): Promise<ClientConfig> {
     const clientConfig: ClientConfig = {
       authProviders: {
-        google: this.environmentService.isAuthGoogleEnabled() ?? false,
+        google: this.environmentService.isAuthGoogleEnabled(),
         magicLink: false,
         password: true,
       },
       telemetry: {
-        enabled: this.environmentService.isTelemetryEnabled() ?? false,
+        enabled: this.environmentService.isTelemetryEnabled(),
         anonymizationEnabled:
-          this.environmentService.isTelemetryAnonymizationEnabled() ?? false,
+          this.environmentService.isTelemetryAnonymizationEnabled(),
       },
-      demoMode: this.environmentService.isDemoMode() ?? false,
-      debugMode: this.environmentService.isDebugMode() ?? false,
+      signInPrefilled: this.environmentService.isSignInPrefilled(),
+      debugMode: this.environmentService.isDebugMode(),
     };
 
     return Promise.resolve(clientConfig);
