@@ -3,11 +3,11 @@ import { useTasks } from '../hooks/useTasks';
 import { TaskList } from './TaskList';
 
 export function TaskGroups() {
-  const { todayTasks, otherTasks } = useTasks();
+  const { todayOrPreviousTasks, upcomingTasks } = useTasks();
   return (
     <>
-      <TaskList title="Today" tasks={todayTasks ?? []} />
-      <TaskList title="Others" tasks={otherTasks ?? []} />
+      <TaskList title="Today" tasks={todayOrPreviousTasks ?? []} />
+      <TaskList title="Upcoming" tasks={upcomingTasks ?? []} />
     </>
   );
 }

@@ -8,9 +8,11 @@ import {
   Checkbox,
   CheckboxShape,
 } from '@/ui/input/checkbox/components/Checkbox';
+import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { useGetCompaniesQuery, useGetPeopleQuery } from '~/generated/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
+import { useCompleteTask } from '../hooks/useCompleteTask';
 import { TaskForList } from '../types/TaskForList';
 
 const StyledContainer = styled.div`
@@ -18,27 +20,42 @@ const StyledContainer = styled.div`
   align-self: stretch;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   height: ${({ theme }) => theme.spacing(12)};
+  min-width: calc(100% - ${({ theme }) => theme.spacing(8)});
   padding: 0 ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledSeparator = styled.div`
-  flex: 1;
+const StyledTaskBody = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  width: 1px;
 `;
 
 const StyledTaskTitle = styled.div`
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: 0 ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledCommentIcon = styled.div`
+  align-items: center;
   color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledDueDate = styled.div`
+  align-items: center;
   color: ${({ theme }) => theme.font.color.secondary};
+  display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledFieldsContainer = styled.div`
+  display: flex;
 `;
 
 export function TaskRow({ task }: { task: TaskForList }) {
@@ -71,6 +88,8 @@ export function TaskRow({ task }: { task: TaskForList }) {
       },
     },
   });
+  const body = JSON.parse(task.body ?? '{}')[0]?.content[0]?.text;
+  const { completeTask } = useCompleteTask(task);
 
   return (
     <StyledContainer
@@ -83,23 +102,31 @@ export function TaskRow({ task }: { task: TaskForList }) {
           e.stopPropagation();
         }}
       >
-        <Checkbox checked={false} shape={CheckboxShape.Rounded} />
+        <Checkbox
+          checked={!!task.completedAt}
+          shape={CheckboxShape.Rounded}
+          onChange={completeTask}
+        />
       </div>
-      <StyledTaskTitle>{task.title}</StyledTaskTitle>
-      {task.comments && task.comments.length > 0 && (
-        <StyledCommentIcon>
-          <IconComment size={theme.icon.size.md} />
-        </StyledCommentIcon>
-      )}
-      <StyledSeparator />
-      <ActivityTargetChips
-        targetCompanies={targetCompanies}
-        targetPeople={targetPeople}
-      />
-      <StyledDueDate>
-        <IconCalendar size={theme.icon.size.md} />
-        {task.dueAt && beautifyExactDate(task.dueAt)}
-      </StyledDueDate>
+      <StyledTaskTitle>{task.title ?? '(No title)'}</StyledTaskTitle>
+      <StyledTaskBody>
+        <OverflowingTextWithTooltip text={body} />
+        {task.comments && task.comments.length > 0 && (
+          <StyledCommentIcon>
+            <IconComment size={theme.icon.size.md} />
+          </StyledCommentIcon>
+        )}
+      </StyledTaskBody>
+      <StyledFieldsContainer>
+        <ActivityTargetChips
+          targetCompanies={targetCompanies}
+          targetPeople={targetPeople}
+        />
+        <StyledDueDate>
+          <IconCalendar size={theme.icon.size.md} />
+          {task.dueAt && beautifyExactDate(task.dueAt)}
+        </StyledDueDate>
+      </StyledFieldsContainer>
     </StyledContainer>
   );
 }

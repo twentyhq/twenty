@@ -32,6 +32,7 @@ const common = {
     },
   },
   spacing: (multiplicator: number) => `${multiplicator * 4}px`,
+  betweenSiblingsGap: `2px`,
   table: {
     horizontalCellMargin: '8px',
     checkboxColumnWidth: '32px',

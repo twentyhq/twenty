@@ -63,6 +63,7 @@ export function TableHeader<SortField>({
           {viewName}
         </>
       }
+      displayBottomBorder={false}
       rightComponents={[
         <FilterDropdownButton
           context={TableContext}
