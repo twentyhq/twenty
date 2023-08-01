@@ -5,9 +5,11 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { DefaultLayout } from '@/ui/layout/components/DefaultLayout';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
+import { SignInUp } from '~/pages/auth/SignInUp';
 import { Verify } from '~/pages/auth/Verify';
 import { Companies } from '~/pages/companies/Companies';
 import { CompanyShow } from '~/pages/companies/CompanyShow';
+import { Impersonate } from '~/pages/impersonate/Impersonate';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { People } from '~/pages/people/People';
 import { PersonShow } from '~/pages/people/PersonShow';
@@ -15,9 +17,8 @@ import { SettingsExperience } from '~/pages/settings/SettingsExperience';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorksapce } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
+import { Tasks } from '~/pages/tasks/Tasks';
 import { AppInternalHooks } from '~/sync-hooks/AppInternalHooks';
-
-import { SignInUp } from './pages/auth/SignInUp';
 
 // TEMP FEATURE FLAG FOR VIEW FIELDS
 export const ACTIVATE_VIEW_FIELDS = true;
@@ -39,6 +40,8 @@ export function App() {
           <Route path={AppPath.PersonShowPage} element={<PersonShow />} />
           <Route path={AppPath.CompaniesPage} element={<Companies />} />
           <Route path={AppPath.CompanyShowPage} element={<CompanyShow />} />
+          <Route path={AppPath.TasksPage} element={<Tasks />} />
+          <Route path={AppPath.Impersonate} element={<Impersonate />} />
 
           <Route path={AppPath.OpportunitiesPage} element={<Opportunities />} />
           <Route

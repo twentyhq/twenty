@@ -3,12 +3,19 @@ import styled from '@emotion/styled';
 type Props = {
   title: string;
   description?: string;
+  addornment?: React.ReactNode;
 };
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledTitleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const StyledTitle = styled.h2`
@@ -26,10 +33,13 @@ const StyledDescription = styled.h3`
   margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-export function H2Title({ title, description }: Props) {
+export function H2Title({ title, description, addornment }: Props) {
   return (
     <StyledContainer>
-      <StyledTitle>{title}</StyledTitle>
+      <StyledTitleContainer>
+        <StyledTitle>{title}</StyledTitle>
+        {addornment}
+      </StyledTitleContainer>
       {description && <StyledDescription>{description}</StyledDescription>}
     </StyledContainer>
   );

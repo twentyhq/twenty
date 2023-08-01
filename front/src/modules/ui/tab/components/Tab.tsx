@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 type OwnProps = {
   title: string;
+  icon?: React.ReactNode;
   active?: boolean;
   className?: string;
   onClick?: () => void;
@@ -15,9 +16,10 @@ const StyledTab = styled.div<{ active?: boolean }>`
     active ? theme.border.color.inverted : 'transparent'};
   color: ${({ theme, active }) =>
     active ? theme.font.color.primary : theme.font.color.secondary};
-
   cursor: pointer;
+
   display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(4)};
 
@@ -28,9 +30,16 @@ const StyledTab = styled.div<{ active?: boolean }>`
   }
 `;
 
-export function Tab({ title, active = false, onClick, className }: OwnProps) {
+export function Tab({
+  title,
+  icon,
+  active = false,
+  onClick,
+  className,
+}: OwnProps) {
   return (
     <StyledTab onClick={onClick} active={active} className={className}>
+      {icon}
       {title}
     </StyledTab>
   );
