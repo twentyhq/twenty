@@ -5,6 +5,7 @@ type OwnProps = {
   leftComponent?: ReactNode;
   rightComponents?: ReactNode[];
   bottomComponent?: ReactNode;
+  displayBottomBorder?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -12,13 +13,16 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledTableHeader = styled.div`
+const StyledTopBar = styled.div<{ displayBottomBorder: boolean }>`
   align-items: center;
+  border-bottom: ${({ displayBottomBorder, theme }) =>
+    displayBottomBorder ? `1px solid ${theme.border.color.light}` : 'none'};
+  box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
   flex-direction: row;
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  height: 40px;
+  height: 39px;
   justify-content: space-between;
   padding-left: ${({ theme }) => theme.spacing(3)};
   padding-right: ${({ theme }) => theme.spacing(2)};
@@ -31,20 +35,21 @@ const StyledLeftSection = styled.div`
 const StyledRightSection = styled.div`
   display: flex;
   font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: 2px;
+  gap: ${({ theme }) => theme.betweenSiblingsGap};
 `;
 
 export function TopBar({
   leftComponent,
   rightComponents,
   bottomComponent,
+  displayBottomBorder = true,
 }: OwnProps) {
   return (
     <StyledContainer>
-      <StyledTableHeader>
+      <StyledTopBar displayBottomBorder={displayBottomBorder}>
         <StyledLeftSection>{leftComponent}</StyledLeftSection>
         <StyledRightSection>{rightComponents}</StyledRightSection>
-      </StyledTableHeader>
+      </StyledTopBar>
       {bottomComponent}
     </StyledContainer>
   );

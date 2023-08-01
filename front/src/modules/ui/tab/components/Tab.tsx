@@ -16,9 +16,10 @@ const StyledTab = styled.div<{ active?: boolean }>`
     active ? theme.border.color.inverted : 'transparent'};
   color: ${({ theme, active }) =>
     active ? theme.font.color.primary : theme.font.color.secondary};
-
   cursor: pointer;
+
   display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(4)};
 
@@ -38,7 +39,8 @@ export function Tab({
 }: OwnProps) {
   return (
     <StyledTab onClick={onClick} active={active} className={className}>
-      {icon} {title}
+      {icon}
+      {title}
     </StyledTab>
   );
 }

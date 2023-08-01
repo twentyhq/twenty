@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
@@ -11,7 +13,16 @@ export function useTasks() {
     TasksContext,
   );
 
-  const { data, loading } = useGetActivitiesQuery({
+  const { data: completeTasksData } = useGetActivitiesQuery({
+    variables: {
+      where: {
+        type: { equals: ActivityType.Task },
+        completedAt: { not: { equals: null } },
+      },
+    },
+  });
+
+  const { data: incompleteTaskData } = useGetActivitiesQuery({
     variables: {
       where: {
         type: { equals: ActivityType.Task },
@@ -21,27 +32,28 @@ export function useTasks() {
     },
   });
 
-  const todayTasks = data?.findManyActivities.filter((task) => {
+  const data = activeTabId === 'done' ? completeTasksData : incompleteTaskData;
+
+  const todayOrPreviousTasks = data?.findManyActivities.filter((task) => {
     if (!task.dueAt) {
       return false;
     }
     const dueDate = parseDate(task.dueAt).toJSDate();
-    const today = new Date();
-    return dueDate.getDate() === today.getDate();
+    const today = DateTime.now().endOf('day').toJSDate();
+    return dueDate <= today;
   });
 
-  const otherTasks = data?.findManyActivities.filter((task) => {
+  const upcomingTasks = data?.findManyActivities.filter((task) => {
     if (!task.dueAt) {
       return false;
     }
     const dueDate = parseDate(task.dueAt).toJSDate();
-    const today = new Date();
-    return dueDate.getDate() !== today.getDate();
+    const today = DateTime.now().endOf('day').toJSDate();
+    return dueDate > today;
   });
 
   return {
-    todayTasks,
-    otherTasks,
-    loading,
+    todayOrPreviousTasks,
+    upcomingTasks,
   };
 }

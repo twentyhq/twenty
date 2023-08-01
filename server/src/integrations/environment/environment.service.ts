@@ -62,7 +62,7 @@ export class EnvironmentService {
   getFrontAuthCallbackUrl(): string {
     return (
       this.configService.get<string>('FRONT_AUTH_CALLBACK_URL') ??
-      this.getFrontBaseUrl() + '/auth/callback'
+      this.getFrontBaseUrl() + '/verify'
     );
   }
 

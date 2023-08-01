@@ -17,6 +17,12 @@ const StyledTasksContainer = styled.div`
   overflow: auto;
 `;
 
+const StyledTabListContainer = styled.div`
+  align-items: end;
+  display: flex;
+  height: 40px;
+`;
+
 export function Tasks() {
   const theme = useTheme();
 
@@ -41,7 +47,11 @@ export function Tasks() {
       <StyledTasksContainer>
         <RecoilScope SpecificContext={TasksContext}>
           <TopBar
-            leftComponent={<TabList context={TasksContext} tabs={TASK_TABS} />}
+            leftComponent={
+              <StyledTabListContainer>
+                <TabList context={TasksContext} tabs={TASK_TABS} />
+              </StyledTabListContainer>
+            }
           />
           <TaskGroups />
         </RecoilScope>
