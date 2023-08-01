@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-  issue_comment:
-    types: [created]
+  pull_request_target:
+    types: [labeled]
 jobs:
   chromatic-deployment:
-    if: ${{ (github.event.issue.pull_request && contains(github.event.comment.body, '@chromatic')) || github.event_name == 'push' }}
+    if: ${{ contains(github.event.*.labels.*.name, 'run-chromatic') }} || github.event_name == 'push' }}
     runs-on: ubuntu-latest
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
