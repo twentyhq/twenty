@@ -20,13 +20,14 @@ export function FilterDropdownButton({
     context,
   );
   console.log('availableFilters from generic', availableFilters);
-  return availableFilters.length > 1 ? (
-    <MultipleFiltersDropdownButton
+  return availableFilters.length === 1 &&
+    availableFilters[0].type === 'entity' ? (
+    <SingleEntityFilterDropdownButton
       context={context}
       HotkeyScope={HotkeyScope}
     />
   ) : (
-    <SingleEntityFilterDropdownButton
+    <MultipleFiltersDropdownButton
       context={context}
       HotkeyScope={HotkeyScope}
     />
