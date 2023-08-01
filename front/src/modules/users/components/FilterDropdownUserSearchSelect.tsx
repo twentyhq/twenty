@@ -1,22 +1,27 @@
+import { Context } from 'react';
+
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { FilterDropdownEntitySearchSelect } from '@/ui/filter-n-sort/components/FilterDropdownEntitySearchSelect';
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
 import { filterDropdownSelectedEntityIdScopedState } from '@/ui/filter-n-sort/states/filterDropdownSelectedEntityIdScopedState';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { TableContext } from '@/ui/table/states/TableContext';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { useSearchUserQuery } from '~/generated/graphql';
 
-export function FilterDropdownUserSearchSelect() {
+export function FilterDropdownUserSearchSelect({
+  context,
+}: {
+  context: Context<string | null>;
+}) {
   const filterDropdownSearchInput = useRecoilScopedValue(
     filterDropdownSearchInputScopedState,
-    TableContext,
+    context,
   );
 
   const [filterDropdownSelectedEntityId] = useRecoilScopedState(
     filterDropdownSelectedEntityIdScopedState,
-    TableContext,
+    context,
   );
 
   const usersForSelect = useFilteredSearchEntityQuery({
@@ -38,7 +43,7 @@ export function FilterDropdownUserSearchSelect() {
   return (
     <FilterDropdownEntitySearchSelect
       entitiesForSelect={usersForSelect}
-      context={TableContext}
+      context={context}
     />
   );
 }

@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 
 import { TaskGroups } from '@/activities/components/TaskGroups';
 import { TasksContext } from '@/activities/states/TasksContext';
+import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
+import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { TabList } from '@/ui/tab/components/TabList';
@@ -52,6 +54,12 @@ export function Tasks() {
                 <TabList context={TasksContext} tabs={TASK_TABS} />
               </StyledTabListContainer>
             }
+            rightComponents={[
+              <FilterDropdownButton
+                context={TasksContext}
+                HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+              />,
+            ]}
           />
           <TaskGroups />
         </RecoilScope>
