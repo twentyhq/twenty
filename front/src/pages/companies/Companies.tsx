@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -7,6 +8,7 @@ import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/components/TableActionBarButtonCreateActivityCompany';
 import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
+import { ReactSpreadsheetImport } from '@/spreadsheet-import';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
@@ -64,20 +66,28 @@ export function Companies() {
   const theme = useTheme();
 
   return (
-    <WithTopBarContainer
-      title="Companies"
-      icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-      onAddButtonClick={handleAddButtonClick}
-    >
-      <RecoilScope SpecificContext={TableContext}>
-        <StyledTableContainer>
-          <CompanyTable />
-        </StyledTableContainer>
-        <EntityTableActionBar>
-          <TableActionBarButtonCreateActivityCompany />
-          <TableActionBarButtonDeleteCompanies />
-        </EntityTableActionBar>
-      </RecoilScope>
-    </WithTopBarContainer>
+    <>
+      <WithTopBarContainer
+        title="Companies"
+        icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
+        onAddButtonClick={handleAddButtonClick}
+      >
+        <RecoilScope SpecificContext={TableContext}>
+          <StyledTableContainer>
+            <CompanyTable />
+          </StyledTableContainer>
+          <EntityTableActionBar>
+            <TableActionBarButtonCreateActivityCompany />
+            <TableActionBarButtonDeleteCompanies />
+          </EntityTableActionBar>
+        </RecoilScope>
+      </WithTopBarContainer>
+      <ReactSpreadsheetImport
+        isOpen={true}
+        onSubmit={() => {}}
+        onClose={() => {}}
+        fields={[]}
+      />
+    </>
   );
 }
