@@ -107,7 +107,7 @@ export function SingleEntityFilterDropdownButton({
         isUnfolded={isUnfolded}
         onClick={() => handleIsUnfoldedChange(!isUnfolded)}
       >
-        {filters[0]?.displayValue}
+        {filters[0]?.displayValue || 'Filter'}
       </StyledDropdownButton>
       {isUnfolded && (
         <DropdownMenuContainer onClose={() => handleIsUnfoldedChange(false)}>
