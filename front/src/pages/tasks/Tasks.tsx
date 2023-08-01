@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { TaskGroups } from '@/tasks/components/TaskGroups';
-import { TasksContext } from '@/tasks/states/TasksContext';
+import { TaskGroups } from '@/activities/components/TaskGroups';
+import { TasksContext } from '@/activities/states/TasksContext';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { TabList } from '@/ui/tab/components/TabList';

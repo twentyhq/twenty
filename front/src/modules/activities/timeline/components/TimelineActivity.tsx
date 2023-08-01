@@ -1,8 +1,8 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
+import { useCompleteTask } from '@/activities/hooks/useCompleteTask';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { useCompleteTask } from '@/tasks/hooks/useCompleteTask';
 import { IconNotes } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { Activity, User } from '~/generated/graphql';
