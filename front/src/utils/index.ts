@@ -10,6 +10,30 @@ export function formatToHumanReadableDate(date: Date | string) {
   }).format(parsedJSDate);
 }
 
-export const getLogoUrlFromDomainName = (domainName?: string): string => {
-  return `https://api.faviconkit.com/${domainName}/144`;
-};
+export function sanitizeURL(link: string | null | undefined) {
+  return link
+    ? link.replace(/(https?:\/\/)|(www\.)/g, '').replace(/\/$/, '')
+    : '';
+}
+
+export function getLogoUrlFromDomainName(
+  domainName?: string,
+): string | undefined {
+  const sanitizedDomain = sanitizeURL(domainName);
+
+  if (!sanitizedDomain) return;
+
+  for (const prefix of ['', 'www.', 'https://']) {
+    const img = document.createElement('img');
+    img.setAttribute(
+      'src',
+      `https://api.faviconkit.com/${prefix}${sanitizedDomain}/144`,
+    );
+
+    if (img.complete) {
+      return img.src;
+    }
+  }
+
+  return;
+}
