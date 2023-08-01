@@ -19,7 +19,7 @@ services:
       - "3000:3000"
     environment:
       DEBUG_MODE: false
-      IS_SIGN_IN_PREFILLED: true
+      SIGN_IN_PREFILLED: true
       ACCESS_TOKEN_SECRET: "secret_jwt"
       LOGIN_TOKEN_SECRET: "secret_login_token"
       REFRESH_TOKEN_SECRET: "secret_refresh_token"
