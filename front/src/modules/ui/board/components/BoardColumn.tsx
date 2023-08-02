@@ -61,16 +61,15 @@ const StyledAmount = styled.div`
 `;
 
 const StyledNumChildren = styled.div`
+  align-items: center;
   background-color: ${({ theme }) => theme.background.tertiary};
   border-radius: ${({ theme }) => theme.border.radius.rounded};
   color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  height: 20px;
+  justify-content: center;
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
   margin-left: auto;
-  padding-bottom: ${({ theme }) => theme.spacing(1 / 2)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  padding-top: ${({ theme }) => theme.spacing(1 / 2)};
-  text-align: center;
   width: 16px;
 `;
 
