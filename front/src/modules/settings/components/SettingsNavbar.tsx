@@ -79,7 +79,6 @@ export function SettingsNavbar() {
         label="Logout"
         onClick={handleLogout}
         icon={<IconLogout size={theme.icon.size.md} />}
-        danger={true}
       />
     </SubMenuNavbar>
   );
