@@ -7,7 +7,7 @@ import { IconNotes } from '@/ui/icon';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 import { Activity, User } from '~/generated/graphql';
 import {
-  beautifyExactDate,
+  beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
@@ -126,7 +126,7 @@ type OwnProps = {
 
 export function TimelineActivity({ activity }: OwnProps) {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(activity.createdAt);
-  const exactCreatedAt = beautifyExactDate(activity.createdAt);
+  const exactCreatedAt = beautifyExactDateTime(activity.createdAt);
   const body = JSON.parse(activity.body ?? '{}')[0]?.content[0]?.text;
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
