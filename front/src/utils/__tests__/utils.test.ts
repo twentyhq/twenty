@@ -1,21 +1,49 @@
-import { getLogoUrlFromDomainName } from '..';
+import { getLogoUrlFromDomainName, sanitizeURL } from '..';
+
+describe('sanitizeURL', () => {
+  test('should sanitize the URL correctly', () => {
+    expect(sanitizeURL('http://example.com/')).toBe('example.com');
+    expect(sanitizeURL('https://www.example.com/')).toBe('example.com');
+    expect(sanitizeURL('www.example.com')).toBe('example.com');
+    expect(sanitizeURL('example.com')).toBe('example.com');
+    expect(sanitizeURL('example.com/')).toBe('example.com');
+  });
+
+  test('should handle undefined input', () => {
+    expect(sanitizeURL(undefined)).toBe('');
+  });
+});
 
 describe('getLogoUrlFromDomainName', () => {
-  it(`should generate logo url if undefined `, () => {
+  test('should return the correct logo URL for a given domain', () => {
+    expect(getLogoUrlFromDomainName('example.com')).toBe(
+      'https://favicon.twenty.com/example.com',
+    );
+
+    expect(getLogoUrlFromDomainName('http://example.com/')).toBe(
+      'https://favicon.twenty.com/example.com',
+    );
+
+    expect(getLogoUrlFromDomainName('https://www.example.com/')).toBe(
+      'https://favicon.twenty.com/example.com',
+    );
+
+    expect(getLogoUrlFromDomainName('www.example.com')).toBe(
+      'https://favicon.twenty.com/example.com',
+    );
+
+    expect(getLogoUrlFromDomainName('example.com/')).toBe(
+      'https://favicon.twenty.com/example.com',
+    );
+
+    expect(getLogoUrlFromDomainName('apple.com')).toBe(
+      'https://favicon.twenty.com/apple.com',
+    );
+  });
+
+  test('should handle undefined input', () => {
     expect(getLogoUrlFromDomainName(undefined)).toBe(
-      'https://api.faviconkit.com/undefined/144',
-    );
-  });
-
-  it(`should generate logo url if defined `, () => {
-    expect(getLogoUrlFromDomainName('test.com')).toBe(
-      'https://api.faviconkit.com/test.com/144',
-    );
-  });
-
-  it(`should generate logo url if empty `, () => {
-    expect(getLogoUrlFromDomainName('')).toBe(
-      'https://api.faviconkit.com//144',
+      'https://favicon.twenty.com/',
     );
   });
 });

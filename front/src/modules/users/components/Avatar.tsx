@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
@@ -86,6 +87,20 @@ export function Avatar({
   type = 'squared',
 }: OwnProps) {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
+  const [isInvalidAvatarUrl, setIsInvalidAvatarUrl] = useState(false);
+
+  useEffect(() => {
+    if (avatarUrl) {
+      new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(false);
+        img.onerror = () => resolve(true);
+        img.src = getImageAbsoluteURIOrBase64(avatarUrl) as string;
+      }).then((res) => {
+        setIsInvalidAvatarUrl(res as boolean);
+      });
+    }
+  }, [avatarUrl]);
 
   return (
     <StyledAvatar
@@ -95,7 +110,8 @@ export function Avatar({
       type={type}
       colorId={colorId}
     >
-      {noAvatarUrl && placeholder[0]?.toLocaleUpperCase()}
+      {(noAvatarUrl || isInvalidAvatarUrl) &&
+        placeholder[0]?.toLocaleUpperCase()}
     </StyledAvatar>
   );
 }
