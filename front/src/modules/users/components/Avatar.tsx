@@ -23,6 +23,7 @@ export const StyledAvatar = styled.div<OwnProps & { colorId: string }>`
     !isNonEmptyString(avatarUrl) ? stringToHslColor(colorId, 75, 85) : 'none'};
   ${({ avatarUrl }) =>
     isNonEmptyString(avatarUrl) ? `background-image: url(${avatarUrl});` : ''}
+  background-position: center;
   background-size: cover;
   border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
   color: ${({ colorId }) => stringToHslColor(colorId, 75, 25)};

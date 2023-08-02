@@ -32,6 +32,7 @@ type StyledLogoProps = {
 
 const StyledLogo = styled.div<StyledLogoProps>`
   background: url(${(props) => props.logo});
+  background-position: center;
   background-size: cover;
   border-radius: ${({ theme }) => theme.border.radius.xs};
   height: 16px;
