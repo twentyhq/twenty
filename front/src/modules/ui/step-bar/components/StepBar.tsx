@@ -12,15 +12,9 @@ const Container = styled.div`
 export type StepsProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
     activeStep: number;
-    icon?: React.ReactNode;
   };
 
-export const StepBar = ({
-  children,
-  activeStep,
-  icon,
-  ...restProps
-}: StepsProps) => {
+export const StepBar = ({ children, activeStep, ...restProps }: StepsProps) => {
   return (
     <Container {...restProps}>
       {React.Children.map(children, (child, index) => {
@@ -36,9 +30,9 @@ export const StepBar = ({
         }
 
         return React.cloneElement<StepProps>(child as any, {
-          isActive: index === activeStep,
+          index,
+          isActive: index <= activeStep,
           isLast: index === React.Children.count(children) - 1,
-          icon,
         });
       })}
     </Container>

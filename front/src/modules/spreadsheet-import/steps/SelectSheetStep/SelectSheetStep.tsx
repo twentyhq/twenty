@@ -1,23 +1,30 @@
 import { useCallback, useState } from 'react';
-import {
-  Heading,
-  Radio,
-  RadioGroup,
-  Stack,
-  Text,
-  useStyleConfig,
-} from '@chakra-ui/react';
+import { Radio, RadioGroup, Stack } from '@chakra-ui/react';
 import styled from '@emotion/styled';
 
 import { Modal } from '@/ui/modal/components/Modal';
 
 import { ContinueButton } from '../../components/ContinueButton';
-import { useRsi } from '../../hooks/useRsi';
-import type { themeOverrides } from '../../theme';
 
-const StyledContent = styled(Modal.Content)`
-  align-items: center;
-  justify-content: center;
+const Content = styled(Modal.Content)`
+  background-color: red;
+  flex: 0;
+  height: 100%;
+  overflow-y: scroll;
+`;
+
+const Title = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.xl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  text-align: center;
+`;
+
+const Value = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
 type SelectSheetProps = {
@@ -30,11 +37,9 @@ export const SelectSheetStep = ({
   onContinue,
 }: SelectSheetProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { translations } = useRsi();
+
   const [value, setValue] = useState(sheetNames[0]);
-  const styles = useStyleConfig(
-    'SelectSheetStep',
-  ) as (typeof themeOverrides)['components']['SelectSheetStep']['baseStyle'];
+
   const handleOnContinue = useCallback(
     async (data: typeof value) => {
       setIsLoading(true);
@@ -46,24 +51,22 @@ export const SelectSheetStep = ({
 
   return (
     <>
-      <StyledContent>
-        <Heading {...styles.heading}>
-          {translations.uploadStep.selectSheet.title}
-        </Heading>
+      <Content>
+        <Title>Select the sheet to use</Title>
         <RadioGroup onChange={(value) => setValue(value)} value={value}>
           <Stack spacing={8}>
             {sheetNames.map((sheetName) => (
-              <Radio value={sheetName} key={sheetName} {...styles.radio}>
-                <Text {...styles.radioLabel}>{sheetName}</Text>
+              <Radio value={sheetName} key={sheetName}>
+                <Value>{sheetName}</Value>
               </Radio>
             ))}
           </Stack>
         </RadioGroup>
-      </StyledContent>
+      </Content>
       <ContinueButton
         isLoading={isLoading}
         onContinue={() => handleOnContinue(value)}
-        title={translations.uploadStep.selectSheet.nextButtonTitle}
+        title="Next"
       />
     </>
   );

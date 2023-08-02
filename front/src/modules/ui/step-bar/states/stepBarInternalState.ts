@@ -7,6 +7,6 @@ export type StepsState = {
 export const stepBarInternalState = atom<StepsState>({
   key: 'step-bar/internal-state',
   default: {
-    activeStep: 0,
+    activeStep: -1,
   },
 });

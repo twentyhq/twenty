@@ -1,12 +1,82 @@
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Box, Button, Text, useStyleConfig, useToast } from '@chakra-ui/react';
+import styled from '@emotion/styled';
 import * as XLSX from 'xlsx-ugnis';
 
+import { MainButton } from '@/ui/button/components/MainButton';
+import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
+
 import { useRsi } from '../../../hooks/useRsi';
-import type { themeOverrides } from '../../../theme';
-import { getDropZoneBorder } from '../utils/getDropZoneBorder';
 import { readFileAsync } from '../utils/readFilesAsync';
+
+const Container = styled.div`
+  align-items: center;
+  background: ${({ theme }) => `
+    repeating-linear-gradient(
+      0deg,
+      ${theme.font.color.primary},
+      ${theme.font.color.primary} 10px,
+      transparent 10px,
+      transparent 20px,
+      ${theme.font.color.primary} 20px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      ${theme.font.color.primary},
+      ${theme.font.color.primary} 10px,
+      transparent 10px,
+      transparent 20px,
+      ${theme.font.color.primary} 20px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      ${theme.font.color.primary},
+      ${theme.font.color.primary} 10px,
+      transparent 10px,
+      transparent 20px,
+      ${theme.font.color.primary} 20px
+    ),
+    repeating-linear-gradient(
+      270deg,
+      ${theme.font.color.primary},
+      ${theme.font.color.primary} 10px,
+      transparent 10px,
+      transparent 20px,
+      ${theme.font.color.primary} 20px
+    );
+  `};
+  background-position: 0 0, 0 0, 100% 0, 0 100%;
+  background-repeat: no-repeat;
+  background-size: 2px 100%, 100% 2px, 2px 100%, 100% 2px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+`;
+
+const Overlay = styled.div`
+  background: ${({ theme }) => theme.background.transparent.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  bottom: 0px;
+  left: 0px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+`;
+
+const Text = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  text-align: center;
+`;
+
+const Button = styled(MainButton)`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  width: 200px;
+`;
 
 type DropZoneProps = {
   onContinue: (data: XLSX.WorkBook, file: File) => void;
@@ -14,12 +84,12 @@ type DropZoneProps = {
 };
 
 export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
-  const { translations, maxFileSize, dateFormat, parseRaw } = useRsi();
-  const styles = useStyleConfig(
-    'UploadStep',
-  ) as (typeof themeOverrides)['components']['UploadStep']['baseStyle'];
-  const toast = useToast();
+  const { maxFileSize, dateFormat, parseRaw } = useRsi();
+
   const [loading, setLoading] = useState(false);
+
+  const { enqueueSnackBar } = useSnackBar();
+
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     noClick: true,
     noKeyboard: true,
@@ -35,13 +105,9 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
     onDropRejected: (fileRejections) => {
       setLoading(false);
       fileRejections.forEach((fileRejection) => {
-        toast({
-          status: 'error',
-          variant: 'left-accent',
-          position: 'bottom-left',
-          title: `${fileRejection.file.name} ${translations.uploadStep.dropzone.errorToastDescription}`,
-          description: fileRejection.errors[0].message,
-          isClosable: true,
+        enqueueSnackBar(fileRejection.errors[0].message, {
+          title: `${fileRejection.file.name} upload rejected`,
+          variant: 'error',
         });
       });
     },
@@ -60,35 +126,19 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
   });
 
   return (
-    <Box
-      {...getRootProps()}
-      {...getDropZoneBorder(styles.dropZoneBorder)}
-      width="100%"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      flexDirection="column"
-      flex={1}
-    >
-      <input {...getInputProps()} data-testid="rsi-dropzone" />
+    <Container {...getRootProps()}>
+      {isDragActive && <Overlay />}
+      <input {...getInputProps()} />
       {isDragActive ? (
-        <Text sx={styles.dropzoneText}>
-          {translations.uploadStep.dropzone.activeDropzoneTitle}
-        </Text>
+        <Text>Drop file here...</Text>
       ) : loading || isLoading ? (
-        <Text sx={styles.dropzoneText}>
-          {translations.uploadStep.dropzone.loadingTitle}
-        </Text>
+        <Text>Processing...</Text>
       ) : (
         <>
-          <Text sx={styles.dropzoneText}>
-            {translations.uploadStep.dropzone.title}
-          </Text>
-          <Button sx={styles.dropzoneButton} onClick={open}>
-            {translations.uploadStep.dropzone.buttonTitle}
-          </Button>
+          <Text>Upload .xlsx, .xls or .csv file</Text>
+          <Button onClick={open} title="Select file" />
         </>
       )}
-    </Box>
+    </Container>
   );
 };

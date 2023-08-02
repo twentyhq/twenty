@@ -1,30 +1,50 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-const Container = styled.div`
+import { AnimatedCheckmark } from '@/ui/checkmark/components/AnimatedCheckmark';
+
+const Container = styled.div<{ isLast: boolean }>`
   align-items: center;
   display: flex;
-  flex-direction: column;
+  flex-grow: ${({ isLast }) => (isLast ? '0' : '1')};
 `;
 
 const StepCircle = styled(motion.div)<{ isCurrent: boolean }>`
   align-items: center;
-  background: ${({ isCurrent }) => (isCurrent ? 'blue' : 'grey')};
   border-radius: 50%;
+  border-style: solid;
+  border-width: 1px;
   display: flex;
+  flex-basis: auto;
+  flex-shrink: 0;
   height: 20px;
   justify-content: center;
+  overflow: hidden;
+  position: relative;
   width: 20px;
 `;
 
-const StepLabel = styled.div<{ isActive: boolean }>`
-  color: ${({ isActive }) => (isActive ? 'blue' : 'grey')};
+const StepIndex = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const StepLabel = styled.span<{ isActive: boolean }>`
+  color: ${({ theme, isActive }) =>
+    isActive ? theme.font.color.primary : theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  margin-left: ${({ theme }) => theme.spacing(2)};
+  white-space: nowrap;
 `;
 
 const StepLine = styled(motion.div)<{ isActive: boolean }>`
-  background: ${({ isActive }) => (isActive ? 'blue' : 'grey')};
   height: 2px;
-  transition: background 0.3s;
+  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
+  overflow: hidden;
   width: 100%;
 `;
 
@@ -32,28 +52,63 @@ export type StepProps = React.PropsWithChildren &
   React.ComponentProps<'div'> & {
     isActive?: boolean;
     isLast?: boolean;
+    index?: number;
     label: string;
-    icon?: React.ReactNode;
   };
 
 export const Step = ({
   isActive = false,
   isLast = false,
+  index = 0,
   label,
-  icon,
   children,
 }: StepProps) => {
+  const theme = useTheme();
+
+  const variantsCircle = {
+    active: {
+      backgroundColor: theme.font.color.primary,
+      borderColor: theme.font.color.primary,
+      transition: { duration: 0.5 },
+    },
+    inactive: {
+      backgroundColor: theme.background.transparent.lighter,
+      borderColor: theme.border.color.medium,
+      transition: { duration: 0.5 },
+    },
+  };
+
+  const variantsLine = {
+    active: {
+      backgroundColor: theme.font.color.primary,
+      transition: { duration: 0.5 },
+    },
+    inactive: {
+      backgroundColor: theme.border.color.medium,
+      transition: { duration: 0.5 },
+    },
+  };
+
   return (
-    <Container>
+    <Container isLast={isLast}>
       <StepCircle
         isCurrent={isActive}
-        animate={{ scale: isActive ? 1.2 : 1 }}
-        transition={{ type: 'spring', stiffness: 500 }}
+        variants={variantsCircle}
+        animate={isActive ? 'active' : 'inactive'}
       >
-        {icon}
+        {isActive && (
+          <AnimatedCheckmark isAnimating={isActive} color={theme.color.gray0} />
+        )}
+        {!isActive && <StepIndex>{index + 1}</StepIndex>}
       </StepCircle>
-      {!isLast && <StepLine isActive={isActive} />}
       <StepLabel isActive={isActive}>{label}</StepLabel>
+      {!isLast && (
+        <StepLine
+          isActive={isActive}
+          variants={variantsLine}
+          animate={isActive ? 'active' : 'inactive'}
+        />
+      )}
       {isActive && children}
     </Container>
   );

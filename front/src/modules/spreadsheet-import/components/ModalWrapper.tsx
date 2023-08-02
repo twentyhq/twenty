@@ -8,8 +8,11 @@ import { useRsi } from '../hooks/useRsi';
 import { ModalCloseButton } from './ModalCloseButton';
 
 const StyledModal = styled(Modal)`
-  height: calc(100% - ${({ theme }) => theme.spacing(20)});
-  width: calc(100% - ${({ theme }) => theme.spacing(20)});
+  height: 61%;
+  min-height: 400px;
+  min-width: 600px;
+  position: relative;
+  width: 53%;
 `;
 
 const StyledRtlLtr = styled.div`

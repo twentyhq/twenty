@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react';
-import { Progress, useToast } from '@chakra-ui/react';
+import { Progress } from '@chakra-ui/react';
 import type XLSX from 'xlsx-ugnis';
+
+import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 
 import { useRsi } from '../hooks/useRsi';
 import type { RawData } from '../types';
@@ -59,19 +61,15 @@ export const UploadFlow = ({ nextStep }: Props) => {
     selectHeaderStepHook,
     matchColumnsStepHook,
   } = useRsi();
-  const toast = useToast();
+  const { enqueueSnackBar } = useSnackBar();
+
   const errorToast = useCallback(
     (description: string) => {
-      toast({
-        status: 'error',
-        variant: 'left-accent',
-        position: 'bottom-left',
-        title: `${translations.alerts.toast.error}`,
-        description,
-        isClosable: true,
+      enqueueSnackBar(translations.alerts.toast.error, {
+        variant: 'error',
       });
     },
-    [toast, translations],
+    [enqueueSnackBar, translations],
   );
 
   switch (state.type) {
@@ -104,13 +102,13 @@ export const UploadFlow = ({ nextStep }: Props) => {
                   type: StepType.selectHeader,
                   data: mappedWorkbook,
                 });
-                nextStep();
               } catch (e) {
                 errorToast((e as Error).message);
               }
             } else {
               setState({ type: StepType.selectSheet, workbook });
             }
+            nextStep();
           }}
         />
       );
@@ -138,7 +136,6 @@ export const UploadFlow = ({ nextStep }: Props) => {
                 type: StepType.selectHeader,
                 data: mappedWorkbook,
               });
-              nextStep();
             } catch (e) {
               errorToast((e as Error).message);
             }

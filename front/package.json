@@ -23,7 +23,6 @@
     "apollo-link-rest": "^0.9.0",
     "apollo-upload-client": "^17.0.0",
     "chakra-react-select": "^4.7.0",
-    "chakra-ui-steps": "^2.1.0",
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
     "deep-equal": "^2.2.2",
