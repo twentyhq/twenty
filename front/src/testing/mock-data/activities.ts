@@ -56,7 +56,7 @@ export const mockedActivities: Array<MockedActivity> = [
     title: 'My very first note',
     type: ActivityType.Note,
     body: null,
-    dueAt: null,
+    dueAt: '2023-04-26T10:12:42.33625+00:00',
     completedAt: null,
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
@@ -112,7 +112,7 @@ export const mockedActivities: Array<MockedActivity> = [
     body: null,
     type: ActivityType.Note,
     completedAt: null,
-    dueAt: null,
+    dueAt: '2029-08-26T10:12:42.33625+00:00',
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
       firstName: 'Charles',
