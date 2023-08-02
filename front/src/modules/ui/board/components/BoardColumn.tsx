@@ -60,6 +60,19 @@ const StyledAmount = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledNumChildren = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.tertiary};
+  border-radius: ${({ theme }) => theme.border.radius.rounded};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  margin-left: auto;
+  width: 16px;
+`;
+
 type OwnProps = {
   color?: string;
   title: string;
@@ -69,6 +82,7 @@ type OwnProps = {
   totalAmount?: number;
   children: React.ReactNode;
   isFirstColumn: boolean;
+  numChildren: number;
 };
 
 export function BoardColumn({
@@ -79,6 +93,7 @@ export function BoardColumn({
   totalAmount,
   children,
   isFirstColumn,
+  numChildren,
 }: OwnProps) {
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
     React.useState(false);
@@ -112,6 +127,7 @@ export function BoardColumn({
       <StyledHeader>
         <Tag onClick={handleTitleClick} color={color} text={title} />
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
+        <StyledNumChildren>{numChildren}</StyledNumChildren>
       </StyledHeader>
       {isBoardColumnMenuOpen && (
         <BoardColumnMenu
