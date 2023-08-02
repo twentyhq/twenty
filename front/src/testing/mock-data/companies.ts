@@ -1,4 +1,5 @@
-import { Company, User } from '../../generated/graphql';
+import { companyViewFields } from '@/companies/constants/companyViewFields';
+import { Company, User, ViewField } from '~/generated/graphql';
 
 type MockedCompany = Pick<
   Company,
@@ -118,3 +119,15 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     __typename: 'Company',
   },
 ];
+
+export const mockedCompanyViewFields = companyViewFields.map<ViewField>(
+  (viewFieldDefinition) => ({
+    __typename: 'ViewField',
+    fieldName: viewFieldDefinition.columnLabel,
+    id: viewFieldDefinition.id,
+    index: viewFieldDefinition.columnOrder,
+    isVisible: true,
+    objectName: 'company',
+    sizeInPx: viewFieldDefinition.columnSize,
+  }),
+);

@@ -29,6 +29,29 @@ export class ReadViewFieldAbilityHandler implements IAbilityHandler {
 }
 
 @Injectable()
+export class CreateViewFieldAbilityHandler implements IAbilityHandler {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs();
+
+    const allowed = await relationAbilityChecker(
+      'ViewField',
+      ability,
+      this.prismaService.client,
+      args,
+    );
+
+    if (!allowed) {
+      return false;
+    }
+
+    return ability.can(AbilityAction.Create, 'ViewField');
+  }
+}
+
+@Injectable()
 export class UpdateViewFieldAbilityHandler implements IAbilityHandler {
   constructor(private readonly prismaService: PrismaService) {}
 

@@ -1,9 +1,10 @@
-import * as React from 'react';
+import { useCallback, useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { useUpdateViewFieldMutation } from '~/generated/graphql';
 
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
@@ -102,8 +103,11 @@ export function EntityTable<SortField>({
   useUpdateEntityMutation,
 }: OwnProps<SortField>) {
   const viewFields = useRecoilValue(viewFieldsFamilyState);
+  const setViewFields = useSetRecoilState(viewFieldsFamilyState);
 
-  const tableBodyRef = React.useRef<HTMLDivElement>(null);
+  const [updateViewFieldMutation] = useUpdateViewFieldMutation();
+
+  const tableBodyRef = useRef<HTMLDivElement>(null);
 
   useMapKeyboardToSoftFocus();
 
@@ -115,6 +119,25 @@ export function EntityTable<SortField>({
       leaveTableFocus();
     },
   });
+
+  const handleColumnResize = useCallback(
+    (resizedFieldId: string, width: number) => {
+      setViewFields((previousViewFields) =>
+        previousViewFields.map((viewField) =>
+          viewField.id === resizedFieldId
+            ? { ...viewField, columnSize: width }
+            : viewField,
+        ),
+      );
+      updateViewFieldMutation({
+        variables: {
+          data: { sizeInPx: width },
+          where: { id: resizedFieldId },
+        },
+      });
+    },
+    [setViewFields, updateViewFieldMutation],
+  );
 
   return (
     <EntityUpdateMutationHookContext.Provider value={useUpdateEntityMutation}>
@@ -129,7 +152,10 @@ export function EntityTable<SortField>({
           <StyledTableWrapper>
             {viewFields.length > 0 && (
               <StyledTable>
-                <EntityTableHeader viewFields={viewFields} />
+                <EntityTableHeader
+                  onColumnResize={handleColumnResize}
+                  viewFields={viewFields}
+                />
                 <EntityTableBody />
               </StyledTable>
             )}

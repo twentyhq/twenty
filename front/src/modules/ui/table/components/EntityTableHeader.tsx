@@ -1,7 +1,10 @@
-import { PointerEvent, useCallback, useState } from 'react';
+import { PointerEvent, useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { ViewFieldDefinition, ViewFieldMetadata } from '../types/ViewField';
+import type {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '../types/ViewField';
 
 import { ColumnHead } from './ColumnHead';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
@@ -40,18 +43,22 @@ const StyledResizeHandler = styled.div`
 `;
 
 type OwnProps = {
+  onColumnResize: (resizedFieldId: string, width: number) => void;
   viewFields: ViewFieldDefinition<ViewFieldMetadata>[];
 };
 
-export function EntityTableHeader({ viewFields }: OwnProps) {
-  const initialColumnWidths = viewFields.reduce<Record<string, number>>(
-    (result, viewField) => ({
-      ...result,
-      [viewField.id]: viewField.columnSize,
-    }),
-    {},
+export function EntityTableHeader({ onColumnResize, viewFields }: OwnProps) {
+  const columnWidths = useMemo(
+    () =>
+      viewFields.reduce<Record<string, number>>(
+        (result, viewField) => ({
+          ...result,
+          [viewField.id]: viewField.columnSize,
+        }),
+        {},
+      ),
+    [viewFields],
   );
-  const [columnWidths, setColumnWidths] = useState(initialColumnWidths);
   const [isResizing, setIsResizing] = useState(false);
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
@@ -82,16 +89,16 @@ export function EntityTableHeader({ viewFields }: OwnProps) {
     setIsResizing(false);
     if (!resizedFieldId) return;
 
-    const newColumnWidths = {
-      ...columnWidths,
-      [resizedFieldId]: Math.max(
-        columnWidths[resizedFieldId] + offset,
-        COLUMN_MIN_WIDTH,
-      ),
-    };
-    setColumnWidths(newColumnWidths);
+    const nextWidth = Math.round(
+      Math.max(columnWidths[resizedFieldId] + offset, COLUMN_MIN_WIDTH),
+    );
+
+    if (nextWidth !== columnWidths[resizedFieldId]) {
+      onColumnResize(resizedFieldId, nextWidth);
+    }
+
     setOffset(0);
-  }, [offset, setIsResizing, columnWidths, resizedFieldId]);
+  }, [resizedFieldId, columnWidths, offset, onColumnResize]);
 
   return (
     <thead>
