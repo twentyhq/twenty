@@ -1,3 +1,4 @@
+import { ChipSize } from '@/ui/chip/components/Chip';
 import { EntityChip, EntityChipVariant } from '@/ui/chip/components/EntityChip';
 
 type OwnProps = {
@@ -5,6 +6,8 @@ type OwnProps = {
   name: string;
   pictureUrl?: string;
   variant?: EntityChipVariant;
+  size?: ChipSize;
+  avatarSize?: number;
 };
 
 export function CompanyChip({
@@ -12,6 +15,8 @@ export function CompanyChip({
   name,
   pictureUrl,
   variant = EntityChipVariant.Regular,
+  size,
+  avatarSize,
 }: OwnProps) {
   return (
     <EntityChip
@@ -21,6 +26,8 @@ export function CompanyChip({
       avatarType="squared"
       pictureUrl={pictureUrl}
       variant={variant}
+      size={size}
+      avatarSize={avatarSize}
     />
   );
 }
