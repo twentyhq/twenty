@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { type ComponentProps } from 'react';
 import styled from '@emotion/styled';
 
-import { IconButtonSize, IconButtonVariant } from './IconButton';
+import type { IconButtonSize, IconButtonVariant } from './IconButton';
+
 const StyledIconButtonGroupContainer = styled.div`
   align-items: flex-start;
   background: ${({ theme }) => theme.background.transparent.primary};
@@ -14,21 +15,24 @@ const StyledIconButtonGroupContainer = styled.div`
 type IconButtonGroupProps = {
   variant: IconButtonVariant;
   size: IconButtonSize;
-  children: React.ReactElement[];
-};
+  children: React.ReactElement | React.ReactElement[];
+} & Omit<ComponentProps<'div'>, 'children'>;
 
 export function IconButtonGroup({
   children,
   variant,
   size,
+  ...props
 }: IconButtonGroupProps) {
   return (
-    <StyledIconButtonGroupContainer>
-      {React.Children.map(children, (child) =>
-        React.cloneElement(child, {
-          ...(variant ? { variant } : {}),
-          ...(size ? { size } : {}),
-        }),
+    <StyledIconButtonGroupContainer {...props}>
+      {React.Children.map(
+        Array.isArray(children) ? children : [children],
+        (child) =>
+          React.cloneElement(child, {
+            ...(variant ? { variant } : {}),
+            ...(size ? { size } : {}),
+          }),
       )}
     </StyledIconButtonGroupContainer>
   );

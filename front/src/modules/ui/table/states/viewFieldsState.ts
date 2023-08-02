@@ -1,8 +1,49 @@
-import { atom } from 'recoil';
+import { atom, selector } from 'recoil';
 
-import { ViewFieldDefinition, ViewFieldMetadata } from '../types/ViewField';
+import { companyViewFields } from '@/companies/constants/companyViewFields';
+import { peopleViewFields } from '@/people/constants/peopleViewFields';
 
-export const viewFieldsState = atom<ViewFieldDefinition<ViewFieldMetadata>[]>({
+import type {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '../types/ViewField';
+
+export const viewFieldsState = atom<{
+  objectName: 'company' | 'person' | '';
+  viewFields: ViewFieldDefinition<ViewFieldMetadata>[];
+}>({
   key: 'viewFieldsState',
-  default: [],
+  default: { objectName: '', viewFields: [] },
+});
+
+export const columnWidthByViewFieldIdState = selector({
+  key: 'columnWidthByViewFieldIdState',
+  get: ({ get }) =>
+    get(viewFieldsState).viewFields.reduce<Record<string, number>>(
+      (result, viewField) => ({
+        ...result,
+        [viewField.id]: viewField.columnSize,
+      }),
+      {},
+    ),
+});
+
+export const addableViewFieldDefinitionsState = selector({
+  key: 'addableViewFieldDefinitionsState',
+  get: ({ get }) => {
+    const { objectName, viewFields } = get(viewFieldsState);
+
+    if (!objectName) return [];
+
+    const existingColumnLabels = viewFields.map(
+      (viewField) => viewField.columnLabel,
+    );
+    const viewFieldDefinitions =
+      objectName === 'company' ? companyViewFields : peopleViewFields;
+
+    return viewFieldDefinitions.filter(
+      (viewFieldDefinition) =>
+        !existingColumnLabels.includes(viewFieldDefinition.columnLabel),
+    );
+  },
 });
