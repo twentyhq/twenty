@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { Avatar } from '@/users/components/Avatar';
 import {
-  beautifyExactDate,
+  beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
@@ -64,7 +64,7 @@ const StyledTooltip = styled(Tooltip)`
 
 export function CommentHeader({ comment, actionBar }: OwnProps) {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(comment.createdAt);
-  const exactCreatedAt = beautifyExactDate(comment.createdAt);
+  const exactCreatedAt = beautifyExactDateTime(comment.createdAt);
   const showDate = beautifiedCreatedAt !== '';
 
   const author = comment.author;

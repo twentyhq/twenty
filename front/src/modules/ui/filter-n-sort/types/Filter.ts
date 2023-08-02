@@ -6,5 +6,6 @@ export type Filter = {
   type: FilterType;
   value: string;
   displayValue: string;
+  displayAvatarUrl?: string;
   operand: FilterOperand;
 };
