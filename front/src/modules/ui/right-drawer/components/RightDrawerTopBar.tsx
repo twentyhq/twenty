@@ -1,5 +1,8 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
+import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';
+import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { RightDrawerTopBarCloseButton } from './RightDrawerTopBarCloseButton';
@@ -15,19 +18,27 @@ const StyledRightDrawerTopBar = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
   gap: ${({ theme }) => theme.spacing(1)};
   height: 56px;
-  justify-content: flex-start;
+  justify-content: space-between;
   padding-left: ${({ theme }) => theme.spacing(2)};
 
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
+const TopBarWrapper = styled.div`
+  display: flex;
+`;
+
 export function RightDrawerTopBar() {
   const isMobile = useIsMobile();
+  const activityId = useRecoilValue(viewableActivityIdState);
 
   return (
     <StyledRightDrawerTopBar>
-      <RightDrawerTopBarCloseButton />
-      {!isMobile && <RightDrawerTopBarExpandButton />}
+      <TopBarWrapper>
+        <RightDrawerTopBarCloseButton />
+        {!isMobile && <RightDrawerTopBarExpandButton />}
+      </TopBarWrapper>
+      <ActivityActionBar activityId={activityId ?? ''} />
     </StyledRightDrawerTopBar>
   );
 }

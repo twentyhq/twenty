@@ -21,7 +21,6 @@ import { debounce } from '~/utils/debounce';
 
 import { ActivityAssigneeEditableField } from '../editable-fields/components/ActivityAssigneeEditableField';
 import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
-import { ActivityActionBar } from '../right-drawer/components/ActivityActionBar';
 import { CommentForDrawer } from '../types/CommentForDrawer';
 
 import { ActivityTitle } from './ActivityTitle';
@@ -57,14 +56,6 @@ const StyledTopContainer = styled.div`
   flex-direction: column;
   gap: 24px;
   padding: 24px 24px 24px 48px;
-`;
-
-const StyledTopActionsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
 `;
 
 type OwnProps = {
@@ -155,10 +146,7 @@ export function ActivityEditor({
     <StyledContainer>
       <StyledUpperPartContainer>
         <StyledTopContainer>
-          <StyledTopActionsContainer>
-            <ActivityTypeDropdown activity={activity} />
-            <ActivityActionBar activityId={activity?.id ?? ''} />
-          </StyledTopActionsContainer>
+          <ActivityTypeDropdown activity={activity} />
           <ActivityTitle
             title={title ?? ''}
             completed={!!completedAt}
