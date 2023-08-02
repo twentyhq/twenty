@@ -17,6 +17,8 @@ import MainNavbar from '@/ui/navbar/components/MainNavbar';
 import NavItem from '@/ui/navbar/components/NavItem';
 import NavTitle from '@/ui/navbar/components/NavTitle';
 
+import { Favorites } from './pages/favorites/Favorites';
+
 export function AppNavbar() {
   const theme = useTheme();
   const currentPath = useLocation().pathname;
@@ -52,6 +54,8 @@ export function AppNavbar() {
             active={currentPath === '/tasks'}
             icon={<IconCheckbox size={theme.icon.size.md} />}
           />
+          <NavTitle label="Favourites" />
+          <Favorites />
           <NavTitle label="Workspace" />
           <NavItem
             label="Companies"

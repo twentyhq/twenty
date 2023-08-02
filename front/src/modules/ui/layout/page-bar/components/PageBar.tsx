@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import { IconChevronLeft, IconPlus, IconHeart } from '@/ui/icon/index';
+import { IconChevronLeft, IconHeart, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -58,6 +58,11 @@ const StyledTopBarIconTitleContainer = styled.div`
   width: 100%;
 `;
 
+const ActionButtonsContainer = styled.div`
+  display: inline-flex;
+  gap: 4px;
+`;
+
 type OwnProps = {
   title: string;
   hasBackButton?: boolean;
@@ -106,24 +111,28 @@ export function PageBar({
             </TitleContainer>
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
-        <IconButton
-          icon={<IconHeart size={16} />}
-          size="large"
-          data-testid="add-button"
-          textColor="secondary"
-          onClick={onFavouriteButtonClick}
-          variant="border"
-        />
-        {onAddButtonClick && (
-          <IconButton
-            icon={<IconPlus size={16} />}
-            size="large"
-            data-testid="add-button"
-            textColor="secondary"
-            onClick={onAddButtonClick}
-            variant="border"
-          />
-        )}
+        <ActionButtonsContainer>
+          {onFavouriteButtonClick && (
+            <IconButton
+              icon={<IconHeart size={16} />}
+              size="large"
+              data-testid="add-button"
+              textColor="secondary"
+              onClick={onFavouriteButtonClick}
+              variant="border"
+            />
+          )}
+          {onAddButtonClick && (
+            <IconButton
+              icon={<IconPlus size={16} />}
+              size="large"
+              data-testid="add-button"
+              textColor="secondary"
+              onClick={onAddButtonClick}
+              variant="border"
+            />
+          )}
+        </ActionButtonsContainer>
       </TopBarContainer>
     </>
   );
