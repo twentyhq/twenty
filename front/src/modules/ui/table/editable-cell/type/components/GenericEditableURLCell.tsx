@@ -8,6 +8,7 @@ import {
   ViewFieldDefinition,
   ViewFieldURLMetadata,
 } from '@/ui/table/types/ViewField';
+import { sanitizeURL } from '~/utils';
 
 import { GenericEditableURLCellEditMode } from './GenericEditableURLCellEditMode';
 
@@ -33,7 +34,9 @@ export function GenericEditableURLCell({
     <EditableCell
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={<GenericEditableURLCellEditMode viewField={viewField} />}
-      nonEditModeContent={<InplaceInputURLDisplayMode value={fieldValue} />}
+      nonEditModeContent={
+        <InplaceInputURLDisplayMode value={sanitizeURL(fieldValue)} />
+      }
     ></EditableCell>
   );
 }

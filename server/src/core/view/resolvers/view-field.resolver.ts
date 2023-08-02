@@ -2,17 +2,21 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { accessibleBy } from '@casl/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma, Workspace } from '@prisma/client';
 
 import { AppAbility } from 'src/ability/ability.factory';
 import {
+  CreateViewFieldAbilityHandler,
   ReadViewFieldAbilityHandler,
   UpdateViewFieldAbilityHandler,
 } from 'src/ability/handlers/view-field.ability-handler';
+import { AffectedRows } from 'src/core/@generated/prisma/affected-rows.output';
+import { CreateManyViewFieldArgs } from 'src/core/@generated/view-field/create-many-view-field.args';
 import { FindManyViewFieldArgs } from 'src/core/@generated/view-field/find-many-view-field.args';
 import { UpdateOneViewFieldArgs } from 'src/core/@generated/view-field/update-one-view-field.args';
 import { ViewField } from 'src/core/@generated/view-field/view-field.model';
 import { ViewFieldService } from 'src/core/view/services/view-field.service';
+import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
   PrismaSelect,
@@ -26,6 +30,21 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 @Resolver(() => ViewField)
 export class ViewFieldResolver {
   constructor(private readonly viewFieldService: ViewFieldService) {}
+
+  @Mutation(() => AffectedRows)
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreateViewFieldAbilityHandler)
+  async createManyViewField(
+    @Args() args: CreateManyViewFieldArgs,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Prisma.BatchPayload> {
+    return this.viewFieldService.createMany({
+      data: args.data.map((dataItem) => ({
+        ...dataItem,
+        workspaceId: workspace.id,
+      })),
+    });
+  }
 
   @Query(() => [ViewField])
   @UseGuards(AbilityGuard)

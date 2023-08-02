@@ -98,6 +98,11 @@ export function CommandMenu() {
       label: 'Go to Settings',
       shortcuts: ['G', 'S'],
     },
+    {
+      to: '/tasks',
+      label: 'Go to Tasks',
+      shortcuts: ['G', 'T'],
+    },
   ];
 
   const matchingCommand = commands.find(
@@ -162,7 +167,6 @@ export function CommandMenu() {
         {matchingCommand && (
           <StyledGroup heading="Navigate">
             <CommandMenuItem
-              key={matchingCommand.shortcuts?.join('')}
               to={matchingCommand.to}
               label={matchingCommand.label}
               shortcuts={matchingCommand.shortcuts}
@@ -222,8 +226,10 @@ export function CommandMenu() {
         {!matchingCommand && (
           <StyledGroup heading="Navigate">
             {commands
-              .filter((cmd) =>
-                cmd.shortcuts?.join('').includes(search?.toUpperCase()),
+              .filter(
+                (cmd) =>
+                  cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
+                  cmd.label?.toUpperCase().includes(search?.toUpperCase()),
               )
               .map((cmd) => (
                 <CommandMenuItem

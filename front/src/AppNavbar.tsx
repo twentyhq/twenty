@@ -49,6 +49,7 @@ export function AppNavbar() {
           <NavItem
             label="Tasks"
             to="/tasks"
+            active={currentPath === '/tasks'}
             icon={<IconCheckbox size={theme.icon.size.md} />}
           />
           <NavTitle label="Workspace" />
