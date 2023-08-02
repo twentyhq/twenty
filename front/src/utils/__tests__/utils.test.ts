@@ -46,7 +46,7 @@ describe('getLogoUrlFromDomainName', () => {
     );
 
     expect(getLogoUrlFromDomainName('apple.com')).toBe(
-      'https://api.faviconkit.com/www.apple.com/144',
+      'https://api.faviconkit.com/apple.com/144',
     );
   });
 
