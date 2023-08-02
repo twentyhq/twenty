@@ -37,7 +37,7 @@ type SubjectsAbility = Subjects<{
   PipelineProgress: PipelineProgress;
   Attachment: Attachment;
   UserSettings: UserSettings;
-  Favorite: Favorite
+  Favorite: Favorite;
 }>;
 
 export type AppAbility = PureAbility<

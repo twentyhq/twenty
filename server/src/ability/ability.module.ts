@@ -95,8 +95,9 @@ import {
   UpdateAttachmentAbilityHandler,
 } from './handlers/attachment.ability-handler';
 import {
-  ReadFavoriteAbilityHandler
-} from './handlers/favorite.ability-handler'
+  CreateFavoriteAbilityHandler,
+  ReadFavoriteAbilityHandler,
+} from './handlers/favorite.ability-handler';
 
 @Global()
 @Module({
@@ -183,6 +184,7 @@ import {
     DeletePipelineProgressAbilityHandler,
     //Favorite
     ReadFavoriteAbilityHandler,
+    CreateFavoriteAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -266,6 +268,7 @@ import {
     DeletePipelineProgressAbilityHandler,
     //Favorite
     ReadFavoriteAbilityHandler,
+    CreateFavoriteAbilityHandler,
   ],
 })
 export class AbilityModule {}
