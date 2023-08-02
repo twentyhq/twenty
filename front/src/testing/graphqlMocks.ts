@@ -13,6 +13,7 @@ import {
   SEARCH_USER_QUERY,
 } from '@/search/queries/search';
 import { GET_CURRENT_USER } from '@/users/queries';
+import { GET_VIEW_FIELDS } from '@/views/queries/select';
 import {
   GetCompaniesQuery,
   GetPeopleQuery,
@@ -24,8 +25,11 @@ import {
 } from '~/generated/graphql';
 
 import { mockedActivities } from './mock-data/activities';
-import { mockedCompaniesData } from './mock-data/companies';
-import { mockedPeopleData } from './mock-data/people';
+import {
+  mockedCompaniesData,
+  mockedCompanyViewFields,
+} from './mock-data/companies';
+import { mockedPeopleData, mockedPersonViewFields } from './mock-data/people';
 import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
 import { mockedPipelinesData } from './mock-data/pipelines';
 import { mockedUsersData } from './mock-data/users';
@@ -203,6 +207,22 @@ export const graphqlMocks = [
           authProviders: { google: true, password: true, magicLink: false },
           telemetry: { enabled: false, anonymizationEnabled: true },
         },
+      }),
+    );
+  }),
+  graphql.query(getOperationName(GET_VIEW_FIELDS) ?? '', (req, res, ctx) => {
+    const {
+      where: {
+        objectName: { equals: objectName },
+      },
+    } = req.variables;
+
+    return res(
+      ctx.data({
+        viewFields:
+          objectName === 'company'
+            ? mockedCompanyViewFields
+            : mockedPersonViewFields,
       }),
     );
   }),
