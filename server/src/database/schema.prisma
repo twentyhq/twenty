@@ -118,8 +118,9 @@ model User {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Favorite  Favorite[]
 
   @@map("users")
 }
@@ -244,6 +245,7 @@ model Company {
   updatedAt        DateTime           @updatedAt
   ActivityTarget   ActivityTarget[]
   PipelineProgress PipelineProgress[]
+  Favorite         Favorite[]
 
   @@map("companies")
 }
@@ -292,6 +294,7 @@ model Person {
   updatedAt        DateTime           @updatedAt
   ActivityTarget   ActivityTarget[]
   PipelineProgress PipelineProgress[]
+  Favorite         Favorite[]
 
   @@map("people")
 }
@@ -555,9 +558,16 @@ model Attachment {
 }
 
 model Favorite {
-  id          String @id @default(uuid())
-  workspaceId String
-  favorite    String
+  id          String   @id @default(uuid())
+  workspaceId String?
+  /// @TypeGraphQL.omit(input: true, output: false)
+  person      Person?  @relation(fields: [personId], references: [id])
+  personId    String?
+  /// @TypeGraphQL.omit(input: true, output: false)
+  company     Company? @relation(fields: [companyId], references: [id])
+  companyId   String?
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String?
 
   @@map("favorites")
 }
