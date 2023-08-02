@@ -140,6 +140,7 @@ export class AbilityFactory {
     });
     // ViewField
     can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
 
     return build();

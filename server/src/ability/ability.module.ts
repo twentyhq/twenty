@@ -99,6 +99,7 @@ import {
   ReadFavoriteAbilityHandler,
 } from './handlers/favorite.ability-handler';
 import {
+  CreateViewFieldAbilityHandler,
   ReadViewFieldAbilityHandler,
   UpdateViewFieldAbilityHandler,
 } from './handlers/view-field.ability-handler';
@@ -191,6 +192,7 @@ import {
     CreateFavoriteAbilityHandler,
     // ViewField
     ReadViewFieldAbilityHandler,
+    CreateViewFieldAbilityHandler,
     UpdateViewFieldAbilityHandler,
   ],
   exports: [
@@ -278,6 +280,7 @@ import {
     CreateFavoriteAbilityHandler,
     // ViewField
     ReadViewFieldAbilityHandler,
+    CreateViewFieldAbilityHandler,
     UpdateViewFieldAbilityHandler,
   ],
 })
