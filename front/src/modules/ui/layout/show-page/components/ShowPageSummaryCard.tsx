@@ -4,7 +4,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { Avatar } from '@/users/components/Avatar';
 import {
-  beautifyExactDate,
+  beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
@@ -71,7 +71,7 @@ export function ShowPageSummaryCard({
 }: OwnProps) {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
-  const exactCreatedAt = date !== '' ? beautifyExactDate(date) : '';
+  const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
   const dateElementId = `date-id-${uuidV4()}`;
 
   return (

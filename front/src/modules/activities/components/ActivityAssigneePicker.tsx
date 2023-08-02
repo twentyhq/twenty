@@ -33,7 +33,7 @@ export function ActivityAssigneePicker({
   );
   const [updateActivity] = useUpdateActivityMutation();
 
-  const companies = useFilteredSearchEntityQuery({
+  const users = useFilteredSearchEntityQuery({
     queryHook: useSearchUserQuery,
     selectedIds: activity?.accountOwner?.id ? [activity?.accountOwner?.id] : [],
     searchFilter: searchFilter,
@@ -70,9 +70,9 @@ export function ActivityAssigneePicker({
       onEntitySelected={handleEntitySelected}
       onCancel={onCancel}
       entities={{
-        loading: companies.loading,
-        entitiesToSelect: companies.entitiesToSelect,
-        selectedEntity: companies.selectedEntities[0],
+        loading: users.loading,
+        entitiesToSelect: users.entitiesToSelect,
+        selectedEntity: users.selectedEntities[0],
       }}
     />
   );

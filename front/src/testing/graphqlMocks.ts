@@ -1,6 +1,7 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql } from 'msw';
 
+import { GET_ACTIVITIES } from '@/activities/queries';
 import { CREATE_EVENT } from '@/analytics/queries';
 import { GET_CLIENT_CONFIG } from '@/client-config/queries';
 import { GET_COMPANIES } from '@/companies/queries';
@@ -207,6 +208,13 @@ export const graphqlMocks = [
           authProviders: { google: true, password: true, magicLink: false },
           telemetry: { enabled: false, anonymizationEnabled: true },
         },
+      }),
+    );
+  }),
+  graphql.query(getOperationName(GET_ACTIVITIES) ?? '', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        findManyActivities: mockedActivities,
       }),
     );
   }),
