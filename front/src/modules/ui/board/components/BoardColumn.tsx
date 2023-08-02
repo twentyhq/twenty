@@ -21,6 +21,7 @@ export const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   min-width: 200px;
 
   padding: ${({ theme }) => theme.spacing(2)};
+  position: relative;
 `;
 
 const StyledHeader = styled.div`
