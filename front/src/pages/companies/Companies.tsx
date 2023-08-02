@@ -18,9 +18,10 @@ import {
   useInsertManyFavoritesMutation,
 } from '~/generated/graphql';
 import { ACTIVATE_VIEW_FIELDS } from '~/App';
+import {
+  useInsertOneCompanyMutation,
+} from '~/generated/graphql';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useInsertOneCompanyMutation } from '~/generated/graphql';
-
 import { SEARCH_COMPANY_QUERY } from '../../modules/search/queries/search';
 import { GET_FAVORITES } from '@/favorites/queries/show';
 

@@ -19,8 +19,10 @@ import {
   useInsertManyFavoritesMutation,
 } from '~/generated/graphql';
 import { ACTIVATE_VIEW_FIELDS } from '~/App';
+import {
+  useInsertOnePersonMutation,
+} from '~/generated/graphql';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useInsertOnePersonMutation } from '~/generated/graphql';
 
 const StyledTableContainer = styled.div`
   display: flex;
