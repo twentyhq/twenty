@@ -293,7 +293,7 @@ export type CommentThreadTarget = {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
-  workspace: Workspace;
+  workspace?: Maybe<Workspace>;
 };
 
 export type CommentThreadTargetCreateManyCommentThreadInput = {
@@ -522,6 +522,7 @@ export enum CommentableType {
 
 export type Company = {
   __typename?: 'Company';
+  Favorite?: Maybe<Array<Favorite>>;
   _commentThreadCount: Scalars['Int'];
   accountOwner?: Maybe<User>;
   accountOwnerId?: Maybe<Scalars['String']>;
@@ -539,6 +540,7 @@ export type Company = {
 };
 
 export type CompanyCreateInput = {
+  Favorite?: InputMaybe<FavoriteCreateNestedManyWithoutCompanyInput>;
   accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
   address: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -566,6 +568,7 @@ export type CompanyOrderByRelationAggregateInput = {
 };
 
 export type CompanyOrderByWithRelationInput = {
+  Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   accountOwner?: InputMaybe<UserOrderByWithRelationInput>;
   accountOwnerId?: InputMaybe<SortOrder>;
   address?: InputMaybe<SortOrder>;
@@ -599,6 +602,7 @@ export enum CompanyScalarFieldEnum {
 }
 
 export type CompanyUpdateInput = {
+  Favorite?: InputMaybe<FavoriteUpdateManyWithoutCompanyNestedInput>;
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
   address?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -630,6 +634,7 @@ export type CompanyUpdateOneWithoutPeopleNestedInput = {
 
 export type CompanyWhereInput = {
   AND?: InputMaybe<Array<CompanyWhereInput>>;
+  Favorite?: InputMaybe<FavoriteListRelationFilter>;
   NOT?: InputMaybe<Array<CompanyWhereInput>>;
   OR?: InputMaybe<Array<CompanyWhereInput>>;
   accountOwner?: InputMaybe<UserRelationFilter>;
@@ -706,6 +711,78 @@ export type EnumPipelineProgressableTypeFilter = {
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
 };
 
+export type Favorite = {
+  __typename?: 'Favorite';
+  User?: Maybe<User>;
+  company?: Maybe<Company>;
+  companyId?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  person?: Maybe<Person>;
+  personId?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['String']>;
+  workspaceId?: Maybe<Scalars['String']>;
+};
+
+export type FavoriteCreateManyInput = {
+  companyId?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  personId?: InputMaybe<Scalars['String']>;
+  userId?: InputMaybe<Scalars['String']>;
+  workspaceId?: InputMaybe<Scalars['String']>;
+};
+
+export type FavoriteCreateNestedManyWithoutCompanyInput = {
+  connect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+};
+
+export type FavoriteCreateNestedManyWithoutPersonInput = {
+  connect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+};
+
+export type FavoriteListRelationFilter = {
+  every?: InputMaybe<FavoriteWhereInput>;
+  none?: InputMaybe<FavoriteWhereInput>;
+  some?: InputMaybe<FavoriteWhereInput>;
+};
+
+export type FavoriteOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type FavoriteUpdateManyWithoutCompanyNestedInput = {
+  connect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+  set?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+};
+
+export type FavoriteUpdateManyWithoutPersonNestedInput = {
+  connect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+  set?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+};
+
+export type FavoriteUpdateManyWithoutUserNestedInput = {
+  connect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+  set?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
+};
+
+export type FavoriteWhereInput = {
+  AND?: InputMaybe<Array<FavoriteWhereInput>>;
+  NOT?: InputMaybe<Array<FavoriteWhereInput>>;
+  OR?: InputMaybe<Array<FavoriteWhereInput>>;
+  User?: InputMaybe<UserRelationFilter>;
+  companyId?: InputMaybe<StringNullableFilter>;
+  id?: InputMaybe<StringFilter>;
+  personId?: InputMaybe<StringNullableFilter>;
+  userId?: InputMaybe<StringNullableFilter>;
+  workspaceId?: InputMaybe<StringNullableFilter>;
+};
+
+export type FavoriteWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+};
+
 export enum FileFolder {
   Attachment = 'Attachment',
   ProfilePicture = 'ProfilePicture',
@@ -748,6 +825,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   challenge: LoginToken;
   createEvent: Analytics;
+  createFavorites: Array<Favorite>;
   createOneComment: Comment;
   createOneCommentThread: CommentThread;
   createOneCompany: Company;
@@ -785,6 +863,12 @@ export type MutationChallengeArgs = {
 export type MutationCreateEventArgs = {
   data: Scalars['JSON'];
   type: Scalars['String'];
+};
+
+
+export type MutationCreateFavoritesArgs = {
+  data: Array<FavoriteCreateManyInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -1026,6 +1110,7 @@ export type NestedStringNullableFilter = {
 
 export type Person = {
   __typename?: 'Person';
+  Favorite?: Maybe<Array<Favorite>>;
   _commentThreadCount: Scalars['Int'];
   city?: Maybe<Scalars['String']>;
   commentThreads: Array<CommentThread>;
@@ -1046,6 +1131,7 @@ export type Person = {
 };
 
 export type PersonCreateInput = {
+  Favorite?: InputMaybe<FavoriteCreateNestedManyWithoutPersonInput>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1079,6 +1165,7 @@ export type PersonOrderByRelationAggregateInput = {
 };
 
 export type PersonOrderByWithRelationInput = {
+  Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   city?: InputMaybe<SortOrder>;
   company?: InputMaybe<CompanyOrderByWithRelationInput>;
   companyId?: InputMaybe<SortOrder>;
@@ -1116,6 +1203,7 @@ export enum PersonScalarFieldEnum {
 }
 
 export type PersonUpdateInput = {
+  Favorite?: InputMaybe<FavoriteUpdateManyWithoutPersonNestedInput>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1149,6 +1237,7 @@ export type PersonUpdateOneWithoutPipelineProgressesNestedInput = {
 
 export type PersonWhereInput = {
   AND?: InputMaybe<Array<PersonWhereInput>>;
+  Favorite?: InputMaybe<FavoriteListRelationFilter>;
   NOT?: InputMaybe<Array<PersonWhereInput>>;
   OR?: InputMaybe<Array<PersonWhereInput>>;
   city?: InputMaybe<StringNullableFilter>;
@@ -1493,6 +1582,7 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  findFavorites: Array<Favorite>;
   findManyCommentThreads: Array<CommentThread>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
@@ -1653,6 +1743,7 @@ export type Telemetry = {
 
 export type User = {
   __typename?: 'User';
+  Favorite?: Maybe<Array<Favorite>>;
   assignedCommentThreads?: Maybe<Array<CommentThread>>;
   authoredAttachments?: Maybe<Array<Attachment>>;
   authoredCommentThreads?: Maybe<Array<CommentThread>>;
@@ -1699,6 +1790,7 @@ export type UserExists = {
 };
 
 export type UserOrderByWithRelationInput = {
+  Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   assignedCommentThreads?: InputMaybe<CommentThreadOrderByRelationAggregateInput>;
   authoredAttachments?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
   authoredCommentThreads?: InputMaybe<CommentThreadOrderByRelationAggregateInput>;
@@ -1794,6 +1886,7 @@ export type UserSettingsWhereInput = {
 };
 
 export type UserUpdateInput = {
+  Favorite?: InputMaybe<FavoriteUpdateManyWithoutUserNestedInput>;
   assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
   authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutAuthorNestedInput>;
   authoredCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAuthorNestedInput>;
@@ -1831,6 +1924,7 @@ export type UserUpdateOneWithoutCompaniesNestedInput = {
 
 export type UserWhereInput = {
   AND?: InputMaybe<Array<UserWhereInput>>;
+  Favorite?: InputMaybe<FavoriteListRelationFilter>;
   NOT?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
   assignedCommentThreads?: InputMaybe<CommentThreadListRelationFilter>;
@@ -2130,6 +2224,18 @@ export type DeleteManyCompaniesMutationVariables = Exact<{
 
 
 export type DeleteManyCompaniesMutation = { __typename?: 'Mutation', deleteManyCompany: { __typename?: 'AffectedRows', count: number } };
+
+export type GetFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
+
+export type InsertManyFavoritesMutationVariables = Exact<{
+  data: Array<FavoriteCreateManyInput> | FavoriteCreateManyInput;
+}>;
+
+
+export type InsertManyFavoritesMutation = { __typename?: 'Mutation', createFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type GetPeopleQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
@@ -3333,6 +3439,99 @@ export function useDeleteManyCompaniesMutation(baseOptions?: Apollo.MutationHook
 export type DeleteManyCompaniesMutationHookResult = ReturnType<typeof useDeleteManyCompaniesMutation>;
 export type DeleteManyCompaniesMutationResult = Apollo.MutationResult<DeleteManyCompaniesMutation>;
 export type DeleteManyCompaniesMutationOptions = Apollo.BaseMutationOptions<DeleteManyCompaniesMutation, DeleteManyCompaniesMutationVariables>;
+export const GetFavoritesDocument = gql`
+    query GetFavorites {
+  findFavorites {
+    id
+    person {
+      id
+      firstName
+      lastName
+    }
+    company {
+      id
+      name
+      domainName
+      accountOwner {
+        id
+        displayName
+        avatarUrl
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetFavoritesQuery__
+ *
+ * To run a query within a React component, call `useGetFavoritesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFavoritesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFavoritesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFavoritesQuery(baseOptions?: Apollo.QueryHookOptions<GetFavoritesQuery, GetFavoritesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFavoritesQuery, GetFavoritesQueryVariables>(GetFavoritesDocument, options);
+      }
+export function useGetFavoritesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFavoritesQuery, GetFavoritesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFavoritesQuery, GetFavoritesQueryVariables>(GetFavoritesDocument, options);
+        }
+export type GetFavoritesQueryHookResult = ReturnType<typeof useGetFavoritesQuery>;
+export type GetFavoritesLazyQueryHookResult = ReturnType<typeof useGetFavoritesLazyQuery>;
+export type GetFavoritesQueryResult = Apollo.QueryResult<GetFavoritesQuery, GetFavoritesQueryVariables>;
+export const InsertManyFavoritesDocument = gql`
+    mutation InsertManyFavorites($data: [FavoriteCreateManyInput!]!) {
+  createFavorites(data: $data) {
+    id
+    person {
+      id
+      firstName
+      lastName
+      displayName
+    }
+    company {
+      id
+      name
+      domainName
+    }
+  }
+}
+    `;
+export type InsertManyFavoritesMutationFn = Apollo.MutationFunction<InsertManyFavoritesMutation, InsertManyFavoritesMutationVariables>;
+
+/**
+ * __useInsertManyFavoritesMutation__
+ *
+ * To run a mutation, you first call `useInsertManyFavoritesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertManyFavoritesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertManyFavoritesMutation, { data, loading, error }] = useInsertManyFavoritesMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useInsertManyFavoritesMutation(baseOptions?: Apollo.MutationHookOptions<InsertManyFavoritesMutation, InsertManyFavoritesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InsertManyFavoritesMutation, InsertManyFavoritesMutationVariables>(InsertManyFavoritesDocument, options);
+      }
+export type InsertManyFavoritesMutationHookResult = ReturnType<typeof useInsertManyFavoritesMutation>;
+export type InsertManyFavoritesMutationResult = Apollo.MutationResult<InsertManyFavoritesMutation>;
+export type InsertManyFavoritesMutationOptions = Apollo.BaseMutationOptions<InsertManyFavoritesMutation, InsertManyFavoritesMutationVariables>;
 export const GetPeopleDocument = gql`
     query GetPeople($orderBy: [PersonOrderByWithRelationInput!], $where: PersonWhereInput, $limit: Int) {
   people: findManyPerson(orderBy: $orderBy, where: $where, take: $limit) {
