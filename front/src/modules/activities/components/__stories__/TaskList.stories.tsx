@@ -30,4 +30,16 @@ const meta: Meta<typeof TaskList> = {
 export default meta;
 type Story = StoryObj<typeof TaskList>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    title: 'Tasks',
+    tasks: mockedActivities,
+  },
+};
+
+export const Empty: Story = {
+  args: {
+    title: 'No tasks',
+    tasks: [],
+  },
+};
