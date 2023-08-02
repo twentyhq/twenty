@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect, useRef } from 'react';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
@@ -12,6 +12,12 @@ type OwnProps = PropsWithChildren<unknown>;
 
 export function EditableCellSoftFocusMode({ children }: OwnProps) {
   const { openEditableCell } = useEditableCell();
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ block: 'nearest' });
+  });
 
   function openEditMode() {
     openEditableCell();
@@ -52,7 +58,11 @@ export function EditableCellSoftFocusMode({ children }: OwnProps) {
   }
 
   return (
-    <EditableCellDisplayContainer onClick={handleClick} softFocus>
+    <EditableCellDisplayContainer
+      onClick={handleClick}
+      softFocus
+      scrollRef={scrollRef}
+    >
       {children}
     </EditableCellDisplayContainer>
   );

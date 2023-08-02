@@ -91,6 +91,11 @@ export function AuthAutoRouter() {
         setHotkeyScope(PageHotkeyScope.OpportunitiesPage, { goto: true });
         break;
       }
+      case isMatchingLocation(AppPath.TasksPage): {
+        setHotkeyScope(PageHotkeyScope.TaskPage, { goto: true });
+        break;
+      }
+
       case isMatchingLocation(AppPath.SignIn): {
         setHotkeyScope(PageHotkeyScope.SignInUp);
         break;

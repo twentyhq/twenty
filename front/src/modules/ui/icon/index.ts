@@ -9,6 +9,7 @@ export { IconUser } from '@tabler/icons-react';
 export { IconList } from '@tabler/icons-react';
 export { IconInbox } from '@tabler/icons-react';
 export { IconSearch } from '@tabler/icons-react';
+export { IconArchive } from '@tabler/icons-react';
 export { IconSettings } from '@tabler/icons-react';
 export { IconLogout } from '@tabler/icons-react';
 export { IconColorSwatch } from '@tabler/icons-react';

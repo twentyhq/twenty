@@ -6,14 +6,14 @@ import { useRecoilState } from 'recoil';
 import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
 import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE } from '@/people/queries';
-import { Button, ButtonVariant } from '@/ui/button/components/Button';
+import { IconButton } from '@/ui/button/components/IconButton';
 import { IconTrash } from '@/ui/icon';
 import { isRightDrawerOpenState } from '@/ui/right-drawer/states/isRightDrawerOpenState';
 import { useDeleteActivityMutation } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  cursor: pointer;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
 type OwnProps = {
@@ -39,12 +39,11 @@ export function ActivityActionBar({ activityId }: OwnProps) {
 
   return (
     <StyledContainer>
-      <Button
+      <IconButton
         icon={
           <IconTrash size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
         }
         onClick={deleteActivity}
-        variant={ButtonVariant.Tertiary}
       />
     </StyledContainer>
   );

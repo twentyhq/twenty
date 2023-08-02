@@ -22,7 +22,7 @@ export function useApolloFactory() {
 
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
-      uri: `${process.env.REACT_APP_API_URL}`,
+      uri: `${process.env.REACT_APP_SERVER_BASE_URL}/graphql`,
       cache: new InMemoryCache({
         typePolicies: {
           Activity: {

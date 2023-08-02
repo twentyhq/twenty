@@ -52,6 +52,44 @@ export const GET_ACTIVITIES_BY_TARGETS = gql`
   }
 `;
 
+export const GET_ACTIVITIES = gql`
+  query GetActivities(
+    $where: ActivityWhereInput!
+    $orderBy: [ActivityOrderByWithRelationInput!]
+  ) {
+    findManyActivities(orderBy: $orderBy, where: $where) {
+      id
+      createdAt
+      title
+      body
+      type
+      completedAt
+      dueAt
+      assignee {
+        id
+        firstName
+        lastName
+        displayName
+        avatarUrl
+      }
+      author {
+        id
+        firstName
+        lastName
+        displayName
+      }
+      comments {
+        id
+      }
+      activityTargets {
+        id
+        commentableType
+        commentableId
+      }
+    }
+  }
+`;
+
 export const GET_ACTIVITY = gql`
   query GetActivity($activityId: String!) {
     findManyActivities(where: { id: { equals: $activityId } }) {

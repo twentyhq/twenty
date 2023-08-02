@@ -5,6 +5,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
 import {
   IconBuildingSkyscraper,
+  IconCheckbox,
   IconInbox,
   IconSearch,
   IconSettings,
@@ -44,6 +45,12 @@ export function AppNavbar() {
             label="Settings"
             to="/settings/profile"
             icon={<IconSettings size={theme.icon.size.md} />}
+          />
+          <NavItem
+            label="Tasks"
+            to="/tasks"
+            active={currentPath === '/tasks'}
+            icon={<IconCheckbox size={theme.icon.size.md} />}
           />
           <NavTitle label="Workspace" />
           <NavItem

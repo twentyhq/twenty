@@ -1,8 +1,10 @@
+import { Ref } from 'react';
 import styled from '@emotion/styled';
 
 type Props = {
   softFocus?: boolean;
   onClick?: () => void;
+  scrollRef?: Ref<HTMLDivElement>;
 };
 
 export const EditableCellDisplayModeOuterContainer = styled.div<
@@ -37,6 +39,7 @@ export function EditableCellDisplayContainer({
   children,
   softFocus,
   onClick,
+  scrollRef,
 }: React.PropsWithChildren<Props>) {
   return (
     <EditableCellDisplayModeOuterContainer
@@ -47,6 +50,7 @@ export function EditableCellDisplayContainer({
       }
       onClick={onClick}
       softFocus={softFocus}
+      ref={scrollRef}
     >
       <EditableCellDisplayModeInnerContainer>
         {children}

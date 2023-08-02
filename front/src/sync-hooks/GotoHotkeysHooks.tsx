@@ -5,6 +5,7 @@ export function GotoHotkeysHooks() {
   useGoToHotkeys('c', '/companies');
   useGoToHotkeys('o', '/opportunities');
   useGoToHotkeys('s', '/settings/profile');
+  useGoToHotkeys('t', '/tasks');
 
   return <></>;
 }

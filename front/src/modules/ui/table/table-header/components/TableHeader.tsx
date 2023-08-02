@@ -6,6 +6,7 @@ import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
+import { TopBar } from '@/ui/top-bar/TopBar';
 
 import { TableContext } from '../../states/TableContext';
 
@@ -16,23 +17,6 @@ type OwnProps<SortField> = {
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
 };
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const StyledTableHeader = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: flex;
-  flex-direction: row;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  height: 40px;
-  justify-content: space-between;
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledIcon = styled.div`
   display: flex;
   margin-left: ${({ theme }) => theme.spacing(1)};
@@ -41,16 +25,6 @@ const StyledIcon = styled.div`
   & > svg {
     font-size: ${({ theme }) => theme.icon.size.sm};
   }
-`;
-
-const StyledViewSection = styled.div`
-  display: flex;
-`;
-
-const StyledFilters = styled.div`
-  display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: 2px;
 `;
 
 export function TableHeader<SortField>({
@@ -82,35 +56,38 @@ export function TableHeader<SortField>({
   );
 
   return (
-    <StyledContainer>
-      <StyledTableHeader>
-        <StyledViewSection>
+    <TopBar
+      leftComponent={
+        <>
           <StyledIcon>{viewIcon}</StyledIcon>
           {viewName}
-        </StyledViewSection>
-        <StyledFilters>
-          <FilterDropdownButton
-            context={TableContext}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-          />
-          <SortDropdownButton<SortField>
-            isSortSelected={sorts.length > 0}
-            availableSorts={availableSorts || []}
-            onSortSelect={sortSelect}
-            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-          />
-        </StyledFilters>
-      </StyledTableHeader>
-      <SortAndFilterBar
-        context={TableContext}
-        sorts={sorts}
-        onRemoveSort={sortUnselect}
-        onCancelClick={() => {
-          innerSetSorts([]);
-          onSortsUpdate && onSortsUpdate([]);
-        }}
-      />
-    </StyledContainer>
+        </>
+      }
+      displayBottomBorder={false}
+      rightComponents={[
+        <FilterDropdownButton
+          context={TableContext}
+          HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+        />,
+        <SortDropdownButton<SortField>
+          isSortSelected={sorts.length > 0}
+          availableSorts={availableSorts || []}
+          onSortSelect={sortSelect}
+          HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+        />,
+      ]}
+      bottomComponent={
+        <SortAndFilterBar
+          context={TableContext}
+          sorts={sorts}
+          onRemoveSort={sortUnselect}
+          onCancelClick={() => {
+            innerSetSorts([]);
+            onSortsUpdate && onSortsUpdate([]);
+          }}
+        />
+      }
+    />
   );
 }
 
