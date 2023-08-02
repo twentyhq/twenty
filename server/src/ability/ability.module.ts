@@ -201,6 +201,7 @@ import {
     //Favorite
     CreateFavoriteAbilityHandler,
     ReadFavoriteAbilityHandler,
+    CreateFavoriteAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -292,6 +293,7 @@ import {
     //Favorite
     CreateFavoriteAbilityHandler,
     ReadFavoriteAbilityHandler,
+    CreateFavoriteAbilityHandler,
   ],
 })
 export class AbilityModule {}

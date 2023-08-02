@@ -41,7 +41,7 @@ type SubjectsAbility = Subjects<{
   UserSettings: UserSettings;
   Favorite: Favorite;
   ViewField: ViewField;
-  Favorite: Favorite
+  Favorite: Favorite;
 }>;
 
 export type AppAbility = PureAbility<
