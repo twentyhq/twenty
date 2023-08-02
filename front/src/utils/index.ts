@@ -20,26 +20,10 @@ export function getLogoUrlFromDomainName(
   domainName?: string,
 ): string | undefined {
   const sanitizedDomain = sanitizeURL(domainName);
+  const url = `https://favicon.twenty.com/${sanitizedDomain}`;
 
-  if (!sanitizedDomain) return;
+  const img = document.createElement('img');
+  img.setAttribute('src', url);
 
-  const prioritizeWWW = ['apple.com'].includes(sanitizedDomain);
-
-  const prefixes = prioritizeWWW
-    ? ['www.', '', 'https://']
-    : ['', 'www.', 'https://'];
-
-  for (const prefix of prefixes) {
-    const img = document.createElement('img');
-    img.setAttribute(
-      'src',
-      `https://api.faviconkit.com/${prefix}${sanitizedDomain}/144`,
-    );
-
-    if (img.complete) {
-      return img.src;
-    }
-  }
-
-  return;
+  return img.complete ? url : undefined;
 }
