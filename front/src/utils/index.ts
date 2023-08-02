@@ -20,10 +20,5 @@ export function getLogoUrlFromDomainName(
   domainName?: string,
 ): string | undefined {
   const sanitizedDomain = sanitizeURL(domainName);
-  const url = `https://favicon.twenty.com/${sanitizedDomain}`;
-
-  const img = document.createElement('img');
-  img.setAttribute('src', url);
-
-  return img.complete ? url : undefined;
+  return `https://favicon.twenty.com/${sanitizedDomain}`;
 }

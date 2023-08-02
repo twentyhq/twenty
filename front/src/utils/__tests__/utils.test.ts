@@ -16,41 +16,34 @@ describe('sanitizeURL', () => {
 
 describe('getLogoUrlFromDomainName', () => {
   test('should return the correct logo URL for a given domain', () => {
-    const imgMock = {
-      complete: true,
-      src: '',
-      setAttribute(name: string, value: string) {
-        this.src = value;
-      },
-    };
-    document.createElement = () => imgMock as unknown as HTMLElement;
-
     expect(getLogoUrlFromDomainName('example.com')).toBe(
-      'https://api.faviconkit.com/example.com/144',
+      'https://favicon.twenty.com/example.com',
     );
 
     expect(getLogoUrlFromDomainName('http://example.com/')).toBe(
-      'https://api.faviconkit.com/example.com/144',
+      'https://favicon.twenty.com/example.com',
     );
 
     expect(getLogoUrlFromDomainName('https://www.example.com/')).toBe(
-      'https://api.faviconkit.com/example.com/144',
+      'https://favicon.twenty.com/example.com',
     );
 
     expect(getLogoUrlFromDomainName('www.example.com')).toBe(
-      'https://api.faviconkit.com/example.com/144',
+      'https://favicon.twenty.com/example.com',
     );
 
     expect(getLogoUrlFromDomainName('example.com/')).toBe(
-      'https://api.faviconkit.com/example.com/144',
+      'https://favicon.twenty.com/example.com',
     );
 
     expect(getLogoUrlFromDomainName('apple.com')).toBe(
-      'https://api.faviconkit.com/apple.com/144',
+      'https://favicon.twenty.com/apple.com',
     );
   });
 
   test('should handle undefined input', () => {
-    expect(getLogoUrlFromDomainName(undefined)).toBeUndefined();
+    expect(getLogoUrlFromDomainName(undefined)).toBe(
+      'https://favicon.twenty.com/',
+    );
   });
 });
