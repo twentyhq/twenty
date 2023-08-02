@@ -1,6 +1,8 @@
 import { Context, useState } from 'react';
 import React from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconChevronDown } from '@tabler/icons-react';
 
 import { filterDefinitionUsedInDropdownScopedState } from '@/ui/filter-n-sort/states/filterDefinitionUsedInDropdownScopedState';
 import { filterDropdownSearchInputScopedState } from '@/ui/filter-n-sort/states/filterDropdownSearchInputScopedState';
@@ -16,6 +18,7 @@ import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 import { DropdownMenuContainer } from './DropdownMenuContainer';
 import { FilterDropdownEntitySearchInput } from './FilterDropdownEntitySearchInput';
 import { FilterDropdownEntitySelect } from './FilterDropdownEntitySelect';
+import { GenericEntityFilterChip } from './GenericEntityFilterChip';
 
 const StyledDropdownButtonContainer = styled.div`
   display: flex;
@@ -29,21 +32,22 @@ type StyledDropdownButtonProps = {
 };
 
 const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
+  align-items: center;
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
   display: flex;
+
   filter: ${(props) => (props.isUnfolded ? 'brightness(0.95)' : 'none')};
-
   padding: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
 
+  padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
-  user-select: none;
 
   &:hover {
     filter: brightness(0.95);
   }
+  user-select: none;
 `;
 
 export function SingleEntityFilterDropdownButton({
@@ -53,6 +57,8 @@ export function SingleEntityFilterDropdownButton({
   context: Context<string | null>;
   HotkeyScope: FiltersHotkeyScope;
 }) {
+  const theme = useTheme();
+
   const [availableFilters] = useRecoilScopedState(
     availableFiltersScopedState,
     context,
@@ -107,7 +113,12 @@ export function SingleEntityFilterDropdownButton({
         isUnfolded={isUnfolded}
         onClick={() => handleIsUnfoldedChange(!isUnfolded)}
       >
-        {filters[0]?.displayValue || 'Filter'}
+        {filters[0] ? (
+          <GenericEntityFilterChip filter={filters[0]} />
+        ) : (
+          'Filter'
+        )}
+        <IconChevronDown size={theme.icon.size.md} />
       </StyledDropdownButton>
       {isUnfolded && (
         <DropdownMenuContainer onClose={() => handleIsUnfoldedChange(false)}>

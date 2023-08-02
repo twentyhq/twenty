@@ -39,6 +39,7 @@ export function useTasks() {
         value: currentUser.id,
         operand: 'is',
         displayValue: currentUser.displayName,
+        displayAvatarUrl: currentUser.avatarUrl ?? undefined,
       },
     ]);
   }
