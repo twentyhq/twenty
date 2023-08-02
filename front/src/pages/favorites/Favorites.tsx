@@ -9,10 +9,10 @@ import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  flex-wrap: wrap;
   gap: 4px;
-  height: 100px;
-  overflow-x: hidden;
+  height: 150px;
+  overflow-x: auto;
+  width: 100%;
 `;
 
 export function Favorites() {

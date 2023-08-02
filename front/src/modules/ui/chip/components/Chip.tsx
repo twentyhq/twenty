@@ -100,6 +100,11 @@ const StyledLabel = styled.span`
   white-space: nowrap;
 `;
 
+const ContainerWrapper = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
 export function Chip({
   size = ChipSize.Small,
   label,
@@ -113,21 +118,23 @@ export function Chip({
   className,
 }: OwnProps) {
   return (
-    <StyledContainer
-      data-testid="chip"
-      clickable={clickable}
-      variant={variant}
-      accent={accent}
-      size={size}
-      disabled={disabled}
-      className={className}
-      maxWidth={maxWidth}
-    >
-      {leftComponent}
-      <StyledLabel>
-        <OverflowingTextWithTooltip text={label} />
-      </StyledLabel>
-      {rightComponent}
-    </StyledContainer>
+    <ContainerWrapper>
+      <StyledContainer
+        data-testid="chip"
+        clickable={clickable}
+        variant={variant}
+        accent={accent}
+        size={size}
+        disabled={disabled}
+        className={className}
+        maxWidth={maxWidth}
+      >
+        {leftComponent}
+        <StyledLabel>
+          <OverflowingTextWithTooltip text={label} />
+        </StyledLabel>
+        {rightComponent}
+      </StyledContainer>
+    </ContainerWrapper>
   );
 }
