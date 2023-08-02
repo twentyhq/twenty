@@ -1,10 +1,11 @@
 import { DateTime } from 'luxon';
+import { useRecoilState } from 'recoil';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { activeTabIdScopedState } from '@/ui/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
 import { tasksFilters } from '~/pages/tasks/tasks-filters';
 import { parseDate } from '~/utils/date-utils';
@@ -23,7 +24,25 @@ export function useTasks() {
     TasksContext,
   );
 
-  const filters = useRecoilScopedValue(filtersScopedState, TasksContext);
+  const [filters, setFilters] = useRecoilScopedState(
+    filtersScopedState,
+    TasksContext,
+  );
+
+  // If there is no filter, we set the default filter to the current user
+  const [currentUser] = useRecoilState(currentUserState);
+  if (currentUser && !filters.length) {
+    setFilters([
+      {
+        field: 'assigneeId',
+        type: 'entity',
+        value: currentUser.id,
+        operand: 'is',
+        displayValue: currentUser.displayName,
+      },
+    ]);
+  }
+
   const whereFilters = Object.assign(
     {},
     ...filters.map((filter) => {
