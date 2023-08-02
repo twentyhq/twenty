@@ -14,7 +14,7 @@ import { logError } from '../logError';
 jest.mock('~/utils/logError');
 
 describe('beautifyExactDateTime', () => {
-  it('should return the past date in the correct format with time', () => {
+  it('should return the date in the correct format with time', () => {
     const mockDate = '2023-01-01T12:13:24';
     const actualDate = new Date(mockDate);
     const expected = DateTime.fromJSDate(actualDate)
@@ -48,23 +48,10 @@ describe('beautifyExactDate', () => {
     const result = beautifyExactDate(mockDate);
     expect(result).toEqual(expected);
   });
-  it('should return Today if the date is today', () => {
+  it('should return "Today" if the date is today', () => {
     const todayString = DateTime.local().toISODate();
     const mockDate = `${todayString}T12:13:24`;
     const expected = 'Today';
-
-    const result = beautifyExactDate(mockDate);
-    expect(result).toEqual(expected);
-  });
-});
-
-describe('beautifyExactDate', () => {
-  it('should return the correct relative date', () => {
-    const mockDate = '2023-01-01T12:13:24';
-    const actualDate = new Date(mockDate);
-    const expected = DateTime.fromJSDate(actualDate)
-      .setLocale(DEFAULT_DATE_LOCALE)
-      .toFormat('DD');
 
     const result = beautifyExactDate(mockDate);
     expect(result).toEqual(expected);
