@@ -33,7 +33,7 @@ type MockedActivity = Pick<
     lastName: string;
     displayName: string;
   };
-  comments: Array<Pick<Comment, 'body'>>;
+  comments: Array<Pick<Comment, 'body' | 'id'>>;
   activityTargets: Array<
     Pick<
       ActivityTarget,
