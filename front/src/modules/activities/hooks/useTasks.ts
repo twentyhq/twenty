@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
@@ -31,18 +32,21 @@ export function useTasks() {
 
   // If there is no filter, we set the default filter to the current user
   const [currentUser] = useRecoilState(currentUserState);
-  if (currentUser && !filters.length) {
-    setFilters([
-      {
-        field: 'assigneeId',
-        type: 'entity',
-        value: currentUser.id,
-        operand: 'is',
-        displayValue: currentUser.displayName,
-        displayAvatarUrl: currentUser.avatarUrl ?? undefined,
-      },
-    ]);
-  }
+
+  useEffect(() => {
+    if (currentUser && !filters.length) {
+      setFilters([
+        {
+          field: 'assigneeId',
+          type: 'entity',
+          value: currentUser.id,
+          operand: 'is',
+          displayValue: currentUser.displayName,
+          displayAvatarUrl: currentUser.avatarUrl ?? undefined,
+        },
+      ]);
+    }
+  }, [currentUser, filters, setFilters]);
 
   const whereFilters = Object.assign(
     {},
