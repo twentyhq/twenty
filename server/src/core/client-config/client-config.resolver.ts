@@ -1,15 +1,28 @@
-import { Resolver, Query } from '@nestjs/graphql';
+import { Resolver, Query, Args } from '@nestjs/graphql';
+
+import crypto from 'crypto';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
-import { ClientConfig } from './client-config.entity';
+import { ClientConfig, ClientConfigInput } from './client-config.entity';
+
+function getHMACKey(email?: string, key?: string | null) {
+  if (!email || !key) return null;
+
+  const hmac = crypto.createHmac('sha256', key);
+  return hmac.update(email).digest('hex');
+}
 
 @Resolver()
 export class ClientConfigResolver {
   constructor(private environmentService: EnvironmentService) {}
 
   @Query(() => ClientConfig)
-  async clientConfig(): Promise<ClientConfig> {
+  async clientConfig(
+    @Args() { email }: ClientConfigInput,
+  ): Promise<ClientConfig> {
+    const key = this.environmentService.getSupportHMACKey();
+
     const clientConfig: ClientConfig = {
       authProviders: {
         google: this.environmentService.isAuthGoogleEnabled(),
@@ -26,7 +39,7 @@ export class ClientConfigResolver {
       supportChat: {
         supportDriver: this.environmentService.getSupportDriver(),
         supportFrontendKey: this.environmentService.getSupportFrontendKey(),
-        supportHMACKey: this.environmentService.getSupportHMACKey(),
+        supportHMACKey: getHMACKey(email, key),
       },
     };
 

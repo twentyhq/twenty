@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { useGetClientConfigQuery } from '~/generated/graphql';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -44,27 +46,52 @@ function insertScript(scriptSrc: string) {
   document.body.appendChild(script);
 }
 
-function configureFront(chatId: string) {
+function configureFront(config: Record<string, unknown>) {
   // insert script and initialize Front Chat when script is loaded
   insertScript('https://chat-assets.frontapp.com/v1/chat.bundle.js');
 
-  window.FrontChat?.('init', {
-    chatId,
-    useDefaultLauncher: false,
-  });
+  window.FrontChat?.('init', config);
 }
 
 export default function SupportChat() {
-  const supportChatConfig = useRecoilValue(supportChatState);
+  const [supportChatConfig, setSupportChatConfig] =
+    useRecoilState(supportChatState);
+  const user = useRecoilValue(currentUserState);
+
+  const { data, loading } = useGetClientConfigQuery({
+    variables: { email: user?.email },
+  });
 
   useEffect(() => {
+    if (!loading && data?.clientConfig) {
+      setSupportChatConfig(data?.clientConfig.supportChat);
+    }
+  }, [data, loading, setSupportChatConfig]);
+
+  useEffect(() => {
+    const email = user?.email;
+    const displayName = user?.displayName;
+    const userHash = supportChatConfig.supportHMACKey;
     if (
       supportChatConfig.supportDriver === 'front' &&
       supportChatConfig.supportFrontendKey
     ) {
-      configureFront(supportChatConfig.supportFrontendKey);
+      configureFront({
+        chatId: supportChatConfig.supportFrontendKey,
+        useDefaultLauncher: false,
+        ...(email ? { email } : {}),
+        ...(displayName ? { name: displayName } : {}),
+        ...(userHash ? { userHash } : {}),
+        customFields: {},
+      });
     }
-  }, [supportChatConfig.supportDriver, supportChatConfig.supportFrontendKey]);
+  }, [
+    supportChatConfig.supportDriver,
+    supportChatConfig.supportFrontendKey,
+    supportChatConfig.supportHMACKey,
+    user?.displayName,
+    user?.email,
+  ]);
 
   function handleSupportClick() {
     if (supportChatConfig.supportDriver === 'front') window.FrontChat?.('show');

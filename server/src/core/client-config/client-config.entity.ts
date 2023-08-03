@@ -1,4 +1,6 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { ArgsType, Field, ObjectType } from '@nestjs/graphql';
+
+import { IsOptional, IsString } from 'class-validator';
 
 @ObjectType()
 class AuthProviders {
@@ -49,4 +51,12 @@ export class ClientConfig {
 
   @Field(() => SupportChat)
   supportChat: SupportChat;
+}
+
+@ArgsType()
+export class ClientConfigInput {
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  email?: string;
 }

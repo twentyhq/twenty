@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_CLIENT_CONFIG = gql`
-  query GetClientConfig {
-    clientConfig {
+  query GetClientConfig($email: String) {
+    clientConfig(email: $email) {
       authProviders {
         google
         password

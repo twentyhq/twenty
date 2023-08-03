@@ -1762,6 +1762,11 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 };
 
 
+export type QueryClientConfigArgs = {
+  email?: InputMaybe<Scalars['String']>;
+};
+
+
 export type QueryFindManyActivitiesArgs = {
   cursor?: InputMaybe<ActivityWhereUniqueInput>;
   distinct?: InputMaybe<Array<ActivityScalarFieldEnum>>;
@@ -2444,7 +2449,9 @@ export type ImpersonateMutationVariables = Exact<{
 
 export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
-export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetClientConfigQueryVariables = Exact<{
+  email?: InputMaybe<Scalars['String']>;
+}>;
 
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, supportChat: { __typename?: 'SupportChat', supportDriver: string, supportFrontendKey?: string | null, supportHMACKey?: string | null } } };
@@ -3622,8 +3629,8 @@ export type ImpersonateMutationHookResult = ReturnType<typeof useImpersonateMuta
 export type ImpersonateMutationResult = Apollo.MutationResult<ImpersonateMutation>;
 export type ImpersonateMutationOptions = Apollo.BaseMutationOptions<ImpersonateMutation, ImpersonateMutationVariables>;
 export const GetClientConfigDocument = gql`
-    query GetClientConfig {
-  clientConfig {
+    query GetClientConfig($email: String) {
+  clientConfig(email: $email) {
     authProviders {
       google
       password
@@ -3655,6 +3662,7 @@ export const GetClientConfigDocument = gql`
  * @example
  * const { data, loading, error } = useGetClientConfigQuery({
  *   variables: {
+ *      email: // value for 'email'
  *   },
  * });
  */
