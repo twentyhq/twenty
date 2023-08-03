@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@air/react-drag-to-select": "^5.0.8",
     "@apollo/client": "^3.7.5",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@blocknote/core": "^0.8.2",

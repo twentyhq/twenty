@@ -1,6 +1,10 @@
 import { useCallback, useRef } from 'react';
+import {
+  boxesIntersect,
+  useSelectionContainer,
+} from '@air/react-drag-to-select';
 import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
@@ -9,6 +13,8 @@ import { useUpdateViewFieldMutation } from '~/generated/graphql';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { EntityUpdateMutationHookContext } from '../states/EntityUpdateMutationHookContext';
+import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
+import { tableRowIdsState } from '../states/tableRowIdsState';
 import { viewFieldsFamilyState } from '../states/viewFieldsState';
 import { TableHeader } from '../table-header/components/TableHeader';
 
@@ -102,12 +108,48 @@ export function EntityTable<SortField>({
   onSortsUpdate,
   useUpdateEntityMutation,
 }: OwnProps<SortField>) {
+  const tableBodyRef = useRef<HTMLDivElement>(null);
+  const entityTableBodyRef = useRef<HTMLTableSectionElement>(null);
+  const rowIds = useRecoilValue(tableRowIdsState);
+
+  const setRowSelectedState = useRecoilCallback(
+    ({ set }) =>
+      (rowId: string, selected: boolean) => {
+        set(isRowSelectedFamilyState(rowId), selected);
+      },
+  );
+
+  const { DragSelection } = useSelectionContainer({
+    eventsElement: tableBodyRef.current,
+    onSelectionStart: () => {
+      Array.from(entityTableBodyRef.current?.children ?? []).forEach(
+        (item, index) => {
+          setRowSelectedState(rowIds[index], false);
+        },
+      );
+    },
+    onSelectionChange: (box) => {
+      const scrollAwareBox = {
+        ...box,
+        top: box.top + window.scrollY,
+        left: box.left + window.scrollX,
+      };
+      Array.from(entityTableBodyRef.current?.children ?? []).forEach(
+        (item, index) => {
+          if (boxesIntersect(scrollAwareBox, item.getBoundingClientRect())) {
+            setRowSelectedState(rowIds[index], true);
+          } else {
+            setRowSelectedState(rowIds[index], false);
+          }
+        },
+      );
+    },
+  });
+
   const viewFields = useRecoilValue(viewFieldsFamilyState);
   const setViewFields = useSetRecoilState(viewFieldsFamilyState);
 
   const [updateViewFieldMutation] = useUpdateViewFieldMutation();
-
-  const tableBodyRef = useRef<HTMLDivElement>(null);
 
   useMapKeyboardToSoftFocus();
 
@@ -156,10 +198,11 @@ export function EntityTable<SortField>({
                   onColumnResize={handleColumnResize}
                   viewFields={viewFields}
                 />
-                <EntityTableBody />
+                <EntityTableBody tbodyRef={entityTableBodyRef} />
               </StyledTable>
             )}
           </StyledTableWrapper>
+          <DragSelection />
         </StyledTableContainer>
       </StyledTableWithHeader>
     </EntityUpdateMutationHookContext.Provider>
