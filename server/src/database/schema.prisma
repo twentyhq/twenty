@@ -240,9 +240,10 @@ model Company {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  ActivityTarget ActivityTarget[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  ActivityTarget   ActivityTarget[]
+  PipelineProgress PipelineProgress[]
 
   @@map("companies")
 }
@@ -287,9 +288,10 @@ model Person {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  ActivityTarget ActivityTarget[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  ActivityTarget   ActivityTarget[]
+  PipelineProgress PipelineProgress[]
 
   @@map("people")
 }
@@ -507,6 +509,12 @@ model PipelineProgress {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
+
+  personId String?
+  person   Person? @relation(fields: [personId], references: [id])
 
   @@map("pipeline_progresses")
 }
