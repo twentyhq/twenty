@@ -1,8 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
-type MouseMoveListener = (positionX: number, positionY: number) => void;
-type MouseDownListener = (positionX: number, positionY: number) => void;
-type MouseUpListener = (positionX: number, positionY: number) => void;
+type MouseListener = (positionX: number, positionY: number) => void;
 
 export function useTrackPointer({
   shouldTrackPointer = true,
@@ -11,9 +9,9 @@ export function useTrackPointer({
   onMouseUp,
 }: {
   shouldTrackPointer?: boolean;
-  onMouseMove?: MouseMoveListener;
-  onMouseDown?: MouseDownListener;
-  onMouseUp?: MouseUpListener;
+  onMouseMove?: MouseListener;
+  onMouseDown?: MouseListener;
+  onMouseUp?: MouseListener;
 }) {
   const extractPosition = useCallback((event: MouseEvent | TouchEvent) => {
     const clientX =
@@ -50,13 +48,11 @@ export function useTrackPointer({
 
   useEffect(() => {
     if (shouldTrackPointer) {
-      console.log('coucou');
       document.addEventListener('mousemove', onInternalMouseMove);
       document.addEventListener('mousedown', onInternalMouseDown);
       document.addEventListener('mouseup', onInternalMouseUp);
 
       return () => {
-        console.log('coucou2');
         document.removeEventListener('mousemove', onInternalMouseMove);
         document.removeEventListener('mousedown', onInternalMouseDown);
         document.removeEventListener('mouseup', onInternalMouseUp);

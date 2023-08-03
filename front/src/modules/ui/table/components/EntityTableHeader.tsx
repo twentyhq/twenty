@@ -1,12 +1,17 @@
 import { useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
 
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
+import { useUpdateViewFieldMutation } from '~/generated/graphql';
 
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '../types/ViewField';
+import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
+import { viewFieldsState } from '../states/viewFieldsState';
 
 import { ColumnHead } from './ColumnHead';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
@@ -44,12 +49,11 @@ const StyledResizeHandler = styled.div`
   z-index: 1;
 `;
 
-type OwnProps = {
-  onColumnResize: (resizedFieldId: string, width: number) => void;
-  viewFields: ViewFieldDefinition<ViewFieldMetadata>[];
-};
+export function EntityTableHeader() {
+  const viewFields = useRecoilValue(viewFieldsState);
+  const setViewFields = useSetRecoilState(viewFieldsState);
 
-export function EntityTableHeader({ onColumnResize, viewFields }: OwnProps) {
+  const [updateViewFieldMutation] = useUpdateViewFieldMutation();
   const columnWidths = useMemo(
     () =>
       viewFields.reduce<Record<string, number>>(
@@ -66,7 +70,26 @@ export function EntityTableHeader({ onColumnResize, viewFields }: OwnProps) {
   >(null);
 
   const [resizedFieldId, setResizedFieldId] = useState<string | null>(null);
-  const [offset, setOffset] = useState(0);
+  const [offset, setOffset] = useRecoilState(resizeFieldOffsetState);
+
+  const handleColumnResize = useCallback(
+    (resizedFieldId: string, width: number) => {
+      setViewFields((previousViewFields) =>
+        previousViewFields.map((viewField) =>
+          viewField.id === resizedFieldId
+            ? { ...viewField, columnSize: width }
+            : viewField,
+        ),
+      );
+      updateViewFieldMutation({
+        variables: {
+          data: { sizeInPx: width },
+          where: { id: resizedFieldId },
+        },
+      });
+    },
+    [setViewFields, updateViewFieldMutation],
+  );
 
   const handleResizeHandlerStart = useCallback(
     (positionX: number, _: number) => {
@@ -78,35 +101,31 @@ export function EntityTableHeader({ onColumnResize, viewFields }: OwnProps) {
   const handleResizeHandlerMove = useCallback(
     (positionX: number, _positionY: number) => {
       if (!initialPointerPositionX) return;
-      setOffset(positionX - (initialPointerPositionX ?? positionX));
+      setOffset(positionX - initialPointerPositionX);
     },
     [setOffset, initialPointerPositionX],
   );
 
-  const handleResizeHandlerEnd = useCallback(
-    (_positionX: number, _positionY: number) => {
-      if (!resizedFieldId) return;
-      const nextWidth = Math.round(
-        Math.max(columnWidths[resizedFieldId] + offset, COLUMN_MIN_WIDTH),
-      );
+  const handleResizeHandlerEnd = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (_positionX: number, _positionY: number) => {
+        if (!resizedFieldId) return;
+        const nextWidth = Math.round(
+          Math.max(
+            columnWidths[resizedFieldId] +
+              snapshot.getLoadable(resizeFieldOffsetState).valueOrThrow(),
+            COLUMN_MIN_WIDTH,
+          ),
+        );
 
-      if (nextWidth !== columnWidths[resizedFieldId]) {
-        columnWidths[resizedFieldId] = nextWidth;
-
-        onColumnResize(resizedFieldId, nextWidth);
-      }
-      setOffset(0);
-      setInitialPointerPositionX(null);
-      setResizedFieldId(null);
-    },
-    [
-      resizedFieldId,
-      columnWidths,
-      offset,
-      setOffset,
-      setResizedFieldId,
-      onColumnResize,
-    ],
+        if (nextWidth !== columnWidths[resizedFieldId]) {
+          handleColumnResize(resizedFieldId, nextWidth);
+        }
+        set(resizeFieldOffsetState, 0);
+        setInitialPointerPositionX(null);
+        setResizedFieldId(null);
+      },
+    [resizedFieldId, columnWidths, setResizedFieldId, handleColumnResize],
   );
 
   useTrackPointer({
