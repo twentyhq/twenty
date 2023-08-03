@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
@@ -14,28 +14,28 @@ const StyledQuestionMark = styled.div`
   align-items: center;
   border-radius: 50%;
   border-style: solid;
-  border-width: 1px;
+  border-width: ${({ theme }) => theme.spacing(0.25)};
   display: flex;
-  font-size: 10px;
-  height: 10px;
+  height: ${({ theme }) => theme.spacing(3.5)};
   justify-content: center;
   margin-right: ${({ theme }) => theme.spacing(1)};
-  padding: 1px;
-  width: 10px;
+  width: ${({ theme }) => theme.spacing(3.5)};
 `;
 
 const StyledButton = styled.button`
-  background-color: ${({ theme }) => theme.background.transparent.light};
+  align-items: center;
+  background-color: transparent;
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  padding: ${({ theme }) => theme.spacing(1.3)};
   :hover {
-    background: ${({ theme }) => theme.background.transparent.lighter};
+    background-color: ${({ theme }) => theme.background.transparent.light};
     color: ${({ theme }) => theme.font.color.secondary};
   }
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 // insert a script tag into the DOM right before the closing body tag
@@ -46,17 +46,23 @@ function insertScript(scriptSrc: string) {
   document.body.appendChild(script);
 }
 
-function configureFront(config: Record<string, unknown>) {
-  // insert script and initialize Front Chat when script is loaded
-  insertScript('https://chat-assets.frontapp.com/v1/chat.bundle.js');
+function configureFront(chatId: string) {
+  const url = 'https://chat-assets.frontapp.com/v1/chat.bundle.js';
+  // check if Front Chat script is already loaded
+  const script = document.querySelector(`script[src="${url}"]`);
 
-  window.FrontChat?.('init', config);
+  if (!script) {
+    // insert script and initialize Front Chat when script is loaded
+    insertScript(url);
+    window.FrontChat?.('init', { chatId, useDefaultLauncher: false });
+  }
 }
 
 export default function SupportChat() {
   const [supportChatConfig, setSupportChatConfig] =
     useRecoilState(supportChatState);
   const user = useRecoilValue(currentUserState);
+  const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
 
   const { data, loading } = useGetClientConfigQuery({
     variables: { email: user?.email },
@@ -69,16 +75,22 @@ export default function SupportChat() {
   }, [data, loading, setSupportChatConfig]);
 
   useEffect(() => {
-    const email = user?.email;
-    const displayName = user?.displayName;
-    const userHash = supportChatConfig.supportHMACKey;
     if (
       supportChatConfig.supportDriver === 'front' &&
       supportChatConfig.supportFrontendKey
     ) {
-      configureFront({
+      configureFront(supportChatConfig.supportFrontendKey);
+      setIsFrontChatLoaded(true);
+    }
+  }, [supportChatConfig.supportDriver, supportChatConfig.supportFrontendKey]);
+
+  useEffect(() => {
+    const email = user?.email;
+    const displayName = user?.displayName;
+    const userHash = supportChatConfig.supportHMACKey;
+    if (userHash && email) {
+      window.FrontChat?.('identity', {
         chatId: supportChatConfig.supportFrontendKey,
-        useDefaultLauncher: false,
         ...(email ? { email } : {}),
         ...(displayName ? { name: displayName } : {}),
         ...(userHash ? { userHash } : {}),
@@ -86,7 +98,6 @@ export default function SupportChat() {
       });
     }
   }, [
-    supportChatConfig.supportDriver,
     supportChatConfig.supportFrontendKey,
     supportChatConfig.supportHMACKey,
     user?.displayName,
@@ -97,12 +108,12 @@ export default function SupportChat() {
     if (supportChatConfig.supportDriver === 'front') window.FrontChat?.('show');
   }
 
-  return (
+  return isFrontChatLoaded ? (
     <StyledButtonContainer>
       <StyledButton>
         <StyledQuestionMark>?</StyledQuestionMark>
         <div onClick={handleSupportClick}>Support</div>
       </StyledButton>
     </StyledButtonContainer>
-  );
+  ) : null;
 }
