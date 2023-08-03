@@ -29,15 +29,30 @@ export function parseDate(dateToParse: Date | string | number) {
   return formattedDate.setLocale(DEFAULT_DATE_LOCALE);
 }
 
-export function beautifyExactDate(dateToBeautify: Date | string | number) {
-  try {
-    const parsedDate = parseDate(dateToBeautify);
+function isSameDay(a: DateTime, b: DateTime): boolean {
+  return a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year');
+}
 
-    return parsedDate.toFormat('DD · T');
+function formatDate(dateToFormat: Date | string | number, format: string) {
+  try {
+    const parsedDate = parseDate(dateToFormat);
+    return parsedDate.toFormat(format);
   } catch (error) {
     logError(error);
     return '';
   }
+}
+
+export function beautifyExactDateTime(dateToBeautify: Date | string | number) {
+  const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local());
+  const dateFormat = isToday ? 'T' : 'DD · T';
+  return formatDate(dateToBeautify, dateFormat);
+}
+
+export function beautifyExactDate(dateToBeautify: Date | string | number) {
+  const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local());
+  const dateFormat = isToday ? "'Today'" : 'DD';
+  return formatDate(dateToBeautify, dateFormat);
 }
 
 export function beautifyPastDateRelativeToNow(

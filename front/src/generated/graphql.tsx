@@ -885,6 +885,7 @@ export type Mutation = {
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
   createEvent: Analytics;
+  createManyViewField: AffectedRows;
   createOneActivity: Activity;
   createOneComment: Comment;
   createOneCompany: Company;
@@ -931,6 +932,12 @@ export type MutationChallengeArgs = {
 export type MutationCreateEventArgs = {
   data: Scalars['JSON'];
   type: Scalars['String'];
+};
+
+
+export type MutationCreateManyViewFieldArgs = {
+  data: Array<ViewFieldCreateManyInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -2076,6 +2083,15 @@ export type ViewField = {
   sizeInPx: Scalars['Int'];
 };
 
+export type ViewFieldCreateManyInput = {
+  fieldName: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  index: Scalars['Int'];
+  isVisible: Scalars['Boolean'];
+  objectName: Scalars['String'];
+  sizeInPx: Scalars['Int'];
+};
+
 export type ViewFieldOrderByWithRelationInput = {
   fieldName?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
@@ -2640,8 +2656,16 @@ export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }
 
 export type DeleteUserAccountMutation = { __typename?: 'Mutation', deleteUserAccount: { __typename?: 'User', id: string } };
 
+export type CreateViewFieldsMutationVariables = Exact<{
+  data: Array<ViewFieldCreateManyInput> | ViewFieldCreateManyInput;
+}>;
+
+
+export type CreateViewFieldsMutation = { __typename?: 'Mutation', createManyViewField: { __typename?: 'AffectedRows', count: number } };
+
 export type GetViewFieldsQueryVariables = Exact<{
   where?: InputMaybe<ViewFieldWhereInput>;
+  orderBy?: InputMaybe<Array<ViewFieldOrderByWithRelationInput> | ViewFieldOrderByWithRelationInput>;
 }>;
 
 
@@ -5050,9 +5074,42 @@ export function useDeleteUserAccountMutation(baseOptions?: Apollo.MutationHookOp
 export type DeleteUserAccountMutationHookResult = ReturnType<typeof useDeleteUserAccountMutation>;
 export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAccountMutation>;
 export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
+export const CreateViewFieldsDocument = gql`
+    mutation CreateViewFields($data: [ViewFieldCreateManyInput!]!) {
+  createManyViewField(data: $data) {
+    count
+  }
+}
+    `;
+export type CreateViewFieldsMutationFn = Apollo.MutationFunction<CreateViewFieldsMutation, CreateViewFieldsMutationVariables>;
+
+/**
+ * __useCreateViewFieldsMutation__
+ *
+ * To run a mutation, you first call `useCreateViewFieldsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateViewFieldsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createViewFieldsMutation, { data, loading, error }] = useCreateViewFieldsMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateViewFieldsMutation(baseOptions?: Apollo.MutationHookOptions<CreateViewFieldsMutation, CreateViewFieldsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateViewFieldsMutation, CreateViewFieldsMutationVariables>(CreateViewFieldsDocument, options);
+      }
+export type CreateViewFieldsMutationHookResult = ReturnType<typeof useCreateViewFieldsMutation>;
+export type CreateViewFieldsMutationResult = Apollo.MutationResult<CreateViewFieldsMutation>;
+export type CreateViewFieldsMutationOptions = Apollo.BaseMutationOptions<CreateViewFieldsMutation, CreateViewFieldsMutationVariables>;
 export const GetViewFieldsDocument = gql`
-    query GetViewFields($where: ViewFieldWhereInput) {
-  viewFields: findManyViewField(where: $where) {
+    query GetViewFields($where: ViewFieldWhereInput, $orderBy: [ViewFieldOrderByWithRelationInput!]) {
+  viewFields: findManyViewField(where: $where, orderBy: $orderBy) {
     id
     fieldName
     isVisible
@@ -5075,6 +5132,7 @@ export const GetViewFieldsDocument = gql`
  * const { data, loading, error } = useGetViewFieldsQuery({
  *   variables: {
  *      where: // value for 'where'
+ *      orderBy: // value for 'orderBy'
  *   },
  * });
  */

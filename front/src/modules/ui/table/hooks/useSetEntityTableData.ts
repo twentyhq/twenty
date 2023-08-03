@@ -8,11 +8,6 @@ import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEnti
 import { TableContext } from '@/ui/table/states/TableContext';
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
-import { viewFieldsFamilyState } from '@/ui/table/states/viewFieldsState';
-import {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/table/types/ViewField';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
 
 export function useSetEntityTableData() {
@@ -24,7 +19,6 @@ export function useSetEntityTableData() {
     ({ set, snapshot }) =>
       <T extends { id: string }>(
         newEntityArray: T[],
-        viewFields: ViewFieldDefinition<ViewFieldMetadata>[],
         filters: FilterDefinition[],
       ) => {
         for (const entity of newEntityArray) {
@@ -49,14 +43,12 @@ export function useSetEntityTableData() {
 
         resetTableRowSelection();
 
-        set(entityTableDimensionsState, {
-          numberOfColumns: viewFields.length,
+        set(entityTableDimensionsState, (prevState) => ({
+          ...prevState,
           numberOfRows: entityIds.length,
-        });
+        }));
 
         set(availableFiltersScopedState(tableContextScopeId), filters);
-
-        set(viewFieldsFamilyState, viewFields);
 
         set(isFetchingEntityTableDataState, false);
       },
