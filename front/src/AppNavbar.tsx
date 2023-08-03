@@ -6,7 +6,6 @@ import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
 import {
   IconBuildingSkyscraper,
   IconCheckbox,
-  IconInbox,
   IconSearch,
   IconSettings,
   IconTargetArrow,
