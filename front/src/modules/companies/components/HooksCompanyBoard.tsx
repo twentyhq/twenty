@@ -162,10 +162,16 @@ export function HooksCompanyBoard({
   );
 
   const synchronizeCompanyProgresses = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot, set }) =>
       (companyBoardIndex: { [key: string]: CompanyProgress }) => {
         Object.entries(companyBoardIndex).forEach(([id, companyProgress]) => {
-          set(companyProgressesFamilyState(id), companyProgress);
+          if (
+            JSON.stringify(
+              snapshot.getLoadable(companyProgressesFamilyState(id)).getValue(),
+            ) !== JSON.stringify(companyProgress)
+          ) {
+            set(companyProgressesFamilyState(id), companyProgress);
+          }
         });
       },
     [],
