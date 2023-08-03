@@ -77,27 +77,32 @@ export default function SupportChat() {
   useEffect(() => {
     if (
       supportChatConfig.supportDriver === 'front' &&
-      supportChatConfig.supportFrontendKey
+      supportChatConfig.supportFrontendKey &&
+      !isFrontChatLoaded
     ) {
       configureFront(supportChatConfig.supportFrontendKey);
       setIsFrontChatLoaded(true);
     }
-  }, [supportChatConfig.supportDriver, supportChatConfig.supportFrontendKey]);
+  }, [
+    isFrontChatLoaded,
+    supportChatConfig.supportDriver,
+    supportChatConfig.supportFrontendKey,
+  ]);
 
   useEffect(() => {
     const email = user?.email;
     const displayName = user?.displayName;
     const userHash = supportChatConfig.supportHMACKey;
-    if (userHash && email) {
+    if (userHash && email && isFrontChatLoaded) {
       window.FrontChat?.('identity', {
-        chatId: supportChatConfig.supportFrontendKey,
-        ...(email ? { email } : {}),
+        email,
         ...(displayName ? { name: displayName } : {}),
-        ...(userHash ? { userHash } : {}),
+        userHash,
         customFields: {},
       });
     }
   }, [
+    isFrontChatLoaded,
     supportChatConfig.supportFrontendKey,
     supportChatConfig.supportHMACKey,
     user?.displayName,
