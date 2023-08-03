@@ -1,25 +1,20 @@
 import { selectorFamily } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
-import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 
-import { boardState } from './boardState';
+import { boardCardIdsByColumnIdFamilyState } from './boardCardIdsByColumnIdFamilyState';
 
 export const boardColumnTotalsFamilySelector = selectorFamily({
   key: 'boardColumnTotalsFamilySelector',
   get:
     (pipelineStageId: string) =>
     ({ get }) => {
-      const board = get(boardState);
-      const pipelineStage = board?.find(
-        (pipelineStage: BoardPipelineStageColumn) =>
-          pipelineStage.pipelineStageId === pipelineStageId,
+      const cardIds = get(boardCardIdsByColumnIdFamilyState(pipelineStageId));
+
+      const pipelineProgresses = cardIds.map((pipelineProgressId: string) =>
+        get(companyProgressesFamilyState(pipelineProgressId)),
       );
 
-      const pipelineProgresses = pipelineStage?.pipelineProgressIds.map(
-        (pipelineProgressId: string) =>
-          get(companyProgressesFamilyState(pipelineProgressId)),
-      );
       const pipelineStageTotal: number =
         pipelineProgresses?.reduce(
           (acc: number, curr: any) => acc + curr?.pipelineProgress.amount,

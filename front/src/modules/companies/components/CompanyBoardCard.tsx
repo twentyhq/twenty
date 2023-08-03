@@ -1,4 +1,4 @@
-import { ReactNode, useCallback } from 'react';
+import { ReactNode, useCallback, useContext } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -7,9 +7,8 @@ import { companyProgressesFamilyState } from '@/companies/states/companyProgress
 import { PipelineProgressPointOfContactEditableField } from '@/pipeline/editable-field/components/PipelineProgressPointOfContactEditableField';
 import { ProbabilityEditableField } from '@/pipeline/editable-field/components/ProbabilityEditableField';
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
-import { BoardCardContext } from '@/pipeline/states/BoardCardContext';
-import { pipelineProgressIdScopedState } from '@/pipeline/states/pipelineProgressIdScopedState';
-import { selectedBoardCardsState } from '@/pipeline/states/selectedBoardCardsState';
+import { selectedBoardCardIdsState } from '@/pipeline/states/selectedBoardCardIdsState';
+import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
@@ -19,7 +18,6 @@ import {
   Checkbox,
   CheckboxVariant,
 } from '@/ui/input/checkbox/components/Checkbox';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
@@ -110,25 +108,25 @@ const StyledFieldContainer = styled.div`
 export function CompanyBoardCard() {
   const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
 
-  const [pipelineProgressId] = useRecoilScopedState(
-    pipelineProgressIdScopedState,
-    BoardCardContext,
-  );
+  const boardCardId = useContext(BoardCardIdContext);
+
   const [companyProgress] = useRecoilState(
-    companyProgressesFamilyState(pipelineProgressId || ''),
+    companyProgressesFamilyState(boardCardId ?? ''),
   );
-  const { pipelineProgress, company } = companyProgress || {};
+  const { pipelineProgress, company } = companyProgress ?? {};
+
   const [selectedBoardCards, setSelectedBoardCards] = useRecoilState(
-    selectedBoardCardsState,
+    selectedBoardCardIdsState,
   );
 
-  const selected = selectedBoardCards.includes(pipelineProgressId || '');
+  const selected = selectedBoardCards.includes(boardCardId ?? '');
+
   function setSelected(isSelected: boolean) {
     if (isSelected) {
-      setSelectedBoardCards([...selectedBoardCards, pipelineProgressId || '']);
+      setSelectedBoardCards([...selectedBoardCards, boardCardId ?? '']);
     } else {
       setSelectedBoardCards(
-        selectedBoardCards.filter((id) => id !== pipelineProgressId),
+        selectedBoardCards.filter((id) => id !== boardCardId),
       );
     }
   }

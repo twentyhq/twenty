@@ -1,6 +1,6 @@
 import { DropResult } from '@hello-pangea/dnd';
 
-import { getOptimisticlyUpdatedBoard } from '../Board';
+import { getOptimisticlyUpdatedBoardColumns } from '../../hooks/useUpdateBoardCardIds';
 
 describe('getOptimisticlyUpdatedBoard', () => {
   it('should return a new board with the updated cell', () => {
@@ -36,7 +36,10 @@ describe('getOptimisticlyUpdatedBoard', () => {
       },
     ];
 
-    const updatedBoard = getOptimisticlyUpdatedBoard(initialBoard, dropResult);
+    const updatedBoard = getOptimisticlyUpdatedBoardColumns(
+      initialBoard,
+      dropResult,
+    );
 
     const finalBoard = [
       {

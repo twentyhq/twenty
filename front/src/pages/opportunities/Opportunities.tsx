@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
-import { BoardActionBarButtonDeletePipelineProgress } from '@/pipeline/components/BoardActionBarButtonDeletePipelineProgress';
+import { BoardActionBarButtonDeleteBoardCard } from '@/pipeline/components/BoardActionBarButtonDeletePipelineProgress';
 import { EntityBoard } from '@/pipeline/components/EntityBoard';
 import { EntityBoardActionBar } from '@/pipeline/components/EntityBoardActionBar';
 import {
@@ -50,7 +50,7 @@ export function Opportunities() {
           updateSorts={updateSorts}
         />
         <EntityBoardActionBar>
-          <BoardActionBarButtonDeletePipelineProgress />
+          <BoardActionBarButtonDeleteBoardCard />
         </EntityBoardActionBar>
       </RecoilScope>
     </WithTopBarContainer>

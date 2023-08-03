@@ -1,8 +1,8 @@
 import { atom } from 'recoil';
 
-import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
+import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
 
-export const boardColumnsState = atom<BoardPipelineStageColumn[]>({
+export const boardColumnsState = atom<BoardColumnDefinition[]>({
   key: 'boardColumnsState',
   default: [],
 });

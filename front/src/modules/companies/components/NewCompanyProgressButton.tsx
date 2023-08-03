@@ -5,11 +5,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardColumnContext } from '@/pipeline/states/BoardColumnContext';
-import { boardState } from '@/pipeline/states/boardState';
+import { boardColumnsState } from '@/pipeline/states/boardColumnsState';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { pipelineStageIdScopedState } from '@/pipeline/states/pipelineStageIdScopedState';
-import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
 import { NewButton } from '@/ui/board/components/NewButton';
+import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -24,7 +24,7 @@ import { useFilteredSearchCompanyQuery } from '../queries';
 
 export function NewCompanyProgressButton() {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
-  const [board, setBoard] = useRecoilState(boardState);
+  const [board, setBoard] = useRecoilState(boardColumnsState);
   const [pipeline] = useRecoilState(currentPipelineState);
   const [pipelineStageId] = useRecoilScopedState(
     pipelineStageIdScopedState,
@@ -53,8 +53,7 @@ export function NewCompanyProgressButton() {
       const newUuid = uuidv4();
       const newBoard = JSON.parse(JSON.stringify(board));
       const destinationColumnIndex = newBoard.findIndex(
-        (column: BoardPipelineStageColumn) =>
-          column.pipelineStageId === pipelineStageId,
+        (column: BoardColumnDefinition) => column.id === pipelineStageId,
       );
       newBoard[destinationColumnIndex].pipelineProgressIds.push(newUuid);
       setBoard(newBoard);
