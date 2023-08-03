@@ -16,6 +16,7 @@ import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavba
 import MainNavbar from '@/ui/navbar/components/MainNavbar';
 import NavItem from '@/ui/navbar/components/NavItem';
 import NavTitle from '@/ui/navbar/components/NavTitle';
+import { IconBell } from '@tabler/icons-react';
 
 export function AppNavbar() {
   const theme = useTheme();
@@ -36,9 +37,9 @@ export function AppNavbar() {
             }}
           />
           <NavItem
-            label="Inbox"
+            label="Notifications"
             to="/inbox"
-            icon={<IconInbox size={theme.icon.size.md} />}
+            icon={<IconBell size={theme.icon.size.md} />}
             soon={true}
           />
           <NavItem
