@@ -69,14 +69,12 @@ export function BoardHeader<SortField>({
             context={context}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
-          ,
           <SortDropdownButton<SortField>
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
-          ,
         </>
       }
       bottomComponent={
