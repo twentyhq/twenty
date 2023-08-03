@@ -1432,7 +1432,6 @@ export type PipelineProgress = {
   pointOfContact?: Maybe<Person>;
   pointOfContactId?: Maybe<Scalars['String']>;
   probability?: Maybe<Scalars['Int']>;
-  progressableType: PipelineProgressableType;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -1447,7 +1446,6 @@ export type PipelineProgressCreateInput = {
   pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
   pointOfContact?: InputMaybe<PersonCreateNestedOneWithoutContactPipelineProgressesInput>;
   probability?: InputMaybe<Scalars['Int']>;
-  progressableType: PipelineProgressableType;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -1489,7 +1487,6 @@ export type PipelineProgressOrderByWithRelationInput = {
   pointOfContact?: InputMaybe<PersonOrderByWithRelationInput>;
   pointOfContactId?: InputMaybe<SortOrder>;
   probability?: InputMaybe<SortOrder>;
-  progressableType?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
@@ -1505,7 +1502,6 @@ export enum PipelineProgressScalarFieldEnum {
   PipelineStageId = 'pipelineStageId',
   PointOfContactId = 'pointOfContactId',
   Probability = 'probability',
-  ProgressableType = 'progressableType',
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
 }
@@ -1521,7 +1517,6 @@ export type PipelineProgressUpdateInput = {
   pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
   pointOfContact?: InputMaybe<PersonUpdateOneWithoutContactPipelineProgressesNestedInput>;
   probability?: InputMaybe<Scalars['Int']>;
-  progressableType?: InputMaybe<PipelineProgressableType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -1574,7 +1569,6 @@ export type PipelineProgressWhereInput = {
   pointOfContact?: InputMaybe<PersonRelationFilter>;
   pointOfContactId?: InputMaybe<StringNullableFilter>;
   probability?: InputMaybe<IntNullableFilter>;
-  progressableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
@@ -2584,7 +2578,7 @@ export type GetPipelineProgressQueryVariables = Exact<{
 }>;
 
 
-export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, pipelineStageId: string, progressableType: PipelineProgressableType, companyId?: string | null, personId?: string | null, amount?: number | null, closeDate?: string | null, pointOfContactId?: string | null, probability?: number | null, pointOfContact?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null }> };
+export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, pipelineStageId: string, companyId?: string | null, personId?: string | null, amount?: number | null, closeDate?: string | null, pointOfContactId?: string | null, probability?: number | null, pointOfContact?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null }> };
 
 export type DeleteManyPipelineProgressMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -2622,7 +2616,6 @@ export type UpdateOnePipelineProgressStageMutation = { __typename?: 'Mutation', 
 
 export type CreateOneCompanyPipelineProgressMutationVariables = Exact<{
   uuid: Scalars['String'];
-  entityType: PipelineProgressableType;
   companyId: Scalars['String'];
   pipelineId: Scalars['String'];
   pipelineStageId: Scalars['String'];
@@ -4420,7 +4413,6 @@ export const GetPipelineProgressDocument = gql`
   findManyPipelineProgress(where: $where, orderBy: $orderBy) {
     id
     pipelineStageId
-    progressableType
     companyId
     personId
     amount
@@ -4615,9 +4607,9 @@ export type UpdateOnePipelineProgressStageMutationHookResult = ReturnType<typeof
 export type UpdateOnePipelineProgressStageMutationResult = Apollo.MutationResult<UpdateOnePipelineProgressStageMutation>;
 export type UpdateOnePipelineProgressStageMutationOptions = Apollo.BaseMutationOptions<UpdateOnePipelineProgressStageMutation, UpdateOnePipelineProgressStageMutationVariables>;
 export const CreateOneCompanyPipelineProgressDocument = gql`
-    mutation CreateOneCompanyPipelineProgress($uuid: String!, $entityType: PipelineProgressableType!, $companyId: String!, $pipelineId: String!, $pipelineStageId: String!) {
+    mutation CreateOneCompanyPipelineProgress($uuid: String!, $companyId: String!, $pipelineId: String!, $pipelineStageId: String!) {
   createOnePipelineProgress(
-    data: {id: $uuid, progressableType: $entityType, company: {connect: {id: $companyId}}, pipeline: {connect: {id: $pipelineId}}, pipelineStage: {connect: {id: $pipelineStageId}}}
+    data: {id: $uuid, company: {connect: {id: $companyId}}, pipeline: {connect: {id: $pipelineId}}, pipelineStage: {connect: {id: $pipelineStageId}}}
   ) {
     id
   }
@@ -4639,7 +4631,6 @@ export type CreateOneCompanyPipelineProgressMutationFn = Apollo.MutationFunction
  * const [createOneCompanyPipelineProgressMutation, { data, loading, error }] = useCreateOneCompanyPipelineProgressMutation({
  *   variables: {
  *      uuid: // value for 'uuid'
- *      entityType: // value for 'entityType'
  *      companyId: // value for 'companyId'
  *      pipelineId: // value for 'pipelineId'
  *      pipelineStageId: // value for 'pipelineStageId'

@@ -59,7 +59,6 @@ export const UPDATE_PIPELINE_PROGRESS_STAGE = gql`
 export const CREATE_COMPANY_PIPELINE_PROGRESS = gql`
   mutation CreateOneCompanyPipelineProgress(
     $uuid: String!
-    $entityType: PipelineProgressableType!
     $companyId: String!
     $pipelineId: String!
     $pipelineStageId: String!
@@ -67,7 +66,6 @@ export const CREATE_COMPANY_PIPELINE_PROGRESS = gql`
     createOnePipelineProgress(
       data: {
         id: $uuid
-        progressableType: $entityType
         company: { connect: { id: $companyId } }
         pipeline: { connect: { id: $pipelineId } }
         pipelineStage: { connect: { id: $pipelineStageId } }

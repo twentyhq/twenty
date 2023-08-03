@@ -497,11 +497,10 @@ model PipelineProgress {
   pointOfContact   Person?       @relation("PointOfContactPipelineProgress", fields: [pointOfContactId], references: [id])
   pointOfContactId String?
 
-  progressableType PipelineProgressableType
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace        Workspace                @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId      String
+  workspaceId String
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?

@@ -33,7 +33,6 @@ export const GET_PIPELINE_PROGRESS = gql`
     findManyPipelineProgress(where: $where, orderBy: $orderBy) {
       id
       pipelineStageId
-      progressableType
       companyId
       personId
       amount
