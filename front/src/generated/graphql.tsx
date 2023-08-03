@@ -639,6 +639,7 @@ export enum CommentableType {
 export type Company = {
   __typename?: 'Company';
   ActivityTarget?: Maybe<Array<ActivityTarget>>;
+  PipelineProgress?: Maybe<Array<PipelineProgress>>;
   _activityCount: Scalars['Int'];
   accountOwner?: Maybe<User>;
   accountOwnerId?: Maybe<Scalars['String']>;
@@ -657,6 +658,7 @@ export type Company = {
 
 export type CompanyCreateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutCompanyInput>;
+  PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutCompanyInput>;
   accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
   address: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -677,6 +679,10 @@ export type CompanyCreateNestedOneWithoutPeopleInput = {
   connect?: InputMaybe<CompanyWhereUniqueInput>;
 };
 
+export type CompanyCreateNestedOneWithoutPipelineProgressInput = {
+  connect?: InputMaybe<CompanyWhereUniqueInput>;
+};
+
 export type CompanyListRelationFilter = {
   every?: InputMaybe<CompanyWhereInput>;
   none?: InputMaybe<CompanyWhereInput>;
@@ -689,6 +695,7 @@ export type CompanyOrderByRelationAggregateInput = {
 
 export type CompanyOrderByWithRelationInput = {
   ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
+  PipelineProgress?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   accountOwner?: InputMaybe<UserOrderByWithRelationInput>;
   accountOwnerId?: InputMaybe<SortOrder>;
   address?: InputMaybe<SortOrder>;
@@ -723,6 +730,7 @@ export enum CompanyScalarFieldEnum {
 
 export type CompanyUpdateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutCompanyNestedInput>;
+  PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutCompanyNestedInput>;
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
   address?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -752,11 +760,17 @@ export type CompanyUpdateOneWithoutPeopleNestedInput = {
   disconnect?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type CompanyUpdateOneWithoutPipelineProgressNestedInput = {
+  connect?: InputMaybe<CompanyWhereUniqueInput>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type CompanyWhereInput = {
   AND?: InputMaybe<Array<CompanyWhereInput>>;
   ActivityTarget?: InputMaybe<ActivityTargetListRelationFilter>;
   NOT?: InputMaybe<Array<CompanyWhereInput>>;
   OR?: InputMaybe<Array<CompanyWhereInput>>;
+  PipelineProgress?: InputMaybe<PipelineProgressListRelationFilter>;
   accountOwner?: InputMaybe<UserRelationFilter>;
   accountOwnerId?: InputMaybe<StringNullableFilter>;
   address?: InputMaybe<StringFilter>;
@@ -1202,6 +1216,7 @@ export type NestedStringNullableFilter = {
 export type Person = {
   __typename?: 'Person';
   ActivityTarget?: Maybe<Array<ActivityTarget>>;
+  PipelineProgress?: Maybe<Array<PipelineProgress>>;
   _activityCount: Scalars['Int'];
   activities: Array<Activity>;
   avatarUrl?: Maybe<Scalars['String']>;
@@ -1209,6 +1224,7 @@ export type Person = {
   comments: Array<Comment>;
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']>;
+  contactPipelineProgresses?: Maybe<Array<PipelineProgress>>;
   createdAt: Scalars['DateTime'];
   displayName: Scalars['String'];
   email?: Maybe<Scalars['String']>;
@@ -1218,15 +1234,16 @@ export type Person = {
   lastName?: Maybe<Scalars['String']>;
   linkedinUrl?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
-  pipelineProgresses?: Maybe<Array<PipelineProgress>>;
   updatedAt: Scalars['DateTime'];
 };
 
 export type PersonCreateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutPersonInput>;
+  PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutPersonInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
+  contactPipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPointOfContactInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   email?: InputMaybe<Scalars['String']>;
   firstName?: InputMaybe<Scalars['String']>;
@@ -1235,7 +1252,6 @@ export type PersonCreateInput = {
   lastName?: InputMaybe<Scalars['String']>;
   linkedinUrl?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
-  pipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPointOfContactInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -1247,7 +1263,11 @@ export type PersonCreateNestedOneWithoutActivityTargetInput = {
   connect?: InputMaybe<PersonWhereUniqueInput>;
 };
 
-export type PersonCreateNestedOneWithoutPipelineProgressesInput = {
+export type PersonCreateNestedOneWithoutContactPipelineProgressesInput = {
+  connect?: InputMaybe<PersonWhereUniqueInput>;
+};
+
+export type PersonCreateNestedOneWithoutPipelineProgressInput = {
   connect?: InputMaybe<PersonWhereUniqueInput>;
 };
 
@@ -1263,10 +1283,12 @@ export type PersonOrderByRelationAggregateInput = {
 
 export type PersonOrderByWithRelationInput = {
   ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
+  PipelineProgress?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   avatarUrl?: InputMaybe<SortOrder>;
   city?: InputMaybe<SortOrder>;
   company?: InputMaybe<CompanyOrderByWithRelationInput>;
   companyId?: InputMaybe<SortOrder>;
+  contactPipelineProgresses?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   createdAt?: InputMaybe<SortOrder>;
   email?: InputMaybe<SortOrder>;
   firstName?: InputMaybe<SortOrder>;
@@ -1275,7 +1297,6 @@ export type PersonOrderByWithRelationInput = {
   lastName?: InputMaybe<SortOrder>;
   linkedinUrl?: InputMaybe<SortOrder>;
   phone?: InputMaybe<SortOrder>;
-  pipelineProgresses?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
@@ -1303,9 +1324,11 @@ export enum PersonScalarFieldEnum {
 
 export type PersonUpdateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutPersonNestedInput>;
+  PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutPersonNestedInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
+  contactPipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPointOfContactNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   email?: InputMaybe<Scalars['String']>;
   firstName?: InputMaybe<Scalars['String']>;
@@ -1314,7 +1337,6 @@ export type PersonUpdateInput = {
   lastName?: InputMaybe<Scalars['String']>;
   linkedinUrl?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
-  pipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPointOfContactNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -1330,7 +1352,12 @@ export type PersonUpdateManyWithoutWorkspaceNestedInput = {
   set?: InputMaybe<Array<PersonWhereUniqueInput>>;
 };
 
-export type PersonUpdateOneWithoutPipelineProgressesNestedInput = {
+export type PersonUpdateOneWithoutContactPipelineProgressesNestedInput = {
+  connect?: InputMaybe<PersonWhereUniqueInput>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type PersonUpdateOneWithoutPipelineProgressNestedInput = {
   connect?: InputMaybe<PersonWhereUniqueInput>;
   disconnect?: InputMaybe<Scalars['Boolean']>;
 };
@@ -1340,10 +1367,12 @@ export type PersonWhereInput = {
   ActivityTarget?: InputMaybe<ActivityTargetListRelationFilter>;
   NOT?: InputMaybe<Array<PersonWhereInput>>;
   OR?: InputMaybe<Array<PersonWhereInput>>;
+  PipelineProgress?: InputMaybe<PipelineProgressListRelationFilter>;
   avatarUrl?: InputMaybe<StringNullableFilter>;
   city?: InputMaybe<StringNullableFilter>;
   company?: InputMaybe<CompanyRelationFilter>;
   companyId?: InputMaybe<StringNullableFilter>;
+  contactPipelineProgresses?: InputMaybe<PipelineProgressListRelationFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   email?: InputMaybe<StringNullableFilter>;
   firstName?: InputMaybe<StringNullableFilter>;
@@ -1352,7 +1381,6 @@ export type PersonWhereInput = {
   lastName?: InputMaybe<StringNullableFilter>;
   linkedinUrl?: InputMaybe<StringNullableFilter>;
   phone?: InputMaybe<StringNullableFilter>;
-  pipelineProgresses?: InputMaybe<PipelineProgressListRelationFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
@@ -1391,8 +1419,12 @@ export type PipelineProgress = {
   __typename?: 'PipelineProgress';
   amount?: Maybe<Scalars['Int']>;
   closeDate?: Maybe<Scalars['DateTime']>;
+  company?: Maybe<Company>;
+  companyId?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
+  person?: Maybe<Person>;
+  personId?: Maybe<Scalars['String']>;
   pipeline: Pipeline;
   pipelineId: Scalars['String'];
   pipelineStage: PipelineStage;
@@ -1408,15 +1440,25 @@ export type PipelineProgress = {
 export type PipelineProgressCreateInput = {
   amount?: InputMaybe<Scalars['Int']>;
   closeDate?: InputMaybe<Scalars['DateTime']>;
+  company?: InputMaybe<CompanyCreateNestedOneWithoutPipelineProgressInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  person?: InputMaybe<PersonCreateNestedOneWithoutPipelineProgressInput>;
   pipeline: PipelineCreateNestedOneWithoutPipelineProgressesInput;
   pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
-  pointOfContact?: InputMaybe<PersonCreateNestedOneWithoutPipelineProgressesInput>;
+  pointOfContact?: InputMaybe<PersonCreateNestedOneWithoutContactPipelineProgressesInput>;
   probability?: InputMaybe<Scalars['Int']>;
   progressableId: Scalars['String'];
   progressableType: PipelineProgressableType;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineProgressCreateNestedManyWithoutCompanyInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+};
+
+export type PipelineProgressCreateNestedManyWithoutPersonInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
 };
 
 export type PipelineProgressCreateNestedManyWithoutPointOfContactInput = {
@@ -1436,8 +1478,12 @@ export type PipelineProgressOrderByRelationAggregateInput = {
 export type PipelineProgressOrderByWithRelationInput = {
   amount?: InputMaybe<SortOrder>;
   closeDate?: InputMaybe<SortOrder>;
+  company?: InputMaybe<CompanyOrderByWithRelationInput>;
+  companyId?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
+  person?: InputMaybe<PersonOrderByWithRelationInput>;
+  personId?: InputMaybe<SortOrder>;
   pipeline?: InputMaybe<PipelineOrderByWithRelationInput>;
   pipelineId?: InputMaybe<SortOrder>;
   pipelineStage?: InputMaybe<PipelineStageOrderByWithRelationInput>;
@@ -1453,9 +1499,11 @@ export type PipelineProgressOrderByWithRelationInput = {
 export enum PipelineProgressScalarFieldEnum {
   Amount = 'amount',
   CloseDate = 'closeDate',
+  CompanyId = 'companyId',
   CreatedAt = 'createdAt',
   DeletedAt = 'deletedAt',
   Id = 'id',
+  PersonId = 'personId',
   PipelineId = 'pipelineId',
   PipelineStageId = 'pipelineStageId',
   PointOfContactId = 'pointOfContactId',
@@ -1469,15 +1517,29 @@ export enum PipelineProgressScalarFieldEnum {
 export type PipelineProgressUpdateInput = {
   amount?: InputMaybe<Scalars['Int']>;
   closeDate?: InputMaybe<Scalars['DateTime']>;
+  company?: InputMaybe<CompanyUpdateOneWithoutPipelineProgressNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
   id?: InputMaybe<Scalars['String']>;
+  person?: InputMaybe<PersonUpdateOneWithoutPipelineProgressNestedInput>;
   pipeline?: InputMaybe<PipelineUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
   pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
-  pointOfContact?: InputMaybe<PersonUpdateOneWithoutPipelineProgressesNestedInput>;
+  pointOfContact?: InputMaybe<PersonUpdateOneWithoutContactPipelineProgressesNestedInput>;
   probability?: InputMaybe<Scalars['Int']>;
   progressableId?: InputMaybe<Scalars['String']>;
   progressableType?: InputMaybe<PipelineProgressableType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type PipelineProgressUpdateManyWithoutCompanyNestedInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  set?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+};
+
+export type PipelineProgressUpdateManyWithoutPersonNestedInput = {
+  connect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
+  set?: InputMaybe<Array<PipelineProgressWhereUniqueInput>>;
 };
 
 export type PipelineProgressUpdateManyWithoutPipelineStageNestedInput = {
@@ -1504,8 +1566,12 @@ export type PipelineProgressWhereInput = {
   OR?: InputMaybe<Array<PipelineProgressWhereInput>>;
   amount?: InputMaybe<IntNullableFilter>;
   closeDate?: InputMaybe<DateTimeNullableFilter>;
+  company?: InputMaybe<CompanyRelationFilter>;
+  companyId?: InputMaybe<StringNullableFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
   id?: InputMaybe<StringFilter>;
+  person?: InputMaybe<PersonRelationFilter>;
+  personId?: InputMaybe<StringNullableFilter>;
   pipeline?: InputMaybe<PipelineRelationFilter>;
   pipelineId?: InputMaybe<StringFilter>;
   pipelineStage?: InputMaybe<PipelineStageRelationFilter>;
