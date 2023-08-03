@@ -104,6 +104,7 @@ export function EntityBoardColumn({
           pipelineStageId={column.pipelineStageId}
           totalAmount={boardColumnTotal}
           isFirstColumn={column.index === 0}
+          numChildren={column.pipelineProgressIds.length}
         >
           <BoardColumnCardsContainer droppableProvided={droppableProvided}>
             {column.pipelineProgressIds.map((pipelineProgressId, index) => (

@@ -95,6 +95,7 @@ import {
   UpdateAttachmentAbilityHandler,
 } from './handlers/attachment.ability-handler';
 import {
+  CreateViewFieldAbilityHandler,
   ReadViewFieldAbilityHandler,
   UpdateViewFieldAbilityHandler,
 } from './handlers/view-field.ability-handler';
@@ -184,6 +185,7 @@ import {
     DeletePipelineProgressAbilityHandler,
     // ViewField
     ReadViewFieldAbilityHandler,
+    CreateViewFieldAbilityHandler,
     UpdateViewFieldAbilityHandler,
   ],
   exports: [
@@ -268,6 +270,7 @@ import {
     DeletePipelineProgressAbilityHandler,
     // ViewField
     ReadViewFieldAbilityHandler,
+    CreateViewFieldAbilityHandler,
     UpdateViewFieldAbilityHandler,
   ],
 })

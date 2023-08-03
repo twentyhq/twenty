@@ -35,11 +35,12 @@ export function CompanyTable() {
   return (
     <>
       <GenericEntityTableData
+        objectName="company"
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
         orderBy={orderBy}
         whereFilters={whereFilters}
-        viewFields={companyViewFields}
+        viewFieldDefinitions={companyViewFields}
         filterDefinitionArray={companiesFilters}
       />
       <EntityTable

@@ -36,11 +36,12 @@ export function PeopleTable() {
   return (
     <>
       <GenericEntityTableData
+        objectName="person"
         getRequestResultKey="people"
         useGetRequest={useGetPeopleQuery}
         orderBy={orderBy}
         whereFilters={whereFilters}
-        viewFields={peopleViewFields}
+        viewFieldDefinitions={peopleViewFields}
         filterDefinitionArray={peopleFilters}
       />
       <EntityTable
