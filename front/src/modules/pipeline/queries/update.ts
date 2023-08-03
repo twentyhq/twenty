@@ -17,3 +17,64 @@ export const UPDATE_PIPELINE_STAGE = gql`
     }
   }
 `;
+
+export const UPDATE_PIPELINE_PROGRESS = gql`
+  mutation UpdateOnePipelineProgress(
+    $id: String
+    $amount: Int
+    $closeDate: DateTime
+    $probability: Int
+    $pointOfContactId: String
+  ) {
+    updateOnePipelineProgress(
+      where: { id: $id }
+      data: {
+        amount: $amount
+        closeDate: $closeDate
+        probability: $probability
+        pointOfContact: { connect: { id: $pointOfContactId } }
+      }
+    ) {
+      id
+      amount
+      closeDate
+    }
+  }
+`;
+
+export const UPDATE_PIPELINE_PROGRESS_STAGE = gql`
+  mutation UpdateOnePipelineProgressStage(
+    $id: String
+    $pipelineStageId: String
+  ) {
+    updateOnePipelineProgress(
+      where: { id: $id }
+      data: { pipelineStage: { connect: { id: $pipelineStageId } } }
+    ) {
+      id
+    }
+  }
+`;
+
+export const CREATE_COMPANY_PIPELINE_PROGRESS = gql`
+  mutation CreateOneCompanyPipelineProgress(
+    $uuid: String!
+    $entityType: PipelineProgressableType!
+    $companyId: String!
+    $pipelineId: String!
+    $pipelineStageId: String!
+  ) {
+    createOnePipelineProgress(
+      data: {
+        id: $uuid
+        progressableType: $entityType
+        progressableId: $companyId
+        company: { connect: { id: $companyId } }
+        pipeline: { connect: { id: $pipelineId } }
+        pipelineStage: { connect: { id: $pipelineStageId } }
+      }
+    ) {
+      id
+    }
+  }
+`;

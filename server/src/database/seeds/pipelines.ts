@@ -90,7 +90,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       pipelineStageId: 'twenty-fe256b39-3ec3-4fe3-8998-b76aa0bfb600',
       progressableType: 'Company',
-      progressableId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
+      companyId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
     },
   });
@@ -103,7 +103,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       pipelineStageId: 'twenty-fe256b39-3ec3-4fe4-8998-b76aa0bfb600',
       progressableType: 'Company',
-      progressableId: 'twenty-118995f3-5d81-46d6-bf83-f7fd33ea6102',
+      companyId: 'twenty-118995f3-5d81-46d6-bf83-f7fd33ea6102',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
     },
   });
@@ -116,7 +116,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       pipelineStageId: 'twenty-fe256b39-3ec3-4fe5-8998-b76aa0bfb600',
       progressableType: 'Company',
-      progressableId: 'twenty-04b2e9f5-0713-40a5-8216-82802401d33e',
+      companyId: 'twenty-04b2e9f5-0713-40a5-8216-82802401d33e',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
     },
   });
@@ -129,7 +129,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b75aa0bfb400',
       pipelineStageId: 'twenty-fe256b39-3ec3-4fe5-8998-b76aa0bfb600',
       progressableType: 'Company',
-      progressableId: 'twenty-460b6fb1-ed89-413a-b31a-962986e67bb4',
+      companyId: 'twenty-460b6fb1-ed89-413a-b31a-962986e67bb4',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
     },
   });
@@ -168,7 +168,7 @@ export const seedPipelines = async (prisma: PrismaClient) => {
       pipelineId: 'twenty-fe256b39-3ec3-4fe3-8997-b74aa0bfb400',
       pipelineStageId: 'twenty-fe256b39-3ec3-4fe3-8998-a76aa0bfb600',
       progressableType: 'Person',
-      progressableId: 'twenty-755035db-623d-41fe-92e7-dd45b7c568e1',
+      companyId: 'twenty-755035db-623d-41fe-92e7-dd45b7c568e1',
       workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
     },
   });

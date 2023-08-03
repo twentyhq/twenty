@@ -17,7 +17,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import {
   PipelineProgressableType,
-  useCreateOnePipelineProgressMutation,
+  useCreateOneCompanyPipelineProgressMutation,
 } from '~/generated/graphql';
 
 import { useFilteredSearchCompanyQuery } from '../queries';
@@ -36,12 +36,13 @@ export function NewCompanyProgressButton() {
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation({
-    refetchQueries: [
-      getOperationName(GET_PIPELINE_PROGRESS) ?? '',
-      getOperationName(GET_PIPELINES) ?? '',
-    ],
-  });
+  const [createOnePipelineProgress] =
+    useCreateOneCompanyPipelineProgressMutation({
+      refetchQueries: [
+        getOperationName(GET_PIPELINE_PROGRESS) ?? '',
+        getOperationName(GET_PIPELINES) ?? '',
+      ],
+    });
 
   const handleEntitySelect = useCallback(
     async (company: any) => {
@@ -63,7 +64,7 @@ export function NewCompanyProgressButton() {
           uuid: newUuid,
           pipelineStageId: pipelineStageId || '',
           pipelineId: pipeline?.id || '',
-          entityId: company.id || '',
+          companyId: company.id || '',
           entityType: PipelineProgressableType.Company,
         },
       });

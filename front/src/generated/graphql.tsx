@@ -2590,7 +2590,22 @@ export type GetPipelineProgressQueryVariables = Exact<{
 }>;
 
 
-export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, pipelineStageId: string, progressableType: PipelineProgressableType, progressableId: string, amount?: number | null, closeDate?: string | null, pointOfContactId?: string | null, probability?: number | null, pointOfContact?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null }> };
+export type GetPipelineProgressQuery = { __typename?: 'Query', findManyPipelineProgress: Array<{ __typename?: 'PipelineProgress', id: string, pipelineStageId: string, progressableType: PipelineProgressableType, companyId?: string | null, personId?: string | null, amount?: number | null, closeDate?: string | null, pointOfContactId?: string | null, probability?: number | null, pointOfContact?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null }> };
+
+export type DeleteManyPipelineProgressMutationVariables = Exact<{
+  ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+}>;
+
+
+export type DeleteManyPipelineProgressMutation = { __typename?: 'Mutation', deleteManyPipelineProgress: { __typename?: 'AffectedRows', count: number } };
+
+export type UpdatePipelineStageMutationVariables = Exact<{
+  id?: InputMaybe<Scalars['String']>;
+  data: PipelineStageUpdateInput;
+}>;
+
+
+export type UpdatePipelineStageMutation = { __typename?: 'Mutation', updateOnePipelineStage?: { __typename?: 'PipelineStage', id: string, name: string, color: string } | null };
 
 export type UpdateOnePipelineProgressMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -2611,31 +2626,16 @@ export type UpdateOnePipelineProgressStageMutationVariables = Exact<{
 
 export type UpdateOnePipelineProgressStageMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string } | null };
 
-export type CreateOnePipelineProgressMutationVariables = Exact<{
+export type CreateOneCompanyPipelineProgressMutationVariables = Exact<{
   uuid: Scalars['String'];
   entityType: PipelineProgressableType;
-  entityId: Scalars['String'];
+  companyId: Scalars['String'];
   pipelineId: Scalars['String'];
   pipelineStageId: Scalars['String'];
 }>;
 
 
-export type CreateOnePipelineProgressMutation = { __typename?: 'Mutation', createOnePipelineProgress: { __typename?: 'PipelineProgress', id: string } };
-
-export type DeleteManyPipelineProgressMutationVariables = Exact<{
-  ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-}>;
-
-
-export type DeleteManyPipelineProgressMutation = { __typename?: 'Mutation', deleteManyPipelineProgress: { __typename?: 'AffectedRows', count: number } };
-
-export type UpdatePipelineStageMutationVariables = Exact<{
-  id?: InputMaybe<Scalars['String']>;
-  data: PipelineStageUpdateInput;
-}>;
-
-
-export type UpdatePipelineStageMutation = { __typename?: 'Mutation', updateOnePipelineStage?: { __typename?: 'PipelineStage', id: string, name: string, color: string } | null };
+export type CreateOneCompanyPipelineProgressMutation = { __typename?: 'Mutation', createOnePipelineProgress: { __typename?: 'PipelineProgress', id: string } };
 
 export type SearchPeopleQueryVariables = Exact<{
   where?: InputMaybe<PersonWhereInput>;
@@ -4427,7 +4427,8 @@ export const GetPipelineProgressDocument = gql`
     id
     pipelineStageId
     progressableType
-    progressableId
+    companyId
+    personId
     amount
     closeDate
     pointOfContactId
@@ -4471,6 +4472,75 @@ export function useGetPipelineProgressLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetPipelineProgressQueryHookResult = ReturnType<typeof useGetPipelineProgressQuery>;
 export type GetPipelineProgressLazyQueryHookResult = ReturnType<typeof useGetPipelineProgressLazyQuery>;
 export type GetPipelineProgressQueryResult = Apollo.QueryResult<GetPipelineProgressQuery, GetPipelineProgressQueryVariables>;
+export const DeleteManyPipelineProgressDocument = gql`
+    mutation DeleteManyPipelineProgress($ids: [String!]) {
+  deleteManyPipelineProgress(where: {id: {in: $ids}}) {
+    count
+  }
+}
+    `;
+export type DeleteManyPipelineProgressMutationFn = Apollo.MutationFunction<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
+
+/**
+ * __useDeleteManyPipelineProgressMutation__
+ *
+ * To run a mutation, you first call `useDeleteManyPipelineProgressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteManyPipelineProgressMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteManyPipelineProgressMutation, { data, loading, error }] = useDeleteManyPipelineProgressMutation({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useDeleteManyPipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>(DeleteManyPipelineProgressDocument, options);
+      }
+export type DeleteManyPipelineProgressMutationHookResult = ReturnType<typeof useDeleteManyPipelineProgressMutation>;
+export type DeleteManyPipelineProgressMutationResult = Apollo.MutationResult<DeleteManyPipelineProgressMutation>;
+export type DeleteManyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
+export const UpdatePipelineStageDocument = gql`
+    mutation UpdatePipelineStage($id: String, $data: PipelineStageUpdateInput!) {
+  updateOnePipelineStage(where: {id: $id}, data: $data) {
+    id
+    name
+    color
+  }
+}
+    `;
+export type UpdatePipelineStageMutationFn = Apollo.MutationFunction<UpdatePipelineStageMutation, UpdatePipelineStageMutationVariables>;
+
+/**
+ * __useUpdatePipelineStageMutation__
+ *
+ * To run a mutation, you first call `useUpdatePipelineStageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePipelineStageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePipelineStageMutation, { data, loading, error }] = useUpdatePipelineStageMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdatePipelineStageMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePipelineStageMutation, UpdatePipelineStageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePipelineStageMutation, UpdatePipelineStageMutationVariables>(UpdatePipelineStageDocument, options);
+      }
+export type UpdatePipelineStageMutationHookResult = ReturnType<typeof useUpdatePipelineStageMutation>;
+export type UpdatePipelineStageMutationResult = Apollo.MutationResult<UpdatePipelineStageMutation>;
+export type UpdatePipelineStageMutationOptions = Apollo.BaseMutationOptions<UpdatePipelineStageMutation, UpdatePipelineStageMutationVariables>;
 export const UpdateOnePipelineProgressDocument = gql`
     mutation UpdateOnePipelineProgress($id: String, $amount: Int, $closeDate: DateTime, $probability: Int, $pointOfContactId: String) {
   updateOnePipelineProgress(
@@ -4550,114 +4620,45 @@ export function useUpdateOnePipelineProgressStageMutation(baseOptions?: Apollo.M
 export type UpdateOnePipelineProgressStageMutationHookResult = ReturnType<typeof useUpdateOnePipelineProgressStageMutation>;
 export type UpdateOnePipelineProgressStageMutationResult = Apollo.MutationResult<UpdateOnePipelineProgressStageMutation>;
 export type UpdateOnePipelineProgressStageMutationOptions = Apollo.BaseMutationOptions<UpdateOnePipelineProgressStageMutation, UpdateOnePipelineProgressStageMutationVariables>;
-export const CreateOnePipelineProgressDocument = gql`
-    mutation CreateOnePipelineProgress($uuid: String!, $entityType: PipelineProgressableType!, $entityId: String!, $pipelineId: String!, $pipelineStageId: String!) {
+export const CreateOneCompanyPipelineProgressDocument = gql`
+    mutation CreateOneCompanyPipelineProgress($uuid: String!, $entityType: PipelineProgressableType!, $companyId: String!, $pipelineId: String!, $pipelineStageId: String!) {
   createOnePipelineProgress(
-    data: {id: $uuid, progressableType: $entityType, progressableId: $entityId, pipeline: {connect: {id: $pipelineId}}, pipelineStage: {connect: {id: $pipelineStageId}}}
+    data: {id: $uuid, progressableType: $entityType, progressableId: $companyId, company: {connect: {id: $companyId}}, pipeline: {connect: {id: $pipelineId}}, pipelineStage: {connect: {id: $pipelineStageId}}}
   ) {
     id
   }
 }
     `;
-export type CreateOnePipelineProgressMutationFn = Apollo.MutationFunction<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>;
+export type CreateOneCompanyPipelineProgressMutationFn = Apollo.MutationFunction<CreateOneCompanyPipelineProgressMutation, CreateOneCompanyPipelineProgressMutationVariables>;
 
 /**
- * __useCreateOnePipelineProgressMutation__
+ * __useCreateOneCompanyPipelineProgressMutation__
  *
- * To run a mutation, you first call `useCreateOnePipelineProgressMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateOnePipelineProgressMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateOneCompanyPipelineProgressMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOneCompanyPipelineProgressMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createOnePipelineProgressMutation, { data, loading, error }] = useCreateOnePipelineProgressMutation({
+ * const [createOneCompanyPipelineProgressMutation, { data, loading, error }] = useCreateOneCompanyPipelineProgressMutation({
  *   variables: {
  *      uuid: // value for 'uuid'
  *      entityType: // value for 'entityType'
- *      entityId: // value for 'entityId'
+ *      companyId: // value for 'companyId'
  *      pipelineId: // value for 'pipelineId'
  *      pipelineStageId: // value for 'pipelineStageId'
  *   },
  * });
  */
-export function useCreateOnePipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>) {
+export function useCreateOneCompanyPipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<CreateOneCompanyPipelineProgressMutation, CreateOneCompanyPipelineProgressMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>(CreateOnePipelineProgressDocument, options);
+        return Apollo.useMutation<CreateOneCompanyPipelineProgressMutation, CreateOneCompanyPipelineProgressMutationVariables>(CreateOneCompanyPipelineProgressDocument, options);
       }
-export type CreateOnePipelineProgressMutationHookResult = ReturnType<typeof useCreateOnePipelineProgressMutation>;
-export type CreateOnePipelineProgressMutationResult = Apollo.MutationResult<CreateOnePipelineProgressMutation>;
-export type CreateOnePipelineProgressMutationOptions = Apollo.BaseMutationOptions<CreateOnePipelineProgressMutation, CreateOnePipelineProgressMutationVariables>;
-export const DeleteManyPipelineProgressDocument = gql`
-    mutation DeleteManyPipelineProgress($ids: [String!]) {
-  deleteManyPipelineProgress(where: {id: {in: $ids}}) {
-    count
-  }
-}
-    `;
-export type DeleteManyPipelineProgressMutationFn = Apollo.MutationFunction<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
-
-/**
- * __useDeleteManyPipelineProgressMutation__
- *
- * To run a mutation, you first call `useDeleteManyPipelineProgressMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteManyPipelineProgressMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteManyPipelineProgressMutation, { data, loading, error }] = useDeleteManyPipelineProgressMutation({
- *   variables: {
- *      ids: // value for 'ids'
- *   },
- * });
- */
-export function useDeleteManyPipelineProgressMutation(baseOptions?: Apollo.MutationHookOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>(DeleteManyPipelineProgressDocument, options);
-      }
-export type DeleteManyPipelineProgressMutationHookResult = ReturnType<typeof useDeleteManyPipelineProgressMutation>;
-export type DeleteManyPipelineProgressMutationResult = Apollo.MutationResult<DeleteManyPipelineProgressMutation>;
-export type DeleteManyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<DeleteManyPipelineProgressMutation, DeleteManyPipelineProgressMutationVariables>;
-export const UpdatePipelineStageDocument = gql`
-    mutation UpdatePipelineStage($id: String, $data: PipelineStageUpdateInput!) {
-  updateOnePipelineStage(where: {id: $id}, data: $data) {
-    id
-    name
-    color
-  }
-}
-    `;
-export type UpdatePipelineStageMutationFn = Apollo.MutationFunction<UpdatePipelineStageMutation, UpdatePipelineStageMutationVariables>;
-
-/**
- * __useUpdatePipelineStageMutation__
- *
- * To run a mutation, you first call `useUpdatePipelineStageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdatePipelineStageMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updatePipelineStageMutation, { data, loading, error }] = useUpdatePipelineStageMutation({
- *   variables: {
- *      id: // value for 'id'
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useUpdatePipelineStageMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePipelineStageMutation, UpdatePipelineStageMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdatePipelineStageMutation, UpdatePipelineStageMutationVariables>(UpdatePipelineStageDocument, options);
-      }
-export type UpdatePipelineStageMutationHookResult = ReturnType<typeof useUpdatePipelineStageMutation>;
-export type UpdatePipelineStageMutationResult = Apollo.MutationResult<UpdatePipelineStageMutation>;
-export type UpdatePipelineStageMutationOptions = Apollo.BaseMutationOptions<UpdatePipelineStageMutation, UpdatePipelineStageMutationVariables>;
+export type CreateOneCompanyPipelineProgressMutationHookResult = ReturnType<typeof useCreateOneCompanyPipelineProgressMutation>;
+export type CreateOneCompanyPipelineProgressMutationResult = Apollo.MutationResult<CreateOneCompanyPipelineProgressMutation>;
+export type CreateOneCompanyPipelineProgressMutationOptions = Apollo.BaseMutationOptions<CreateOneCompanyPipelineProgressMutation, CreateOneCompanyPipelineProgressMutationVariables>;
 export const SearchPeopleDocument = gql`
     query SearchPeople($where: PersonWhereInput, $limit: Int, $orderBy: [PersonOrderByWithRelationInput!]) {
   searchResults: findManyPerson(where: $where, take: $limit, orderBy: $orderBy) {
