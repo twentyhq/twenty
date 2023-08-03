@@ -2,7 +2,7 @@ import { ReactElement, useRef } from 'react';
 import styled from '@emotion/styled';
 
 import { overlayBackground } from '@/ui/theme/constants/effects';
-import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { BoardCardFieldHotkeyScope } from '../types/BoardCardFieldHotkeyScope';

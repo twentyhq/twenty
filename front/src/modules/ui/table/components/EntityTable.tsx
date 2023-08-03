@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
-import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateViewFieldMutation } from '~/generated/graphql';
 
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';

@@ -14,7 +14,7 @@ import { PersonChip } from '@/people/components/PersonChip';
 import { useFilteredSearchPeopleQuery } from '@/people/queries';
 import { MultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';

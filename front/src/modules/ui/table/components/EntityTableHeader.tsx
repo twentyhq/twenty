@@ -1,5 +1,7 @@
-import { PointerEvent, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
+
+import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 
 import type {
   ViewFieldDefinition,
@@ -59,7 +61,6 @@ export function EntityTableHeader({ onColumnResize, viewFields }: OwnProps) {
       ),
     [viewFields],
   );
-  const [isResizing, setIsResizing] = useState(false);
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
   >(null);
@@ -67,38 +68,53 @@ export function EntityTableHeader({ onColumnResize, viewFields }: OwnProps) {
   const [resizedFieldId, setResizedFieldId] = useState<string | null>(null);
   const [offset, setOffset] = useState(0);
 
-  const handleResizeHandlerDragStart = useCallback(
-    (event: PointerEvent<HTMLDivElement>, fieldId: string) => {
-      setIsResizing(true);
-      setResizedFieldId(fieldId);
-      setInitialPointerPositionX(event.clientX);
+  const handleResizeHandlerStart = useCallback(
+    (positionX: number, _: number) => {
+      setInitialPointerPositionX(positionX);
     },
-    [setIsResizing, setResizedFieldId, setInitialPointerPositionX],
+    [],
   );
 
-  const handleResizeHandlerDrag = useCallback(
-    (event: PointerEvent<HTMLDivElement>) => {
-      if (!isResizing || initialPointerPositionX === null) return;
-
-      setOffset(event.clientX - initialPointerPositionX);
+  const handleResizeHandlerMove = useCallback(
+    (positionX: number, _positionY: number) => {
+      if (!initialPointerPositionX) return;
+      setOffset(positionX - (initialPointerPositionX ?? positionX));
     },
-    [isResizing, initialPointerPositionX],
+    [setOffset, initialPointerPositionX],
   );
 
-  const handleResizeHandlerDragEnd = useCallback(() => {
-    setIsResizing(false);
-    if (!resizedFieldId) return;
+  const handleResizeHandlerEnd = useCallback(
+    (_positionX: number, _positionY: number) => {
+      if (!resizedFieldId) return;
+      const nextWidth = Math.round(
+        Math.max(columnWidths[resizedFieldId] + offset, COLUMN_MIN_WIDTH),
+      );
 
-    const nextWidth = Math.round(
-      Math.max(columnWidths[resizedFieldId] + offset, COLUMN_MIN_WIDTH),
-    );
+      if (nextWidth !== columnWidths[resizedFieldId]) {
+        columnWidths[resizedFieldId] = nextWidth;
 
-    if (nextWidth !== columnWidths[resizedFieldId]) {
-      onColumnResize(resizedFieldId, nextWidth);
-    }
+        onColumnResize(resizedFieldId, nextWidth);
+      }
+      setOffset(0);
+      setInitialPointerPositionX(null);
+      setResizedFieldId(null);
+    },
+    [
+      resizedFieldId,
+      columnWidths,
+      offset,
+      setOffset,
+      setResizedFieldId,
+      onColumnResize,
+    ],
+  );
 
-    setOffset(0);
-  }, [resizedFieldId, columnWidths, offset, onColumnResize]);
+  useTrackPointer({
+    shouldTrackPointer: resizedFieldId !== null,
+    onMouseDown: handleResizeHandlerStart,
+    onMouseMove: handleResizeHandlerMove,
+    onMouseUp: handleResizeHandlerEnd,
+  });
 
   return (
     <thead>
@@ -116,7 +132,7 @@ export function EntityTableHeader({ onColumnResize, viewFields }: OwnProps) {
         {viewFields.map((viewField) => (
           <StyledColumnHeaderCell
             key={viewField.columnOrder.toString()}
-            isResizing={isResizing && resizedFieldId === viewField.id}
+            isResizing={resizedFieldId === viewField.id}
             style={{
               width: Math.max(
                 columnWidths[viewField.id] +
@@ -132,12 +148,9 @@ export function EntityTableHeader({ onColumnResize, viewFields }: OwnProps) {
             <StyledResizeHandler
               className="cursor-col-resize"
               role="separator"
-              onPointerDown={(event) =>
-                handleResizeHandlerDragStart(event, viewField.id)
-              }
-              onPointerMove={handleResizeHandlerDrag}
-              onPointerOut={handleResizeHandlerDragEnd}
-              onPointerUp={handleResizeHandlerDragEnd}
+              onPointerDown={() => {
+                setResizedFieldId(viewField.id);
+              }}
             />
           </StyledColumnHeaderCell>
         ))}

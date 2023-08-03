@@ -63,18 +63,22 @@ export function BoardHeader<SortField>({
           {viewName}
         </>
       }
-      rightComponents={[
-        <FilterDropdownButton
-          context={context}
-          HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-        />,
-        <SortDropdownButton<SortField>
-          isSortSelected={sorts.length > 0}
-          availableSorts={availableSorts || []}
-          onSortSelect={sortSelect}
-          HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-        />,
-      ]}
+      rightComponent={
+        <>
+          <FilterDropdownButton
+            context={context}
+            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+          />
+          ,
+          <SortDropdownButton<SortField>
+            isSortSelected={sorts.length > 0}
+            availableSorts={availableSorts || []}
+            onSortSelect={sortSelect}
+            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+          />
+          ,
+        </>
+      }
       bottomComponent={
         <SortAndFilterBar
           context={context}

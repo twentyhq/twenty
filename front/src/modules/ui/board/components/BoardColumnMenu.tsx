@@ -7,7 +7,7 @@ import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMen
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
 import { icon } from '@/ui/theme/constants/icon';
-import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 
