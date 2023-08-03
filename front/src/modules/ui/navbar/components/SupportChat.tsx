@@ -93,11 +93,11 @@ export default function SupportChat() {
     const email = user?.email;
     const displayName = user?.displayName;
     const userHash = supportChatConfig.supportHMACKey;
-    if (userHash && email && isFrontChatLoaded) {
+    if (email && isFrontChatLoaded) {
       window.FrontChat?.('identity', {
         email,
         ...(displayName ? { name: displayName } : {}),
-        userHash,
+        ...(userHash ? { userHash } : {}),
         customFields: {},
       });
     }
