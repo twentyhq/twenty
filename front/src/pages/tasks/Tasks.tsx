@@ -54,13 +54,13 @@ export function Tasks() {
                 <TabList context={TasksContext} tabs={TASK_TABS} />
               </StyledTabListContainer>
             }
-            rightComponents={[
+            rightComponent={
               <FilterDropdownButton
                 key="tasks-filter-dropdown-button"
                 context={TasksContext}
                 HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-              />,
-            ]}
+              />
+            }
           />
           <TaskGroups />
         </RecoilScope>

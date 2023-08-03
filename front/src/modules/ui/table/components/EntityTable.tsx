@@ -1,15 +1,12 @@
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
-import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
-import { useUpdateViewFieldMutation } from '~/generated/graphql';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { EntityUpdateMutationHookContext } from '../states/EntityUpdateMutationHookContext';
-import { viewFieldsFamilyState } from '../states/viewFieldsState';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -102,11 +99,6 @@ export function EntityTable<SortField>({
   onSortsUpdate,
   useUpdateEntityMutation,
 }: OwnProps<SortField>) {
-  const viewFields = useRecoilValue(viewFieldsFamilyState);
-  const setViewFields = useSetRecoilState(viewFieldsFamilyState);
-
-  const [updateViewFieldMutation] = useUpdateViewFieldMutation();
-
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   useMapKeyboardToSoftFocus();
@@ -120,25 +112,6 @@ export function EntityTable<SortField>({
     },
   });
 
-  const handleColumnResize = useCallback(
-    (resizedFieldId: string, width: number) => {
-      setViewFields((previousViewFields) =>
-        previousViewFields.map((viewField) =>
-          viewField.id === resizedFieldId
-            ? { ...viewField, columnSize: width }
-            : viewField,
-        ),
-      );
-      updateViewFieldMutation({
-        variables: {
-          data: { sizeInPx: width },
-          where: { id: resizedFieldId },
-        },
-      });
-    },
-    [setViewFields, updateViewFieldMutation],
-  );
-
   return (
     <EntityUpdateMutationHookContext.Provider value={useUpdateEntityMutation}>
       <StyledTableWithHeader>
@@ -150,15 +123,10 @@ export function EntityTable<SortField>({
             onSortsUpdate={onSortsUpdate}
           />
           <StyledTableWrapper>
-            {viewFields.length > 0 && (
-              <StyledTable>
-                <EntityTableHeader
-                  onColumnResize={handleColumnResize}
-                  viewFields={viewFields}
-                />
-                <EntityTableBody />
-              </StyledTable>
-            )}
+            <StyledTable>
+              <EntityTableHeader />
+              <EntityTableBody />
+            </StyledTable>
           </StyledTableWrapper>
         </StyledTableContainer>
       </StyledTableWithHeader>

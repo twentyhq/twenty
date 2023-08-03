@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 type OwnProps = {
   leftComponent?: ReactNode;
-  rightComponents?: ReactNode[];
+  rightComponent?: ReactNode;
   bottomComponent?: ReactNode;
   displayBottomBorder?: boolean;
 };
@@ -40,7 +40,7 @@ const StyledRightSection = styled.div`
 
 export function TopBar({
   leftComponent,
-  rightComponents,
+  rightComponent,
   bottomComponent,
   displayBottomBorder = true,
 }: OwnProps) {
@@ -48,7 +48,7 @@ export function TopBar({
     <StyledContainer>
       <StyledTopBar displayBottomBorder={displayBottomBorder}>
         <StyledLeftSection>{leftComponent}</StyledLeftSection>
-        <StyledRightSection>{rightComponents}</StyledRightSection>
+        <StyledRightSection>{rightComponent}</StyledRightSection>
       </StyledTopBar>
       {bottomComponent}
     </StyledContainer>
