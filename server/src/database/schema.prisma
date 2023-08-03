@@ -498,7 +498,6 @@ model PipelineProgress {
   pointOfContactId String?
 
   progressableType PipelineProgressableType
-  progressableId   String
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace        Workspace                @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)

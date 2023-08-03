@@ -1432,7 +1432,6 @@ export type PipelineProgress = {
   pointOfContact?: Maybe<Person>;
   pointOfContactId?: Maybe<Scalars['String']>;
   probability?: Maybe<Scalars['Int']>;
-  progressableId: Scalars['String'];
   progressableType: PipelineProgressableType;
   updatedAt: Scalars['DateTime'];
 };
@@ -1448,7 +1447,6 @@ export type PipelineProgressCreateInput = {
   pipelineStage: PipelineStageCreateNestedOneWithoutPipelineProgressesInput;
   pointOfContact?: InputMaybe<PersonCreateNestedOneWithoutContactPipelineProgressesInput>;
   probability?: InputMaybe<Scalars['Int']>;
-  progressableId: Scalars['String'];
   progressableType: PipelineProgressableType;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -1491,7 +1489,6 @@ export type PipelineProgressOrderByWithRelationInput = {
   pointOfContact?: InputMaybe<PersonOrderByWithRelationInput>;
   pointOfContactId?: InputMaybe<SortOrder>;
   probability?: InputMaybe<SortOrder>;
-  progressableId?: InputMaybe<SortOrder>;
   progressableType?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
@@ -1508,7 +1505,6 @@ export enum PipelineProgressScalarFieldEnum {
   PipelineStageId = 'pipelineStageId',
   PointOfContactId = 'pointOfContactId',
   Probability = 'probability',
-  ProgressableId = 'progressableId',
   ProgressableType = 'progressableType',
   UpdatedAt = 'updatedAt',
   WorkspaceId = 'workspaceId'
@@ -1525,7 +1521,6 @@ export type PipelineProgressUpdateInput = {
   pipelineStage?: InputMaybe<PipelineStageUpdateOneRequiredWithoutPipelineProgressesNestedInput>;
   pointOfContact?: InputMaybe<PersonUpdateOneWithoutContactPipelineProgressesNestedInput>;
   probability?: InputMaybe<Scalars['Int']>;
-  progressableId?: InputMaybe<Scalars['String']>;
   progressableType?: InputMaybe<PipelineProgressableType>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
@@ -1579,7 +1574,6 @@ export type PipelineProgressWhereInput = {
   pointOfContact?: InputMaybe<PersonRelationFilter>;
   pointOfContactId?: InputMaybe<StringNullableFilter>;
   probability?: InputMaybe<IntNullableFilter>;
-  progressableId?: InputMaybe<StringFilter>;
   progressableType?: InputMaybe<EnumPipelineProgressableTypeFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
@@ -4623,7 +4617,7 @@ export type UpdateOnePipelineProgressStageMutationOptions = Apollo.BaseMutationO
 export const CreateOneCompanyPipelineProgressDocument = gql`
     mutation CreateOneCompanyPipelineProgress($uuid: String!, $entityType: PipelineProgressableType!, $companyId: String!, $pipelineId: String!, $pipelineStageId: String!) {
   createOnePipelineProgress(
-    data: {id: $uuid, progressableType: $entityType, progressableId: $companyId, company: {connect: {id: $companyId}}, pipeline: {connect: {id: $pipelineId}}, pipelineStage: {connect: {id: $pipelineStageId}}}
+    data: {id: $uuid, progressableType: $entityType, company: {connect: {id: $companyId}}, pipeline: {connect: {id: $pipelineId}}, pipelineStage: {connect: {id: $pipelineStageId}}}
   ) {
     id
   }

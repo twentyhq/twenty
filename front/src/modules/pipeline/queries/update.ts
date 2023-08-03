@@ -68,7 +68,6 @@ export const CREATE_COMPANY_PIPELINE_PROGRESS = gql`
       data: {
         id: $uuid
         progressableType: $entityType
-        progressableId: $companyId
         company: { connect: { id: $companyId } }
         pipeline: { connect: { id: $pipelineId } }
         pipelineStage: { connect: { id: $pipelineStageId } }
