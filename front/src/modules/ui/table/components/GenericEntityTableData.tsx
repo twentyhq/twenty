@@ -33,7 +33,6 @@ export function GenericEntityTableData({
     variables: { orderBy, where: whereFilters },
     onCompleted: (data: any) => {
       const entities = data[getRequestResultKey] ?? [];
-
       setEntityTableData(entities, filterDefinitionArray);
     },
   });

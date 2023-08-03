@@ -34,14 +34,7 @@ export function EntityTableCell({ cellIndex }: { cellIndex: number }) {
   return (
     <RecoilScope>
       <ColumnIndexContext.Provider value={cellIndex}>
-        <td
-          onContextMenu={(event) => handleContextMenu(event)}
-          style={{
-            width: viewField.columnSize,
-            minWidth: viewField.columnSize,
-            maxWidth: viewField.columnSize,
-          }}
-        >
+        <td onContextMenu={(event) => handleContextMenu(event)}>
           <GenericEditableCell viewField={viewField} />
         </td>
       </ColumnIndexContext.Provider>
