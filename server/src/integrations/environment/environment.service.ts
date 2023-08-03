@@ -101,4 +101,16 @@ export class EnvironmentService {
       this.configService.get<string>('STORAGE_LOCAL_PATH') ?? '.local-storage'
     );
   }
+
+  getSupportDriver(): string {
+    return this.configService.get<string>('SUPPORT_DRIVER') ?? 'front';
+  }
+
+  getSupportFrontendKey(): string | null {
+    return this.configService.get<string>('SUPPORT_FRONTEND_KEY') ?? null;
+  }
+
+  getSupportHMACKey(): string | null {
+    return this.configService.get<string>('SUPPORT_HMAC_KEY') ?? null;
+  }
 }

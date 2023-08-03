@@ -207,6 +207,11 @@ export const graphqlMocks = [
           debugMode: false,
           authProviders: { google: true, password: true, magicLink: false },
           telemetry: { enabled: false, anonymizationEnabled: true },
+          supportChat: {
+            supportDriver: 'front',
+            supportFrontendKey: null,
+            supportHMACKey: null,
+          },
         },
       }),
     );

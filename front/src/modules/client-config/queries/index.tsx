@@ -13,6 +13,11 @@ export const GET_CLIENT_CONFIG = gql`
         enabled
         anonymizationEnabled
       }
+      supportChat {
+        supportDriver
+        supportFrontendKey
+        supportHMACKey
+      }
     }
   }
 `;

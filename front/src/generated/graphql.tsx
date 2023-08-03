@@ -548,6 +548,7 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   debugMode: Scalars['Boolean'];
   signInPrefilled: Scalars['Boolean'];
+  supportChat: SupportChat;
   telemetry: Telemetry;
 };
 
@@ -1900,6 +1901,13 @@ export type StringNullableFilter = {
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
+export type SupportChat = {
+  __typename?: 'SupportChat';
+  supportDriver: Scalars['String'];
+  supportFrontendKey?: Maybe<Scalars['String']>;
+  supportHMACKey?: Maybe<Scalars['String']>;
+};
+
 export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
@@ -2439,7 +2447,7 @@ export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __ty
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, supportChat: { __typename?: 'SupportChat', supportDriver: string, supportFrontendKey?: string | null, supportHMACKey?: string | null } } };
 
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
@@ -3625,6 +3633,11 @@ export const GetClientConfigDocument = gql`
     telemetry {
       enabled
       anonymizationEnabled
+    }
+    supportChat {
+      supportDriver
+      supportFrontendKey
+      supportHMACKey
     }
   }
 }

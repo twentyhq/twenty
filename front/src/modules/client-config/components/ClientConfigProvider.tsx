@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 
@@ -15,6 +16,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   const [, setSignInPrefilled] = useRecoilState(isSignInPrefilledState);
   const [, setTelemetry] = useRecoilState(telemetryState);
   const [isLoading, setIsLoading] = useState(true);
+  const setSupportChat = useSetRecoilState(supportChatState);
 
   const { data, loading } = useGetClientConfigQuery();
 
@@ -31,6 +33,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
       setDebugMode(data?.clientConfig.debugMode);
       setSignInPrefilled(data?.clientConfig.signInPrefilled);
       setTelemetry(data?.clientConfig.telemetry);
+      setSupportChat(data?.clientConfig.supportChat);
     }
   }, [
     data,
@@ -40,6 +43,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
     setTelemetry,
     setIsLoading,
     loading,
+    setSupportChat,
   ]);
 
   return isLoading ? <></> : <>{children}</>;
