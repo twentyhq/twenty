@@ -276,13 +276,14 @@ model Person {
   /// @Validator.IsOptional()
   avatarUrl   String?
 
-  company            Company?           @relation(fields: [companyId], references: [id])
-  companyId          String?
+  company                   Company?           @relation(fields: [companyId], references: [id])
+  companyId                 String?
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace          Workspace          @relation(fields: [workspaceId], references: [id])
+  workspace                 Workspace          @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId        String
-  pipelineProgresses PipelineProgress[]
+  workspaceId               String
+  contactPipelineProgresses PipelineProgress[] @relation("PointOfContactPipelineProgress")
+  pipelineProgresses        PipelineProgress[] @relation("DeprecatedPointOfContactPipelineProgress")
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -488,18 +489,21 @@ model PipelineProgress {
   closeDate   DateTime?
   probability Int?
 
-  pipeline         Pipeline                 @relation(fields: [pipelineId], references: [id])
-  pipelineId       String
-  pipelineStage    PipelineStage            @relation(fields: [pipelineStageId], references: [id])
-  pipelineStageId  String
-  pointOfContact   Person?                  @relation(fields: [pointOfContactId], references: [id])
-  pointOfContactId String?
-  progressableType PipelineProgressableType
-  progressableId   String
+  pipeline                   Pipeline                 @relation(fields: [pipelineId], references: [id])
+  pipelineId                 String
+  pipelineStage              PipelineStage            @relation(fields: [pipelineStageId], references: [id])
+  pipelineStageId            String
+  pointOfContact             Person?                  @relation("PointOfContactPipelineProgress", fields: [pointOfContactId], references: [id])
+  pointOfContactId           String?
+  // We need to go through the deprecation state as renaming the backref does not trigger a migration
+  deprecatedPointOfContact   Person?                  @relation("DeprecatedPointOfContactPipelineProgress", fields: [deprecatedPointOfContactId], references: [id])
+  deprecatedPointOfContactId String?
+  progressableType           PipelineProgressableType
+  progressableId             String
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace        Workspace                @relation(fields: [workspaceId], references: [id])
+  workspace                  Workspace                @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId      String
+  workspaceId                String
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
