@@ -18,7 +18,10 @@ const StyledTaskGroupEmptyContainer = styled.div`
   flex-direction: column;
   gap: 8px;
   justify-content: center;
-  padding: 12px 16px 64px 16px;
+  padding-bottom: ${({ theme }) => theme.spacing(16)};
+  padding-left: ${({ theme }) => theme.spacing(4)};
+  padding-right: ${({ theme }) => theme.spacing(4)};
+  padding-top: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledEmptyTaskGroupTitle = styled.div`

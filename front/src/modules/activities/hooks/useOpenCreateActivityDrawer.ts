@@ -11,7 +11,11 @@ import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ActivityType, useCreateActivityMutation } from '~/generated/graphql';
 
-import { GET_ACTIVITIES_BY_TARGETS, GET_ACTIVITY } from '../queries';
+import {
+  GET_ACTIVITIES,
+  GET_ACTIVITIES_BY_TARGETS,
+  GET_ACTIVITY,
+} from '../queries';
 import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
 import { CommentableEntity } from '../types/CommentableEntity';
@@ -53,6 +57,7 @@ export function useOpenCreateActivityDrawer() {
         getOperationName(GET_PEOPLE) ?? '',
         getOperationName(GET_ACTIVITY) ?? '',
         getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
+        getOperationName(GET_ACTIVITIES) ?? '',
       ],
       onCompleted(data) {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
