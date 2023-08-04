@@ -39,10 +39,19 @@ const StyledButton = styled.button`
 `;
 
 // insert a script tag into the DOM right before the closing body tag
-function insertScript(scriptSrc: string) {
+function insertScript({
+  src,
+  innerHTML,
+  onLoad,
+}: {
+  src?: string;
+  innerHTML?: string;
+  onLoad?: (...args: any[]) => void;
+}) {
   const script = document.createElement('script');
-  script.src = scriptSrc;
-
+  if (src) script.src = src;
+  if (innerHTML) script.innerHTML = innerHTML;
+  if (onLoad) script.onload = onLoad;
   document.body.appendChild(script);
 }
 
@@ -52,9 +61,16 @@ function configureFront(chatId: string) {
   const script = document.querySelector(`script[src="${url}"]`);
 
   if (!script) {
-    // insert script and initialize Front Chat when script is loaded
-    insertScript(url);
-    window.FrontChat?.('init', { chatId, useDefaultLauncher: false });
+    // insert script and initialize Front Chat when it loads
+    insertScript({
+      src: url,
+      onLoad: () => {
+        window.FrontChat?.('init', {
+          chatId,
+          useDefaultLauncher: false,
+        });
+      },
+    });
   }
 }
 
@@ -93,7 +109,7 @@ export default function SupportChat() {
     const email = user?.email;
     const displayName = user?.displayName;
     const userHash = supportChatConfig.supportHMACKey;
-    if (email && isFrontChatLoaded) {
+    if (!loading && email && isFrontChatLoaded) {
       window.FrontChat?.('identity', {
         email,
         ...(displayName ? { name: displayName } : {}),
@@ -107,6 +123,7 @@ export default function SupportChat() {
     supportChatConfig.supportHMACKey,
     user?.displayName,
     user?.email,
+    loading,
   ]);
 
   function handleSupportClick() {
