@@ -3,7 +3,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
+import {
+  GET_ACTIVITIES,
+  GET_ACTIVITIES_BY_TARGETS,
+} from '@/activities/queries';
 import { GET_COMPANIES } from '@/companies/queries';
 import { GET_PEOPLE } from '@/people/queries';
 import { IconButton } from '@/ui/button/components/IconButton';
@@ -22,16 +25,17 @@ type OwnProps = {
 
 export function ActivityActionBar({ activityId }: OwnProps) {
   const theme = useTheme();
-  const [createCommentMutation] = useDeleteActivityMutation();
+  const [deleteActivityMutation] = useDeleteActivityMutation();
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
 
   function deleteActivity() {
-    createCommentMutation({
+    deleteActivityMutation({
       variables: { activityId },
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
         getOperationName(GET_PEOPLE) ?? '',
         getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
+        getOperationName(GET_ACTIVITIES) ?? '',
       ],
     });
     setIsRightDrawerOpen(false);
