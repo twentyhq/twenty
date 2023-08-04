@@ -25,11 +25,11 @@ type OwnProps = {
 
 export function ActivityActionBar({ activityId }: OwnProps) {
   const theme = useTheme();
-  const [createCommentMutation] = useDeleteActivityMutation();
+  const [deleteActivityMutation] = useDeleteActivityMutation();
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
 
   function deleteActivity() {
-    createCommentMutation({
+    deleteActivityMutation({
       variables: { activityId },
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
