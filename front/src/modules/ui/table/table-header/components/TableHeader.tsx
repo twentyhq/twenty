@@ -64,18 +64,20 @@ export function TableHeader<SortField>({
         </>
       }
       displayBottomBorder={false}
-      rightComponents={[
-        <FilterDropdownButton
-          context={TableContext}
-          HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-        />,
-        <SortDropdownButton<SortField>
-          isSortSelected={sorts.length > 0}
-          availableSorts={availableSorts || []}
-          onSortSelect={sortSelect}
-          HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
-        />,
-      ]}
+      rightComponent={
+        <>
+          <FilterDropdownButton
+            context={TableContext}
+            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+          />
+          <SortDropdownButton<SortField>
+            isSortSelected={sorts.length > 0}
+            availableSorts={availableSorts || []}
+            onSortSelect={sortSelect}
+            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+          />
+        </>
+      }
       bottomComponent={
         <SortAndFilterBar
           context={TableContext}

@@ -23,6 +23,7 @@ export const GET_ACTIVITIES_BY_TARGETS = gql`
         firstName
         lastName
         displayName
+        avatarUrl
       }
       author {
         id
@@ -105,6 +106,7 @@ export const GET_ACTIVITY = gql`
         firstName
         lastName
         displayName
+        avatarUrl
       }
       author {
         id

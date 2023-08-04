@@ -15,10 +15,7 @@ import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picke
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import {
-  PipelineProgressableType,
-  useCreateOnePipelineProgressMutation,
-} from '~/generated/graphql';
+import { useCreateOneCompanyPipelineProgressMutation } from '~/generated/graphql';
 
 import { useFilteredSearchCompanyQuery } from '../queries';
 
@@ -36,12 +33,13 @@ export function NewCompanyProgressButton() {
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const [createOnePipelineProgress] = useCreateOnePipelineProgressMutation({
-    refetchQueries: [
-      getOperationName(GET_PIPELINE_PROGRESS) ?? '',
-      getOperationName(GET_PIPELINES) ?? '',
-    ],
-  });
+  const [createOneCompanyPipelineProgress] =
+    useCreateOneCompanyPipelineProgressMutation({
+      refetchQueries: [
+        getOperationName(GET_PIPELINE_PROGRESS) ?? '',
+        getOperationName(GET_PIPELINES) ?? '',
+      ],
+    });
 
   const handleEntitySelect = useCallback(
     async (company: any) => {
@@ -58,13 +56,12 @@ export function NewCompanyProgressButton() {
       );
       newBoard[destinationColumnIndex].pipelineProgressIds.push(newUuid);
       setBoard(newBoard);
-      await createOnePipelineProgress({
+      await createOneCompanyPipelineProgress({
         variables: {
           uuid: newUuid,
           pipelineStageId: pipelineStageId || '',
           pipelineId: pipeline?.id || '',
-          entityId: company.id || '',
-          entityType: PipelineProgressableType.Company,
+          companyId: company.id || '',
         },
       });
     },
@@ -72,7 +69,7 @@ export function NewCompanyProgressButton() {
       goBackToPreviousHotkeyScope,
       board,
       setBoard,
-      createOnePipelineProgress,
+      createOneCompanyPipelineProgress,
       pipelineStageId,
       pipeline?.id,
     ],

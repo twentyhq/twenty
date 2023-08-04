@@ -30,6 +30,7 @@ export function PeoplePicker({ personId, onSubmit, onCancel }: OwnProps) {
       id: person.id,
       name: person.firstName + ' ' + person.lastName,
       avatarType: 'rounded',
+      avatarUrl: person.avatarUrl ?? '',
     }),
     orderByField: 'firstName',
     searchOnFields: ['firstName', 'lastName'],

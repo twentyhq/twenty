@@ -6,7 +6,7 @@ export type PipelineProgressForBoard = Pick<
   | 'id'
   | 'amount'
   | 'closeDate'
-  | 'progressableId'
+  | 'companyId'
   | 'probability'
   | 'pointOfContactId'
 > & {

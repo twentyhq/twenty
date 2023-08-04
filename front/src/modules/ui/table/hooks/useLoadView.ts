@@ -9,7 +9,7 @@ import {
 } from '~/generated/graphql';
 
 import { entityTableDimensionsState } from '../states/entityTableDimensionsState';
-import { viewFieldsFamilyState } from '../states/viewFieldsState';
+import { viewFieldsState } from '../states/viewFieldsState';
 import {
   ViewFieldDefinition,
   ViewFieldMetadata,
@@ -32,7 +32,7 @@ export const useLoadView = ({
   const setEntityTableDimensions = useSetRecoilState(
     entityTableDimensionsState,
   );
-  const setViewFields = useSetRecoilState(viewFieldsFamilyState);
+  const setViewFields = useSetRecoilState(viewFieldsState);
 
   const [createViewFieldsMutation] = useCreateViewFieldsMutation();
 

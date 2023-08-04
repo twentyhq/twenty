@@ -119,7 +119,7 @@ export function HooksCompanyBoard({
     variables: {
       where: {
         id: {
-          in: pipelineProgresses.map((item) => item.progressableId),
+          in: pipelineProgresses.map((item) => item.companyId || ''),
         },
       },
     },
@@ -145,7 +145,9 @@ export function HooksCompanyBoard({
     },
     pipelineProgress: PipelineProgressForBoard,
   ) => {
-    const company = companiesDict[pipelineProgress.progressableId];
+    const company =
+      pipelineProgress.companyId && companiesDict[pipelineProgress.companyId];
+    if (!company) return acc;
     return {
       ...acc,
       [pipelineProgress.id]: {
@@ -160,10 +162,16 @@ export function HooksCompanyBoard({
   );
 
   const synchronizeCompanyProgresses = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot, set }) =>
       (companyBoardIndex: { [key: string]: CompanyProgress }) => {
         Object.entries(companyBoardIndex).forEach(([id, companyProgress]) => {
-          set(companyProgressesFamilyState(id), companyProgress);
+          if (
+            JSON.stringify(
+              snapshot.getLoadable(companyProgressesFamilyState(id)).getValue(),
+            ) !== JSON.stringify(companyProgress)
+          ) {
+            set(companyProgressesFamilyState(id), companyProgress);
+          }
         });
       },
     [],
