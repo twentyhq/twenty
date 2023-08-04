@@ -121,8 +121,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
         <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
         <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
         <ActivityCreateButton
-          onNoteClick={() => openCreateActivity(entity, ActivityType.Note)}
-          onTaskClick={() => openCreateActivity(entity, ActivityType.Task)}
+          onNoteClick={() => openCreateActivity(ActivityType.Note, entity)}
+          onTaskClick={() => openCreateActivity(ActivityType.Task, entity)}
         />
       </StyledTimelineEmptyContainer>
     );
@@ -132,8 +132,8 @@ export function Timeline({ entity }: { entity: CommentableEntity }) {
     <StyledMainContainer>
       <StyledTopActionBar>
         <ActivityCreateButton
-          onNoteClick={() => openCreateActivity(entity, ActivityType.Note)}
-          onTaskClick={() => openCreateActivity(entity, ActivityType.Task)}
+          onNoteClick={() => openCreateActivity(ActivityType.Note, entity)}
+          onTaskClick={() => openCreateActivity(ActivityType.Task, entity)}
         />
       </StyledTopActionBar>
       <StyledTimelineContainer>

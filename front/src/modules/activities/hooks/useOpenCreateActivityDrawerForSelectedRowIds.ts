@@ -44,21 +44,32 @@ export function useOpenCreateActivityDrawerForSelectedRowIds() {
         id,
       }),
     );
+    const now = new Date().toISOString();
 
     createActivityMutation({
       variables: {
-        authorId: currentUser?.id ?? '',
-        activityId: v4(),
-        createdAt: new Date().toISOString(),
-        type: ActivityType.Note,
-        activityTargetArray: commentableEntityArray.map((entity) => ({
-          commentableId: entity.id,
-          commentableType: entity.type,
-          companyId: entity.type === CommentableType.Company ? entity.id : null,
-          personId: entity.type === CommentableType.Person ? entity.id : null,
+        data: {
           id: v4(),
-          createdAt: new Date().toISOString(),
-        })),
+          createdAt: now,
+          updatedAt: now,
+          author: { connect: { id: currentUser?.id ?? '' } },
+          type: ActivityType.Note,
+          activityTargets: {
+            createMany: {
+              data: commentableEntityArray.map((entity) => ({
+                commentableId: entity.id,
+                commentableType: entity.type,
+                id: v4(),
+                createdAt: new Date().toISOString(),
+                companyId:
+                  entity.type === CommentableType.Company ? entity.id : null,
+                personId:
+                  entity.type === CommentableType.Person ? entity.id : null,
+              })),
+              skipDuplicates: true,
+            },
+          },
+        },
       },
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',

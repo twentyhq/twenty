@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { IconChevronDown } from '@/ui/icon/index';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
@@ -50,29 +49,6 @@ const StyledDropdownButton = styled.div<StyledDropdownButtonProps>`
   }
 `;
 
-const StyledDropdownTopOption = styled.li`
-  color: ${({ theme }) => theme.font.color.primary};
-  cursor: pointer;
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  justify-content: space-between;
-
-  padding: calc(${({ theme }) => theme.spacing(2)})
-    calc(${({ theme }) => theme.spacing(2)});
-  &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-  }
-  user-select: none;
-`;
-
-const StyledIcon = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-right: ${({ theme }) => theme.spacing(1)};
-  min-width: ${({ theme }) => theme.spacing(4)};
-`;
-
 function DropdownButton({
   label,
   isActive,
@@ -116,24 +92,5 @@ function DropdownButton({
     </StyledDropdownButtonContainer>
   );
 }
-
-const StyleAngleDownContainer = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  margin-left: auto;
-`;
-
-function DropdownTopOptionAngleDown() {
-  return (
-    <StyleAngleDownContainer>
-      <IconChevronDown size={16} />
-    </StyleAngleDownContainer>
-  );
-}
-DropdownButton.StyledDropdownTopOption = StyledDropdownTopOption;
-DropdownButton.StyledDropdownTopOptionAngleDown = DropdownTopOptionAngleDown;
-DropdownButton.StyledIcon = StyledIcon;
 
 export default DropdownButton;

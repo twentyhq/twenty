@@ -1,10 +1,5 @@
-import { useEffect } from 'react';
 import { Draggable } from '@hello-pangea/dnd';
 
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-
-import { BoardCardContext } from '../states/BoardCardContext';
-import { pipelineProgressIdScopedState } from '../states/pipelineProgressIdScopedState';
 import { BoardOptions } from '../types/BoardOptions';
 
 export function EntityBoardCard({
@@ -16,15 +11,6 @@ export function EntityBoardCard({
   pipelineProgressId: string;
   index: number;
 }) {
-  const [pipelineProgressIdFromRecoil, setPipelineProgressId] =
-    useRecoilScopedState(pipelineProgressIdScopedState, BoardCardContext);
-
-  useEffect(() => {
-    if (pipelineProgressIdFromRecoil !== pipelineProgressId) {
-      setPipelineProgressId(pipelineProgressId);
-    }
-  }, [pipelineProgressId, setPipelineProgressId, pipelineProgressIdFromRecoil]);
-
   return (
     <Draggable
       key={pipelineProgressId}
