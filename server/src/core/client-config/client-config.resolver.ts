@@ -23,6 +23,10 @@ export class ClientConfigResolver {
       },
       signInPrefilled: this.environmentService.isSignInPrefilled(),
       debugMode: this.environmentService.isDebugMode(),
+      supportChat: {
+        supportDriver: this.environmentService.getSupportDriver(),
+        supportFrontendKey: this.environmentService.getSupportFrontendKey(),
+      },
     };
 
     return Promise.resolve(clientConfig);

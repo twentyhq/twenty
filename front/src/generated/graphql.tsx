@@ -548,6 +548,7 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   debugMode: Scalars['Boolean'];
   signInPrefilled: Scalars['Boolean'];
+  supportChat: SupportChat;
   telemetry: Telemetry;
 };
 
@@ -1906,6 +1907,12 @@ export type StringNullableFilter = {
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
+export type SupportChat = {
+  __typename?: 'SupportChat';
+  supportDriver: Scalars['String'];
+  supportFrontendKey?: Maybe<Scalars['String']>;
+};
+
 export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
@@ -1935,6 +1942,7 @@ export type User = {
   phoneNumber?: Maybe<Scalars['String']>;
   settings: UserSettings;
   settingsId: Scalars['String'];
+  supportHMACKey?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
 };
@@ -2448,7 +2456,7 @@ export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __ty
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, supportChat: { __typename?: 'SupportChat', supportDriver: string, supportFrontendKey?: string | null } } };
 
 export type GetCompaniesQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<CompanyOrderByWithRelationInput> | CompanyOrderByWithRelationInput>;
@@ -2677,7 +2685,7 @@ export type SearchActivityQuery = { __typename?: 'Query', searchResults: Array<{
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, canImpersonate: boolean, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, canImpersonate: boolean, supportHMACKey?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3647,6 +3655,10 @@ export const GetClientConfigDocument = gql`
     telemetry {
       enabled
       anonymizationEnabled
+    }
+    supportChat {
+      supportDriver
+      supportFrontendKey
     }
   }
 }
@@ -4895,6 +4907,7 @@ export const GetCurrentUserDocument = gql`
       locale
       colorScheme
     }
+    supportHMACKey
   }
 }
     `;
