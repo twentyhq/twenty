@@ -9,30 +9,26 @@ type OwnProps = {
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
-const StyledClickable = styled.div<{ hrefIsEmpty: boolean }>`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-color: ${({ theme }) => theme.border.color.medium};
-  border-radius: 50px;
-  border-style: solid;
-  border-width: 1px;
-  padding: ${({ hrefIsEmpty }) => (hrefIsEmpty ? '0px' : '3px 8px')};
+const StyledClickable = styled.div`
+  display: flex;
+  overflow: hidden;
   white-space: nowrap;
 
   a {
     color: inherit;
-    font-size: ${({ theme }) => theme.font.size.md};
-    text-decoration: none;
   }
 `;
 
 export function RawLink({ className, href, children, onClick }: OwnProps) {
-  const hrefIsEmpty = href === '';
+  console.log(children);
 
   return (
-    <StyledClickable className={className} hrefIsEmpty={hrefIsEmpty}>
-      <ReactLink target="_blank" onClick={onClick} to={href}>
-        {children}
-      </ReactLink>
-    </StyledClickable>
+    <div>
+      <StyledClickable className={className}>
+        <ReactLink target="_blank" onClick={onClick} to={href}>
+          {children}
+        </ReactLink>
+      </StyledClickable>
+    </div>
   );
 }
