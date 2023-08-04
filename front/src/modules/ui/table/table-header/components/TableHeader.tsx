@@ -7,6 +7,7 @@ import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownBu
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { TopBar } from '@/ui/top-bar/TopBar';
+import { OptionsDropdownButton } from '@/views/components/OptionsDropdownButton';
 
 import { TableContext } from '../../states/TableContext';
 
@@ -74,6 +75,9 @@ export function TableHeader<SortField>({
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
+            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+          />
+          <OptionsDropdownButton
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
           />
         </>
