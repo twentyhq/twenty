@@ -1,15 +1,13 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
-import { BoardColumnContext } from '@/pipeline/states/BoardColumnContext';
-import { boardColumnsState } from '@/pipeline/states/boardColumnsState';
+import { boardCardIdsByColumnIdFamilyState } from '@/pipeline/states/boardCardIdsByColumnIdFamilyState';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
-import { pipelineStageIdScopedState } from '@/pipeline/states/pipelineStageIdScopedState';
 import { NewButton } from '@/ui/board/components/NewButton';
-import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
+import { BoardColumnIdContext } from '@/ui/board/states/BoardColumnIdContext';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -24,12 +22,8 @@ import { useFilteredSearchCompanyQuery } from '../queries';
 
 export function NewCompanyProgressButton() {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
-  const [board, setBoard] = useRecoilState(boardColumnsState);
   const [pipeline] = useRecoilState(currentPipelineState);
-  const [pipelineStageId] = useRecoilScopedState(
-    pipelineStageIdScopedState,
-    BoardColumnContext,
-  );
+  const pipelineStageId = useContext(BoardColumnIdContext);
 
   const {
     goBackToPreviousHotkeyScope,
@@ -43,34 +37,36 @@ export function NewCompanyProgressButton() {
     ],
   });
 
-  const handleEntitySelect = useCallback(
-    async (company: any) => {
-      if (!company) return;
+  const handleEntitySelect = useRecoilCallback(
+    ({ set }) =>
+      async (company: any) => {
+        if (!company) return;
 
-      setIsCreatingCard(false);
-      goBackToPreviousHotkeyScope();
+        if (!pipelineStageId) throw new Error('pipelineStageId is not defined');
 
-      const newUuid = uuidv4();
-      const newBoard = JSON.parse(JSON.stringify(board));
-      const destinationColumnIndex = newBoard.findIndex(
-        (column: BoardColumnDefinition) => column.id === pipelineStageId,
-      );
-      newBoard[destinationColumnIndex].pipelineProgressIds.push(newUuid);
-      setBoard(newBoard);
-      await createOnePipelineProgress({
-        variables: {
-          uuid: newUuid,
-          pipelineStageId: pipelineStageId || '',
-          pipelineId: pipeline?.id || '',
-          entityId: company.id || '',
-          entityType: PipelineProgressableType.Company,
-        },
-      });
-    },
+        setIsCreatingCard(false);
+
+        goBackToPreviousHotkeyScope();
+
+        const newUuid = uuidv4();
+
+        set(boardCardIdsByColumnIdFamilyState(pipelineStageId), (oldValue) => [
+          ...oldValue,
+          newUuid,
+        ]);
+
+        await createOnePipelineProgress({
+          variables: {
+            uuid: newUuid,
+            pipelineStageId: pipelineStageId,
+            pipelineId: pipeline?.id ?? '',
+            entityId: company.id ?? '',
+            entityType: PipelineProgressableType.Company,
+          },
+        });
+      },
     [
       goBackToPreviousHotkeyScope,
-      board,
-      setBoard,
       createOnePipelineProgress,
       pipelineStageId,
       pipeline?.id,
