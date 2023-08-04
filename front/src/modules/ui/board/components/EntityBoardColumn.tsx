@@ -84,7 +84,6 @@ export function EntityBoardColumn({
           onTitleEdit={handleEditColumnTitle}
           title={column.title}
           color={column.colorCode}
-          pipelineStageId={column.id}
           totalAmount={boardColumnTotal}
           isFirstColumn={column.index === 0}
           numChildren={cardIds.length}
