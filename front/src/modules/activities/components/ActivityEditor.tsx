@@ -5,10 +5,7 @@ import styled from '@emotion/styled';
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
-import {
-  GET_ACTIVITIES,
-  GET_ACTIVITIES_BY_TARGETS,
-} from '@/activities/queries';
+import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { IconCalendar } from '@/ui/icon/index';
@@ -178,7 +175,6 @@ export function ActivityEditor({
                           dueAt: newDate,
                         },
                       },
-                      refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
                     });
                   }}
                 />
