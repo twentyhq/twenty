@@ -5,11 +5,11 @@ import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   ClickOutsideMode,
   useListenClickOutside,
-} from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 

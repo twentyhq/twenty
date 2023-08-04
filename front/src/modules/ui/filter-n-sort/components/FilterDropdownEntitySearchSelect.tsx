@@ -62,6 +62,7 @@ export function FilterDropdownEntitySearchSelect({
         operand: selectedOperandInDropdown,
         type: filterDefinitionUsedInDropdown.type,
         value: selectedEntity.id,
+        displayAvatarUrl: selectedEntity.avatarUrl,
       });
     }
   }
