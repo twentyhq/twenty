@@ -28,7 +28,7 @@ export const toViewFieldInput = (
 ) => ({
   fieldName: viewFieldDefinition.columnLabel,
   index: viewFieldDefinition.columnOrder,
-  isVisible: true,
+  isVisible: viewFieldDefinition.isVisible ?? true,
   objectName,
   sizeInPx: viewFieldDefinition.columnSize,
 });
@@ -64,6 +64,7 @@ export const useLoadView = ({
           columnLabel: viewField.fieldName,
           columnOrder: viewField.index,
           columnSize: viewField.sizeInPx,
+          isVisible: viewField.isVisible,
         }));
 
         setViewFieldsState({ objectName, viewFields });

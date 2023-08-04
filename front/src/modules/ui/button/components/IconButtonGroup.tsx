@@ -12,7 +12,7 @@ const StyledIconButtonGroupContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-type IconButtonGroupProps = Omit<ComponentProps<'div'>, 'children'> & {
+export type IconButtonGroupProps = Omit<ComponentProps<'div'>, 'children'> & {
   variant: IconButtonVariant;
   size: IconButtonSize;
   children: React.ReactElement | React.ReactElement[];

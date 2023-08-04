@@ -19,6 +19,7 @@ import {
   addableViewFieldDefinitionsState,
   columnWidthByViewFieldIdState,
   viewFieldsState,
+  visibleViewFieldsState,
 } from '../states/viewFieldsState';
 import type {
   ViewFieldDefinition,
@@ -87,8 +88,8 @@ const StyledEntityTableColumnMenu = styled(EntityTableColumnMenu)`
 export function EntityTableHeader() {
   const theme = useTheme();
 
-  const [{ objectName, viewFields }, setViewFieldsState] =
-    useRecoilState(viewFieldsState);
+  const [{ objectName }, setViewFieldsState] = useRecoilState(viewFieldsState);
+  const viewFields = useRecoilValue(visibleViewFieldsState);
   const columnWidths = useRecoilValue(columnWidthByViewFieldIdState);
   const addableViewFieldDefinitions = useRecoilValue(
     addableViewFieldDefinitionsState,

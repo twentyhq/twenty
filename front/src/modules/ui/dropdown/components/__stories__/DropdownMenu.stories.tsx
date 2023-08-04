@@ -2,18 +2,21 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { IconPlus } from '@/ui/icon/index';
+import { IconButton } from '@/ui/button/components/IconButton';
+import { IconPlus, IconUser } from '@/ui/icon';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { Avatar } from '@/users/components/Avatar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { DropdownMenu } from '../DropdownMenu';
 import { DropdownMenuCheckableItem } from '../DropdownMenuCheckableItem';
+import { DropdownMenuHeader } from '../DropdownMenuHeader';
 import { DropdownMenuItem } from '../DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '../DropdownMenuItemsContainer';
 import { DropdownMenuSearch } from '../DropdownMenuSearch';
 import { DropdownMenuSelectableItem } from '../DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '../DropdownMenuSeparator';
+import { DropdownMenuSubheader } from '../DropdownMenuSubheader';
 
 const meta: Meta<typeof DropdownMenu> = {
   title: 'UI/Dropdown/DropdownMenu',
@@ -59,47 +62,36 @@ const MenuAbsolutePositionWrapper = styled.div`
   width: fit-content;
 `;
 
-const FakeMenuItemList = () => (
-  <>
-    <DropdownMenuItem>Company A</DropdownMenuItem>
-    <DropdownMenuItem>Company B</DropdownMenuItem>
-    <DropdownMenuItem>Company C</DropdownMenuItem>
-    <DropdownMenuItem>Person 2</DropdownMenuItem>
-    <DropdownMenuItem>Company D</DropdownMenuItem>
-    <DropdownMenuItem>Person 1</DropdownMenuItem>
-  </>
-);
-
 const mockSelectArray = [
   {
     id: '1',
     name: 'Company A',
-    avatarUrl: avatarUrl,
+    avatarUrl,
   },
   {
     id: '2',
     name: 'Company B',
-    avatarUrl: avatarUrl,
+    avatarUrl,
   },
   {
     id: '3',
     name: 'Company C',
-    avatarUrl: avatarUrl,
+    avatarUrl,
   },
   {
     id: '4',
     name: 'Person 2',
-    avatarUrl: avatarUrl,
+    avatarUrl,
   },
   {
     id: '5',
     name: 'Company D',
-    avatarUrl: avatarUrl,
+    avatarUrl,
   },
   {
     id: '6',
     name: 'Person 1',
-    avatarUrl: avatarUrl,
+    avatarUrl,
   },
 ];
 
@@ -189,10 +181,75 @@ export const SimpleMenuItem: Story = {
   render: (args) => (
     <DropdownMenu {...args}>
       <DropdownMenuItemsContainer hasMaxHeight>
-        <FakeMenuItemList />
+        {mockSelectArray.map(({ name }) => (
+          <DropdownMenuItem>{name}</DropdownMenuItem>
+        ))}
       </DropdownMenuItemsContainer>
     </DropdownMenu>
   ),
+};
+
+export const WithHeaders: Story = {
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuHeader>Header</DropdownMenuHeader>
+      <DropdownMenuSeparator />
+      <DropdownMenuSubheader>Subheader 1</DropdownMenuSubheader>
+      <DropdownMenuItemsContainer>
+        {mockSelectArray.slice(0, 3).map(({ name }) => (
+          <DropdownMenuItem>{name}</DropdownMenuItem>
+        ))}
+      </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
+      <DropdownMenuSubheader>Subheader 2</DropdownMenuSubheader>
+      <DropdownMenuItemsContainer>
+        {mockSelectArray.slice(3).map(({ name }) => (
+          <DropdownMenuItem>{name}</DropdownMenuItem>
+        ))}
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
+  ),
+};
+
+export const WithIcons: Story = {
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {mockSelectArray.map(({ name }) => (
+          <DropdownMenuItem>
+            <IconUser size={16} />
+            {name}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
+  ),
+};
+
+export const WithActions: Story = {
+  ...WithContentBelow,
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {mockSelectArray.map(({ name }, index) => (
+          <DropdownMenuItem
+            className={index === 0 ? 'hover' : undefined}
+            actions={[
+              <IconButton icon={<IconUser />} />,
+              <IconButton icon={<IconPlus />} />,
+            ]}
+          >
+            {name}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuItemsContainer>
+    </DropdownMenu>
+  ),
+  parameters: {
+    pseudo: { hover: ['.hover'] },
+  },
 };
 
 export const LoadingMenu: Story = {
@@ -215,25 +272,9 @@ export const Search: Story = {
       <DropdownMenuSearch />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        <FakeMenuItemList />
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
-  ),
-};
-
-export const Button: Story = {
-  ...WithContentBelow,
-  render: (args) => (
-    <DropdownMenu {...args}>
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <DropdownMenuItem>
-          <IconPlus size={16} />
-          <div>Create new</div>
-        </DropdownMenuItem>
-      </DropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        <FakeSelectableMenuItemList />
+        {mockSelectArray.map(({ name }) => (
+          <DropdownMenuItem>{name}</DropdownMenuItem>
+        ))}
       </DropdownMenuItemsContainer>
     </DropdownMenu>
   ),

@@ -47,3 +47,15 @@ export const addableViewFieldDefinitionsState = selector({
     );
   },
 });
+
+export const visibleViewFieldsState = selector({
+  key: 'visibleViewFieldsState',
+  get: ({ get }) =>
+    get(viewFieldsState).viewFields.filter((viewField) => viewField.isVisible),
+});
+
+export const hiddenViewFieldsState = selector({
+  key: 'hiddenViewFieldsState',
+  get: ({ get }) =>
+    get(viewFieldsState).viewFields.filter((viewField) => !viewField.isVisible),
+});

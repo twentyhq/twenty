@@ -1,5 +1,8 @@
 import { useCallback, useState } from 'react';
+import { useTheme } from '@emotion/react';
+import { IconChevronDown } from '@tabler/icons-react';
 
+import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
@@ -24,10 +27,10 @@ export function SortDropdownButton<SortField>({
   onSortSelect,
   HotkeyScope,
 }: OwnProps<SortField>) {
+  const theme = useTheme();
+
   const [isUnfolded, setIsUnfolded] = useState(false);
-
   const [isOptionUnfolded, setIsOptionUnfolded] = useState(false);
-
   const [selectedSortDirection, setSelectedSortDirection] =
     useState<SelectedSortType<SortField>['order']>('asc');
 
@@ -76,13 +79,12 @@ export function SortDropdownButton<SortField>({
         </DropdownMenuItemsContainer>
       ) : (
         <>
-          <DropdownButton.StyledDropdownTopOption
+          <DropdownMenuHeader
+            endIcon={<IconChevronDown size={theme.icon.size.md} />}
             onClick={() => setIsOptionUnfolded(true)}
           >
             {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
-
-            <DropdownButton.StyledDropdownTopOptionAngleDown />
-          </DropdownButton.StyledDropdownTopOption>
+          </DropdownMenuHeader>
           <DropdownMenuSeparator />
 
           <DropdownMenuItemsContainer>
@@ -94,9 +96,7 @@ export function SortDropdownButton<SortField>({
                   onSortItemSelect(sort);
                 }}
               >
-                <DropdownButton.StyledIcon>
-                  {sort.icon}
-                </DropdownButton.StyledIcon>
+                {sort.icon}
                 {sort.label}
               </DropdownMenuSelectableItem>
             ))}
