@@ -4,10 +4,9 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
 import { useGetClientConfigQuery } from '~/generated/graphql';
-
-import { supportChatState } from '../states/supportChatState';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
