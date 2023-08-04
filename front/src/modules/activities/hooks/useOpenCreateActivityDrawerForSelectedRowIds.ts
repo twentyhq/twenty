@@ -61,6 +61,10 @@ export function useOpenCreateActivityDrawerForSelectedRowIds() {
                 commentableType: entity.type,
                 id: v4(),
                 createdAt: new Date().toISOString(),
+                companyId:
+                  entity.type === CommentableType.Company ? entity.id : null,
+                personId:
+                  entity.type === CommentableType.Person ? entity.id : null,
               })),
               skipDuplicates: true,
             },

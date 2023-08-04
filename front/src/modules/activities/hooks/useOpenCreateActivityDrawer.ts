@@ -9,7 +9,11 @@ import { useRightDrawer } from '@/ui/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { ActivityType, useCreateActivityMutation } from '~/generated/graphql';
+import {
+  ActivityType,
+  CommentableType,
+  useCreateActivityMutation,
+} from '~/generated/graphql';
 
 import {
   GET_ACTIVITIES,
@@ -53,6 +57,14 @@ export function useOpenCreateActivityDrawer() {
                     {
                       commentableId: entity.id,
                       commentableType: entity.type,
+                      companyId:
+                        entity.type === CommentableType.Company
+                          ? entity.id
+                          : null,
+                      personId:
+                        entity.type === CommentableType.Person
+                          ? entity.id
+                          : null,
                       id: v4(),
                       createdAt: now,
                     },

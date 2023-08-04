@@ -68,7 +68,9 @@ export function TaskRow({ task }: { task: TaskForList }) {
           in: task?.activityTargets
             ? task?.activityTargets
                 .filter((target) => target.commentableType === 'Person')
-                .map((target) => target.commentableId ?? '')
+                .map(
+                  (target) => (target.personId || target.commentableId) ?? '',
+                )
             : [],
         },
       },
@@ -82,7 +84,9 @@ export function TaskRow({ task }: { task: TaskForList }) {
           in: task?.activityTargets
             ? task?.activityTargets
                 .filter((target) => target.commentableType === 'Company')
-                .map((target) => target.commentableId ?? '')
+                .map(
+                  (target) => (target.companyId || target.commentableId) ?? '',
+                )
             : [],
         },
       },
