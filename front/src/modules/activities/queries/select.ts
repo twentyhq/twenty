@@ -48,6 +48,8 @@ export const GET_ACTIVITIES_BY_TARGETS = gql`
         id
         commentableType
         commentableId
+        companyId
+        personId
       }
     }
   }
@@ -86,6 +88,8 @@ export const GET_ACTIVITIES = gql`
         id
         commentableType
         commentableId
+        companyId
+        personId
       }
     }
   }
@@ -131,6 +135,8 @@ export const GET_ACTIVITY = gql`
         id
         commentableType
         commentableId
+        companyId
+        personId
       }
     }
   }

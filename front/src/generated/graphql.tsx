@@ -2319,7 +2319,7 @@ export type CreateActivityMutationVariables = Exact<{
 }>;
 
 
-export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId: string, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
+export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId: string, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, commentableType?: CommentableType | null, commentableId?: string | null, companyId?: string | null, personId?: string | null }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
 
 export type GetActivitiesByTargetsQueryVariables = Exact<{
   activityTargetIds: Array<Scalars['String']> | Scalars['String'];
@@ -2327,7 +2327,7 @@ export type GetActivitiesByTargetsQueryVariables = Exact<{
 }>;
 
 
-export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
+export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null, companyId?: string | null, personId?: string | null }> | null }> };
 
 export type GetActivitiesQueryVariables = Exact<{
   where: ActivityWhereInput;
@@ -2335,14 +2335,14 @@ export type GetActivitiesQueryVariables = Exact<{
 }>;
 
 
-export type GetActivitiesQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
+export type GetActivitiesQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null, companyId?: string | null, personId?: string | null }> | null }> };
 
 export type GetActivityQueryVariables = Exact<{
   activityId: Scalars['String'];
 }>;
 
 
-export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null }> };
+export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, commentableType?: CommentableType | null, commentableId?: string | null, companyId?: string | null, personId?: string | null }> | null }> };
 
 export type AddActivityTargetsOnActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2350,7 +2350,7 @@ export type AddActivityTargetsOnActivityMutationVariables = Exact<{
 }>;
 
 
-export type AddActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null } };
+export type AddActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, commentableType?: CommentableType | null, commentableId?: string | null, companyId?: string | null, personId?: string | null }> | null } };
 
 export type RemoveActivityTargetsOnActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2358,7 +2358,7 @@ export type RemoveActivityTargetsOnActivityMutationVariables = Exact<{
 }>;
 
 
-export type RemoveActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null } };
+export type RemoveActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, commentableType?: CommentableType | null, commentableId?: string | null, companyId?: string | null, personId?: string | null }> | null } };
 
 export type DeleteActivityMutationVariables = Exact<{
   activityId: Scalars['String'];
@@ -2835,6 +2835,8 @@ export const CreateActivityDocument = gql`
       activityId
       commentableType
       commentableId
+      companyId
+      personId
     }
     comments {
       id
@@ -2923,6 +2925,8 @@ export const GetActivitiesByTargetsDocument = gql`
       id
       commentableType
       commentableId
+      companyId
+      personId
     }
   }
 }
@@ -2986,6 +2990,8 @@ export const GetActivitiesDocument = gql`
       id
       commentableType
       commentableId
+      companyId
+      personId
     }
   }
 }
@@ -3059,6 +3065,8 @@ export const GetActivityDocument = gql`
       id
       commentableType
       commentableId
+      companyId
+      personId
     }
   }
 }
@@ -3106,6 +3114,8 @@ export const AddActivityTargetsOnActivityDocument = gql`
       updatedAt
       commentableType
       commentableId
+      companyId
+      personId
     }
   }
 }
@@ -3152,6 +3162,8 @@ export const RemoveActivityTargetsOnActivityDocument = gql`
       updatedAt
       commentableType
       commentableId
+      companyId
+      personId
     }
   }
 }

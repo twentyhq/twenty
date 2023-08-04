@@ -54,6 +54,8 @@ export function useOpenCreateActivityDrawerForSelectedRowIds() {
         activityTargetArray: commentableEntityArray.map((entity) => ({
           commentableId: entity.id,
           commentableType: entity.type,
+          companyId: entity.type === CommentableType.Company ? entity.id : null,
+          personId: entity.type === CommentableType.Person ? entity.id : null,
           id: v4(),
           createdAt: new Date().toISOString(),
         })),

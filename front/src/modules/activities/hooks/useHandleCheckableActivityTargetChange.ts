@@ -6,6 +6,7 @@ import { GET_PEOPLE } from '@/people/queries';
 import {
   Activity,
   ActivityTarget,
+  CommentableType,
   useAddActivityTargetsOnActivityMutation,
   useRemoveActivityTargetsOnActivityMutation,
 } from '~/generated/graphql';
@@ -65,6 +66,10 @@ export function useHandleCheckableActivityTargetChange({
             createdAt: new Date().toISOString(),
             commentableType: entity.entityType,
             commentableId: entity.id,
+            companyId:
+              entity.entityType === CommentableType.Company ? entity.id : null,
+            personId:
+              entity.entityType === CommentableType.Person ? entity.id : null,
           })),
         },
       });
