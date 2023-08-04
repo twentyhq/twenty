@@ -2309,17 +2309,11 @@ export type CreateCommentMutationVariables = Exact<{
 export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, activityId?: string | null, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } };
 
 export type CreateActivityMutationVariables = Exact<{
-  activityId: Scalars['String'];
-  body?: InputMaybe<Scalars['String']>;
-  title?: InputMaybe<Scalars['String']>;
-  type: ActivityType;
-  authorId: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  activityTargetArray: Array<ActivityTargetCreateManyActivityInput> | ActivityTargetCreateManyActivityInput;
+  data: ActivityCreateInput;
 }>;
 
 
-export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId: string, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
+export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId: string, assigneeId?: string | null, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, commentableType?: CommentableType | null, commentableId?: string | null }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
 
 export type GetActivitiesByTargetsQueryVariables = Exact<{
   activityTargetIds: Array<Scalars['String']> | Scalars['String'];
@@ -2819,14 +2813,13 @@ export type CreateCommentMutationHookResult = ReturnType<typeof useCreateComment
 export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
 export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
 export const CreateActivityDocument = gql`
-    mutation CreateActivity($activityId: String!, $body: String, $title: String, $type: ActivityType!, $authorId: String!, $createdAt: DateTime!, $activityTargetArray: [ActivityTargetCreateManyActivityInput!]!) {
-  createOneActivity(
-    data: {id: $activityId, createdAt: $createdAt, updatedAt: $createdAt, author: {connect: {id: $authorId}}, body: $body, title: $title, type: $type, activityTargets: {createMany: {data: $activityTargetArray, skipDuplicates: true}}}
-  ) {
+    mutation CreateActivity($data: ActivityCreateInput!) {
+  createOneActivity(data: $data) {
     id
     createdAt
     updatedAt
     authorId
+    assigneeId
     type
     activityTargets {
       id
@@ -2863,13 +2856,7 @@ export type CreateActivityMutationFn = Apollo.MutationFunction<CreateActivityMut
  * @example
  * const [createActivityMutation, { data, loading, error }] = useCreateActivityMutation({
  *   variables: {
- *      activityId: // value for 'activityId'
- *      body: // value for 'body'
- *      title: // value for 'title'
- *      type: // value for 'type'
- *      authorId: // value for 'authorId'
- *      createdAt: // value for 'createdAt'
- *      activityTargetArray: // value for 'activityTargetArray'
+ *      data: // value for 'data'
  *   },
  * });
  */

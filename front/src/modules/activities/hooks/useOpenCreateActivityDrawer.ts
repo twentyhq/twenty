@@ -35,22 +35,34 @@ export function useOpenCreateActivityDrawer() {
     type: ActivityType,
     entity?: CommentableEntity,
   ) {
-    createActivityMutation({
+    const now = new Date().toISOString();
+
+    return createActivityMutation({
       variables: {
-        authorId: currentUser?.id ?? '',
-        activityId: v4(),
-        createdAt: new Date().toISOString(),
-        type: type,
-        activityTargetArray: entity
-          ? [
-              {
-                commentableId: entity.id,
-                commentableType: entity.type,
-                id: v4(),
-                createdAt: new Date().toISOString(),
-              },
-            ]
-          : [],
+        data: {
+          id: v4(),
+          createdAt: now,
+          updatedAt: now,
+          author: { connect: { id: currentUser?.id ?? '' } },
+          assignee: { connect: { id: currentUser?.id ?? '' } },
+          dueAt: now,
+          type: type,
+          activityTargets: {
+            createMany: {
+              data: entity
+                ? [
+                    {
+                      commentableId: entity.id,
+                      commentableType: entity.type,
+                      id: v4(),
+                      createdAt: now,
+                    },
+                  ]
+                : [],
+              skipDuplicates: true,
+            },
+          },
+        },
       },
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
