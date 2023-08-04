@@ -36,13 +36,13 @@ export function useUpdateBoardCardIds() {
 
         if (!destinationColumn || !sourceColumn) return;
 
-        const sourceItems = [
+        const sourceCardIds = [
           ...snapshot
             .getLoadable(boardCardIdsByColumnIdFamilyState(sourceColumn.id))
             .valueOrThrow(),
         ];
 
-        const destinationItems = [
+        const destinationCardIds = [
           ...snapshot
             .getLoadable(
               boardCardIdsByColumnIdFamilyState(destinationColumn.id),
@@ -50,21 +50,35 @@ export function useUpdateBoardCardIds() {
             .valueOrThrow(),
         ];
 
-        const [removedCardId] = sourceItems.splice(source.index, 1);
-
         const destinationIndex =
-          destination.index === 0 ? -1 : destination.index - 1;
+          destination.index >= destinationCardIds.length
+            ? destinationCardIds.length - 1
+            : destination.index;
 
-        destinationItems.splice(destinationIndex, 0, removedCardId);
+        if (sourceColumn.id === destinationColumn.id) {
+          const [deletedCardId] = sourceCardIds.splice(source.index, 1);
 
-        if (destinationColumn.id !== sourceColumn.id) {
-          set(boardCardIdsByColumnIdFamilyState(sourceColumn.id), sourceItems);
+          sourceCardIds.splice(destinationIndex, 0, deletedCardId);
+
+          set(
+            boardCardIdsByColumnIdFamilyState(sourceColumn.id),
+            sourceCardIds,
+          );
+        } else {
+          const [removedCardId] = sourceCardIds.splice(source.index, 1);
+
+          destinationCardIds.splice(destinationIndex, 0, removedCardId);
+
+          set(
+            boardCardIdsByColumnIdFamilyState(sourceColumn.id),
+            sourceCardIds,
+          );
+
+          set(
+            boardCardIdsByColumnIdFamilyState(destinationColumn.id),
+            destinationCardIds,
+          );
         }
-
-        set(
-          boardCardIdsByColumnIdFamilyState(destinationColumn.id),
-          destinationItems,
-        );
 
         return newBoardColumns;
       },

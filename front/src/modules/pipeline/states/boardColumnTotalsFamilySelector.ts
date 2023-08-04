@@ -4,6 +4,8 @@ import { companyProgressesFamilyState } from '@/companies/states/companyProgress
 
 import { boardCardIdsByColumnIdFamilyState } from './boardCardIdsByColumnIdFamilyState';
 
+// TODO: this state should be computed during the synchronization hook and put in a generic
+// boardColumnTotalsFamilyState indexed by columnId.
 export const boardColumnTotalsFamilySelector = selectorFamily({
   key: 'boardColumnTotalsFamilySelector',
   get:

@@ -87,7 +87,7 @@ export function HooksCompanyBoard({
     [],
   );
 
-  const { loading: loadingGetPipelines } = useGetPipelinesQuery({
+  useGetPipelinesQuery({
     variables: {
       where: {
         pipelineProgressableType: { equals: PipelineProgressableType.Company },
@@ -125,15 +125,14 @@ export function HooksCompanyBoard({
           .valueOrThrow();
 
         for (const boardColumn of boardColumns) {
-          set(
-            boardCardIdsByColumnIdFamilyState(boardColumn.id),
-            pipelineProgresses
-              .filter(
-                (pipelineProgressToFilter) =>
-                  pipelineProgressToFilter.pipelineStageId === boardColumn.id,
-              )
-              .map((pipelineProgress) => pipelineProgress.id),
-          );
+          const boardCardIds = pipelineProgresses
+            .filter(
+              (pipelineProgressToFilter) =>
+                pipelineProgressToFilter.pipelineStageId === boardColumn.id,
+            )
+            .map((pipelineProgress) => pipelineProgress.id);
+
+          set(boardCardIdsByColumnIdFamilyState(boardColumn.id), boardCardIds);
         }
       },
     [],
@@ -144,7 +143,6 @@ export function HooksCompanyBoard({
       where: whereFilters,
       orderBy,
     },
-    skip: loadingGetPipelines,
     onCompleted: (data) => {
       const pipelineProgresses = data?.findManyPipelineProgress || [];
 

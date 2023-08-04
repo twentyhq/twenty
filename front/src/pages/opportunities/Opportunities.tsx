@@ -10,6 +10,7 @@ import {
   defaultPipelineProgressOrderBy,
   PipelineProgressesSelectedSortType,
 } from '@/pipeline/queries';
+import { BoardOptionsContext } from '@/ui/board/states/BoardOptionsContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { IconTargetArrow } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
@@ -40,19 +41,21 @@ export function Opportunities() {
       title="Opportunities"
       icon={<IconTargetArrow size={theme.icon.size.md} />}
     >
-      <RecoilScope SpecificContext={CompanyBoardContext}>
-        <HooksCompanyBoard
-          availableFilters={opportunitiesBoardOptions.filters}
-          orderBy={orderBy}
-        />
-        <EntityBoard
-          boardOptions={opportunitiesBoardOptions}
-          updateSorts={updateSorts}
-        />
-        <EntityBoardActionBar>
-          <BoardActionBarButtonDeleteBoardCard />
-        </EntityBoardActionBar>
-      </RecoilScope>
+      <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
+        <RecoilScope SpecificContext={CompanyBoardContext}>
+          <HooksCompanyBoard
+            availableFilters={opportunitiesBoardOptions.filters}
+            orderBy={orderBy}
+          />
+          <EntityBoard
+            boardOptions={opportunitiesBoardOptions}
+            updateSorts={updateSorts}
+          />
+          <EntityBoardActionBar>
+            <BoardActionBarButtonDeleteBoardCard />
+          </EntityBoardActionBar>
+        </RecoilScope>
+      </BoardOptionsContext.Provider>
     </WithTopBarContainer>
   );
 }
