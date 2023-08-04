@@ -1,20 +1,16 @@
-import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback } from 'recoil';
 
+import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
+import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
+import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardIdsState';
 import { IconTrash } from '@/ui/icon/index';
 import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
-import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
 
-import { GET_PIPELINES } from '../queries';
-import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '../states/boardColumnsState';
-import { selectedBoardCardIdsState } from '../states/selectedBoardCardIdsState';
-
-export function BoardActionBarButtonDeleteBoardCard() {
-  const [deletePipelineProgress] = useDeleteManyPipelineProgressMutation({
-    refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
-  });
-
+export function BoardActionBarButtonDeleteBoardCard({
+  onDelete,
+}: {
+  onDelete: (deletedCardIds: string[]) => void;
+}) {
   const deleteBoardCardIds = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -51,11 +47,7 @@ export function BoardActionBarButtonDeleteBoardCard() {
   async function handleDeleteClick() {
     const deletedCardIds = deleteBoardCardIds();
 
-    await deletePipelineProgress({
-      variables: {
-        ids: deletedCardIds,
-      },
-    });
+    onDelete(deletedCardIds);
   }
 
   return (

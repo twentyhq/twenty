@@ -7,8 +7,8 @@ import { companyProgressesFamilyState } from '@/companies/states/companyProgress
 import { PipelineProgressPointOfContactEditableField } from '@/pipeline/editable-field/components/PipelineProgressPointOfContactEditableField';
 import { ProbabilityEditableField } from '@/pipeline/editable-field/components/ProbabilityEditableField';
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
-import { selectedBoardCardIdsState } from '@/pipeline/states/selectedBoardCardIdsState';
 import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
+import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardIdsState';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';

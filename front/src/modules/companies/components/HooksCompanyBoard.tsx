@@ -8,10 +8,10 @@ import {
   CompanyProgress,
   PipelineProgressForBoard,
 } from '@/companies/types/CompanyProgress';
-import { boardCardIdsByColumnIdFamilyState } from '@/pipeline/states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '@/pipeline/states/boardColumnsState';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
-import { isBoardLoadedState } from '@/pipeline/states/isBoardLoadedState';
+import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
+import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
+import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
 import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';

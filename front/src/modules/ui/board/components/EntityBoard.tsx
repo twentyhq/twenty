@@ -20,7 +20,7 @@ import {
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
 
-import { GET_PIPELINE_PROGRESS } from '../queries';
+import { GET_PIPELINE_PROGRESS } from '../../../pipeline/queries';
 import { BoardColumnContext } from '../states/BoardColumnContext';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardOptions } from '../types/BoardOptions';
@@ -37,11 +37,15 @@ const StyledBoardWithHeader = styled.div`
 export function EntityBoard({
   boardOptions,
   updateSorts,
+  onEditColumnTitle,
+  onEditColumnColor,
 }: {
   boardOptions: BoardOptions;
   updateSorts: (
     sorts: Array<SelectedSortType<PipelineProgressOrderByWithRelationInput>>,
   ) => void;
+  onEditColumnTitle: (columnId: string, title: string) => void;
+  onEditColumnColor: (columnId: string, color: string) => void;
 }) {
   const [boardColumns] = useRecoilState(boardColumnsState);
   const theme = useTheme();
@@ -115,6 +119,8 @@ export function EntityBoard({
                 <EntityBoardColumn
                   boardOptions={boardOptions}
                   column={column}
+                  onEditColumnTitle={onEditColumnTitle}
+                  onEditColumnColor={onEditColumnColor}
                 />
               </RecoilScope>
             </BoardColumnIdContext.Provider>

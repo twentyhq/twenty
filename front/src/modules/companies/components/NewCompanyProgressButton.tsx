@@ -4,9 +4,9 @@ import { useRecoilCallback, useRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
 import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
-import { boardCardIdsByColumnIdFamilyState } from '@/pipeline/states/boardCardIdsByColumnIdFamilyState';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { NewButton } from '@/ui/board/components/NewButton';
+import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
 import { BoardColumnIdContext } from '@/ui/board/states/BoardColumnIdContext';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';

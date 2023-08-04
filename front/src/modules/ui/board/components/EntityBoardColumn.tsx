@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
@@ -9,9 +8,7 @@ import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import { BoardColumnIdContext } from '@/ui/board/states/BoardColumnIdContext';
 import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 
-import { GET_PIPELINES } from '../queries';
 import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';
 import { boardColumnTotalsFamilySelector } from '../states/boardColumnTotalsFamilySelector';
 import { BoardOptions } from '../types/BoardOptions';
@@ -53,11 +50,15 @@ const BoardColumnCardsContainer = ({
 export function EntityBoardColumn({
   column,
   boardOptions,
+  onEditColumnTitle,
+  onEditColumnColor,
 }: {
   column: BoardColumnDefinition;
   boardOptions: BoardOptions;
+  onEditColumnTitle: (columnId: string, title: string) => void;
+  onEditColumnColor: (columnId: string, color: string) => void;
 }) {
-  const boardColumnId = useContext(BoardColumnIdContext);
+  const boardColumnId = useContext(BoardColumnIdContext) ?? '';
 
   const boardColumnTotal = useRecoilValue(
     boardColumnTotalsFamilySelector(column.id),
@@ -67,26 +68,12 @@ export function EntityBoardColumn({
     boardCardIdsByColumnIdFamilyState(boardColumnId ?? ''),
   );
 
-  const [updatePipelineStage] = useUpdatePipelineStageMutation();
-
   function handleEditColumnTitle(value: string) {
-    updatePipelineStage({
-      variables: {
-        id: boardColumnId,
-        data: { name: value },
-      },
-      refetchQueries: [getOperationName(GET_PIPELINES) || ''],
-    });
+    onEditColumnTitle(boardColumnId, value);
   }
 
-  function handleEditColumnColor(value: string) {
-    updatePipelineStage({
-      variables: {
-        id: boardColumnId,
-        data: { color: value },
-      },
-      refetchQueries: [getOperationName(GET_PIPELINES) || ''],
-    });
+  function handleEditColumnColor(newColor: string) {
+    onEditColumnColor(boardColumnId, newColor);
   }
 
   return (

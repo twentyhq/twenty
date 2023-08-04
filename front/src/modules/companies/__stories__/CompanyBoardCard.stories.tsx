@@ -3,13 +3,13 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
 import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
+import { BoardColumnContext } from '@/ui/board/states/BoardColumnContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPipelineProgressData } from '~/testing/mock-data/pipeline-progress';
 
 import { defaultPipelineProgressOrderBy } from '../../pipeline/queries';
-import { BoardColumnContext } from '../../pipeline/states/BoardColumnContext';
 import { HooksCompanyBoard } from '../components/HooksCompanyBoard';
 import { CompanyBoardContext } from '../states/CompanyBoardContext';
 
