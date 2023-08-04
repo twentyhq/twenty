@@ -90,14 +90,11 @@ export default function SupportChat() {
 
   useEffect(() => {
     const email = user?.email;
-    const displayName = user?.displayName;
-    const userHash = supportChatConfig?.supportHMACKey;
     if (!loading && email && isFrontChatLoaded) {
       window.FrontChat?.('identity', {
         email,
-        ...(displayName ? { name: displayName } : {}),
-        ...(userHash ? { userHash } : {}),
-        customFields: {},
+        name: user?.displayName,
+        userHash: supportChatConfig?.supportHMACKey,
       });
     }
   }, [
