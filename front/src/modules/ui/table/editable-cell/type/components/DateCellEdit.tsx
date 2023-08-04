@@ -4,8 +4,8 @@ import { Key } from 'ts-key-enum';
 
 import { DateInputEdit } from '@/ui/input/date/components/DateInputEdit';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
-import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { useEditableCell } from '../../hooks/useEditableCell';
 

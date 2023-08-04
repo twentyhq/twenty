@@ -2,9 +2,7 @@ import { atom } from 'recoil';
 
 import { ViewFieldDefinition, ViewFieldMetadata } from '../types/ViewField';
 
-export const viewFieldsFamilyState = atom<
-  ViewFieldDefinition<ViewFieldMetadata>[]
->({
-  key: 'viewFieldsFamilyState',
+export const viewFieldsState = atom<ViewFieldDefinition<ViewFieldMetadata>[]>({
+  key: 'viewFieldsState',
   default: [],
 });
