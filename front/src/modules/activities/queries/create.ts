@@ -39,7 +39,6 @@ export const CREATE_ACTIVITY_WITH_COMMENT = gql`
       createdAt
       updatedAt
       authorId
-      assigneeId
       type
       activityTargets {
         id
