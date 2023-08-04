@@ -3,9 +3,6 @@ import {
   boxesIntersect,
   useSelectionContainer,
 } from '@air/react-drag-to-select';
-import { useRecoilValue } from 'recoil';
-
-import { tableRowIdsState } from '../modules/ui/table/states/tableRowIdsState';
 
 type OwnProps = {
   dragSelectable: RefObject<HTMLElement>;
@@ -18,7 +15,6 @@ export function DragSelect({
   onDragSelectionChange,
   onDragSelectionStart,
 }: OwnProps) {
-  const rowIds = useRecoilValue(tableRowIdsState);
 
   const { DragSelection } = useSelectionContainer({
     onSelectionStart: onDragSelectionStart,
