@@ -11,7 +11,7 @@ import { Section, SectionAlignment } from '@/ui/section/components/Section';
 import { H1Title, H1TitleFontColor } from '@/ui/typography/components/H1Title';
 import { debounce } from '~/utils/debounce';
 
-interface DeleteModalProps {
+export interface DeleteModalProps {
   isOpen: boolean;
   title: string;
   subtitle: ReactNode;
@@ -20,7 +20,7 @@ interface DeleteModalProps {
   deleteButtonText?: string;
 }
 
-const StyledCenteredButton = styled(Button)`
+export const StyledCenteredButton = styled(Button)`
   justify-content: center;
 `;
 

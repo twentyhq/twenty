@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { ConfirmationModal } from '@/settings/profile/components/ConfirmationModal';
 import {
   Button,
   ButtonSize,
@@ -36,6 +38,9 @@ const ButtonContainer = styled.div`
 `;
 
 export function SettingsWorkspaceMembers() {
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [userToDelete, setUserToDelte] = useState<string | undefined>();
+
   const [currentUser] = useRecoilState(currentUserState);
   const workspace = currentUser?.workspaceMember?.workspace;
   const theme = useTheme();
@@ -75,6 +80,7 @@ export function SettingsWorkspaceMembers() {
         cache.gc();
       },
     });
+    setIsConfirmationModalOpen(false);
   };
 
   return (
@@ -105,9 +111,10 @@ export function SettingsWorkspaceMembers() {
                 currentUser?.id !== member.user.id && (
                   <ButtonContainer>
                     <Button
-                      onClick={() =>
-                        handleRemoveWorkspaceMember(member.user.id)
-                      }
+                      onClick={() => {
+                        setIsConfirmationModalOpen(true);
+                        setUserToDelte(member.user.id);
+                      }}
                       variant={ButtonVariant.Tertiary}
                       size={ButtonSize.Small}
                       icon={<IconTrash size={theme.icon.size.md} />}
@@ -119,6 +126,21 @@ export function SettingsWorkspaceMembers() {
           ))}
         </Section>
       </StyledContainer>
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        setIsOpen={setIsConfirmationModalOpen}
+        title="Account Deletion"
+        subtitle={
+          <>
+            This action cannot be undone. This will permanently delete this user
+            and remove him from all his assignements.
+          </>
+        }
+        handleConfirmDelete={() =>
+          userToDelete && handleRemoveWorkspaceMember(userToDelete)
+        }
+        deleteButtonText="Delete account"
+      />
     </SubMenuTopBarContainer>
   );
 }
