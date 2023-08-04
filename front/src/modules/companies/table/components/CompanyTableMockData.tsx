@@ -13,18 +13,21 @@ export function CompanyTableMockData() {
   const setEntityTableDimensions = useSetRecoilState(
     entityTableDimensionsState,
   );
-  const setViewFields = useSetRecoilState(viewFieldsState);
+  const setViewFieldsState = useSetRecoilState(viewFieldsState);
   const setEntityTableData = useSetEntityTableData();
 
   setEntityTableData(mockedCompaniesData, []);
 
   useEffect(() => {
-    setViewFields(companyViewFields);
+    setViewFieldsState({
+      objectName: 'company',
+      viewFields: companyViewFields,
+    });
     setEntityTableDimensions((prevState) => ({
       ...prevState,
       numberOfColumns: companyViewFields.length,
     }));
-  }, [setEntityTableDimensions, setViewFields]);
+  }, [setEntityTableDimensions, setViewFieldsState]);
 
   return <></>;
 }

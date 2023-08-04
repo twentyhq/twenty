@@ -13,7 +13,7 @@ const StyledRow = styled.tr<{ selected: boolean }>`
 `;
 
 export function EntityTableRow({ rowId }: { rowId: string }) {
-  const viewFields = useRecoilValue(viewFieldsState);
+  const { viewFields } = useRecoilValue(viewFieldsState);
 
   return (
     <StyledRow data-testid={`row-id-${rowId}`} selected={false}>

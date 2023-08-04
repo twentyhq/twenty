@@ -1,25 +1,44 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
+import { getOperationName } from '@apollo/client/utilities';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
-} from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
+import { IconButton } from '@/ui/button/components/IconButton';
+import { IconPlus } from '@/ui/icon';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
-import { useUpdateViewFieldMutation } from '~/generated/graphql';
+import { GET_VIEW_FIELDS } from '@/views/queries/select';
+import {
+  useCreateViewFieldMutation,
+  useUpdateViewFieldMutation,
+} from '~/generated/graphql';
 
+import { toViewFieldInput } from '../hooks/useLoadView';
 import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
-import { viewFieldsState } from '../states/viewFieldsState';
+import {
+  addableViewFieldDefinitionsState,
+  columnWidthByViewFieldIdState,
+  viewFieldsState,
+} from '../states/viewFieldsState';
+import type {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '../types/ViewField';
 
 import { ColumnHead } from './ColumnHead';
+import { EntityTableColumnMenu } from './EntityTableColumnMenu';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
 const COLUMN_MIN_WIDTH = 75;
 
-const StyledColumnHeaderCell = styled.th<{ isResizing?: boolean }>`
-  min-width: ${COLUMN_MIN_WIDTH}px;
+const StyledColumnHeaderCell = styled.th<{
+  columnWidth: number;
+  isResizing?: boolean;
+}>`
+  ${({ columnWidth }) => `
+    min-width: ${columnWidth}px;
+    width: ${columnWidth}px;
+  `}
   position: relative;
   user-select: none;
   ${({ isResizing, theme }) => {
@@ -49,57 +68,48 @@ const StyledResizeHandler = styled.div`
   z-index: 1;
 `;
 
-export function EntityTableHeader() {
-  const viewFields = useRecoilValue(viewFieldsState);
-  const setViewFields = useSetRecoilState(viewFieldsState);
+const StyledAddIconButtonWrapper = styled.div`
+  display: inline-flex;
+  position: relative;
+`;
 
-  const [updateViewFieldMutation] = useUpdateViewFieldMutation();
-  const columnWidths = useMemo(
-    () =>
-      viewFields.reduce<Record<string, number>>(
-        (result, viewField) => ({
-          ...result,
-          [viewField.id]: viewField.columnSize,
-        }),
-        {},
-      ),
-    [viewFields],
+const StyledAddIconButton = styled(IconButton)`
+  border-radius: 0;
+`;
+
+const StyledEntityTableColumnMenu = styled(EntityTableColumnMenu)`
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: ${({ theme }) => theme.lastLayerZIndex};
+`;
+
+export function EntityTableHeader() {
+  const theme = useTheme();
+
+  const [{ objectName, viewFields }, setViewFieldsState] =
+    useRecoilState(viewFieldsState);
+  const columnWidths = useRecoilValue(columnWidthByViewFieldIdState);
+  const addableViewFieldDefinitions = useRecoilValue(
+    addableViewFieldDefinitionsState,
   );
+  const [offset, setOffset] = useRecoilState(resizeFieldOffsetState);
+
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
   >(null);
-
   const [resizedFieldId, setResizedFieldId] = useState<string | null>(null);
-  const [offset, setOffset] = useRecoilState(resizeFieldOffsetState);
+  const [isColumnMenuOpen, setIsColumnMenuOpen] = useState(false);
 
-  const handleColumnResize = useCallback(
-    (resizedFieldId: string, width: number) => {
-      setViewFields((previousViewFields) =>
-        previousViewFields.map((viewField) =>
-          viewField.id === resizedFieldId
-            ? { ...viewField, columnSize: width }
-            : viewField,
-        ),
-      );
-      updateViewFieldMutation({
-        variables: {
-          data: { sizeInPx: width },
-          where: { id: resizedFieldId },
-        },
-      });
-    },
-    [setViewFields, updateViewFieldMutation],
-  );
+  const [createViewFieldMutation] = useCreateViewFieldMutation();
+  const [updateViewFieldMutation] = useUpdateViewFieldMutation();
 
-  const handleResizeHandlerStart = useCallback(
-    (positionX: number, _: number) => {
-      setInitialPointerPositionX(positionX);
-    },
-    [],
-  );
+  const handleResizeHandlerStart = useCallback((positionX: number) => {
+    setInitialPointerPositionX(positionX);
+  }, []);
 
   const handleResizeHandlerMove = useCallback(
-    (positionX: number, _positionY: number) => {
+    (positionX: number) => {
       if (!initialPointerPositionX) return;
       setOffset(positionX - initialPointerPositionX);
     },
@@ -108,8 +118,9 @@ export function EntityTableHeader() {
 
   const handleResizeHandlerEnd = useRecoilCallback(
     ({ snapshot, set }) =>
-      (_positionX: number, _positionY: number) => {
+      () => {
         if (!resizedFieldId) return;
+
         const nextWidth = Math.round(
           Math.max(
             columnWidths[resizedFieldId] +
@@ -119,13 +130,30 @@ export function EntityTableHeader() {
         );
 
         if (nextWidth !== columnWidths[resizedFieldId]) {
-          handleColumnResize(resizedFieldId, nextWidth);
+          // Optimistic update to avoid "bouncing width" visual effect on resize.
+          setViewFieldsState((previousState) => ({
+            ...previousState,
+            viewFields: previousState.viewFields.map((viewField) =>
+              viewField.id === resizedFieldId
+                ? { ...viewField, columnSize: nextWidth }
+                : viewField,
+            ),
+          }));
+
+          updateViewFieldMutation({
+            variables: {
+              data: { sizeInPx: nextWidth },
+              where: { id: resizedFieldId },
+            },
+            refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
+          });
         }
+
         set(resizeFieldOffsetState, 0);
         setInitialPointerPositionX(null);
         setResizedFieldId(null);
       },
-    [resizedFieldId, columnWidths, setResizedFieldId, handleColumnResize],
+    [resizedFieldId, columnWidths, setResizedFieldId],
   );
 
   useTrackPointer({
@@ -134,6 +162,29 @@ export function EntityTableHeader() {
     onMouseMove: handleResizeHandlerMove,
     onMouseUp: handleResizeHandlerEnd,
   });
+
+  const toggleColumnMenu = useCallback(() => {
+    setIsColumnMenuOpen((previousValue) => !previousValue);
+  }, []);
+
+  const handleAddViewField = useCallback(
+    (viewFieldDefinition: ViewFieldDefinition<ViewFieldMetadata>) => {
+      setIsColumnMenuOpen(false);
+
+      if (!objectName) return;
+
+      createViewFieldMutation({
+        variables: {
+          data: toViewFieldInput(objectName, {
+            ...viewFieldDefinition,
+            columnOrder: viewFields.length + 1,
+          }),
+        },
+        refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
+      });
+    },
+    [createViewFieldMutation, objectName, viewFields.length],
+  );
 
   return (
     <thead>
@@ -150,15 +201,13 @@ export function EntityTableHeader() {
 
         {viewFields.map((viewField) => (
           <StyledColumnHeaderCell
-            key={viewField.columnOrder.toString()}
+            key={viewField.id}
             isResizing={resizedFieldId === viewField.id}
-            style={{
-              width: Math.max(
-                columnWidths[viewField.id] +
-                  (resizedFieldId === viewField.id ? offset : 0),
-                COLUMN_MIN_WIDTH,
-              ),
-            }}
+            columnWidth={Math.max(
+              columnWidths[viewField.id] +
+                (resizedFieldId === viewField.id ? offset : 0),
+              COLUMN_MIN_WIDTH,
+            )}
           >
             <ColumnHead
               viewName={viewField.columnLabel}
@@ -173,7 +222,24 @@ export function EntityTableHeader() {
             />
           </StyledColumnHeaderCell>
         ))}
-        <th></th>
+        <th>
+          {addableViewFieldDefinitions.length > 0 && (
+            <StyledAddIconButtonWrapper>
+              <StyledAddIconButton
+                size="large"
+                icon={<IconPlus size={theme.icon.size.md} />}
+                onClick={toggleColumnMenu}
+              />
+              {isColumnMenuOpen && (
+                <StyledEntityTableColumnMenu
+                  onAddViewField={handleAddViewField}
+                  onClickOutside={toggleColumnMenu}
+                  viewFieldDefinitions={addableViewFieldDefinitions}
+                />
+              )}
+            </StyledAddIconButtonWrapper>
+          )}
+        </th>
       </tr>
     </thead>
   );

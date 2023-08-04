@@ -905,6 +905,7 @@ export type Mutation = {
   createOneCompany: Company;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
+  createOneViewField: ViewField;
   deleteCurrentWorkspace: Workspace;
   deleteManyActivities: AffectedRows;
   deleteManyCompany: AffectedRows;
@@ -977,6 +978,11 @@ export type MutationCreateOnePersonArgs = {
 
 export type MutationCreateOnePipelineProgressArgs = {
   data: PipelineProgressCreateInput;
+};
+
+
+export type MutationCreateOneViewFieldArgs = {
+  data: ViewFieldCreateInput;
 };
 
 
@@ -2137,6 +2143,15 @@ export type ViewField = {
   sizeInPx: Scalars['Int'];
 };
 
+export type ViewFieldCreateInput = {
+  fieldName: Scalars['String'];
+  id?: InputMaybe<Scalars['String']>;
+  index: Scalars['Int'];
+  isVisible: Scalars['Boolean'];
+  objectName: Scalars['String'];
+  sizeInPx: Scalars['Int'];
+};
+
 export type ViewFieldCreateManyInput = {
   fieldName: Scalars['String'];
   id?: InputMaybe<Scalars['String']>;
@@ -2708,6 +2723,13 @@ export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }
 
 
 export type DeleteUserAccountMutation = { __typename?: 'Mutation', deleteUserAccount: { __typename?: 'User', id: string } };
+
+export type CreateViewFieldMutationVariables = Exact<{
+  data: ViewFieldCreateInput;
+}>;
+
+
+export type CreateViewFieldMutation = { __typename?: 'Mutation', createOneViewField: { __typename?: 'ViewField', id: string, fieldName: string, isVisible: boolean, sizeInPx: number, index: number } };
 
 export type CreateViewFieldsMutationVariables = Exact<{
   data: Array<ViewFieldCreateManyInput> | ViewFieldCreateManyInput;
@@ -5128,6 +5150,43 @@ export function useDeleteUserAccountMutation(baseOptions?: Apollo.MutationHookOp
 export type DeleteUserAccountMutationHookResult = ReturnType<typeof useDeleteUserAccountMutation>;
 export type DeleteUserAccountMutationResult = Apollo.MutationResult<DeleteUserAccountMutation>;
 export type DeleteUserAccountMutationOptions = Apollo.BaseMutationOptions<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
+export const CreateViewFieldDocument = gql`
+    mutation CreateViewField($data: ViewFieldCreateInput!) {
+  createOneViewField(data: $data) {
+    id
+    fieldName
+    isVisible
+    sizeInPx
+    index
+  }
+}
+    `;
+export type CreateViewFieldMutationFn = Apollo.MutationFunction<CreateViewFieldMutation, CreateViewFieldMutationVariables>;
+
+/**
+ * __useCreateViewFieldMutation__
+ *
+ * To run a mutation, you first call `useCreateViewFieldMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateViewFieldMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createViewFieldMutation, { data, loading, error }] = useCreateViewFieldMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateViewFieldMutation(baseOptions?: Apollo.MutationHookOptions<CreateViewFieldMutation, CreateViewFieldMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateViewFieldMutation, CreateViewFieldMutationVariables>(CreateViewFieldDocument, options);
+      }
+export type CreateViewFieldMutationHookResult = ReturnType<typeof useCreateViewFieldMutation>;
+export type CreateViewFieldMutationResult = Apollo.MutationResult<CreateViewFieldMutation>;
+export type CreateViewFieldMutationOptions = Apollo.BaseMutationOptions<CreateViewFieldMutation, CreateViewFieldMutationVariables>;
 export const CreateViewFieldsDocument = gql`
     mutation CreateViewFields($data: [ViewFieldCreateManyInput!]!) {
   createManyViewField(data: $data) {
