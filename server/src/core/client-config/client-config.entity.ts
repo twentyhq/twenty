@@ -30,9 +30,6 @@ class SupportChat {
 
   @Field(() => String, { nullable: true })
   supportFrontendKey: string | null;
-
-  @Field(() => String, { nullable: true })
-  supportHMACKey: string | null;
 }
 
 @ObjectType()

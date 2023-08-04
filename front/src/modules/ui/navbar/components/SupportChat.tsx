@@ -3,12 +3,12 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { supportChatState } from '@/client-config/states/supportChatState';
 import {
   Button,
   ButtonSize,
   ButtonVariant,
 } from '@/ui/button/components/Button';
-import { useGetClientConfigQuery } from '~/generated/graphql';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -64,14 +64,9 @@ function configureFront(chatId: string) {
 
 export default function SupportChat() {
   const user = useRecoilValue(currentUserState);
+  const supportChatConfig = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
   const [isChatShowing, setIsChatShowing] = useState(false);
-
-  const { data, loading } = useGetClientConfigQuery({
-    variables: { email: user?.email },
-  });
-
-  const supportChatConfig = data?.clientConfig.supportChat;
 
   useEffect(() => {
     if (
@@ -82,28 +77,20 @@ export default function SupportChat() {
       configureFront(supportChatConfig.supportFrontendKey);
       setIsFrontChatLoaded(true);
     }
-  }, [
-    isFrontChatLoaded,
-    supportChatConfig?.supportDriver,
-    supportChatConfig?.supportFrontendKey,
-  ]);
-
-  useEffect(() => {
-    const email = user?.email;
-    if (!loading && email && isFrontChatLoaded) {
+    if (user?.email && isFrontChatLoaded) {
       window.FrontChat?.('identity', {
-        email,
-        name: user?.displayName,
-        userHash: supportChatConfig?.supportHMACKey,
+        email: user.email,
+        name: user.displayName,
+        userHash: user?.supportHMACKey,
       });
     }
   }, [
     isFrontChatLoaded,
-    supportChatConfig?.supportFrontendKey,
-    supportChatConfig?.supportHMACKey,
+    supportChatConfig?.supportDriver,
+    supportChatConfig.supportFrontendKey,
     user?.displayName,
     user?.email,
-    loading,
+    user?.supportHMACKey,
   ]);
 
   function handleSupportClick() {

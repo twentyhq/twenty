@@ -27,6 +27,7 @@ export const GET_CURRENT_USER = gql`
         locale
         colorScheme
       }
+      supportHMACKey
     }
   }
 `;

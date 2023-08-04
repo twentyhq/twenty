@@ -210,7 +210,6 @@ export const graphqlMocks = [
           supportChat: {
             supportDriver: 'front',
             supportFrontendKey: null,
-            supportHMACKey: null,
           },
         },
       }),
