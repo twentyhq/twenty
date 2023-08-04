@@ -16,7 +16,11 @@ export function EntityTableRow({ rowId }: { rowId: string }) {
   const viewFields = useRecoilValue(visibleViewFieldsState);
 
   return (
-    <StyledRow data-testid={`row-id-${rowId}`} selected={false}>
+    <StyledRow
+      data-testid={`row-id-${rowId}`}
+      selected={false}
+      data-selectable-id={rowId}
+    >
       <td>
         <CheckboxCell />
       </td>

@@ -1,12 +1,16 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
+import { DragSelect } from '../../../../utils/DragSelect';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
+import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
 import { EntityUpdateMutationHookContext } from '../states/EntityUpdateMutationHookContext';
+import { tableRowIdsState } from '../states/tableRowIdsState';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -99,6 +103,16 @@ export function EntityTable<SortField>({
   useUpdateEntityMutation,
 }: OwnProps<SortField>) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
+  const entityTableBodyRef = useRef<HTMLTableSectionElement>(null);
+
+  const rowIds = useRecoilValue(tableRowIdsState);
+  const setRowSelectedState = useSetRowSelectedState();
+
+  function resetSelections() {
+    for (const rowId of rowIds) {
+      setRowSelectedState(rowId, false);
+    }
+  }
 
   useMapKeyboardToSoftFocus();
 
@@ -124,9 +138,14 @@ export function EntityTable<SortField>({
           <StyledTableWrapper>
             <StyledTable>
               <EntityTableHeader />
-              <EntityTableBody />
+              <EntityTableBody tbodyRef={entityTableBodyRef} />
             </StyledTable>
           </StyledTableWrapper>
+          <DragSelect
+            dragSelectable={entityTableBodyRef}
+            onDragSelectionStart={resetSelections}
+            onDragSelectionChange={setRowSelectedState}
+          />
         </StyledTableContainer>
       </StyledTableWithHeader>
     </EntityUpdateMutationHookContext.Provider>
