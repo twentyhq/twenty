@@ -1,16 +1,19 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
+import { DragSelect } from '../../../../utils/DragSelect';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
+import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
 import { EntityUpdateMutationHookContext } from '../states/EntityUpdateMutationHookContext';
+import { tableRowIdsState } from '../states/tableRowIdsState';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
-import { EntityTableDragSelect } from './EntityTableDragSelect';
 import { EntityTableHeader } from './EntityTableHeader';
 
 const StyledTable = styled.table`
@@ -103,6 +106,15 @@ export function EntityTable<SortField>({
   const tableBodyRef = useRef<HTMLDivElement>(null);
   const entityTableBodyRef = useRef<HTMLTableSectionElement>(null);
 
+  const rowIds = useRecoilValue(tableRowIdsState);
+  const setRowSelectedState = useSetRowSelectedState();
+
+  function resetSelections() {
+    for (const rowId of rowIds) {
+      setRowSelectedState(rowId, false);
+    }
+  }
+
   useMapKeyboardToSoftFocus();
 
   const leaveTableFocus = useLeaveTableFocus();
@@ -130,9 +142,10 @@ export function EntityTable<SortField>({
               <EntityTableBody tbodyRef={entityTableBodyRef} />
             </StyledTable>
           </StyledTableWrapper>
-          <EntityTableDragSelect
-            tableBodyRef={tableBodyRef}
-            entityTableBodyRef={entityTableBodyRef}
+          <DragSelect
+            dragSelectable={entityTableBodyRef}
+            onDragSelectionStart={resetSelections}
+            onDragSelectionChange={setRowSelectedState}
           />
         </StyledTableContainer>
       </StyledTableWithHeader>
