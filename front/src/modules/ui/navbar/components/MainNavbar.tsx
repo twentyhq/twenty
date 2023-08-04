@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   height: 100%;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: ${({ theme }) => theme.spacing(2.5)};
   width: 100%;
 `;
 

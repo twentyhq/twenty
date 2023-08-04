@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { supportChatState } from '@/client-config/states/supportChatState';
+import {
+  Button,
+  ButtonSize,
+  ButtonVariant,
+} from '@/ui/button/components/Button';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 
 const StyledButtonContainer = styled.div`
@@ -20,22 +24,6 @@ const StyledQuestionMark = styled.div`
   justify-content: center;
   margin-right: ${({ theme }) => theme.spacing(1)};
   width: ${({ theme }) => theme.spacing(3.5)};
-`;
-
-const StyledButton = styled.button`
-  align-items: center;
-  background-color: transparent;
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  :hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
-    color: ${({ theme }) => theme.font.color.secondary};
-  }
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 // insert a script tag into the DOM right before the closing body tag
@@ -75,24 +63,19 @@ function configureFront(chatId: string) {
 }
 
 export default function SupportChat() {
-  const [supportChatConfig, setSupportChatConfig] =
-    useRecoilState(supportChatState);
   const user = useRecoilValue(currentUserState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
+  const [isChatShowing, setIsChatShowing] = useState(false);
 
   const { data, loading } = useGetClientConfigQuery({
     variables: { email: user?.email },
   });
 
-  useEffect(() => {
-    if (!loading && data?.clientConfig) {
-      setSupportChatConfig(data?.clientConfig.supportChat);
-    }
-  }, [data, loading, setSupportChatConfig]);
+  const supportChatConfig = data?.clientConfig.supportChat;
 
   useEffect(() => {
     if (
-      supportChatConfig.supportDriver === 'front' &&
+      supportChatConfig?.supportDriver === 'front' &&
       supportChatConfig.supportFrontendKey &&
       !isFrontChatLoaded
     ) {
@@ -101,14 +84,14 @@ export default function SupportChat() {
     }
   }, [
     isFrontChatLoaded,
-    supportChatConfig.supportDriver,
-    supportChatConfig.supportFrontendKey,
+    supportChatConfig?.supportDriver,
+    supportChatConfig?.supportFrontendKey,
   ]);
 
   useEffect(() => {
     const email = user?.email;
     const displayName = user?.displayName;
-    const userHash = supportChatConfig.supportHMACKey;
+    const userHash = supportChatConfig?.supportHMACKey;
     if (!loading && email && isFrontChatLoaded) {
       window.FrontChat?.('identity', {
         email,
@@ -119,23 +102,30 @@ export default function SupportChat() {
     }
   }, [
     isFrontChatLoaded,
-    supportChatConfig.supportFrontendKey,
-    supportChatConfig.supportHMACKey,
+    supportChatConfig?.supportFrontendKey,
+    supportChatConfig?.supportHMACKey,
     user?.displayName,
     user?.email,
     loading,
   ]);
 
   function handleSupportClick() {
-    if (supportChatConfig.supportDriver === 'front') window.FrontChat?.('show');
+    if (supportChatConfig?.supportDriver === 'front') {
+      const action = isChatShowing ? 'hide' : 'show';
+      setIsChatShowing(!isChatShowing);
+      window.FrontChat?.(action);
+    }
   }
 
   return isFrontChatLoaded ? (
     <StyledButtonContainer>
-      <StyledButton>
-        <StyledQuestionMark>?</StyledQuestionMark>
-        <div onClick={handleSupportClick}>Support</div>
-      </StyledButton>
+      <Button
+        variant={ButtonVariant.Tertiary}
+        size={ButtonSize.Small}
+        title="Support"
+        icon={<StyledQuestionMark>?</StyledQuestionMark>}
+        onClick={handleSupportClick}
+      />
     </StyledButtonContainer>
   ) : null;
 }
