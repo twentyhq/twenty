@@ -4,6 +4,7 @@ import { useTheme } from '@emotion/react';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
 import {
+  IconBell,
   IconBuildingSkyscraper,
   IconCheckbox,
   IconSearch,
@@ -15,7 +16,6 @@ import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavba
 import MainNavbar from '@/ui/navbar/components/MainNavbar';
 import NavItem from '@/ui/navbar/components/NavItem';
 import NavTitle from '@/ui/navbar/components/NavTitle';
-import { IconBell } from '@tabler/icons-react';
 
 export function AppNavbar() {
   const theme = useTheme();
