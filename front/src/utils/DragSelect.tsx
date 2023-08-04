@@ -15,7 +15,6 @@ export function DragSelect({
   onDragSelectionChange,
   onDragSelectionStart,
 }: OwnProps) {
-
   const { DragSelection } = useSelectionContainer({
     onSelectionStart: onDragSelectionStart,
     onSelectionChange: (box) => {
