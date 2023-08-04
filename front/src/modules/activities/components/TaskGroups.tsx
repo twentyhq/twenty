@@ -16,7 +16,7 @@ const StyledTaskGroupEmptyContainer = styled.div`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing(2)};
   justify-content: center;
   padding-bottom: ${({ theme }) => theme.spacing(16)};
   padding-left: ${({ theme }) => theme.spacing(4)};
@@ -40,12 +40,16 @@ const StyledEmptyTaskGroupSubTitle = styled.div`
 `;
 
 export function TaskGroups() {
-  const { todayOrPreviousTasks, upcomingTasks } = useTasks();
+  const { todayOrPreviousTasks, upcomingTasks, unscheduledTasks } = useTasks();
   const theme = useTheme();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  if (todayOrPreviousTasks?.length === 0 && upcomingTasks?.length === 0) {
+  if (
+    todayOrPreviousTasks?.length === 0 &&
+    upcomingTasks?.length === 0 &&
+    unscheduledTasks?.length === 0
+  ) {
     return (
       <StyledTaskGroupEmptyContainer>
         <StyledEmptyTaskGroupTitle>No task yet</StyledEmptyTaskGroupTitle>
@@ -64,6 +68,7 @@ export function TaskGroups() {
     <>
       <TaskList title="Today" tasks={todayOrPreviousTasks ?? []} />
       <TaskList title="Upcoming" tasks={upcomingTasks ?? []} />
+      <TaskList title="Unscheduled" tasks={unscheduledTasks ?? []} />
     </>
   );
 }

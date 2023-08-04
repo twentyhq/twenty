@@ -45,7 +45,6 @@ export function useOpenCreateActivityDrawer() {
           updatedAt: now,
           author: { connect: { id: currentUser?.id ?? '' } },
           assignee: { connect: { id: currentUser?.id ?? '' } },
-          dueAt: now,
           type: type,
           activityTargets: {
             createMany: {
