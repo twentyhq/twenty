@@ -28,8 +28,8 @@ export function useOpenCreateActivityDrawer() {
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
   return function openCreateActivityDrawer(
-    entity: CommentableEntity,
     type: ActivityType,
+    entity?: CommentableEntity,
   ) {
     createActivityMutation({
       variables: {
@@ -37,14 +37,16 @@ export function useOpenCreateActivityDrawer() {
         activityId: v4(),
         createdAt: new Date().toISOString(),
         type: type,
-        activityTargetArray: [
-          {
-            commentableId: entity.id,
-            commentableType: entity.type,
-            id: v4(),
-            createdAt: new Date().toISOString(),
-          },
-        ],
+        activityTargetArray: entity
+          ? [
+              {
+                commentableId: entity.id,
+                commentableType: entity.type,
+                id: v4(),
+                createdAt: new Date().toISOString(),
+              },
+            ]
+          : [],
       },
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
@@ -55,7 +57,7 @@ export function useOpenCreateActivityDrawer() {
       onCompleted(data) {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableActivityId(data.createOneActivity.id);
-        setCommentableEntityArray([entity]);
+        setCommentableEntityArray(entity ? [entity] : []);
         openRightDrawer(RightDrawerPages.CreateActivity);
       },
     });
