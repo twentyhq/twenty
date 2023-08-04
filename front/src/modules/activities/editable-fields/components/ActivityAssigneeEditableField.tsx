@@ -15,6 +15,7 @@ type OwnProps = {
 };
 
 export function ActivityAssigneeEditableField({ activity }: OwnProps) {
+  console.log(activity);
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <RecoilScope>
