@@ -6,6 +6,7 @@ export { IconTrash } from '@tabler/icons-react';
 export { IconLayoutSidebarRightCollapse } from '@tabler/icons-react';
 export { IconLayoutSidebarLeftCollapse } from '@tabler/icons-react';
 export { IconUser } from '@tabler/icons-react';
+export { IconBell } from '@tabler/icons-react';
 export { IconList } from '@tabler/icons-react';
 export { IconInbox } from '@tabler/icons-react';
 export { IconSearch } from '@tabler/icons-react';
