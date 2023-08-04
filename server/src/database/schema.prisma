@@ -566,7 +566,7 @@ model ViewField {
   sizeInPx   Int
 
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
 
