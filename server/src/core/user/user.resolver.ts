@@ -43,6 +43,8 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 
 import { UserService } from './user.service';
 
+import { UserWithHMACKey } from './dto/user-with-HMAC';
+
 function getHMACKey(email?: string, key?: string | null) {
   if (!email || !key) return null;
 
@@ -59,7 +61,7 @@ export class UserResolver {
     private environmentService: EnvironmentService,
   ) {}
 
-  @Query(() => User)
+  @Query(() => UserWithHMACKey)
   async currentUser(
     @AuthUser() { id, email }: User,
     @PrismaSelector({ modelName: 'User' })
@@ -67,11 +69,14 @@ export class UserResolver {
   ) {
     const key = this.environmentService.getSupportHMACKey();
 
+    const select = prismaSelect.value;
+    delete select['supportHMACKey'];
+
     const user = await this.userService.findUnique({
       where: {
         id,
       },
-      select: prismaSelect.value,
+      select,
     });
     assert(user, 'User not found');
 
