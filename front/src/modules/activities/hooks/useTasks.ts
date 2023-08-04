@@ -96,8 +96,13 @@ export function useTasks() {
     return dueDate > today;
   });
 
+  const unscheduledTasks = tasksData?.findManyActivities.filter((task) => {
+    return !task.dueAt;
+  });
+
   return {
     todayOrPreviousTasks,
     upcomingTasks,
+    unscheduledTasks,
   };
 }

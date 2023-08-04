@@ -1,8 +1,15 @@
+import { ComponentProps } from 'react';
 import styled from '@emotion/styled';
 
+import {
+  IconButtonGroup,
+  type IconButtonGroupProps,
+} from '@/ui/button/components/IconButtonGroup';
 import { hoverBackground } from '@/ui/theme/constants/effects';
 
-export const DropdownMenuItem = styled.li`
+const styledIconButtonGroupClassName = 'dropdown-menu-item-actions';
+
+const StyledItem = styled.li`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
 
@@ -25,6 +32,43 @@ export const DropdownMenuItem = styled.li`
 
   ${hoverBackground};
 
+  position: relative;
   user-select: none;
+
   width: calc(100% - 2 * var(--horizontal-padding));
+
+  &:hover {
+    .${styledIconButtonGroupClassName} {
+      display: flex;
+    }
+  }
 `;
+
+const StyledActions = styled(IconButtonGroup)`
+  display: none;
+  position: absolute;
+  right: ${({ theme }) => theme.spacing(1)};
+`;
+
+export type DropdownMenuItemProps = ComponentProps<'li'> & {
+  actions?: IconButtonGroupProps['children'];
+};
+
+export const DropdownMenuItem = ({
+  actions,
+  children,
+  ...props
+}: DropdownMenuItemProps) => (
+  <StyledItem {...props}>
+    {children}
+    {actions && (
+      <StyledActions
+        className={styledIconButtonGroupClassName}
+        variant="transparent"
+        size="small"
+      >
+        {actions}
+      </StyledActions>
+    )}
+  </StyledItem>
+);

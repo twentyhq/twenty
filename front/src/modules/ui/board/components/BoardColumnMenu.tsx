@@ -5,7 +5,6 @@ import { IconPencil } from '@tabler/icons-react';
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
-import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
 import { icon } from '@/ui/theme/constants/icon';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
@@ -46,9 +45,7 @@ export function BoardColumnMenu({
         {openMenu === 'actions' && (
           <DropdownMenuItemsContainer>
             <DropdownMenuSelectableItem onClick={() => setOpenMenu('title')}>
-              <DropdownButton.StyledIcon>
-                <IconPencil size={icon.size.md} stroke={icon.stroke.sm} />
-              </DropdownButton.StyledIcon>
+              <IconPencil size={icon.size.md} stroke={icon.stroke.sm} />
               Rename
             </DropdownMenuSelectableItem>
           </DropdownMenuItemsContainer>

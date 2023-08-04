@@ -25,11 +25,32 @@ import {
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AbilityGuard } from 'src/guards/ability.guard';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { CreateOneViewFieldArgs } from 'src/core/@generated/view-field/create-one-view-field.args';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => ViewField)
 export class ViewFieldResolver {
   constructor(private readonly viewFieldService: ViewFieldService) {}
+
+  @Mutation(() => ViewField, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreateViewFieldAbilityHandler)
+  async createOneViewField(
+    @Args() args: CreateOneViewFieldArgs,
+    @AuthWorkspace() workspace: Workspace,
+    @PrismaSelector({ modelName: 'ViewField' })
+    prismaSelect: PrismaSelect<'ViewField'>,
+  ): Promise<Partial<ViewField>> {
+    return this.viewFieldService.create({
+      data: {
+        ...args.data,
+        workspace: { connect: { id: workspace.id } },
+      },
+      select: prismaSelect.value,
+    });
+  }
 
   @Mutation(() => AffectedRows)
   @UseGuards(AbilityGuard)

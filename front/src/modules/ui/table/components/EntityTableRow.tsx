@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { ViewFieldContext } from '../states/ViewFieldContext';
-import { viewFieldsState } from '../states/viewFieldsState';
+import { visibleViewFieldsState } from '../states/viewFieldsState';
 
 import { CheckboxCell } from './CheckboxCell';
 import { EntityTableCell } from './EntityTableCell';
@@ -13,7 +13,7 @@ const StyledRow = styled.tr<{ selected: boolean }>`
 `;
 
 export function EntityTableRow({ rowId }: { rowId: string }) {
-  const viewFields = useRecoilValue(viewFieldsState);
+  const viewFields = useRecoilValue(visibleViewFieldsState);
 
   return (
     <StyledRow
@@ -26,10 +26,7 @@ export function EntityTableRow({ rowId }: { rowId: string }) {
       </td>
       {viewFields.map((viewField, columnIndex) => {
         return (
-          <ViewFieldContext.Provider
-            value={viewField}
-            key={viewField.columnOrder}
-          >
+          <ViewFieldContext.Provider value={viewField} key={viewField.id}>
             <EntityTableCell cellIndex={columnIndex} />
           </ViewFieldContext.Provider>
         );

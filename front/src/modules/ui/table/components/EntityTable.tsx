@@ -24,7 +24,6 @@ const StyledTable = styled.table`
   margin-left: ${({ theme }) => theme.table.horizontalCellMargin};
   margin-right: ${({ theme }) => theme.table.horizontalCellMargin};
   table-layout: fixed;
-  width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
 
   th {
     border: 1px solid ${({ theme }) => theme.border.color.light};
@@ -41,7 +40,7 @@ const StyledTable = styled.table`
       border-right-color: transparent;
     }
     :last-of-type {
-      min-width: 0;
+      min-width: fit-content;
       width: 100%;
     }
   }
@@ -62,7 +61,7 @@ const StyledTable = styled.table`
       border-right-color: transparent;
     }
     :last-of-type {
-      min-width: 0;
+      min-width: fit-content;
       width: 100%;
     }
   }

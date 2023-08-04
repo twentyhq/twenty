@@ -4,9 +4,9 @@ import { useTheme } from '@emotion/react';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
 import {
+  IconBell,
   IconBuildingSkyscraper,
   IconCheckbox,
-  IconInbox,
   IconSearch,
   IconSettings,
   IconTargetArrow,
@@ -36,9 +36,9 @@ export function AppNavbar() {
             }}
           />
           <NavItem
-            label="Inbox"
+            label="Notifications"
             to="/inbox"
-            icon={<IconInbox size={theme.icon.size.md} />}
+            icon={<IconBell size={theme.icon.size.md} />}
             soon={true}
           />
           <NavItem
