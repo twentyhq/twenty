@@ -14,12 +14,7 @@ type MockedPipeline = Pick<
       pipelineProgresses: Array<
         Pick<
           PipelineProgress,
-          | 'id'
-          | 'progressableType'
-          | 'progressableId'
-          | 'amount'
-          | 'closeDate'
-          | '__typename'
+          'id' | 'companyId' | 'amount' | 'closeDate' | '__typename'
         >
       >;
     }
@@ -40,16 +35,14 @@ export const mockedPipelinesData: Array<MockedPipeline> = [
         pipelineProgresses: [
           {
             id: 'fe256b39-3ec3-4fe7-8998-b76aa0bfb600',
-            progressableType: PipelineProgressableType.Company,
-            progressableId: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
+            companyId: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
             amount: null,
             closeDate: null,
             __typename: 'PipelineProgress',
           },
           {
             id: '4a886c90-f4f2-4984-8222-882ebbb905d6',
-            progressableType: PipelineProgressableType.Company,
-            progressableId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
+            companyId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
             amount: null,
             closeDate: null,
             __typename: 'PipelineProgress',

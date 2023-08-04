@@ -7,7 +7,7 @@ import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearch } from '@/ui/dropdown/components/DropdownMenuSearch';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
-import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 

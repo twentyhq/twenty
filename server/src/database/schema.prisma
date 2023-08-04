@@ -240,9 +240,10 @@ model Company {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  ActivityTarget ActivityTarget[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  ActivityTarget   ActivityTarget[]
+  PipelineProgress PipelineProgress[]
 
   @@map("companies")
 }
@@ -276,20 +277,21 @@ model Person {
   /// @Validator.IsOptional()
   avatarUrl   String?
 
-  company            Company?           @relation(fields: [companyId], references: [id])
-  companyId          String?
+  company                   Company?           @relation(fields: [companyId], references: [id])
+  companyId                 String?
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace          Workspace          @relation(fields: [workspaceId], references: [id])
+  workspace                 Workspace          @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId        String
-  pipelineProgresses PipelineProgress[]
+  workspaceId               String
+  contactPipelineProgresses PipelineProgress[] @relation("PointOfContactPipelineProgress")
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  ActivityTarget ActivityTarget[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  ActivityTarget   ActivityTarget[]
+  PipelineProgress PipelineProgress[]
 
   @@map("people")
 }
@@ -488,24 +490,29 @@ model PipelineProgress {
   closeDate   DateTime?
   probability Int?
 
-  pipeline         Pipeline                 @relation(fields: [pipelineId], references: [id])
+  pipeline         Pipeline      @relation(fields: [pipelineId], references: [id])
   pipelineId       String
-  pipelineStage    PipelineStage            @relation(fields: [pipelineStageId], references: [id])
+  pipelineStage    PipelineStage @relation(fields: [pipelineStageId], references: [id])
   pipelineStageId  String
-  pointOfContact   Person?                  @relation(fields: [pointOfContactId], references: [id])
+  pointOfContact   Person?       @relation("PointOfContactPipelineProgress", fields: [pointOfContactId], references: [id])
   pointOfContactId String?
-  progressableType PipelineProgressableType
-  progressableId   String
+
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspace        Workspace                @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
-  workspaceId      String
+  workspaceId String
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
+
+  personId String?
+  person   Person? @relation(fields: [personId], references: [id])
 
   @@map("pipeline_progresses")
 }

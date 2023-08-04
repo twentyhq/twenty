@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 
-import { useListenClickOutside } from '@/ui/utilities/click-outside/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
 

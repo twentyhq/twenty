@@ -36,6 +36,7 @@ export function FilterDropdownUserSearchSelect({
       entityType: Entity.User,
       name: `${entity.displayName}`,
       avatarType: 'rounded',
+      avatarUrl: entity.avatarUrl ?? '',
     }),
     searchFilter: filterDropdownSearchInput,
   });

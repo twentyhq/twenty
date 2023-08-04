@@ -27,7 +27,7 @@ export const opportunitiesFilters: FilterDefinitionByEntity<PipelineProgress>[] 
       type: 'date',
     },
     {
-      field: 'progressableId',
+      field: 'companyId',
       label: 'Company',
       icon: (
         <IconBuildingSkyscraper size={icon.size.md} stroke={icon.stroke.sm} />
