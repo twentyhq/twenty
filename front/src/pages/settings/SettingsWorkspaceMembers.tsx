@@ -39,7 +39,7 @@ const ButtonContainer = styled.div`
 
 export function SettingsWorkspaceMembers() {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-  const [userToDelete, setUserToDelte] = useState<string | undefined>();
+  const [userToDelete, setUserToDelete] = useState<string | undefined>();
 
   const [currentUser] = useRecoilState(currentUserState);
   const workspace = currentUser?.workspaceMember?.workspace;
@@ -113,7 +113,7 @@ export function SettingsWorkspaceMembers() {
                     <Button
                       onClick={() => {
                         setIsConfirmationModalOpen(true);
-                        setUserToDelte(member.user.id);
+                        setUserToDelete(member.user.id);
                       }}
                       variant={ButtonVariant.Tertiary}
                       size={ButtonSize.Small}
