@@ -22,7 +22,7 @@ const StyledTasksContainer = styled.div`
 const StyledTabListContainer = styled.div`
   align-items: end;
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
+  height: 40px;
 `;
 
 export function Tasks() {
