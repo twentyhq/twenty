@@ -141,7 +141,7 @@ export class UserResolver {
   }
 
   @ResolveField(() => String, {
-    nullable: false,
+    nullable: true,
   })
   supportUserHash(@Parent() parent: User): string | null {
     if (this.environmentService.getSupportDriver() !== SupportDriver.Front) {
