@@ -43,7 +43,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 
 import { UserService } from './user.service';
 
-import { UserWithHMACKey } from './dto/user-with-HMAC';
+import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
 
 function getHMACKey(email?: string, key?: string | null) {
   if (!email || !key) return null;
@@ -61,26 +61,25 @@ export class UserResolver {
     private environmentService: EnvironmentService,
   ) {}
 
-  @Query(() => UserWithHMACKey)
+  @Query(() => User)
   async currentUser(
-    @AuthUser() { id, email }: User,
+    @AuthUser() { id }: User,
     @PrismaSelector({ modelName: 'User' })
     prismaSelect: PrismaSelect<'User'>,
   ) {
-    const key = this.environmentService.getSupportHMACKey();
+   
 
     const select = prismaSelect.value;
-    delete select['supportHMACKey'];
 
     const user = await this.userService.findUnique({
       where: {
         id,
       },
-      select,
+    select
     });
     assert(user, 'User not found');
 
-    return { ...user, supportHMACKey: getHMACKey(email, key) };
+    return user;
   }
 
   @UseFilters(ExceptionFilter)
@@ -139,6 +138,17 @@ export class UserResolver {
   })
   displayName(@Parent() parent: User): string {
     return `${parent.firstName ?? ''} ${parent.lastName ?? ''}`;
+  }
+
+  @ResolveField(() => String, {
+    nullable: false,
+  })
+  supportUserHash(@Parent() parent: User): string | null {
+    if (this.environmentService.getSupportDriver() !== SupportDriver.Front) {
+      return null;
+    }
+    const key = this.environmentService.getSupportFrontHMACKey();
+    return getHMACKey(parent.email, key);
   }
 
   @Mutation(() => String)

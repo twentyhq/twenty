@@ -1,11 +1,11 @@
 import { atom } from 'recoil';
 
-import { SupportChat } from '~/generated/graphql';
+import { Support } from '~/generated/graphql';
 
-export const supportChatState = atom<SupportChat>({
+export const supportChatState = atom<Support>({
   key: 'supportChatState',
   default: {
-    supportDriver: 'front',
-    supportFrontendKey: null,
+    supportDriver: 'none',
+    supportFrontChatId: null,
   },
 });

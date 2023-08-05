@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { StorageType } from './interfaces/storage.interface';
+import { SupportDriver } from './interfaces/support.interface';
 
 @Injectable()
 export class EnvironmentService {
@@ -103,14 +104,14 @@ export class EnvironmentService {
   }
 
   getSupportDriver(): string {
-    return this.configService.get<string>('SUPPORT_DRIVER') ?? 'front';
+    return this.configService.get<string>('SUPPORT_DRIVER') ?? SupportDriver.None;
   }
 
-  getSupportFrontendKey(): string | null {
-    return this.configService.get<string>('SUPPORT_FRONTEND_KEY') ?? null;
+  getSupportFrontChatId(): string | undefined {
+    return this.configService.get<string>('SUPPORT_FRONT_CHAT_ID');
   }
 
-  getSupportHMACKey(): string | null {
-    return this.configService.get<string>('SUPPORT_HMAC_KEY') ?? null;
+  getSupportFrontHMACKey(): string | undefined {
+    return this.configService.get<string>('SUPPORT_FRONT_HMAC_KEY');
   }
 }

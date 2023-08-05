@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -9,24 +10,12 @@ import {
   ButtonSize,
   ButtonVariant,
 } from '@/ui/button/components/Button';
+import { IconHelpCircle } from '@/ui/icon';
 
 const StyledButtonContainer = styled.div`
   display: flex;
 `;
 
-const StyledQuestionMark = styled.div`
-  align-items: center;
-  border-radius: 50%;
-  border-style: solid;
-  border-width: ${({ theme }) => theme.spacing(0.25)};
-  display: flex;
-  height: ${({ theme }) => theme.spacing(3.5)};
-  justify-content: center;
-  margin-right: ${({ theme }) => theme.spacing(1)};
-  width: ${({ theme }) => theme.spacing(3.5)};
-`;
-
-// insert a script tag into the DOM right before the closing body tag
 function insertScript({
   src,
   innerHTML,
@@ -63,41 +52,39 @@ function configureFront(chatId: string) {
 }
 
 export default function SupportChat() {
+  const theme = useTheme();
   const user = useRecoilValue(currentUserState);
   const supportChatConfig = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
-  const [isChatShowing, setIsChatShowing] = useState(false);
 
   useEffect(() => {
     if (
       supportChatConfig?.supportDriver === 'front' &&
-      supportChatConfig.supportFrontendKey &&
+      supportChatConfig.supportFrontChatId &&
       !isFrontChatLoaded
     ) {
-      configureFront(supportChatConfig.supportFrontendKey);
+      configureFront(supportChatConfig.supportFrontChatId);
       setIsFrontChatLoaded(true);
     }
     if (user?.email && isFrontChatLoaded) {
       window.FrontChat?.('identity', {
         email: user.email,
         name: user.displayName,
-        userHash: user?.supportHMACKey,
+        userHash: user?.supportUserHash,
       });
     }
   }, [
     isFrontChatLoaded,
     supportChatConfig?.supportDriver,
-    supportChatConfig.supportFrontendKey,
+    supportChatConfig.supportFrontChatId,
     user?.displayName,
     user?.email,
-    user?.supportHMACKey,
+    user?.supportUserHash,
   ]);
 
   function handleSupportClick() {
     if (supportChatConfig?.supportDriver === 'front') {
-      const action = isChatShowing ? 'hide' : 'show';
-      setIsChatShowing(!isChatShowing);
-      window.FrontChat?.(action);
+      window.FrontChat?.('show');
     }
   }
 
@@ -107,7 +94,7 @@ export default function SupportChat() {
         variant={ButtonVariant.Tertiary}
         size={ButtonSize.Small}
         title="Support"
-        icon={<StyledQuestionMark>?</StyledQuestionMark>}
+        icon={<IconHelpCircle size={theme.icon.size.md} />}
         onClick={handleSupportClick}
       />
     </StyledButtonContainer>
