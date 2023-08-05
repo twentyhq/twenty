@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { DateInputEdit } from '@/ui/input/date/components/DateInputEdit';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { parseDate } from '~/utils/date-utils';
@@ -11,6 +13,12 @@ type OwnProps = {
 };
 
 export function EditableFieldEditModeDate({ value, onChange }: OwnProps) {
+  const [internalValue, setInternalValue] = useState(value);
+
+  useEffect(() => {
+    setInternalValue(value);
+  }, [value]);
+
   const { closeEditableField } = useEditableField();
 
   function handleChange(newValue: string) {
@@ -20,7 +28,7 @@ export function EditableFieldEditModeDate({ value, onChange }: OwnProps) {
 
   return (
     <DateInputEdit
-      value={parseDate(value).toJSDate()}
+      value={parseDate(internalValue).toJSDate()}
       onChange={(newDate: Date) => {
         handleChange(newDate.toISOString());
       }}

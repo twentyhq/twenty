@@ -1,8 +1,8 @@
-import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import {
   ViewFieldChipMetadata,
   ViewFieldDefinition,
-} from '@/ui/table/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
+import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 
 import { GenericEditableChipCellDisplayMode } from './GenericEditableChipCellDisplayMode';
 import { GenericEditableChipCellEditMode } from './GenericEditableChipCellEditMode';

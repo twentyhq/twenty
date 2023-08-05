@@ -12,7 +12,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
-} from '../types/ViewField';
+} from '../../editable-field/types/ViewField';
 
 const StyledColumnMenu = styled(DropdownMenu)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
