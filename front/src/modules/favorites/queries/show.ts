@@ -8,6 +8,7 @@ export const GET_FAVORITES = gql`
         id
         firstName
         lastName
+        avatarUrl
       }
       company {
         id

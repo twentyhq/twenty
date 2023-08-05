@@ -22,6 +22,15 @@ export const GET_PERSON = gql`
         name
         domainName
       }
+      Favorite {
+        id
+        person {
+          id
+        }
+        company {
+          id
+        }
+      }
     }
   }
 `;
