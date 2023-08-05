@@ -93,7 +93,7 @@ export function EntityBoardColumn({
               <BoardCardIdContext.Provider value={cardId} key={cardId}>
                 <EntityBoardCard
                   index={index}
-                  pipelineProgressId={cardId}
+                  cardId={cardId}
                   boardOptions={boardOptions}
                 />
               </BoardCardIdContext.Provider>
