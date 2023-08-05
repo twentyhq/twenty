@@ -40,6 +40,7 @@ export const VERIFY = gql`
         firstName
         lastName
         canImpersonate
+        supportUserHash
         workspaceMember {
           id
           allowImpersonation
@@ -99,6 +100,7 @@ export const IMPERSONATE = gql`
         firstName
         lastName
         canImpersonate
+        supportUserHash
         workspaceMember {
           id
           allowImpersonation

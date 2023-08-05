@@ -23,9 +23,9 @@ export class ClientConfigResolver {
       },
       signInPrefilled: this.environmentService.isSignInPrefilled(),
       debugMode: this.environmentService.isDebugMode(),
-      supportChat: {
+      support: {
         supportDriver: this.environmentService.getSupportDriver(),
-        supportFrontendKey: this.environmentService.getSupportFrontendKey(),
+        supportFrontChatId: this.environmentService.getSupportFrontChatId(),
       },
     };
 

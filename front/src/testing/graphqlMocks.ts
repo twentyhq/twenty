@@ -207,9 +207,9 @@ export const graphqlMocks = [
           debugMode: false,
           authProviders: { google: true, password: true, magicLink: false },
           telemetry: { enabled: false, anonymizationEnabled: true },
-          supportChat: {
+          support: {
             supportDriver: 'front',
-            supportFrontendKey: null,
+            supportFrontChatId: null,
           },
         },
       }),

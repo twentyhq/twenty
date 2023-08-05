@@ -129,7 +129,7 @@ const StyledButton = styled.button<
         return theme.font.weight.medium;
     }
   }};
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: flex-start;
   padding: ${({ theme, title }) => {

@@ -22,12 +22,12 @@ class Telemetry {
 }
 
 @ObjectType()
-class SupportChat {
+class Support {
   @Field(() => String)
   supportDriver: string;
 
   @Field(() => String, { nullable: true })
-  supportFrontendKey: string | null;
+  supportFrontChatId: string | undefined;
 }
 
 @ObjectType()
@@ -44,6 +44,6 @@ export class ClientConfig {
   @Field(() => Boolean)
   debugMode: boolean;
 
-  @Field(() => SupportChat)
-  supportChat: SupportChat;
+  @Field(() => Support)
+  support: Support;
 }

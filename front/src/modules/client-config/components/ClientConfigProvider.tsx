@@ -33,7 +33,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
       setDebugMode(data?.clientConfig.debugMode);
       setSignInPrefilled(data?.clientConfig.signInPrefilled);
       setTelemetry(data?.clientConfig.telemetry);
-      setSupportChat(data?.clientConfig.supportChat);
+      setSupportChat(data?.clientConfig.support);
     }
   }, [
     data,
