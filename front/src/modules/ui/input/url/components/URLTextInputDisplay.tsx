@@ -1,9 +1,9 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { RawLink } from '@/ui/link/components/RawLink';
+import { RoundedLink } from '@/ui/link/components/RoundedLink';
 
-const StyledRawLink = styled(RawLink)`
+const StyledRawLink = styled(RoundedLink)`
   overflow: hidden;
 
   a {
