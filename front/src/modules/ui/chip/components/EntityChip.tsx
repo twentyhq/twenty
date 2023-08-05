@@ -27,7 +27,7 @@ export function EntityChip({
   entityId,
   name,
   size,
-  avatarSize = "sm",
+  avatarSize = 'sm',
   pictureUrl,
   avatarType = 'rounded',
   variant = EntityChipVariant.Regular,

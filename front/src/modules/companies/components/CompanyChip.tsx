@@ -1,5 +1,6 @@
 import { ChipSize } from '@/ui/chip/components/Chip';
 import { EntityChip, EntityChipVariant } from '@/ui/chip/components/EntityChip';
+import { AvatarSize } from '@/users/components/Avatar';
 
 type OwnProps = {
   id: string;
@@ -7,7 +8,7 @@ type OwnProps = {
   pictureUrl?: string;
   variant?: EntityChipVariant;
   size?: ChipSize;
-  avatarSize?: number;
+  avatarSize?: AvatarSize;
 };
 
 export function CompanyChip({

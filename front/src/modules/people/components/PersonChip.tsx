@@ -1,5 +1,6 @@
 import { ChipSize } from '@/ui/chip/components/Chip';
 import { EntityChip, EntityChipVariant } from '@/ui/chip/components/EntityChip';
+import { AvatarSize } from '@/users/components/Avatar';
 
 export type PersonChipPropsType = {
   id: string;
@@ -7,7 +8,7 @@ export type PersonChipPropsType = {
   pictureUrl?: string;
   variant?: EntityChipVariant;
   size?: ChipSize;
-  avatarSize?: number;
+  avatarSize?: AvatarSize;
 };
 
 export function PersonChip({
