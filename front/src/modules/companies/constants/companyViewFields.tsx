@@ -4,7 +4,7 @@ import {
   IconCalendarEvent,
   IconLink,
   IconMap,
-  IconUser,
+  IconUserCircle,
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
@@ -48,7 +48,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
     id: 'accountOwner',
     columnLabel: 'Account Owner',
-    columnIcon: <IconUser />,
+    columnIcon: <IconUserCircle />,
     columnSize: 150,
     columnOrder: 3,
     metadata: {
