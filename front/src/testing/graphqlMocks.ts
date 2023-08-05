@@ -2,6 +2,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { graphql } from 'msw';
 
 import { GET_ACTIVITIES } from '@/activities/queries';
+import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/queries/create';
 import { CREATE_EVENT } from '@/analytics/queries';
 import { GET_CLIENT_CONFIG } from '@/client-config/queries';
 import { GET_COMPANIES } from '@/companies/queries';
@@ -25,7 +26,7 @@ import {
   SearchUserQuery,
 } from '~/generated/graphql';
 
-import { mockedActivities } from './mock-data/activities';
+import { mockedActivities, mockedTasks } from './mock-data/activities';
 import {
   mockedCompaniesData,
   mockedCompanyViewFields,
@@ -207,6 +208,10 @@ export const graphqlMocks = [
           debugMode: false,
           authProviders: { google: true, password: true, magicLink: false },
           telemetry: { enabled: false, anonymizationEnabled: true },
+          support: {
+            supportDriver: 'front',
+            supportFrontChatId: null,
+          },
         },
       }),
     );
@@ -234,4 +239,14 @@ export const graphqlMocks = [
       }),
     );
   }),
+  graphql.mutation(
+    getOperationName(CREATE_ACTIVITY_WITH_COMMENT) ?? '',
+    (req, res, ctx) => {
+      return res(
+        ctx.data({
+          createOneActivity: mockedTasks[0],
+        }),
+      );
+    },
+  ),
 ];

@@ -12,6 +12,7 @@ export type OwnProps = {
   onSubmit: (newCompany: EntityForSelect | null) => void;
   onCancel?: () => void;
   createModeEnabled?: boolean;
+  width?: number;
 };
 
 export function CompanyPickerCell({
@@ -19,6 +20,7 @@ export function CompanyPickerCell({
   onSubmit,
   onCancel,
   createModeEnabled,
+  width,
 }: OwnProps) {
   const [, setIsCreating] = useRecoilScopedState(isCreateModeScopedState);
 
@@ -46,6 +48,7 @@ export function CompanyPickerCell({
 
   return (
     <SingleEntitySelect
+      width={width}
       onCreate={createModeEnabled ? handleCreate : undefined}
       onCancel={onCancel}
       onEntitySelected={handleEntitySelected}

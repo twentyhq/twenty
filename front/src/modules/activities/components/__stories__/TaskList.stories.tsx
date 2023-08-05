@@ -36,10 +36,3 @@ export const Default: Story = {
     tasks: mockedActivities,
   },
 };
-
-export const Empty: Story = {
-  args: {
-    title: 'No tasks',
-    tasks: [],
-  },
-};

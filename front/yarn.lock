@@ -12,6 +12,13 @@
   resolved "https://registry.yarnpkg.com/@adobe/css-tools/-/css-tools-4.2.0.tgz#e1a84fca468f4b337816fcb7f0964beb620ba855"
   integrity sha512-E09FiIft46CmH5Qnjb0wsW54/YQd69LsxeKUOWawmws1XWvyFGURnAChH0mlr7YPFR1ofwvUQfcL0J3lMxXqPA==
 
+"@air/react-drag-to-select@^5.0.8":
+  version "5.0.8"
+  resolved "https://registry.yarnpkg.com/@air/react-drag-to-select/-/react-drag-to-select-5.0.8.tgz#b359aad86fd7cf9c6e11c7bc2c089b3113243b08"
+  integrity sha512-Nf53SQ6SDx7HDVmsIBINrVMKnGktXFRPeLS2WS80/pmJl6Ie5xY3sz0Ga2fLvlY9N3DWucY1pXY7mfHXBFd9KQ==
+  dependencies:
+    react-style-object-to-css "^1.1.2"
+
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
@@ -15963,6 +15970,11 @@ react-scripts@5.0.1:
     workbox-webpack-plugin "^6.4.1"
   optionalDependencies:
     fsevents "^2.3.2"
+
+react-style-object-to-css@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-style-object-to-css/-/react-style-object-to-css-1.1.2.tgz#3e97da92c9edf8190e30f4b27026e74285940498"
+  integrity sha512-+5MFULqCCj7wwJJ/ISKFP91ZlHVF1Rv8o0neiTKvt21XDTU5e34tc8hy+XPLeYWYOupdHt25HxxwocvYm3HM6A==
 
 react-style-singleton@^2.2.1:
   version "2.2.1"

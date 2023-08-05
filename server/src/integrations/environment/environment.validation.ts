@@ -16,6 +16,7 @@ import { StorageType } from './interfaces/storage.interface';
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { IsAWSRegion } from './decorators/is-aws-region.decorator';
 import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
+import { SupportDriver } from './interfaces/support.interface';
 
 export class EnvironmentVariables {
   // Misc
@@ -104,6 +105,19 @@ export class EnvironmentVariables {
   @IsString()
   @ValidateIf((env) => env.STORAGE_TYPE === StorageType.Local)
   STORAGE_LOCAL_PATH?: string;
+
+  // Support
+  @IsEnum(SupportDriver)
+  @IsOptional()
+  SUPPORT_DRIVER?: SupportDriver;
+
+  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
+  @IsString()
+  SUPPORT_FRONT_CHAT_ID?: AwsRegion;
+
+  @ValidateIf((env) => env.SUPPORT_DRIVER === SupportDriver.Front)
+  @IsString()
+  SUPPORT_FRONT_HMAC_KEY?: string;
 }
 
 export function validate(config: Record<string, unknown>) {

@@ -30,6 +30,7 @@ export function SingleEntitySelect<
   onEntitySelected,
   onCreate,
   onCancel,
+  width,
   disableBackgroundBlur = false,
 }: {
   onCancel?: () => void;
@@ -37,6 +38,7 @@ export function SingleEntitySelect<
   entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
   onEntitySelected: (entity: CustomEntityForSelect | null | undefined) => void;
   disableBackgroundBlur?: boolean;
+  width?: number;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -58,7 +60,11 @@ export function SingleEntitySelect<
   });
 
   return (
-    <DropdownMenu disableBlur={disableBackgroundBlur} ref={containerRef}>
+    <DropdownMenu
+      disableBlur={disableBackgroundBlur}
+      ref={containerRef}
+      width={width}
+    >
       <DropdownMenuSearch
         value={searchFilter}
         onChange={handleSearchFilterChange}

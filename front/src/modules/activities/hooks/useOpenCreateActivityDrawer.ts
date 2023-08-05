@@ -9,9 +9,17 @@ import { useRightDrawer } from '@/ui/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { ActivityType, useCreateActivityMutation } from '~/generated/graphql';
+import {
+  ActivityType,
+  CommentableType,
+  useCreateActivityMutation,
+} from '~/generated/graphql';
 
-import { GET_ACTIVITIES_BY_TARGETS, GET_ACTIVITY } from '../queries';
+import {
+  GET_ACTIVITIES,
+  GET_ACTIVITIES_BY_TARGETS,
+  GET_ACTIVITY,
+} from '../queries';
 import { commentableEntityArrayState } from '../states/commentableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
 import { CommentableEntity } from '../types/CommentableEntity';
@@ -28,34 +36,56 @@ export function useOpenCreateActivityDrawer() {
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
   return function openCreateActivityDrawer(
-    entity: CommentableEntity,
     type: ActivityType,
+    entity?: CommentableEntity,
   ) {
-    createActivityMutation({
+    const now = new Date().toISOString();
+
+    return createActivityMutation({
       variables: {
-        authorId: currentUser?.id ?? '',
-        activityId: v4(),
-        createdAt: new Date().toISOString(),
-        type: type,
-        activityTargetArray: [
-          {
-            commentableId: entity.id,
-            commentableType: entity.type,
-            id: v4(),
-            createdAt: new Date().toISOString(),
+        data: {
+          id: v4(),
+          createdAt: now,
+          updatedAt: now,
+          author: { connect: { id: currentUser?.id ?? '' } },
+          assignee: { connect: { id: currentUser?.id ?? '' } },
+          type: type,
+          activityTargets: {
+            createMany: {
+              data: entity
+                ? [
+                    {
+                      commentableId: entity.id,
+                      commentableType: entity.type,
+                      companyId:
+                        entity.type === CommentableType.Company
+                          ? entity.id
+                          : null,
+                      personId:
+                        entity.type === CommentableType.Person
+                          ? entity.id
+                          : null,
+                      id: v4(),
+                      createdAt: now,
+                    },
+                  ]
+                : [],
+              skipDuplicates: true,
+            },
           },
-        ],
+        },
       },
       refetchQueries: [
         getOperationName(GET_COMPANIES) ?? '',
         getOperationName(GET_PEOPLE) ?? '',
         getOperationName(GET_ACTIVITY) ?? '',
         getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
+        getOperationName(GET_ACTIVITIES) ?? '',
       ],
       onCompleted(data) {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableActivityId(data.createOneActivity.id);
-        setCommentableEntityArray([entity]);
+        setCommentableEntityArray(entity ? [entity] : []);
         openRightDrawer(RightDrawerPages.CreateActivity);
       },
     });

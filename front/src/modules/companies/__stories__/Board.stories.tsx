@@ -1,7 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
-import { EntityBoard } from '@/pipeline/components/EntityBoard';
+import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';

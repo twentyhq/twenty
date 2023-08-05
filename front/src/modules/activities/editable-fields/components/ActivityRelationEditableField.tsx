@@ -16,7 +16,10 @@ import { ActivityRelationEditableFieldEditMode } from './ActivityRelationEditabl
 type OwnProps = {
   activity?: Pick<Activity, 'id'> & {
     activityTargets?: Array<
-      Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
+      Pick<
+        ActivityTarget,
+        'id' | 'commentableId' | 'commentableType' | 'personId' | 'companyId'
+      >
     > | null;
   };
 };
@@ -29,7 +32,9 @@ export function ActivityRelationEditableField({ activity }: OwnProps) {
           in: activity?.activityTargets
             ? activity?.activityTargets
                 .filter((target) => target.commentableType === 'Person')
-                .map((target) => target.commentableId ?? '')
+                .map(
+                  (target) => (target.personId || target.commentableId) ?? '',
+                )
             : [],
         },
       },
@@ -43,7 +48,9 @@ export function ActivityRelationEditableField({ activity }: OwnProps) {
           in: activity?.activityTargets
             ? activity?.activityTargets
                 .filter((target) => target.commentableType === 'Company')
-                .map((target) => target.commentableId ?? '')
+                .map(
+                  (target) => (target.companyId || target.commentableId) ?? '',
+                )
             : [],
         },
       },
