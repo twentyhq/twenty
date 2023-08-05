@@ -16,6 +16,8 @@ export const DropdownMenu = styled.div<{
 
   flex-direction: column;
 
+  max-width: 160px;
+
   overflow: hidden;
 
   width: ${({ width }) => width ?? 160}px;
