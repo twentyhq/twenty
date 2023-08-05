@@ -47,7 +47,12 @@ export function EntityBoard({
   onEditColumnTitle: (columnId: string, title: string) => void;
   onEditColumnColor: (columnId: string, color: string) => void;
 }) {
+  console.log('EntityBoard');
+
   const [boardColumns] = useRecoilState(boardColumnsState);
+
+  console.log('boardColumns', boardColumns);
+
   const theme = useTheme();
   const [updatePipelineProgressStage] =
     useUpdateOnePipelineProgressStageMutation();

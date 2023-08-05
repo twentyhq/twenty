@@ -6,6 +6,6 @@ export const companyBoardIndexState = atomFamily<
   CompanyProgress | undefined,
   string
 >({
-  key: 'currentPipelineState',
+  key: 'companyBoardIndexState',
   default: undefined,
 });

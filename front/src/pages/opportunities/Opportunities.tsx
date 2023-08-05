@@ -14,6 +14,7 @@ import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
 import { BoardOptionsContext } from '@/ui/board/states/BoardOptionsContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
+import { AvailableFiltersContext } from '@/ui/filter-n-sort/states/AvailableFiltersContext';
 import { IconTargetArrow } from '@/ui/icon/index';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -25,6 +26,7 @@ import {
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 export function Opportunities() {
+  console.log('Opportunities');
   const theme = useTheme();
 
   const [orderBy, setOrderBy] = useState<
@@ -83,19 +85,20 @@ export function Opportunities() {
     >
       <BoardOptionsContext.Provider value={opportunitiesBoardOptions}>
         <RecoilScope SpecificContext={CompanyBoardContext}>
-          <HooksCompanyBoard
-            availableFilters={opportunitiesBoardOptions.filters}
-            orderBy={orderBy}
-          />
-          <EntityBoard
-            boardOptions={opportunitiesBoardOptions}
-            updateSorts={updateSorts}
-            onEditColumnColor={handleEditColumnColor}
-            onEditColumnTitle={handleEditColumnTitle}
-          />
-          <EntityBoardActionBar>
-            <BoardActionBarButtonDeleteBoardCard onDelete={handleDelete} />
-          </EntityBoardActionBar>
+          <AvailableFiltersContext.Provider
+            value={opportunitiesBoardOptions.filters}
+          >
+            <HooksCompanyBoard orderBy={orderBy} />
+            <EntityBoard
+              boardOptions={opportunitiesBoardOptions}
+              updateSorts={updateSorts}
+              onEditColumnColor={handleEditColumnColor}
+              onEditColumnTitle={handleEditColumnTitle}
+            />
+            <EntityBoardActionBar>
+              <BoardActionBarButtonDeleteBoardCard onDelete={handleDelete} />
+            </EntityBoardActionBar>
+          </AvailableFiltersContext.Provider>
         </RecoilScope>
       </BoardOptionsContext.Provider>
     </WithTopBarContainer>
