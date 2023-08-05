@@ -1,10 +1,13 @@
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
-import { useFavorites } from '@/favorites/hooks/useSetFavorites';
+import { currentFavorites } from '@/favorites/states/currentFavorites';
 import { PersonChip } from '@/people/components/PersonChip';
 import { ChipSize } from '@/ui/chip/components/Chip';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
+import { useGetFavoritesQuery } from '~/generated/graphql';
 
 const Wrapper = styled.div`
   display: flex;
@@ -16,11 +19,15 @@ const Wrapper = styled.div`
 `;
 
 export function Favorites() {
-  const data = useFavorites();
+  const [favorites, setFavorites] = useRecoilState(currentFavorites);
+  const { data } = useGetFavoritesQuery();
+  useEffect(() => {
+    if (data) setFavorites(data.findFavorites);
+  }, [data, setFavorites]);
   return (
     <Wrapper>
-      {data &&
-        data.findFavorites.map(
+      {favorites &&
+        favorites.map(
           ({ id, person, company }) =>
             (person && (
               <PersonChip
@@ -29,7 +36,8 @@ export function Favorites() {
                 key={id}
                 variant={EntityChipVariant.Transparent}
                 size={ChipSize.Large}
-                avatarSize={20}
+                avatarSize="md"
+                pictureUrl={person?.avatarUrl ?? ''}
               />
             )) ||
             (company && (
@@ -40,7 +48,7 @@ export function Favorites() {
                 pictureUrl={company?.accountOwner?.avatarUrl ?? ''}
                 variant={EntityChipVariant.Transparent}
                 size={ChipSize.Large}
-                avatarSize={20}
+                avatarSize="md"
               />
             )),
         )}

@@ -11,11 +11,12 @@ export type ButtonProps = {
   icon?: React.ReactNode;
   variant?: IconButtonVariant;
   size?: IconButtonSize;
+  customColor?: string;
   textColor?: IconButtonFontColor;
 } & React.ComponentProps<'button'>;
 
 const StyledIconButton = styled.button<
-  Pick<ButtonProps, 'variant' | 'size' | 'textColor'>
+  Pick<ButtonProps, 'variant' | 'size' | 'textColor' | 'customColor'>
 >`
   align-items: center;
   background: ${({ theme, variant }) => {
@@ -66,12 +67,14 @@ const StyledIconButton = styled.button<
         return 'none';
     }
   }};
-  color: ${({ theme, disabled, textColor }) => {
+  color: ${({ theme, disabled, textColor, customColor }) => {
     if (disabled) {
       return theme.font.color.extraLight;
     }
 
-    return theme.font.color[textColor ?? 'secondary'];
+    return customColor
+      ? customColor
+      : theme.font.color[textColor ?? 'secondary'];
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
@@ -121,6 +124,7 @@ export function IconButton({
   size = 'medium',
   textColor = 'tertiary',
   disabled = false,
+  customColor,
   ...props
 }: ButtonProps) {
   return (
@@ -129,6 +133,7 @@ export function IconButton({
       size={size}
       disabled={disabled}
       textColor={textColor}
+      customColor={customColor}
       {...props}
     >
       {icon}

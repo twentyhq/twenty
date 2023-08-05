@@ -1,8 +1,9 @@
 import { ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { isFavorited } from '@/favorites/states/isFavorited';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { IconChevronLeft, IconHeart, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
@@ -82,6 +83,7 @@ export function PageBar({
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
+  const [isFavorite] = useRecoilState(isFavorited);
 
   const iconSize = useIsMobile()
     ? navbarIconSize.mobile
@@ -117,7 +119,7 @@ export function PageBar({
               icon={<IconHeart size={16} />}
               size="large"
               data-testid="add-button"
-              textColor="secondary"
+              customColor={isFavorite ? '#f83e3e' : ''}
               onClick={onFavouriteButtonClick}
               variant="border"
             />

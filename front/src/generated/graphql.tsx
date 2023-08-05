@@ -594,297 +594,7 @@ export type CommentOrderByRelationAggregateInput = {
   _count?: InputMaybe<SortOrder>;
 };
 
-export type CommentThread = {
-  __typename?: 'CommentThread';
-  assignee?: Maybe<User>;
-  assigneeId?: Maybe<Scalars['String']>;
-  attachments?: Maybe<Array<Attachment>>;
-  author: User;
-  authorId: Scalars['String'];
-  body?: Maybe<Scalars['String']>;
-  commentThreadTargets?: Maybe<Array<CommentThreadTarget>>;
-  comments?: Maybe<Array<Comment>>;
-  completedAt?: Maybe<Scalars['DateTime']>;
-  createdAt: Scalars['DateTime'];
-  dueAt?: Maybe<Scalars['DateTime']>;
-  id: Scalars['ID'];
-  reminderAt?: Maybe<Scalars['DateTime']>;
-  title?: Maybe<Scalars['String']>;
-  type: ActivityType;
-  updatedAt: Scalars['DateTime'];
-};
-
-export type CommentThreadCreateInput = {
-  assignee?: InputMaybe<UserCreateNestedOneWithoutAssignedCommentThreadsInput>;
-  attachments?: InputMaybe<AttachmentCreateNestedManyWithoutActivityInput>;
-  author: UserCreateNestedOneWithoutAuthoredCommentThreadsInput;
-  body?: InputMaybe<Scalars['String']>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetCreateNestedManyWithoutCommentThreadInput>;
-  comments?: InputMaybe<CommentCreateNestedManyWithoutCommentThreadInput>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  dueAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  reminderAt?: InputMaybe<Scalars['DateTime']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadCreateNestedOneWithoutCommentThreadTargetsInput = {
-  connect?: InputMaybe<CommentThreadWhereUniqueInput>;
-};
-
-export type CommentThreadCreateNestedOneWithoutCommentsInput = {
-  connect?: InputMaybe<CommentThreadWhereUniqueInput>;
-};
-
-export type CommentThreadListRelationFilter = {
-  every?: InputMaybe<CommentThreadWhereInput>;
-  none?: InputMaybe<CommentThreadWhereInput>;
-  some?: InputMaybe<CommentThreadWhereInput>;
-};
-
-export type CommentThreadOrderByRelationAggregateInput = {
-  _count?: InputMaybe<SortOrder>;
-};
-
-export type CommentThreadOrderByWithRelationInput = {
-  assignee?: InputMaybe<UserOrderByWithRelationInput>;
-  assigneeId?: InputMaybe<SortOrder>;
-  attachments?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
-  author?: InputMaybe<UserOrderByWithRelationInput>;
-  authorId?: InputMaybe<SortOrder>;
-  body?: InputMaybe<SortOrder>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetOrderByRelationAggregateInput>;
-  comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
-  completedAt?: InputMaybe<SortOrder>;
-  createdAt?: InputMaybe<SortOrder>;
-  dueAt?: InputMaybe<SortOrder>;
-  id?: InputMaybe<SortOrder>;
-  reminderAt?: InputMaybe<SortOrder>;
-  title?: InputMaybe<SortOrder>;
-  type?: InputMaybe<SortOrder>;
-  updatedAt?: InputMaybe<SortOrder>;
-};
-
-export type CommentThreadRelationFilter = {
-  is?: InputMaybe<CommentThreadWhereInput>;
-  isNot?: InputMaybe<CommentThreadWhereInput>;
-};
-
-export enum CommentThreadScalarFieldEnum {
-  AssigneeId = 'assigneeId',
-  AuthorId = 'authorId',
-  Body = 'body',
-  CompletedAt = 'completedAt',
-  CreatedAt = 'createdAt',
-  DeletedAt = 'deletedAt',
-  DueAt = 'dueAt',
-  Id = 'id',
-  ReminderAt = 'reminderAt',
-  Title = 'title',
-  Type = 'type',
-  UpdatedAt = 'updatedAt',
-  WorkspaceId = 'workspaceId'
-}
-
-export type CommentThreadTarget = {
-  __typename?: 'CommentThreadTarget';
-  commentThread: CommentThread;
-  commentThreadId: Scalars['String'];
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
-  workspace?: Maybe<Workspace>;
-};
-
-export type CommentThreadTargetCreateManyCommentThreadInput = {
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadTargetCreateManyCommentThreadInputEnvelope = {
-  data: Array<CommentThreadTargetCreateManyCommentThreadInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CommentThreadTargetCreateManyWorkspaceInput = {
-  commentThreadId: Scalars['String'];
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadTargetCreateManyWorkspaceInputEnvelope = {
-  data: Array<CommentThreadTargetCreateManyWorkspaceInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type CommentThreadTargetCreateNestedManyWithoutCommentThreadInput = {
-  connect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>>;
-  create?: InputMaybe<Array<CommentThreadTargetCreateWithoutCommentThreadInput>>;
-  createMany?: InputMaybe<CommentThreadTargetCreateManyCommentThreadInputEnvelope>;
-};
-
-export type CommentThreadTargetCreateOrConnectWithoutCommentThreadInput = {
-  create: CommentThreadTargetCreateWithoutCommentThreadInput;
-  where: CommentThreadTargetWhereUniqueInput;
-};
-
-export type CommentThreadTargetCreateOrConnectWithoutWorkspaceInput = {
-  create: CommentThreadTargetCreateWithoutWorkspaceInput;
-  where: CommentThreadTargetWhereUniqueInput;
-};
-
-export type CommentThreadTargetCreateWithoutCommentThreadInput = {
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadTargetCreateWithoutWorkspaceInput = {
-  commentThread: CommentThreadCreateNestedOneWithoutCommentThreadTargetsInput;
-  commentableId: Scalars['String'];
-  commentableType: CommentableType;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadTargetListRelationFilter = {
-  every?: InputMaybe<CommentThreadTargetWhereInput>;
-  none?: InputMaybe<CommentThreadTargetWhereInput>;
-  some?: InputMaybe<CommentThreadTargetWhereInput>;
-};
-
-export type CommentThreadTargetOrderByRelationAggregateInput = {
-  _count?: InputMaybe<SortOrder>;
-};
-
-export type CommentThreadTargetScalarWhereInput = {
-  AND?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  NOT?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  OR?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  commentThreadId?: InputMaybe<StringFilter>;
-  commentableId?: InputMaybe<StringFilter>;
-  commentableType?: InputMaybe<EnumCommentableTypeFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
-export type CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput = {
-  connect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentThreadTargetCreateOrConnectWithoutCommentThreadInput>>;
-  create?: InputMaybe<Array<CommentThreadTargetCreateWithoutCommentThreadInput>>;
-  createMany?: InputMaybe<CommentThreadTargetCreateManyCommentThreadInputEnvelope>;
-  delete?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  set?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-};
-
-export type CommentThreadTargetUpdateManyWithoutWorkspaceNestedInput = {
-  connect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  connectOrCreate?: InputMaybe<Array<CommentThreadTargetCreateOrConnectWithoutWorkspaceInput>>;
-  create?: InputMaybe<Array<CommentThreadTargetCreateWithoutWorkspaceInput>>;
-  createMany?: InputMaybe<CommentThreadTargetCreateManyWorkspaceInputEnvelope>;
-  delete?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  deleteMany?: InputMaybe<Array<CommentThreadTargetScalarWhereInput>>;
-  disconnect?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-  set?: InputMaybe<Array<CommentThreadTargetWhereUniqueInput>>;
-};
-
-export type CommentThreadTargetWhereInput = {
-  AND?: InputMaybe<Array<CommentThreadTargetWhereInput>>;
-  NOT?: InputMaybe<Array<CommentThreadTargetWhereInput>>;
-  OR?: InputMaybe<Array<CommentThreadTargetWhereInput>>;
-  commentThread?: InputMaybe<CommentThreadRelationFilter>;
-  commentThreadId?: InputMaybe<StringFilter>;
-  commentableId?: InputMaybe<StringFilter>;
-  commentableType?: InputMaybe<EnumCommentableTypeFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<StringFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
-export type CommentThreadTargetWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
-};
-
-export type CommentThreadUpdateInput = {
-  assignee?: InputMaybe<UserUpdateOneWithoutAssignedCommentThreadsNestedInput>;
-  attachments?: InputMaybe<AttachmentUpdateManyWithoutActivityNestedInput>;
-  author?: InputMaybe<UserUpdateOneRequiredWithoutAuthoredCommentThreadsNestedInput>;
-  body?: InputMaybe<Scalars['String']>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetUpdateManyWithoutCommentThreadNestedInput>;
-  comments?: InputMaybe<CommentUpdateManyWithoutCommentThreadNestedInput>;
-  completedAt?: InputMaybe<Scalars['DateTime']>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  dueAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  reminderAt?: InputMaybe<Scalars['DateTime']>;
-  title?: InputMaybe<Scalars['String']>;
-  type?: InputMaybe<ActivityType>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-export type CommentThreadUpdateManyWithoutAssigneeNestedInput = {
-  connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  disconnect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  set?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-};
-
-export type CommentThreadUpdateManyWithoutAuthorNestedInput = {
-  connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  disconnect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  set?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-};
-
-export type CommentThreadUpdateManyWithoutWorkspaceNestedInput = {
-  connect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  disconnect?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-  set?: InputMaybe<Array<CommentThreadWhereUniqueInput>>;
-};
-
-export type CommentThreadWhereInput = {
-  AND?: InputMaybe<Array<CommentThreadWhereInput>>;
-  NOT?: InputMaybe<Array<CommentThreadWhereInput>>;
-  OR?: InputMaybe<Array<CommentThreadWhereInput>>;
-  assignee?: InputMaybe<UserRelationFilter>;
-  assigneeId?: InputMaybe<StringNullableFilter>;
-  attachments?: InputMaybe<AttachmentListRelationFilter>;
-  author?: InputMaybe<UserRelationFilter>;
-  authorId?: InputMaybe<StringFilter>;
-  body?: InputMaybe<StringNullableFilter>;
-  commentThreadTargets?: InputMaybe<CommentThreadTargetListRelationFilter>;
-  comments?: InputMaybe<CommentListRelationFilter>;
-  completedAt?: InputMaybe<DateTimeNullableFilter>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  dueAt?: InputMaybe<DateTimeNullableFilter>;
-  id?: InputMaybe<StringFilter>;
-  reminderAt?: InputMaybe<DateTimeNullableFilter>;
-  title?: InputMaybe<StringNullableFilter>;
-  type?: InputMaybe<EnumActivityTypeFilter>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
-export type CommentThreadWhereUniqueInput = {
-  id?: InputMaybe<Scalars['String']>;
-};
-
-export type CommentUpdateManyWithoutAuthorNestedInput = {
+export type CommentUpdateManyWithoutActivityNestedInput = {
   connect?: InputMaybe<Array<CommentWhereUniqueInput>>;
   disconnect?: InputMaybe<Array<CommentWhereUniqueInput>>;
   set?: InputMaybe<Array<CommentWhereUniqueInput>>;
@@ -929,10 +639,9 @@ export enum CommentableType {
 export type Company = {
   __typename?: 'Company';
   ActivityTarget?: Maybe<Array<ActivityTarget>>;
+  Favorite?: Maybe<Array<Favorite>>;
   PipelineProgress?: Maybe<Array<PipelineProgress>>;
   _activityCount: Scalars['Int'];
-  Favorite?: Maybe<Array<Favorite>>;
-  _commentThreadCount: Scalars['Int'];
   accountOwner?: Maybe<User>;
   accountOwnerId?: Maybe<Scalars['String']>;
   activities: Array<Activity>;
@@ -950,8 +659,8 @@ export type Company = {
 
 export type CompanyCreateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutCompanyInput>;
-  PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutCompanyInput>;
   Favorite?: InputMaybe<FavoriteCreateNestedManyWithoutCompanyInput>;
+  PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutCompanyInput>;
   accountOwner?: InputMaybe<UserCreateNestedOneWithoutCompaniesInput>;
   address: Scalars['String'];
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -988,8 +697,8 @@ export type CompanyOrderByRelationAggregateInput = {
 
 export type CompanyOrderByWithRelationInput = {
   ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
-  PipelineProgress?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
+  PipelineProgress?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   accountOwner?: InputMaybe<UserOrderByWithRelationInput>;
   accountOwnerId?: InputMaybe<SortOrder>;
   address?: InputMaybe<SortOrder>;
@@ -1024,8 +733,8 @@ export enum CompanyScalarFieldEnum {
 
 export type CompanyUpdateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutCompanyNestedInput>;
-  PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutCompanyNestedInput>;
   Favorite?: InputMaybe<FavoriteUpdateManyWithoutCompanyNestedInput>;
+  PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutCompanyNestedInput>;
   accountOwner?: InputMaybe<UserUpdateOneWithoutCompaniesNestedInput>;
   address?: InputMaybe<Scalars['String']>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
@@ -1153,14 +862,6 @@ export type Favorite = {
   workspaceId?: Maybe<Scalars['String']>;
 };
 
-export type FavoriteCreateManyInput = {
-  companyId?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  personId?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
-  workspaceId?: InputMaybe<Scalars['String']>;
-};
-
 export type FavoriteCreateNestedManyWithoutCompanyInput = {
   connect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
 };
@@ -1173,6 +874,14 @@ export type FavoriteListRelationFilter = {
   every?: InputMaybe<FavoriteWhereInput>;
   none?: InputMaybe<FavoriteWhereInput>;
   some?: InputMaybe<FavoriteWhereInput>;
+};
+
+export type FavoriteMutationForCompanyArgs = {
+  companyId: Scalars['String'];
+};
+
+export type FavoriteMutationForPersonArgs = {
+  personId: Scalars['String'];
 };
 
 export type FavoriteOrderByRelationAggregateInput = {
@@ -1267,14 +976,16 @@ export type Mutation = {
   allowImpersonation: WorkspaceMember;
   challenge: LoginToken;
   createEvent: Analytics;
+  createFavoriteForCompany: Favorite;
+  createFavoriteForPerson: Favorite;
   createManyViewField: AffectedRows;
   createOneActivity: Activity;
-  createFavorites: Array<Favorite>;
   createOneComment: Comment;
   createOneCompany: Company;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
   deleteCurrentWorkspace: Workspace;
+  deleteFavorite: Favorite;
   deleteManyActivities: AffectedRows;
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
@@ -1318,19 +1029,19 @@ export type MutationCreateEventArgs = {
 };
 
 
-export type MutationCreateManyViewFieldArgs = {
-  data: Array<ViewFieldCreateManyInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
-}
-
-export type MutationCreateFavoritesArgs = {
-  data: Array<FavoriteCreateManyInput>;
-  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
+export type MutationCreateFavoriteForCompanyArgs = {
+  data: FavoriteMutationForCompanyArgs;
 };
 
 
-export type MutationCreateOneCommentArgs = {
-  data: CommentCreateInput;
+export type MutationCreateFavoriteForPersonArgs = {
+  data: FavoriteMutationForPersonArgs;
+};
+
+
+export type MutationCreateManyViewFieldArgs = {
+  data: Array<ViewFieldCreateManyInput>;
+  skipDuplicates?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -1356,6 +1067,11 @@ export type MutationCreateOnePersonArgs = {
 
 export type MutationCreateOnePipelineProgressArgs = {
   data: PipelineProgressCreateInput;
+};
+
+
+export type MutationDeleteFavoriteArgs = {
+  where: FavoriteWhereInput;
 };
 
 
@@ -1595,12 +1311,11 @@ export type NestedStringNullableFilter = {
 export type Person = {
   __typename?: 'Person';
   ActivityTarget?: Maybe<Array<ActivityTarget>>;
+  Favorite?: Maybe<Array<Favorite>>;
   PipelineProgress?: Maybe<Array<PipelineProgress>>;
   _activityCount: Scalars['Int'];
   activities: Array<Activity>;
   avatarUrl?: Maybe<Scalars['String']>;
-  Favorite?: Maybe<Array<Favorite>>;
-  _commentThreadCount: Scalars['Int'];
   city?: Maybe<Scalars['String']>;
   comments: Array<Comment>;
   company?: Maybe<Company>;
@@ -1620,9 +1335,9 @@ export type Person = {
 
 export type PersonCreateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetCreateNestedManyWithoutPersonInput>;
+  Favorite?: InputMaybe<FavoriteCreateNestedManyWithoutPersonInput>;
   PipelineProgress?: InputMaybe<PipelineProgressCreateNestedManyWithoutPersonInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
-  Favorite?: InputMaybe<FavoriteCreateNestedManyWithoutPersonInput>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyCreateNestedOneWithoutPeopleInput>;
   contactPipelineProgresses?: InputMaybe<PipelineProgressCreateNestedManyWithoutPointOfContactInput>;
@@ -1665,9 +1380,9 @@ export type PersonOrderByRelationAggregateInput = {
 
 export type PersonOrderByWithRelationInput = {
   ActivityTarget?: InputMaybe<ActivityTargetOrderByRelationAggregateInput>;
+  Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   PipelineProgress?: InputMaybe<PipelineProgressOrderByRelationAggregateInput>;
   avatarUrl?: InputMaybe<SortOrder>;
-  Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   city?: InputMaybe<SortOrder>;
   company?: InputMaybe<CompanyOrderByWithRelationInput>;
   companyId?: InputMaybe<SortOrder>;
@@ -1707,9 +1422,9 @@ export enum PersonScalarFieldEnum {
 
 export type PersonUpdateInput = {
   ActivityTarget?: InputMaybe<ActivityTargetUpdateManyWithoutPersonNestedInput>;
+  Favorite?: InputMaybe<FavoriteUpdateManyWithoutPersonNestedInput>;
   PipelineProgress?: InputMaybe<PipelineProgressUpdateManyWithoutPersonNestedInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
-  Favorite?: InputMaybe<FavoriteUpdateManyWithoutPersonNestedInput>;
   city?: InputMaybe<Scalars['String']>;
   company?: InputMaybe<CompanyUpdateOneWithoutPeopleNestedInput>;
   contactPipelineProgresses?: InputMaybe<PipelineProgressUpdateManyWithoutPointOfContactNestedInput>;
@@ -2122,9 +1837,8 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  findManyActivities: Array<Activity>;
   findFavorites: Array<Favorite>;
-  findManyCommentThreads: Array<CommentThread>;
+  findManyActivities: Array<Activity>;
   findManyCompany: Array<Company>;
   findManyPerson: Array<Person>;
   findManyPipeline: Array<Pipeline>;
@@ -2295,10 +2009,9 @@ export type Telemetry = {
 
 export type User = {
   __typename?: 'User';
+  Favorite?: Maybe<Array<Favorite>>;
   assignedActivities?: Maybe<Array<Activity>>;
   authoredActivities?: Maybe<Array<Activity>>;
-  Favorite?: Maybe<Array<Favorite>>;
-  assignedCommentThreads?: Maybe<Array<CommentThread>>;
   authoredAttachments?: Maybe<Array<Attachment>>;
   avatarUrl?: Maybe<Scalars['String']>;
   canImpersonate: Scalars['Boolean'];
@@ -2344,10 +2057,9 @@ export type UserExists = {
 };
 
 export type UserOrderByWithRelationInput = {
+  Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   assignedActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
   authoredActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
-  Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
-  assignedCommentThreads?: InputMaybe<CommentThreadOrderByRelationAggregateInput>;
   authoredAttachments?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
   avatarUrl?: InputMaybe<SortOrder>;
   canImpersonate?: InputMaybe<SortOrder>;
@@ -2443,10 +2155,9 @@ export type UserSettingsWhereInput = {
 };
 
 export type UserUpdateInput = {
+  Favorite?: InputMaybe<FavoriteUpdateManyWithoutUserNestedInput>;
   assignedActivities?: InputMaybe<ActivityUpdateManyWithoutAssigneeNestedInput>;
   authoredActivities?: InputMaybe<ActivityUpdateManyWithoutAuthorNestedInput>;
-  Favorite?: InputMaybe<FavoriteUpdateManyWithoutUserNestedInput>;
-  assignedCommentThreads?: InputMaybe<CommentThreadUpdateManyWithoutAssigneeNestedInput>;
   authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutAuthorNestedInput>;
   avatarUrl?: InputMaybe<Scalars['String']>;
   canImpersonate?: InputMaybe<Scalars['Boolean']>;
@@ -2848,7 +2559,7 @@ export type GetCompanyQueryVariables = Exact<{
 }>;
 
 
-export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null } };
+export type GetCompanyQuery = { __typename?: 'Query', findUniqueCompany: { __typename?: 'Company', id: string, domainName: string, name: string, createdAt: string, address: string, linkedinUrl?: string | null, employees?: number | null, _activityCount: number, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, avatarUrl?: string | null } | null, Favorite?: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string } | null, company?: { __typename?: 'Company', id: string } | null }> | null } };
 
 export type UpdateOneCompanyMutationVariables = Exact<{
   where: CompanyWhereUniqueInput;
@@ -2875,14 +2586,28 @@ export type DeleteManyCompaniesMutation = { __typename?: 'Mutation', deleteManyC
 export type GetFavoritesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
+export type GetFavoritesQuery = { __typename?: 'Query', findFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string, accountOwner?: { __typename?: 'User', id: string, displayName: string, avatarUrl?: string | null } | null } | null }> };
 
-export type InsertManyFavoritesMutationVariables = Exact<{
-  data: Array<FavoriteCreateManyInput> | FavoriteCreateManyInput;
+export type InsertPersonFavoriteMutationVariables = Exact<{
+  data: FavoriteMutationForPersonArgs;
 }>;
 
 
-export type InsertManyFavoritesMutation = { __typename?: 'Mutation', createFavorites: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type InsertPersonFavoriteMutation = { __typename?: 'Mutation', createFavoriteForPerson: { __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null } };
+
+export type InsertCompanyFavoriteMutationVariables = Exact<{
+  data: FavoriteMutationForCompanyArgs;
+}>;
+
+
+export type InsertCompanyFavoriteMutation = { __typename?: 'Mutation', createFavoriteForCompany: { __typename?: 'Favorite', id: string, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+
+export type DeleteFavoriteMutationVariables = Exact<{
+  where: FavoriteWhereInput;
+}>;
+
+
+export type DeleteFavoriteMutation = { __typename?: 'Mutation', deleteFavorite: { __typename?: 'Favorite', id: string } };
 
 export type GetPeopleQueryVariables = Exact<{
   orderBy?: InputMaybe<Array<PersonOrderByWithRelationInput> | PersonOrderByWithRelationInput>;
@@ -2947,7 +2672,7 @@ export type GetPersonQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, Favorite?: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string } | null, company?: { __typename?: 'Company', id: string } | null }> | null } };
 
 export type UpdateOnePersonMutationVariables = Exact<{
   where: PersonWhereUniqueInput;
@@ -4130,6 +3855,15 @@ export const GetCompanyDocument = gql`
       displayName
       avatarUrl
     }
+    Favorite {
+      id
+      person {
+        id
+      }
+      company {
+        id
+      }
+    }
   }
 }
     `;
@@ -4288,6 +4022,7 @@ export const GetFavoritesDocument = gql`
       id
       firstName
       lastName
+      avatarUrl
     }
     company {
       id
@@ -4329,9 +4064,9 @@ export function useGetFavoritesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetFavoritesQueryHookResult = ReturnType<typeof useGetFavoritesQuery>;
 export type GetFavoritesLazyQueryHookResult = ReturnType<typeof useGetFavoritesLazyQuery>;
 export type GetFavoritesQueryResult = Apollo.QueryResult<GetFavoritesQuery, GetFavoritesQueryVariables>;
-export const InsertManyFavoritesDocument = gql`
-    mutation InsertManyFavorites($data: [FavoriteCreateManyInput!]!) {
-  createFavorites(data: $data) {
+export const InsertPersonFavoriteDocument = gql`
+    mutation InsertPersonFavorite($data: FavoriteMutationForPersonArgs!) {
+  createFavoriteForPerson(data: $data) {
     id
     person {
       id
@@ -4339,6 +4074,39 @@ export const InsertManyFavoritesDocument = gql`
       lastName
       displayName
     }
+  }
+}
+    `;
+export type InsertPersonFavoriteMutationFn = Apollo.MutationFunction<InsertPersonFavoriteMutation, InsertPersonFavoriteMutationVariables>;
+
+/**
+ * __useInsertPersonFavoriteMutation__
+ *
+ * To run a mutation, you first call `useInsertPersonFavoriteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertPersonFavoriteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [insertPersonFavoriteMutation, { data, loading, error }] = useInsertPersonFavoriteMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useInsertPersonFavoriteMutation(baseOptions?: Apollo.MutationHookOptions<InsertPersonFavoriteMutation, InsertPersonFavoriteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<InsertPersonFavoriteMutation, InsertPersonFavoriteMutationVariables>(InsertPersonFavoriteDocument, options);
+      }
+export type InsertPersonFavoriteMutationHookResult = ReturnType<typeof useInsertPersonFavoriteMutation>;
+export type InsertPersonFavoriteMutationResult = Apollo.MutationResult<InsertPersonFavoriteMutation>;
+export type InsertPersonFavoriteMutationOptions = Apollo.BaseMutationOptions<InsertPersonFavoriteMutation, InsertPersonFavoriteMutationVariables>;
+export const InsertCompanyFavoriteDocument = gql`
+    mutation InsertCompanyFavorite($data: FavoriteMutationForCompanyArgs!) {
+  createFavoriteForCompany(data: $data) {
+    id
     company {
       id
       name
@@ -4347,32 +4115,65 @@ export const InsertManyFavoritesDocument = gql`
   }
 }
     `;
-export type InsertManyFavoritesMutationFn = Apollo.MutationFunction<InsertManyFavoritesMutation, InsertManyFavoritesMutationVariables>;
+export type InsertCompanyFavoriteMutationFn = Apollo.MutationFunction<InsertCompanyFavoriteMutation, InsertCompanyFavoriteMutationVariables>;
 
 /**
- * __useInsertManyFavoritesMutation__
+ * __useInsertCompanyFavoriteMutation__
  *
- * To run a mutation, you first call `useInsertManyFavoritesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInsertManyFavoritesMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useInsertCompanyFavoriteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useInsertCompanyFavoriteMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [insertManyFavoritesMutation, { data, loading, error }] = useInsertManyFavoritesMutation({
+ * const [insertCompanyFavoriteMutation, { data, loading, error }] = useInsertCompanyFavoriteMutation({
  *   variables: {
  *      data: // value for 'data'
  *   },
  * });
  */
-export function useInsertManyFavoritesMutation(baseOptions?: Apollo.MutationHookOptions<InsertManyFavoritesMutation, InsertManyFavoritesMutationVariables>) {
+export function useInsertCompanyFavoriteMutation(baseOptions?: Apollo.MutationHookOptions<InsertCompanyFavoriteMutation, InsertCompanyFavoriteMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InsertManyFavoritesMutation, InsertManyFavoritesMutationVariables>(InsertManyFavoritesDocument, options);
+        return Apollo.useMutation<InsertCompanyFavoriteMutation, InsertCompanyFavoriteMutationVariables>(InsertCompanyFavoriteDocument, options);
       }
-export type InsertManyFavoritesMutationHookResult = ReturnType<typeof useInsertManyFavoritesMutation>;
-export type InsertManyFavoritesMutationResult = Apollo.MutationResult<InsertManyFavoritesMutation>;
-export type InsertManyFavoritesMutationOptions = Apollo.BaseMutationOptions<InsertManyFavoritesMutation, InsertManyFavoritesMutationVariables>;
+export type InsertCompanyFavoriteMutationHookResult = ReturnType<typeof useInsertCompanyFavoriteMutation>;
+export type InsertCompanyFavoriteMutationResult = Apollo.MutationResult<InsertCompanyFavoriteMutation>;
+export type InsertCompanyFavoriteMutationOptions = Apollo.BaseMutationOptions<InsertCompanyFavoriteMutation, InsertCompanyFavoriteMutationVariables>;
+export const DeleteFavoriteDocument = gql`
+    mutation DeleteFavorite($where: FavoriteWhereInput!) {
+  deleteFavorite(where: $where) {
+    id
+  }
+}
+    `;
+export type DeleteFavoriteMutationFn = Apollo.MutationFunction<DeleteFavoriteMutation, DeleteFavoriteMutationVariables>;
+
+/**
+ * __useDeleteFavoriteMutation__
+ *
+ * To run a mutation, you first call `useDeleteFavoriteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteFavoriteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteFavoriteMutation, { data, loading, error }] = useDeleteFavoriteMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useDeleteFavoriteMutation(baseOptions?: Apollo.MutationHookOptions<DeleteFavoriteMutation, DeleteFavoriteMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteFavoriteMutation, DeleteFavoriteMutationVariables>(DeleteFavoriteDocument, options);
+      }
+export type DeleteFavoriteMutationHookResult = ReturnType<typeof useDeleteFavoriteMutation>;
+export type DeleteFavoriteMutationResult = Apollo.MutationResult<DeleteFavoriteMutation>;
+export type DeleteFavoriteMutationOptions = Apollo.BaseMutationOptions<DeleteFavoriteMutation, DeleteFavoriteMutationVariables>;
 export const GetPeopleDocument = gql`
     query GetPeople($orderBy: [PersonOrderByWithRelationInput!], $where: PersonWhereInput, $limit: Int) {
   people: findManyPerson(orderBy: $orderBy, where: $where, take: $limit) {
@@ -4704,6 +4505,15 @@ export const GetPersonDocument = gql`
       id
       name
       domainName
+    }
+    Favorite {
+      id
+      person {
+        id
+      }
+      company {
+        id
+      }
     }
   }
 }
