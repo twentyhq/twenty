@@ -54,6 +54,7 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
           companyId={fieldValueEntity?.id ?? null}
           onSubmit={handleEntitySubmit}
           onCancel={handleCancel}
+          width={viewField.columnSize}
         />
       );
     }
@@ -63,6 +64,7 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
           userId={fieldValueEntity?.id ?? null}
           onSubmit={handleEntitySubmit}
           onCancel={handleCancel}
+          width={viewField.columnSize}
         />
       );
     }
