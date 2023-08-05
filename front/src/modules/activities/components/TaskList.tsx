@@ -36,26 +36,21 @@ const StyledTaskRows = styled.div`
   width: 100%;
 `;
 
-const StyledEmptyListMessage = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  padding: ${({ theme }) => theme.spacing(4)};
-`;
-
 export function TaskList({ title, tasks }: OwnProps) {
   return (
-    <StyledContainer>
-      <StyledTitle>
-        {title} <StyledCount>{tasks ? tasks.length : 0}</StyledCount>
-      </StyledTitle>
-      {tasks && tasks.length > 0 ? (
-        <StyledTaskRows>
-          {tasks.map((task) => (
-            <TaskRow key={task.id} task={task} />
-          ))}
-        </StyledTaskRows>
-      ) : (
-        <StyledEmptyListMessage>No task in this section</StyledEmptyListMessage>
+    <>
+      {tasks && tasks.length > 0 && (
+        <StyledContainer>
+          <StyledTitle>
+            {title} <StyledCount>{tasks.length}</StyledCount>
+          </StyledTitle>
+          <StyledTaskRows>
+            {tasks.map((task) => (
+              <TaskRow key={task.id} task={task} />
+            ))}
+          </StyledTaskRows>
+        </StyledContainer>
       )}
-    </StyledContainer>
+    </>
   );
 }
