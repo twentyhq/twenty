@@ -101,7 +101,8 @@ import {
 } from './handlers/view-field.ability-handler';
 import {
   CreateFavoriteAbilityHandler,
-  ReadFavoriteAbilityHandler
+  ReadFavoriteAbilityHandler,
+  DeleteFavoriteAbilityHandler,
 } from './handlers/favorite.ability-handler'
 
 @Global()
@@ -194,6 +195,7 @@ import {
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
+    DeleteFavoriteAbilityHandler,
   ],
   exports: [
     AbilityFactory,
@@ -282,6 +284,7 @@ import {
     //Favorite
     ReadFavoriteAbilityHandler,
     CreateFavoriteAbilityHandler,
+    DeleteFavoriteAbilityHandler,
   ],
 })
 export class AbilityModule {}

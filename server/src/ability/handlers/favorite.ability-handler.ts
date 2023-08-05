@@ -1,12 +1,18 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable, NotFoundException } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { IAbilityHandler } from 'src/ability/interfaces/ability-handler.interface';
-
+import { subject } from '@casl/ability';
 import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
 import { relationAbilityChecker } from 'src/ability/ability.util';
+import { FavoriteWhereInput } from 'src/core/@generated/favorite/favorite-where.input';
+import { assert } from 'src/utils/assert';
+
+class FavoriteArgs {
+  where?: FavoriteWhereInput;
+}
 
 @Injectable()
 export class ManageFavoriteAbilityHandler implements IAbilityHandler {
@@ -42,5 +48,21 @@ export class CreateFavoriteAbilityHandler implements IAbilityHandler {
     }
 
     return ability.can(AbilityAction.Create, 'Favorite');
+  }
+}
+
+@Injectable()
+export class DeleteFavoriteAbilityHandler implements IAbilityHandler {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async handle(ability: AppAbility, context: ExecutionContext) {
+    const gqlContext = GqlExecutionContext.create(context);
+    const args = gqlContext.getArgs<FavoriteArgs>();
+    const favorite = await this.prismaService.client.favorite.findFirst({
+      where: args.where
+    });
+    assert(favorite, '', NotFoundException);
+
+    return ability.can(AbilityAction.Delete, subject('Favorite', favorite));
   }
 }

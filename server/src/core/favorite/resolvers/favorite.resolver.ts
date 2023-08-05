@@ -1,4 +1,4 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation, ObjectType, ID } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { Prisma, Workspace } from '@prisma/client';
@@ -13,14 +13,28 @@ import { AbilityGuard } from 'src/guards/ability.guard';
 import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
 import {
   CreateFavoriteAbilityHandler,
+  DeleteFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
 } from 'src/ability/handlers/favorite.ability-handler';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
-import { CreateManyFavoriteArgs } from 'src/core/@generated/favorite/create-many-favorite.args';
-import { FavoriteCreateManyInput } from 'src/core/@generated/favorite/favorite-create-many.input';
 import { FavoriteService } from 'src/core/favorite/services/favorite.service';
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
+import { InputType } from '@nestjs/graphql';
+import { Field } from '@nestjs/graphql';
+import { FavoriteWhereInput } from 'src/core/@generated/favorite/favorite-where.input';
+
+@InputType()
+class FavoriteMutationForPersonArgs {
+  @Field(() => String)
+  personId: string;
+}
+
+@InputType()
+class FavoriteMutationForCompanyArgs {
+  @Field(() => String)
+  companyId: string;
+}
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Favorite)
@@ -40,53 +54,95 @@ export class FavoriteResolver {
       where: {
         workspaceId: workspace.id,
       },
-      select: prismaSelect.value,
+      include: {
+        person: true,
+        company: {
+          include: {
+            accountOwner: true,
+          }
+        },
+      },
     });
 
     return favorites
   }
 
-  @Mutation(() => [Favorite], {
+  @Mutation(() => Favorite, {
     nullable: false,
   })
   @UseGuards(AbilityGuard)
   @CheckAbilities(CreateFavoriteAbilityHandler)
-  async createFavorites(
-    @Args() args: CreateManyFavoriteArgs,
+  async createFavoriteForPerson(
+    @Args('data') args: FavoriteMutationForPersonArgs,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<Prisma.BatchPayload> {
+    @PrismaSelector({ modelName: 'Favorite' })
+    prismaSelect: PrismaSelect<'Favorite'>,
+  ): Promise<Partial<Favorite>> {
     //To avoid duplicates we first fetch all favorites assinged by workspace
-    const favorites = await this.favoriteService.findMany({
-      where: { workspaceId: workspace.id },
-      select: { companyId: true, personId: true },
+    const favorite = await this.favoriteService.findFirst({
+      where: { workspaceId: workspace.id, personId: args.personId },
     });
 
-    //we create a set for both people and companies
-    const favorite_persons = new Set(favorites.map((fav) => fav.personId));
-    const favorite_companies = new Set(favorites.map((fav) => fav.companyId));
+    if(favorite) return favorite
 
-    const uniquePeople: FavoriteCreateManyInput[] = [];
-    const uniqueCompanies: FavoriteCreateManyInput[] = [];
+    return this.favoriteService.create({
+      data: {
+        person: {
+          connect: { id: args.personId }
+        }, 
+        workspaceId: workspace.id
+      },
+      select: prismaSelect.value
+    });
+  }
 
-    args.data.forEach((favorite) => {
-      favorite.workspaceId = workspace.id;
-      //we dont know if a favorite is a person or company, so we check for both
-      if (favorite.personId) {
-        //if person is not in favorites then add to favorites
-        if (!favorite_persons.has(favorite.personId))
-          uniquePeople.push(favorite);
-          //if company is not in favorites then add to favorites
-      } else if (favorite.companyId) {
-        if (!favorite_companies.has(favorite.companyId))
-          uniqueCompanies.push(favorite);
-      }
+  @Mutation(() => Favorite, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreateFavoriteAbilityHandler)
+  async createFavoriteForCompany(
+    @Args('data') args: FavoriteMutationForCompanyArgs,
+    @AuthWorkspace() workspace: Workspace,
+    @PrismaSelector({ modelName: 'Favorite' })
+    prismaSelect: PrismaSelect<'Favorite'>,
+  ): Promise<Partial<Favorite>> {
+    //To avoid duplicates we first fetch all favorites assinged by workspace
+    const favorite = await this.favoriteService.findFirst({
+      where: { workspaceId: workspace.id, companyId: args.companyId },
     });
 
-    const created_favorites = await this.favoriteService.createMany({
-      data: [...uniquePeople, ...uniqueCompanies],
-      skipDuplicates: true,
+    if(favorite) return favorite
+
+    return this.favoriteService.create({
+      data: {
+        company: {
+          connect: { id: args.companyId }
+        }, 
+        workspaceId: workspace.id
+      },
+      select: prismaSelect.value
+    });
+  }
+
+  @Mutation(() => Favorite, {
+    nullable: false,
+  })
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(DeleteFavoriteAbilityHandler)
+  async deleteFavorite(
+    @Args('where') args: FavoriteWhereInput,
+    @AuthWorkspace() workspace: Workspace,
+    @PrismaSelector({ modelName: 'Favorite' })
+    prismaSelect: PrismaSelect<'Favorite'>,
+  ): Promise<Partial<Favorite>> {
+    const favorite = await this.favoriteService.findFirst({
+      where: { ...args, workspaceId: workspace.id },
     });
 
-    return created_favorites;
+    return this.favoriteService.delete({
+      where: { id: favorite?.id },
+      select: prismaSelect.value
+    })
   }
 }

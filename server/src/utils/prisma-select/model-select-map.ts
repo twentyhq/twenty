@@ -16,6 +16,6 @@ export type ModelSelectMap = {
   PipelineStage: Prisma.PipelineStageSelect;
   PipelineProgress: Prisma.PipelineProgressSelect;
   Attachment: Prisma.AttachmentSelect;
-  ViewField: Prisma.ViewFieldSelect;
   Favorite: Prisma.FavoriteSelect;
+  ViewField: Prisma.ViewFieldSelect;
 };
