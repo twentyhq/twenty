@@ -20,8 +20,6 @@ const StyledClickable = styled.div`
 `;
 
 export function RawLink({ className, href, children, onClick }: OwnProps) {
-  console.log(children);
-
   return (
     <div>
       <StyledClickable className={className}>
