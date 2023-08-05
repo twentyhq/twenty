@@ -27,6 +27,7 @@ const StyledBar = styled.div`
   flex-direction: row;
   height: 40px;
   justify-content: space-between;
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledChipcontainer = styled.div`
