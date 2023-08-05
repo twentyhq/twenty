@@ -8,15 +8,17 @@ import {
   CompanyProgress,
   PipelineProgressForBoard,
 } from '@/companies/types/CompanyProgress';
-import { boardState } from '@/pipeline/states/boardState';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
-import { isBoardLoadedState } from '@/pipeline/states/isBoardLoadedState';
-import { BoardPipelineStageColumn } from '@/ui/board/components/Board';
+import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
+import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
+import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
+import { BoardColumnDefinition } from '@/ui/board/types/BoardColumnDefinition';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import {
+  GetPipelineProgressQuery,
   PipelineProgressableType,
   PipelineProgressOrderByWithRelationInput as PipelineProgresses_Order_By,
 } from '~/generated/graphql';
@@ -39,12 +41,51 @@ export function HooksCompanyBoard({
   useInitializeCompanyBoardFilters({
     availableFilters,
   });
-  const [currentPipeline, setCurrentPipeline] =
-    useRecoilState(currentPipelineState);
 
-  const [board, setBoard] = useRecoilState(boardState);
+  const [currentPipeline] = useRecoilState(currentPipelineState);
+  const [, setBoardColumns] = useRecoilState(boardColumnsState);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
+
+  const updateBoardColumns = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (pipeline: Pipeline) => {
+        const currentPipeline = snapshot
+          .getLoadable(currentPipelineState)
+          .valueOrThrow();
+
+        const currentBoardColumns = snapshot
+          .getLoadable(boardColumnsState)
+          .valueOrThrow();
+
+        if (JSON.stringify(pipeline) !== JSON.stringify(currentPipeline)) {
+          set(currentPipelineState, pipeline);
+        }
+
+        const pipelineStages = pipeline?.pipelineStages ?? [];
+
+        const orderedPipelineStages = [...pipelineStages].sort((a, b) => {
+          if (!a.index || !b.index) return 0;
+          return a.index - b.index;
+        });
+
+        const newBoardColumns: BoardColumnDefinition[] =
+          orderedPipelineStages?.map((pipelineStage) => ({
+            id: pipelineStage.id,
+            title: pipelineStage.name,
+            colorCode: pipelineStage.color,
+            index: pipelineStage.index ?? 0,
+          }));
+
+        if (
+          JSON.stringify(currentBoardColumns) !==
+          JSON.stringify(newBoardColumns)
+        ) {
+          setBoardColumns(newBoardColumns);
+        }
+      },
+    [],
+  );
 
   useGetPipelinesQuery({
     variables: {
@@ -54,23 +95,8 @@ export function HooksCompanyBoard({
     },
     onCompleted: async (data) => {
       const pipeline = data?.findManyPipeline[0] as Pipeline;
-      setCurrentPipeline(pipeline);
-      const pipelineStages = pipeline?.pipelineStages;
-      const orderedPipelineStages = pipelineStages
-        ? [...pipelineStages].sort((a, b) => {
-            if (!a.index || !b.index) return 0;
-            return a.index - b.index;
-          })
-        : [];
-      const initialBoard: BoardPipelineStageColumn[] =
-        orderedPipelineStages?.map((pipelineStage, i) => ({
-          pipelineStageId: pipelineStage.id,
-          title: pipelineStage.name,
-          colorCode: pipelineStage.color,
-          index: pipelineStage.index || 0,
-          pipelineProgressIds: board?.[i].pipelineProgressIds || [],
-        })) || [];
-      setBoard(initialBoard);
+
+      updateBoardColumns(pipeline);
     },
   });
 
@@ -89,6 +115,29 @@ export function HooksCompanyBoard({
     };
   }, [filters, pipelineStageIds]) as any;
 
+  const updateBoardCardIds = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (
+        pipelineProgresses: GetPipelineProgressQuery['findManyPipelineProgress'],
+      ) => {
+        const boardColumns = snapshot
+          .getLoadable(boardColumnsState)
+          .valueOrThrow();
+
+        for (const boardColumn of boardColumns) {
+          const boardCardIds = pipelineProgresses
+            .filter(
+              (pipelineProgressToFilter) =>
+                pipelineProgressToFilter.pipelineStageId === boardColumn.id,
+            )
+            .map((pipelineProgress) => pipelineProgress.id);
+
+          set(boardCardIdsByColumnIdFamilyState(boardColumn.id), boardCardIds);
+        }
+      },
+    [],
+  );
+
   const pipelineProgressesQuery = useGetPipelineProgressQuery({
     variables: {
       where: whereFilters,
@@ -96,18 +145,9 @@ export function HooksCompanyBoard({
     },
     onCompleted: (data) => {
       const pipelineProgresses = data?.findManyPipelineProgress || [];
-      setBoard((board) =>
-        board?.map((boardPipelineStage) => ({
-          ...boardPipelineStage,
-          pipelineProgressIds: pipelineProgresses
-            .filter(
-              (pipelineProgress) =>
-                pipelineProgress.pipelineStageId ===
-                boardPipelineStage.pipelineStageId,
-            )
-            .map((pipelineProgress) => pipelineProgress.id),
-        })),
-      );
+
+      updateBoardCardIds(pipelineProgresses);
+
       setIsBoardLoaded(true);
     },
   });

@@ -10,7 +10,7 @@ import {
 
 import { entityTableDimensionsState } from '../states/entityTableDimensionsState';
 import { viewFieldsState } from '../states/viewFieldsState';
-import {
+import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
   ViewFieldTextMetadata,
@@ -22,6 +22,17 @@ const DEFAULT_VIEW_FIELD_METADATA: ViewFieldTextMetadata = {
   fieldName: '',
 };
 
+export const toViewFieldInput = (
+  objectName: 'company' | 'person',
+  viewFieldDefinition: ViewFieldDefinition<ViewFieldMetadata>,
+) => ({
+  fieldName: viewFieldDefinition.columnLabel,
+  index: viewFieldDefinition.columnOrder,
+  isVisible: viewFieldDefinition.isVisible ?? true,
+  objectName,
+  sizeInPx: viewFieldDefinition.columnSize,
+});
+
 export const useLoadView = ({
   objectName,
   viewFieldDefinitions,
@@ -32,7 +43,7 @@ export const useLoadView = ({
   const setEntityTableDimensions = useSetRecoilState(
     entityTableDimensionsState,
   );
-  const setViewFields = useSetRecoilState(viewFieldsState);
+  const setViewFieldsState = useSetRecoilState(viewFieldsState);
 
   const [createViewFieldsMutation] = useCreateViewFieldsMutation();
 
@@ -43,36 +54,34 @@ export const useLoadView = ({
     },
     onCompleted: (data) => {
       if (data.viewFields.length) {
-        setViewFields(
-          data.viewFields.map<ViewFieldDefinition<ViewFieldMetadata>>(
-            (viewField) => ({
-              ...(viewFieldDefinitions.find(
-                ({ columnLabel }) => viewField.fieldName === columnLabel,
-              ) || { metadata: DEFAULT_VIEW_FIELD_METADATA }),
-              id: viewField.id,
-              columnLabel: viewField.fieldName,
-              columnOrder: viewField.index,
-              columnSize: viewField.sizeInPx,
-            }),
-          ),
-        );
+        const viewFields = data.viewFields.map<
+          ViewFieldDefinition<ViewFieldMetadata>
+        >((viewField) => ({
+          ...(viewFieldDefinitions.find(
+            ({ columnLabel }) => viewField.fieldName === columnLabel,
+          ) || { metadata: DEFAULT_VIEW_FIELD_METADATA }),
+          id: viewField.id,
+          columnLabel: viewField.fieldName,
+          columnOrder: viewField.index,
+          columnSize: viewField.sizeInPx,
+          isVisible: viewField.isVisible,
+        }));
+
+        setViewFieldsState({ objectName, viewFields });
         setEntityTableDimensions((prevState) => ({
           ...prevState,
           numberOfColumns: data.viewFields.length,
         }));
+
         return;
       }
 
       // Populate if empty
       createViewFieldsMutation({
         variables: {
-          data: viewFieldDefinitions.map((viewFieldDefinition) => ({
-            fieldName: viewFieldDefinition.columnLabel,
-            index: viewFieldDefinition.columnOrder,
-            isVisible: true,
-            objectName,
-            sizeInPx: viewFieldDefinition.columnSize,
-          })),
+          data: viewFieldDefinitions.map((viewFieldDefinition) =>
+            toViewFieldInput(objectName, viewFieldDefinition),
+          ),
         },
         refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
       });

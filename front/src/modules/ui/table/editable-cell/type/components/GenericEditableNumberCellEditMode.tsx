@@ -42,8 +42,6 @@ export function GenericEditableNumberCellEditMode({ viewField }: OwnProps) {
         throw new Error('Number too big');
       }
 
-      console.log({ numberValue });
-
       setFieldValue(numberValue.toString());
 
       if (currentRowEntityId && updateField) {
