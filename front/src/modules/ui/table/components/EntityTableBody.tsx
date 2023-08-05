@@ -1,4 +1,3 @@
-import { Ref } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
@@ -10,11 +9,7 @@ import { tableRowIdsState } from '../states/tableRowIdsState';
 
 import { EntityTableRow } from './EntityTableRow';
 
-type OwnProps = {
-  tbodyRef: Ref<HTMLTableSectionElement>;
-};
-
-export function EntityTableBody({ tbodyRef }: OwnProps) {
+export function EntityTableBody() {
   const rowIds = useRecoilValue(tableRowIdsState);
 
   const isNavbarSwitchingSize = useRecoilValue(isNavbarSwitchingSizeState);
@@ -28,7 +23,7 @@ export function EntityTableBody({ tbodyRef }: OwnProps) {
   }
 
   return (
-    <tbody ref={tbodyRef}>
+    <tbody>
       {rowIds.map((rowId, index) => (
         <RowIdContext.Provider value={rowId} key={rowId}>
           <RowIndexContext.Provider value={index}>

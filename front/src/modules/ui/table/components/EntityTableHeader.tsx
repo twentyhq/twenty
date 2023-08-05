@@ -188,7 +188,7 @@ export function EntityTableHeader() {
   );
 
   return (
-    <thead>
+    <thead data-select-disable>
       <tr>
         <th
           style={{

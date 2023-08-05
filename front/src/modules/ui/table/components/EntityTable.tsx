@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
+import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
-import { DragSelect } from '../../../../utils/DragSelect';
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
 import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
@@ -103,7 +103,6 @@ export function EntityTable<SortField>({
   useUpdateEntityMutation,
 }: OwnProps<SortField>) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
-  const entityTableBodyRef = useRef<HTMLTableSectionElement>(null);
 
   const rowIds = useRecoilValue(tableRowIdsState);
   const setRowSelectedState = useSetRowSelectedState();
@@ -138,11 +137,11 @@ export function EntityTable<SortField>({
           <StyledTableWrapper>
             <StyledTable>
               <EntityTableHeader />
-              <EntityTableBody tbodyRef={entityTableBodyRef} />
+              <EntityTableBody />
             </StyledTable>
           </StyledTableWrapper>
           <DragSelect
-            dragSelectable={entityTableBodyRef}
+            dragSelectable={tableBodyRef}
             onDragSelectionStart={resetSelections}
             onDragSelectionChange={setRowSelectedState}
           />

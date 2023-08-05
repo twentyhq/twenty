@@ -16,6 +16,17 @@ export function DragSelect({
   onDragSelectionStart,
 }: OwnProps) {
   const { DragSelection } = useSelectionContainer({
+    shouldStartSelecting: (target) => {
+      if (target instanceof HTMLElement) {
+        let el = target;
+        while (el.parentElement && !el.dataset.selectDisable) {
+          el = el.parentElement;
+        }
+
+        return el.dataset.selectDisable !== 'true';
+      }
+      return true;
+    },
     onSelectionStart: onDragSelectionStart,
     onSelectionChange: (box) => {
       const scrollAwareBox = {
