@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { StorageType } from './interfaces/storage.interface';
+import { SupportDriver } from './interfaces/support.interface';
 
 @Injectable()
 export class EnvironmentService {
@@ -100,5 +101,17 @@ export class EnvironmentService {
     return (
       this.configService.get<string>('STORAGE_LOCAL_PATH') ?? '.local-storage'
     );
+  }
+
+  getSupportDriver(): string {
+    return this.configService.get<string>('SUPPORT_DRIVER') ?? SupportDriver.None;
+  }
+
+  getSupportFrontChatId(): string | undefined {
+    return this.configService.get<string>('SUPPORT_FRONT_CHAT_ID');
+  }
+
+  getSupportFrontHMACKey(): string | undefined {
+    return this.configService.get<string>('SUPPORT_FRONT_HMAC_KEY');
   }
 }

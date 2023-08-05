@@ -1,12 +1,16 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
+import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
 import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
+import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
 import { EntityUpdateMutationHookContext } from '../states/EntityUpdateMutationHookContext';
+import { tableRowIdsState } from '../states/tableRowIdsState';
 import { TableHeader } from '../table-header/components/TableHeader';
 
 import { EntityTableBody } from './EntityTableBody';
@@ -20,7 +24,6 @@ const StyledTable = styled.table`
   margin-left: ${({ theme }) => theme.table.horizontalCellMargin};
   margin-right: ${({ theme }) => theme.table.horizontalCellMargin};
   table-layout: fixed;
-  width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
 
   th {
     border: 1px solid ${({ theme }) => theme.border.color.light};
@@ -37,7 +40,7 @@ const StyledTable = styled.table`
       border-right-color: transparent;
     }
     :last-of-type {
-      min-width: 0;
+      min-width: fit-content;
       width: 100%;
     }
   }
@@ -58,7 +61,7 @@ const StyledTable = styled.table`
       border-right-color: transparent;
     }
     :last-of-type {
-      min-width: 0;
+      min-width: fit-content;
       width: 100%;
     }
   }
@@ -101,6 +104,15 @@ export function EntityTable<SortField>({
 }: OwnProps<SortField>) {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
+  const rowIds = useRecoilValue(tableRowIdsState);
+  const setRowSelectedState = useSetRowSelectedState();
+
+  function resetSelections() {
+    for (const rowId of rowIds) {
+      setRowSelectedState(rowId, false);
+    }
+  }
+
   useMapKeyboardToSoftFocus();
 
   const leaveTableFocus = useLeaveTableFocus();
@@ -128,6 +140,11 @@ export function EntityTable<SortField>({
               <EntityTableBody />
             </StyledTable>
           </StyledTableWrapper>
+          <DragSelect
+            dragSelectable={tableBodyRef}
+            onDragSelectionStart={resetSelections}
+            onDragSelectionChange={setRowSelectedState}
+          />
         </StyledTableContainer>
       </StyledTableWithHeader>
     </EntityUpdateMutationHookContext.Provider>

@@ -13,6 +13,10 @@ export const GET_CLIENT_CONFIG = gql`
         enabled
         anonymizationEnabled
       }
+      support {
+        supportDriver
+        supportFrontChatId
+      }
     }
   }
 `;

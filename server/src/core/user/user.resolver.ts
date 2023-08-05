@@ -8,6 +8,8 @@ import {
 } from '@nestjs/graphql';
 import { UseFilters, UseGuards } from '@nestjs/common';
 
+import crypto from 'crypto';
+
 import { accessibleBy } from '@casl/prisma';
 import { Prisma, Workspace } from '@prisma/client';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
@@ -37,8 +39,18 @@ import { UpdateOneUserArgs } from 'src/core/@generated/user/update-one-user.args
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 import { UserService } from './user.service';
+
+import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
+
+function getHMACKey(email?: string, key?: string | null) {
+  if (!email || !key) return null;
+
+  const hmac = crypto.createHmac('sha256', key);
+  return hmac.update(email).digest('hex');
+}
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
@@ -46,6 +58,7 @@ export class UserResolver {
   constructor(
     private readonly userService: UserService,
     private readonly fileUploadService: FileUploadService,
+    private environmentService: EnvironmentService,
   ) {}
 
   @Query(() => User)
@@ -54,11 +67,15 @@ export class UserResolver {
     @PrismaSelector({ modelName: 'User' })
     prismaSelect: PrismaSelect<'User'>,
   ) {
+   
+
+    const select = prismaSelect.value;
+
     const user = await this.userService.findUnique({
       where: {
         id,
       },
-      select: prismaSelect.value,
+    select
     });
     assert(user, 'User not found');
 
@@ -121,6 +138,17 @@ export class UserResolver {
   })
   displayName(@Parent() parent: User): string {
     return `${parent.firstName ?? ''} ${parent.lastName ?? ''}`;
+  }
+
+  @ResolveField(() => String, {
+    nullable: false,
+  })
+  supportUserHash(@Parent() parent: User): string | null {
+    if (this.environmentService.getSupportDriver() !== SupportDriver.Front) {
+      return null;
+    }
+    const key = this.environmentService.getSupportFrontHMACKey();
+    return getHMACKey(parent.email, key);
   }
 
   @Mutation(() => String)

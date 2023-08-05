@@ -13,8 +13,6 @@ import { filterDropdownSearchInputScopedState } from '../states/filterDropdownSe
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
-import DropdownButton from './DropdownButton';
-
 export function FilterDropdownFilterSelect({
   context,
 }: {
@@ -61,9 +59,7 @@ export function FilterDropdownFilterSelect({
             setFilterDropdownSearchInput('');
           }}
         >
-          <DropdownButton.StyledIcon>
-            {availableFilter.icon}
-          </DropdownButton.StyledIcon>
+          {availableFilter.icon}
           {availableFilter.label}
         </DropdownMenuSelectableItem>
       ))}

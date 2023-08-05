@@ -13,7 +13,10 @@ import { assertNotNull } from '~/utils/assert';
 type OwnProps = {
   activity?: Pick<Activity, 'id'> & {
     activityTargets?: Array<
-      Pick<ActivityTarget, 'id' | 'commentableId' | 'commentableType'>
+      Pick<
+        ActivityTarget,
+        'id' | 'commentableId' | 'commentableType' | 'personId' | 'companyId'
+      >
     > | null;
   };
 };
@@ -31,7 +34,7 @@ export function ActivityRelationEditableFieldEditMode({ activity }: OwnProps) {
     () =>
       activity?.activityTargets
         ?.filter((relation) => relation.commentableType === 'Person')
-        .map((relation) => relation.commentableId)
+        .map((relation) => relation.personId || relation.commentableId)
         .filter(assertNotNull) ?? [],
     [activity?.activityTargets],
   );
@@ -40,7 +43,7 @@ export function ActivityRelationEditableFieldEditMode({ activity }: OwnProps) {
     () =>
       activity?.activityTargets
         ?.filter((relation) => relation.commentableType === 'Company')
-        .map((relation) => relation.commentableId)
+        .map((relation) => relation.companyId || relation.commentableId)
         .filter(assertNotNull) ?? [],
     [activity?.activityTargets],
   );
