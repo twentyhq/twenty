@@ -43,8 +43,6 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 
 import { UserService } from './user.service';
 
-import { UserWithHMACKey } from './dto/user-with-HMAC';
-import { get } from 'http';
 import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
 
 function getHMACKey(email?: string, key?: string | null) {
