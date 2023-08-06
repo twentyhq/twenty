@@ -39,7 +39,7 @@ type SubjectsAbility = Subjects<{
   Attachment: Attachment;
   UserSettings: UserSettings;
   ViewField: ViewField;
-  Favorite: Favorite
+  Favorite: Favorite;
 }>;
 
 export type AppAbility = PureAbility<

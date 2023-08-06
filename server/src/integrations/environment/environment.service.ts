@@ -104,7 +104,9 @@ export class EnvironmentService {
   }
 
   getSupportDriver(): string {
-    return this.configService.get<string>('SUPPORT_DRIVER') ?? SupportDriver.None;
+    return (
+      this.configService.get<string>('SUPPORT_DRIVER') ?? SupportDriver.None
+    );
   }
 
   getSupportFrontChatId(): string | undefined {

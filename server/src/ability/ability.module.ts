@@ -103,7 +103,7 @@ import {
   CreateFavoriteAbilityHandler,
   ReadFavoriteAbilityHandler,
   DeleteFavoriteAbilityHandler,
-} from './handlers/favorite.ability-handler'
+} from './handlers/favorite.ability-handler';
 
 @Global()
 @Module({

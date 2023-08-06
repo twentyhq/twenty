@@ -1,7 +1,9 @@
-import { Resolver, Query, Args, Mutation, ObjectType, ID } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+import { InputType } from '@nestjs/graphql';
+import { Field } from '@nestjs/graphql';
 
-import { Prisma, Workspace } from '@prisma/client';
+import { Workspace } from '@prisma/client';
 
 import {
   PrismaSelect,
@@ -18,10 +20,6 @@ import {
 } from 'src/ability/handlers/favorite.ability-handler';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { FavoriteService } from 'src/core/favorite/services/favorite.service';
-import { UserAbility } from 'src/decorators/user-ability.decorator';
-import { AppAbility } from 'src/ability/ability.factory';
-import { InputType } from '@nestjs/graphql';
-import { Field } from '@nestjs/graphql';
 import { FavoriteWhereInput } from 'src/core/@generated/favorite/favorite-where.input';
 
 @InputType()
@@ -46,9 +44,6 @@ export class FavoriteResolver {
   @CheckAbilities(ReadFavoriteAbilityHandler)
   async findFavorites(
     @AuthWorkspace() workspace: Workspace,
-    @UserAbility() ability: AppAbility,
-    @PrismaSelector({ modelName: 'Favorite' })
-    prismaSelect: PrismaSelect<'Favorite'>,
   ): Promise<Partial<Favorite>[]> {
     const favorites = await this.favoriteService.findMany({
       where: {
@@ -59,12 +54,12 @@ export class FavoriteResolver {
         company: {
           include: {
             accountOwner: true,
-          }
+          },
         },
       },
     });
 
-    return favorites
+    return favorites;
   }
 
   @Mutation(() => Favorite, {
@@ -83,16 +78,16 @@ export class FavoriteResolver {
       where: { workspaceId: workspace.id, personId: args.personId },
     });
 
-    if(favorite) return favorite
+    if (favorite) return favorite;
 
     return this.favoriteService.create({
       data: {
         person: {
-          connect: { id: args.personId }
-        }, 
-        workspaceId: workspace.id
+          connect: { id: args.personId },
+        },
+        workspaceId: workspace.id,
       },
-      select: prismaSelect.value
+      select: prismaSelect.value,
     });
   }
 
@@ -112,16 +107,16 @@ export class FavoriteResolver {
       where: { workspaceId: workspace.id, companyId: args.companyId },
     });
 
-    if(favorite) return favorite
+    if (favorite) return favorite;
 
     return this.favoriteService.create({
       data: {
         company: {
-          connect: { id: args.companyId }
-        }, 
-        workspaceId: workspace.id
+          connect: { id: args.companyId },
+        },
+        workspaceId: workspace.id,
       },
-      select: prismaSelect.value
+      select: prismaSelect.value,
     });
   }
 
@@ -142,7 +137,7 @@ export class FavoriteResolver {
 
     return this.favoriteService.delete({
       where: { id: favorite?.id },
-      select: prismaSelect.value
-    })
+      select: prismaSelect.value,
+    });
   }
 }

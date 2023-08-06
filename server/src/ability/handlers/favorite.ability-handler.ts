@@ -1,8 +1,14 @@
-import { ExecutionContext, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ExecutionContext,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { IAbilityHandler } from 'src/ability/interfaces/ability-handler.interface';
 import { subject } from '@casl/ability';
+
+import { IAbilityHandler } from 'src/ability/interfaces/ability-handler.interface';
+
 import { PrismaService } from 'src/database/prisma.service';
 import { AbilityAction } from 'src/ability/ability.action';
 import { AppAbility } from 'src/ability/ability.factory';
@@ -59,7 +65,7 @@ export class DeleteFavoriteAbilityHandler implements IAbilityHandler {
     const gqlContext = GqlExecutionContext.create(context);
     const args = gqlContext.getArgs<FavoriteArgs>();
     const favorite = await this.prismaService.client.favorite.findFirst({
-      where: args.where
+      where: args.where,
     });
     assert(favorite, '', NotFoundException);
 
