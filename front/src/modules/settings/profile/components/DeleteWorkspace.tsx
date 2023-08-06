@@ -1,19 +1,25 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
 import { ButtonVariant } from '@/ui/button/components/Button';
 import { H2Title } from '@/ui/typography/components/H2Title';
 import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 
-import { DeleteModal, StyledDeleteButton } from './DeleteModal';
+import { ConfirmationModal } from '../../../ui/modal/components/ConfirmationModal';
+
+import { StyledDeleteButton } from './DeleteModal';
 
 export function DeleteWorkspace() {
   const [isDeleteWorkSpaceModalOpen, setIsDeleteWorkSpaceModalOpen] =
     useState(false);
 
   const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
+  const currentUser = useRecoilValue(currentUserState);
+  const userEmail = currentUser?.email;
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -36,7 +42,9 @@ export function DeleteWorkspace() {
         title="Delete workspace"
       />
 
-      <DeleteModal
+      <ConfirmationModal
+        confirmationPlaceholder={userEmail}
+        confirmationValue={userEmail}
         isOpen={isDeleteWorkSpaceModalOpen}
         setIsOpen={setIsDeleteWorkSpaceModalOpen}
         title="Workspace Deletion"
