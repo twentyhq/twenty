@@ -39,6 +39,11 @@ const StyledEmptyTaskGroupSubTitle = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export function TaskGroups() {
   const { todayOrPreviousTasks, upcomingTasks, unscheduledTasks } = useTasks();
   const theme = useTheme();
@@ -65,10 +70,10 @@ export function TaskGroups() {
   }
 
   return (
-    <>
+    <StyledContainer>
       <TaskList title="Today" tasks={todayOrPreviousTasks ?? []} />
       <TaskList title="Upcoming" tasks={upcomingTasks ?? []} />
       <TaskList title="Unscheduled" tasks={unscheduledTasks ?? []} />
-    </>
+    </StyledContainer>
   );
 }

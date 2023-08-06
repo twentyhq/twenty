@@ -8,7 +8,7 @@ import {
   IconColorSwatch,
   IconLogout,
   IconSettings,
-  IconUser,
+  IconUserCircle,
   IconUsers,
 } from '@/ui/icon/index';
 import NavItem from '@/ui/navbar/components/NavItem';
@@ -32,7 +32,7 @@ export function SettingsNavbar() {
       <NavItem
         label="Profile"
         to="/settings/profile"
-        icon={<IconUser size={theme.icon.size.md} />}
+        icon={<IconUserCircle size={theme.icon.size.md} />}
         active={
           !!useMatch({
             path: useResolvedPath('/settings/profile').pathname,

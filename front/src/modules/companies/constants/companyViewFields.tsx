@@ -4,7 +4,7 @@ import {
   IconCalendarEvent,
   IconLink,
   IconMap,
-  IconUser,
+  IconUserCircle,
   IconUsers,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
@@ -32,6 +32,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       contentFieldName: 'name',
       relationType: Entity.Company,
     },
+    isVisible: true,
   } as ViewFieldDefinition<ViewFieldChipMetadata>,
   {
     id: 'domainName',
@@ -44,11 +45,12 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       fieldName: 'domainName',
       placeHolder: 'example.com',
     },
+    isVisible: true,
   } as ViewFieldDefinition<ViewFieldURLMetadata>,
   {
     id: 'accountOwner',
     columnLabel: 'Account Owner',
-    columnIcon: <IconUser />,
+    columnIcon: <IconUserCircle />,
     columnSize: 150,
     columnOrder: 3,
     metadata: {
@@ -56,6 +58,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       fieldName: 'accountOwner',
       relationType: Entity.User,
     },
+    isVisible: true,
   } satisfies ViewFieldDefinition<ViewFieldRelationMetadata>,
   {
     id: 'createdAt',
@@ -67,6 +70,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       type: 'date',
       fieldName: 'createdAt',
     },
+    isVisible: true,
   } satisfies ViewFieldDefinition<ViewFieldDateMetadata>,
   {
     id: 'employees',
@@ -78,6 +82,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       type: 'number',
       fieldName: 'employees',
     },
+    isVisible: true,
   } satisfies ViewFieldDefinition<ViewFieldNumberMetadata>,
   {
     id: 'linkedin',
@@ -90,6 +95,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       fieldName: 'linkedinUrl',
       placeHolder: 'LinkedIn URL',
     },
+    isVisible: true,
   } satisfies ViewFieldDefinition<ViewFieldURLMetadata>,
   {
     id: 'address',
@@ -102,5 +108,6 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       fieldName: 'address',
       placeHolder: 'Addre​ss', // Hack: Fake character to prevent password-manager from filling the field
     },
+    isVisible: true,
   } satisfies ViewFieldDefinition<ViewFieldTextMetadata>,
 ];

@@ -1,30 +1,30 @@
 import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
+import debounce from 'lodash.debounce';
 
-import { currentUserState } from '@/auth/states/currentUserState';
 import { Button, ButtonVariant } from '@/ui/button/components/Button';
 import { TextInput } from '@/ui/input/text/components/TextInput';
 import { Modal } from '@/ui/modal/components/Modal';
 import { Section, SectionAlignment } from '@/ui/section/components/Section';
 import { H1Title, H1TitleFontColor } from '@/ui/typography/components/H1Title';
-import { debounce } from '~/utils/debounce';
 
-interface DeleteModalProps {
+interface ConfirmationModalProps {
   isOpen: boolean;
   title: string;
   subtitle: ReactNode;
   setIsOpen: (val: boolean) => void;
-  handleConfirmDelete: () => void;
+  onConfirmClick: () => void;
   deleteButtonText?: string;
+  confirmationPlaceholder?: string;
+  confirmationValue?: string;
 }
 
-const StyledCenteredButton = styled(Button)`
+export const StyledCenteredButton = styled(Button)`
   justify-content: center;
 `;
 
-export const StyledDeleteButton = styled(StyledCenteredButton)`
+export const StyledConfirmationButton = styled(StyledCenteredButton)`
   border-color: ${({ theme }) => theme.color.red20};
   box-shadow: none;
   color: ${({ theme }) => theme.color.red};
@@ -35,27 +35,28 @@ export const StyledDeleteButton = styled(StyledCenteredButton)`
   }
 `;
 
-export function DeleteModal({
+export function ConfirmationModal({
   isOpen = false,
   title,
   subtitle,
   setIsOpen,
-  handleConfirmDelete,
+  onConfirmClick,
   deleteButtonText = 'Delete',
-}: DeleteModalProps) {
-  const [email, setEmail] = useState('');
-  const [isValidEmail, setIsValidEmail] = useState(true);
-  const currentUser = useRecoilValue(currentUserState);
-  const userEmail = currentUser?.email;
+  confirmationValue,
+  confirmationPlaceholder,
+}: ConfirmationModalProps) {
+  const [inputConfirmationValue, setInputConfirmationValue] =
+    useState<string>('');
+  const [isValidValue, setIsValidValue] = useState(!confirmationValue);
 
-  const handleEmailChange = (val: string) => {
-    setEmail(val);
-    isEmailMatchingUserEmail(val, userEmail);
+  const handleInputConfimrationValueChange = (value: string) => {
+    setInputConfirmationValue(value);
+    isValueMatchingUserEmail(confirmationValue, value);
   };
 
-  const isEmailMatchingUserEmail = debounce(
-    (email1?: string, email2?: string) => {
-      setIsValidEmail(Boolean(email1 && email2 && email1 === email2));
+  const isValueMatchingUserEmail = debounce(
+    (value?: string, inputValue?: string) => {
+      setIsValidValue(Boolean(value && inputValue && value === inputValue));
     },
     250,
   );
@@ -73,20 +74,22 @@ export function DeleteModal({
         >
           <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
           <Section alignment={SectionAlignment.Center}>{subtitle}</Section>
-          <Section>
-            <TextInput
-              value={email}
-              onChange={handleEmailChange}
-              placeholder={userEmail}
-              fullWidth
-              key={'email-' + userEmail}
-            />
-          </Section>
-          <StyledDeleteButton
-            onClick={handleConfirmDelete}
+          {confirmationValue && (
+            <Section>
+              <TextInput
+                value={inputConfirmationValue}
+                onChange={handleInputConfimrationValueChange}
+                placeholder={confirmationPlaceholder}
+                fullWidth
+                key={'email-' + confirmationValue}
+              />
+            </Section>
+          )}
+          <StyledConfirmationButton
+            onClick={onConfirmClick}
             variant={ButtonVariant.Secondary}
             title={deleteButtonText}
-            disabled={!isValidEmail || !email}
+            disabled={!isValidValue}
             fullWidth
           />
           <StyledCenteredButton

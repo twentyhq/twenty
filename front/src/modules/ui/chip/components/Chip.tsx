@@ -17,6 +17,7 @@ export enum ChipVariant {
   Highlighted = 'highlighted',
   Regular = 'regular',
   Transparent = 'transparent',
+  Rounded = 'rounded',
 }
 
 type OwnProps = {
@@ -38,8 +39,18 @@ const StyledContainer = styled.div<Partial<OwnProps>>`
   background-color: ${({ theme, variant }) =>
     variant === ChipVariant.Highlighted
       ? theme.background.transparent.light
+      : variant === ChipVariant.Rounded
+      ? theme.background.transparent.lighter
       : 'transparent'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-color: ${({ theme, variant }) =>
+    variant === ChipVariant.Rounded ? theme.border.color.medium : 'none'};
+  border-radius: ${({ theme, variant }) =>
+    variant === ChipVariant.Rounded ? '50px' : theme.border.radius.sm};
+  border-style: ${({ variant }) =>
+    variant === ChipVariant.Rounded ? 'solid' : 'none'};
+  border-width: ${({ variant }) =>
+    variant === ChipVariant.Rounded ? '1px' : '0px'};
+
   color: ${({ theme, disabled, accent }) =>
     disabled
       ? theme.font.color.light
@@ -59,7 +70,8 @@ const StyledContainer = styled.div<Partial<OwnProps>>`
   max-width: ${({ maxWidth }) => (maxWidth ? maxWidth : '200px')};
 
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme, variant }) =>
+    variant === ChipVariant.Rounded ? '3px 8px' : theme.spacing(1)};
   user-select: none;
 
   :hover {

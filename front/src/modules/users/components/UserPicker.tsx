@@ -10,13 +10,14 @@ export type OwnProps = {
   userId: string;
   onSubmit: (newUser: EntityForSelect | null) => void;
   onCancel?: () => void;
+  width?: number;
 };
 
 type UserForSelect = EntityForSelect & {
   entityType: Entity.User;
 };
 
-export function UserPicker({ userId, onSubmit, onCancel }: OwnProps) {
+export function UserPicker({ userId, onSubmit, onCancel, width }: OwnProps) {
   const [searchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
@@ -44,6 +45,7 @@ export function UserPicker({ userId, onSubmit, onCancel }: OwnProps) {
 
   return (
     <SingleEntitySelect
+      width={width}
       onEntitySelected={handleEntitySelected}
       onCancel={onCancel}
       entities={{
