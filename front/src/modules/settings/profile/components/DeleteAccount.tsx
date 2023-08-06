@@ -6,11 +6,12 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
 import { ButtonVariant } from '@/ui/button/components/Button';
-import { StyledConfirmationButton } from '@/ui/modal/components/ConfirmationModal';
+import {
+  ConfirmationModal,
+  StyledConfirmationButton,
+} from '@/ui/modal/components/ConfirmationModal';
 import { H2Title } from '@/ui/typography/components/H2Title';
 import { useDeleteUserAccountMutation } from '~/generated/graphql';
-
-import { ConfirmationModal } from '../../../ui/modal/components/ConfirmationModal';
 
 export function DeleteAccount() {
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
