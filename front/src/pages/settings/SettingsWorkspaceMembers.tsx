@@ -133,7 +133,7 @@ export function SettingsWorkspaceMembers() {
         subtitle={
           <>
             This action cannot be undone. This will permanently delete this user
-            and remove him from all his assignements.
+            and remove them from all their assignements.
           </>
         }
         handleConfirmDelete={() =>
