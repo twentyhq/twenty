@@ -13,15 +13,13 @@ export default meta;
 
 type Story = StoryObj<typeof ConfirmationModal>;
 
-const defaultArgs = {
-  isOpen: true,
-  title: 'Pariatur labore.',
-  subtitle: 'Velit dolore aliquip laborum occaecat fugiat.',
-  deleteButtonText: 'Delete',
-};
-
 export const Default: Story = {
-  args: defaultArgs,
+  args: {
+    isOpen: true,
+    title: 'Pariatur labore.',
+    subtitle: 'Velit dolore aliquip laborum occaecat fugiat.',
+    deleteButtonText: 'Delete',
+  },
   decorators: [ComponentDecorator],
 };
 
@@ -29,7 +27,7 @@ export const InputConfirmation: Story = {
   args: {
     confirmationValue: 'email@test.dev',
     confirmationPlaceholder: 'email@test.dev',
-    ...defaultArgs,
+    ...Default.args,
   },
-  decorators: [ComponentDecorator],
+  decorators: Default.decorators,
 };
