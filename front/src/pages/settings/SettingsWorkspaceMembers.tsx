@@ -136,7 +136,7 @@ export function SettingsWorkspaceMembers() {
             and remove them from all their assignements.
           </>
         }
-        handleConfirmDelete={() =>
+        onConfirmClick={() =>
           userToDelete && handleRemoveWorkspaceMember(userToDelete)
         }
         deleteButtonText="Delete account"

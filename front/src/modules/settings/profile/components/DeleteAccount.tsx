@@ -6,12 +6,11 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
 import { ButtonVariant } from '@/ui/button/components/Button';
+import { StyledConfirmationButton } from '@/ui/modal/components/ConfirmationModal';
 import { H2Title } from '@/ui/typography/components/H2Title';
 import { useDeleteUserAccountMutation } from '~/generated/graphql';
 
 import { ConfirmationModal } from '../../../ui/modal/components/ConfirmationModal';
-
-import { StyledDeleteButton } from './DeleteModal';
 
 export function DeleteAccount() {
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
@@ -40,7 +39,7 @@ export function DeleteAccount() {
         description="Delete account and all the associated data"
       />
 
-      <StyledDeleteButton
+      <StyledConfirmationButton
         onClick={() => setIsDeleteAccountModalOpen(true)}
         variant={ButtonVariant.Secondary}
         title="Delete account"
@@ -58,7 +57,7 @@ export function DeleteAccount() {
             entire account. <br /> Please type in your email to confirm.
           </>
         }
-        handleConfirmDelete={deleteAccount}
+        onConfirmClick={deleteAccount}
         deleteButtonText="Delete account"
       />
     </>

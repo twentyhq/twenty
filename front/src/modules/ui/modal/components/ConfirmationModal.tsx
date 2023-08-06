@@ -14,7 +14,7 @@ interface ConfirmationModalProps {
   title: string;
   subtitle: ReactNode;
   setIsOpen: (val: boolean) => void;
-  handleConfirmDelete: () => void;
+  onConfirmClick: () => void;
   deleteButtonText?: string;
   confirmationPlaceholder?: string;
   confirmationValue?: string;
@@ -40,14 +40,14 @@ export function ConfirmationModal({
   title,
   subtitle,
   setIsOpen,
-  handleConfirmDelete,
+  onConfirmClick,
   deleteButtonText = 'Delete',
   confirmationValue,
   confirmationPlaceholder,
 }: ConfirmationModalProps) {
   const [inputConfirmationValue, setInputConfirmationValue] =
     useState<string>('');
-  const [isValidValue, setIsValidValue] = useState(!!!confirmationValue);
+  const [isValidValue, setIsValidValue] = useState(!confirmationValue);
 
   const handleInputConfimrationValueChange = (value: string) => {
     setInputConfirmationValue(value);
@@ -86,7 +86,7 @@ export function ConfirmationModal({
             </Section>
           )}
           <StyledConfirmationButton
-            onClick={handleConfirmDelete}
+            onClick={onConfirmClick}
             variant={ButtonVariant.Secondary}
             title={deleteButtonText}
             disabled={!isValidValue}
