@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
@@ -10,6 +11,7 @@ import {
 } from '@/ui/button/components/Button';
 import { IconSettings, IconTrash } from '@/ui/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/components/SubMenuTopBarContainer';
+import { ConfirmationModal } from '@/ui/modal/components/ConfirmationModal';
 import { Section } from '@/ui/section/components/Section';
 import { H1Title } from '@/ui/typography/components/H1Title';
 import { H2Title } from '@/ui/typography/components/H2Title';
@@ -36,6 +38,9 @@ const ButtonContainer = styled.div`
 `;
 
 export function SettingsWorkspaceMembers() {
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<string | undefined>();
+
   const [currentUser] = useRecoilState(currentUserState);
   const workspace = currentUser?.workspaceMember?.workspace;
   const theme = useTheme();
@@ -75,6 +80,7 @@ export function SettingsWorkspaceMembers() {
         cache.gc();
       },
     });
+    setIsConfirmationModalOpen(false);
   };
 
   return (
@@ -105,9 +111,10 @@ export function SettingsWorkspaceMembers() {
                 currentUser?.id !== member.user.id && (
                   <ButtonContainer>
                     <Button
-                      onClick={() =>
-                        handleRemoveWorkspaceMember(member.user.id)
-                      }
+                      onClick={() => {
+                        setIsConfirmationModalOpen(true);
+                        setUserToDelete(member.user.id);
+                      }}
                       variant={ButtonVariant.Tertiary}
                       size={ButtonSize.Small}
                       icon={<IconTrash size={theme.icon.size.md} />}
@@ -119,6 +126,21 @@ export function SettingsWorkspaceMembers() {
           ))}
         </Section>
       </StyledContainer>
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        setIsOpen={setIsConfirmationModalOpen}
+        title="Account Deletion"
+        subtitle={
+          <>
+            This action cannot be undone. This will permanently delete this user
+            and remove them from all their assignements.
+          </>
+        }
+        onConfirmClick={() =>
+          userToDelete && handleRemoveWorkspaceMember(userToDelete)
+        }
+        deleteButtonText="Delete account"
+      />
     </SubMenuTopBarContainer>
   );
 }
