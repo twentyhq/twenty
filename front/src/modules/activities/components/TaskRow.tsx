@@ -35,6 +35,7 @@ const StyledTaskBody = styled.div`
 `;
 
 const StyledTaskTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: 0 ${({ theme }) => theme.spacing(2)};
 `;

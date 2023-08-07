@@ -13,6 +13,7 @@ type OwnProps = {
 const StyledContainer = styled.div`
   align-items: center;
   border-top: 1px solid ${({ theme }) => theme.border.color.medium};
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
