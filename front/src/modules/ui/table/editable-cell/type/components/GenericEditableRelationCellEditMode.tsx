@@ -55,6 +55,7 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
           onSubmit={handleEntitySubmit}
           onCancel={handleCancel}
           width={viewField.columnSize}
+          createModeEnabled
         />
       );
     }
