@@ -848,6 +848,7 @@ export type EnumPipelineProgressableTypeFilter = {
 
 export enum FileFolder {
   Attachment = 'Attachment',
+  PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   WorkspaceLogo = 'WorkspaceLogo'
 }
@@ -928,6 +929,7 @@ export type Mutation = {
   uploadAttachment: Scalars['String'];
   uploadFile: Scalars['String'];
   uploadImage: Scalars['String'];
+  uploadPersonPicture: Scalars['String'];
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   verify: Verify;
@@ -1091,6 +1093,12 @@ export type MutationUploadFileArgs = {
 export type MutationUploadImageArgs = {
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
+};
+
+
+export type MutationUploadPersonPictureArgs = {
+  file: Scalars['Upload'];
+  id: Scalars['String'];
 };
 
 
@@ -2581,6 +2589,21 @@ export type DeleteManyPersonMutationVariables = Exact<{
 
 
 export type DeleteManyPersonMutation = { __typename?: 'Mutation', deleteManyPerson: { __typename?: 'AffectedRows', count: number } };
+
+export type UploadPersonPictureMutationVariables = Exact<{
+  id: Scalars['String'];
+  file: Scalars['Upload'];
+}>;
+
+
+export type UploadPersonPictureMutation = { __typename?: 'Mutation', uploadPersonPicture: string };
+
+export type RemovePersonPictureMutationVariables = Exact<{
+  where: PersonWhereUniqueInput;
+}>;
+
+
+export type RemovePersonPictureMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, avatarUrl?: string | null } | null };
 
 export type GetPipelinesQueryVariables = Exact<{
   where?: InputMaybe<PipelineWhereInput>;
@@ -4401,6 +4424,72 @@ export function useDeleteManyPersonMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteManyPersonMutationHookResult = ReturnType<typeof useDeleteManyPersonMutation>;
 export type DeleteManyPersonMutationResult = Apollo.MutationResult<DeleteManyPersonMutation>;
 export type DeleteManyPersonMutationOptions = Apollo.BaseMutationOptions<DeleteManyPersonMutation, DeleteManyPersonMutationVariables>;
+export const UploadPersonPictureDocument = gql`
+    mutation UploadPersonPicture($id: String!, $file: Upload!) {
+  uploadPersonPicture(id: $id, file: $file)
+}
+    `;
+export type UploadPersonPictureMutationFn = Apollo.MutationFunction<UploadPersonPictureMutation, UploadPersonPictureMutationVariables>;
+
+/**
+ * __useUploadPersonPictureMutation__
+ *
+ * To run a mutation, you first call `useUploadPersonPictureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadPersonPictureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadPersonPictureMutation, { data, loading, error }] = useUploadPersonPictureMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUploadPersonPictureMutation(baseOptions?: Apollo.MutationHookOptions<UploadPersonPictureMutation, UploadPersonPictureMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadPersonPictureMutation, UploadPersonPictureMutationVariables>(UploadPersonPictureDocument, options);
+      }
+export type UploadPersonPictureMutationHookResult = ReturnType<typeof useUploadPersonPictureMutation>;
+export type UploadPersonPictureMutationResult = Apollo.MutationResult<UploadPersonPictureMutation>;
+export type UploadPersonPictureMutationOptions = Apollo.BaseMutationOptions<UploadPersonPictureMutation, UploadPersonPictureMutationVariables>;
+export const RemovePersonPictureDocument = gql`
+    mutation RemovePersonPicture($where: PersonWhereUniqueInput!) {
+  updateOnePerson(data: {avatarUrl: null}, where: $where) {
+    id
+    avatarUrl
+  }
+}
+    `;
+export type RemovePersonPictureMutationFn = Apollo.MutationFunction<RemovePersonPictureMutation, RemovePersonPictureMutationVariables>;
+
+/**
+ * __useRemovePersonPictureMutation__
+ *
+ * To run a mutation, you first call `useRemovePersonPictureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemovePersonPictureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removePersonPictureMutation, { data, loading, error }] = useRemovePersonPictureMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useRemovePersonPictureMutation(baseOptions?: Apollo.MutationHookOptions<RemovePersonPictureMutation, RemovePersonPictureMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemovePersonPictureMutation, RemovePersonPictureMutationVariables>(RemovePersonPictureDocument, options);
+      }
+export type RemovePersonPictureMutationHookResult = ReturnType<typeof useRemovePersonPictureMutation>;
+export type RemovePersonPictureMutationResult = Apollo.MutationResult<RemovePersonPictureMutation>;
+export type RemovePersonPictureMutationOptions = Apollo.BaseMutationOptions<RemovePersonPictureMutation, RemovePersonPictureMutationVariables>;
 export const GetPipelinesDocument = gql`
     query GetPipelines($where: PipelineWhereInput) {
   findManyPipeline(where: $where) {

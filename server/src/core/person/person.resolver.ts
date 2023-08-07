@@ -10,6 +10,9 @@ import { UseGuards } from '@nestjs/common';
 
 import { accessibleBy } from '@casl/prisma';
 import { Prisma } from '@prisma/client';
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
+
+import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Person } from 'src/core/@generated/person/person.model';
@@ -34,13 +37,18 @@ import {
 import { UserAbility } from 'src/decorators/user-ability.decorator';
 import { AppAbility } from 'src/ability/ability.factory';
 import { Workspace } from 'src/core/@generated/workspace/workspace.model';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { FileUploadService } from 'src/core/file/services/file-upload.service';
 
 import { PersonService } from './person.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Person)
 export class PersonResolver {
-  constructor(private readonly personService: PersonService) {}
+  constructor(
+    private readonly personService: PersonService,
+    private readonly fileUploadService: FileUploadService,
+  ) {}
 
   @Query(() => [Person], {
     nullable: false,
@@ -155,5 +163,32 @@ export class PersonResolver {
       },
       select: prismaSelect.value,
     } as Prisma.PersonCreateArgs);
+  }
+
+  @Mutation(() => String)
+  async uploadPersonPicture(
+    @Args('id') id: string,
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename, mimetype }: FileUpload,
+  ): Promise<string> {
+    const stream = createReadStream();
+    const buffer = await streamToBuffer(stream);
+    const fileFolder = FileFolder.PersonPicture;
+
+    const { paths } = await this.fileUploadService.uploadImage({
+      file: buffer,
+      filename,
+      mimeType: mimetype,
+      fileFolder,
+    });
+
+    await this.personService.update({
+      where: { id },
+      data: {
+        avatarUrl: paths[0],
+      },
+    });
+
+    return paths[0];
   }
 }
