@@ -8,6 +8,7 @@ import { ChipSize, ChipVariant } from '@/ui/chip/components/Chip';
 type OwnProps = {
   href: string;
   children?: React.ReactNode;
+  type?: string;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
@@ -21,14 +22,26 @@ const StyledClickable = styled.div`
   }
 `;
 
-export function RoundedLink({ children, href, onClick }: OwnProps) {
+export function RoundedLink({ children, href, onClick, type }: OwnProps) {
+  let displayValue = children;
+
+  if (type === 'linkedin') {
+    const splitUrl = href.split('/');
+    displayValue = splitUrl[4];
+  }
+
+  if (type === 'twitter') {
+    const splitUrl = href.split('/');
+    displayValue = `@${splitUrl[3]}`;
+  }
+
   return (
     <div>
       {children !== '' ? (
         <StyledClickable>
           <ReactLink target="_blank" to={href} onClick={onClick}>
             <Chip
-              label={`${children}`}
+              label={`${displayValue}`}
               variant={ChipVariant.Rounded}
               size={ChipSize.Large}
             />

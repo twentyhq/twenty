@@ -16,6 +16,7 @@ export const UPDATE_ONE_PERSON = gql`
       email
       jobTitle
       linkedinUrl
+      twitterUrl
       firstName
       lastName
       displayName
@@ -40,6 +41,7 @@ export const INSERT_ONE_PERSON = gql`
       lastName
       jobTitle
       linkedinUrl
+      twitterUrl
       displayName
       phone
       createdAt
