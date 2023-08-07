@@ -13,6 +13,7 @@ const ModalDiv = styled(motion.div)`
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   overflow: hidden;
+  max-height: 90vh;
   z-index: 10000; // should be higher than Backdrop's z-index
 `;
 
