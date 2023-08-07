@@ -11,8 +11,8 @@ const config = {
   tagline: 'Dinosaurs are cool',
   favicon: 'img/logo-square-dark.ico',
 
-  // Prevent search engines from indexing the site if not for production
-  noIndex: process.env.NODE_ENV !== 'production',
+  // Prevent search engines from indexing the doc for selected environments
+  noIndex: process.env.SHOULD_INDEX_DOC === 'false',
 
   // Set the production url of your site here
   url: 'https://docs.twenty.com',

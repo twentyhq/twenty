@@ -2,7 +2,7 @@ FROM node:18.16-bullseye as docs
 
 WORKDIR /app/docs
 
-ARG NODE_ENV
+ARG SHOULD_INDEX_DOC
 
 COPY ../../docs/package.json .
 COPY ../../docs/yarn.lock .
