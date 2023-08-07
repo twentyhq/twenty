@@ -175,6 +175,7 @@ export function AutosizeTextInput({
       <StyledInputContainer>
         {!isHidden && (
           <StyledTextArea
+            autoFocus
             placeholder={placeholder || 'Write a comment'}
             maxRows={MAX_ROWS}
             minRows={computedMinRows}
