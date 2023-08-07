@@ -10,4 +10,6 @@ RUN yarn
 
 COPY ../../docs .
 
+RUN echo "SHOULD_INDEX_DOC: $SHOULD_INDEX_DOC"
+
 CMD ["yarn", "start"]

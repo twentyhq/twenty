@@ -5,6 +5,8 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
+console.log('process.env.SHOULD_INDEX_DOC', process.env.SHOULD_INDEX_DOC)
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Twenty - Documentation',
