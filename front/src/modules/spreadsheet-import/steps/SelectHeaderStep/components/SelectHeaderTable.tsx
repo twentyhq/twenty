@@ -37,7 +37,7 @@ export const SelectHeaderTable = ({
         setSelectedRows(new Set([data.indexOf(row)]));
       }}
       headerRowHeight={0}
-      className="rdg-static"
+      // className="rdg-static"
     />
   );
 };
