@@ -1,16 +1,14 @@
 import { useCallback, useState } from 'react';
-import { Radio, RadioGroup, Stack } from '@chakra-ui/react';
 import styled from '@emotion/styled';
 
+import { Radio } from '@/ui/input/radio/components/Radio';
+import { RadioGroup } from '@/ui/input/radio/components/RadioGroup';
 import { Modal } from '@/ui/modal/components/Modal';
 
 import { ContinueButton } from '../../components/ContinueButton';
 
 const Content = styled(Modal.Content)`
-  background-color: red;
-  flex: 0;
-  height: 100%;
-  overflow-y: scroll;
+  align-items: center;
 `;
 
 const Title = styled.span`
@@ -21,10 +19,9 @@ const Title = styled.span`
   text-align: center;
 `;
 
-const Value = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+const RadioContainer = styled.div`
+  // TODO: Enhance, this fix scroll issue but it's ugly
+  max-height: 100px;
 `;
 
 type SelectSheetProps = {
@@ -53,15 +50,13 @@ export const SelectSheetStep = ({
     <>
       <Content>
         <Title>Select the sheet to use</Title>
-        <RadioGroup onChange={(value) => setValue(value)} value={value}>
-          <Stack spacing={8}>
+        <RadioContainer>
+          <RadioGroup onChange={(value) => setValue(value)} value={value}>
             {sheetNames.map((sheetName) => (
-              <Radio value={sheetName} key={sheetName}>
-                <Value>{sheetName}</Value>
-              </Radio>
+              <Radio value={sheetName} key={sheetName} />
             ))}
-          </Stack>
-        </RadioGroup>
+          </RadioGroup>
+        </RadioContainer>
       </Content>
       <ContinueButton
         isLoading={isLoading}
