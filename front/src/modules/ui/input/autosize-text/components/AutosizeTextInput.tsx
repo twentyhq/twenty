@@ -4,6 +4,7 @@ import { HotkeysEvent } from 'react-hotkeys-hook/dist/types';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
+import { Button } from '@/ui/button/components/Button';
 import { RoundedIconButton } from '@/ui/button/components/RoundedIconButton';
 import { IconArrowRight } from '@/ui/icon/index';
 
@@ -13,16 +14,28 @@ type OwnProps = {
   onValidate?: (text: string) => void;
   minRows?: number;
   placeholder?: string;
+  onFocus?: () => void;
+  variant?: 'icon' | 'button';
+  buttonTitle?: string;
 };
 
 const StyledContainer = styled.div`
-  display: flex;
-
   width: 100%;
 `;
 
-const StyledTextArea = styled(TextareaAutosize)`
-  background: ${({ theme }) => theme.background.tertiary};
+const StyledInputContainer = styled.div`
+  display: flex;
+  position: relative;
+  width: 100%;
+`;
+
+interface StyledTextAreaProps {
+  variant: 'icon' | 'button';
+}
+
+const StyledTextArea = styled(TextareaAutosize)<StyledTextAreaProps>`
+  background: ${({ theme, variant }) =>
+    variant === 'button' ? 'transparent' : theme.background.tertiary};
   border: none;
   border-radius: 5px;
   color: ${({ theme }) => theme.font.color.primary};
@@ -51,19 +64,59 @@ const StyledBottomRightRoundedIconButton = styled.div`
   height: 0;
   position: relative;
   right: 26px;
-  top: calc(100% - 26.5px);
+  top: 6px;
   width: 0px;
+`;
+
+const StyledSendButton = styled(Button)`
+  margin-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledWordCounter = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  line-height: 150%;
+  width: 100%;
+`;
+
+interface StyledBottomContainerProps {
+  isTextAreaHidden: boolean;
+}
+
+const StyledBottomContainer = styled.div<StyledBottomContainerProps>`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-top: ${({ theme, isTextAreaHidden }) =>
+    isTextAreaHidden ? 0 : theme.spacing(4)};
+`;
+
+const StyledCommentText = styled.div`
+  cursor: text;
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 export function AutosizeTextInput({
   placeholder,
   onValidate,
   minRows = 1,
+  onFocus,
+  variant = 'icon',
+  buttonTitle,
 }: OwnProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const [isHidden, setIsHidden] = useState(variant === 'button');
   const [text, setText] = useState('');
 
   const isSendButtonDisabled = !text;
+  const words =
+    variant === 'button'
+      ? text
+          .split('\n')
+          .map((line) => line.split(' ').filter((word) => word !== ''))
+          .reduce((acc, curr) => [...acc, ...curr], [] as string[]).length
+      : 0;
 
   useHotkeys(
     ['shift+enter', 'enter'],
@@ -118,25 +171,57 @@ export function AutosizeTextInput({
   const computedMinRows = minRows > MAX_ROWS ? MAX_ROWS : minRows;
 
   return (
-    <>
-      <StyledContainer>
-        <StyledTextArea
-          placeholder={placeholder || 'Write a comment'}
-          maxRows={MAX_ROWS}
-          minRows={computedMinRows}
-          onChange={handleInputChange}
-          value={text}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-        />
-        <StyledBottomRightRoundedIconButton>
-          <RoundedIconButton
-            onClick={handleOnClickSendButton}
-            icon={<IconArrowRight size={15} />}
-            disabled={isSendButtonDisabled}
+    <StyledContainer>
+      <StyledInputContainer>
+        {!isHidden && (
+          <StyledTextArea
+            placeholder={placeholder || 'Write a comment'}
+            maxRows={MAX_ROWS}
+            minRows={computedMinRows}
+            onChange={handleInputChange}
+            value={text}
+            onFocus={() => {
+              onFocus?.();
+              setIsFocused(true);
+            }}
+            onBlur={() => setIsFocused(false)}
+            variant={variant}
           />
-        </StyledBottomRightRoundedIconButton>
-      </StyledContainer>
-    </>
+        )}
+        {variant === 'icon' && (
+          <StyledBottomRightRoundedIconButton>
+            <RoundedIconButton
+              onClick={handleOnClickSendButton}
+              icon={<IconArrowRight size={15} />}
+              disabled={isSendButtonDisabled}
+            />
+          </StyledBottomRightRoundedIconButton>
+        )}
+      </StyledInputContainer>
+
+      {variant === 'button' && (
+        <StyledBottomContainer isTextAreaHidden={isHidden}>
+          <StyledWordCounter>
+            {isHidden ? (
+              <StyledCommentText
+                onClick={() => {
+                  setIsHidden(false);
+                  onFocus?.();
+                }}
+              >
+                Write a comment
+              </StyledCommentText>
+            ) : (
+              `${words} word${words === 1 ? '' : 's'}`
+            )}
+          </StyledWordCounter>
+          <StyledSendButton
+            title={buttonTitle || 'Comment'}
+            disabled={isSendButtonDisabled}
+            onClick={handleOnClickSendButton}
+          />
+        </StyledBottomContainer>
+      )}
+    </StyledContainer>
   );
 }

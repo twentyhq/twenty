@@ -146,7 +146,7 @@ export function ActivityEditor({
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer id="activity-editor-container">
       <StyledUpperPartContainer>
         <StyledTopContainer>
           <ActivityTypeDropdown activity={activity} />

@@ -31,17 +31,20 @@ const StyledThreadItemListContainer = styled.div`
 
   justify-content: flex-start;
   padding: ${({ theme }) => theme.spacing(8)};
+  padding-bottom: ${({ theme }) => theme.spacing(32)};
   padding-left: ${({ theme }) => theme.spacing(12)};
   width: 100%;
 `;
 
 const StyledCommentActionBar = styled.div`
+  background: ${({ theme }) => theme.background.primary};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  bottom: 0;
   display: flex;
-  padding: 16px 24px 16px 48px;
+  padding: 16px 24px;
+  position: absolute;
   width: calc(
-    ${({ theme }) => (useIsMobile() ? '100%' : theme.rightDrawerWidth)} - 48px -
-      24px
+    ${({ theme }) => (useIsMobile() ? '100%' : theme.rightDrawerWidth)} - 48px
   );
 `;
 
@@ -74,24 +77,45 @@ export function ActivityComments({ activity }: OwnProps) {
         createdAt: new Date().toISOString(),
       },
       refetchQueries: [getOperationName(GET_ACTIVITY) ?? ''],
+      onCompleted: () => {
+        setTimeout(() => {
+          handleFocus();
+        }, 100);
+      },
+      awaitRefetchQueries: true,
+    });
+  }
+
+  function handleFocus() {
+    const scrollableContainer = document.getElementById(
+      'activity-editor-container',
+    );
+    scrollableContainer?.scrollTo({
+      top: scrollableContainer.scrollHeight,
+      behavior: 'smooth',
     });
   }
 
   return (
     <>
       {activity?.comments.length > 0 && (
-        <>
-          <StyledThreadItemListContainer>
-            <StyledThreadCommentTitle>Comments</StyledThreadCommentTitle>
-            {activity?.comments?.map((comment) => (
-              <Comment key={comment.id} comment={comment} />
-            ))}
-          </StyledThreadItemListContainer>
-        </>
+        <StyledThreadItemListContainer>
+          <StyledThreadCommentTitle>Comments</StyledThreadCommentTitle>
+          {activity?.comments?.map((comment) => (
+            <Comment key={comment.id} comment={comment} />
+          ))}
+        </StyledThreadItemListContainer>
       )}
 
       <StyledCommentActionBar>
-        {currentUser && <AutosizeTextInput onValidate={handleSendComment} />}
+        {currentUser && (
+          <AutosizeTextInput
+            onValidate={handleSendComment}
+            onFocus={handleFocus}
+            variant="button"
+            placeholder={activity?.comments.length > 0 ? 'Reply...' : undefined}
+          />
+        )}
       </StyledCommentActionBar>
     </>
   );

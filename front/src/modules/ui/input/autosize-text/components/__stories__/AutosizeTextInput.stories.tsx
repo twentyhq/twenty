@@ -14,3 +14,7 @@ export default meta;
 type Story = StoryObj<typeof AutosizeTextInput>;
 
 export const Default: Story = {};
+
+export const ButtonVariant: Story = {
+  args: { variant: 'button' },
+};
