@@ -98,7 +98,6 @@ export function SortDropdownButton<SortField>({
                 }}
               >
                 {sort.icon}
-                {/* {sort.label} */}
                 <OverflowingTextWithTooltip text={sort.label} />
               </DropdownMenuSelectableItem>
             ))}
