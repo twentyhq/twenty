@@ -10,12 +10,17 @@ import { IconArrowRight } from '@/ui/icon/index';
 
 const MAX_ROWS = 5;
 
+export enum AutosizeTextInputVariant {
+  Icon = 'icon',
+  Button = 'button',
+}
+
 type OwnProps = {
   onValidate?: (text: string) => void;
   minRows?: number;
   placeholder?: string;
   onFocus?: () => void;
-  variant?: 'icon' | 'button';
+  variant?: AutosizeTextInputVariant;
   buttonTitle?: string;
 };
 
@@ -29,13 +34,15 @@ const StyledInputContainer = styled.div`
   width: 100%;
 `;
 
-interface StyledTextAreaProps {
-  variant: 'icon' | 'button';
-}
+type StyledTextAreaProps = {
+  variant: AutosizeTextInputVariant;
+};
 
 const StyledTextArea = styled(TextareaAutosize)<StyledTextAreaProps>`
   background: ${({ theme, variant }) =>
-    variant === 'button' ? 'transparent' : theme.background.tertiary};
+    variant === AutosizeTextInputVariant.Button
+      ? 'transparent'
+      : theme.background.tertiary};
   border: none;
   border-radius: 5px;
   color: ${({ theme }) => theme.font.color.primary};
@@ -79,9 +86,9 @@ const StyledWordCounter = styled.div`
   width: 100%;
 `;
 
-interface StyledBottomContainerProps {
+type StyledBottomContainerProps = {
   isTextAreaHidden: boolean;
-}
+};
 
 const StyledBottomContainer = styled.div<StyledBottomContainerProps>`
   align-items: center;
@@ -102,21 +109,17 @@ export function AutosizeTextInput({
   onValidate,
   minRows = 1,
   onFocus,
-  variant = 'icon',
+  variant = AutosizeTextInputVariant.Icon,
   buttonTitle,
 }: OwnProps) {
   const [isFocused, setIsFocused] = useState(false);
-  const [isHidden, setIsHidden] = useState(variant === 'button');
+  const [isHidden, setIsHidden] = useState(
+    variant === AutosizeTextInputVariant.Button,
+  );
   const [text, setText] = useState('');
 
   const isSendButtonDisabled = !text;
-  const words =
-    variant === 'button'
-      ? text
-          .split('\n')
-          .map((line) => line.split(' ').filter((word) => word !== ''))
-          .reduce((acc, curr) => [...acc, ...curr], [] as string[]).length
-      : 0;
+  const words = text.split(/\s|\n/).length;
 
   useHotkeys(
     ['shift+enter', 'enter'],
@@ -189,7 +192,7 @@ export function AutosizeTextInput({
             variant={variant}
           />
         )}
-        {variant === 'icon' && (
+        {variant === AutosizeTextInputVariant.Icon && (
           <StyledBottomRightRoundedIconButton>
             <RoundedIconButton
               onClick={handleOnClickSendButton}
@@ -200,7 +203,7 @@ export function AutosizeTextInput({
         )}
       </StyledInputContainer>
 
-      {variant === 'button' && (
+      {variant === AutosizeTextInputVariant.Button && (
         <StyledBottomContainer isTextAreaHidden={isHidden}>
           <StyledWordCounter>
             {isHidden ? (
@@ -217,7 +220,7 @@ export function AutosizeTextInput({
             )}
           </StyledWordCounter>
           <StyledSendButton
-            title={buttonTitle || 'Comment'}
+            title={buttonTitle ?? 'Comment'}
             disabled={isSendButtonDisabled}
             onClick={handleOnClickSendButton}
           />

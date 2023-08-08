@@ -2,7 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { AutosizeTextInput } from '../AutosizeTextInput';
+import {
+  AutosizeTextInput,
+  AutosizeTextInputVariant,
+} from '../AutosizeTextInput';
 
 const meta: Meta<typeof AutosizeTextInput> = {
   title: 'UI/Input/AutosizeTextInput',
@@ -16,5 +19,5 @@ type Story = StoryObj<typeof AutosizeTextInput>;
 export const Default: Story = {};
 
 export const ButtonVariant: Story = {
-  args: { variant: 'button' },
+  args: { variant: AutosizeTextInputVariant.Button },
 };
