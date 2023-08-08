@@ -14,6 +14,8 @@ import { isViewFieldNumber } from '../types/guards/isViewFieldNumber';
 import { isViewFieldNumberValue } from '../types/guards/isViewFieldNumberValue';
 import { isViewFieldPhone } from '../types/guards/isViewFieldPhone';
 import { isViewFieldPhoneValue } from '../types/guards/isViewFieldPhoneValue';
+import { isViewFieldProbability } from '../types/guards/isViewFieldProbability';
+import { isViewFieldProbabilityValue } from '../types/guards/isViewFieldProbabilityValue';
 import { isViewFieldRelation } from '../types/guards/isViewFieldRelation';
 import { isViewFieldRelationValue } from '../types/guards/isViewFieldRelationValue';
 import { isViewFieldText } from '../types/guards/isViewFieldText';
@@ -35,6 +37,8 @@ import {
   ViewFieldNumberValue,
   ViewFieldPhoneMetadata,
   ViewFieldPhoneValue,
+  ViewFieldProbabilityMetadata,
+  ViewFieldProbabilityValue,
   ViewFieldRelationMetadata,
   ViewFieldRelationValue,
   ViewFieldTextMetadata,
@@ -68,6 +72,8 @@ export function useUpdateGenericEntityField() {
       ? ViewFieldDoubleTextChipValue
       : MetadataType extends ViewFieldRelationMetadata
       ? ViewFieldRelationValue
+      : MetadataType extends ViewFieldProbabilityMetadata
+      ? ViewFieldProbabilityValue
       : unknown,
   >(
     currentEntityId: string,
@@ -214,6 +220,18 @@ export function useUpdateGenericEntityField() {
     } else if (
       isViewFieldDate(viewField) &&
       isViewFieldDateValue(newFieldValueUnknown)
+    ) {
+      const newContent = newFieldValueUnknown;
+
+      updateEntity({
+        variables: {
+          where: { id: currentEntityId },
+          data: { [viewField.metadata.fieldName]: newContent },
+        },
+      });
+    } else if (
+      isViewFieldProbability(viewField) &&
+      isViewFieldProbabilityValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
 

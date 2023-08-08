@@ -26,7 +26,6 @@ import {
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 export function Opportunities() {
-  console.log('Opportunities');
   const theme = useTheme();
 
   const [orderBy, setOrderBy] = useState<

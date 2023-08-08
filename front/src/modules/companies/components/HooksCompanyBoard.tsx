@@ -1,6 +1,8 @@
 import { useEffect, useMemo } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
+import { pipelineViewFields } from '@/pipeline/constants/pipelineViewFields';
+import { fieldsDefinitionsState } from '@/ui/board/states/fieldsDefinitionsState';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
@@ -25,9 +27,11 @@ export function HooksCompanyBoard({
 }: {
   orderBy: PipelineProgresses_Order_By[];
 }) {
-  console.log('HooksCompanyBoard');
+  const setFieldsDefinitionsState = useSetRecoilState(fieldsDefinitionsState);
 
-  console.time('HooksCompanyBoard');
+  useEffect(() => {
+    setFieldsDefinitionsState(pipelineViewFields);
+  });
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 

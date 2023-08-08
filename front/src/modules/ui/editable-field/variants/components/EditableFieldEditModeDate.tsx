@@ -28,7 +28,7 @@ export function EditableFieldEditModeDate({ value, onChange }: OwnProps) {
 
   return (
     <DateInputEdit
-      value={parseDate(internalValue).toJSDate()}
+      value={internalValue ? parseDate(internalValue).toJSDate() : new Date()}
       onChange={(newDate: Date) => {
         handleChange(newDate.toISOString());
       }}

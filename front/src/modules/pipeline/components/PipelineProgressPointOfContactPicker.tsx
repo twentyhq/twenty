@@ -53,8 +53,11 @@ export function PipelineProgressPointOfContactPicker({
 
     await updatePipelineProgress({
       variables: {
-        ...pipelineProgress,
-        pointOfContactId: entity.id,
+        where: { id: pipelineProgress.id },
+        data: {
+          ...pipelineProgress,
+          pointOfContact: { connect: { id: entity.id } },
+        },
       },
       refetchQueries: [
         getOperationName(GET_PIPELINE_PROGRESS) ?? '',

@@ -41,8 +41,8 @@ export function PipelineProgressAmountEditableField({ progress }: OwnProps) {
 
       await updateOnePipelineProgress({
         variables: {
-          id: progress.id,
-          amount: numberValue,
+          where: { id: progress.id },
+          data: { ...progress, amount: numberValue },
         },
       });
 

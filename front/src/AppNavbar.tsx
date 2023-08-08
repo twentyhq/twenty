@@ -67,7 +67,6 @@ export function AppNavbar() {
             label="People"
             to="/people"
             onClick={() => {
-              console.log('asd');
               measureTotalFrameLoad('people');
 
               navigate('/people');
@@ -79,7 +78,6 @@ export function AppNavbar() {
             label="Opportunities"
             // to="/opportunities"
             onClick={() => {
-              console.log('asd');
               measureTotalFrameLoad('opportunities');
 
               navigate('/opportunities');

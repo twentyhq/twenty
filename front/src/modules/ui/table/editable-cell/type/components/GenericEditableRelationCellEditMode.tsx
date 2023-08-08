@@ -29,6 +29,7 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
     }),
   );
 
+  console.log(fieldValueEntity);
   const updateEntityField = useUpdateEntityField();
 
   function handleEntitySubmit(newFieldEntity: EntityForSelect | null) {
