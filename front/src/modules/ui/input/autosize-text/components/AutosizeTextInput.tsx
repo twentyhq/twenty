@@ -51,9 +51,6 @@ const StyledTextArea = styled(TextareaAutosize)<StyledTextAreaProps>`
   font-weight: ${({ theme }) => theme.font.weight.regular};
   line-height: 16px;
   overflow: auto;
-  padding: 8px;
-  resize: none;
-  width: 100%;
 
   &:focus {
     border: none;
@@ -64,6 +61,10 @@ const StyledTextArea = styled(TextareaAutosize)<StyledTextAreaProps>`
     color: ${({ theme }) => theme.font.color.light};
     font-weight: ${({ theme }) => theme.font.weight.regular};
   }
+  padding: ${({ variant }) =>
+    variant === AutosizeTextInputVariant.Button ? '8px 0' : '8px'};
+  resize: none;
+  width: 100%;
 `;
 
 // TODO: this messes with the layout, fix it
@@ -174,58 +175,60 @@ export function AutosizeTextInput({
   const computedMinRows = minRows > MAX_ROWS ? MAX_ROWS : minRows;
 
   return (
-    <StyledContainer>
-      <StyledInputContainer>
-        {!isHidden && (
-          <StyledTextArea
-            autoFocus
-            placeholder={placeholder || 'Write a comment'}
-            maxRows={MAX_ROWS}
-            minRows={computedMinRows}
-            onChange={handleInputChange}
-            value={text}
-            onFocus={() => {
-              onFocus?.();
-              setIsFocused(true);
-            }}
-            onBlur={() => setIsFocused(false)}
-            variant={variant}
-          />
-        )}
-        {variant === AutosizeTextInputVariant.Icon && (
-          <StyledBottomRightRoundedIconButton>
-            <RoundedIconButton
-              onClick={handleOnClickSendButton}
-              icon={<IconArrowRight size={15} />}
-              disabled={isSendButtonDisabled}
+    <>
+      <StyledContainer>
+        <StyledInputContainer>
+          {!isHidden && (
+            <StyledTextArea
+              autoFocus={variant === AutosizeTextInputVariant.Button}
+              placeholder={placeholder ?? 'Write a comment'}
+              maxRows={MAX_ROWS}
+              minRows={computedMinRows}
+              onChange={handleInputChange}
+              value={text}
+              onFocus={() => {
+                onFocus?.();
+                setIsFocused(true);
+              }}
+              onBlur={() => setIsFocused(false)}
+              variant={variant}
             />
-          </StyledBottomRightRoundedIconButton>
-        )}
-      </StyledInputContainer>
+          )}
+          {variant === AutosizeTextInputVariant.Icon && (
+            <StyledBottomRightRoundedIconButton>
+              <RoundedIconButton
+                onClick={handleOnClickSendButton}
+                icon={<IconArrowRight size={15} />}
+                disabled={isSendButtonDisabled}
+              />
+            </StyledBottomRightRoundedIconButton>
+          )}
+        </StyledInputContainer>
 
-      {variant === AutosizeTextInputVariant.Button && (
-        <StyledBottomContainer isTextAreaHidden={isHidden}>
-          <StyledWordCounter>
-            {isHidden ? (
-              <StyledCommentText
-                onClick={() => {
-                  setIsHidden(false);
-                  onFocus?.();
-                }}
-              >
-                Write a comment
-              </StyledCommentText>
-            ) : (
-              `${words} word${words === 1 ? '' : 's'}`
-            )}
-          </StyledWordCounter>
-          <StyledSendButton
-            title={buttonTitle ?? 'Comment'}
-            disabled={isSendButtonDisabled}
-            onClick={handleOnClickSendButton}
-          />
-        </StyledBottomContainer>
-      )}
-    </StyledContainer>
+        {variant === AutosizeTextInputVariant.Button && (
+          <StyledBottomContainer isTextAreaHidden={isHidden}>
+            <StyledWordCounter>
+              {isHidden ? (
+                <StyledCommentText
+                  onClick={() => {
+                    setIsHidden(false);
+                    onFocus?.();
+                  }}
+                >
+                  Write a comment
+                </StyledCommentText>
+              ) : (
+                `${words} word${words === 1 ? '' : 's'}`
+              )}
+            </StyledWordCounter>
+            <StyledSendButton
+              title={buttonTitle ?? 'Comment'}
+              disabled={isSendButtonDisabled}
+              onClick={handleOnClickSendButton}
+            />
+          </StyledBottomContainer>
+        )}
+      </StyledContainer>
+    </>
   );
 }

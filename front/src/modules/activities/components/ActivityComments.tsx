@@ -4,7 +4,10 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { AutosizeTextInput } from '@/ui/input/autosize-text/components/AutosizeTextInput';
+import {
+  AutosizeTextInput,
+  AutosizeTextInputVariant,
+} from '@/ui/input/autosize-text/components/AutosizeTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Activity, useCreateCommentMutation } from '~/generated/graphql';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
@@ -41,10 +44,10 @@ const StyledCommentActionBar = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   bottom: 0;
   display: flex;
-  padding: 16px 24px;
+  padding: 16px 24px 16px 48px;
   position: absolute;
   width: calc(
-    ${({ theme }) => (useIsMobile() ? '100%' : theme.rightDrawerWidth)} - 48px
+    ${({ theme }) => (useIsMobile() ? '100%' : theme.rightDrawerWidth)} - 72px
   );
 `;
 
@@ -99,12 +102,14 @@ export function ActivityComments({ activity }: OwnProps) {
   return (
     <>
       {activity?.comments.length > 0 && (
-        <StyledThreadItemListContainer>
-          <StyledThreadCommentTitle>Comments</StyledThreadCommentTitle>
-          {activity?.comments?.map((comment) => (
-            <Comment key={comment.id} comment={comment} />
-          ))}
-        </StyledThreadItemListContainer>
+        <>
+          <StyledThreadItemListContainer>
+            <StyledThreadCommentTitle>Comments</StyledThreadCommentTitle>
+            {activity?.comments?.map((comment) => (
+              <Comment key={comment.id} comment={comment} />
+            ))}
+          </StyledThreadItemListContainer>
+        </>
       )}
 
       <StyledCommentActionBar>
@@ -112,7 +117,7 @@ export function ActivityComments({ activity }: OwnProps) {
           <AutosizeTextInput
             onValidate={handleSendComment}
             onFocus={handleFocus}
-            // variant={AutosizeTextInputVariant.Button}
+            variant={AutosizeTextInputVariant.Button}
             placeholder={activity?.comments.length > 0 ? 'Reply...' : undefined}
           />
         )}
