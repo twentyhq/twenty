@@ -33,7 +33,9 @@ export const Email: Story = {
     const sortButton = await canvas.findByText('Sort');
     await userEvent.click(sortButton);
 
-    const emailSortButton = canvas.getByText('Email', { selector: 'li > div' });
+    const emailSortButton = canvas.getByText('Email', {
+      selector: 'li > div > div',
+    });
     await userEvent.click(emailSortButton);
 
     expect(await canvas.getByTestId('remove-icon-email')).toBeInTheDocument();
@@ -49,7 +51,9 @@ export const Cancel: Story = {
     const sortButton = await canvas.findByText('Sort');
     await userEvent.click(sortButton);
 
-    const emailSortButton = canvas.getByText('Email', { selector: 'li > div' });
+    const emailSortButton = canvas.getByText('Email', {
+      selector: 'li > div > div',
+    });
     await userEvent.click(emailSortButton);
 
     expect(await canvas.getByTestId('remove-icon-email')).toBeInTheDocument();
