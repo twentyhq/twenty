@@ -166,6 +166,8 @@ export class PersonResolver {
   }
 
   @Mutation(() => String)
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(UpdatePersonAbilityHandler)
   async uploadPersonPicture(
     @Args('id') id: string,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -173,13 +175,12 @@ export class PersonResolver {
   ): Promise<string> {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
-    const fileFolder = FileFolder.PersonPicture;
 
     const { paths } = await this.fileUploadService.uploadImage({
       file: buffer,
       filename,
       mimeType: mimetype,
-      fileFolder,
+      fileFolder: FileFolder.PersonPicture,
     });
 
     await this.personService.update({
