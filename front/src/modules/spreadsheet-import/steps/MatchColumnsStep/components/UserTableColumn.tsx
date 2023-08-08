@@ -1,12 +1,58 @@
-import { CgClose, CgUndo } from 'react-icons/cg';
-import { Box, Flex, IconButton, Text, useStyleConfig } from '@chakra-ui/react';
-import { dataAttr } from '@chakra-ui/utils';
+import styled from '@emotion/styled';
+
+import { IconButton } from '@/ui/button/components/IconButton';
+import { IconArrowBack, IconX } from '@/ui/icon';
 
 import type { RawData } from '../../../types';
 import type { Column } from '../MatchColumnsStep';
 import { ColumnType } from '../MatchColumnsStep';
 
-import type { Styles } from './ColumnGrid';
+const Container = styled.div``;
+
+const Content = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+`;
+
+type IsIgnoreProps = {
+  isIgnored: boolean;
+};
+
+const Heading = styled.h2<IsIgnoreProps>`
+  color: ${({ theme, isIgnored }) => {
+    if (isIgnored) {
+      return theme.font.color.secondary;
+    }
+    return theme.font.color.primary;
+  }};
+  font-size: ${({ theme }) => theme.font.size.xl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const Text = styled.span<IsIgnoreProps>`
+  color: ${({ theme, isIgnored }) => {
+    if (isIgnored) {
+      return theme.font.color.secondary;
+    }
+    return theme.font.color.primary;
+  }};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  overflow: hidden;
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 type UserTableColumnProps<T extends string> = {
   column: Column<T>;
@@ -15,48 +61,37 @@ type UserTableColumnProps<T extends string> = {
   onRevertIgnore: (index: number) => void;
 };
 
-export const UserTableColumn = <T extends string>(
-  props: UserTableColumnProps<T>,
-) => {
-  const styles = useStyleConfig('MatchColumnsStep') as Styles;
-  const {
-    column: { header, index, type },
-    entries,
-    onIgnore,
-    onRevertIgnore,
-  } = props;
+export const UserTableColumn = <T extends string>({
+  column: { header, index, type },
+  entries,
+  onIgnore,
+  onRevertIgnore,
+}: UserTableColumnProps<T>) => {
   const isIgnored = type === ColumnType.ignored;
+
   return (
-    <Box>
-      <Flex px={6} justifyContent="space-between" alignItems="center" mb={4}>
-        <Text sx={styles.userTable.header} data-ignored={dataAttr(isIgnored)}>
-          {header}
-        </Text>
+    <Container>
+      <Content>
+        <Heading isIgnored={isIgnored}>{header}</Heading>
         {type === ColumnType.ignored ? (
           <IconButton
             aria-label="Ignore column"
-            icon={<CgUndo />}
+            icon={<IconArrowBack />}
             onClick={() => onRevertIgnore(index)}
-            {...styles.userTable.ignoreButton}
           />
         ) : (
           <IconButton
             aria-label="Ignore column"
-            icon={<CgClose />}
+            icon={<IconX />}
             onClick={() => onIgnore(index)}
-            {...styles.userTable.ignoreButton}
           />
         )}
-      </Flex>
+      </Content>
       {entries.map((entry, index) => (
-        <Text
-          key={(entry || '') + index}
-          sx={styles.userTable.cell}
-          data-ignored={dataAttr(isIgnored)}
-        >
+        <Text key={(entry || '') + index} isIgnored={isIgnored}>
           {entry}
         </Text>
       ))}
-    </Box>
+    </Container>
   );
 };

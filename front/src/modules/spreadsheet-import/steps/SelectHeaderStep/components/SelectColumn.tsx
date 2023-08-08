@@ -1,5 +1,6 @@
 import { Column, FormatterProps, useRowSelection } from 'react-data-grid';
-import { Radio } from '@chakra-ui/react';
+
+import { Radio } from '@/ui/input/radio/components/Radio';
 
 import type { RawData } from '../../../types';
 
@@ -10,9 +11,8 @@ function SelectFormatter(props: FormatterProps<unknown>) {
 
   return (
     <Radio
-      bg="white"
       aria-label="Select"
-      isChecked={isRowSelected}
+      checked={isRowSelected}
       onChange={(event) => {
         onRowSelectionChange({
           row: props.row,

@@ -1,7 +1,21 @@
-import { CgCheck } from 'react-icons/cg';
-import { chakra, Flex, useStyleConfig } from '@chakra-ui/react';
 import { dataAttr } from '@chakra-ui/utils';
+import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+
+import { IconCheck } from '@/ui/icon';
+
+const Container = styled.div`
+  height: 6px;
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
+  min-height: 6px;
+  min-width: 6px;
+  width: 6px;
+`;
+
+const Flex = styled.div`
+  display: flex;
+`;
 
 const MotionFlex = motion(Flex);
 
@@ -13,30 +27,22 @@ const animationConfig = {
   initial: { scale: 0.5, opacity: 0 },
   animate: { scale: 1, opacity: 1 },
 };
+
 type MatchIconProps = {
   isChecked: boolean;
 };
 
 export const MatchIcon = (props: MatchIconProps) => {
-  const style = useStyleConfig('MatchIcon', props);
-
   return (
-    <chakra.div
-      __css={style}
-      minW={6}
-      minH={6}
-      w={6}
-      h={6}
-      ml="0.875rem"
-      mr={3}
+    <Container
       data-highlighted={dataAttr(props.isChecked)}
       data-testid="column-checkmark"
     >
       {props.isChecked && (
         <MotionFlex {...animationConfig}>
-          <CgCheck size="1.5rem" />
+          <IconCheck size={16} />
         </MotionFlex>
       )}
-    </chakra.div>
+    </Container>
   );
 };

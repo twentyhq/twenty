@@ -13,6 +13,7 @@ const Header = styled(Modal.Header)`
   background-color: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   height: 60px;
+  padding: 0px;
   padding-left: ${({ theme }) => theme.spacing(30)};
   padding-right: ${({ theme }) => theme.spacing(30)};
 `;

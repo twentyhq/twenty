@@ -6,6 +6,7 @@ import { Modal } from '@/ui/modal/components/Modal';
 const Footer = styled(Modal.Footer)`
   height: 60px;
   justify-content: center;
+  padding: 0px;
   padding-left: ${({ theme }) => theme.spacing(30)};
   padding-right: ${({ theme }) => theme.spacing(30)};
 `;

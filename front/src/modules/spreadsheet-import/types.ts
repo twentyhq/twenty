@@ -94,6 +94,7 @@ export type Select = {
 };
 
 export type SelectOption = {
+  // icon?: React.ReactNode;
   // UI-facing option label
   label: string;
   // Field entry matching criteria as well as select output

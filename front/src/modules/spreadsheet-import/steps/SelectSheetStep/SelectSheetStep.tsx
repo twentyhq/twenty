@@ -20,8 +20,10 @@ const Title = styled.span`
 `;
 
 const RadioContainer = styled.div`
-  // TODO: Enhance, this fix scroll issue but it's ugly
-  max-height: 100px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 0px;
 `;
 
 type SelectSheetProps = {
@@ -51,7 +53,7 @@ export const SelectSheetStep = ({
       <Content>
         <Title>Select the sheet to use</Title>
         <RadioContainer>
-          <RadioGroup onChange={(value) => setValue(value)} value={value}>
+          <RadioGroup onValueChange={(value) => setValue(value)} value={value}>
             {sheetNames.map((sheetName) => (
               <Radio value={sheetName} key={sheetName} />
             ))}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useToast } from '@chakra-ui/react';
+
+import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 
 import { UnmatchedFieldsAlert } from '../../components/Alerts/UnmatchedFieldsAlert';
 import { useRsi } from '../../hooks/useRsi';
@@ -83,9 +84,9 @@ export const MatchColumnsStep = <T extends string>({
   headerValues,
   onContinue,
 }: MatchColumnsProps<T>) => {
-  const toast = useToast();
+  const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);
-  const { fields, autoMapHeaders, autoMapDistance, translations } = useRsi<T>();
+  const { fields, autoMapHeaders, autoMapDistance } = useRsi<T>();
   const [isLoading, setIsLoading] = useState(false);
   const [columns, setColumns] = useState<Columns<T>>(
     // Do not remove spread, it indexes empty array elements, otherwise map() skips over them
@@ -111,14 +112,9 @@ export const MatchColumnsStep = <T extends string>({
           if (columnIndex === index) {
             return setColumn(column, field, data);
           } else if (index === existingFieldIndex) {
-            toast({
-              status: 'warning',
-              variant: 'left-accent',
-              position: 'bottom-left',
-              title: translations.matchColumnsStep.duplicateColumnWarningTitle,
-              description:
-                translations.matchColumnsStep.duplicateColumnWarningDescription,
-              isClosable: true,
+            enqueueSnackBar('Columns cannot duplicate', {
+              title: 'Another column unselected',
+              variant: 'error',
             });
             return setColumn(column);
           } else {
@@ -127,14 +123,7 @@ export const MatchColumnsStep = <T extends string>({
         }),
       );
     },
-    [
-      columns,
-      data,
-      fields,
-      toast,
-      translations.matchColumnsStep.duplicateColumnWarningDescription,
-      translations.matchColumnsStep.duplicateColumnWarningTitle,
-    ],
+    [columns, data, fields, enqueueSnackBar],
   );
 
   const onIgnore = useCallback(

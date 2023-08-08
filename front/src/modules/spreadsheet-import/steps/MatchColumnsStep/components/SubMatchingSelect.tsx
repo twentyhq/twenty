@@ -1,4 +1,4 @@
-import { Box, Text, useStyleConfig } from '@chakra-ui/react';
+import styled from '@emotion/styled';
 
 import { MatchColumnSelect } from '../../../components/Selects/MatchColumnSelect';
 import { useRsi } from '../../../hooks/useRsi';
@@ -9,7 +9,18 @@ import type {
 } from '../MatchColumnsStep';
 import { getFieldOptions } from '../utils/getFieldOptions';
 
-import type { Styles } from './ColumnGrid';
+const Container = styled.div`
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+const SelectLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+`;
 
 interface Props<T> {
   option: MatchedOptions<T> | Partial<MatchedOptions<T>>;
@@ -22,14 +33,13 @@ export const SubMatchingSelect = <T extends string>({
   column,
   onSubChange,
 }: Props<T>) => {
-  const styles = useStyleConfig('MatchColumnsStep') as Styles;
   const { translations, fields } = useRsi<T>();
   const options = getFieldOptions(fields, column.value);
   const value = options.find((opt) => opt.value == option.value);
 
   return (
-    <Box pl={2} pb="0.375rem">
-      <Text sx={styles.selectColumn.selectLabel}>{option.entry}</Text>
+    <Container>
+      <SelectLabel>{option.entry}</SelectLabel>
       <MatchColumnSelect
         value={value}
         placeholder={translations.matchColumnsStep.subSelectPlaceholder}
@@ -39,6 +49,6 @@ export const SubMatchingSelect = <T extends string>({
         options={options}
         name={option.entry}
       />
-    </Box>
+    </Container>
   );
 };

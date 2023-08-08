@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Table } from '../../../components/Table';
 import type { RawData } from '../../../types';
 
-import { generateSelectionColumns } from './columns';
+import { generateSelectionColumns } from './SelectColumn';
 
 interface Props {
   data: RawData[];
@@ -37,7 +37,6 @@ export const SelectHeaderTable = ({
         setSelectedRows(new Set([data.indexOf(row)]));
       }}
       headerRowHeight={0}
-      // className="rdg-static"
     />
   );
 };

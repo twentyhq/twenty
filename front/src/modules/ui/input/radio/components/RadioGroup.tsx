@@ -5,15 +5,17 @@ import { RadioProps } from './Radio';
 
 type RadioGroupProps = React.PropsWithChildren & {
   value?: string;
-  onChange?: (value: string) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onValueChange?: (value: string) => void;
 };
 
-export function RadioGroup({ value, onChange, children }: RadioGroupProps) {
+export function RadioGroup({
+  value,
+  onChange,
+  onValueChange,
+  children,
+}: RadioGroupProps) {
   const theme = useTheme();
-
-  function handleRadioChange(newValue: string) {
-    onChange?.(newValue);
-  }
 
   return (
     <>
@@ -22,7 +24,8 @@ export function RadioGroup({ value, onChange, children }: RadioGroupProps) {
           return React.cloneElement(child, {
             style: { marginBottom: theme.spacing(2) },
             checked: child.props.value === value,
-            onChange: handleRadioChange,
+            onChange,
+            onValueChange,
           });
         }
         return child;

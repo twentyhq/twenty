@@ -23,7 +23,6 @@ const StyledHeader = styled.div`
   flex-direction: row;
   overflow: hidden;
   padding: ${({ theme }) => theme.spacing(5)};
-  width: 100%;
 `;
 
 const StyledContent = styled.div`
@@ -40,7 +39,6 @@ const StyledFooter = styled.div`
   flex-direction: row;
   overflow: hidden;
   padding: ${({ theme }) => theme.spacing(5)};
-  width: 100%;
 `;
 
 const BackDrop = styled(motion.div)`

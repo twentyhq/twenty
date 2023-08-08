@@ -1,14 +1,26 @@
 import { useCallback, useState } from 'react';
-import { Box, Heading, useStyleConfig } from '@chakra-ui/react';
+import styled from '@emotion/styled';
 
 import { Modal } from '@/ui/modal/components/Modal';
 
 import { ContinueButton } from '../../components/ContinueButton';
-import { useRsi } from '../../hooks/useRsi';
-import type { themeOverrides } from '../../theme';
 import type { RawData } from '../../types';
 
 import { SelectHeaderTable } from './components/SelectHeaderTable';
+
+const Title = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.xl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  text-align: center;
+`;
+
+const TableContainer = styled.div`
+  display: flex;
+  flex-grow: 1;
+  height: 0px;
+`;
 
 type SelectHeaderProps = {
   data: RawData[];
@@ -16,10 +28,6 @@ type SelectHeaderProps = {
 };
 
 export const SelectHeaderStep = ({ data, onContinue }: SelectHeaderProps) => {
-  const styles = useStyleConfig(
-    'SelectHeaderStep',
-  ) as (typeof themeOverrides)['components']['SelectHeaderStep']['baseStyle'];
-  const { translations } = useRsi();
   const [selectedRows, setSelectedRows] = useState<ReadonlySet<number>>(
     new Set([0]),
   );
@@ -37,20 +45,18 @@ export const SelectHeaderStep = ({ data, onContinue }: SelectHeaderProps) => {
   return (
     <>
       <Modal.Content>
-        <Heading {...styles.heading}>
-          {translations.selectHeaderStep.title}
-        </Heading>
-        <Box h={0} flexGrow={1}>
+        <Title>Select header row</Title>
+        <TableContainer>
           <SelectHeaderTable
             data={data}
             selectedRows={selectedRows}
             setSelectedRows={setSelectedRows}
           />
-        </Box>
+        </TableContainer>
       </Modal.Content>
       <ContinueButton
         onContinue={handleContinue}
-        title={translations.selectHeaderStep.nextButtonTitle}
+        title="Next"
         isLoading={isLoading}
       />
     </>

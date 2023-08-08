@@ -8,6 +8,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@blocknote/core": "^0.8.2",
     "@blocknote/react": "^0.8.2",
+    "@chakra-ui/accordion": "^2.3.0",
     "@chakra-ui/react": "^2.8.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.5",

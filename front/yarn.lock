@@ -1562,7 +1562,7 @@
     "@tiptap/react" "^2.0.3"
     react-icons "^4.3.1"
 
-"@chakra-ui/accordion@2.3.0":
+"@chakra-ui/accordion@2.3.0", "@chakra-ui/accordion@^2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@chakra-ui/accordion/-/accordion-2.3.0.tgz#2c85fd2d2734b176f019f8db9f4e075007b4e1fb"
   integrity sha512-A4TkRw3Jnt+Fam6dSSJ62rskdrvjF3JGctYcfXlojfFIpHPuIw4pDwfZgNAxlaxWkcj0e7JJKlQ88dnZW+QfFg==
