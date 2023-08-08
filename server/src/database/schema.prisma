@@ -266,7 +266,7 @@ model Person {
   linkedinUrl String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  twitterUrl String?
+  xUrl String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   jobTitle    String?

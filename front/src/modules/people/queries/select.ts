@@ -30,7 +30,7 @@ export const GET_PEOPLE = gql`
       displayName
       jobTitle
       linkedinUrl
-      twitterUrl
+      xUrl
       avatarUrl
       createdAt
       _activityCount

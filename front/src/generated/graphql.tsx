@@ -1241,8 +1241,8 @@ export type Person = {
   lastName?: Maybe<Scalars['String']>;
   linkedinUrl?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
-  twitterUrl?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+  xUrl?: Maybe<Scalars['String']>;
 };
 
 export type PersonCreateInput = {
@@ -1260,8 +1260,8 @@ export type PersonCreateInput = {
   lastName?: InputMaybe<Scalars['String']>;
   linkedinUrl?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
-  twitterUrl?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type PersonCreateNestedManyWithoutCompanyInput = {
@@ -1306,8 +1306,8 @@ export type PersonOrderByWithRelationInput = {
   lastName?: InputMaybe<SortOrder>;
   linkedinUrl?: InputMaybe<SortOrder>;
   phone?: InputMaybe<SortOrder>;
-  twitterUrl?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
+  xUrl?: InputMaybe<SortOrder>;
 };
 
 export type PersonRelationFilter = {
@@ -1328,9 +1328,9 @@ export enum PersonScalarFieldEnum {
   LastName = 'lastName',
   LinkedinUrl = 'linkedinUrl',
   Phone = 'phone',
-  TwitterUrl = 'twitterUrl',
   UpdatedAt = 'updatedAt',
-  WorkspaceId = 'workspaceId'
+  WorkspaceId = 'workspaceId',
+  XUrl = 'xUrl'
 }
 
 export type PersonUpdateInput = {
@@ -1348,8 +1348,8 @@ export type PersonUpdateInput = {
   lastName?: InputMaybe<Scalars['String']>;
   linkedinUrl?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
-  twitterUrl?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type PersonUpdateManyWithoutCompanyNestedInput = {
@@ -1393,8 +1393,8 @@ export type PersonWhereInput = {
   lastName?: InputMaybe<StringNullableFilter>;
   linkedinUrl?: InputMaybe<StringNullableFilter>;
   phone?: InputMaybe<StringNullableFilter>;
-  twitterUrl?: InputMaybe<StringNullableFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+  xUrl?: InputMaybe<StringNullableFilter>;
 };
 
 export type PersonWhereUniqueInput = {
@@ -1948,7 +1948,7 @@ export type User = {
   phoneNumber?: Maybe<Scalars['String']>;
   settings: UserSettings;
   settingsId: Scalars['String'];
-  supportUserHash: Scalars['String'];
+  supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
 };
@@ -2443,7 +2443,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -2457,7 +2457,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2508,7 +2508,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, twitterUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type GetPersonPhoneByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2564,7 +2564,7 @@ export type GetPersonQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, twitterUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
 
 export type UpdateOnePersonMutationVariables = Exact<{
   where: PersonWhereUniqueInput;
@@ -2572,14 +2572,14 @@ export type UpdateOnePersonMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, twitterUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
+export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
 
 export type InsertOnePersonMutationVariables = Exact<{
   data: PersonCreateInput;
 }>;
 
 
-export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, twitterUrl?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
+export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
 
 export type DeleteManyPersonMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -2691,7 +2691,7 @@ export type SearchActivityQuery = { __typename?: 'Query', searchResults: Array<{
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, canImpersonate: boolean, supportUserHash: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3928,7 +3928,7 @@ export const GetPeopleDocument = gql`
     displayName
     jobTitle
     linkedinUrl
-    twitterUrl
+    xUrl
     avatarUrl
     createdAt
     _activityCount
@@ -4241,7 +4241,7 @@ export const GetPersonDocument = gql`
     city
     jobTitle
     linkedinUrl
-    twitterUrl
+    xUrl
     avatarUrl
     phone
     _activityCount
@@ -4294,7 +4294,7 @@ export const UpdateOnePersonDocument = gql`
     email
     jobTitle
     linkedinUrl
-    twitterUrl
+    xUrl
     firstName
     lastName
     displayName
@@ -4345,7 +4345,7 @@ export const InsertOnePersonDocument = gql`
     lastName
     jobTitle
     linkedinUrl
-    twitterUrl
+    xUrl
     displayName
     phone
     createdAt

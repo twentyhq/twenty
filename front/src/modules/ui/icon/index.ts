@@ -51,6 +51,6 @@ export { IconUserCircle } from '@tabler/icons-react';
 export { IconCalendar } from '@tabler/icons-react';
 export { IconPencil } from '@tabler/icons-react';
 export { IconCircleDot } from '@tabler/icons-react';
-export { IconBrandTwitter } from '@tabler/icons-react';
+export { IconBrandX } from '@tabler/icons-react';
 export { IconTag } from '@tabler/icons-react';
 export { IconHelpCircle } from '@tabler/icons-react';

@@ -1,6 +1,6 @@
 import {
   IconBrandLinkedin,
-  IconBrandTwitter,
+  IconBrandX,
   IconBriefcase,
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -122,15 +122,15 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     },
   } satisfies ViewFieldDefinition<ViewFieldURLMetadata>,
   {
-    id: 'twitter',
-    columnLabel: 'Twitter',
-    columnIcon: <IconBrandTwitter />,
+    id: 'x',
+    columnLabel: 'X',
+    columnIcon: <IconBrandX />,
     columnSize: 150,
-    columnOrder: 8,
+    columnOrder: 9,
     metadata: {
       type: 'url',
-      fieldName: 'twitterUrl',
-      placeHolder: 'Twitter',
+      fieldName: 'xUrl',
+      placeHolder: 'X',
     },
   } satisfies ViewFieldDefinition<ViewFieldURLMetadata>,
 ];
