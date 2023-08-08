@@ -1,12 +1,10 @@
 import { ReactNode, useCallback, useContext } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 import { PipelineProgressPointOfContactEditableField } from '@/pipeline/editable-field/components/PipelineProgressPointOfContactEditableField';
 import { ProbabilityEditableField } from '@/pipeline/editable-field/components/ProbabilityEditableField';
-import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardIdsState';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
@@ -141,10 +139,13 @@ export function CompanyBoardCard() {
           probability: pipelineProgress.probability,
           pointOfContactId: pipelineProgress.pointOfContactId || undefined,
         },
-        refetchQueries: [
-          getOperationName(GET_PIPELINE_PROGRESS) ?? '',
-          getOperationName(GET_PIPELINES) ?? '',
-        ],
+        optimisticResponse: {
+          __typename: 'Mutation',
+          updateOnePipelineProgress: {
+            __typename: 'PipelineProgress',
+            ...pipelineProgress,
+          },
+        },
       });
     },
     [updatePipelineProgress],

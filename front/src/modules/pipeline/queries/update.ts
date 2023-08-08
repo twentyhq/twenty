@@ -38,6 +38,7 @@ export const UPDATE_PIPELINE_PROGRESS = gql`
       id
       amount
       closeDate
+      probability
     }
   }
 `;
