@@ -119,7 +119,7 @@ export function AutosizeTextInput({
   const [text, setText] = useState('');
 
   const isSendButtonDisabled = !text;
-  const words = text.split(/\s|\n/).length;
+  const words = text.split(/\s|\n/).filter((word) => word).length;
 
   useHotkeys(
     ['shift+enter', 'enter'],

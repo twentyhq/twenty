@@ -4,10 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import {
-  AutosizeTextInput,
-  AutosizeTextInputVariant,
-} from '@/ui/input/autosize-text/components/AutosizeTextInput';
+import { AutosizeTextInput } from '@/ui/input/autosize-text/components/AutosizeTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Activity, useCreateCommentMutation } from '~/generated/graphql';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
@@ -115,7 +112,7 @@ export function ActivityComments({ activity }: OwnProps) {
           <AutosizeTextInput
             onValidate={handleSendComment}
             onFocus={handleFocus}
-            variant={AutosizeTextInputVariant.Button}
+            // variant={AutosizeTextInputVariant.Button}
             placeholder={activity?.comments.length > 0 ? 'Reply...' : undefined}
           />
         )}
