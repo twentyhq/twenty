@@ -72,7 +72,7 @@ const PROBABILITY_VALUES = [
   { label: '100%', value: 100 },
 ];
 
-export function ProbabilityFieldEditMode({ viewField }: OwnProps) {
+export function ProbabilityEditableFieldEditMode({ viewField }: OwnProps) {
   const [nextProbabilityIndex, setNextProbabilityIndex] = useState<
     number | null
   >(null);
@@ -83,8 +83,6 @@ export function ProbabilityFieldEditMode({ viewField }: OwnProps) {
       fieldName: viewField.metadata.fieldName,
     }),
   );
-
-  console.log(fieldValue);
 
   const probabilityIndex = Math.ceil(fieldValue / 25);
   const { closeEditableField } = useEditableField();

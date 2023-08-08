@@ -13,7 +13,6 @@ export function PersonChip({
   pictureUrl,
   variant,
 }: PersonChipPropsType) {
-  //console.log(id, name, pictureUrl, variant);
   return (
     <EntityChip
       entityId={id}

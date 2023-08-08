@@ -6,7 +6,7 @@ import {
 } from '@/ui/editable-field/types/ViewField';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-import { ProbabilityFieldEditMode } from './ProbabilityFieldEditMode';
+import { ProbabilityEditableFieldEditMode } from './ProbabilityEditableFieldEditMode';
 
 type OwnProps = {
   viewField: ViewFieldDefinition<ViewFieldProbabilityMetadata>;
@@ -17,7 +17,9 @@ export function ProbabilityEditableField({ viewField }: OwnProps) {
     <RecoilScope SpecificContext={FieldContext}>
       <EditableField
         iconLabel={viewField.columnIcon}
-        displayModeContent={<ProbabilityFieldEditMode viewField={viewField} />}
+        displayModeContent={
+          <ProbabilityEditableFieldEditMode viewField={viewField} />
+        }
         displayModeContentOnly
         disableHoverEffect
       />
