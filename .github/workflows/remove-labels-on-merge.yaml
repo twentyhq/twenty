@@ -1,0 +1,21 @@
+name: Remove Labels on Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  remove-labels:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Remove labels
+        if: github.event.pull_request.merged == true
+        run: |
+          LABELS_TO_REMOVE=("awaiting review" "awaiting author")
+          
+          for label in "${LABELS_TO_REMOVE[@]}"; do
+            echo "Removing label: $label"
+            gh pr edit ${GITHUB_REPOSITORY#*/}#${{ github.event.pull_request.number }} --remove-label "$label"
+          done
