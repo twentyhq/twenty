@@ -40,14 +40,12 @@ export function EntityBoard({
   boardOptions,
   updateSorts,
   onEditColumnTitle,
-  onEditColumnColor,
 }: {
   boardOptions: BoardOptions;
   updateSorts: (
     sorts: Array<SelectedSortType<PipelineProgressOrderByWithRelationInput>>,
   ) => void;
-  onEditColumnTitle: (columnId: string, title: string) => void;
-  onEditColumnColor: (columnId: string, color: string) => void;
+  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
 }) {
   const [boardColumns] = useRecoilState(boardColumnsState);
 
@@ -138,7 +136,6 @@ export function EntityBoard({
                   boardOptions={boardOptions}
                   column={column}
                   onEditColumnTitle={onEditColumnTitle}
-                  onEditColumnColor={onEditColumnColor}
                 />
               </RecoilScope>
             </BoardColumnIdContext.Provider>

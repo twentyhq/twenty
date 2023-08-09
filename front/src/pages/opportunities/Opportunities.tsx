@@ -45,23 +45,25 @@ export function Opportunities() {
 
   const [updatePipelineStage] = useUpdatePipelineStageMutation();
 
-  function handleEditColumnTitle(boardColumnId: string, newTitle: string) {
+  function handleEditColumnTitle(
+    boardColumnId: string,
+    newTitle: string,
+    newColor: string,
+  ) {
     updatePipelineStage({
       variables: {
         id: boardColumnId,
-        data: { name: newTitle },
+        data: { name: newTitle, color: newColor },
       },
-      refetchQueries: [getOperationName(GET_PIPELINES) || ''],
-    });
-  }
-
-  function handleEditColumnColor(boardColumnId: string, newColor: string) {
-    updatePipelineStage({
-      variables: {
-        id: boardColumnId,
-        data: { color: newColor },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        updateOnePipelineStage: {
+          __typename: 'PipelineStage',
+          id: boardColumnId,
+          name: newTitle,
+          color: newColor,
+        },
       },
-      refetchQueries: [getOperationName(GET_PIPELINES) || ''],
     });
   }
 
@@ -91,7 +93,6 @@ export function Opportunities() {
             <EntityBoard
               boardOptions={opportunitiesBoardOptions}
               updateSorts={updateSorts}
-              onEditColumnColor={handleEditColumnColor}
               onEditColumnTitle={handleEditColumnTitle}
             />
             <EntityBoardActionBar>
