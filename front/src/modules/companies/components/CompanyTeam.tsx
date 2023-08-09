@@ -20,7 +20,6 @@ const StyledTitleContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   justify-content: space-between;
-  padding: 12px 12px 0px 12px;
   padding-bottom: ${({ theme }) => theme.spacing(0)};
   padding-left: ${({ theme }) => theme.spacing(3)};
   padding-right: ${({ theme }) => theme.spacing(3)};
