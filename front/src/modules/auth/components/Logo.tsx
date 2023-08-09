@@ -28,11 +28,11 @@ const StyledWorkspaceLogo = styled.div<StyledWorkspaceLogoProps>`
   background: url(${(props) => props.logo});
   background-size: cover;
   border-radius: ${({ theme }) => theme.border.radius.xs};
-  bottom: -12px;
-  height: 24px;
+  bottom: ${({ theme }) => `-${theme.spacing(3)}`};
+  height: ${({ theme }) => theme.spacing(6)};
   position: absolute;
-  right: -12px;
-  width: 24px;
+  right: ${({ theme }) => `-${theme.spacing(3)}`};
+  width: ${({ theme }) => theme.spacing(6)};
 `;
 
 export function Logo({ workspaceLogo, ...props }: Props) {
