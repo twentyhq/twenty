@@ -1,4 +1,5 @@
-import React, { useCallback, useState } from 'react';
+
+import React, { useCallback, useRef, useState } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
@@ -92,6 +93,7 @@ export function ActivityEditor({
   const [completedAt, setCompletedAt] = useState<string | null>(
     activity.completedAt ?? '',
   );
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [updateActivityMutation] = useUpdateActivityMutation();
 
@@ -166,7 +168,7 @@ export function ActivityEditor({
   }
 
   return (
-    <StyledContainer>
+    <StyledContainer ref={containerRef}>
       <StyledUpperPartContainer>
         <StyledTopContainer>
           <ActivityTypeDropdown activity={activity} />
@@ -219,6 +221,7 @@ export function ActivityEditor({
             id: activity.id,
             comments: activity.comments ?? [],
           }}
+          scrollableContainerRef={containerRef}
         />
       )}
     </StyledContainer>
