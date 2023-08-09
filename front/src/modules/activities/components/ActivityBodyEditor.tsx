@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
+import { useApolloClient } from '@apollo/client';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
@@ -8,7 +8,7 @@ import debounce from 'lodash.debounce';
 import { BlockEditor } from '@/ui/editor/components/BlockEditor';
 import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
 
-import { GET_ACTIVITIES_BY_TARGETS } from '../queries/select';
+import { ACTIVITY_UPDATE_FRAGMENT } from '../queries/update';
 
 const BlockNoteStyledContainer = styled.div`
   width: 100%;
@@ -21,6 +21,12 @@ type OwnProps = {
 
 export function ActivityBodyEditor({ activity, onChange }: OwnProps) {
   const [updateActivityMutation] = useUpdateActivityMutation();
+
+  const client = useApolloClient();
+  const cachedActivity = client.readFragment({
+    id: `Activity:${activity.id}`,
+    fragment: ACTIVITY_UPDATE_FRAGMENT,
+  });
 
   const [body, setBody] = useState<string | null>(null);
 
@@ -42,12 +48,18 @@ export function ActivityBodyEditor({ activity, onChange }: OwnProps) {
             body: activityBody,
           },
         },
-        refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
+        optimisticResponse: {
+          __typename: 'Mutation',
+          updateOneActivity: {
+            ...cachedActivity,
+            body: activityBody,
+          },
+        },
       });
     }
 
     return debounce(onInternalChange, 200);
-  }, [activity, updateActivityMutation, setBody]);
+  }, [updateActivityMutation, activity.id, cachedActivity]);
 
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent: activity.body ? JSON.parse(activity.body) : undefined,
