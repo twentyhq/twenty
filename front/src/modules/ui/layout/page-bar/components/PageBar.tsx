@@ -1,9 +1,8 @@
 import { ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { isFavorited } from '@/favorites/states/isFavorited';
 import { IconButton } from '@/ui/button/components/IconButton';
 import { IconChevronLeft, IconHeart, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
@@ -67,6 +66,7 @@ const ActionButtonsContainer = styled.div`
 type OwnProps = {
   title: string;
   hasBackButton?: boolean;
+  isFavorite?: boolean;
   icon: ReactNode;
   onAddButtonClick?: () => void;
   onFavouriteButtonClick?: () => void;
@@ -75,6 +75,7 @@ type OwnProps = {
 export function PageBar({
   title,
   hasBackButton,
+  isFavorite,
   icon,
   onAddButtonClick,
   onFavouriteButtonClick,
@@ -83,7 +84,6 @@ export function PageBar({
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
 
   const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
-  const [isFavorite] = useRecoilState(isFavorited);
 
   const iconSize = useIsMobile()
     ? navbarIconSize.mobile
@@ -119,7 +119,7 @@ export function PageBar({
               icon={<IconHeart size={16} />}
               size="large"
               data-testid="add-button"
-              customColor={isFavorite ? '#f83e3e' : ''}
+              accent={isFavorite ? 'red' : 'regular'}
               onClick={onFavouriteButtonClick}
               variant="border"
             />
