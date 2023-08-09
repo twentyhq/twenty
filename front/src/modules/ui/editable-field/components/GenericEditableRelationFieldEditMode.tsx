@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { PeoplePicker } from '@/people/components/PeoplePicker';
-import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import {
   ViewFieldDefinition,
   ViewFieldRelationMetadata,
@@ -14,6 +13,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 import { useEditableField } from '../hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
+import { EntityIdContext } from '../states/EntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 
 const RelationPickerContainer = styled.div`
@@ -56,7 +56,7 @@ function RelationPicker({
 }
 
 export function GenericEditableRelationFieldEditMode({ viewField }: OwnProps) {
-  const currentEntityId = useContext(BoardCardIdContext);
+  const currentEntityId = useContext(EntityIdContext);
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<any | null>(

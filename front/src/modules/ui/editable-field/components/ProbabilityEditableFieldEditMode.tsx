@@ -2,10 +2,10 @@ import { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
 
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
+import { EntityIdContext } from '../states/EntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import {
   ViewFieldDefinition,
@@ -76,7 +76,8 @@ export function ProbabilityEditableFieldEditMode({ viewField }: OwnProps) {
   const [nextProbabilityIndex, setNextProbabilityIndex] = useState<
     number | null
   >(null);
-  const currentEntityId = useContext(BoardCardIdContext);
+  const currentEntityId = useContext(EntityIdContext);
+
   const [fieldValue, setFieldValue] = useRecoilState<number>(
     genericEntityFieldFamilySelector({
       entityId: currentEntityId ?? '',

@@ -2404,6 +2404,8 @@ export type DeleteActivityMutationVariables = Exact<{
 
 export type DeleteActivityMutation = { __typename?: 'Mutation', deleteManyActivities: { __typename?: 'AffectedRows', count: number } };
 
+export type ActivityUpdatePartsFragment = { __typename?: 'Activity', id: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null };
+
 export type UpdateActivityMutationVariables = Exact<{
   where: ActivityWhereUniqueInput;
   data: ActivityUpdateInput;
@@ -2831,7 +2833,22 @@ export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: nev
 
 export type DeleteCurrentWorkspaceMutation = { __typename?: 'Mutation', deleteCurrentWorkspace: { __typename?: 'Workspace', id: string } };
 
-
+export const ActivityUpdatePartsFragmentDoc = gql`
+    fragment ActivityUpdateParts on Activity {
+  id
+  body
+  title
+  type
+  completedAt
+  dueAt
+  assignee {
+    id
+    firstName
+    lastName
+    displayName
+  }
+}
+    `;
 export const CreateCommentDocument = gql`
     mutation CreateComment($commentId: String!, $commentText: String!, $authorId: String!, $activityId: String!, $createdAt: DateTime!) {
   createOneComment(
@@ -3286,21 +3303,10 @@ export type DeleteActivityMutationOptions = Apollo.BaseMutationOptions<DeleteAct
 export const UpdateActivityDocument = gql`
     mutation UpdateActivity($where: ActivityWhereUniqueInput!, $data: ActivityUpdateInput!) {
   updateOneActivity(where: $where, data: $data) {
-    id
-    body
-    title
-    type
-    completedAt
-    dueAt
-    assignee {
-      id
-      firstName
-      lastName
-      displayName
-    }
+    ...ActivityUpdateParts
   }
 }
-    `;
+    ${ActivityUpdatePartsFragmentDoc}`;
 export type UpdateActivityMutationFn = Apollo.MutationFunction<UpdateActivityMutation, UpdateActivityMutationVariables>;
 
 /**

@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import {
   ViewFieldDateMetadata,
   ViewFieldDefinition,
 } from '@/ui/editable-field/types/ViewField';
 
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
+import { EntityIdContext } from '../states/EntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import { EditableFieldEditModeDate } from '../variants/components/EditableFieldEditModeDate';
 
@@ -16,7 +16,7 @@ type OwnProps = {
 };
 
 export function GenericEditableDateFieldEditMode({ viewField }: OwnProps) {
-  const currentEntityId = useContext(BoardCardIdContext);
+  const currentEntityId = useContext(EntityIdContext);
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
