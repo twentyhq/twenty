@@ -1,13 +1,13 @@
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
-import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 import {
   ViewFieldDateMetadata,
   ViewFieldDefinition,
-} from '@/ui/table/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
+import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
+import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
+import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 
 import { DateCellEdit } from './DateCellEdit';
 

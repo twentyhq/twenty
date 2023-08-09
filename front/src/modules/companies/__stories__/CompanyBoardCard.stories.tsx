@@ -19,10 +19,7 @@ const meta: Meta<typeof CompanyBoardCard> = {
   decorators: [
     (Story) => (
       <RecoilScope SpecificContext={CompanyBoardContext}>
-        <HooksCompanyBoard
-          availableFilters={[]}
-          orderBy={defaultPipelineProgressOrderBy}
-        />
+        <HooksCompanyBoard orderBy={defaultPipelineProgressOrderBy} />
         <RecoilScope SpecificContext={BoardColumnContext}>
           <BoardCardIdContext.Provider value={mockedPipelineProgressData[1].id}>
             <MemoryRouter>

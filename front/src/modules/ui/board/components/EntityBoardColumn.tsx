@@ -84,7 +84,6 @@ export function EntityBoardColumn({
           onTitleEdit={handleEditColumnTitle}
           title={column.title}
           color={column.colorCode}
-          pipelineStageId={column.id}
           totalAmount={boardColumnTotal}
           isFirstColumn={column.index === 0}
           numChildren={cardIds.length}
@@ -94,7 +93,7 @@ export function EntityBoardColumn({
               <BoardCardIdContext.Provider value={cardId} key={cardId}>
                 <EntityBoardCard
                   index={index}
-                  pipelineProgressId={cardId}
+                  cardId={cardId}
                   boardOptions={boardOptions}
                 />
               </BoardCardIdContext.Provider>

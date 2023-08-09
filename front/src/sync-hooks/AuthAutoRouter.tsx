@@ -129,11 +129,13 @@ export function AuthAutoRouter() {
       }
     }
 
-    eventTracker('pageview', {
-      location: {
-        pathname: location.pathname,
-      },
-    });
+    setTimeout(() => {
+      eventTracker('pageview', {
+        location: {
+          pathname: location.pathname,
+        },
+      });
+    }, 500);
   }, [
     onboardingStatus,
     navigate,

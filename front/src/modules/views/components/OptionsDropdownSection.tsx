@@ -10,7 +10,7 @@ import { DropdownMenuSubheader } from '@/ui/dropdown/components/DropdownMenuSubh
 import {
   ViewFieldDefinition,
   ViewFieldMetadata,
-} from '@/ui/table/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
 
 type OptionsDropdownSectionProps = {
   renderActions: (

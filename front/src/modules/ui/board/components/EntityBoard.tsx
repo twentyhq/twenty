@@ -48,6 +48,7 @@ export function EntityBoard({
   onEditColumnColor: (columnId: string, color: string) => void;
 }) {
   const [boardColumns] = useRecoilState(boardColumnsState);
+
   const theme = useTheme();
   const [updatePipelineProgressStage] =
     useUpdateOnePipelineProgressStageMutation();
