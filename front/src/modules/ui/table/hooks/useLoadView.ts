@@ -8,13 +8,13 @@ import {
   useGetViewFieldsQuery,
 } from '~/generated/graphql';
 
-import { entityTableDimensionsState } from '../states/entityTableDimensionsState';
-import { viewFieldsState } from '../states/viewFieldsState';
 import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
   ViewFieldTextMetadata,
-} from '../types/ViewField';
+} from '../../editable-field/types/ViewField';
+import { entityTableDimensionsState } from '../states/entityTableDimensionsState';
+import { viewFieldsState } from '../states/viewFieldsState';
 
 const DEFAULT_VIEW_FIELD_METADATA: ViewFieldTextMetadata = {
   type: 'text',

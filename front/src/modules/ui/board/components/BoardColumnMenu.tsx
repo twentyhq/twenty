@@ -1,12 +1,16 @@
 import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { IconPencil } from '@tabler/icons-react';
+import { Key } from 'ts-key-enum';
 
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { icon } from '@/ui/theme/constants/icon';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+
+import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 
@@ -19,15 +23,13 @@ const StyledMenuContainer = styled.div`
 type OwnProps = {
   onClose: () => void;
   title: string;
-  color?: string;
-  onTitleEdit: (title: string) => void;
-  onColumnColorEdit: (color: string) => void;
+  color: string;
+  onTitleEdit: (title: string, color: string) => void;
 };
 
 export function BoardColumnMenu({
   onClose,
   onTitleEdit,
-  onColumnColorEdit,
   title,
   color,
 }: OwnProps) {
@@ -38,6 +40,13 @@ export function BoardColumnMenu({
     refs: [boardColumnMenuRef],
     callback: onClose,
   });
+
+  useScopedHotkeys(
+    [Key.Escape, Key.Enter],
+    onClose,
+    BoardColumnHotkeyScope.BoardColumn,
+    [],
+  );
 
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
@@ -55,7 +64,6 @@ export function BoardColumnMenu({
             color={color}
             onClose={onClose}
             onTitleEdit={onTitleEdit}
-            onColumnColorEdit={onColumnColorEdit}
             title={title}
           />
         )}

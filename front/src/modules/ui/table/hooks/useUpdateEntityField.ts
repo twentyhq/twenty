@@ -1,25 +1,25 @@
 import { useContext } from 'react';
 
+import { isViewFieldChip } from '@/ui/editable-field/types/guards/isViewFieldChip';
+import { isViewFieldDate } from '@/ui/editable-field/types/guards/isViewFieldDate';
+import { isViewFieldDateValue } from '@/ui/editable-field/types/guards/isViewFieldDateValue';
+import { isViewFieldDoubleText } from '@/ui/editable-field/types/guards/isViewFieldDoubleText';
+import { isViewFieldDoubleTextChip } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextChip';
+import { isViewFieldDoubleTextChipValue } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextChipValue';
+import { isViewFieldDoubleTextValue } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextValue';
+import { isViewFieldNumber } from '@/ui/editable-field/types/guards/isViewFieldNumber';
+import { isViewFieldNumberValue } from '@/ui/editable-field/types/guards/isViewFieldNumberValue';
+import { isViewFieldPhone } from '@/ui/editable-field/types/guards/isViewFieldPhone';
+import { isViewFieldPhoneValue } from '@/ui/editable-field/types/guards/isViewFieldPhoneValue';
+import { isViewFieldRelation } from '@/ui/editable-field/types/guards/isViewFieldRelation';
+import { isViewFieldRelationValue } from '@/ui/editable-field/types/guards/isViewFieldRelationValue';
+import { isViewFieldText } from '@/ui/editable-field/types/guards/isViewFieldText';
+import { isViewFieldTextValue } from '@/ui/editable-field/types/guards/isViewFieldTextValue';
+import { isViewFieldURL } from '@/ui/editable-field/types/guards/isViewFieldURL';
+import { isViewFieldURLValue } from '@/ui/editable-field/types/guards/isViewFieldURLValue';
 import { EntityUpdateMutationHookContext } from '@/ui/table/states/EntityUpdateMutationHookContext';
-import { isViewFieldChip } from '@/ui/table/types/guards/isViewFieldChip';
-import { isViewFieldRelation } from '@/ui/table/types/guards/isViewFieldRelation';
-import { isViewFieldText } from '@/ui/table/types/guards/isViewFieldText';
 
-import { isViewFieldChipValue } from '../types/guards/isViewFieldChipValue';
-import { isViewFieldDate } from '../types/guards/isViewFieldDate';
-import { isViewFieldDateValue } from '../types/guards/isViewFieldDateValue';
-import { isViewFieldDoubleText } from '../types/guards/isViewFieldDoubleText';
-import { isViewFieldDoubleTextChip } from '../types/guards/isViewFieldDoubleTextChip';
-import { isViewFieldDoubleTextChipValue } from '../types/guards/isViewFieldDoubleTextChipValue';
-import { isViewFieldDoubleTextValue } from '../types/guards/isViewFieldDoubleTextValue';
-import { isViewFieldNumber } from '../types/guards/isViewFieldNumber';
-import { isViewFieldNumberValue } from '../types/guards/isViewFieldNumberValue';
-import { isViewFieldPhone } from '../types/guards/isViewFieldPhone';
-import { isViewFieldPhoneValue } from '../types/guards/isViewFieldPhoneValue';
-import { isViewFieldRelationValue } from '../types/guards/isViewFieldRelationValue';
-import { isViewFieldTextValue } from '../types/guards/isViewFieldTextValue';
-import { isViewFieldURL } from '../types/guards/isViewFieldURL';
-import { isViewFieldURLValue } from '../types/guards/isViewFieldURLValue';
+import { isViewFieldChipValue } from '../../editable-field/types/guards/isViewFieldChipValue';
 import {
   ViewFieldChipMetadata,
   ViewFieldChipValue,
@@ -41,7 +41,7 @@ import {
   ViewFieldTextValue,
   ViewFieldURLMetadata,
   ViewFieldURLValue,
-} from '../types/ViewField';
+} from '../../editable-field/types/ViewField';
 
 export function useUpdateEntityField() {
   const useUpdateEntityMutation = useContext(EntityUpdateMutationHookContext);

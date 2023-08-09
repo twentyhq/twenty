@@ -8,6 +8,10 @@ import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader'
 import { DropdownMenuItem } from '@/ui/dropdown/components/DropdownMenuItem';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '@/ui/editable-field/types/ViewField';
 import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { IconChevronLeft, IconMinus, IconPlus, IconTag } from '@/ui/icon';
@@ -15,10 +19,6 @@ import {
   hiddenViewFieldsState,
   visibleViewFieldsState,
 } from '@/ui/table/states/viewFieldsState';
-import {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/table/types/ViewField';
 import { useUpdateViewFieldMutation } from '~/generated/graphql';
 
 import { GET_VIEW_FIELDS } from '../queries/select';

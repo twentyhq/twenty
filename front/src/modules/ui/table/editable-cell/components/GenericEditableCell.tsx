@@ -1,17 +1,17 @@
+import { isViewFieldDate } from '@/ui/editable-field/types/guards/isViewFieldDate';
+import { isViewFieldDoubleText } from '@/ui/editable-field/types/guards/isViewFieldDoubleText';
+import { isViewFieldDoubleTextChip } from '@/ui/editable-field/types/guards/isViewFieldDoubleTextChip';
+import { isViewFieldNumber } from '@/ui/editable-field/types/guards/isViewFieldNumber';
+import { isViewFieldPhone } from '@/ui/editable-field/types/guards/isViewFieldPhone';
+import { isViewFieldRelation } from '@/ui/editable-field/types/guards/isViewFieldRelation';
+import { isViewFieldText } from '@/ui/editable-field/types/guards/isViewFieldText';
+import { isViewFieldURL } from '@/ui/editable-field/types/guards/isViewFieldURL';
 import {
   ViewFieldDefinition,
   ViewFieldMetadata,
-} from '@/ui/table/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
 
-import { isViewFieldChip } from '../../types/guards/isViewFieldChip';
-import { isViewFieldDate } from '../../types/guards/isViewFieldDate';
-import { isViewFieldDoubleText } from '../../types/guards/isViewFieldDoubleText';
-import { isViewFieldDoubleTextChip } from '../../types/guards/isViewFieldDoubleTextChip';
-import { isViewFieldNumber } from '../../types/guards/isViewFieldNumber';
-import { isViewFieldPhone } from '../../types/guards/isViewFieldPhone';
-import { isViewFieldRelation } from '../../types/guards/isViewFieldRelation';
-import { isViewFieldText } from '../../types/guards/isViewFieldText';
-import { isViewFieldURL } from '../../types/guards/isViewFieldURL';
+import { isViewFieldChip } from '../../../editable-field/types/guards/isViewFieldChip';
 import { GenericEditableChipCell } from '../type/components/GenericEditableChipCell';
 import { GenericEditableDateCell } from '../type/components/GenericEditableDateCell';
 import { GenericEditableDoubleTextCell } from '../type/components/GenericEditableDoubleTextCell';

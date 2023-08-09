@@ -848,6 +848,7 @@ export type EnumPipelineProgressableTypeFilter = {
 
 export enum FileFolder {
   Attachment = 'Attachment',
+  PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   WorkspaceLogo = 'WorkspaceLogo'
 }
@@ -928,6 +929,7 @@ export type Mutation = {
   uploadAttachment: Scalars['String'];
   uploadFile: Scalars['String'];
   uploadImage: Scalars['String'];
+  uploadPersonPicture: Scalars['String'];
   uploadProfilePicture: Scalars['String'];
   uploadWorkspaceLogo: Scalars['String'];
   verify: Verify;
@@ -1094,6 +1096,12 @@ export type MutationUploadImageArgs = {
 };
 
 
+export type MutationUploadPersonPictureArgs = {
+  file: Scalars['Upload'];
+  id: Scalars['String'];
+};
+
+
 export type MutationUploadProfilePictureArgs = {
   file: Scalars['Upload'];
 };
@@ -1242,6 +1250,7 @@ export type Person = {
   linkedinUrl?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+  xUrl?: Maybe<Scalars['String']>;
 };
 
 export type PersonCreateInput = {
@@ -1260,6 +1269,7 @@ export type PersonCreateInput = {
   linkedinUrl?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type PersonCreateNestedManyWithoutCompanyInput = {
@@ -1305,6 +1315,7 @@ export type PersonOrderByWithRelationInput = {
   linkedinUrl?: InputMaybe<SortOrder>;
   phone?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
+  xUrl?: InputMaybe<SortOrder>;
 };
 
 export type PersonRelationFilter = {
@@ -1326,7 +1337,8 @@ export enum PersonScalarFieldEnum {
   LinkedinUrl = 'linkedinUrl',
   Phone = 'phone',
   UpdatedAt = 'updatedAt',
-  WorkspaceId = 'workspaceId'
+  WorkspaceId = 'workspaceId',
+  XUrl = 'xUrl'
 }
 
 export type PersonUpdateInput = {
@@ -1345,6 +1357,7 @@ export type PersonUpdateInput = {
   linkedinUrl?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type PersonUpdateManyWithoutCompanyNestedInput = {
@@ -1389,6 +1402,7 @@ export type PersonWhereInput = {
   linkedinUrl?: InputMaybe<StringNullableFilter>;
   phone?: InputMaybe<StringNullableFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+  xUrl?: InputMaybe<StringNullableFilter>;
 };
 
 export type PersonWhereUniqueInput = {
@@ -1942,7 +1956,7 @@ export type User = {
   phoneNumber?: Maybe<Scalars['String']>;
   settings: UserSettings;
   settingsId: Scalars['String'];
-  supportUserHash: Scalars['String'];
+  supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
 };
@@ -2437,7 +2451,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -2451,7 +2465,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2502,7 +2516,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type GetPersonPhoneByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2558,7 +2572,7 @@ export type GetPersonQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
 
 export type UpdateOnePersonMutationVariables = Exact<{
   where: PersonWhereUniqueInput;
@@ -2566,14 +2580,14 @@ export type UpdateOnePersonMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
+export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
 
 export type InsertOnePersonMutationVariables = Exact<{
   data: PersonCreateInput;
 }>;
 
 
-export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
+export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
 
 export type DeleteManyPersonMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -2581,6 +2595,21 @@ export type DeleteManyPersonMutationVariables = Exact<{
 
 
 export type DeleteManyPersonMutation = { __typename?: 'Mutation', deleteManyPerson: { __typename?: 'AffectedRows', count: number } };
+
+export type UploadPersonPictureMutationVariables = Exact<{
+  id: Scalars['String'];
+  file: Scalars['Upload'];
+}>;
+
+
+export type UploadPersonPictureMutation = { __typename?: 'Mutation', uploadPersonPicture: string };
+
+export type RemovePersonPictureMutationVariables = Exact<{
+  where: PersonWhereUniqueInput;
+}>;
+
+
+export type RemovePersonPictureMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, avatarUrl?: string | null } | null };
 
 export type GetPipelinesQueryVariables = Exact<{
   where?: InputMaybe<PipelineWhereInput>;
@@ -2613,15 +2642,12 @@ export type UpdatePipelineStageMutationVariables = Exact<{
 export type UpdatePipelineStageMutation = { __typename?: 'Mutation', updateOnePipelineStage?: { __typename?: 'PipelineStage', id: string, name: string, color: string } | null };
 
 export type UpdateOnePipelineProgressMutationVariables = Exact<{
-  id?: InputMaybe<Scalars['String']>;
-  amount?: InputMaybe<Scalars['Int']>;
-  closeDate?: InputMaybe<Scalars['DateTime']>;
-  probability?: InputMaybe<Scalars['Int']>;
-  pointOfContactId?: InputMaybe<Scalars['String']>;
+  data: PipelineProgressUpdateInput;
+  where: PipelineProgressWhereUniqueInput;
 }>;
 
 
-export type UpdateOnePipelineProgressMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string, amount?: number | null, closeDate?: string | null } | null };
+export type UpdateOnePipelineProgressMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string, amount?: number | null, closeDate?: string | null, probability?: number | null } | null };
 
 export type UpdateOnePipelineProgressStageMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -2685,7 +2711,7 @@ export type SearchActivityQuery = { __typename?: 'Query', searchResults: Array<{
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, canImpersonate: boolean, supportUserHash: string, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null } } | null, settings: { __typename?: 'UserSettings', id: string, locale: string, colorScheme: ColorScheme } } };
 
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3922,6 +3948,7 @@ export const GetPeopleDocument = gql`
     displayName
     jobTitle
     linkedinUrl
+    xUrl
     avatarUrl
     createdAt
     _activityCount
@@ -4234,6 +4261,7 @@ export const GetPersonDocument = gql`
     city
     jobTitle
     linkedinUrl
+    xUrl
     avatarUrl
     phone
     _activityCount
@@ -4286,6 +4314,7 @@ export const UpdateOnePersonDocument = gql`
     email
     jobTitle
     linkedinUrl
+    xUrl
     firstName
     lastName
     displayName
@@ -4336,6 +4365,7 @@ export const InsertOnePersonDocument = gql`
     lastName
     jobTitle
     linkedinUrl
+    xUrl
     displayName
     phone
     createdAt
@@ -4401,6 +4431,72 @@ export function useDeleteManyPersonMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteManyPersonMutationHookResult = ReturnType<typeof useDeleteManyPersonMutation>;
 export type DeleteManyPersonMutationResult = Apollo.MutationResult<DeleteManyPersonMutation>;
 export type DeleteManyPersonMutationOptions = Apollo.BaseMutationOptions<DeleteManyPersonMutation, DeleteManyPersonMutationVariables>;
+export const UploadPersonPictureDocument = gql`
+    mutation UploadPersonPicture($id: String!, $file: Upload!) {
+  uploadPersonPicture(id: $id, file: $file)
+}
+    `;
+export type UploadPersonPictureMutationFn = Apollo.MutationFunction<UploadPersonPictureMutation, UploadPersonPictureMutationVariables>;
+
+/**
+ * __useUploadPersonPictureMutation__
+ *
+ * To run a mutation, you first call `useUploadPersonPictureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadPersonPictureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadPersonPictureMutation, { data, loading, error }] = useUploadPersonPictureMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      file: // value for 'file'
+ *   },
+ * });
+ */
+export function useUploadPersonPictureMutation(baseOptions?: Apollo.MutationHookOptions<UploadPersonPictureMutation, UploadPersonPictureMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadPersonPictureMutation, UploadPersonPictureMutationVariables>(UploadPersonPictureDocument, options);
+      }
+export type UploadPersonPictureMutationHookResult = ReturnType<typeof useUploadPersonPictureMutation>;
+export type UploadPersonPictureMutationResult = Apollo.MutationResult<UploadPersonPictureMutation>;
+export type UploadPersonPictureMutationOptions = Apollo.BaseMutationOptions<UploadPersonPictureMutation, UploadPersonPictureMutationVariables>;
+export const RemovePersonPictureDocument = gql`
+    mutation RemovePersonPicture($where: PersonWhereUniqueInput!) {
+  updateOnePerson(data: {avatarUrl: null}, where: $where) {
+    id
+    avatarUrl
+  }
+}
+    `;
+export type RemovePersonPictureMutationFn = Apollo.MutationFunction<RemovePersonPictureMutation, RemovePersonPictureMutationVariables>;
+
+/**
+ * __useRemovePersonPictureMutation__
+ *
+ * To run a mutation, you first call `useRemovePersonPictureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemovePersonPictureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removePersonPictureMutation, { data, loading, error }] = useRemovePersonPictureMutation({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useRemovePersonPictureMutation(baseOptions?: Apollo.MutationHookOptions<RemovePersonPictureMutation, RemovePersonPictureMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemovePersonPictureMutation, RemovePersonPictureMutationVariables>(RemovePersonPictureDocument, options);
+      }
+export type RemovePersonPictureMutationHookResult = ReturnType<typeof useRemovePersonPictureMutation>;
+export type RemovePersonPictureMutationResult = Apollo.MutationResult<RemovePersonPictureMutation>;
+export type RemovePersonPictureMutationOptions = Apollo.BaseMutationOptions<RemovePersonPictureMutation, RemovePersonPictureMutationVariables>;
 export const GetPipelinesDocument = gql`
     query GetPipelines($where: PipelineWhereInput) {
   findManyPipeline(where: $where) {
@@ -4564,14 +4660,12 @@ export type UpdatePipelineStageMutationHookResult = ReturnType<typeof useUpdateP
 export type UpdatePipelineStageMutationResult = Apollo.MutationResult<UpdatePipelineStageMutation>;
 export type UpdatePipelineStageMutationOptions = Apollo.BaseMutationOptions<UpdatePipelineStageMutation, UpdatePipelineStageMutationVariables>;
 export const UpdateOnePipelineProgressDocument = gql`
-    mutation UpdateOnePipelineProgress($id: String, $amount: Int, $closeDate: DateTime, $probability: Int, $pointOfContactId: String) {
-  updateOnePipelineProgress(
-    where: {id: $id}
-    data: {amount: $amount, closeDate: $closeDate, probability: $probability, pointOfContact: {connect: {id: $pointOfContactId}}}
-  ) {
+    mutation UpdateOnePipelineProgress($data: PipelineProgressUpdateInput!, $where: PipelineProgressWhereUniqueInput!) {
+  updateOnePipelineProgress(where: $where, data: $data) {
     id
     amount
     closeDate
+    probability
   }
 }
     `;
@@ -4590,11 +4684,8 @@ export type UpdateOnePipelineProgressMutationFn = Apollo.MutationFunction<Update
  * @example
  * const [updateOnePipelineProgressMutation, { data, loading, error }] = useUpdateOnePipelineProgressMutation({
  *   variables: {
- *      id: // value for 'id'
- *      amount: // value for 'amount'
- *      closeDate: // value for 'closeDate'
- *      probability: // value for 'probability'
- *      pointOfContactId: // value for 'pointOfContactId'
+ *      data: // value for 'data'
+ *      where: // value for 'where'
  *   },
  * });
  */

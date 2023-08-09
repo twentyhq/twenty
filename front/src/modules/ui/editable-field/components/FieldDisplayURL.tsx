@@ -1,5 +1,5 @@
-import { RawLink } from '@/ui/link/components/RawLink';
+import { RoundedLink } from '@/ui/link/components/RoundedLink';
 
 export function FieldDisplayURL({ URL }: { URL: string | undefined }) {
-  return <RawLink href={URL ? 'https://' + URL : ''}>{URL}</RawLink>;
+  return <RoundedLink href={URL ? 'https://' + URL : ''}>{URL}</RoundedLink>;
 }

@@ -10,6 +10,7 @@ export type StyledCalendarContainerProps = {
 };
 
 const StyledInputContainer = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
 
   padding: ${({ theme }) => theme.spacing(2)};

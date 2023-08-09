@@ -57,6 +57,7 @@ export function BoardHeader<SortField>({
 
   return (
     <TopBar
+      displayBottomBorder={false}
       leftComponent={
         <>
           <StyledIcon>{viewIcon}</StyledIcon>

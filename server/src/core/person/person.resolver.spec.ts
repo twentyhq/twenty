@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { AbilityFactory } from 'src/ability/ability.factory';
+import { FileUploadService } from 'src/core/file/services/file-upload.service';
 
 import { PersonService } from './person.service';
 import { PersonResolver } from './person.resolver';
@@ -18,6 +19,10 @@ describe('PersonResolver', () => {
         },
         {
           provide: AbilityFactory,
+          useValue: {},
+        },
+        {
+          provide: FileUploadService,
           useValue: {},
         },
       ],

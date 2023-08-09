@@ -20,24 +20,14 @@ export const UPDATE_PIPELINE_STAGE = gql`
 
 export const UPDATE_PIPELINE_PROGRESS = gql`
   mutation UpdateOnePipelineProgress(
-    $id: String
-    $amount: Int
-    $closeDate: DateTime
-    $probability: Int
-    $pointOfContactId: String
+    $data: PipelineProgressUpdateInput!
+    $where: PipelineProgressWhereUniqueInput!
   ) {
-    updateOnePipelineProgress(
-      where: { id: $id }
-      data: {
-        amount: $amount
-        closeDate: $closeDate
-        probability: $probability
-        pointOfContact: { connect: { id: $pointOfContactId } }
-      }
-    ) {
+    updateOnePipelineProgress(where: $where, data: $data) {
       id
       amount
       closeDate
+      probability
     }
   }
 `;

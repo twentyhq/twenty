@@ -18,8 +18,8 @@ export function DropdownMenuSkeletonItem() {
   return (
     <StyledDropdownMenuSkeletonContainer>
       <SkeletonTheme
-        baseColor="transparent"
-        highlightColor={theme.background.tertiary}
+        baseColor={theme.background.quaternary}
+        highlightColor={theme.background.secondary}
       >
         <Skeleton height={16} />
       </SkeletonTheme>

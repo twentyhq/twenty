@@ -5,6 +5,7 @@ export const settings: Settings = {
     imageCropSizes: {
       'profile-picture': ['original'],
       'workspace-logo': ['original'],
+      'person-picture': ['original'],
     },
     maxFileSize: '10MB',
   },

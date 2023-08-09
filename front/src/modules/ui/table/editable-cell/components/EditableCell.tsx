@@ -1,6 +1,9 @@
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import styled from '@emotion/styled';
+import { IconPencil } from '@tabler/icons-react';
+import { motion } from 'framer-motion';
 
+import { IconButton } from '@/ui/button/components/IconButton';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../states/CellHotkeyScopeContext';
@@ -11,6 +14,11 @@ import { useIsSoftFocusOnCurrentCell } from '../hooks/useIsSoftFocusOnCurrentCel
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
 import { EditableCellSoftFocusMode } from './EditableCellSoftFocusMode';
+
+const StyledEditButtonContainer = styled(motion.div)`
+  position: absolute;
+  right: 5px;
+`;
 
 export const CellBaseContainer = styled.div`
   align-items: center;
@@ -48,7 +56,38 @@ export function EditableCell({
   transparent = false,
   maxContentWidth,
 }: OwnProps) {
-  const { isCurrentCellInEditMode } = useCurrentCellEditMode();
+  const { isCurrentCellInEditMode, setCurrentCellInEditMode } =
+    useCurrentCellEditMode();
+  const [isHovered, setIsHovered] = useState(false);
+
+  function isValidUrl(value: string) {
+    let testUrl = value;
+    if (testUrl && !testUrl.startsWith('http')) {
+      testUrl = 'http://' + testUrl;
+    }
+    try {
+      new URL(testUrl);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  const handleClick = () => {
+    setCurrentCellInEditMode();
+  };
+
+  function handleContainerMouseEnter() {
+    setIsHovered(true);
+  }
+
+  function handleContainerMouseLeave() {
+    setIsHovered(false);
+  }
+
+  const value = nonEditModeContent.props.value;
+  const showEditButton =
+    !isCurrentCellInEditMode && isValidUrl(value) && isHovered;
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
@@ -56,7 +95,10 @@ export function EditableCell({
     <CellHotkeyScopeContext.Provider
       value={editHotkeyScope ?? DEFAULT_CELL_SCOPE}
     >
-      <CellBaseContainer>
+      <CellBaseContainer
+        onMouseEnter={handleContainerMouseEnter}
+        onMouseLeave={handleContainerMouseLeave}
+      >
         {isCurrentCellInEditMode ? (
           <EditableCellEditMode
             maxContentWidth={maxContentWidth}
@@ -71,9 +113,27 @@ export function EditableCell({
             {nonEditModeContent}
           </EditableCellSoftFocusMode>
         ) : (
-          <EditableCellDisplayMode>
-            {nonEditModeContent}
-          </EditableCellDisplayMode>
+          <>
+            {showEditButton && (
+              <StyledEditButtonContainer
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.1 }}
+                whileHover={{ scale: 1.04 }}
+              >
+                <IconButton
+                  variant="shadow"
+                  size="small"
+                  onClick={handleClick}
+                  icon={<IconPencil size={14} />}
+                />
+              </StyledEditButtonContainer>
+            )}
+
+            <EditableCellDisplayMode>
+              {nonEditModeContent}
+            </EditableCellDisplayMode>
+          </>
         )}
       </CellBaseContainer>
     </CellHotkeyScopeContext.Provider>

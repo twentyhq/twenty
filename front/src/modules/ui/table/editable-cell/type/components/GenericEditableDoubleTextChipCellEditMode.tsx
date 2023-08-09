@@ -1,12 +1,12 @@
 import { useRecoilState } from 'recoil';
 
-import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 import {
   ViewFieldDefinition,
   ViewFieldDoubleTextChipMetadata,
-} from '@/ui/table/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
+import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
+import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
+import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 
 import { DoubleTextCellEdit } from './DoubleTextCellEdit';
 

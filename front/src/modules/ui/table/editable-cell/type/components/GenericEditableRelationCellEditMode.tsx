@@ -1,16 +1,16 @@
 import { useRecoilState } from 'recoil';
 
 import { CompanyPickerCell } from '@/companies/components/CompanyPickerCell';
+import {
+  ViewFieldDefinition,
+  ViewFieldRelationMetadata,
+} from '@/ui/editable-field/types/ViewField';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useEditableCell } from '@/ui/table/editable-cell/hooks/useEditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
-import {
-  ViewFieldDefinition,
-  ViewFieldRelationMetadata,
-} from '@/ui/table/types/ViewField';
 import { UserPicker } from '@/users/components/UserPicker';
 
 type OwnProps = {
@@ -54,6 +54,8 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
           companyId={fieldValueEntity?.id ?? null}
           onSubmit={handleEntitySubmit}
           onCancel={handleCancel}
+          width={viewField.columnSize}
+          createModeEnabled
         />
       );
     }
@@ -63,6 +65,7 @@ export function GenericEditableRelationCellEditMode({ viewField }: OwnProps) {
           userId={fieldValueEntity?.id ?? null}
           onSubmit={handleEntitySubmit}
           onCancel={handleCancel}
+          width={viewField.columnSize}
         />
       );
     }

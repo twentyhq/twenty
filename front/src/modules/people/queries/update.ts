@@ -16,6 +16,7 @@ export const UPDATE_ONE_PERSON = gql`
       email
       jobTitle
       linkedinUrl
+      xUrl
       firstName
       lastName
       displayName
@@ -40,6 +41,7 @@ export const INSERT_ONE_PERSON = gql`
       lastName
       jobTitle
       linkedinUrl
+      xUrl
       displayName
       phone
       createdAt
@@ -51,6 +53,21 @@ export const DELETE_MANY_PERSON = gql`
   mutation DeleteManyPerson($ids: [String!]) {
     deleteManyPerson(where: { id: { in: $ids } }) {
       count
+    }
+  }
+`;
+
+export const UPDATE_PERSON_PICTURE = gql`
+  mutation UploadPersonPicture($id: String!, $file: Upload!) {
+    uploadPersonPicture(id: $id, file: $file)
+  }
+`;
+
+export const REMOVE_PERSON_PICTURE = gql`
+  mutation RemovePersonPicture($where: PersonWhereUniqueInput!) {
+    updateOnePerson(data: { avatarUrl: null }, where: $where) {
+      id
+      avatarUrl
     }
   }
 `;

@@ -7,7 +7,7 @@ import {
 type OwnProps = {
   dragSelectable: RefObject<HTMLElement>;
   onDragSelectionChange: (id: string, selected: boolean) => void;
-  onDragSelectionStart: () => void;
+  onDragSelectionStart?: () => void;
 };
 
 export function DragSelect({

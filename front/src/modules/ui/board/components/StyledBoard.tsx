@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
 
 export const StyledBoard = styled.div`
-  border-radius: ${({ theme }) => theme.spacing(2)};
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex: 1;
   flex-direction: row;
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
 `;

@@ -6,6 +6,7 @@ import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader'
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
+import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
 
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '../types/interface';
@@ -97,7 +98,7 @@ export function SortDropdownButton<SortField>({
                 }}
               >
                 {sort.icon}
-                {sort.label}
+                <OverflowingTextWithTooltip text={sort.label} />
               </DropdownMenuSelectableItem>
             ))}
           </DropdownMenuItemsContainer>

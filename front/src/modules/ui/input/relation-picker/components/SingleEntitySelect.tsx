@@ -30,6 +30,7 @@ export function SingleEntitySelect<
   onEntitySelected,
   onCreate,
   onCancel,
+  width,
   disableBackgroundBlur = false,
 }: {
   onCancel?: () => void;
@@ -37,6 +38,7 @@ export function SingleEntitySelect<
   entities: EntitiesForSingleEntitySelect<CustomEntityForSelect>;
   onEntitySelected: (entity: CustomEntityForSelect | null | undefined) => void;
   disableBackgroundBlur?: boolean;
+  width?: number;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -58,29 +60,33 @@ export function SingleEntitySelect<
   });
 
   return (
-    <DropdownMenu disableBlur={disableBackgroundBlur} ref={containerRef}>
+    <DropdownMenu
+      disableBlur={disableBackgroundBlur}
+      ref={containerRef}
+      width={width}
+    >
       <DropdownMenuSearch
         value={searchFilter}
         onChange={handleSearchFilterChange}
         autoFocus
       />
       <DropdownMenuSeparator />
-      {showCreateButton && (
-        <>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            <DropdownMenuItem onClick={onCreate}>
-              <IconPlus size={theme.icon.size.md} />
-              Create new
-            </DropdownMenuItem>
-          </DropdownMenuItemsContainer>
-          <DropdownMenuSeparator />
-        </>
-      )}
       <SingleEntitySelectBase
         entities={entities}
         onEntitySelected={onEntitySelected}
         onCancel={onCancel}
       />
+      {showCreateButton && (
+        <>
+          <DropdownMenuItemsContainer hasMaxHeight>
+            <DropdownMenuItem onClick={onCreate}>
+              <IconPlus size={theme.icon.size.md} />
+              Add New
+            </DropdownMenuItem>
+          </DropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+        </>
+      )}
     </DropdownMenu>
   );
 }
