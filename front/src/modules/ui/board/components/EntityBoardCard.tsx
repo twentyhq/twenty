@@ -18,6 +18,8 @@ export function EntityBoardCard({
           ref={draggableProvided?.innerRef}
           {...draggableProvided?.dragHandleProps}
           {...draggableProvided?.draggableProps}
+          data-selectable-id={pipelineProgressId}
+          data-select-disable
         >
           {boardOptions.cardComponent}
         </div>
