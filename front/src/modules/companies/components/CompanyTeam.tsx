@@ -9,7 +9,6 @@ export type CompanyTeamPropsType = {
 
 const StyledContainer = styled.div`
   align-items: flex-start;
-  align-self: stretch;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -17,31 +16,32 @@ const StyledContainer = styled.div`
 
 const StyledTitleContainer = styled.div`
   align-items: center;
-  align-self: stretch;
   backdrop-filter: blur(5px);
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   justify-content: space-between;
   padding: 12px 12px 0px 12px;
+  padding-bottom: ${({ theme }) => theme.spacing(0)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(3)};
+  padding-top: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledListContainer = styled.div`
   align-items: flex-start;
-  align-self: stretch;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.spacing(1)};
   display: flex;
   flex-direction: column;
+  max-height: ${({ theme }) => theme.spacing(35)};
+  overflow: auto;
+  width: 100%;
 `;
 
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
-  font-family: Inter;
-  font-size: 13px;
-
-  font-style: normal;
-  font-weight: 500;
-  line-height: 150%;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
 export function CompanyTeam({ company }: CompanyTeamPropsType) {
@@ -57,15 +57,19 @@ export function CompanyTeam({ company }: CompanyTeamPropsType) {
   });
 
   return (
-    <StyledContainer>
-      <StyledTitleContainer>
-        <StyledTitle>Team</StyledTitle>
-      </StyledTitleContainer>
-      <StyledListContainer>
-        {data?.people?.map((person) => {
-          return <PeopleCard key={person.id} person={person} />;
-        })}
-      </StyledListContainer>
-    </StyledContainer>
+    <>
+      {Boolean(data?.people?.length) && (
+        <StyledContainer>
+          <StyledTitleContainer>
+            <StyledTitle>Team</StyledTitle>
+          </StyledTitleContainer>
+          <StyledListContainer>
+            {data?.people?.map((person) => (
+              <PeopleCard key={person.id} person={person} />
+            ))}
+          </StyledListContainer>
+        </StyledContainer>
+      )}
+    </>
   );
 }

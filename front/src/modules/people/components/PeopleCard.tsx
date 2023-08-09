@@ -32,18 +32,17 @@ const StyledCardInfo = styled.div`
 
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
-  font-family: Inter;
-  font-size: 13px;
-
-  font-style: normal;
-  font-weight: 500;
-  line-height: 150%;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
 const StyledJobTitle = styled.div`
   border-radius: ${({ theme }) => theme.spacing(1)};
   color: ${({ theme }) => theme.font.color.secondary};
-  padding: 3px 4px 3px 0px;
+  padding-bottom: ${({ theme }) => theme.spacing(0.5)};
+  padding-left: ${({ theme }) => theme.spacing(0)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(0.5)};
 
   &:hover {
     background: ${({ theme }) => theme.background.tertiary};
