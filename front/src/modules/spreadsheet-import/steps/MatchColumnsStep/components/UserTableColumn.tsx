@@ -1,13 +1,33 @@
 import styled from '@emotion/styled';
 
-import { IconButton } from '@/ui/button/components/IconButton';
-import { IconArrowBack, IconX } from '@/ui/icon';
+import { assertNotNull } from '~/utils/assert';
 
 import type { RawData } from '../../../types';
 import type { Column } from '../MatchColumnsStep';
 import { ColumnType } from '../MatchColumnsStep';
 
-const Container = styled.div``;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Value = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const Example = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 const Content = styled.div`
   align-items: center;
@@ -22,38 +42,6 @@ type IsIgnoreProps = {
   isIgnored: boolean;
 };
 
-const Heading = styled.h2<IsIgnoreProps>`
-  color: ${({ theme, isIgnored }) => {
-    if (isIgnored) {
-      return theme.font.color.secondary;
-    }
-    return theme.font.color.primary;
-  }};
-  font-size: ${({ theme }) => theme.font.size.xl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const Text = styled.span<IsIgnoreProps>`
-  color: ${({ theme, isIgnored }) => {
-    if (isIgnored) {
-      return theme.font.color.secondary;
-    }
-    return theme.font.color.primary;
-  }};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  overflow: hidden;
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 type UserTableColumnProps<T extends string> = {
   column: Column<T>;
   entries: RawData;
@@ -62,16 +50,22 @@ type UserTableColumnProps<T extends string> = {
 };
 
 export const UserTableColumn = <T extends string>({
-  column: { header, index, type },
+  column,
   entries,
   onIgnore,
   onRevertIgnore,
 }: UserTableColumnProps<T>) => {
+  const { header, index, type } = column;
   const isIgnored = type === ColumnType.ignored;
+  const entry = entries.find(assertNotNull);
+
+  console.log('column: ', column);
 
   return (
     <Container>
-      <Content>
+      <Value>{header}</Value>
+      {entry && <Example>{`ex: ${entry}`}</Example>}
+      {/* <Content>
         <Heading isIgnored={isIgnored}>{header}</Heading>
         {type === ColumnType.ignored ? (
           <IconButton
@@ -86,12 +80,7 @@ export const UserTableColumn = <T extends string>({
             onClick={() => onIgnore(index)}
           />
         )}
-      </Content>
-      {entries.map((entry, index) => (
-        <Text key={(entry || '') + index} isIgnored={isIgnored}>
-          {entry}
-        </Text>
-      ))}
+      </Content> */}
     </Container>
   );
 };

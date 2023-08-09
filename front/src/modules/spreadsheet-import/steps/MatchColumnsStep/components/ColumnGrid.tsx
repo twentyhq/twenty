@@ -1,10 +1,9 @@
-import type React from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 
 import { Modal } from '@/ui/modal/components/Modal';
 
 import { ContinueButton } from '../../../components/ContinueButton';
-import { FadingWrapper } from '../../../components/FadingWrapper';
 import type { Column, Columns } from '../MatchColumnsStep';
 
 const Content = styled(Modal.Content)`
@@ -27,20 +26,30 @@ const Description = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
+const TableContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 0px;
+  width: 100%;
+`;
+
 const MatchTable = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  flex-grow: 1;
-  height: 0px;
   margin-top: ${({ theme }) => theme.spacing(8)};
+  width: 75%;
 `;
 
 const MatchTableColumn = styled.div`
   display: flex;
+  flex: 0 0 50%;
   flex-direction: column;
-  flex-grow: 1;
+  overflow-x: auto;
 `;
 
 type MatchTableHeaderProps = {
@@ -57,88 +66,45 @@ const MatchTableHeader = styled.div<MatchTableHeaderProps>`
   padding-left: ${({ theme }) => theme.spacing(4)};
   padding-right: ${({ theme }) => theme.spacing(4)};
   padding-top: ${({ theme }) => theme.spacing(2)};
-  text-transform: uppercase;
   ${({ position, theme }) => {
     if (position === 'left') {
       return `border-top-left-radius: calc(${theme.border.radius.md} - 1px);`;
     }
     return `border-top-right-radius: calc(${theme.border.radius.md} - 1px);`;
   }};
+  text-transform: uppercase;
 `;
 
-const Title = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-`;
-
-type ColumnLengthProps = {
-  columnLength: number;
-};
-
-const Grid = styled.div<ColumnLengthProps>`
-  display: grid;
-  flex: 1;
-  grid-template-columns:
-    0.75rem repeat(${({ columnLength }) => columnLength}, minmax(18rem, auto))
-    0.75rem;
-  grid-template-rows: auto auto auto 1fr;
-  height: 100%;
-`;
-
-type GridProps = {
-  gridRow?: string;
-  gridColumn?: string;
-};
-
-const Box = styled.div<GridProps>`
-  ${({ gridColumn }) => {
-    if (!gridColumn) {
-      return;
+const MatchTableRow = styled.div<MatchTableHeaderProps>`
+  align-items: center;
+  display: flex;
+  height: 64px;
+  ${({ position, theme }) => {
+    if (position === 'left') {
+      return `
+        padding-left: ${theme.spacing(4)};
+        padding-right: ${theme.spacing(2)};
+      `;
     }
-
     return `
-      grid-column: ${gridColumn};
+      padding-left: ${theme.spacing(2)};
+      padding-right: ${theme.spacing(4)};
     `;
   }};
-  ${({ gridRow }) => {
-    if (!gridRow) {
-      return;
-    }
-
-    return `
-      grid-row: ${gridRow};
-    `;
-  }};
-`;
-
-const UserColumn = styled(Box)`
-  padding-top: ${({ theme }) => theme.spacing(1)};
-`;
-
-const TemplateTitle = styled(Box)`
-  margin-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const TemplateColumn = styled(Box)`
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 type ColumnGridProps<T extends string> = {
   columns: Columns<T>;
-  userColumn: (column: Column<T>) => React.ReactNode;
-  templateColumn: (column: Column<T>) => React.ReactNode;
+  renderUserColumn: (column: Column<T>) => React.ReactNode;
+  renderTemplateColumn: (column: Column<T>) => React.ReactNode;
   onContinue: (val: Record<string, string>[]) => void;
   isLoading: boolean;
 };
 
 export const ColumnGrid = <T extends string>({
   columns,
-  userColumn,
-  templateColumn,
+  renderUserColumn,
+  renderTemplateColumn,
   onContinue,
   isLoading,
 }: ColumnGridProps<T>) => {
@@ -149,42 +115,44 @@ export const ColumnGrid = <T extends string>({
         <Description>
           Select the correct field for each column you'd like to import.
         </Description>
-        <MatchTable>
-          <MatchTableColumn>
-            <MatchTableHeader position="left">Imported data</MatchTableHeader>
-          </MatchTableColumn>
-          <MatchTableColumn>
-            <MatchTableHeader position="right">Twenty fields</MatchTableHeader>
-          </MatchTableColumn>
-        </MatchTable>
-        <Grid columnLength={columns.length}>
-          <Box gridColumn={`1/${columns.length + 3}`}>
-            <Title>Your table</Title>
-          </Box>
-          {columns.map((column, index) => (
-            <UserColumn
-              key={column.header + index}
-              gridRow="2/3"
-              gridColumn={`${index + 2}/${index + 3}`}
-            >
-              {userColumn(column)}
-            </UserColumn>
-          ))}
-          <FadingWrapper gridColumn={`1/${columns.length + 3}`} gridRow="2/3" />
-          <TemplateTitle gridColumn={`1/${columns.length + 3}`}>
-            <Title>Will become</Title>
-          </TemplateTitle>
-          <FadingWrapper gridColumn={`1/${columns.length + 3}`} gridRow="4/5" />
-          {columns.map((column, index) => (
-            <TemplateColumn
-              key={column.header + index}
-              gridRow="4/5"
-              gridColumn={`${index + 2}/${index + 3}`}
-            >
-              {templateColumn(column)}
-            </TemplateColumn>
-          ))}
-        </Grid>
+        <TableContainer>
+          <MatchTable>
+            <MatchTableColumn>
+              <MatchTableHeader position="left">Imported data</MatchTableHeader>
+              {columns.map((column, index) => {
+                const userColumn = renderUserColumn(column);
+
+                if (React.isValidElement(userColumn)) {
+                  return (
+                    <MatchTableRow key={index} position="left">
+                      {userColumn}
+                    </MatchTableRow>
+                  );
+                }
+
+                return null;
+              })}
+            </MatchTableColumn>
+            <MatchTableColumn>
+              <MatchTableHeader position="right">
+                Twenty fields
+              </MatchTableHeader>
+              {columns.map((column, index) => {
+                const templateColumn = renderTemplateColumn(column);
+
+                if (React.isValidElement(templateColumn)) {
+                  return (
+                    <MatchTableRow key={index} position="right">
+                      {templateColumn}
+                    </MatchTableRow>
+                  );
+                }
+
+                return null;
+              })}
+            </MatchTableColumn>
+          </MatchTable>
+        </TableContainer>
       </Content>
       <ContinueButton
         isLoading={isLoading}

@@ -205,7 +205,7 @@ export const MatchColumnsStep = <T extends string>({
         columns={columns}
         onContinue={handleOnContinue}
         isLoading={isLoading}
-        userColumn={(column) => (
+        renderUserColumn={(column) => (
           <UserTableColumn
             column={column}
             onIgnore={onIgnore}
@@ -213,7 +213,7 @@ export const MatchColumnsStep = <T extends string>({
             entries={dataExample.map((row) => row[column.index])}
           />
         )}
-        templateColumn={(column) => (
+        renderTemplateColumn={(column) => (
           <TemplateColumn
             column={column}
             onChange={onChange}
