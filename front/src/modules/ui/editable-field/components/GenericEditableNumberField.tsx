@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import {
   ViewFieldDefinition,
   ViewFieldNumberMetadata,
 } from '@/ui/editable-field/types/ViewField';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
+import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { FieldContext } from '../states/FieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 
@@ -19,11 +19,11 @@ type OwnProps = {
 };
 
 export function GenericEditableNumberField({ viewField }: OwnProps) {
-  const currentEntityId = useContext(BoardCardIdContext);
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
 
   const fieldValue = useRecoilValue<string>(
     genericEntityFieldFamilySelector({
-      entityId: currentEntityId ?? '',
+      entityId: currentEditableFieldEntityId ?? '',
       fieldName: viewField.metadata.fieldName,
     }),
   );

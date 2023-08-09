@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { PersonChip } from '@/people/components/PersonChip';
-import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import {
   ViewFieldDefinition,
   ViewFieldRelationMetadata,
@@ -11,6 +10,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
+import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { FieldContext } from '../states/FieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 
@@ -47,11 +47,11 @@ function RelationChip({
 }
 
 export function GenericEditableRelationField({ viewField }: OwnProps) {
-  const currentEntityId = useContext(BoardCardIdContext);
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
 
   const fieldValue = useRecoilValue<any | null>(
     genericEntityFieldFamilySelector({
-      entityId: currentEntityId ?? '',
+      entityId: currentEditableFieldEntityId ?? '',
       fieldName: viewField.metadata.fieldName,
     }),
   );

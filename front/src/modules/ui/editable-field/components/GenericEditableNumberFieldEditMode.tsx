@@ -1,7 +1,6 @@
 import { useContext, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import {
   ViewFieldDefinition,
   ViewFieldNumberMetadata,
@@ -14,6 +13,7 @@ import {
 
 import { useRegisterCloseFieldHandlers } from '../hooks/useRegisterCloseFieldHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
+import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 
 type OwnProps = {
@@ -21,12 +21,12 @@ type OwnProps = {
 };
 
 export function GenericEditableNumberFieldEditMode({ viewField }: OwnProps) {
-  const currentEntityId = useContext(BoardCardIdContext);
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<number | null>(
     genericEntityFieldFamilySelector({
-      entityId: currentEntityId ?? '',
+      entityId: currentEditableFieldEntityId ?? '',
       fieldName: viewField.metadata.fieldName,
     }),
   );
@@ -44,9 +44,9 @@ export function GenericEditableNumberFieldEditMode({ viewField }: OwnProps) {
 
     setFieldValue(castAsIntegerOrNull(internalValue));
 
-    if (currentEntityId && updateField) {
+    if (currentEditableFieldEntityId && updateField) {
       updateField(
-        currentEntityId,
+        currentEditableFieldEntityId,
         viewField,
         castAsIntegerOrNull(internalValue),
       );
