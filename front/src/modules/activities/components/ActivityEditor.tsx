@@ -1,4 +1,3 @@
-
 import React, { useCallback, useRef, useState } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
