@@ -20,6 +20,7 @@ type OwnProps = {
   activity: Pick<Activity, 'id'> & {
     comments: Array<CommentForDrawer>;
   };
+  scrollableContainerRef: React.RefObject<HTMLDivElement>;
 };
 
 const StyledThreadItemListContainer = styled.div`
@@ -58,7 +59,10 @@ const StyledThreadCommentTitle = styled.div`
   text-transform: uppercase;
 `;
 
-export function ActivityComments({ activity }: OwnProps) {
+export function ActivityComments({
+  activity,
+  scrollableContainerRef,
+}: OwnProps) {
   const [createCommentMutation] = useCreateCommentMutation();
   const currentUser = useRecoilValue(currentUserState);
 
@@ -90,9 +94,8 @@ export function ActivityComments({ activity }: OwnProps) {
   }
 
   function handleFocus() {
-    const scrollableContainer = document.getElementById(
-      'activity-editor-container',
-    );
+    const scrollableContainer = scrollableContainerRef.current;
+
     scrollableContainer?.scrollTo({
       top: scrollableContainer.scrollHeight,
       behavior: 'smooth',
