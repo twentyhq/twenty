@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { CompanyAccountOwnerEditableField } from '@/companies/editable-field/components/CompanyAccountOwnerEditableField';
 import { CompanyAddressEditableField } from '@/companies/editable-field/components/CompanyAddressEditableField';
 import { CompanyCreatedAtEditableField } from '@/companies/editable-field/components/CompanyCreatedAtEditableField';
@@ -54,6 +55,7 @@ export function CompanyShow() {
             <CompanyAddressEditableField company={company} />
             <CompanyCreatedAtEditableField company={company} />
           </PropertyBox>
+          <CompanyTeam company={company}></CompanyTeam>
         </ShowPageLeftContainer>
         <ShowPageRightContainer>
           <Timeline
