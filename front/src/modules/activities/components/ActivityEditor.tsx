@@ -1,14 +1,12 @@
 import React, { useCallback, useState } from 'react';
+import { useApolloClient } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
-import {
-  GET_ACTIVITIES,
-  GET_ACTIVITIES_BY_TARGETS,
-} from '@/activities/queries';
+import { GET_ACTIVITIES } from '@/activities/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { IconCalendar } from '@/ui/icon/index';
@@ -24,6 +22,7 @@ import { debounce } from '~/utils/debounce';
 
 import { ActivityAssigneeEditableField } from '../editable-fields/components/ActivityAssigneeEditableField';
 import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
+import { ACTIVITY_UPDATE_FRAGMENT } from '../queries/update';
 import { CommentForDrawer } from '../types/CommentForDrawer';
 
 import { ActivityTitle } from './ActivityTitle';
@@ -96,6 +95,12 @@ export function ActivityEditor({
 
   const [updateActivityMutation] = useUpdateActivityMutation();
 
+  const client = useApolloClient();
+  const cachedActivity = client.readFragment({
+    id: `Activity:${activity.id}`,
+    fragment: ACTIVITY_UPDATE_FRAGMENT,
+  });
+
   const updateTitle = useCallback(
     (newTitle: string) => {
       updateActivityMutation({
@@ -107,10 +112,17 @@ export function ActivityEditor({
             title: newTitle ?? '',
           },
         },
-        refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
+        optimisticResponse: {
+          __typename: 'Mutation',
+          updateOneActivity: {
+            __typename: 'Activity',
+            ...cachedActivity,
+            title: newTitle,
+          },
+        },
       });
     },
-    [activity, updateActivityMutation],
+    [activity.id, cachedActivity, updateActivityMutation],
   );
 
   const handleActivityCompletionChange = useCallback(
@@ -124,11 +136,19 @@ export function ActivityEditor({
             completedAt: value ? new Date().toISOString() : null,
           },
         },
-        refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
+        optimisticResponse: {
+          __typename: 'Mutation',
+          updateOneActivity: {
+            __typename: 'Activity',
+            ...cachedActivity,
+            completedAt: value ? new Date().toISOString() : null,
+          },
+        },
+        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
       setCompletedAt(value ? new Date().toISOString() : null);
     },
-    [activity, updateActivityMutation],
+    [activity.id, cachedActivity, updateActivityMutation],
   );
 
   const debouncedUpdateTitle = debounce(updateTitle, 200);
