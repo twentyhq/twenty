@@ -54,3 +54,18 @@ export const DELETE_MANY_PERSON = gql`
     }
   }
 `;
+
+export const UPDATE_PERSON_PICTURE = gql`
+  mutation UploadPersonPicture($id: String!, $file: Upload!) {
+    uploadPersonPicture(id: $id, file: $file)
+  }
+`;
+
+export const REMOVE_PERSON_PICTURE = gql`
+  mutation RemovePersonPicture($where: PersonWhereUniqueInput!) {
+    updateOnePerson(data: { avatarUrl: null }, where: $where) {
+      id
+      avatarUrl
+    }
+  }
+`;
