@@ -81,7 +81,7 @@ export const companyViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
     metadata: {
       type: 'number',
       fieldName: 'employees',
-      isPositive: true
+      isPositive: true,
     },
     isVisible: true,
   } satisfies ViewFieldDefinition<ViewFieldNumberMetadata>,

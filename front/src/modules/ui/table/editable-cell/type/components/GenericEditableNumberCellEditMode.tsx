@@ -7,13 +7,13 @@ import {
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
+import { TextCellEdit } from './TextCellEdit';
 
 import {
   canBeCastAsPositiveIntegerOrNull,
   castAsPositiveIntegerOrNull,
 } from '~/utils/cast-as-positive-integer-or-null';
 
-import { TextCellEdit } from './TextCellEdit';
 
 type OwnProps = {
   viewField: ViewFieldDefinition<ViewFieldNumberMetadata>;
@@ -54,7 +54,7 @@ export function GenericEditableNumberCellEditMode({ viewField }: OwnProps) {
           throw Error('Not a number');
         }
 
-        numberValue = valueCastedAsPositiveNumberOrNull
+        numberValue = valueCastedAsPositiveNumberOrNull;
       }
 
       // TODO: find a way to store this better in DB
@@ -63,9 +63,13 @@ export function GenericEditableNumberCellEditMode({ viewField }: OwnProps) {
       }
 
       setFieldValue(numberValue.toString());
-
+      
       if (currentRowEntityId && updateField) {
-        updateField(currentRowEntityId, viewField, numberValue);
+        updateField(
+          currentRowEntityId,
+          viewField,
+          numberValue,
+        );
       }
     } catch (error) {
       console.warn(
