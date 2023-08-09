@@ -13,7 +13,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 import { useEditableField } from '../hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { EntityIdContext } from '../states/EntityIdContext';
+import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 
 const RelationPickerContainer = styled.div`
@@ -56,12 +56,12 @@ function RelationPicker({
 }
 
 export function GenericEditableRelationFieldEditMode({ viewField }: OwnProps) {
-  const currentEntityId = useContext(EntityIdContext);
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<any | null>(
     genericEntityFieldFamilySelector({
-      entityId: currentEntityId ?? '',
+      entityId: currentEditableFieldEntityId ?? '',
       fieldName: viewField.metadata.fieldName,
     }),
   );
@@ -78,8 +78,8 @@ export function GenericEditableRelationFieldEditMode({ viewField }: OwnProps) {
       avatarUrl: newRelation?.avatarUrl ?? null,
     });
 
-    if (currentEntityId && updateField) {
-      updateField(currentEntityId, viewField, newRelation);
+    if (currentEditableFieldEntityId && updateField) {
+      updateField(currentEditableFieldEntityId, viewField, newRelation);
     }
 
     closeEditableField();

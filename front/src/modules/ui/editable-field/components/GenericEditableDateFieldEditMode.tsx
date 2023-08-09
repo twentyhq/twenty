@@ -7,7 +7,7 @@ import {
 } from '@/ui/editable-field/types/ViewField';
 
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { EntityIdContext } from '../states/EntityIdContext';
+import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import { EditableFieldEditModeDate } from '../variants/components/EditableFieldEditModeDate';
 
@@ -16,12 +16,12 @@ type OwnProps = {
 };
 
 export function GenericEditableDateFieldEditMode({ viewField }: OwnProps) {
-  const currentEntityId = useContext(EntityIdContext);
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     genericEntityFieldFamilySelector({
-      entityId: currentEntityId ?? '',
+      entityId: currentEditableFieldEntityId ?? '',
       fieldName: viewField.metadata.fieldName,
     }),
   );
@@ -33,8 +33,8 @@ export function GenericEditableDateFieldEditMode({ viewField }: OwnProps) {
 
     setFieldValue(newDateISO);
 
-    if (currentEntityId && updateField && newDateISO) {
-      updateField(currentEntityId, viewField, newDateISO);
+    if (currentEditableFieldEntityId && updateField && newDateISO) {
+      updateField(currentEditableFieldEntityId, viewField, newDateISO);
     }
   }
 
