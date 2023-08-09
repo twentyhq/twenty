@@ -6,10 +6,7 @@ import styled from '@emotion/styled';
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
-import {
-  GET_ACTIVITIES,
-  GET_ACTIVITIES_BY_TARGETS,
-} from '@/activities/queries';
+import { GET_ACTIVITIES } from '@/activities/queries';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
 import { IconCalendar } from '@/ui/icon/index';
@@ -139,11 +136,19 @@ export function ActivityEditor({
             completedAt: value ? new Date().toISOString() : null,
           },
         },
-        refetchQueries: [getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? ''],
+        optimisticResponse: {
+          __typename: 'Mutation',
+          updateOneActivity: {
+            __typename: 'Activity',
+            ...cachedActivity,
+            completedAt: value ? new Date().toISOString() : null,
+          },
+        },
+        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
       setCompletedAt(value ? new Date().toISOString() : null);
     },
-    [activity, updateActivityMutation],
+    [activity.id, cachedActivity, updateActivityMutation],
   );
 
   const debouncedUpdateTitle = debounce(updateTitle, 200);
