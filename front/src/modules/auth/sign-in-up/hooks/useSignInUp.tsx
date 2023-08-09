@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,7 +11,7 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
+import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 import { useAuth } from '../../hooks/useAuth';
@@ -63,35 +63,9 @@ export function useSignInUp() {
   });
   const [showErrors, setShowErrors] = useState(false);
 
-  const [workspaceFromInviteHashQuery, { data: workspace }] =
-    useGetWorkspaceFromInviteHashLazyQuery();
-
-  useEffect(() => {
-    function navigateToSignUp() {
-      enqueueSnackBar('workspace does not exist', {
-        variant: 'error',
-      });
-      setSignInUpMode(SignInUpMode.SignUp);
-      navigate('/sign-up');
-    }
-    if (isMatchingLocation(AppPath.Invite) && workspaceInviteHash) {
-      workspaceFromInviteHashQuery({
-        variables: {
-          inviteHash: workspaceInviteHash,
-        },
-        onCompleted: (data) => {
-          if (!data.findWorkspaceFromInviteHash) {
-            navigateToSignUp();
-          }
-        },
-        onError: (_) => {
-          navigateToSignUp();
-        },
-      });
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspaceInviteHash]);
+  const { data: workspace } = useGetWorkspaceFromInviteHashQuery({
+    variables: { inviteHash: workspaceInviteHash || '' },
+  });
 
   const form = useForm<Form>({
     mode: 'onChange',
