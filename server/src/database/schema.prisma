@@ -175,6 +175,7 @@ model Workspace {
   activityTargets    ActivityTarget[]
   viewFields         ViewField[]
   views              View[]
+  viewSorts          ViewSort[]
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -571,6 +572,7 @@ model View {
   fields   ViewField[]
   name     String
   objectId String
+  sorts    ViewSort[]
   type     ViewType
 
   /// @TypeGraphQL.omit(input: true, output: true)
@@ -580,6 +582,28 @@ model View {
 
   @@unique([workspaceId, type, objectId, name])
   @@map("views")
+}
+
+enum ViewSortDirection {
+  asc
+  desc
+}
+
+model ViewSort {
+  direction ViewSortDirection
+  key       String
+  name      String
+
+  view   View   @relation(fields: [viewId], references: [id])
+  viewId String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+
+  @@id([viewId, key])
+  @@map("viewSorts")
 }
 
 model ViewField {

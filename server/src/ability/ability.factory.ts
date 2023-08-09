@@ -19,6 +19,7 @@ import {
   UserSettings,
   ViewField,
   View,
+  ViewSort,
 } from '@prisma/client';
 
 import { AbilityAction } from './ability.action';
@@ -40,6 +41,7 @@ type SubjectsAbility = Subjects<{
   UserSettings: UserSettings;
   View: View;
   ViewField: ViewField;
+  ViewSort: ViewSort;
 }>;
 
 export type AppAbility = PureAbility<

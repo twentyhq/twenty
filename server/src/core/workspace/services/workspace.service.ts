@@ -113,6 +113,7 @@ export class WorkspaceService {
       activity,
       view,
       viewField,
+      viewSort,
     } = this.prismaService.client;
 
     const activitys = await activity.findMany({
@@ -156,6 +157,9 @@ export class WorkspaceService {
         where,
       }),
       viewField.deleteMany({
+        where,
+      }),
+      viewSort.deleteMany({
         where,
       }),
       refreshToken.deleteMany({
