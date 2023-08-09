@@ -97,8 +97,6 @@ export function ProbabilityEditableFieldEditMode({ viewField }: OwnProps) {
     closeEditableField();
   }
 
-  console.log(probabilityIndex);
-
   return (
     <StyledContainer>
       <StyledLabel>
