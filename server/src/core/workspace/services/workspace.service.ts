@@ -111,6 +111,7 @@ export class WorkspaceService {
       comment,
       activityTarget,
       activity,
+      view,
       viewField,
     } = this.prismaService.client;
 
@@ -149,6 +150,9 @@ export class WorkspaceService {
         }),
       ),
       activity.deleteMany({
+        where,
+      }),
+      view.deleteMany({
         where,
       }),
       viewField.deleteMany({

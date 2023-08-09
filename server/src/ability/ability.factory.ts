@@ -18,6 +18,7 @@ import {
   PipelineProgress,
   UserSettings,
   ViewField,
+  View,
 } from '@prisma/client';
 
 import { AbilityAction } from './ability.action';
@@ -37,6 +38,7 @@ type SubjectsAbility = Subjects<{
   PipelineProgress: PipelineProgress;
   Attachment: Attachment;
   UserSettings: UserSettings;
+  View: View;
   ViewField: ViewField;
 }>;
 

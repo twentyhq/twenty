@@ -45,7 +45,7 @@ export class ViewFieldResolver {
   ): Promise<Partial<ViewField>> {
     return this.viewFieldService.create({
       data: {
-        ...args.data,
+        ...(args.data as Prisma.ViewFieldCreateInput),
         workspace: { connect: { id: workspace.id } },
       },
       select: prismaSelect.value,
