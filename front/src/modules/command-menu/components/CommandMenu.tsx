@@ -15,7 +15,9 @@ import {
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
+import { commandMenuCommand } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
+import { CommandType } from '../types/Command';
 
 import { CommandMenuItem } from './CommandMenuItem';
 import {
@@ -31,6 +33,8 @@ export function CommandMenu() {
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
+  const commands = useRecoilValue(commandMenuCommand);
+
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
@@ -77,36 +81,16 @@ export function CommandMenu() {
   });
   const activities = activityData?.searchResults ?? [];
 
-  const commands = [
-    {
-      to: '/people',
-      label: 'Go to People',
-      shortcuts: ['G', 'P'],
-    },
-    {
-      to: '/companies',
-      label: 'Go to Companies',
-      shortcuts: ['G', 'C'],
-    },
-    {
-      to: '/opportunities',
-      label: 'Go to Opportunities',
-      shortcuts: ['G', 'O'],
-    },
-    {
-      to: '/settings/profile',
-      label: 'Go to Settings',
-      shortcuts: ['G', 'S'],
-    },
-    {
-      to: '/tasks',
-      label: 'Go to Tasks',
-      shortcuts: ['G', 'T'],
-    },
-  ];
+  const matchingNavigateCommand = commands.find(
+    (cmd) =>
+      cmd.shortcuts?.join('') === search?.toUpperCase() &&
+      cmd.type === CommandType.Navigate,
+  );
 
-  const matchingCommand = commands.find(
-    (cmd) => cmd.shortcuts.join('') === search?.toUpperCase(),
+  const matchingCreateCommand = commands.find(
+    (cmd) =>
+      cmd.shortcuts?.join('') === search?.toUpperCase() &&
+      cmd.type === CommandType.Create,
   );
 
   /*
@@ -164,12 +148,40 @@ export function CommandMenu() {
       />
       <StyledList>
         <StyledEmpty>No results found.</StyledEmpty>
-        {matchingCommand && (
+        {!matchingCreateCommand && (
+          <StyledGroup heading="Create">
+            {commands
+              .filter((cmd) => cmd.type === CommandType.Create)
+              .map((cmd) => (
+                <CommandMenuItem
+                  key={cmd.label}
+                  to={cmd.to}
+                  label={cmd.label}
+                  icon={cmd.icon}
+                  shortcuts={cmd.shortcuts || []}
+                  onClick={cmd.onCommandClick}
+                />
+              ))}
+          </StyledGroup>
+        )}
+        {matchingCreateCommand && (
+          <StyledGroup heading="Create">
+            <CommandMenuItem
+              key={matchingCreateCommand.label}
+              to={matchingCreateCommand.to}
+              label={matchingCreateCommand.label}
+              icon={matchingCreateCommand.icon}
+              shortcuts={matchingCreateCommand.shortcuts || []}
+              onClick={matchingCreateCommand.onCommandClick}
+            />
+          </StyledGroup>
+        )}
+        {matchingNavigateCommand && (
           <StyledGroup heading="Navigate">
             <CommandMenuItem
-              to={matchingCommand.to}
-              label={matchingCommand.label}
-              shortcuts={matchingCommand.shortcuts}
+              to={matchingNavigateCommand.to}
+              label={matchingNavigateCommand.label}
+              shortcuts={matchingNavigateCommand.shortcuts}
             />
           </StyledGroup>
         )}
@@ -223,17 +235,18 @@ export function CommandMenu() {
             ))}
           </StyledGroup>
         )}
-        {!matchingCommand && (
+        {!matchingNavigateCommand && (
           <StyledGroup heading="Navigate">
             {commands
               .filter(
                 (cmd) =>
-                  cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
-                  cmd.label?.toUpperCase().includes(search?.toUpperCase()),
+                  (cmd.shortcuts?.join('').includes(search?.toUpperCase()) ||
+                    cmd.label?.toUpperCase().includes(search?.toUpperCase())) &&
+                  cmd.type === CommandType.Navigate,
               )
               .map((cmd) => (
                 <CommandMenuItem
-                  key={cmd.shortcuts.join('')}
+                  key={cmd.shortcuts?.join('')}
                   to={cmd.to}
                   label={cmd.label}
                   shortcuts={cmd.shortcuts}
