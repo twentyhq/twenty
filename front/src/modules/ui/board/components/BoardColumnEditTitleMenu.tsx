@@ -31,9 +31,8 @@ const StyledEditModeInput = styled.input`
 type OwnProps = {
   onClose: () => void;
   title: string;
-  onTitleEdit: (title: string) => void;
-  onColumnColorEdit: (color: string) => void;
-  color?: string;
+  onTitleEdit: (title: string, color: string) => void;
+  color: string;
 };
 
 const StyledColorSample = styled.div<{ colorName: string }>`
@@ -61,15 +60,17 @@ export const COLOR_OPTIONS = [
 export function BoardColumnEditTitleMenu({
   onClose,
   onTitleEdit,
-  onColumnColorEdit,
   title,
   color,
 }: OwnProps) {
   const [internalValue, setInternalValue] = useState(title);
-  const debouncedOnUpdate = debounce(onTitleEdit, 200);
+  const debouncedOnUpdateTitle = debounce(
+    (newTitle) => onTitleEdit(newTitle, color),
+    200,
+  );
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInternalValue(event.target.value);
-    debouncedOnUpdate(event.target.value);
+    debouncedOnUpdateTitle(event.target.value);
   };
   return (
     <DropdownMenuItemsContainer>
@@ -86,7 +87,7 @@ export function BoardColumnEditTitleMenu({
         <DropdownMenuSelectableItem
           key={colorOption.name}
           onClick={() => {
-            onColumnColorEdit(colorOption.id);
+            onTitleEdit(title, colorOption.id);
             onClose();
           }}
           selected={colorOption.id === color}

@@ -60,24 +60,30 @@ export const DELETE_ACTIVITY = gql`
   }
 `;
 
+export const ACTIVITY_UPDATE_FRAGMENT = gql`
+  fragment ActivityUpdateParts on Activity {
+    id
+    body
+    title
+    type
+    completedAt
+    dueAt
+    assignee {
+      id
+      firstName
+      lastName
+      displayName
+    }
+  }
+`;
+
 export const UPDATE_ACTIVITY = gql`
   mutation UpdateActivity(
     $where: ActivityWhereUniqueInput!
     $data: ActivityUpdateInput!
   ) {
     updateOneActivity(where: $where, data: $data) {
-      id
-      body
-      title
-      type
-      completedAt
-      dueAt
-      assignee {
-        id
-        firstName
-        lastName
-        displayName
-      }
+      ...ActivityUpdateParts
     }
   }
 `;
