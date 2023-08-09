@@ -91,13 +91,11 @@ export function ProbabilityEditableFieldEditMode({ viewField }: OwnProps) {
 
   function handleChange(newValue: number) {
     setFieldValue(newValue);
-    if (currentEntityId && updateField && newValue) {
+    if (currentEntityId && updateField) {
       updateField(currentEntityId, viewField, newValue);
     }
     closeEditableField();
   }
-
-  console.log(probabilityIndex);
 
   return (
     <StyledContainer>

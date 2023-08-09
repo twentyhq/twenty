@@ -10,6 +10,7 @@ import {
 } from '@/ui/editable-field/types/ViewField';
 import {
   IconBrandLinkedin,
+  IconBrandX,
   IconBriefcase,
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -118,6 +119,18 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
       type: 'url',
       fieldName: 'linkedinUrl',
       placeHolder: 'LinkedIn',
+    },
+  } satisfies ViewFieldDefinition<ViewFieldURLMetadata>,
+  {
+    id: 'x',
+    columnLabel: 'X',
+    columnIcon: <IconBrandX />,
+    columnSize: 150,
+    columnOrder: 9,
+    metadata: {
+      type: 'url',
+      fieldName: 'xUrl',
+      placeHolder: 'X',
     },
   } satisfies ViewFieldDefinition<ViewFieldURLMetadata>,
 ];

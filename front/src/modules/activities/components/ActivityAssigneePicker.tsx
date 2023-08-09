@@ -1,3 +1,5 @@
+import { useApolloClient } from '@apollo/client';
+
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
@@ -10,6 +12,8 @@ import {
   useSearchUserQuery,
   useUpdateActivityMutation,
 } from '~/generated/graphql';
+
+import { ACTIVITY_UPDATE_FRAGMENT } from '../queries/update';
 
 export type OwnProps = {
   activity: Pick<Activity, 'id'> & {
@@ -41,6 +45,8 @@ export function ActivityAssigneePicker({
       entityType: Entity.User,
       id: user.id,
       name: user.displayName,
+      firstName: user.firstName,
+      lastName: user.lastName,
       avatarType: 'rounded',
       avatarUrl: user.avatarUrl ?? '',
     }),
@@ -48,15 +54,32 @@ export function ActivityAssigneePicker({
     searchOnFields: ['firstName', 'lastName'],
   });
 
-  async function handleEntitySelected(
+  const client = useApolloClient();
+  const cachedActivity = client.readFragment({
+    id: `Activity:${activity.id}`,
+    fragment: ACTIVITY_UPDATE_FRAGMENT,
+  });
+
+  function handleEntitySelected(
     selectedUser: UserForSelect | null | undefined,
   ) {
     if (selectedUser) {
-      await updateActivity({
+      updateActivity({
         variables: {
           where: { id: activity.id },
           data: {
             assignee: { connect: { id: selectedUser.id } },
+          },
+        },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          updateOneActivity: {
+            ...cachedActivity,
+            assignee: {
+              __typename: 'User',
+              ...selectedUser,
+              displayName: selectedUser.name,
+            },
           },
         },
       });

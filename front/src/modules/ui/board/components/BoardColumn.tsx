@@ -73,10 +73,9 @@ const StyledNumChildren = styled.div`
 `;
 
 type OwnProps = {
-  color?: string;
+  color: string;
   title: string;
-  onTitleEdit: (title: string) => void;
-  onColumnColorEdit: (color: string) => void;
+  onTitleEdit: (title: string, color: string) => void;
   totalAmount?: number;
   children: React.ReactNode;
   isFirstColumn: boolean;
@@ -87,7 +86,6 @@ export function BoardColumn({
   color,
   title,
   onTitleEdit,
-  onColumnColorEdit,
   totalAmount,
   children,
   isFirstColumn,
@@ -124,7 +122,6 @@ export function BoardColumn({
         <BoardColumnMenu
           onClose={handleClose}
           onTitleEdit={onTitleEdit}
-          onColumnColorEdit={onColumnColorEdit}
           title={title}
           color={color}
         />
