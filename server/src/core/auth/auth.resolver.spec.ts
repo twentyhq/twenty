@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
+
 import { AuthResolver } from './auth.resolver';
 
 import { TokenService } from './services/token.service';
@@ -12,6 +14,10 @@ describe('AuthResolver', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthResolver,
+        {
+          provide: WorkspaceService,
+          useValue: {},
+        },
         {
           provide: AuthService,
           useValue: {},

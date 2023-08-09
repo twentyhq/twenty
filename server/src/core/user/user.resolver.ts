@@ -15,6 +15,7 @@ import { Prisma, Workspace } from '@prisma/client';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
+import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
 
 import { FindManyUserArgs } from 'src/core/@generated/user/find-many-user.args';
 import { User } from 'src/core/@generated/user/user.model';
@@ -43,8 +44,6 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 
 import { UserService } from './user.service';
 
-import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
-
 function getHMACKey(email?: string, key?: string | null) {
   if (!email || !key) return null;
 
@@ -67,15 +66,13 @@ export class UserResolver {
     @PrismaSelector({ modelName: 'User' })
     prismaSelect: PrismaSelect<'User'>,
   ) {
-   
-
     const select = prismaSelect.value;
 
     const user = await this.userService.findUnique({
       where: {
         id,
       },
-    select
+      select,
     });
     assert(user, 'User not found');
 
