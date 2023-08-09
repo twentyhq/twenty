@@ -1769,6 +1769,7 @@ export type Query = {
   findManyWorkspaceMember: Array<WorkspaceMember>;
   findUniqueCompany: Company;
   findUniquePerson: Person;
+  findWorkspaceFromInviteHash: Workspace;
 };
 
 
@@ -1879,6 +1880,11 @@ export type QueryFindUniqueCompanyArgs = {
 
 export type QueryFindUniquePersonArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryFindWorkspaceFromInviteHashArgs = {
+  inviteHash: Scalars['String'];
 };
 
 export enum QueryMode {
@@ -2786,6 +2792,13 @@ export type GetWorkspaceMembersQueryVariables = Exact<{ [key: string]: never; }>
 
 
 export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', id: string, email: string, avatarUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string } }> };
+
+export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
+  inviteHash: Scalars['String'];
+}>;
+
+
+export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null } };
 
 export type UpdateWorkspaceMutationVariables = Exact<{
   data: WorkspaceUpdateInput;
@@ -5444,6 +5457,43 @@ export function useGetWorkspaceMembersLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetWorkspaceMembersQueryHookResult = ReturnType<typeof useGetWorkspaceMembersQuery>;
 export type GetWorkspaceMembersLazyQueryHookResult = ReturnType<typeof useGetWorkspaceMembersLazyQuery>;
 export type GetWorkspaceMembersQueryResult = Apollo.QueryResult<GetWorkspaceMembersQuery, GetWorkspaceMembersQueryVariables>;
+export const GetWorkspaceFromInviteHashDocument = gql`
+    query GetWorkspaceFromInviteHash($inviteHash: String!) {
+  findWorkspaceFromInviteHash(inviteHash: $inviteHash) {
+    id
+    displayName
+    logo
+  }
+}
+    `;
+
+/**
+ * __useGetWorkspaceFromInviteHashQuery__
+ *
+ * To run a query within a React component, call `useGetWorkspaceFromInviteHashQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetWorkspaceFromInviteHashQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetWorkspaceFromInviteHashQuery({
+ *   variables: {
+ *      inviteHash: // value for 'inviteHash'
+ *   },
+ * });
+ */
+export function useGetWorkspaceFromInviteHashQuery(baseOptions: Apollo.QueryHookOptions<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>(GetWorkspaceFromInviteHashDocument, options);
+      }
+export function useGetWorkspaceFromInviteHashLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>(GetWorkspaceFromInviteHashDocument, options);
+        }
+export type GetWorkspaceFromInviteHashQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashQuery>;
+export type GetWorkspaceFromInviteHashLazyQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashLazyQuery>;
+export type GetWorkspaceFromInviteHashQueryResult = Apollo.QueryResult<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>;
 export const UpdateWorkspaceDocument = gql`
     mutation UpdateWorkspace($data: WorkspaceUpdateInput!) {
   updateWorkspace(data: $data) {

@@ -15,6 +15,8 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { assert } from 'src/utils/assert';
 import { User } from 'src/core/@generated/user/user.model';
+import { Workspace } from 'src/core/@generated/workspace/workspace.model';
+import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 
 import { AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
@@ -34,6 +36,7 @@ import { ImpersonateInput } from './dto/impersonate.input';
 @Resolver()
 export class AuthResolver {
   constructor(
+    private workspaceService: WorkspaceService,
     private authService: AuthService,
     private tokenService: TokenService,
   ) {}
@@ -55,6 +58,17 @@ export class AuthResolver {
     return await this.authService.checkWorkspaceInviteHashIsValid(
       workspaceInviteHashValidInput.inviteHash,
     );
+  }
+
+  @Query(() => Workspace)
+  async findWorkspaceFromInviteHash(
+    @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
+  ) {
+    return await this.workspaceService.findFirst({
+      where: {
+        inviteHash: workspaceInviteHashValidInput.inviteHash,
+      },
+    });
   }
 
   @Mutation(() => LoginToken)

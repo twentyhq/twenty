@@ -11,6 +11,7 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 import { useAuth } from '../../hooks/useAuth';
@@ -19,6 +20,7 @@ import { PASSWORD_REGEX } from '../../utils/passwordRegex';
 export enum SignInUpMode {
   SignIn = 'sign-in',
   SignUp = 'sign-up',
+  Invite = 'invite',
 }
 
 export enum SignInUpStep {
@@ -50,12 +52,20 @@ export function useSignInUp() {
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
     SignInUpStep.Init,
   );
-  const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(
-    isMatchingLocation(AppPath.SignIn)
+  const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
+    if (isMatchingLocation(AppPath.Invite)) {
+      return SignInUpMode.Invite;
+    }
+
+    return isMatchingLocation(AppPath.SignIn)
       ? SignInUpMode.SignIn
-      : SignInUpMode.SignUp,
-  );
+      : SignInUpMode.SignUp;
+  });
   const [showErrors, setShowErrors] = useState(false);
+
+  const { data: workspace } = useGetWorkspaceFromInviteHashQuery({
+    variables: { inviteHash: workspaceInviteHash || '' },
+  });
 
   const form = useForm<Form>({
     mode: 'onChange',
@@ -171,5 +181,6 @@ export function useSignInUp() {
     goBackToEmailStep,
     submitCredentials,
     form,
+    workspace: workspace?.findWorkspaceFromInviteHash,
   };
 }

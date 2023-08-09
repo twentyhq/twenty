@@ -12,8 +12,10 @@ import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
+import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
 import { ActivityType, CommentableType } from '~/generated/graphql';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
@@ -21,6 +23,7 @@ import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 export function AuthAutoRouter() {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
+  const { enqueueSnackBar } = useSnackBar();
 
   const [previousLocation, setPreviousLocation] = useState('');
 
@@ -32,6 +35,8 @@ export function AuthAutoRouter() {
 
   const eventTracker = useEventTracker();
 
+  const [workspaceFromInviteHashQuery] =
+    useGetWorkspaceFromInviteHashLazyQuery();
   const { addToCommandMenu, setToIntitialCommandMenu } = useCommandMenu();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
@@ -57,6 +62,13 @@ export function AuthAutoRouter() {
       isMatchingLocation(AppPath.CreateWorkspace) ||
       isMatchingLocation(AppPath.CreateProfile);
 
+    function navigateToSignUp() {
+      enqueueSnackBar('workspace does not exist', {
+        variant: 'error',
+      });
+      navigate(AppPath.SignUp);
+    }
+
     if (
       onboardingStatus === OnboardingStatus.OngoingUserCreation &&
       !isMachinOngoingUserCreationRoute
@@ -77,6 +89,24 @@ export function AuthAutoRouter() {
       isMatchingOnboardingRoute
     ) {
       navigate('/');
+    } else if (isMatchingLocation(AppPath.Invite)) {
+      const inviteHash =
+        matchPath({ path: '/invite/:workspaceInviteHash' }, location.pathname)
+          ?.params.workspaceInviteHash || '';
+
+      workspaceFromInviteHashQuery({
+        variables: {
+          inviteHash,
+        },
+        onCompleted: (data) => {
+          if (!data.findWorkspaceFromInviteHash) {
+            navigateToSignUp();
+          }
+        },
+        onError: (_) => {
+          navigateToSignUp();
+        },
+      });
     }
 
     switch (true) {
@@ -222,6 +252,8 @@ export function AuthAutoRouter() {
     location,
     previousLocation,
     eventTracker,
+    workspaceFromInviteHashQuery,
+    enqueueSnackBar,
     addToCommandMenu,
     openCreateActivity,
     setToIntitialCommandMenu,
