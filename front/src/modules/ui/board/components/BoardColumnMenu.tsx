@@ -23,15 +23,13 @@ const StyledMenuContainer = styled.div`
 type OwnProps = {
   onClose: () => void;
   title: string;
-  color?: string;
-  onTitleEdit: (title: string) => void;
-  onColumnColorEdit: (color: string) => void;
+  color: string;
+  onTitleEdit: (title: string, color: string) => void;
 };
 
 export function BoardColumnMenu({
   onClose,
   onTitleEdit,
-  onColumnColorEdit,
   title,
   color,
 }: OwnProps) {
@@ -66,7 +64,6 @@ export function BoardColumnMenu({
             color={color}
             onClose={onClose}
             onTitleEdit={onTitleEdit}
-            onColumnColorEdit={onColumnColorEdit}
             title={title}
           />
         )}
