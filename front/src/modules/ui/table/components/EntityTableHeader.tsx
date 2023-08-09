@@ -13,6 +13,10 @@ import {
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
 
+import type {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '../../editable-field/types/ViewField';
 import { toViewFieldInput } from '../hooks/useLoadView';
 import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
 import {
@@ -21,10 +25,6 @@ import {
   viewFieldsState,
   visibleViewFieldsState,
 } from '../states/viewFieldsState';
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '../types/ViewField';
 
 import { ColumnHead } from './ColumnHead';
 import { EntityTableColumnMenu } from './EntityTableColumnMenu';

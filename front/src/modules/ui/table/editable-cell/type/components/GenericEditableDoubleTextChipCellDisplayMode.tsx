@@ -2,13 +2,13 @@ import { useRecoilState } from 'recoil';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
-import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 import {
   ViewFieldDefinition,
   ViewFieldDoubleTextChipMetadata,
-} from '@/ui/table/types/ViewField';
+} from '@/ui/editable-field/types/ViewField';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
+import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
 
 type OwnProps = {
   viewField: ViewFieldDefinition<ViewFieldDoubleTextChipMetadata>;

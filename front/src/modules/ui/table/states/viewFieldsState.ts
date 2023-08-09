@@ -6,7 +6,7 @@ import { peopleViewFields } from '@/people/constants/peopleViewFields';
 import type {
   ViewFieldDefinition,
   ViewFieldMetadata,
-} from '../types/ViewField';
+} from '../../editable-field/types/ViewField';
 
 export const viewFieldsState = atom<{
   objectName: 'company' | 'person' | '';

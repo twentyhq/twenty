@@ -4,19 +4,15 @@ import { BoardOptions } from '../types/BoardOptions';
 
 export function EntityBoardCard({
   boardOptions,
-  pipelineProgressId,
+  cardId,
   index,
 }: {
   boardOptions: BoardOptions;
-  pipelineProgressId: string;
+  cardId: string;
   index: number;
 }) {
   return (
-    <Draggable
-      key={pipelineProgressId}
-      draggableId={pipelineProgressId}
-      index={index}
-    >
+    <Draggable key={cardId} draggableId={cardId} index={index}>
       {(draggableProvided) => (
         <div
           ref={draggableProvided?.innerRef}

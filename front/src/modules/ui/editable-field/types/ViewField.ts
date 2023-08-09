@@ -10,7 +10,8 @@ export type ViewFieldType =
   | 'number'
   | 'date'
   | 'phone'
-  | 'url';
+  | 'url'
+  | 'probability';
 
 export type ViewFieldTextMetadata = {
   type: 'text';
@@ -72,6 +73,11 @@ export type ViewFieldDoubleTextChipMetadata = {
   entityType: Entity;
 };
 
+export type ViewFieldProbabilityMetadata = {
+  type: 'probability';
+  fieldName: string;
+};
+
 export type ViewFieldMetadata = { type: ViewFieldType } & (
   | ViewFieldTextMetadata
   | ViewFieldRelationMetadata
@@ -82,6 +88,7 @@ export type ViewFieldMetadata = { type: ViewFieldType } & (
   | ViewFieldURLMetadata
   | ViewFieldNumberMetadata
   | ViewFieldDateMetadata
+  | ViewFieldProbabilityMetadata
 );
 
 export type ViewFieldDefinition<T extends ViewFieldMetadata | unknown> = {
@@ -101,7 +108,8 @@ export type ViewFieldChipValue = string;
 export type ViewFieldDateValue = string;
 export type ViewFieldPhoneValue = string;
 export type ViewFieldURLValue = string;
-export type ViewFieldNumberValue = number;
+export type ViewFieldNumberValue = number | null;
+export type ViewFieldProbabilityValue = number;
 
 export type ViewFieldDoubleTextValue = {
   firstValue: string;

@@ -1,12 +1,16 @@
 import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { IconPencil } from '@tabler/icons-react';
+import { Key } from 'ts-key-enum';
 
 import { DropdownMenu } from '@/ui/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { icon } from '@/ui/theme/constants/icon';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+
+import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
 
@@ -38,6 +42,13 @@ export function BoardColumnMenu({
     refs: [boardColumnMenuRef],
     callback: onClose,
   });
+
+  useScopedHotkeys(
+    [Key.Escape, Key.Enter],
+    onClose,
+    BoardColumnHotkeyScope.BoardColumn,
+    [],
+  );
 
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>

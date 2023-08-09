@@ -17,10 +17,7 @@ const meta: Meta<typeof EntityBoard> = {
   decorators: [
     (Story) => (
       <RecoilScope SpecificContext={CompanyBoardContext}>
-        <HooksCompanyBoard
-          availableFilters={[]}
-          orderBy={defaultPipelineProgressOrderBy}
-        />
+        <HooksCompanyBoard orderBy={defaultPipelineProgressOrderBy} />
         <MemoryRouter>
           <Story />
         </MemoryRouter>

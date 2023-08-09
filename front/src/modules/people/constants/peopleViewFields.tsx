@@ -1,4 +1,14 @@
 import {
+  ViewFieldDateMetadata,
+  ViewFieldDefinition,
+  ViewFieldDoubleTextChipMetadata,
+  ViewFieldMetadata,
+  ViewFieldPhoneMetadata,
+  ViewFieldRelationMetadata,
+  ViewFieldTextMetadata,
+  ViewFieldURLMetadata,
+} from '@/ui/editable-field/types/ViewField';
+import {
   IconBrandLinkedin,
   IconBriefcase,
   IconBuildingSkyscraper,
@@ -9,16 +19,6 @@ import {
   IconUser,
 } from '@/ui/icon/index';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import {
-  ViewFieldDateMetadata,
-  ViewFieldDefinition,
-  ViewFieldDoubleTextChipMetadata,
-  ViewFieldMetadata,
-  ViewFieldPhoneMetadata,
-  ViewFieldRelationMetadata,
-  ViewFieldTextMetadata,
-  ViewFieldURLMetadata,
-} from '@/ui/table/types/ViewField';
 
 export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   {
