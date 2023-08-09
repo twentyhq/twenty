@@ -1250,6 +1250,7 @@ export type Person = {
   linkedinUrl?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+  xUrl?: Maybe<Scalars['String']>;
 };
 
 export type PersonCreateInput = {
@@ -1268,6 +1269,7 @@ export type PersonCreateInput = {
   linkedinUrl?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type PersonCreateNestedManyWithoutCompanyInput = {
@@ -1313,6 +1315,7 @@ export type PersonOrderByWithRelationInput = {
   linkedinUrl?: InputMaybe<SortOrder>;
   phone?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
+  xUrl?: InputMaybe<SortOrder>;
 };
 
 export type PersonRelationFilter = {
@@ -1334,7 +1337,8 @@ export enum PersonScalarFieldEnum {
   LinkedinUrl = 'linkedinUrl',
   Phone = 'phone',
   UpdatedAt = 'updatedAt',
-  WorkspaceId = 'workspaceId'
+  WorkspaceId = 'workspaceId',
+  XUrl = 'xUrl'
 }
 
 export type PersonUpdateInput = {
@@ -1353,6 +1357,7 @@ export type PersonUpdateInput = {
   linkedinUrl?: InputMaybe<Scalars['String']>;
   phone?: InputMaybe<Scalars['String']>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
+  xUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type PersonUpdateManyWithoutCompanyNestedInput = {
@@ -1397,6 +1402,7 @@ export type PersonWhereInput = {
   linkedinUrl?: InputMaybe<StringNullableFilter>;
   phone?: InputMaybe<StringNullableFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
+  xUrl?: InputMaybe<StringNullableFilter>;
 };
 
 export type PersonWhereUniqueInput = {
@@ -2510,7 +2516,7 @@ export type GetPeopleQueryVariables = Exact<{
 }>;
 
 
-export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
+export type GetPeopleQuery = { __typename?: 'Query', people: Array<{ __typename?: 'Person', id: string, phone?: string | null, email?: string | null, city?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, createdAt: string, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null }> };
 
 export type GetPersonPhoneByIdQueryVariables = Exact<{
   id: Scalars['String'];
@@ -2566,7 +2572,7 @@ export type GetPersonQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
 
 export type UpdateOnePersonMutationVariables = Exact<{
   where: PersonWhereUniqueInput;
@@ -2574,14 +2580,14 @@ export type UpdateOnePersonMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
+export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
 
 export type InsertOnePersonMutationVariables = Exact<{
   data: PersonCreateInput;
 }>;
 
 
-export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
+export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
 
 export type DeleteManyPersonMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -3942,6 +3948,7 @@ export const GetPeopleDocument = gql`
     displayName
     jobTitle
     linkedinUrl
+    xUrl
     avatarUrl
     createdAt
     _activityCount
@@ -4254,6 +4261,7 @@ export const GetPersonDocument = gql`
     city
     jobTitle
     linkedinUrl
+    xUrl
     avatarUrl
     phone
     _activityCount
@@ -4306,6 +4314,7 @@ export const UpdateOnePersonDocument = gql`
     email
     jobTitle
     linkedinUrl
+    xUrl
     firstName
     lastName
     displayName
@@ -4356,6 +4365,7 @@ export const InsertOnePersonDocument = gql`
     lastName
     jobTitle
     linkedinUrl
+    xUrl
     displayName
     phone
     createdAt

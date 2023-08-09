@@ -266,6 +266,9 @@ model Person {
   linkedinUrl String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
+  xUrl String?
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
   jobTitle    String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
