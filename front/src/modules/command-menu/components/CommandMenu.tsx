@@ -35,6 +35,7 @@ export function CommandMenu() {
   const [search, setSearch] = useState('');
   const commands = useRecoilValue(commandMenuCommand);
 
+
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
