@@ -5,19 +5,20 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
+import type {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '@/ui/editable-field/types/ViewField';
 import { IconPlus } from '@/ui/icon';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { GET_VIEW_FIELDS } from '@/views/queries/select';
+import { currentViewIdState } from '@/views/states/currentViewIdState';
 import {
   useCreateViewFieldMutation,
   useUpdateViewFieldMutation,
 } from '~/generated/graphql';
 
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '../../editable-field/types/ViewField';
-import { toViewFieldInput } from '../hooks/useLoadView';
+import { toViewFieldInput } from '../hooks/useLoadViewFields';
 import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
 import {
   addableViewFieldDefinitionsState,
@@ -89,6 +90,7 @@ export function EntityTableHeader() {
   const theme = useTheme();
 
   const [{ objectName }, setViewFieldsState] = useRecoilState(viewFieldsState);
+  const currentViewId = useRecoilValue(currentViewIdState);
   const viewFields = useRecoilValue(visibleViewFieldsState);
   const columnWidths = useRecoilValue(columnWidthByViewFieldIdState);
   const addableViewFieldDefinitions = useRecoilValue(
@@ -176,15 +178,18 @@ export function EntityTableHeader() {
 
       createViewFieldMutation({
         variables: {
-          data: toViewFieldInput(objectName, {
-            ...viewFieldDefinition,
-            columnOrder: viewFields.length + 1,
-          }),
+          data: {
+            ...toViewFieldInput(objectName, {
+              ...viewFieldDefinition,
+              columnOrder: viewFields.length + 1,
+            }),
+            view: { connect: { id: currentViewId } },
+          },
         },
         refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
       });
     },
-    [createViewFieldMutation, objectName, viewFields.length],
+    [createViewFieldMutation, currentViewId, objectName, viewFields.length],
   );
 
   return (

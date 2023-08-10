@@ -17,8 +17,8 @@ import {
   PipelineStage,
   PipelineProgress,
   UserSettings,
-  ViewField,
   View,
+  ViewField,
   ViewSort,
 } from '@prisma/client';
 
@@ -134,10 +134,21 @@ export class AbilityFactory {
       workspaceId: workspace.id,
     });
 
+    // View
+    can(AbilityAction.Read, 'View', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'View', { workspaceId: workspace.id });
+    can(AbilityAction.Update, 'View', { workspaceId: workspace.id });
+
     // ViewField
     can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
+
+    // ViewSort
+    can(AbilityAction.Read, 'ViewSort', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'ViewSort', { workspaceId: workspace.id });
+    can(AbilityAction.Update, 'ViewSort', { workspaceId: workspace.id });
+    can(AbilityAction.Delete, 'ViewSort', { workspaceId: workspace.id });
 
     return build();
   }
