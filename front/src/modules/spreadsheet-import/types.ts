@@ -65,6 +65,8 @@ export type Data<T extends string> = {
 export type Fields<T extends string> = ReadonlyDeep<Field<T>[]>;
 
 export type Field<T extends string> = {
+  // Icon
+  icon: React.ReactNode;
   // UI-facing field label
   label: string;
   // Field's unique identifier
@@ -94,11 +96,14 @@ export type Select = {
 };
 
 export type SelectOption = {
-  // icon?: React.ReactNode;
+  // Icon
+  icon?: React.ReactNode;
   // UI-facing option label
   label: string;
   // Field entry matching criteria as well as select output
   value: string;
+  // Disabled option when already select
+  disabled?: boolean;
 };
 
 export type Input = {

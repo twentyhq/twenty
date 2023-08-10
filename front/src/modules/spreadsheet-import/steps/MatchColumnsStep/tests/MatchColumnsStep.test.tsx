@@ -19,6 +19,7 @@ import { MatchColumnsStep } from '../MatchColumnsStep';
 
 const fields: Fields<any> = [
   {
+    icon: null,
     label: 'Name',
     key: 'name',
     fieldType: {
@@ -27,6 +28,7 @@ const fields: Fields<any> = [
     example: 'Stephanie',
   },
   {
+    icon: null,
     label: 'Mobile Phone',
     key: 'mobile',
     fieldType: {
@@ -35,6 +37,7 @@ const fields: Fields<any> = [
     example: '+12323423',
   },
   {
+    icon: null,
     label: 'Is cool',
     key: 'is_cool',
     fieldType: {
@@ -184,6 +187,7 @@ describe('Match Columns automatic matching', () => {
 
     const alternativeFields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         alternateMatches: ['first name'],
@@ -272,6 +276,7 @@ describe('Match Columns automatic matching', () => {
 
     const fields = [
       {
+        icon: null,
         label: 'Is cool',
         key: 'is_cool',
         fieldType: {
@@ -510,6 +515,7 @@ describe('Match Columns general tests', () => {
 
     const enumFields = [
       {
+        icon: null,
         label: 'Team',
         key: 'team',
         fieldType: {
@@ -622,6 +628,7 @@ describe('Match Columns general tests', () => {
 
     const requiredFields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {

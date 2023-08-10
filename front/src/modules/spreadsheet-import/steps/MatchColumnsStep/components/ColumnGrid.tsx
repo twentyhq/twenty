@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { Modal } from '@/ui/modal/components/Modal';
 
 import { ContinueButton } from '../../../components/ContinueButton';
-import type { Column, Columns } from '../MatchColumnsStep';
+import type { Columns } from '../MatchColumnsStep';
 
 const Content = styled(Modal.Content)`
   align-items: center;
@@ -26,7 +26,7 @@ const Description = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.regular};
 `;
 
-const TableContainer = styled.div`
+const GridContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -35,50 +35,39 @@ const TableContainer = styled.div`
   width: 100%;
 `;
 
-const MatchTable = styled.div`
+const Grid = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-sizing: border-box;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   margin-top: ${({ theme }) => theme.spacing(8)};
   width: 75%;
 `;
 
-const MatchTableColumn = styled.div`
+type HeightProps = {
+  height?: `${number}px`;
+};
+
+const GridRow = styled.div<HeightProps>`
+  box-sizing: border-box;
   display: flex;
-  flex: 0 0 50%;
-  flex-direction: column;
-  overflow-x: auto;
+  flex-direction: row;
+  min-height: ${({ height = '64px' }) => height};
 `;
 
-type MatchTableHeaderProps = {
+type PositionProps = {
   position: 'left' | 'right';
 };
 
-const MatchTableHeader = styled.div<MatchTableHeaderProps>`
+const GridCell = styled.div<PositionProps>`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.tertiary};
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(4)};
-  padding-right: ${({ theme }) => theme.spacing(4)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  ${({ position, theme }) => {
-    if (position === 'left') {
-      return `border-top-left-radius: calc(${theme.border.radius.md} - 1px);`;
-    }
-    return `border-top-right-radius: calc(${theme.border.radius.md} - 1px);`;
-  }};
-  text-transform: uppercase;
-`;
-
-const MatchTableRow = styled.div<MatchTableHeaderProps>`
-  align-items: center;
+  box-sizing: border-box;
   display: flex;
-  height: 64px;
+  flex: 1;
+  overflow-x: auto;
+  padding-bottom: ${({ theme }) => theme.spacing(4)};
+  padding-top: ${({ theme }) => theme.spacing(4)};
   ${({ position, theme }) => {
     if (position === 'left') {
       return `
@@ -93,10 +82,36 @@ const MatchTableRow = styled.div<MatchTableHeaderProps>`
   }};
 `;
 
+const GridHeader = styled.div<PositionProps>`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.tertiary};
+  box-sizing: border-box;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  flex: 1;
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  padding-left: ${({ theme }) => theme.spacing(4)};
+  padding-right: ${({ theme }) => theme.spacing(4)};
+  ${({ position, theme }) => {
+    if (position === 'left') {
+      return `border-top-left-radius: calc(${theme.border.radius.md} - 1px);`;
+    }
+    return `border-top-right-radius: calc(${theme.border.radius.md} - 1px);`;
+  }};
+  text-transform: uppercase;
+`;
+
 type ColumnGridProps<T extends string> = {
   columns: Columns<T>;
-  renderUserColumn: (column: Column<T>) => React.ReactNode;
-  renderTemplateColumn: (column: Column<T>) => React.ReactNode;
+  renderUserColumn: (
+    columns: Columns<T>,
+    columnIndex: number,
+  ) => React.ReactNode;
+  renderTemplateColumn: (
+    columns: Columns<T>,
+    columnIndex: number,
+  ) => React.ReactNode;
   onContinue: (val: Record<string, string>[]) => void;
   isLoading: boolean;
 };
@@ -115,44 +130,29 @@ export const ColumnGrid = <T extends string>({
         <Description>
           Select the correct field for each column you'd like to import.
         </Description>
-        <TableContainer>
-          <MatchTable>
-            <MatchTableColumn>
-              <MatchTableHeader position="left">Imported data</MatchTableHeader>
-              {columns.map((column, index) => {
-                const userColumn = renderUserColumn(column);
+        <GridContainer>
+          <Grid>
+            <GridRow height="29px">
+              <GridHeader position="left">Imported data</GridHeader>
+              <GridHeader position="right">Twenty fields</GridHeader>
+            </GridRow>
+            {columns.map((column, index) => {
+              const userColumn = renderUserColumn(columns, index);
+              const templateColumn = renderTemplateColumn(columns, index);
 
-                if (React.isValidElement(userColumn)) {
-                  return (
-                    <MatchTableRow key={index} position="left">
-                      {userColumn}
-                    </MatchTableRow>
-                  );
-                }
+              if (React.isValidElement(userColumn)) {
+                return (
+                  <GridRow key={index}>
+                    <GridCell position="left">{userColumn}</GridCell>
+                    <GridCell position="right">{templateColumn}</GridCell>
+                  </GridRow>
+                );
+              }
 
-                return null;
-              })}
-            </MatchTableColumn>
-            <MatchTableColumn>
-              <MatchTableHeader position="right">
-                Twenty fields
-              </MatchTableHeader>
-              {columns.map((column, index) => {
-                const templateColumn = renderTemplateColumn(column);
-
-                if (React.isValidElement(templateColumn)) {
-                  return (
-                    <MatchTableRow key={index} position="right">
-                      {templateColumn}
-                    </MatchTableRow>
-                  );
-                }
-
-                return null;
-              })}
-            </MatchTableColumn>
-          </MatchTable>
-        </TableContainer>
+              return null;
+            })}
+          </Grid>
+        </GridContainer>
       </Content>
       <ContinueButton
         isLoading={isLoading}

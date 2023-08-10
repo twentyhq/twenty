@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 
+import { SelectOption } from '@/spreadsheet-import/types';
+
 import { MatchColumnSelect } from '../../../components/Selects/MatchColumnSelect';
 import { useRsi } from '../../../hooks/useRsi';
 import type {
@@ -34,7 +36,7 @@ export const SubMatchingSelect = <T extends string>({
   onSubChange,
 }: Props<T>) => {
   const { translations, fields } = useRsi<T>();
-  const options = getFieldOptions(fields, column.value);
+  const options = getFieldOptions(fields, column.value) as SelectOption[];
   const value = options.find((opt) => opt.value == option.value);
 
   return (

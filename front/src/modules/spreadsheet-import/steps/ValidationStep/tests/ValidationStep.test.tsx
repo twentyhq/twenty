@@ -64,6 +64,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {
@@ -116,6 +117,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {
@@ -195,6 +197,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {
@@ -241,6 +244,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {
@@ -292,6 +296,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {
@@ -349,6 +354,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {
@@ -412,6 +418,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {
@@ -419,6 +426,7 @@ describe('Validation step tests', () => {
         },
       },
       {
+        icon: null,
         label: 'lastName',
         key: 'lastName',
         fieldType: {
@@ -427,6 +435,7 @@ describe('Validation step tests', () => {
         },
       },
       {
+        icon: null,
         label: 'is cool',
         key: 'is_cool',
         fieldType: {
@@ -576,6 +585,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {
@@ -583,6 +593,7 @@ describe('Validation step tests', () => {
         },
       },
       {
+        icon: null,
         label: 'lastName',
         key: 'lastName',
         fieldType: {
@@ -642,6 +653,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {
@@ -709,6 +721,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {
@@ -767,6 +780,7 @@ describe('Validation step tests', () => {
     ];
     const fields = [
       {
+        icon: null,
         label: 'Name',
         key: 'name',
         fieldType: {

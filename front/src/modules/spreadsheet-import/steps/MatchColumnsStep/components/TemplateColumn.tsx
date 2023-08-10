@@ -1,48 +1,50 @@
 // TODO: We should create our own accordion component
 import {
   Accordion,
-  AccordionButton,
+  AccordionButton as ChakraAccordionButton,
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
 } from '@chakra-ui/accordion';
 import styled from '@emotion/styled';
 
+import { IconChevronDown, IconForbid } from '@/ui/icon';
+
 import { MatchColumnSelect } from '../../../components/Selects/MatchColumnSelect';
 import { useRsi } from '../../../hooks/useRsi';
 import type { Translations } from '../../../translationsRSIProps';
 import type { Fields } from '../../../types';
-import type { Column } from '../MatchColumnsStep';
+import type { Column, Columns } from '../MatchColumnsStep';
 import { ColumnType } from '../MatchColumnsStep';
 
-import { MatchIcon } from './MatchIcon';
 import { SubMatchingSelect } from './SubMatchingSelect';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   min-height: 10px;
   width: 100%;
 `;
 
-const ColumnIgnored = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-`;
-
-const ColumnSelectContainer = styled.div`
+const AccordionButton = styled(ChakraAccordionButton)`
   align-items: center;
+  background-color: ${({ theme }) => theme.accent.secondary};
+  border: none;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-sizing: border-box;
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
-  min-height: 10px;
+  flex-direction: row;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
   width: 100%;
-`;
 
-const MatchColumnSelectContainer = styled.div`
-  flex: 1;
+  &:hover {
+    background-color: ${({ theme }) => theme.accent.primary};
+  }
 `;
 
 const AccordionContainer = styled.div`
@@ -51,7 +53,9 @@ const AccordionContainer = styled.div`
 `;
 
 const AccordionLabel = styled.span`
-  color: ${({ theme }) => theme.color.blue};
+  color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  flex: 1;
   font-size: ${({ theme }) => theme.font.size.sm};
   padding-left: ${({ theme }) => theme.spacing(1)};
   text-align: left;
@@ -71,77 +75,86 @@ const getAccordionTitle = <T extends string>(
 };
 
 type TemplateColumnProps<T extends string> = {
+  columns: Columns<T>;
+  columnIndex: number;
   onChange: (val: T, index: number) => void;
   onSubChange: (val: T, index: number, option: string) => void;
-  column: Column<T>;
 };
 
 export const TemplateColumn = <T extends string>({
-  column,
+  columns,
+  columnIndex,
   onChange,
   onSubChange,
 }: TemplateColumnProps<T>) => {
   const { translations, fields } = useRsi<T>();
+  const column = columns[columnIndex];
   const isIgnored = column.type === ColumnType.ignored;
-  const isChecked =
-    column.type === ColumnType.matched ||
-    column.type === ColumnType.matchedCheckbox ||
-    column.type === ColumnType.matchedSelectOptions;
   const isSelect = 'matchedOptions' in column;
-  const selectOptions = fields.map(({ label, key }) => ({ value: key, label }));
-  const selectValue = selectOptions.find(
+  const fieldOptions = fields.map(({ icon, label, key }) => {
+    const isSelected =
+      columns.findIndex((column) => {
+        if ('value' in column) {
+          return column.value === key;
+        }
+
+        return false;
+      }) !== -1;
+
+    return {
+      icon,
+      value: key,
+      label,
+      disabled: isSelected,
+    } as const;
+  });
+  const selectOptions = [
+    {
+      icon: <IconForbid />,
+      value: 'do-not-import',
+      label: 'Do not import',
+    },
+    ...fieldOptions,
+  ];
+  const selectValue = fieldOptions.find(
     ({ value }) => 'value' in column && column.value === value,
+  );
+  const ignoreValue = selectOptions.find(
+    ({ value }) => value === 'do-not-import',
   );
 
   return (
     <Container>
-      {isIgnored ? (
-        <ColumnIgnored>Column ignored</ColumnIgnored>
-      ) : (
-        <>
-          <ColumnSelectContainer>
-            <MatchColumnSelectContainer>
-              <MatchColumnSelect
-                placeholder="Select column..."
-                value={selectValue}
-                onChange={(value) => onChange(value?.value as T, column.index)}
-                options={selectOptions}
-                name={column.header}
-              />
-            </MatchColumnSelectContainer>
-            <MatchIcon isChecked={isChecked} />
-          </ColumnSelectContainer>
-          {isSelect && (
-            <AccordionContainer>
-              <Accordion allowMultiple width="100%">
-                <AccordionItem border="none" py={1}>
-                  <AccordionButton
-                    _hover={{ bg: 'transparent' }}
-                    _focus={{ boxShadow: 'none' }}
-                    px={0}
-                    py={4}
-                    data-testid="accordion-button"
-                  >
-                    <AccordionIcon />
-                    <AccordionLabel>
-                      {getAccordionTitle<T>(fields, column, translations)}
-                    </AccordionLabel>
-                  </AccordionButton>
-                  <AccordionPanel pb={4} pr={3} display="flex" flexDir="column">
-                    {column.matchedOptions.map((option) => (
-                      <SubMatchingSelect
-                        option={option}
-                        column={column}
-                        onSubChange={onSubChange}
-                        key={option.entry}
-                      />
-                    ))}
-                  </AccordionPanel>
-                </AccordionItem>
-              </Accordion>
-            </AccordionContainer>
-          )}
-        </>
+      <MatchColumnSelect
+        placeholder="Select column..."
+        value={isIgnored ? ignoreValue : selectValue}
+        onChange={(value) => onChange(value?.value as T, column.index)}
+        options={selectOptions}
+        name={column.header}
+      />
+      {isSelect && (
+        <AccordionContainer>
+          <Accordion allowMultiple width="100%">
+            <AccordionItem border="none" py={1}>
+              <AccordionButton data-testid="accordion-button">
+                <AccordionLabel>
+                  {getAccordionTitle<T>(fields, column, translations)}
+                </AccordionLabel>
+                <AccordionIcon as={IconChevronDown} />
+              </AccordionButton>
+              <AccordionPanel pb={4} pr={3} display="flex" flexDir="column">
+                {column.matchedOptions.map((option) => (
+                  <SubMatchingSelect
+                    option={option}
+                    column={column}
+                    onSubChange={onSubChange}
+                    key={option.entry}
+                  />
+                ))}
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+        </AccordionContainer>
       )}
     </Container>
   );

@@ -3,6 +3,7 @@ import type { RsiProps } from '../types';
 
 const fields = [
   {
+    icon: null,
     label: 'Name',
     key: 'name',
     alternateMatches: ['first name', 'first'],
@@ -18,6 +19,7 @@ const fields = [
     ],
   },
   {
+    icon: null,
     label: 'Surname',
     key: 'surname',
     alternateMatches: ['second name', 'last name', 'last'],
@@ -35,6 +37,7 @@ const fields = [
     description: 'Family / Last name',
   },
   {
+    icon: null,
     label: 'Age',
     key: 'age',
     alternateMatches: ['years'],
@@ -52,6 +55,7 @@ const fields = [
     ],
   },
   {
+    icon: null,
     label: 'Team',
     key: 'team',
     alternateMatches: ['department'],
@@ -71,6 +75,7 @@ const fields = [
     ],
   },
   {
+    icon: null,
     label: 'Is manager',
     key: 'is_manager',
     alternateMatches: ['manages'],

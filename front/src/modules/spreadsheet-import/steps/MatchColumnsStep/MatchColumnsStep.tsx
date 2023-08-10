@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import styled from '@emotion/styled';
 
+import { ButtonVariant } from '@/ui/button/components/Button';
+import { useDialog } from '@/ui/dialog/hooks/useDialog';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 
-import { UnmatchedFieldsAlert } from '../../components/Alerts/UnmatchedFieldsAlert';
 import { useRsi } from '../../hooks/useRsi';
 import type { Field, RawData } from '../../types';
 
@@ -15,6 +17,25 @@ import { normalizeTableData } from './utils/normalizeTableData';
 import { setColumn } from './utils/setColumn';
 import { setIgnoreColumn } from './utils/setIgnoreColumn';
 import { setSubColumn } from './utils/setSubColumn';
+
+const ColumnsContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
+
+const Columns = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const Column = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+`;
 
 export type MatchColumnsProps<T extends string> = {
   data: RawData[];
@@ -84,6 +105,7 @@ export const MatchColumnsStep = <T extends string>({
   headerValues,
   onContinue,
 }: MatchColumnsProps<T>) => {
+  const { enqueueDialog } = useDialog();
   const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);
   const { fields, autoMapHeaders, autoMapDistance } = useRsi<T>();
@@ -96,36 +118,6 @@ export const MatchColumnsStep = <T extends string>({
       header: value ?? '',
     })),
   );
-  const [showUnmatchedFieldsAlert, setShowUnmatchedFieldsAlert] =
-    useState(false);
-
-  const onChange = useCallback(
-    (value: T, columnIndex: number) => {
-      const field = fields.find(
-        (field) => field.key === value,
-      ) as unknown as Field<T>;
-      const existingFieldIndex = columns.findIndex(
-        (column) => 'value' in column && column.value === field.key,
-      );
-      setColumns(
-        columns.map<Column<T>>((column, index) => {
-          if (columnIndex === index) {
-            return setColumn(column, field, data);
-          } else if (index === existingFieldIndex) {
-            enqueueSnackBar('Columns cannot duplicate', {
-              title: 'Another column unselected',
-              variant: 'error',
-            });
-            return setColumn(column);
-          } else {
-            return column;
-          }
-        }),
-      );
-    },
-    [columns, data, fields, enqueueSnackBar],
-  );
-
   const onIgnore = useCallback(
     (columnIndex: number) => {
       setColumns(
@@ -148,6 +140,41 @@ export const MatchColumnsStep = <T extends string>({
     [columns, setColumns],
   );
 
+  const onChange = useCallback(
+    (value: T, columnIndex: number) => {
+      if (value === 'do-not-import') {
+        if (columns[columnIndex].type === ColumnType.ignored) {
+          onRevertIgnore(columnIndex);
+        } else {
+          onIgnore(columnIndex);
+        }
+      } else {
+        const field = fields.find(
+          (field) => field.key === value,
+        ) as unknown as Field<T>;
+        const existingFieldIndex = columns.findIndex(
+          (column) => 'value' in column && column.value === field.key,
+        );
+        setColumns(
+          columns.map<Column<T>>((column, index) => {
+            if (columnIndex === index) {
+              return setColumn(column, field, data);
+            } else if (index === existingFieldIndex) {
+              enqueueSnackBar('Columns cannot duplicate', {
+                title: 'Another column unselected',
+                variant: 'error',
+              });
+              return setColumn(column);
+            } else {
+              return column;
+            }
+          }),
+        );
+      }
+    },
+    [columns, onRevertIgnore, onIgnore, fields, data, enqueueSnackBar],
+  );
+
   const onSubChange = useCallback(
     (value: string, columnIndex: number, entry: string) => {
       setColumns(
@@ -165,9 +192,35 @@ export const MatchColumnsStep = <T extends string>({
     [fields, columns],
   );
 
+  const handleAlertOnContinue = useCallback(async () => {
+    setIsLoading(true);
+    await onContinue(normalizeTableData(columns, data, fields), data, columns);
+    setIsLoading(false);
+  }, [onContinue, columns, data, fields]);
+
   const handleOnContinue = useCallback(async () => {
     if (unmatchedRequiredFields.length > 0) {
-      setShowUnmatchedFieldsAlert(true);
+      enqueueDialog({
+        title: 'Not all columns matched',
+        message:
+          'There are required columns that are not matched or ignored. Do you want to continue?',
+        children: (
+          <ColumnsContainer>
+            <Columns>Columns not matched:</Columns>
+            {unmatchedRequiredFields.map((field) => (
+              <Column key={field}>{field}</Column>
+            ))}
+          </ColumnsContainer>
+        ),
+        buttons: [
+          { title: 'Cancel' },
+          {
+            title: 'Continue',
+            onClick: handleAlertOnContinue,
+            variant: ButtonVariant.Primary,
+          },
+        ],
+      });
     } else {
       setIsLoading(true);
       await onContinue(
@@ -177,14 +230,15 @@ export const MatchColumnsStep = <T extends string>({
       );
       setIsLoading(false);
     }
-  }, [unmatchedRequiredFields.length, onContinue, columns, data, fields]);
-
-  const handleAlertOnContinue = useCallback(async () => {
-    setShowUnmatchedFieldsAlert(false);
-    setIsLoading(true);
-    await onContinue(normalizeTableData(columns, data, fields), data, columns);
-    setIsLoading(false);
-  }, [onContinue, columns, data, fields]);
+  }, [
+    unmatchedRequiredFields,
+    enqueueDialog,
+    handleAlertOnContinue,
+    onContinue,
+    columns,
+    data,
+    fields,
+  ]);
 
   useEffect(() => {
     if (autoMapHeaders) {
@@ -194,33 +248,24 @@ export const MatchColumnsStep = <T extends string>({
   }, []);
 
   return (
-    <>
-      <UnmatchedFieldsAlert
-        isOpen={showUnmatchedFieldsAlert}
-        onClose={() => setShowUnmatchedFieldsAlert(false)}
-        fields={unmatchedRequiredFields}
-        onConfirm={handleAlertOnContinue}
-      />
-      <ColumnGrid
-        columns={columns}
-        onContinue={handleOnContinue}
-        isLoading={isLoading}
-        renderUserColumn={(column) => (
-          <UserTableColumn
-            column={column}
-            onIgnore={onIgnore}
-            onRevertIgnore={onRevertIgnore}
-            entries={dataExample.map((row) => row[column.index])}
-          />
-        )}
-        renderTemplateColumn={(column) => (
-          <TemplateColumn
-            column={column}
-            onChange={onChange}
-            onSubChange={onSubChange}
-          />
-        )}
-      />
-    </>
+    <ColumnGrid
+      columns={columns}
+      onContinue={handleOnContinue}
+      isLoading={isLoading}
+      renderUserColumn={(columns, columnIndex) => (
+        <UserTableColumn
+          column={columns[columnIndex]}
+          entries={dataExample.map((row) => row[columns[columnIndex].index])}
+        />
+      )}
+      renderTemplateColumn={(columns, columnIndex) => (
+        <TemplateColumn
+          columns={columns}
+          columnIndex={columnIndex}
+          onChange={onChange}
+          onSubChange={onSubChange}
+        />
+      )}
+    />
   );
 };

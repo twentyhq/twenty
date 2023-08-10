@@ -9,7 +9,7 @@ import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/com
 import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
 import { ReactSpreadsheetImport } from '@/spreadsheet-import';
-import { IconBuildingSkyscraper } from '@/ui/icon';
+import { IconBuildingSkyscraper, IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
 import { useUpsertEntityTableItem } from '@/ui/table/hooks/useUpsertEntityTableItem';
@@ -88,6 +88,7 @@ export function Companies() {
         onClose={() => {}}
         fields={[
           {
+            icon: <IconUser />,
             // Visible in table header and when matching columns.
             label: 'Firstname',
             // This is the key used for this field when we call onSubmit.
@@ -113,6 +114,7 @@ export function Companies() {
             ],
           },
           {
+            icon: <IconUser />,
             // Visible in table header and when matching columns.
             label: 'Lastname',
             // This is the key used for this field when we call onSubmit.
@@ -138,6 +140,7 @@ export function Companies() {
             ],
           },
           {
+            icon: <IconUser />,
             // Visible in table header and when matching columns.
             label: 'Test',
             // This is the key used for this field when we call onSubmit.
