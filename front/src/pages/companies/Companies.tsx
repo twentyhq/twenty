@@ -44,7 +44,7 @@ export function Companies() {
           name: '',
           domainName: '',
           address: '',
-          createdAt: new Date().toISOString(),
+          createdAt: '',
         },
       },
       update: () => {
