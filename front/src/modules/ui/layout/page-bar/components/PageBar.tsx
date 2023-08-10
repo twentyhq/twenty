@@ -69,7 +69,7 @@ type OwnProps = {
   isFavorite?: boolean;
   icon: ReactNode;
   onAddButtonClick?: () => void;
-  onFavouriteButtonClick?: () => void;
+  onFavoriteButtonClick?: () => void;
 };
 
 export function PageBar({
@@ -78,7 +78,7 @@ export function PageBar({
   isFavorite,
   icon,
   onAddButtonClick,
-  onFavouriteButtonClick,
+  onFavoriteButtonClick,
 }: OwnProps) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
@@ -114,13 +114,13 @@ export function PageBar({
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
         <ActionButtonsContainer>
-          {onFavouriteButtonClick && (
+          {onFavoriteButtonClick && (
             <IconButton
               icon={<IconHeart size={16} />}
               size="large"
               data-testid="add-button"
-              accent={isFavorite ? 'red' : 'regular'}
-              onClick={onFavouriteButtonClick}
+              textColor={isFavorite ? 'danger' : 'secondary'}
+              onClick={onFavoriteButtonClick}
               variant="border"
             />
           )}
