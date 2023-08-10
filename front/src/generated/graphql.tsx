@@ -2679,12 +2679,14 @@ export type UpdateOneCompanyMutationVariables = Exact<{
 
 export type UpdateOneCompanyMutation = { __typename?: 'Mutation', updateOneCompany?: { __typename?: 'Company', address: string, createdAt: string, domainName: string, employees?: number | null, linkedinUrl?: string | null, id: string, name: string, accountOwner?: { __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null } | null } | null };
 
+export type InsertCompanyFragmentFragment = { __typename?: 'Company', domainName: string, address: string, id: string, name: string, createdAt: string };
+
 export type InsertOneCompanyMutationVariables = Exact<{
   data: CompanyCreateInput;
 }>;
 
 
-export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', address: string, createdAt: string, domainName: string, linkedinUrl?: string | null, employees?: number | null, id: string, name: string } };
+export type InsertOneCompanyMutation = { __typename?: 'Mutation', createOneCompany: { __typename?: 'Company', domainName: string, address: string, id: string, name: string, createdAt: string } };
 
 export type DeleteManyCompaniesMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -2766,12 +2768,14 @@ export type UpdateOnePersonMutationVariables = Exact<{
 
 export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
 
+export type InsertPersonFragmentFragment = { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, createdAt: string };
+
 export type InsertOnePersonMutationVariables = Exact<{
   data: PersonCreateInput;
 }>;
 
 
-export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
+export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, createdAt: string } };
 
 export type DeleteManyPersonMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -3023,6 +3027,24 @@ export const ActivityUpdatePartsFragmentDoc = gql`
     lastName
     displayName
   }
+}
+    `;
+export const InsertCompanyFragmentFragmentDoc = gql`
+    fragment InsertCompanyFragment on Company {
+  domainName
+  address
+  id
+  name
+  createdAt
+}
+    `;
+export const InsertPersonFragmentFragmentDoc = gql`
+    fragment InsertPersonFragment on Person {
+  id
+  firstName
+  lastName
+  displayName
+  createdAt
 }
     `;
 export const CreateCommentDocument = gql`
@@ -4062,16 +4084,10 @@ export type UpdateOneCompanyMutationOptions = Apollo.BaseMutationOptions<UpdateO
 export const InsertOneCompanyDocument = gql`
     mutation InsertOneCompany($data: CompanyCreateInput!) {
   createOneCompany(data: $data) {
-    address
-    createdAt
-    domainName
-    linkedinUrl
-    employees
-    id
-    name
+    ...InsertCompanyFragment
   }
 }
-    `;
+    ${InsertCompanyFragmentFragmentDoc}`;
 export type InsertOneCompanyMutationFn = Apollo.MutationFunction<InsertOneCompanyMutation, InsertOneCompanyMutationVariables>;
 
 /**
@@ -4548,25 +4564,10 @@ export type UpdateOnePersonMutationOptions = Apollo.BaseMutationOptions<UpdateOn
 export const InsertOnePersonDocument = gql`
     mutation InsertOnePerson($data: PersonCreateInput!) {
   createOnePerson(data: $data) {
-    id
-    city
-    company {
-      domainName
-      name
-      id
-    }
-    email
-    firstName
-    lastName
-    jobTitle
-    linkedinUrl
-    xUrl
-    displayName
-    phone
-    createdAt
+    ...InsertPersonFragment
   }
 }
-    `;
+    ${InsertPersonFragmentFragmentDoc}`;
 export type InsertOnePersonMutationFn = Apollo.MutationFunction<InsertOnePersonMutation, InsertOnePersonMutationVariables>;
 
 /**
