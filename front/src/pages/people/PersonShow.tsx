@@ -21,7 +21,7 @@ import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageCo
 
 export function PersonShow() {
   const personId = useParams().personId ?? '';
-  const { InsertPersonFavorite, DeletePersonFavorite } = useFavorites();
+  const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
 
   const { data } = usePersonQuery(personId);
   const person = data?.findUniquePerson;
@@ -45,8 +45,8 @@ export function PersonShow() {
   }
 
   async function handleFavoriteButtonClick() {
-    if (isFavorite) DeletePersonFavorite(personId);
-    else InsertPersonFavorite(personId);
+    if (isFavorite) deletePersonFavorite(personId);
+    else insertPersonFavorite(personId);
   }
 
   return (

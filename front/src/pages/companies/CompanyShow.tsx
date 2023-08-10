@@ -24,7 +24,7 @@ import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageCo
 
 export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
-  const { InsertCompanyFavorite, DeleteCompanyFavorite } = useFavorites();
+  const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
 
   const theme = useTheme();
   const { data } = useCompanyQuery(companyId);
@@ -35,8 +35,8 @@ export function CompanyShow() {
   if (!company) return <></>;
 
   async function handleFavoriteButtonClick() {
-    if (isFavorite) DeleteCompanyFavorite(companyId);
-    else InsertCompanyFavorite(companyId);
+    if (isFavorite) deleteCompanyFavorite(companyId);
+    else insertCompanyFavorite(companyId);
   }
 
   return (
