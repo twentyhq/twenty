@@ -91,14 +91,14 @@ export function EntityBoardColumn({
                 />
               </BoardCardIdContext.Provider>
             ))}
-            <Draggable draggableId={`new-${column.id}`} index={cardIds.length}>
+            <Draggable
+              draggableId={`new-${column.id}`}
+              index={cardIds.length}
+              isDragDisabled={true}
+            >
               {(draggableProvided) => (
                 <div
                   ref={draggableProvided?.innerRef}
-                  {...{
-                    ...draggableProvided.dragHandleProps,
-                    draggable: false,
-                  }}
                   {...draggableProvided?.draggableProps}
                 >
                   <StyledNewCardButtonContainer>
