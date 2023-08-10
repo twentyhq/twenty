@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
-import { fieldsDefinitionsState } from '@/ui/board/states/fieldsDefinitionsState';
 import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardIdsState';
+import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
 import { EditableFieldEntityIdContext } from '@/ui/editable-field/states/EditableFieldEntityIdContext';
@@ -111,7 +111,7 @@ export function CompanyBoardCard() {
   const [selectedBoardCards, setSelectedBoardCards] = useRecoilState(
     selectedBoardCardIdsState,
   );
-  const fieldsDefinitions = useRecoilValue(fieldsDefinitionsState);
+  const viewFieldsDefinitions = useRecoilValue(viewFieldsDefinitionsState);
 
   const selected = selectedBoardCards.includes(boardCardId ?? '');
 
@@ -170,7 +170,7 @@ export function CompanyBoardCard() {
             </StyledCheckboxContainer>
           </StyledBoardCardHeader>
           <StyledBoardCardBody>
-            {fieldsDefinitions.map((viewField) => {
+            {viewFieldsDefinitions.map((viewField) => {
               return (
                 <PreventSelectOnClickContainer key={viewField.id}>
                   <EditableFieldEntityIdContext.Provider value={boardCardId}>

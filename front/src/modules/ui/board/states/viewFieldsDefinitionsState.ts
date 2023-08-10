@@ -5,7 +5,7 @@ import type {
   ViewFieldMetadata,
 } from '../../editable-field/types/ViewField';
 
-export const fieldsDefinitionsState = atom<
+export const viewFieldsDefinitionsState = atom<
   ViewFieldDefinition<ViewFieldMetadata>[]
 >({
   key: 'fieldsDefinitionState',

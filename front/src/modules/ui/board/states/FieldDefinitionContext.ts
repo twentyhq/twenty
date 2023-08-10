@@ -1,9 +1,7 @@
 import { createContext } from 'react';
 
-import {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '../../editable-field/types/ViewField';
+import { FieldDefinition } from '@/ui/editable-field/types/FieldDefinition';
 
-export const FieldDefinitionContext =
-  createContext<ViewFieldDefinition<ViewFieldMetadata> | null>(null);
+export const FieldDefinitionContext = createContext<FieldDefinition | null>(
+  null,
+);
