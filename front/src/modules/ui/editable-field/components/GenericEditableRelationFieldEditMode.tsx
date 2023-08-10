@@ -80,7 +80,6 @@ export function GenericEditableRelationFieldEditMode() {
       avatarUrl: newRelation?.avatarUrl ?? null,
     });
 
-    /*
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
@@ -88,7 +87,6 @@ export function GenericEditableRelationFieldEditMode() {
         newRelation,
       );
     }
-    */
 
     closeEditableField();
   }

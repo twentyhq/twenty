@@ -31,7 +31,6 @@ export function GenericEditableDateFieldEditMode() {
 
     setFieldValue(newDateISO);
 
-    /*
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
@@ -39,7 +38,6 @@ export function GenericEditableDateFieldEditMode() {
         newDateISO,
       );
     }
-    */
   }
 
   return (

@@ -92,7 +92,6 @@ export function ProbabilityEditableFieldEditMode() {
 
   function handleChange(newValue: number) {
     setFieldValue(newValue);
-    /*
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
@@ -100,7 +99,6 @@ export function ProbabilityEditableFieldEditMode() {
         newValue,
       );
     }
-    */
     closeEditableField();
   }
 

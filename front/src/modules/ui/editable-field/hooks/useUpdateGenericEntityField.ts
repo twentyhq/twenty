@@ -1,51 +1,51 @@
 import { useContext } from 'react';
 
-import { isViewFieldChip } from '@/ui/editable-field/types/guards/isViewFieldChip';
+import { isFieldChip } from '@/ui/editable-field/types/guards/isFieldChip';
 
 import { EditableFieldContext } from '../states/EditableFieldContext';
-import { isViewFieldChipValue } from '../types/guards/isViewFieldChipValue';
-import { isViewFieldDate } from '../types/guards/isViewFieldDate';
-import { isViewFieldDateValue } from '../types/guards/isViewFieldDateValue';
-import { isViewFieldDoubleText } from '../types/guards/isViewFieldDoubleText';
-import { isViewFieldDoubleTextChip } from '../types/guards/isViewFieldDoubleTextChip';
-import { isViewFieldDoubleTextChipValue } from '../types/guards/isViewFieldDoubleTextChipValue';
-import { isViewFieldDoubleTextValue } from '../types/guards/isViewFieldDoubleTextValue';
-import { isViewFieldNumber } from '../types/guards/isViewFieldNumber';
-import { isViewFieldNumberValue } from '../types/guards/isViewFieldNumberValue';
-import { isViewFieldPhone } from '../types/guards/isViewFieldPhone';
-import { isViewFieldPhoneValue } from '../types/guards/isViewFieldPhoneValue';
-import { isViewFieldProbability } from '../types/guards/isViewFieldProbability';
-import { isViewFieldProbabilityValue } from '../types/guards/isViewFieldProbabilityValue';
-import { isViewFieldRelation } from '../types/guards/isViewFieldRelation';
-import { isViewFieldRelationValue } from '../types/guards/isViewFieldRelationValue';
-import { isViewFieldText } from '../types/guards/isViewFieldText';
-import { isViewFieldTextValue } from '../types/guards/isViewFieldTextValue';
-import { isViewFieldURL } from '../types/guards/isViewFieldURL';
-import { isViewFieldURLValue } from '../types/guards/isViewFieldURLValue';
+import { FieldDefinition } from '../types/FieldDefinition';
 import {
-  ViewFieldChipMetadata,
-  ViewFieldChipValue,
-  ViewFieldDateMetadata,
-  ViewFieldDateValue,
-  ViewFieldDefinition,
-  ViewFieldDoubleTextChipMetadata,
-  ViewFieldDoubleTextChipValue,
-  ViewFieldDoubleTextMetadata,
-  ViewFieldDoubleTextValue,
-  ViewFieldMetadata,
-  ViewFieldNumberMetadata,
-  ViewFieldNumberValue,
-  ViewFieldPhoneMetadata,
-  ViewFieldPhoneValue,
-  ViewFieldProbabilityMetadata,
-  ViewFieldProbabilityValue,
-  ViewFieldRelationMetadata,
-  ViewFieldRelationValue,
-  ViewFieldTextMetadata,
-  ViewFieldTextValue,
-  ViewFieldURLMetadata,
-  ViewFieldURLValue,
-} from '../types/ViewField';
+  FieldChipMetadata,
+  FieldChipValue,
+  FieldDateMetadata,
+  FieldDateValue,
+  FieldDoubleTextChipMetadata,
+  FieldDoubleTextChipValue,
+  FieldDoubleTextMetadata,
+  FieldDoubleTextValue,
+  FieldMetadata,
+  FieldNumberMetadata,
+  FieldNumberValue,
+  FieldPhoneMetadata,
+  FieldPhoneValue,
+  FieldProbabilityMetadata,
+  FieldProbabilityValue,
+  FieldRelationMetadata,
+  FieldRelationValue,
+  FieldTextMetadata,
+  FieldTextValue,
+  FieldURLMetadata,
+  FieldURLValue,
+} from '../types/FieldMetadata';
+import { isFieldChipValue } from '../types/guards/isFieldChipValue';
+import { isFieldDate } from '../types/guards/isFieldDate';
+import { isFieldDateValue } from '../types/guards/isFieldDateValue';
+import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
+import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
+import { isFieldDoubleTextChipValue } from '../types/guards/isFieldDoubleTextChipValue';
+import { isFieldDoubleTextValue } from '../types/guards/isFieldDoubleTextValue';
+import { isFieldNumber } from '../types/guards/isFieldNumber';
+import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
+import { isFieldPhone } from '../types/guards/isFieldPhone';
+import { isFieldPhoneValue } from '../types/guards/isFieldPhoneValue';
+import { isFieldProbability } from '../types/guards/isFieldProbability';
+import { isFieldProbabilityValue } from '../types/guards/isFieldProbabilityValue';
+import { isFieldRelation } from '../types/guards/isFieldRelation';
+import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
+import { isFieldText } from '../types/guards/isFieldText';
+import { isFieldTextValue } from '../types/guards/isFieldTextValue';
+import { isFieldURL } from '../types/guards/isFieldURL';
+import { isFieldURLValue } from '../types/guards/isFieldURLValue';
 
 export function useUpdateGenericEntityField() {
   const currentEditableField = useContext(EditableFieldContext);
@@ -54,48 +54,45 @@ export function useUpdateGenericEntityField() {
   const [updateEntity] = useUpdateEntityMutation();
 
   return function updateEntityField<
-    MetadataType extends ViewFieldMetadata,
-    ValueType extends MetadataType extends ViewFieldDoubleTextMetadata
-      ? ViewFieldDoubleTextValue
-      : MetadataType extends ViewFieldTextMetadata
-      ? ViewFieldTextValue
-      : MetadataType extends ViewFieldPhoneMetadata
-      ? ViewFieldPhoneValue
-      : MetadataType extends ViewFieldURLMetadata
-      ? ViewFieldURLValue
-      : MetadataType extends ViewFieldNumberMetadata
-      ? ViewFieldNumberValue
-      : MetadataType extends ViewFieldDateMetadata
-      ? ViewFieldDateValue
-      : MetadataType extends ViewFieldChipMetadata
-      ? ViewFieldChipValue
-      : MetadataType extends ViewFieldDoubleTextChipMetadata
-      ? ViewFieldDoubleTextChipValue
-      : MetadataType extends ViewFieldRelationMetadata
-      ? ViewFieldRelationValue
-      : MetadataType extends ViewFieldProbabilityMetadata
-      ? ViewFieldProbabilityValue
+    MetadataType extends FieldMetadata,
+    ValueType extends MetadataType extends FieldDoubleTextMetadata
+      ? FieldDoubleTextValue
+      : MetadataType extends FieldTextMetadata
+      ? FieldTextValue
+      : MetadataType extends FieldPhoneMetadata
+      ? FieldPhoneValue
+      : MetadataType extends FieldURLMetadata
+      ? FieldURLValue
+      : MetadataType extends FieldNumberMetadata
+      ? FieldNumberValue
+      : MetadataType extends FieldDateMetadata
+      ? FieldDateValue
+      : MetadataType extends FieldChipMetadata
+      ? FieldChipValue
+      : MetadataType extends FieldDoubleTextChipMetadata
+      ? FieldDoubleTextChipValue
+      : MetadataType extends FieldRelationMetadata
+      ? FieldRelationValue
+      : MetadataType extends FieldProbabilityMetadata
+      ? FieldProbabilityValue
       : unknown,
   >(
     currentEntityId: string,
-    viewField: ViewFieldDefinition<MetadataType>,
+    field: FieldDefinition<MetadataType>,
     newFieldValue: ValueType,
   ) {
     const newFieldValueUnknown = newFieldValue as unknown;
-    // TODO: improve type guards organization, maybe with a common typeguard for all view fields
+    // TODO: improve type guards organization, maybe with a common typeguard for all  fields
     //    taking an object of options as parameter ?
     //
-    // The goal would be to check that the view field value not only is valid,
-    //    but also that it is validated against the corresponding view field type
+    // The goal would be to check that the  field value not only is valid,
+    //    but also that it is validated against the corresponding  field type
 
     // Relation
-    if (
-      isViewFieldRelation(viewField) &&
-      isViewFieldRelationValue(newFieldValueUnknown)
-    ) {
+    if (isFieldRelation(field) && isFieldRelationValue(newFieldValueUnknown)) {
       const newSelectedEntity = newFieldValueUnknown;
 
-      const fieldName = viewField.metadata.fieldName;
+      const fieldName = field.metadata.fieldName;
 
       if (!newSelectedEntity) {
         updateEntity({
@@ -121,35 +118,29 @@ export function useUpdateGenericEntityField() {
         });
       }
       // Chip
-    } else if (
-      isViewFieldChip(viewField) &&
-      isViewFieldChipValue(newFieldValueUnknown)
-    ) {
+    } else if (isFieldChip(field) && isFieldChipValue(newFieldValueUnknown)) {
       const newContent = newFieldValueUnknown;
 
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.contentFieldName]: newContent },
+          data: { [field.metadata.contentFieldName]: newContent },
         },
       });
       // Text
-    } else if (
-      isViewFieldText(viewField) &&
-      isViewFieldTextValue(newFieldValueUnknown)
-    ) {
+    } else if (isFieldText(field) && isFieldTextValue(newFieldValueUnknown)) {
       const newContent = newFieldValueUnknown;
 
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
       // Double text
     } else if (
-      isViewFieldDoubleText(viewField) &&
-      isViewFieldDoubleTextValue(newFieldValueUnknown)
+      isFieldDoubleText(field) &&
+      isFieldDoubleTextValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
 
@@ -157,15 +148,15 @@ export function useUpdateGenericEntityField() {
         variables: {
           where: { id: currentEntityId },
           data: {
-            [viewField.metadata.firstValueFieldName]: newContent.firstValue,
-            [viewField.metadata.secondValueFieldName]: newContent.secondValue,
+            [field.metadata.firstValueFieldName]: newContent.firstValue,
+            [field.metadata.secondValueFieldName]: newContent.secondValue,
           },
         },
       });
       //  Double Text Chip
     } else if (
-      isViewFieldDoubleTextChip(viewField) &&
-      isViewFieldDoubleTextChipValue(newFieldValueUnknown)
+      isFieldDoubleTextChip(field) &&
+      isFieldDoubleTextChipValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
 
@@ -173,73 +164,64 @@ export function useUpdateGenericEntityField() {
         variables: {
           where: { id: currentEntityId },
           data: {
-            [viewField.metadata.firstValueFieldName]: newContent.firstValue,
-            [viewField.metadata.secondValueFieldName]: newContent.secondValue,
+            [field.metadata.firstValueFieldName]: newContent.firstValue,
+            [field.metadata.secondValueFieldName]: newContent.secondValue,
           },
         },
       });
       // Phone
-    } else if (
-      isViewFieldPhone(viewField) &&
-      isViewFieldPhoneValue(newFieldValueUnknown)
-    ) {
+    } else if (isFieldPhone(field) && isFieldPhoneValue(newFieldValueUnknown)) {
       const newContent = newFieldValueUnknown;
 
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
       // URL
-    } else if (
-      isViewFieldURL(viewField) &&
-      isViewFieldURLValue(newFieldValueUnknown)
-    ) {
+    } else if (isFieldURL(field) && isFieldURLValue(newFieldValueUnknown)) {
       const newContent = newFieldValueUnknown;
 
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
       // Number
     } else if (
-      isViewFieldNumber(viewField) &&
-      isViewFieldNumberValue(newFieldValueUnknown)
+      isFieldNumber(field) &&
+      isFieldNumberValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
 
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
       // Date
-    } else if (
-      isViewFieldDate(viewField) &&
-      isViewFieldDateValue(newFieldValueUnknown)
-    ) {
+    } else if (isFieldDate(field) && isFieldDateValue(newFieldValueUnknown)) {
       const newContent = newFieldValueUnknown;
 
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
     } else if (
-      isViewFieldProbability(viewField) &&
-      isViewFieldProbabilityValue(newFieldValueUnknown)
+      isFieldProbability(field) &&
+      isFieldProbabilityValue(newFieldValueUnknown)
     ) {
       const newContent = newFieldValueUnknown;
 
       updateEntity({
         variables: {
           where: { id: currentEntityId },
-          data: { [viewField.metadata.fieldName]: newContent },
+          data: { [field.metadata.fieldName]: newContent },
         },
       });
     }

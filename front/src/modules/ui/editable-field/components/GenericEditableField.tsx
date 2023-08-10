@@ -1,6 +1,10 @@
 import { useContext } from 'react';
 
 import { EditableFieldContext } from '../states/EditableFieldContext';
+import { isFieldDate } from '../types/guards/isFieldDate';
+import { isFieldNumber } from '../types/guards/isFieldNumber';
+import { isFieldProbability } from '../types/guards/isFieldProbability';
+import { isFieldRelation } from '../types/guards/isFieldRelation';
 
 import { GenericEditableDateField } from './GenericEditableDateField';
 import { GenericEditableNumberField } from './GenericEditableNumberField';
@@ -11,19 +15,18 @@ export function GenericEditableField() {
   const currentEditableField = useContext(EditableFieldContext);
   const fieldDefinition = currentEditableField.fieldDefinition;
 
-  switch (fieldDefinition.type) {
-    case 'date':
-      return <GenericEditableDateField />;
-    case 'number':
-      return <GenericEditableNumberField />;
-    case 'probability':
-      return <ProbabilityEditableField />;
-    case 'relation':
-      return <GenericEditableRelationField />;
-    default:
-      console.warn(
-        `Unknown field metadata type: ${fieldDefinition.type} in GenericEditableField`,
-      );
-      return <></>;
+  if (isFieldRelation(fieldDefinition)) {
+    return <GenericEditableRelationField />;
+  } else if (isFieldDate(fieldDefinition)) {
+    return <GenericEditableDateField />;
+  } else if (isFieldNumber(fieldDefinition)) {
+    return <GenericEditableNumberField />;
+  } else if (isFieldProbability(fieldDefinition)) {
+    return <ProbabilityEditableField />;
+  } else {
+    console.warn(
+      `Unknown field metadata type: ${fieldDefinition.metadata.type} in GenericEditableCell`,
+    );
+    return <></>;
   }
 }

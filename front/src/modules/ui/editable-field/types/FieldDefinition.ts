@@ -5,6 +5,5 @@ export type FieldDefinition<T extends FieldMetadata | unknown> = {
   label: string;
   icon?: JSX.Element;
   type: string;
-  isVisible?: boolean;
   metadata: T;
 };

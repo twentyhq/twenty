@@ -47,7 +47,6 @@ export function GenericEditableNumberFieldEditMode() {
 
     setFieldValue(castAsIntegerOrNull(internalValue));
 
-    /*
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
@@ -55,7 +54,6 @@ export function GenericEditableNumberFieldEditMode() {
         castAsIntegerOrNull(internalValue),
       );
     }
-    */
   }
 
   function onCancel() {
