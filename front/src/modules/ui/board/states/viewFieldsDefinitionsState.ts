@@ -8,6 +8,6 @@ import type {
 export const viewFieldsDefinitionsState = atom<
   ViewFieldDefinition<ViewFieldMetadata>[]
 >({
-  key: 'fieldsDefinitionState',
+  key: 'viewFieldsDefinitionState',
   default: [],
 });

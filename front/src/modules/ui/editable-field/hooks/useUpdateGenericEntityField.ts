@@ -82,11 +82,11 @@ export function useUpdateGenericEntityField() {
     newFieldValue: ValueType,
   ) {
     const newFieldValueUnknown = newFieldValue as unknown;
-    // TODO: improve type guards organization, maybe with a common typeguard for all  fields
-    //    taking an object of options as parameter ?
+    // TODO: improve type guards organization, maybe with a common typeguard for all fields
+    // taking an object of options as parameter ?
     //
-    // The goal would be to check that the  field value not only is valid,
-    //    but also that it is validated against the corresponding  field type
+    // The goal would be to check that the field value not only is valid,
+    // but also that it is validated against the corresponding field type
 
     // Relation
     if (isFieldRelation(field) && isFieldRelationValue(newFieldValueUnknown)) {

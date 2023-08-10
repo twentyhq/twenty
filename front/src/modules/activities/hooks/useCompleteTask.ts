@@ -16,8 +16,6 @@ export function useCompleteTask(task: Task) {
     fragment: ACTIVITY_UPDATE_FRAGMENT,
   });
 
-  console.log('cachedTask', cachedTask);
-
   const completeTask = useCallback(
     (value: boolean) => {
       const completedAt = value ? new Date().toISOString() : null;
