@@ -8,7 +8,7 @@ import {
 } from '@/ui/icon/index';
 import { CompanyOrderByWithRelationInput as Companies_Order_By } from '~/generated/graphql';
 
-export const availableSorts = [
+export const availableSorts: SortType<Companies_Order_By>[] = [
   {
     key: 'name',
     label: 'Name',
@@ -34,4 +34,4 @@ export const availableSorts = [
     label: 'Creation',
     icon: <IconCalendarEvent size={16} />,
   },
-] satisfies Array<SortType<Companies_Order_By>>;
+];

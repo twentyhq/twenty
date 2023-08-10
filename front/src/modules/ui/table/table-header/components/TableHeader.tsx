@@ -1,12 +1,14 @@
-import { ReactNode, useCallback, useState } from 'react';
+import { ReactNode, useCallback } from 'react';
 import styled from '@emotion/styled';
 
 import { FilterDropdownButton } from '@/ui/filter-n-sort/components/FilterDropdownButton';
 import SortAndFilterBar from '@/ui/filter-n-sort/components/SortAndFilterBar';
 import { SortDropdownButton } from '@/ui/filter-n-sort/components/SortDropdownButton';
+import { sortScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { TopBar } from '@/ui/top-bar/TopBar';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { OptionsDropdownButton } from '@/views/components/OptionsDropdownButton';
 
 import { TableContext } from '../../states/TableContext';
@@ -34,26 +36,26 @@ export function TableHeader<SortField>({
   availableSorts,
   onSortsUpdate,
 }: OwnProps<SortField>) {
-  const [sorts, innerSetSorts] = useState<Array<SelectedSortType<SortField>>>(
-    [],
+  const [sorts, setSorts] = useRecoilScopedState<SelectedSortType<SortField>[]>(
+    sortScopedState,
+    TableContext,
   );
+  const handleSortsUpdate = onSortsUpdate ?? setSorts;
 
   const sortSelect = useCallback(
     (newSort: SelectedSortType<SortField>) => {
       const newSorts = updateSortOrFilterByKey(sorts, newSort);
-      innerSetSorts(newSorts);
-      onSortsUpdate && onSortsUpdate(newSorts);
+      handleSortsUpdate(newSorts);
     },
-    [onSortsUpdate, sorts],
+    [handleSortsUpdate, sorts],
   );
 
   const sortUnselect = useCallback(
     (sortKey: string) => {
       const newSorts = sorts.filter((sort) => sort.key !== sortKey);
-      innerSetSorts(newSorts);
-      onSortsUpdate && onSortsUpdate(newSorts);
+      handleSortsUpdate(newSorts);
     },
-    [onSortsUpdate, sorts],
+    [handleSortsUpdate, sorts],
   );
 
   return (
@@ -88,8 +90,7 @@ export function TableHeader<SortField>({
           sorts={sorts}
           onRemoveSort={sortUnselect}
           onCancelClick={() => {
-            innerSetSorts([]);
-            onSortsUpdate && onSortsUpdate([]);
+            handleSortsUpdate([]);
           }}
         />
       }
