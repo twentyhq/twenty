@@ -3,7 +3,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { pipelineViewFields } from '@/pipeline/constants/pipelineViewFields';
 import { isBoardLoadedState } from '@/ui/board/states/isBoardLoadedState';
-import { fieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
+import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -27,7 +27,9 @@ export function HooksCompanyBoard({
 }: {
   orderBy: PipelineProgresses_Order_By[];
 }) {
-  const setFieldsDefinitionsState = useSetRecoilState(fieldsDefinitionsState);
+  const setFieldsDefinitionsState = useSetRecoilState(
+    viewFieldsDefinitionsState,
+  );
 
   useEffect(() => {
     setFieldsDefinitionsState(pipelineViewFields);
