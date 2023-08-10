@@ -1,3 +1,3 @@
 import { createContext } from 'react';
 
-export const EditableFieldEntityIdContext = createContext<string | null>(null);
+export const EditableFieldEntityIdContext = createContext<string>('');

@@ -1,23 +1,20 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
+import { parseDate } from '~/utils/date-utils';
 
 import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
-import { FieldContext } from '../states/FieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldNumberMetadata } from '../types/FieldMetadata';
+import { FieldDateMetadata } from '../types/FieldMetadata';
 
-import { EditableField } from './EditableField';
-import { GenericEditableNumberFieldEditMode } from './GenericEditableNumberFieldEditMode';
-
-export function GenericEditableNumberField() {
+export function GenericEditableDateFieldDisplayMode() {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
-  ) as FieldDefinition<FieldNumberMetadata>;
+  ) as FieldDefinition<FieldDateMetadata>;
 
   const fieldValue = useRecoilValue<string>(
     genericEntityFieldFamilySelector({
@@ -28,14 +25,9 @@ export function GenericEditableNumberField() {
     }),
   );
 
-  return (
-    <RecoilScope SpecificContext={FieldContext}>
-      <EditableField
-        iconLabel={currentEditableFieldDefinition.icon}
-        editModeContent={<GenericEditableNumberFieldEditMode />}
-        displayModeContent={fieldValue}
-        isDisplayModeContentEmpty={!fieldValue}
-      />
-    </RecoilScope>
-  );
+  const internalDateValue = fieldValue
+    ? parseDate(fieldValue).toJSDate()
+    : null;
+
+  return <DateInputDisplay value={internalDateValue} />;
 }

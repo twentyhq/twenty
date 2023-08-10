@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { EditableFieldContext } from '../states/EditableFieldContext';
+import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldProbability } from '../types/guards/isFieldProbability';
@@ -12,8 +12,7 @@ import { GenericEditableRelationField } from './GenericEditableRelationField';
 import { ProbabilityEditableField } from './ProbabilityEditableField';
 
 export function GenericEditableField() {
-  const currentEditableField = useContext(EditableFieldContext);
-  const fieldDefinition = currentEditableField.fieldDefinition;
+  const fieldDefinition = useContext(EditableFieldDefinitionContext);
 
   if (isFieldRelation(fieldDefinition)) {
     return <GenericEditableRelationField />;

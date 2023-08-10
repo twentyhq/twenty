@@ -3,16 +3,14 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { PeoplePicker } from '@/people/components/PeoplePicker';
-import {
-  ViewFieldRelationMetadata,
-  ViewFieldRelationValue,
-} from '@/ui/editable-field/types/ViewField';
+import { ViewFieldRelationValue } from '@/ui/editable-field/types/ViewField';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 import { useEditableField } from '../hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { EditableFieldContext } from '../states/EditableFieldContext';
+import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldRelationMetadata } from '../types/FieldMetadata';
@@ -53,10 +51,10 @@ function RelationPicker({
 }
 
 export function GenericEditableRelationFieldEditMode() {
-  const currentEditableField = useContext(EditableFieldContext);
-  const currentEditableFieldEntityId = currentEditableField.entityId;
-  const currentEditableFieldDefinition =
-    currentEditableField.fieldDefinition as FieldDefinition<ViewFieldRelationMetadata>;
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableFieldDefinition = useContext(
+    EditableFieldDefinitionContext,
+  ) as FieldDefinition<FieldRelationMetadata>;
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<any | null>(

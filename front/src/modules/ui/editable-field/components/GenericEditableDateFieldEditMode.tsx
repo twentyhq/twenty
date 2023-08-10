@@ -2,17 +2,18 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { EditableFieldContext } from '../states/EditableFieldContext';
+import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldDateMetadata } from '../types/FieldMetadata';
 import { EditableFieldEditModeDate } from '../variants/components/EditableFieldEditModeDate';
 
 export function GenericEditableDateFieldEditMode() {
-  const currentEditableField = useContext(EditableFieldContext);
-  const currentEditableFieldEntityId = currentEditableField.entityId;
-  const currentEditableFieldDefinition =
-    currentEditableField.fieldDefinition as FieldDefinition<FieldDateMetadata>;
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableFieldDefinition = useContext(
+    EditableFieldDefinitionContext,
+  ) as FieldDefinition<FieldDateMetadata>;
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
