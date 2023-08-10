@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 
 import { isViewFieldChip } from '@/ui/editable-field/types/guards/isViewFieldChip';
-import { EntityUpdateMutationHookContext } from '@/ui/table/states/EntityUpdateMutationHookContext';
 
+import { EditableFieldContext } from '../states/EditableFieldContext';
 import { isViewFieldChipValue } from '../types/guards/isViewFieldChipValue';
 import { isViewFieldDate } from '../types/guards/isViewFieldDate';
 import { isViewFieldDateValue } from '../types/guards/isViewFieldDateValue';
@@ -48,7 +48,8 @@ import {
 } from '../types/ViewField';
 
 export function useUpdateGenericEntityField() {
-  const useUpdateEntityMutation = useContext(EntityUpdateMutationHookContext);
+  const currentEditableField = useContext(EditableFieldContext);
+  const useUpdateEntityMutation = currentEditableField?.mutation;
 
   const [updateEntity] = useUpdateEntityMutation();
 

@@ -7,7 +7,7 @@ import {
 } from '@/ui/editable-field/types/ViewField';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
+import { EditableFieldContext } from '../states/EditableFieldContext';
 import { FieldContext } from '../states/FieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 
@@ -19,7 +19,8 @@ type OwnProps = {
 };
 
 export function GenericEditableNumberField({ viewField }: OwnProps) {
-  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableField = useContext(EditableFieldContext);
+  const currentEditableFieldEntityId = currentEditableField?.entityId;
 
   const fieldValue = useRecoilValue<string>(
     genericEntityFieldFamilySelector({

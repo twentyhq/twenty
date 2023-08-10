@@ -7,7 +7,7 @@ import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardId
 import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
-import { EditableFieldEntityIdContext } from '@/ui/editable-field/states/EditableFieldEntityIdContext';
+import { EditableFieldContext } from '@/ui/editable-field/states/EditableFieldContext';
 import {
   Checkbox,
   CheckboxVariant,
@@ -173,9 +173,15 @@ export function CompanyBoardCard() {
             {viewFieldsDefinitions.map((viewField) => {
               return (
                 <PreventSelectOnClickContainer key={viewField.id}>
-                  <EditableFieldEntityIdContext.Provider value={boardCardId}>
+                  <EditableFieldContext.Provider
+                    value={{
+                      entityId: boardCardId,
+                      mutation: useUpdateOnePipelineProgressMutation,
+                      fieldDefinition: null,
+                    }}
+                  >
                     <GenericEditableField viewField={viewField} />
-                  </EditableFieldEntityIdContext.Provider>
+                  </EditableFieldContext.Provider>
                 </PreventSelectOnClickContainer>
               );
             })}

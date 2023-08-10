@@ -9,7 +9,7 @@ import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { parseDate } from '~/utils/date-utils';
 
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
+import { EditableFieldContext } from '../states/EditableFieldContext';
 import { FieldContext } from '../states/FieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 
@@ -21,7 +21,8 @@ type OwnProps = {
 };
 
 export function GenericEditableDateField({ viewField }: OwnProps) {
-  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableField = useContext(EditableFieldContext);
+  const currentEditableFieldEntityId = currentEditableField?.entityId;
 
   const fieldValue = useRecoilValue<string>(
     genericEntityFieldFamilySelector({

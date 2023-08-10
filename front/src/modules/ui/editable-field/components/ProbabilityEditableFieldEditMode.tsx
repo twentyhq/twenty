@@ -5,7 +5,7 @@ import { useRecoilState } from 'recoil';
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
 
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
+import { EditableFieldContext } from '../states/EditableFieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import {
   ViewFieldDefinition,
@@ -76,7 +76,8 @@ export function ProbabilityEditableFieldEditMode({ viewField }: OwnProps) {
   const [nextProbabilityIndex, setNextProbabilityIndex] = useState<
     number | null
   >(null);
-  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableField = useContext(EditableFieldContext);
+  const currentEditableFieldEntityId = currentEditableField?.entityId;
 
   const [fieldValue, setFieldValue] = useRecoilState<number>(
     genericEntityFieldFamilySelector({

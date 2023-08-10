@@ -10,7 +10,7 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
+import { EditableFieldContext } from '../states/EditableFieldContext';
 import { FieldContext } from '../states/FieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 
@@ -47,7 +47,8 @@ function RelationChip({
 }
 
 export function GenericEditableRelationField({ viewField }: OwnProps) {
-  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableField = useContext(EditableFieldContext);
+  const currentEditableFieldEntityId = currentEditableField?.entityId;
 
   const fieldValue = useRecoilValue<any | null>(
     genericEntityFieldFamilySelector({
