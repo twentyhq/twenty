@@ -28,6 +28,9 @@ export const UPDATE_PIPELINE_PROGRESS = gql`
       amount
       closeDate
       probability
+      pointOfContact {
+        id
+      }
     }
   }
 `;

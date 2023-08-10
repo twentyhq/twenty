@@ -2655,7 +2655,7 @@ export type UpdateOnePipelineProgressMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOnePipelineProgressMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string, amount?: number | null, closeDate?: string | null, probability?: number | null } | null };
+export type UpdateOnePipelineProgressMutation = { __typename?: 'Mutation', updateOnePipelineProgress?: { __typename?: 'PipelineProgress', id: string, amount?: number | null, closeDate?: string | null, probability?: number | null, pointOfContact?: { __typename?: 'Person', id: string } | null } | null };
 
 export type UpdateOnePipelineProgressStageMutationVariables = Exact<{
   id?: InputMaybe<Scalars['String']>;
@@ -4685,6 +4685,9 @@ export const UpdateOnePipelineProgressDocument = gql`
     amount
     closeDate
     probability
+    pointOfContact {
+      id
+    }
   }
 }
     `;
