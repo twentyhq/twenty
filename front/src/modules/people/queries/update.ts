@@ -26,25 +26,20 @@ export const UPDATE_ONE_PERSON = gql`
   }
 `;
 
+export const INSERT_PERSON_FRAGMENT = gql`
+  fragment InsertPersonFragment on Person {
+    id
+    firstName
+    lastName
+    displayName
+    createdAt
+  }
+`;
+
 export const INSERT_ONE_PERSON = gql`
   mutation InsertOnePerson($data: PersonCreateInput!) {
     createOnePerson(data: $data) {
-      id
-      city
-      company {
-        domainName
-        name
-        id
-      }
-      email
-      firstName
-      lastName
-      jobTitle
-      linkedinUrl
-      xUrl
-      displayName
-      phone
-      createdAt
+      ...InsertPersonFragment
     }
   }
 `;

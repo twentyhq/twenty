@@ -2592,12 +2592,14 @@ export type UpdateOnePersonMutationVariables = Exact<{
 
 export type UpdateOnePersonMutation = { __typename?: 'Mutation', updateOnePerson?: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, firstName?: string | null, lastName?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } | null };
 
+export type InsertPersonFragmentFragment = { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, createdAt: string };
+
 export type InsertOnePersonMutationVariables = Exact<{
   data: PersonCreateInput;
 }>;
 
 
-export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, city?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, displayName: string, phone?: string | null, createdAt: string, company?: { __typename?: 'Company', domainName: string, name: string, id: string } | null } };
+export type InsertOnePersonMutation = { __typename?: 'Mutation', createOnePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, createdAt: string } };
 
 export type DeleteManyPersonMutationVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -2857,6 +2859,15 @@ export const InsertCompanyFragmentFragmentDoc = gql`
   address
   id
   name
+  createdAt
+}
+    `;
+export const InsertPersonFragmentFragmentDoc = gql`
+    fragment InsertPersonFragment on Person {
+  id
+  firstName
+  lastName
+  displayName
   createdAt
 }
     `;
@@ -4377,25 +4388,10 @@ export type UpdateOnePersonMutationOptions = Apollo.BaseMutationOptions<UpdateOn
 export const InsertOnePersonDocument = gql`
     mutation InsertOnePerson($data: PersonCreateInput!) {
   createOnePerson(data: $data) {
-    id
-    city
-    company {
-      domainName
-      name
-      id
-    }
-    email
-    firstName
-    lastName
-    jobTitle
-    linkedinUrl
-    xUrl
-    displayName
-    phone
-    createdAt
+    ...InsertPersonFragment
   }
 }
-    `;
+    ${InsertPersonFragmentFragmentDoc}`;
 export type InsertOnePersonMutationFn = Apollo.MutationFunction<InsertOnePersonMutation, InsertOnePersonMutationVariables>;
 
 /**

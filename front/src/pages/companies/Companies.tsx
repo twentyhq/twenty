@@ -47,8 +47,9 @@ export function Companies() {
           createdAt: '',
         },
       },
-      update: () => {
-        setTableRowIds([newCompanyId, ...tableRowIds]);
+      update: (cache, { data }) => {
+        data?.createOneCompany.id &&
+          setTableRowIds([data?.createOneCompany.id, ...tableRowIds]);
       },
       refetchQueries: [getOperationName(SEARCH_COMPANY_QUERY) ?? ''],
     });

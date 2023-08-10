@@ -44,8 +44,9 @@ export function People() {
           createdAt: '',
         },
       },
-      update: () => {
-        setTableRowIds([newPersonId, ...tableRowIds]);
+      update: (cache, { data }) => {
+        data?.createOnePerson?.id &&
+          setTableRowIds([data?.createOnePerson.id, ...tableRowIds]);
       },
     });
   }
