@@ -5,7 +5,8 @@ import { useRecoilState } from 'recoil';
 import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
 
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
-import { EditableFieldContext } from '../states/EditableFieldContext';
+import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldProbabilityMetadata } from '../types/FieldMetadata';
@@ -70,10 +71,10 @@ export function ProbabilityEditableFieldEditMode() {
   const [nextProbabilityIndex, setNextProbabilityIndex] = useState<
     number | null
   >(null);
-  const currentEditableField = useContext(EditableFieldContext);
-  const currentEditableFieldEntityId = currentEditableField.entityId;
-  const currentEditableFieldDefinition =
-    currentEditableField.fieldDefinition as FieldDefinition<FieldProbabilityMetadata>;
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableFieldDefinition = useContext(
+    EditableFieldDefinitionContext,
+  ) as FieldDefinition<FieldProbabilityMetadata>;
 
   const [fieldValue, setFieldValue] = useRecoilState<number>(
     genericEntityFieldFamilySelector({

@@ -1,24 +1,24 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { parseDate } from '~/utils/date-utils';
 
-import { EditableFieldContext } from '../states/EditableFieldContext';
+import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { FieldContext } from '../states/FieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldDateMetadata } from '../types/FieldMetadata';
 
 import { EditableField } from './EditableField';
+import { GenericEditableDateFieldDisplayMode } from './GenericEditableDateFieldDisplayMode';
 import { GenericEditableDateFieldEditMode } from './GenericEditableDateFieldEditMode';
 
 export function GenericEditableDateField() {
-  const currentEditableField = useContext(EditableFieldContext);
-  const currentEditableFieldEntityId = currentEditableField.entityId;
-  const currentEditableFieldDefinition =
-    currentEditableField.fieldDefinition as FieldDefinition<FieldDateMetadata>;
+  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableFieldDefinition = useContext(
+    EditableFieldDefinitionContext,
+  ) as FieldDefinition<FieldDateMetadata>;
 
   const fieldValue = useRecoilValue<string>(
     genericEntityFieldFamilySelector({
@@ -29,16 +29,12 @@ export function GenericEditableDateField() {
     }),
   );
 
-  const internalDateValue = fieldValue
-    ? parseDate(fieldValue).toJSDate()
-    : null;
-
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <EditableField
         iconLabel={currentEditableFieldDefinition.icon}
         editModeContent={<GenericEditableDateFieldEditMode />}
-        displayModeContent={<DateInputDisplay value={internalDateValue} />}
+        displayModeContent={<GenericEditableDateFieldDisplayMode />}
         isDisplayModeContentEmpty={!fieldValue}
       />
     </RecoilScope>

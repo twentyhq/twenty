@@ -7,7 +7,9 @@ import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardId
 import { viewFieldsDefinitionsState } from '@/ui/board/states/viewFieldsDefinitionsState';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
-import { EditableFieldContext } from '@/ui/editable-field/states/EditableFieldContext';
+import { EditableFieldDefinitionContext } from '@/ui/editable-field/states/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '@/ui/editable-field/states/EditableFieldEntityIdContext';
+import { EditableFieldMutationContext } from '@/ui/editable-field/states/EditableFieldMutationContext';
 import {
   Checkbox,
   CheckboxVariant,
@@ -167,27 +169,29 @@ export function CompanyBoardCard() {
           </StyledCheckboxContainer>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          {viewFieldsDefinitions.map((viewField) => {
-            return (
-              <PreventSelectOnClickContainer key={viewField.id}>
-                <EditableFieldContext.Provider
-                  value={{
-                    entityId: boardCardId,
-                    mutation: useUpdateOnePipelineProgressMutation,
-                    fieldDefinition: {
-                      id: viewField.id,
-                      label: viewField.columnLabel,
-                      icon: viewField.columnIcon,
-                      type: viewField.metadata.type,
-                      metadata: viewField.metadata,
-                    },
-                  }}
-                >
-                  <GenericEditableField />
-                </EditableFieldContext.Provider>
-              </PreventSelectOnClickContainer>
-            );
-          })}
+          <EditableFieldMutationContext.Provider
+            value={useUpdateOnePipelineProgressMutation}
+          >
+            <EditableFieldEntityIdContext.Provider value={boardCardId}>
+              {viewFieldsDefinitions.map((viewField) => {
+                return (
+                  <PreventSelectOnClickContainer key={viewField.id}>
+                    <EditableFieldDefinitionContext.Provider
+                      value={{
+                        id: viewField.id,
+                        label: viewField.columnLabel,
+                        icon: viewField.columnIcon,
+                        type: viewField.metadata.type,
+                        metadata: viewField.metadata,
+                      }}
+                    >
+                      <GenericEditableField />
+                    </EditableFieldDefinitionContext.Provider>
+                  </PreventSelectOnClickContainer>
+                );
+              })}
+            </EditableFieldEntityIdContext.Provider>
+          </EditableFieldMutationContext.Provider>
         </StyledBoardCardBody>
       </StyledBoardCard>
     </StyledBoardCardWrapper>

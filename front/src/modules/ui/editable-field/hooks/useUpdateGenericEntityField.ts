@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { isFieldChip } from '@/ui/editable-field/types/guards/isFieldChip';
 
-import { EditableFieldContext } from '../states/EditableFieldContext';
+import { EditableFieldMutationContext } from '../states/EditableFieldMutationContext';
 import { FieldDefinition } from '../types/FieldDefinition';
 import {
   FieldChipMetadata,
@@ -48,8 +48,7 @@ import { isFieldURL } from '../types/guards/isFieldURL';
 import { isFieldURLValue } from '../types/guards/isFieldURLValue';
 
 export function useUpdateGenericEntityField() {
-  const currentEditableField = useContext(EditableFieldContext);
-  const useUpdateEntityMutation = currentEditableField?.mutation;
+  const useUpdateEntityMutation = useContext(EditableFieldMutationContext);
 
   const [updateEntity] = useUpdateEntityMutation();
 
