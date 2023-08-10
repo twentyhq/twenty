@@ -2,30 +2,25 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { PersonChip } from '@/people/components/PersonChip';
-import {
-  ViewFieldDefinition,
-  ViewFieldRelationMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import { ViewFieldRelationMetadata } from '@/ui/editable-field/types/ViewField';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
+import { EditableFieldContext } from '../states/EditableFieldContext';
 import { FieldContext } from '../states/FieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { FieldDefinition } from '../types/FieldDefinition';
+import { FieldRelationMetadata } from '../types/FieldMetadata';
 
 import { EditableField } from './EditableField';
 import { GenericEditableRelationFieldEditMode } from './GenericEditableRelationFieldEditMode';
-
-type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldRelationMetadata>;
-};
 
 function RelationChip({
   fieldDefinition,
   fieldValue,
 }: {
-  fieldDefinition: ViewFieldDefinition<ViewFieldRelationMetadata>;
+  fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   fieldValue: any | null;
 }) {
   switch (fieldDefinition.metadata.relationType) {
@@ -46,13 +41,18 @@ function RelationChip({
   }
 }
 
-export function GenericEditableRelationField({ viewField }: OwnProps) {
-  const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+export function GenericEditableRelationField() {
+  const currentEditableField = useContext(EditableFieldContext);
+  const currentEditableFieldEntityId = currentEditableField.entityId;
+  const currentEditableFieldDefinition =
+    currentEditableField.fieldDefinition as FieldDefinition<ViewFieldRelationMetadata>;
 
   const fieldValue = useRecoilValue<any | null>(
     genericEntityFieldFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: currentEditableFieldDefinition
+        ? currentEditableFieldDefinition.metadata.fieldName
+        : '',
     }),
   );
 
@@ -64,12 +64,13 @@ export function GenericEditableRelationField({ viewField }: OwnProps) {
           customEditHotkeyScope={{
             scope: RelationPickerHotkeyScope.RelationPicker,
           }}
-          iconLabel={viewField.columnIcon}
-          editModeContent={
-            <GenericEditableRelationFieldEditMode viewField={viewField} />
-          }
+          iconLabel={currentEditableFieldDefinition.icon}
+          editModeContent={<GenericEditableRelationFieldEditMode />}
           displayModeContent={
-            <RelationChip fieldDefinition={viewField} fieldValue={fieldValue} />
+            <RelationChip
+              fieldDefinition={currentEditableFieldDefinition}
+              fieldValue={fieldValue}
+            />
           }
           isDisplayModeContentEmpty={!fieldValue}
           isDisplayModeFixHeight
