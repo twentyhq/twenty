@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -18,10 +18,14 @@ import MainNavbar from '@/ui/navbar/components/MainNavbar';
 import NavItem from '@/ui/navbar/components/NavItem';
 import NavTitle from '@/ui/navbar/components/NavTitle';
 
+import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
+
 export function AppNavbar() {
   const theme = useTheme();
   const currentPath = useLocation().pathname;
   const { openCommandMenu } = useCommandMenu();
+
+  const navigate = useNavigate();
 
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
 
@@ -65,12 +69,22 @@ export function AppNavbar() {
           <NavItem
             label="People"
             to="/people"
+            onClick={() => {
+              measureTotalFrameLoad('people');
+
+              navigate('/people');
+            }}
             icon={<IconUser size={theme.icon.size.md} />}
             active={currentPath === '/people'}
           />
           <NavItem
             label="Opportunities"
-            to="/opportunities"
+            // to="/opportunities"
+            onClick={() => {
+              measureTotalFrameLoad('opportunities');
+
+              navigate('/opportunities');
+            }}
             icon={<IconTargetArrow size={theme.icon.size.md} />}
             active={currentPath === '/opportunities'}
           />

@@ -1,10 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { Key } from 'ts-key-enum';
 
 import { Tag } from '@/ui/tag/components/Tag';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
@@ -75,11 +73,9 @@ const StyledNumChildren = styled.div`
 `;
 
 type OwnProps = {
-  color?: string;
+  color: string;
   title: string;
-  pipelineStageId?: string;
-  onTitleEdit: (title: string) => void;
-  onColumnColorEdit: (color: string) => void;
+  onTitleEdit: (title: string, color: string) => void;
   totalAmount?: number;
   children: React.ReactNode;
   isFirstColumn: boolean;
@@ -90,7 +86,6 @@ export function BoardColumn({
   color,
   title,
   onTitleEdit,
-  onColumnColorEdit,
   totalAmount,
   children,
   isFirstColumn,
@@ -103,13 +98,6 @@ export function BoardColumn({
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
-
-  useScopedHotkeys(
-    [Key.Escape, Key.Enter],
-    handleClose,
-    BoardColumnHotkeyScope.BoardColumn,
-    [],
-  );
 
   function handleTitleClick() {
     setIsBoardColumnMenuOpen(true);
@@ -132,9 +120,8 @@ export function BoardColumn({
       </StyledHeader>
       {isBoardColumnMenuOpen && (
         <BoardColumnMenu
-          onClose={() => setIsBoardColumnMenuOpen(false)}
+          onClose={handleClose}
           onTitleEdit={onTitleEdit}
-          onColumnColorEdit={onColumnColorEdit}
           title={title}
           color={color}
         />

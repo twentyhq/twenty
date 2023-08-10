@@ -1,27 +1,22 @@
-import { ReactNode, useCallback, useContext } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
+import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
-import { PipelineProgressPointOfContactEditableField } from '@/pipeline/editable-field/components/PipelineProgressPointOfContactEditableField';
-import { ProbabilityEditableField } from '@/pipeline/editable-field/components/ProbabilityEditableField';
-import { GET_PIPELINE_PROGRESS, GET_PIPELINES } from '@/pipeline/queries';
 import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
+import { fieldsDefinitionsState } from '@/ui/board/states/fieldsDefinitionsState';
 import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardIdsState';
 import { EntityChipVariant } from '@/ui/chip/components/EntityChip';
-import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
-import { NumberEditableField } from '@/ui/editable-field/variants/components/NumberEditableField';
-import { IconCurrencyDollar, IconProgressCheck } from '@/ui/icon';
-import { IconCalendarEvent } from '@/ui/icon';
+import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
+import { EditableFieldEntityIdContext } from '@/ui/editable-field/states/EditableFieldEntityIdContext';
 import {
   Checkbox,
   CheckboxVariant,
 } from '@/ui/input/checkbox/components/Checkbox';
+import { EntityUpdateMutationHookContext } from '@/ui/table/states/EntityUpdateMutationHookContext';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import { PipelineProgressForBoard } from '../types/CompanyProgress';
+import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
 
 import { CompanyChip } from './CompanyChip';
 
@@ -106,8 +101,6 @@ const StyledFieldContainer = styled.div`
 `;
 
 export function CompanyBoardCard() {
-  const [updatePipelineProgress] = useUpdateOnePipelineProgressMutation();
-
   const boardCardId = useContext(BoardCardIdContext);
 
   const [companyProgress] = useRecoilState(
@@ -118,6 +111,7 @@ export function CompanyBoardCard() {
   const [selectedBoardCards, setSelectedBoardCards] = useRecoilState(
     selectedBoardCardIdsState,
   );
+  const fieldsDefinitions = useRecoilValue(fieldsDefinitionsState);
 
   const selected = selectedBoardCards.includes(boardCardId ?? '');
 
@@ -130,25 +124,6 @@ export function CompanyBoardCard() {
       );
     }
   }
-
-  const handleCardUpdate = useCallback(
-    async (pipelineProgress: PipelineProgressForBoard) => {
-      await updatePipelineProgress({
-        variables: {
-          id: pipelineProgress.id,
-          amount: pipelineProgress.amount,
-          closeDate: pipelineProgress.closeDate,
-          probability: pipelineProgress.probability,
-          pointOfContactId: pipelineProgress.pointOfContactId || undefined,
-        },
-        refetchQueries: [
-          getOperationName(GET_PIPELINE_PROGRESS) ?? '',
-          getOperationName(GET_PIPELINES) ?? '',
-        ],
-      });
-    },
-    [updatePipelineProgress],
-  );
 
   if (!company || !pipelineProgress) {
     return null;
@@ -171,71 +146,42 @@ export function CompanyBoardCard() {
   }
 
   return (
-    <StyledBoardCardWrapper>
-      <StyledBoardCard
-        selected={selected}
-        onClick={() => setSelected(!selected)}
-      >
-        <StyledBoardCardHeader>
-          <CompanyChip
-            id={company.id}
-            name={company.name}
-            pictureUrl={getLogoUrlFromDomainName(company.domainName)}
-            variant={EntityChipVariant.Transparent}
-          />
-          <StyledCheckboxContainer className="checkbox-container">
-            <Checkbox
-              checked={selected}
-              onChange={() => setSelected(!selected)}
-              variant={CheckboxVariant.Secondary}
+    <EntityUpdateMutationHookContext.Provider
+      value={useUpdateOnePipelineProgressMutation}
+    >
+      <StyledBoardCardWrapper>
+        <StyledBoardCard
+          selected={selected}
+          onClick={() => setSelected(!selected)}
+        >
+          <StyledBoardCardHeader>
+            <CompanyChip
+              id={company.id}
+              name={company.name}
+              pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+              variant={EntityChipVariant.Transparent}
             />
-          </StyledCheckboxContainer>
-        </StyledBoardCardHeader>
-        <StyledBoardCardBody>
-          <PreventSelectOnClickContainer>
-            <DateEditableField
-              icon={<IconCalendarEvent />}
-              value={pipelineProgress.closeDate}
-              onSubmit={(value) =>
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  closeDate: value,
-                })
-              }
-            />
-          </PreventSelectOnClickContainer>
-          <PreventSelectOnClickContainer>
-            <NumberEditableField
-              icon={<IconCurrencyDollar />}
-              placeholder="Opportunity amount"
-              value={pipelineProgress.amount}
-              onSubmit={(value) =>
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  amount: value,
-                })
-              }
-            />
-          </PreventSelectOnClickContainer>
-          <PreventSelectOnClickContainer>
-            <ProbabilityEditableField
-              icon={<IconProgressCheck />}
-              value={pipelineProgress.probability}
-              onSubmit={(value) => {
-                handleCardUpdate({
-                  ...pipelineProgress,
-                  probability: value,
-                });
-              }}
-            />
-          </PreventSelectOnClickContainer>
-          <PreventSelectOnClickContainer>
-            <PipelineProgressPointOfContactEditableField
-              pipelineProgress={pipelineProgress}
-            />
-          </PreventSelectOnClickContainer>
-        </StyledBoardCardBody>
-      </StyledBoardCard>
-    </StyledBoardCardWrapper>
+            <StyledCheckboxContainer className="checkbox-container">
+              <Checkbox
+                checked={selected}
+                onChange={() => setSelected(!selected)}
+                variant={CheckboxVariant.Secondary}
+              />
+            </StyledCheckboxContainer>
+          </StyledBoardCardHeader>
+          <StyledBoardCardBody>
+            {fieldsDefinitions.map((viewField) => {
+              return (
+                <PreventSelectOnClickContainer key={viewField.id}>
+                  <EditableFieldEntityIdContext.Provider value={boardCardId}>
+                    <GenericEditableField viewField={viewField} />
+                  </EditableFieldEntityIdContext.Provider>
+                </PreventSelectOnClickContainer>
+              );
+            })}
+          </StyledBoardCardBody>
+        </StyledBoardCard>
+      </StyledBoardCardWrapper>
+    </EntityUpdateMutationHookContext.Provider>
   );
 }

@@ -1,13 +1,13 @@
 import { useRecoilValue } from 'recoil';
 
+import {
+  ViewFieldDateMetadata,
+  ViewFieldDefinition,
+} from '@/ui/editable-field/types/ViewField';
 import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
 import { EditableCell } from '@/ui/table/editable-cell/components/EditableCell';
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
-import {
-  ViewFieldDateMetadata,
-  ViewFieldDefinition,
-} from '@/ui/table/types/ViewField';
 
 import { GenericEditableDateCellEditMode } from './GenericEditableDateCellEditMode';
 

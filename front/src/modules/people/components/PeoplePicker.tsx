@@ -7,8 +7,8 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useSearchPeopleQuery } from '~/generated/graphql';
 
 export type OwnProps = {
-  personId: string;
-  onSubmit: (newPersonId: string | null) => void;
+  personId: string | null;
+  onSubmit: (newPersonId: PersonForSelect | null) => void;
   onCancel?: () => void;
 };
 
@@ -23,7 +23,7 @@ export function PeoplePicker({ personId, onSubmit, onCancel }: OwnProps) {
 
   const people = useFilteredSearchEntityQuery({
     queryHook: useSearchPeopleQuery,
-    selectedIds: [personId],
+    selectedIds: [personId ?? ''],
     searchFilter: searchFilter,
     mappingFunction: (person) => ({
       entityType: Entity.Person,
@@ -39,7 +39,7 @@ export function PeoplePicker({ personId, onSubmit, onCancel }: OwnProps) {
   async function handleEntitySelected(
     selectedPerson: PersonForSelect | null | undefined,
   ) {
-    onSubmit(selectedPerson?.id ?? null);
+    onSubmit(selectedPerson ?? null);
   }
 
   return (

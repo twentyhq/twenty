@@ -51,12 +51,10 @@ export function EntityBoardColumn({
   column,
   boardOptions,
   onEditColumnTitle,
-  onEditColumnColor,
 }: {
   column: BoardColumnDefinition;
   boardOptions: BoardOptions;
-  onEditColumnTitle: (columnId: string, title: string) => void;
-  onEditColumnColor: (columnId: string, color: string) => void;
+  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
 }) {
   const boardColumnId = useContext(BoardColumnIdContext) ?? '';
 
@@ -68,23 +66,17 @@ export function EntityBoardColumn({
     boardCardIdsByColumnIdFamilyState(boardColumnId ?? ''),
   );
 
-  function handleEditColumnTitle(value: string) {
-    onEditColumnTitle(boardColumnId, value);
-  }
-
-  function handleEditColumnColor(newColor: string) {
-    onEditColumnColor(boardColumnId, newColor);
+  function handleEditColumnTitle(title: string, color: string) {
+    onEditColumnTitle(boardColumnId, title, color);
   }
 
   return (
     <Droppable droppableId={column.id}>
       {(droppableProvided) => (
         <BoardColumn
-          onColumnColorEdit={handleEditColumnColor}
           onTitleEdit={handleEditColumnTitle}
           title={column.title}
           color={column.colorCode}
-          pipelineStageId={column.id}
           totalAmount={boardColumnTotal}
           isFirstColumn={column.index === 0}
           numChildren={cardIds.length}
@@ -94,7 +86,7 @@ export function EntityBoardColumn({
               <BoardCardIdContext.Provider value={cardId} key={cardId}>
                 <EntityBoardCard
                   index={index}
-                  pipelineProgressId={cardId}
+                  cardId={cardId}
                   boardOptions={boardOptions}
                 />
               </BoardCardIdContext.Provider>

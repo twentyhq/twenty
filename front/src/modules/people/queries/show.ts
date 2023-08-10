@@ -14,6 +14,7 @@ export const GET_PERSON = gql`
       city
       jobTitle
       linkedinUrl
+      xUrl
       avatarUrl
       phone
       _activityCount
