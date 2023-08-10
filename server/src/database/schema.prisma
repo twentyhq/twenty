@@ -282,7 +282,7 @@ model Person {
   /// @Validator.IsOptional()
   avatarUrl   String?
 
-  company                   Company?           @relation(fields: [companyId], references: [id])
+  company                   Company?           @relation(fields: [companyId], references: [id], onDelete: SetNull)
   companyId                 String?
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace                 Workspace          @relation(fields: [workspaceId], references: [id])
@@ -407,10 +407,10 @@ model ActivityTarget {
   workspaceId     String
 
   personId String?
-  person   Person? @relation(fields: [personId], references: [id])
+  person   Person? @relation(fields: [personId], references: [id], onDelete: Cascade)
 
   companyId String?
-  company   Company? @relation(fields: [companyId], references: [id])
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -514,10 +514,10 @@ model PipelineProgress {
   updatedAt DateTime @updatedAt
 
   companyId String?
-  company   Company? @relation(fields: [companyId], references: [id])
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   personId String?
-  person   Person? @relation(fields: [personId], references: [id])
+  person   Person? @relation(fields: [personId], references: [id], onDelete: Cascade)
 
   @@map("pipeline_progresses")
 }

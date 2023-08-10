@@ -38,6 +38,7 @@ const StyledInput = styled.input<{
   variant: CheckboxVariant;
   indeterminate?: boolean;
   shape?: CheckboxShape;
+  isChecked: boolean;
 }>`
   cursor: pointer;
   margin: 0;
@@ -79,9 +80,11 @@ const StyledInput = styled.input<{
     width: var(--size);
   }
 
-  &:checked + label:before {
-    background: ${({ theme }) => theme.color.blue};
-    border-color: ${({ theme }) => theme.color.blue};
+  & + label:before {
+    background: ${({ theme, isChecked }) =>
+      isChecked ? theme.color.blue : 'inherit'};
+    border-color: ${({ theme, isChecked }) =>
+      isChecked ? theme.color.blue : 'inherit'};
   }
 
   & + label > svg {
@@ -112,7 +115,6 @@ export function Checkbox({
   React.useEffect(() => {
     setIsInternalChecked(checked);
   }, [checked]);
-
   function handleChange(value: boolean) {
     onChange?.(value);
     setIsInternalChecked(!isInternalChecked);
@@ -130,6 +132,7 @@ export function Checkbox({
         variant={variant}
         checkboxSize={size}
         shape={shape}
+        isChecked={isInternalChecked}
         onChange={(event) => handleChange(event.target.checked)}
       />
       <label htmlFor="checkbox">

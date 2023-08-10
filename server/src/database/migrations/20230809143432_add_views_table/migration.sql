@@ -28,12 +28,6 @@ CREATE UNIQUE INDEX "views_workspaceId_type_objectId_name_key" ON "views"("works
 CREATE UNIQUE INDEX "viewFields_workspaceId_viewId_objectName_fieldName_key" ON "viewFields"("workspaceId", "viewId", "objectName", "fieldName");
 
 -- AddForeignKey
--- ALTER TABLE "pipeline_progresses" ADD CONSTRAINT "pipeline_progresses_companyId_fkey" FOREIGN KEY ("companyId") REFERENCES "companies"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
--- ALTER TABLE "pipeline_progresses" ADD CONSTRAINT "pipeline_progresses_personId_fkey" FOREIGN KEY ("personId") REFERENCES "people"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "views" ADD CONSTRAINT "views_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "workspaces"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
