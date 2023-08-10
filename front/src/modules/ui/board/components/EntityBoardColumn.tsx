@@ -97,7 +97,10 @@ export function EntityBoardColumn({
               isDragDisabled={true}
             >
               {(draggableProvided) => (
-                <div ref={draggableProvided?.innerRef}>
+                <div
+                  ref={draggableProvided?.innerRef}
+                  {...draggableProvided?.draggableProps}
+                >
                   <StyledNewCardButtonContainer>
                     <RecoilScope>{boardOptions.newCardComponent}</RecoilScope>
                   </StyledNewCardButtonContainer>
