@@ -27,7 +27,10 @@ const StyledButton = styled.div<StyledButtonProps>`
   user-select: none;
 
   &:hover {
-    background: ${({ theme }) => theme.background.tertiary};
+    background: ${({ theme, type }) =>
+      type === 'warning'
+        ? theme.tag.background.red
+        : theme.background.tertiary};
   }
 `;
 

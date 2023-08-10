@@ -15,21 +15,46 @@ type StyledContainerProps = {
   position: PositionType;
 };
 
-const StyledContainer = styled.div<StyledContainerProps>`
+const StyledContainerContextMenu = styled.div<StyledContainerProps>`
   align-items: center;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   bottom: ${(props) => (props.position.x ? 'auto' : '38px')};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
+
+  left: ${(props) => (props.position.x ? `${props.position.x}px` : '50%')};
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  position: ${(props) => (props.position.x ? 'fixed' : 'absolute')};
+  top: ${(props) => (props.position.y ? `${props.position.y}px` : 'auto')};
+
+  transform: translateX(-50%);
+  width: 160px;
+  z-index: 1;
+
+  div {
+    justify-content: left;
+  }
+`;
+
+const StyledContainerActionBar = styled.div`
+  align-items: center;
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  bottom: 38px;
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   height: 48px;
 
-  left: ${(props) => (props.position.x ? `${props.position.x}px` : '50%')};
+  left: 50%;
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
-  position: ${(props) => (props.position.x ? 'fixed' : 'absolute')};
-  top: ${(props) => (props.position.y ? `${props.position.y}px` : 'auto')};
+  position: absolute;
+  top: auto;
 
   transform: translateX(-50%);
   z-index: 1;
@@ -57,10 +82,16 @@ export function ActionBar({ children, selectedIds }: OwnProps) {
   if (selectedIds.length === 0) {
     return null;
   }
-
+  if (position.x && position.y) {
+    return (
+      <StyledContainerContextMenu className="action-bar" position={position}>
+        {children}
+      </StyledContainerContextMenu>
+    );
+  }
   return (
-    <StyledContainer className="action-bar" position={position}>
+    <StyledContainerActionBar className="action-bar">
       {children}
-    </StyledContainer>
+    </StyledContainerActionBar>
   );
 }
