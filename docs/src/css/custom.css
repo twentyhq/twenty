@@ -183,3 +183,23 @@ li.coming-soon a::after {
 a.table-of-contents__link:hover{
   text-decoration: underline;
 }
+
+.navbar-sub-menu {
+  padding-top: 8px;
+  font-size: 13px;
+}
+
+.navbar-sub-menu .menu__link--sublist {
+  font-size: 11px;
+}
+
+.docs-image {
+  max-width: 100%;
+  display: flex;
+  align-self: center;
+  width: 80%;
+}
+
+.tabs-container {
+  padding: 20px;
+}
