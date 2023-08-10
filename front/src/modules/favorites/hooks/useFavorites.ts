@@ -15,7 +15,7 @@ export function useFavorites() {
   const [insertPersonFavoriteMutation] = useInsertPersonFavoriteMutation();
   const [deleteFavoriteMutation] = useDeleteFavoriteMutation();
 
-  const InsertCompanyFavorite = (companyId: string) => {
+  function insertCompanyFavorite(companyId: string) {
     insertCompanyFavoriteMutation({
       variables: {
         data: {
@@ -27,9 +27,9 @@ export function useFavorites() {
         getOperationName(GET_COMPANY) ?? '',
       ],
     });
-  };
+  }
 
-  const InsertPersonFavorite = (personId: string) => {
+  function insertPersonFavorite(personId: string) {
     insertPersonFavoriteMutation({
       variables: {
         data: {
@@ -41,9 +41,9 @@ export function useFavorites() {
         getOperationName(GET_PERSON) ?? '',
       ],
     });
-  };
+  }
 
-  const DeleteCompanyFavorite = (companyId: string) => {
+  function deleteCompanyFavorite(companyId: string) {
     deleteFavoriteMutation({
       variables: {
         where: {
@@ -57,9 +57,9 @@ export function useFavorites() {
         getOperationName(GET_COMPANY) ?? '',
       ],
     });
-  };
+  }
 
-  const DeletePersonFavorite = (personId: string) => {
+  function deletePersonFavorite(personId: string) {
     deleteFavoriteMutation({
       variables: {
         where: {
@@ -73,12 +73,12 @@ export function useFavorites() {
         getOperationName(GET_PERSON) ?? '',
       ],
     });
-  };
+  }
 
   return {
-    InsertCompanyFavorite,
-    InsertPersonFavorite,
-    DeleteCompanyFavorite,
-    DeletePersonFavorite,
+    insertCompanyFavorite,
+    insertPersonFavorite,
+    deleteCompanyFavorite,
+    deletePersonFavorite,
   };
 }

@@ -8,7 +8,6 @@ import { getLogoUrlFromDomainName } from '~/utils';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 150px;
   overflow-x: auto;
   width: 100%;
 `;

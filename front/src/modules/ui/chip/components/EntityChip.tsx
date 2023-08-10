@@ -1,17 +1,15 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Avatar, AvatarSize, AvatarType } from '@/users/components/Avatar';
+import { Avatar, AvatarType } from '@/users/components/Avatar';
 import { isNonEmptyString } from '~/utils/isNonEmptyString';
 
-import { Chip, ChipSize, ChipVariant } from './Chip';
+import { Chip, ChipVariant } from './Chip';
 
 type OwnProps = {
   linkToEntity?: string;
   entityId: string;
   name: string;
-  size?: ChipSize;
-  avatarSize?: AvatarSize;
   pictureUrl?: string;
   avatarType?: AvatarType;
   variant?: EntityChipVariant;
@@ -26,8 +24,6 @@ export function EntityChip({
   linkToEntity,
   entityId,
   name,
-  size,
-  avatarSize = 'sm',
   pictureUrl,
   avatarType = 'rounded',
   variant = EntityChipVariant.Regular,
@@ -46,7 +42,6 @@ export function EntityChip({
     <div onClick={handleLinkClick}>
       <Chip
         label={name}
-        size={size}
         variant={
           linkToEntity
             ? variant === EntityChipVariant.Regular
@@ -59,7 +54,7 @@ export function EntityChip({
             avatarUrl={pictureUrl}
             colorId={entityId}
             placeholder={name}
-            size={avatarSize}
+            size="sm"
             type={avatarType}
           />
         }

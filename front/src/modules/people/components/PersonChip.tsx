@@ -1,14 +1,10 @@
-import { ChipSize } from '@/ui/chip/components/Chip';
 import { EntityChip, EntityChipVariant } from '@/ui/chip/components/EntityChip';
-import { AvatarSize } from '@/users/components/Avatar';
 
 export type PersonChipPropsType = {
   id: string;
   name: string;
   pictureUrl?: string;
   variant?: EntityChipVariant;
-  size?: ChipSize;
-  avatarSize?: AvatarSize;
 };
 
 export function PersonChip({
@@ -16,8 +12,6 @@ export function PersonChip({
   name,
   pictureUrl,
   variant,
-  size,
-  avatarSize,
 }: PersonChipPropsType) {
   return (
     <EntityChip
@@ -27,8 +21,6 @@ export function PersonChip({
       avatarType="rounded"
       pictureUrl={pictureUrl}
       variant={variant}
-      size={size}
-      avatarSize={avatarSize}
     />
   );
 }

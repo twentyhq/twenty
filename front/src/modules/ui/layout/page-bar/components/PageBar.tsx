@@ -60,7 +60,7 @@ const StyledTopBarIconTitleContainer = styled.div`
 
 const ActionButtonsContainer = styled.div`
   display: inline-flex;
-  gap: 4px;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 type OwnProps = {
