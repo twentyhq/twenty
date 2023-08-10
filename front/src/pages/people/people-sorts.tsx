@@ -12,19 +12,15 @@ import {
   SortOrder as Order_By,
 } from '~/generated/graphql';
 
-export const availableSorts = [
+export const availableSorts: SortType<People_Order_By>[] = [
   {
     key: 'fullname',
     label: 'People',
     icon: <IconUser size={16} />,
 
-    orderByTemplates: [
-      (order: Order_By) => ({
-        firstName: order,
-      }),
-      (order: Order_By) => ({
-        lastName: order,
-      }),
+    orderByTemplate: (order: Order_By) => [
+      { firstName: order },
+      { lastName: order },
     ],
   },
   {
@@ -32,7 +28,7 @@ export const availableSorts = [
     label: 'Company',
     icon: <IconBuildingSkyscraper size={16} />,
 
-    orderByTemplates: [(order: Order_By) => ({ company: { name: order } })],
+    orderByTemplate: (order: Order_By) => [{ company: { name: order } }],
   },
   {
     key: 'email',
@@ -54,4 +50,4 @@ export const availableSorts = [
     label: 'City',
     icon: <IconMap size={16} />,
   },
-] satisfies Array<SortType<People_Order_By>>;
+];

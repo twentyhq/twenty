@@ -1,15 +1,17 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { GET_PEOPLE } from '@/people/queries';
 import { IconTrash } from '@/ui/icon/index';
 import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector';
+import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { useDeleteManyPersonMutation } from '~/generated/graphql';
 
 export function TableActionBarButtonDeletePeople() {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
+  const [tableRowIds, setTableRowIds] = useRecoilState(tableRowIdsState);
 
   const resetRowSelection = useResetTableRowSelection();
 
@@ -25,6 +27,17 @@ export function TableActionBarButtonDeletePeople() {
     await deleteManyPerson({
       variables: {
         ids: rowIdsToDelete,
+      },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        deleteManyPerson: {
+          count: rowIdsToDelete.length,
+        },
+      },
+      update: () => {
+        setTableRowIds(
+          tableRowIds.filter((id) => !rowIdsToDelete.includes(id)),
+        );
       },
     });
   }

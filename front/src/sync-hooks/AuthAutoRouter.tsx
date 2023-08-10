@@ -186,14 +186,22 @@ export function AuthAutoRouter() {
             label: 'Create Task',
             type: CommandType.Create,
             icon: <IconCheckbox />,
-            onCommandClick: () => openCreateActivity(ActivityType.Task, entity),
+            onCommandClick: () =>
+              openCreateActivity(
+                ActivityType.Task,
+                entity ? [entity] : undefined,
+              ),
           },
           {
             to: '',
             label: 'Create Note',
             type: CommandType.Create,
             icon: <IconNotes />,
-            onCommandClick: () => openCreateActivity(ActivityType.Note, entity),
+            onCommandClick: () =>
+              openCreateActivity(
+                ActivityType.Note,
+                entity ? [entity] : undefined,
+              ),
           },
         ]);
         break;
@@ -212,14 +220,22 @@ export function AuthAutoRouter() {
             label: 'Create Task',
             type: CommandType.Create,
             icon: <IconCheckbox />,
-            onCommandClick: () => openCreateActivity(ActivityType.Task, entity),
+            onCommandClick: () =>
+              openCreateActivity(
+                ActivityType.Task,
+                entity ? [entity] : undefined,
+              ),
           },
           {
             to: '',
             label: 'Create Note',
             type: CommandType.Create,
             icon: <IconNotes />,
-            onCommandClick: () => openCreateActivity(ActivityType.Note, entity),
+            onCommandClick: () =>
+              openCreateActivity(
+                ActivityType.Note,
+                entity ? [entity] : undefined,
+              ),
           },
         ]);
         break;

@@ -174,6 +174,8 @@ model Workspace {
   pipelineProgresses PipelineProgress[]
   activityTargets    ActivityTarget[]
   viewFields         ViewField[]
+  views              View[]
+  viewSorts          ViewSort[]
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -266,7 +268,7 @@ model Person {
   linkedinUrl String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  xUrl String?
+  xUrl        String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   jobTitle    String?
@@ -557,6 +559,53 @@ model Attachment {
   @@map("attachments")
 }
 
+enum ViewType {
+  Table
+  Pipeline
+}
+
+model View {
+  /// @Validator.IsString()
+  /// @Validator.IsOptional()
+  id String @id @default(uuid())
+
+  fields   ViewField[]
+  name     String
+  objectId String
+  sorts    ViewSort[]
+  type     ViewType
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+
+  @@unique([workspaceId, type, objectId, name])
+  @@map("views")
+}
+
+enum ViewSortDirection {
+  asc
+  desc
+}
+
+model ViewSort {
+  direction ViewSortDirection
+  key       String
+  name      String
+
+  view   View   @relation(fields: [viewId], references: [id])
+  viewId String
+
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  /// @TypeGraphQL.omit(input: true, output: true)
+  workspaceId String
+
+  @@id([viewId, key])
+  @@map("viewSorts")
+}
+
 model ViewField {
   /// @Validator.IsString()
   /// @Validator.IsOptional()
@@ -568,10 +617,14 @@ model ViewField {
   objectName String
   sizeInPx   Int
 
+  view   View?   @relation(fields: [viewId], references: [id])
+  viewId String?
+
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   /// @TypeGraphQL.omit(input: true, output: true)
   workspaceId String
 
+  @@unique([workspaceId, viewId, objectName, fieldName])
   @@map("viewFields")
 }

@@ -19,3 +19,11 @@ export const CREATE_VIEW_FIELDS = gql`
     }
   }
 `;
+
+export const CREATE_VIEW_SORTS = gql`
+  mutation CreateViewSorts($data: [ViewSortCreateManyInput!]!) {
+    createManyViewSort(data: $data) {
+      count
+    }
+  }
+`;

@@ -1,30 +1,33 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { companyViewFields } from '@/companies/constants/companyViewFields';
-import { CompaniesSelectedSortType, defaultOrderBy } from '@/companies/queries';
-import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { filtersScopedState } from '@/ui/filter-n-sort/states/filtersScopedState';
+import { sortsOrderByScopedState } from '@/ui/filter-n-sort/states/sortScopedState';
 import { turnFilterIntoWhereClause } from '@/ui/filter-n-sort/utils/turnFilterIntoWhereClause';
 import { IconList } from '@/ui/icon';
 import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useViewSorts } from '@/views/hooks/useViewSorts';
+import { currentViewIdState } from '@/views/states/currentViewIdState';
 import {
-  CompanyOrderByWithRelationInput,
   useGetCompaniesQuery,
   useUpdateOneCompanyMutation,
 } from '~/generated/graphql';
 import { companiesFilters } from '~/pages/companies/companies-filters';
 import { availableSorts } from '~/pages/companies/companies-sorts';
 
-export function CompanyTable() {
-  const [orderBy, setOrderBy] =
-    useState<CompanyOrderByWithRelationInput[]>(defaultOrderBy);
+import { defaultOrderBy } from '../../queries';
 
-  const updateSorts = useCallback((sorts: Array<CompaniesSelectedSortType>) => {
-    setOrderBy(sorts.length ? reduceSortsToOrderBy(sorts) : defaultOrderBy);
-  }, []);
+export function CompanyTable() {
+  const currentViewId = useRecoilValue(currentViewIdState);
+  const orderBy = useRecoilScopedValue(sortsOrderByScopedState, TableContext);
+  const { updateSorts } = useViewSorts({
+    availableSorts,
+    Context: TableContext,
+  });
 
   const filters = useRecoilScopedValue(filtersScopedState, TableContext);
 
@@ -38,7 +41,7 @@ export function CompanyTable() {
         objectName="company"
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
-        orderBy={orderBy}
+        orderBy={orderBy.length ? orderBy : defaultOrderBy}
         whereFilters={whereFilters}
         viewFieldDefinitions={companyViewFields}
         filterDefinitionArray={companiesFilters}
@@ -47,7 +50,7 @@ export function CompanyTable() {
         viewName="All Companies"
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
-        onSortsUpdate={updateSorts}
+        onSortsUpdate={currentViewId ? updateSorts : undefined}
         useUpdateEntityMutation={useUpdateOneCompanyMutation}
       />
     </>
