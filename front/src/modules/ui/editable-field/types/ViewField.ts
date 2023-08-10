@@ -39,7 +39,7 @@ export type ViewFieldDateMetadata = {
 export type ViewFieldNumberMetadata = {
   type: 'number';
   fieldName: string;
-  isPositive: boolean;
+  isPositive?: boolean;
 };
 
 export type ViewFieldRelationMetadata = {
