@@ -53,6 +53,9 @@ If you don't, you can provision one through `docker` using the following command
 ```
 
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
+
+This database is containing two tables: `default` and `test`
+You can access it using `twenty` postgres user (password: `twenty`)
   </TabItem>
   <TabItem value="linux-wsl" label="Linux / Windows WSL">
 
@@ -95,8 +98,6 @@ To do so, make copies of the `.env.example` files in `/front` and `/server`:
 cp ./front/.env.example ./front/.env
 cp ./server/.env.example ./server/.env
 ```
-
-Don't forget to update the database connection string with the correct credentials (see step 3).
 
 ### 5. Server setup
 
@@ -164,7 +165,7 @@ The default values should work out of the box, except for the postgres URL, whic
 Open `./server/.env` and change to the following:
 
 ```bash
-PG_DATABASE_URL=postgres://postgres:twenty@postgres:5432/default?connection_limit=1
+PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=1
 ```
 
 
@@ -212,7 +213,7 @@ You should now have:
 
 ### 7. Sign in to your local Twenty installation
 
-Open [http://localhost:3001](http://localhost:3001) and sign in using our seeded demo account `tim@apple.dev`.
+Open [http://localhost:3001](http://localhost:3001) and sign in using our seeded demo account `tim@apple.dev` (password: `Applecar2025`)
 
 ### 8. (Optional)
 
