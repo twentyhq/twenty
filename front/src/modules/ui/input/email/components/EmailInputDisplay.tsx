@@ -1,21 +1,25 @@
 import { MouseEvent } from 'react';
-import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 
 import { ContactLink } from '@/ui/link/components/ContactLink';
+
+function validateEmail(email: string) {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailPattern.test(email.trim());
+}
 
 type OwnProps = {
   value: string | null;
 };
 
-export function PhoneInputDisplay({ value }: OwnProps) {
-  return value && isValidPhoneNumber(value) ? (
+export function EmailInputDisplay({ value }: OwnProps) {
+  return value && validateEmail(value) ? (
     <ContactLink
-      href={parsePhoneNumber(value, 'FR')?.getURI()}
+      href={`mailto:${value}`}
       onClick={(event: MouseEvent<HTMLElement>) => {
         event.stopPropagation();
       }}
     >
-      {parsePhoneNumber(value, 'FR')?.formatInternational() || value}
+      {value}
     </ContactLink>
   ) : (
     <ContactLink href="#">{value}</ContactLink>
