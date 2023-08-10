@@ -1,25 +1,22 @@
+import { useContext } from 'react';
+
 import { EditableField } from '@/ui/editable-field/components/EditableField';
 import { FieldContext } from '@/ui/editable-field/states/FieldContext';
-import {
-  ViewFieldDefinition,
-  ViewFieldProbabilityMetadata,
-} from '@/ui/editable-field/types/ViewField';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+
+import { EditableFieldContext } from '../states/EditableFieldContext';
 
 import { ProbabilityEditableFieldEditMode } from './ProbabilityEditableFieldEditMode';
 
-type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldProbabilityMetadata>;
-};
+export function ProbabilityEditableField() {
+  const currentEditableField = useContext(EditableFieldContext);
+  const currentEditableFieldDefinition = currentEditableField.fieldDefinition;
 
-export function ProbabilityEditableField({ viewField }: OwnProps) {
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <EditableField
-        iconLabel={viewField.columnIcon}
-        displayModeContent={
-          <ProbabilityEditableFieldEditMode viewField={viewField} />
-        }
+        iconLabel={currentEditableFieldDefinition.icon}
+        displayModeContent={<ProbabilityEditableFieldEditMode />}
         displayModeContentOnly
         disableHoverEffect
       />

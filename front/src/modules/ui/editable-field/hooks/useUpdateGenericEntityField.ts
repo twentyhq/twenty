@@ -53,7 +53,7 @@ export function useUpdateGenericEntityField() {
 
   const [updateEntity] = useUpdateEntityMutation();
 
-  return function updatePeopleField<
+  return function updateEntityField<
     MetadataType extends ViewFieldMetadata,
     ValueType extends MetadataType extends ViewFieldDoubleTextMetadata
       ? ViewFieldDoubleTextValue

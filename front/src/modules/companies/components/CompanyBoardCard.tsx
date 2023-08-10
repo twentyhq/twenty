@@ -124,7 +124,8 @@ export function CompanyBoardCard() {
     }
   }
 
-  if (!company || !pipelineProgress) {
+  // boardCardId check can be moved to a wrapper to avoid unnecessary logic above
+  if (!company || !pipelineProgress || !boardCardId) {
     return null;
   }
 
@@ -173,10 +174,16 @@ export function CompanyBoardCard() {
                   value={{
                     entityId: boardCardId,
                     mutation: useUpdateOnePipelineProgressMutation,
-                    fieldDefinition: null,
+                    fieldDefinition: {
+                      id: viewField.id,
+                      label: viewField.columnLabel,
+                      icon: viewField.columnIcon,
+                      type: viewField.metadata.type,
+                      metadata: viewField.metadata,
+                    },
                   }}
                 >
-                  <GenericEditableField viewField={viewField} />
+                  <GenericEditableField />
                 </EditableFieldContext.Provider>
               </PreventSelectOnClickContainer>
             );

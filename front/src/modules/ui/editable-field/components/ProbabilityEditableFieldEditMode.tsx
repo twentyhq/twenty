@@ -7,10 +7,8 @@ import { useEditableField } from '@/ui/editable-field/hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
 import { EditableFieldContext } from '../states/EditableFieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
-import {
-  ViewFieldDefinition,
-  ViewFieldProbabilityMetadata,
-} from '../types/ViewField';
+import { FieldDefinition } from '../types/FieldDefinition';
+import { FieldProbabilityMetadata } from '../types/FieldMetadata';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -60,10 +58,6 @@ const StyledLabel = styled.div`
   width: ${({ theme }) => theme.spacing(12)};
 `;
 
-type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldProbabilityMetadata>;
-};
-
 const PROBABILITY_VALUES = [
   { label: '0%', value: 0 },
   { label: '25%', value: 25 },
@@ -72,30 +66,41 @@ const PROBABILITY_VALUES = [
   { label: '100%', value: 100 },
 ];
 
-export function ProbabilityEditableFieldEditMode({ viewField }: OwnProps) {
+export function ProbabilityEditableFieldEditMode() {
   const [nextProbabilityIndex, setNextProbabilityIndex] = useState<
     number | null
   >(null);
   const currentEditableField = useContext(EditableFieldContext);
-  const currentEditableFieldEntityId = currentEditableField?.entityId;
+  const currentEditableFieldEntityId = currentEditableField.entityId;
+  const currentEditableFieldDefinition =
+    currentEditableField.fieldDefinition as FieldDefinition<FieldProbabilityMetadata>;
 
   const [fieldValue, setFieldValue] = useRecoilState<number>(
     genericEntityFieldFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: currentEditableFieldDefinition
+        ? currentEditableFieldDefinition.metadata.fieldName
+        : '',
     }),
   );
 
-  const probabilityIndex = Math.ceil(fieldValue / 25);
   const { closeEditableField } = useEditableField();
 
   const updateField = useUpdateGenericEntityField();
 
+  const probabilityIndex = Math.ceil(fieldValue / 25);
+
   function handleChange(newValue: number) {
     setFieldValue(newValue);
+    /*
     if (currentEditableFieldEntityId && updateField) {
-      updateField(currentEditableFieldEntityId, viewField, newValue);
+      updateField(
+        currentEditableFieldEntityId,
+        currentEditableFieldDefinition,
+        newValue,
+      );
     }
+    */
     closeEditableField();
   }
 

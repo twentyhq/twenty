@@ -1,12 +1,16 @@
 import { createContext } from 'react';
 
 import { FieldDefinition } from '../types/FieldDefinition';
+import { ViewFieldMetadata } from '../types/ViewField';
 
 type EditableFieldContextValue = {
-  entityId: string | null;
-  fieldDefinition: FieldDefinition | null;
-  mutation: any | null;
+  entityId: string;
+  fieldDefinition: FieldDefinition<ViewFieldMetadata>;
+  mutation: any;
 };
 
-export const EditableFieldContext =
-  createContext<EditableFieldContextValue | null>(null);
+export const EditableFieldContext = createContext<EditableFieldContextValue>({
+  entityId: '',
+  fieldDefinition: {} as FieldDefinition<ViewFieldMetadata>,
+  mutation: undefined,
+});
