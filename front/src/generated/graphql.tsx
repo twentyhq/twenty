@@ -846,6 +846,20 @@ export type EnumPipelineProgressableTypeFilter = {
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
 };
 
+export type EnumViewSortDirectionFilter = {
+  equals?: InputMaybe<ViewSortDirection>;
+  in?: InputMaybe<Array<ViewSortDirection>>;
+  not?: InputMaybe<NestedEnumViewSortDirectionFilter>;
+  notIn?: InputMaybe<Array<ViewSortDirection>>;
+};
+
+export type EnumViewTypeFilter = {
+  equals?: InputMaybe<ViewType>;
+  in?: InputMaybe<Array<ViewType>>;
+  not?: InputMaybe<NestedEnumViewTypeFilter>;
+  notIn?: InputMaybe<Array<ViewType>>;
+};
+
 export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
@@ -1176,6 +1190,20 @@ export type NestedEnumPipelineProgressableTypeFilter = {
   in?: InputMaybe<Array<PipelineProgressableType>>;
   not?: InputMaybe<NestedEnumPipelineProgressableTypeFilter>;
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
+};
+
+export type NestedEnumViewSortDirectionFilter = {
+  equals?: InputMaybe<ViewSortDirection>;
+  in?: InputMaybe<Array<ViewSortDirection>>;
+  not?: InputMaybe<NestedEnumViewSortDirectionFilter>;
+  notIn?: InputMaybe<Array<ViewSortDirection>>;
+};
+
+export type NestedEnumViewTypeFilter = {
+  equals?: InputMaybe<ViewType>;
+  in?: InputMaybe<Array<ViewType>>;
+  not?: InputMaybe<NestedEnumViewTypeFilter>;
+  notIn?: InputMaybe<Array<ViewType>>;
 };
 
 export type NestedIntFilter = {
@@ -2161,6 +2189,20 @@ export type Verify = {
   user: User;
 };
 
+export type View = {
+  __typename?: 'View';
+  fields?: Maybe<Array<ViewField>>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  sorts?: Maybe<Array<ViewSort>>;
+  type: ViewType;
+};
+
+export type ViewCreateNestedOneWithoutFieldsInput = {
+  connect?: InputMaybe<ViewWhereUniqueInput>;
+};
+
 export type ViewField = {
   __typename?: 'ViewField';
   fieldName: Scalars['String'];
@@ -2169,6 +2211,8 @@ export type ViewField = {
   isVisible: Scalars['Boolean'];
   objectName: Scalars['String'];
   sizeInPx: Scalars['Int'];
+  view?: Maybe<View>;
+  viewId?: Maybe<Scalars['String']>;
 };
 
 export type ViewFieldCreateInput = {
@@ -2178,6 +2222,7 @@ export type ViewFieldCreateInput = {
   isVisible: Scalars['Boolean'];
   objectName: Scalars['String'];
   sizeInPx: Scalars['Int'];
+  view?: InputMaybe<ViewCreateNestedOneWithoutFieldsInput>;
 };
 
 export type ViewFieldCreateManyInput = {
@@ -2187,6 +2232,17 @@ export type ViewFieldCreateManyInput = {
   isVisible: Scalars['Boolean'];
   objectName: Scalars['String'];
   sizeInPx: Scalars['Int'];
+  viewId?: InputMaybe<Scalars['String']>;
+};
+
+export type ViewFieldListRelationFilter = {
+  every?: InputMaybe<ViewFieldWhereInput>;
+  none?: InputMaybe<ViewFieldWhereInput>;
+  some?: InputMaybe<ViewFieldWhereInput>;
+};
+
+export type ViewFieldOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
 };
 
 export type ViewFieldOrderByWithRelationInput = {
@@ -2196,6 +2252,8 @@ export type ViewFieldOrderByWithRelationInput = {
   isVisible?: InputMaybe<SortOrder>;
   objectName?: InputMaybe<SortOrder>;
   sizeInPx?: InputMaybe<SortOrder>;
+  view?: InputMaybe<ViewOrderByWithRelationInput>;
+  viewId?: InputMaybe<SortOrder>;
 };
 
 export enum ViewFieldScalarFieldEnum {
@@ -2205,6 +2263,7 @@ export enum ViewFieldScalarFieldEnum {
   IsVisible = 'isVisible',
   ObjectName = 'objectName',
   SizeInPx = 'sizeInPx',
+  ViewId = 'viewId',
   WorkspaceId = 'workspaceId'
 }
 
@@ -2215,6 +2274,7 @@ export type ViewFieldUpdateInput = {
   isVisible?: InputMaybe<Scalars['Boolean']>;
   objectName?: InputMaybe<Scalars['String']>;
   sizeInPx?: InputMaybe<Scalars['Int']>;
+  view?: InputMaybe<ViewUpdateOneWithoutFieldsNestedInput>;
 };
 
 export type ViewFieldUpdateManyWithoutWorkspaceNestedInput = {
@@ -2233,10 +2293,122 @@ export type ViewFieldWhereInput = {
   isVisible?: InputMaybe<BoolFilter>;
   objectName?: InputMaybe<StringFilter>;
   sizeInPx?: InputMaybe<IntFilter>;
+  view?: InputMaybe<ViewRelationFilter>;
+  viewId?: InputMaybe<StringNullableFilter>;
 };
 
 export type ViewFieldWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
+  workspaceId_viewId_objectName_fieldName?: InputMaybe<ViewFieldWorkspaceIdViewIdObjectNameFieldNameCompoundUniqueInput>;
+};
+
+export type ViewFieldWorkspaceIdViewIdObjectNameFieldNameCompoundUniqueInput = {
+  fieldName: Scalars['String'];
+  objectName: Scalars['String'];
+  viewId: Scalars['String'];
+};
+
+export type ViewOrderByWithRelationInput = {
+  fields?: InputMaybe<ViewFieldOrderByRelationAggregateInput>;
+  id?: InputMaybe<SortOrder>;
+  name?: InputMaybe<SortOrder>;
+  objectId?: InputMaybe<SortOrder>;
+  sorts?: InputMaybe<ViewSortOrderByRelationAggregateInput>;
+  type?: InputMaybe<SortOrder>;
+};
+
+export type ViewRelationFilter = {
+  is?: InputMaybe<ViewWhereInput>;
+  isNot?: InputMaybe<ViewWhereInput>;
+};
+
+export type ViewSort = {
+  __typename?: 'ViewSort';
+  direction: ViewSortDirection;
+  key: Scalars['String'];
+  name: Scalars['String'];
+  view: View;
+  viewId: Scalars['String'];
+};
+
+export enum ViewSortDirection {
+  Asc = 'asc',
+  Desc = 'desc'
+}
+
+export type ViewSortListRelationFilter = {
+  every?: InputMaybe<ViewSortWhereInput>;
+  none?: InputMaybe<ViewSortWhereInput>;
+  some?: InputMaybe<ViewSortWhereInput>;
+};
+
+export type ViewSortOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
+};
+
+export type ViewSortUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<ViewSortWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ViewSortWhereUniqueInput>>;
+  set?: InputMaybe<Array<ViewSortWhereUniqueInput>>;
+};
+
+export type ViewSortViewIdKeyCompoundUniqueInput = {
+  key: Scalars['String'];
+  viewId: Scalars['String'];
+};
+
+export type ViewSortWhereInput = {
+  AND?: InputMaybe<Array<ViewSortWhereInput>>;
+  NOT?: InputMaybe<Array<ViewSortWhereInput>>;
+  OR?: InputMaybe<Array<ViewSortWhereInput>>;
+  direction?: InputMaybe<EnumViewSortDirectionFilter>;
+  key?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  view?: InputMaybe<ViewRelationFilter>;
+  viewId?: InputMaybe<StringFilter>;
+};
+
+export type ViewSortWhereUniqueInput = {
+  viewId_key?: InputMaybe<ViewSortViewIdKeyCompoundUniqueInput>;
+};
+
+export enum ViewType {
+  Pipeline = 'Pipeline',
+  Table = 'Table'
+}
+
+export type ViewUpdateManyWithoutWorkspaceNestedInput = {
+  connect?: InputMaybe<Array<ViewWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<ViewWhereUniqueInput>>;
+  set?: InputMaybe<Array<ViewWhereUniqueInput>>;
+};
+
+export type ViewUpdateOneWithoutFieldsNestedInput = {
+  connect?: InputMaybe<ViewWhereUniqueInput>;
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type ViewWhereInput = {
+  AND?: InputMaybe<Array<ViewWhereInput>>;
+  NOT?: InputMaybe<Array<ViewWhereInput>>;
+  OR?: InputMaybe<Array<ViewWhereInput>>;
+  fields?: InputMaybe<ViewFieldListRelationFilter>;
+  id?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  objectId?: InputMaybe<StringFilter>;
+  sorts?: InputMaybe<ViewSortListRelationFilter>;
+  type?: InputMaybe<EnumViewTypeFilter>;
+};
+
+export type ViewWhereUniqueInput = {
+  id?: InputMaybe<Scalars['String']>;
+  workspaceId_type_objectId_name?: InputMaybe<ViewWorkspaceIdTypeObjectIdNameCompoundUniqueInput>;
+};
+
+export type ViewWorkspaceIdTypeObjectIdNameCompoundUniqueInput = {
+  name: Scalars['String'];
+  objectId: Scalars['String'];
+  type: ViewType;
 };
 
 export type Workspace = {
@@ -2258,6 +2430,8 @@ export type Workspace = {
   pipelines?: Maybe<Array<Pipeline>>;
   updatedAt: Scalars['DateTime'];
   viewFields?: Maybe<Array<ViewField>>;
+  viewSorts?: Maybe<Array<ViewSort>>;
+  views?: Maybe<Array<View>>;
   workspaceMember?: Maybe<Array<WorkspaceMember>>;
 };
 
@@ -2337,6 +2511,8 @@ export type WorkspaceUpdateInput = {
   pipelines?: InputMaybe<PipelineUpdateManyWithoutWorkspaceNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   viewFields?: InputMaybe<ViewFieldUpdateManyWithoutWorkspaceNestedInput>;
+  viewSorts?: InputMaybe<ViewSortUpdateManyWithoutWorkspaceNestedInput>;
+  views?: InputMaybe<ViewUpdateManyWithoutWorkspaceNestedInput>;
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
 };
 
