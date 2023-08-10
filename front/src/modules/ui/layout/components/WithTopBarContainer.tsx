@@ -13,7 +13,7 @@ type OwnProps = {
   isFavorite?: boolean;
   icon: ReactNode;
   onAddButtonClick?: () => void;
-  onFavouriteButtonClick?: () => void;
+  onFavoriteButtonClick?: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -29,7 +29,7 @@ export function WithTopBarContainer({
   isFavorite,
   icon,
   onAddButtonClick,
-  onFavouriteButtonClick,
+  onFavoriteButtonClick,
 }: OwnProps) {
   return (
     <StyledContainer>
@@ -40,7 +40,7 @@ export function WithTopBarContainer({
         isFavorite={isFavorite}
         icon={icon}
         onAddButtonClick={onAddButtonClick}
-        onFavouriteButtonClick={onFavouriteButtonClick}
+        onFavoriteButtonClick={onFavoriteButtonClick}
       />
       <RightDrawerContainer topMargin={PAGE_BAR_MIN_HEIGHT + 16 + 16}>
         {children}

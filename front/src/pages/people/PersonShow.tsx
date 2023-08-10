@@ -55,7 +55,7 @@ export function PersonShow() {
       icon={<IconUser size={theme.icon.size.md} />}
       hasBackButton
       isFavorite={isFavorite}
-      onFavouriteButtonClick={handleFavoriteButtonClick}
+      onFavoriteButtonClick={handleFavoriteButtonClick}
     >
       <ShowPageContainer>
         <ShowPageLeftContainer>

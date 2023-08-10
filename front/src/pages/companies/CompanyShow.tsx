@@ -45,7 +45,7 @@ export function CompanyShow() {
       hasBackButton
       isFavorite={isFavorite}
       icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
-      onFavouriteButtonClick={handleFavoriteButtonClick}
+      onFavoriteButtonClick={handleFavoriteButtonClick}
     >
       <ShowPageContainer>
         <ShowPageLeftContainer>
