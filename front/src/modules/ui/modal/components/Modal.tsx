@@ -26,9 +26,10 @@ const StyledHeader = styled.div`
 `;
 
 const StyledContent = styled.div`
-  display: flex;
-  flex: 1;
+  display: block;
   flex-direction: column;
+  height: 100%;
+  max-height: 30vh;
   overflow: scroll;
   padding: ${({ theme }) => theme.spacing(10)};
 `;

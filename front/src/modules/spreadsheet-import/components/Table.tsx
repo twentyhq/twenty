@@ -12,7 +12,7 @@ const StyledDataGrid = styled(DataGrid)`
   --rdg-error-cell-background-color: ${({ theme }) => theme.color.red};
   --rdg-font-size: ${({ theme }) => theme.font.size.sm};
   --rdg-frozen-cell-box-shadow: none;
-  --rdg-header-background-color: ${({ theme }) => theme.accent.primary};
+  --rdg-header-background-color: ${({ theme }) => theme.background.primary};
   --rdg-info-cell-background-color: ${({ theme }) => theme.color.blue};
   --rdg-row-hover-background-color: ${({ theme }) => theme.background.tertiary};
   --rdg-row-selected-background-color: ${({ theme }) => theme.accent.primary};
@@ -27,14 +27,15 @@ const StyledDataGrid = styled(DataGrid)`
   block-size: 100%;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
+  width: 100%;
 
   .rdg-header-row .rdg-cell {
-    color: ${({ theme }) => theme.font.color.primary};
+    box-shadow: none;
+    color: ${({ theme }) => theme.font.color.tertiary};
     font-size: ${({ theme }) => theme.font.size.sm};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
+    font-weight: ${({ theme }) => theme.font.weight.semiBold};
     letter-spacing: wider;
     text-transform: uppercase;
-    box-shadow: none;
     ${({ headerRowHeight }) => {
       if (headerRowHeight === 0) {
         return `
@@ -48,10 +49,10 @@ const StyledDataGrid = styled(DataGrid)`
     border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
     border-inline-end: none;
     border-right: none;
+    box-shadow: none;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    box-shadow: none;
   }
 
   .rdg-row:last-child > .rdg-cell {

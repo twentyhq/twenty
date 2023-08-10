@@ -1,30 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { Modal } from '@/ui/modal/components/Modal';
-
-import { ContinueButton } from '../../../components/ContinueButton';
 import type { Columns } from '../MatchColumnsStep';
-
-const Content = styled(Modal.Content)`
-  align-items: center;
-`;
-
-const Heading = styled.h2`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.xl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const Description = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-`;
 
 const GridContainer = styled.div`
   align-items: center;
@@ -112,53 +89,38 @@ type ColumnGridProps<T extends string> = {
     columns: Columns<T>,
     columnIndex: number,
   ) => React.ReactNode;
-  onContinue: (val: Record<string, string>[]) => void;
-  isLoading: boolean;
 };
 
 export const ColumnGrid = <T extends string>({
   columns,
   renderUserColumn,
   renderTemplateColumn,
-  onContinue,
-  isLoading,
 }: ColumnGridProps<T>) => {
   return (
     <>
-      <Content>
-        <Heading>Match Columns</Heading>
-        <Description>
-          Select the correct field for each column you'd like to import.
-        </Description>
-        <GridContainer>
-          <Grid>
-            <GridRow height="29px">
-              <GridHeader position="left">Imported data</GridHeader>
-              <GridHeader position="right">Twenty fields</GridHeader>
-            </GridRow>
-            {columns.map((column, index) => {
-              const userColumn = renderUserColumn(columns, index);
-              const templateColumn = renderTemplateColumn(columns, index);
+      <GridContainer>
+        <Grid>
+          <GridRow height="29px">
+            <GridHeader position="left">Imported data</GridHeader>
+            <GridHeader position="right">Twenty fields</GridHeader>
+          </GridRow>
+          {columns.map((column, index) => {
+            const userColumn = renderUserColumn(columns, index);
+            const templateColumn = renderTemplateColumn(columns, index);
 
-              if (React.isValidElement(userColumn)) {
-                return (
-                  <GridRow key={index}>
-                    <GridCell position="left">{userColumn}</GridCell>
-                    <GridCell position="right">{templateColumn}</GridCell>
-                  </GridRow>
-                );
-              }
+            if (React.isValidElement(userColumn)) {
+              return (
+                <GridRow key={index}>
+                  <GridCell position="left">{userColumn}</GridCell>
+                  <GridCell position="right">{templateColumn}</GridCell>
+                </GridRow>
+              );
+            }
 
-              return null;
-            })}
-          </Grid>
-        </GridContainer>
-      </Content>
-      <ContinueButton
-        isLoading={isLoading}
-        onContinue={onContinue}
-        title="Next"
-      />
+            return null;
+          })}
+        </Grid>
+      </GridContainer>
     </>
   );
 };

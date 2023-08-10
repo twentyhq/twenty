@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { Heading } from '@/spreadsheet-import/components/Heading';
 import { Modal } from '@/ui/modal/components/Modal';
 
 import { ContinueButton } from '../../components/ContinueButton';
@@ -8,12 +9,8 @@ import type { RawData } from '../../types';
 
 import { SelectHeaderTable } from './components/SelectHeaderTable';
 
-const Title = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.xl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+const StyledHeading = styled(Heading)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
-  text-align: center;
 `;
 
 const TableContainer = styled.div`
@@ -45,7 +42,7 @@ export const SelectHeaderStep = ({ data, onContinue }: SelectHeaderProps) => {
   return (
     <>
       <Modal.Content>
-        <Title>Select header row</Title>
+        <StyledHeading title="Select header row" />
         <TableContainer>
           <SelectHeaderTable
             data={data}

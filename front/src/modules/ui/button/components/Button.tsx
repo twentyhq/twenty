@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
+import { TablerIconsProps } from '@tabler/icons-react';
 
 import { SoonPill } from '@/ui/pill/components/SoonPill';
 import { rgba } from '@/ui/theme/constants/colors';
@@ -58,6 +59,8 @@ const StyledButton = styled.button<
       case 'primary':
       case 'secondary':
         return `${theme.background.transparent.medium}`;
+      case 'danger':
+        return `${theme.border.color.danger}`;
       case 'tertiary':
       default:
         return 'none';
@@ -80,6 +83,7 @@ const StyledButton = styled.button<
     switch (variant) {
       case 'primary':
       case 'secondary':
+      case 'danger':
         return position === 'middle' ? `1px 0 1px 0` : `1px`;
       case 'tertiary':
       default:
@@ -156,6 +160,8 @@ const StyledButton = styled.button<
       switch (variant) {
         case 'primary':
           return `background: linear-gradient(0deg, ${theme.background.transparent.medium} 0%, ${theme.background.transparent.medium} 100%), ${theme.color.blue}`;
+        case 'danger':
+          return `background: ${theme.background.transparent.danger}`;
         default:
           return `background: ${theme.background.tertiary}`;
       }
@@ -178,7 +184,7 @@ const StyledButton = styled.button<
 `;
 
 export function Button({
-  icon,
+  icon: initialIcon,
   title,
   fullWidth = false,
   variant = ButtonVariant.Primary,
@@ -188,6 +194,16 @@ export function Button({
   disabled = false,
   ...props
 }: ButtonProps) {
+  const icon = useMemo(() => {
+    if (!initialIcon || !React.isValidElement(initialIcon)) {
+      return null;
+    }
+
+    return React.cloneElement<TablerIconsProps>(initialIcon as any, {
+      size: 14,
+    });
+  }, [initialIcon]);
+
   return (
     <StyledButton
       fullWidth={fullWidth}

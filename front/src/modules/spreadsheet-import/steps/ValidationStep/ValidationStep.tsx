@@ -1,19 +1,52 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { RowsChangeData } from 'react-data-grid';
-import { Box, Button, Heading, Switch, useStyleConfig } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
+import styled from '@emotion/styled';
 
+import { Heading } from '@/spreadsheet-import/components/Heading';
+import { Button, ButtonVariant } from '@/ui/button/components/Button';
+import { useDialog } from '@/ui/dialog/hooks/useDialog';
+import { IconTrash } from '@/ui/icon';
+import { Toggle } from '@/ui/input/toggle/components/Toggle';
 import { Modal } from '@/ui/modal/components/Modal';
 
-import { SubmitDataAlert } from '../../components/Alerts/SubmitDataAlert';
 import { ContinueButton } from '../../components/ContinueButton';
 import { Table } from '../../components/Table';
 import { useRsi } from '../../hooks/useRsi';
-import type { themeOverrides } from '../../theme';
 import type { Data } from '../../types';
 
 import { generateColumns } from './components/columns';
 import { addErrorsAndRunHooks } from './utils/dataMutations';
 import type { Meta } from './types';
+
+const Toolbar = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${({ theme }) => theme.spacing(8)};
+`;
+
+const ErrorToggle = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+`;
+
+const ErrorToggleDescription = styled.span`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+const ScrollContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 0px;
+  width: 100%;
+`;
 
 type Props<T extends string> = {
   initialData: Data<T>[];
@@ -24,11 +57,9 @@ export const ValidationStep = <T extends string>({
   initialData,
   file,
 }: Props<T>) => {
+  const { enqueueDialog } = useDialog();
   const { translations, fields, onClose, onSubmit, rowHook, tableHook } =
     useRsi<T>();
-  const styles = useStyleConfig(
-    'ValidationStep',
-  ) as (typeof themeOverrides)['components']['ValidationStep']['baseStyle'];
 
   const [data, setData] = useState<(Data<T> & Meta)[]>(
     useMemo(
@@ -41,7 +72,6 @@ export const ValidationStep = <T extends string>({
     ReadonlySet<number | string>
   >(new Set());
   const [filterByErrors, setFilterByErrors] = useState(false);
-  const [showSubmitAlert, setShowSubmitAlert] = useState(false);
 
   const updateData = useCallback(
     (rows: typeof data) => {
@@ -113,7 +143,6 @@ export const ValidationStep = <T extends string>({
       { validData: [] as Data<T>[], invalidData: [] as Data<T>[], all: data },
     );
     onSubmit(calculatedData, file);
-    setShowSubmitAlert(false);
     onClose();
   };
   const onContinue = () => {
@@ -128,72 +157,73 @@ export const ValidationStep = <T extends string>({
     if (!invalidData) {
       submitData();
     } else {
-      setShowSubmitAlert(true);
+      enqueueDialog({
+        title: 'Finish flow with errors',
+        message:
+          'There are still some rows that contain errors. Rows with errors will be ignored when submitting.',
+        buttons: [
+          { title: 'Cancel' },
+          {
+            title: 'Submit',
+            variant: ButtonVariant.Primary,
+            onClick: submitData,
+          },
+        ],
+      });
     }
   };
 
   return (
     <>
-      <SubmitDataAlert
-        isOpen={showSubmitAlert}
-        onClose={() => setShowSubmitAlert(false)}
-        onConfirm={submitData}
-      />
       <Modal.Content>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb="2rem"
-          flexWrap="wrap"
-          gap="8px"
-        >
-          <Heading sx={styles.heading}>
-            {translations.validationStep.title}
-          </Heading>
-          <Box display="flex" gap="16px" alignItems="center" flexWrap="wrap">
-            <Button variant="outline" size="sm" onClick={deleteSelectedRows}>
-              {translations.validationStep.discardButtonTitle}
-            </Button>
-            <Switch
-              display="flex"
-              alignItems="center"
-              isChecked={filterByErrors}
+        {/* <ScrollContainer> */}
+        <Heading
+          title="Review your import"
+          description="Correct the issues and fill the missing data."
+        />
+        <Toolbar>
+          <ErrorToggle>
+            <Toggle
+              value={filterByErrors}
               onChange={() => setFilterByErrors(!filterByErrors)}
-            >
-              {translations.validationStep.filterSwitchTitle}
-            </Switch>
-          </Box>
-        </Box>
-        <Box h={0} flexGrow={1}>
-          <Table
-            rowKeyGetter={rowKeyGetter}
-            rows={tableData}
-            onRowsChange={updateRow}
-            columns={columns}
-            selectedRows={selectedRows}
-            onSelectedRowsChange={setSelectedRows}
-            components={{
-              noRowsFallback: (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  gridColumn="1/-1"
-                  mt="32px"
-                >
-                  {filterByErrors
-                    ? translations.validationStep.noRowsMessageWhenFiltered
-                    : translations.validationStep.noRowsMessage}
-                </Box>
-              ),
-            }}
+            />
+            <ErrorToggleDescription>
+              Show only rows with errors
+            </ErrorToggleDescription>
+          </ErrorToggle>
+          <Button
+            icon={<IconTrash />}
+            title="Discard"
+            variant={ButtonVariant.Danger}
+            onClick={deleteSelectedRows}
+            disabled={false}
           />
-        </Box>
+        </Toolbar>
+        <Table
+          rowKeyGetter={rowKeyGetter}
+          rows={tableData}
+          onRowsChange={updateRow}
+          columns={columns}
+          selectedRows={selectedRows}
+          onSelectedRowsChange={setSelectedRows}
+          components={{
+            noRowsFallback: (
+              <Box
+                display="flex"
+                justifyContent="center"
+                gridColumn="1/-1"
+                mt="32px"
+              >
+                {filterByErrors
+                  ? translations.validationStep.noRowsMessageWhenFiltered
+                  : translations.validationStep.noRowsMessage}
+              </Box>
+            ),
+          }}
+        />
+        {/* </ScrollContainer> */}
       </Modal.Content>
-      <ContinueButton
-        onContinue={onContinue}
-        title={translations.validationStep.nextButtonTitle}
-      />
+      <ContinueButton onContinue={onContinue} title="Confirm" />
     </>
   );
 };

@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
+import { Heading } from '@/spreadsheet-import/components/Heading';
 import { ButtonVariant } from '@/ui/button/components/Button';
 import { useDialog } from '@/ui/dialog/hooks/useDialog';
+import { Modal } from '@/ui/modal/components/Modal';
 import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 
 import { useRsi } from '../../hooks/useRsi';
@@ -17,6 +20,10 @@ import { normalizeTableData } from './utils/normalizeTableData';
 import { setColumn } from './utils/setColumn';
 import { setIgnoreColumn } from './utils/setIgnoreColumn';
 import { setSubColumn } from './utils/setSubColumn';
+
+const Content = styled(Modal.Content)`
+  align-items: center;
+`;
 
 const ColumnsContainer = styled.div`
   align-items: center;
@@ -248,24 +255,37 @@ export const MatchColumnsStep = <T extends string>({
   }, []);
 
   return (
-    <ColumnGrid
-      columns={columns}
-      onContinue={handleOnContinue}
-      isLoading={isLoading}
-      renderUserColumn={(columns, columnIndex) => (
-        <UserTableColumn
-          column={columns[columnIndex]}
-          entries={dataExample.map((row) => row[columns[columnIndex].index])}
+    <>
+      <Content>
+        <Heading
+          title="Match Columns"
+          description="Select the correct field for each column you'd like to import."
         />
-      )}
-      renderTemplateColumn={(columns, columnIndex) => (
-        <TemplateColumn
+        <ColumnGrid
           columns={columns}
-          columnIndex={columnIndex}
-          onChange={onChange}
-          onSubChange={onSubChange}
+          renderUserColumn={(columns, columnIndex) => (
+            <UserTableColumn
+              column={columns[columnIndex]}
+              entries={dataExample.map(
+                (row) => row[columns[columnIndex].index],
+              )}
+            />
+          )}
+          renderTemplateColumn={(columns, columnIndex) => (
+            <TemplateColumn
+              columns={columns}
+              columnIndex={columnIndex}
+              onChange={onChange}
+              onSubChange={onSubChange}
+            />
+          )}
         />
-      )}
-    />
+      </Content>
+      <ContinueButton
+        isLoading={isLoading}
+        onContinue={handleOnContinue}
+        title="Next"
+      />
+    </>
   );
 };
