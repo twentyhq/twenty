@@ -851,6 +851,20 @@ export type EnumPipelineProgressableTypeFilter = {
   notIn?: InputMaybe<Array<PipelineProgressableType>>;
 };
 
+export type EnumViewSortDirectionFilter = {
+  equals?: InputMaybe<ViewSortDirection>;
+  in?: InputMaybe<Array<ViewSortDirection>>;
+  not?: InputMaybe<NestedEnumViewSortDirectionFilter>;
+  notIn?: InputMaybe<Array<ViewSortDirection>>;
+};
+
+export type EnumViewTypeFilter = {
+  equals?: InputMaybe<ViewType>;
+  in?: InputMaybe<Array<ViewType>>;
+  not?: InputMaybe<NestedEnumViewTypeFilter>;
+  notIn?: InputMaybe<Array<ViewType>>;
+};
+
 export type Favorite = {
   __typename?: 'Favorite';
   company?: Maybe<Company>;
@@ -914,20 +928,6 @@ export type FavoriteWhereInput = {
 
 export type FavoriteWhereUniqueInput = {
   id?: InputMaybe<Scalars['String']>;
-}
-
-export type EnumViewSortDirectionFilter = {
-  equals?: InputMaybe<ViewSortDirection>;
-  in?: InputMaybe<Array<ViewSortDirection>>;
-  not?: InputMaybe<NestedEnumViewSortDirectionFilter>;
-  notIn?: InputMaybe<Array<ViewSortDirection>>;
-};
-
-export type EnumViewTypeFilter = {
-  equals?: InputMaybe<ViewType>;
-  in?: InputMaybe<Array<ViewType>>;
-  not?: InputMaybe<NestedEnumViewTypeFilter>;
-  notIn?: InputMaybe<Array<ViewType>>;
 };
 
 export enum FileFolder {
