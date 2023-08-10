@@ -853,14 +853,14 @@ export type EnumPipelineProgressableTypeFilter = {
 
 export type Favorite = {
   __typename?: 'Favorite';
-  User?: Maybe<User>;
   company?: Maybe<Company>;
   companyId?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   person?: Maybe<Person>;
   personId?: Maybe<Scalars['String']>;
-  userId?: Maybe<Scalars['String']>;
   workspaceId?: Maybe<Scalars['String']>;
+  workspaceMember?: Maybe<WorkspaceMember>;
+  workspaceMemberId?: Maybe<Scalars['String']>;
 };
 
 export type FavoriteCreateNestedManyWithoutCompanyInput = {
@@ -901,22 +901,15 @@ export type FavoriteUpdateManyWithoutPersonNestedInput = {
   set?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
 };
 
-export type FavoriteUpdateManyWithoutUserNestedInput = {
-  connect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
-  disconnect?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
-  set?: InputMaybe<Array<FavoriteWhereUniqueInput>>;
-};
-
 export type FavoriteWhereInput = {
   AND?: InputMaybe<Array<FavoriteWhereInput>>;
   NOT?: InputMaybe<Array<FavoriteWhereInput>>;
   OR?: InputMaybe<Array<FavoriteWhereInput>>;
-  User?: InputMaybe<UserRelationFilter>;
   companyId?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<StringFilter>;
   personId?: InputMaybe<StringNullableFilter>;
-  userId?: InputMaybe<StringNullableFilter>;
   workspaceId?: InputMaybe<StringNullableFilter>;
+  workspaceMemberId?: InputMaybe<StringNullableFilter>;
 };
 
 export type FavoriteWhereUniqueInput = {
@@ -2042,7 +2035,6 @@ export type Telemetry = {
 
 export type User = {
   __typename?: 'User';
-  Favorite?: Maybe<Array<Favorite>>;
   assignedActivities?: Maybe<Array<Activity>>;
   authoredActivities?: Maybe<Array<Activity>>;
   authoredAttachments?: Maybe<Array<Attachment>>;
@@ -2091,7 +2083,6 @@ export type UserExists = {
 };
 
 export type UserOrderByWithRelationInput = {
-  Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   assignedActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
   authoredActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
   authoredAttachments?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
@@ -2189,7 +2180,6 @@ export type UserSettingsWhereInput = {
 };
 
 export type UserUpdateInput = {
-  Favorite?: InputMaybe<FavoriteUpdateManyWithoutUserNestedInput>;
   assignedActivities?: InputMaybe<ActivityUpdateManyWithoutAssigneeNestedInput>;
   authoredActivities?: InputMaybe<ActivityUpdateManyWithoutAuthorNestedInput>;
   authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutAuthorNestedInput>;
@@ -2228,7 +2218,6 @@ export type UserUpdateOneWithoutCompaniesNestedInput = {
 
 export type UserWhereInput = {
   AND?: InputMaybe<Array<UserWhereInput>>;
-  Favorite?: InputMaybe<FavoriteListRelationFilter>;
   NOT?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
   assignedActivities?: InputMaybe<ActivityListRelationFilter>;
@@ -2373,6 +2362,7 @@ export type WorkspaceInviteHashValid = {
 
 export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
+  Favorite?: Maybe<Array<Favorite>>;
   allowImpersonation: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
@@ -2383,6 +2373,7 @@ export type WorkspaceMember = {
 };
 
 export type WorkspaceMemberOrderByWithRelationInput = {
+  Favorite?: InputMaybe<FavoriteOrderByRelationAggregateInput>;
   allowImpersonation?: InputMaybe<SortOrder>;
   createdAt?: InputMaybe<SortOrder>;
   id?: InputMaybe<SortOrder>;
@@ -2409,6 +2400,7 @@ export type WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput = {
 
 export type WorkspaceMemberWhereInput = {
   AND?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
+  Favorite?: InputMaybe<FavoriteListRelationFilter>;
   NOT?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
   OR?: InputMaybe<Array<WorkspaceMemberWhereInput>>;
   allowImpersonation?: InputMaybe<BoolFilter>;
@@ -2711,7 +2703,7 @@ export type GetPersonQueryVariables = Exact<{
 }>;
 
 
-export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null } };
+export type GetPersonQuery = { __typename?: 'Query', findUniquePerson: { __typename?: 'Person', id: string, firstName?: string | null, lastName?: string | null, displayName: string, email?: string | null, createdAt: string, city?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, xUrl?: string | null, avatarUrl?: string | null, phone?: string | null, _activityCount: number, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, Favorite?: Array<{ __typename?: 'Favorite', id: string, person?: { __typename?: 'Person', id: string } | null, company?: { __typename?: 'Company', id: string } | null }> | null } };
 
 export type UpdateOnePersonMutationVariables = Exact<{
   where: PersonWhereUniqueInput;
