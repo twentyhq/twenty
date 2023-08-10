@@ -37,7 +37,7 @@ export function useOpenCreateActivityDrawer() {
 
   return function openCreateActivityDrawer(
     type: ActivityType,
-    entity?: CommentableEntity,
+    entities?: CommentableEntity[],
   ) {
     const now = new Date().toISOString();
 
@@ -52,23 +52,19 @@ export function useOpenCreateActivityDrawer() {
           type: type,
           activityTargets: {
             createMany: {
-              data: entity
-                ? [
-                    {
-                      commentableId: entity.id,
-                      commentableType: entity.type,
-                      companyId:
-                        entity.type === CommentableType.Company
-                          ? entity.id
-                          : null,
-                      personId:
-                        entity.type === CommentableType.Person
-                          ? entity.id
-                          : null,
-                      id: v4(),
-                      createdAt: now,
-                    },
-                  ]
+              data: entities
+                ? entities.map((entity) => ({
+                    commentableId: entity.id,
+                    commentableType: entity.type,
+                    companyId:
+                      entity.type === CommentableType.Company
+                        ? entity.id
+                        : null,
+                    personId:
+                      entity.type === CommentableType.Person ? entity.id : null,
+                    id: v4(),
+                    createdAt: now,
+                  }))
                 : [],
               skipDuplicates: true,
             },
@@ -85,7 +81,7 @@ export function useOpenCreateActivityDrawer() {
       onCompleted(data) {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
         setViewableActivityId(data.createOneActivity.id);
-        setCommentableEntityArray(entity ? [entity] : []);
+        setCommentableEntityArray(entities ?? []);
         openRightDrawer(RightDrawerPages.CreateActivity);
       },
     });
