@@ -33,7 +33,7 @@ export function GenericEditableDateFieldEditMode({ viewField }: OwnProps) {
 
     setFieldValue(newDateISO);
 
-    if (currentEditableFieldEntityId && updateField && newDateISO) {
+    if (currentEditableFieldEntityId && updateField) {
       updateField(currentEditableFieldEntityId, viewField, newDateISO);
     }
   }
