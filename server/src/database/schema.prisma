@@ -120,7 +120,6 @@ model User {
 
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  Favorite  Favorite[]
 
   @@map("users")
 }
@@ -206,6 +205,7 @@ model WorkspaceMember {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Favorite         Favorite[]
 
   @@map("workspace_members")
 }
@@ -268,7 +268,7 @@ model Person {
   linkedinUrl String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
-  xUrl String?
+  xUrl        String?
   /// @Validator.IsString()
   /// @Validator.IsOptional()
   jobTitle    String?
@@ -569,8 +569,9 @@ model Favorite {
   /// @TypeGraphQL.omit(input: true, output: false)
   company     Company? @relation(fields: [companyId], references: [id])
   companyId   String?
-  User        User?    @relation(fields: [userId], references: [id])
-  userId      String?
+  /// @TypeGraphQL.omit(input: true, output: false)
+  workspaceMember    WorkspaceMember? @relation(fields: [workspaceMemberId], references: [id])
+  workspaceMemberId  String?
 
   @@map("favorites")
 }
