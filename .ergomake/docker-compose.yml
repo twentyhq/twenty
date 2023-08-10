@@ -23,13 +23,13 @@ services:
       ACCESS_TOKEN_SECRET: "secret_jwt"
       LOGIN_TOKEN_SECRET: "secret_login_token"
       REFRESH_TOKEN_SECRET: "secret_refresh_token"
-      PG_DATABASE_URL: "postgres://postgres:postgrespassword@postgres:5432/default?connection_limit=1"
+      PG_DATABASE_URL: "postgres://twenty:twenty@postgres:5432/default?connection_limit=1"
       FRONT_BASE_URL: "http://localhost:3000"
     labels:
       dev.ergomake.env.replace-env.FRONT_BASE_URL: "https://{{ services.server.url }}"
   postgres:
     build: ../infra/dev/postgres
     environment:
-      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_PASSWORD: twenty
     ports:
       - "5432"

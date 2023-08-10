@@ -1,18 +1,19 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import type {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+  ViewFieldTextMetadata,
+} from '@/ui/editable-field/types/ViewField';
 import { GET_VIEW_FIELDS } from '@/views/queries/select';
+import { currentViewIdState } from '@/views/states/currentViewIdState';
 import {
   SortOrder,
   useCreateViewFieldsMutation,
   useGetViewFieldsQuery,
 } from '~/generated/graphql';
 
-import type {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-  ViewFieldTextMetadata,
-} from '../../editable-field/types/ViewField';
 import { entityTableDimensionsState } from '../states/entityTableDimensionsState';
 import { viewFieldsState } from '../states/viewFieldsState';
 
@@ -33,13 +34,14 @@ export const toViewFieldInput = (
   sizeInPx: viewFieldDefinition.columnSize,
 });
 
-export const useLoadView = ({
+export const useLoadViewFields = ({
   objectName,
   viewFieldDefinitions,
 }: {
   objectName: 'company' | 'person';
   viewFieldDefinitions: ViewFieldDefinition<ViewFieldMetadata>[];
 }) => {
+  const currentViewId = useRecoilValue(currentViewIdState);
   const setEntityTableDimensions = useSetRecoilState(
     entityTableDimensionsState,
   );
@@ -50,7 +52,10 @@ export const useLoadView = ({
   useGetViewFieldsQuery({
     variables: {
       orderBy: { index: SortOrder.Asc },
-      where: { objectName: { equals: objectName } },
+      where: {
+        objectName: { equals: objectName },
+        viewId: { equals: currentViewId ?? null },
+      },
     },
     onCompleted: (data) => {
       if (data.viewFields.length) {
@@ -79,9 +84,10 @@ export const useLoadView = ({
       // Populate if empty
       createViewFieldsMutation({
         variables: {
-          data: viewFieldDefinitions.map((viewFieldDefinition) =>
-            toViewFieldInput(objectName, viewFieldDefinition),
-          ),
+          data: viewFieldDefinitions.map((viewFieldDefinition) => ({
+            ...toViewFieldInput(objectName, viewFieldDefinition),
+            viewId: currentViewId,
+          })),
         },
         refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
       });

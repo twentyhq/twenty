@@ -12,7 +12,8 @@ jobs:
         image: postgres
         env:
           POSTGRES_HOST: postgres
-          POSTGRES_PASSWORD: postgrespassword
+          POSTGRES_PASSWORD: twenty
+          POSTGRES_USER: twenty
           POSTGRES_DB: test
           POSTGRES_PORT: 5432
         ports:

@@ -4,6 +4,9 @@ sidebar_custom_props:
   icon: TbDeviceDesktop
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Local Setup
 
 This section will guide you through the Twenty installation on your local environment. 
@@ -41,12 +44,50 @@ You also need to have a PosgresSQL database available. If you already have one a
 
 If you don't, you can provision one through `docker` using the following command:
 
+<Tabs>
+  <TabItem value="docker" label="Docker" default>
+
 ```bash
-cd twenty
-make provision-postgres
+  cd twenty
+  make provision-postgres
 ```
 
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
+
+This instance is containing two databases: `default` and `test`
+You can access them using `twenty` postgres user (password: `twenty`)
+  </TabItem>
+  <TabItem value="linux-wsl" label="Linux / Windows WSL">
+
+Install PostgresSQL on WSL2:
+
+```bash
+  sudo apt update
+  sudo apt install postgresql postgresql-contrib
+```
+
+Start postgresql service and connect to the database using default `postgres` user:
+
+```bash
+sudo service postgresql start
+sudo -u postgres psql
+```
+
+Create two databases:
+
+```sql
+CREATE DATABASE "default";
+CREATE DATABASE "test";
+```
+
+Create a `twenty` user with password `twenty`:
+
+```sql
+CREATE USER twenty PASSWORD ‘twenty’
+```
+  </TabItem>
+</Tabs>
+
 
 ### 4. Setup env variables
 
@@ -57,8 +98,6 @@ To do so, make copies of the `.env.example` files in `/front` and `/server`:
 cp ./front/.env.example ./front/.env
 cp ./server/.env.example ./server/.env
 ```
-
-The default values should work out of the box. Don't forget to update the database connection string if you are using your own database instance.
 
 ### 5. Server setup
 
@@ -126,7 +165,7 @@ The default values should work out of the box, except for the postgres URL, whic
 Open `./server/.env` and change to the following:
 
 ```bash
-PG_DATABASE_URL=postgres://postgres:postgrespassword@postgres:5432/default?connection_limit=1
+PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=1
 ```
 
 
@@ -174,7 +213,7 @@ You should now have:
 
 ### 7. Sign in to your local Twenty installation
 
-Open [http://localhost:3001](http://localhost:3001) and sign in using our seeded demo account `tim@apple.dev`.
+Open [http://localhost:3001](http://localhost:3001) and sign in using our seeded demo account `tim@apple.dev` (password: `Applecar2025`)
 
 ### 8. (Optional)
 

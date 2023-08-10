@@ -40,7 +40,8 @@ export function GenericEditableDoubleTextChipCellDisplayMode({
     }),
   );
 
-  const displayName = `${firstValue} ${secondValue}`;
+  const displayName =
+    firstValue || secondValue ? `${firstValue} ${secondValue}` : ' ';
 
   switch (viewField.metadata.entityType) {
     case Entity.Company: {

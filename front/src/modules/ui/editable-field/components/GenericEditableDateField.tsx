@@ -1,47 +1,40 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import {
-  ViewFieldDateMetadata,
-  ViewFieldDefinition,
-} from '@/ui/editable-field/types/ViewField';
-import { DateInputDisplay } from '@/ui/input/date/components/DateInputDisplay';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { parseDate } from '~/utils/date-utils';
 
+import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { FieldContext } from '../states/FieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { FieldDefinition } from '../types/FieldDefinition';
+import { FieldDateMetadata } from '../types/FieldMetadata';
 
 import { EditableField } from './EditableField';
+import { GenericEditableDateFieldDisplayMode } from './GenericEditableDateFieldDisplayMode';
 import { GenericEditableDateFieldEditMode } from './GenericEditableDateFieldEditMode';
 
-type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldDateMetadata>;
-};
-
-export function GenericEditableDateField({ viewField }: OwnProps) {
+export function GenericEditableDateField() {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableFieldDefinition = useContext(
+    EditableFieldDefinitionContext,
+  ) as FieldDefinition<FieldDateMetadata>;
 
   const fieldValue = useRecoilValue<string>(
     genericEntityFieldFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: currentEditableFieldDefinition
+        ? currentEditableFieldDefinition.metadata.fieldName
+        : '',
     }),
   );
-
-  const internalDateValue = fieldValue
-    ? parseDate(fieldValue).toJSDate()
-    : null;
 
   return (
     <RecoilScope SpecificContext={FieldContext}>
       <EditableField
-        iconLabel={viewField.columnIcon}
-        editModeContent={
-          <GenericEditableDateFieldEditMode viewField={viewField} />
-        }
-        displayModeContent={<DateInputDisplay value={internalDateValue} />}
+        iconLabel={currentEditableFieldDefinition.icon}
+        editModeContent={<GenericEditableDateFieldEditMode />}
+        displayModeContent={<GenericEditableDateFieldDisplayMode />}
         isDisplayModeContentEmpty={!fieldValue}
       />
     </RecoilScope>

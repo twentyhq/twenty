@@ -7,6 +7,7 @@ import { IconList } from '@tabler/icons-react';
 import { useRecoilState } from 'recoil';
 
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
+import { GET_PIPELINE_PROGRESS } from '@/pipeline/queries';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
 import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { useUpdateBoardCardIds } from '@/ui/board/hooks/useUpdateBoardCardIds';
@@ -21,7 +22,6 @@ import {
   useUpdateOnePipelineProgressStageMutation,
 } from '~/generated/graphql';
 
-import { GET_PIPELINE_PROGRESS } from '../../../pipeline/queries';
 import { BoardColumnContext } from '../states/BoardColumnContext';
 import { boardColumnsState } from '../states/boardColumnsState';
 import { selectedBoardCardIdsState } from '../states/selectedBoardCardIdsState';

@@ -5,11 +5,9 @@
     "dbaeumer.vscode-eslint",
     "unifiedjs.vscode-mdx",
     "ms-vscode.makefile-tools",
-    "ms-azuretools.vscode-docker",
     "esbenp.prettier-vscode",
     "GraphQL.vscode-graphql",
     "prisma.prisma",
-    "unifiedjs.vscode-mdx",
     "yoavbls.pretty-ts-errors",
     "graphql.vscode-graphql-syntax",
     "graphql.vscode-graphql"

@@ -7,6 +7,10 @@ import {
 import { useCurrentRowEntityId } from '@/ui/table/hooks/useCurrentEntityId';
 import { useUpdateEntityField } from '@/ui/table/hooks/useUpdateEntityField';
 import { tableEntityFieldFamilySelector } from '@/ui/table/states/tableEntityFieldFamilySelector';
+import {
+  canBeCastAsPositiveIntegerOrNull,
+  castAsPositiveIntegerOrNull,
+} from '~/utils/cast-as-positive-integer-or-null';
 
 import { TextCellEdit } from './TextCellEdit';
 
@@ -31,10 +35,25 @@ export function GenericEditableNumberCellEditMode({ viewField }: OwnProps) {
     if (newText === fieldValue) return;
 
     try {
-      const numberValue = parseInt(newText);
+      let numberValue = parseInt(newText);
 
       if (isNaN(numberValue)) {
         throw new Error('Not a number');
+      }
+
+      if (viewField.metadata.isPositive) {
+        if (!canBeCastAsPositiveIntegerOrNull(newText)) {
+          return;
+        }
+
+        const valueCastedAsPositiveNumberOrNull =
+          castAsPositiveIntegerOrNull(newText);
+
+        if (valueCastedAsPositiveNumberOrNull === null) {
+          throw Error('Not a number');
+        }
+
+        numberValue = valueCastedAsPositiveNumberOrNull;
       }
 
       // TODO: find a way to store this better in DB

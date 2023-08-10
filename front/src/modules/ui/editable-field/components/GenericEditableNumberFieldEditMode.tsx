@@ -1,10 +1,6 @@
 import { useContext, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
-import {
-  ViewFieldDefinition,
-  ViewFieldNumberMetadata,
-} from '@/ui/editable-field/types/ViewField';
 import { TextInputEdit } from '@/ui/input/text/components/TextInputEdit';
 import {
   canBeCastAsIntegerOrNull,
@@ -13,21 +9,25 @@ import {
 
 import { useRegisterCloseFieldHandlers } from '../hooks/useRegisterCloseFieldHandlers';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
+import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { FieldDefinition } from '../types/FieldDefinition';
+import { FieldNumberMetadata } from '../types/FieldMetadata';
 
-type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldNumberMetadata>;
-};
-
-export function GenericEditableNumberFieldEditMode({ viewField }: OwnProps) {
+export function GenericEditableNumberFieldEditMode() {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableFieldDefinition = useContext(
+    EditableFieldDefinitionContext,
+  ) as FieldDefinition<FieldNumberMetadata>;
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<number | null>(
     genericEntityFieldFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: currentEditableFieldDefinition
+        ? currentEditableFieldDefinition.metadata.fieldName
+        : '',
     }),
   );
   const [internalValue, setInternalValue] = useState(
@@ -35,6 +35,10 @@ export function GenericEditableNumberFieldEditMode({ viewField }: OwnProps) {
   );
 
   const updateField = useUpdateGenericEntityField();
+
+  const wrapperRef = useRef(null);
+
+  useRegisterCloseFieldHandlers(wrapperRef, handleSubmit, onCancel);
 
   function handleSubmit() {
     if (!canBeCastAsIntegerOrNull(internalValue)) {
@@ -47,7 +51,7 @@ export function GenericEditableNumberFieldEditMode({ viewField }: OwnProps) {
     if (currentEditableFieldEntityId && updateField) {
       updateField(
         currentEditableFieldEntityId,
-        viewField,
+        currentEditableFieldDefinition,
         castAsIntegerOrNull(internalValue),
       );
     }
@@ -60,9 +64,6 @@ export function GenericEditableNumberFieldEditMode({ viewField }: OwnProps) {
   function handleChange(newValue: string) {
     setInternalValue(newValue);
   }
-  const wrapperRef = useRef(null);
-
-  useRegisterCloseFieldHandlers(wrapperRef, handleSubmit, onCancel);
 
   return (
     <div ref={wrapperRef}>

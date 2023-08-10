@@ -6,7 +6,7 @@ import {
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useSetEntityTableData } from '@/ui/table/hooks/useSetEntityTableData';
 
-import { useLoadView } from '../hooks/useLoadView';
+import { useLoadViewFields } from '../hooks/useLoadViewFields';
 
 export function GenericEntityTableData({
   objectName,
@@ -27,7 +27,7 @@ export function GenericEntityTableData({
 }) {
   const setEntityTableData = useSetEntityTableData();
 
-  useLoadView({ objectName, viewFieldDefinitions });
+  useLoadViewFields({ objectName, viewFieldDefinitions });
 
   useGetRequest({
     variables: { orderBy, where: whereFilters },

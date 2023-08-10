@@ -6,7 +6,7 @@ export type SortType<OrderByTemplate> = {
   label: string;
   key: string;
   icon?: ReactNode;
-  orderByTemplates?: Array<(order: Order_By) => OrderByTemplate>;
+  orderByTemplate?: (order: Order_By) => OrderByTemplate[];
 };
 
 export type SelectedSortType<OrderByTemplate> = SortType<OrderByTemplate> & {
