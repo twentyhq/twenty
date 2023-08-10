@@ -12,7 +12,6 @@ import {
   Checkbox,
   CheckboxVariant,
 } from '@/ui/input/checkbox/components/Checkbox';
-import { EntityUpdateMutationHookContext } from '@/ui/table/states/EntityUpdateMutationHookContext';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
@@ -146,48 +145,44 @@ export function CompanyBoardCard() {
   }
 
   return (
-    <EntityUpdateMutationHookContext.Provider
-      value={useUpdateOnePipelineProgressMutation}
-    >
-      <StyledBoardCardWrapper>
-        <StyledBoardCard
-          selected={selected}
-          onClick={() => setSelected(!selected)}
-        >
-          <StyledBoardCardHeader>
-            <CompanyChip
-              id={company.id}
-              name={company.name}
-              pictureUrl={getLogoUrlFromDomainName(company.domainName)}
-              variant={EntityChipVariant.Transparent}
+    <StyledBoardCardWrapper>
+      <StyledBoardCard
+        selected={selected}
+        onClick={() => setSelected(!selected)}
+      >
+        <StyledBoardCardHeader>
+          <CompanyChip
+            id={company.id}
+            name={company.name}
+            pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+            variant={EntityChipVariant.Transparent}
+          />
+          <StyledCheckboxContainer className="checkbox-container">
+            <Checkbox
+              checked={selected}
+              onChange={() => setSelected(!selected)}
+              variant={CheckboxVariant.Secondary}
             />
-            <StyledCheckboxContainer className="checkbox-container">
-              <Checkbox
-                checked={selected}
-                onChange={() => setSelected(!selected)}
-                variant={CheckboxVariant.Secondary}
-              />
-            </StyledCheckboxContainer>
-          </StyledBoardCardHeader>
-          <StyledBoardCardBody>
-            {viewFieldsDefinitions.map((viewField) => {
-              return (
-                <PreventSelectOnClickContainer key={viewField.id}>
-                  <EditableFieldContext.Provider
-                    value={{
-                      entityId: boardCardId,
-                      mutation: useUpdateOnePipelineProgressMutation,
-                      fieldDefinition: null,
-                    }}
-                  >
-                    <GenericEditableField viewField={viewField} />
-                  </EditableFieldContext.Provider>
-                </PreventSelectOnClickContainer>
-              );
-            })}
-          </StyledBoardCardBody>
-        </StyledBoardCard>
-      </StyledBoardCardWrapper>
-    </EntityUpdateMutationHookContext.Provider>
+          </StyledCheckboxContainer>
+        </StyledBoardCardHeader>
+        <StyledBoardCardBody>
+          {viewFieldsDefinitions.map((viewField) => {
+            return (
+              <PreventSelectOnClickContainer key={viewField.id}>
+                <EditableFieldContext.Provider
+                  value={{
+                    entityId: boardCardId,
+                    mutation: useUpdateOnePipelineProgressMutation,
+                    fieldDefinition: null,
+                  }}
+                >
+                  <GenericEditableField viewField={viewField} />
+                </EditableFieldContext.Provider>
+              </PreventSelectOnClickContainer>
+            );
+          })}
+        </StyledBoardCardBody>
+      </StyledBoardCard>
+    </StyledBoardCardWrapper>
   );
 }
