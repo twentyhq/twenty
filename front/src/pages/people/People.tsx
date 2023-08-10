@@ -6,9 +6,12 @@ import { v4 } from 'uuid';
 import { PeopleTable } from '@/people/table/components/PeopleTable';
 import { TableActionBarButtonCreateActivityPeople } from '@/people/table/components/TableActionBarButtonCreateActivityPeople';
 import { TableActionBarButtonDeletePeople } from '@/people/table/components/TableActionBarButtonDeletePeople';
+import { TableContextMenuEntryDeletePeople } from '@/people/table/components/TableActionContextMenuEntryDeletePeople';
+import { TableContextMenuEntryCreateActivityPeople } from '@/people/table/components/TableContextMenuEntryCreateActivityPeople';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
+import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -67,6 +70,10 @@ export function People() {
           <TableActionBarButtonCreateActivityPeople />
           <TableActionBarButtonDeletePeople />
         </EntityTableActionBar>
+        <EntityTableContextMenu>
+          <TableContextMenuEntryCreateActivityPeople />
+          <TableContextMenuEntryDeletePeople />
+        </EntityTableContextMenu>
       </WithTopBarContainer>
     </RecoilScope>
   );

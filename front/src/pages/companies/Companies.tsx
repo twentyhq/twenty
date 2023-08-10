@@ -7,10 +7,13 @@ import { v4 } from 'uuid';
 import { CompanyTable } from '@/companies/table/components/CompanyTable';
 import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/components/TableActionBarButtonCreateActivityCompany';
 import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
+import { TableContextMenuEntryDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies copy';
+import { TableContextMenuEntryCreateActivityCompany } from '@/companies/table/components/TableContextMenuEntryCreateActivityCompany copy';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
+import { EntityTableContextMenu } from '@/ui/table/context-menu/components/EntityTableContextMenu';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -72,6 +75,10 @@ export function Companies() {
             <TableActionBarButtonCreateActivityCompany />
             <TableActionBarButtonDeleteCompanies />
           </EntityTableActionBar>
+          <EntityTableContextMenu>
+            <TableContextMenuEntryCreateActivityCompany />
+            <TableContextMenuEntryDeleteCompanies />
+          </EntityTableContextMenu>
         </RecoilScope>
       </WithTopBarContainer>
     </>

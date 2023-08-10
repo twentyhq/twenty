@@ -4,32 +4,37 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { contextMenuPositionState } from '@/ui/table/states/contextMenuPositionState';
 
+import { PositionType } from '../types/PositionType';
+
 type OwnProps = {
   children: React.ReactNode | React.ReactNode[];
   selectedIds: string[];
 };
 
-const StyledContainerActionBar = styled.div`
-  align-items: center;
+type StyledContainerProps = {
+  position: PositionType;
+};
+
+const StyledContainerContextMenu = styled.div<StyledContainerProps>`
+  align-items: flex-start;
   background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  bottom: 38px;
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
-  height: 48px;
+  flex-direction: column;
+  gap: 1px;
 
-  left: 50%;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  top: auto;
+  left: ${(props) => `${props.position.x}px`};
+  position: fixed;
+  top: ${(props) => `${props.position.y}px`};
 
   transform: translateX(-50%);
+  width: 160px;
   z-index: 1;
 `;
 
-export function ActionBar({ children, selectedIds }: OwnProps) {
+export function ContextMenu({ children, selectedIds }: OwnProps) {
   const position = useRecoilValue(contextMenuPositionState);
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
 
@@ -48,12 +53,12 @@ export function ActionBar({ children, selectedIds }: OwnProps) {
     };
   }, [setContextMenuPosition]);
 
-  if (selectedIds.length === 0 || position.x || position.y) {
+  if (selectedIds.length === 0 || (!position.x && !position.y)) {
     return null;
   }
   return (
-    <StyledContainerActionBar className="action-bar">
+    <StyledContainerContextMenu className="action-bar" position={position}>
       {children}
-    </StyledContainerActionBar>
+    </StyledContainerContextMenu>
   );
 }

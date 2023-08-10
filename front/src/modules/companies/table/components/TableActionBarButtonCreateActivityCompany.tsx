@@ -1,6 +1,7 @@
+import { IconCheckbox, IconNotes } from '@tabler/icons-react';
+
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
-import { TableActionBarButtonToggleComments } from '@/ui/table/action-bar/components/TableActionBarButtonOpenComments';
-import { TableActionBarButtonToggleTasks } from '@/ui/table/action-bar/components/TableActionBarButtonOpenTasks';
+import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 import { ActivityType, CommentableType } from '~/generated/graphql';
 
 export function TableActionBarButtonCreateActivityCompany() {
@@ -13,10 +14,14 @@ export function TableActionBarButtonCreateActivityCompany() {
 
   return (
     <>
-      <TableActionBarButtonToggleComments
+      <EntityTableActionBarButton
+        label="Note"
+        icon={<IconNotes size={16} />}
         onClick={() => handleButtonClick(ActivityType.Note)}
       />
-      <TableActionBarButtonToggleTasks
+      <EntityTableActionBarButton
+        label="Task"
+        icon={<IconCheckbox size={16} />}
         onClick={() => handleButtonClick(ActivityType.Task)}
       />
     </>
