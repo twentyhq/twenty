@@ -12,6 +12,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -32,7 +33,6 @@ const StyledListContainer = styled.div`
   border-radius: ${({ theme }) => theme.spacing(1)};
   display: flex;
   flex-direction: column;
-  max-height: ${({ theme }) => theme.spacing(35)};
   overflow: auto;
   width: 100%;
 `;

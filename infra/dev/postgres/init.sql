@@ -6,3 +6,4 @@ CREATE DATABASE "test";
 
 -- Create a twenty user
 CREATE USER twenty PASSWORD 'twenty';
+ALTER USER twenty CREATEDB;
