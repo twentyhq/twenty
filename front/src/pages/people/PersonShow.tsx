@@ -3,6 +3,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { PersonPropertyBox } from '@/people/components/PersonPropertyBox';
 import { GET_PERSON, usePersonQuery } from '@/people/queries';
 import { IconUser } from '@/ui/icon';
@@ -20,9 +21,12 @@ import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageCo
 
 export function PersonShow() {
   const personId = useParams().personId ?? '';
+  const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
 
   const { data } = usePersonQuery(personId);
   const person = data?.findUniquePerson;
+  const isFavorite =
+    person?.Favorite && person?.Favorite?.length > 0 ? true : false;
 
   const theme = useTheme();
   const [uploadPicture] = useUploadPersonPictureMutation();
@@ -40,11 +44,18 @@ export function PersonShow() {
     });
   }
 
+  async function handleFavoriteButtonClick() {
+    if (isFavorite) deletePersonFavorite(personId);
+    else insertPersonFavorite(personId);
+  }
+
   return (
     <WithTopBarContainer
       title={person?.firstName ?? ''}
       icon={<IconUser size={theme.icon.size.md} />}
       hasBackButton
+      isFavorite={isFavorite}
+      onFavouriteButtonClick={handleFavoriteButtonClick}
     >
       <ShowPageContainer>
         <ShowPageLeftContainer>

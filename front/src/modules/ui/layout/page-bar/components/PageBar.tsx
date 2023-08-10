@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
-import { IconChevronLeft, IconPlus } from '@/ui/icon/index';
+import { IconChevronLeft, IconHeart, IconPlus } from '@/ui/icon/index';
 import NavCollapseButton from '@/ui/navbar/components/NavCollapseButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -58,18 +58,27 @@ const StyledTopBarIconTitleContainer = styled.div`
   width: 100%;
 `;
 
+const ActionButtonsContainer = styled.div`
+  display: inline-flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+`;
+
 type OwnProps = {
   title: string;
   hasBackButton?: boolean;
+  isFavorite?: boolean;
   icon: ReactNode;
   onAddButtonClick?: () => void;
+  onFavouriteButtonClick?: () => void;
 };
 
 export function PageBar({
   title,
   hasBackButton,
+  isFavorite,
   icon,
   onAddButtonClick,
+  onFavouriteButtonClick,
 }: OwnProps) {
   const navigate = useNavigate();
   const navigateBack = useCallback(() => navigate(-1), [navigate]);
@@ -104,16 +113,28 @@ export function PageBar({
             </TitleContainer>
           </StyledTopBarIconTitleContainer>
         </StyledLeftContainer>
-        {onAddButtonClick && (
-          <IconButton
-            icon={<IconPlus size={16} />}
-            size="large"
-            data-testid="add-button"
-            textColor="secondary"
-            onClick={onAddButtonClick}
-            variant="border"
-          />
-        )}
+        <ActionButtonsContainer>
+          {onFavouriteButtonClick && (
+            <IconButton
+              icon={<IconHeart size={16} />}
+              size="large"
+              data-testid="add-button"
+              accent={isFavorite ? 'red' : 'regular'}
+              onClick={onFavouriteButtonClick}
+              variant="border"
+            />
+          )}
+          {onAddButtonClick && (
+            <IconButton
+              icon={<IconPlus size={16} />}
+              size="large"
+              data-testid="add-button"
+              textColor="secondary"
+              onClick={onAddButtonClick}
+              variant="border"
+            />
+          )}
+        </ActionButtonsContainer>
       </TopBarContainer>
     </>
   );

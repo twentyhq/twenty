@@ -19,6 +19,7 @@ import {
   UserSettings,
   View,
   ViewField,
+  Favorite,
   ViewSort,
 } from '@prisma/client';
 
@@ -41,6 +42,7 @@ type SubjectsAbility = Subjects<{
   UserSettings: UserSettings;
   View: View;
   ViewField: ViewField;
+  Favorite: Favorite;
   ViewSort: ViewSort;
 }>;
 
@@ -143,6 +145,12 @@ export class AbilityFactory {
     can(AbilityAction.Read, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Create, 'ViewField', { workspaceId: workspace.id });
     can(AbilityAction.Update, 'ViewField', { workspaceId: workspace.id });
+    //Favorite
+    can(AbilityAction.Read, 'Favorite', { workspaceId: workspace.id });
+    can(AbilityAction.Create, 'Favorite');
+    can(AbilityAction.Delete, 'Favorite', {
+      workspaceId: workspace.id,
+    });
 
     // ViewSort
     can(AbilityAction.Read, 'ViewSort', { workspaceId: workspace.id });
