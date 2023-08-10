@@ -59,10 +59,10 @@ const StyledInput = styled.input<{
   & + label:before {
     --size: ${({ checkboxSize }) =>
       checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
-    background: ${({ theme, indeterminate }) =>
-      indeterminate ? theme.color.blue : 'transparent'};
-    border-color: ${({ theme, indeterminate, variant }) =>
-      indeterminate
+    background: ${({ theme, indeterminate, isChecked }) =>
+      indeterminate || isChecked ? theme.color.blue : 'transparent'};
+    border-color: ${({ theme, indeterminate, isChecked, variant }) =>
+      indeterminate || isChecked
         ? theme.color.blue
         : variant === CheckboxVariant.Primary
         ? theme.border.color.inverted
@@ -78,13 +78,6 @@ const StyledInput = styled.input<{
     display: inline-block;
     height: var(--size);
     width: var(--size);
-  }
-
-  & + label:before {
-    background: ${({ theme, isChecked }) =>
-      isChecked ? theme.color.blue : 'inherit'};
-    border-color: ${({ theme, isChecked }) =>
-      isChecked ? theme.color.blue : 'inherit'};
   }
 
   & + label > svg {
