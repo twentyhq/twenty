@@ -24,16 +24,20 @@ export const UPDATE_ONE_COMPANY = gql`
   }
 `;
 
+export const INSERT_COMPANY_FRAGMENT = gql`
+  fragment InsertCompanyFragment on Company {
+    domainName
+    address
+    id
+    name
+    createdAt
+  }
+`;
+
 export const INSERT_ONE_COMPANY = gql`
   mutation InsertOneCompany($data: CompanyCreateInput!) {
     createOneCompany(data: $data) {
-      address
-      createdAt
-      domainName
-      linkedinUrl
-      employees
-      id
-      name
+      ...InsertCompanyFragment
     }
   }
 `;
