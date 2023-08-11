@@ -217,14 +217,6 @@ export const EditRelation: Story = {
       await userEvent.click(airbnbChip);
     });
 
-    await step(
-      'Click on last row company cell to exit relation picker',
-      async () => {
-        const otherCell = await canvas.findByText('Janice Dane');
-        await userEvent.click(otherCell);
-      },
-    );
-
     await step('Check if Airbnb is in second row company cell', async () => {
       await canvas.findByText('Airbnb');
     });
