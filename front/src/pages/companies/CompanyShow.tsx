@@ -54,10 +54,10 @@ export function CompanyShow() {
       <ShowPageContainer>
         <ShowPageLeftContainer>
           <ShowPageSummaryCard
-            id={company.id}
-            logoOrAvatar={getLogoUrlFromDomainName(company.domainName ?? '')}
-            title={company.name ?? 'No name'}
-            date={company.createdAt ?? ''}
+            id={company?.id}
+            logoOrAvatar={getLogoUrlFromDomainName(company?.domainName ?? '')}
+            title={company?.name ?? 'No name'}
+            date={company?.createdAt ?? ''}
             renderTitleEditComponent={() => (
               <CompanyNameEditableField company={company} />
             )}
@@ -84,7 +84,7 @@ export function CompanyShow() {
         </ShowPageLeftContainer>
         <ShowPageRightContainer>
           <Timeline
-            entity={{ id: company.id ?? '', type: CommentableType.Company }}
+            entity={{ id: company?.id ?? '', type: CommentableType.Company }}
           />
         </ShowPageRightContainer>
       </ShowPageContainer>
