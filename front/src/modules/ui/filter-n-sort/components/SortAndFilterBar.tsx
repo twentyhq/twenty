@@ -8,9 +8,12 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { useRemoveFilter } from '../hooks/useRemoveFilter';
 import { availableFiltersScopedState } from '../states/availableFiltersScopedState';
 import { filtersScopedState } from '../states/filtersScopedState';
+import { sortAndFilterBarState } from '../states/sortAndFilterBarState';
+import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType } from '../types/interface';
 import { getOperandLabelShort } from '../utils/getOperandLabel';
 
+import { FilterDropdownButton } from './FilterDropdownButton';
 import SortOrFilterChip from './SortOrFilterChip';
 
 type OwnProps<SortField> = {
@@ -18,6 +21,7 @@ type OwnProps<SortField> = {
   sorts: Array<SelectedSortType<SortField>>;
   onRemoveSort: (sortId: SelectedSortType<SortField>['key']) => void;
   onCancelClick: () => void;
+  hasFilterButton?: boolean;
 };
 
 const StyledBar = styled.div`
@@ -61,11 +65,17 @@ const StyledCancelButton = styled.button`
   }
 `;
 
+const StyledFilterContainer = styled.div`
+  align-items: center;
+  display: flex;
+`;
+
 function SortAndFilterBar<SortField>({
   context,
   sorts,
   onRemoveSort,
   onCancelClick,
+  hasFilterButton = false,
 }: OwnProps<SortField>) {
   const theme = useTheme();
 
@@ -78,6 +88,8 @@ function SortAndFilterBar<SortField>({
     availableFiltersScopedState,
     context,
   );
+
+  const [isOpen] = useRecoilScopedState(sortAndFilterBarState, context);
 
   const filtersWithDefinition = filters.map((filter) => {
     const filterDefinition = availableFilters.find((availableFilter) => {
@@ -97,47 +109,57 @@ function SortAndFilterBar<SortField>({
     onCancelClick();
   }
 
-  if (!filtersWithDefinition.length && !sorts.length) {
+  if ((!filtersWithDefinition.length && !sorts.length) || !isOpen) {
     return null;
   }
 
   return (
     <StyledBar>
-      <StyledChipcontainer>
-        {sorts.map((sort) => {
-          return (
-            <SortOrFilterChip
-              key={sort.key}
-              labelValue={sort.label}
-              id={sort.key}
-              icon={
-                sort.order === 'desc' ? (
-                  <IconArrowNarrowDown size={theme.icon.size.md} />
-                ) : (
-                  <IconArrowNarrowUp size={theme.icon.size.md} />
-                )
-              }
-              onRemove={() => onRemoveSort(sort.key)}
-            />
-          );
-        })}
-        {filtersWithDefinition.map((filter) => {
-          return (
-            <SortOrFilterChip
-              key={filter.field}
-              labelKey={filter.label}
-              labelValue={`${getOperandLabelShort(filter.operand)} ${
-                filter.displayValue
-              }`}
-              id={filter.field}
-              icon={filter.icon}
-              onRemove={() => {
-                removeFilter(filter.field);
-              }}
-            />
-          );
-        })}
-      </StyledChipcontainer>
+      <StyledFilterContainer>
+        <StyledChipcontainer>
+          {sorts.map((sort) => {
+            return (
+              <SortOrFilterChip
+                key={sort.key}
+                labelValue={sort.label}
+                id={sort.key}
+                icon={
+                  sort.order === 'desc' ? (
+                    <IconArrowNarrowDown size={theme.icon.size.md} />
+                  ) : (
+                    <IconArrowNarrowUp size={theme.icon.size.md} />
+                  )
+                }
+                onRemove={() => onRemoveSort(sort.key)}
+              />
+            );
+          })}
+          {filtersWithDefinition.map((filter) => {
+            return (
+              <SortOrFilterChip
+                key={filter.field}
+                labelKey={filter.label}
+                labelValue={`${getOperandLabelShort(filter.operand)} ${
+                  filter.displayValue
+                }`}
+                id={filter.field}
+                icon={filter.icon}
+                onRemove={() => {
+                  removeFilter(filter.field);
+                }}
+              />
+            );
+          })}
+        </StyledChipcontainer>
+        {hasFilterButton && (
+          <FilterDropdownButton
+            context={context}
+            HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            color={theme.font.color.secondary}
+            label={`+ Filter`}
+          />
+        )}
+      </StyledFilterContainer>
       {filters.length + sorts.length > 0 && (
         <StyledCancelButton
           data-testid={'cancel-button'}

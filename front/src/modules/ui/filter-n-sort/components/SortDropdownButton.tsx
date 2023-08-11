@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { Context, useCallback, useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import { IconChevronDown } from '@tabler/icons-react';
 
@@ -7,7 +7,9 @@ import { DropdownMenuItemsContainer } from '@/ui/dropdown/components/DropdownMen
 import { DropdownMenuSelectableItem } from '@/ui/dropdown/components/DropdownMenuSelectableItem';
 import { DropdownMenuSeparator } from '@/ui/dropdown/components/DropdownMenuSeparator';
 import { OverflowingTextWithTooltip } from '@/ui/tooltip/OverflowingTextWithTooltip';
+import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
+import { sortAndFilterBarState } from '../states/sortAndFilterBarState';
 import { FiltersHotkeyScope } from '../types/FiltersHotkeyScope';
 import { SelectedSortType, SortType } from '../types/interface';
 
@@ -18,6 +20,8 @@ type OwnProps<SortField> = {
   onSortSelect: (sort: SelectedSortType<SortField>) => void;
   availableSorts: SortType<SortField>[];
   HotkeyScope: FiltersHotkeyScope;
+  context: Context<string | null>;
+  isPrimaryButton?: boolean;
 };
 
 const options: Array<SelectedSortType<any>['order']> = ['asc', 'desc'];
@@ -27,6 +31,8 @@ export function SortDropdownButton<SortField>({
   availableSorts,
   onSortSelect,
   HotkeyScope,
+  context,
+  isPrimaryButton,
 }: OwnProps<SortField>) {
   const theme = useTheme();
 
@@ -46,6 +52,15 @@ export function SortDropdownButton<SortField>({
     setIsOptionUnfolded(false);
     setSelectedSortDirection('asc');
   }, []);
+
+  const [isSortAndFilterBarOpen, setIsSortAndFilterBarOpen] =
+    useRecoilScopedState(sortAndFilterBarState, context);
+
+  useEffect(() => {
+    if (isPrimaryButton && isSortAndFilterBarOpen && isSortSelected) {
+      setIsUnfolded(true);
+    }
+  }, [isSortAndFilterBarOpen, isPrimaryButton, isSortSelected]);
 
   function handleIsUnfoldedChange(newIsUnfolded: boolean) {
     if (newIsUnfolded) {
@@ -95,6 +110,7 @@ export function SortDropdownButton<SortField>({
                 onClick={() => {
                   setIsUnfolded(false);
                   onSortItemSelect(sort);
+                  setIsSortAndFilterBarOpen(true);
                 }}
               >
                 {sort.icon}

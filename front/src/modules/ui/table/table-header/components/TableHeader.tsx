@@ -72,12 +72,15 @@ export function TableHeader<SortField>({
           <FilterDropdownButton
             context={TableContext}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            isPrimaryButton
           />
           <SortDropdownButton<SortField>
+            context={TableContext}
             isSortSelected={sorts.length > 0}
             availableSorts={availableSorts || []}
             onSortSelect={sortSelect}
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
+            isPrimaryButton
           />
           <OptionsDropdownButton
             HotkeyScope={FiltersHotkeyScope.FilterDropdownButton}
@@ -92,6 +95,7 @@ export function TableHeader<SortField>({
           onCancelClick={() => {
             handleSortsUpdate([]);
           }}
+          hasFilterButton
         />
       }
     />
