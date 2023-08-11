@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { CompanyPicker } from '@/companies/components/CompanyPicker';
 import { PeoplePicker } from '@/people/components/PeoplePicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
@@ -49,6 +50,15 @@ function RelationPicker({
       return (
         <UserPicker
           userId={fieldValue ? fieldValue.id : ''}
+          onSubmit={handleEntitySubmit}
+          onCancel={handleCancel}
+        />
+      );
+    }
+    case Entity.Company: {
+      return (
+        <CompanyPicker
+          companyId={fieldValue ? fieldValue.id : ''}
           onSubmit={handleEntitySubmit}
           onCancel={handleCancel}
         />
