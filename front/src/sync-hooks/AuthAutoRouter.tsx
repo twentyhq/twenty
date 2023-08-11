@@ -3,6 +3,7 @@ import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { IconCheckbox, IconNotes } from '@tabler/icons-react';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useEventTracker } from '@/analytics/hooks/useEventTracker';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
@@ -16,7 +17,7 @@ import { useSnackBar } from '@/ui/snack-bar/hooks/useSnackBar';
 import { TableHotkeyScope } from '@/ui/table/types/TableHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
-import { ActivityType, CommentableType } from '~/generated/graphql';
+import { ActivityType } from '~/generated/graphql';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
@@ -177,7 +178,7 @@ export function AuthAutoRouter() {
         )?.params.id;
 
         const entity = !!companyId
-          ? { id: companyId, type: CommentableType.Company }
+          ? { id: companyId, type: ActivityTargetableEntityType.Company }
           : undefined;
 
         addToCommandMenu([
@@ -211,7 +212,7 @@ export function AuthAutoRouter() {
           ?.params.id;
 
         const entity = !!personId
-          ? { id: personId, type: CommentableType.Person }
+          ? { id: personId, type: ActivityTargetableEntityType.Person }
           : undefined;
 
         addToCommandMenu([

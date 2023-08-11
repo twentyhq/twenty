@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useCompanyQuery } from '@/companies/queries';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -15,10 +16,7 @@ import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer'
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
-import {
-  CommentableType,
-  useUpdateOneCompanyMutation,
-} from '~/generated/graphql';
+import { useUpdateOneCompanyMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { CompanyNameEditableField } from '../../modules/companies/editable-field/components/CompanyNameEditableField';
@@ -84,7 +82,10 @@ export function CompanyShow() {
         </ShowPageLeftContainer>
         <ShowPageRightContainer>
           <Timeline
-            entity={{ id: company?.id ?? '', type: CommentableType.Company }}
+            entity={{
+              id: company?.id ?? '',
+              type: ActivityTargetableEntityType.Company,
+            }}
           />
         </ShowPageRightContainer>
       </ShowPageContainer>

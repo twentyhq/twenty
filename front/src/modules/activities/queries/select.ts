@@ -8,7 +8,14 @@ export const GET_ACTIVITIES_BY_TARGETS = gql`
     findManyActivities(
       orderBy: $orderBy
       where: {
-        activityTargets: { some: { commentableId: { in: $activityTargetIds } } }
+        activityTargets: {
+          some: {
+            OR: [
+              { personId: { in: $activityTargetIds } }
+              { companyId: { in: $activityTargetIds } }
+            ]
+          }
+        }
       }
     ) {
       id
@@ -46,8 +53,6 @@ export const GET_ACTIVITIES_BY_TARGETS = gql`
       }
       activityTargets {
         id
-        commentableType
-        commentableId
         companyId
         personId
       }
@@ -86,8 +91,6 @@ export const GET_ACTIVITIES = gql`
       }
       activityTargets {
         id
-        commentableType
-        commentableId
         companyId
         personId
       }
@@ -133,8 +136,6 @@ export const GET_ACTIVITY = gql`
       }
       activityTargets {
         id
-        commentableType
-        commentableId
         companyId
         personId
       }

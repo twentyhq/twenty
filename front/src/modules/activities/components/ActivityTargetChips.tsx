@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
-import { GetCompaniesQuery, GetPeopleQuery } from '~/generated/graphql';
+import { ActivityTarget, Company, Person } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 const StyledContainer = styled.div`
@@ -12,30 +12,39 @@ const StyledContainer = styled.div`
 `;
 
 export function ActivityTargetChips({
-  targetCompanies,
-  targetPeople,
+  targets,
 }: {
-  targetCompanies?: GetCompaniesQuery;
-  targetPeople?: GetPeopleQuery;
+  targets?: Array<
+    Pick<ActivityTarget, 'id'> & {
+      person?: Pick<Person, 'id' | 'displayName' | 'avatarUrl'>;
+      company?: Pick<Company, 'id' | 'domainName' | 'name'>;
+    }
+  > | null;
 }) {
+  if (!targets) {
+    return null;
+  }
+
   return (
     <StyledContainer>
-      {targetCompanies?.companies &&
-        targetCompanies.companies.map((company) => (
+      {targets
+        .filter(({ company }) => company !== null)
+        .map(({ company }) => (
           <CompanyChip
-            key={company.id}
-            id={company.id}
-            name={company.name}
-            pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+            key={company?.id}
+            id={company?.id ?? ''}
+            name={company?.name ?? ''}
+            pictureUrl={getLogoUrlFromDomainName(company?.domainName)}
           />
         ))}
-      {targetPeople?.people &&
-        targetPeople.people.map((person) => (
+      {targets
+        .filter(({ person }) => person !== null)
+        .map(({ person }) => (
           <PersonChip
-            key={person.id}
-            id={person.id}
-            name={person.displayName}
-            pictureUrl={person.avatarUrl ?? ''}
+            key={person?.id}
+            id={person?.id ?? ''}
+            name={person?.displayName ?? ''}
+            pictureUrl={person?.avatarUrl ?? ''}
           />
         ))}
     </StyledContainer>

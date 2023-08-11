@@ -18,19 +18,17 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { Activity, ActivityTarget, CommentableType } from '~/generated/graphql';
+import { Activity, ActivityTarget } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 
 import { useHandleCheckableActivityTargetChange } from '../hooks/useHandleCheckableActivityTargetChange';
+import { ActivityTargetableEntityType } from '../types/ActivityTargetableEntity';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '../utils/flatMapAndSortEntityForSelectArrayByName';
 
 type OwnProps = {
   activity?: Pick<Activity, 'id'> & {
     activityTargets: Array<
-      Pick<
-        ActivityTarget,
-        'id' | 'commentableId' | 'commentableType' | 'companyId' | 'personId'
-      >
+      Pick<ActivityTarget, 'id' | 'companyId' | 'personId'>
     >;
   };
 };
@@ -89,8 +87,8 @@ export function ActivityRelationPicker({ activity }: OwnProps) {
   const initialPeopleIds = useMemo(
     () =>
       activity?.activityTargets
-        ?.filter((relation) => relation.commentableType === 'Person')
-        .map((relation) => relation.personId || relation.commentableId)
+        ?.filter((relation) => relation.personId !== null)
+        .map((relation) => relation.personId)
         .filter(assertNotNull) ?? [],
     [activity?.activityTargets],
   );
@@ -98,8 +96,8 @@ export function ActivityRelationPicker({ activity }: OwnProps) {
   const initialCompanyIds = useMemo(
     () =>
       activity?.activityTargets
-        ?.filter((relation) => relation.commentableType === 'Company')
-        .map((relation) => relation.companyId || relation.commentableId)
+        ?.filter((relation) => relation.companyId !== null)
+        .map((relation) => relation.companyId)
         .filter(assertNotNull) ?? [],
     [activity?.activityTargets],
   );
@@ -211,7 +209,7 @@ export function ActivityRelationPicker({ activity }: OwnProps) {
         onClick={handleRelationContainerClick}
       >
         {selectedEntities?.map((entity) =>
-          entity.entityType === CommentableType.Company ? (
+          entity.entityType === ActivityTargetableEntityType.Company ? (
             <CompanyChip
               key={entity.id}
               id={entity.id}

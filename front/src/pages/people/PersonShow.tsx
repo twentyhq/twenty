@@ -3,6 +3,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { PersonPropertyBox } from '@/people/components/PersonPropertyBox';
 import { GET_PERSON, usePersonQuery } from '@/people/queries';
@@ -11,10 +12,7 @@ import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer'
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
-import {
-  CommentableType,
-  useUploadPersonPictureMutation,
-} from '~/generated/graphql';
+import { useUploadPersonPictureMutation } from '~/generated/graphql';
 
 import { PeopleFullNameEditableField } from '../../modules/people/editable-field/components/PeopleFullNameEditableField';
 import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageContainer';
@@ -74,7 +72,10 @@ export function PersonShow() {
         </ShowPageLeftContainer>
         <ShowPageRightContainer>
           <Timeline
-            entity={{ id: person?.id ?? '', type: CommentableType.Person }}
+            entity={{
+              id: person?.id ?? '',
+              type: ActivityTargetableEntityType.Person,
+            }}
           />
         </ShowPageRightContainer>
       </ShowPageContainer>

@@ -1,19 +1,21 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { commentableEntityArrayState } from '@/activities/states/commentableEntityArrayState';
+import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { Timeline } from '@/activities/timeline/components/Timeline';
 
 export function RightDrawerTimeline() {
-  const [commentableEntityArray] = useRecoilState(commentableEntityArrayState);
+  const activityTargetableEntityArray = useRecoilValue(
+    activityTargetableEntityArrayState,
+  );
 
   return (
     <>
-      {commentableEntityArray.map((commentableEntity) => (
+      {activityTargetableEntityArray.map((targetableEntity) => (
         <Timeline
-          key={commentableEntity.id}
+          key={targetableEntity.id}
           entity={{
-            id: commentableEntity?.id ?? '',
-            type: commentableEntity.type,
+            id: targetableEntity?.id ?? '',
+            type: targetableEntity.type,
           }}
         />
       ))}
