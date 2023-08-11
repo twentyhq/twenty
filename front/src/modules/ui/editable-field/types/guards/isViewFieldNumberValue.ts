@@ -4,8 +4,6 @@ import { ViewFieldNumberValue } from '../ViewField';
 export function isViewFieldNumberValue(
   fieldValue: unknown,
 ): fieldValue is ViewFieldNumberValue {
-  console.log(fieldValue);
-
   return (
     fieldValue !== null &&
     fieldValue !== undefined &&

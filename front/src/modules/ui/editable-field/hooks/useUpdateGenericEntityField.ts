@@ -78,7 +78,6 @@ export function useUpdateGenericEntityField() {
     field: FieldDefinition<FieldMetadata>,
     newFieldValue: ValueType,
   ) {
-    console.log(currentEntityId, field, newFieldValue);
     const newFieldValueUnknown = newFieldValue as unknown;
     // TODO: improve type guards organization, maybe with a common typeguard for all fields
     // taking an object of options as parameter ?
