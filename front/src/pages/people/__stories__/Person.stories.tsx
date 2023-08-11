@@ -21,7 +21,7 @@ const meta: Meta<PageDecoratorArgs> = {
     ),
     PageDecorator,
   ],
-  args: { currentPath: `/person/${mockedPeopleData[0].id}` },
+  args: { currentPath: '/person/:personId', id: mockedPeopleData[0].id },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

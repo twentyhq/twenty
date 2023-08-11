@@ -21,7 +21,10 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Companies/Company',
   component: CompanyShow,
   decorators: [PageDecorator],
-  args: { currentPath: '/companies/89bb825c-171e-4bcc-9cf7-43448d6fb278' },
+  args: {
+    currentPath: '/companies/:companyId',
+    id: mockedCompaniesData[0].id,
+  },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: [

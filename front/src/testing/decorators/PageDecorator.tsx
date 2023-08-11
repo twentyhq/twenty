@@ -7,18 +7,30 @@ import { UserProvider } from '~/modules/users/components/UserProvider';
 
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
 
-export type PageDecoratorArgs = { currentPath: string };
+export type PageDecoratorArgs = { currentPath: string; id: string };
 
-export const PageDecorator: Decorator<{ currentPath: string }> = (
+function replacePlaceholder(path: string, id?: string) {
+  const matches = path.match(/:[a-zA-Z0-9]+/);
+
+  if (id && matches && matches.length > 0) {
+    return path.replace(matches[0], id);
+  }
+
+  return path;
+}
+
+export const PageDecorator: Decorator<{ currentPath: string; id: string }> = (
   Story,
   { args },
 ) => (
   <UserProvider>
     <ClientConfigProvider>
-      <MemoryRouter initialEntries={[args.currentPath]}>
+      <MemoryRouter
+        initialEntries={[replacePlaceholder(args.currentPath, args.id)]}
+      >
         <Routes>
           <Route
-            path="/companies/:companyId"
+            path={args.currentPath}
             element={
               <FullHeightStorybookLayout>
                 <DefaultLayout>
