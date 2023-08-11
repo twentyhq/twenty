@@ -4,18 +4,18 @@ import styled from '@emotion/styled';
 type OwnProps = {
   icon: ReactNode;
   label: string;
-  type?: 'standard' | 'warning';
+  type?: 'standard' | 'danger';
   onClick: () => void;
 };
 
 type StyledButtonProps = {
-  type: 'standard' | 'warning';
+  type: 'standard' | 'danger';
 };
 
 const StyledButton = styled.div<StyledButtonProps>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${(props) =>
-    props.type === 'warning'
+    props.type === 'danger'
       ? props.theme.color.red
       : props.theme.font.color.secondary};
   cursor: pointer;
@@ -28,9 +28,7 @@ const StyledButton = styled.div<StyledButtonProps>`
 
   &:hover {
     background: ${({ theme, type }) =>
-      type === 'warning'
-        ? theme.tag.background.red
-        : theme.background.tertiary};
+      type === 'danger' ? theme.tag.background.red : theme.background.tertiary};
   }
 `;
 
@@ -39,7 +37,7 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-export function EntityTableActionBarButton({
+export function ActionBarEntry({
   label,
   icon,
   type = 'standard',

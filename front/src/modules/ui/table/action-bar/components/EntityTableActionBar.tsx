@@ -5,12 +5,8 @@ import { ActionBar } from '@/ui/action-bar/components/ActionBar';
 
 import { selectedRowIdsSelector } from '../../states/selectedRowIdsSelector';
 
-type OwnProps = {
-  children: React.ReactNode | React.ReactNode[];
-};
-
-export function EntityTableActionBar({ children }: OwnProps) {
+export function EntityTableActionBar() {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
-  return <ActionBar selectedIds={selectedRowIds}>{children}</ActionBar>;
+  return <ActionBar selectedIds={selectedRowIds}></ActionBar>;
 }

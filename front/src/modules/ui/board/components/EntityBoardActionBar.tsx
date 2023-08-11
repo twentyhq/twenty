@@ -5,11 +5,7 @@ import { ActionBar } from '@/ui/action-bar/components/ActionBar';
 
 import { selectedBoardCardIdsState } from '../states/selectedBoardCardIdsState';
 
-type OwnProps = {
-  children: React.ReactNode | React.ReactNode[];
-};
-
-export function EntityBoardActionBar({ children }: OwnProps) {
+export function EntityBoardActionBar() {
   const selectedBoardCards = useRecoilValue(selectedBoardCardIdsState);
-  return <ActionBar selectedIds={selectedBoardCards}>{children}</ActionBar>;
+  return <ActionBar selectedIds={selectedBoardCards}></ActionBar>;
 }

@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { actionBarOpenState } from '@/ui/table/states/ActionBarIsOpenState';
+import { contextMenuEntriesState } from '@/ui/table/states/ContextMenuEntriesState';
+import { contextMenuOpenState } from '@/ui/table/states/ContextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/table/states/contextMenuPositionState';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { PositionType } from '../types/PositionType';
 
 type OwnProps = {
-  children: React.ReactNode | React.ReactNode[];
   selectedIds: string[];
 };
 
@@ -34,31 +37,28 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
   z-index: 1;
 `;
 
-export function ContextMenu({ children, selectedIds }: OwnProps) {
+export function ContextMenu({ selectedIds }: OwnProps) {
   const position = useRecoilValue(contextMenuPositionState);
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
+  const contextMenuOpen = useRecoilValue(contextMenuOpenState);
+  const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
+  const setContextMenuOpenState = useSetRecoilState(contextMenuOpenState);
+  const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
+  const wrapperRef = useRef(null);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (!(event.target as HTMLElement).closest('.action-bar')) {
-        setContextMenuPosition({ x: null, y: null });
-      }
-    }
+  useListenClickOutside({
+    refs: [wrapperRef],
+    callback: () => {
+      setContextMenuOpenState(false);
+      setActionBarOpenState(true);
+    },
+  });
 
-    document.addEventListener('mousedown', handleClickOutside);
-
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [setContextMenuPosition]);
-
-  if (selectedIds.length === 0 || (!position.x && !position.y)) {
+  if (selectedIds.length === 0 || !contextMenuOpen) {
     return null;
   }
   return (
-    <StyledContainerContextMenu className="action-bar" position={position}>
-      {children}
+    <StyledContainerContextMenu ref={wrapperRef} position={position}>
+      {contextMenuEntries}
     </StyledContainerContextMenu>
   );
 }

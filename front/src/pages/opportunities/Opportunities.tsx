@@ -1,17 +1,15 @@
-import { useCallback, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
+import { useCallback, useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 
 import { HooksCompanyBoard } from '@/companies/components/HooksCompanyBoard';
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import {
   defaultPipelineProgressOrderBy,
-  GET_PIPELINES,
   PipelineProgressesSelectedSortType,
 } from '@/pipeline/queries';
-import { BoardActionBarButtonDeleteBoardCard } from '@/ui/board/components/BoardActionBarButtonDeleteBoardCard';
 import { EntityBoard } from '@/ui/board/components/EntityBoard';
 import { EntityBoardActionBar } from '@/ui/board/components/EntityBoardActionBar';
+import { useOpenActionBar } from '@/ui/board/hooks/useActionBar';
 import { BoardOptionsContext } from '@/ui/board/states/BoardOptionsContext';
 import { reduceSortsToOrderBy } from '@/ui/filter-n-sort/helpers';
 import { AvailableFiltersContext } from '@/ui/filter-n-sort/states/AvailableFiltersContext';
@@ -20,7 +18,6 @@ import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer'
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
   PipelineProgressOrderByWithRelationInput,
-  useDeleteManyPipelineProgressMutation,
   useUpdatePipelineStageMutation,
 } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
@@ -67,17 +64,11 @@ export function Opportunities() {
     });
   }
 
-  const [deletePipelineProgress] = useDeleteManyPipelineProgressMutation({
-    refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
-  });
+  const setActionBar = useOpenActionBar();
 
-  async function handleDelete(cardIdsToDelete: string[]) {
-    await deletePipelineProgress({
-      variables: {
-        ids: cardIdsToDelete,
-      },
-    });
-  }
+  useEffect(() => {
+    setActionBar();
+  }, [setActionBar]);
 
   return (
     <WithTopBarContainer
@@ -95,9 +86,7 @@ export function Opportunities() {
               updateSorts={updateSorts}
               onEditColumnTitle={handleEditColumnTitle}
             />
-            <EntityBoardActionBar>
-              <BoardActionBarButtonDeleteBoardCard onDelete={handleDelete} />
-            </EntityBoardActionBar>
+            <EntityBoardActionBar></EntityBoardActionBar>
           </AvailableFiltersContext.Provider>
         </RecoilScope>
       </BoardOptionsContext.Provider>

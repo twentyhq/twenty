@@ -8,7 +8,7 @@ const meta: Meta<typeof ActionBar> = {
   title: 'UI/ActionBar/ActionBar',
   component: ActionBar,
   decorators: [ComponentDecorator],
-  args: { children: 'Lorem ipsum', selectedIds: [] },
+  args: { selectedIds: [] },
 };
 
 export default meta;

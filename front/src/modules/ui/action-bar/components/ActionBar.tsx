@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { contextMenuPositionState } from '@/ui/table/states/contextMenuPositionState';
+import { actionBarEntriesState } from '@/ui/table/states/ActionBarEntriesState';
+import { actionBarOpenState } from '@/ui/table/states/ActionBarIsOpenState';
+import { contextMenuOpenState } from '@/ui/table/states/ContextMenuIsOpenState';
 
 type OwnProps = {
-  children: React.ReactNode | React.ReactNode[];
   selectedIds: string[];
 };
 
@@ -29,31 +30,18 @@ const StyledContainerActionBar = styled.div`
   z-index: 1;
 `;
 
-export function ActionBar({ children, selectedIds }: OwnProps) {
-  const position = useRecoilValue(contextMenuPositionState);
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
+export function ActionBar({ selectedIds }: OwnProps) {
+  const actionBarOpen = useRecoilValue(actionBarOpenState);
+  const contextMenuOpen = useRecoilValue(contextMenuOpenState);
+  const actionBarEntries = useRecoilValue(actionBarEntriesState);
+  const wrapperRef = useRef(null);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (!(event.target as HTMLElement).closest('.action-bar')) {
-        setContextMenuPosition({ x: null, y: null });
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [setContextMenuPosition]);
-
-  if (selectedIds.length === 0 || position.x || position.y) {
+  if (selectedIds.length === 0 || !actionBarOpen || contextMenuOpen) {
     return null;
   }
   return (
-    <StyledContainerActionBar className="action-bar">
-      {children}
+    <StyledContainerActionBar ref={wrapperRef}>
+      {actionBarEntries}
     </StyledContainerActionBar>
   );
 }

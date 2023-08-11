@@ -1,6 +1,6 @@
 import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { BoardCardIdContext } from '@/ui/board/states/BoardCardIdContext';
 import { fieldsDefinitionsState } from '@/ui/board/states/fieldsDefinitionsState';
@@ -12,6 +12,7 @@ import {
   Checkbox,
   CheckboxVariant,
 } from '@/ui/input/checkbox/components/Checkbox';
+import { actionBarOpenState } from '@/ui/table/states/ActionBarIsOpenState';
 import { EntityUpdateMutationHookContext } from '@/ui/table/states/EntityUpdateMutationHookContext';
 import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
@@ -114,10 +115,12 @@ export function CompanyBoardCard() {
   const fieldsDefinitions = useRecoilValue(fieldsDefinitionsState);
 
   const selected = selectedBoardCards.includes(boardCardId ?? '');
+  const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
 
   function setSelected(isSelected: boolean) {
     if (isSelected) {
       setSelectedBoardCards([...selectedBoardCards, boardCardId ?? '']);
+      setActionBarOpenState(true);
     } else {
       setSelectedBoardCards(
         selectedBoardCards.filter((id) => id !== boardCardId),

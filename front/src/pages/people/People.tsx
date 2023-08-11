@@ -1,13 +1,12 @@
+import { useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useOpenActionBar } from '@/people/hooks/useOpenActionBar';
+import { useOpenContextMenu } from '@/people/hooks/useOpenContextMenu';
 import { PeopleTable } from '@/people/table/components/PeopleTable';
-import { TableActionBarButtonCreateActivityPeople } from '@/people/table/components/TableActionBarButtonCreateActivityPeople';
-import { TableActionBarButtonDeletePeople } from '@/people/table/components/TableActionBarButtonDeletePeople';
-import { TableContextMenuEntryDeletePeople } from '@/people/table/components/TableActionContextMenuEntryDeletePeople';
-import { TableContextMenuEntryCreateActivityPeople } from '@/people/table/components/TableContextMenuEntryCreateActivityPeople';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
@@ -56,6 +55,14 @@ export function People() {
 
   const theme = useTheme();
 
+  const setContextMenu = useOpenContextMenu();
+  const setActionBar = useOpenActionBar();
+
+  useEffect(() => {
+    setContextMenu();
+    setActionBar();
+  }, [setContextMenu, setActionBar]);
+
   return (
     <RecoilScope SpecificContext={TableContext}>
       <WithTopBarContainer
@@ -66,14 +73,8 @@ export function People() {
         <StyledTableContainer>
           <PeopleTable />
         </StyledTableContainer>
-        <EntityTableActionBar>
-          <TableActionBarButtonCreateActivityPeople />
-          <TableActionBarButtonDeletePeople />
-        </EntityTableActionBar>
-        <EntityTableContextMenu>
-          <TableContextMenuEntryCreateActivityPeople />
-          <TableContextMenuEntryDeletePeople />
-        </EntityTableContextMenu>
+        <EntityTableActionBar></EntityTableActionBar>
+        <EntityTableContextMenu></EntityTableContextMenu>
       </WithTopBarContainer>
     </RecoilScope>
   );

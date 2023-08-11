@@ -4,7 +4,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { IconList } from '@tabler/icons-react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { CompanyBoardContext } from '@/companies/states/CompanyBoardContext';
 import { BoardHeader } from '@/ui/board/components/BoardHeader';
@@ -12,6 +12,7 @@ import { StyledBoard } from '@/ui/board/components/StyledBoard';
 import { useUpdateBoardCardIds } from '@/ui/board/hooks/useUpdateBoardCardIds';
 import { BoardColumnIdContext } from '@/ui/board/states/BoardColumnIdContext';
 import { SelectedSortType } from '@/ui/filter-n-sort/types/interface';
+import { actionBarOpenState } from '@/ui/table/states/ActionBarIsOpenState';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import {
@@ -107,10 +108,12 @@ export function EntityBoard({
   const [selectedBoardCards, setSelectedBoardCards] = useRecoilState(
     selectedBoardCardIdsState,
   );
+  const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
 
   function setRowSelectedState(boardCardId: string, selected: boolean) {
     if (selected && !selectedBoardCards.includes(boardCardId)) {
       setSelectedBoardCards([...selectedBoardCards, boardCardId ?? '']);
+      setActionBarOpenState(true);
     } else if (!selected && selectedBoardCards.includes(boardCardId)) {
       setSelectedBoardCards(
         selectedBoardCards.filter((id) => id !== boardCardId),

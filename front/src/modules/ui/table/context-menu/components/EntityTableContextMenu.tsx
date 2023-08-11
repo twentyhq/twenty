@@ -5,12 +5,7 @@ import { ContextMenu } from '@/ui/context-menu/components/ContextMenu';
 
 import { selectedRowIdsSelector } from '../../states/selectedRowIdsSelector';
 
-type OwnProps = {
-  children: React.ReactNode | React.ReactNode[];
-};
-
-export function EntityTableContextMenu({ children }: OwnProps) {
+export function EntityTableContextMenu() {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
-
-  return <ContextMenu selectedIds={selectedRowIds}>{children}</ContextMenu>;
+  return <ContextMenu selectedIds={selectedRowIds}></ContextMenu>;
 }

@@ -2,8 +2,8 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { GET_PIPELINES } from '@/pipeline/queries';
+import { ContextMenuEntry } from '@/ui/context-menu/components/ContextMenuEntry';
 import { IconTrash } from '@/ui/icon/index';
-import { EntityTableContextMenuEntry } from '@/ui/table/context-menu/components/EntityTableContextMenuEntry';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
 import { selectedRowIdsSelector } from '@/ui/table/states/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
@@ -44,10 +44,10 @@ export function TableContextMenuEntryDeleteCompanies() {
   }
 
   return (
-    <EntityTableContextMenuEntry
+    <ContextMenuEntry
       label="Delete"
       icon={<IconTrash size={16} />}
-      type="warning"
+      type="danger"
       onClick={handleDeleteClick}
     />
   );

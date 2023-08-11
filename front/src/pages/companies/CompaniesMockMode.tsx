@@ -2,8 +2,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
-import { TableActionBarButtonCreateActivityCompany } from '@/companies/table/components/TableActionBarButtonCreateActivityCompany';
-import { TableActionBarButtonDeleteCompanies } from '@/companies/table/components/TableActionBarButtonDeleteCompanies';
 import { IconBuildingSkyscraper } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { EntityTableActionBar } from '@/ui/table/action-bar/components/EntityTableActionBar';
@@ -28,10 +26,7 @@ export function CompaniesMockMode() {
           <StyledTableContainer>
             <CompanyTableMockMode />
           </StyledTableContainer>
-          <EntityTableActionBar>
-            <TableActionBarButtonCreateActivityCompany />
-            <TableActionBarButtonDeleteCompanies />
-          </EntityTableActionBar>
+          <EntityTableActionBar></EntityTableActionBar>
         </RecoilScope>
       </WithTopBarContainer>
     </>

@@ -1,10 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 
+import { ActionBarEntry } from '@/ui/action-bar/components/ActionBarEntry';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/board/states/boardCardIdsByColumnIdFamilyState';
 import { boardColumnsState } from '@/ui/board/states/boardColumnsState';
 import { selectedBoardCardIdsState } from '@/ui/board/states/selectedBoardCardIdsState';
 import { IconTrash } from '@/ui/icon/index';
-import { EntityTableActionBarButton } from '@/ui/table/action-bar/components/EntityTableActionBarButton';
 
 export function BoardActionBarButtonDeleteBoardCard({
   onDelete,
@@ -51,10 +51,10 @@ export function BoardActionBarButtonDeleteBoardCard({
   }
 
   return (
-    <EntityTableActionBarButton
+    <ActionBarEntry
       label="Delete"
       icon={<IconTrash size={16} />}
-      type="warning"
+      type="danger"
       onClick={handleDeleteClick}
     />
   );
