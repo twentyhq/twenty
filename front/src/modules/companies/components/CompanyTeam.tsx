@@ -12,6 +12,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -32,7 +33,6 @@ const StyledListContainer = styled.div`
   border-radius: ${({ theme }) => theme.spacing(1)};
   display: flex;
   flex-direction: column;
-  max-height: ${({ theme }) => theme.spacing(35)};
   overflow: auto;
   width: 100%;
 `;
@@ -63,8 +63,12 @@ export function CompanyTeam({ company }: CompanyTeamPropsType) {
             <StyledTitle>Team</StyledTitle>
           </StyledTitleContainer>
           <StyledListContainer>
-            {data?.people?.map((person) => (
-              <PeopleCard key={person.id} person={person} />
+            {data?.people?.map((person, id) => (
+              <PeopleCard
+                key={person.id}
+                person={person}
+                hasBottomBorder={id !== data.people.length - 1}
+              />
             ))}
           </StyledListContainer>
         </StyledContainer>

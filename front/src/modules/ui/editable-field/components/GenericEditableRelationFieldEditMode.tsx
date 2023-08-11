@@ -3,18 +3,17 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { PeoplePicker } from '@/people/components/PeoplePicker';
-import {
-  ViewFieldDefinition,
-  ViewFieldRelationMetadata,
-  ViewFieldRelationValue,
-} from '@/ui/editable-field/types/ViewField';
+import { ViewFieldRelationValue } from '@/ui/editable-field/types/ViewField';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 import { useEditableField } from '../hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
+import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { FieldDefinition } from '../types/FieldDefinition';
+import { FieldRelationMetadata } from '../types/FieldMetadata';
 
 const RelationPickerContainer = styled.div`
   left: 0px;
@@ -22,17 +21,13 @@ const RelationPickerContainer = styled.div`
   top: -8px;
 `;
 
-type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldRelationMetadata>;
-};
-
 function RelationPicker({
   fieldDefinition,
   fieldValue,
   handleEntitySubmit,
   handleCancel,
 }: {
-  fieldDefinition: ViewFieldDefinition<ViewFieldRelationMetadata>;
+  fieldDefinition: FieldDefinition<FieldRelationMetadata>;
   fieldValue: ViewFieldRelationValue;
   handleEntitySubmit: (newRelationId: EntityForSelect | null) => void;
   handleCancel: () => void;
@@ -55,14 +50,19 @@ function RelationPicker({
   }
 }
 
-export function GenericEditableRelationFieldEditMode({ viewField }: OwnProps) {
+export function GenericEditableRelationFieldEditMode() {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableFieldDefinition = useContext(
+    EditableFieldDefinitionContext,
+  ) as FieldDefinition<FieldRelationMetadata>;
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<any | null>(
     genericEntityFieldFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: currentEditableFieldDefinition
+        ? currentEditableFieldDefinition.metadata.fieldName
+        : '',
     }),
   );
 
@@ -79,7 +79,11 @@ export function GenericEditableRelationFieldEditMode({ viewField }: OwnProps) {
     });
 
     if (currentEditableFieldEntityId && updateField) {
-      updateField(currentEditableFieldEntityId, viewField, newRelation);
+      updateField(
+        currentEditableFieldEntityId,
+        currentEditableFieldDefinition,
+        newRelation,
+      );
     }
 
     closeEditableField();
@@ -92,7 +96,7 @@ export function GenericEditableRelationFieldEditMode({ viewField }: OwnProps) {
   return (
     <RelationPickerContainer>
       <RelationPicker
-        fieldDefinition={viewField}
+        fieldDefinition={currentEditableFieldDefinition}
         fieldValue={fieldValue}
         handleEntitySubmit={handleSubmit}
         handleCancel={handleCancel}

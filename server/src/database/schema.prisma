@@ -205,8 +205,9 @@ model WorkspaceMember {
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Favorite  Favorite[]
 
   @@map("workspace_members")
 }
@@ -246,6 +247,7 @@ model Company {
   updatedAt        DateTime           @updatedAt
   ActivityTarget   ActivityTarget[]
   PipelineProgress PipelineProgress[]
+  Favorite         Favorite[]
 
   @@map("companies")
 }
@@ -282,7 +284,7 @@ model Person {
   /// @Validator.IsOptional()
   avatarUrl   String?
 
-  company                   Company?           @relation(fields: [companyId], references: [id])
+  company                   Company?           @relation(fields: [companyId], references: [id], onDelete: SetNull)
   companyId                 String?
   /// @TypeGraphQL.omit(input: true, output: true)
   workspace                 Workspace          @relation(fields: [workspaceId], references: [id])
@@ -297,6 +299,7 @@ model Person {
   updatedAt        DateTime           @updatedAt
   ActivityTarget   ActivityTarget[]
   PipelineProgress PipelineProgress[]
+  Favorite         Favorite[]
 
   @@map("people")
 }
@@ -407,10 +410,10 @@ model ActivityTarget {
   workspaceId     String
 
   personId String?
-  person   Person? @relation(fields: [personId], references: [id])
+  person   Person? @relation(fields: [personId], references: [id], onDelete: Cascade)
 
   companyId String?
-  company   Company? @relation(fields: [companyId], references: [id])
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -514,10 +517,10 @@ model PipelineProgress {
   updatedAt DateTime @updatedAt
 
   companyId String?
-  company   Company? @relation(fields: [companyId], references: [id])
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   personId String?
-  person   Person? @relation(fields: [personId], references: [id])
+  person   Person? @relation(fields: [personId], references: [id], onDelete: Cascade)
 
   @@map("pipeline_progresses")
 }
@@ -557,6 +560,22 @@ model Attachment {
   updatedAt DateTime  @updatedAt
 
   @@map("attachments")
+}
+
+model Favorite {
+  id                String           @id @default(uuid())
+  workspaceId       String?
+  /// @TypeGraphQL.omit(input: true, output: false)
+  person            Person?          @relation(fields: [personId], references: [id])
+  personId          String?
+  /// @TypeGraphQL.omit(input: true, output: false)
+  company           Company?         @relation(fields: [companyId], references: [id])
+  companyId         String?
+  /// @TypeGraphQL.omit(input: true, output: false)
+  workspaceMember   WorkspaceMember? @relation(fields: [workspaceMemberId], references: [id])
+  workspaceMemberId String?
+
+  @@map("favorites")
 }
 
 enum ViewType {

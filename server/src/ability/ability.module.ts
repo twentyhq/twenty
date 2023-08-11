@@ -100,6 +100,11 @@ import {
   UpdateViewFieldAbilityHandler,
 } from './handlers/view-field.ability-handler';
 import {
+  CreateFavoriteAbilityHandler,
+  ReadFavoriteAbilityHandler,
+  DeleteFavoriteAbilityHandler,
+} from './handlers/favorite.ability-handler';
+import {
   CreateViewSortAbilityHandler,
   ReadViewSortAbilityHandler,
   UpdateViewSortAbilityHandler,
@@ -193,6 +198,10 @@ import {
     ReadViewFieldAbilityHandler,
     CreateViewFieldAbilityHandler,
     UpdateViewFieldAbilityHandler,
+    //Favorite
+    ReadFavoriteAbilityHandler,
+    CreateFavoriteAbilityHandler,
+    DeleteFavoriteAbilityHandler,
     // ViewSort
     ReadViewSortAbilityHandler,
     CreateViewSortAbilityHandler,
@@ -283,6 +292,10 @@ import {
     ReadViewFieldAbilityHandler,
     CreateViewFieldAbilityHandler,
     UpdateViewFieldAbilityHandler,
+    //Favorite
+    ReadFavoriteAbilityHandler,
+    CreateFavoriteAbilityHandler,
+    DeleteFavoriteAbilityHandler,
     // ViewSort
     ReadViewSortAbilityHandler,
     CreateViewSortAbilityHandler,

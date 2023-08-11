@@ -4,14 +4,17 @@ import styled from '@emotion/styled';
 import { Avatar } from '@/users/components/Avatar';
 import { Person } from '~/generated/graphql';
 
-export type PeopleCardPropsType = {
+export type PeopleCardProps = {
   person: Pick<Person, 'id' | 'avatarUrl' | 'displayName' | 'jobTitle'>;
+  hasBottomBorder?: boolean;
 };
 
-const StyledCard = styled.div`
+const StyledCard = styled.div<{ hasBottomBorder: boolean }>`
   align-items: center;
   align-self: stretch;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid
+    ${({ theme, hasBottomBorder }) =>
+      hasBottomBorder ? theme.border.color.light : 'transparent'};
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(8)};
@@ -49,10 +52,16 @@ const StyledJobTitle = styled.div`
   }
 `;
 
-export function PeopleCard({ person }: PeopleCardPropsType) {
+export function PeopleCard({
+  person,
+  hasBottomBorder = true,
+}: PeopleCardProps) {
   const navigate = useNavigate();
   return (
-    <StyledCard onClick={() => navigate(`/person/${person.id}`)}>
+    <StyledCard
+      onClick={() => navigate(`/person/${person.id}`)}
+      hasBottomBorder={hasBottomBorder}
+    >
       <Avatar
         size="lg"
         type="rounded"
@@ -61,7 +70,7 @@ export function PeopleCard({ person }: PeopleCardPropsType) {
       />
       <StyledCardInfo>
         <StyledTitle>{person.displayName}</StyledTitle>
-        <StyledJobTitle> {person.jobTitle ?? 'Add job title'}</StyledJobTitle>
+        {person.jobTitle && <StyledJobTitle>{person.jobTitle}</StyledJobTitle>}
       </StyledCardInfo>
     </StyledCard>
   );

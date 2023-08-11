@@ -13,6 +13,8 @@ COPY ./front .
 RUN yarn install
 RUN yarn build
 
+COPY ./infra/prod/front/serve.json ./build
+
 FROM node:18.16.0-alpine as front
 
 WORKDIR /app/front
@@ -20,4 +22,4 @@ COPY --from=build /app/front/build ./build
 
 RUN yarn global add serve
 
-CMD ["serve", "-s", "build"]
+CMD ["serve", "build"]

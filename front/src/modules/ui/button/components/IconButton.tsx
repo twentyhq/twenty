@@ -5,7 +5,11 @@ export type IconButtonVariant = 'transparent' | 'border' | 'shadow' | 'white';
 
 export type IconButtonSize = 'large' | 'medium' | 'small';
 
-export type IconButtonFontColor = 'primary' | 'secondary' | 'tertiary';
+export type IconButtonFontColor =
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'danger';
 
 export type ButtonProps = {
   icon?: React.ReactNode;
@@ -71,7 +75,9 @@ const StyledIconButton = styled.button<
       return theme.font.color.extraLight;
     }
 
-    return theme.font.color[textColor ?? 'secondary'];
+    return textColor === 'danger'
+      ? theme.color.red
+      : theme.font.color[textColor ?? 'secondary'];
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;

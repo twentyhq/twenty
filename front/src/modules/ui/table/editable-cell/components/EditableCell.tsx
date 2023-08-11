@@ -9,7 +9,9 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { CellHotkeyScopeContext } from '../../states/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentCellEditMode } from '../hooks/useCurrentCellEditMode';
+import { useEditableCell } from '../hooks/useEditableCell';
 import { useIsSoftFocusOnCurrentCell } from '../hooks/useIsSoftFocusOnCurrentCell';
+import { useSetSoftFocusOnCurrentCell } from '../hooks/useSetSoftFocusOnCurrentCell';
 
 import { EditableCellDisplayMode } from './EditableCellDisplayMode';
 import { EditableCellEditMode } from './EditableCellEditMode';
@@ -39,6 +41,7 @@ type OwnProps = {
   editHotkeyScope?: HotkeyScope;
   transparent?: boolean;
   maxContentWidth?: number;
+  useEditButton?: boolean;
   onSubmit?: () => void;
   onCancel?: () => void;
 };
@@ -55,27 +58,19 @@ export function EditableCell({
   editHotkeyScope,
   transparent = false,
   maxContentWidth,
+  useEditButton,
 }: OwnProps) {
-  const { isCurrentCellInEditMode, setCurrentCellInEditMode } =
-    useCurrentCellEditMode();
+  const { isCurrentCellInEditMode } = useCurrentCellEditMode();
   const [isHovered, setIsHovered] = useState(false);
 
-  function isValidUrl(value: string) {
-    let testUrl = value;
-    if (testUrl && !testUrl.startsWith('http')) {
-      testUrl = 'http://' + testUrl;
-    }
-    try {
-      new URL(testUrl);
-      return true;
-    } catch (err) {
-      return false;
-    }
-  }
+  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentCell();
 
-  const handleClick = () => {
-    setCurrentCellInEditMode();
-  };
+  const { openEditableCell } = useEditableCell();
+
+  function handlePenClick() {
+    setSoftFocusOnCurrentCell();
+    openEditableCell();
+  }
 
   function handleContainerMouseEnter() {
     setIsHovered(true);
@@ -85,9 +80,7 @@ export function EditableCell({
     setIsHovered(false);
   }
 
-  const value = nonEditModeContent.props.value;
-  const showEditButton =
-    !isCurrentCellInEditMode && isValidUrl(value) && isHovered;
+  const showEditButton = useEditButton && isHovered && !isCurrentCellInEditMode;
 
   const hasSoftFocus = useIsSoftFocusOnCurrentCell();
 
@@ -124,7 +117,7 @@ export function EditableCell({
                 <IconButton
                   variant="shadow"
                   size="small"
-                  onClick={handleClick}
+                  onClick={handlePenClick}
                   icon={<IconPencil size={14} />}
                 />
               </StyledEditButtonContainer>

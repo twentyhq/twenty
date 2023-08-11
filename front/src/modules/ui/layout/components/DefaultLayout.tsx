@@ -19,7 +19,20 @@ const StyledLayout = styled.div`
   flex-direction: row;
   height: 100vh;
   position: relative;
+  scrollbar-color: ${({ theme }) => theme.border.color.medium};
+
+  scrollbar-width: 4px;
   width: 100vw;
+
+  *::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: ${({ theme }) => theme.border.color.medium};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+  }
 `;
 
 const NAVBAR_WIDTH = '236px';

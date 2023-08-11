@@ -32,4 +32,12 @@ describe('isURL', () => {
   it(`should return true if string 2.com`, () => {
     expect(isURL('2.com')).toBeTruthy();
   });
+
+  it(`should return true if string https://2.com/test/`, () => {
+    expect(isURL('https://2.com/test/')).toBeTruthy();
+  });
+
+  it(`should return false if string https://2.com/test/sldkfj!?`, () => {
+    expect(isURL('https://2.com/test/sldkfj!?')).toBeFalsy();
+  });
 });

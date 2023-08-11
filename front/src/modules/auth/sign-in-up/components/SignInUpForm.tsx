@@ -76,7 +76,7 @@ export function SignInUpForm() {
 
   const title = useMemo(() => {
     if (signInUpMode === SignInUpMode.Invite) {
-      return `Join ${workspace?.displayName ?? ''} Team`;
+      return `Join ${workspace?.displayName ?? ''} team`;
     }
 
     return signInUpMode === SignInUpMode.SignIn

@@ -1,34 +1,30 @@
-import {
-  ViewFieldDefinition,
-  ViewFieldMetadata,
-} from '@/ui/editable-field/types/ViewField';
+import { useContext } from 'react';
 
-import { isViewFieldDate } from '../types/guards/isViewFieldDate';
-import { isViewFieldNumber } from '../types/guards/isViewFieldNumber';
-import { isViewFieldProbability } from '../types/guards/isViewFieldProbability';
-import { isViewFieldRelation } from '../types/guards/isViewFieldRelation';
+import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
+import { isFieldDate } from '../types/guards/isFieldDate';
+import { isFieldNumber } from '../types/guards/isFieldNumber';
+import { isFieldProbability } from '../types/guards/isFieldProbability';
+import { isFieldRelation } from '../types/guards/isFieldRelation';
 
 import { GenericEditableDateField } from './GenericEditableDateField';
 import { GenericEditableNumberField } from './GenericEditableNumberField';
 import { GenericEditableRelationField } from './GenericEditableRelationField';
 import { ProbabilityEditableField } from './ProbabilityEditableField';
 
-type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldMetadata>;
-};
+export function GenericEditableField() {
+  const fieldDefinition = useContext(EditableFieldDefinitionContext);
 
-export function GenericEditableField({ viewField: fieldDefinition }: OwnProps) {
-  if (isViewFieldDate(fieldDefinition)) {
-    return <GenericEditableDateField viewField={fieldDefinition} />;
-  } else if (isViewFieldNumber(fieldDefinition)) {
-    return <GenericEditableNumberField viewField={fieldDefinition} />;
-  } else if (isViewFieldRelation(fieldDefinition)) {
-    return <GenericEditableRelationField viewField={fieldDefinition} />;
-  } else if (isViewFieldProbability(fieldDefinition)) {
-    return <ProbabilityEditableField viewField={fieldDefinition} />;
+  if (isFieldRelation(fieldDefinition)) {
+    return <GenericEditableRelationField />;
+  } else if (isFieldDate(fieldDefinition)) {
+    return <GenericEditableDateField />;
+  } else if (isFieldNumber(fieldDefinition)) {
+    return <GenericEditableNumberField />;
+  } else if (isFieldProbability(fieldDefinition)) {
+    return <ProbabilityEditableField />;
   } else {
     console.warn(
-      `Unknown field metadata type: ${fieldDefinition.metadata.type} in GenericEditableField`,
+      `Unknown field metadata type: ${fieldDefinition.metadata.type} in GenericEditableCell`,
     );
     return <></>;
   }

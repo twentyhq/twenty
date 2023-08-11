@@ -10,8 +10,10 @@ type OwnProps = {
   children: JSX.Element | JSX.Element[];
   title: string;
   hasBackButton?: boolean;
+  isFavorite?: boolean;
   icon: ReactNode;
   onAddButtonClick?: () => void;
+  onFavoriteButtonClick?: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -24,8 +26,10 @@ export function WithTopBarContainer({
   children,
   title,
   hasBackButton,
+  isFavorite,
   icon,
   onAddButtonClick,
+  onFavoriteButtonClick,
 }: OwnProps) {
   return (
     <StyledContainer>
@@ -33,8 +37,10 @@ export function WithTopBarContainer({
       <PageBar
         title={title}
         hasBackButton={hasBackButton}
+        isFavorite={isFavorite}
         icon={icon}
         onAddButtonClick={onAddButtonClick}
+        onFavoriteButtonClick={onFavoriteButtonClick}
       />
       <RightDrawerContainer topMargin={PAGE_BAR_MIN_HEIGHT + 16 + 16}>
         {children}

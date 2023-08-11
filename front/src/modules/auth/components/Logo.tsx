@@ -6,40 +6,62 @@ type Props = React.ComponentProps<'div'> & {
   workspaceLogo?: string | null;
 };
 
-const StyledLogo = styled.div`
+const StyledContainer = styled.div`
   height: 48px;
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(4)};
-
-  img {
-    height: 100%;
-    width: 100%;
-  }
 
   position: relative;
   width: 48px;
 `;
 
-type StyledWorkspaceLogoProps = {
+const StyledTwentyLogo = styled.img`
+  border-radius: ${({ theme }) => theme.border.radius.xs};
+  height: 24px;
+  width: 24px;
+`;
+
+const StyledTwentyLogoContainer = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.primary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  bottom: ${({ theme }) => `-${theme.spacing(3)}`};
+  display: flex;
+  height: 28px;
+  justify-content: center;
+
+  position: absolute;
+  right: ${({ theme }) => `-${theme.spacing(3)}`};
+  width: 28px;
+`;
+
+type StyledMainLogoProps = {
   logo?: string | null;
 };
 
-const StyledWorkspaceLogo = styled.div<StyledWorkspaceLogoProps>`
+const StyledMainLogo = styled.div<StyledMainLogoProps>`
   background: url(${(props) => props.logo});
   background-size: cover;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  bottom: ${({ theme }) => `-${theme.spacing(3)}`};
-  height: ${({ theme }) => theme.spacing(6)};
-  position: absolute;
-  right: ${({ theme }) => `-${theme.spacing(3)}`};
-  width: ${({ theme }) => theme.spacing(6)};
+  height: 100%;
+
+  width: 100%;
 `;
 
 export function Logo({ workspaceLogo, ...props }: Props) {
+  if (!workspaceLogo) {
+    return (
+      <StyledContainer {...props}>
+        <StyledMainLogo logo="/icons/android/android-launchericon-192-192.png" />
+      </StyledContainer>
+    );
+  }
+
   return (
-    <StyledLogo {...props}>
-      <StyledWorkspaceLogo logo={getImageAbsoluteURIOrBase64(workspaceLogo)} />
-      <img src="/icons/android/android-launchericon-192-192.png" alt="logo" />
-    </StyledLogo>
+    <StyledContainer {...props}>
+      <StyledMainLogo logo={getImageAbsoluteURIOrBase64(workspaceLogo)} />
+      <StyledTwentyLogoContainer>
+        <StyledTwentyLogo src="/icons/android/android-launchericon-192-192.png" />
+      </StyledTwentyLogoContainer>
+    </StyledContainer>
   );
 }

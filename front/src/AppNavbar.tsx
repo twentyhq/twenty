@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { Favorites } from '@/favorites/components/Favorites';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
 import {
   IconBell,
@@ -56,6 +57,7 @@ export function AppNavbar() {
             active={currentPath === '/tasks'}
             icon={<IconCheckbox size={theme.icon.size.md} />}
           />
+          <Favorites />
           <NavTitle label="Workspace" />
           <NavItem
             label="Companies"

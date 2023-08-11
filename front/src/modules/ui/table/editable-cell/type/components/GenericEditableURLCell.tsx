@@ -32,6 +32,7 @@ export function GenericEditableURLCell({
 
   return (
     <EditableCell
+      useEditButton
       editModeHorizontalAlign={editModeHorizontalAlign}
       editModeContent={<GenericEditableURLCellEditMode viewField={viewField} />}
       nonEditModeContent={

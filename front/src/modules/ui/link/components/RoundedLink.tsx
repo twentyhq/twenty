@@ -30,7 +30,7 @@ export function RoundedLink({ children, href, onClick }: OwnProps) {
             <Chip
               label={`${children}`}
               variant={ChipVariant.Rounded}
-              size={ChipSize.Large}
+              size={ChipSize.Small}
             />
           </ReactLink>
         </StyledClickable>

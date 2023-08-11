@@ -19,6 +19,15 @@ export const GET_COMPANY = gql`
         displayName
         avatarUrl
       }
+      Favorite {
+        id
+        person {
+          id
+        }
+        company {
+          id
+        }
+      }
     }
   }
 `;

@@ -1,28 +1,27 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import {
-  ViewFieldDateMetadata,
-  ViewFieldDefinition,
-} from '@/ui/editable-field/types/ViewField';
-
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
+import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
+import { FieldDefinition } from '../types/FieldDefinition';
+import { FieldDateMetadata } from '../types/FieldMetadata';
 import { EditableFieldEditModeDate } from '../variants/components/EditableFieldEditModeDate';
 
-type OwnProps = {
-  viewField: ViewFieldDefinition<ViewFieldDateMetadata>;
-};
-
-export function GenericEditableDateFieldEditMode({ viewField }: OwnProps) {
+export function GenericEditableDateFieldEditMode() {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
+  const currentEditableFieldDefinition = useContext(
+    EditableFieldDefinitionContext,
+  ) as FieldDefinition<FieldDateMetadata>;
 
   // TODO: we could use a hook that would return the field value with the right type
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     genericEntityFieldFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
-      fieldName: viewField.metadata.fieldName,
+      fieldName: currentEditableFieldDefinition
+        ? currentEditableFieldDefinition.metadata.fieldName
+        : '',
     }),
   );
 
@@ -34,7 +33,11 @@ export function GenericEditableDateFieldEditMode({ viewField }: OwnProps) {
     setFieldValue(newDateISO);
 
     if (currentEditableFieldEntityId && updateField) {
-      updateField(currentEditableFieldEntityId, viewField, newDateISO);
+      updateField(
+        currentEditableFieldEntityId,
+        currentEditableFieldDefinition,
+        newDateISO,
+      );
     }
   }
 
