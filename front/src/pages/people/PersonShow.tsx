@@ -4,23 +4,13 @@ import { useTheme } from '@emotion/react';
 
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { PeopleCompanyEditableField } from '@/people/editable-field/components/PeopleCompanyEditableField';
 import { GET_PERSON, usePersonQuery } from '@/people/queries';
 import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
 import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
 import { EditableFieldDefinitionContext } from '@/ui/editable-field/states/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '@/ui/editable-field/states/EditableFieldEntityIdContext';
 import { EditableFieldMutationContext } from '@/ui/editable-field/states/EditableFieldMutationContext';
-import { DateEditableField } from '@/ui/editable-field/variants/components/DateEditableField';
-import { PhoneEditableField } from '@/ui/editable-field/variants/components/PhoneEditableField';
-import { TextEditableField } from '@/ui/editable-field/variants/components/TextEditableField';
-import {
-  IconCalendar,
-  IconMail,
-  IconMap,
-  IconPhone,
-  IconUser,
-} from '@/ui/icon';
+import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
@@ -106,74 +96,6 @@ export function PersonShow() {
                 })}
               </EditableFieldEntityIdContext.Provider>
             </EditableFieldMutationContext.Provider>
-            <TextEditableField
-              value={person.email}
-              icon={<IconMail />}
-              placeholder={'Email'}
-              onSubmit={(newEmail) => {
-                // updatePerson({
-                //   variables: {
-                //     where: {
-                //       id: person.id,
-                //     },
-                //     data: {
-                //       email: newEmail,
-                //     },
-                //   },
-                // });
-              }}
-            />
-            <PhoneEditableField
-              value={person.phone}
-              icon={<IconPhone />}
-              placeholder={'Phone'}
-              onSubmit={(newPhone) => {
-                // updatePerson({
-                //   variables: {
-                //     where: {
-                //       id: person.id,
-                //     },
-                //     data: {
-                //       phone: newPhone,
-                //     },
-                //   },
-                // });
-              }}
-            />
-            <DateEditableField
-              value={person.createdAt}
-              icon={<IconCalendar />}
-              onSubmit={(newDate) => {
-                // updatePerson({
-                //   variables: {
-                //     where: {
-                //       id: person.id,
-                //     },
-                //     data: {
-                //       createdAt: newDate,
-                //     },
-                //   },
-                // });
-              }}
-            />
-            <PeopleCompanyEditableField people={person} />
-            <TextEditableField
-              value={person.city}
-              icon={<IconMap />}
-              placeholder={'City'}
-              onSubmit={(newCity) => {
-                // updatePerson({
-                //   variables: {
-                //     where: {
-                //       id: person.id,
-                //     },
-                //     data: {
-                //       city: newCity,
-                //     },
-                //   },
-                // });
-              }}
-            />
           </PropertyBox>
         </ShowPageLeftContainer>
         <ShowPageRightContainer>
