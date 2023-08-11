@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { PersonChip } from '@/people/components/PersonChip';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { UserChip } from '@/users/components/UserChip';
 
 import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
 import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
@@ -29,6 +30,15 @@ export function GenericEditableRelationFieldDisplayMode() {
     case Entity.Person: {
       return (
         <PersonChip
+          id={fieldValue?.id ?? ''}
+          name={fieldValue?.displayName ?? ''}
+          pictureUrl={fieldValue?.avatarUrl ?? ''}
+        />
+      );
+    }
+    case Entity.User: {
+      return (
+        <UserChip
           id={fieldValue?.id ?? ''}
           name={fieldValue?.displayName ?? ''}
           pictureUrl={fieldValue?.avatarUrl ?? ''}

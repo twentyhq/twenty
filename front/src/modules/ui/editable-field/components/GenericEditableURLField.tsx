@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitionContext';
@@ -9,19 +8,19 @@ import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdCon
 import { FieldContext } from '../states/FieldContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldRelationMetadata } from '../types/FieldMetadata';
+import { FieldNumberMetadata } from '../types/FieldMetadata';
 
 import { EditableField } from './EditableField';
-import { GenericEditableRelationFieldDisplayMode } from './GenericEditableRelationFieldDisplayMode';
-import { GenericEditableRelationFieldEditMode } from './GenericEditableRelationFieldEditMode';
+import { FieldDisplayURL } from './FieldDisplayURL';
+import { GenericEditableURLFieldEditMode } from './GenericEditableURLFieldEditMode';
 
-export function GenericEditableRelationField() {
+export function GenericEditableURLField() {
   const currentEditableFieldEntityId = useContext(EditableFieldEntityIdContext);
   const currentEditableFieldDefinition = useContext(
     EditableFieldDefinitionContext,
-  ) as FieldDefinition<FieldRelationMetadata>;
+  ) as FieldDefinition<FieldNumberMetadata>;
 
-  const fieldValue = useRecoilValue<any | null>(
+  const fieldValue = useRecoilValue<string>(
     genericEntityFieldFamilySelector({
       entityId: currentEditableFieldEntityId ?? '',
       fieldName: currentEditableFieldDefinition
@@ -32,19 +31,13 @@ export function GenericEditableRelationField() {
 
   return (
     <RecoilScope SpecificContext={FieldContext}>
-      <RecoilScope>
-        <EditableField
-          useEditButton={currentEditableFieldDefinition.metadata.useEditButton}
-          customEditHotkeyScope={{
-            scope: RelationPickerHotkeyScope.RelationPicker,
-          }}
-          iconLabel={currentEditableFieldDefinition.icon}
-          editModeContent={<GenericEditableRelationFieldEditMode />}
-          displayModeContent={<GenericEditableRelationFieldDisplayMode />}
-          isDisplayModeContentEmpty={!fieldValue}
-          isDisplayModeFixHeight
-        />
-      </RecoilScope>
+      <EditableField
+        useEditButton
+        iconLabel={currentEditableFieldDefinition.icon}
+        editModeContent={<GenericEditableURLFieldEditMode />}
+        displayModeContent={<FieldDisplayURL URL={fieldValue} />}
+        isDisplayModeContentEmpty={!fieldValue}
+      />
     </RecoilScope>
   );
 }

@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { PeoplePicker } from '@/people/components/PeoplePicker';
-import { ViewFieldRelationValue } from '@/ui/editable-field/types/ViewField';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { UserPicker } from '@/users/components/UserPicker';
 
 import { useEditableField } from '../hooks/useEditableField';
 import { useUpdateGenericEntityField } from '../hooks/useUpdateGenericEntityField';
@@ -13,7 +13,10 @@ import { EditableFieldDefinitionContext } from '../states/EditableFieldDefinitio
 import { EditableFieldEntityIdContext } from '../states/EditableFieldEntityIdContext';
 import { genericEntityFieldFamilySelector } from '../states/genericEntityFieldFamilySelector';
 import { FieldDefinition } from '../types/FieldDefinition';
-import { FieldRelationMetadata } from '../types/FieldMetadata';
+import {
+  FieldRelationMetadata,
+  FieldRelationValue,
+} from '../types/FieldMetadata';
 
 const RelationPickerContainer = styled.div`
   left: 0px;
@@ -28,7 +31,7 @@ function RelationPicker({
   handleCancel,
 }: {
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
-  fieldValue: ViewFieldRelationValue;
+  fieldValue: FieldRelationValue;
   handleEntitySubmit: (newRelationId: EntityForSelect | null) => void;
   handleCancel: () => void;
 }) {
@@ -36,7 +39,16 @@ function RelationPicker({
     case Entity.Person: {
       return (
         <PeoplePicker
-          personId={fieldValue?.id ?? null}
+          personId={fieldValue ? fieldValue.id : ''}
+          onSubmit={handleEntitySubmit}
+          onCancel={handleCancel}
+        />
+      );
+    }
+    case Entity.User: {
+      return (
+        <UserPicker
+          userId={fieldValue ? fieldValue.id : ''}
           onSubmit={handleEntitySubmit}
           onCancel={handleCancel}
         />
@@ -46,7 +58,7 @@ function RelationPicker({
       console.warn(
         `Unknown relation type: "${fieldDefinition.metadata.relationType}" in GenericEditableRelationField`,
       );
-      return <> </>;
+      return <></>;
   }
 }
 

@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
+import { useSetRecoilState } from 'recoil';
 
+import { genericEntitiesFamilyState } from '@/ui/editable-field/states/genericEntitiesFamilyState';
 import { useGetCompanyQuery } from '~/generated/graphql';
 
 export const GET_COMPANY = gql`
@@ -33,5 +35,13 @@ export const GET_COMPANY = gql`
 `;
 
 export function useCompanyQuery(id: string) {
-  return useGetCompanyQuery({ variables: { where: { id } } });
+  const updateCompanyShowPage = useSetRecoilState(
+    genericEntitiesFamilyState(id),
+  );
+  return useGetCompanyQuery({
+    variables: { where: { id } },
+    onCompleted: (data) => {
+      updateCompanyShowPage(data?.findUniqueCompany);
+    },
+  });
 }

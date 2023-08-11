@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -12,7 +13,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/People',
   component: People,
   decorators: [PageDecorator],
-  args: { currentPath: '/people' },
+  args: { routePath: AppPath.PeoplePage },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

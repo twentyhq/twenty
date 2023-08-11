@@ -21,6 +21,7 @@ import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageCo
 
 export function PersonShow() {
   const personId = useParams().personId ?? '';
+
   const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
 
   const { data } = usePersonQuery(personId);
