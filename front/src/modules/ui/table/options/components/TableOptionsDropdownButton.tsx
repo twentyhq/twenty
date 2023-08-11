@@ -1,7 +1,6 @@
 import { useCallback, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 import { useTheme } from '@emotion/react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { IconButton } from '@/ui/button/components/IconButton';
 import { DropdownMenuHeader } from '@/ui/dropdown/components/DropdownMenuHeader';
@@ -16,16 +15,15 @@ import DropdownButton from '@/ui/filter-n-sort/components/DropdownButton';
 import { FiltersHotkeyScope } from '@/ui/filter-n-sort/types/FiltersHotkeyScope';
 import { IconChevronLeft, IconMinus, IconPlus, IconTag } from '@/ui/icon';
 import {
-  hiddenViewFieldsState,
-  visibleViewFieldsState,
-} from '@/ui/table/states/viewFieldsState';
-import { useUpdateViewFieldMutation } from '~/generated/graphql';
+  hiddenTableColumnsState,
+  tableColumnsState,
+  visibleTableColumnsState,
+} from '@/ui/table/states/tableColumnsState';
 
-import { GET_VIEW_FIELDS } from '../queries/select';
+import { TableOptionsDropdownSection } from './TableOptionsDropdownSection';
 
-import { OptionsDropdownSection } from './OptionsDropdownSection';
-
-type OptionsDropdownButtonProps = {
+type TableOptionsDropdownButtonProps = {
+  onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   HotkeyScope: FiltersHotkeyScope;
 };
 
@@ -33,51 +31,52 @@ enum Option {
   Properties = 'Properties',
 }
 
-export const OptionsDropdownButton = ({
+export const TableOptionsDropdownButton = ({
+  onColumnsChange,
   HotkeyScope,
-}: OptionsDropdownButtonProps) => {
+}: TableOptionsDropdownButtonProps) => {
   const theme = useTheme();
   const [isUnfolded, setIsUnfolded] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option | undefined>(
     undefined,
   );
 
-  const visibleFields = useRecoilValue(visibleViewFieldsState);
-  const hiddenFields = useRecoilValue(hiddenViewFieldsState);
+  const [columns, setColumns] = useRecoilState(tableColumnsState);
+  const visibleColumns = useRecoilValue(visibleTableColumnsState);
+  const hiddenColumns = useRecoilValue(hiddenTableColumnsState);
 
-  const [updateViewFieldMutation] = useUpdateViewFieldMutation();
+  const handleColumnVisibilityChange = useCallback(
+    (columnId: string, nextIsVisible: boolean) => {
+      const nextColumns = columns.map((column) =>
+        column.id === columnId
+          ? { ...column, isVisible: nextIsVisible }
+          : column,
+      );
 
-  const handleViewFieldVisibilityChange = useCallback(
-    (viewFieldId: string, nextIsVisible: boolean) => {
-      updateViewFieldMutation({
-        variables: {
-          data: { isVisible: nextIsVisible },
-          where: { id: viewFieldId },
-        },
-        refetchQueries: [getOperationName(GET_VIEW_FIELDS) ?? ''],
-      });
+      setColumns(nextColumns);
+      onColumnsChange?.(nextColumns);
     },
-    [updateViewFieldMutation],
+    [columns, onColumnsChange, setColumns],
   );
 
   const renderFieldActions = useCallback(
-    (viewField: ViewFieldDefinition<ViewFieldMetadata>) =>
+    (column: ViewFieldDefinition<ViewFieldMetadata>) =>
       // Do not allow hiding last visible column
-      !viewField.isVisible || visibleFields.length > 1 ? (
+      !column.isVisible || visibleColumns.length > 1 ? (
         <IconButton
           icon={
-            viewField.isVisible ? (
+            column.isVisible ? (
               <IconMinus size={theme.icon.size.sm} />
             ) : (
               <IconPlus size={theme.icon.size.sm} />
             )
           }
           onClick={() =>
-            handleViewFieldVisibilityChange(viewField.id, !viewField.isVisible)
+            handleColumnVisibilityChange(column.id, !column.isVisible)
           }
         />
       ) : undefined,
-    [handleViewFieldVisibilityChange, theme.icon.size.sm, visibleFields.length],
+    [handleColumnVisibilityChange, theme.icon.size.sm, visibleColumns.length],
   );
 
   const resetSelectedOption = useCallback(() => {
@@ -115,18 +114,18 @@ export const OptionsDropdownButton = ({
             Properties
           </DropdownMenuHeader>
           <DropdownMenuSeparator />
-          <OptionsDropdownSection
+          <TableOptionsDropdownSection
             renderActions={renderFieldActions}
             title="Visible"
-            viewFields={visibleFields}
+            columns={visibleColumns}
           />
-          {hiddenFields.length > 0 && (
+          {hiddenColumns.length > 0 && (
             <>
               <DropdownMenuSeparator />
-              <OptionsDropdownSection
+              <TableOptionsDropdownSection
                 renderActions={renderFieldActions}
                 title="Hidden"
-                viewFields={hiddenFields}
+                columns={hiddenColumns}
               />
             </>
           )}
