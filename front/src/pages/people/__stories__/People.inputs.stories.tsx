@@ -6,6 +6,7 @@ import { graphql } from 'msw';
 
 import { UPDATE_ONE_PERSON } from '@/people/queries';
 import { SEARCH_COMPANY_QUERY } from '@/search/queries/search';
+import { AppPath } from '@/types/AppPath';
 import { Company } from '~/generated/graphql';
 import {
   PageDecorator,
@@ -25,7 +26,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/People/Input',
   component: People,
   decorators: [PageDecorator],
-  args: { currentPath: '/people' },
+  args: { routePath: AppPath.PeoplePage },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

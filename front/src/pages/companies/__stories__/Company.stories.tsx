@@ -23,8 +23,8 @@ const meta: Meta<PageDecoratorArgs> = {
   component: CompanyShow,
   decorators: [PageDecorator],
   args: {
-    currentPath: AppPath.CompanyShowPage,
-    id: mockedCompaniesData[0].id,
+    routePath: AppPath.CompanyShowPage,
+    routeParams: { ':companyId': mockedCompaniesData[0].id },
   },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },

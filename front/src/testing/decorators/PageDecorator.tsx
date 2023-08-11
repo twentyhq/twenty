@@ -7,39 +7,34 @@ import { UserProvider } from '~/modules/users/components/UserProvider';
 
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
 
-export type PageDecoratorArgs = { currentPath: string; id: string };
+export type PageDecoratorArgs = { routePath: string; routeParams: RouteParams };
 
-function replacePlaceholder(path: string, id?: string) {
-  const matches = path.match(/:[a-zA-Z0-9]+/);
+type RouteParams = {
+  [param: string]: string;
+};
 
-  if (id && matches && matches.length > 0) {
-    return path.replace(matches[0], id);
-  }
-
-  return path;
+function computeLocation(routePath: string, routeParams: RouteParams) {
+  return routePath.replace(/:(\w+)/g, (paramName) => {
+    return routeParams[paramName] ?? '';
+  });
 }
 
-export const PageDecorator: Decorator<{ currentPath: string; id: string }> = (
-  Story,
-  { args },
-) => (
+export const PageDecorator: Decorator<{
+  routePath: string;
+  routeParams: RouteParams;
+}> = (Story, { args }) => (
   <UserProvider>
     <ClientConfigProvider>
       <MemoryRouter
-        initialEntries={[replacePlaceholder(args.currentPath, args.id)]}
+        initialEntries={[computeLocation(args.routePath, args.routeParams)]}
       >
-        <Routes>
-          <Route
-            path={args.currentPath}
-            element={
-              <FullHeightStorybookLayout>
-                <DefaultLayout>
-                  <Story />
-                </DefaultLayout>
-              </FullHeightStorybookLayout>
-            }
-          />
-        </Routes>
+        <FullHeightStorybookLayout>
+          <DefaultLayout>
+            <Routes>
+              <Route path={args.routePath} element={<Story />} />
+            </Routes>
+          </DefaultLayout>
+        </FullHeightStorybookLayout>
       </MemoryRouter>
     </ClientConfigProvider>
   </UserProvider>

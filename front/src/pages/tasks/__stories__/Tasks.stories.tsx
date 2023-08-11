@@ -13,7 +13,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Tasks/Default',
   component: Tasks,
   decorators: [PageDecorator],
-  args: { currentPath: AppPath.TasksPage },
+  args: { routePath: AppPath.TasksPage },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

@@ -17,7 +17,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/CreateWorkspace',
   component: CreateWorkspace,
   decorators: [PageDecorator],
-  args: { currentPath: AppPath.CreateWorkspace },
+  args: { routePath: AppPath.CreateWorkspace },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: [

@@ -14,7 +14,10 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/People/Person',
   component: PersonShow,
   decorators: [PageDecorator],
-  args: { currentPath: AppPath.PersonShowPage, id: mockedPeopleData[0].id },
+  args: {
+    routePath: AppPath.PersonShowPage,
+    routeParams: { ':personId': mockedPeopleData[0].id },
+  },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

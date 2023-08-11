@@ -17,7 +17,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/CreateProfile',
   component: CreateProfile,
   decorators: [PageDecorator],
-  args: { currentPath: AppPath.CreateProfile },
+  args: { routePath: AppPath.CreateProfile },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: [

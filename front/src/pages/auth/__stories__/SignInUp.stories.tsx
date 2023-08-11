@@ -14,7 +14,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/SignInUp',
   component: SignInUp,
   decorators: [PageDecorator],
-  args: { currentPath: AppPath.SignIn },
+  args: { routePath: AppPath.SignIn },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

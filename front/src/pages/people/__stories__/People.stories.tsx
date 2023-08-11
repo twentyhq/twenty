@@ -13,7 +13,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/People',
   component: People,
   decorators: [PageDecorator],
-  args: { currentPath: AppPath.PeoplePage },
+  args: { routePath: AppPath.PeoplePage },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,
