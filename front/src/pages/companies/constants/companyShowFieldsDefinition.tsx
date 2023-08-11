@@ -18,15 +18,6 @@ import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 export const companyShowFieldsDefinition: FieldDefinition<FieldMetadata>[] = [
   {
-    id: 'createdAt',
-    label: 'Created at',
-    icon: <IconCalendar />,
-    type: 'date',
-    metadata: {
-      fieldName: 'createdAt',
-    },
-  } satisfies FieldDefinition<FieldDateMetadata>,
-  {
     id: 'domainName',
     label: 'Domain name',
     icon: <IconLink />,
@@ -63,7 +54,16 @@ export const companyShowFieldsDefinition: FieldDefinition<FieldMetadata>[] = [
     type: 'text',
     metadata: {
       fieldName: 'address',
-      placeHolder: 'Employees',
+      placeHolder: 'Address',
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
+  {
+    id: 'createdAt',
+    label: 'Created at',
+    icon: <IconCalendar />,
+    type: 'date',
+    metadata: {
+      fieldName: 'createdAt',
+    },
+  } satisfies FieldDefinition<FieldDateMetadata>,
 ];
