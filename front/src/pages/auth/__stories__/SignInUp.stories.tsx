@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fireEvent, within } from '@storybook/testing-library';
 
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -13,7 +14,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/SignInUp',
   component: SignInUp,
   decorators: [PageDecorator],
-  args: { currentPath: '/sign-in' },
+  args: { currentPath: AppPath.SignIn },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: graphqlMocks,

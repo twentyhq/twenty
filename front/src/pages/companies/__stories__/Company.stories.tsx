@@ -7,6 +7,7 @@ import { graphql } from 'msw';
 import { GET_ACTIVITIES_BY_TARGETS, GET_ACTIVITY } from '@/activities/queries';
 import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/queries/create';
 import { GET_COMPANY, UPDATE_ONE_COMPANY } from '@/companies/queries';
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -22,7 +23,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: CompanyShow,
   decorators: [PageDecorator],
   args: {
-    currentPath: '/companies/:companyId',
+    currentPath: AppPath.CompanyShowPage,
     id: mockedCompaniesData[0].id,
   },
   parameters: {

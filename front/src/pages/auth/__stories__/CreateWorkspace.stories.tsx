@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
+import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
   type PageDecoratorArgs,
@@ -16,7 +17,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/CreateWorkspace',
   component: CreateWorkspace,
   decorators: [PageDecorator],
-  args: { currentPath: '/create/workspace' },
+  args: { currentPath: AppPath.CreateWorkspace },
   parameters: {
     docs: { story: 'inline', iframeHeight: '500px' },
     msw: [
