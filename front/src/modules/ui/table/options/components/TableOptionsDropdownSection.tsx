@@ -12,32 +12,32 @@ import {
   ViewFieldMetadata,
 } from '@/ui/editable-field/types/ViewField';
 
-type OptionsDropdownSectionProps = {
+type TableOptionsDropdownSectionProps = {
   renderActions: (
-    viewField: ViewFieldDefinition<ViewFieldMetadata>,
+    column: ViewFieldDefinition<ViewFieldMetadata>,
   ) => DropdownMenuItemProps['actions'];
   title: string;
-  viewFields: ViewFieldDefinition<ViewFieldMetadata>[];
+  columns: ViewFieldDefinition<ViewFieldMetadata>[];
 };
 
-export const OptionsDropdownSection = ({
+export const TableOptionsDropdownSection = ({
   renderActions,
   title,
-  viewFields,
-}: OptionsDropdownSectionProps) => {
+  columns,
+}: TableOptionsDropdownSectionProps) => {
   const theme = useTheme();
 
   return (
     <>
       <DropdownMenuSubheader>{title}</DropdownMenuSubheader>
       <DropdownMenuItemsContainer>
-        {viewFields.map((viewField) => (
-          <DropdownMenuItem actions={renderActions(viewField)}>
-            {viewField.columnIcon &&
-              cloneElement(viewField.columnIcon, {
+        {columns.map((column) => (
+          <DropdownMenuItem key={column.id} actions={renderActions(column)}>
+            {column.columnIcon &&
+              cloneElement(column.columnIcon, {
                 size: theme.icon.size.md,
               })}
-            {viewField.columnLabel}
+            {column.columnLabel}
           </DropdownMenuItem>
         ))}
       </DropdownMenuItemsContainer>

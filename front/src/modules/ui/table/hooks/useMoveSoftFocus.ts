@@ -1,8 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
-import { numberOfTableColumnsSelectorState } from '../states/numberOfTableColumnsSelectorState';
-import { numberOfTableRowsSelectorState } from '../states/numberOfTableRowsSelectorState';
+import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 import { softFocusPositionState } from '../states/softFocusPositionState';
+import { numberOfTableColumnsState } from '../states/tableColumnsState';
 
 import { useSetSoftFocusPosition } from './useSetSoftFocusPosition';
 
@@ -39,7 +39,7 @@ export function useMoveSoftFocus() {
           .valueOrThrow();
 
         const numberOfTableRows = snapshot
-          .getLoadable(numberOfTableRowsSelectorState)
+          .getLoadable(numberOfTableRowsState)
           .valueOrThrow();
 
         let newRowNumber = softFocusPosition.row + 1;
@@ -64,11 +64,11 @@ export function useMoveSoftFocus() {
           .valueOrThrow();
 
         const numberOfTableColumns = snapshot
-          .getLoadable(numberOfTableColumnsSelectorState)
+          .getLoadable(numberOfTableColumnsState)
           .valueOrThrow();
 
         const numberOfTableRows = snapshot
-          .getLoadable(numberOfTableRowsSelectorState)
+          .getLoadable(numberOfTableRowsState)
           .valueOrThrow();
 
         const currentColumnNumber = softFocusPosition.column;
@@ -112,7 +112,7 @@ export function useMoveSoftFocus() {
           .valueOrThrow();
 
         const numberOfTableColumns = snapshot
-          .getLoadable(numberOfTableColumnsSelectorState)
+          .getLoadable(numberOfTableColumnsState)
           .valueOrThrow();
 
         const currentColumnNumber = softFocusPosition.column;

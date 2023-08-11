@@ -10,6 +10,7 @@ import { EntityTable } from '@/ui/table/components/EntityTable';
 import { GenericEntityTableData } from '@/ui/table/components/GenericEntityTableData';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useTableViewFields } from '@/views/hooks/useTableViewFields';
 import { useViewSorts } from '@/views/hooks/useViewSorts';
 import { currentViewIdState } from '@/views/states/currentViewIdState';
 import {
@@ -24,6 +25,11 @@ import { defaultOrderBy } from '../../queries';
 export function CompanyTable() {
   const currentViewId = useRecoilValue(currentViewIdState);
   const orderBy = useRecoilScopedValue(sortsOrderByScopedState, TableContext);
+
+  const { handleColumnsChange } = useTableViewFields({
+    objectName: 'company',
+    viewFieldDefinitions: companyViewFields,
+  });
   const { updateSorts } = useViewSorts({
     availableSorts,
     Context: TableContext,
@@ -38,18 +44,17 @@ export function CompanyTable() {
   return (
     <>
       <GenericEntityTableData
-        objectName="company"
         getRequestResultKey="companies"
         useGetRequest={useGetCompaniesQuery}
         orderBy={orderBy.length ? orderBy : defaultOrderBy}
         whereFilters={whereFilters}
-        viewFieldDefinitions={companyViewFields}
         filterDefinitionArray={companiesFilters}
       />
       <EntityTable
         viewName="All Companies"
         viewIcon={<IconList size={16} />}
         availableSorts={availableSorts}
+        onColumnsChange={handleColumnsChange}
         onSortsUpdate={currentViewId ? updateSorts : undefined}
         useUpdateEntityMutation={useUpdateOneCompanyMutation}
       />

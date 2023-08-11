@@ -3,12 +3,13 @@ import { useRecoilCallback } from 'recoil';
 import { availableFiltersScopedState } from '@/ui/filter-n-sort/states/availableFiltersScopedState';
 import { FilterDefinition } from '@/ui/filter-n-sort/types/FilterDefinition';
 import { useResetTableRowSelection } from '@/ui/table/hooks/useResetTableRowSelection';
-import { entityTableDimensionsState } from '@/ui/table/states/entityTableDimensionsState';
-import { isFetchingEntityTableDataState } from '@/ui/table/states/isFetchingEntityTableDataState';
 import { TableContext } from '@/ui/table/states/TableContext';
 import { tableEntitiesFamilyState } from '@/ui/table/states/tableEntitiesFamilyState';
 import { tableRowIdsState } from '@/ui/table/states/tableRowIdsState';
 import { useContextScopeId } from '@/ui/utilities/recoil-scope/hooks/useContextScopeId';
+
+import { isFetchingEntityTableDataState } from '../states/isFetchingEntityTableDataState';
+import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 
 export function useSetEntityTableData() {
   const resetTableRowSelection = useResetTableRowSelection();
@@ -43,10 +44,7 @@ export function useSetEntityTableData() {
 
         resetTableRowSelection();
 
-        set(entityTableDimensionsState, (prevState) => ({
-          ...prevState,
-          numberOfRows: entityIds.length,
-        }));
+        set(numberOfTableRowsState, entityIds.length);
 
         set(availableFiltersScopedState(tableContextScopeId), filters);
 

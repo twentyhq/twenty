@@ -2,6 +2,10 @@ import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import type {
+  ViewFieldDefinition,
+  ViewFieldMetadata,
+} from '@/ui/editable-field/types/ViewField';
 import { SelectedSortType, SortType } from '@/ui/filter-n-sort/types/interface';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -90,6 +94,7 @@ type OwnProps<SortField> = {
   viewName: string;
   viewIcon?: React.ReactNode;
   availableSorts?: Array<SortType<SortField>>;
+  onColumnsChange?: (columns: ViewFieldDefinition<ViewFieldMetadata>[]) => void;
   onSortsUpdate?: (sorts: Array<SelectedSortType<SortField>>) => void;
   onRowSelectionChange?: (rowSelection: string[]) => void;
   useUpdateEntityMutation: any;
@@ -99,6 +104,7 @@ export function EntityTable<SortField>({
   viewName,
   viewIcon,
   availableSorts,
+  onColumnsChange,
   onSortsUpdate,
   useUpdateEntityMutation,
 }: OwnProps<SortField>) {
@@ -132,11 +138,12 @@ export function EntityTable<SortField>({
             viewName={viewName}
             viewIcon={viewIcon}
             availableSorts={availableSorts}
+            onColumnsChange={onColumnsChange}
             onSortsUpdate={onSortsUpdate}
           />
           <StyledTableWrapper>
             <StyledTable>
-              <EntityTableHeader />
+              <EntityTableHeader onColumnsChange={onColumnsChange} />
               <EntityTableBody />
             </StyledTable>
           </StyledTableWrapper>
