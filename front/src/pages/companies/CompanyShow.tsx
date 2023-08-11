@@ -22,7 +22,7 @@ import { getLogoUrlFromDomainName } from '~/utils';
 import { CompanyNameEditableField } from '../../modules/companies/editable-field/components/CompanyNameEditableField';
 import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageContainer';
 
-import { companyShowFieldsDefinition } from './constants/companyShowFieldsDefinition';
+import { companyShowFieldDefinition } from './constants/companyShowFieldDefinition';
 
 export function CompanyShow() {
   const companyId = useParams().companyId ?? '';
@@ -31,10 +31,11 @@ export function CompanyShow() {
   const theme = useTheme();
   const { data } = useCompanyQuery(companyId);
   const company = data?.findUniqueCompany;
-  const isFavorite =
-    company?.Favorite && company?.Favorite?.length > 0 ? true : false;
 
   if (!company) return <></>;
+
+  const isFavorite =
+    company.Favorite && company.Favorite?.length > 0 ? true : false;
 
   async function handleFavoriteButtonClick() {
     if (isFavorite) deleteCompanyFavorite(companyId);
@@ -43,7 +44,7 @@ export function CompanyShow() {
 
   return (
     <WithTopBarContainer
-      title={company?.name ?? ''}
+      title={company.name ?? ''}
       hasBackButton
       isFavorite={isFavorite}
       icon={<IconBuildingSkyscraper size={theme.icon.size.md} />}
@@ -52,10 +53,10 @@ export function CompanyShow() {
       <ShowPageContainer>
         <ShowPageLeftContainer>
           <ShowPageSummaryCard
-            id={company?.id}
-            logoOrAvatar={getLogoUrlFromDomainName(company?.domainName ?? '')}
-            title={company?.name ?? 'No name'}
-            date={company?.createdAt ?? ''}
+            id={company.id}
+            logoOrAvatar={getLogoUrlFromDomainName(company.domainName ?? '')}
+            title={company.name ?? 'No name'}
+            date={company.createdAt ?? ''}
             renderTitleEditComponent={() => (
               <CompanyNameEditableField company={company} />
             )}
@@ -65,7 +66,7 @@ export function CompanyShow() {
               value={useUpdateOneCompanyMutation}
             >
               <EditableFieldEntityIdContext.Provider value={company.id}>
-                {companyShowFieldsDefinition.map((fieldDefinition) => {
+                {companyShowFieldDefinition.map((fieldDefinition) => {
                   return (
                     <EditableFieldDefinitionContext.Provider
                       value={fieldDefinition}
@@ -83,7 +84,7 @@ export function CompanyShow() {
         <ShowPageRightContainer>
           <Timeline
             entity={{
-              id: company?.id ?? '',
+              id: company.id,
               type: ActivityTargetableEntityType.Company,
             }}
           />

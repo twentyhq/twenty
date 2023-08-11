@@ -16,7 +16,7 @@ import {
 } from '@/ui/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
-export const companyShowFieldsDefinition: FieldDefinition<FieldMetadata>[] = [
+export const companyShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
     id: 'domainName',
     label: 'Domain name',

@@ -16,8 +16,8 @@ export function ActivityTargetChips({
 }: {
   targets?: Array<
     Pick<ActivityTarget, 'id'> & {
-      person?: Pick<Person, 'id' | 'displayName' | 'avatarUrl'>;
-      company?: Pick<Company, 'id' | 'domainName' | 'name'>;
+      person?: Pick<Person, 'id' | 'displayName' | 'avatarUrl'> | null;
+      company?: Pick<Company, 'id' | 'domainName' | 'name'> | null;
     }
   > | null;
 }) {

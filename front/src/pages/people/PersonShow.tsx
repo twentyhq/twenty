@@ -5,30 +5,41 @@ import { useTheme } from '@emotion/react';
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { PersonPropertyBox } from '@/people/components/PersonPropertyBox';
 import { GET_PERSON, usePersonQuery } from '@/people/queries';
+import { GenericEditableField } from '@/ui/editable-field/components/GenericEditableField';
+import { PropertyBox } from '@/ui/editable-field/property-box/components/PropertyBox';
+import { EditableFieldDefinitionContext } from '@/ui/editable-field/states/EditableFieldDefinitionContext';
+import { EditableFieldEntityIdContext } from '@/ui/editable-field/states/EditableFieldEntityIdContext';
+import { EditableFieldMutationContext } from '@/ui/editable-field/states/EditableFieldMutationContext';
 import { IconUser } from '@/ui/icon';
 import { WithTopBarContainer } from '@/ui/layout/components/WithTopBarContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
-import { useUploadPersonPictureMutation } from '~/generated/graphql';
+import {
+  useUpdateOnePersonMutation,
+  useUploadPersonPictureMutation,
+} from '~/generated/graphql';
 
 import { PeopleFullNameEditableField } from '../../modules/people/editable-field/components/PeopleFullNameEditableField';
 import { ShowPageContainer } from '../../modules/ui/layout/components/ShowPageContainer';
 
+import { personShowFieldDefinition } from './constants/personShowFieldDefinition';
+
 export function PersonShow() {
   const personId = useParams().personId ?? '';
-
   const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
 
+  const theme = useTheme();
   const { data } = usePersonQuery(personId);
   const person = data?.findUniquePerson;
-  const isFavorite =
-    person?.Favorite && person?.Favorite?.length > 0 ? true : false;
 
-  const theme = useTheme();
   const [uploadPicture] = useUploadPersonPictureMutation();
+
+  if (!person) return <></>;
+
+  const isFavorite =
+    person.Favorite && person.Favorite?.length > 0 ? true : false;
 
   async function onUploadPicture(file: File) {
     if (!file || !person?.id) {
@@ -37,7 +48,7 @@ export function PersonShow() {
     await uploadPicture({
       variables: {
         file,
-        id: person?.id,
+        id: person.id,
       },
       refetchQueries: [getOperationName(GET_PERSON) ?? ''],
     });
@@ -50,7 +61,7 @@ export function PersonShow() {
 
   return (
     <WithTopBarContainer
-      title={person?.firstName ?? ''}
+      title={person.firstName ?? ''}
       icon={<IconUser size={theme.icon.size.md} />}
       hasBackButton
       isFavorite={isFavorite}
@@ -59,21 +70,38 @@ export function PersonShow() {
       <ShowPageContainer>
         <ShowPageLeftContainer>
           <ShowPageSummaryCard
-            id={person?.id}
-            title={person?.displayName ?? 'No name'}
-            logoOrAvatar={person?.avatarUrl ?? undefined}
-            date={person?.createdAt ?? ''}
+            id={person.id}
+            title={person.displayName ?? 'No name'}
+            logoOrAvatar={person.avatarUrl ?? undefined}
+            date={person.createdAt ?? ''}
             renderTitleEditComponent={() =>
               person ? <PeopleFullNameEditableField people={person} /> : <></>
             }
             onUploadPicture={onUploadPicture}
           />
-          {person && <PersonPropertyBox person={person} />}
+          <PropertyBox extraPadding={true}>
+            <EditableFieldMutationContext.Provider
+              value={useUpdateOnePersonMutation}
+            >
+              <EditableFieldEntityIdContext.Provider value={person.id}>
+                {personShowFieldDefinition.map((fieldDefinition) => {
+                  return (
+                    <EditableFieldDefinitionContext.Provider
+                      value={fieldDefinition}
+                      key={fieldDefinition.id}
+                    >
+                      <GenericEditableField />
+                    </EditableFieldDefinitionContext.Provider>
+                  );
+                })}
+              </EditableFieldEntityIdContext.Provider>
+            </EditableFieldMutationContext.Provider>
+          </PropertyBox>
         </ShowPageLeftContainer>
         <ShowPageRightContainer>
           <Timeline
             entity={{
-              id: person?.id ?? '',
+              id: person.id ?? '',
               type: ActivityTargetableEntityType.Person,
             }}
           />

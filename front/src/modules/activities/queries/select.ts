@@ -1,5 +1,58 @@
 import { gql } from '@apollo/client';
 
+export const ACTIVITY_QUERY_FRAGMENT = gql`
+  fragment ActivityQueryFragment on Activity {
+    id
+    createdAt
+    title
+    body
+    type
+    completedAt
+    dueAt
+    assignee {
+      id
+      firstName
+      lastName
+      displayName
+      avatarUrl
+    }
+    author {
+      id
+      firstName
+      lastName
+      displayName
+    }
+    comments {
+      id
+      body
+      createdAt
+      updatedAt
+      author {
+        id
+        displayName
+        firstName
+        lastName
+        avatarUrl
+      }
+    }
+    activityTargets {
+      id
+      companyId
+      personId
+      company {
+        id
+        name
+        domainName
+      }
+      person {
+        id
+        displayName
+        avatarUrl
+      }
+    }
+  }
+`;
+
 export const GET_ACTIVITIES_BY_TARGETS = gql`
   query GetActivitiesByTargets(
     $activityTargetIds: [String!]!
@@ -18,44 +71,7 @@ export const GET_ACTIVITIES_BY_TARGETS = gql`
         }
       }
     ) {
-      id
-      createdAt
-      title
-      body
-      type
-      completedAt
-      dueAt
-      assignee {
-        id
-        firstName
-        lastName
-        displayName
-        avatarUrl
-      }
-      author {
-        id
-        firstName
-        lastName
-        displayName
-      }
-      comments {
-        id
-        body
-        createdAt
-        updatedAt
-        author {
-          id
-          displayName
-          firstName
-          lastName
-          avatarUrl
-        }
-      }
-      activityTargets {
-        id
-        companyId
-        personId
-      }
+      ...ActivityQueryFragment
     }
   }
 `;
@@ -66,34 +82,7 @@ export const GET_ACTIVITIES = gql`
     $orderBy: [ActivityOrderByWithRelationInput!]
   ) {
     findManyActivities(orderBy: $orderBy, where: $where) {
-      id
-      createdAt
-      title
-      body
-      type
-      completedAt
-      dueAt
-      assignee {
-        id
-        firstName
-        lastName
-        displayName
-        avatarUrl
-      }
-      author {
-        id
-        firstName
-        lastName
-        displayName
-      }
-      comments {
-        id
-      }
-      activityTargets {
-        id
-        companyId
-        personId
-      }
+      ...ActivityQueryFragment
     }
   }
 `;
@@ -101,44 +90,7 @@ export const GET_ACTIVITIES = gql`
 export const GET_ACTIVITY = gql`
   query GetActivity($activityId: String!) {
     findManyActivities(where: { id: { equals: $activityId } }) {
-      id
-      createdAt
-      body
-      title
-      type
-      completedAt
-      dueAt
-      assignee {
-        id
-        firstName
-        lastName
-        displayName
-        avatarUrl
-      }
-      author {
-        id
-        firstName
-        lastName
-        displayName
-      }
-      comments {
-        id
-        body
-        createdAt
-        updatedAt
-        author {
-          id
-          displayName
-          firstName
-          lastName
-          avatarUrl
-        }
-      }
-      activityTargets {
-        id
-        companyId
-        personId
-      }
+      ...ActivityQueryFragment
     }
   }
 `;

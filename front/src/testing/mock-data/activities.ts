@@ -3,6 +3,7 @@ import {
   ActivityTarget,
   ActivityType,
   Comment,
+  User,
 } from '~/generated/graphql';
 
 type MockedActivity = Pick<
@@ -32,7 +33,11 @@ type MockedActivity = Pick<
     lastName: string;
     displayName: string;
   };
-  comments: Array<Pick<Comment, 'body' | 'id'>>;
+  comments: Array<
+    Pick<Comment, 'body' | 'id' | 'createdAt' | 'updatedAt'> & {
+      author: Pick<User, 'id' | 'displayName'>;
+    }
+  >;
   activityTargets: Array<
     Pick<
       ActivityTarget,
