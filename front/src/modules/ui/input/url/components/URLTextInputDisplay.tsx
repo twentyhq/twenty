@@ -20,13 +20,13 @@ type OwnProps = {
 
 const checkUrlType = (url: string) => {
   if (
-    /^(http|https):\/\/(?:www\.)?linkedin.com(\w+:{0,1}\w*@)?(\S+)(:([0-9])+)?(\/|\/([\w#!:.?+=&%@!\-/]))?$/.test(
+    /^(http|https):\/\/(?:www\.)?linkedin.com(\w+:{0,1}\w*@)?(\S+)(:([0-9])+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/.test(
       url,
     )
   ) {
     return LinkType.LinkedIn;
   }
-  if (url.match(/^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?$/i)) {
+  if (url.match(/^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i)) {
     return LinkType.Twitter;
   }
 

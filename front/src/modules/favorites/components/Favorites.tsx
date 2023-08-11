@@ -31,6 +31,7 @@ export function Favorites() {
               icon={
                 <Avatar
                   key={id}
+                  colorId={person.id}
                   avatarUrl={person.avatarUrl ?? ''}
                   type="rounded"
                   placeholder={`${person.firstName} ${person.lastName}`}

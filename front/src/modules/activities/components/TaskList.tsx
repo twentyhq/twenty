@@ -20,6 +20,7 @@ const StyledContainer = styled.div`
 
 const StyledTitle = styled.h3`
   color: ${({ theme }) => theme.font.color.primary};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;

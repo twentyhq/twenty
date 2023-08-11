@@ -21,6 +21,7 @@ export function GenericEditableRelationCell({
 }: OwnProps) {
   return (
     <EditableCell
+      maxContentWidth={160}
       editModeHorizontalAlign={editModeHorizontalAlign}
       editHotkeyScope={{ scope: RelationPickerHotkeyScope.RelationPicker }}
       editModeContent={

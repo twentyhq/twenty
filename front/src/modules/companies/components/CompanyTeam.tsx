@@ -63,8 +63,12 @@ export function CompanyTeam({ company }: CompanyTeamPropsType) {
             <StyledTitle>Team</StyledTitle>
           </StyledTitleContainer>
           <StyledListContainer>
-            {data?.people?.map((person) => (
-              <PeopleCard key={person.id} person={person} />
+            {data?.people?.map((person, id) => (
+              <PeopleCard
+                key={person.id}
+                person={person}
+                hasBottomBorder={id !== data.people.length - 1}
+              />
             ))}
           </StyledListContainer>
         </StyledContainer>

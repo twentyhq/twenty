@@ -123,7 +123,7 @@ export const peopleViewFields: ViewFieldDefinition<ViewFieldMetadata>[] = [
   } satisfies ViewFieldDefinition<ViewFieldURLMetadata>,
   {
     id: 'x',
-    columnLabel: 'X',
+    columnLabel: 'Twitter',
     columnIcon: <IconBrandX />,
     columnSize: 150,
     columnOrder: 9,
